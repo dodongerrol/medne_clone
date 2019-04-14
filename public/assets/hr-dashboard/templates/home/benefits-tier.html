@@ -1,0 +1,164 @@
+<div team-benefits-tier-directive>
+	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+		<div class="container">
+			<div class="welcome-container">
+				<h4 ui-sref="benefits-dashboard">Overview</h4>
+				<div class="arrow-up" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<div class="dropdown">
+				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Employee
+				  </h4>
+				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
+				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				  </ul>
+				</div>
+				<div class="arrow-up-2" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="activity">Activity</h4>
+				<div class="arrow-up-3" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container" ng-if="options.accessibility == 1">
+				<h4 ui-sref="e-claim">Claim</h4>
+				<div class="arrow-up-4" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="statement">Statement</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="account-and-payment">Account</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="hrdb-body-container">
+		<div class="container">
+			<h3 class="text-center" style="color: #5b5b5b;">
+				
+			</h3>
+			<hr>
+			<div class="col-lg-2 account-billing-link-list">
+				<ul>
+					<li>
+						<a ui-sref="company-and-contacts">Company & Contacts</a>
+					</li>
+					<li>
+						<a ui-sref="transactions">Transactions</a>
+					</li>
+					<li>
+						<a ui-sref="document-center">Document Center</a>
+					</li>
+					<li>
+						<a ui-sref="account-and-payment">Account & Payment</a>
+					</li>
+					<li class="active-link">
+						<a href="">Team Benefits Tier</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-lg-10">
+				<div class="team-benefits-tiers-wrapper tier-feature-item" style="">
+					<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Team benefits tiers.</h1>
+					<div class="white-space-20"></div>
+					<div class="team-benefits-tiers-container account-tier-container" style="">
+							<h4>Manage your team benefits tiers here.</h4>
+
+							<div class="summary-details-wrapper">
+								<div ng-repeat="list in tier_arr" class="summary-details ng-scope">
+									<div class="benefits-tier-summary-btn-content active">
+										<button class="active" ng-class="{'isDone' : list.member_enrolled_count > 0}">Tier 
+											<span ng-bind="$index + 1">1</span> 
+											<span ng-bind="list.member_enrolled_count">5</span>/<span ng-bind="list.member_head_count">10</span>
+										</button>
+										<span ng-click="toggleEditTier( list, $index+1 )">Edit</span>
+									</div>
+
+									<div class="benefits-tier-summary-details">
+										<div class="benefits-tier-summary-label-text">
+											<span class="summary-label">Medical annual cap: </span>
+											<span class="summary-text">S$ <span ng-bind="list.medical_annual_cap">100</span></span>
+										</div>
+										<div class="benefits-tier-summary-label-text">
+											<span class="summary-label">Wellness annual cap: </span>
+											<span class="summary-text">S$ <span ng-bind="list.wellness_annual_cap">1000</span></span>
+										</div>
+										<div class="benefits-tier-summary-label-text">
+											<span class="summary-label">GP cap per visit: </span>
+											<span class="summary-text">S$ <span ng-bind="list.gp_cap_per_visit">50</span></span>
+										</div>	
+									</div>
+								</div>
+							</div>
+
+					</div>
+
+					<div class="tier-item-container tier-feature-item account-tier-edit-container" style="display: none;">
+							<div class="tier-item-form">
+								<div class="tier-item-header">
+									<h4>Tier <span ng-bind="tier_data.index">1</span></h4>
+									<img src="../assets/hr-dashboard/img/icons/close.svg" ng-click="toggleEditTier()">
+								</div>
+								<div class="tier-item-body">
+									<div class="input-wrapper">
+										<label>Medical annual cap</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.medical_annual_cap">
+											<div class="icon-item">
+												S
+	    									<i class="fa fa-usd icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="input-wrapper">
+										<label>Wellness annual cap</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.wellness_annual_cap">
+	  									<div class="icon-item">
+	  										S
+	    									<i class="fa fa-usd icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="input-wrapper">
+										<label>GP cap per visit</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.gp_cap_per_visit">
+	  									<div class="icon-item">
+	  										S
+	    									<i class="fa fa-usd icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="input-wrapper">
+										<label>Employee headcount</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.member_head_count">
+	    								<div class="icon-item">
+	    									<i class="fa fa-users icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="input-wrapper">
+										<label>Dependent headcount</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.dependent_head_count">
+	    								<div class="icon-item">
+	    									<i class="fa fa-users icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="tier-item-button">
+										<button ng-click="saveTierData( tier_data )">Save &amp; Continue</button>
+									</div>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

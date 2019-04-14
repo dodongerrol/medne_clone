@@ -1,0 +1,39 @@
+.profile-settings {
+	color: #777676; 
+	cursor: pointer;
+}
+
+#profile-detail-wrapper .table>tbody>tr>td,
+#profile-detail-wrapper .table>tbody>tr>th,
+#profile-detail-wrapper .table>tfoot>tr>td,
+#profile-detail-wrapper .table>tfoot>tr>th,
+#profile-detail-wrapper .table>thead>tr>td,
+#profile-detail-wrapper .table>thead>tr>th{
+	    border-top: 1px solid transparent !important;
+}
+
+/*---- BREAKS FOR YOUR CLINIC ----*/
+	.add-break-time-wrapper {
+		display: flex;
+    align-items: center;
+    height: 38px;
+    padding-left: 50px;
+	}
+
+	.add-break-time-wrapper span {
+		margin: 0 20px;
+	}
+
+	.add-break-time-wrapper select {
+		border-radius: 4px;
+    padding: 4px 10px;
+	}
+
+	.add-break-time-wrapper .fa-times {
+		color: #777;
+    cursor: pointer;
+    font-size: 19px;
+    margin-left: 40px;
+	}
+
+/*--------------------------------*/

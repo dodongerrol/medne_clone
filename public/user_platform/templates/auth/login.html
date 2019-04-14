@@ -1,0 +1,61 @@
+
+
+<div id="login-content" ng-controller="MainCtrl as login" >
+	<div class="sk-double-bounce" id="loader-home" hidden>
+	    <div class="sk-child sk-double-bounce1"></div>
+	    <div class="sk-child sk-double-bounce2"></div>
+	</div>
+	<div class="col-md-12 no-padding text-center login-logo">
+		<img src="../user/img/mednefits logo v3 (white) LARGE.png" class="img-20">
+	</div>
+
+	<div class="col-md-12 no-padding">
+		<div class="login-wrapper text-center">
+		
+
+			<div class="white-space-10"></div>
+			<h5><b>HEALTH PROFESSIONAL LOGIN</b></h5>
+			<div class="white-space-1"></div>
+			<h5><b>Welcome, Please Sign in</b></h5>
+			<div class="white-space-10"></div>
+
+			<form ng-submit="login.loginUser()">
+				<div class="form-group">
+					<input type="email" class="form-control" name="email" placeholder="Email" ng-model="login.loginData.username" autofocus required>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" name="password" placeholder="Password" ng-model="login.loginData.password" required>
+				</div>
+
+				<div class="form-group text-left" style="font-size: 12px;">
+					<label>
+						<input type="checkbox" name="">
+						Stay Signed In
+					</label>
+
+					<a class="pull-right" href="javascript:void(0)" ui-sref="forgot" style="position: relative;top: 3px">
+						<b>Forgot Password?</b>
+					</a>
+				</div>
+				<div class="form-group" id="error_message" style="display: none;">
+					<button type="button" class="btn btn-danger form-control"><span ng-bind="login.error"></span></button>
+				</div>
+
+				<div class="form-group" id="succ_message" style="display: none;">
+					<button type="button" class="btn btn-success btn-success-succ form-control"">Successfully Created Account. Please Login</button>
+				</div>
+
+				<div class="form-group">
+					<button type="submit" class="btn btn-info form-control"> Sign In</button>
+				</div>
+
+				<div class="form-group">
+					<p class="text-center" style="font-size: 12px;">No Account Yet? <a href="javascript:void(0)" ui-sref="signup" style="color: #2C9FD7">Sign Up</a></p>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+</div>
+
+

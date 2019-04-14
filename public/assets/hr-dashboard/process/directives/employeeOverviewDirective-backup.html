@@ -1,0 +1,516 @@
+app.directive("employeeOverviewDirective", [
+  "$state",
+  "hrSettings",
+  "$rootScope",
+  "dashboardFactory",
+  function directive($state, hrSettings, $rootScope, dashboardFactory) {
+    return {
+      restrict: "A",
+      scope: true,
+      link: function link(scope, element, attributeSet) {
+        console.log("employeeOverviewDirective Runnning !");
+
+        scope.employees = {};
+        scope.options = {};
+        scope.page_ctr = 5;
+        scope.page_active = 1;
+        scope.emp_arr = [];
+        scope.isEmpChecked = {};
+        scope.checkAllChecked = false;
+        scope.plan_status = {};
+        scope.company_properties = {};
+        scope.company_properties.total_allocation = 0.00;
+        scope.company_properties.allocated = 0.00;
+        scope.family_trap = false;
+        scope.family_temp = null;
+        scope.family_selected = null;
+        scope.isEmployeeShow = false;
+        scope.selectedEmployee_index = null;
+        scope.selectedEmployee = {};
+        scope.isTierDetailsShow = false;
+        scope.isMedicalUsageShow = false;
+        scope.isWellnessUsageShow = false;
+        scope.empTabSelected = 0;
+        scope.isAddDependentsShow = false;
+
+
+        scope.$on("refresh", function(evt, data){
+          scope.onLoad();
+          scope.emp_arr = [];
+          scope.isEmpChecked = {};
+        });
+
+        scope.getUsage = function(x,y){
+          return ( parseFloat(x) + parseFloat(y) );
+        }
+
+        scope.range = function (range) {
+          var arr = []; 
+          for (var i = 0; i < range; i++) {
+              arr.push(i);
+          }
+          return arr;
+        }
+
+        scope.showFamily = function(emp, evt){
+          scope.family_selected = emp.user_id;
+
+          if ( emp.family_coverage.dependents.length > 0 || emp.family_coverage.spouse.spouse ) {
+            if (scope.family_trap == false) {
+              if (emp.family_coverage.spouse.spouse) {
+                var duration = emp.family_coverage.spouse.spouse.duration.split( " " );
+                emp.family_coverage.spouse.spouse.plan_start = moment( emp.family_coverage.spouse.spouse.plan_start ).format("MM/DD/YYYY");
+                emp.family_coverage.spouse.spouse.plan_end = moment( emp.family_coverage.spouse.spouse.plan_start ).add(duration[0], duration[1]).format("MM/DD/YYYY");
+              }
+
+              for ( var i = emp.family_coverage.dependents.length - 1; i >= 0; i-- ) {
+                var duration2 = emp.family_coverage.dependents[ i ].plan.duration.split(" ");
+                emp.family_coverage.dependents[i].plan.plan_start = moment( emp.family_coverage.dependents[i].plan.plan_start ).format("MM/DD/YYYY");
+                emp.family_coverage.dependents[i].plan.plan_end = moment( emp.family_coverage.dependents[i].plan.plan_start ).add(duration2[0], duration2[1]).format("MM/DD/YYYY");
+
+                $(`<tr class="family-tr family-tr-` +
+                    emp.family_coverage.dependents[i].dependent.UserID + `" style="background:#eee;">
+										<td class="for-checkbox-container"></td>
+										<td>
+											<p><a>` + emp.family_coverage.dependents[i].dependent.Name + `</a></p>
+										</td>
+										<td>
+											<p>---</p>
+										</td>
+										<td>
+											<p>Start Date: <span>` + emp.family_coverage.dependents[i].plan.plan_start + `</span></p>
+											<p>End Date: <span>` + emp.family_coverage.dependents[i].plan.plan_end + `</span></p>
+										</td>
+										<td>
+											<p>Dependent</p>
+										</td>
+										<td>
+											<p class="text-center">
+												S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.dependents[i].spent + `</span>
+												<span>Usage</span>
+											</p>
+										</td>
+									</tr>`).insertAfter($(evt.target).closest("tr"));
+              }
+
+              $(`<tr class="family-tr family-tr-` + emp.user_id + `" style="background:#eee;">
+									<td class="for-checkbox-container"></td>
+									<td>
+										<p><a>` + emp.family_coverage.spouse.spouse.Name + `</a></p>
+									</td>
+									<td>
+										<p>---</p>
+									</td>
+									<td>
+										<p>Start Date: <span>` + emp.family_coverage.spouse.spouse.plan_start + `</span></p>
+										<p>End Date: <span>` + emp.family_coverage.spouse.spouse.plan_end + `</span></p>
+									</td>
+									<td>
+										<p>Spouse</p>
+									</td>
+									<td>
+										<p class="text-center">
+											S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.spouse.spent + `</span>
+											<span>Usage</span>
+										</p>
+									</td>
+								</tr>`).insertAfter($(evt.target).closest("tr"));
+
+              scope.family_temp = emp.user_id;
+              scope.family_trap = true;
+            } else {
+              $(".family-tr").remove();
+              scope.family_trap = false;
+
+              if (scope.family_temp != scope.family_selected) {
+                scope.showFamily(emp, evt);
+              }
+            }
+          } else {
+            $(".family-tr").remove();
+            scope.family_trap = false;
+          }
+        };
+
+        scope.editList = function(){
+          if (scope.emp_arr.length > 0) {
+            $("#edit-employee-modal").modal("show");
+            $rootScope.$broadcast("empInitialized", {
+              data: scope.emp_arr,
+              accessibility: scope.options
+            });
+          }
+        };
+
+        scope.deleteList = function(){
+          if (scope.emp_arr.length > 0) {
+            $("#delete-employee-confirmation-modal").modal("show");
+            $rootScope.$broadcast("empInitialized", { data: scope.emp_arr });
+          }
+        };
+
+        scope.replaceList = function(){
+          if (scope.emp_arr.length > 0) {
+            $("#replace-employee").modal("show");
+            $rootScope.$broadcast("empInitialized", { data: scope.emp_arr });
+          }
+        };
+
+        scope.checkAll = function(bool){
+          scope.emp_arr = [];
+
+          if (bool == true) {
+            scope.checkAllChecked = true;
+          } else {
+            scope.checkAllChecked = false;
+          }
+          angular.forEach(scope.employees.data, function(value, key) {
+            if (bool == true) {
+              scope.emp_arr.push(value);
+            }
+            scope.isEmpChecked[key] = bool;
+          });
+        };
+
+        scope.empSelectedByName = function(emp, index){
+          scope.isAllChecked = false;
+          scope.checkAll(false);
+          scope.clickedOnlyOne = true;
+          scope.emp_arr = [];
+          scope.emp_arr.push(emp);
+          scope.editList();
+        };
+
+        scope.empSelected = function(emp){
+          if (scope.clickedOnlyOne == true) {
+            scope.emp_arr = [];
+            scope.clickedOnlyOne = false;
+          }
+          if ($.inArray(emp, scope.emp_arr) < 0) {
+            scope.emp_arr.push(emp);
+          } else {
+            scope.emp_arr.splice($.inArray(emp, scope.emp_arr), 1);
+          }
+        };
+
+        scope.perPage = function(num){
+          scope.page_ctr = num;
+          scope.page_active = 1;
+          scope.getEmployeeList(scope.page_active);
+        };
+
+        scope.toggleAddDependents = function(){
+          
+          if( scope.isAddDependentsShow == false ){
+            scope.isAddDependentsShow = true;
+          }else{
+            scope.isAddDependentsShow = false;
+          }
+        };
+
+        scope.toggleEmpTab = function(opt){
+          scope.empTabSelected = opt;
+        };
+
+        scope.togglePage = function(){
+
+          $(".per_page").toggle();
+        };
+
+        scope.toggleTierDetails = function(){
+          if( scope.isTierDetailsShow == false ){
+            scope.isTierDetailsShow = true;
+          }else{
+            scope.isTierDetailsShow = false;
+          }
+        }
+
+        scope.toggleMedicalUsage = function(){
+          if( scope.isMedicalUsageShow == false ){
+            scope.isMedicalUsageShow = true;
+          }else{
+            scope.isMedicalUsageShow = false;
+          }
+        }
+
+        scope.toggleWellnessUsage = function(){
+          if( scope.isWellnessUsageShow == false ){
+            scope.isWellnessUsageShow = true;
+          }else{
+            scope.isWellnessUsageShow = false;
+          }
+        }
+
+        scope.openUpdateEmployeeModal = function(){
+          $("#update-employee-modal").modal('show');
+        }
+
+        scope.toggleEmployee = function(emp, index){
+          if( scope.isEmployeeShow == false ){
+            scope.isEmployeeShow = true;
+            scope.selectedEmployee_index = index;
+            scope.selectedEmployee = emp;
+            console.log( emp );
+            console.log( scope.emp_arr.length );
+            scope.getEmpDependents( emp.user_id );
+            $('body').css('overflow','auto');
+            $(".hrdb-body-container").hide();
+            scope.showLoading();
+            scope.hideLoading();
+            $(".employee-information-wrapper").fadeIn();
+          }else{
+            scope.isEmployeeShow = false;
+            $('body').css('overflow','hidden');
+            $(".hrdb-body-container").fadeIn();
+            $(".employee-information-wrapper").hide();
+          }
+        }
+
+        scope.prevSelectedEmployee = function(){
+          if( scope.selectedEmployee_index != 0 ){
+            scope.showLoading();
+            scope.hideLoading();
+            scope.selectedEmployee_index--;
+            scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
+          }
+        };
+
+        scope.nextSelectedEmployee = function(){
+          if( scope.selectedEmployee_index != (scope.employees.data.length-1) ){
+            scope.showLoading();
+            scope.hideLoading();
+            scope.selectedEmployee_index++;
+            scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
+          }
+        };
+
+        scope.nextPage = function(){
+          if( scope.page_active < scope.employees.last_page ){
+            scope.page_active++;
+            scope.getEmployeeList(scope.page_active);
+          }
+        };
+
+        scope.goToPage = function(page){
+          scope.page_active = page;
+          scope.getEmployeeList(scope.page_active);
+        };
+
+        scope.prevPage = function(){
+          if( scope.page_active > 1 ){
+            scope.page_active--;
+            scope.getEmployeeList(scope.page_active);
+          }
+        };
+
+        scope.getEmployeeList = function(page){
+          $(".employee-overview-pagination").show();
+          scope.showLoading();
+          hrSettings.getEmployees(scope.page_ctr, page)
+            .then(function(response) {
+              console.log(response);
+              scope.employees = response.data;
+              scope.employees.total_allocation = response.data.total_allocation;
+              scope.employees.allocated = response.data.allocated;
+              angular.forEach(scope.employees.data, function(value, key) {
+                value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
+                value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
+                value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
+                value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
+              });
+              $(".loader-table").hide();
+              $(".main-table").fadeIn();
+              scope.hideLoading();
+            });
+        };
+
+        scope.removeSearchEmp = function(){
+          scope.inputSearch = "";
+          scope.page_active = 1;
+          scope.getEmployeeList(1);
+        }
+
+        scope.searchEmployee = function(input){
+          console.log(input);
+          if( input ){
+            scope.showLoading();
+            var data = {
+              search: input
+            };
+
+            hrSettings.findEmployee(data)
+              .then(function(response) {
+                scope.employees = response.data;
+                  angular.forEach(scope.employees.data, function(value, key) {
+                  value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
+                  value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
+                  value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
+                  value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
+                });
+                $(".employee-overview-pagination").hide();
+                scope.hideLoading();
+              });
+          }else{
+            scope.removeSearchEmp();
+          }
+        };
+
+        scope.addEmp = function(){
+          if (scope.progress.added_purchase_status == true) {
+            swal({
+                title: "",
+                text: "Employees have yet to enroll into the company benefits plan. Enroll them now.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Go",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: true,
+                customClass: "alertPendingEmp"
+              },
+              function(isConfirm) {
+                if (isConfirm) {
+                  dashboardFactory.setHeadCountStatus(true);
+                  $state.go("web-preview");
+                }
+              }
+            );
+          }else if( scope.progress.completed == scope.progress.total_employees ) {
+            // $state.go("congratulations");
+            // dashboardFactory.setHeadCountStatus(true);
+            $("#under-development-modal").modal("show");
+          } else if(scope.plan_status.expire) {
+            swal({
+                title: "Ooooops!",
+                text: "Your Care Plan is expired! Please renew your plan to be able to add new employees.",
+                type: "warning",
+                showCancelButton: false,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Done",
+                closeOnConfirm: true,
+              },
+              function(isConfirm) {}
+            );
+          }else{
+            $state.go("enrollment-options");
+            dashboardFactory.setHeadCountStatus(false);
+          }
+        };
+
+        scope.getProgress = function(){
+          hrSettings.getEnrollmentProgress()
+          .then(function(response) {
+            scope.hideLoading();
+            // console.log( response );
+            scope.progress = response.data.data;
+          });
+        };
+
+        scope.showLoading = function(){
+          $(".circle-loader").fadeIn();
+          loading_trap = true;
+        };
+
+        scope.hideLoading = function(){
+          setTimeout(function() {
+            $(".circle-loader").fadeOut();
+            loading_trap = false;
+          }, 1000);
+        };
+
+        scope.empDetailsLoadingState = function(){
+          scope.showLoading();
+          $( ".export-emp-details-message" ).show();
+          hrSettings.getEployeeDetails()
+            .then(function(response) {
+              scope.allEmpData = response.data.data;
+              scope.hideLoading();
+              setTimeout(function() {
+                $( ".export-emp-details-message" ).hide();
+                $( "#empDetailsBtn" ).click();
+              }, 1000);
+            });
+        }
+
+        scope.showGlobalModal = function( message ){
+          $( "#global_modal" ).modal('show');
+          $( "#global_message" ).text(message);
+        }
+
+        scope.checkCompanyBalance = function(){
+
+          hrSettings.getCheckCredits();
+        };
+
+        scope.userCompanyCreditsAllocated = function(){
+          hrSettings.userCompanyCreditsAllocated( )
+          .then(function(response){
+            scope.company_properties = response.data;
+          });
+        }
+
+        scope.getPlanStatus = function( ) {
+          hrSettings.getPlanStatus( )
+          .then(function(response){
+            // console.log(response);
+            scope.plan_status = response.data;
+          });
+        }
+
+        scope.getTotalMembers = function( ) {
+          hrSettings.getCountMembers( )
+            .then(function(response){
+              // console.log(response);
+              scope.member_count = response.data.total_members;
+            });
+        }
+
+        scope.getEmpDependents = function( id ) {
+          hrSettings.getDependents( id )
+            .then(function(response){
+              // console.log(response);
+              scope.selected_emp_dependents = response.data;
+            });
+        }
+
+        scope.checkDependentsStatus = function(){
+          hrSettings.getMethodType()
+           .then(function(response){
+              // console.log(response);
+              scope.dependents_status = response.data.data;
+            });
+        }
+
+        scope.onLoad = function(){
+          // scope.checkCompanyBalance();
+          scope.getPlanStatus( );
+          scope.userCompanyCreditsAllocated();
+          scope.getTotalMembers();
+          scope.checkDependentsStatus();
+          scope.showLoading();
+          hrSettings.getSession()
+            .then(function(response) {
+              scope.options.accessibility = response.data.accessibility;
+              scope.getEmployeeList(scope.page_active);
+              scope.getProgress();
+            });
+        };
+        
+        scope.onLoad();
+
+
+        $("body").click(function(e){
+          if ( $(e.target).parents(".per-page-pagination").length === 0) {
+            $(".per_page").hide();
+          }
+        });
+
+        $("body").delegate( '.per_page li', 'click', function(e){
+          
+          $(".per_page").hide();
+        });
+
+      }
+    };
+  }
+]);

@@ -1,0 +1,115 @@
+<?php
+
+use Illuminate\Auth\UserTrait;
+use Illuminate\Auth\UserInterface;
+use Illuminate\Auth\Reminders\RemindableTrait;
+use Illuminate\Auth\Reminders\RemindableInterface;
+
+class Admin_Clinic_Type extends Eloquent implements UserInterface, RemindableInterface {
+
+	use UserTrait, RemindableTrait;
+
+	/**
+	 * The database table used by the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'clinic_types';
+	protected $primaryKey = 'ClinicTypeID';
+
+ 	
+ 	//Get all clinic types
+	public function GetClinicTypes()
+	{
+		$clinicTypeData = DB::table('clinic_types')
+		    ->where('Active',1)
+		    ->lists('Name','ClinicTypeID');
+			return $clinicTypeData;
+	}
+
+
+	public function getClinicWithSub()
+	{
+		$clinic_types = [];
+		$result = Admin_Clinic_Type::where('head', 1)->orderBy('position', 'asc')->get();
+		// return $result;
+		foreach ($result as $key => $value) {
+        $temp = array(
+            'head_clinic'   => $value,
+            'sub_clinic'    => Admin_Clinic_Type::where('sub_id', $value->ClinicTypeID)->get()
+        );
+
+        array_push($clinic_types, $temp);
+    }
+
+    return $clinic_types;
+	}
+
+	// ---  get all clinic types details -- 
+
+	public function getClinicTypesFromWeb( )
+	{
+		$clinicTypeData = DB::table('clinic_types')
+						->select('ClinicTypeID','Name', 'clinic_type_image_url')
+		    		// ->where('Active',1)
+		    		->orderBy('position', 'desc')
+		    		->get();
+			return $clinicTypeData;
+	}
+
+	public function GetAllClinicTypes()
+	{
+		// $clinicTypeData = DB::table('clinic_types')
+		// 	->select('ClinicTypeID','Name', 'clinic_type_image_url')
+		//     ->where('Active',1)
+		//     ->orderBy('position', 'asc')
+		//     ->get();
+
+		$clinicTypeData = DB::table('clinic_types')
+						->select('ClinicTypeID','Name', 'clinic_type_image_url')
+		    		->where('Active',1)
+		    		->where('head',1)
+		    		->orderBy('position', 'asc')
+		    		->get();
+			return $clinicTypeData;
+	}
+
+	public function NewAllClinicTypes( )
+	{
+		$clinicTypeData = DB::table('clinic_types')
+						->select('ClinicTypeID','Name', 'clinic_type_image_url')
+		    		->where('Active',1)
+		    		->where('head',1)
+		    		->orderBy('new_position', 'asc')
+		    		->get();
+			return $clinicTypeData;
+	}
+
+	// ---  get selected clinic type details -- 
+
+	public function findClinicTypeDetails($value){
+
+            $clinicTypeData = DB::table('clinic_types')
+                ->where('ClinicTypeID', '=', $value)
+                ->where('Active', '=', 1)    
+                ->first();
+
+                return $clinicTypeData;
+        }
+
+
+
+     // nhr main searach functions for mobile
+
+     public function getSpeciality($search)
+        {
+        	$clinicTypeData = DB::table('clinic_types')
+        		->select('ClinicTypeID as clinic_type_id','Name as name')
+                ->where('Name', 'like', "%$search%")
+                ->where('Active', '=', 1)    
+                ->get();
+
+                return $clinicTypeData;
+        }   
+
+}

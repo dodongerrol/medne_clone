@@ -1,0 +1,92 @@
+<div class="hrdb-body-container" style="padding-top: 180px;">
+	<div class="container">
+		<h1 class="dl-template-title text-center" style="color: #5b5b5b;">Upload your file</h1>
+		<div style="margin-right: 100px;margin-left: 100px;">
+			<table class="table table-hover preview-table">
+				<thead>
+					<tr>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>NRIC/FIN</th>
+						<th>Date of Birth</th>
+						<th>Work Email</th>
+						<th>Mobile</th>
+						<th>Job Title</th>
+						<th>Start Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Filbert <button class="table-edit-button pull-right" data-toggle="modal" data-target="#edit-employee-details">Edit</button></td>
+						<td>Tan</td>
+						<td>S9088888J</td>
+						<td>01/01/1990</td>
+						<td>filbert@mednefits.com</td>
+						<td>98000882</td>
+						<td>Marketing</td>
+						<td>22/05/2017</td>
+					</tr>
+					<tr class="has-error">
+						<td>Chris <button class="table-edit-button pull-right" data-toggle="modal" data-target="#edit-employee-details">Edit</button></td>
+						<td>Teo</td>
+						<td>S8588888J</td>
+						<td>01/01/1985</td>
+						<!-- <td>chris@mednefits.com</td> -->
+						<td></td>
+						<td>97678374</td>
+						<td>Corporate Strategy</td>
+						<td>22/05/2017</td>
+					</tr>
+					<tr>
+						<td>Hadi <button class="table-edit-button pull-right" data-toggle="modal" data-target="#edit-employee-details">Edit</button></td>
+						<td>Wibawa</td>
+						<td>S8588899J</td>
+						<td>01/08/1990</td>
+						<td>hadi@mednefits.com</td>
+						<td>98767775</td>
+						<td>Corporate Strategy</td>
+						<td>22/05/2017</td>
+					</tr>
+					<tr>
+						<td>Alna <button class="table-edit-button pull-right" data-toggle="modal" data-target="#edit-employee-details">Edit</button></td>
+						<td>Tan</td>
+						<td>S778899J</td>
+						<td>01/05/1977</td>
+						<td>alna@mednefits.com</td>
+						<td>96453312</td>
+						<td>Sales/Telesales</td>
+						<td>22/05/2017</td>
+					</tr>
+					<tr>
+						<td>Hadi <button class="table-edit-button pull-right" data-toggle="modal" data-target="#edit-employee-details">Edit</button></td>
+						<td>Cahyo</td>
+						<td>S9888776J</td>
+						<td>01/05/1989</td>
+						<td>hadi.c@mednefits.com</td>
+						<td>92234581</td>
+						<td>InfoCom</td>
+						<td>22/05/2017</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="prev-next-buttons-container">
+	<div class="container">
+		<button ui-sref="download-template" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: solid 2px #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button>
+		<button ui-sref="download-template" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
+
+		<button ui-sref="successful" class="pull-right btn btn-info next-wizard-button"><p class="pull-left enroll-text">ENROLL</p> <p class="number-of-enrollees pull-right">5</p></button>
+		<h4 class="pull-right pending-enrollees-text">
+			<span>10</span> PENDING<br>ENROLLMENT
+		</h4>
+
+		<!--
+			this button can be clicked if the the ticks are all checked.
+			Uncomment Below
+		-->
+
+		<!-- <button ui-sref="download-template" class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
+	</div>
+</div>

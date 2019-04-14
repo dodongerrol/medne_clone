@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Medicloud</title>
+
+    <!-- Bootstrap -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Oxygen:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+    <link href="css/medicloud.css" rel="stylesheet" type="text/css">
+    
+    <link href="pop/reveal.css" rel="stylesheet" type="text/css">
+   <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script> 
+     <script type="text/javascript" src="pop/jquery.reveal.js"></script>
+    
+   
+  <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">-->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+ 
+    
+     <!-- Bootstrap video -->
+     <link href="plugins/plyr-master/dist/plyr.css" rel="stylesheet" type="text/css">
+     <script type="text/javascript" src="plugins/plyr-master/dist/plyr.js"></script>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    
+    
+     <style>
+  .carousel-inner > .item > img,
+  .carousel-inner > .item > a > img {
+      width: 100%;
+      margin: auto;
+  }
+  </style>
+  
+     
+</head>
+  <body>
+   
+   <!--main navigation-->
+  <nav class="navbar navbar-inverse navbar-fixed-top ">
+     <div class="container">
+        <div class="navbar-header ">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html"><img src="img/mc-logo.png" width="145" height="58" class="img-responsive"  alt=""/></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse ">
+          <ul class="nav navbar-nav ">
+            <li class=" nav-link active"><a href="index.html">HOME</a></li>
+            <li class=" nav-link "><a href="usr-booking-temp.html"> FOR HEALTH PROFESSIONALS  </a></li>
+            <li class=" nav-link margin-right"><a href="corporate.html">CORPORATE</a></li>
+            <li class=" nav-link fr "><a href="#">Sign Up</a></li>
+            <!-- <li class=" nav-link fr "><a class="f2" href="#">Log In</a></li>-->
+             <button class="btn btn-primary fr margin-top2 " type="button">Log In</button>
+            
+          </ul>
+          
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+     
+    
+   
+   
+ <!--main body content -->  
+<div class="container-fluid"><!--main container-fluid -->  
+ 
+ 
+ 
+ <div class="container-info"><!--container-info-->
+   <div class="container-info-bgtrns"><!--container-info-bgtrns-->
+   
+    <!--slider-container-->
+    <div data-ride="carousel" class="carousel slide" id="myCarousel2" data-interval="10000">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+              <li class="" data-slide-to="0" data-target="#myCarousel2"></li>
+              <li data-slide-to="1" data-target="#myCarousel2" class=""></li>
+              <li data-slide-to="2" data-target="#myCarousel2" class="active"></li>
+              
+            </ol>
+        
+            <!-- Wrapper for slides -->
+            <div class="position-a">
+            <div role="listbox" class="carousel-inner">
+            
+              <div class="item  active"  ><!-- end of item 01 -->
+             
+       	      <img src="img/Slider-01.jpg" width="1440" height="570"  alt="First slide"/> 
+              <div class="title-item">The Modern way to <br /> Healthcare and Wellness </div>
+               <div class="play-btn" data-toggle="modal" data-target="#myModal"><img  src="img/Play Button.png" width="112" height="112"  alt=""/> </div>
+              </div><!-- end of item 01 -->
+            
+             
+             
+               <div class="item ">
+              <img src="img/Slider-02.jpg" width="1440" height="570"  alt="Second slide"/>
+ 			  <div class="title-item">The Modern way to <br /> Healthcare and Wellness </div>
+               <div class="play-btn" data-toggle="modal" data-target="#myModal"><img  src="img/Play Button.png" width="112" height="112"  alt=""/> </div>
+              </div>
+        
+             
+            
+          
+              
+            </div>
+        
+            <!-- Left and right controls -->
+            <a data-slide="prev" role="button" href="#myCarousel2" class="left carousel-control arrow-position2">
+            
+           
+            <span aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a data-slide="next" role="button" href="#myCarousel2" class="right carousel-control arrow-position2">
+              <span aria-hidden="true" class="glyphicon glyphicon-chevron-right"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+          </div>
+     <!--slider-container-->
+     
+     <div class="clearfix"></div>
+   </div><!--end of container-info-bgtrns-->
+ </div>
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+
+ 
+<div class="xs-clear"></div>
+<!--mc-info section-->
+
+
+ <div class=" mc-info-section"> 
+    <div class="col-xs-12 col-sm-4 col-md-4 padding-l testbg ipadwidth ">
+            
+            <div class="col-xs-2 col-sm-2 col-md-2 pull-left padding-l-none  padding-r-none   ">
+            <img src="img/icn-search.svg" width="70" height="70"   alt=""/> </div>
+            
+            		
+            <div class="col-xs-8 col-sm-8 col-md-9 padding-r-none   ">
+            <p class="FF fs18">FIND</p>
+             <p class="pull-left mob-fs ">Find Providers Near You</p>
+            </div>
+            
+                        
+            <div class="col-xs-2 col-sm-2 col-md-6">
+               <span class="pull-right col-md-2 position-b pos-right" ><img src="img/arrow-right.png" width="30" height="46"  alt=""/></span>
+           	</div>
+            
+    </div>
+  
+  
+  
+  <div class="col-xs-12 col-sm-4 col-md-4 padding-l testbg ipadwidth ">
+            
+            <div class="col-xs-2 col-sm-2 col-md-2 pull-left padding-l-none padding-r-none">
+            <img src="img/icn-tic.svg"  width="70" height="70"  alt=""/> </div>
+            
+            		
+            <div class="col-xs-8 col-sm-8 col-md-9 padding-r-none   ">
+            <p class="FF fs18">BOOK</p>
+             <p class="pull-left mob-fs ">Choose a date and time of appointment</p>
+            </div>
+            
+                        
+            <div class="col-xs-2 col-sm-2 col-md-7">
+               <span class="pull-right col-md-2 position-b pos-right" ><img src="img/arrow-right.png" width="30" height="46"  alt=""/></span>
+           	</div>
+            
+    </div>
+    
+  
+  
+ <div class="col-xs-12 col-sm-4 col-md-4 padding-l testbg ipadwidth ">
+            
+        <div class="col-xs-2 col-sm-2 col-md-2 pull-left padding-l-none  padding-r-none"><img src="img/icn-cal.svg"  width="70" height="70"   alt=""/></div>
+            
+            		
+            <div class="col-xs-8 col-sm-8 col-md-9 padding-r-none   ">
+            <p class="FF fs18">CONFIRM</p>
+             <p class="pull-left mob-fs ">That’s it! You just had yourself a confirmed 
+                appointment and save up 20% to by booking
+                via medicloud  </p>
+            </div>
+            
+                        
+            
+            
+    </div>
+    
+    
+    
+    
+      <div class="clearfix"></div>
+      <div class="xs-clear"></div>
+  </div>
+ 
+ <!--mc-info section-->
+ 
+ 
+ <div class="xs-clear"></div>
+
+ 
+ 
+ <!--slider-->
+ <div class="container-info"><!--container-info-->
+   <div class="container-info-bgtrns"><!--container-info-bgtrns-->
+   
+     <div class="mc-slider-container"><!--mc-slider-container-->
+     <div class="slider-container  ">
+             
+          <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <!--<ol class="carousel-indicators">
+              <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+              <li data-target="#myCarousel" data-slide-to="1"></li>
+              <li data-target="#myCarousel" data-slide-to="2"></li>
+              <li data-target="#myCarousel" data-slide-to="3"></li>
+            </ol>-->
+        
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+              <div class="item active">
+              <img  src="img/Phone-01.png" width="1264" height="1356"  alt=""/> 
+              </div>
+        
+              <div class="item">
+              <img  src="img/Phone-02.png" width="1264" height="1356"  alt=""/> 
+              </div>
+            
+              <div class="item">
+             <img  src="img/Phone-03.png" width="1264" height="1356"  alt=""/> 
+              </div>
+              
+              
+              <div class="item">
+             <img src="img/Phone-04.png" width="1264" height="1356"  alt=""/> 
+              </div>
+              
+              
+              <div class="item">
+             <img  src="img/Phone-05.png" width="1264" height="1356"  alt=""/> 
+              </div>
+              
+              
+              <div class="item">
+             <img  src="img/Phone-06.png" width="1264" height="1356"  alt=""/> 
+              </div>
+        
+              
+            </div>
+        
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+            
+           
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+              <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div> 
+          </div>
+     </div><!--end of mc-slider-container-->
+     
+     
+     
+     <div class="mc-download paddinglr">
+        <h1 class="FF fs15 fs23 fs28 f1 ">Download Medicloud App Now!</h1>
+        
+        
+        <div class="info-detail margin-top ipad-align-left ">
+           <div class="info-icn pull-left  "><img src="img/icn-info.svg" width="55" height="55"  alt=""/></div>
+           <div class="info-main pull-left FF2">Convenience </div>
+           <div class="clearfix"></div>
+           <div class="info-sub clearfix FF2">Book your appointments in just 3 steps! </div>
+        </div>
+        
+        
+         <div class="info-detail ipad-align-left">
+           <div class="info-icn pull-left"> <img src="img/icn-info1.svg" width="55" height="55"  alt=""/></div>
+           <div class="info-main pull-left  FF2">Real Time Availability</div>
+           <div class="clearfix"></div>
+           <div class="info-sub clearfix FF2">Access our partners’ schedules right on your phone </div>
+        </div>
+        
+        
+         <div class="info-detail margin-bottom ipad-align-left">
+           <div class="info-icn pull-left"><img src="img/icn-info2.svg" width="55" height="55"  alt=""/></div>
+           <div class="info-main pull-left  FF2">Cost Savings  </div>
+           <div class="clearfix"></div>
+           <div class="info-sub clearfix FF2">One more thing - we provide an affordable solution </div>
+        </div>
+        
+        
+         
+        
+        
+        <!--<div class="info-detail text-center  ">
+           <div class="col-xs-6 col-md-3 col-sm-4 padding-bottom cus-width3 padding-l-none ">
+               <a href="https://itunes.apple.com/us/app/medicloud/id972694931?mt=8">
+               		<img class="img-responsive" src="img/app-store.png" alt="">
+                </a>
+            </div>
+            
+           <div class="col-xs-6 col-md-3 col-sm-4 padding-bottom cus-width3 padding-l-none ">
+               <a href="https://play.google.com/store/apps/details?id=com.sg.medicloud&hl=en">
+               		<img  class="img-responsive" alt="" src="img/google-play.png">
+               </a>
+           </div>
+            
+           <div class="col-xs-6 col-md-2 col-sm-4 padding-bottom  cus-width padding-l-none   ">
+           <img class=" mar-auto " width="55" height="55" src="img/img-circle.png" alt="">
+           </div>
+            
+             <div class="col-xs-6 col-md-2 col-sm-4 padding-bottom  cus-width padding-l-none ">
+             <img class=" mar-auto img-responsive" width="55" height="55" alt="" src="img/qr-code.png">
+             </div>
+           <div class="xs-clear"></div> 
+         </div>-->
+         
+         
+         
+          <div class="info-detail">
+          
+          hgjfhgdjh
+          </div>
+         
+      </div>
+     
+     
+     
+     
+     <div class="clearfix"></div>
+   </div><!--end of container-info-bgtrns-->
+ </div>
+ <!--end of slider-->
+ 
+ 
+ 
+ <!--footer-->
+<div class="container-footer">
+ <div class=" footer bg">
+   
+   
+               <div class="col-md-6 col-xs-12 col-sm-6">
+                  <div class="footer-container padding-l2 padding-l4">
+                    <h3><span class="line f1 fs13 fs15 fs182 ">About</span></h3>
+                                   <div class="f1 fs12 FF2">Medicloud is a trusted healthcare and wellness marketplace <br />
+                                for health professsionals to list their services and customers  <br />
+                                to book appointments online or from a mobile phone. <br />
+                                
+                                With Medicloud platform, health professionals will be able to  <br /> 
+                                connect with and provide a rich personalised service to their   <br />
+                                customers.</div>
+                  </div>
+               </div>  
+   
+   
+   
+   <div class="xs-clear"></div>
+  
+	<div class="bg"><!--bg--> 	
+        <div class="col-md-3 col-xs-6  col-sm-3  padding-l2 bg">
+                    
+       								 <h3><span class="line f1 fs13 fs15 fs182">Learn More</span></h3>
+                      				  <div class="footer-nav f1 fs12 FF2">
+                                           <ul>
+                                                <li><a href="usr-booking-temp.html">Health Professionals</a></li>
+                                                <li><a href="corporate.html">Corporate</a></li>
+                                                 <li><a href="promo.html">Promotions</a></li>
+                                             <li><a href="privacy-policy.html">Privacy</a></li>
+                                                <li><a href="terms.html">Terms</a></li>
+                                           </ul>
+          </div>
+                          
+        </div>
+    
+    
+    
+                <div class="col-md-3 col-xs-6  col-sm-3 bg">
+                      <h3><span class="line f1 fs13 fs15 fs182">Contact </span></h3>
+                          <div class="f1  fs12 FF2">10 Anson Road <br />
+                                        International Plaza #21-05<br />
+                                        Singapore 079903<br /><br />
+                                        
+                                        (65) 6635 8374<br />
+                  <a class="f1" href="mailto:info@medicloud.sg">info@medicloud.sg</a> </div>  
+                </div>
+    
+    <div class="xs-clear"></div>            
+    </div> <!--end of bg-->          
+                
+                
+                <div class="col-md-12  col-xs-12 padding-l-none padding-r-none ">
+                      
+                      <div class="col-md-9  col-xs-12    f1 fs1  footer-terms padding-l3">
+                        © 2015 Medicloud Pte. Ltd. All rights reserved<br />
+                      <a href="terms.html">Terms of Use</a> | <a href="privacy-policy.html">Privacy Policy </a> </div>
+                      
+                      <div class="col-md-2 col-xs-12 col-sm-2 footer-social">
+                        <div class=" pull-left padding-r"><a href="https://www.facebook.com/medicloudsg/"><img src="img/icn-social-fb.png" width="24" height="24"  alt=""/></a></div>
+     <div class=" pull-left padding-r">
+     <a href="https://www.instagram.com/medicloud/?hl=en">
+     <img src="img/icn-social-Insta.png" width="24" height="24"  alt=""/>
+		</a>
+	</div>
+                        <div class=" pull-left padding-r"><a href="http://bit.ly/1Uh2Q2s"><img src="img/icn-social-in.png" width="24" height="24"  alt=""/></a></div>
+                        <div class="xs-clear"></div>  
+        			  </div>
+      
+				</div>
+
+
+
+
+
+ </div><!--end of footer-->
+ <div class="clearfix"></div>
+</div><!--end of container-footer-->
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        
+      </div>
+      <div class="modal-body">
+        <div id="video" class="js-media-player">
+                    <video poster="video/Start-Screen.jpg"  >
+                        <!-- Video files -->
+                       <!-- <source src="https://cdn.selz.com/plyr/1.5/View_From_A_Blue_Moon_Trailer-HD.mp4" type="video/mp4">
+                        <source src="https://cdn.selz.com/plyr/1.5/View_From_A_Blue_Moon_Trailer-HD.webm" type="video/webm">-->
+                        <source src="video/mc-comp.mp4" type="video/mp4">
+                        <source src="video/mc-comp.webm" type="video/webm">
+
+                        <!-- Text track file -->
+               
+
+                        <!-- Fallback for browsers that don't support the <video> element -->
+                       <!-- <a href="https://cdn.selz.com/plyr/1.0/movie.mp4">Download</a>-->
+                    </video>
+                </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+ 
+ 
+</div><!--end of main container-fluid -->  
+
+
+   
+<!-- Rangetouch to fix <input type="range"> on touch devices (see https://rangetouch.com) -->
+        <script src="https://cdn.rangetouch.com/0.0.9/rangetouch.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+     <script>
+jQuery('#myModal').on('shown.bs.modal', function (e) {
+  
+  $("video").each(function () { this.play() });
+  
+ 
+  
+});	 
+	 
+jQuery('#myModal').on('hidden.bs.modal', function (e) {
+  
+  $("video").each(function () { this.pause() });
+  
+ 
+  
+});
+
+
+</script>
+    
+   
+  </body>
+</html>

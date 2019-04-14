@@ -1,0 +1,924 @@
+	<div activity-page>
+	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+		<div class="container">
+			<div class="welcome-container">
+				<h4 ui-sref="benefits-dashboard">Overview</h4>
+				<div class="arrow-up" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<div class="dropdown" ng-if="options.accessibility == 1">
+				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Employee
+				  </h4>
+				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
+				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				  </ul>
+				</div>
+				<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
+				<div class="arrow-up-2" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="activity">Activity</h4>
+				<div class="arrow-up-3" style="visibility: visible;"></div>
+			</div>
+			<div class="welcome-container" ng-if="options.accessibility == 1">
+				<h4 ui-sref="e-claim">Claim</h4>
+				<div class="arrow-up-4" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="statement">Statement</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="account-and-payment">Account</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="hrdb-body-container" style="background-color: #f5f5f5;padding-top: 180px;padding-bottom: 0;">
+		<div class="container">
+			<!-- <div class="col-md-12 text-center disable-cursor-off">
+				<div class="slider-container">
+					<p class="color-gray text-left weight-700 activity-date-header">
+						<span style="margin-right: 10px;">Select a timeframe </span>
+
+						<span class="year-selector"><a href="javascript:void(0)" ng-class="{'active' : year_active == 1}" ng-click="setYear('1')">This year</a></span>
+						<span class="year-selector"><a href="javascript:void(0)" ng-class="{'active' : year_active == 2}" ng-click="setYear('2')">Last year</a></span>
+						<span class="year-selector"><a href="javascript:void(0)" ng-class="{'active' : year_active == 3}" ng-click="showCustomDate(3)">Custom</a></span>
+					</p>
+
+					<div class="showCustomPickerTrue">
+						<div class="white-space-50"></div>
+						<input id="date-slider" type="text"/><br/>
+					</div>
+
+					<div ng-if="showCustomPicker" class="custom-date-selector btn-custom-date" style="display: inline-block;">
+						<div class="white-space-20"></div>
+						<div class="white-space-20"></div>
+						<button class="btn btn-custom-start">
+							<i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
+							<span id="rangePicker_start">01/01/2018</span>
+							<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
+						</button>
+
+						<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
+
+						<button class="btn btn-custom-end">
+							<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
+							<span id="rangePicker_end">04/01/2018</span>
+							<i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
+						</button>
+					</div>
+				</div>
+				<div class="white-space-30"></div>
+			</div> -->
+
+			<div class="col-md-12">
+				<div class="body-container">
+					<p class="color-gray text-left weight-700">
+						<span style="margin-right: 10px;">Select a timeframe </span>
+					</p>
+				</div>
+			</div>
+
+			<div class="col-md-12 disable-cursor-off">
+				<div class="body-container activity-header-calendar">
+					<div class="date-selection-container">
+						<div class="custom-date-selector btn-custom-date" style="display: inline-block;">
+							<button class="btn btn-custom-start">
+								<i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
+								<span id="rangePicker_start">01/01/2018</span>
+								<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
+							</button>
+
+							<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
+
+							<button class="btn btn-custom-end">
+								<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
+								<span id="rangePicker_end">04/01/2018</span>
+								<i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
+							</button>
+
+							<button class="btn btn-apply" ng-click="applyDates()">
+								Apply
+							</button>
+						</div>
+					</div>
+
+					<div class="search-wrapper text-right">
+						<form ng-submit="searchEmployeeActivity();">
+							<div class="input-group">
+								<input class="form-control font-13 typeahead" placeholder="Search Employee Name"/>
+					      <span class="input-group-btn">
+					        <button class="btn btn-default" type="button" ng-if="!search.close"><i class="fa fa-search font-18"></i></button>
+					        <button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i class="fa fa-close font-18"></i></button>
+					      </span>
+							</div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-12 disable-cursor-off">
+				<div class="white-space-30"></div>
+				<div class="body-container">
+					<div class="team-benefits-wrapper">
+						<div class="col-md-12  eclaim-border-bottom text-center no-padding">
+							<h4 class="color-black3 font-16 weight-700" style="position: absolute;left: 0" ng-bind="activity_title"></h4>
+
+							<div class="eclaim-spending-type-container">
+	                <button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical" ng-click="setSpendType(0)">Medical</button>
+	                <button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness" ng-click="setSpendType(1)">Wellness</button>
+	            </div>
+						</div>
+
+						<div class="preloader-container searchActivityLoader">
+							<div class="preloader-wrapper big active">
+						    <div class="spinner-layer spinner-blue-only">
+						      <div class="circle-clipper left">
+						        <div class="circle"></div>
+						      </div><div class="gap-patch">
+						        <div class="circle"></div>
+						      </div><div class="circle-clipper right">
+						        <div class="circle"></div>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+
+						<div class="no-benefits-overlay" ng-if="options.accessibility == 0">
+							<h3 class="font-30 color-black3 weight-700">Benefits Spending Account</h3>
+							<div class="white-space-20"></div>
+							<p class="font-18 color-black3 weight-700 no-margin">Offer your team the flexibility and freedom to manage their own healthcare.</p>
+							<p class="font-18 color-black3 weight-700" style="max-width: 440px;margin: 0 auto">With an upfront planned benefits budget, it gives you more cost certainty and zero year-end surprises.</p>
+							<div class="white-space-20"></div>
+							<div class="white-space-20"></div>
+							<button onclick="window.location.href='https://mednefits.com/get-mednefits-now-1'" class="btn btn-learn-more">Learn more about Benefits Spending Account</button>
+						</div>
+
+						<div class="col-md-12 no-padding costs-wrapper">
+							<div class="costs-box no-padding">
+								<div class="benefit-box eclaim-border-right">
+									<h5 class="font-medium2 color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_spent_format_number | number:2">0.00</span></h5>
+									<p class="color-gray2 font-12 weight-700 no-margin">SPENT</p>
+								</div>
+							</div>
+
+							<div class="costs-box no-padding">
+								<div class="benefit-box eclaim-border-right">
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.balance | number:2">0.00</span></h5>
+									<p class="color-gray2 font-12 weight-700 no-margin">BALANCE</p>
+								</div>
+							</div>
+
+							<div class="costs-box no-padding">
+								<div class="benefit-box eclaim-border-right">
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.allocation | number:2">0.00</span></h5>
+									<p class="color-gray2 font-12 weight-700 no-margin">ALLOCATED</p>
+								</div>
+							</div>
+
+							<div class="costs-box no-padding">
+								<div class="benefit-box eclaim-border-right">
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.pending_e_claim_amount | number:2">0.00</span></h5>
+									<p class="color-gray2 font-12 weight-700 no-margin">PENDING E-CLAIM APPROVAL</p>
+								</div>
+							</div>
+
+							<div class="costs-box no-padding">
+								<div class="benefit-box ">
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="total_allocation.total_allocation | number:2" ng-if="activity.spending_type == 'medical'">0.00</span>
+										<span ng-bind="total_allocation.total_wellness_allocation | number:2" ng-if="activity.spending_type == 'wellness'">0.00</span></h5>
+									<p class="color-gray2 font-12 weight-700 no-margin">TOTAL COMPANY CREDITS</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-10 no-padding">
+							<div class="white-space-20"></div>
+							<div class="spent-box text-left">
+								<p class="color-black3 weight-700 font-16">Spending Breakdown</p>
+								<div class="progress-wrapper">
+									<div class="progress-bar"></div>
+								</div>
+
+								<div class="white-space-10"></div>
+
+								<div class="in-network-box">
+									<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.in_network_spending_format_number | number:2">0.00</span></p>
+									<p class="color-gray2 font-12 weight-700">IN-NETWORK</p>
+								</div>
+
+								<div class="out-network-box">
+									<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.e_claim_spending_format_number | number:2">0.00</span></p>
+									<p class="color-gray2 font-12 weight-700">E-CLAIM(OUT-OF-NETWORK)</p>
+								</div>
+							</div>
+							<div class="white-space-30"></div>
+						</div>
+
+						<div ng-if="options.accessibility == 1" >
+							<div class="col-md-12 no-padding">
+								<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
+								<div class="white-space-20"></div>
+							</div>
+
+							<div class="col-md-7 no-padding">
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Health-Screening.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_screening_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Health Screening</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.general_practitioner_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Dental-Care.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.dental_care_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Dental Care</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Traditonal-Chinese-Medicine.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.tcm_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin" style="width: 100px">Traditional Chinese Medicine</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Health-Specialist.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_specialist_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Health Specialist</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Wellness.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.wellness_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Wellness</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-5" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
+								<div class="col-md-12">
+									<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
+								</div>
+								<div class="col-md-7">
+									<div class="network-box" style="margin: 0">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
+								</div>
+							</div>
+
+							<div class="col-md-12">
+								<div class="white-space-30"></div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="no-benefits-container" ng-if="options.accessibility == 0" >
+
+						<div class="col-md-12 no-padding">
+							<div class="white-space-20"></div>
+						</div>
+
+						<div class="col-md-12 no-padding">
+							<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
+							<div class="white-space-20"></div>
+						</div>
+
+						<div class="col-md-8 no-padding">
+							<div class="col-md-4 no-padding-left">
+								<div class="network-box">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/Health-Screening.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_screening_breakdown">0</span>%</p>
+										<p class="color-gray font-11 weight-700 no-margin">Health Screening</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-4 no-padding-left">
+								<div class="network-box">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.general_practitioner_breakdown">0</span>%</p>
+										<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-4 no-padding-left">
+								<div class="network-box">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/Dental-Care.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.dental_care_breakdown">0</span>%</p>
+										<p class="color-gray font-11 weight-700 no-margin">Dental Care</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-4 no-padding-left">
+								<div class="network-box">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/Traditonal-Chinese-Medicine.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.tcm_breakdown">0</span>%</p>
+										<p class="color-gray font-11 weight-700 no-margin" style="width: 100px">Traditional Chinese Medicine</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-4 no-padding-left">
+								<div class="network-box">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/Health-Specialist.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_specialist_breakdown">0</span>%</p>
+										<p class="color-gray font-11 weight-700 no-margin">Health Specialist</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-4 no-padding-left">
+								<div class="network-box">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/Wellness.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.wellness_breakdown">0</span>%</p>
+										<p class="color-gray font-11 weight-700 no-margin">Wellness</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-4" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
+							<div class="col-md-12">
+								<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
+							</div>
+							<div class="col-md-7">
+								<div class="network-box" style="margin: 0">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-5">
+								<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation">00</span></p>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="body-container transactions-header">
+					<div class="col-md-3">
+					</div>
+
+					<div class="col-md-6 no-padding text-center">
+						<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="inNetWorkTable = true;outNetWorkTable = false;">
+							IN-NETWORK<br>
+							TRANSACTIONS
+						</button>
+
+						<button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="inNetWorkTable = false;outNetWorkTable = true;">
+							E-CLAIM TRANSACTIONS<br>
+							(OUT-OF-NETWORK)
+						</button>
+					</div>
+
+					<div class="col-md-3 no-padding text-right disable-cursor-off">
+						<div class="white-space-20"></div>
+						<div class="white-space-10"></div>
+
+						<p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', cash: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+						<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == false" class="color-blue-custom2 font-12 weight-700 pointer-cursor" ng-click="downloadInNetwork()">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
+
+						<p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+						<p ng-if="outNetWorkTable == true" ng-json-export-excel data="e_claim_transactions" 
+						report-fields="{member: 'EMPLOYEE', approved_date: 'APPROVED DATE', claim_date: 'CLAIM DATE', visit_date: 'VISIT DATE', transaction_id: 'TRANSACTION #',service: 'ITEM/SERVICE',merchant: 'MERCHANT',amount: 'TOTAL AMOUNT',type: 'TYPE'}" filename="'E-Claim-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div ng-if="inNetWorkTable == true" class="transactions-container" style="border-top:2px solid #777;position: relative;">
+			<div class="main-transac-container" style="position: relative;">
+			
+				<div class="col-md-12">
+					<div class="total-transac-header">
+						<p class="color-black3 font-14 weight-700"><span ng-bind="activity.total_in_network_transactions">0</span> Total Transactions 
+							<span class="pull-right">Total Spent 
+								<span class="font-medium2" style="margin-left: 15px">S$<span ng-bind="activity.total_in_network_spent_format_number | number:2">0.00</span></span>
+							</span>
+						</p>
+
+						<div class="preloader-container searchActivityLoader2">
+							<div class="preloader-wrapper big active">
+						    <div class="spinner-layer spinner-blue-only">
+						      <div class="circle-clipper left">
+						        <div class="circle"></div>
+						      </div><div class="gap-patch">
+						        <div class="circle"></div>
+						      </div><div class="circle-clipper right">
+						        <div class="circle"></div>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="transaction-rows">
+
+						<div class="transact" ng-repeat="month in activity_dates">
+							<div class="date-wrapper">
+								<div class="date-box text-uppercase" ng-bind="month.month" ></div>
+							</div>
+
+							<div class="transaction-tr" ng-click="showDetails($event,trans)" ng-repeat="trans in month.transactions track by $index">
+								<div class="dot-box">
+									<div class="dot-circle"></div>
+								</div>
+								<div class="month-box text-center">
+									<span class="weight-700" ng-bind="trans.day">20</span>
+								</div>
+								<div class="img-wrapper">
+									<img src="../../assets/hr-dashboard/img/GP.png" style="width: 24px;">
+								</div>
+								<div class="transaction-details">
+									<p class="font-medium2 weight-700 color-black3" ng-bind="trans.member"></p>
+									<p ng-bind="trans.clinic_type_and_service"></p>
+									<p ng-bind="trans.clinic_name"></p>
+									<p class="spouse-dependent-container color-blue-custom2 font-11 height-13">
+										<span ng-if="trans.sub_account_user_type == 'spouse'">
+											Spouse of <span ng-bind="trans.owner_account"></span>
+										</span>
+										<span ng-if="trans.sub_account_user_type == 'dependent'">
+											Dependent of <span ng-bind="trans.owner_account"></span>
+										</span>
+									</p>
+									<p ng-if="trans.status_text" style="background: rgb(79, 151, 98);color: white;padding: 5px;border-radius: 4px;display: inline-block;font-size: 12px;" ng-bind="trans.status_text"></p>
+									<p ng-if="trans.transaction_type == 'cash'" style="background: #1DB100;color: white;padding: 5px;border-radius: 4px;display: block;font-size: 12px;width: 40px;text-align: center;margin-top: 4px;">
+										Cash
+									</p>
+									<div class="credits-spouse-wrap">
+										<p ng-if="trans.transaction_type == 'credits'" style="background: #219AD7;color: white;padding: 5px;border-radius: 4px;display: block;font-size: 12px;width: 50px;text-align: center;margin-top: 4px;">
+											Credits
+										</p>
+										<!-- <span class="activity-spouse">Spouse of Calvin Lee</span> -->
+									</div>
+								</div>
+								<div class="transaction-price">
+									<p class="font-medium2 weight-700 color-black3">S$ <span ng-bind="trans.amount">0.00</span></p>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- <div ng-if="inNetwork_pagination.data.in_network_transactions.length > 0" class="trans-pagination-shadow"></div>
+					<div ng-if="inNetwork_pagination.data.in_network_transactions.length > 0" class="pagination-box"> -->
+
+					<div ng-if="activity_dates.length > 0" class="trans-pagination-shadow"></div>
+					<div ng-if="activity_dates.length > 0" class="pagination-box">
+						<div class="transaction-pagination-container">
+							<div class="transaction-pagination">
+								
+								<div class="arrow" ng-class="{'active': inNetwork_activePage != 1}" ng-click="innetworkPrev()">
+									<i class="fa fa-angle-left"></i>
+									<span>Prev</span>
+								</div>
+
+								<div class="pages-container">
+									<div class="page" ng-class="{'active': list == inNetwork_activePage}" ng-repeat="list in range( inNetwork_pagination.last_page ) | limitTo:pagesToDisplay:startIndex( inNetwork_activePage, inNetwork_pagination.last_page ) track by $index" ng-click="innetworkPageTo(list)">
+										{{list}}
+									</div>
+								</div>
+
+								<div class="arrow" ng-class="{'active': inNetwork_activePage != inNetwork_pagination.last_page}" ng-click="innetworkNext()">
+									<span>Next</span>
+									<i class="fa fa-angle-right"></i>
+								</div>
+
+								<div class="per-page-container">
+									<div class="per-page">
+										<div class="per-page-count"><span ng-bind="inNetwork_perPage">10</span> per page</div>
+										<div class="drop-arrow">
+											<i class="fa fa-caret-down"></i>
+										</div>
+									</div>
+
+									<div class="per-page-drop">
+										<li ng-repeat="list in perPage_arr" ng-click="innetworkPerPage( list )" ng-bind="list">10</li>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="hidden-details-container">
+				<img ng-src="{{selected_list.clinic_image}}">
+				<div class="white-space-10"></div>
+				<p class="text-center weight-700 font-14" ng-bind="selected_list.clinic_name">Drs Chua & Partners (AV) Pte Ltd</p>
+				<div class="white-space-20"></div>
+				<div class="white-space-10"></div>
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>MEMBER</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.member">Alice Ng</span></p>
+					</div>
+				</div>
+
+				<div ng-if="selected_list.owner_account" class="details-row">
+					<div class="details-left">
+						<p><label>EMPLOYEE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.owner_account">Filbert Tan</span></p>
+					</div>
+				</div>
+
+				<div ng-if="selected_list.dependent_relationship" class="details-row dependent-relationship-wrapper">
+					<div class="details-left">
+						<p><label>DEPENDENT RELATIONSHIP</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.dependent_relationship">Spouse</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>DATE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.date_of_transaction">20 October 2017, 09:30am</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>TRANSACTION #</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.transaction_id">IN74859204</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>ITEM/SERVICE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.clinic_type_and_service">General Practitioner Visit</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>TOTAL AMOUNT</label></p>
+
+						<div ng-class="selected_list.service_credits && selected_list.transaction_type == 'credits' ? 'blue' : 'green'" class="procedure-indicator" ng-if="selected_list.lite_plan">
+							<span ng-if="!selected_list.service_credits && selected_list.transaction_type == 'cash' || selected_list.service_credits && selected_list.transaction_type == 'cash'">Cash</span>
+							<span ng-if="selected_list.service_credits && selected_list.transaction_type == 'credits'">Credits</span>
+						</div>
+						<div ng-if="selected_list.lite_plan" style="border-bottom: 1px solid #999;width: 50px;margin: 0 20px 5px auto;"></div>
+						<div class="consultation-indicator blue" ng-if="selected_list.lite_plan ">
+							<span ng-if="selected_list.consultation_credits || selected_list.service_credits">Credits</span>
+							<span hidden>Cash</span>
+						</div>
+					</div>
+					<div class="details-right">
+						<p style="margin-bottom: 5px;"><span>S$ <span ng-bind="selected_list.amount"></span</span></p>
+						<span ng-if="selected_list.lite_plan">
+							<p style="line-height: 1;color: #555;" ng-bind="selected_list.procedure"></p>
+							<p style="line-height: 1;margin-bottom: 10px;"><span>S$ <span ng-bind="selected_list.procedure_cost"></span></span></p>
+							<p style="line-height: 1;color: #555;">Consultation</p>
+							<p style="line-height: 1;margin-bottom: 20px;"><span>S$ <span ng-bind="selected_list.consultation"></span</span></p>
+						</span>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>PAYMENT TYPE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.type">In-Network</span></p>
+					</div>
+				</div>
+
+				<div class="white-space-20"></div>
+				<button ng-disabled="selected_list.receipt_status == false" ng-click="downloadReceipt(selected_list.files, selected_list)" class="btn btn-download">Download Receipt</button>
+				<div class="white-space-20"></div>
+				<a href="/download/transaction_receipt/{{selected_list.trans_id}}" target="_blank" ng-if="selected_list.type == 'Mednefits Credits'" class="btn btn-download" style="background: #51BEF2 !important;">Mednefits E-Receipt</a>
+			</div>
+		</div>
+		 
+		
+		<div ng-if="outNetWorkTable == true" class="transactions-container" style="border-top:2px solid #777;position: relative;">
+			<div class="main-transac-container" style="position: relative;">
+			
+				<div class="col-md-12">
+					<div class="total-transac-header">
+						<p class="color-black3 font-14 weight-700"><span ng-bind="activity.e_claim_transactions.length">0</span> Total Transactions 
+							<span class="pull-right">Total Spent 
+								<span class="font-medium2" style="margin-left: 15px">S$<span ng-bind="activity.e_claim_spending_format_number | number:2"></span></span>
+							</span>
+						</p>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="transaction-rows">
+
+						<div class="transact" ng-repeat="month in eclaim_dates">
+							<div class="date-wrapper">
+								<div class="date-box text-uppercase" ng-bind="month.month" ></div>
+							</div>
+
+							<div class="transaction-tr" ng-click="showDetails($event,trans)" ng-repeat="trans in month.transactions">
+								<div class="dot-box">
+									<div class="dot-circle"></div>
+								</div>
+								<div class="month-box text-center">
+									<span class="weight-700" ng-bind="trans.day">20</span>
+								</div>
+								<div class="img-wrapper">
+									<img src="../assets/hr-dashboard/img/receipt.png" style="width: 40px;">
+								</div>
+								<div class="transaction-details">
+									<p class="font-medium2 weight-700 color-black3" ng-bind="trans.member">Filbert Tan</p>
+									<p class="" ng-bind="trans.service">General Practitioner Visit</p>
+									<p class="" ng-bind="trans.merchant">Drs Chua & Partners (AV) Pte Ltd</p>
+									<p class="color-blue-custom2 font-11 height-13">
+										<span ng-if="trans.sub_account_type == 'spouse'">
+											Spouse of <span ng-bind="trans.sub_account">Filbert Tan</span>
+										</span>
+										<span ng-if="trans.sub_account_type == 'dependent'">
+											Dependent of <span ng-bind="trans.sub_account">Filbert Tan</span>
+										</span>
+									</p>
+								</div>
+								<div class="transaction-price">
+									<p class="font-medium2 weight-700 color-black3">S$ <span ng-bind="trans.amount">0.00</span></p>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- <div ng-if="outNetwork_pagination.data.in_network_transactions.length > 0" class="trans-pagination-shadow"></div>
+					<div ng-if="outNetwork_pagination.data.in_network_transactions.length > 0" class="pagination-box"> -->
+
+					<div ng-if="eclaim_dates.length > 0" class="trans-pagination-shadow"></div>
+					<div ng-if="eclaim_dates.length > 0" class="pagination-box">
+						<div class="transaction-pagination-container">
+							<div class="transaction-pagination">
+								
+								<div class="arrow" ng-class="{'active': outNetwork_activePage != 1}" ng-click="outnetworkPrev()">
+									<i class="fa fa-angle-left"></i>
+									<span>Prev</span>
+								</div>
+
+								<div class="pages-container">
+									<div class="page" ng-class="{'active': list == outNetwork_activePage}" ng-repeat="list in range( outNetwork_pagination.last_page ) | limitTo:pagesToDisplay:startIndex( outNetwork_activePage, outNetwork_pagination.last_page ) track by $index" ng-click="outnetworkPageTo(list)">
+										{{list}}
+									</div>
+								</div>
+
+								<div class="arrow" ng-class="{'active': outNetwork_activePage != outNetwork_pagination.last_page}" ng-click="outnetworkNext()">
+									<span>Next</span>
+									<i class="fa fa-angle-right"></i>
+								</div>
+
+								<div class="per-page-container">
+									<div class="per-page">
+										<div class="per-page-count"><span ng-bind="outNetwork_perPage">10</span> per page</div>
+										<div class="drop-arrow">
+											<i class="fa fa-caret-down"></i>
+										</div>
+									</div>
+
+									<div class="per-page-drop">
+										<li ng-repeat="list in perPage_arr" ng-click="outnetworkPerPage( list )" ng-bind="list">10</li>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="hidden-details-container">
+				<img ng-src="../assets/hr-dashboard/img/GP.png" style="border-radius: 0 !important;border:none;">
+				<div class="white-space-20"></div>
+				<div class="white-space-10"></div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>MEMBER</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.member">Alice Ng</span></p>
+					</div>
+				</div>
+
+				<div ng-if="selected_list.owner_account" class="details-row">
+					<div class="details-left">
+						<p><label>EMPLOYEE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.owner_account">Filbert Tan</span></p>
+					</div>
+				</div>
+
+				<div ng-if="selected_list.dependent_relationship" class="details-row dependent-relationship-wrapper">
+					<div class="details-left">
+						<p><label>DEPENDENT RELATIONSHIP</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.dependent_relationship">Spouse</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>APPROVED DATE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.approved_date"></span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>CLAIM DATE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.claim_date">20 October 2017, 09:30am</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>VISIT DATE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.visit_date">20 October 2017, 09:30am</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>TRANSACTION #</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.transaction_id">IN74859204</span></p>
+					</div>
+				</div>
+				<!--
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>ITEM/SERVICE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.service">General Practitioner Visit</span></p>
+					</div>
+				</div> -->
+
+				<!--
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>MERCHANT</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.merchant">Allan Clinic</span></p>
+					</div>
+				</div> -->
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>CLAIM TYPE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span>Vision</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>PROVIDER</label></p>
+					</div>
+					<div class="details-right">
+						<p><span>Vision Hut</span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>CLAIM AMOUNT</label></p>
+					</div>
+					<div class="details-right">
+						<p><span>S$ <span ng-bind="selected_list.amount"></span></span></p>
+					</div>
+				</div>
+
+				<div class="details-row">
+					<div class="details-left">
+						<p><label>PAYMENT TYPE</label></p>
+					</div>
+					<div class="details-right">
+						<p><span ng-bind="selected_list.type">In-Network</span></p>
+					</div>
+				</div>
+
+				<div class="white-space-20"></div>
+				<button ng-disabled="selected_list.receipt_status == false" ng-click="downloadReceipt(selected_list.files, selected_list)" class="btn btn-download">Download Receipt</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="fetching_users" class="fetching-floating-box" hidden>
+		<p id="fetching_text"><i class="fa fa-circle-o-notch fa-spin"></i> Fetching <span ng-bind="fetching_data.from"></span> of <span ng-bind="fetching_data.to"></span> users... </p>
+		<p id="done_fetching_text" hidden><i class="fa fa-check"></i> Done fetching <span ng-bind="fetching_data.to">1</span> users.</p>
+	</div>
+	
+</div>

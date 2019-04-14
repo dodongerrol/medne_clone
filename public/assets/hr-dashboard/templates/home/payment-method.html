@@ -1,0 +1,50 @@
+<div class="hrdb-body-container download-template" payment-rate>
+	<div class="container">
+		<div class="download-template-container">
+			<h1 class="dl-template-title text-center weight-700">Payment</h1>
+			<div class="white-space-20"></div>
+			<div class="white-space-20"></div>
+			<div class="center-block payment-circle">
+				<h2 class="text-center" style="color: #fff;margin-bottom: 3px;">S$<span ng-bind="paymentRate.price"></span></h2>
+				<h6 class="text-center" style="color: #fff;margin-top: 0;">for <span ng-bind="paymentRate.plan.duration"></span></h6>
+				<h4 class="text-center" style="color: #fff;"><span ng-bind="paymentRate.employees"></span> employees</h4>
+			</div>
+			<div class="enrollment-method-container center-block" >
+				<div class="enrollment-method-box" style="padding-bottom: 10px;">
+					<img src="../../assets/hr-dashboard/img/Cheque.png" class="center-block">
+					<h4 class="text-center" style="color: #727272;font-weight: bolder;">CHEQUE</h4>
+					<br>
+					<p class="text-center">
+				      	<input class="with-gap" name="group1" type="radio" id="test1" ng-model="isCheque" ng-value="true"/>
+				      	<label for="test1">&nbsp;</label>
+				    </p>
+				</div>
+				<!-- <div class="enrollment-method-box" style="margin-left: 10px;padding-bottom: 10px;">
+					<img src="assets/hr-dashboard/img/Credit-card.png" class="center-block">
+					<h4 class="text-center" style="color: #727272;font-weight: bolder;">CREDIT CARD</h4>
+					<br>
+					 <p class="text-center">
+				      	<input class="with-gap" name="group1" type="radio" id="test2" ng-model="isCredit" ng-value="true"/>
+				      	<label for="test2">&nbsp;</label>
+				    </p>
+				</div> -->
+				<p class="text-error text-center" ng-if="choose_err" style="margin-top: 20px;">Please select payment method</p>
+
+				<div ng-if="paying" class="loader-container upload-load" style="height: 160px;padding-top: 100px;" >
+					<div class="preloader-wrapper big active">
+					    <div class="spinner-layer spinner-blue-only">
+					      <div class="circle-clipper left">
+					        <div class="circle"></div>
+					      </div><div class="gap-patch">
+					        <div class="circle"></div>
+					      </div><div class="circle-clipper right">
+					        <div class="circle"></div>
+					      </div>
+					    </div>
+					  </div>
+				</div>
+				<button ng-if="!paying" ng-click="payBtn()" class="center-block" style="margin-top: 100px;padding: 20px 40px;color: #fff;background-color: #0392cf;border: 0;border-radius: 6px;font-size: 20px;">PAY S$<span ng-bind="paymentRate.price"></span></button>
+			</div>
+		</div>
+	</div>
+</div>

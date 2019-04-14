@@ -1,0 +1,856 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Clinic-Settings</title>
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nunito">
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Montserrat">
+<link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+<link href="../medicloudv2.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+<script type="text/javascript" src="../../popup/jquery.reveal.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script type="text/javascript" src="../../jquery-timepicker/jquery.timepicker.js"></script>
+
+<link href="../../css/jquery-ui.css" rel="stylesheet" type="text/css">
+<link href="../datepicker-appointment.css" rel="stylesheet" type="text/css">
+<link href="../../popup/reveal.css" rel="stylesheet" type="text/css">
+<link href="../../jquery-timepicker/jquery.timepicker.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+		
+	$(function() {
+	 $("#datepicker").datepicker({
+        dateFormat: "DD, d MM, yy"
+    }).datepicker("setDate", "0");	
+    $( "#datepicker" ).datepicker({dateFormat: 'DD, d MM, yy',});
+	
+	
+	 $("#datepicker2").datepicker({
+        dateFormat: "DD, d MM, yy"
+    }).datepicker("setDate", "0");	
+    $( "#datepicker2" ).datepicker({dateFormat: 'DD, d MM, yy',});
+	
+	
+	$("#datepicker3").datepicker({
+        dateFormat: "DD, d MM, yy"
+    }).datepicker("setDate", "0");	
+    $( "#datepicker3" ).datepicker({dateFormat: 'DD, d MM, yy',});
+	
+	
+	
+	
+	  
+	   
+  });		 
+
+</script>
+
+
+ <script type="text/javascript" src="../../scripts/jquery.twbsPagination.js"></script>
+
+ 
+
+<script>
+$(document).ready(function () {
+    $('#pagination-demo').twbsPagination({
+        totalPages: "5",
+        visiblePages: "5",
+        onPageClick: function (event, page) {
+            $('#page-content').text('Page ' + page);
+        }
+    });
+
+   
+});
+
+ </script>
+
+<script src="http://dev.medicloud.sg/medicloud_v001/public/assets/admin/bootstrap-datetimepicker.js"></script>
+ 
+</head>
+
+<body>
+
+
+<div id="main-container">
+  <div class="header">
+    <div class="section-left">
+      <div class="logo-container"> <img src="../../images/mc-v2-logo.png" width="261" height="52"  alt=""/> </div>
+      <!--END LOGO CONTAINER--> 
+    </div>
+    <!--END SECTION RIGHT-->
+    
+    <div class="section-right">
+      <div id="main-nav">
+        <ul>
+          <li><a href="#">HOME</a></li>
+          <li><a href="#">ANALYTICS</a></li>
+          <li class="active"><a href="#">SETTINGS</a></li>
+          <li><a href="#">LOGOUT</a></li>
+          <div class="clear"></div>
+        </ul>
+      </div>
+      <!--END OF --> 
+    </div>
+    <!--END SECTION RIGHT--> 
+    
+  </div>
+  <!--END HEADER-->
+  
+  <div class="clear"></div>
+  <div id="clinic-form-container">
+    <div class="form-nav "> 
+    
+    <div class="calander">
+    
+      <div id="datepicker2"></div>
+    </div> 
+    <!--END CALANDER-->
+    
+    <div class="all-doctor">
+    <div class="nav-btn">
+    
+    
+<div class="icn-face mar-pic"> <img src="../../images/dr-img-place-holder.png" width="50" height="50"  alt=""/></div>
+        <!--END OF ICN FACE-->
+        
+        <div class="btn-name2 wd2">
+          <div class="btn-name-title2 padding-top">View All Doctors</div>
+         
+        </div>
+        <!--END OF BTN NAME2-->
+        
+               <div class="clear"></div>
+      </div>
+    
+    </div>
+    <!--END OF ALLL DOCTOR-->
+
+
+<a href="#">
+      <div class="nav-btn">
+      
+       <div class="fl check-space" >
+        <input id="checkbox1" type="checkbox" name="checkbox" value="1" checked="checked"><label for="checkbox1"><span></span></label>
+      </div>
+        <div class="icn-face"> <img src="../../images/icn-face.png" width="50" height="50"  alt=""/> </div>
+        <!--END OF ICN FACE-->
+        
+        <div class="btn-name3">
+          <div class="btn-name-title3">Dr. Linda Hill M.D</div>
+          <div class="btn-name-sub3">General Practitioner</div>
+        </div>
+        <!--END OF BTN NAME2-->
+        
+        <div class="icn-dot"><img src="../../images/icn-dot-green.png" width="16" height="16"  alt=""/></div>
+        <div class="clear"></div>
+      </div>
+      <!--END OF NAV BTN--> 
+      </a> 
+      
+      
+      
+      
+      
+      <a href="#">
+      <div class="nav-btn">
+       <div class="fl check-space" >
+        <input id="checkbox2" type="checkbox" name="checkbox" value="1" checked="checked"><label for="checkbox2"><span></span></label>
+      </div>
+        <div class="icn-face"> <img src="../../images/icn-face.png" width="50" height="50"  alt=""/> </div>
+        <!--END OF ICN FACE-->
+        
+        <div class="btn-name3">
+          <div class="btn-name-title3">Dr. Barnes Nobel </div>
+          <div class="btn-name-sub3">General Practitioner</div>
+        </div>
+        <!--END OF BTN NAME2-->
+        
+        <div class="icn-dot"><img src="../../images/icn-dot-red.png" width="16" height="16"  alt=""/></div>
+        <div class="clear"></div>
+      </div>
+      <!--END OF NAV BTN--> 
+      </a> 
+      
+      
+      
+      
+      <a href="#">
+      <div class="nav-btn ">
+       <div class="fl check-space" >
+        <input id="checkbox3" type="checkbox" name="checkbox" value="1" checked="checked"><label for="checkbox3"><span></span></label>
+      </div>
+        <div class="icn-face"> <img src="../../images/icn-face.png" width="50" height="50"  alt=""/> </div>
+        <!--END OF ICN FACE-->
+        
+        <div class="btn-name3">
+          <div class="btn-name-title3">Dr. Barnes Nobel </div>
+          <div class="btn-name-sub3">General Practitioner</div>
+        </div>
+        <!--END OF BTN NAME2-->
+        
+        <div class="icn-dot"><img src="../../images/icn-dot-green.png" width="16" height="16"  alt=""/></div>
+        <div class="clear"></div>
+      </div>
+      <!--END OF NAV BTN--> 
+      </a> 
+      
+      
+      
+      
+      
+      
+      
+      <a href="#">
+      <div class="nav-btn b-bottom  ">
+       <div class="fl check-space" >
+        <input id="checkbox4" type="checkbox" name="checkbox" value="1" checked="checked"><label for="checkbox4"><span></span></label>
+      </div>
+        <div class="icn-face"> <img src="../../images/icn-face.png" width="50" height="50"  alt=""/> </div>
+        <!--END OF ICN FACE-->
+        
+        <div class="btn-name3">
+          <div class="btn-name-title3">Dr. Barnes Nobel </div>
+          <div class="btn-name-sub3">General Practitioner</div>
+        </div>
+        <!--END OF BTN NAME2-->
+        
+        <div class="icn-dot"><img src="../../images/icn-dot-green.png" width="16" height="16"  alt=""/></div>
+        <div class="clear"></div>
+      </div>
+      <!--END OF NAV BTN--> 
+      </a> 
+      
+      
+    </div>
+    <!--END OF FORM NAV-->
+    
+    <div class="form-nav-page pb2">
+      <div class="clinic-home">
+       <div id="fullcalendar-container">
+  <div class="calendar-time">
+    <div class="time-title pd3">TIME</div>
+   
+    <div class="time-count ">7.00 am <div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count ">7.30 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count ">8.00 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count  ">8.30 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count">9.00 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count ">9.30 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count ">10.00 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count">10.30 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count">11.00 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count ">11.30 am<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count">12.00 nn<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count ">12.30 pm<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+    <div class="time-count ">1.00 pm<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+  <div class="time-count ">1.30 pm<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+  <div class="time-count padding-bottom-0 ">2.00 pm<div class="dot-appointments-60min"><img src="../../images/mc-dot.png" width="11" height="10"  alt=""/></div></div>
+   
+    <div class="clear"></div>
+    </div> <!--END OF CALENDAR TIME-->
+    
+    
+  <div class="calendar-day ">
+   <div class="day-title2 w fl">
+     <div class="day">MON</div>
+     
+   </div>
+    <div class="day-title2 g fl">
+     <div class="day ">TUE</div>
+     
+   </div>
+    <div class="day-title2 w fl">
+     <div class="day c3">WED</div>
+     
+   </div>
+    <div class="day-title2 g fl">
+     <div class="day">THU</div>
+     
+   </div>
+    <div class="day-title2 w fl">
+     <div class="day">FRI</div>
+     
+   </div>
+    <div class="day-title2 wd g fl">
+     <div class="day">SAT</div>
+     
+   </div>
+   <div class="day-title2 wd g fl">
+     <div class="day">SUN</div>
+     
+   </div>
+    <div class="clear"></div>
+
+
+
+<div class="clear"></div>
+
+
+
+
+
+<div class="appointments-60min-container fl">
+<a href="#" class="big-link" data-reveal-id="myModal">
+<div  class="slot30min">
+<div class=" textblock f1 c1">Jonathan Ross</div>
+<div class=" textblock2 c2 ">Procedure Name </div>
+<div class=" textblock2 c1 ">776 379116</div>
+</div>
+
+</a>
+
+   
+  <div class="slot30min">
+<div class=" textblock f1 c1">Jonathan Ross</div>
+<div class=" textblock2 c2 ">Procedure Name </div>
+<div class=" textblock2 c1 ">776 379116</div>
+</div>
+   
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   
+  <div class="slot30min">
+<div class=" textblock f1 c1">Jonathan Ross</div>
+<div class=" textblock2 c2 ">Procedure Name </div>
+<div class=" textblock2 c1 ">776 379116</div>
+</div>
+   
+   
+  <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   
+   
+   
+   
+   
+  <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   
+   
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+  <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+    <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   
+</div><!--END OF APPOINTMENT 60MIN CONTAINER-->
+
+
+
+
+
+<div class="appointments-60min-container g fl">
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+</div><!--END OF APPOINTMENT 60MIN CONTAINER-->
+
+
+<div class="appointments-60min-container fl">
+  <div class="slot30min-blue ">
+   <div class=" textblock f1 c1">Jonathan Ross</div>
+<div class=" textblock2 c2 ">Procedure Name </div>
+<div class=" textblock2 c1 ">776 379116</div>
+   </div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="slot15min-blue "><div class=" textblock-15min f1 c1">Jonathan Ross</div></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+  
+    <div class="slotlunch "><div class=" textblock-lunch f1 c1">lunch Break</div></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+</div><!--END OF APPOINTMENT 60MIN CONTAINER-->
+
+
+<div class="appointments-60min-container g fl">
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+</div><!--END OF APPOINTMENT 60MIN CONTAINER-->
+
+
+<div class="appointments-60min-container fl">
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+</div><!--END OF APPOINTMENT 60MIN CONTAINER-->
+
+
+<div class="appointments-60min-container g fl">
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+</div><!--END OF APPOINTMENT 60MIN CONTAINER-->
+
+
+<div class="appointments-60min-container fl">
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+   <div class="appointments-deafult-f  "></div>
+   <div class="appointments-deafult-f border-b "></div>
+</div><!--END OF APPOINTMENT 60MIN CONTAINER-->
+
+
+
+
+  
+</div><!--END OF CALENDAR DAY--> 
+
+
+  
+ 
+</div> 
+         <div class="clear"></div> 
+    
+    <div class="pageination ">
+       
+        
+        <div class="text-center">
+                <ul id="pagination-demo" class="pagination-sm"></ul>
+            </div>
+
+        
+        
+      </div>
+        
+      </div>
+      <!--END OF CLINIC HOME--> 
+      
+     
+        
+      <div id="myModal" class="reveal-modal">
+			
+            
+            <form>
+            
+            <div class="pop-title">NEW APPOINTMENT </div>
+             <div class="clear"></div>
+<div class="portfolio-field-section mar-control wdview7">
+  
+       
+       
+       
+       <div class="field-container">
+         <div class="field-name">
+         		<label>DOCTOR</label>
+   			</div><!--END OF FIELD NAME-->
+            <div class="clear"></div> 
+         	<div class="field-type">
+                <div class="select-box-v2a fl"> 
+                  <select>
+                  <option>option1</option>
+                  <option>option2</option>
+                   <option>option3</option>
+                  </select>
+                </div>
+						<label class="fl font-type-oxygen S3 mar-t6 mar-left-2 l-gray">Speciality </label>
+         			<div class="clear"></div>
+   			</div><!--END OF FIELD TYPE-->
+          </div>
+          
+          
+          
+          <div class="field-container">
+         <div class="field-name">
+         		<label>PROCEDURE</label>
+   			</div><!--END OF FIELD NAME-->
+            <div class="clear"></div> 
+         	<div class="field-type">
+                <div class="select-box-v2a fl"> 
+                  <select>
+                   <option>option1</option>
+                  <option>option2</option>
+                   <option>option3</option>
+                  </select>
+                </div>
+						<label class="fl font-type-oxygen S3 mar-t6 mar-left-2 l-gray">30 mins</label>
+         			<div class="clear"></div>
+   			</div><!--END OF FIELD TYPE-->
+          </div>
+          
+          
+      
+      
+      
+      
+      <div class="clear"></div>
+         
+		<div class="field-container">
+             <div class="field-name">
+             	<label>REMARK</label>
+             		</div><!--END OF FIELD NAME--> 
+             
+             <div class="field-type">
+             	<textarea cols="50" rows="4"></textarea>
+             		</div><!--END OF FIELD TYPE-->
+     	</div><!--END OF FIELD CONTAINER-->  
+         
+      
+      
+      
+      
+      <div class="field-container">
+         <div class="field-name">
+         <label>DATE</label>
+         </div><!--END OF FIELD NAME--> 
+         <div id="popdate" class="field-type">
+         <input class="input-date" type="text" id="datepicker3">
+         </div><!--END OF FIELD TYPE-->
+       </div><!--END OF FIELD CONTAINER-->
+     
+      
+      
+      
+      
+      
+      
+       <div class="field-container">
+        <div class="field-container-small wdview8">
+           
+              
+              <div class="field-type">
+               <div class="field-name">
+                <label>START</label>
+              </div><!--END OF FIELD NAME--> 
+              <input id="start" type="text" class="time input-xsmall-d fl"   data-time-format="H:i"/>
+              <div class="select-box-v2b fl"> 
+                  <select>
+                  <option>AM</option>
+                  <option>PM</option>
+                  </select>
+                </div>
+						
+   			
+              
+              
+               <script>
+                $(function() {
+                    $('#start').timepicker();
+					
+                });
+            </script>
+                 
+              
+                 
+               </div><!--END OF FIELD TYPE-->
+               
+              
+              
+         </div><!--END OF FIELD CONTAINER SMALL-->
+         
+         
+         <div class="field-container-small wdview8">
+           <div class="field-name">
+             <label>END</label>
+           </div><!--END OF FIELD NAME--> 
+              <div class="field-type">
+              <input id="end" type="text" class="time input-xsmall-d fl" data-time-format="H:i" />
+               <div class="select-box-v2b fl"> 
+                  <select>
+                  <option>AM</option>
+                  <option>PM</option>
+                  </select>
+                </div>
+              
+                  <script>
+                $(function() {
+                    $('#end').timepicker();
+                });
+            </script>
+                 
+               </div><!--END OF FIELD TYPE-->
+               
+                
+              
+               
+         </div><!--END OF FIELD CONTAINER SMALL-->
+        </div>
+      
+      
+      
+      
+      
+      
+      <div class="field-container">
+         
+         	<div class="field-name">
+         		<label>NRIC OR FIN</label>
+         			</div><!--END OF FIELD NAME--> 
+         	<div class="field-type">
+         		<input class="input-tick" type="text">
+                <!--<input type="text">-->
+         			</div><!--END OF FIELD TYPE-->
+                    
+       	</div><!--END OF FIELD CONTAINER-->
+        <!--NOTE: UNCOMMENT THE DEFAULT INPUT FOR THE NORMAL STATE 
+        THE CLASS INPUT-TICK HAS THE GREEN TICK FOR VALIDATION PURPOSE -->
+        
+        
+        
+        <div class="field-container">
+         
+         	<div class="field-name">
+         		<label>PATIENT NAME</label>
+         			</div><!--END OF FIELD NAME--> 
+         	<div class="field-type">
+         		<input type="text">
+         			</div><!--END OF FIELD TYPE-->
+                    
+       	</div><!--END OF FIELD CONTAINER-->
+        
+      
+      
+      
+       
+        
+      
+      
+       
+       
+         
+         
+          <div class="clear"></div>
+         
+         <div class="field-container">
+        <div class="field-container-xsmall">
+           
+              <div class="field-name">
+                <label>Phone</label>
+              </div><!--END OF FIELD NAME--> 
+              
+              <div class="field-type">
+                 <input type="text" class="input-xsmall">
+               </div><!--END OF FIELD TYPE-->
+               
+               <div class="field-name">
+                <label>Code</label>
+              </div><!--END OF FIELD NAME--> 
+               
+         </div><!--END OF FIELD CONTAINER SMALL-->
+         
+         
+         <div class="field-container-medium">
+            <div class="field-type">
+                 <input type="text" class="input-medium">
+               		</div><!--END OF FIELD TYPE-->
+               
+               <div class="field-name">
+             		<label>Phone No</label>
+           				</div><!--END OF FIELD NAME--> 
+               
+         </div><!--END OF FIELD CONTAINER SMALL-->
+        </div><!--END OF FIELD CONTAINER-->
+        
+        
+         <div class="clear"></div>
+        
+        
+         <div class="field-container">
+         
+         	<div class="field-name">
+         		<label>EMAIL</label>
+         			</div><!--END OF FIELD NAME--> 
+         	<div class="field-type">
+         		<input type="text">
+         			</div><!--END OF FIELD TYPE-->
+                    
+       	</div><!--END OF FIELD CONTAINER-->
+        
+        
+        
+        
+        
+         
+       
+       
+         <div class="field-container"> 
+           <div class="btn-update font-type-Montserrat">BOOK NOW</div>
+            
+         </div><!--END OF FIELD CONTAINER-->
+       
+      <div class="clear"></div>
+      
+      
+     
+   </div>
+            
+            </form>
+            
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
+			
+    </div>
+    
+  
+    <!--END OF FORM NAV PAGE-->
+    
+    <div class="clear"></div>
+  </div>
+  <!--END OF CLINIC FORM CONTAINER--> 
+</div>
+<!--END OF MAIN CONTAINER-->
+
+
+
+
+</body>
+</html>

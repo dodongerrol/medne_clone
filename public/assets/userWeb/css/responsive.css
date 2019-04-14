@@ -1,0 +1,9 @@
+
+.col-md-2-4,
+.col-sm-2-4,
+.col-xs-2-4{
+    width: 20%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+}

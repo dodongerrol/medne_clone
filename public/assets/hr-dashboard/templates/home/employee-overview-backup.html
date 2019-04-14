@@ -1,0 +1,232 @@
+<div employee-overview-directive>
+	<div class="navbar-blue-bg" style="margin-top: 80px;position: fixed;height: 40px;">
+		<div class="container">
+			<div class="welcome-container">
+				<h4 ui-sref="benefits-dashboard">Overview</h4>
+				<div class="arrow-up" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<div class="dropdown" ng-if="options.accessibility == 1">
+				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Employee
+				  </h4>
+				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
+				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				  </ul>
+				</div>
+				<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
+				<div class="arrow-up-2" style="visibility: visible;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="activity">Activity</h4>
+				<div class="arrow-up-3" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container" ng-if="options.accessibility == 1">
+				<h4 ui-sref="e-claim">E-Claim</h4>
+				<div class="arrow-up-4" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="statement">Statement</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="account-and-payment">Account</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="hrdb-body-container">
+		<div class="container">
+			<div class="col-lg-12">
+				<h3 class="text-center" style="color: #5b5b5b;">Employee Overview</h3>
+				<h5 class="text-center" style="color: #5b5b5b;">Edit, add, remove, or replace employee information</h5>
+			</div>
+			<div style="margin-right: 85px;margin-left: 85px;margin-top: 130px;">
+				<button ng-click="addEmp()" class="btn add-employee-button pull-left">
+					<span><img src="../../assets/hr-dashboard/img/icons/add-employee.svg"> ADD EMPLOYEE</span>
+				</button>
+				<p class="pull-left" style="margin: 10px;font-size: 12px;color: #5b5b5b;">Enrolled Employees : <span ng-bind="progress.completed">5</span> </p>
+				<form ng-submit="searchEmployee(inputSearch)">
+					<input type="text" class="form-control pull-right" style="width: 300px;background-color: #f7f7f7;" placeholder="Enter Employee and press enter.." id="search-employee-input" ng-model="inputSearch">
+					<label for="search-employee-input" class="search-employee-icon" >
+						<i ng-if="!inputSearch" class="fa fa-search fa-fw"></i>
+						<i ng-if="inputSearch" class="fa fa-times fa-fw" ng-click="removeSearchEmp()"></i>
+					</label>
+
+				</form>
+					<button id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', NRIC: 'NRIC', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE' }" filename="'Employee Details'" separator="," hidden></button>
+					
+					<button ng-click="empDetailsLoadingState()"  class="btn" style="float: right;font-size: 12px;background: #0392cf;color: #FFF;font-weight: 700;">Export employee details <i class="fa fa-download font-12"></i></button>
+
+					<!-- <button ng-click="getAllEmpDetails()" class="btn" style="float: right;font-size: 12px;background: #0392cf;color: #FFF;font-weight: 700;">Export employee details <i class="fa fa-download font-12"></i></button> -->
+				<br><br>
+				<div class="col-md-6">
+					<i class="fa fa-edit fa-fw edit-del-rep-icons"></i> <a href="" class="edit-del-rep-text" ng-click="editList()">Edit</a>
+					<i class="fa fa-trash fa-fw edit-del-rep-icons"></i> <a href="" class="edit-del-rep-text" ng-click="deleteList()">Delete</a>
+					<i class="fa fa-retweet fa-fw edit-del-rep-icons"></i> <a href="" class="edit-del-rep-text" ng-click="replaceList()">Replace</a>
+				</div>
+				<div class="col-md-6">
+					<div class="pull-right" style="margin-top: -8px;color: #333;font-weight: 700;width: 285px;" ng-if="options.accessibility == 1">
+						<p class="font-12 font-medium2" style="margin-bottom: 0;line-height: 1.5;">Medical Spending Account</p>
+						<p class="font-12"><span>Total: S$ <span ng-bind="company_properties.total_allocation">00.00</span></span> <span style="margin-left: 50px;">Allocated: S$ <span ng-bind="company_properties.allocated">00.00</span></span></p>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="pull-right" style="margin-top: -8px;color: #333;font-weight: 700;width: 285px;" ng-if="options.accessibility == 1">
+						<p class="font-12 font-medium2" style="margin-bottom: 0;line-height: 1.5;">Wellness Spending Account</p>
+						<p class="font-12"><span>Total: S$ <span ng-bind="company_properties.total_allocation_wellness">00.00</span></span> <span style="margin-left: 50px;">Allocated: S$ <span ng-bind="company_properties.allocated_wellness">00.00</span></span></p>
+					</div>
+				</div>
+				<table class="employee-overview-table">
+					<thead>
+						<tr>
+							<th class="for-checkbox-container">
+								<input type="checkbox" class="employee-overview filled-in" id="check-all" ng-click="checkAll(isAllChecked)" ng-model="isAllChecked" ng-value="true">
+								<label for="check-all" style="margin-bottom: 0;"></label>
+							</th>
+							<th>
+								<strong>
+									Name
+									<a href="" class="sort-arrow">
+										<i class="fa fa-angle-up up"></i>
+										<i class="fa fa-angle-down down"></i>
+									</a>
+								</strong>
+							</th>
+							<th>
+								<strong>
+									Work Email
+									<a href="" class="sort-arrow">
+										<i class="fa fa-angle-up up"></i>
+										<i class="fa fa-angle-down down"></i>
+									</a>
+								</strong>
+							</th>
+							<th>
+								<strong>Plan Details</strong>
+							</th>
+							<th>
+								<strong>Enrollment Date</strong>
+							</th>
+							<th class="text-center" style="line-height: 1;">
+								<strong>Spending Account<br>(Medical)</strong>
+							</th>
+							<th class="text-center" style="line-height: 1;">
+								<strong>Spending Account<br>(Wellness)</strong>
+							</th>
+						</tr>
+					</thead>
+					<tbody class="main-table" hidden>
+
+						<tr style="border-bottom: 1px solid #d0d0d0;" ng-repeat="emp in employees.data">
+							<td class="for-checkbox-container">
+								<input type="checkbox" class="employee-overview filled-in" id="{{$index}}" ng-model="isEmpChecked[$index]" ng-value="true" ng-click="empSelected(emp)">
+								<label for="{{$index}}" style="margin-bottom: 0;"></label>
+							</td>
+							<td>
+								<p>
+									<!-- <a ng-click="showFamily(emp,$event)" ng-bind="emp.name">Filbert Tan</a> -->
+									<a ng-click="empSelectedByName(emp, $index)" ng-bind="emp.name" style="display: block;">Filbert Tan</a>
+									<span ng-if="emp.deletion" style="color: red;" ng-bind="emp.deletion_text"></span>
+								</p>
+							</td>
+							<td>
+								<p ng-bind="emp.email">filbert@mednefits.com</p>
+							</td>
+							<td>
+								<p ng-bind="emp.plan_name">Mednefits Care (Corporate)</p>
+								<p>Start Date: <span ng-bind="emp.start_date">22/05/2017</span></p>
+								<p>End Date: <span ng-bind="emp.expiry_date">22/05/2018</span></p>
+							</td>
+							<td>
+								<p>Spouse:
+									<span ng-if="emp.family_coverage.spouse.spouse">1</span>
+									<span ng-if="!emp.family_coverage.spouse.spouse">-</span>
+								</p>
+								<p>Dependent:
+									<span ng-if="emp.family_coverage.dependents.length > 0" ng-bind="emp.family_coverage.dependents.length"></span>
+									<span ng-if="emp.family_coverage.dependents.length == 0">-</span>
+									<a ng-click="showFamily(emp,$event)" href="javascript:void(0)" class="pull-right">
+										<i class="fa fa-angle-down font-20 color-black"></i>
+									</a>
+								</p>
+
+							</td>
+							<td>
+								<p class="text-center">
+									S$<span ng-bind="emp.allocation.credits_allocation" style="width: 100px;text-align: right;margin-right: 10px;"></span>
+									<span>Allocation</span>
+								</p>
+								<p class="text-center">
+									S$<span ng-bind="emp.allocation.credits_spent" style="width: 100px;text-align: right;margin-right: 10px;"></span>
+									<span>Usage</span>
+								</p>
+							</td>
+							<td>
+								<p class="text-center">
+									S$<span ng-bind="emp.allocation.credits_allocation_wellness" style="width: 100px;text-align: right;margin-right: 10px;"></span>
+									<span>Allocation</span>
+								</p>
+								<p class="text-center">
+									S$<span ng-bind="emp.allocation.credits_spent_wellness" style="width: 100px;text-align: right;margin-right: 10px;"></span>
+									<span>Usage</span>
+								</p>
+							</td>
+						</tr>
+
+					</tbody>
+
+					<tbody class="loader-table">
+						<tr>
+							<td colspan="6">
+								<div class="loader-container" style="padding-top: 10% !important;">
+									<div class="preloader-wrapper big active">
+									    <div class="spinner-layer spinner-blue-only">
+									      <div class="circle-clipper left">
+									        <div class="circle"></div>
+									      </div><div class="gap-patch">
+									        <div class="circle"></div>
+									      </div><div class="circle-clipper right">
+									        <div class="circle"></div>
+									      </div>
+									    </div>
+									  </div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="employee-overview-pagination">
+					<div class="pagintaion-previous-next-container center-block" style="width: 350px;">
+						<a id="pagination-prev" ng-click="prevPage()" ng-if="page_active > 1">
+							<img src="../../assets/hr-dashboard/img/icons/right-arrow-angle.svg" style="margin-bottom: 2px;width: 15px;transform: rotate(180deg);">
+							<span>Prev</span>
+						</a>
+						<label class="page-number" ng-bind="page_active">1</label>
+						<a id="pagination-next" ng-click="nextPage()" ng-hide="page_active >= employees.last_page">
+							<span>Next</span>
+							<img src="../../assets/hr-dashboard/img/icons/right-arrow-angle.svg" style="margin-bottom: 2px;width: 15px;">
+						</a>
+						<label ng-click="togglePage()" style="margin-top: 4px;color: #0392cf;cursor: pointer;position: relative;" class="pull-right">
+							<span ng-bind="page_ctr"></span> per page
+							<img src="../../assets/hr-dashboard/img/icons/right-arrow-angle-blue.svg" style="width: 11px;transform: rotate(90deg);">
+							<div class="per_page">
+								<ul class="nav">
+									<li><a href="javascript:void(0);" ng-click="perPage(5)">5</a></li>
+									<li><a href="javascript:void(0);" ng-click="perPage(10)">10</a></li>
+									<li><a href="javascript:void(0);" ng-click="perPage(15)">15</a></li>
+									<li><a href="javascript:void(0);" ng-click="perPage(20)">20</a></li>
+									<li><a href="javascript:void(0);" ng-click="perPage(25)">25</a></li>
+								</ul>
+							</div>
+						</label>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

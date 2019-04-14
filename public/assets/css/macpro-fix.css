@@ -1,0 +1,1406 @@
+/*======================================================================================================================================================*
+/***********macbook pro fix***********/
+/*====================================================================================================================================================*/
+
+
+
+
+
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+/* Retina-specific stuff here */
+.new-fsc-available {
+    background-color: #cbfcca !important;
+}
+#main-nav ul { list-style-type: none; margin: 0; padding: 2.5% 0 0 58% !important;/*background-color:red !important;*/
+}
+#fullcalendar-container .calendar-time .time-count { /*border:1px solid #936;*/ }
+#clinic-form-container { margin: 3% 3% 0 3%;/*width: 90%; background-color:#cacaca;*/
+}
+.single-textblock-15min { /*padding-left: 11%;*/
+/*	padding-top: 4%;*/
+text-align: left; }
+.appointments-six-slot { padding-bottom: 9.9%; width: 16.66% !important; }
+
+
+
+.time-count { border-top: 1px solid #c0c0fa; height:102px !important; padding:0px !important; }
+.appointments-seven-day .seven-slot-day {
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    padding: 16px 0;
+    text-align: center;
+}
+
+.cus-int-height{ height:90px !important; padding-bottom:10px !important;}
+
+/*chrome inside mac*/
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+ .f1 {
+ font-size: .9em;
+ text-align: left;
+ padding-left: 10%;
+ //padding-top: 3%;
+}
+
+.cus-int-height{ height:90px !important; padding-bottom:10px !important;}
+
+.new-fsc-available {
+    background-color: #cbfcca !important;
+}
+
+#fullcalendar-container .calendar-time .time-title {
+    
+    padding: 18.8%;
+	
+}
+.appointments-seven-day .seven-slot-day {
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    padding: 16px 0;
+    text-align: center;
+}
+#fullcalendar-container .calendar-time .time-count { height: 8.155em; border-bottom: 1px solid #f9f9f9;  }
+/*#fullcalendar-container .calendar-time .time-count2{ height: 1.999em; border-bottom: 1px solid #c0c0fa;  }*/
+/* .single-textblock {
+ font-size: 0.8em;
+ padding-left: 5%;
+ padding-top: 1%;
+ text-align: left;
+}
+.single-textblock2 {
+ font-size: 0.8em;
+ padding-left: 5%;
+ padding-top: 0;
+ text-align: left;
+}
+
+.single-slot15min-blue { background-color: #caecfc; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 1.999em !important; width: 100%; }
+.single-slot30min-blue { background-color: #caecfc; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 4.1em; width: 100%; }
+
+.single-slot45min-blue { background-color: #caecfc; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 6.1em !important; padding: 0 !important; width: 100%; }
+.single-slot60min-blue { background-color: #caecfc; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 8.3em; padding: 0 !important; width: 100%; }
+
+.single-slot75min-blue { background-color: #caecfc; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 10.3em; padding: 0 !important; width: 100%; }*/
+
+
+
+
+
+/*CALANDER STRUCTURE 2 SLOT */
+/*.appointments-two-slot .two-slot {
+ border-bottom: 1px solid #ececec;
+ border-left: 1px solid #ececec;
+ padding: 3.5% 2.8%;
+ text-align: center;
+}
+.appointments-two-slot {
+ padding-bottom: 9.9%;
+ width: 50%;
+}
+.two-textblock {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: .05%;
+ text-align: left;
+}
+.two-textblock2 {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: .05%;
+ text-align: left;
+}
+.two-textblock-15min {
+ padding-left: 11%;
+ padding-top: .5%;
+ text-align: left;
+}
+.two-slotlunch {
+ background-color: #fccaca;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ border-top: 1px solid #dddddd;
+ height: 2em;
+ padding: 3% 0;
+ width: 100%;
+}
+ .two-slot15min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .two-slot15min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .two-slot30min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.08em;
+ width: 100%;
+}
+.two-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.08em;
+ width: 100%;
+}
+ .two-slot45min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.15em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.two-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.15em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*60 min */
+
+/*.two-slot60min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.23em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.two-slot60min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.23em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 60 min */
+
+
+
+
+/*1hr 15 min */
+
+/*.two-slot75min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.3em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.two-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.3em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 15 min */
+
+
+/*1hr 30 min */
+
+/*.two-slot90min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.37em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.two-slot90min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.37em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 30 min */
+
+
+/*1hr 45 min */
+
+/*.two-slot105min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.47em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.two-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.47em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 45 min */
+
+
+
+/*2hr min */
+
+/*.two-slot120min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.57em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.two-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.54em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 2hr */
+
+
+
+
+
+
+
+
+
+
+
+/*CALANDER STRUCTURE 3 SLOT */
+/*.appointments-three-slot .three-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 1.33em 2.8%;
+ text-align: center;
+}
+.appointments-three-slot {
+ padding-bottom: 9.9%;
+ width: 33.3%;
+}
+.three-slot30min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.2em;
+ width: 100%;
+}
+.three-textblock {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 0%;
+ text-align: left;
+}
+.three-textblock2 {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 0%;
+ text-align: left;
+}
+.three-slot15min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+
+ width: 100%;
+}
+ .three-slot15min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .three-slot30min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.01em;
+ width: 100%;
+}
+.three-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.1em;
+ width: 100%;
+}
+ .three-slot45min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.066em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.three-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*60 min */
+
+/*.three-slot60min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.120em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.three-slot60min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.26em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 60 min */
+
+
+
+
+/*1hr 15 min */
+
+/*.three-slot75min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.16em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.three-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.28em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 15 min */
+
+
+/*1hr 30 min */
+
+/*.three-slot90min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.2em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.three-slot90min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.38em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 30 min */
+
+
+/*1hr 45 min */
+/*
+.three-slot105min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.25em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.three-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.45em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 1hr 45 min 
+
+
+
+2hr min 
+
+.three-slot120min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.3em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.three-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.55em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 2hr */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*CALANDER STRUCTURE 4 SLOT */
+/*.appointments-four-slot .four-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 7.5% 2.8%;
+ text-align: center;
+}
+.appointments-four-slot {
+ padding-bottom: 9.9%;
+ width: 25%;
+}
+ .four-textblock {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 0%;
+ text-align: left;
+}
+.four-textblock2 {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 0%;
+ text-align: left;
+}
+ .four-slot15min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .four-slot15min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .four-slot30min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.1em;
+ width: 100%;
+}
+.four-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.1em;
+ width: 100%;
+}
+ .four-slot45min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.23em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.four-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.17em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*60 min */
+
+/*.four-slot60min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.23em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.four-slot60min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.2em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 60 min */
+
+
+
+
+/*1hr 15 min */
+
+/*.four-slot75min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.33em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.four-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.33em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 15 min */
+
+
+/*1hr 30 min */
+
+/*.four-slot90min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.40em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.four-slot90min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.4em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 30 min */
+
+
+/*1hr 45 min */
+
+/*.four-slot105min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.43em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.four-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.4em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 45 min */
+
+
+
+/*2hr min */
+
+/*.four-slot120min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.54em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.four-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.54em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 2hr */
+
+
+
+
+
+
+
+
+/*CALANDER STRUCTURE 5SLOT */
+/*.appointments-five-slot .five-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 9.5% 2.8%;
+ text-align: center;
+}
+.appointments-five-slot {
+ padding-bottom: 9.9%;
+ width: 20%;
+}
+ .five-textblock {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 1%;
+ text-align: left;
+}
+.five-textblock2 {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 1%;
+ text-align: left;
+}
+ .five-slot15min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .five-slot15min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .five-slot30min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.01em;
+ width: 100%;
+}
+.five-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.06em;
+ width: 100%;
+}
+ .five-slot45min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.07em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.five-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.07em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*60 min */
+
+/*.five-slot60min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.11em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.five-slot60min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.25em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 60 min */
+
+
+
+
+/*1hr 15 min */
+
+/*.five-slot75min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.16em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.five-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.29em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 1hr 15 min 
+
+
+1hr 30 min 
+
+.five-slot90min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.20em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.five-slot90min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.36em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 30 min */
+
+
+/*1hr 45 min */
+
+/*.five-slot105min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.25em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.five-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.5em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+/*end of 1hr 45 min */
+
+
+
+/*2hr min */
+
+/*.five-slot120min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.29em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.five-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.55em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*CALANDER STRUCTURE 6SLOT */
+
+
+/*.appointments-six-slot .six-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 17px 39px;
+ text-align: center;
+}*/
+/* .appointments-six-slot {
+ padding-bottom: 9.9%;
+width: 142px !important;
+}*/
+/* .six-textblock {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 1%;
+ text-align: left;
+}
+.six-textblock2 {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 1%;
+ text-align: left;
+}
+ .six-slot15min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .six-slot15min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .six-slot30min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4em;
+ width: 100%;
+}
+.six-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.1em;
+ width: 100%;
+}
+ .six-slot45min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.08em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.six-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.13em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+60 min 
+
+.six-slot60min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.25em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.six-slot60min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.25em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 60 min 
+
+
+
+
+1hr 15 min 
+
+.six-slot75min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.21em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.six-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.3em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 1hr 15 min 
+
+
+1hr 30 min 
+
+.six-slot90min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.20em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.six-slot90min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.4em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 1hr 30 min 
+
+
+1hr 45 min 
+
+.six-slot105min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.25em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.six-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.48em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 1hr 45 min 
+
+
+
+
+2hr min 
+
+.six-slot120min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.30em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.six-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.55em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*CALANDER STRUCTURE 7SLOT */
+
+/*.appointments-seven-slot .seven-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 17px 37px !important;
+ text-align: center;
+}
+.appointments-six-slot { padding-bottom: 9.9%; width: 9.65%; max-width: 5% !important; }
+.appointments-seven-slot {
+ padding-bottom: 9.9%;
+ width: 14.27%;
+}
+ .seven-textblock {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 1%;
+ text-align: left;
+}
+.seven-textblock2 {
+ font-size: 1em;
+ padding-left: 10%;
+ padding-top: 1%;
+ text-align: left;
+}
+ .seven-slot15min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .seven-slot15min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 2em;
+ width: 100%;
+}
+ .seven-slot30min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.050em;
+ width: 100%;
+}
+.seven-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ 
+ width: 100%;
+}
+ .seven-slot45min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.19em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.seven-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.18em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+60 min 
+
+.seven-slot60min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.2em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.seven-slot60min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.2em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 60 min 
+
+
+
+
+1hr 15 min 
+
+.seven-slot75min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.3em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.seven-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ 
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+end of 1hr 15 min 
+}
+
+1hr 30 min 
+
+.seven-slot90min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.4em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.seven-slot90min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 12.4em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 1hr 30 min 
+
+
+1hr 45 min 
+
+.seven-slot105min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.45em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.seven-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.47em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+end of 1hr 45 min 
+
+
+
+2hr min 
+
+.seven-slot120min {
+ background-color: #f0f0f0;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.55em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+.seven-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.55em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+ .appointments-seven-day {
+ padding-bottom: 9.9%;
+ width: 14.28%;
+}
+ .appointments-seven-day .seven-slot-day {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 9px 32px;
+ text-align: center;
+}
+ #clinic-form-container .form-nav-page .search-bar .dr-available-profile-image {
+ margin-left: 5%;
+ margin-top: 4.7%;
+}
+
+ 
+  new addition 8 jan 2:49pm; 
+
+
+
+
+
+
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner {
+ float: left;
+ width: 87% !important;
+ padding: 2% 0 2% 2%;
+ background-color: #f5f5f5;
+ -webkit-border-radius: 10px;
+ -moz-border-radius: 10px;
+ border-radius: 10px;
+ margin: 0 0 0 2%;
+}
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-name {
+ float: left;
+ width: 22%;
+ font-size: .9em;
+ color: #333333;
+ font-family: 'Oxygen', sans-serif;
+}
+ #clinic-form-container .form-nav-page .dr-view-title .title-a {
+ float: left;
+ margin: 0 15.4% 0 11%;
+ font-size: .9em;
+ color: #999999;
+ font-family: 'Oxygen', sans-serif;
+}
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-no {
+ float: left;
+ width: 25%;
+ font-size: .9em;
+ color: #333333;
+ font-family: 'Oxygen', sans-serif;
+}
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-Procedures {
+ float: left;
+ font-size: .9em;
+ color: #333333;
+ width: 33%;
+ font-family: 'Oxygen', sans-serif;
+ margin-right: 4%;
+}
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-Procedures {
+ float: left;
+ font-size: .9em;
+ color: #333333;
+ width: 33%;
+ font-family: 'Oxygen', sans-serif;
+ margin-right: 7%;
+ padding-top: .8%;
+}
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-no {
+ float: left;
+ width: 25%;
+ font-size: .9em;
+ color: #333333;
+ font-family: 'Oxygen', sans-serif;
+ padding-top: .9%;
+}
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-name {
+ float: left;
+ width: 22%;
+ font-size: .9em;
+ color: #333333;
+ font-family: 'Oxygen', sans-serif;
+ padding-top: .8%;
+}
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .icn-close {
+ float: left;
+ margin-top: 1.2%;
+ margin-left: 2%;
+}
+
+
+#fullcalendar-container .calendar-time { width: 9%; background-color: #f9f9f9; text-align: center; float: left; position: relative; padding-bottom: 9.1%; }
+
+
+.appointments-single-slot .single-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 1.90% 2.8%; width: 94.4%; text-align: center !important; font-weight: bold; }
+*/
+
+.time-count { border-top: 1px solid #c0c0fa; height:102px !important; padding:0px !important; }
+
+}
+/* end of chrome inside mac*/
+}  /*end of Retina-specific */

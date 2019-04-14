@@ -1,0 +1,198 @@
+<div id="survey-container" survey-directive>
+	<div class="row logo-wrapper">
+		<div class="col s12">
+			<img src="../assets/care-plan/img/mednefits logo v3 (white) LARGE.png" class="responsive-img" style="width: 200px;">
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col s12">
+			<div class="survey-wrapper" >
+				<div id="top" class="survey-item all-white">
+					<h2>Let's get you a quote in just a few seconds.</h2>
+					<h4>A little details from you to get started.</h4>
+				</div>
+
+				<div id="one" class="survey-item all-white">
+					<h1 id="cover-select" class="font-55 weight-500">
+						<span>I'd like to cover</span>
+						<select ng-model="carePlan_data.cover_type" ng-change="selectData(carePlan_data.cover_type)">
+							<option value=""></option>
+							<option value="individual">me</option>
+							<option value="team/corporate">me and my team</option>
+						</select>
+						<p ng-if="cover_error" class="text-error-survey">Please select an option</p>
+					</h1>
+					
+				</div>
+
+				<div id="two" class="survey-item all-white" hidden>
+					<form ng-submit="inputPostal(carePlan_data.company_postal_code)">
+						<h1 class="font-55 weight-500">
+							<span>My <span ng-hide="carePlan_data.cover_type == 'individual'">company</span> postal code is</span>
+							<input type="text" ng-model="carePlan_data.company_postal_code" class="" ng-change="inputNumPostal(carePlan_data.company_postal_code)">
+						</h1>
+						<p ng-if="post_digit_error" class="text-error-survey">Postal code must be in 6 digits</p>
+						<p ng-if="post_required_error" class="text-error-survey">Postal code is required to get quote</p>
+						<p ng-if="post_none_error" class="text-error-survey">Unfortunately we are not able to offer plans in your area for 2017</p>
+					</form>
+				</div>
+
+				<div id="three" class="survey-item all-white" hidden>
+					<span ng-if="carePlan_data.cover_type != 'individual'">
+						<form ng-submit="inputTotal(carePlan_data.employees)">
+							<h1 class="font-50 weight-500">
+								<span>There are a total of</span>
+								<input id="total-emp-input" type="text" ng-model="carePlan_data.employees" class="">
+								<span>full time employees enrolling in this plan</span>
+							</h1>
+							<p ng-if="total_minimum_error" class="text-error-survey">Unfortunately we need a minimum of 3 full time employees to kick start this plan.</p>
+							<p ng-if="total_required_error" class="text-error-survey">Number of full time employees is required to get a quote.</p>
+						</form>
+					</span>
+
+					<span id="if-individual" ng-if="carePlan_data.cover_type == 'individual'">
+						<h1 class="font-50 weight-500">
+							<span>I'm a</span>
+							<form ng-submit="selectAge(carePlan_data.age)">
+									<input id="age-input" type="text" ng-model="carePlan_data.age"  >
+							</form>
+							<span>year old</span>
+							<select id="select-gender" ng-model="carePlan_data.contact_gender" ng-change="selectGender(carePlan_data.contact_gender)">
+								<option value=""></option>
+								<option value="male">male</option>
+								<option value="female">female</option>
+							</select>
+						</h1>
+
+						<p id="age_error" class="text-error-survey" hidden>Oops, you did not meet the eligible age requirement between 18 to 65 years</p>
+						<p ng-if="gender_error" class="text-error-survey">Please pick your gender</p>
+					</span>
+				</div>
+
+				<div id="four" class="survey-item all-white" hidden>
+					<h1 class="font-55 weight-500">
+						<span>I'd like my plan to start on</span>
+						<input id="plan-datepicker" type="text" class="datepicker" ng-model="carePlan_data.plan_start" ng-click="datePickerClicked()" >
+					</h1>
+					
+				</div>
+
+				<div id="five" class="survey-item all-white" hidden>
+					<h1 class="font-45 weight-500">
+						<span>If you need to get hold of me, I'm</span>
+						<br>
+						<form ng-submit="inputInfo(carePlan_data.contact_name)">
+							<input id="input-name" type="text" class="first text" ng-model="carePlan_data.contact_name" ng-change="typingName(carePlan_data.contact_name)" placeholder="First & Last Name" size="10" ng-blur="inputInfo(carePlan_data.contact_name)">
+						</form>
+						<span>and my email is</span>
+						<form ng-submit="inputEmail(carePlan_data.contact_email)">
+							<input type="text" class="second text" ng-model="carePlan_data.contact_email" ng-change="typingEmail(carePlan_data.contact_email)" placeholder="" size="10" ng-blur="inputEmail(carePlan_data.contact_email)">
+						</form>
+					</h1>
+					<p ng-if="no_lastname2_error" class="text-error-survey">You need to input your Last Name</p>
+					<p ng-if="no_lastname_error" class="text-error-survey">You need to input your First Name and Last Name</p>
+					<p ng-if="email_error" class="text-error-survey">Invalid Email Address</p>
+					<!-- <p ng-if="name_email_error" class="text-error-survey">Your name and email is required to get a quote</p> -->
+					<p ng-if="name_error" class="text-error-survey">Your name is required to get a quote</p>
+					<p ng-if="email_error2" class="text-error-survey">Your email is required to get a quote</p>
+				</div>
+
+				<div id="five" ng-if="!post_digit_error && !post_required_error && !post_none_error && !total_minimum_error && !total_required_error && !name_email_error && !cover_error && !email_error2 && !email_error && !name_error && !no_lastname_error && !no_lastname2_error && show_next"  class="survey-item all-white" style="margin-top: 50px;">
+					<button ng-click="nextButton()" class="btn btn-large white blue-text font-20 weight-700">Next</button>
+				</div>
+			</div>
+			
+			<div class="loading-survey-wrapper center-align" hidden>
+				<div class="row">
+					<div class="col s12">
+						<h1 class="color-white font-25">Thanks!</h1>
+						<div class="white-space-40"></div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col s12">
+						<h1 class="color-white font-35">Your <span ng-if="carePlan_data.cover_type != 'individual' ">team </span>personalised quote is on its way.</h1>
+						<div class="white-space-50"></div>
+						<div class="white-space-20"></div>
+						<div class="white-space-10"></div>
+					</div>
+				</div>
+
+				<div class="preloader-wrapper big active">
+				    <div class="spinner-layer spinner-white-only">
+				      <div class="circle-clipper left">
+				        <div class="circle"></div>
+				      </div><div class="gap-patch">
+				        <div class="circle"></div>
+				      </div><div class="circle-clipper right">
+				        <div class="circle"></div>
+				      </div>
+				    </div>
+				  </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    $('select').material_select();
+	  });
+</script>
+
+<style type="text/css">
+	.picker__box{
+		height: 370px;	
+	}
+	.picker__frame {
+	  margin: 0 auto;
+	  max-width: 565px;
+	  width: 30%;
+	}
+
+	.picker__date-display {
+	  text-align: center;
+	  background-color: #F4F4F4;
+	  color: #0392CF;
+	  padding-bottom: 15px;
+	  font-weight: 300;
+	  float: left;
+	  /*width: 50%;*/
+	  width: 35%;
+	  height: 370px;	
+	}
+
+	.picker__calendar-container {
+	  padding: 0 1rem;
+	  float: left;
+	  width: 65%;
+	}
+
+	.picker__footer {
+	  text-align: right;
+	  padding: 5px 10px;
+	  clear: both;
+	  width: 65%;
+	  position: absolute;
+	    bottom: 0px;
+	    right: 0;
+	}
+
+	.picker__month-display {
+	  text-transform: uppercase;
+	  font-size: 2rem;
+	  margin-top: 55px;
+	}
+
+	.picker__weekday-display{
+		background-color: #F4F4F4;
+		color: #0392CF;
+	}
+
+	.picker__year-display{
+		background-color: #F4F4F4;
+		color: #0392CF;
+	}
+</style>

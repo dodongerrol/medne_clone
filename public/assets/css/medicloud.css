@@ -1,0 +1,1629 @@
+/*MEDICLOUD COMMON LAYOUT****************************************************************************************************************************************************************/
+body { background-color: #4E7DEA; margin: 0px; padding: 0px; font-family: Arial, Helvetica, sans-serif; }
+.mc-container { width: 100%; height: auto; }
+/*.mc-container { width: 100%; height: auto;overflow: hidden; }*/
+.mc-container .mc-background-effect { background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/bg-effect.png); width: 100%; height: 100vh; }
+.mc-container .mc-background-color { background-color: #FFF; width: 100%; height: 100vh; }
+.mc-container .mc-border-line { border-bottom: 1px solid #eeeeee; height: 1px; }
+.mc-container .mc-header2 { padding: 50px 0 0 0; color: #cccccc; width: 250px; font-size: 14px; }
+.mc-container .mc-header3 { padding: 50px 0 10px 0; color: #cccccc; }
+/*MEDICLOUD COMMON LAYOUT END***********************************************************************************************************************************************************/
+
+
+
+
+
+/*MEDICLOUD HELPER CLASSES***************************************************************************************************************************************************************/
+.mc-fl { float: left; }
+.mc-fr { float: right; }
+.mc-clear { clear: both; }
+.mc-form-spacer { padding-top: 11px; }
+.mc-label { font-size: 12px; padding-left: 123px; padding-top: 31px; color: #cccccc; -webkit-font-smoothing: antialiased; }
+.mc-label2 { font-size: 12px; padding-left: 10px; color: #666666; padding-top: 26px; -webkit-font-smoothing: antialiased; }
+.mc-label3 { font-size: 11px; padding-top: 5px; color: #004e73; -webkit-font-smoothing: antialiased; }
+.mc-label4 { font-size: 13px; color: #cccccc; padding-top: 67px; text-align: right; -webkit-font-smoothing: antialiased; }
+.mc-label5 { font-size: 12px; color: #ffffff; -webkit-font-smoothing: antialiased; }
+.mc-label6 { font-size: 15px; color: #ffffff; text-align: center; -webkit-font-smoothing: antialiased; }
+.mc-label7 { font-size: 15px; color: #666666; padding-top: 26px; -webkit-font-smoothing: antialiased; }
+.mc-label8 { font-size: 10px; padding-top: 5px; color: #999999; -webkit-font-smoothing: antialiased; }
+.mc-label9 { font-size: 11px; padding-top: 5px; color: #04628e; -webkit-font-smoothing: antialiased; }
+.mc-label10 { font-size: 12px; color: #000; }
+.mc-label11 { font-size: 40px; padding-left:124px;  padding-top: 31px; color: #cccccc; -webkit-font-smoothing: antialiased; }
+.mc-label12 { font-size: 20px; padding-top: 10px; color: #1b9bd7; -webkit-font-smoothing: antialiased; font-weight: bold; }
+/*.mc-label4{ font-size: 13px; color:#003366; padding-top:67px; text-align:right; -webkit-font-smoothing: antialiased; }*/
+.mc-label13 { font-size: 14px; padding-top: 5px; color: #666666 !important; -webkit-font-smoothing: antialiased; }
+.mc-label14 { font-size: 12px; padding-top: 5px; color: #999999 !important; -webkit-font-smoothing: antialiased; }
+.mc-label15 { font-size: 12px; padding-top: 5px; color: #666666 !important; -webkit-font-smoothing: antialiased; }
+input { outline: none; }
+.mc-font { color: #40a7dc; font-size: 19px; }
+.span { margin-top: -50px; }
+.mc-bg-white { background-color: #FFF; }
+.mc-calendar-space { padding-left: 20px; }
+.mc-calendar-space-none { }
+.mc-slot-color { background-color: #f4f4f4 !important; }
+.mc-pad-0 { padding-left: 0px !important; }
+.mc-pad-l { padding-left: 55px !important; }
+.mc-pad-l3 { padding-left: 112px !important; }
+.mc-pad-l2 { padding-left: 163px !important; }
+.mc-pad-l4 { padding-left: 103px !important; }
+.mc-pad-l5 { padding-left: 50px !important; }
+.mc-pad-l6 { padding-left: 20px !important; }
+.mc-pad-r2 { padding-right: 10px !important; }
+.mc-mar-l { margin-left: 114px !important; }
+.mc-mar-l2 { margin-left: 85px !important; }
+.mc-mar-r { margin-right: 20px !important; }
+.mc-mar-t2 { margin-top: 35px !important; }
+.mc-mar-t3 { margin-top: 66px !important; }
+.mc-pad-t0 { padding-top: 0px !important; }
+.mc-pad-t { padding-top: 55px !important; }
+.mc-pad-t2 { padding-top: 20px !important; }
+.mc-pad-t3 { padding-top: 15px !important; }
+.mc-pad-t4 { padding-top: 5px !important; }
+.mc-pad-t5 { padding-top: 80px !important; }
+.mc-pad-25p { padding-top: 25px !important; }
+.mc-pad-lr { padding-left: 10px; padding-right: 10px; }
+.mc-mar-lr { margin-left: 10px; margin-right: 10px; }
+/*.mc-pad-t1{ padding-top:0px !important;}*/
+.txt-align { text-align: center !important; }
+.txt-align-l { text-align: left !important; }
+.line-height { line-height: 58px !important; }
+.height12 { height: 12px; }
+.height13 { height: 13px; }
+.width { width: 35% !important; }
+.cursor { cursor: pointer; }
+.mc-spacer { padding-bottom: 45px; }
+.slide { position: relative; top: 0px; left: 190px; width: 1000px; height: 450px; overflow: hidden; }
+.slider-child { cursor: move; position: absolute; left: 0px; top: 0px; width: 1000px; height: 680px; overflow: hidden; }
+.slider1_container { position: relative; top: 0px; left: 150px; width: 1000px; height: 450px; overflow: hidden; }
+.calendar-wrapper { margin-left: 20%; margin-top: 10%; }
+a { text-decoration: none !important; color: /*#fff*/ #00aeef; }
+.mc-error { padding-left: 20px; color: #F00; font-size: 14px; float: left; }
+.mc-line-chart-container { margin-left: 18%; width: 80%; }
+.input-hidden { cursor: pointer; border: none !important; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-date-blue.png); background-color: transparent !important; width: 20px; height: 25px !important; color: transparent !important; }
+.highlight { color: #027db6 !important; font-weight: bold !important; }
+.height335 { height: 335px !important; }
+.window-h { width: 100vh; }
+.bg2 { background-color: #ebebeb !important; }
+/*MEDICLOUD HELPER CLASSES END********************************************************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+/*MEDICLOUD LOGIN PAGE****************************************************************************************************************************************************************/
+.mc-container .mc-background-effect .mc-logo-center { width: 175px; padding-top: 61px; padding-bottom: 10px; margin-right: auto; margin-left: auto; }
+.mc-container .mc-background-effect .mc-login-form-container { height: 302px; width: 506px; /*background-color: #CCC;*/ margin-right: auto; margin-left: auto; position: relative; }
+.mc-container .mc-background-effect .mc-login-form-container form { margin: 0px; padding: 0px; border: none; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset { border: none; }
+.mc-container .mc-background-effect .mc-login-form-container .icn-close { position: absolute; top: 0px; right: 0px; z-index: 1; display: none; }
+.mc-container .mc-background-effect .mc-login-form-container .mc-form-bg { width: 480px; height: auto; background-color: #ffffff; position: absolute; top: 25px; padding-bottom: 20px; right: 23px; border-radius: 17px; -webkit-border-radius: 17px; -moz-border-radius: 17px; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .div-space-top { padding: 28px 0px 0px 31px; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .div-space-bottom { padding: 10px 0px 0px 31px; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg div input { width: 400px; height: 60px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; border: none; background-color: #f0efef; font-size: 13px; padding-left: 17px; color: #000; padding-right: 4px; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .mc-btn-lightblue { height: 44px; width: 197px; background-color: #c8eafb; margin: 20px 0px 10px 31px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 15px; color: #5bbae7; cursor: pointer }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .mc-btn-drkblue { height: 40px; width: 197px; background-color: #1b9bd7; margin: 20px 0px 0px 26px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 19px; color: #FFFFFF; cursor: pointer !important; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .forgot { background-color: #c8eafb; margin: 20px 0px 0px 32px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding: 20px 66px; color: #5bbae7; cursor: pointer }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .login { background-color: #1b9bd7; margin: 20px 0px 0px 30px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding: 20px 70px; color: #FFFFFF; cursor: pointer !important; }
+/*MEDICLOUD LOGIN PAGE END************************************************************************************************************************************************************/
+
+
+
+
+
+/*MEDICLOUD CLINIC PAGE****************************************************************************************************************************************************************/
+
+.mc-container .mc-background-color .mc-header { height: 103px; width: 100%; }
+.mc-container .mc-background-color .mc-header .mc-logo-container { padding: 30px 0px 32px 50px; }
+.mc-container .mc-background-color .mc-header .mc-main-menu { float: right; width: auto; padding-right: 5%; padding-top: 20px; width: 70%; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul { padding: 0px; margin: 0px; float: right; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li { float: left; display: inline-block; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li a { float: left; display: inline-block; padding-top: 15px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; margin-top: 15px; margin-right: 25px; font-size: 13px; color: #999999; cursor: pointer; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li a:hover { float: left; display: inline-block; background-color: #1b9bd7; padding-top: 15px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; margin-top: 15px; margin-right: 25px; font-size: 13px; color: #fff; cursor: pointer; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; }
+.mc-container .mc-background-color .mc-header .mc-btn-logout { width: 116px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 14px; padding-bottom: 14px; color: #fff; float: right; margin-top: 15px; cursor: pointer; font-size: 12px; font-family: sinkin_sans300_light; }
+.mc-container .mc-background-color .mc-dr-selection-container { height: 60px; padding: 20px 74px 20px 85px; }
+.mc-container .mc-background-color .mc-dr-selection-container .icn-doctor { padding: 18px 15px 0px 0px; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select { background: transparent !important; background: none !important; background-position: 5% 50%; height: 61px; width: 367px; padding: 5px; font-size: 15px; line-height: 1; border: 0; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #bababa !important; padding-left: 12px; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box { height: 61px; width: 367px !important; overflow: hidden; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png); background-repeat: no-repeat; background-position: 95% 54%; border-radius: 3px 5px 5px 3px; padding-right: 7px; outline: none !important; line-height: 10px !important; /*background-position: 95% 50%;*/ background-color: #f7f7f7; color: #bababa !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select { padding-right: 0; vertical-align: bottom!important; text-align: left; height: auto; line-height: 1em; height: 61px; /*color:#bababa !important;*/ width: 107% !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; outline: none !important; color: #616465 !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select option { padding-top: 5px; color: #616465 !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .mc-btn-add-doctor { height: 33px; width: 176px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: right; margin-top: 10px; cursor: pointer; font-size: 15px; }
+.mc-container .mc-background-color .mc-doctor-profile-container { width: 100%; /*padding-bottom: 20px;*/ }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail { float: left; height: auto; width: 695px; padding: 20px 0 0 120px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-dr-profile-image { height: 125px; width: 125px; float: left; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; background-color: none !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-dr-profile-image img { height: 125px; width: 125px; float: left; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; background-color: none !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form { width: 450px; float: left; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form { margin: 0 0 0 30px; float: left; width: 490px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset { border: none !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset .mc-form-spacer input { background: transparent !important; height: 25px; width: 428px; font-size: 14px; line-height: 1; border: none; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #616465!important; padding-top: 20px }
+.inputshort { background: transparent !important; height: 25px; width: 267px !important; font-size: 14px; line-height: 1; border: none; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #666666!important; padding-top: 20px; float: left; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset .mc-btn-container { padding: 30px 0 0 0; }
+.mc-btn-save-changes { height: 32px; width: 176px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: left; margin-top: 12px; cursor: pointer; font-size: 15px; letter-spacing: 1px; }
+.mc-btn-cancel { height: 33px; width: 60px; background-color: #fff; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #cccccc; float: left; margin-top: 10px; margin-left: 20px; cursor: pointer; font-size: 13px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl { height: auto; margin-bottom: 50px; margin-left: 75px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl .mc-price-display { width: 231px; /*height:180px;*/ border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; background-color: #c8eafb; margin: 11px 0 0 0; text-align: center; font-size: 110px; color: #FFF; padding: 5px 30px 5px 20px; float: left; border: none !important; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/dollar-sign.png); background-position: 227px 21px; background-repeat: no-repeat; }
+.select-box select { background: transparent !important; background: none !important; background-position: 5% 50%; height: 61px; width: 367px; padding: 5px; font-size: 14px; line-height: 1; border: 0; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #bababa !important; padding-left: 12px; }
+.select-box { height: 61px; width: 367px !important; overflow: hidden; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png); background-repeat: no-repeat; background-position: 95% 54%; border-radius: 3px 5px 5px 3px; padding-right: 7px; outline: none !important; line-height: 10px !important; /*background-position: 95% 50%;*/ background-color: #f7f7f7; color: #bababa !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.select-box select { padding-right: 0; vertical-align: bottom!important; text-align: left; height: auto; line-height: 1em; height: 61px; color: #bababa !important; width: 107% !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; outline: none !important; }
+.select-box select option { padding-top: 5px; color: #bababa !important; }
+.mc-container .mc-background-color .mc-calendar { height: 70px; background-color: #c8eafb; padding: 0px 80px 0 100px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-color-box-blue { background-color: #1b9bd7; height: 23px; width: 23px; margin-top: 24px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-color-box-gray { background-color: #f4f4f4; height: 23px; width: 23px; margin-top: 24px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-date-toggle-container { height: 28px; width: 285px; margin-left: 21%; margin-top: 24px; }
+.mc-date-toggle-container .mc-arrow-white { padding-right: 21px; cursor: pointer; }
+.mc-date-toggle-container .mc-arrow-blue { padding-left: 23px; cursor: pointer; }
+.mc-date-toggle-container .mc-date-blue { padding-right: 18px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option { float: right; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .option { font-size: 13px; height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; color: #1b9bd7; cursor: pointer!important; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .option:hover { height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 13px; cursor: pointer!important; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .select { height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 13px; }
+.mc-bg-white .mc-container .mc-background-color .mc-doctor-profile-container .mc-calendar-view { /*background-color: #CCF; */ height: 929px; width: auto; margin-bottom: 30px; }
+.mc-calendar-view .calendar-time { float: left; height: 929px; width: 71px; /*background-color: #FCF;*/ }
+.calendar-time .mc-time { height: 20px; width: 65px; }
+.mc-calendar-view .mc-fl .mc-calendar-day { height: 75px; width: 100%; }
+.mc-calendar-day .mc-day { font-size: 14px; color: #cccccc; float: left; height: 35px; width: 178px; padding-top: 28px; text-align: center; }
+.mc-calendar-day .mc-day .date { font-size: 12px; color: #999999; float: left; height: 35px; width: 178px; padding-top: 2px !important; text-align: center; }
+.mc-calendar-day .mc-day-selected { font-size: 14px; color: #00000 !important; float: left; height: 35px; width: 178px; padding-top: 31px; text-align: center; }
+.mc-calendar-view .mc-fl .mc-day-option-container { height: 73px; width: auto; padding-top: 5px; padding-bottom: 7px;/* background-color:#C3C;*/ }
+.mc-day-option-container .mc-day-block { /*background-color: #9CF;*/ height: 73px; width: 169px; margin-right: 10px; float: left }
+.mc-day-option-container .mc-day-block-last { /*background-color: #9CF;*/ height: 73px; width: 175px; float: left }
+.mc-day-block .mc-slot1 { color: #666666; font-size: 12px; height: 30px; margin-bottom: 1px; padding: 6px 0 0 5px; width: 167px; background-color: #1b9bd7; }
+.mc-day-block .mc-slot2 { color: #666666; font-size: 12px; height: 30px; margin-bottom: 1px; padding: 6px 0 0 5px; width: 167px; background-color: #1b9bd7; }
+.mc-day-block .mc-slot1hr { color: #666666; font-size: 12px; height: 60px; margin-bottom: 1px; padding: 6px 0 0 5px; width: 167px; background-color: #1b9bd7; }
+.mc-day-block .mc-slot1hr2 { color: #666666; font-size: 12px; height: 64px; margin-bottom: 1px; padding: 6px 0 0 5px; width: 167px; background-color: #1b9bd7; margin-right: 10px; }
+.mc-day-block-last .mc-slot1-last { height: 36px; width: 175px; margin-bottom: 1px; background-color: #1b9bd7; }
+.mc-day-block-last .mc-slot1hr-last { height: 66px; width: 175px; margin-bottom: 1px; background-color: #1b9bd7; }
+.mc-day-block-last .mc-slot2-last { height: 36px; width: 175px; background-color: #1b9bd7; }
+.mc-footer { height: 90px; background-color: #1b9bd7; padding-left: 70px; padding-top: 40px; /*margin-top: 145px;*/ }
+.mc-social-icon { margin-right: 20px; cursor: pointer !important; }
+/*MEDICLOUD CLINIC PAGE END*************************************************************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+/*MEDICLOUD CALENDAR DAY EVENT PAGE *************************************************************************************************************/
+.dr-book-wrapper { height: 440px; width: 200px;/* background-color:red;*/ border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.book-dr-selected { height: 380px; width: 200px; background-color: #caecfc; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.book-dr { height: 380px; width: 200px; background-color: #f8f8f8; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.book-content { background-color: #C60; padding: 50px; }
+.btn-container { text-align: center !important; }
+.btn-booknow { height: 30px; width: 137px; background-color: #12d537; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; text-align: center; padding-top: 6px; color: #fff; cursor: pointer; font-size: 12px; margin: auto; }
+.btn-container-pick { text-align: left !important; margin: 10px 0px 10px 0px; position: relative; }
+.btn-picknow { height: 30px; width: 167px; background-color: #5bbae7; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; text-align: center; padding-top: 6px; color: #fff; cursor: pointer; font-size: 12px; margin: auto; }
+.mc-container .mc-background-color .mc-calendar2 { height: 50px; background-color: #c8eafb; padding: 0px 80px 20px 75px; }
+.mc-date-toggle-container2 { height: 28px; width: 285px; margin-top: 24px; }
+.mc-date-toggle-container2 .mc-arrow-white { padding-right: 21px; }
+.mc-date-toggle-container2 .mc-arrow-blue { padding-left: 23px; }
+.mc-date-toggle-container2 .mc-date-blue { padding-right: 18px; }
+.event-container3 { width: 50%;/* background-color:#FCF;*/ }
+.event-time3 { width: 14%; margin-top: 30px; float: left; }
+.time3 { width: 81%; height: 65px; /*background-color: #039;*/ font-size: 12px; margin-left: 30px; color: #999999; }
+.event-display { /*background-color:#3CF;*/ float: left; margin-top: 28px; width: 72%; }
+.day-event-gray { width: 100%; height: 60px; background-color: #f4f4f4; margin-left: 5px; cursor: pointer !important; border-left: 1px solid #95d3f0; }
+.day-event-blue { width: 100%; height: 60px; background-color: #c8eafb; margin-left: 5px; cursor: pointer !important; border-left: 1px solid #95d3f0; }
+.day-event-dblue { width: 100%; height: 60px; background-color: #1b9bd7; margin-left: 5px; cursor: pointer !important; border-left: 1px solid #95d3f0; }
+.day-event-lblue { width: 100%; height: 60px; background-color: #5bbae8; margin-left: 5px; cursor: pointer !important; border-left: 1px solid #95d3f0; }
+.day-event-white { width: 100%; height: 60px; background-color: #fff; margin-left: 5px; }
+.mc-dot { height: 17px; }
+.mc-dot2 { height: 17px; margin-top: -12px; }
+.client-name { float: left; font-size: 14px; padding-left: 10px; padding-top: 17px; color: #cccccc; }
+.client-name-gray { float: left; font-size: 14px; padding-left: 10px; padding-top: 17px; color: #e0e0e0; }
+.client-name-white { float: left; font-size: 14px; padding-left: 10px; padding-top: 17px; color: #fff; }
+.client-remark { float: right; font-size: 11px; padding-right: 10px; padding-top: 21px; color: #cccccc; }
+.client-name-dblue { float: left; font-size: 14px; padding-left: 10px; padding-top: 17px; color: #1b9bd7; }
+.day-display { float: left; padding: 30px 0 0 0; }
+/* jquery calendar override*/
+
+.ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span { display: block; left: 50%; margin-left: -8px; margin-top: -8px; position: absolute; top: 50%; /*background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/calender-arw-l-.png) !important;*/ }
+.ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span { /*background-image: url("https://medicloud.sg/medicloud_v2/public/assets/images/calender-arw-l-.png") !important;*/ background-position: -15px 0; display: block; left: 50%; margin-left: -8px; margin-top: -8px; position: absolute; top: 50%; }
+/*.ui-datepicker { display: none; padding: 0.2em 0.2em 0; width: 22em !important; }*/
+.ui-icon-circle-triangle-w { background-position: 0 0 !important; }
+.ui-icon-circle-triangle-e { background-position: -16 0 !important; }
+.ui-widget-content { background: none !important; border: none !important; color: #333333; }
+.ui-widget-content { color: #1b9bd7 !important; }
+.ui-widget-header { background: none !important; border: none !important; color: #cfcfcf !important; font-weight: bold; }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: none !important; text-align: center !important; color: #cccccc !important; }
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight { background: #1b9bd7!important; border: 1px solid #fed22f; color: #fff !important; background-color: #1b9bd7 !important; }
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { background-color: #1b9bd7!important; border: 1px solid #fbd850; color: #eb8f00; font-weight: bold; }
+.ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { background: #c8eafb !important; border: 1px solid #fbd850; color: #fff !important; font-weight: bold; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: none !important; background: url(https://medicloud.sg/medicloud_v2/public/assets/images/cal-bg.png) repeat-x !important; font-weight: bold; color: #c77405; }
+.ui-datepicker td span, .ui-datepicker td a { padding: 0.9em !important; }
+.mc-calendar-option { float: right; }
+.mc-calendar-option .option { font-size: 13px; height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; color: #1b9bd7; }
+.mc-calendar-option .option:hover { height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 13px; }
+.mc-calendar-option .select { height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 13px; }
+/*MEDICLOUD CALENDAR DAY EVENT PAGE END************************************************************************************************************/
+
+
+
+
+
+
+
+/*CLINIC PAGE************************************************************************************************************/
+
+.mc-day-block .mc-slot-lblue { background-color: #c8eafb; color: #666666; font-size: 11px; height: 30px; margin-bottom: 1px; padding: 6px 0 0 5px; width: 167px; }
+.mc-day-block-last .mc-slot1-last-lblue { color: #666666; font-size: 11px; height: 30px; padding: 6px 0 0 5px; width: 170px; margin-bottom: 1px; background-color: #c8eafb; }
+.mc-day-block-last .mc-slot2-last-lblue { height: 36px; width: 170px; background-color: #1b9bd7; color: #666666; font-size: 11px; height: 30px; padding: 6px 0 0 5px; background-color: #c8eafb; }
+/*CLINIC PAGE END************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+/*WEB DOCTOR PAGE************************************************************************************************************/
+.mc-counter-display { background-color: #1b9bd7; width: 100% }
+.pattern-bg { background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/bg-effect.png); width: 100%; height: 100%; }
+.number-counter-today { color: #FFF; float: left; width: 23%; /*background-color:#39F;*/ text-align: center; font-size: 8em; font-weight: bold; font-weight: bold; padding: 40px 0 5% 5%; }
+.counter-container { margin-left: 10%; margin-right: auto; }
+.counter-day { color: #666; font-size: 13px; font-weight: normal !important; }
+.done-arrow { float: right; padding: 4% 2% 0; }
+.btn-done { float: right; padding: 4.5% 3%; font-size: 12px; color: #ffffff; border-right: 1px solid #FFF; border-left: 1px solid #FFF; }
+.history-container { background-color: #fafafa; width: 35%; height: 30%; float: left; margin-left: 8%; width: 43%; margin-top: 3.4%; }
+.btn-holder { padding: 2% 2% 0 0; }
+.profile-image { text-align: center !important; padding: 2% 0 0 0; }
+.profile-image img { border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; width: 30%; height: 30%; /*background-color: #36F!important;*/ text-align: center; }
+.patient-detail-hdr { width: auto; height: 35px; background-color: #f4f4f4; padding: 2% 0 0 6%; color: #cccccc; }
+.detail-age { padding: 3% 0 0 6%; font-size: 13px; color: #333333; }
+.detail { padding: 3% 6% 0 0; font-size: 13px; color: #999999; }
+.calendar { font-family: 'Trebuchet MS', Tahoma, Verdana, Arial, sans-serif; font-size: 0.9em; background-color: #EEE; color: #333; border: 1px solid #DDD; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; padding: 0.2em; width: 14em; }
+.calendar .months { background-color: #1b9bd7; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; color: #FFF; padding: 0.2em; text-align: center; }
+.calendar .prev-month, .calendar .next-month { padding: 0; }
+.calendar .prev-month { float: left; }
+.calendar .next-month { float: right; }
+.calendar .current-month { margin: 0 auto; }
+.calendar .months .prev-month, .calendar .months .next-month { color: #FFF; text-decoration: none; padding: 0 0.4em; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; cursor: pointer; }
+.calendar .months .prev-month:hover, .calendar .months .next-month:hover { background-color: #FDF5CE; color: #C77405; }
+.calendar table { border-collapse: collapse; padding: 0; font-size: 0.8em; width: 100%; }
+.calendar th { text-align: center; }
+.calendar td { text-align: right; padding: 1px; width: 14.3%; }
+.calendar td span { display: block; /*color: #1C94C4;*/ background-color: #F6F6F6; border: 1px solid #CCC; text-decoration: none; padding: 0.2em; cursor: pointer; }
+.calendar td span:hover { color: #C77405; background-color: #c8eafb; border: 1px solid #1b9bd7; }
+.calendar td.today span { background-color: #1b9bd7; border: 1px solid #fff; }
+.today span { color: #FFF !important; }
+/*WEB DOCTOR PAGE END************************************************************************************************************/
+
+
+
+
+
+
+
+/*HR SETTINGS PAGE ************************************************************************************************************/
+
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset .mc-form-spacer .hr-input { background-color: #f7f7f7 !important; border: medium none; border-radius: 0; color: #333333 !important; font-size: 14px; height: 60px; line-height: 1; outline: medium none !important; width: 347px; -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; padding-top: 0px !important; padding-left: 20px; }
+.select-box2 { background-color: #f7f7f7; background-image: url("https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png"); background-position: 95% 54%; background-repeat: no-repeat; border-radius: 11px !important; color: #bababa !important; height: 61px; line-height: 10px !important; outline: medium none !important; overflow: hidden; padding-right: 7px; width: 361px !important; }
+.hr-select { border-radius: 11px !important; color: #616465 !important; height: 61px; line-height: 1em; outline: medium none !important; padding-left: 20px; text-align: left; vertical-align: bottom !important; width: 107% !important; font-size: 16px !important; background: transparent !important; background: none repeat scroll 0 0 rgba(0, 0, 0, 0) !important; border: none !important; }
+#datepick4 { color: #666666 !important; background-color: #f7f7f7 !important; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-date-gray.png)!important; background-repeat: no-repeat !important; background-position: 95% 54% !important; border: medium none; border-radius: 0; color: #333333 !important; font-size: 14px; height: 60px; line-height: 1; outline: medium none !important; width: 347px; -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; padding-top: 0px !important; padding-left: 20px; }
+#datepick5 { color: #666666 !important; background-color: #f7f7f7 !important; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-date-gray.png)!important; background-repeat: no-repeat !important; background-position: 95% 54% !important; border: medium none; border-radius: 0; color: #333333 !important; font-size: 14px; height: 60px; line-height: 1; outline: medium none !important; width: 347px; -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; padding-top: 0px !important; padding-left: 20px; }
+.male { padding-top: 5px; float: left; width: 50px; color: #bababa!important; font-size: 13px; }
+.gender { float: left; padding: 10px 0; }
+.gender div { float: left; }
+.radio-btn { width: 20px!important; background-color: #960!important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-dr-profile-image2 { height: 125px; width: 125px; float: left; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; background-color: none !important; padding-top: 6px; }
+/*HR SETTINGS PAGE END************************************************************************************************************/
+
+
+
+
+/*CLINIC DASHBOARD PAGE************************************************************************************************************/
+.label-blue { color: #1b9bd7 !important; }
+.label-red { color: #ff9195 !important; }
+.label-20 { font-size: 85px !important; }
+.chart { border-left: 1px solid #F00 !important; }
+.mc-counter1 { float: left; width: 30%;/* background-color:#F00;*/ text-align: center; margin-left: 5%; margin-top: 2%; margin-bottom: 5%; }
+.mc-counter2 { float: left; width: 30%; /*background-color: #F90; */ text-align: center; margin-top: 2%; margin-bottom: 5%; }
+.mc-counter3 { float: left; width: 70%; /*background-color: #F90;*/ text-align: center; margin: 11% 0 0% 24%; }
+.mc-counter4 { float: left; width: 70%;/* background-color: #F90;*/ text-align: center; margin: 16.5% 0 3% 22%; }
+.mc-counter5 { float: left;  /*background-color: #F90; */ text-align: center; margin-top: 2%; margin-bottom: 5%; }
+.mc-counter6 { float: left; width: 70%; /*background-color: #F90;*/ text-align: center; margin: 11% 0 0% 17%; }
+.counter-number { font-size: 7em; color: #8fd8f7; font-family: 'Nunito', sans-serif !important; }
+.counter-number2 { font-size: 5em; color: #8fd8f7; }
+.counter-number .number { font-size: 1em; color: #8fd8f7; float: left; }
+.dollar { font-size: 23px !important; color: #8fd8f7; float: left; }
+.counter-name { color: #4f859e !important; font-size: 12px; word-wrap: normal; font-weight: bold; }
+.counter-name2 { color: #4f859e !important; font-size: 12px; word-wrap: normal; width: 250px; }
+.mc-pullbottom { margin-bottom: 300px; }
+.mc-counter-display-left { float: left; width: 50%; /*background-color:red;*/ padding: 2% 0 5% 0; border-right: 1px solid #cccccc; }
+.counter-number span { font-size: 12px; vertical-align: 75px; }
+.counter-number div { font-size: 20px; vertical-align: 75px; }
+.mc-counter-display-right { float: left; width: 45%; /*background-color:red;*/ /*padding: 2% 0 5% 0;*/ }
+.mc-rating-container { width: 300px; height: 50px; }
+.dateselect { float: right; }
+.mc-rating1 { width: 450px; height: 80px; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-stars.png); margin-top: 4% }
+.mc-rating2 { width: 450px; height: 80px; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-stars.png); background-position: 0% 25%; margin-top: 4%; }
+.mc-rating3 { width: 450px; height: 80px; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-stars.png); background-position: 0% 50%; margin-top: 4%; }
+.mc-rating4 { width: 450px; height: 80px; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-stars.png); background-position: 0% 75%; margin-top: 4%; }
+.mc-rating5 { width: 450px; height: 80px; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-stars.png); background-position: 0% 100%; margin-top: 4%; }
+.clinic-input { width: 250px; height: 60px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; border: none; background-color: #f0efef; font-size: 15px; padding-left: 17px; color: #616465; }
+.selected { float: left; display: inline-block; background-color: #1b9bd7; padding-top: 15px; font-size: 14px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; margin-top: 15px; margin-right: 25px; color: #fff !important; cursor: pointer; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; }
+/*CLINIC DASHBOARD PAGE END************************************************************************************************************/
+
+
+/*PAYMENT PAGE************************************************************************************************************/
+
+.mc-payment-pinkbar { background-color: #ffcccc; height: 87px; width: 100%; }
+.mc-white-flage { padding: 1.5% 0 0 4%; }
+.mc-payment-outstanding { float: left; width: auto; padding: 0 0 0 20px; }
+.mc-header-payment { color: #666666; font-size: 22px; padding: 18px 0 0 5px; letter-spacing: 1px; }
+.mc-payment-date { padding: 5px 0 0 6px; color: #666666; font-size: 14px; }
+.mc-outstanding { color: #8fd8f7; float: right; padding: 1% 5% 0 0; }
+.mc-outstanding-amount { color: #666666; float: left; font-size: 3em; }
+.mc-outstanding-amount div { font-size: 20px; vertical-align: 85px; font-size: 12px; float: left; color: #666666 !important; }
+.mc-label-dollar { float: left; color: #666666 !important; }
+.btn-close { padding: 18px 12px 0 35px; }
+.mc-outstanding-details { padding: 30px 80px 30px 55px; border-bottom: 1px solid #cccccc; }
+.mc-title-container { padding: 0 0 0 16px; }
+.mc-outstanding-title { color: #666666 !important; }
+.btn-payment { background-color: #5bbae7; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; color: #ffffff; padding: 14px 15px 15px 13px; text-align: center; width: 125px; }
+.payment-input { width: 170px; height: 60px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; border: none; background-color: #f0efef; font-size: 13px; padding-left: 17px; color: #616465; }
+/*PAYMENT PAGE************************************************************************************************************/
+
+
+
+
+
+
+
+/*HR PAGE************************************************************************************************************/
+.hr-graybar { background-color: #f7f7f7; height: 60px; padding: 20px 70px 20px 60px; }
+.hr-input { width: 170px; height: 60px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; border: none; background-color: #ffffff; font-size: 13px; padding-left: 17px; color: #616465; }
+.hr-select-box { background-color: #ffffff; background-image: url("https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png"); background-position: 93% 53%; background-repeat: no-repeat; border-radius: 11px !important; color: #bababa !important; height: 61px; line-height: 10px !important; outline: medium none !important; overflow: hidden; padding-right: 7px; width: 255px !important; }
+.hr-select-box select { background: none repeat scroll 0 0 transparent; border: medium none !important; border-radius: 11px !important; color: #616465 !important; height: 61px; line-height: 1em; outline: medium none !important; padding-right: 0; text-align: left; vertical-align: bottom !important; width: 111% !important; padding-left: 10px; font-size: 15px; }
+.icn-durarion { padding: 17px 15px 0 0; float: left; }
+.hr-dateselect { float: left; padding-left: 40px; /*background-color:red;*/ width: 450px; }
+.hr-event-container { width: 100%; padding-top: 30px; }
+.timelime-container { width: 50%; /*background-color:#99C;*/ float: left; }
+.mc-insurance-container { width: 30%; /*background-color:#9C0;*/ float: right; }
+.hr-time { color: #999999; font-size: 12px; height: 65px; margin-left: 100px; margin-right: 20px; padding-top: 5px; width: 92px; }
+.red-dot { position: absolute; }
+.yellow-dot { position: absolute; }
+.green-dot { position: absolute; }
+.timeline-title { border-left: 1px solid #c8eafb; margin: 12px 0 -12px 4px; padding: 0 0 30px; }
+.timeline-title-last { margin: 12px 0 -12px 4px; padding: 0 0 30px; }
+.mc-label-title { font-size: 16px; color: #1b9bd7; }
+.mc-label-sub { font-size: 14px; color: #999999; }
+.mc-label-sub2 { font-size: 12px; color: #cccccc; }
+.timeline-header { width: 685px; background-color: #f2fafd; margin: 30px 0 30px 100px; padding: 20px; text-align: center; font-size: 16px; color: #666666; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; }
+.mc-insurance-container { margin: 2.2% 0 0 0; }
+.mc-insurance-hdr { height: 52px; background-color: #f7f7f7; padding: 20px 0 20px 20px; }
+.mc-insurance-hdr2 { background-color: #8fd8f7; padding: 20px 0 20px 20px; }
+.mc-insurance-hdr3 { background-color: #ff6666; padding: 20px 0 20px 20px; margin-top: 20px; }
+.mc-insurance-label { color: #103084; font-size: 17px; }
+.mc-insurance-label2 { color: #1b9bd7; font-size: 12px; }
+.mc-insurance-label3 { color: #FFFFFF; font-size: 12px; }
+.mc-insurance-counter { float: left; width: 74%; /*background-color: #F90;*/ text-align: center; margin: 11% 0 0% 5%; }
+.mc-insurance-number { font-size: 4em; color: #ffffff; font-weight: bold; }
+.mc-insurance-number2 { font-size: 3em; color: #5fbae6; font-weight: bold; padding-right: 50px; }
+.insurance-dollar { font-size: 15px !important; color: #ffffff; float: left; webkit-text-stroke: 0.35px }
+.txt-color { color: #103084 !important; }
+.txt-color-gray { color: #333333 !important; }
+.txt-color-blue { color: #1b9bd7; font-size: 49px; font-weight: bold; }
+.mc-counter-small { float: left; text-align: center; margin-top: 20px; }
+.mc-counter-small2 { float: left; text-align: center; margin-left: 50px; margin-top: 20px; }
+.arrow { padding: 13px 20px 0 0; }
+
+/*HR PAGE END ************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Smartphones (portrait) ----------- */
+/*@media only screen and (min-device-width:320px) and (max-device-width:480px){*/
+
+@media only screen
+  and (min-device-width: 320px)
+  and (max-device-width: 480px)
+  and (orientation: portrait) {
+
+
+/*MEDICLOUD LOGIN PAGE****************************************************************************************************************************************************************/
+
+/*new addition 06.04.2015*/
+.mc-mar-l { margin-left: 85px !important; }
+.terms_nav { /*background-color: #33f;*/ float: right; margin-right: 15%; margin-top: 1%; width: 100% !important; }
+.terms_nav ul { float: left; width: 100%; list-style: none; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 20px; }
+.terms_nav ul li a { width: auto; float: left; display: block; margin-top: 0px !important; padding: 5px 5px 5px 5px !important; font-size: 12px; color: #999999; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; list-style: none; margin-left: 5px; }
+.terms_nav ul li a:hover { float: left; display: block; margin-top: 0px !important; background-color: #128fc9; padding: 5px 5px 5px 5px !important; color: #fff; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; list-style: none; margin-left: 5px; }
+.selected_b { float: left; display: block; margin-top: 15px; background-color: #128fc9; padding: 15px 15px 15px 15px; color: #fff; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; list-style: none; margin-left: 5px; color: #ffffff; }
+.terms_container { width: 89% !important; margin-left: 8.5%; margin-top: 5%; font-size: 11px !important; }
+.terms_title { font-weight: bold; }
+.terms_nav { /*background-color: #33f;*/ float: right; margin-right: 15%; margin-top: 1%; width: 100% !important; }
+/*MEDICLOUD LOGIN PAGE END************************************************************************************************************************************************************/
+
+
+
+.mc-container .mc-background-effect .mc-logo-center { margin-left: auto; margin-right: auto; padding-bottom: 10px; padding-top: 180px; width: 175px; }
+/*.reset-wrapper { height: 50% !important; padding-bottom: 44% !important; background-color: grey; }
+.reset-container { margin-top: 20% !important; height: 40% !important; }
+.mc-footer { background-color: #1b9bd7; height: 90px; margin-top: 0px !important; padding-left: 2%; /* padding-top: 7%;*/
+/*width: 98% !important; }*/
+}
+
+
+
+
+
+
+
+
+
+
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
+/*MEDICLOUD CLINIC PAGE****************************************************************************************************************************************************************/
+.mc-label { font-size: 12px; padding-left: 25px; padding-top: 31px; color: #cccccc; }
+.mc-blancer { width: 900px; float: left; }
+.mc-mar-l { margin-left: 185px !important; }
+.mc-container .mc-background-color .mc-header { height: 103px; width: 100%; }
+.mc-container .mc-background-color .mc-header .mc-logo-container { padding: 30px 0px 32px 50px; }
+.mc-container .mc-background-color .mc-header .mc-main-menu { float: right; width: auto; padding-right: 5%; padding-top: 20px; width: 70%; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul { padding: 0px; margin: 0px; float: right; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li { float: left; display: inline-block; /*background-color:#30F;*/ padding-top: 30px; padding-left: 10px; padding-right: 10px; margin-right: 25px; font-size: 12px; color: #999999; cursor: pointer; }
+.mc-container .mc-background-color .mc-header .mc-btn-logout { height: 29px; width: 116px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: right; margin-top: 17px; cursor: pointer; font-size: 12px; }
+.mc-container .mc-background-color .mc-dr-selection-container { height: 60px; padding: 20px 51px 20px 85px; }
+.mc-container .mc-background-color .mc-dr-selection-container .icn-doctor { padding: 18px 15px 0px 0px; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select { background: transparent !important; background: none !important; background-position: 5% 50%; height: 61px; width: 367px; padding: 5px; font-size: 14px; line-height: 1; border: 0; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #bababa !important; padding-left: 12px; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box { height: 61px; width: 267px !important; overflow: hidden; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png); background-repeat: no-repeat; background-position: 95% 54%; border-radius: 3px 5px 5px 3px; padding-right: 7px; outline: none !important; line-height: 10px !important; /*background-position: 95% 50%;*/ background-color: #f7f7f7; color: #bababa !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select { padding-right: 0; vertical-align: bottom!important; text-align: left; height: auto; line-height: 1em; height: 61px; /*color:#bababa !important;*/ width: 108% !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; outline: none !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select option { padding-top: 5px; color: #bababa !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .mc-btn-add-doctor { height: 33px; width: 176px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: right; margin-top: 10px; cursor: pointer; font-size: 13px; }
+.mc-container .mc-background-color .mc-doctor-profile-container { width: 100%; padding-bottom: 20px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail { float: left; height: auto; width: 562px; padding: 20px 0 0 120px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-dr-profile-image { height: 110px; width: 110px; float: left; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; background-color: none!important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-dr-profile-image img { height: 110px; width: 110px; float: left; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; /*background-color: #C3C;*/ }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form { width: 376px !important; float: left; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form { margin: 0 0 0 5px; float: left; width: 390px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset { border: none !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset .mc-form-spacer input { background: transparent !important; height: 25px; width: 367px; font-size: 14px; line-height: 1; border: none; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #666666!important; padding-top: 20px }
+.inputshort { background: transparent !important; height: 25px; width: 267px !important; font-size: 14px; line-height: 1; border: none; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #666666!important; padding-top: 20px; float: left; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset .mc-btn-container { padding: 30px 0 0 0; }
+.mc-btn-save-changes { height: 33px; width: 176px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: left; margin-top: 10px; cursor: pointer; font-size: 13px; }
+.mc-btn-cancel { height: 33px; width: 60px; background-color: #fff; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #cccccc; float: left; margin-top: 10px; margin-left: 20px; cursor: pointer; font-size: 13px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl { height: auto; margin-bottom: 50px; width: 270px; margin-left: 0px !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl .mc-price-display { width: 231px; /*height:180px;*/ border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; background-color: #c8eafb; margin: 11px 0 0 0; text-align: center; font-size: 110px; color: #FFF; padding: 30px; float: left }
+.select-box select { background: transparent !important; background: none !important; background-position: 5% 50%; height: 61px; width: 367px; padding: 5px; font-size: 14px; line-height: 1; border: 0; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #666666!important; padding-left: 12px; }
+.select-box { height: 61px; width: 267px !important; overflow: hidden; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png); background-repeat: no-repeat; background-position: 95% 54%; border-radius: 3px 5px 5px 3px; padding-right: 7px; outline: none !important; line-height: 10px !important; /*background-position: 95% 50%;*/ background-color: #f7f7f7; color: #bababa !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.select-box select { padding-right: 0; vertical-align: bottom!important; text-align: left; height: auto; line-height: 1em; height: 61px; /*color:#bababa !important;*/ width: 107% !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; outline: none !important; }
+.select-box select option { padding-top: 5px; color: #bababa !important; }
+.mc-container .mc-background-color .mc-calendar { height: 70px; background-color: #c8eafb; padding: 0px 50px 0 100px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-color-box-blue { background-color: #1b9bd7; height: 23px; width: 23px; margin-top: 24px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-color-box-gray { background-color: #f4f4f4; height: 23px; width: 23px; margin-top: 24px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-date-toggle-container { height: 28px; width: 285px; margin-left: 9%; margin-top: 24px; }
+.mc-date-toggle-container .mc-arrow-white { padding-right: 21px; }
+.mc-date-toggle-container .mc-arrow-blue { padding-left: 23px; }
+.mc-date-toggle-container .mc-date-blue { padding-right: 18px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option { float: right; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .option { height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; color: #1b9bd7; font-size: 14px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .option:hover { height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 14px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .select { height: 32px; float: left; padding: 14px 24px 0 24px; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 14px; }
+.mc-bg-white .mc-container .mc-background-color .mc-doctor-profile-container .mc-calendar-view {/* background-color: #CCF;*/ height: 929px; width: auto; margin-bottom: 30px; }
+.mc-calendar-view .calendar-time { float: left; height: 929px; width: 96px; /*background-color: #FCF; */ }
+.calendar-time .mc-time { height: 20px; width: 95px; }
+.mc-calendar-view .mc-fl .mc-calendar-day { height: 75px; width: 100%; }
+.mc-calendar-day .mc-day { font-size: 14px; color: #cccccc; float: left; height: 35px; width: 128px; padding-top: 31px; text-align: center; }
+.mc-calendar-day .mc-day-selected { font-size: 14px; color: #00000 !important; float: left; height: 35px; width: 178px; padding-top: 31px; text-align: center; }
+.mc-calendar-view .mc-fl .mc-day-option-container { height: 73px; width: auto; padding-top: 5px; padding-bottom: 7px;/* background-color:#C3C;*/ }
+.mc-day-option-container .mc-day-block { /*background-color: #9CF;*/ height: 73px; width: 120px !important; margin-right: 10px; float: left }
+.mc-day-option-container .mc-day-block-last { /*background-color: #9CF;*/ height: 73px; width: 120px !important; float: left }
+.mc-day-block .mc-slot1 { height: 36px; width: 125px; margin-bottom: 1px; background-color: #1b9bd7; }
+.mc-day-block .mc-slot2 { height: 36px; width: 125px; background-color: #1b9bd7; }
+.mc-day-block-last .mc-slot1-last { height: 36px; width: 125px; margin-bottom: 1px; background-color: #1b9bd7; }
+.mc-day-block-last .mc-slot2-last { height: 36px; width: 125px; background-color: #1b9bd7; }
+.mc-footer { height: 90px; background-color: #1b9bd7; padding-left: 70px; padding-top: 40px; }
+.mc-social-icon { margin-right: 20px; }
+/*MEDICLOUD CLINIC PAGE END*************************************************************************************************************************************************************/
+
+
+
+
+}
+
+
+
+/*ipad orientation : portrait */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) {
+/*MEDICLOUD CLINIC PAGE****************************************************************************************************************************************************************/
+
+.mc-container .mc-background-color .mc-header { height: 103px; width: 100%; }
+.mc-container .mc-background-color .mc-header .mc-logo-container { padding: 30px 0px 32px 50px; }
+.mc-blancer { width: 715px; float: left; }
+.mc-calendar-day .mc-day { font-size: 14px; color: #cccccc; float: left; height: 35px; width: 102px !important; padding-top: 31px; text-align: center; }
+.mc-calendar-day .mc-day-selected { font-size: 14px; color: #00000 !important; float: left; height: 35px; width: 178px; padding-top: 31px; text-align: center; }
+.mc-container .mc-background-color .mc-header .mc-main-menu { float: right; width: auto; padding-right: 5%; padding-top: 20px; width: 58%; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul { padding: 0px; margin: 0px; float: right; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li { float: left; display: inline-block; /*background-color:#30F;*/ padding-top: 30px; padding-left: 10px; padding-right: 10px; margin-right: 25px; font-size: 12px; color: #999999; cursor: pointer; }
+.mc-container .mc-background-color .mc-header .mc-btn-logout { height: 29px; width: 116px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: right; margin-top: 17px; cursor: pointer; font-size: 12px; }
+.mc-container .mc-background-color .mc-dr-selection-container { height: 60px; padding: 20px 36px 20px 56px; }
+.mc-container .mc-background-color .mc-dr-selection-container .icn-doctor { padding: 18px 15px 0px 0px; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select { background: transparent !important; background: none !important; background-position: 5% 50%; height: 61px; width: 367px; padding: 5px; font-size: 14px; line-height: 1; border: 0; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #bababa !important; padding-left: 12px; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box { height: 61px; width: 245px !important; overflow: hidden; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png); background-repeat: no-repeat; background-position: 95% 54%; border-radius: 3px 5px 5px 3px; padding-right: 7px; outline: none !important; line-height: 10px !important; /*background-position: 95% 50%;*/ background-color: #f7f7f7; color: #bababa !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select { padding-right: 0; vertical-align: bottom!important; text-align: left; height: auto; line-height: 1em; height: 61px; /*color:#bababa !important;*/ width: 107% !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; outline: none !important; color: #bababa !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select option { padding-top: 5px; color: #bababa !important; }
+.mc-container .mc-background-color .mc-dr-selection-container .mc-btn-add-doctor { height: 33px; width: 176px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: right; margin-top: 10px; cursor: pointer; font-size: 13px; }
+.mc-container .mc-background-color .mc-doctor-profile-container { width: 100%; /*padding-bottom: 20px;*/ }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail { float: left; height: auto; width: 695px; padding: 20px 0 0 54px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-dr-profile-image { height: 125px; width: 125px; float: left; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; background-color: none !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form { width: 450px; float: left; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form { margin: 0 0 0 30px; float: left; width: 490px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset { border: none !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset .mc-form-spacer input { background: transparent !important; height: 25px; width: 367px; font-size: 14px; line-height: 1; border: none; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #666666!important; padding-top: 20px }
+.inputshort { background: transparent !important; height: 25px; width: 267px !important; font-size: 14px; line-height: 1; border: none; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #666666!important; padding-top: 20px; float: left; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form fieldset .mc-btn-container { padding: 30px 0 0 0; }
+.mc-btn-save-changes { height: 33px; width: 176px; background-color: #1b9bd7; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #fff; float: left; margin-top: 10px; cursor: pointer; font-size: 13px; }
+.mc-btn-cancel { height: 33px; width: 60px; background-color: #fff; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding-top: 12px; color: #cccccc; float: left; margin-top: 10px; margin-left: 20px; cursor: pointer; font-size: 13px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl { height: auto; margin-bottom: 50px; margin-left: 222px !important; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl .mc-price-display { width: 231px; /*height:180px;*/ border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; background-color: #c8eafb; margin: 11px 0 0 0; text-align: center; font-size: 110px; color: #FFF; padding: 30px; float: left }
+.select-box select { background: transparent !important; background: none !important; background-position: 5% 50%; height: 61px; width: 367px; padding: 5px; font-size: 14px; line-height: 1; border: 0; border-radius: 0; -webkit-appearance: none; outline: none !important; color: #bababa !important; padding-left: 12px; }
+.select-box { height: 61px; width: 367px !important; overflow: hidden; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png); background-repeat: no-repeat; background-position: 95% 54%; border-radius: 3px 5px 5px 3px; padding-right: 7px; outline: none !important; line-height: 10px !important; /*background-position: 95% 50%;*/ background-color: #f7f7f7; color: #bababa !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; }
+.select-box select { padding-right: 0; vertical-align: bottom!important; text-align: left; height: auto; line-height: 1em; height: 61px; color: #bababa !important; width: 107% !important; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; outline: none !important; }
+.select-box select option { padding-top: 5px; color: #bababa !important; }
+.mc-container .mc-background-color .mc-calendar { height: 70px; background-color: #c8eafb; padding: 0px 20px 0 20px !important; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-color-box-blue { background-color: #1b9bd7; height: 23px; width: 23px; margin-top: 24px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-color-box-gray { background-color: #f4f4f4; height: 23px; width: 23px; margin-top: 24px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-date-toggle-container { height: 28px; width: 285px; margin-left: 5%; margin-top: 24px; }
+.mc-date-toggle-container .mc-arrow-white { padding-right: 21px; }
+.mc-date-toggle-container .mc-arrow-blue { padding-left: 23px; }
+.mc-date-toggle-container .mc-date-blue { padding-right: 18px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option { float: right; padding-top: 5px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .option { font-size: 13px; height: 32px; float: left; padding: 11px 16px 0 16px !important; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; color: #1b9bd7; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .option:hover { height: 32px; float: left; padding: 11px 16px 0 16px !important; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 13px; }
+.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-calendar-option .select { height: 16px; float: left; padding: 11px 16px 016px !important; margin-top: 12px; border-radius: 11px !important; -webkit-border-radius: 11px !important; -moz-border-radius: 11px !important; background-color: #1b9bd7; color: #FFF; font-size: 13px; }
+.mc-bg-white .mc-container .mc-background-color .mc-doctor-profile-container .mc-calendar-view { /*background-color: #CCF; */ height: 929px; width: auto; margin-bottom: 30px; }
+.mc-calendar-view .calendar-time { float: left; height: 929px; width: 52px; /*background-color: #FCF;*/ }
+.calendar-time .mc-time { height: 20px; width: 52px; }
+.mc-calendar-view .mc-fl .mc-calendar-day { height: 75px; width: 100%; }
+.mc-calendar-day .mc-day { font-size: 12px; color: #cccccc; float: left; height: 35px; width: 178px; padding-top: 31px; text-align: center; }
+.mc-calendar-day .mc-day-selected { font-size: 14px; color: #00000; float: left; height: 35px; width: 178px; padding-top: 31px; text-align: center; }
+.mc-calendar-view .mc-fl .mc-day-option-container { height: 73px; width: auto; padding-top: 5px; padding-bottom: 7px;/* background-color:#C3C;*/ }
+.mc-day-option-container .mc-day-block { /*background-color: #9CF;*/ height: 73px; width: 13% !important; margin-right: 10px; float: left }
+.mc-day-option-container .mc-day-block-last { /*background-color: #9CF;*/ height: 73px; width: 13% !important; float: left }
+.mc-day-block .mc-slot1 { height: 36px; width: auto !important; margin-bottom: 1px; background-color: #1b9bd7; }
+.mc-day-block .mc-slot2 { height: 36px; width: auto !important; background-color: #1b9bd7; }
+.mc-day-block-last .mc-slot1-last { height: 36px; width: 100px !important; margin-bottom: 1px; background-color: #1b9bd7; }
+.mc-day-block-last .mc-slot2-last { height: 36px; width: 100px !important; background-color: #1b9bd7; }
+.mc-footer { height: 90px; background-color: #1b9bd7; padding-left: 70px; padding-top: 40px; }
+.mc-social-icon { margin-right: 20px; }
+/*MEDICLOUD CLINIC PAGE END*************************************************************************************************************************************************************/
+
+
+
+
+/*.slider1_container{ position: relative; top: 0px; left: 10px !important; width: 700px; height: 450px; overflow: hidden; }
+.slider-child{cursor: move; position: absolute; left: 0px;  top: 0px; width: 960px; height: 680px; overflow: hidden;}
+*/.jssora03r { right: 48px !important; }
+.event-container3 { width: 100%; }
+.time3 { color: #999999; font-size: 12px; height: 65px; margin-left: 16px; width: 70px; }
+.day-event-gray { background-color: #f4f4f4; height: 60px; margin-left: 5px; width: 295px; }
+.day-event-dblue { background-color: #1b9bd7; height: 60px; margin-left: 5px; width: 295px; }
+.day-event-white { background-color: #fff; height: 60px; margin-left: 5px; width: 295px; }
+.day-event-blue { background-color: #c8eafb; height: 60px; margin-left: 5px; width: 295px; }
+.mc-label11 { color: #cccccc; font-size: 30px; padding-left: 125px; padding-top: 31px; }
+day-container { float: left; width: 300px; }
+.day-display { float: left; padding: 30px 0 0; width: 48%; }
+.calendar-wrapper { margin-left: 120px; margin-top: 22.5%; }
+/*PAYMENT PAGE************************************************************************************************************/
+
+.mc-payment-pinkbar { background-color: #ffcccc; height: 87px; width: 100%; }
+.mc-white-flage { padding: 1.5% 0 0 4%; }
+.mc-payment-outstanding { float: left; width: auto; padding: 0 0 0 20px; }
+.mc-header-payment { color: #666666; font-size: 22px; padding: 18px 0 0 5px; letter-spacing: 1px; }
+.mc-payment-date { padding: 5px 0 0 6px; color: #666666; font-size: 14px; }
+.mc-outstanding { color: #8fd8f7; float: right; padding: 1% 5% 0 0; }
+.mc-outstanding-amount { color: #666666; float: left; font-size: 3em; }
+.mc-outstanding-amount div { font-size: 20px; vertical-align: 85px; font-size: 12px; float: left; color: #666666 !important; }
+.mc-label-dollar { float: left; color: #666666 !important; }
+.btn-close { padding: 18px 12px 0 35px; }
+.mc-outstanding-details { padding: 30px 80px 30px 55px; border-bottom: 1px solid #cccccc; }
+.mc-title-container { padding: 0 0 0 16px; }
+.mc-outstanding-title { color: 666666 !important; }
+.btn-payment { background-color: #5bbae7; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; color: #ffffff; padding: 14px 15px 15px 13px; }
+.mc-container .mc-background-color .mc-header .mc-btn-logout { background-color: #1b9bd7; border-radius: 10px; color: #fff; cursor: pointer; float: right; font-size: 12px; height: 15px; margin-top: 17px; padding-top: 12px; text-align: center; width: 75px; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li { color: #999999; cursor: pointer; display: inline-block; float: left; font-size: 12px; margin-right: 0px !important; padding-left: 10px; padding-right: 10px; padding-top: 16px; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li:hover { color: #ffffff; cursor: pointer; display: inline-block; float: left; font-size: 12px; margin-right: 0px !important; padding-left: 10px; padding-right: 10px; padding-top: 16px; /*background-color: #1b9bd7;*/ }
+.payment-input { background-color: #f0efef; border: medium none; border-radius: 10px; color: #bababa; font-size: 13px; height: 60px; padding-left: 17px; width: 115px; }
+/*PAYMENT PAGE************************************************************************************************************/
+
+
+
+
+
+
+
+
+btn-wrapper3 { background-color: #960; margin-left: auto; margin-right: auto; width: 100% !important; }
+}
+.time-slot { width: 14%; height: auto; margin-top: 10px; }
+.mart { margin-top: 8px; width: 182px; }
+.slot-wrapper2 { }
+.mc-label { width: 100px; float: right !important; padding-left: 50px; padding-top: 31px; }
+
+
+
+
+/*new date*/
+.ui-datepicker { display: none; padding: 0.2em 0.2em 0; width: 13em !important; }
+.ui-widget-content { background-color: #eee !important; border: 1px solid #aaaaaa; color: #222222; }
+.ui-datepicker table { border-collapse: collapse; font-size: 0.5em !important; }
+.ui-widget-header { background-color: #1b9bd7 !important; border: 1px solid #aaaaaa; color: #222222;/*font-weight: bold;*/ }
+.ui-datepicker .ui-datepicker-header { padding: 0.1em 0 !important; position: relative; }
+.ui-widget-header { color: #ffffff !important; font-size: 13px; font-weight: bold; }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background-image: none !important; border: 1px solid #cacaca !important; color: #999999 !important; font-weight: normal; }
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight { border: 1px solid #fcefa1; color: #ffffff !important; }
+h1 { font-size: 12px !important; color: #fff !important; font-family: 'sinkin_sans300_light' !important; }
+.blockUI { background: none !important; border: none!important; }
+.blockOverlay { background-color: #1b9bd7!important; background-image: url(https://medicloud.sg/medicloud_v2/public/assets/images/bg-effect.png) !important; }
+.error { font-size: 10px; color: #da0000; clear: both; /*font-family: 'sinkin_sans300_light' !important;*/ padding-left: 125px; }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: url("images/ui-bg_glass_100_f6f6f6_1x400.png") repeat-x scroll 50% 50% #f6f6f6; border: 1px solid #cccccc; color: #1c94c4; font-weight: normal !important; }
+
+
+/*****password reset*****/
+.reset-wrapper { height: 350px; padding: 50px; }
+.reset-wrapper2 { padding: 50px; }
+.reset-container { width: 600px; height: 85%; background-color: #c8eafb; margin: 0 auto 0 auto; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; }
+.reset-container-confirm { width: 600px; height: 352px; background-color: #c8eafb; margin: 0 auto 0 auto; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; padding-bottom: 30px; }
+.reset-title { padding-left: 30px; color: #666666 !important; padding-top: 40px; font-family: sinkin_sans300_light; }
+.reset-title-sub { color: #666666 !important; font-size: 11px; padding-left: 30px; font-family: 'sinkin_sans300_light'; }
+.reset-input { background-color: #f7f7f7 !important; border: medium none; border-radius: 0; color: #333333 !important; font-size: 14px; height: 60px; line-height: 1; outline: medium none !important; width: 347px; -moz-border-radius: 8px; -webkit-border-radius: 8px; border-radius: 8px; padding-top: 0px !important; padding-left: 20px; font-family: 'sinkin_sans300_light'; }
+.reset-input-wrapper { padding: 30px 0 0 30px; }
+.mc-btn-reset-changes { background-color: #1b9bd7; border-radius: 10px; color: #fff; cursor: pointer; float: left; font-size: 15px; margin-left: 30px; margin-top: 30px; text-align: center; padding: 15px 30px; margin-bottom: 30px; }
+.error-notification { text-align: center; color: #F00; width: 100%; height: 23px; padding-top: 8px; background-color: #FDD; -moz-border-radius: 0px 8px 0px 8px; -webkit-border-radius: 0px 8px 0px 8px; border-radius: 8px 8px 0px 0px; font-size: 11px; font-family: 'sinkin_sans300_light' !important; }
+.mc-price-display { font-family: 'Nunito', sans-serif; }
+/*.queue-check{  margin-top:17px; margin-bottom:15px;}
+.input-queue{ height:30px; width:96px; background-color: #ebebeb; -moz-border-radius: 4px  4px  4px  4px; -webkit-border-radius: 4px  4px  4px  4px; border-radius:  4px  4px  4px  4px; border:none; }
+.queue-input-container{ margin-bottom:6px; margin-left:25px;}
+.select-box-queue {
+   background-color: #f7f7f7;
+    background-image: url("http://localhost:81/medicloud_v2/public/assets/images/icn-down-arrow.png");
+    background-position: 95% 54%;
+    background-repeat: no-repeat;
+    border-radius: 5px !important;
+    color: #bababa !important;
+    height: 31px;
+    line-height: 10px !important;
+    outline: medium none !important;
+    overflow: hidden;
+    padding-right: 7px;
+    width: 91px !important;
+}
+
+.select-box-queue select {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0) !important;
+    border: 0 none;
+    border-radius: 0;
+    color: #bababa !important;
+    font-size: 14px;
+    height: 30px;
+    line-height: 1;
+    outline: medium none !important;
+    padding: 5px 5px 5px 12px;
+    width:120px;
+}
+
+.select-box-queue select option{  color:#bababa !important;}
+
+.appointments{ width:700px; background-color:#09F;}
+.time-width{ width: 90px !important;}
+.time-cal3{ width:680px;}
+.mc-mar-t0{ margin-top:0px !important;}*/
+.queue-check { margin-top: 17px; margin-bottom: 15px; }
+.input-queue { height: 30px; width: 90px; padding-left: 6px; background-color: #ebebeb; -moz-border-radius: 4px 4px 4px 4px; -webkit-border-radius: 4px 4px 4px 4px; border-radius: 4px 4px 4px 4px; border: none; color: #616465; font-size: 12px; }
+.queue-input-container { margin-bottom: 6px; margin-left: 25px; }
+
+
+/*BOOKING PAGE CSS*/
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form .form-booking { float: left; margin: 0 0 0 30px; width: 572px }
+.mc-mar-line { margin-bottom: 22px !important; margin-top: 11px !important; }
+.mc-blank { height: 100px; }
+.mc-btn-add-more { background-color: #1b9bd7; border-radius: 5px; color: #fff; cursor: pointer; float: left !important; font-size: 11px; height: 24px; margin-left: 25px; padding-top: 8px; text-align: center; width: 90px; cursor: pointer }
+.insu-check { margin-top: 10px; margin-bottom: 10px; }
+.time-container { margin-top: 15px; }
+.open-day { margin-right: 75px; margin-top: 3px; }
+.open-day-tuesday { margin-right: 73px; margin-top: 3px; }
+.open-day-wed { margin-right: 53px; margin-top: 3px; }
+.open-day-thu { margin-right: 68px; margin-top: 3px; }
+.open-day-fri { margin-right: 88px; margin-top: 3px; }
+.open-day-sat { margin-right: 68px; margin-top: 3px; }
+.open-day-sun { margin-right: 78px; margin-top: 3px; }
+.time-extended { margin-bottom: 10px; }
+.input-date { background-color: #f7f7f7; border: medium none; border-radius: 10px; color: #616465; font-size: 15px; height: 60px; padding-left: 17px; padding-right: 4px; width: 400px; }
+.mc-btn-booknow { background-color: #12d537; border-radius: 10px; color: #fff; cursor: pointer; font-size: 20px; height: 44px; margin: 30px 0 auto 31%; padding-top: 17px; text-align: center; width: 243px; }
+.mc-btn-booknow2 { background-color: #12d537; border-radius: 10px; color: #fff; cursor: pointer; font-size: 20px; height: 44px; padding-top: 20px; text-align: center; width: 243px; }
+.queue-title { color: #000000 !important; font-size: 12px; word-wrap: normal; margin-top: 10%; }
+.queue-number { color: #1b9bd7; font-family: "Nunito", sans-serif !important; font-size: 7em; }
+.queue-hours { color: #1b9bd7; font-family: "Nunito", sans-serif !important; font-size: 3em; }
+.queue-counter { float: left; margin-bottom: 9%; margin-left: 5%; margin-top: 2%; text-align: center; width: 600px; }
+.queue-counter2 { float: left; margin-bottom: 9%; margin-left: 5%; margin-top: 2%; text-align: center; width: 279px; }
+.appoint-counter { float: left; margin-bottom: 5%; margin-left: 5%; margin-top: 2%; text-align: center; width: 600px; }
+.mc-queue-container { width: 600px; }
+.queue-bar-container { margin-top: 23px; clear: both; }
+.queue-bar-blue { background-color: #c8eafb; border-left: 1px solid #95d3f0; cursor: pointer !important; height: 60px; margin-left: 80px; margin-bottom: 10px; width: 460px; }
+.mc-btn-stop { background-color: #ff0000; border-radius: 10px; color: #fff; cursor: pointer; font-size: 20px; height: 42px; margin: 30px auto 0 210px; padding-top: 14px; text-align: center; width: 243px; -webkit-font-smoothing: antialiased; }
+.queue-bar-lblue2 { background-color: #5bbae8; border-left: 1px solid #95d3f0; cursor: pointer !important; height: 60px; margin-left: 80px; margin-bottom: 10px; width: 460px; color: #ffffff !important; }
+.mc-btn-stop { background-color: #ff0000; border-radius: 10px; color: #fff; cursor: pointer; font-size: 20px; height: 42px; margin: 30px auto 0 180px; padding-top: 14px; text-align: center; width: 243px; -webkit-font-smoothing: antialiased; }
+.select-box-queue { background-color: #f7f7f7; background-image: url("https://medicloud.sg/medicloud_v2/public/assets/images/icn-down-arrow.png"); background-position: 95% 54%; background-repeat: no-repeat; border-radius: 5px !important; color: #bababa !important; height: 31px; line-height: 10px !important; outline: medium none !important; overflow: hidden; padding-right: 7px; width: 91px !important; }
+.select-box-queue select { background: none repeat scroll 0 0 rgba(241, 239, 239, 0) !important; border: 0 none; border-radius: 0; color: #bababa !important; font-size: 14px; height: 30px; line-height: 1; outline: medium none !important; padding: 5px 5px 5px 12px; width: 120px; }
+.select-box-queue select option { color: #bababa !important; }
+.appointments { width: 300px; margin-top: 21px; /*background-color:#09F;*/ }
+.time-width { width: 90px !important; }
+.time-cal3 { width: 680px; }
+.mc-mar-t0 { margin-top: 0px !important; }
+
+/*new addition***********************************************************************************************************************/
+.mc-shortform-container { width: 600px; }
+.short-img { border-radius: 8px; margin-bottom: 20px; margin-left: 120px; }
+.short-img img { width: 80px; height: 80px; border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; }
+.short-pd { padding: 0px 0px 10px 10px !important; }
+.short-pd2 { padding: 0px 0px 0px 10px !important; }
+.short-pd3 { padding: 10px 0px 0px 10px !important; }
+.mc-label10 { font-size: 12px; color: #000 !important; }
+.mc-label15 { font-size: 12px; padding-top: 5px; color: #666666 !important; -webkit-font-smoothing: antialiased; }
+.mc-label16 { font-size: 14px; padding-top: 5px; color: #000000 !important; -webkit-font-smoothing: antialiased; }
+.mc-label17 { font-size: 17px; padding-top: 5px; color: #000000 !important; -webkit-font-smoothing: antialiased; }
+.mc-mar-t4 { margin-top: 30px !important; }
+.mc-mar-ls { margin-left: 120px !important; }
+.mc-pad-r2 { padding-right: 10px !important; }
+.shortform-input { background-color: #f0efef; border: medium none; border-radius: 10px; color: #616465; font-size: 13px; height: 60px; padding-left: 17px; padding-right: 4px; width: 400px; }
+.shortform-fields { margin-bottom: 10px; width: 568px; }
+.amount-display { height: 60px; width: 418px; border-top: 1px solid #999; border-bottom: 1px solid #999; margin-left: 122px; margin-bottom: 28px; margin-top: 20px; }
+.mc-label17 { font-size: 40px; padding-top: 5px; color: #666666 !important; -webkit-font-smoothing: antialiased; font-family: 'Nunito', sans-serif; }
+.short-form-title { width: 110px; margin-right: 10px; padding-top: 16px; text-align: right; }
+
+
+/*template*/
+.main-left-container { width: 50%; height: 100%; height: 100vh; background-color: #06F; }
+.main-right-container { width: 50%; height: 100%; height: 100vh; background-color: #9C0; }
+/* new-addition-02-01-2015 */
+/*input[type=checkbox]:not(old),
+input[type=radio   ]:not(old){
+  width     : 2em;
+  margin    : 0;
+  padding   : 0;
+  font-size : 1em;
+  opacity   : 0;
+}
+
+input[type=checkbox]:not(old) + label,
+input[type=radio   ]:not(old) + label{
+  display      : inline-block;
+  margin-left  : -2em;
+  line-height  : 1.5em;
+}
+
+input[type=checkbox]:not(old) + label > span,
+input[type=radio   ]:not(old) + label > span{
+  display          : inline-block;
+  width            : 0.875em;
+  height           : 0.875em;
+  margin           : 0.25em 0.5em 0.25em 0.25em;
+  border           : 0.0625em solid rgb(192,192,192);
+  border-radius    : 0.25em;
+  background       : rgb(224,224,224);
+  background-image :    -moz-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image :     -ms-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image :      -o-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image : -webkit-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  background-image :         linear-gradient(rgb(240,240,240),rgb(224,224,224));
+  vertical-align   : bottom;
+}
+
+input[type=checkbox]:not(old):checked + label > span,
+input[type=radio   ]:not(old):checked + label > span{
+  background-image :    -moz-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image :     -ms-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image :      -o-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image : -webkit-linear-gradient(rgb(224,224,224),rgb(240,240,240));
+  background-image :         linear-gradient(rgb(224,224,224),rgb(240,240,240));
+}
+
+input[type=checkbox]:not(old):checked + label > span:before{
+  content     : '✓';
+  display     : block;
+  width       : 1em;
+  color       : rgb(153,204,102);
+  font-size   : 0.875em;
+  line-height : 1em;
+  text-align  : center;
+  text-shadow : 0 0 0.0714em rgb(115,153,77);
+  font-weight : bold;
+}
+
+input[type=radio]:not(old):checked +  label > span > span{
+  display          : block;
+  width            : 0.5em;
+  height           : 0.5em;
+  margin           : 0.125em;
+  border           : 0.0625em solid rgb(115,153,77);
+  border-radius    : 0.125em;
+  background       : rgb(153,204,102);
+  background-image :    -moz-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image :     -ms-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image :      -o-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image : -webkit-linear-gradient(rgb(179,217,140),rgb(153,204,102));
+  background-image :         linear-gradient(rgb(179,217,140),rgb(153,204,102));
+}
+*/
+
+
+/* new-addition-07-01-2015 */
+.queue-bar-gray { background-color: #f4f4f4; border-left: 1px solid #95d3f0; cursor: pointer !important; height: 60px; margin-left: 80px; margin-bottom: 10px; width: 460px; }
+.queue-bar-dblue { background-color: #1b9bd7; border-left: 1px solid #95d3f0; cursor: pointer !important; height: 60px; margin-left: 80px; margin-bottom: 10px; width: 460px; }
+.queue-bar-white { background-color: #ffffff; cursor: pointer !important; height: 60px; margin-left: 80px; margin-bottom: 10px; width: 460px; }
+.error-notification-b { text-align: center; color: #F00; width: 100%; height: 23px; padding-top: 8px; background-color: #FDD; font-size: 11px; font-family: 'sinkin_sans300_light' !important; }
+.error-notification-green { text-align: center; color: #F00; width: 100%; height: 23px; padding-top: 8px; background-color: #093; font-size: 11px; font-family: 'sinkin_sans300_light' !important; }
+.error-notification-green { text-align: center; color: #F00; width: 100%; height: 23px; padding-top: 8px; background-color: #093; font-size: 11px; font-family: 'sinkin_sans300_light' !important; }
+
+/* new-addition-13-01-2015 */
+/*following css is to remove the place holder values on click */
+input:focus::-webkit-input-placeholder {
+color:transparent;
+}
+input:focus:-moz-placeholder {
+color:transparent;
+} /* FF 4-18 */
+input:focus::-moz-placeholder {
+color:transparent;
+} /* FF 19+ */
+input:focus:-ms-input-placeholder {
+color:transparent;
+} /* IE 10+ */
+/* new-addition-14-01-2015 */
+.height120 { height: 120px; }
+.queue-hours { color: #1b9bd7; font-family: "Nunito", sans-serif !important; font-size: 2em; }
+.color-dash { color: #1b9bd7; }
+.mc-pad-t6 { padding-top: 17px !important; }
+.bg-color { background-color: #f7f7f7; }
+.bg-color-w { background-color: #ffffff !important; }
+.mar-top { margin-top: 21px !important; }
+.mar-top24 { margin-top: 24px !important; }
+.sp-padding { padding: 20px 74px 20px 57px !important; }
+/*site wide buttons*/
+.mc-btn-save-changes, .mc-btn-drkblue, .mc-btn-stop, .mc-btn-booknow2, .mc-btn-reset-changes, .mc-btn-lightblue { font-family: 'Montserrat', sans-serif; }
+.mc-btn-add-more { font-family: 'Oxygen', sans-serif; }
+.mc-btn-add-doctor, .counter-day, .mc-insurance-label, .insurance-dollar, .select { font-family: 'Montserrat', sans-serif; }
+.mc-price-display { font-family: 'Nunito', sans-serif; }
+/*new addition 09.02.2015*/
+.mc-done { background-color: #1b9bd7; width: 75px; height: 26px; text-align: center; padding-top: 5px; margin-top: 13px; margin-right: 20px; -moz-border-radius: 12px; -webkit-border-radius: 12px; border-radius: 12px; color: #fff; font-size: 13px; }
+.title { margin-top: 75px; margin-bottom: 20px; margin-left: 58px; font-size: 12px; color: #000; float: left; }
+.input-holder { margin-left: 58px; }
+.input-diagnose { width: 517px; height: 171px; font-size: 12px; }
+.diagnose-popwidth { width: 646px!important; height: 419px !important; max-width: none !important; margin-left: auto; margin-right: auto; }
+.mc-donebtn { width: 200px; }
+.label-short-error { margin-left: 200px; }
+/*new addition 06.04.2015*/
+.terms_nav { /*background-color: #33f;*/ float: right; margin-right: 5%; margin-top: 1%; width: 35%; }
+.terms_nav ul { float: left; width: 100%; list-style: none; margin-left: 30px; }
+.terms_nav ul li a { float: left; display: block; margin-top: 15px; padding: 15px 15px 15px 15px; color: #999999; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; list-style: none; margin-left: 10px; margin-right: 10px; }
+.terms_nav ul li a:hover { float: left; display: block; margin-top: 15px; background-color: #128fc9; padding: 15px 15px 15px 15px; color: #fff; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; list-style: none; margin-left: 10px; margin-right: 10px; }
+.selected_b { float: left; display: block; margin-top: 15px; background-color: #128fc9; padding: 15px 15px 15px 15px; color: #fff !important; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; list-style: none; margin-left: 10px; margin-right: 10px; }
+.terms_container { width: 60%; /*margin-left:8.5%; margin-top:5%;*/ margin: 4% auto 0% auto; font-size: 13px; color: #666666; line-height: 1.7; font-family: Georgia, serif; }
+.terms_title { font-weight: bold; color: #333333 !important; }
+/*dashboard 02 styles*/
+
+
+
+/*dashboard 02 styles web section*/
+.mc-date-filter { width: 100%; /*background-color:#0CF;*/ height: 150px; }
+.am-div { color: #1b9bd7; font-family: "Nunito", sans-serif !important; font-size: 3em; float: left!important; margin-top: 21px !important; }
+.queue-number { color: #1b9bd7; font-family: "Nunito", sans-serif !important; margin-left: 21% !important;/* margin-left: 36%;*/}
+.queue-number3 { color: #1b9bd7; font-family: "Nunito", sans-serif !important; margin-left: 32% !important; font-size: 7em; }
+.queue-number4 { color: #1b9bd7; font-family: "Nunito", sans-serif !important; margin-left: -5% !important; font-size: 7em; }
+.queue-number5 { color: #1b9bd7; font-family: "Nunito", sans-serif !important; margin-left: 0 !important; font-size: 7em; }
+/*.profile-image img { background-color: #36f !important;  border-radius: 11px !important; height: 30%; text-align: center; width: 40% !important;
+	margin-left:21%;}*/
+/*.profile-image img { background-color: #36f !important; border-radius: 11px !important; height: 30%;  margin-left: -8%; text-align: center;
+    width: 25% !important; }*/
+.profile-image img { /*background-color: #36f !important;*/border-radius: 11px !important; height: 30%; /* margin-left: 5%;*/text-align: center; width: 16% !important; }
+.dr-detail-container { margin-left: 25.5%; width: 50%; }
+.mar-top2 { margin-top: -10px; }
+.mar-top3 { margin-top: 23px; }
+.appointments { margin-top: 21px; width: 50%; }
+.appoint-counter { float: left; margin-bottom: 2.5%; margin-left: 5%; margin-top: 2%; text-align: center; width: 90%;/*background-color:red !important;*/
+}
+.page-number { width: 20%; margin: 34px auto 0 auto; }
+.page-number .number { border-radius: 10px; color: #00aeef; float: left; font-size: 14px; height: 25px; list-style: outside none none; margin-right: 2px; padding-top: 10px; text-align: center; text-decoration: none; width: 32px; }
+.page-number .number:hover { background-color: #00aeef; border-radius: 10px; color: #fff; float: left; font-size: 14px; height: 25px; list-style: outside none none; margin-right: 2px; padding-top: 10px; text-align: center; text-decoration: none; width: 32px; }
+.num-selected { background-color: #00aeef; border-radius: 10px; color: #fff !important; float: left; font-size: 14px; height: 30px; list-style: outside none none; margin-right: 2px; padding-top: 10px; text-align: center; text-decoration: none; width: 32px; }
+.mc-container .mc-background-color .mc-calendar3 { background-color: #c8eafb; border-radius: 8px !important; float: right; height: 26px; left: 20% !important; margin-right: 67px; margin-top: 10px; padding: 15px; width: 15%; }
+.mc-date-toggle-container3 { /* background-color: red;*/ height: 28px; width: 100%;}
+.mc-date-toggle-container3 { height: 28px;/*width: 285px;*/}
+.mc-label-date { color: #004e73; font-size: 11px; padding: 5px 10px 0 5px; }
+.calendar { background-color: #eee; border: 1px solid #ddd; border-radius: 4px; color: #333; font-family: "Trebuchet MS", Tahoma, Verdana, Arial, sans-serif; font-size: 0.9em; padding: 0.2em; width: 14em; left: 79.2% !important; }
+.width50 { width: 50% !important; }
+.width95 { width: 85% !important; }
+.mar-none { margin-bottom: 0 !important; }
+.mar-l { margin-left: 0% !important; }
+.mar-l2 { margin-left: 25.5% !important; }
+/*#ui-datepicker-div { top: 27% !important; left: 5% !important; }*/
+.input-d { background-color: #c8eafb; background-image: url("https://medicloud.sg/medicloud_v2/public/assets/images/date-arrow.png"); background-position: right center; background-repeat: no-repeat; border: medium none; float: left; font-size: 11px; padding: 7px; width: 80%; color: #004e73; }
+.day-display { float: left; padding-top: 0 !important; width: auto !important; }
+.btn-wrapper2 { margin-left: 28%; }
+
+
+
+/*dashboard 02 styles responsive section ipad*/
+.margine-control-ld { margin-left: 38%; }
+
+
+/*new addition 14 july 2015 */
+.btn-wrapper2 { margin-left: 21%; }
+.mc-btn-booknow3 { background-color: #12d537; border-radius: 10px; color: #fff; cursor: pointer; font-size: 15px; height: 35px; margin: 34px auto 0 auto; padding-top: 13px; text-align: center; width: 188px; font-family: 'Montserrat', sans-serif; }
+/*.mc-btn-booknow5 {background-color: #12d537;  border-radius: 10px; color: #fff; cursor: pointer;  font-size: 15px; height: 35px;  margin: 0px auto;
+    padding-top: 13px; text-align: center; width: 188px; }
+*/
+.mc-btn-stop2 { background-color: #ff0000; border-radius: 10px; color: #fff; cursor: pointer; font-size: 15px; height: 35px; margin: 34px auto 0 10px; padding-top: 13px; text-align: center; width: 188px; font-family: 'Montserrat', sans-serif; }
+.mc-btn-stop5 { background-color: red; border-radius: 10px; color: white; cursor: pointer; font-size: 15px; height: 35px; margin: 34px auto 0 99px; padding-top: 13px; text-align: center; width: 188px; font-family: 'Montserrat', sans-serif; }
+.que-section { clear: both; margin-top: 30px; width: 100%; /*background-color:#99F;*/}
+.mrl14 { margin-left: 14% !important; }
+.mrl26 { margin-left: 31% !important; }
+.mrl21 { margin-left: 21% !important; }
+.wd75 { width: 73% !important; }
+.mt5 { margin-top: 5% !important; }
+.event-container4 { padding-right: 20% /* background-color:#FCF;*/ }
+.gobal-mart { margin-top: 8%; }
+
+
+/*All margin control reset*/
+.gobal-marl { margin-left: 36%; }
+.gobal-marl { margin-left: 36%; }
+.global-marl18 { margin-left: 18%; }
+.gobal-mart { margin-top: 4%; }
+/*End all margin control reset*/
+
+
+
+
+
+
+
+/******DOCTOR PAGE ALIGNMENT CONTROL************/
+
+#datepick2 { left: 3% !important; top: 74% !important; }
+.queue-number-dr { color: #1b9bd7; font-family: "Nunito", sans-serif !important; font-size: 8em; }
+.mc-btn-stop6 { background-color: #ff0000; border-radius: 10px; color: #fff; cursor: pointer; font-size: 20px; height: 42px; margin: 31px auto 0 216px; padding-top: 14px; text-align: center; width: 243px; }
+.queue-counter-dr { float: left; margin-bottom: 9%; margin-left: 5%; margin-top: 4%; text-align: center; width: 600px; }
+
+
+/*updated 04 AUG 2015*/
+.btn-margin { margin-left: 17%; }
+.btn-margin2 { margin-left: 15%; }
+.btn-wrapper4 { margin-left: auto; /*margin-right: auto;*/
+text-align: center; width: 60%; }
+.mc-btn-booknow7 { background-color: #12d537; border-radius: 10px; color: #fff; cursor: pointer; font-size: 15px; height: 35px; margin: 34px 20px 0 auto; padding-top: 13px; text-align: center; width: 188px; font-family: 'Montserrat', sans-serif; }
+.mc-calendar4 { background-color: #c8eafb; border-radius: 8px !important; float: left; height: 26px; left: 20% !important; margin-left: 67px; margin-top: 10px; padding: 15px; width: 15%; margin-bottom: 5%; }
+.no-width { width: none !important; }
+.margin-control-new { margin-left: 4% !important; }
+/*.page-number2 { width: auto;  margin: 34px 5% 0 auto;   }
+.page-number2 a { width: 20px; padding:5px; }
+.page-number2 a:hover { width: auto; padding:5px;  background-color: #00aeef;  border-radius: 10px;  color: #fff; }
+*/
+.page-number2 { width: 20%; margin: 34px auto 0 auto; }
+.page-number2 .number { border-radius: 10px; color: #00aeef; float: left; font-size: 14px; /* height: 25px;*/
+list-style: outside none none; margin-right: 2px; padding-top: 10px; text-align: center; text-decoration: none; width: 32px; }
+.page-number2 .number:hover { background-color: #00aeef; border-radius: 10px; color: #fff; float: left; font-size: 14px; /* height: 25px;*/
+list-style: outside none none; margin-right: 2px; padding-top: 10px; text-align: center; text-decoration: none; width: 32px; }
+.num-selected { background-color: #00aeef; border-radius: 10px; color: #fff !important; float: left; font-size: 14px; /* height: 30px;*/
+list-style: outside none none; margin-right: 2px; padding-top: 10px; text-align: center; text-decoration: none; width: 32px; }
+/*end updated 04 AUG 2015*/
+
+
+
+
+/*updated 05 AUG 2015*/
+.empty-label-slot { font-size: 1.5em; color: #1b9bd7; font-family: "Nunito", sans-serif !important; padding-left: 2%; text-align: center; padding-top: 7.7%; ; }
+.empty-label-q { font-size: 1.5em; color: #1b9bd7; font-family: "Nunito", sans-serif !important; padding-left: 2%; text-align: center; width: 94%; padding-top: 5%; }
+.queue-number-stopped { color: #1b9bd7; font-family: "Nunito", sans-serif !important; font-size: 3em; margin-left: 36% !important; }
+/*end updated 05 AUG 2015*/
+
+
+/*new addition to be cleaned*/
+
+.btn-wrapper3 { margin-left: auto; margin-right: auto; width: 60%;/* background-color:#960;*/ text-align: center; }
+.btn-wrapper { margin-left: 22%; }
+
+
+/*NEW CSS*/
+
+/*--------------HEADER NAV----------------*/
+
+li.dropdown > a{
+	padding: 15px 30px;
+}
+
+.admin-nav-custom li.dropdown > a:hover{
+	background-color: #508DC1 !important;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    border-top: 1px solid #FFF;
+    height: auto;
+    background-color: #1667AC;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    transition: all .5s ease-in-out 1s;
+    padding: 0;
+}
+
+.dropdown-content li a {
+    color: #DDD !important;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content li a:hover,
+.dropdown-content li.active a {
+    color: #FFF !important;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    transition: all .5s ease-in-out 1s;
+}
+
+
+/*----------------------------------------*/
+
+
+.custom-block-section{
+  padding: 20px 20px !important;
+  margin: 0px 8%;
+  margin-bottom: 20px;
+  border: 1px solid #E5E5E5;
+  border-radius: 10px;
+}
+
+
+.admin-navbar{
+	background: #1667AC;
+    border: 1px solid #FFF !important;
+    border-radius: 3px !important; 
+}
+
+.admin-navbar a,
+.admin-navbar li{
+    color: #FFF;
+}
+
+.admin-navbar .nav > li > a:hover, 
+.admin-navbar .nav > li > a:focus {
+    text-decoration: none;
+    background-color: transparent !important;
+    color: #f5f5f5;
+
+}
+
+.admin-navbar li.active > a {
+    background: #508DC1 !important;
+}
+
+.dataTables_wrapper thead tr th,
+.dataTables_wrapper tbody tr td{
+	font-size: 12px;
+}
+
+.corporate-content-wrapper,
+.creditTopUp-content-wrapper{
+	padding: 20px 30px 30px 30px!important;
+	border: 1px solid #E5E5E5;
+  	border-radius: 10px;
+    width: 82.33333333% !important;
+}
+
+.corporate-form .form-group{
+	width: 40%;
+	margin: 10px 0;
+	display: block !important;
+}
+
+.manualTopUp-form .form-group{
+	width: 100%;
+	margin: 10px 0;
+	display: block !important;
+}
+
+.corporate-form .form-group label:nth-child(1),
+.manualTopUp-form .form-group label:nth-child(1){
+	width: 120px;
+}
+
+.custom-content-title{
+	background: #508DC1;
+    color: #FFF;
+    padding: 10px 0;
+}
+
+.custom-content-title.one{
+	border-radius: 6px 0 0 6px;
+	border-right: 1px solid #EEE;
+	margin-bottom: 30px;
+}
+
+.custom-content-title.two{
+	border-radius: 0px 6px 6px 0px;
+	border-left: 1px solid #EEE;
+	margin-bottom: 10px;
+}
+
+
+
+.table-creditTopUp thead tr th,
+.table-creditTopUp tbody tr td{
+	font-size: 11px;
+}
+
+.corporate-list thead tr th,
+.corporate-list tbody tr td{
+	font-size: 12px;
+}
+
+.table-creditTopUp tbody button.btn{
+    padding: 2px 6px;
+    font-size: 11px;
+}
+
+.corporate-list tbody button.btn{
+    padding: 3px 8px;
+}
+
+.nav-corporate li a{
+	color: #333 !important;
+}
+
+.nav-corporate li.active a{
+	color: #FFF !important;
+}
+
+.activate-profile-wrapper{
+	margin: 5% auto;
+    width: 600px;
+	background: #FFFFFF;
+	/*border: 1px solid #000;*/
+	box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+
+.activate-profile-wrapper .header{
+	background: #114158;
+	padding: 15px 20px;
+}
+
+.activate-profile-wrapper .body{
+	background: #FFF;
+	padding: 10px 20px;
+}
+
+.activate-profile-wrapper .body form{
+	border-bottom:1px solid #afafaf;
+	padding: 30px 0;
+	padding-top: 10px;
+}
+
+.activate-profile-wrapper .body form .form-group{
+	margin: 10px 0;
+	width: 100%;
+}
+
+.activate-profile-wrapper .body form .form-group label{
+    width: 21%;
+    display: inline-block;
+    text-align: right;
+    font-weight: 500;
+    font-size: 12px;
+    padding-right: 25px;
+}
+
+.activate-profile-wrapper .body form .form-group input{
+	width: 70%;
+    display: inline-block;
+    height: 40px !important;
+    margin-left: 10px;
+    border: 1px solid #929292 !important;
+}
+
+.activate-profile-wrapper .body form .form-group .phone-country{
+	width: 20%;
+    float: none;
+    font-size: 12px;
+    display: inline-block;
+    padding: 0;
+    position: relative;
+	top: -1px;
+}
+
+.activate-profile-wrapper .body form .form-group .phone-country input{
+	width: 90%;
+	text-align: left;
+}
+
+.activate-profile-wrapper .body form .form-group .phone-country ul{
+	margin-left: 10px; 
+	width: 270px; 
+	max-height: 180px; 
+	overflow-y: auto; 
+	overflow-x: hidden;
+}
+
+.activate-profile-wrapper .body form .form-group input.phone-number{
+	width: 47.5%;
+	margin-left: 20px;
+}
+
+.activate-profile-wrapper .footer{
+	padding: 10px 20px;
+	padding-bottom: 20px;
+	text-align: right;
+}
+
+.btn-activate-profile{
+    height: 20px;
+    border-radius: 5px;
+    background-color: #1b9bd7;
+    color: #fff !important;
+    padding: 16px 30px;
+    line-height: 0;
+    font-family: "Montserrat";
+    font-size: 1em;
+}
+
+
+@media only screen and (max-width:1380px){
+  #download-results-area,
+  #results-area{
+    padding: 0 20px;
+    font-size: 12px;
+  }
+}
+
+/*-------Admin transac history-----------*/
+
+.admin-transac-history{
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 75px;
+    font-family: 'Open Sans' !important;
+    padding: 20px;
+    border: 1px solid #CCC;
+    border-radius: 6px;
+    /*overflow: hidden;*/
+    margin-bottom: 50px;
+    min-height: 500px;
+}
+
+.admin-transac-history .search-terms{
+    width: auto;
+    border-radius: 4px;
+    /*height: 20px;*/
+    padding: 7px;
+    background: #FFF;
+    border: 1px solid #D3D3D3;
+    position: relative;
+    top: 4px;
+}
+
+.admin-transac-history .btn{
+    position: relative;
+    top: 3px;
+    font-size: 13px;
+    /*height: 12px;*/
+    line-height: 1;
+    padding: 10px 25px;
+    /*background-color: #FFF;*/
+    border: 1px solid #D3D3D3;
+    margin-left: 350px;
+    /*margin-left: 230px;*/
+}
+
+.admin-transac-history .table-history th,
+.admin-transac-history .table-history td{
+    text-align: center;
+}
+
+.admin-transac-history .history-table-wrapper{
+    overflow-x: auto;
+    overflow-y: hidden;
+    height:auto;
+    width: 2100px;
+}
+
+.admin-transac-history .history-table-wrapper table.table-history {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width:100%;
+}
+
+.admin-transac-history .history-table-wrapper .table-history thead{
+    flex: 0 0 auto;
+    width: calc(100% - 0.9em);
+    display: table;
+    table-layout: fixed;
+}
+
+.admin-transac-history .history-table-wrapper .table-history th{
+    font-size: 12px;
+    font-family: 'Montserrat';
+}
+
+.admin-transac-history .history-table-wrapper .table-history th,
+.admin-transac-history .history-table-wrapper .table-history td{
+    text-align: center;
+}
+
+.admin-transac-history .history-table-wrapper .table-history tbody{
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+
+.admin-transac-history .history-table-wrapper .table-history tbody tr{
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+}
+
+/*CALENDAR*/
+
+.history-range-wrapper{
+    box-shadow: 1px 1px 10px #444;
+    width: 390px !important;
+    padding: 15px 0;
+    padding-top: 30px;
+    background: #FFF;
+    position: absolute;
+    top: 65px;
+    left: 120px ;
+    border-radius: 2px;
+    display: none;
+    background: #F4F4F4;
+    z-index: 10;
+}
+
+.history-range-wrapper .ui-state-default, 
+.history-range-wrapper .ui-widget-content .ui-state-default, 
+.history-range-wrapper .ui-widget-header .ui-state-default {
+    top: 0px !important;
+}
+
+.history-range-wrapper .ui-widget-header {
+    font-size: 14px !important;
+}
+
+
+
+.history-range-wrapper .ui-datepicker th ,
+.ui-datepicker td {
+    font-size: 10px;
+    text-align: right;
+}
+
+.history-range-wrapper .ui-datepicker .ui-datepicker-prev span, 
+.history-range-wrapper .ui-datepicker .ui-datepicker-next span {
+    top: 30%;
+}
+
+
+.summary-datepicker-wrapper .ui-widget-content{
+    margin: 10px;
+}
+
+.ui-datepicker-multi-2 .ui-datepicker-group {
+    width: 50% !important;
+}
+
+.ui-datepicker.ui-datepicker-multi {
+    width: auto !important;
+}
+
+.history-range-wrapper input {
+    width: 25%;
+    padding: 2%;
+    border: 1px solid #999;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: #FFF;
+}
+
+
+#summary-datepicker th ,
+.history-range-wrapper th {
+    text-align: center !important;
+}
+
+#summary-datepicker td a,
+.history-range-wrapper td a {
+    width: 32px;
+}
+
+#summary-datepicker .ui-datepicker-hover a ,
+.history-range-wrapper .ui-datepicker-hover a {
+    color: white !important;
+    background: #1b9bd7 none repeat scroll 0 0 !important;
+    border-radius: 4px !important;
+    width: 32px;
+}
+
+#summary-datepicker .ui-datepicker-select a ,
+.history-range-wrapper .ui-datepicker-select a {
+    color: white !important;
+    background: #1b9bd7 none repeat scroll 0 0 !important;
+    border-radius: 4px !important;
+    width: 32px;
+}
+
+.blockUI-hide .blockOverlay {
+    background-color: #FFF !important;
+    background-image: none;
+}
+
+.blockUI-hide .blockMsg h1{
+    padding: 40px;
+    border: 1px solid #999;
+    border-radius: 5px;
+}
+
+.blockUI-hide .blockMsg h1{
+    color: #000 !important;
+    font-family: 'Open Sans' !important;
+    font-size: 15px !important;
+}
+/*-----------------------------------*/
+
+
+
+
+/* CUSTOM CSS */
+
+
+.text-right{
+	text-align: right;
+}
+
+.text-center{
+	text-align: center;
+}
+
+.margin-center{
+	margin: 0 auto;
+}
+
+.img-40{
+	width: 40%;
+}
+
+
+.no-padding{
+  padding: 0 !important;
+}
+
+.no-side-padding{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.white-space-5{
+  height: 5px;
+}
+
+.white-space-20{
+  height: 20px;
+}
+
+
+
+
+
+/*browser hack for chrome*/
+
+/**
+ * This hack targets the Webkit browser engine
+ * which includes Safari and Chrome.
+ */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+.ui-datepicker { display: none; padding: 0.2em 0.2em 0; width: 9em !important; }
+.ui-datepicker table { border-collapse: collapse; font-size: 0.4em !important; }
+/*#ui-datepicker-div { left: 5% !important; top: 23% !important; }*/
+.mc-btn-stop2 { background-color: red; border-radius: 10px; color: white; cursor: pointer; font-size: 15px; height: 35px; margin: 34px auto 0 9px; padding-top: 13px; text-align: center; width: 188px; font-family: 'Montserrat', sans-serif; }
+.mc-btn-stop5 { background-color: red; border-radius: 10px; color: white; cursor: pointer; font-size: 15px; height: 35px; margin: 34px auto 0 111px; padding-top: 13px; text-align: center; width: 188px; font-family: 'Montserrat', sans-serif; }
+.mc-calendar-space-none { width: 113px; }
+.mc-label2 { font-size: 12px; padding-left: 10px; color: #666666; padding-top: 26px; width: 79px; float: left; }
+.mc-calendar-space { padding-left: 20px; width: 113px; }
+
+
+
+ /* Safari only override */
+::i-block-chrome, 
+/*#ui-datepicker-div { left: 79% !important; top: 20% !important;}*/
+::i-block-chrome, .mc-btn-stop2 { background-color: red; border-radius: 10px; color: white; cursor: pointer; font-size: 15px; height: 35px;
+margin: 32px auto 0 105px; padding-top: 13px; text-align: center; width: 188px; font-family: 'Montserrat', sans-serif;}
+.gobal-mart { margin-top: 14%; }
+.mc-btn-stop6 { background-color: #ff0000; border-radius: 10px; color: #fff; cursor: pointer; font-size: 20px; height: 42px; margin: 31px auto 0 216px; padding-top: 14px; text-align: center; width: 243px; }
+.mc-label { color: #cccccc; font-size: 12px; padding-left: 120px !important; padding-top: 18px !important; width: 50px !important; }
+.mc-fl { float: left !important; }
+.ui-datepicker { display: none; padding: 0.2em 0.2em 0; width: 17em !important; }
+.ui-datepicker td span, .ui-datepicker td a { padding: 0.5em !important; }
+.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1.5em !important; }
+.ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { background: none repeat scroll 0 0 #c8eafb !important; border: 1px solid #fbd850; color: #fff !important;/*font-weight: bold;*/ }
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: none !important; text-align: center !important; color: #999999 !important; }
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight { background: none repeat scroll 0 0 #1b9bd7 !important; border: 1px solid #fed22f; color: #fff !important; }
+.mc-container .mc-background-effect .mc-logo-center { margin-left: auto; margin-right: auto; padding-bottom: 10px; padding-top: 61px; width: 175px; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg div input { background-color: #f0efef; border: medium none; border-radius: 10px; color: #bababa; font-size: 15px; height: 60px; padding-left: 17px; width: 400px; }
+.profile-image img { /*background-color: #36f !important;*/ border-radius: 11px !important; text-align: center; width: 170px; height: 160px; }
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl .mc-price-display { background-color: #c8eafb; background-image: url("images/dollar-sign.png"); background-position: 227px 21px; background-repeat: no-repeat; border: medium none !important; border-radius: 10px; color: #fff; float: left; font-size: 110px; margin: 11px 0 0; padding: 5px 30px 5px 20px; text-align: center !important; width: 231px; outline: none; }
+.mc-price-display { font-family: "Nunito", sans-serif; }
+.mc-price-display::-webkit-input-placeholder { color: white; vertical-align:central;}
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .forgot { background-color: #c8eafb; margin: 20px 0px 0px 32px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding: 20px 66px; color: #5bbae7; cursor: pointer }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg .login { background-color: #1b9bd7; margin: 20px 0px 0px 30px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; text-align: center; padding: 20px 70px; color: #FFFFFF; cursor: pointer !important; }
+input { outline: none; }
+.input-hidden { background-color: transparent !important;
+background-image: url("https://medicloud.sg/medicloud_v2/public/assets/images/icn-date-blue.png"); border: medium none !important; color: transparent !important; cursor: pointer; height: 25px !important; width: 26px; }
+/* new-addition-12-01-2015 */
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select option { color: #bababa !important; padding-top: 5px; background-color: #f7f7f7!important; height: 20px; padding: 10px 0 0 10px !important; }
+/* new-addition-13-01-2015 */
+.mc-btn-add-more { background-color: #1b9bd7; border-radius: 5px; color: #fff; cursor: pointer; float: left !important; font-size: 11px; height: 20px; margin-left: 25px; padding-top: 8px; text-align: center; width: 90px; cursor: pointer }
+.mc-container .mc-background-color .mc-dr-selection-container .select-box select option { color: #bababa !important; padding: 20px; }
+.mc-container .mc-background-effect .mc-login-form-container form fieldset .mc-form-bg div input { background-color: #f0efef !important; border: medium none; border-radius: 10px; color: #bababa; font-size: 13px; height: 60px; padding-left: 17px; padding-right: 4px; width: 400px; }
+.mc-counter-small2 { float: left; margin-left: 30px; margin-top: 20px; text-align: center; }
+.terms_nav { /*background-color: #33f;*/ float: right; margin-right: 15%; margin-top: 1%; width: 100% !important; }
+.calendar-wrapper { margin-left: 12% !important; margin-top: 10%; }
+/*#ui-datepicker-div { left: 76% !important; top: 27% !important; }*/
+}
+
+
+/*pagination*/
+.pagination > li > li
+{
+	display: inline;
+}
+.pagination > li > li > a:hover, .pagination > li > li > span:hover, .pagination > li > li > a:focus, .pagination > li > li > span:focus
+{
+	z-index: 2;
+    color: #23527c;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.pagination > li > li > a, .pagination > li > li > span {
+    position: relative;
+    float: left;
+    padding: 6px 12px;
+    margin-left: -1px;
+    line-height: 1.42857143;
+    color: #337ab7;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.paginate-active
+{
+	background: #1667AC!important;
+    color: white!important;
+}

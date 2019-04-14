@@ -1,0 +1,400 @@
+<div class="main-container" style="background: #EFEEF4;" eclaim-submit-directive>
+
+  <div id="white-nav" ui-view="navigation" style=""></div>
+
+	<div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1">
+		<div class="md-padding-left-20">
+			<div class="white-space-50"></div>
+			<h4 class="color-black2 weight-700">Submit an Out-of-Network Claim</h4>
+			<div class="white-space-10"></div>
+			<p class="color-gray font-13 weight-700">If you went to an out-of-network service that are covered by your company, you may submit a clam here and get reimbursed.</p>
+			<div class="white-space-30"></div>
+		</div>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1">
+		<div class="col-xs-12 col-sm-6 col-md-6 no-padding-left xss-no-padding">
+			<div class="eclaim-left-container">
+
+				<div id="xs-step-container" class="xs-show2">
+					<div class="col-xs-12 col-sm-12 col-md-12 text-center">
+						<div class="white-space-10"></div>
+						<p ng-if="step_active == 1" class="color-gray weight-700">STEP 1 : Enter Claim Details</p>
+						<p ng-if="step_active == 2" class="color-gray weight-700">STEP 2 : Receipt Verification</p>
+						<p ng-if="step_active == 3" class="color-gray weight-700">STEP 3 : Claim Submitted</p>
+						<div class="white-space-30"></div>
+					</div>
+				</div>
+
+				<div id="eclaim-form" ng-if="step_active == 1">
+					<form class="form-inline">
+						<div class="form-group col-md-12 ">
+					    <label>Spending Account<span>*</span></label>
+					    <div class="input-wrapper">
+				    		<button ng-click="setSpendingType(0)" ng-class="{'active' : spendingTypeOpt == 0}" class="btn btn-default btn-medical" style="margin-right: 5px;">Medical</button>
+				    		<button ng-click="setSpendingType(1)" ng-class="{'active' : spendingTypeOpt == 1}" class="btn btn-default btn-wellness">Wellness</button>
+					    </div>
+					  </div>
+					  <div class="form-group col-md-12 claim-type-form">
+					    <label>Claim Type<span>*</span></label>
+					    <div class="input-wrapper">
+						    <div class="btn-group " style="width: 100%">
+								  <button type="button" class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;height: 34px">
+								  	<span class="claim-type-name" ng-bind="eclaim.service_selected">General Practice</span>
+								    <span class="caret" style="position: absolute;top: 15px;right: 10px;"></span>
+								  </button>
+								  <ul class="dropdown-menu medical-drop">
+								    <li ng-repeat="list in claim_type_arr"><a href="javascript:void(0)" ng-click="selectClaimType(list.name)" ng-bind="list.name"></a></li>
+								  </ul>
+								</div>
+							</div>
+					  </div>
+					  <div class="form-group col-md-12">
+					    <label>Provider<span>*</span></label>
+					    <div class="input-wrapper">
+					    	<input type="text" class="form-control" style="width: 100%" placeholder="Mednefits Pte Ltd" ng-model="eclaim.merchant">
+					    </div>
+					  </div>
+					  <div class="form-group col-md-12 visit-date-form" >
+					    <label>Visit Date<span>*</span></label>
+					    <div class="input-wrapper">
+	              <div class="input-group date" style="width: 100%;">
+								  <input id="visitDateInput" type="text" class="form-control eclaim-date-picker" placeholder="Date" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.visit_date">
+								  <span class="input-group-addon" id="sizing-addon2">
+								  	<img src="../assets/e-claim/img/new-assets/Submit-E-Claim---Visit-Date.png" style="width: 18px;">
+								  </span>
+								</div>
+							</div>
+            </div>
+					  <div class="form-group col-md-12 visit-time-form">
+					    <label>Visit Time</label>
+					    <div class="input-wrapper">
+						    <div class="input-group date" style="width: 100%;">
+								  <span class="input-group-addon" id="sizing-addon2">
+								  	<img src="../assets/e-claim/img/new-assets/Submit-E-Claim---Visit-Time.png" style="width: 18px;">
+								  </span>
+
+								  <input valid-time id="visitTimeInput" ng-disabled="!eclaim.visit_date" type="text" class="form-control eclaim-date-picker" aria-describedby="sizing-addon2" style="border-right: none;padding: 6px 8px;" ng-model="eclaim.visit_time" ng-blur="visitTimeChanged( eclaim.visit_time )" ng-focus="hideVisitTime()">
+
+								  <span class="input-group-addon visit-time-drop-btn" ng-click="showVisitTime( )">
+								  	<i class="fa fa-caret-down"></i>
+								  </span>
+
+								  <span class="input-group-addon daytime-drop">
+								    <span ng-bind="eclaim.selectedDayTime"></span>
+							    	<span class="caret" style="border-width: 6px;display: block;position: relative;top: 5px;left: 1px;"></span>
+									  <ul class="dropdown-menu">
+									    <li><a href="javascript:void(0)" ng-click="selectDayTime('AM')">AM</a></li>
+									    <li><a href="javascript:void(0)" ng-click="selectDayTime('PM')">PM</a></li>
+									  </ul>
+								  </span>
+
+								  <div class="time-select-container" tabindex="-1" ng-blur="hideVisitTime()">
+								  	<div class="arrow-up-wrapper">
+								  		<div class="display-flex">
+									  		<div class="hour-arrow" ng-click="addHour($event)">
+									  			<a href="javascript:void(0)" ><i class="fa fa-chevron-up"></i></a>
+									  		</div>
+									  		<div class="minute-arrow" ng-click="addMinute()">
+									  			<a href="javascript:void(0)" ><i class="fa fa-chevron-up"></i></a>
+									  		</div>
+								  		</div>
+								  	</div>
+								  	<div class="time-wrapper">
+								  		<div class="display-flex">
+									  		<div class="hour-time">
+									  			<span ng-if="selected_hour < 10">0</span><span ng-bind="selected_hour">01</span>
+									  		</div>
+									  		<div class="separate">
+									  			:
+									  		</div>
+									  		<div class="minute-time">
+									  			<span ng-if="selected_minute < 10">0</span><span ng-bind="selected_minute">59</span>
+									  		</div>
+								  		</div>	
+								  	</div>
+								  	<div class="arrow-down-wrapper">
+								  		<div class="display-flex">
+									  		<div class="hour-arrow" ng-click="deductHour()">
+									  			<a href="javascript:void(0)" ><i class="fa fa-chevron-down"></i></a>
+									  		</div>
+									  		<div class="minute-arrow" ng-click="deductMinute()">
+									  			<a href="javascript:void(0)" ><i class="fa fa-chevron-down"></i></a>
+									  		</div>
+								  		</div>
+								  	</div>
+								  </div>
+								</div>
+							</div>
+					  </div>
+					  <div class="form-group col-md-12 amount-input">
+					    <label>Claim Amount<span>*</span></label>
+					    <div class="input-wrapper">
+						    <div class="input-group date" style="width: 80%">
+								  <input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="Price" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.claim_amount">
+								  <span class="input-group-addon" id="sizing-addon2" style="color: #0086D3;font-weight: 700;">
+								  	S$
+								  </span>
+								</div>
+							</div>
+					  </div>
+
+					  <div class="form-group col-md-12 member-drop">
+					    <label>Member<span>*</span></label>
+					    <div class="input-wrapper">
+						    <div class="btn-group " style="width: 100%">
+								  <button type="button" class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;height: 34px">
+								  	<span class="member-name" ng-bind="eclaim.member_selected.name"></span>
+								    <span class="caret" style="position: absolute;top: 15px;right: 10px;"></span>
+								  </button>
+								  <ul class="dropdown-menu">
+								    <li><a ng-repeat="mem in elcaim_members" href="javascript:void(0)" ng-click="selectMember(mem)" ng-bind="mem.name"></a></li>
+								  </ul>
+								</div>
+							</div>
+					  </div>
+					  <div class="col-md-12 button-box">
+					  	<div class="white-space-50 xs-hide"></div>
+					  	<div class="white-space-20"></div>
+					  	<button class="btn btn-default btn-next pull-right" ng-click="saveEclaimInfo()">Next</button>
+					  </div>
+					</form>
+				</div>
+
+				<div id="receipt-form" ng-if="step_active == 2">
+					<form class="form-inline">
+						
+						<div class="form-group col-xs-12 col-sm-12 col-md-12">
+							<div ng-model="file" class="drop-box" ngf-drop="uploadReceipts(file)" ngf-select="uploadReceipts(file)" ngf-drag-over-class="'dragover'">
+              	<img src="../assets/e-claim/img/new-assets/Upload-Receipt.png" style="width: 35px;">
+	              <h5 class="weight-700" style="margin-top: 10px;">Drop your file here!</h5>
+	              <p class="weight-700 font-12 color-gray">or</p>
+	              <p class="weight-700 color-blue-custom">Select a file</p>
+	            </div>
+						</div>
+
+						<div class="form-group col-xs-12 col-sm-12 col-md-12">
+							<div class="receipts-container">
+								<p class="weight-700">Uploaded</p>
+
+								<div class="uploads-box">
+									<div class="upload-wrapper" ng-repeat="img in uploading_files">
+										<div class="img-wrapper">
+											<img ng-if="img.type == 'image/png' || img.type == 'image/jpeg'" src="../assets/e-claim/img/new-assets/Receipt-png.png" style="width: 30px;">
+
+											<img ng-if="img.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" style="width: 30px;">
+
+											<img ng-if="img.type == 'application/pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" style="width: 30px;">
+
+											<img ng-if="img.type != 'image/png' && img.type != 'image/jpeg' && img.type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' && img.type != 'application/pdf'" src="../assets/e-claim/img/new-assets/Receipt-png.png" style="width: 30px;">
+
+											<!-- <img src="../assets/e-claim/img/new-assets/Receipt-png.png" style="width: 30px;"> -->
+										</div>
+										<div class="upload-details">
+											<h5 class="no-margin-top">
+												<label class="weight-700 no-margin">
+													<span ng-bind="img.name | limitTo:13 "></span>{{img.name.length > 13 ? '...' : ''}}
+												</label> 
+												<span class="weight-700 color-gray2 font-11"><span ng-bind="(img.size / 1000)"></span>kb</span> 
+												<a href="javascript:void(0)" class="pull-right" ng-click="removeReceipt(img)">
+													<i class="fa fa-times font-15 color-black2"></i>
+												</a>
+											</h5>
+											<div class="progress-wrapper">
+												<div class="progress-bar" ng-class="{'progress-error' : img.error == true}" style="width: {{img.uploading}}%"></div>
+											</div>
+											<!-- ng-if="upload.uploading" -->
+											<div class="white-space-5"></div>
+											<div class="white-space-2"></div>
+											<div class="white-space-1"></div>
+											<p ng-if="img.uploading < 100 && !img.error" class="weight-700 color-gray2 font-11">Uploading...</p>
+											<p ng-if="img.uploading == 100 && !img.error" class="weight-700 color-gray2 font-11">Completed</p>
+											<p ng-if="img.error == true" class="weight-700 text-error font-11" ng-bind="img.error_text"></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group col-xs-12 col-sm-12 col-md-12">
+					  	<button ng-disabled="upload_ctr > 0 || upload_active == 0" ng-click="saveUploads()" class="btn btn-default btn-next pull-right">Next</button>
+					  	<button ng-click="backStep()" class="btn btn-default btn-back pull-right">Back</button>
+					  </div>
+					</form>
+				</div>
+
+				<div id="claim-form" ng-if="step_active == 3">
+					<form class="form-inline">
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
+					    <p class="color-blue-custom">
+					    	<label class="color-black3">Spending Account<span>*</span></label> 
+					    	<span style="text-transform: capitalize;" ng-bind="eclaim.spending_type"></span>
+					    </p>
+					  </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
+					    <p class="color-blue-custom">
+					    	<label class="color-black3">Claim Type<span>*</span></label> 
+					    	<span ng-bind="eclaim.service_selected">General Practice</span>
+					    </p>
+					  </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
+					    <p class="color-blue-custom">
+					    	<label class="color-black3">Provider<span>*</span></label> 
+					    	<span ng-bind="eclaim.merchant">General Practice</span>
+					    </p>
+					  </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
+					    <p class="color-blue-custom">
+					    	<label class="color-black3">Visit Date<span>*</span></label> 
+					    	<span ng-bind="eclaim.visit_date">25 April 2017</span>
+					    </p>
+					  </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12" >
+					    <p class="color-blue-custom">
+					    	<label class="color-black3">Visit Time<span>*</span></label>
+					    	<span>
+					    		<span ng-bind="eclaim.visit_time">3:30</span><span ng-bind="eclaim.selectedDayTime">pm</span>
+					    	</span>
+					    	
+					    </p>
+            </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
+					    <p class="color-blue-custom">
+					    	<label class="color-black3">Claim Amount<span>*</span></label> 
+					    	<span>S$ <span ng-bind="eclaim.claim_amount | number"></span></span>
+					    </p>
+					  </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
+					    <p class="color-blue-custom">
+					    	<label class="color-black3">Member<span>*</span></label> 
+					    	<span ng-bind="eclaim.member_selected.name">Spectacle</span>
+					    </p>
+					  </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12 claim-img-wrapper">
+					    <label>Receipt<span>*</span></label>
+					    <div class="receipt-imgs">
+					    	<div ng-repeat="img in eclaim.receipts" style="display: inline-block;">
+					    		<img ng-if="img.receipt_type == 'image'" ng-src="{{img.receipt_file}}" style="">
+					    		<img ng-if="img.receipt_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" style="">
+					    		<img ng-if="img.receipt_type == 'xls'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" style="">
+					    	</div>
+					    	
+					    </div>
+					  </div>
+					  <div class="form-group col-xs-12 col-sm-12 col-md-12 no-margin">
+					  	<!-- <div class="white-space-2"></div>
+					  	<div class="white-space-50"></div>
+					  	<div class="white-space-20"></div> -->
+					  	<button ng-click="submitEclaim()" class="btn btn-default btn-next pull-right">Submit</button>
+					  	<button ng-if="submitFailed" ng-click="backStep()" class="btn btn-default btn-back pull-right">Back</button>
+					  </div>
+					</form>
+				</div>
+
+				<div id="claim-form" ng-if="step_active == 4">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="elcaim-success-wrapper text-center">
+							<img src="../assets/e-claim/img/new-assets/Thank-you.png" style="width: 80px;">
+							<div class="white-space-50"></div>
+							<h5 class="color-blue-custom weight-700 font-medium2">Thank you!</h5>
+							<div class="white-space-10"></div>
+							<p class="color-black3 weight-700 text-spacing-3 font-16">Your claim has been successfully submitted.<br>Our team will be processing your claim,<br>for claim status updates go to Activity.</p>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<!-- <div class="white-space-50"></div> -->
+						<button ui-sref="home" class="btn btn-default btn-back pull-right">Home</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="col-xs-12 col-sm-6 col-md-6 no-padding-right xs-hide2">
+			<div class="eclaim-right-container">
+				<div id="eclaim-steps">
+					<div class="step-wrapper" ng-class="{'active':step_active >= 1}">
+						<div class="circle-wrapper">
+							<div class="circle">
+								<img src="../assets/e-claim/img/new-assets/01-Enter-Claim-Details.png" style="width: 40px;">
+							</div>
+						</div>
+
+						<div class="step-details">
+							<h5 class="weight-700" ng-class="{'color-black2':step_active == 1}"><span class="step-num">01</span> Enter Claim Details</h5>
+							<p class="color-gray weight-700">Tell us more about your claim. Do make sure the Item/Service is part of your company approved parameter.</p>
+						</div>
+					</div>
+
+					<div class="step-wrapper one" ng-class="{'active':step_active >= 2}">
+						<div class="circle-wrapper">
+							<div class="circle">
+								<img ng-if="step_active < 2" src="../assets/e-claim/img/new-assets/02-Receipt-Verification-(Grey).png" style="width: 40px;">
+								<img ng-if="step_active >= 2" src="../assets/e-claim/img/new-assets/02-Receipt-Verification-(Blue).png" style="width: 40px;" >
+							</div>
+						</div>
+
+						<div class="step-details">
+							<h5 class="weight-700" ng-class="{'color-black2':step_active == 2}"><span class="step-num">02</span> Receipt Verification</h5>
+							<p class="color-gray weight-700">Snap a photo of your physical receipt given by the merchant for claim reimbursement.</p>
+						</div>
+					</div>
+
+					<div class="step-wrapper two" ng-class="{'active':step_active >= 3}">
+						<div class="circle-wrapper">
+							<div class="circle">
+								<img ng-if="step_active < 3" src="../assets/e-claim/img/new-assets/03-Claim-Submitted-(Grey).png" style="width: 40px;">
+								<img ng-if="step_active >= 3" src="../assets/e-claim/img/new-assets/03-Claim-Submitted-(Blue).png" style="width: 40px;" >
+							</div>
+						</div>
+
+						<div class="step-details">
+							<h5 class="weight-700" ng-class="{'color-black2':step_active >= 3}"><span class="step-num">03</span> Claim Submitted</h5>
+							<p class="color-gray weight-700">Track your claim status under Activity.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="white-space-50"></div>
+	</div>
+</div>
+
+<style type="text/css">
+	.dragover {
+	    border: 2px dashed #6aaae0 !important;
+	}
+
+	.jq-toast-wrap{
+    /*width: 300px;*/
+    /*width: auto;*/
+    width: 50%;
+    margin: 0 auto;
+	}
+
+	.jq-toast-single{
+    height: auto;
+    line-height: 2;
+    padding: 0 50px;
+    border: 1px solid #4caae0;
+    border-radius: 0;
+    font-size: 18px;
+    font-family: inherit;
+    font-weight: 700;
+	}
+
+	.close-jq-toast-single{
+		line-height: 1;
+	}
+</style>
+
+<script type="text/javascript">
+	$("body").click(function(e){
+  	if ($(e.target).parents(".visit-time-form").length === 0) {
+        $(".time-select-container").hide();
+    }
+	 });
+</script>

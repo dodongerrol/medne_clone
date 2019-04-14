@@ -1,0 +1,101 @@
+
+.tabs-below > .nav-tabs,
+.tabs-right > .nav-tabs,
+.tabs-left > .side-pannel > .nav-tabs {
+  border-bottom: 0;
+}
+
+.tab-content > .tab-pane,
+.pill-content > .pill-pane {
+  display: none;
+}
+
+.tab-content > .active,
+.pill-content > .active {
+  display: block;
+}
+
+.tabs-left > .side-pannel > .nav-tabs > li,
+.tabs-right > .nav-tabs > li {
+  float: none;
+}
+
+.tabs-left > .side-pannel > .nav-tabs > li > a,
+.tabs-right > .nav-tabs > li > a {
+  min-width: 70px;
+  margin-right: 0;
+  margin-bottom: 3px;
+  text-align: center;
+  padding-bottom: 20px;
+  padding-top: 20px;
+  color: #555555;
+}
+
+.tabs-left > .side-pannel > .nav-tabs {
+  float: left;
+  /*margin-right: 19px;*/
+  border-right: 1px solid #ddd;
+  /*height: 100%;*/
+  font-size: small;
+  background: #72CEF3;
+}
+
+.tabs-left > .side-pannel > .nav-tabs > li > a {
+  margin-right: -1px;
+  -webkit-border-radius: 4px 0 0 4px;
+     -moz-border-radius: 4px 0 0 4px;
+          border-radius: 4px 0 0 4px;
+}
+
+.tabs-left > .side-pannel > .nav-tabs > li > a:hover,
+.tabs-left > .side-pannel > .nav-tabs > li > a:focus {
+  border-color: transparent !important;
+  background: #72CEF3;
+}
+
+.tabs-left > .side-pannel > .nav-tabs .active > a,
+.tabs-left > .side-pannel > .nav-tabs .active > a:hover,
+.tabs-left > .side-pannel > .nav-tabs .active > a:focus {
+  border-color: #ddd transparent #ddd #ddd;
+  /*border-right-color: #ffffff;*/
+  background: #B0E2F9 !important;
+
+}
+
+/*.primary-navbar{
+    background: #E1E7EB;
+    height: 100%; 
+    width: 105px;
+    color: #CCC;
+    text-align: center;
+}*/
+
+
+
+#alert_box{
+  background: #ECE3AF;
+  position: fixed;
+  z-index: 10000;
+  left: 50%;
+  top: 15px;
+  padding: 3px 30px;
+  border-radius: 5px 5px 10px 10px;
+  display:none;
+}
+
+.toggle-on.btn-xs {
+    padding-top: 5px;
+}
+
+
+.toggle-off.btn-xs {
+    padding-top: 5px;
+}
+
+.input-error {
+    border:1px solid red !important;
+    border-color: red;
+    -webkit-box-shadow: 0 0 5px red !important;
+    -moz-box-shadow: 0 0 5px red !important;
+    box-shadow: 0 0 5px red !important;
+}

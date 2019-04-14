@@ -1,0 +1,120 @@
+html,body{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    background: #0392CF;
+    color: #FFF;
+    font-family: Calibri,sans-serif;
+}
+
+i{
+    color: #FFF;
+}
+
+.header{
+    /*margin-bottom: 10%;*/
+}
+
+.header .logo{
+    padding: 20px 30px;
+    font-weight: 700;
+}
+
+.header .logo h1{
+    font-size: 50px;
+}
+
+#main-section .content-wrapper{
+    padding: 0 50px;
+    /*margin: 70px 0;*/
+    width: 95%;
+    transition: all .3s ease-in-out;
+}
+
+#main-section .content-wrapper.notActive{
+    opacity: .3;
+    transition: all .3s ease-in-out;
+}
+
+#main-section .content-wrapper.notActive:hover{
+    opacity: 1;
+    transition: all .3s ease-in-out;
+}
+
+#main-section .content-wrapper .btn{
+    margin-top: 20px;
+
+}
+
+#main-section .content-wrapper h5{
+    font-size: 22px;
+    font-weight: 700;
+}
+
+#main-section .content-wrapper h1{
+    font-size: 50px;
+    font-weight: 700;
+    transition: all .3s ease-in-out;
+}
+
+#main-section .content-wrapper.notActive h1{
+    font-size: 40px;
+    font-weight: 700;
+    transition: all .3s ease-in-out;
+}
+
+#main-section .content-wrapper .zipcode-input{
+        display: inline;
+    background: transparent;
+    border: none;
+    border-bottom: 4px solid #FFF;
+    width: 140px;
+    padding: 0 10px;
+    margin: 0 10px;
+    color: #FFF;
+}
+
+
+#main-section .content-wrapper .zipcode-input::-webkit-input-placeholder { color: #9CEFD8; opacity: 1 !important; }
+#main-section .content-wrapper .zipcode-input:-moz-placeholder { color: #9CEFD8;}
+#main-section .content-wrapper .zipcode-input::-moz-placeholder {color: #9CEFD8;}
+#main-section .content-wrapper .zipcode-input:-ms-input-placeholder {color: #9CEFD8;}
+
+#main-section .content-wrapper .zipcode-input:focus{
+    outline: none;
+}
+
+#main-section .content-wrapper p{
+    margin-top: 30px;
+    color: #001837 !important;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+#fifth-form .checkbox{
+   margin-bottom: 40px;
+}
+
+#fifth-form .checkbox input{
+    height: 30px;
+    width: 30px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    margin-left: -50px;
+}
+
+#fifth-form .checkbox label{
+    padding-left: 50px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+#fifth-form .checkbox label p{
+    margin: 0;
+    font-size: 16px;
+    color: #b5d5e2 !important;
+    font-weight: 400;
+}

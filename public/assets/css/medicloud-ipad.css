@@ -1,0 +1,1353 @@
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) and (orientation : portrait) {
+	
+	
+
+.mc-border-line { border-bottom: 1px solid #eeeeee; height: 1px; width: 100% !important; }
+	
+.ui-datepicker {
+    display: none;
+    height: 20em !important;
+    padding: 0.2em 0.2em 0;
+    width: 22em !important;
+}	
+.mc-res-width{ width:100% !important} 
+.mc-container .mc-background-color .mc-header .mc-main-menu ul { padding: 0px; margin: 0px; float: right; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li { float: left; display: inline-block; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; padding: 0 0 0 0 !important; margin: 0 0 0 0 !important; background-color:none !important;  }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li a:hover { float: left; display: inline-block; background-color:#1b9bd7; padding-top: 15px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; margin-top: 15px; margin-right: 25px  !important; font-size: 13px; color: #fff; cursor: pointer; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; }
+
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li a { float: left; display: inline-block; padding-top: 15px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; margin-top: 15px;  margin-right: 25px  !important;  font-size: 13px; color: #999999; cursor: pointer; background-color: none !important;}
+.mc-container .mc-background-color .mc-header .mc-btn-logout {
+    background-color: #1b9bd7;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    float: right;
+    font-size: 12px;
+    height: 15px;
+    margin-top: 17px;
+    padding-top: 12px;
+    text-align: center;
+    width: 108px;
+}
+
+
+.mc-date-filter{ width:100%; /*background-color:#0CF; */height:150px; }
+
+
+.profile-image {
+    margin-left: -2% !important;
+    padding: 2% 0 0;
+    text-align: center !important;
+}
+
+.day-event-lblue {
+    background-color: #5bbae8;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-left: 5px;
+    width: 75%!important;
+}
+
+.day-event-gray {
+    background-color: #f4f4f4;
+    height: 60px;
+    margin-left: 5px;
+    width: 75% !important;
+}
+
+.day-event-dblue {
+    background-color: #1b9bd7;
+    height: 60px;
+    margin-left: 5px;
+   width: 75% !important;
+}
+
+
+.day-event-white {
+    background-color: #fff;
+    height: 60px;
+    margin-left: 5px;
+    width: 75% !important;
+}
+
+
+.day-event-blue {
+    background-color: #c8eafb;
+    height: 60px;
+    margin-left: 5px;
+    width: 75% !important;
+}
+
+
+
+ .appointments {
+        
+        width: 50% !important;
+		
+    }
+
+
+.appoint-counter {
+    float: left;
+    margin-bottom: 5%;
+    margin-left: 0% !important;
+    margin-top: 2%;
+    text-align: center;
+    width: 100% !important;
+	/*background-color:red !important;*/
+}
+
+
+.queue-number{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 36%!important;
+	font-size: 4em  !important;
+	
+}
+
+
+.am-div {
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    font-size: 2em !important;
+	float:left!important;
+	margin-top: 10px !important;
+}
+	
+
+
+
+
+/*.profile-image img {
+    background-color: #36f !important;
+    border-radius: 11px !important;
+    height: 30%;
+    text-align: center;
+    width: 30% !important;
+	margin-left:6% !important;
+}*/
+
+
+
+
+.dr-detail-container {
+    margin-left: 28%;
+    width: 50%;
+}
+
+
+
+
+.queue-bar-gray {
+    background-color: #f4f4f4;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 5px;
+    margin-left: 85px;
+   /* width:95% !important;*/
+}
+
+
+.queue-bar-dblue {
+    background-color: #1b9bd7;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 5px;
+    margin-left: 85px;
+ /*  width:95% !important;*/
+}
+
+
+.queue-bar-blue {
+    background-color: #c8eafb;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 5px;
+    margin-left: 85px;
+   /*width:95% !important;*/
+}
+
+
+.mc-container .mc-background-color .mc-calendar3 {
+    background-color: #c8eafb;
+    border-radius: 8px !important;
+    float: right;
+    height: 26px;
+    left: 20% !important;
+    margin-right: 36px;
+    margin-top: 10px;
+    padding: 15px;
+    width: 26%;
+}
+
+.page-number {
+    margin: 41px 45% auto 45%;
+    width: 20% !important;
+    text-align: center;
+}
+
+
+#ui-datepicker-div {
+    left:4% !important;
+    top: 14% !important;
+}
+
+
+.day-display {
+    float: left;
+    padding:  0 !important;
+    width: auto !important;
+}
+
+
+.calendar-wrapper {
+    margin-left:0 !important;
+    margin-top: 0 !important;
+}
+
+
+
+
+
+
+.ui-datepicker {
+    display: none;
+     height: 12.5em !important;
+    padding: 0.2em 0.2em 0;
+    width: 14em !important;
+}
+
+.ui-datepicker table {
+    border-collapse: collapse;
+    font-size: 0.9em;
+    margin: 0 0 0.4em;
+    width: 100%;
+}
+.ui-datepicker table {
+    border-collapse: collapse;
+    font-size: 0.5em !important;
+}
+.ui-widget-header {
+    color: #cccccc !important;
+    font-size: 15px;
+    font-weight: bold;
+	background-color: #1b9bd7 !important;
+}
+
+.ui-datepicker .ui-datepicker-title {
+   
+    margin: 0 2.3em;
+    text-align: center;
+	font-size:15px;
+}
+
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+    height: 0em !important;
+    position: absolute;
+    top: 16px  !important;
+    width: 1.8em;
+}
+
+.ui-widget-content {
+    background-color:#fff !important;
+    border: 1px solid #aaaaaa;
+    color: #222222;
+}
+
+.ui-widget-content {
+    background-color: #eee !important;
+    border: 1px solid #aaaaaa;
+    color: #222222;
+}
+
+
+.ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    background: #c8eafb none repeat scroll 0 0 !important;
+     border:none !important ;
+    border-radius: 44px !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+
+
+/*.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    background: none !important;
+    border: 1px solid #cccccc;
+    color: #1c94c4;
+    font-weight: normal !important;
+}
+*/
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    background-image: none !important;
+    border:none !important;
+    color: #999999 !important;
+    font-weight: normal;
+}
+
+.ui-state-default {
+    background: #FFF !important;
+    border:none !important ;
+    color: #1c94c4;
+    font-weight: normal !important;
+}
+
+.ui-widget-header {
+    color: #cfcfcf !important;
+    font-weight: normal  !important;
+	   
+}
+
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background: #fbf9ee url("images/ui-bg_glass_55_fbf9ee_1x400.png") repeat-x scroll 50% 50%;
+    border: 1px solid #fcefa1;
+    border-radius: 42px;
+    color: #fff !important;
+}
+
+
+.mc-label11 {
+    color: #cccccc;
+    font-size: 30px;
+    padding-left: 35px;
+    padding-top: 0px;
+}
+.btn-wrapper {
+    /*background-color: pink;*/
+    margin-left: 26%;
+    width: 100%;
+}
+.btn-wrapper2{ margin-left:28%;}
+
+.btn-wrapper3 {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 29%;
+}
+/*.btn-wrapper3{ margin-left: auto; margin-right: auto; width:100%; background-color:orange;}*/
+
+
+.btn-wrapper4 {
+   /* background-color: peru;*/
+    margin-left: 43% !important;
+    width: 85% !important;
+}
+
+.event-container3 {
+    margin-left: 3%;
+    width: 100%;
+	/*background-color:green !important;*/
+}
+
+
+
+.event-display {
+    float: left;
+    margin-top: 28px;
+    width: 53%;
+}
+
+
+.mc-btn-booknow3 {
+    background-color: #12d537;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    height: 31px;
+    margin: 34px auto 0 0;
+    padding-top: 13px;
+    text-align: center;
+    width: 143px;
+}
+
+
+.mc-btn-stop2 {
+    background-color: #ff0000;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    height: 31px;
+    margin: 34px auto 0 2%;
+    padding-top: 13px;
+    text-align: center;
+    width: 135px !important;
+}
+
+
+.event-container4 { padding-right: 20% /* background-color:#FCF;*/ }		
+.mrl19{ margin-left:19% !important;}
+.que-section {
+    		clear: both;
+   			 margin-top: 30px;
+			 width:100%;
+			 /*background-color:pink;*/
+		
+		}
+
+
+.dr-detail-container {
+    margin-left: 25.5%;
+    width: 50%;
+}
+.wd100 { width: 60% !important;}
+.mrl14{ margin-left:22% !important;}
+.wd10 { width: 80% !important;}
+
+
+
+
+.ipad-margin{
+    margin-left: 34%;
+}
+
+
+
+.ipad-margin2{
+    margin-left: 0%;
+}
+.ipad-margin3{
+    margin-left: -9%;
+}
+.ipad-footer-controller{
+    height: 100vh;
+    background-color: red;
+}
+.d-margine-controller{
+    margin-left: 2% !important;
+}
+
+.queue-number2{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 32%;
+    font-size: 5em;
+   /* margin-left: 36%;*/
+	
+}
+
+
+
+.queue-number3{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 36% !important;
+    font-size: 4em;
+}
+.queue-number4{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: -5% !important;
+    font-size: 7em;
+}
+.queue-number5{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 0 !important;
+    font-size: 7em;
+}
+
+
+
+.gobal-marl {
+    margin-left: 34% !important;
+}
+
+
+
+/*ipad margin controls*/
+.ipad-mar1{ margin-left:27% !important;}
+.mt5 {
+    margin-top: 3% !important;
+}
+
+
+
+/* updated 04 AUG 2015*/
+.mc-calendar4 {
+    background-color: #c8eafb;
+    border-radius: 8px !important;
+    float: left;
+    height: 26px;
+    left: 20% !important;
+    margin-bottom: 5%;
+    margin-left: 67px;
+    margin-top: 10px;
+    padding: 15px;
+    width: 26%;
+}
+
+
+.mc-btn-booknow7 {
+   background-color: #12d537;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    height: 31px;
+    margin: 34px 2% 0 auto;
+    padding-top: 13px;
+    text-align: center;
+    width: 143px;
+}
+
+
+.btn-margin {
+    margin-left: 17%;
+}
+
+.btn-margin2 {
+    margin-left: 18%;
+}
+
+.btn-wrapper4 {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 60%;
+}
+
+
+.no-width{ width:none !important;  }
+.margin-control-new{ margin-left:4% !important; } 
+
+.page-number2 { width: auto !important;  margin: 23px 4% 0 auto;}
+
+.page-number2 .number {
+   
+    border-radius: 10px;
+    color: #00aeef;
+    float: left;
+    font-size: 14px;
+    height: 25px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+.page-number2 .number:hover  {
+    background-color: #00aeef;
+    border-radius: 10px;
+    color: #fff;
+    float: left;
+    font-size: 14px;
+    height: 25px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+
+.num-selected  {
+    background-color: #00aeef;
+    border-radius: 10px;
+    color: #fff !important;
+    float: left;
+    font-size: 14px;
+    height: 30px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+
+
+
+.queue-number-stopped {
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    font-size: 3em;
+    margin-left: 34% !important;
+}	
+
+
+
+
+/* updated 04 AUG 2015 DOCTOR SETTINGS IPAD OPTIMIZED*/
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-profile-form form {
+    float: left;
+    margin: 0 0 0 1% !important;
+    width: auto;
+	/*background-color:#F39;*/
+}
+
+
+
+
+
+
+
+
+
+/*calander control*/
+
+.mc-container {
+    height: auto;
+    width: 100%;
+}
+
+.width100{ width:93% !important;}
+
+.mc-calendar-view {
+    
+    margin-bottom: 30px;
+    width: 100%;
+/*	background-color:orange;*/}
+	
+	
+.mc-calendar-view .calendar-time {
+    float: left;
+    height: 929px;
+    width: 5% !important;
+	/*background-color:red;*/
+}
+	
+	.calendar-time .mc-time {
+   /* height: 20px;*/
+    width: 100% !important;
+}
+
+
+.mc-calendar-day .mc-day {
+    color:pink /*#cccccc*/;
+    float: left;
+    font-size: 14px;
+    height: 35px;
+    padding-top: 28px;
+    text-align: center;
+    width: 14% !important;
+}
+
+
+
+.mc-day-option-container .mc-day-block {
+    float: left;
+    height: 73px;
+    margin-right: 10px;
+    width: 13.5%;
+}
+
+
+.mc-day-option-container .mc-day-block-last {
+    float: left;
+    height: 73px;
+    width: 13.2%;
+}
+
+
+.mc-day-block .mc-slot1 {
+    background-color: #1b9bd7;
+    color: #666666;
+    font-size: 12px;
+    height: 30px;
+    margin-bottom: 1px;
+    padding: 6px 0 0 5px;
+    width: 100% !important;
+}
+
+
+.mc-day-block .mc-slot2 {
+    background-color: #1b9bd7;
+    color: #666666;
+    font-size: 12px;
+    height: 30px;
+    margin-bottom: 1px;
+    padding: 6px 0 0 5px;
+    width: 100% !important;
+}
+
+
+.mc-day-block-last .mc-slot1-last {
+    background-color: #1b9bd7;
+    height: 36px;
+    margin-bottom: 1px;
+    width: 100% !important;
+}
+
+.mc-day-block-last .mc-slot2-last {
+    background-color: #1b9bd7;
+    height: 36px;
+    width: 100% !important;
+}
+
+
+.mc-blancer {
+    float: left;
+    width: 95%;
+	background-color:#C06;
+}
+
+
+
+.mc-container .mc-background-color .mc-calendar {
+    background-color: #c8eafb;
+    height: 70px;
+    padding: 0 2%  !important;
+	 width: 96% !important;
+	 margin-top:3% !important;
+}
+
+.mc-container .mc-background-color .mc-doctor-profile-container {
+    width: 100% !important;
+}
+
+
+.mc-footer {
+    background-color: #1b9bd7;
+    height: 90px;
+    margin-top: 145px;
+    padding-left: 2%;
+    padding-top: 7%;
+	width:98% !important;
+}
+
+.mc-social-icon {
+    margin-right: 10px;
+}
+
+
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-profile-detail-rcolum.mc-fl {
+    height: auto;
+    margin-bottom: 50px;
+    margin-left: 10% !important;
+}
+
+
+.select-box {
+    background-color: #f7f7f7;
+    background-image: url("http://medicloud.sg/medicloud_web/public/assets/images/icn-down-arrow.png");
+    background-position: 95% 54%;
+    background-repeat: no-repeat;
+    border-radius: 11px !important;
+    color: #bababa !important;
+    height: 61px;
+    line-height: 10px !important;
+    outline: medium none !important;
+    overflow: hidden;
+    padding-right: 7px;
+    width: 275px !important;
+}
+
+
+
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail {
+    float: left;
+    height: auto;
+    padding: 20px 0 0 54px;
+    width: auto;
+}
+
+
+.inputshort {
+    background: transparent none repeat scroll 0 0 !important;
+    border: medium none;
+    border-radius: 0;
+    color: #666666 !important;
+    float: left;
+    font-size: 14px;
+    height: 25px;
+    line-height: 1;
+    outline: medium none !important;
+    padding-top: 20px;
+    width: 160px !important;
+}
+
+.mc-label {
+    float: right !important;
+    padding-right: 5%;
+    padding-top: 2%;
+    width: 10%;
+	color:red !important;
+}
+
+
+
+.reset-wrapper{ height:65% !important; background-color:#C30;}
+.reset-container{ margin-top:10% !important; height:40% !important;}
+.mc-footer {
+    background-color: #1b9bd7;
+    height: 90px;
+    margin-top: 0px !important;
+    padding-left: 2%;
+   /* padding-top: 7%;*/
+	width:98% !important;
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) and (orientation : landscape){
+    .mc-border-line { border-bottom: 1px solid #eeeeee; height: 1px; width: 100% !important; }
+	
+	.mc-btn-booknow3 {
+    background-color: #12d537;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    height: 31px;
+    margin: 34px auto 0 0;
+    padding-top: 13px;
+    text-align: center;
+    width: 143px;
+}
+
+.mc-btn-stop2 {
+    background-color: #ff0000;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    height: 31px;
+    margin: 34px auto 0 2%;
+    padding-top: 13px;
+    text-align: center;
+    width: 135px !important;
+}
+	
+	.mc-container .mc-background-color .mc-calendar3 {
+    background-color: #c8eafb;
+    border-radius: 8px !important;
+    float: right;
+    height: 26px;
+    left: 20% !important;
+    margin-right: 67px;
+    margin-top: 10px;
+    padding: 15px;
+    width: 25%;
+}
+	
+.ui-datepicker {
+    display: none;
+     height: 10.5em !important;
+    padding: 0.2em 0.2em 0;
+    width: 14em !important;
+}	
+	.queue-number{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 37%!important;
+	font-size: 4em  !important;
+	
+}
+
+.dr-detail-container {
+    margin-left: 25.5%;
+    width: 50%;
+}
+
+	
+.queue-bar-gray {
+    background-color: #f4f4f4;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 10px;
+    margin-left: 63px;
+   /* width:95% !important;*/
+}
+
+
+.queue-bar-dblue {
+    background-color: #1b9bd7;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 10px;
+    margin-left: 63px;
+   /*width:95% !important;*/
+}
+
+
+.queue-bar-blue {
+    background-color: #c8eafb;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 10px;
+    margin-left: 63px;
+  /* width:95% !important;*/
+}
+
+
+.event-display {
+    float: left;
+    margin-top: 28px;
+    width: 75%;
+}
+
+.mar-top24 {
+    margin-top: 36px !important;
+}
+	
+	
+
+.btn-wrapper2{ margin-left:42%;}
+.btn-wrapper3 {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 34%;
+}
+
+.btn-wrapper {
+    margin-left: 22%;
+    width: 100%;
+}
+
+.btn-wrapper6 {
+    margin-left: 31%;
+    width: 100%;
+}
+
+.btn-wrapper4 {
+    margin-left: 15% !important;
+    width: 85% !important;
+}	
+
+
+#ui-datepicker-div {
+    left: 3% !important;
+    top: 27% !important;
+}
+
+.mrl25{ margin-left:3% !important;}
+.wd85 { width: 70% !important;}
+.wd100 { width: 80% !important;}
+.wd10 { width: 90% !important;}
+.mrl21 {
+    margin-left: 21% !important;
+}
+
+
+.am-div {
+    color: #1b9bd7;
+    float: left !important;
+    font-family: "Nunito",sans-serif !important;
+    font-size: 2em;
+    margin-top: 12px !important;
+}
+
+
+
+.mc-footer {
+    background-color: #1b9bd7;
+    height: 90px;
+    padding-left: 70px;
+    padding-top: 40px;
+	width:100% !important;
+	
+	
+}
+
+.que-section {
+    		clear: both;
+   			 margin-top: 30px;
+			 width:100%;
+			 /*background-color:orange;*/
+		
+		}
+
+
+
+
+
+
+.mc-container .mc-background-color .mc-header { height: 103px; width: 100%; }
+.mc-container .mc-background-color .mc-header .mc-logo-container { padding: 30px 0px 32px 50px; }
+.mc-container .mc-background-color .mc-header .mc-main-menu { float: right; width: auto; padding-right: 5%; padding-top: 0px !important; width: 60%; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul { padding: 0px; margin: 0px; float: right; }
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li { float: left; display: inline-block;}
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li a { float: left; display: inline-block; padding-top: 15px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; margin-top: 0px; margin-right: 0px !important; font-size: 13px; color: #999999; cursor: pointer;}
+.mc-container .mc-background-color .mc-header .mc-main-menu ul li a:hover { float: left; display: inline-block; background-color: #1b9bd7; padding-top: 15px; padding-bottom: 15px; padding-left: 10px; padding-right: 10px; margin-top: 0px; margin-right: 0px !important; font-size: 13px; color: #fff; cursor: pointer; border-radius: 8px !important; -webkit-border-radius: 8px !important; -moz-border-radius: 8px !important; }
+.mc-container .mc-background-color .mc-header .mc-btn-logout { background-color: #1b9bd7;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    float: right;
+    font-family: sinkin_sans300_light;
+    font-size: 12px;
+    margin-top: 30px;
+    padding-bottom: 6px;
+    padding-top: 14px;
+    text-align: center;
+    width: 116px; }
+
+
+.mc-label11 {
+    color: #cccccc;
+    font-size: 40px;
+    padding-left: 123px;
+    padding-top: 31px;
+}
+	
+.ipad-margin{
+    margin-left: 33%;
+}
+
+
+
+.ipad-margin2{
+    margin-left: 23% !important;
+}
+.ipad-margin3{
+    margin-left: 16%;
+}
+
+.d-margine-controller{
+    margin-left: 2% !important;
+}
+.queue-number2{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 32%;
+    font-size: 5em;
+   /* margin-left: 36%;*/
+	
+}
+
+
+
+.queue-number3{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 36% !important;
+    font-size: 4em;
+}
+.queue-number4{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: -5% !important;
+    font-size: 7em;
+}
+.queue-number5{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 0 !important;
+    font-size: 7em;
+}
+
+
+
+/*ipad margin controls*/
+.ipad-mar1{ margin-left:25% !important;}
+.mt5 {
+    margin-top: 8% !important;
+}
+
+.gobal-mart {
+    margin-top: 14%;
+}
+.gobal-marl {
+    margin-left: 20% !important;
+}
+
+
+
+
+
+/* updated 04 AUG 2015*/
+.mc-calendar4 {
+    background-color: #c8eafb;
+    border-radius: 8px !important;
+    float: left;
+    height: 26px;
+    left: 20% !important;
+    margin-bottom: 5%;
+    margin-left: 67px;
+    margin-top: 10px;
+    padding: 15px;
+    width: 26%;
+}
+
+
+.mc-btn-booknow7 {
+   background-color: #12d537;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    height: 31px;
+    margin: 34px 2% 0 auto;
+    padding-top: 13px;
+    text-align: center;
+    width: 143px;
+}
+
+
+.btn-margin {
+    margin-left: 17%;
+}
+
+.btn-margin2 {
+    margin-left: 18%;
+}
+
+.btn-wrapper4 {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 60%;
+}
+
+
+.no-width{ width:none !important;  }
+.margin-control-new{ margin-left:4% !important; } 
+
+.page-number2 { width: auto !important;  margin: 23px 4% 0 auto;}
+
+.page-number2 .number {
+   
+    border-radius: 10px;
+    color: #00aeef;
+    float: left;
+    font-size: 14px;
+    height: 25px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+.page-number2 .number:hover  {
+    background-color: #00aeef;
+    border-radius: 10px;
+    color: #fff;
+    float: left;
+    font-size: 14px;
+    height: 25px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+
+.num-selected  {
+    background-color: #00aeef;
+    border-radius: 10px;
+    color: #fff !important;
+    float: left;
+    font-size: 14px;
+    height: 30px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 10px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+.btn-wrapper4 {
+    margin-left: 42% !important;
+    width: 85% !important;
+}
+
+
+
+
+
+
+.mc-btn-stop5 {
+    background-color: red;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    font-family: "Montserrat",sans-serif;
+    font-size: 15px;
+    height: 35px;
+    margin: 34px auto 0 99px;
+    padding-top: 13px;
+    text-align: center;
+    width: 188px;
+}
+
+
+
+.queue-number-stopped {
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    font-size: 3em;
+    margin-left: 36% !important;
+}	
+
+
+
+
+/*calander control*/
+
+.mc-container {
+    height: auto;
+    width: 100%;
+}
+
+.width100{ width:93% !important;}
+
+.mc-calendar-view {
+    
+    margin-bottom: 30px;
+    width: 100%;
+	/*background-color:orange;*/}
+	
+	
+.mc-calendar-view .calendar-time {
+    float: left;
+    height: 929px;
+    width: 5% !important;
+	/*background-color:red;*/
+}
+	
+	.calendar-time .mc-time {
+   /* height: 20px;*/
+    width: 100% !important;
+}
+
+
+.mc-calendar-day .mc-day {
+    color:pink /*#cccccc*/;
+    float: left;
+    font-size: 14px;
+    height: 35px;
+    padding-top: 28px;
+    text-align: center;
+    width: 14% !important;
+}
+
+
+
+.mc-day-option-container .mc-day-block {
+    float: left;
+    height: 73px;
+    margin-right: 10px;
+    width: 13.5%;
+}
+
+
+.mc-day-option-container .mc-day-block-last {
+    float: left;
+    height: 73px;
+    width: 13.2%;
+}
+
+
+.mc-day-block .mc-slot1 {
+    background-color: #1b9bd7;
+    color: #666666;
+    font-size: 12px;
+    height: 30px;
+    margin-bottom: 1px;
+    padding: 6px 0 0 5px;
+    width: 100% !important;
+}
+
+
+.mc-day-block .mc-slot2 {
+    background-color: #1b9bd7;
+    color: #666666;
+    font-size: 12px;
+    height: 30px;
+    margin-bottom: 1px;
+    padding: 6px 0 0 5px;
+    width: 100% !important;
+}
+
+
+.mc-day-block-last .mc-slot1-last {
+    background-color: #1b9bd7;
+    height: 36px;
+    margin-bottom: 1px;
+    width: 100% !important;
+}
+
+.mc-day-block-last .mc-slot2-last {
+    background-color: #1b9bd7;
+    height: 36px;
+    width: 100% !important;
+}
+
+
+.mc-blancer {
+    float: left;
+    width: 95%;
+	background-color:#C06;
+}
+
+
+
+.mc-container .mc-background-color .mc-calendar {
+    background-color: #c8eafb;
+    height: 70px;
+    padding: 0 2%  !important;
+	 width: 96% !important;
+}
+
+.mc-container .mc-background-color .mc-doctor-profile-container {
+    width: 100% !important;
+}
+
+
+
+
+.mc-footer {
+    background-color: #1b9bd7;
+    height: 90px;
+    margin-top: 0px !important;
+    padding-left: 2%;
+   /* padding-top: 7%;*/
+	width:98% !important;
+}
+
+.mc-social-icon {
+    margin-right: 10px;
+}
+
+
+.reset-wrapper{ height:50% !important;}
+
+.reset-container{ margin-top:0% !important; height:80% !important;}
+
+
+
+}
+
+

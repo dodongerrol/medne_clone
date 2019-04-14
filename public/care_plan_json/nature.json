@@ -1,0 +1,59 @@
+[
+	{
+		"nature":"Agriculture and Fishing"
+	},
+	{
+		"nature":"Mining and Quarrying"
+	},
+	{
+		"nature":"Manufacturing"
+	},
+	{
+		"nature":"Electricity, Gas, Steam and Air-Conditioning Supply"
+	},
+	{
+		"nature":"Water Supply, Sewerage, Waste Management"
+	},
+	{
+		"nature":"Construction"
+	},
+	{
+		"nature":"Wholesale and Retail Trade"
+	},
+	{
+		"nature":"Transportation and Storage"
+	},
+	{
+		"nature":"Accommodation and Food Service Activities"
+	},
+	{
+		"nature":"Information and Communications"
+	},
+	{
+		"nature":"Financial and Insurance Activities"
+	},
+	{
+		"nature":"Real Estate Activities"
+	},
+	{
+		"nature":"Professional, Scientific and Technical Activities"
+	},
+	{
+		"nature":"Administrative"
+	},
+	{
+		"nature":"Public Administration and Defence"
+	},
+	{
+		"nature":"Education"
+	},
+	{
+		"nature":"Health and Social Services"
+	},
+	{
+		"nature":"Arts, Entertainment and Recreation"
+	},
+	{
+		"nature":"Other Service Activities"
+	}
+]

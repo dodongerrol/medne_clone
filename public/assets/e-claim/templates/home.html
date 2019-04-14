@@ -1,0 +1,376 @@
+<div class="main-container" style="background-image: url(../assets/e-claim/img/new-assets/Home---Background2.jpg);background-size: cover;background-position: 100%;" emp-details-directive >
+	<div class="overlay"></div>
+
+  <div ui-view="navigation"></div>
+
+	<div class="col-md-12">
+		<div class="home-container">
+			<div class="white-space-50 xs-hide"></div>
+			<div class="white-space-20"></div>
+			<div class="white-space-20"></div>
+			<h1 class="color-blue-custom weight-700">Welcome {{ user_details.fullname }}</h1>
+			<h2 class="color-blue-custom ">Your Benefits	through <span ng-bind="user_details.company_name"></span></h2>
+			<div class="white-space-50 xxs-hide"></div>
+			<div class="white-space-20"></div>
+		</div>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="home-container main-home">
+			<div class="col-xs-12 col-sm-5 col-md-4 no-padding">
+				<div class="home-left-container">
+					<p class="coverage-title font-20 border-bottom"><span class="weight-700">Your Coverage</span> <span class="font-16">(In-Network)</span></p>
+
+					<div class="coverage-list border-bottom" ng-repeat="list in employee_packages">
+						<div class="img-wrapper">
+							<img ng-src="{{ list.image }}" style="width: 35px;">
+						</div>
+						<div class="coverage-details">
+							<div class="coverage-title">
+								<p class="weight-700" ng-bind="list.package_name"></p>
+							</div>
+							<div class="coverage-desc">
+								<p class="weight-700" ng-bind="list.package_description"></p>
+							</div>
+						</div>
+					</div>
+
+					<!-- <div class="coverage-list border-bottom">
+						<div class="img-wrapper">
+							<img src="../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+						</div>
+						<div class="coverage-details">
+							<div class="coverage-title">
+								<p class="weight-700">General Practitioner</p>
+							</div>
+							<div class="coverage-desc">
+								<p class="weight-700">100% consultation covered. you only need to pay medicine/treatment</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="coverage-list border-bottom">
+						<div class="img-wrapper">
+							<img src="../assets/e-claim/img/new-assets/Dental-Care.png" style="width: 35px;">
+						</div>
+						<div class="coverage-details">
+							<div class="coverage-title">
+								<p class="weight-700">Dental Care</p>
+							</div>
+							<div class="coverage-desc">
+								<p class="weight-700">30% off selected dental services</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="coverage-list border-bottom">
+						<div class="img-wrapper">
+							<img src="../assets/e-claim/img/new-assets/Traditonal-Chinese-Medicine.png" style="width: 35px;">
+						</div>
+						<div class="coverage-details">
+							<div class="coverage-title">
+								<p class="weight-700">Traditional Chinese Medicine</p>
+							</div>
+							<div class="coverage-desc">
+								<p class="weight-700">100% consultation covered. you only need to pay medicine/treatment</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="coverage-list border-bottom">
+						<div class="img-wrapper">
+							<img src="../assets/e-claim/img/new-assets/Health-Specialist.png" style="width: 35px;">
+						</div>
+						<div class="coverage-details">
+							<div class="coverage-title">
+								<p class="weight-700">Health Specialist</p>
+							</div>
+							<div class="coverage-desc">
+								<p class="weight-700">Save up to 60% on consultation</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="coverage-list border-bottom">
+						<div class="img-wrapper">
+							<img src="../assets/e-claim/img/new-assets/Wellness.png" style="width: 35px;">
+						</div>
+						<div class="coverage-details">
+							<div class="coverage-title">
+								<p class="weight-700">Wellness</p>
+							</div>
+							<div class="coverage-desc">
+								<p class="weight-700">Save up to 40% on wellness services</p>
+							</div>
+						</div>
+					</div> -->
+				</div>
+			</div>
+
+			<div class="col-xs-12 col-sm-7 col-md-8 no-padding">
+				<div class="home-right-container">
+					<p class="activity-title font-20 border-bottom weight-700">
+						Your Activity 
+						<a href="javascript:void(0)" ui-sref="activity" class="pull-right"><img src="../assets/e-claim/img/new-assets/Home---Activity---Arrow.png" style="width: 20px;margin-right: 10px;"></a>
+					</p>
+
+					<div class="white-space-10"></div>
+					<!-- <p class="weight-700 font-13">Your Mednefits Credits</p> -->
+					<div class="home-spending-type-container">
+						<p class="weight-700">Your Spending Account</p>
+						<button class="btn btn-default btn-medical" ng-class="{'active' : spendingTypeOpt == 0}" ng-click="spendingType( 0 )">Medical</button>
+						<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingTypeOpt == 1}" ng-click="spendingType( 1 )">Wellness</button>
+					</div>
+					
+					<div class="activity-container border-bottom">
+						<div class="col-xs-12 col-sm-12 col-md-3 text-center" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
+							<div class="white-space-30"></div>
+							<div class="white-space-5"></div>
+							<p class="font-medium2 weight-700">Balance</p>
+							<p class="font-30 weight-700 no-margin" style="color:#00B2E1"><span class="font-16" style="top: -10px;position: relative;">S$</span><span ng-bind="current_spending.balance">00.00</span></p>
+						</div>
+
+						<div class="col-xs-12 col-sm-12 col-md-4 no-padding" style="position: relative;">
+							<div class="activity-chart text-center">
+								<div id="statusPieGraph" class="no-modebar">
+									<div class="pie-graph-text">
+										<p class="font-18 weight-700 no-margin">S$ <span ng-bind="current_spending.current_spending" ></span></p>
+										<p class="color-black3 weight-700 font-14">Total Spent</p>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+
+						<div class="col-xs-12 col-sm-12 col-md-5  xss-no-padding">
+							<div class="activity-account">
+								<div class="top text-center">
+									<p class="color-white weight-700">In-Network Account</p>
+									<p class="color-white weight-700 font-11 no-margin">Spent</p>
+									<p class="color-white weight-700 font-medium font-16">S$ <span ng-bind="current_spending.in_network_spent"></span></p>		
+								</div>
+
+								<div class="bottom text-center">
+									<p class="color-white weight-700">Out-of-Network Account</p>
+									<p class="color-white weight-700 font-11 no-margin">Spent</p>
+									<p class="color-white weight-700 font-medium font-16">S$ <span ng-bind="current_spending.e_claim_spent"></span></p>		
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-12">
+							<div class="white-space-30"></div>
+						</div>
+					</div>
+
+					<div class="recent-trans sm-hide xs-show hide-767">
+						<div class="white-space-10"></div>
+						<p class="weight-700 font-13">RECENT TRANSACTIONS</p>
+
+						<div class="transaction-list-title">
+							<div class="col-md-6 text-center">
+								<p class="weight-700 font-15 color-blue-custom2">In-Network Transactions</p>
+							</div>
+
+							<div class="col-md-6 text-center">
+								<p class="weight-700 font-15 color-gray">Out-of-Network Transactions</p>
+							</div>
+						</div>
+
+						<div class="transaction-list">
+							<div class="transact">
+								<div class="col-xs-6 col-sm-6 col-md-6 no-padding-left border-right">
+									<div class="col-xs-12 col-sm-12 col-md-12 no-padding" ng-repeat="list in current_spending.in_network_transactions">
+										<div class="flex-wrapper">
+											<div class="img-wrapper">
+												<img src="../assets/e-claim/img/new-assets/Home---Date.png" style="width: 24px;">
+											</div>
+											<div class="transaction-details">
+												<label class="font-medium" ng-bind="list.date_of_transaction"></label>
+												<p class="dot"> 
+													<span ng-bind="list.clinic_type_and_service"></span>
+												</p>
+												<p class="dot2" ng-bind="list.clinic_name"></p>
+											</div>
+											<div class="transaction-price">
+												<div class="white-space-10"></div>
+												<p class="weight-700 color-blue-custom2">S$ <span ng-bind="list.amount"></span></p>
+												<div ng-if="list.cash_status" class="cash-badge">Cash</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-xs-6 col-sm-6 col-md-6">
+									<div class="col-xs-12 col-sm-12 col-md-12 no-padding" ng-repeat="list in current_spending.e_claim">
+										<div class="flex-wrapper">
+											<div class="img-wrapper">
+												<img src="../assets/e-claim/img/new-assets/Home---Date.png" style="width: 24px;">
+											</div>
+											<div class="transaction-details">
+												<label class="font-medium">Claim Date: <span ng-bind="list.claim_date"></span></label>
+												<p class="dot" ng-bind="list.service"></p>
+												<p class="dot2" ng-bind="list.merchant"></p>
+											</div>
+											<div class="transaction-price">
+												<div class="white-space-10"></div>
+												<p class="weight-700 color-blue-custom2">S$ <span ng-bind="list.amount"></span></p>
+												<label class="transaction-status-label" ng-bind="list.status_text"></label>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-12 sm-show xs-hide">
+		<div class="home-bottom-container ">
+			<p class="coverage-title font-20 border-bottom"><span class="weight-700">Recent Transactions</span></p>
+			<div class="white-space-10"></div>
+
+			<div class="transaction-list-title">
+				<div class="col-xs-6 col-sm-6 col-md-6 text-center">
+					<p class="weight-700 font-15 color-blue-custom2">In-Network Transactions</p>
+				</div>
+
+				<div class="col-xs-6 col-sm-6 col-md-6 text-center">
+					<p class="weight-700 font-15 color-gray">E-Claim Transactions</p>
+				</div>
+			</div>
+
+			<div class="transaction-list">
+				<div class="transact">
+					<div class="col-xs-6 col-sm-6 col-md-6 no-padding-left border-right">
+						<div class="col-xs-12 col-sm-12 col-md-12 no-padding" ng-repeat="list in current_spending.in_network_transactions">
+							<div class="flex-wrapper">
+								<div class="img-wrapper">
+									<img src="../assets/e-claim/img/new-assets/Home---Date.png" style="width: 24px;">
+								</div>
+								<div class="transaction-details">
+									<label class="font-medium" ng-bind="list.date_of_transaction"></label>
+									<p class="dot"> 
+										<span ng-bind="list.clinic_type_and_service"></span>
+									</p>
+									<p class="dot2" ng-bind="list.clinic_name"></p>
+								</div>
+								<div class="transaction-price">
+									<div class="white-space-10"></div>
+									<p class="weight-700 color-blue-custom2">S$ <span ng-bind="list.amount | number"></span></p>
+									<div ng-if="list.cash_status" class="cash-badge">Cash</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-xs-6 col-sm-6 col-md-6">
+						<div class="col-xs-12 col-sm-12 col-md-12 no-padding" ng-repeat="list in current_spending.e_claim">
+							<div class="flex-wrapper">
+								<div class="img-wrapper">
+									<img src="../assets/e-claim/img/new-assets/Home---Date.png" style="width: 24px;">
+								</div>
+								<div class="transaction-details">
+									<label class="font-medium">Claim Date: <span ng-bind="list.claim_date"></span></label>
+									<p class="dot" ng-bind="list.service"></p>
+									<p class="dot2" ng-bind="list.merchant"></p>
+								</div>
+								<div class="transaction-price">
+									<div class="white-space-10"></div>
+									<p class="weight-700 color-blue-custom2">S$ <span ng-bind="list.amount | number"></span></p>
+									<label class="transaction-status-label" ng-bind="list.status_text"></label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>	
+
+	<div class="col-xs-12 col-sm-12 col-md-12 show-767">
+		<div class="home-bottom-container ">
+			<div class="white-space-20"></div>
+
+			<div class="transaction-list-title">
+				<div class="col-xs-12 col-sm-12 col-md-12 text-center">
+					<p class="weight-700 font-15 color-blue-custom2">Recent In-Network Transactions</p>
+					<div class="white-space-20"></div>
+				</div>
+			</div>
+
+			<div class="transaction-list">
+				<div class="transact">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="col-xs-12 col-sm-12 col-md-12 no-padding" ng-repeat="list in current_spending.in_network_transactions">
+							<div class="flex-wrapper">
+								<div class="img-wrapper">
+									<img src="../assets/e-claim/img/new-assets/Home---Date.png" style="width: 24px;">
+								</div>
+								<div class="transaction-details">
+									<label class="font-medium" ng-bind="list.date_of_transaction"></label>
+									<p class="dot"> 
+										<span ng-bind="list.clinic_type_and_service"></span>
+									</p>
+									<p class="dot2" ng-bind="list.clinic_name"></p>
+								</div>
+								<div class="transaction-price">
+									<div class="white-space-10"></div>
+									<p class="weight-700 color-blue-custom2">S$ <span ng-bind="list.amount | number"></span></p>
+									<div ng-if="list.cash_status" class="cash-badge">Cash</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="home-bottom-container ">
+			<div class="white-space-20"></div>
+
+			<div class="transaction-list-title">
+				<div class="col-xs-12 col-sm-12 col-md-12 text-center">
+					<p class="weight-700 font-15 color-gray">Recent E-Claim Transactions</p>
+					<div class="white-space-20"></div>
+				</div>
+			</div>
+
+			<div class="transaction-list">
+				<div class="transact">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="col-xs-12 col-sm-12 col-md-12 no-padding" ng-repeat="list in current_spending.e_claim">
+							<div class="flex-wrapper">
+								<div class="img-wrapper">
+									<img src="../assets/e-claim/img/new-assets/Home---Date.png" style="width: 24px;">
+								</div>
+								<div class="transaction-details">
+									<label class="font-medium">Claim Date: <span ng-bind="list.claim_date"></span></label>
+									<p class="dot" ng-bind="list.service"></p>
+									<p class="dot2" ng-bind="list.merchant"></p>
+								</div>
+								<div class="transaction-price">
+									<div class="white-space-10"></div>
+									<p class="weight-700 color-blue-custom2">S$ <span ng-bind="list.amount | number"></span></p>
+									<label class="transaction-status-label" ng-bind="list.status_text"></label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>	
+
+	<div class="col-xs-12 col-sm-12 col-md-12 sm-hide">
+		<div class="white-space-50"></div>
+	</div>
+
+</div>
+

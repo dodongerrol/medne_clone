@@ -1,0 +1,258 @@
+
+body
+{
+	/*background-color: #d4d4d4!important;*/
+	background-color: #EFEFF4!important;
+}
+
+.claim-page input{
+	background: #fff !important;
+	outline: none !important;
+}
+
+.claim-page input:focus{
+	border:none !important;
+}
+
+.claim-page input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #ddd;
+}
+.claim-page input::-moz-placeholder { /* Firefox 19+ */
+  color: #ddd;
+}
+.claim-page input:-ms-input-placeholder { /* IE 10+ */
+  color: #ddd;
+}
+.claim-page input:-moz-placeholder { /* Firefox 18- */
+  color: #ddd;
+}
+
+.claim-page .table > tbody > tr > td { 
+  padding: 25px 8px 15px 8px;
+}
+
+.autocp-form input{
+	border: none !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+
+.autocp-form .form-item-container{
+	border: none !important;
+}
+
+.visit-date-add{
+	background: #fff;
+}
+
+.daytime-drop{
+	background: #fff;
+	font-size: 12px !important;
+	text-align: center;
+	color: #aaa !important;
+    border-left: 1px solid #ddd!important;
+}
+
+.daytime-drop .dropdown-menu {
+    left: auto;
+    right: 0;
+    width: 40px;
+    min-width: 0;
+}
+
+.daytime-drop .dropdown-menu li a{
+    padding: 0 5px;
+}
+
+.amount-add{
+	background: #fff;
+	font-size: 15px !important;
+    font-weight: 700;
+	text-align: center;
+	color: #1A9BD3 !important;
+}
+
+.claim-page .btn-add{
+    padding: 13px 15px;
+    width: 100%;
+    box-sizing: border-box !important;
+}
+
+.table-trans-list-container{
+	background: #fff !important;
+    padding: 25px 40px;
+	box-shadow: 1px 1px 10px #a6a6a6;
+    margin: 50px 30px;
+}
+
+.table-no-border tr,
+.table-no-border tr td
+
+{
+	border:none !important;
+}
+
+.trans-prev tr td{
+	color: #777;
+}
+
+.trans-prev tr th{
+	font-weight: 700;
+}
+
+.trans-list-tbl tr td{
+	color: #777;
+	padding: 25px 8px 15px 8px !important;
+}
+
+.load_state
+{
+	display: none;
+}
+/*.sweet-alert .sa-icon.sa-success .sa-line
+{
+	background-color: #1667AC!important;
+}*/
+#ui-datepicker-div
+{
+	width: 225px!important;
+	font-size: 25px!important;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default
+{
+	font-size: 14px!important;
+	color: #211f1f !important;
+}
+.confirm
+{
+	background-color: #1667AC!important;
+}
+.np-autocomplete-wrapper.form-group span.form-control-feedback {
+	display: none;
+}
+.np-autocomplete-wrapper.has-feedback span.form-control-feedback {
+	display: block;
+}
+.np-autocomplete-open input.form-control {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.np-autocomplete-open .list-group-item:first-child {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+.np-autocomplete-wrapper .list-group-item.active strong {
+	text-shadow: none;
+}
+.list-group
+{
+	width: 340px!important;
+}
+.btn-primary
+{
+	background: #265a88!important;
+}
+
+.dp-btn{
+	height: 32.2px !important;
+background: #eee;
+color: #000;
+position: relative !important;
+top: -0.2px;
+}
+
+.services-list-container{
+  background: #fff;
+  position: absolute;
+  width: 95%;
+  left: 8px;
+  display: none;
+}
+
+.services-list-container ul li a:hover{
+  background: #fff;
+}
+
+.services-list-container ul li{
+	position: relative;
+}
+
+.services-list-container ul li i{
+	cursor: pointer;
+  color: #c5c3c3;
+  position: absolute;
+  top: 12px;
+  right: 5px;
+}
+
+.display-flex{
+	display: flex;
+}
+
+.add-btn-service a{
+	display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: #4c9a4f;
+  border-radius: 50%;
+  text-align: center;
+  padding: 1px;
+  margin-top: 12px;
+}
+
+.add-btn-service a i{
+	color: #fff;
+}
+
+.time-select-container{
+	background: #fff;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 50px;
+  border-radius: 5px;
+  padding: 15px 0;
+  display: none;
+  z-index: 9999;
+  border: 1px solid #bbb;
+}
+
+.time-select-container .hour-arrow,
+.time-select-container .minute-arrow
+{
+	flex: 1;
+	text-align: center;
+	margin: 10px 0;
+}
+
+.time-select-container .hour-arrow i,
+.time-select-container .minute-arrow i
+{
+	color: #333;
+
+}
+
+.time-select-container .hour-time{
+	flex: 6;
+	text-align: center;
+}
+
+.time-select-container .separate{
+	flex: 1;
+	text-align: center;
+}
+
+.time-select-container .minute-time{
+	flex: 6;
+	text-align: center;
+}
+
+.table-trans-list-container .custom-date-selector button {
+    background: #fff;
+    color: #555;
+    font-weight: 700;
+    padding: 8px 30px;
+    box-shadow: none;
+    border: 2px solid #ddd;
+    font-size: 14px;
+}

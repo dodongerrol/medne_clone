@@ -1,0 +1,371 @@
+<div  company-contacts-directive>
+<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+	<div class="container">
+		<div class="welcome-container">
+			<h4 ui-sref="benefits-dashboard">Overview</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<div class="dropdown">
+			  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			    Employee
+			  </h4>
+			  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
+			    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+			    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+			  </ul>
+			</div>
+			<div class="arrow-up-2" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="activity">Activity</h4>
+			<div class="arrow-up-3" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container" ng-if="options.accessibility == 1">
+			<h4 ui-sref="e-claim">Claim</h4>
+			<div class="arrow-up-4" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="statement">Statement</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="account-and-payment">Account</h4>
+			<div class="arrow-up-5"></div>
+		</div>
+	</div>
+</div>
+<div class="hrdb-body-container">
+	<div class="container">
+		<h3 class="text-center" style="color: #5b5b5b;">Account & Billing</h3>
+		<hr>
+		<div class="col-lg-2 account-billing-link-list">
+			<ul>
+				<li>
+					<a ui-sref="company-and-contacts">Company & Contacts</a>
+				</li>
+				<li>
+					<a ui-sref="transactions">Transactions</a>
+				</li>
+				<li>
+					<a ui-sref="document-center">Document Center</a>
+				</li>
+				<li class="active-link">
+					<a href="">Account & Payment</a>
+				</li>
+				<li>
+					<a ui-sref="benefits-tier">Team Benefits Tier</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-lg-10 info-container" hidden>
+			<!-- Plan Subscription -->
+			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Plan Subscription</h3>
+			<table class="table table-bordered account-and-payment-table">
+				<tbody>
+					<tr>
+						<td>
+							<h5 style="font-weight: bold;">Plan</h5>
+							<span ng-bind="billings.plan_type">Mednefits Care (Corporate)</span>
+						</td>
+						<td>
+							<h5 style="font-weight: bold;">Start Date</h5>
+							<span ng-bind="plan_subs.start_date">22/06/2017</span>
+						</td>
+						<td>
+							<h5 style="font-weight: bold;">End Date</h5>
+							<span ng-bind="plan_subs.end_date">22/06/2017</span>
+						</td>
+						<td>
+							<h5 style="font-weight: bold;">Days to Expiry</h5>
+							<span ng-bind="plan_subs.plan_days_to_expire">0</span>
+						</td>
+						<td>
+							<h5 style="font-weight: bold;">Employees</h5>
+							<span ng-bind="plan_subs.employees">0</span>
+						</td>
+						<td ng-if="plan_subs.dependents > 0">
+							<h5 style="font-weight: bold;">Dependents</h5>
+							<span ng-bind="plan_subs.dependents">0</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- <h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Plan Subscription</h3>
+			<table class="table table-bordered account-and-payment-table">
+				<thead>
+					<tr>
+						<th colspan="2">Payment Method</th>
+						<th colspan="2">Details</th>
+					</tr>
+				</thead>
+				<tbody class="account-and-payment-table-tbody">
+					<tr>
+						<td ng-if="billings.payment_method.cheque == 'true'">Cheque</td>
+						<td ng-if="billings.payment_method.credit_card == 'true'">Credit Card</td>
+						<td>
+							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-payment-information-modal" ng-click="openEditPaymentModal(billings)">Edit</button>
+						</td>
+						<td>
+							<h5 style="font-weight: bold;margin: 0;">Billing Address</h5>
+							<h5 style="margin: 0;" ng-bind="billings[0].billing_address.billing_address">7 Temasek Boulevard</h5>
+						</td>
+						<td>
+							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-payment-information-details-modal" ng-click="openEditPaymentModal2(billings)">Edit</button>
+						</td>
+					</tr>
+				</tbody>
+			</table> -->
+
+			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;"></h3>
+			<table class="table table-bordered account-and-payment-table">
+				<thead>
+					<tr>
+						<th>Account</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody class="account-and-payment-table-tbody">
+					<tr>
+						<td>Update Password</td>
+						<td class="text-right">
+							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-password-modal" ng-click="openEditPasswordModal(company_contacts)">Edit</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 35px;margin-bottom: 20px;">Current Active Plans:</h3>
+
+			<div class="active-plan" ng-repeat="list in comp_active_plans">
+				<p><label>Active Plan #<span ng-bind="$index + 1"></span></label></p>
+				<p><label>Active Plan ID #<span ng-bind="list.customer_active_plan_id">138</span></label></p>
+
+				<div class="employee-account-container">
+
+					<div class="employee-account-title">
+            <span>Employee Account</span>
+          </div>
+
+					<p>
+						<!-- <label>Account Type:</label>  -->
+						<label>Plan Type: </label>
+						<span ng-if="list.account_type == 'insurance_bundle'">Insurance Bundle</span>
+						<span ng-if="list.account_type == 'stand_alone_plan'">Standalone Plan</span>
+						<span ng-if="list.account_type == 'lite_plan'">Lite Plan</span>
+						<span ng-if="list.account_type == 'trial_plan'">Trial Plan</span>
+					</p>
+					<!-- <p><label>Date:</label> <span ng-bind="list.plan_start">28-06-2017</span></p> -->
+					<p><label>Start Date:</label> <span ng-bind="list.plan_start">28-06-2017</span></p>
+					<p><label>Plan Duration:</label> <span ng-bind="list.duration">365 Days</span></p>
+					<!-- <p><label>Employees:</label> <span ng-bind="list.employees">1</span></p> -->
+					<p><label>Total Seats:</label> <span ng-bind="list.employees">1</span></p>
+					<p><label>Occupied Seats:</label> <span ng-bind="list.employees">1</span></p>
+					<p><label>Vacant Seats:</label> <span ng-bind="list.employees">1</span></p>
+					<p><label>Plan Amount:</label> S$<span ng-bind="list.plan_amount">99.00</span></p>
+					<p><label>Payment Status:</label> <span ng-if="list.paid == 'true'">PAID</span><span ng-if="list.paid == 'false'">PENDING</span></p>
+				</div>
+
+				<div ng-if="list.dependents.length > 0" class="employee-account-container">
+
+					<div class="employee-account-title">
+            <span>Dependent Account</span>
+          </div>
+          <div class="dependent-account-list-container">
+	          <div ng-repeat="dep in list.dependents" class="dependents-list">
+	          	<p>
+							<!-- <label>Account Type:</label>  -->
+								<label>Plan Account Type: </label>
+								<span ng-if="dep.account_type == 'insurance_bundle'">Insurance Bundle</span>
+								<span ng-if="dep.account_type == 'stand_alone_plan'">Standalone Plan</span>
+								<span ng-if="dep.account_type == 'lite_plan'">Lite Plan</span>
+								<span ng-if="dep.account_type == 'trial_plan'">Trial Plan</span>
+							</p>
+							<!-- <p><label>Date:</label> <span ng-bind="dep.plan_start">28-06-2017</span></p> -->
+							<p><label>Start Date:</label> <span ng-bind="dep.plan_start">28-06-2017</span></p>
+							<!-- <p><label>Employees:</label> <span ng-bind="dep.employees">1</span></p> -->
+							<p><label>Total Seats:</label> <span ng-bind="dep.total_dependents">1</span></p>
+							<p><label>Occupied Seats:</label> <span ng-bind="dep.occupied">1</span></p>
+							<p><label>Vacant Seats:</label> <span ng-bind="dep.vacant">1</span></p>
+							<p><label>Plan Amount:</label> S$<span ng-bind="dep.amount">99.00</span></p>
+							<p><label>Payment Status:</label> <span ng-if="dep.payment_status == 1">PAID</span><span ng-if="dep.payment_status == 0">PENDING</span></p>
+		        </div>
+					</div>
+				</div>
+
+				<br>
+				<!-- <p ng-if="list.plan_extension"><label>Plan Extention</label></p> -->
+				<div ng-if="list.plan_extension" class="plan-extension-title">
+          <span>Plan Extension</span>
+        </div>
+
+				<p ng-if="list.plan_extension">
+					<label>Account Type:</label> 
+					<span ng-if="list.plan_extension.account_type == 'insurance_bundle'">Insurance Bundle</span>
+					<span ng-if="list.plan_extension.account_type == 'stand_alone_plan'">Standalone Plan</span>
+					<span ng-if="list.plan_extension.account_type == 'lite_plan'">Lite Plan</span>
+					<span ng-if="list.plan_extension.account_type == 'trial_plan'">Trial Plan</span>
+					<p ng-if="list.plan_extension"><label>Date:</label> <span ng-bind="list.plan_extension.plan_start">28-06-2017</span></p>
+					<p ng-if="list.plan_extension"><label>Plan Duration:</label> <span ng-bind="list.plan_extension.duration">365 Days</span></p>
+					<p ng-if="list.plan_extension"><label>Employees:</label> <span ng-bind="list.plan_extension.employees">1</span></p>
+					<p ng-if="list.plan_extension"><label>Plan Amount:</label> S$<span ng-bind="list.plan_extension.amount">99.00</span></p>
+					<p ng-if="list.plan_extension"><label>Payment Status:</label> <span ng-if="list.plan_extension.paid == 1">PAID</span><span ng-if="list.plan_extension.paid == 0">PENDING</span></p>
+				</p>
+				<!-- <p ng-if="list.dependents > 0"><label>Dependents Plans: <span ng-bind="list.dependents"></span></label></p> -->
+				<!-- <br> -->
+				<!-- <p ng-if="list.dependents > 0"><label>Number of Dependent Plan: <span ng-bind="list.dependents"></span></label></p> -->
+				<br>
+				<div class="medical-spending-container">
+					<p><label class="medical-spending-title">Medical Spending Account:</label></p>
+					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p> -->
+					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_medical">0.00</span></p> -->
+					<p><label>Total:</label> S$<span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p>
+					<p><label>Unallocated:</label> S$<span ng-bind="list.total_deposit_medical">0.00</span></p>
+				</div>
+				<div class="wellness-spending-container">
+					<p><label class="wellness-spending-title">Wellness Spending Account:</label></p>
+					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p> -->
+					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_wellness">0.00</span></p> -->
+					<p><label>Total:</label> S$<span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p>
+					<p><label>Unallocated:</label> S$<span ng-bind="list.total_deposit_medical">0.00</span></p>
+				</div>
+				<br>
+				<div class="col-md-12 no-padding text-center">
+					<button class="btn btn-default btn-view-plan" ng-click="selectActivePlan(list)" data-toggle="modal" data-target="#active-plan-details-modal">View Plan</button>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="col-lg-8">
+			<div class="loader-container">
+				<div class="preloader-wrapper big active">
+				    <div class="spinner-layer spinner-blue-only">
+				      <div class="circle-clipper left">
+				        <div class="circle"></div>
+				      </div><div class="gap-patch">
+				        <div class="circle"></div>
+				      </div><div class="circle-clipper right">
+				        <div class="circle"></div>
+				      </div>
+				    </div>
+				  </div>
+			</div>
+		</div>
+	</div>
+
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="active-plan-details-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="">
+      <div class="modal-content" style="border-radius: 0;">
+          <div class="modal-header" style="background-color: #33a2d4;padding: 20px;">
+            <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Active Plan Details</h4>
+          </div>
+          <div class="modal-body" style="padding:0;overflow: hidden;">
+            <div class="col-md-12 header">
+            	<p>Transactions</p>
+            </div>
+            <div class="col-md-12 body">
+            	<div class="col-md-6 no-padding">
+            		<p>Plan Account Type: 
+            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'stand_alone_plan'">Standalone Plan</span>
+            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'insurance_bundle'">Insurance Bundle</span>
+            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'lite_plan'">Lite Plan</span>
+            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'trial_plan'">Trial Plan</span>
+            		</p>
+            		<p>Invoice: <span ng-bind="selected_active_plan_details.invoice.invoice_number">0MCCC0037</span></p>
+            		<p>Plan Duration: <span ng-bind="selected_active_plan_details.active_plan.duration">4 Months</span></p>
+            		<p>Employees: <span ng-bind="selected_active_plan_details.active_plan.employees">10</span></p>
+            		<p>Plan Amount: S$<span ng-bind="selected_active_plan_details.active_plan.plan_amount">398.71</span></p>
+            		<p>Payment Status: 
+            			<span ng-if="selected_active_plan_details.active_plan.paid == 'true'">PAID</span>
+            			<span ng-if="selected_active_plan_details.active_plan.paid == 'false'">PENDING</span>
+            		</p>
+            		<p>Plan Duration: <span ng-bind="selected_active_plan_details.active_plan.duration">4 Months</span></p>
+            		<p>Employees: <span ng-bind="selected_active_plan_details.active_plan.employees">10</span></p>
+            		<p>Plan Amount: S$<span ng-bind="selected_active_plan_details.active_plan.plan_amount">398.71</span></p>
+            		<p>Payment Status: 
+            			<span ng-if="selected_active_plan_details.active_plan.paid == 'true'">PAID</span>
+            			<span ng-if="selected_active_plan_details.active_plan.paid == 'false'">PENDING</span>
+            		</p>
+            	</div>
+            	<div class="col-md-6 text-center no-padding">
+            		<button class="btn btn-default btn-trans-dl-invoice" ng-click="activePlanDownloadInvoice()">DOWNLOAD INVOICE</button>
+            		<button class="btn btn-default btn-trans-pending-enroll" ng-click="goToEmpOverview()" data-dismiss="modal"><span ng-bind="selected_active_plan_details.active_plan.pending_enrollment">0</span> PENDING ENROLLMENT</button>
+            		<button class="btn btn-default btn-trans-dl-receipt" ng-click="activePlanDownloadReceipt()" ng-if="selected_active_plan_details.active_plan.paid == 'true'">DOWNLOAD RECEIPT</button>
+            	</div>
+            </div>
+            <div class="col-md-12 header" ng-if="selected_active_plan_details.dependents.length > 0">
+            	<p>Dependent Plans</p>
+            </div>
+           <div class="col-md-12 body" ng-repeat="list in selected_active_plan_details.dependents">
+	        	<div class="col-md-6 no-padding">
+	            	<p>Dependent Plan Account Type: 
+	        			<span ng-if="list.account_type == 'stand_alone_plan'">Standalone Plan</span>
+	        			<span ng-if="list.account_type == 'insurance_bundle'">Insurance Bundle</span>
+	        			<span ng-if="list.account_type == 'lite_plan'">Lite Plan</span>
+	        			<span ng-if="list.account_type == 'trial_plan'">Trial Plan</span>
+	        		</p>
+	        		<p>Active Plan Type: 
+	        			<span ng-if="list.type == 'active_plan'">Active Plan</span>
+	        			<span ng-if="list.type == 'extension_plan'">Plan Extension</span>
+	        		</p>
+	        		<p>Plan Duration: <span ng-bind="list.duration">4 Months</span></p>
+	        		<p>Total Seats: <span ng-bind="list.total_dependents">10</span></p>
+	        		<p>Occupied Seats: <span ng-bind="list.occupied">10</span></p>
+	        		<p>Vacant Seats: <span ng-bind="list.vacant">10</span></p>
+	        		<p>Plan Amount: S$<span ng-bind="list.total_amount">398.71</span></p>
+	        		<p>Payment Status: 
+	        			<span ng-if="list.payment_status == true">PAID</span>
+	        			<span ng-if="list.payment_status == false">PENDING</span>
+	        		</p>
+	        	</div>
+	      		<div class="col-md-6 text-center no-padding">
+	        		<button class="btn btn-default btn-trans-dl-invoice" ng-click="dependentPlanDownloadInvoice(list)">DOWNLOAD INVOICE</button>
+	        		<button class="btn btn-default btn-trans-pending-enroll" ng-click="goToEmpOverview()" data-dismiss="modal"><span ng-bind="list.vacant">0</span> PENDING ENROLLMENT</button>
+	        	</div>
+           </div>
+        	<div ng-if="selected_active_plan_details.extension" class="col-md-12 header">
+            	<p>Plan Extension</p>
+            </div>
+            <div class="col-md-12 body" ng-if="selected_active_plan_details.extension">
+            	<p>Account Type: 
+        			<span ng-if="selected_active_plan_details.extension.account_type == 'stand_alone_plan'">Standalone Plan</span>
+        			<span ng-if="selected_active_plan_details.extension.account_type == 'insurance_bundle'">Insurance Bundle</span>
+        			<span ng-if="selected_active_plan_details.extension.account_type == 'lite_plan'">Lite Plan</span>
+        			<span ng-if="selected_active_plan_details.extension.account_type == 'trial_plan'">Trial Plan</span>
+        		</p>
+        		<p>Invoice: <span ng-bind="selected_active_plan_details.extension.invoice.invoice_number">0MCCC0037</span></p>
+        		<p>Plan Duration: <span ng-bind="selected_active_plan_details.extension.duration">4 Months</span></p>
+        		<p>Employees: <span ng-bind="selected_active_plan_details.extension.employees">10</span></p>
+        		<p>Plan Amount: S$<span ng-bind="selected_active_plan_details.extension.plan_amount">398.71</span></p>
+        		<p>Payment Status: 
+        			<span ng-if="selected_active_plan_details.extension.paid == 1">PAID</span>
+        			<span ng-if="selected_active_plan_details.extension.paid == 0">PENDING</span>
+        		</p>
+            </div>
+            <div ng-if="selected_active_plan_details.deposits.length > 0" class="col-md-12 header">
+            	<p>Spending Account</p>
+            </div>
+            <div ng-if="selected_active_plan_details.deposits.length > 0" ng-repeat="list in selected_active_plan_details.deposits" class="col-md-12 body">
+            	<div class="col-md-6 no-padding">
+            		<p>Invoice: <span <span ng-bind="list.deposit_number">DEP000085</span></p>
+            		<p>Total Credits: S$<span ng-bind="list.total_credits">12,500.00</span></p>
+            		<p>(<span ng-bind="list.total_all_credits_text"></span>)</p>
+            		<p>Deposit: S$<span ng-bind="list.total_deposit">1,250.00</span></p>
+            		<p>Payment Status: <span ng-if="list.payment_status == 0">PENDING</span> <span ng-if="list.payment_status == 1">PENDING</span></span></p>
+            	</div>
+            	<div class="col-md-6 text-center no-padding">
+            		<button class="btn btn-default btn-spend-dl-invoice" ng-click="downloadSpendingDeposit(list.deposit_id)">DOWNLOAD INVOICE</button>
+            	</div>
+            </div>
+          </div>
+          <div class="modal-footer" style="border-top: 2px solid #e5e5e5;padding: 20px">
+            <button class="pull-right active-plan-close-btn" data-dismiss="modal">CLOSE</button>
+          </div>
+      </div>
+    </div>
+	</div>
+
+</div>
+</div>

@@ -1,0 +1,29 @@
+<!-- This modal is for Employee Overview page only -->
+
+
+<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="account-billing-edit-payment-information-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" edit-details-directive>
+    <div class="modal-dialog" role="document" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-header" style="background-color: #33a2d4;padding: 20px;">
+                <img src="assets/hr-dashboard/img/icons/close.svg" style="width: 20px;cursor: pointer;" class="pull-right" data-dismiss="modal">
+                <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Edit Payment Information</h4>
+            </div>
+            <div class="modal-body" style="padding: 25px 30px 25px 30px;">
+                <form>
+                    <div class="form-group">
+                        <label style="color: #4e4e4e;">Payment Method</label>
+                        <select class="form-control account-billing-edit-business-info-modal-input" ng-model="payment.payment_method.method">
+                            <option selected>Cheque</option>
+                            <option>Credit Card</option>
+                        </select>
+                        <!-- <input type="text" class="form-control account-billing-edit-business-info-modal-input" name="" value="038987"> -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border: 0;padding: 25px 30px 25px 30px;">
+                <button class="pull-right edit-employee-details-button" style="border: solid 1px #0392cf;background-color: #0392cf;color: #fff;" ng-click="updatePaymentMethod()">UPDATE</button>
+                <button class="pull-right edit-employee-details-button" style="border: solid 1px #ff7373;color: #ff7373;margin-right: 18px;" data-dismiss="modal">CANCEL</button>
+            </div>
+        </div>
+    </div>
+</div>

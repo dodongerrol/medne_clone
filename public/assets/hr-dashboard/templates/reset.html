@@ -1,0 +1,37 @@
+<div class="container">
+	<div class="login-need-help-container">
+		<a href="#" class="pull-right need-help-text tooltips">
+			<h3>Need help?</h3>
+			<div class="tooltip-container">
+				<h3 class="tooltip-title">We're here to help.</h3>
+				<h3 class="tooltip-phone-email-title">You may ring us</h3>
+				<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
+				<h3 class="tooltip-phone-email-details">Mon - Fri 10:00 to 19:00</h3>
+				<br>
+				<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
+				<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
+			</div>
+		</a>
+	</div>
+	<div class="col-sm-12 col-md-12 col-lg-12">
+		<img src="../../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+		<h2 class="text-center text-below-image">for company</h2>
+		<form class="med-form" ng-submit="reset.resetHr()" id="form-reset" style="display: none;">
+			<div class="form-group">
+				<input type="password" name="password" class="form-control med-input" placeholder="Password" ng-model="reset.reset_pass.password" required>
+			</div>
+			<div class="form-group">
+				<input type="password" name="password" class="form-control med-input" placeholder="Confirm Password" ng-model="reset.reset_pass.confirm_password" required>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-info btn-block med-button" id="reset-btn">DONE</button>
+			</div>
+		</form>
+		<div class="form-group" id="success-message" style="display: none;">
+			<button type="button" class="btn btn-info btn-block med-button"><span ng-bind="reset.message"></span></button>
+		</div>
+		<div class="form-group" id="token-expired" style="display: none;">
+			<button type="button" class="btn btn-info btn-block med-button">Token Expired.</button>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,801 @@
+<div class="comp-details-wrapper center-align" company-details-directive>
+	<div ng-if="userDetails_data.cover_type != 'individual'" id="form-one" class="" >
+		<div class="row">
+			<div class="col s12">
+				<p class="color-gray font-20 weight-700 font-myriad">STEP 1 OF 4</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<h1 class="font-40 weight-500 color-dark-grey font-myriad">Business Information</h1>
+				<div class="white-space-20"></div>
+			</div>
+		</div>
+
+		<div class="row" >
+			<div class="col s8 offset-s2">
+				<form>
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50" >
+				          <input id="comp-name" type="text" 
+				          	ng-model="userDetails_data.company_name" 
+				          	ng-class="{'invalid': !userDetails_data.company_name && stepOneClicked }" 
+				          	class="validate font-16 color-blue" placeholder=" ">
+				          <label for="comp-name" class="font-16 active">Company Name</label>
+				        </div>
+				        <div id="business-select" class="input-field col s6 padding-right-50">
+				        	<select class="font-16 color-blue" ng-model="userDetails_data.nature_of_business" material-select>
+				        		<option ng-repeat="list in nature_of_business_list" value="{{list.nature}}" ng-bind="list.nature"></option>
+						    </select>
+						    <label class="font-16 ">Nature of Business</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+				          <input id="comp-name" type="text" 
+				          	ng-model="userDetails_data.company_address" 
+				          	ng-class="{'invalid': !userDetails_data.company_address && stepOneClicked}"
+				          	class="validate font-16 color-blue" placeholder=" ">
+				          <label for="comp-name" class="font-16 active">Company Address (Singapore)</label>
+				        </div>
+
+				        <div class="input-field col s6 padding-right-50">
+				          <input id="postcode" type="text"
+					          ng-model="userDetails_data.company_postal_code" 
+					          ng-class="{'invalid': !userDetails_data.company_postal_code && stepOneClicked}"  
+					          class="validate font-16 color-blue" placeholder=" ">
+				          <label for="postcode" class="font-16 active">Postal Code</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div id="establish-select" class="input-field col s6 padding-right-50">
+				            <select  class="font-16 color-blue" ng-model="userDetails_data.establishment" >
+						      <option value="{{ 2017 - $index }}" ng-repeat="n in years track by $index">{{ 2017 - $index }}</option>
+						    </select>
+						    <label class="font-16 ">What is the year of establishment?</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50 right-align">
+				          <div class="white-space-20"></div>
+				          <button ng-click="stepOneDone()" class="btn btn-large blue white-text radius-8 btn-con">CONTINUE</button>
+				          <button ng-click="stepOneDone()" class="btn btn-large blue white-text radius-8 btn-done" hidden>Done</button>
+				        </div>
+					</div>	
+				</form>
+			</div>
+		</div>
+
+	</div>
+
+	<div ng-if="userDetails_data.cover_type == 'individual'" class="personal-container " >
+		<div class="row">
+			<div class="col s12">
+				<!-- <div class="white-space-20"></div>
+				<div class="white-space-20"></div> -->
+				<p class="color-gray font-20 weight-700 font-myriad">STEP 1 OF 3</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<h1 class="font-40 weight-500 color-dark-grey font-myriad">Personal Details</h1>
+				<div class="white-space-20"></div>
+			</div>
+		</div>
+				
+		<div class="row">
+			<div class="col s8 offset-s2">
+				<form>
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50" >
+				          <input id="first-name3" type="text" class="validate font-16 color-blue" placeholder=" " 
+				          	ng-model="userDetails_data.firstname"
+				          	ng-class="{'invalid': !userDetails_data.firstname && stepTwoClicked }" >
+				          <label for="first-name" class="font-16 active">First/Given Name</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				        	<input id="last-name3" type="text" class="validate font-16 color-blue" placeholder=" " 
+				        	ng-model="userDetails_data.lastname"
+				        	ng-class="{'invalid': !userDetails_data.lastname && stepTwoClicked }" >
+				          	<label for="last-name" class="font-16 active">Last/Family Name</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+				        	<input id="nric" type="text" class="validate font-16 color-blue" placeholder=" " 
+				        	ng-model="userDetails_data.nric"
+				        	ng-class="{'invalid': !userDetails_data.nric && stepTwoClicked }" >
+				          	<label for="nric" class="font-16 active">NRIC/FIN</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				        	<input id="dob" type="text" class="validate font-16 color-blue" placeholder=" " 
+				        	ng-model="userDetails_data.age" >
+				          	<label for="dob" class="font-16 active">Age</label>
+				        </div>
+					</div>
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+				        	<select id="select-gender" ng-model="userDetails_data.gender" class="color-blue">
+								<option value=""></option>
+								<option value="male">Male</option>
+								<option value="female">Female</option>
+							</select>
+				          	<label class="font-16 ">Gender</label>
+				        </div>
+				        <div id="job-select" class="input-field col s6 padding-right-50" >
+							<select class="color-blue" ng-model="userDetails_data.job_title" material-select>
+						      <option ng-repeat="list in job_list" value="{{list.job_title}}" ng-bind="list.job_title"></option>
+						    </select>
+						    <label class="font-16">Job Title</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+				            <input id="email3" type="text" class="validate font-16 color-blue" placeholder=" " ng-model="userDetails_data.email"
+				            ng-class="{'invalid': !userDetails_data.email && stepTwoClicked }">
+				          	<label for="email3" class="font-16 active">Email</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				            <input id="email-confirm3" type="text" class="font-16 color-blue" placeholder=" " ng-model="userDetails_data.email_confirm"
+				            ng-class="{'invalid': (userDetails_data.email != userDetails_data.email_confirm) && stepTwoClicked, 'valid': userDetails_data.email_confirm && (userDetails_data.email == userDetails_data.email_confirm) && stepTwoClicked}" >
+				          	<label for="email-confirm3" class="font-16 active">Email Confirmation</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+							<input id="mobile" type="text" class="validate font-16 color-blue" placeholder=" " ng-model="userDetails_data.phone"
+							ng-class="{'invalid': !userDetails_data.phone && stepTwoClicked }">
+				          	<label for="mobile" class="font-16 active">Mobile</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				        	<input id="address3" type="text" class="validate font-16 color-blue" placeholder=" " ng-model="userDetails_data.home_address"
+							ng-class="{'invalid': !userDetails_data.home_address && stepTwoClicked }">
+				          	<label for="address3" class="font-16 active">Home Address</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+							<input id="pcode" type="text" class="validate font-16 color-blue" placeholder=" " ng-model="userDetails_data.company_postal_code"
+							ng-class="{'invalid': !userDetails_data.company_postal_code && stepTwoClicked }">
+				          	<label for="pcode" class="font-16 active">Postal Code</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+				          <p class="text-error" ng-if="email_taken_error">*Email address already taken.</p>
+				          <p class="text-error" ng-if="email_blank_error">*Input Email Address.</p>
+				          <p class="text-error" ng-if="email_mismatch_error">*Email Address and Email Address Confirmation mismatch.</p>
+				          <p class="text-error" ng-if="email_mismatch_error">*Input Email Address Confirmation.</p>
+				          <p class="text-error" ng-if="job_error">*Input job title.</p>
+				          <p class="text-error" ng-if="invalid_nric">*NRIC is invalid.</p>
+				        </div>
+				        <div class="input-field col s6 padding-right-50 right-align">
+				          <button ng-click="stepTwoIndividalDone()" class="btn btn-large blue white-text radius-8 btn-con">CONTINUE</button>
+				          <button ng-click="stepTwoIndividalDone()" class="btn btn-large blue white-text radius-8 btn-done" hidden>Done</button>
+				        </div>
+					</div>	
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="form-two" hidden>
+		<div class="row">
+			<div class="col s12">
+				<!-- <div class="white-space-20"></div>
+				<div class="white-space-20"></div> -->
+				<p class="color-gray font-20 weight-700">STEP 2 OF 4</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s12">
+				<h1 class="font-40 weight-500 color-dark-grey">Business Contacts</h1>
+				<p class="color-gray font-16">Please include the person responsible for managing the company's benefits</p>
+				<div class="white-space-50"></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s8 offset-s2">
+				<form>
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50" >
+				          <input id="first-name" type="text" class="validate font-16 color-blue" placeholder=" " 
+				          	ng-model="userDetails_data.firstname"
+				          	ng-class="{'invalid': !userDetails_data.firstname && stepTwoClicked }" >
+				          <label for="first-name" class="font-16 active">First/Given Name</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				        	<input id="last-name" type="text" class="validate font-16 color-blue" placeholder=" " 
+				        	ng-model="userDetails_data.lastname"
+				        	ng-class="{'invalid': !userDetails_data.lastname && stepTwoClicked }" >
+				          	<label for="last-name" class="font-16 active">Last/Family Name</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div id="job-select" class="input-field col s6 padding-right-50" >
+							<select class="color-blue" ng-model="userDetails_data.job_title">
+						      <!-- <option value="" selected></option>
+						      <option value="1">Option 1</option>
+						      <option value="2">Option 2</option>
+						      <option value="3">Option 3</option> -->
+						      <option ng-repeat="list in job_list" value="{{list.job_title}}">{{list.job_title}}</option>
+						    </select>
+						    <label class="font-16 ">Job Title</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				        	
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+				            <input id="email" type="text" class="validate font-16 color-blue" placeholder=" " ng-model="userDetails_data.email"
+				            ng-class="{'invalid': !userDetails_data.email && stepTwoClicked }">
+				          	<label for="email" class="font-16 active">Work Email</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				            <input id="email-confirm" type="text" class="font-16 color-blue" placeholder=" " ng-model="userDetails_data.email_confirm"
+				            ng-class="{'invalid': (userDetails_data.email != userDetails_data.email_confirm) && stepTwoClicked, 'valid': userDetails_data.email_confirm && (userDetails_data.email == userDetails_data.email_confirm) && stepTwoClicked}" >
+				          	<label for="email-confirm" class="font-16 active">Work Email Confirmation</label>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+							<input id="phone" type="text" class="validate font-16 color-blue" placeholder=" " ng-model="userDetails_data.phone"
+							ng-class="{'invalid': !userDetails_data.phone && stepTwoClicked }">
+				          	<label for="phone" class="font-16 active">Phone</label>
+				        </div>
+				        <div class="input-field col s6 padding-right-50">
+				        	
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s7 padding-right-50">
+							<label class="font-16">Is this person the billing contact?</label>
+							<br>
+							<br>
+							<p>
+						      <input name="billing-contract" type="radio" id="bill-contract-no" ng-model="person_isBilling" ng-value="false" />
+						      <label for="bill-contract-no" class="label-1" style="left: -3px;line-height: 2;"><span>No</span></label>
+
+						      <input name="billing-contract" type="radio" id="bill-contract-yes" ng-model="person_isBilling" ng-value="true" />
+						      <label for="bill-contract-yes" class="label-2" style="line-height: 2;"><span>Yes</span></label>
+						    </p>
+						    <br>
+						    <p ng-if="person_isBilling == undefined && stepTwoClicked" class="text-error">Please Select an Option</p>
+				        </div>
+				        <div class="input-field col s5 padding-right-50 right-align">
+				          
+				        </div>
+					</div>	
+
+					<div ng-if="person_isBilling == false">
+						<div class="row margin-bottom-30 ">
+							<div class="input-field col s6 padding-right-50" >
+					          <input id="first-name2" type="text" class="validate font-16 color-blue" placeholder=" " 
+					          ng-model="userDetails_data.billing_person.firstname"
+					          ng-class="{'invalid': !userDetails_data.billing_person.firstname && stepTwoClicked && person_isBilling == false}">
+					          <label for="first-name2" class="font-16 active">First/Given Name</label>
+					        </div>
+					        <div class="input-field col s6 padding-right-50">
+					        	<input id="last-name2" type="text" class="validate font-16 color-blue" placeholder=" " 
+					        	ng-model="userDetails_data.billing_person.lastname"
+					        	ng-class="{'invalid': !userDetails_data.billing_person.lastname && stepTwoClicked && person_isBilling == false}">
+					          	<label for="last-name2" class="font-16 active">Last/Family Name</label>
+					        </div>
+						</div>
+
+						<div class="row margin-bottom-30">
+							<div class="input-field col s6 padding-right-50">
+					            <input id="email2" type="text" class="validate font-16 color-blue" placeholder=" " 
+					            ng-model="userDetails_data.billing_person.email"
+					            ng-class="{'invalid': !userDetails_data.billing_person.email && stepTwoClicked && person_isBilling == false}">
+					          	<label for="email2" class="font-16 active">Work Email</label>
+					        </div>
+					        <div class="input-field col s6 padding-right-50">
+					            <input id="email-confirm2" type="text" class="font-16 color-blue" placeholder=" "
+					            ng-model="userDetails_data.billing_person.email_confirm"
+					            ng-class="{'invalid': userDetails_data.billing_person.email != userDetails_data.billing_person.email_confirm && stepTwoClicked && person_isBilling == false, 'valid': userDetails_data.billing_person.email_confirm && userDetails_data.billing_person.email == userDetails_data.billing_person.email_confirm && stepTwoClicked && person_isBilling == false}">
+					          	<label for="email-confirm2" class="font-16 active">Work Email Confirmation</label>
+					        </div>
+						</div>	
+
+					</div>
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s7 padding-right-50">
+							<label class="font-16">Is the billing address different from the company's address?</label>
+							<br>
+							<br>
+							<p>
+						      <input name="bill-address" type="radio" id="bill-address-no" ng-model="address_isBilling" ng-value="false"/>
+						      <label for="bill-address-no" class="label-1" style="left: -3px;line-height: 2;"><span>No</span></label>
+
+						      <input name="bill-address" type="radio" id="bill-address-yes" ng-model="address_isBilling" ng-value="true"/>
+						      <label for="bill-address-yes" class="label-2" style="line-height: 2;"><span>Yes</span></label>
+						    </p>
+						    <br>
+						    <p ng-if="address_isBilling == undefined && stepTwoClicked" class="text-error">Please Select an Option</p>
+				        </div>
+				        <div class="input-field col s5 padding-right-50 right-align">
+				          
+				        </div>
+					</div>
+
+					<div ng-if="address_isBilling == true">
+						<div class="row margin-bottom-30">
+							<div class="input-field col s6 padding-right-50">
+					          <input id="bill-add2" type="text" class="validate font-16 color-blue" placeholder=" " 
+					          ng-model="userDetails_data.billing_person.address"
+					          ng-class="{'invalid': !userDetails_data.billing_person.address && stepTwoClicked && address_isBilling == true}">
+					          <label for="bill-add2" class="font-16 active">Billing Address (Singapore)</label>
+					        </div>
+					        <div class="input-field col s6 padding-right-50">
+					          <input id="postcode2" type="text" class="validate font-16 color-blue" 
+					          ng-model="userDetails_data.billing_person.postal_code" placeholder=" "
+					          ng-class="{'invalid': !userDetails_data.billing_person.postal_code && stepTwoClicked && address_isBilling == true}"> 
+					          <label for="postcode2" class="font-16 active">Postal Code</label>
+					        </div>
+						</div>	
+					</div>
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s6 padding-right-50">
+				          <p class="text-error" ng-if="email_taken_error">*Email address already taken.</p>
+				          <p class="text-error" ng-if="email_same_error">*Email address not match.</p>
+				        </div>
+				        <div class="input-field col s6 padding-right-50 right-align">
+				          <button ng-click="stepTwoDone()" class="btn btn-large btn-blue white-text radius-8 btn-con">CONTINUE</button>
+				          <button ng-click="stepTwoDone()" class="btn btn-large btn-blue white-text radius-8 btn-done" hidden>Done</button>
+				        </div>
+					</div>	
+				</form>
+			</div>
+		</div>
+		
+	</div>
+
+
+
+	<div id="form-three" hidden>
+		<div class="row">
+			<div class="col s12">
+				<!-- <div class="white-space-20"></div>
+				<div class="white-space-20"></div> -->
+				<p ng-if="userDetails_data.cover_type != 'individual'" class="color-gray font-20 weight-700">STEP 3 OF 4</p>
+				<p ng-if="userDetails_data.cover_type == 'individual'" class="color-gray font-20 weight-700">STEP 2 OF 3</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col s12">
+				<h1 class="font-40 weight-500 color-dark-grey">Eligibility and Enrolment</h1>
+				<div class="white-space-50"></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s6 offset-s3">
+				<form class="left-align">
+					<div class="row margin-bottom-30">
+						<div class="input-field col s12 padding-right-50" >
+				          <input id="start-date" type="text" class="datepicker color-blue" ng-model="userDetails_data.plan_start" ng-click="datePickerClicked()" style="width: 30%" placeholder=" ">
+				          <label for="start-date" class="font-15 weight-500 color-dark-grey2 active">Start Date*</label>
+				          <p ng-if="userDetails_data.cover_type != 'individual'" class="color-dark-grey font-12">*If your company is using cheque as the payment method, please allow start date to be at least 7 working days after today.</p>
+				          <br>
+				        </div>
+					</div>	
+
+					<div ng-if="userDetails_data.cover_type != 'individual'">
+						<div class="row margin-bottom-30">
+							<div class="input-field col s12 padding-right-50" >
+					          <input id="num-emp" type="text" class="validate color-blue valid disabled" 
+					          ng-model="userDetails_data.employees" style="width: 20%" placeholder=" " >
+					          <label for="num-emp" class="font-15 weight-500 color-dark-grey2 active">Number of Employees Enrolling in this Plan</label>
+					        </div>
+						</div>	
+
+						<div class="row margin-bottom-30">
+							<div class="col s12">
+								<h1 class="font-30 weight-500 color-dark-grey">Benefits Dashboard Account</h1>
+								<p class="color-dark-grey font-12">*Set a password to enrol your team in later using the benefits dashboard</p>
+							</div>
+						</div>
+
+						<div class="row margin-bottom-30">
+							<div class="input-field col s6 padding-right-50" >
+					          <input id="log-id" type="text" class="validate color-blue" 
+					           ng-model="userDetails_data.email" placeholder=" "
+					           ng-class="{'invalid': !userDetails_data.email && stepThreeClicked }">
+					          <label for="log-id" class="font-15 weight-500 color-dark-grey2 active">Login ID</label>
+					        </div>
+						</div>	
+
+						<div class="row margin-bottom-30">
+							<div class="input-field col s6 padding-right-50" >
+					          <input id="passwd" type="password" class="validate color-blue" 
+					          ng-model="userDetails_data.password" placeholder=" "
+					          ng-class="{'invalid': !userDetails_data.password && stepThreeClicked }"> 
+					          <label for="passwd" class="font-15 weight-500 color-dark-grey2 active">Password</label>
+					        </div>
+
+					        <div class="input-field col s6 padding-right-50" >
+					          <input id="passwd2" type="password" class="validate color-blue" 
+					          ng-model="login_password_confirmation" placeholder=" "
+					          ng-class="{'invalid': (!login_password_confirmation || login_password_confirmation != userDetails_data.password) && stepThreeClicked }">
+					          <label for="passwd2" class="font-15 weight-500 color-dark-grey2 active">Password Confirmation</label>
+					        </div>
+						</div>	
+					</div>
+					<div class="row margin-bottom-30">
+							<div class="input-field col s6 padding-right-50">
+			          <p class="text-error" ng-if="email_taken_error">*Email address already taken.</p>
+			        </div>
+			        <div class="input-field col s6 padding-right-50 right-align">
+			          <button ng-if="userDetails_data.cover_type != 'individual'" ng-click="stepThreeDone()" class="btn btn-large btn-blue white-text radius-8">CONTINUE</button>
+			          <button ng-if="userDetails_data.cover_type == 'individual'" ng-click="stepThreeIndividualDone()" class="btn btn-large btn-blue white-text radius-8">CONTINUE</button>
+			        </div>
+					</div>	
+
+					<div class="row margin-bottom-30">
+						<div class="input-field col s12">
+				         	<div class="white-space-100"></div>
+				        </div>
+					</div>	
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div id="form-four" hidden>
+		<div class="row">
+			<div class="col s8 offset-s2">
+				<div class="row">
+					<div class="col s12">
+						<!-- <div class="white-space-20"></div>
+						<div class="white-space-20"></div> -->
+						<p ng-if="userDetails_data.cover_type != 'individual'" class="color-gray font-20 weight-700">STEP 4 OF 4</p>
+						<p ng-if="userDetails_data.cover_type == 'individual'" class="color-gray font-20 weight-700">STEP 3 OF 3</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s12">
+						<h1 class="font-40 weight-500 color-dark-grey">General Agreement</h1>
+						<div class="white-space-20"></div>
+					</div>
+				</div>
+
+				<div class="row no-margin-bottom">
+					<div class="col s12">
+						<div class="agree-wrapper">
+							<div class="header  border-bottom" style="border-color: #e9e9e9">
+								<h5 class="color-dark-grey weight-700 no-margin">IMPORTANT</h5>
+								<div class="white-space-5"></div>
+								<h5 class="font-15 color-dark-grey weight-700 no-margin" >Please read this section carefully before proceed</h5>
+								<div class="white-space-10"></div>
+								<div class="white-space-10"></div>
+							</div>
+
+							<div class="body left-align">
+								<div class="white-space-10"></div>
+								<p class="color-dark-grey weight-500">To the best of our knowledge and belief, all information on this application is true and complete, and Mednefits may rely on this application in deciding whether to provide. If the application is not complete, Mednefits reserves the right to reject it and notify us in writing. We understand and agree that no coverage will be effective before the date determined by Mednefits, and that such coverage will be effective only if we have paid our full annual premium and this application is accepted. We further understand and agree that effective of coverage only with acceptance in writing by Mednefits, no Mednefits affiliate partner has the right to accept this application or bind coverage. If this application is accepted, it becomes a part of our contract with Mednefits.</p>
+
+								<p class="color-dark-grey weight-500">We understand this product is on an auto renewal scheme for every subscription year. If we decide to cancel our group coverage before the next subscription year, we need to submit a written notification of cancellation 1 month before expiry. If we decide to cancel our group coverage after our coverage has been issued, we understand that the cancellation will become effective on the last day of month in which Mednefits received the written notification of cancellation, and that no premiums will be refunded for any period between Mednefit's receipt of notification and the last day of the month when the cancellation takes effect. If there are any premiums paid and not utilised after the cancellation date, we understand that Mednefits will pro-rate and refund 70% of the premiums.</p>
+
+								<p class="color-dark-grey weight-500 no-margin-bottom">Member Terms Of Use Agreement:</p>
+								<p class="color-dark-grey weight-500 no-margin-top">I have read and accepted the Terms and Conditions stated in <a class="color-blue text-underline" href="https://mednefits.com/tcmember/">https://mednefits.com/tcmember/</a></p>
+
+								<p class="color-dark-grey weight-500 no-margin-bottom">Privacy Policy:</p>
+								<p class="color-dark-grey weight-500 no-margin-top">I have read the Privacy Policy stated in <a class="color-blue  text-underline" href="https://mednefits.com/privacy/">https://mednefits.com/privacy/</a> and i consent to the collection and use of my personal data in accordance with its terms and conditions.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div  class="row no-margin">
+					<div class="col s12">
+						<p class="center-align red-text"><span ng-if="terms_agree == 'not'">You need to read and agree to the agreement</span></p>
+					</div>
+				</div>
+
+				<div class="row margin-bottom-30">
+					<div class="input-field col s7 padding-left-80 left-align">
+			          <p>
+					      <input name="gen-agree" type="radio" id="agree-in-temr" ng-model="terms_agree" ng-value="true" />
+					      <label for="agree-in-temr" class="color-dark-grey" style="left: -3px;line-height: 2;"><span>I have read and agree to the above agreement</span></label>
+					    </p>
+					    <br>
+			        </div>
+			        <div class="input-field col s5 right-align">
+			          <button ng-click="proceedButton()" class="btn btn-large btn-blue white-text radius-8">PROCEED</button>
+			        </div>
+				</div>	
+			</div>
+		</div>
+		
+	</div>
+
+	<div id="form-five" hidden>
+		<div class="row">
+			<div class="col s12 m12 l6 offset-l3">
+				<div class="row">
+					<div class="col s12 m12 l12">
+						<h1 class="font-30 weight-500 color-dark-grey">Summary</h1>
+						<p class="color-gray font-16 weight-500">Please check if all details are correct before proceed for payment.</p>
+						<div class="white-space-20"></div>
+					</div>
+				</div>
+
+				<span ng-if="userDetails_data.cover_type != 'individual'">
+					<div class="row">
+						<div class="col s12 m12 l11 offset-l1 left-align">
+							<h4 class="weight-700 color-dark-grey text-underline">Business Information 
+								<button ng-click="editForm('business-info')" class="btn btn-blue white-text btn-edit-summary"><i class="tiny material-icons">edit</i></button>
+							</h4>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Company Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.company_name"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Nature of Business</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.nature_of_business"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Company Adress(Singapore)</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.company_address"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Postal Code</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.company_postal_code"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l11 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">What is the year of establishment?</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.establishment"></h5>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l11 offset-l1 left-align">
+							<h4 class="weight-700 color-dark-grey text-underline">Business Contact
+								<button ng-click="editForm('business-contact')" class="btn btn-blue white-text btn-edit-summary"><i class="tiny material-icons">edit</i></button>
+							</h4>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">First/Given Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.firstname"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Last/Family Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.lastname"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Job Title</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.job_title"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Phone</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.phone"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l11 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Work Email</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.email"></h5>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l11 offset-l1 left-align">
+							<h4 class="weight-700 color-dark-grey text-underline">Business Contact & Address
+								<button ng-click="editForm('business-contact-add')" class="btn btn-blue white-text btn-edit-summary"><i class="tiny material-icons">edit</i></button>
+							</h4>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">First/Given Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.firstname"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Last/Family Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.lastname"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Work Email</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.email"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Company Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.company_name"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Billing Address(Singapore)</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.company_address"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Postal Code</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.company_postal_code"></h5>
+						</div> 
+					</div>
+				</span>
+
+				<span ng-if="userDetails_data.cover_type == 'individual'">
+					<div class="row">
+						<div class="col s12 m12 l11 offset-l1 left-align">
+							<h4 class="weight-700 color-dark-grey text-underline">Personal Details
+							<button ng-click="editForm('personal-details')" class="btn btn-blue white-text btn-edit-summary"><i class="tiny material-icons">edit</i></button>
+							</h4>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">First/Given Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.firstname"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Last/Family Name</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.lastname"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">NRIC/FIN</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.nric"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Age</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.age"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Gender</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.gender"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Job Title</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.job_title"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Email</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.email"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Mobile</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.phone"></h5>
+						</div> 
+					</div>
+
+					<div class="row">
+						<div class="col s12 m12 l6 offset-l1 left-align">
+							<h6 class="weight-500 color-dark-grey">Home Address</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.home_address"></h5>
+						</div>
+						<div class="col s12 m12 l4 left-align">
+							<h6 class="weight-500 color-dark-grey">Postal Code</h6>
+							<h5 class="weight-500 color-blue" ng-bind="userDetails_data.company_postal_code"></h5>
+						</div> 
+					</div>
+				</span>
+				<div class="row">
+					<div class="col s12 m12 l10 right-align">
+						<div class="white-space-50"></div>
+						<button ng-click="proceedPay()" class="btn btn-large btn-blue white-text radius-8">PAYMENT</button>
+						<div class="white-space-100"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('select').material_select();
+    });
+</script>
+
+<style type="text/css">
+	.picker__box{
+		height: 370px;
+	}
+	.picker__frame {
+	  margin: 0 auto;
+	  max-width: 565px;
+	  width: 30%;
+	}
+
+	.picker__date-display {
+	  text-align: center;
+	  background-color: #F4F4F4;
+	  color: #0392CF;
+	  padding-bottom: 15px;
+	  font-weight: 300;
+	  float: left;
+	  /*width: 50%;*/
+	  width: 35%;
+	  height: 370px;
+	}
+
+	.picker__calendar-container {
+	  padding: 0 1rem;
+	  float: left;
+	  width: 65%;
+	}
+
+	.picker__footer {
+	  text-align: right;
+	  padding: 5px 10px;
+	  clear: both;
+	  width: 65%;
+	  position: absolute;
+	    bottom: 0px;
+	    right: 0;
+	}
+
+	.picker__footer button{
+	  width: 33%;
+	  padding: 0;
+	}
+
+	.picker__month-display {
+	  text-transform: uppercase;
+	  font-size: 2rem;
+	  margin-top: 55px;
+	}
+
+	.picker__weekday-display{
+		background-color: #F4F4F4;
+		color: #0392CF;
+	}
+
+	.picker__year-display{
+		background-color: #F4F4F4;
+		color: #0392CF;
+	}
+</style>

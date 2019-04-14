@@ -1,0 +1,13 @@
+<button type="button" ng-class="getItemClasses($index)" ng-mouseenter="onItemMouseenter($index)" ng-repeat="item in searchResults" ng-click="select(item)">
+	<div class="media">
+		<div class="media-left">
+			<img class="media-object img-circle" ng-src="{{item.Image}}" alt="{{item.Image}}" width="48"/>
+		</div>
+		<div class="media-body">
+			<h5 class="media-heading">
+				<strong ng-bind-html="highlight(item.Name)"></strong>
+			</h5>
+			<span ng-bind-html="highlight(item.NRIC)"></span>
+		</div>
+	</div>
+</button>

@@ -1,0 +1,21 @@
+	<div class="col-md-12" style="padding: 0px; padding-top: 20px; padding-bottom: 20px;">
+			<div class="col-md-11">
+				<div class="col-md-6"><b>{{count($staff)}} Staff</b></div>
+				<div class="col-md-3"><span style="padding-left: 40px;"><a id="btn-staff-pop" href="#"  data-toggle="popover" data-placement="top" >
+				<img src="{{ URL::asset('assets/images/ico_add new.svg') }}" width="25" height="25"></a></span></div>
+			</div>
+
+			<div id="staff-list" class="scoll-panel" style="font-size: 12px;">
+
+			<?php 
+				if($staff){
+				foreach ($staff as $val) { ?>
+
+				<div class="col-md-11 staff-doctor">
+					<span class="col-md-1"><img alt="" src="{{ URL::asset('assets/images/ico_customer.svg') }}" width="50" height="50"></span>
+					<div class="col-md-7" style="padding-top: 15px;"><b style="color: #777676;" id="{{ $val->staff_id}}">{{ $val->name }}</b></div>
+				</div>
+			<?php } } ?>
+
+			</div>
+		</div>

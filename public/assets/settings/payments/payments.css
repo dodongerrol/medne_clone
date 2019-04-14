@@ -1,0 +1,401 @@
+.payments-settings {
+	color: #777676; 
+	cursor: pointer;
+}
+
+.search-terms{
+    width: 160px;
+    height: 20px;
+    padding: 7px;
+    background: #FFF;
+    border: 1px solid #D3D3D3;
+    position: relative;
+    top: 4px;
+}
+
+.transac-history .btn{
+    position: relative;
+    top: 3px;
+    font-size: 13px;
+    height: 12px;
+    line-height: 1;
+    padding: 10px 25px;
+    background-color: #FFF;
+    border: 1px solid #D3D3D3;
+    margin-left: 90px;
+}
+
+
+.no-padding-sides{
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.table-history th,
+.table-history td{
+    text-align: center;
+}
+
+.transac-invoice form .form-inline{
+    margin-top: 10px;
+}
+
+.transac-invoice form label{
+    width: 200px;
+    text-align: right;
+    margin-right: 20px;
+}
+
+.transac-invoice form input{
+    width: 40% !important;
+    height: 30px !important;
+    padding: 7px !important;
+    background: #FFF !important;
+    border: 1px solid #D3D3D3 !important;
+}
+
+.transac-invoice .btn-export,
+.transac-invoice .btn-date-text
+{
+    background: #FFF !important;
+    border: 1px solid #D3D3D3 !important;
+    width: 130px;
+}
+
+.transac-invoice .btn{
+    background: #FFF !important;
+    border: 1px solid #D3D3D3 !important;
+}
+
+.transac-invoice .btn.btn-go{
+    background: #1B9BD7 !important;
+    border: 1px solid #1B9BD7 !important;
+    color: #FFF !important;
+}
+
+.transac-invoice .btn-export{
+    margin-left: 50px;
+    color: #aaa !important;
+}
+
+.transac-invoice .invoice-wrapper{
+    border: 1px solid #EEE;
+    margin-bottom: 50px;
+    box-shadow: 0px 0px 10px #CCC; 
+}
+
+.transac-invoice .invoice-wrapper .header{
+    border-bottom: 1px solid #DCDFE0;
+    padding: 20px 30px 10px 30px;
+    overflow: hidden;
+}
+
+.transac-invoice .invoice-wrapper .bill-to{
+    border-bottom: 1px solid #DCDFE0;
+    padding: 20px 0px 20px 30px;
+    overflow: hidden;
+}
+
+.transac-invoice .invoice-wrapper .bill-to .left-wrapper p{
+    margin: 0 !important;
+}
+
+.transac-invoice .invoice-wrapper .bill-to .right-wrapper{
+    margin-top: 10px !important;
+    background: #eee;
+    padding: 5px 0;
+    padding-right: 30px;
+}
+.transac-invoice .invoice-wrapper .bill-to .right-wrapper label{
+    width: 130px;
+    text-align: right;
+    margin-right: 15px;
+}
+
+.transac-invoice .invoice-wrapper .description{
+    padding: 10px 5px;
+}
+
+.transac-invoice .invoice-wrapper table thead tr th{
+    text-align: center;
+    background: #0392CF;
+    color: #FFF;
+    border-color: #0392CF;
+}
+
+.transac-invoice .invoice-wrapper tbody tr td{
+    /*border-top: none !important;*/
+    border: 1px solid #ddd !important;
+}
+
+.transac-invoice .invoice-wrapper .total{
+    padding: 10px 30px 10px 30px;
+    overflow: hidden;
+}
+
+.transac-invoice .invoice-wrapper .total p label{
+    width: 135px;
+}
+
+.transac-invoice .invoice-wrapper .total p{
+    margin: 10px 0;
+}
+
+.transac-invoice .invoice-wrapper .notes{
+    padding-bottom: 10px;
+    overflow: hidden;
+}
+
+.transac-invoice .invoice-wrapper .copyright{
+    padding-bottom: 20px;
+}
+
+.transac-statement .btn-export,
+.transac-statement .btn-date-text
+{
+    background: #FFF !important;
+    border: 1px solid #D3D3D3 !important;
+    width: 130px;
+}
+
+.transac-statement .btn{
+    background: #FFF !important;
+    border: 1px solid #D3D3D3 !important;
+}
+
+.transac-statement .btn.btn-go{
+    background: #1B9BD7 !important;
+    border: 1px solid #1B9BD7 !important;
+    color: #FFF !important;
+}
+
+.transac-statement .btn-export{
+    margin-left: 50px;
+    color: #aaa !important;
+}
+
+.transac-statement .nav-tabs li a,
+.transac-statement .nav-tabs li a:hover,
+.transac-statement .nav-tabs li a:focus,
+.transac-statement .nav-tabs li.active a,
+.transac-statement .nav-tabs li.active a:hover,
+.transac-statement .nav-tabs li.active a:focus
+{
+    border-bottom: 1px solid #FFF !important;
+}
+
+.transac-statement .dropdown-menu{
+    left: auto !important;
+    right: 0 !important;
+}
+
+.transac-statement .status{
+    text-align: center;
+    color: #FFF;
+    border-radius: 3px;
+    font-size: 10px;
+    padding: 2px 5px;
+}
+
+.transac-statement .status.paid{
+    background: #8FAC1B;
+}
+
+.transac-statement .status.unpaid{
+    background: #718FA2;
+}
+
+#view-statement .invoice-wrapper{
+    margin-bottom: 50px;
+    background: #F8FAFC; 
+    padding: 15px;
+}
+
+#view-statement .invoice-wrapper .header{
+    border-bottom: 1px solid #F1F1F1;
+    padding: 20px 30px 50px 30px;
+    overflow: hidden;
+}
+
+#view-statement .invoice-wrapper .bill-to{
+    border-bottom: 1px solid #F1F1F1;
+    padding: 20px 0px 50px 30px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+#view-statement .invoice-wrapper .bill-to .left-wrapper p{
+    margin: 0 !important;
+}
+
+#view-statement .invoice-wrapper .bill-to .right-wrapper{
+    margin-top: 10px !important;
+    padding: 5px 0;
+    text-align: right;
+    margin-right: 15px;
+}
+#view-statement .invoice-wrapper .bill-to .right-wrapper label{
+    width: 100px;
+    text-align: right;
+
+}
+
+
+#view-statement .invoice-wrapper tbody tr td{
+    border-top: none !important;
+}
+
+#view-statement .invoice-wrapper .total{
+    padding: 10px 30px 10px 30px;
+    overflow: hidden;
+}
+
+#view-statement .invoice-wrapper .total p label{
+    width: 135px;
+}
+
+#view-statement .invoice-wrapper .total p{
+    margin: 10px 0;
+}
+
+#view-statement .invoice-wrapper .notes{
+    padding-bottom: 40px;
+    overflow: hidden;
+}
+
+#view-statement .invoice-wrapper .copyright{
+    padding-bottom: 20px;
+}
+
+#view-statement .invoice-wrapper .section-wrapper{
+    background: #EEE;
+    padding:15px;
+    color: #AFAFAF !important;
+}
+
+#view-statement .invoice-wrapper table thead tr th{
+    border-bottom: none !important;
+}
+
+.transaction-list{
+    min-height: 200px;
+    height: 520px;
+    max-height: 520px;
+    width: 100%;
+    overflow: hidden;
+    /* background-color: #f5f5f5; */
+    padding: 10px;
+    overflow-y: auto;
+    border: 1px solid #d5d5d5;
+}
+
+.transaction-list .transaction-wrapper{
+    border-bottom: 1px solid #ccc;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.transaction-list a:last-child .transaction-wrapper{
+    border-bottom: none;
+}
+
+.transaction-list a:hover .transaction-wrapper{
+    background-color: #f6f6f6;
+}
+
+.transaction-list a.active .transaction-wrapper{
+    background: #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.transaction-details{
+    min-height: 500px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f7f7f7;
+    padding: 20px;
+}
+
+.transaction-details p{
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.transaction-details p label{
+    font-size: 12px;
+    color: #444;
+}
+
+.transaction-details .detail-date,
+.transaction-details .detail-price{
+    font-size: 12px;
+    color: #444;
+    font-weight: 700;
+}
+
+.transaction-list img,
+.transaction-details img{
+    border:1px solid #ddd;
+}
+
+.white-space-20{
+    height: 20px !important;
+    width: 100%;
+}
+
+.white-space-15{
+    height: 15px !important;
+    width: 100%;
+}
+
+.white-space-5{
+    height: 5px !important;
+    width: 100%;
+}
+
+
+.preview-transac-page *{
+    box-sizing: border-box !important;
+}
+
+.preview-transac-page a{
+    color: #333;
+}
+
+.trans-name{
+    margin-left: 10px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.trans-no{
+    margin-left: 10px;
+    font-size: 11px;
+}
+
+.trans-no label{
+    font-size: 9px;
+    margin: 0;
+    font-weight: 300;
+}
+
+.trans-date{
+    margin-left: 10px;
+    float: right;
+    font-size: 9px;
+    color: #666;
+    position: relative;
+    top: 3px;
+}
+
+.service-label{
+    float: left;
+    margin-right: 10px;
+    position: relative;
+    top: 3px;
+}
+
+.trans-service{
+    display: inline-block;
+    width: 300px;
+}

@@ -1,0 +1,519 @@
+<div company-contacts-directive>
+<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+	<div class="container">
+		<div class="welcome-container">
+			<h4 ui-sref="benefits-dashboard">Overview</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<div class="dropdown">
+			  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			    Employee
+			  </h4>
+			  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
+			    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+			    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+			  </ul>
+			</div>
+			<div class="arrow-up-2" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="activity">Activity</h4>
+			<div class="arrow-up-3" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container" ng-if="options.accessibility == 1">
+			<h4 ui-sref="e-claim">Claim</h4>
+			<div class="arrow-up-4" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="statement">Statement</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="account-and-payment">Account</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+	</div>
+</div>
+<div class="hrdb-body-container">
+	<div class="container">
+		<h3 class="text-center" style="color: #5b5b5b;">Account & Billing</h3>
+		<hr>
+		<div ng-if="!wdraw_dl" class="col-lg-2 account-billing-link-list" >
+			<ul>
+				<li>
+					<a ui-sref="company-and-contacts">Company & Contacts</a>
+				</li>
+				<li class="active-link">
+					<a href="">Transactions</a>
+				</li>
+				<li>
+					<a ui-sref="document-center">Document Center</a>
+				</li>
+				<li>
+					<a ui-sref="account-and-payment">Account & Payment</a>
+				</li>
+				<li>
+					<a ui-sref="benefits-tier">Team Benefits Tier</a>
+				</li>
+			</ul>
+		</div>
+		<div ng-if="!wdraw_dl" class="col-lg-10 info-container" >
+			<!-- TRANSACTION -->
+			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Plan Transactions</h3>
+			<table class="table table-bordered transaction-table">
+				<thead>
+					<tr>
+						<th>Transaction</th>
+						<th>Date Issue</th>
+						<th>Type</th>
+						<th>Amount</th>
+						<th colspan="2">Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="transac in transactions.data">
+						<td class="v-align" ng-bind="transac.transaction"></td>
+						<td class="v-align" ng-bind="transac.date_issue"></td>
+						<td class="v-align" ng-bind="transac.type"></td>
+						<td class="v-align amount-text" ng-bind="transac.amount"></td>
+						<td class="v-align" ng-if="transac.paid == true">Paid</td>
+						<td class="v-align" ng-if="transac.paid == false">Not Paid</td>
+						<td class="v-align">
+							<a ng-if="transac.type_invoice == 'employee'" href="{{transac.link}}" target="_blank" class="edit-button-in-table" style="display: block;text-align: center;">Download</a>
+							<a ng-if="transac.type_invoice == 'dependent'" href="javascript:void(0)" class="edit-button-in-table" style="display: block;text-align: center;" ng-click="downDepedentInvoice(transac.invoice_id)">Download</a>
+							<a href="{{transac.receipt_link}}" ng-if="transac.paid == true && transac.type_invoice == 'employee'" target="_blank" class="edit-button-in-table" style="display: block;text-align: center;margin-top: 10px;">Receipt</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="pagination-plan-transactions-container">
+				<div ng-if="transactions.current_page != transactions.from" class="arrows" ng-click="nextPrevPlanTransac(false)">
+					<i class="fa fa-caret-left"></i>
+				</div>
+				<div ng-if="transactions.current_page == transactions.from" class="arrows"></div>
+				<div class="page-status">
+					<span ng-bind="transactions.to">1</span> of <span ng-bind="transactions.total">1</span>
+				</div>				
+				<div ng-if="transactions.total == transactions.to" class="arrows"></div>
+				<div ng-if="transactions.total != transactions.to" class="arrows" ng-click="nextPrevPlanTransac(true)">
+					<i class="fa fa-caret-right"></i>
+				</div>
+			</div>
+
+			<div class="white-space-20"></div>
+
+			<!-- SPENDING CREDITS -->
+			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Benefits Spending Account Transactions</h3>
+			<table class="table table-bordered transaction-table">
+				<thead>
+					<tr>
+						<th>Transaction</th>
+						<th>Date Issue</th>
+						<th>Type</th>
+						<th>Amount</th>
+						<th colspan="2">Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="spending in benefits_spending.data">
+						<td class="v-align" ng-bind="spending.transaction">Invoice - OMC000010</td>
+						<td class="v-align" ng-bind="spending.date_issue">07/06/2017</td>
+						<td class="v-align" ng-bind="spending.type">Invoice</td>
+						<td class="v-align amount-text" ng-bind="spending.amount">S$1,485.00</td>
+						<td class="v-align" ng-if="spending.status == 1">Paid</td>
+						<td class="v-align" ng-if="spending.status == 0">Not Paid</td>
+						<td class="v-align">
+							<a href="javascript:void(0)" class="edit-button-in-table" style="display: block;text-align: center;" ng-click="downloadSpendingInvoice(spending)">Download</a>
+							<a href="javascript:void(0)" ng-if="spending.status == 1" class="edit-button-in-table" style="display: block;text-align: center;margin-top: 10px;" ng-click="downloadSpendingReceipt(spending)">Receipt</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="pagination-plan-transactions-container">
+				<div ng-if="benefits_spending.current_page != benefits_spending.from" class="arrows" ng-click="nextPrevBenefitsSpendingTransac(false)">
+					<i class="fa fa-caret-left"></i>
+				</div>
+				<div ng-if="benefits_spending.current_page == benefits_spending.from" class="arrows"></div>
+				<div class="page-status">
+					<span ng-bind="benefits_spending.to">1</span> of <span ng-bind="benefits_spending.total">1</span>
+				</div>				
+				<div ng-if="benefits_spending.total == benefits_spending.to" class="arrows"></div>
+				<div ng-if="benefits_spending.total != benefits_spending.to" class="arrows" ng-click="nextPrevBenefitsSpendingTransac(true)">
+					<i class="fa fa-caret-right"></i>
+				</div>
+			</div>
+
+			<div class="white-space-20"></div>
+
+			<!-- SPENDING ACCOUNT DEPOSITS -->
+			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Spending Account Deposits</h3>
+			<table class="table table-bordered transaction-table">
+				<thead>
+					<tr>
+						<th>Transaction</th>
+						<th>Date Issue</th>
+						<th>Type</th>
+						<th>Amount</th>
+						<th colspan="2">Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="transac in spending_deposits.data">
+						<td class="v-align" ng-bind="transac.transaction">Invoice - OMC000010</td>
+						<td class="v-align" ng-bind="transac.date_issue">07/06/2017</td>
+						<td class="v-align" ng-bind="transac.type">Invoice</td>
+						<td class="v-align amount-text" ng-bind="transac.amount">S$1,485.00</td>
+						<td class="v-align" ng-if="transac.status == true">Paid</td>
+						<td class="v-align" ng-if="transac.status == false">Not Paid</td>
+						<td class="v-align">
+							<a href="javascript:void(0)" ng-click="downloadSpendingDeposit(transac.deposit_id)" class="edit-button-in-table pull-right">Download</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="pagination-plan-transactions-container">
+				<div ng-if="spending_deposits.current_page != spending_deposits.from" class="arrows" ng-click="nextPrevSpendingDeposits(false)">
+					<i class="fa fa-caret-left"></i>
+				</div>
+				<div ng-if="spending_deposits.current_page == spending_deposits.from" class="arrows"></div>
+				<div class="page-status">
+					<span ng-bind="spending_deposits.to">1</span> of <span ng-bind="spending_deposits.total">1</span>
+				</div>				
+				<div ng-if="spending_deposits.total == spending_deposits.to" class="arrows"></div>
+				<div ng-if="spending_deposits.total != spending_deposits.to" class="arrows" ng-click="nextPrevSpendingDeposits(true)">
+					<i class="fa fa-caret-right"></i>
+				</div>
+			</div>
+
+			<div class="white-space-20"></div>
+
+			<!-- REFUND -->
+			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Refund</h3>
+			<table class="table table-bordered transaction-table refund_table">
+				<thead>
+					<tr>
+						<th>Items</th>
+						<th>Date Withdraw</th>
+						<th>Amount</th>
+						<th colspan="3">Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-hide="ref == null" ng-repeat="ref in refunds">
+						<td class="v-align">Withdraw - <span ng-bind="ref.total_employees">1</span> employee</td>
+						<td class="v-align" ng-bind="ref.date_withdraw">22/12/2017</td>
+						<td class="v-align amount-text">S$<span ng-bind="ref.total_amount">1</span></td>
+						<td class="v-align">
+							<span ng-if="ref.refund_data.status == 1">Refunded</span>
+							<span ng-if="ref.refund_data.status == 0">Pending</span>
+						</td>
+						<td class="v-align">
+							<!-- <a href="/hr/get_cancellation_details/{{ref.customer_active_plan_id}}" target="_blank" id="download-btn" class="edit-button-in-table pull-right refund_invoice_btn">Download</a> -->
+							<a href="javascript:void(0)" ng-click="downloadRefund(ref.payment_refund_id)" id="download-btn" class="edit-button-in-table pull-right refund_invoice_btn">Download</a>
+						</td>
+						<td class="v-align">
+							<button ng-click="getUsersRefund(ref)" class="edit-button-in-table pull-right">View</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div ng-if="wdraw_dl" class="col-md-10 col-md-offset-1">
+			<div class="col-md-12">
+				<a href="javascript:void(0)" ng-click="downloadWdrawHide()"><b><i class="fa fa-arrow-left"></i> Back</b></a>
+				<button ng-if="!dl_head_count" ng-click="downloadRefundPDF(cancellation_details)" class="edit-button-in-table pull-right" style="font-size: 14px;font-weight: 700;">
+					Download PDF <i class="fa fa-file-pdf-o" style="margin-left: 10px;"></i>
+				</button>
+
+				<button ng-if="dl_head_count" ng-click="downloadHeadCountPDF(head_count_data)" class="edit-button-in-table pull-right" style="font-size: 14px;font-weight: 700;">
+					Download PDF <i class="fa fa-file-pdf-o" style="margin-left: 10px;"></i>
+				</button>
+			</div>
+			<div class="statement-wrapper" id="pdf-print" style="padding: 30px 10px;width: 100%;display: none;">
+				<div style="padding:0 20px;">
+					<div class="col-md-6">
+						<img src="../../assets/images/mednefits logo v3 (blue) LARGE.png" style="width: 250px;margin-left: 20px;margin-top: 50px;">
+					</div>
+
+					<div class="col-md-6 text-right">
+						<h2 class="weight-700 color-black2 no-margin-top line-height-1" style="font-size: 45px;">CANCELLATION</h2>
+						<div class="white-space-10"></div>
+						<p class="font-medium2 color-black2 weight-700 no-margin line-height-1">Medicloud Pte Ltd</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">7 Temasek Boulevard</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">#18-02 Suntec Tower One</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">038987</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">Singapore</p>
+						<div class="white-space-20"></div>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">+65 6254 7889</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">mednefits.com</p>
+					</div>
+				</div>
+
+				<div class="col-md-12 no-padding">
+					<div class="white-space-30"></div>
+					<div class="border-bottom-aaa"></div>
+					<div class="white-space-30"></div>
+				</div>
+
+				<div style="padding:0 20px;">
+					<div class="col-md-6">
+						<p class="color-black2 font-15 no-margin font-medium2 weight-700 line-height-1" ng-bind="cancellation_details.billing_info.company_name">Singapore Mobility Corporation Pte Ltd</p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1"><span ng-bind="cancellation_details.billing_info.first_name"></span> <span ng-bind="cancellation_details.billing_info.last_name"></span></p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1"><span ng-bind="cancellation_details.billing_info.address"></span>,<br><span ng-bind="cancellation_details.billing_info.postal"></span></p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1">Singapore</p>
+						<div class="white-space-10"></div>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1" ng-bind="cancellation_details.billing_info.phone">+6340 1798</p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1" ng-bind="cancellation_details.billing_info.email">jessie.su@sixt.com.sg</p>
+					</div>
+
+					<div class="col-md-6 text-right right-details">
+						<p class="color-black no-margin text-right">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Cancellation Number:</label>
+							<span class="invoice_number" ng-bind="cancellation_details.cancellation_number">MC84739032</span>
+						</p>
+						<p class="color-black no-margin text-right">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Cancellation Date:</label>
+							<span class="invoice_first_day" ng-bind="cancellation_details.cancellation_date">1 November 2017</span>
+						</p>
+						<div class="white-space-20"></div>
+						<div class="white-space-10"></div>
+						<p class="color-black no-margin text-right" style="background: #eee;display: inline-block;padding-left: 20px;padding-top: 5px;padding-bottom: 5px;">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Amount Due (SGD):</label>
+							<span>$<span ng-bind="cancellation_details.amount_due">433</span></span>
+						</p>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="white-space-30"></div>
+				</div>
+
+				<div class="col-md-12 no-padding">
+					<div class="trans-cancel-table-container" style="border-bottom: 2px solid #ddd;">
+						<table class="trans-cancel-table">
+							<thead>
+								<tr>
+									<th style="width: 40%;">Items</th>
+									<th style="width: 25%;text-align: center;">Quantity</th>
+									<th style="width: 15%;text-align: right;">Price</th>
+									<th style="text-align: right;">Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="list in cancellation_details.users">
+									<td>
+										<p class="font-medium2 font-14 color-black2 no-margin weight-700 line-height-1">Cancellation - <span ng-bind="list.name"></span></p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Member: <span ng-bind="list.name"></span></p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">NRIC: <span ng-bind="list.nric"></span></p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Period of use: <span ng-bind="list.period_of_used"></span></p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Refund: 70% of unused period (<span ng-bind="list.first_period_of_unused"></span> -
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1"><span ng-bind="list.last_period_of_unused"></span>)</p>
+									</td>
+									<td style="text-align: center;">
+										<span class="font-medium2">1</span>
+									</td>
+									<td style="text-align: right;">
+										<span class="font-medium2">$(<span ng-bind="list.after_amount"></span>)</span>
+									</td>
+									<td style="text-align: right;">
+										<span class="font-medium2">$-<span ng-bind="list.after_amount"></span></span>
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="col-md-12 no-padding text-right cancel-total-container">
+					<div style="float: right;width: 300px;">
+						<p class="color-black no-margin text-right" style="border-bottom: 2px solid #ddd;">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Total:</label>
+							<span class="value">$-<span ng-bind="cancellation_details.total_refund"></span></span>
+						</p>
+						<p class="color-black no-margin text-right">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Amount Due (SGD):</label>
+							<span class="value"><b>$-<span ng-bind="cancellation_details.amount_due"></span></b></span>
+						</p>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="white-space-20"></div>
+					<div class="white-space-50"></div>
+					<p class="font-medium2 color-black2 no-margin">Notes</p>
+					<p class="color-black2 font-14 no-margin weight-700 line-height-1">Cancellation refund will be made to the company by cheque in 10 - 14 working days.</p>
+					<div class="white-space-50"></div>
+				</div>
+			</div>
+
+			<div class="statement-wrapper" id="head-count-print" style="padding: 30px 10px;width: 100%;display: none;">
+				<div style="padding:0 20px;">
+					<div class="col-md-6">
+						<img src="../../assets/images/mednefits logo v3 (blue) LARGE.png" style="width: 250px;margin-left: 20px;margin-top: 50px;">
+					</div>
+
+					<div class="col-md-6 text-right">
+						<h2 class="weight-700 color-black2 no-margin-top line-height-1" style="font-size: 45px;">INVOICE</h2>
+						<div class="white-space-10"></div>
+						<p class="font-medium2 color-black2 weight-700 no-margin line-height-1">Medicloud Pte Ltd</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">7 Temasek Boulevard</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">#18-02 Suntec Tower One</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">038987</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">Singapore</p>
+						<div class="white-space-20"></div>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">+65 6254 7889</p>
+						<p class="color-black2 weight-700 no-margin font-14 line-height-1">mednefits.com</p>
+					</div>
+				</div>
+
+				<div class="col-md-12 no-padding">
+					<div class="white-space-30"></div>
+					<div class="border-bottom-aaa"></div>
+					<div class="white-space-30"></div>
+				</div>
+
+				<div style="padding:0 20px;">
+					<div class="col-md-6">
+						<p class="color-black2 font-15 no-margin font-medium2 weight-700 line-height-1" ng-bind="head_count_data.company">Singapore Mobility Corporation Pte Ltd</p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1"><span ng-bind="head_count_data.first_name">Jessie</span> <span ng-bind="head_count_data.last_name">Su</span></p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1"><span ng-bind="head_count_data.address">20 Changi North Crescent, #03-00</span>,<br><span ng-bind="head_count_data.postal">499613</span></p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1" ng-bind="head_count_data.country">Singapore</p>
+						<div class="white-space-10"></div>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1" ng-bind="head_count_data.phone">+6340 1798</p>
+						<p class="color-black2 font-14 no-margin weight-700 line-height-1" ng-bind="head_count_data.email">jessie.su@sixt.com.sg</p>
+					</div>
+
+					<div class="col-md-6 text-right right-details">
+						<p class="color-black no-margin text-right">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Invoice Number:</label>
+							<span class="invoice_number" ng-bind="head_count_data.invoice_number">MC84739032</span>
+						</p>
+						<p class="color-black no-margin text-right">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Invoice Date:</label>
+							<span class="invoice_first_day" ng-bind="head_count_data.invoice_date">1 November 2017</span>
+						</p>
+						<p class="color-black no-margin text-right">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Payment Due:</label>
+							<span ng-bind="head_count_data.payment_due">1 November 2017</span>
+						</p>
+						<div class="white-space-10"></div>
+						<p class="color-black no-margin text-right" style="background: #eee;display: inline-block;padding-left: 20px;padding-top: 5px;padding-bottom: 5px;">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Amount Due (SGD):</label>
+							<span>$<span ng-bind="head_count_data.amount_due">37.80</span></span>
+						</p>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="white-space-30"></div>
+				</div>
+
+				<div class="col-md-12 no-padding">
+					<div class="trans-cancel-table-container" style="border-bottom: 2px solid #ddd;">
+						<table class="trans-cancel-table">
+							<thead>
+								<tr>
+									<th style="width: 40%;">Items</th>
+									<th style="width: 25%;text-align: center;">Quantity</th>
+									<th style="width: 15%;text-align: right;">Price</th>
+									<th style="text-align: right;">Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<p class="font-medium2 font-14 color-black2 no-margin weight-700 line-height-1">Add Employee - <span>Standalone Mednefits Care (Corporate)</span></p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">No. of employees: <span ng-bind="head_count_data.number_employess">1</span></p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Next Billing Date: <span ng-bind="head_count_data.next_billing">31 July 2018</span> (same as <span ng-bind="head_count_data.same_as_invoice">MCARE000026A</span>)</p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Start Date: <span ng-bind="head_count_data.start_date">20 September 2017</span></p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">End Date: <span ng-bind="head_count_data.plan_end">31 August 2018</span> (same as <span ng-bind="head_count_data.same_as_invoice">MCARE000026A</span>)</p>
+									</td>
+									<td style="text-align: center;">
+										<span class="font-medium2">1</span>
+									</td>
+									<td style="text-align: right;">
+										<span class="font-medium2">$<span ng-bind="head_count_data.price">37.80</span></span>
+									</td>
+									<td style="text-align: right;">
+										<span class="font-medium2">$<span ng-bind="head_count_data.amount">37.80</span></span>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<p class="font-medium2 font-14 color-black2 no-margin weight-700 line-height-1">Benefits Coverage</p>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Health Screening: <span> 1 Complementary basic health screening for each employee</span></p>
+										<div class="white-space-10"></div>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Outpatient GP: <span>100% consultation covered, employees only need to pay medicine.</span></p>
+										<div class="white-space-10"></div>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Dental Care: <span>Up to 30% off selected dental services.</span></p>
+										<div class="white-space-10"></div>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Health Specialist: <span ng-bind="head_count_data.plan_end">31 August 2018</span> (same as <span ng-bind="head_count_data.same_as_invoice">MCARE000026A</span>)</p>
+										<div class="white-space-10"></div>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">TCM: <span>100% consultation covered, employees only need to pay medicine and treatment.</span></p>
+										<div class="white-space-10"></div>
+										<p class="color-black2 font-14 no-margin weight-700 line-height-1">Wellness: <span>Up to 40% off wellness services</span></p>
+									</td>
+									<td style="text-align: center;">
+										<span class="font-medium2">1</span>
+									</td>
+									<td style="text-align: right;">
+										<span class="font-medium2">$<span>00.00</span></span>
+									</td>
+									<td style="text-align: right;">
+										<span class="font-medium2">$<span>00.00</span></span>
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="col-md-12 no-padding text-right cancel-total-container" style="padding:0 35px;">
+					<div style="float: right;width: 300px;">
+						<p class="color-black no-margin text-right" style="border-bottom: 2px solid #ddd;">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Total:</label>
+							<span class="value">$<span ng-bind="head_count_data.total">37.80</span></span>
+						</p>
+						<p class="color-black no-margin text-right">
+							<label class="color-black2 font-15 font-medium2 weight-700 line-height-1">Amount Due (SGD):</label>
+							<span class="value"><b>$<span ng-bind="head_count_data.amount_due">37.80</span></b></span>
+						</p>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="white-space-20"></div>
+					<div class="white-space-50"></div>
+					<!-- <p class="font-medium2 color-black2 no-margin">Notes</p> -->
+					<!-- <p class="color-black2 font-14 no-margin weight-700 line-height-1">Cancellation refund will be made to the company by cheque in 10 - 14 working days.</p> -->
+					<div class="white-space-50"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-8" >
+			<div class="loader-container">
+				<div class="preloader-wrapper big active">
+				    <div class="spinner-layer spinner-blue-only">
+				      <div class="circle-clipper left">
+				        <div class="circle"></div>
+				      </div><div class="gap-patch">
+				        <div class="circle"></div>
+				      </div><div class="circle-clipper right">
+				        <div class="circle"></div>
+				      </div>
+				    </div>
+				  </div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>

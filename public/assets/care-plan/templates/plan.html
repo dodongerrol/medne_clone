@@ -1,0 +1,452 @@
+<div class="plan-wrapper center-align" plan-directive>
+	<div id="form-one" >
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-20"></div>
+				<h1 ng-if="userDetails_data.cover_type != 'individual'" class="font-40 weight-500 color-dark-grey font-myriad">Mednefits Care For SMEs</h1>
+				<h1 ng-if="userDetails_data.cover_type == 'individual'" class="font-40 weight-500 color-dark-grey font-myriad">Mednefits Care For Individual</h1>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<h4 class="color-dark-grey">Plan Overview</h4>
+				<!-- <h4 class="color-dark-grey">Choose a plan</h4> -->
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<div class="plan-items-wrapper center-align">
+					<!-- <div class="plan">
+						<div class="icon-container" hidden>
+							<div class="white-space-50"></div>
+							<div class="preloader-wrapper big active">
+							    <div class="spinner-layer spinner-blue-only">
+							      <div class="circle-clipper left">
+							        <div class="circle"></div>
+							      </div><div class="gap-patch">
+							        <div class="circle"></div>
+							      </div><div class="circle-clipper right">
+							        <div class="circle"></div>
+							      </div>
+							    </div>
+							  </div>
+						</div>	
+						<div class="icon-hide">
+							<h1 class="font-40 weight-500 color-dark-grey font-myriad">FREE</h1>
+							<h5 class="color-black weight-700 font-myriad">3 MONTHS</h5>
+							<div class="white-space-10"></div>
+							<p class="weight-700">S$0/employee</p>
+							<p class="no-margin-bottom">
+						      <input id="plan1" name="plan" type="radio" ng-click="selectPlan(1)" />
+						      <label for="plan1"></label>
+						    </p>
+					    </div>
+					</div>
+
+					<div class="plan">
+						<div class="icon-container" hidden>
+							<div class="white-space-50"></div>
+							<div class="preloader-wrapper big active">
+							    <div class="spinner-layer spinner-blue-only">
+							      <div class="circle-clipper left">
+							        <div class="circle"></div>
+							      </div><div class="gap-patch">
+							        <div class="circle"></div>
+							      </div><div class="circle-clipper right">
+							        <div class="circle"></div>
+							      </div>
+							    </div>
+							  </div>
+						</div>
+						<div class="icon-hide">
+							<h1 class="font-40 weight-500 color-dark-grey font-myriad">S$1,485</h1>
+							<h5 class="color-black weight-700 font-myriad">PER YEAR</h5>
+							<div class="white-space-10"></div>
+							<p class="weight-700">S$99/employee</p>
+							<p class="no-margin-bottom">
+						      <input id="plan2" name="plan" type="radio" ng-click="selectPlan(2)" />
+						      <label for="plan2"></label>
+						    </p>
+					    </div>
+					</div> -->
+
+					<div ng-if="userDetails_data.cover_type != 'individual'" class="plan-package">
+						<div class="package">
+							<h1 class="font-30 weight-500 color-white font-myriad">S$<span>0</span></h1>
+							<h5 class="color-white font-myriad">PER YEAR</h5>
+							<div class="white-space-10"></div>
+							<p class="">S$99/employee</p>
+						</div>
+						
+					</div>
+
+					<div ng-if="userDetails_data.cover_type == 'individual'" class="plan-package2">
+						<div class="package">
+							<h1 class="font-40 weight-500 color-white font-myriad">S$125</h1>
+							<h4 class="color-white font-myriad">PER YEAR</h4>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<h1 class="font-35 weight-500 color-dark-grey">Your Details</h1>
+			</div>
+		</div>
+
+		<div class="row details-row">
+			<div class="col s12">
+				<h1 class="font-28 weight-500 color-dark-grey">
+
+					I'd like to cover <a href="javascript:void(0)" ng-if="userDetails_data.cover_type == 'individual'">me</a><a href="javascript:void(0)" ng-if="userDetails_data.cover_type != 'individual'">me and my team</a>. 
+
+					My <span ng-if="userDetails_data.cover_type != 'individual'">company </span>postal code is <a href="" ng-bind="userDetails_data.company_postal_code"></a>. 
+					<br>
+					<form ng-submit="inputTotal(userDetails_data.employees)"> 
+					<span ng-if="userDetails_data.cover_type != 'individual'">There are a total of <input id="emp" type="text" class="validate" ng-model="userDetails_data.employees" > full time employees enrolling in this plan.</span> 
+					</form>
+					<span id="plan-age-wrapper" ng-if="userDetails_data.cover_type == 'individual'"> 
+					I'm a 
+					<input id="age-input" type="text" class="validate"  ng-model="userDetails_data.age"> year old 
+					<select id="select-gender" ng-model="userDetails_data.gender" >
+						<option value=""></option>
+						<option value="male">male</option>
+						<option value="female">female</option>
+					</select>
+					.
+					</span>
+
+					<span id="plan-start-wrapper">
+					I'd like the plan to start on <input id="datepick" type="text" class="datepicker" ng-model="userDetails_data.plan_start" ng-click="datePickerClicked()">.
+					</span>
+
+				</h1>
+
+				<div class="white-space-20"></div>
+				<p id="age_error" class="text-error red-text font-14" hidden>Oops, you did not meet the eligible age requirement between 18 to 65 years</p>
+				<p ng-if="total_minimum_error" class="text-error red-text font-14">Unfortunately we need a minimum of 3 full time employees to kick start this plan.</p>
+				<p ng-if="total_required_error" class="text-error red-text font-14">Number of full time employees is required to get a quote.</p>
+				<p ng-if="package_none_error" class="text-error red-text font-14">Please select a Package first.</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-20"></div>
+				<button id="btn-one" ng-click="detailsDone()" ng-disabled="total_minimum_error || total_required_error || age_error" class="btn btn-large btn-blue font-22 radius-8 width-200">Next</button>
+				<div class="white-space-50"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="form-two" hidden>
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-20"></div>
+				<div class="white-space-20"></div>
+				<h1 class="font-50 weight-500 color-dark-grey font-myriad">Do you have a promo code?</h1>
+				<div class="white-space-20"></div>
+			</div>
+		</div>
+
+		<div class="row" ng-if="promo_code_inserted">
+			<div class="col s12">
+				<h4 class="green-text text-lighten-2 no-margin">Promo code already inserted.</h4>
+			</div>
+		</div>
+
+		<div class="row" ng-if="!promo_code_inserted">
+			<div class="col s12 input-field center-align">
+				<input id="promoInput" ng-model="promo_code" type="text" ng-class="{'invalid':promo_code_error}" class="validate center-align width-200 font-25 blue-text" placeholder="enter it here" name="">
+				<p ng-if="promo_code_error" class="text-error red-text text-lighten-2 font-14 no-margin">Invalid promo code</p>
+				<p ng-if="promo_code_success" class="text-error green-text text-lighten-2 font-14 no-margin">Valid promo code</p>
+			</div>
+		</div>
+
+		<div class="row" ng-if="!promo_code_inserted">
+			<div class="col s12 center-align">
+				<div class="white-space-20"></div>
+				<div class="white-space-20"></div>
+				<div class="white-space-10"></div>
+				<button id="btn-two" ng-click="submitPromoCode()" class="btn btn-large btn-blue font-22 radius-8 width-200 margin-0-10">SUBMIT</button>
+				<button id="btn-three" ng-click="skipPromoCode()" class="btn btn-large white blue-text font-22 radius-8 width-200 margin-0-10">SKIP</button>
+				<div class="white-space-50"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="form-three" style="background: #F6F6F6" hidden>
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-20"></div>
+				<h1 class="font-40 weight-500 color-dark-grey font-myriad">Plan Benefits</h1>
+				<div class="white-space-20"></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<div class="benefits-wrapper">
+					<div class="row">
+						<div class="col s12 m6 l6">
+							<div class="benefit">
+								<div class="img-wrapper">
+									<img src="../assets/care-plan/img/care-packages/Health-Screening.png" class="responsive-img">
+								</div>
+								<div class="white-space-20"></div>
+								<h4 class="color-dark-grey weight-500 font-22">HEALTH SCREENING</h4>
+								
+								<p class="color-dark-grey weight-500 font-15">We provide one complementary basic health screening per subscription year.</p>
+								<p class="color-dark-grey weight-500 font-15">You may upgrade to premuim health screening package at a lower rate exclusively just for you <span ng-if="userDetails_data.cover_type != 'individual'">and your team.</span></p>
+							</div>
+						</div>
+						<div class="col s12 m6 l6">
+							<div class="benefit">
+								<div class="img-wrapper">
+									<img src="../assets/care-plan/img/care-packages/GP.png" class="responsive-img">
+								</div>
+								<div class="white-space-20"></div>
+								<h4 class="color-dark-grey weight-500 font-22">OUTPATIENT GP</h4>
+								
+								<p class="color-dark-grey weight-500 font-15">100% consultation cost will be covered under Mednefits network GP clinics.</p>
+								<p class="color-dark-grey weight-500 font-15">You <span ng-if="userDetails_data.cover_type != 'individual'">and your team </span>only need to pay for medicine or any treatment done in the clinic.</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col s12 m6 l6">
+							<div class="benefit">
+								<div class="img-wrapper">
+									<img src="../assets/care-plan/img/care-packages/Dental.png" class="responsive-img">
+								</div>
+								<div class="white-space-20"></div>
+								<h4 class="color-dark-grey weight-500 font-22">DENTAL CARE</h4>
+								
+								<p class="color-dark-grey weight-500 font-15">You <span ng-if="userDetails_data.cover_type != 'individual'">and your team </span>will receive up to 30% off selected basic dental services under mednefits network dental clinics. Services included such as scaling and polishing, tooth fillings, and gum treatments.</p>
+							</div>
+						</div>
+						<div class="col s12 m6 l6">
+							<div class="benefit">
+								<div class="img-wrapper">
+									<img src="../assets/care-plan/img/care-packages/Specialist.png" class="responsive-img">
+								</div>
+								<div class="white-space-20"></div>
+								<h4 class="color-dark-grey weight-500 font-22">HEALTH SPECIALIST</h4>
+								
+								<p class="color-dark-grey weight-500 font-15">You <span ng-if="userDetails_data.cover_type != 'individual'">and your team </span>will receive up to 60% off on specialist consultation under Mednefits network specialist. Services included such as opthalmology, orthopaedic, physiotherapy, and more.</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col s12 m6 l6">
+							<div class="benefit">
+								<div class="img-wrapper">
+									<img src="../assets/care-plan/img/care-packages/TCM.png" class="responsive-img">
+								</div>
+								<div class="white-space-20"></div>
+								<h4 class="color-dark-grey weight-500 font-22">TRADITIONAL CHINESE MEDICINE</h4>
+								
+								<p class="color-dark-grey weight-500 font-15">100% consultation cost will be covered under Mednefits network TCM partners.</p>
+								<p class="color-dark-grey weight-500 font-15">You <span ng-if="userDetails_data.cover_type != 'individual'">and your team </span>only need to pay for medicine or any treatment done in the clinic.</p>
+							</div>
+						</div>
+						<div class="col s12 m6 l6">
+							<div class="benefit">
+								<div class="img-wrapper">
+									<img src="../assets/care-plan/img/care-packages/Wellness.png" class="responsive-img">
+								</div>
+								<div class="white-space-20"></div>
+								<h4 class="color-dark-grey weight-500 font-22">HEALTH SPECIALIST</h4>
+								
+								<p class="color-dark-grey weight-500 font-15">You and your team can save up to 40% on wellness services such as beauty and body treatment, massage therapy, fitness classes(coming soon).</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-50"></div>
+				<div class="white-space-50"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="form-four" hidden>
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-50"></div>
+				<div class="white-space-50"></div>
+				<h1 class="font-50 weight-500 color-dark-grey font-myriad">Local Network Partners</h1>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<h1 class="font-18 weight-500 color-dark-grey margin-center width-60 line-height-1-5">To give you a closer look at this plan's network size, we've mapped out islandwide distribution of the hundreds GPs, Dental, TCM, Specialist, Wellness partners that joined us.</h1>
+				<div class="white-space-20"></div>
+				<div class="white-space-10"></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s7 offset-s1 center-align" hidden>
+				<div class="map-wrapper">
+					<a href="javascript:void(0)" ng-click="mapClicked('north')">
+						<img src="../assets/care-plan/img/maps/North-(Blue)-v1.png" class="" style="width: 300px">
+					</a>
+					<a href="javascript:void(0)" ng-click="mapClicked('west')">
+						<img src="../assets/care-plan/img/maps/West-(Grey)-v1.png" class="" style="width: 351px">
+					</a>
+					<a href="javascript:void(0)" ng-click="mapClicked('central')">
+						<img src="../assets/care-plan/img/maps/Central-(Grey)-v1.png" class="" style="width: 262px">
+					</a>
+					<a href="javascript:void(0)" ng-click="mapClicked('east')">
+						<img src="../assets/care-plan/img/maps/East-(Grey)-v1.png" class="" style="width: 367px">
+					</a>
+					<a href="javascript:void(0)" ng-click="mapClicked('south')">
+						<img src="../assets/care-plan/img/maps/South-(Grey)-v1.png" class="" style="width: 125px">
+					</a>
+				</div>
+
+			</div>
+
+			<div class="col s5 offset-s2 left-align map-option">
+
+				<h3 class="color-dark-grey">Select option</h3>
+				<br>
+				<button ng-repeat="net in networks" ng-click="mapOption(net)" class="btn btn-blue white-text font-20">{{net.local_network_name}}</button>
+			</div>
+
+			<div class="col s3 left-align">
+				<div class="info-wrapper">
+					<h5 class="blue-text text-lighten-1 weight-700"><span class="text-uppercase" ng-bind="map_selected"></span> <div ng-if="list_clinics.length > 0" class="num-icon" ng-bind="list_clinics.length"></div></h5>
+
+					<div class="info-container">
+						<div class="info" ng-repeat="info in list_clinics">
+							<h5 class="color-black font-16 weight-700" ng-bind="info.header"></h5>
+							<div class="white-space-5"></div>
+							<span>
+								<p class="color-dark-grey no-margin text-underline" ng-bind="info.clinic_name"></p>
+								<p class="color-dark-grey" ng-bind="info.address"></p>
+							</span>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="activate-benefits" class="row">
+			<div class="col s12">
+				<div class="white-space-20"></div>
+				<div class="custom-line" style="margin:0 auto;height:5px;width:80%;border-bottom:2px solid #bbb"></div>
+				<div class="white-space-50"></div>
+				<div class="white-space-100"></div>
+				<h1 class="font-40 weight-500 color-dark-grey font-myriad">Activate Your <span ng-if="userDetails_data.cover_type != 'individual'">Team</span> Benefits</h1>
+				<div class="white-space-50"></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12 plan-bottom">
+				<div class="white-space-20"></div>
+				<button id="payPlanButton" ng-click="payPlanButton()" ng-disabled="total_minimum_error || total_required_error || age_error" class="btn btn-large btn-blue white-text font-20 radius-8">PAY S$<span>0</span> / YR</button>
+				<div class="icon-wrapper" hidden>
+					<div class="preloader-wrapper big active">
+					    <div class="spinner-layer spinner-blue-only">
+					      <div class="circle-clipper left">
+					        <div class="circle"></div>
+					      </div><div class="gap-patch">
+					        <div class="circle"></div>
+					      </div><div class="circle-clipper right">
+					        <div class="circle"></div>
+					      </div>
+					    </div>
+				  </div>
+				 </div>
+				<div class="white-space-100"></div>
+				<div class="white-space-100"></div>
+			</div>
+		</div>
+
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    $('select').material_select();
+	  });
+</script>
+
+
+<style type="text/css">
+	.picker__box{
+		height: 370px;
+	}
+	.picker__frame {
+	  margin: 0 auto;
+	  max-width: 565px;
+	  width: 30%;
+	}
+
+	.picker__date-display {
+	  text-align: center;
+	  background-color: #F4F4F4;
+	  color: #0392CF;
+	  padding-bottom: 15px;
+	  font-weight: 300;
+	  float: left;
+	  /*width: 50%;*/
+	  width: 35%;
+	  height: 370px;
+	}
+
+	.picker__calendar-container {
+	  padding: 0 1rem;
+	  float: left;
+	  width: 65%;
+	}
+
+	.picker__footer {
+	  text-align: right;
+	  padding: 5px 10px;
+	  clear: both;
+	  width: 65%;
+	  position: absolute;
+	    bottom: 0px;
+	    right: 0;
+	}
+
+	.picker__footer button{
+	  width: 33%;
+	  padding: 0;
+	}
+
+	.picker__month-display {
+	  text-transform: uppercase;
+	  font-size: 2rem;
+	  margin-top: 55px;
+	}
+
+	.picker__weekday-display{
+		background-color: #F4F4F4;
+		color: #0392CF;
+	}
+
+	.picker__year-display{
+		background-color: #F4F4F4;
+		color: #0392CF;
+	}
+</style>

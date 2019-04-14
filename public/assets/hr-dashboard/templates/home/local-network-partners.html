@@ -1,0 +1,167 @@
+<div local-network-directive>
+	<div class="navbar-blue-bg" style="margin-top: 80px;position: fixed;height: 40px;" >
+		<div class="container">
+			<div class="welcome-container">
+				<h4 ui-sref="benefits-dashboard">Overview</h4>
+				<div class="arrow-up" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<div class="dropdown">
+				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Employee
+				  </h4>
+				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
+				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				  </ul>
+				</div>
+				<div class="arrow-up-2" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="activity">Activity</h4>
+				<div class="arrow-up-3" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container" ng-if="options.accessibility == 1">
+				<h4 ui-sref="e-claim">Claim</h4>
+				<div class="arrow-up-4" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="statement">Statement</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="account-and-payment">Account</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="hrdb-body-container">
+		<div class="container">
+			<h3 class="text-center" style="color: #5b5b5b;">Plan Coverage</h3>
+			<hr>
+			<div class="col-lg-3 account-billing-link-list">
+				<ul>
+					<li>
+						<a ui-sref="plan-coverage">Benefits</a>
+					</li>
+					<li class="active-link">
+						<a ui-sref="local-network-partners">Local Network Partners</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col-lg-9">
+				<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Local Network Partners</h3>
+				<div class="row">
+					<div class="col-lg-8">
+						<div class="map-container">
+							<a href="javascript:void(0)" ng-click="getLocalNetPart(local_networks[1].local_network_id , 1 , local_networks[1])">
+								<img ng-if="active_District != 'NORTH'" src="../../assets/hr-dashboard/img/maps/North-(Grey)-v1.png" style="width: 200px;left: 159px;">
+								<img ng-if="active_District == 'NORTH'" src="../../assets/hr-dashboard/img/maps/North-(Blue)-v1.png" style="width: 200px;left: 159px;">
+								<div class="circle-number" style="top: 53px;left: 268px;">
+									<span ng-bind="north_length">1</span>
+								</div>
+							</a>
+
+							<a href="javascript:void(0)" ng-click="getLocalNetPart(local_networks[4].local_network_id , 4 , local_networks[4])">
+								<img ng-if="active_District != 'WEST'" src="../../assets/hr-dashboard/img/maps/West-(Grey)-v1.png" style="width: 235px;top: 24px;left: 4px;">
+								<img ng-if="active_District == 'WEST'" src="../../assets/hr-dashboard/img/maps/West-(Blue)-v1.png" style="width: 235px;top: 24px;left: 4px;">
+								<div class="circle-number" style="top: 128px;left: 126px;">
+									<span ng-bind="west_length">1</span>
+								</div>
+							</a>
+
+							<a href="javascript:void(0)" ng-click="getLocalNetPart(local_networks[0].local_network_id , 0 , local_networks[0])">
+								<img ng-if="active_District != 'CENTRAL'" src="../../assets/hr-dashboard/img/maps/Central-(Grey)-v1.png" style="width: 173px;left: 168px;top: 91px;">
+								<img ng-if="active_District == 'CENTRAL'" src="../../assets/hr-dashboard/img/maps/Central-(Blue)-v1.png" style="width: 173px;left: 168px;top: 91px;">
+								<div class="circle-number" style="top: 178px;left: 248px;">
+									<span ng-bind="central_length">1</span>
+								</div>
+							</a>
+
+							<a href="javascript:void(0)" ng-click="getLocalNetPart(local_networks[2].local_network_id , 2 , local_networks[2])">
+								<img ng-if="active_District != 'EAST'" src="../../assets/hr-dashboard/img/maps/East-(Grey)-v1.png" style="width: 238px;top: 67px;right: -5px;">
+								<img ng-if="active_District == 'EAST'" src="../../assets/hr-dashboard/img/maps/East-(Blue)-v1.png" style="width: 238px;top: 67px;right: -5px;">
+								<div class="circle-number" style="top: 152px;right: 100px;">
+									<span ng-bind="east_length">1</span>
+								</div>
+							</a>
+
+							<a href="javascript:void(0)" ng-click="getLocalNetPart(local_networks[3].local_network_id , 3 , local_networks[3])">
+								<img ng-if="active_District != 'SOUTH'" src="../../assets/hr-dashboard/img/maps/South-(Grey)-v1.png" style="width: 80px;bottom: 35px;left: 223px;">
+								<img ng-if="active_District == 'SOUTH'" src="../../assets/hr-dashboard/img/maps/South-(Blue)-v1.png" style="width: 80px;bottom: 35px;left: 223px;">
+								<div class="circle-number" style="top: 241px;left: 252px;">
+									<span ng-bind="south_length">1</span>
+								</div>
+							</a>
+						</div>
+					</div>
+					<div class="col-lg-4 no-padding">
+						<div class="clinic-details-container">
+							<h5 class="clinic-details-title text-center" style="margin-bottom: 10px;"><span ng-bind="active_District"></span> <span class="number-with-circle" ng-bind="filtered_local.length"></span></h5>
+							<select class="form-control" ng-model="active_localNetworkFilter">
+								<option value="all">All</option>
+								<option value="OUTPATIENT GP">General Practitioner</option>
+								<option value="HEALTH SCREENING">Health Screening</option>
+								<option value="DENTAL CARE">Dental Care</option>
+								<option value="TRADITIONAL CHINESE MEDICINE">Traditional Chinese Medicine</option>
+								<option value="BEAUTY & BODY">Wellness</option>
+								<option value="HEALTH SPECIALIST">Health Specialist</option>
+							</select>
+							<br>
+							<div class="clinic-details-content">
+								<div ng-repeat="partner in filtered_local = (local_partners | filter: active_localNetworkFilter==='all' ? undefined : { health:active_localNetworkFilter })">
+									<h6 class="clinic-town" ng-bind="partner.header"></h6>
+
+									<h6 class="clinic-name" ng-bind="partner.clinic_name"></h6>
+									<h6 class="clinic-address" ng-bind="partner.address"></h6>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- <div class="col-lg-2">
+						<button ng-repeat="net in local_networks" ng-click="getLocalNetPart(net.local_network_id , $index , net)" class="btn btn-local-network white-text font-16">{{net.local_network_name}}</button>
+
+					</div>
+					<div class="col-lg-8 no-padding">
+						<div class="clinic-details-container">
+							<h5 class="clinic-details-title text-center" style="margin-bottom: 10px;"><span ng-bind="active_District"></span> <span class="number-with-circle" ng-bind="filtered_local.length"></span></h5>
+							<select class="form-control" ng-model="active_localNetworkFilter">
+								<option value="all">All</option>
+								<option value="OUTPATIENT GP">General Practitioner</option>
+								<option value="HEALTH SCREENING">Health Screening</option>
+								<option value="DENTAL CARE">Dental Care</option>
+								<option value="TRADITIONAL CHINESE MEDICINE">Traditional Chinese Medicine</option>
+								<option value="BEAUTY & BODY">Wellness</option>
+								<option value="HEALTH SPECIALIST">Health Specialist</option>
+							</select>
+							<br>
+							<div class="clinic-details-content">
+								<div ng-repeat="partner in filtered_local = (local_partners | filter: active_localNetworkFilter==='all' ? undefined : { health:active_localNetworkFilter })">
+									<h6 class="clinic-town" ng-bind="partner.header"></h6>
+
+									<h6 class="clinic-name" ng-bind="partner.clinic_name"></h6>
+									<h6 class="clinic-address" ng-bind="partner.address"></h6>
+								</div>
+							</div>
+						</div>
+					</div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+	.circle-number{
+    height: 16px;
+    width: 16px;
+    border: 2px solid #fff;
+    text-align: center;
+    position: absolute;
+    border-radius: 50%;
+    line-height: 1;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+	}
+</style>

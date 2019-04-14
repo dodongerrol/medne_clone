@@ -1,0 +1,38 @@
+<div class="hrdb-body-container download-template">
+	<div class="container">
+		<div class="download-template-container">
+			<h1 class="dl-template-title text-center weight-700">Download Template</h1>
+			<h3 class="text-center dl-template-subtext weight-700">
+				We've put together the fields that are needed for enrollments in the<br>
+				excel template file, first row (aka header). Please download,<br>
+				complete and submit the excel file on step 3 (Upload).
+			</h3>
+			<button class="download-template-button center-block weight-700" onclick="window.location.href = '/excel/Employee Enrollment Listing.xlsx'">
+				<img src="../../assets/hr-dashboard/img/icons/download-file.svg" class="download-icon">
+				<span>DOWNLOAD</span>
+			</button>
+
+			<!--
+				if file was downloaded already
+				Uncomment Below
+			-->
+
+			<!-- <button class="download-template-button downloaded-button center-block">
+				<span>DOWNLOAD</span>
+			</button> -->
+		</div>
+	</div>
+</div>
+<div class="prev-next-buttons-container">
+	<div class="container">
+		<button ui-sref="enrollment-method" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
+		<button ui-sref="prepare" class="pull-right btn btn-info next-wizard-button">NEXT</button>
+
+		<!--
+			this button can be clicked if the file was downloaded
+			Uncomment Below
+		-->
+
+		<!-- <button class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
+	</div>
+</div>

@@ -1,0 +1,87 @@
+<div class="navbar-blue-bg" style="margin-top: 80px;position: fixed;height: 40px;">
+	<div class="container">
+		<div class="welcome-container enrollment-nav">
+			<h4>Enrollment</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<!-- <div class="welcome-container">
+			<h4 ui-sref="benefits-dashboard">Overview</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<div class="dropdown">
+			  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			    Employee
+			  </h4>
+			  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
+			    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+			    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+			  </ul>
+			</div>
+			<div class="arrow-up-2" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="activity">Activity</h4>
+			<div class="arrow-up-3" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container" ng-if="options.accessibility == 1">
+			<h4 ui-sref="e-claim">E-Claim</h4>
+			<div class="arrow-up-4" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="statement">Statement</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div> -->
+	</div>
+</div>
+<div enrollment-method-directive>
+	<div class="hrdb-body-container" >
+		<div class="container">
+			<div class="col-lg-12">
+				<h1 class="text-center weight-700 font-25" style="color: #727272;">Pick your preferred enrollment method</h1>
+				<div class="white-space-20"></div>
+				<div class="enrollment-method-container center-block">
+					<div class="col-md-12">
+						<div class="enrollment-method-box" style="margin-right: 10px;padding-bottom: 10px;">
+							<img src="../../assets/hr-dashboard/img/excel.png" class="center-block">
+							<h4 class="text-center weight-700" style="color: #727272;">EXCEL IMPORT</h4>
+							<br>
+							<p class="text-center">
+						      	<input class="with-gap" name="group1" ng-model="excelMethod" type="radio" id="test1" ng-value="true"/>
+						      	<label for="test1">&nbsp;</label>
+						    </p>
+						</div>
+						<div class="enrollment-method-box" style="margin-left: 10px;padding-bottom: 10px;">
+							<img src="../../assets/hr-dashboard/img/web-input.png" class="center-block">
+							<h4 class="text-center weight-700" style="color: #727272;">WEB INPUT</h4>
+							<br>
+							 <p class="text-center">
+						      	<input class="with-gap" name="group1" ng-model="inputMethod" type="radio" id="test2" ng-value="true"/>
+						      	<label for="test2">&nbsp;</label>
+						    </p>
+						</div>
+					</div>
+
+					<div class="col-md-12 display-flex" style="width: 490px;float: none;margin: 0 auto;">
+						<div class="enrollment-method-box-text" style="border: 0;padding: 20px 0px;">
+							<p class="text-center below-text">Upload employee details in a<br>excel file using the template<br>provided by us.</p>
+						</div>
+						<div class="enrollment-method-box-text" style="border: 0;padding: 20px 0px;">
+							<p class="text-center below-text">Input employee details<br>using our web enrollment form.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-12">
+				<h4 ng-if="no_select" class="text-center text-error">Please select an option</h4>
+			</div>
+		</div>
+	</div>
+	<div class="prev-next-buttons-container">
+		<div class="container">
+			<button ui-sref="enrollment-options" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
+			<button ng-click="submitMethod()" class="pull-right btn btn-info next-wizard-button">NEXT</button>
+		</div>
+	</div>
+</div>

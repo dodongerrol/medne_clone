@@ -1,0 +1,76 @@
+<section id="main-section" home-directive>
+	<div class="container ">
+		<div id="one" class="content-wrapper" ng-class="{notActive: blurOne}">
+			<h5 class="wow fadeInDown" data-wow-duration=".5s" ng-hide="showTwo">
+				Let's get you a qoute - it only takes a few seconds.
+			</h5>
+			<h1 class="wow fadeInDown " data-wow-duration=".5s">
+				My Zipcode is  
+				<input regex-input id="first_input" type="text" class="zipcode-input" placeholder="8002" ng-disabled="moreThanFive" ng-model="firstInput" ng-change='firstValidation(firstInput)'> 
+			</h1>
+			<!-- <p class="wow fadeInDown " id="alert-stat" data-wow-duration=".5s">
+				Zip code is required to get a qoute
+			</p> -->
+		</div>
+
+		<div ng-show="showTwo" id="two" class="content-wrapper" >
+			<h1>
+				I'd like to cover
+				<input type="text" class="zipcode-input" ng-model="zipInput" ng-change='zipValidation(zipInput)'> 
+			</h1>
+		</div>
+
+		<div ng-show="showThree" id="three" class="content-wrapper" >
+			<h1>
+				I'm 
+				<input type="text" class="zipcode-input" ng-model="zipInput" ng-change='zipValidation(zipInput)'> 
+				years old
+			</h1>
+		</div>
+
+		<div ng-show="showFour" id="four" class="content-wrapper" >
+			<h1>
+				<span>I make</span>
+				<span>My family makes</span>
+				<input type="text" class="zipcode-input" ng-model="zipInput" ng-change='zipValidation(zipInput)'> 
+				yearly with 
+				<input type="text" class="zipcode-input" ng-model="zipInput" ng-change='zipValidation(zipInput)'> 
+				person in my tax household.
+			</h1>
+
+			<button class="btn btn-default btn-lg"><b>Next</b></button>
+		</div>
+
+		<div ng-show="showFifth" id="fifth-form" class="content-wrapper">
+			<h5>Tell us about your health and we’ll recommend a plan for you. Your answers will have no impact on rates.</h5>
+			<br>
+			<br>
+			<div class="checkbox">
+				<label>
+				  <input type="checkbox"> I expect to see a specialist more than twice in 2017.
+				  <p>e.g. cardiologist, endocrinologists, dermatologists</p>
+				</label>
+			</div>
+
+			<div class="checkbox">
+				<label>
+				  <input type="checkbox"> I expect to see a specialist more than twice in 2017.
+				  <p>e.g. cardiologist, endocrinologists, dermatologists</p>
+				</label>
+			</div>
+
+			<div class="checkbox">
+				<label>
+				  <input type="checkbox"> I expect to see a specialist more than twice in 2017.
+				  <p>e.g. cardiologist, endocrinologists, dermatologists</p>
+				</label>
+			</div>
+
+			<div class="form-group">
+				<button class="btn btn-default btn-lg"><b>Done</b></button>
+			</div>
+			
+		</div>
+		
+	</div>
+</section>

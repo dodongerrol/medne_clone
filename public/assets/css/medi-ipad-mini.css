@@ -1,0 +1,230 @@
+
+
+
+
+/*======================================================================================================================================================*/
+/*********** MEDICLOUD-V2 IPAD MINI CSS***********/
+/*======================================================================================================================================================*/
+
+@media only screen 
+  and (min-device-width: 768px) 
+  and (max-device-width: 1024px) 
+  and (-webkit-min-device-pixel-ratio: 1) {
+	  #fullcalendar-container .calendar-time .time-count { height: 8.179em !important; border-bottom: 1px solid #f9f9f9;    }
+	  #clinic-form-container .ui-datepicker {
+    display: none;
+    left: 10% !important;
+    padding: 0.2em 0.2em 0;
+    width: 8em !important;
+	/*background-color: red !important;*/
+}
+
+.calander {
+    border-left: 1px solid #ececec;
+    border-top: 1px solid #ececec;
+    padding-bottom: 11%;
+    padding-left: 0%;
+}
+
+#main-nav ul {
+    list-style-type: none;
+    margin-left: 15%;
+    padding: 2.5% 0 0 10px !important;
+	width:80%;
+	
+	
+}
+
+#main-nav li a {
+    color: #1b9bd7;
+    font-family: "Oxygen",sans-serif;
+    text-decoration: none;
+	font-size:18px;
+}
+
+#fullcalendar-container .calendar-time .time-title { padding: 24.5% !important;  }
+
+.nav-scroll-content {
+    height: 645px;
+    overflow-x: hidden;
+    overflow-y: auto;
+	 -webkit-overflow-scrolling: touch;
+}
+
+.scroll-content { position: relative; height: 100%; display: -webkit-inline-flex; display: -ms-inline-flexbox; display: inline-flex; -webkit-overflow-scrolling: touch; }
+
+#content-8 { overflow-x: scroll; overflow-y: hidden; position: relative; white-space: nowrap; }
+
+#fullcalendar-container .calendar-day .single-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding: 2.5% 2.8% !important;
+    text-align: center;
+    width: 94.4%;
+	
+}
+
+
+
+#fullcalendar-container .calendar-day .appointments-two-slot .two-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding-left: 27.8% !important;
+	 padding-right: 27.8% !important;
+	 padding-top: 4.6% !important;
+	  padding-bottom: 4.6% !important;
+    width: 44.2%;
+	
+}
+
+
+
+
+#fullcalendar-container .calendar-day .appointments-three-slot .three-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding: 15px 39.9% !important;
+    width: 19.22% !important;
+	/*background-color:purple !important;*/
+}
+
+#fullcalendar-container .calendar-day .appointments-four-slot .four-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding: 15px 39.9% !important;
+    width: 19.22% !important;
+	/*background-color:pink !important;*/
+}
+
+
+#fullcalendar-container .calendar-day .appointments-five-slot  .five-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding: 15px 39.9% !important;
+    width: 19.22% !important;
+	/*background-color:blue !important;*/
+}
+
+
+
+
+
+.appointments-six-slot {
+    /*background-color: red !important;*/
+   width: 16.5% !important;
+}
+
+.appointments-six-slot .six-slot {
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    padding: 14.4% 3%;
+    text-align: center;
+}
+
+
+
+
+
+.appointments-seven-slot { padding-bottom: 9.9%; width: 14.25% !important;  }
+.appointments-seven-slot .seven-slot {
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    padding: 15px 25px !important;
+    text-align: center;
+	/*background-color:orange;*/
+}
+
+
+.check-space {
+    margin-left: 0% !important;
+    margin-right: 0% !important;
+    margin-top: 0% !important ;
+}
+
+.btn-time {
+    background-color: #1b9bd7;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    float: left;
+    font-size: 1em;
+    margin-left: 1.2%;
+    margin-top: 3.3% !important;
+    padding: 2.3% 6%;
+    text-align: center;
+    width: auto;
+}
+
+#clinic-form-container .form-nav-page .dr-available-select-container .availability-day-graph .dr-time-bar-container .dr-detail-inner {
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    float: none;
+    margin: 0;
+    padding: 2.5% 0 1.5% 2%;
+    width: 99%;
+}
+
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner {
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    float: left;
+    margin: 0 0 0 1%;
+    padding: 3.1% 1%;
+    width: 83%;
+}
+
+.icn-close {
+    float: right;
+    height: 20px;
+    margin-top: 0.5%;
+    width: 20px;
+}
+
+.new-select {
+    background-color: #f5f5f5;
+    border: medium none;
+    border-radius: 5px;
+    height: 45px;
+    padding: 9%;
+    width: 76%;
+}
+
+
+.single-slot15min-blue {
+    background-color: #caecfc;
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    height: 1.896em !important;
+    width: 100%;
+}
+
+#clinic-form-container .form-nav-page .dr-view-title .title-a { float: left; margin: 0 19.5% 0 12% !important; font-size: .9em; color: #999999; }
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-name {
+    color: #333333;
+    float: left;
+    font-family: "Oxygen",sans-serif;
+    font-size: 0.9em;
+	padding-right:5%;
+	width:50%;
+  
+}
+
+#clinic-form-container .form-nav-page .procedures-chart .dr-view-title .title-a {
+    color: #999999;
+    float: left;
+    font-size: 1em;
+    margin: 0 20% 0 2.8% !important;
+}
+
+
+
+
+
+}
+
+
+
+
+/*======================================================================================================================================================*/
+/***********END OF MEDICLOUD-V2 IPAD MINI CSS***********/
+/*======================================================================================================================================================*/

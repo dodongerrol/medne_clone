@@ -1,0 +1,384 @@
+<div id="main-content" style="padding: 0;" appointment-create-directive>
+	<!-- modal -->
+	<div class="modal get-clinc-select" id="select-clinic" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div id="mainModal" class="modal-content" >
+	    	<form ng-submit="searchClinic()">
+		    	<div class="modal-header">
+		    		<button type="button" class="close" aria-label="Close" ng-click="back()"><span aria-hidden="true">&times;</span></button>
+
+		    		<div class="icon">
+						<img ng-if="clinic_details.image_url" ng-src="{{clinic_details.image_url}}" class="img-responsive">
+						<img ng-if="!clinic_details.image_url" ng-src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive">
+					</div>
+					<div class="info ">
+						<h5 class="color-white" style="text-transform: capitalize;" ng-bind="clinic_details.name"></h5>
+						<p class="address color-white" ng-bind="clinic_details.address"></p>
+						<p class="clinic_status" ng-if="clinic_details.open_status == 1"> <i class="fa fa-circle"></i> &nbsp;Now Open </p>
+						<p class="clinic_status" ng-if="clinic_details.open_status == 0"> <i class="fa fa-circle" style="color: red!important;"></i> &nbsp;Closed </p>
+					</div>
+					<div class="fav text-center">
+						<span class="activeFavs">
+							<a  ng-if="clinic_details.favourite == 1" ng-click="toggleFavs(clinic_details,1)" href=""><i class="fa fa-heart" ></i></a>
+						</span>
+						<span class="notActiveFavs" >
+							<a ng-if="clinic_details.favourite == 0" ng-click="toggleFavs(clinic_details,0)" href=""><i class="fa fa-heart-o" ></i></a>
+						</span>
+					
+						<a id="activeFavs" class="activeFavs" ng-click="toggleFavs(clinic_details,1)" href="" hidden><i class="fa fa-heart" ></i></a>
+						<a id="notActiveFavs" class="notActiveFavs" ng-click="toggleFavs(clinic_details,0)" href="" hidden><i class="fa fa-heart-o" ></i></a>
+						
+					</div>
+		    	</div>
+		      	<div class="modal-body">
+		      		<div id="main-body">
+		      			<ul class="nav nav-tabs" role="tablist">
+							<li role="presentation" class="one active">
+								<a href="javascript:void(0)" data-target="#procedures" aria-controls="procedures" role="tab" data-toggle="tab">
+									<i class="fa fa-stethoscope"></i>
+									<br>
+									Procedures
+								</a>
+							</li>
+							<li role="presentation" class="two">
+								<a href="javascript:void(0)" data-target="#doctors" aria-controls="doctors" role="tab" data-toggle="tab">
+									<i class="fa fa-user-md"></i>
+									<br>
+									Doctors
+								</a>
+							</li>
+							<li role="presentation" class="three">
+								<a href="javascript:void(0)" data-target="#information" aria-controls="information" role="tab" data-toggle="tab">
+									<i class="fa fa-medkit"></i>
+									<br>
+									Information
+								</a>
+							</li>
+							<li class="four" ng-click="getDirections(clinic_details.lattitude, clinic_details.longitude)">
+								<a href="javascript:void(0)">
+									<i class="fa fa-ambulance"></i>
+									<br>
+									Directions
+								</a>
+							</li>
+						</ul>
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<!-- PROCEDURES -->
+							<div role="tabpanel" class="tab-pane fade in active" id="procedures">
+								<div class="notes">
+									<h5>Select one or more procedures to make a booking.</h5>
+									<p>Basic fee: Price may increase according to additional service requested by the customers. All prices shown below are the original price set by Medicloud's providers</p>
+								</div>
+
+								<div class="tab-list">
+									<div class="col-md-12 list" ng-repeat="list in clinic_procedures">
+										<div class="left">
+											<a href="javascript:void(0)" ng-click="selectProcedure(list, $index+1)">
+												<i class="fa fa-check icon-circle-border"></i>
+											</a>
+										</div>
+										<div class="middle">
+											<h5><b ng-bind="list.name"></b></h5>
+											<p ng-bind="list.duration"></p>
+										</div>
+											
+										<div class="right pull-right">
+											<b ng-bind="list.price"></b>
+										</div>
+											
+									</div>
+								</div>
+							</div>
+							<!-- DOCTORS -->
+							<div role="tabpanel" class="tab-pane fade" id="doctors">
+								<div class="notes">
+									<h5>Select doctor to make a booking.</h5>
+								</div>
+
+								<div class="tab-list">
+									<div class="col-md-12 list" ng-repeat="list in clinic_doctors">
+										<div class="left">
+											<img ng-src="{{list.image_url}}" class="img-responsive">
+										</div>
+										<div class="middle">
+											<h5><b ng-bind="list.name"></b></h5>
+										</div>
+											
+										<div class="right pull-right">
+											<button class="btn btn-primary" ng-click="selectDoctor(list)">
+												Book Now
+											</button>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+							<!-- INFORMATION -->
+							<div role="tabpanel" class="tab-pane fade" id="information">
+								<div class="notes">
+									<h5>Opening times</h5>
+								</div>
+								<div class="tab-list">
+									<div class="col-md-12 list" ng-repeat="list in  clinic_details.open">
+										<div class="middle">
+											<p><span ng-bind="list.weeks"></span> <span ng-bind="list.starttime"></span> <span ng-bind="list.endtime"></span></p>
+										</div>
+									</div>
+								</div>
+
+								<div class="notes">
+									<h5>Contact Information</h5>
+								</div>
+								<div class="tab-list">
+									<div class="col-md-12 list">
+										<div class="middle">
+											<h5><b>Phone</b></h5>
+											<p ng-bind="clinic_details.telephone"></p>
+										</div>
+									</div>
+									<div class="col-md-12 list">
+										<div class="middle">
+											<h5><b>Email</b></h5>
+											<p ng-bind="clinic_details.email"></p>
+										</div>
+									</div>
+
+								</div>
+							</div>
+							<!-- DIRECTION -->
+							<!-- <div role="tabpanel" class="tab-pane fade" id="direction">
+								<div id="map"></div>
+							</div> -->
+						</div>
+		      		</div>
+		        	
+
+					<div id="schedule-list" class="appointments-avail" hidden>
+						<div class="col-md-12 no-padding"  >
+							<div class="notes">
+								<h5 class="text-center">
+									<span class="pull-left">
+										<a href="javascript:void(0)" ng-click="showMain()"><i class="fa fa-arrow-left"></i></a>
+									</span>
+									Appointments Available
+								</h5>
+							</div>
+							<div class="col-md-12 no-padding">
+								<div class="date-wrapper">
+									<div class="arrow-date">
+										<a href="" ng-click="backSetDate()"><i class="fa fa-caret-left"></i></a>
+									</div>
+									<div class="dates">
+										<ul class="nav nav-tabs" role="tablist">
+											
+											<li role="presentation" class="line-list" ng-repeat="list in date_list" ng-click="selectScheduleList(list,list.date, date_temp_booking.doctor_id, date_temp_booking.procedure_id, date_temp_booking.clinic_id, $index)" id="line_indicator_{{$index}}">
+												<a href="javascript:void(0)" data-target="#date_tab_1" aria-controls="procedures" role="tab" data-toggle="tab">
+												<b style="color: #000;">
+												<span ng-bind="list.date | date: 'dd'"></span> 
+												<span ng-bind="list.date | date: 'EEE'"></span>
+												</b>
+												<br />
+												<span ng-bind="list.date | date: 'MMMM'"></span>
+												</a>
+											</li>
+											
+										</ul>
+									</div>
+									<div class="arrow-date">
+										<a href="" ng-click="nextSetDate()"><i class="fa fa-caret-right"></i></a>
+									</div>
+								</div>
+								
+								<div class="tab-content">
+								  <div id="#data_tab_1" class="tab-pane fade in active">
+								    <ul class="list-group" style=" overflow: auto;max-height: 250px;">
+								    	<p ng-show="!schedule_list" class="text-center"> No Appointments Available </p>
+
+								    	 <li ng-show="schedule_list" class="list-group-item" ng-repeat="list in schedule_list" ng-click="BookingSlot(list.start_time, list.end_time, date_temp_booking.date, date_temp_booking.doctor_id, date_temp_booking.procedure_id, date_temp_booking.clinic_id)">
+								    	 	<span ng-bind="list.start_time"></span> - <span ng-bind="list.end_time"></span>
+								    	 </li>
+
+
+								 	</ul>
+								  </div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div id="confirm-details" hidden>
+						<div class="col-md-12 no-padding">
+							<div class="notes">
+								<h5 class="text-center">
+									<span class="pull-left">
+										<a href="javascript:void(0)" ng-click="showAppiontments()"><i class="fa fa-arrow-left"></i></a>
+									</span>
+									<b>Confirm Details</b>
+								</h5>
+							</div>
+							<div class="form">
+								<p class="text-center">
+									We'd need to verify additional details.
+								</p>
+								<div class="form-group">
+									<input type="text" placeholder="NRIC/FIN" class="form-control" ng-model="booking.nric" required>
+								</div>
+								<div class="form-group">
+									<input type="text" placeholder="PHONE" ng-model="booking.phone" class="form-control" required>
+								</div>
+								<div class="form-group">
+									<input type="text" placeholder="PROMO CODE" ng-model="booking.promo" class="form-control">
+								</div>
+
+								<div class="form-group">
+									<button type="submit" class="btn btn-success form-control" ng-click="confirmBookingModal()">DONE</button>
+								</div>
+
+								<p class="text-center">
+									By tapping DONE, you agree to Medicloud's <a href="">Terms of Use</a> and <a href="">Privacy Policy</a>
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div id="confirm-opt" hidden>
+						<div class="col-md-12 no-padding">
+							<div class="notes">
+								<h5 class="text-center">
+									<span class="pull-left">
+										<a href="javascript:void(0)" ng-click="backToNric()"><i class="fa fa-arrow-left"></i></a>
+									</span>
+									<b>Confirm your Details</b>
+								</h5>
+							</div>
+							<div class="form confirm-opt-form">
+								<form>
+									<p class="text-center">
+										We have sent ans SMS with a 6 Digit Verification Code to your Phone No.
+									</p>
+									<div class="form-group">
+										<input type="text" placeholder="CODE" class="form-control" ng-model="booking.otp" required>
+									</div>
+
+									<div class="form-group text-center btn-wrapper">
+										<button type="submit" class="btn btn-success" ng-click="optValidate()">DONE</button>
+										<button class="btn btn-info" ng-click="resendSms()">RESEND SMS</button>
+									</div>
+
+									<p class="text-center">
+										If you haven't received a message please tap on the Resend Button or go back to change the Phone No.
+									</p>
+								
+								</form>
+							</div>
+						</div>
+					</div>
+		      	</div>
+			    <div class="modal-footer">
+		        	<button class="btn btn-default" ng-click="back()">Close</button>
+		        	<!-- <button type="submit" class="btn btn-primary">Search</button> -->
+		      	</div>
+	    	</form>
+	    </div>
+
+	    <div id="confirmBookingModal" class="modal-content" hidden>
+
+	      <div class="modal-header">
+	        <button type="button" class="close" style="float: left!important;"><span class="fa fa-arrow-left" aria-hidden="true" style="color: #FFF" ng-click="backToNric()"></span></button>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: #FFF">&times;</span></button>
+
+	        <h4 class="modal-title color-black" id="myModalLabel">Your Appointment is at</h4>
+	        <h2 class="text-center">
+	        	<span ng-bind="booking.starttime"></span>
+	        </h2>
+	        <p class="text-left color-black padding-0-10">
+	        	DATE 
+	        	<span class="pull-right">
+	        		EST
+	        	</span>
+	        </p>
+	        <p class="text-left padding-0-10"> 
+	        	<span ng-bind="formatDateAppointmentDisplay(booking.bookingdate)"></span>
+	            <span class="pull-right"> $<span ng-bind="booking.list.price"></span> </span>
+	        </p>
+	      </div>
+	      <!-- BODY -->
+	      <div class="modal-body">
+	        <p class="titles">Your Procedure</p>
+	        <p>
+	        	<b>
+	        	<span ng-bind="selected_procedure"></span>
+	        	</b>
+	        </p>
+	        <span class="time color-gray" ng-bind="booking.list.duration"></span>
+
+	        <p class="titles">Your Doctor</p>
+	        <div class="w-image">
+	        	<div class="img">
+	        		<img src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out" ng-if="!booking.list.doctor.image_url">
+	                <img ng-src="{{ booking.list.doctor.image_url }}" class="img-responsive" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out" ng-if="booking.list.doctor.image_url">
+	        	</div>
+	        	<div class="info">
+	        		<p><b ng-bind="booking.list.doctor.name"></b></p>
+	        		<p class="color-blue" ng-bind="clinic_details.name"></p>
+	        	</div>
+	        </div>
+
+	        <p class="titles">Clinic Details</p>
+	        <div class="w-image">
+	        	<div class="img">
+	        		<img ng-src="{{ clinic_details.image_url }}" class="img-responsive" >
+	        		<img src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive" ng-if="!clinic_details.image_url">
+	        	</div>
+	        	<div class="info">
+	        		<p><b ng-bind="clinic_details.name"></b></p>
+	        		<p class="address color-gray" >
+	        			<span ng-bind="clinic_details.address"></span>
+	        			&nbsp;
+	        		</p>
+	        	</div>
+	        </div>
+
+	      </div>
+
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-success" ng-click="submitBooking()" id="confirm-booking">CONFIRM BOOKING</button>
+	        <button type="button" class="btn btn-info" ng-click="cancelBookingModal()">CANCEL</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<!-- modal -->
+	<div class="modal fade get-clinc-search" id="trackPopupModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	    	<div class="trackPopup-container">
+	    		<img src="../images/pic_girl.png">
+	    		<h1>Thank You!</h1>
+
+	    		<p>
+	    			{{track_response}}
+	    			
+	    		</p>
+
+	    		<button class="btn btn-trackPopup" ui-sref="appointments">
+	    			TRACK APPOINTMENT
+	    		</button>
+	    	</div>
+	    </div>
+	  </div>
+	</div>
+
+	<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+	  <div class="modal-dialog modal-dialog-center modal-sm" role="document">
+	    <div class="modal-content">
+	    	<div class="trackPopup-container" style="background: #EDEDEE;">
+	    		<img src="../user/img/loading.gif" style="width: 50%;">
+	    		<span>Please wait.</span>
+	    	</div>
+	    </div>
+	  </div>
+	</div>
+</div>

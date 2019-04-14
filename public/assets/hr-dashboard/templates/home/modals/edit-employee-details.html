@@ -1,0 +1,65 @@
+<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="edit-employee-details" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" edit-details-directive>
+    <div class="modal-dialog" role="document" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-header" style="background-color: #33a2d4;padding: 20px;">
+                <img src="../assets/hr-dashboard/img/icons/close.svg" style="width: 20px;cursor: pointer;" class="pull-right" data-dismiss="modal">
+                <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Edit Employee Details</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom: 50px;">
+                <form class="form edit-employee-details-form">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.first_name_error == true}" ng-model="selected_employee.enrollee.first_name">
+                        <span class="error-message" ng-bind="selected_employee.error_logs.first_name_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.last_name_error == true}" ng-model="selected_employee.enrollee.last_name">
+                        <span class="error-message" ng-bind="selected_employee.error_logs.last_name_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>NRIC/FIN</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.nric_error == true}" ng-model="selected_employee.enrollee.nric">
+                        <span class="error-message" ng-bind="selected_employee.error_logs.nric_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Work Email</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.email_error == true}" ng-model="selected_employee.enrollee.email">
+                        <span class="error-message" ng-bind="selected_employee.error_logs.email_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.mobile_error == true}" ng-model="selected_employee.enrollee.mobile">
+                        <span class="error-message" ng-bind="selected_employee.error_logs.mobile_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Job Title</label>
+                        <select class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.job_title_error == true}" ng-model="selected_employee.enrollee.job_title">
+                            <!-- For Current Job Title -->
+                            <option ng-repeat="job in job_list">{{job.job_title}}</option>
+                        </select>
+                        <span class="error-message" ng-bind="selected_employee.error_logs.job_title_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Medical Credits</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.credits_medical_error == true}" ng-model="selected_employee.enrollee.credits">
+                        <span class="error-message" ng-bind="selected_employee.error_logs.credits_medical_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Wellness Credits</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.wellness_credits_error == true}" ng-model="selected_employee.enrollee.wellness_credits">
+                        <span class="error-message" ng-bind="selected_employee.error_logs.wellness_credits_message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="text" class="form-control input-edit-employee-details start-date-datepicker" ng-model="selected_employee.start_date">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border: 0;padding: 5px 39px 20px;">
+                <button ng-click="updateEmployee(selected_employee)" class="pull-right edit-employee-details-button" style="border: solid 1px #0392cf;background-color: #0392cf;color: #fff;">UPDATE</button>
+                <button ng-click="removeEmployee()" class="pull-right edit-employee-details-button" style="border: solid 1px #ff7373;color: #ff7373;margin-right: 18px;">REMOVE</button>
+            </div>
+        </div>
+    </div>
+</div>

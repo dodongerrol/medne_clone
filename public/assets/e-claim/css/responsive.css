@@ -1,0 +1,628 @@
+@media only screen and (min-height : 750px) {
+    .padding-top-lg{
+        padding-top: 100px !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Custom, iPhone Retina */ 
+@media only screen and (min-width : 320px) {
+    
+}
+
+/* Extra Small Devices, Phones */ 
+@media only screen and (min-width : 480px) {
+    .xxs-show{
+        display: none !important;
+    }
+
+    .xxs-hide{
+        display: block !important;
+    }
+
+    .xxs-hide-table-cell{
+        display: table-cell !important;
+    }
+
+    .xxs-show-table-cell{
+        display: none !important;
+    }
+}
+
+@media only screen and (min-width : 575px) {
+    .slider-container-space-show{
+        display: none !important;
+    }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+    .xs-show{
+        display: none !important;
+    }
+
+    .xs-hide{
+        display: block !important;
+    }
+
+    .xs-show2{
+        display: none !important;
+    }
+
+    .xs-hide2{
+        display: block !important;
+    }
+
+    .xs-hide-table-cell{
+        display: table-cell !important;
+    }
+
+    .xs-show-table-cell{
+        display: none !important;
+    }
+
+    .logout-li-click{
+        display: none !important;
+    }
+
+    .hide-767{
+        display: block !important;
+    }
+
+    .show-767{
+        display: none !important;
+    }
+
+    .md-padding-left-20{
+        padding-left: 20px;
+    }
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+    .sm-show{
+        display: none !important;
+    }
+
+    .sm-hide{
+        display: block !important;
+    }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1400px) {
+  
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1600px) {
+   
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 2000px) {
+   
+}
+
+
+
+
+
+
+
+
+
+
+/*==========  Non-Mobile First Method  ==========*/
+
+@media only screen and (max-width : 1280px) {
+   
+}
+
+@media only screen and (max-width : 1180px) {
+    #statusPieGraph {
+        left: -10%;
+    }
+}
+
+@media only screen and (max-width : 1100px) {
+    .coverage-list .img-wrapper{
+        height: 50px;
+        line-height: 50px;
+    }
+
+    .coverage-list .coverage-details{
+        display: block;
+    }
+
+    .coverage-list .coverage-title{
+        margin-bottom: 10px;
+    }
+
+    .coverage-list .coverage-desc{
+        padding-left: 10px;
+    }
+
+    .main-home{
+        height: 800px;
+    }
+
+    .transaction-list{
+        max-height: 300px;
+    }
+
+}
+
+
+@media only screen and (max-width : 1080px) {
+    #statusPieGraph {
+        left: -20%;
+    }
+
+    .transaction-table-container {
+        padding: 20px;
+    }
+}
+
+@media only screen and (max-width : 991px) {
+    .sm-hide{
+        display: none !important;
+    }
+
+    .sm-show{
+        display: block !important;
+    }
+
+    #main-navigation {
+        padding: 0;
+    }
+
+    .home-right-container {
+        margin-left: 15px;
+        min-height: 695px;
+    }
+
+    .home-container {
+        padding: 0;
+    }
+
+    .benefit-dollars-container {
+        margin: 30px 0px;
+    }
+
+    #statusPieGraph {
+        left: 0;
+    }
+
+    .activity-chart{
+        margin-bottom: 63px;
+        margin-top: 30px;
+    }
+
+    .activity-account{
+        margin-bottom: 50px;
+    }
+
+    .main-home {
+        height: 710px !important;
+    }
+
+    .home-bottom-container{
+        margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width : 900px) {
+
+}
+
+@media only screen and (max-width : 880px) {
+    .transactions-header button{
+        width: 44%;
+    }
+}
+
+@media only screen and (max-width : 832px) {
+    .main-home {
+        height: 780px !important;
+    }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 768px) {
+
+    .xs-hide{
+        display: none !important;
+    }
+
+    .xs-show{
+        display: block !important;
+    }
+
+    
+
+    .main-loader,
+    .circle-loader{
+        padding-top: 30% !important;
+    }
+
+    .preloader-container {
+        width: 20% !important;
+    }
+
+    .main-container{
+        /*background-position: 100% !important;*/
+    }
+
+
+}
+
+@media only screen and (max-width : 767px) {
+    .home-container .activity-date-header .year-selector{
+        padding-left: 0;
+        margin-right: 15px;
+        margin-top: 15px;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+
+    .spending-type-container {
+        margin-top: 50px;
+    }
+
+    .xs-hide2{
+        display: none !important;
+    }
+
+    .xs-show2{
+        display: block !important;
+    }
+
+    .xs-hide-table-cell{
+        display: none !important;
+    }
+
+    .xs-show-table-cell{
+        display: table-cell !important;
+    }
+
+    .xs-no-padding{
+        padding: 0 !important;
+    }
+
+
+    .xs-flex{
+        display: flex;
+    }
+
+    .xs-text-center{
+        text-align: center;
+    }
+
+
+    .login-wrapper {
+        padding: 20px;
+    }
+
+    .spent-prog{
+        margin-top: 30px;
+    }
+
+    .main-home {
+        height: auto !important;
+    }
+
+    .home-right-container {
+        margin-left: 0px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        min-height: 695px;
+    }
+
+    .main-loader, .circle-loader {
+        padding-top: 22% !important;
+    }
+
+    #white-nav {
+        height: 65px;
+    }
+
+    .navbar-brand{
+        padding-top: 10px;
+    }
+
+    .navbar-toggle{
+        margin: 16px 0;
+    }
+
+    .navbar-collapse ul{
+        float: left !important;
+        padding-left: 0;
+        margin: 0 !important;
+        width: 100%;
+        text-align: left;
+    }
+
+    .navbar-collapse{
+        /*background: #dcd8d8e0;*/
+        background: #f1f1f1;
+        box-shadow: 1px 2px 5px #999;
+    }
+
+    #main-navigation .navbar-center li a,
+    #main-navigation .navbar-right a{
+        padding: 10px 5px;
+        margin: 10px 0;
+    }
+    .logout-li-click{
+        display: block;
+    }
+
+    .right-nav{
+        display: none;
+    }
+
+    .hide-767{
+        display: none !important;
+    }
+
+    .show-767{
+        display: block !important;
+    }
+
+    .eclaim-left-container {
+        height: auto;
+    }
+
+    .slider-container {
+         padding: 0 20px; 
+    }
+
+    .benefit-dollars-container {
+        padding-bottom: 50px;
+        height: auto;
+    }
+
+    .transactions-header {
+        height: auto;
+    }
+
+    #in-network-table thead tr th:first-child, 
+    #in-network-table tbody tr td:first-child {
+        padding-left: 10px;
+    }
+
+    .transactions-header button {
+        width: auto;
+        flex: 1;
+    }
+
+    .transaction-table-container thead tr th {
+        width: auto !important;
+    }
+
+    .in-network-subtr td .btn-upload-receipt, 
+    .in-network-subtr td .btn-download-receipt {
+        width: 40%;
+        display: inline-block;
+        margin-top: 50px;
+    }
+
+    #out-network-table .status-box-left {
+        border-radius: 8px;
+        width: 80%;
+        margin: 0 auto 50px auto;
+    }
+
+    .login-form {
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width : 705px) {
+    
+}
+
+@media only screen and (max-width : 574px) {
+    .activity-account {
+        padding: 0 0px 10px 0px;
+    }
+
+    .main-loader, .circle-loader {
+        padding-top: 40% !important;
+    }
+
+    .slider-container{
+        display: none;
+    }
+
+    .slider-container-space{
+        display: none;
+    }
+
+    .xs-date-selector{
+        display: block;
+    }
+
+    .slider-container-space-show{
+        display: block;
+    }
+}
+
+@media only screen and (max-width : 479px) {
+
+    .xxs-hide{
+        display: none;
+    }
+
+    .xxs-show{
+        display: block;
+    }
+
+    .xss-no-padding{
+        padding: 0 !important;
+    }
+
+    .xxs-hide-table-cell{
+        display: none !important;
+    }
+
+    .xxs-show-table-cell{
+        display: table-cell !important;
+    }
+
+    .transaction-list {
+        max-height: 230px;
+    }
+}
+
+@media only screen and (max-width : 450px) {
+    #eclaim-form .form-group {
+         display: block; 
+    }
+
+    #claim-form .form-group p{
+        display: block;
+    }
+
+    #claim-form .form-group p label{
+        /*width: 150px;*/
+        display: block;
+    }
+
+    #claim-form .form-group p > span{
+        display: block;
+    }
+
+    #claim-form .claim-img-wrapper{
+        display: block;
+        margin-bottom: 80px;
+    }
+
+    #claim-form .claim-img-wrapper label{
+        display: block;
+    }
+
+    #claim-form .claim-img-wrapper .receipt-imgs{
+        display: block;
+    }
+}
+
+@media only screen and (max-width : 440px) {
+    #statusPieGraph {
+        left: auto;
+        right: -5%;
+        position: absolute;
+    }
+}
+
+@media only screen and (max-width : 410px) {
+    #statusPieGraph {
+        right: -10%;
+    }
+
+    .main-loader, .circle-loader {
+        padding-top: 50% !important;
+    }
+
+    .col-xxs-12{
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width : 390px) {
+    #statusPieGraph {
+        right: -15%;
+    }    
+
+    .in-network-subtr .transac-details p {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .in-network-subtr .transac-details p label {
+        width: auto;
+        text-align: center;
+        margin-right: 0;
+        display: block;
+    }
+
+    .in-network-subtr td .btn-upload-receipt, 
+    .in-network-subtr td .btn-download-receipt {
+        width: 90%;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+}
+
+@media only screen and (max-width : 380px) {
+    #statusPieGraph {
+        right: -15%;
+    }    
+}
+
+@media only screen and (max-width : 366px) {
+    .spent-box .out-network-box {
+        margin-top: 20px;
+    }
+
+    .spent-box .in-network-box {
+        border-right: none;
+    }
+}
+
+@media only screen and (max-width : 360px) {
+    #statusPieGraph {
+        right: -20%;
+    }    
+}
+
+
+@media only screen and (max-width : 345px) {
+    #statusPieGraph {
+        right: -25%;
+    }    
+}
+
+@media only screen and (max-width : 325px) {
+    #statusPieGraph {
+        right: -31%;
+    }    
+}
+
+@media only screen and (max-width : 320px) {
+    #statusPieGraph {
+        right: -20%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+<div class="top-navbar" style="padding: 10px 53px;">
+	<!-- <div class="container"> -->
+		<img ui-sref="benefits-dashboard" src="../../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="top-logo pull-left pointer-cursor">
+		<span class="pull-right account-dropdown">
+			<a onclick="myAccount()">
+				<img src="../../assets/hr-dashboard/img/icons/down-arrow.svg" class="arrow-down pull-right">
+				<img src="../../assets/hr-dashboard/img/user.png" class="user-icon pull-right">
+			</a>
+		</span>
+		<div class="account-list-container">
+			<ul>
+				<li>
+					<a ui-sref="company-and-contacts">Account & Billing</a>
+				</li>
+				<li>
+					<a ui-sref="plan-coverage">Plan Coverage</a>
+				</li>
+				<li>
+					<!-- <a href="/company-benefits-dashboard-logout">Log Out</a> -->
+					<a href="javascript:void(0)" id="logout-btn">Log Out</a>
+				</li>
+			</ul>
+		</div>
+		<a href="javascript:void(0)" class="pull-right need-help-text tooltips">
+			<h3>Need help?</h3>
+			<div class="tooltip-container">
+				<h3 class="tooltip-title">We're here to help.</h3>
+				<h3 class="tooltip-phone-email-title">You may ring us</h3>
+				<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
+				<h3 class="tooltip-phone-email-details">Mon - Fri 10:00 to 19:00</h3>
+				<br>
+				<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
+				<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
+			</div>
+		</a>
+	<!-- </div> -->
+</div>
+
+<script type="text/javascript">
+	function myAccount() {
+		$(".account-dropdown").toggleClass('account-dropdown-active');
+		$(".account-list-container").toggleClass('account-list-container-active');
+	}
+
+	$('#logout-btn').click(function( ){
+		window.localStorage.removeItem('token');
+		window.location.href = window.location.origin + '/business-portal-login';
+	});
+</script>

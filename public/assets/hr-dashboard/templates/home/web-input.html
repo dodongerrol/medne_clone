@@ -1,0 +1,194 @@
+<div web-input-directive>
+    <div class="hrdb-body-container" style="padding-top: 200px;">
+        <div class="container">
+        	<h5 class="text-center" style="color: #c1c7cc;">EMPLOYEE <span ng-bind="active_employeeCtr + 1">1</span> OF <span ng-bind="total_emps">0</span></h5>
+            <h1 class="dl-template-title text-center" style="color: #5b5b5b;">Employee Details</h1><br><br>
+
+            <button ng-click="openSummary()" class="summary-right-button pull-right">
+            	SUMMARY
+            </button>
+
+            <div class="list-of-employee">
+    	        <h4 style="padding-left: 24px; font-size: 13px;color: #737373;font-weight: bold;">Employee Summary</h4>
+            	<ul style="padding: 0;margin-bottom: 30px;">
+
+                    <li ng-repeat="input in range(progress.in_progress) track by $index">
+                        <p><span><span ng-bind="$index + 1"></span>. </span><span ng-bind="employee_arr[$index].first_name"></span> <span ng-bind="employee_arr[$index].last_name"></span> <button ng-if="employee_arr[$index]" ng-click="removeEmpArr($index)" class="web-list-of-employee-remove-button pull-right">Remove</button><button ng-if="employee_arr[$index]" ng-click="editEmpArr($index)" class="web-list-of-employee-edit-button pull-right">Edit</button></p>
+                    </li>
+
+            	</ul>
+            </div>
+
+            <div style="margin-right: 200px;margin-left: 200px;">
+            	<form class="form">
+            		<div class="col-lg-6">
+            			<div class="form-group">
+            				<label>First / Given Name</label>
+            				<input type="text" class="form-control web-input-field" ng-model="input_data.first_name">
+    	        		</div>
+            		</div>
+            		<div class="col-lg-6">
+            			<div class="form-group">
+            				<label>Last / Family Name</label>
+            				<input type="text" class="form-control web-input-field" ng-model="input_data.last_name">
+    	        		</div>
+            		</div>
+            		<div class="col-lg-6">
+            			<div class="form-group">
+            				<label>
+                                <input type="radio" ng-value="true" name="id_status" ng-model="input_data.nric_status" ng-change="toggleNRIC(input_data.nric_status,'nric')" style="position: relative;top: 2px;left: 0;opacity: 1;">
+                                NRIC
+                            </label>
+                            <label>
+                                <input type="radio" ng-value="true" name="id_status" ng-model="input_data.fin_status" ng-change="toggleNRIC(input_data.fin_status,'fin')" style="position: relative;top: 2px;left: 0;opacity: 1;">
+                                FIN
+                            </label>
+                            <input type="text" class="form-control web-input-field" ng-model="input_data.nric">
+    	        		</div>
+            		</div>
+            		<div class="col-lg-6">
+            			<div id="input-dob" class="form-group ">
+            				<label>Date of Birth</label>
+            				<input type="text" class="form-control web-input-field datepicker" ng-model="input_data.dob">
+    	        		</div>
+            		</div>
+            		<div class="col-lg-6">
+            			<div class="form-group">
+            				<label>Work Email</label>
+            				<input type="text" class="form-control web-input-field" ng-model="input_data.email">
+    	        		</div>
+            		</div>
+            		<div class="col-lg-6">
+            			<div class="form-group">
+            				<label>Mobile</label>
+            				<input type="text" class="form-control web-input-field" ng-model="input_data.mobile">
+    	        		</div>
+            		</div>
+            		<div class="col-lg-6">
+            			<div class="form-group">
+            				<label>Job Title</label>
+            				<select class="form-control web-input-field" ng-model="input_data.job_title" style="margin-left: -5px">
+            					<!-- For Current Job Title -->
+                                <!-- !!!!!! -->
+                                <option ng-repeat="job in job_list">{{job.job_title}}</option>
+                                <!-- <option>Administration Support</option>
+                                <option>Arts/Culture/Heritage</option>
+                                <option>Building and Estate Management</option>
+                                <option>Corporate Strategy/Top Management</option> -->
+            				</select>
+    	        		</div>
+            		</div>
+            		<div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="text" class="form-control web-input-field web-input-field-date start-date-datepicker" ng-model="input_data.plan_start" >
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label style="line-height: 1;margin-top: 5px;">Medical Credits<br><span class="" style="font-size: 9px;">*If there are no credits to allocate, please input 0 in the respective field/s.</span></label>
+                            <input type="number" class="form-control web-input-field" min="0" ng-model="input_data.medical_credit">
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+            			<div class="form-group">
+            				<label style="line-height: 1;margin-top: 5px;">Wellness Credits<br><span class="" style="font-size: 9px;">*If there are no credits to allocate, please input 0 in the respective field/s.</span></label>
+            				<input type="number" class="form-control web-input-field" min="0" ng-model="input_data.wellness_credit">
+    	        		</div>
+            		</div>
+
+                    <div class="col-lg-12">
+                        <p ng-if="nric_error" class="text-error text-center">Invalid NRIC</p>
+                        <p ng-if="number_emp_error" class="text-error text-center">Number of employees already exceeded.</p>
+                        <p ng-if="inputs_error" class="text-error text-center">Please Input all fields.</p>
+                        <p ng-if="email_error" class="text-error text-center">Invalid email format.</p>
+                    </div>
+            		<div class="col-lg-12">
+            			<div class="form-group">
+                            <button class="pull-right next-employee-button" ng-click="nextEmployee()" ng-disabled="!input_data.first_name || !input_data.last_name || !input_data.nric || !input_data.dob || !input_data.email || !input_data.mobile || !input_data.job_title || !input_data.plan_start || disable_btn">
+            					NEXT EMPLOYEE
+            				</button>
+            				<button ng-if="active_employeeCtr > 0" class="pull-right previous-employee-button" ng-click="prevEmployee()" style="margin-right: 20px;">
+            					PREVIOUS EMPLOYEE
+            				</button>
+            			</div>
+            		</div>
+            	</form>
+            </div>
+        </div>
+    </div>
+    <div class="prev-next-buttons-container">
+    	<div class="container">
+    		<!-- <button ui-sref="download-template" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: solid 2px #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button> -->
+    		<button ui-sref="enrollment-method" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
+
+    		<button ng-click="createBtn()" ng-disabled="(!input_data.first_name || !input_data.last_name || !input_data.nric || !input_data.dob || !input_data.email || !input_data.mobile || !input_data.job_title || !input_data.plan_start) && employee_arr.length == 0" ng-disabled="" id="create-btn" class="pull-right btn btn-info next-wizard-button"><p class="pull-left enroll-text">ENROLL</p> <p class="number-of-enrollees pull-right" ng-if="employee_arr.length > 0" ng-bind="employee_arr.length">0</p></button>
+
+    		<!--
+    			this button can be clicked if the the ticks are all checked.
+    			Uncomment Below
+    		-->
+
+    		<!-- <button ui-sref="download-template" class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
+    	</div>
+    </div>
+</div>
+
+<style type="text/css">
+    .datepicker-dropdown {
+        z-index: 99 !important;
+    }
+
+    .picker__box{
+        height: 370px;  
+    }
+    .picker__frame {
+      margin: 0 auto;
+      max-width: 565px;
+      width: 30%;
+    }
+
+    .picker__date-display {
+      text-align: center;
+      background-color: #F4F4F4;
+      color: #0392CF;
+      padding-bottom: 15px;
+      font-weight: 300;
+      float: left;
+      /*width: 50%;*/
+      width: 35%;
+      height: 370px;    
+    }
+
+    .picker__calendar-container {
+      padding: 0 1rem;
+      float: left;
+      width: 65%;
+    }
+
+    .picker__footer {
+      text-align: right;
+      padding: 5px 10px;
+      clear: both;
+      width: 65%;
+      position: absolute;
+        bottom: 0px;
+        right: 0;
+    }
+
+    .picker__month-display {
+      text-transform: uppercase;
+      font-size: 2rem;
+      margin-top: 55px;
+    }
+
+    .picker__weekday-display{
+        background-color: #F4F4F4;
+        color: #0392CF;
+    }
+
+    .picker__year-display{
+        background-color: #F4F4F4;
+        color: #0392CF;
+    }
+</style>

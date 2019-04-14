@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "mystical-hawk-172002",
+  "private_key_id": "0aec597bbfc3ab729fb79ebf05fc52726726cd9f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDtPp1qkB3IWSgi\n5P6kTr2fIwZr3FMO3+ybDNg+N9ouJwJ9pXvR0S7TqY++/SyhT2/ciCVQMfHNxosn\nScOnCAMM/yqhKgntsKcvfPqlCp7fqps2EF/XUKpviirnZTM0CBFaLgpvU7f3L/HS\n91nuUbKxZxEK0Yg966kCTFeQEIDdE0oi8cl6+Ofa7GibHTUTEtyqHfVWj25L6mym\nbzzxXS1wOzaV/xTULEzf7PaenJZ2qnarafaso1L6bb3bBSDHkc0Doe/9BB9OKcit\nky4nsVnx3pcUPhNWVUC3oqkRXcVD5BiuJPQNFEuxp3SLUuZb5aHRVe9oNILWFSKI\nXtJ6HmpxAgMBAAECggEASKdSQd4coMxc9EK4kMzkWSW6w7FXZkjBBsKqPnOQR23+\n30ecYabz9jIJKW4TCttu4FR5SNPivye8Wa3HUxGrDYHfJjffjoD40hwuDfjwqoJu\nweHF2ASGDV58wRxGz/pghgNvgqRaxEJUhkzlp4wxcw6jM3LzjDLtMRz7+8xyCkFV\nD8JnVj6tle96/1mJtTj1+kxeAUDKmKPU3RJLDcqcMTOg8PxlMF9xWFiJA2L45cZv\n/DeCdEYt4OMl7ON6PW869njwiVVO4ZMDULaWkOaiytrU+gqnW4x5t9majIYZqfoz\nlIv6UonFwcuvv/qEQuTV3HeV3lSICQZnvI6BU/RmOQKBgQD5wvJ+WbMl0i8t7Vb3\nsxNdRJ+4HNfCnMXmRa/ujfBSDu8DtO3cWSCNGs0b+/nK4tW0yLsMPkfDHEsjE0Bz\nJCCi2Fn6MalEXfX2dnRlYKssSm2hd4b3wAWJwZX6Ufx8kczjImT+tKQhBRr7lhyj\nGUL4Bb8vorRnHRpTPOoisJ3QqwKBgQDzK6Fs8utZovAV7stamb7qKxG2dQuTybGh\niQoaHahfp8/Bc2ExyXu4HpeO+LWRRqTm/sbpqyRAuEopTuf4gDFoi+q7KtFmmSK+\nPnFsNKDai/ILuAQ1c9KyL7zn0Dv8IxROfF9dHdA19IwLa0wy6lq2otRuAr8ddoTJ\nl/WYAVlJUwKBgAtYaK2Go5WnO49phZbQ4qNM97hkTwS/HFo+diRu/CiuFvtjH57v\nyYO/YOvRgWJO9Yg1yhFfTuE1CtC4Eihozra2/zdXRCof3olojhcA0iW758j65f2h\nEl9UlNx/FuoNsXHr4QyU5hO96KDfC8P45Mrhb/LZADri3oxDaxtSTIjrAoGAdUWX\nZimI4wO3cXxmSd1XuyrmMe4klTNyHQsv+gRPjUIq6YqxVwdqSRNH2EWNmvBM2rII\nT+yfYS7/ZQiOysNYEKlZnMY7kpVLsh//J0YCRSO0qX4nWXfwJsrq+YjtRN3OD0Pf\n4dJc9YhoeaFXcD6hXO8OL7fXX2gnBenpIVOVMc0CgYAJnrnAsGPFpF7xlz/FrS5j\nz61JRS4M+xdUG0eYCqhG2/7ZGE8AYPFkGAgXX64vg07pg8D8CuQY3NYKyMvsBe5W\nEasxB2RFbnKeYITysxXbLnvDM4NSW73rlLwbYXLOUJu6yvl9nl7ptPVZ3QiHI0dR\n+WdrTrE0V6b4Zd6t6HJG2A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "backupmednefits@mystical-hawk-172002.iam.gserviceaccount.com",
+  "client_id": "106147538089338362304",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/backupmednefits%40mystical-hawk-172002.iam.gserviceaccount.com"
+}

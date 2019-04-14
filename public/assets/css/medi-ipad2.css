@@ -1,0 +1,406 @@
+
+/*======================================================================================================================================================*/
+/*********** MEDICLOUD-V2 IPAD CSS***********/
+/*======================================================================================================================================================*/
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px)  {
+.new-wd11 {
+    width: 19% !important;
+}	
+
+.wd2 { width: 50% !important; }	
+#main-container { width: 100%; height: auto; }
+#main-container .header { width: 100%; height: auto; /*background-color:#C60;*/ }
+#main-container .header .section-right { float: left; width: 33%!important; padding-bottom: 2.9%; /*background-color: #F90;*/ }
+#main-container .header .section-left { float: left; width: 50%; /*background-color: #F96;*/ }
+#main-container .header .logo-container { padding: 2% 5% 5% 5%; width: auto; /*background-color: pink;*/ }
+/***********HEADER NAVIGATION***********/
+#main-container .header .section-right #main-nav { float: left; margin-top: 3%; height: 20%; width: 100%; /*background-color: green;*/ }
+#main-nav ul { list-style-type: none; margin: 0; padding: 2.5% 0 0 47% !important; width:95%; }
+#main-nav li { float: left; text-decoration: none; display: inline-block; padding: 2%; font-size: 1em; margin-left: 3%; }
+#main-nav li a { text-decoration: none; color: #1b9bd7; font-family: 'Oxygen', sans-serif; }
+/*.active { float: left;  text-decoration: none; display:inline-block; background-color:#C06; padding:2%; -webkit-border-radius: 5px;
+-moz-border-radius: 10px; border-radius: 10px;}
+*/
+
+
+#clinic-form-container .form-nav-page .procedures .field-container .field-container-xsmall-c {
+    float: left;
+    margin-left: 1%;
+    margin-right: 1% !important;
+    padding-bottom: 2%;
+}
+
+.input-xsmall-c {
+    background-color: #f5f5f5;
+    border: medium none;
+    border-radius: 5px;
+    padding: 6% !important ;
+    width: 76%;
+}
+
+
+
+
+
+	
+	
+	
+	
+#fullcalendar-container .calendar-time .time-title { /*padding: 17px !important;*/  }	
+
+
+
+#clinic-form-container { margin: 5% 0 0 3% !important; width: 94% !important; }
+.portfolio-field-section .field-container .field-container-medium { float: left; margin-right: 2%; margin-top: 3.5% !important; padding-bottom: 2%; width: 47%; }
+#clinic-form-container .form-nav-page .search-bar .field-name label { float: left; font-size: .8em; color: #666666; margin: 4.8% 0 0 3%; }
+.portfolio-image-section .field-name { margin: 2% 0 0 7%; font-size: .7em; color: #666666; }
+.portfolio-field-section .btn-add { float: left; margin-top: .4% !important; padding: .4% !important; background-color: #f5f5f5; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 0px 5px 5px 0px; }
+.portfolio-field-section .btn-add-plus { background-color: #f5f5f5; border-radius: 0 5px 5px 0; float: left; padding: 1.5%; margin-top: .3%; }
+/*======================================================================================================================================================*/
+/***********CLINIC VIEW DOCTOR PAGE IPAD FIX***********/
+/*======================================================================================================================================================*/
+
+
+#clinic-form-container .form-nav-page .dr-option-nav ul li { float: left; list-style: none; padding: 0%; margin: 0% 6%; }
+#clinic-form-container .form-nav-page .dr-view-detail .dr-image {
+    float: left !important;
+    margin: 0 0 0 1%;
+}
+#clinic-form-container .form-nav-page #load-doctor-view-ajax .dr-view-detail .dr-detail-inner {
+    background-color: #f5f5f5 !important;
+    border-radius: 10px;
+    float: left;
+    margin: 0 0 0 2%;
+    padding: 2.5% 0 2.3% 2%;
+    width: 80% !important;
+}
+
+#clinic-form-container .form-nav-page  .dr-view-detail .dr-detail-inner .label-dr-name {
+    color: #333333;
+    float: left;
+    font-family: "Oxygen",sans-serif;
+    font-size: 0.9em;
+    width: 25% !important;
+}
+
+#clinic-form-container .form-nav-page .dr-view-title {
+    margin: 0;
+    padding: 2.3% 0 1% 3%;
+}
+
+
+
+#clinic-form-container .form-nav-page .dr-view-title .title-a { float: left; margin: 0 22.5% 0 14%; font-size: .9em; color: #999999; }
+#clinic-form-container .form-nav-page .dr-view-title .title-b { float: left; margin: 0 13% 0 0; font-size: .9em; color: #999999; }
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-no { float: left; width: 22.3%; font-size: .9em; color: #333333; }
+.icn-close { float: right; width: 19px; height: 20px; }
+#clinic-form-container .form-nav-page .dr-option-nav { float: left; width: 94.8%; margin: 0% 0 0 0; background-color: #f5f5f5; padding: 2.9% 2.5% 2.8% 2.6%; border-bottom: 1px solid #ececec; }
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-no { color: #333333; float: left; font-family: "Oxygen", sans-serif; font-size: 0.9em !important; text-decoration: none; width: 28%; }
+/*======================================================================================================================================================*/
+/***********CLINIC VIEW DOCTOR EMPTY STATE PAGE IPAD FIX***********/
+/*======================================================================================================================================================*/
+
+#clinic-form-container .form-nav-page .clinic-empty-state { width: 80%; height: 100%; background-color: #d9d7d7; padding: 5% 10% 31.5% 10%; text-align: center; color: #fff; font-size: 1.2em; }
+.btn-add { font-size: 1em; color: #fff; width: 30%; margin: 0 auto; padding: 2%; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; background-color: #1b9bd7; text-align: center; }
+/*======================================================================================================================================================*/
+/***********CLINIC VIEW DOCTOR EMPTY STATE PAGE IPAD FIX***********/
+/*======================================================================================================================================================*/
+#clinic-form-container .form-nav-page .field-container .field-name { float: left; margin: 1% 0; width: 94%; }
+#clinic-form-container .form-nav-page .procedures .field-container .field-name label { color: #666666; float: left; font-size: 0.8em !important; }
+.input-xsmall-b { background-color: #f5f5f5; border: medium none; border-radius: 5px; padding: 7%; width: 84%; }
+.btn-add-b { background-color: #1b9bd7; border-radius: 5px; color: #fff; cursor: pointer; float: left; font-size: .9em; margin: 2.9% 0 0; padding: 2% 0%; text-align: center; width: 15%; }
+#clinic-form-container .form-nav-page .procedures-chart .dr-detail-inner { background-color: #f5f5f5; border-radius: 10px; float: left; margin: 0 0 1% 1%; padding: 2%; width: 75%; }
+/*======================================================================================================================================================*/
+/***********CLINIC APPOINTMENT PAGE IPAD FIX***********/
+/*======================================================================================================================================================*/
+#clinic-form-container .form-nav .btn-name2 { float: left; margin-left: 2%; margin-top: 3.5%; width: 61%; /*background-color:#6CF;*/ }
+#clinic-form-container .form-nav .btn-name2 .btn-name-title2 { clear: both; color: #232323; font-family: "Oxygen", sans-serif; font-size: 0.8em !important; padding-left: 2%; }
+#clinic-form-container .form-nav .btn-name2 .btn-name-sub2 { clear: both; color: #666666; font-family: "Oxygen", sans-serif; font-size: 0.8em !important; padding-left: 2%; width: 90%; }
+.btn-check-out { background-color: #1b9bd7; border-radius: 5px; color: #fff; cursor: pointer; float: left; font-size: 1em; margin: 2.7% 0 0 2%; padding: 1.5%; text-align: center; width: 16%; }
+.mc-calendar4 { background-color: #c8eafb; border-radius: 8px !important; float: right; margin-right: 2%; margin-top: 2.7%; padding: 0.9%; width: 39% !important; }
+.ui-datepicker-div { left: 66.7% !important; }
+.ui-datepicker { display: none; left: 66.7% !important; padding: 0.2em 0.2em 0; width: 9em !important; }
+.padding-left-2 { padding-left: 17% !important; }
+.padding-left-3 { padding-left: 1% !important; }
+.list-container-apointment .time { color: #999999; padding: 0 9% 60% 12%; }
+.list-container-apointment .time-graph .time-chart .list-text { color: #333333; font-family: "Oxygen", sans-serif; font-size: 1em; width: 63%; }
+.list-container-apointment .time-graph .time-chart .porcedure-title-sub2 { color: #999999; font-family: "Oxygen", sans-serif; font-size: 0.9em !important; padding-left: 2%; margin-top: 1%; word-break: keep-all !important; }
+.btn-book-app { background-color: #12d537; border-radius: 10px; color: #fff; cursor: pointer; font-size: 1em; margin: 2.7% auto 0; padding: 1.5%; text-align: center; width: 39.2% !important; }
+#clinic-form-container .form-nav-page .clinic-home .list-container-apointment .time-container { text-align: right; }
+.mar-t { margin-top: 5% !important; }
+/*======================================================================================================================================================*/
+/***********CLINIC SETTINGS DOCTOR VAVILABLITY PAGE***********/
+/*======================================================================================================================================================*/
+
+
+#clinic-form-container .form-nav-page .dr-available-select-container .selection-available-day .day-box { background-color: #72cdf1; border-radius: 5px; color: #fff; float: left; font-family: "Montserrat", sans-serif; font-size: 1em; margin: 0 1% 0 0; padding: 2.2% 3.7%; }
+#clinic-form-container .form-nav-page .dr-available-select-container .selection-available-day .day-box-gray { background-color: #f5f5f5; border-radius: 5px; color: #666666; float: left; font-family: "Montserrat", sans-serif; font-size: 1em; margin: 0 1% 0 0; padding: 2.2% 3.7%; }
+.btn-time { background-color: #1b9bd7; border-radius: 5px; color: #fff; cursor: pointer; float: left; font-size: 1em; margin-left: 1.2%; 
+margin-top: 3.2%!important; padding: 2.3% 6%; text-align: center; width: auto; }
+.dr-available-time .time-container-available .time-input { background-color: #f5f5f5; background-image: url("../images/bg-input-clock.png"); background-position: 97% 5px; background-repeat: no-repeat; background-size: 25px auto; border: medium none; border-radius: 5px; padding: 5% 20% 5% 2%; width: 75%; }
+#clinic-form-container .form-nav-page .dr-available-select-container .availability-day-graph .dr-time-bar-container { /*background-color: red;*/ height: 25px; }
+#clinic-form-container .form-nav-page .dr-available-select-container .availability-day-graph .dr-time-bar-container .dr-detail-inner { background-color: #f5f5f5; border-radius: 10px; float: none; margin: 0; padding: 2.5% 0 1.5% 2%; width: 98%; }
+.padding-left-4 { padding-left: 14.5% !important; }
+.holiday-time .dr-available-time .time-container-available .time-input { background-color: #f5f5f5; background-image: url("../images/bg-input-clock.png"); background-position: 97% 5px; background-repeat: no-repeat; background-size: 25px 25px; border: medium none; border-radius: 5px; padding: 5% 20% 5% 2%; width: 75%; }
+.btn-holiday { background-color: #1b9bd7; border-radius: 5px; color: #fff; cursor: pointer; float: left; font-size: 1em; padding: 2.1% 3.2%; text-align: center; width: auto; margin-left: .5%; }
+.holiday-graph .dr-detail-inner { background-color: #f5f5f5; border-radius: 10px; float: left; margin: 0; padding: 2% 0 1.2% 2%; width: 63%; }
+.icn-close { float: right; height: 20px; margin-top: 0.5%; width: 19px; }
+.time-box-v2 { background-color: #f7f7f7; background-image: url("../images/bg-input-clock.png"); background-position: 95% 54%; background-repeat: no-repeat; border-radius: 5px !important; color: #bababa !important; height: 45px; line-height: 10px !important; outline: medium none !important; overflow: hidden; padding-right: 7px; width: 93% !important; background-size: 23px; }
+.time-box-v2 select { border-radius: 11px !important; color: #616465 !important; height: 44px; line-height: 1em; outline: medium none !important; padding-right: 0; text-align: left; vertical-align: bottom !important; width: 111% !important; background-color: transparent; border: medium none; padding-left: 2%; }
+/*======================================================================================================================================================*/
+/***********APPOINTMENT SINGLE DOCTOR PAGE***********/
+/*======================================================================================================================================================*/
+.wd { width: 10% !important; }
+.wd-chrome2 { }
+.wd-chrome4 { width: 8.5% !important; }
+.pd3 { padding: 21% !important; }
+.month { font-size: 9px !important; }
+#fullcalendar-container { color: #999999; font-family: "Oxygen", sans-serif; font-size: 0.7em !important; }
+#fullcalendar-container .calendar-day .day-title { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; width: 8.5%; /*background-color:#633;*/ }
+
+#clinic-form-container .form-nav-page { border-color: #ececec; border-style: solid; border-width: 1px; float: left; margin-bottom: 2%; padding-bottom: 5%; width: 74% !important; }
+#fullcalendar-container .calendar-time {/*background-color: red #f9f9f9*/; float: left; padding-bottom: 3.3% !important; position: relative; text-align: center; width: 9%; }
+.mar-pic { margin-left: 0% !important; }
+/*.check-space { margin-left: 0.5% !important; margin-right: 0.5% !important; margin-top: 5%; }*/
+#clinic-form-container .form-nav .btn-name3 .btn-name-title3 { clear: both; color: #232323; font-family: "Oxygen", sans-serif; font-size: 0.7em !important; padding-left: 2%; }
+#clinic-form-container .form-nav .btn-name3 .btn-name-sub3 { clear: both; color: #666666; font-family: "Oxygen", sans-serif; font-size: 0.7em !important; padding-left: 2%; width: 90%; }
+#clinic-form-container .form-nav .icn-dot { position:absolute;  margin: 6% 0 0 1%; left:2px; }
+#clinic-form-container .form-nav .icn-dot img { width: 10px !important; height: 10px !important; }
+/*[type="checkbox"]:not(:checked) + label:before, [type="checkbox"]:checked + label:before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 2px;
+	width: 17px;
+	height: 17px;
+	border: 1px solid #cccccc;
+	background: #cccccc;
+	border-radius: 3px;
+box-shadow: inset 0 1px 3px rgba(0,0,0,.3); outline:none !important;
+}
+[type="checkbox"]:not(:checked) + label::after, [type="checkbox"]:checked + label::after {
+	color: #ffffff;
+	content: "✔";
+	font-size: 12px !important;
+	left: 4px;
+	position: absolute;
+	top: 4 px!important;
+	transition: all 0.2s ease 0s;
+}*/
+#main-container .form-nav a { text-decoration: none !important; outline: none !important; border: none !important; color: #ececec; }
+a:visited { text-decoration: none !important; outline: none !important; border: none !important; }
+a:active { text-decoration: none !important; outline: none !important; border: none !important; }
+.slot1hr-blue { width: 100%; background-color: #caecfc !important; padding: 31% 0 !important; /*background-color:orange !important;*/ }
+a { text-decoration: none !important; outline: none !important; border: none !important; }
+a:visited { text-decoration: none !important; outline: none !important; border: none !important; }
+a:active { text-decoration: none !important; outline: none !important; border: none !important; }
+.slot1hr-blue { width: 100%; background-color: #caecfc !important; padding: 31% 0 !important; /*background-color:orange !important;*/ }
+#fullcalendar-container .calendar-day5 .day-title2 { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 2%; width: 20.1%; }
+#fullcalendar-container .calendar-day .day-title2 { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 2% 2.6%; width: 8.8%; }
+.wdview4 { width: 6.2% !important; }
+.wdview6 { width: 22.1% !important; }
+.wdview7 { width: 18.3% !important; }
+.textblock { padding-left: 11%; padding-top: 0% !important; text-align: left; }
+.textblock2 { font-size: 0.8em; padding-left: 11%; padding-top: 2.2% !important; text-align: left; }
+/*slots*/
+
+.slot30min { background-color: #f0f0f0; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; width: 100%; padding: 4.5% 0 !important; }
+.slot30min-blue { background-color: #caecfc; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; width: 100%; padding: 7.5% 0 !important; }
+.slot15min-blue { background-color: #caecfc; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; padding: 4.8% 0 !important; width: 100%; }
+.slot1hr-blue { background-color: #caecfc !important; padding: 31% 0 !important; width: 100%; }
+.slotlunch { background-color: #fccaca; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; border-top: 1px solid #dddddd; padding: 17% 0 !important; width: 100%; }
+.textblock-15min { padding-left: 11%; padding-top: 2.5%; text-align: left; }
+/*======================================================================================================================================================*/
+/***********END OF APPOINTMENT SINGLE DOCTOR PAGE***********/
+/*======================================================================================================================================================*/
+
+
+/*======================================================================================================================================================*/
+/***********APPOINTMENT VIEW 2 PAGE***********/
+/*======================================================================================================================================================*/
+
+.slot30min-l { background-color: #f0f0f0 !important; border-bottom: 1px solid #dddddd !important; border-left: 1px solid #ececec !important; padding: 1.2%; width: 100%; height: 3.6em !important; }
+.slot30min-blue-l { width: 100%; height: 4em; background-color: #caecfc; padding: 20% 0 !important; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; }
+.slot15min-blue-l { background-color: #caecfc; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; padding: 3.2% 0; width: 100%; }
+.slotlunch2 { background-color: #fccaca; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; border-top: 1px solid #dddddd; height: 4em; width: 100%; }
+.calendar-time5 .time-count { padding: 0 0 51.5% 20% !important; height: 1.6em !important; }
+/*======================================================================================================================================================*/
+/***********END OF APPOINTMENT VIEW 2 PAGE***********/
+/*======================================================================================================================================================*/
+
+
+/*======================================================================================================================================================*/
+/***********EAPPOINTMENT VIEW 3 PAGE***********/
+/*======================================================================================================================================================*/
+
+.padding-top-a { padding-top: 14% !important; }
+.appointments-deafult-f { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; height: 2em; width: 100%; }
+/*.slot30min {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #dddddd;
+    border-left: 1px solid #ececec;
+    width: 100%;
+	height:2.9em;
+}*/
+
+
+.slot30min-blue { background-color: #caecfc; border-bottom: 1px solid #dddddd; border-left: 1px solid #ececec; width: 100%; height: 2.9em; }
+/*======================================================================================================================================================*/
+/***********END OF APPOINTMENT VIEW 3 PAGE***********/
+/*======================================================================================================================================================*/
+
+
+/*======================================================================================================================================================*/
+/***********APPOINTMENT VIEW 4 PAGE***********/
+/*======================================================================================================================================================*/
+
+
+
+
+#fullcalendar-container .calendar-day .day-title2 { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 2% 2.6%; width: 8.5% !important; }
+.pd9 { height: 3.777em !important; }
+.pd10 { height: 1.666em !important; }
+.pd11 { height: 1.555em !important; }
+/*======================================================================================================================================================*/
+/***********END OF APPOINTMENT VIEW 4 PAGE***********/
+/*======================================================================================================================================================*/
+
+
+/*======================================================================================================================================================*/
+/***********APPOINTMENT VIEW 4POP PAGE***********/
+/*======================================================================================================================================================*/
+
+
+.reveal-modal { background-color: #fff; border-radius: 5px; box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.17); left: 70% !important; margin-left: -420px; padding: 0; position: absolute; top: 100px; visibility: hidden; width: 50%; z-index: 101; }
+.mar-control { margin: 15% 10% !important; }
+.wdview7 { width: 106.3% !important; }
+.select-box-v2b { background-color: #f7f7f7; background-position: 95% 46%; background-repeat: no-repeat; border-radius: 5px !important; color: #bababa !important; height: 40px !important; line-height: 10px !important; outline: medium none !important; overflow: hidden; width: 23% !important; }
+#ui-datepicker-div { left: 32% !important; background-color: #ececec !important; width: 14em !important; }
+/*======================================================================================================================================================*/
+/***********END OF APPOINTMENT VIEW 4POP PAGE***********/
+/*======================================================================================================================================================*/
+
+
+/*[type="checkbox"]:not(:checked) + label::before, [type="checkbox"]:checked + label::before {
+	background: #cccccc none repeat scroll 0 0;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	content: "";
+	height: 17px;
+	left: 0;
+	position: absolute;
+	top: 0 !important;
+	width: 17px;
+}
+[type="checkbox"]:not(:checked) + label::after, [type="checkbox"]:checked + label::after {
+	color: #06F !important;
+	content: "✔";
+	font-size: 9px !important;
+	left: 3px;
+	position: absolute;
+	transition: all 0.2s ease 0s;
+}*/
+/*#fullcalendar-container .calendar-day .single-slot { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 17px 2.8% !important; width: 94.4%; text-align: center; }*/
+
+.single-slotlunch { background-color: #fccaca; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; border-top: 1px solid #dddddd; padding: 2.5% 0 !important; width: 100%; }
+/*CALANDER STRUCTURE 2 SLOT */
+/*#fullcalendar-container .calendar-day .two-slot { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 4.6% 27.8% !important; width: 44.2%; }*/
+#fullcalendar-container .calendar-day .three-slot { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 8.7% 35.8% !important; width: 27.55% !important; text-align: center; }
+#fullcalendar-container .calendar-day .four-slot { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 11.5% 39.9% ; width: 19.22% !important; }
+#fullcalendar-container .calendar-day .five-slot { border-bottom: 1px solid #ececec; border-left: 1px solid #ececec; padding: 13.5% 42.8% !important; text-align: center; width: 14.24% !important; }
+
+
+.single-slot110min { background-color: #f0f0f0; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 14.5em !important; padding: 0 !important; width: 100%; }
+.single-slot110min-blue { background-color: #caecfc; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 14.5em !important; padding: 0 !important; width: 100%; }
+/*end of 1hr 45 min */
+
+
+.appointments-seven-slot { padding-bottom: 9.9%; width: 14.25%; display: inline-block; }
+
+
+
+
+
+#content-7 { width: 805px; }
+#content-8 { overflow-x: scroll; overflow-y: hidden; position: relative; white-space: nowrap; }
+.scroll-content { position: relative;/* background-color: red;*/ /*margin:10px;*/
+    /*display:inline-block;*/
+height: 100%; display: -webkit-inline-flex; display: -ms-inline-flexbox; display: inline-flex; -webkit-overflow-scrolling: touch; }
+.nav-scroll-content { -webkit-overflow-scrolling: touch; height: 645px; overflow-x: auto; overflow-y: hidden; position: relative; white-space: nowrap; }
+#fullcalendar-container .calendar-time .time-count {/* height: 92px !important;*/ border-top: 1px solid #c0c0fa;  vertical-align: top;  }
+
+
+/*quick fix*/
+
+
+.nav-scroll-content {
+    height: 645px;
+    overflow-x: hidden;
+    overflow-y: auto;
+	 -webkit-overflow-scrolling: touch;
+}
+
+.scroll-content { position: relative; height: 100%; display: -webkit-inline-flex; display: -ms-inline-flexbox; display: inline-flex; -webkit-overflow-scrolling: touch; }
+
+#content-8 { overflow-x: scroll; overflow-y: hidden; position: relative; white-space: nowrap; }
+
+
+#fullcalendar-container .calendar-day .appointments-two-slot .two-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding: 1.30em 27.8% !important;
+    width: 44.2%;
+}
+
+#fullcalendar-container .calendar-day .three-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding: 8.2% 35.8% !important;
+    text-align: center;
+    width: 27.55% !important;
+}
+
+
+#fullcalendar-container .calendar-day .four-slot {
+    border-bottom: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    padding: 11% 39.9% !important;
+    width: 19.22% !important;
+}
+
+
+.appointments-six-slot .six-slot {
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    padding: 1.33em 3% !important;
+    text-align: center;
+}
+
+
+.appointments-seven-slot .seven-slot {
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    padding: 15px 25px ;
+    text-align: center;
+	
+}
+
+
+
+
+
+/*slot fix*/
+
+.single-slot15min-blue {
+    background-color: #caecfc;
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    height: 2em !important;
+    width: 100%;
+}
+
+
+}
+/*======================================================================================================================================================*/
+/*********** END OF MEDICLOUD-V2 IPAD CSS***********/
+/*======================================================================================================================================================*/

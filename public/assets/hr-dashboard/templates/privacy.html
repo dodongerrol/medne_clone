@@ -1,0 +1,36 @@
+<div class="hrdb-body-container" intro-directive>
+	<div class="container">
+		<div class="body-content">
+			<h1 class="text-center privacy-policy-text-title">Privacy Policy</h1>	
+			<div class="privacy-policy-container-box">
+				<div class="privacy-policy-header">
+					<h5 class="text-center">IMPORTANT</h5>
+					<h5 class="text-center">Please read this section carefully before proceed</h5>
+				</div>
+				<div class="privacy-policy-body">
+					<p>Confirmation of Consent for Disclosure (for employer or personmanaging company's benefits):</p>
+					<p>
+						I, on behalf of the company confirm that we have obtained consent from our employees for us to desclose their personal<br>
+						data to Mednefits also known as Medicloud Pte Ltd for the purpose of allowing Medicloud Pte Ltd to provide related services<br>
+						to us and our employee. We also confirm that the consent was obtained in accrodnce with the requirementsunder Personal<br>
+						Data Protection Act 2012 (Act 26 of 2012).
+					</p>
+					<br>
+					<p>
+						Privacy Policy:<br>
+						I have the Privacy Policy stated in <span><a href="https://mednefits.com/privacy/">https://mednefits.com/privacy/</a></span> and I consent to the collection and use of mine and<br>
+						company's employees personal data in accordance with its terms and conditions.
+					</p>
+				</div>
+			</div>
+			<div class="privacy-policy-buttons-container">
+				<button class="btn btn-info med-button pull-right" ng-click="proceedPrivacy()">PROCEED</button>
+				<p>
+					<input name="group1" type="radio" id="agree" ng-model="isPrivacyChecked" ng-value="true"/>
+					<label for="agree" class="agree-text">I have read and agree to the above agreement</label>
+				</p>
+			</div>
+			<p ng-if="privacyError" class="text-error text-center">You must read and agree to the agreement to proceed.</p>
+		</div>
+	</div>
+</div>

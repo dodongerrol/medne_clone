@@ -1,0 +1,283 @@
+/***********macbook 13 inch fix***********/
+@media screen and (min-width: 1025px) and (max-width: 1280px) {
+/* Styles for Desktops */
+ 
+.wd2 { width: 64% !important; }
+#fullcalendar-container .calendar-time .time-title { padding: 21.4%;  }
+.time-count { border-top: 1px solid #c0c0fa; height:102px !important; padding:0px !important; }
+#clinic-form-container .form-nav .btn-name3 .btn-name-title3 { clear: both; color: #232323; font-size: 12px; padding-left: 2%; font-family: 'Oxygen', sans-serif; }
+
+.icn-dot img{ width:11px; height:11px; }
+.google-img{ width:11px; height:11px; padding-top:4px; }
+.appointments-single-slot .single-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 2.2% 2.8%; width: 94.4%; text-align: center !important; font-weight: bold; }
+
+.appointments-seven-day .seven-slot-day {
+    border-bottom: 1px solid #c0c0fa;
+    border-left: 1px solid #c0c0fa;
+    padding: 16px 0;
+    text-align: center;
+}
+
+.appointments-two-slot .two-slot {
+ border-bottom: 1px solid #ececec;
+ border-left: 1px solid #ececec;
+ padding: 4% 2.8%;
+ text-align: center;
+}
+
+
+
+.appointments-four-slot .four-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 8.5% 2.8%;
+ text-align: center;
+}
+
+
+
+
+/*.appointments-five-slot .five-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 10.6% 2.8% !important;
+ text-align: center;
+}
+
+.appointments-seven-slot .seven-slot {
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ padding: 14.9% auto !important;
+ text-align: center;
+}*/
+
+
+
+.single-slot75min-blue { background-color: #caecfc; border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; height: 10.22em; padding: 0 !important; width: 100%; }
+
+.three-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.29em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+.four-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.06em;
+ width: 100%;
+}
+
+.four-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.15em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+.four-slot60min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 8.22em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+.four-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.47em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+
+.four-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.55em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+.five-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.18em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+
+.five-slot75min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 10.26em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+.five-slot105min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 14.433em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+
+.five-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.51em;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+
+.six-slot30min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 4.07em !important;
+ width: 100%;
+}
+
+.six-slot45min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 6.15em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+.six-slot120min-blue {
+ background-color: #caecfc;
+ border-bottom: 1px solid #c0c0fa;
+ border-left: 1px solid #c0c0fa;
+ height: 16.553em !important;
+ padding: 0 !important;
+ width: 100%;
+ line-height:1.6em;
+}
+
+
+.btn-time { background-color: #1b9bd7; border-radius: 5px; color: #fff; cursor: pointer; float: left; font-size: 1em; padding: 1.8% 6.5%; text-align: center; width: auto; margin-left: 1.2%; }
+.new-select { background-color: #f5f5f5; border: medium none; border-radius: 5px; padding: 9% 9% 9% 9%; width: 100%; height:49px; }
+.mar-top { margin-top: 3%; }
+.new-wd11 { width: 18% !important; }
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner {
+ float: left;
+ width: 79% !important;
+ padding: 2% 0 2% 2%;
+ background-color: #f5f5f5;
+ -webkit-border-radius: 10px;
+ -moz-border-radius: 10px;
+ border-radius: 10px;
+ margin: 0 0 0 2%;
+}
+
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-Procedures {
+ float: left;
+ font-size: .9em;
+ color: #333333;
+ width: 30%;
+ font-family: 'Oxygen', sans-serif;
+ margin-right: 7%;
+ padding-top: 0%;
+}
+
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-name {
+ float: left;
+ width: 27%;
+ font-size: .9em;
+ color: #333333;
+ font-family: 'Oxygen', sans-serif;
+ padding-top: 0%;
+}
+
+#clinic-form-container .form-nav-page .dr-view-title .title-a {
+ float: left;
+ margin: 0 17.4% 0 11%;
+ font-size: .9em;
+ color: #999999;
+ font-family: 'Oxygen', sans-serif;
+}
+
+#clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .label-dr-no {
+ float: left;
+ width: 29%;
+ font-size: .9em;
+ color: #333333;
+ font-family: 'Oxygen', sans-serif;
+ padding-top: 0%;
+}
+
+ #clinic-form-container .form-nav-page .dr-view-detail .dr-detail-inner .icn-close {
+ float: left;
+ margin-top: .3%;
+ margin-left: 2%;
+}
+
+
+.f1 {
+ font-size: 1em;
+ text-align: left;
+ padding-left: 10%;
+
+}
+
+.new-mart6 { margin-top: 2.7% !important ; }
+.mar-t4 { margin-top: 2.8% !important; }
+.single-textblock2 {
+ font-size: 0.8em;
+ padding-left: 10%;
+ padding-top: 0;
+ text-align: left;
+}
+
+.single-textblock-15min { font-size: 1em !important;
+ text-align: left;
+ padding-left: 10%;
+ padding-top: .3% !important; }
+
+
+
+.single-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center;   }
+.two-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center;   }
+.three-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center;   }
+.four-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center;   }
+.five-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center;   }
+.six-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center;   }
+.seven-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center;   }
+.dynamic-slot { border-bottom: 1px solid #c0c0fa; border-left: 1px solid #c0c0fa; padding: 24px 0px !important; text-align: center; width: 120px;   }
+}
+
+/*======================================================================================================================================================*
+/***********END OF MACBOOK PRO FIX***********/
+/*====================================================================================================================================================*/
+

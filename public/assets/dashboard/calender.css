@@ -1,0 +1,880 @@
+/* *{  font-family: "Montserrat", sans-serif;  } */
+
+nav.navbar {
+    margin: auto;
+    background: #0190CD;
+    padding: 12px 0 6px 0;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+}
+.navbar-default .navbar-nav>li>a {
+    padding-bottom: 2px;
+    color: #e6e6e6 !important;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 0 25px;
+    text-transform: uppercase;
+    padding-top: 20px;
+    letter-spacing: 1px;
+}
+.navbar-brand, .navbar-nav>li>a {text-shadow: none !important;}
+#bs-example-navbar-collapse-1 .nav .active > a { 
+    /*background: #508DC1 !important;*/
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    border-bottom: 2px solid #fff;
+    color: #fff !important;    
+}
+
+
+#calender_header { height:50px;background:#FFFFFF; margin-top:0;     border-bottom: 1px solid #DDDDDD;}
+.header_tool {margin:15px 45px;}
+.header_tool img {padding-left:15px;}
+.header-list {position:absolute; margin:15px 45px;}
+.header-dates {position:absolute; margin:7px; margin-left: 45%;}
+.header-dates button { background:#FFFFFF; border:none; text-shadow: none;}
+.header-dates button:hover { background:#73CEF4; }
+
+#provider-option{
+    left: -125px !important;
+}
+
+#provider-option .dropdown-header{
+    font-size: 14px;
+    font-weight: 700;
+    color: #444;
+}
+
+#provider-option li a{
+    font-size: 13px;
+}
+
+#provider-option li a input{
+    margin: 0 !important;
+    margin-right: 3px !important;
+    width: 16px;
+    position: relative;
+    top: 2px;
+}
+
+#provider-option li a:focus,
+#provider-option li a:hover{
+    background: none;
+}
+
+#byTabs{
+    margin-bottom: 20px;
+    background: #F1F5F9;
+}
+
+#byTabs li a{
+    border-top: none;
+    border-radius: 0; 
+    color: #333;
+}
+
+#byTabs li a:hover{
+    border-bottom: none;
+}
+
+#byTabs li:nth-child(1){
+    padding-left: 70px;
+}
+
+.fc-bgevent { background: rgba(119, 119, 119, 0.50) !important; }
+
+#calender_header .ui-datepicker { top:94px !important; }
+
+.fc-widget-header>table>thead>tr>th {border-style:none !important; }
+.fc-widget-header { color:#8c949d !important; font-size:small !important;  }
+.fc-agenda-view>table {border-top:hidden;}
+.fc-toolbar { display:none; }
+.fc-axis {border:none !important; color:#8c949d !important; font-size:small !important;}
+.fc-day-header { padding: 5px !important; }
+
+.disabledTab {pointer-events: none;}
+
+/*-- Set calender backgroud image --*/
+
+/* .fc-bg {
+	 background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4JyBoZWlnaHQ9JzgnPgogIDxyZWN0IHdpZHRoPSc4JyBoZWlnaHQ9JzgnIGZpbGw9JyNmZmYnLz4KICA8cGF0aCBkPSdNMCAwTDggOFpNOCAwTDAgOFonIHN0cm9rZS13aWR0aD0nMC41JyBzdHJva2U9JyNhYWEnLz4KPC9zdmc+Cg==");
+	 background-repeat: repeat;
+} */
+
+/* .fc-bg { background: gray; } */
+
+/*.fc-axis { background: white; }*/
+
+
+/*-- Set calender current date backgroud color --*/
+
+.header-date {
+    
+	border-bottom: 3px solid #00cccc !important;
+    background: #73CEF4 !important;
+    color: white !important;
+    position: relative;
+}
+
+/* set datepicker calendar box shadow */
+
+#calender_header #ui-datepicker-div{
+
+	position: relative;
+	width: 255px;
+    padding: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  	text-align: center;
+}
+
+/*--- datepicker buttons background color ---*/
+
+.header-button {
+
+	background:#72CDF1;
+}
+
+.dropdown-btn {
+
+	border: 1px solid #d9d9d9;
+	border-radius: 5px;
+	padding-left: 10px;
+	/*display: block;*/
+	line-height: 35px;
+	padding-right: 10px;
+	color: #686868;
+	background: white;
+	/*width: 350px;*/
+	/*height: 38px;*/
+}
+
+
+/* --- Appointment popup tab css --- */
+
+
+
+#myModal hr { border-top: 1px solid #C1C0C0; }
+#editAppointmentModal hr { border-top: 1px solid #C1C0C0; }
+
+#myModal .modal-body {padding: 5px 0px 0px 0px;}
+#selectDateModal .modal-body {padding: 5px 0px 0px 0px;}
+#editAppointmentModal .modal-body {padding: 5px 0px 0px 0px;}
+
+#myModal .modal-footer {border: 0px;}
+#editAppointmentModal .modal-footer {border: 0px;}
+
+#myModal .modal-body .nav-tabs {border-bottom:0px; padding-left: 33px;}
+#editAppointmentModal .modal-body .nav-tabs {border-bottom:0px; padding-left: 33px;}
+
+/*-------------------------------------*/
+
+.modal-header {background: #114158; color: white; border-bottom: 0px !important;}
+
+.modal-header .close, .modal-header .close > span {color: #FFFFFF !important; text-shadow: inherit;}
+
+.modal-body {background: rgb(111, 201, 245);}
+
+.modal-body .nav-tabs .active a {
+	background-color: rgb(111, 201, 245);
+    border: 1px solid rgba(221, 221, 221, 0); 
+    border-bottom-color: #0090D4;
+    border-bottom-width: 0px;
+    font-weight: bold;
+    color: black !important;
+}
+
+.modal-body .nav-tabs .active a:hover {
+	
+	background-color: rgb(111, 201, 245);
+    border: 1px solid rgba(221, 221, 221, 0); 
+    border-bottom-color: #0090D4;
+    border-bottom-width: 0px !important;
+    font-weight: bold;
+    color: black !important;
+}
+
+.modal-body .nav-tabs li a:hover {
+    border-color: rgba(238, 238, 238, 0);
+    background-color: rgba(238, 238, 238, 0);
+    color: black !important;
+}
+
+.modal-body .nav-tabs>li>a {
+        color: #232323;
+}
+
+.modal-body>.nav-tabs>li.active>a:focus, .modal-body.nav-tabs>li.active>a:hover {
+    cursor: default !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    border-bottom-color: transparent !important;
+}
+
+.input-width { width: 355px; }
+
+.ul-width { width: 390px; }
+
+.details-label {
+	color: #5A5A5A;
+	margin-bottom: 0px;
+	line-height: 35px;
+}
+
+.ext-left{
+    float:left;
+}
+
+.ext-right{
+    float:right;
+}
+
+.right-inner-addon {
+    position: relative;
+    padding-right: 30px;
+}
+
+.right-inner-addon input {
+    padding-right: 30px;
+    background: white;
+    width: 455px;
+    height: 25px;
+}
+
+.right-inner-addon i {
+    position: absolute;
+    right: 0px;
+    padding: 15px 0px;
+    pointer-events: none;
+}
+
+.slot-blocker-width { width: 135px; }
+
+.show { display: block; }
+
+.hide { display: none; }
+
+
+/* --------- Search Autocomplete CSS ---------- */
+
+.autocomplete-suggestions { border: 1px solid #999; background: #fff; cursor: default; overflow: auto; font-size: 90%; }
+.autocomplete-suggestion { padding: 10px 5px; font-size: 1.2em; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #f0f0f0; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399ff; }
+
+/*------------------*/
+
+/*.ui-dialog-osx {
+    -moz-border-radius: 0 0 8px 8px;
+    -webkit-border-radius: 0 0 8px 8px;
+    border-radius: 0 0 8px 8px; border-width: 0 8px 8px 8px;
+}*/
+
+#ui-id-1 , #ui-id-2, #ui-id-3{
+	color: black;
+    padding-left: 10px;
+}
+
+.ui-dialog-titlebar-close {
+	border: 0px;
+    background: rgba(252, 248, 227, 0);
+    margin: -8px 4px 0 0 !important;
+    font-size: 12px !important;
+}
+
+.appointment-det-container {
+    font-size: 14px;
+    color: #777;
+}
+
+.appointment-det-container td { padding-bottom: 10px; }
+
+.edit-appointment {
+	font-size: 15px;
+    padding: 0px;
+    padding-left: 15px;
+    padding-right: 10px;
+}
+
+.appt-details-btn{
+	font-size: medium;
+    color: white;
+    border: 0px;
+    padding: 5px;
+    border-radius: 5px;
+    /* font-weight: bold; */
+    background: #1B9BD7;
+}
+
+
+/*--------------------------   First time configaration window CSS   ----------------------*/
+
+
+#setup-uncompleted-line {
+
+    position: absolute;
+    width: 450px;
+    height: 4px;
+    background-color: rgb(117, 214, 247);
+    margin-top: 58px;
+    margin-left: 45px;
+}
+
+.step-no {
+    position: absolute;
+    margin-top: 12px;
+    font-size: 14px;
+    background: rgb(117, 214, 247);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    line-height: 26px;
+    margin-left: -14px;
+    color: #FFF;
+    padding: 1px 1px 0 1px;
+    box-sizing: border-box;
+    /*font-weight: bold;*/
+}
+
+.lbl-setup-complete {
+    margin-bottom: 0px;
+    color: white;
+    font-size: 12px;
+    width: 80px;
+}
+
+
+.setup >li.active>a, .setup .nav-tabs>li.active>a:focus, .setup .nav-tabs>li.active>a:hover {
+    color: #555 !important;
+    cursor: default !important;
+    background-color: transparent !important;
+    border: 0px !important;
+    border-bottom-color: transparent !important;
+}
+
+.setup >li>a {
+    padding: 0px 15px !important;
+}
+
+.setup>li>a:hover {
+    border-color: transparent !important;
+}
+
+.setup>li>a:focus, .nav>li>a:hover {
+
+    background-color: transparent !important;
+}
+
+.setup>li>a {
+    margin-right: 0px !important;
+    border: 0px !important;
+    border-radius: 0px !important;
+}
+
+.setup>li {
+    text-align: center;
+    width: 108px;
+    height: 51px;
+    padding-top: 8px;
+}
+
+.setup > li.active > label > b{
+    font-weight: bold;
+    /*font-size: 13px;*/
+}
+
+.setup > li > label > b{
+    font-weight: normal;
+    /*font-size: 12px;*/
+}
+
+.setup > li.active > a > span{
+    background: #2AA4D8;
+}
+
+.current-step{
+    background: #53AAFB;
+}
+
+.setup .glyphicon-ok:before { 
+    line-height: 1.9;
+}
+
+.setup-config-ui-dialog .ui-dialog-titlebar {
+    display: none;
+}
+
+.config-tab-wapper h3 {
+    color: black;
+    margin-top: 15px;
+}
+
+.config-nxt-btn {
+    width: 65px;
+    height: 35px;
+    border-radius: 5px;
+    border: 0px;
+    background: #1b9bd7;
+    color: white;
+    border: 1px solid #1b9bd7;
+}
+
+.config-back-btn {
+    width: 30px;
+    background: transparent;
+    border: 1px solid #777;
+    height: 35px;
+    color: #777;
+    border-radius: 5px;
+}
+
+.con-detail-lbl {
+    /*float: right;
+    padding-right: 15px;*/
+    padding-top: 10px;
+    font-size: 12px;
+    color: #666666;
+}
+
+#setupHours .timepicker {
+    color: #777676;
+    border: 1px solid #d9d9d9;
+    width: 80px;
+    font-size: 15px;
+    height: 30px;
+    background: white;
+}
+
+#setupHours .btn-info {
+    background: #1B9BD7;
+}
+
+.config-doc-add-btn {
+    margin-left: 10px;
+    height: 35px;
+    width: 28px;
+    border-radius: 4px;
+    background: #1b9bd7;
+    color: white;
+    border: 1px solid #1b9bd7;
+}
+
+.con-input-error {
+    border:1px solid red !important;
+    border-color: red;
+    -webkit-box-shadow: 0 0 5px red;
+    -moz-box-shadow: 0 0 5px red;
+    box-shadow: 0 0 5px red;
+}
+
+#clinic-doctors-panel {
+    width: 475px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#clinic-service-panel .dropdown-menu>li>span {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+}
+
+#config_alert_box {
+    background: #ECE3AF;
+    position: fixed;
+    z-index: 10000;
+    left: 45%;
+    top: 15px;
+    padding: 3px 30px;
+    border-radius: 5px 5px 10px 10px;
+    display: none;
+}
+
+.stepup-dashboard, .stepup-dashboard a, .stepup-dashboard a:visited,
+    .stepup-dashboard a:active, .stepup-dashboard a:hover {
+    color: #777;
+    font-weight: normal;
+    padding: 0;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.stepup-dashboard .calendar-link {
+    font-size: 30px;
+    padding: 25px 0;
+}
+
+.calendar-link span {
+    width: 49%;
+    float: left;
+    line-height: 40px;
+    text-align: center;
+}
+
+.calendar-link {
+    border: solid 3px #BFEDF9;
+    position: relative;
+    margin-bottom: -1px;
+    cursor: pointer;
+}
+
+.calendar-link:hover {
+    border: solid 3px #96DCE4;
+}
+
+.setup-calendar-link-text {
+    padding-top: 16px;
+}
+
+.setup-features-list span:hover {
+    border: solid 3px #96DCE4;
+    position: relative;
+}
+
+.setup-features-list span {
+    float: left;
+    width: 239px;
+    text-align: center;
+    padding: 30px 0;
+    border: solid 3px #BFEDF9;
+    box-sizing: border-box;
+    cursor: pointer;
+    margin-top: -1px;
+}
+
+.setup-features-list a {
+    display: block;
+}
+
+.margin-left-collapse {
+    margin-left: -2px;
+}
+
+.margin-top-collapse {
+    margin-top: -2px !important;
+}
+
+.setup-features-list div.features-img-holder {
+    height: 90px;
+}
+
+
+
+
+/*--------------------pin popup--------------------------------------------------------*/
+
+.ui-dialog-pin {
+    height:290px !important;
+}
+
+div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.ui-dialog-pin{
+    /*border: 1px solid gray !important;*/
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background: white !important;
+        top: 0 !important;
+}
+
+.ui-dialog-pin>.ui-dialog-titlebar{ display:none; }
+
+#verify_pin p {
+    padding: 15px 0px 0px 18px;
+    letter-spacing: 1px;
+    color: #697073;
+}
+
+#verify_pin hr {
+    width: 420px;
+}
+#verify_pin {
+    display:none;
+}
+
+#verify_pin #pin_verification{
+    background: white !important;
+    border: 1px solid #DDDDDD !important;
+}
+
+#verify_pin .form-group{
+        padding: 8px 19px 0px 18px;
+}
+
+.fc-day-header {
+    font-weight: normal;
+}
+
+.fc-view .fc-body{
+    position: absolute;
+    width: 100.8%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.dialog-cal-error .ui-dialog-title {
+    color: white !important;
+    text-align: center;
+    font-family: "Open Sans","sans-serif";
+}
+
+/*.ui-dialog {
+    font-family: "Open Sans","sans-serif" !important;
+}*/
+
+.arrow-color {
+    color:  #3C3D3E !important;
+}
+
+.ui-datepicker-header {
+        background: white !important;
+    color: darkgray !important;
+}
+
+#phone-code-list li:hover {
+        cursor: pointer;
+        background: #1997D4;
+        color: white !important;
+}
+
+div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.ui-dialog-osx {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background: white !important;
+}
+
+.dialog-cal-error {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.dialog-cal-error .ui-dialog-titlebar {
+    background: #114158 !important;
+    padding: 10px;
+}
+
+.ui-dialog-osx .ui-dialog-titlebar {
+    background: white !important;
+    padding: 10px;
+}
+
+.ui-dialog-osx .ui-dialog-titlebar .ui-dialog-titlebar-close {
+    margin: -15px 0 0 0;
+    float: right;
+    position: relative;
+    top: 12px;
+}
+
+.ui-dialog-osx .ui-dialog-titlebar .ui-dialog-titlebar-close > .glyphicon-remove {
+        color: black;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.ui-dialog-osx .ui-dialog-title {
+        color: black;
+    padding-left: 10px;
+}
+
+.right-inner-addon #nric-valid-icon {
+    position: absolute;
+    right: 0px;
+    padding: 15px 15px;
+    pointer-events: none;
+    color: #04AF82;
+}
+
+#service-list li:hover {
+        cursor: pointer;
+        background: #1997D4;
+        color: white !important;
+    }
+
+.fc-unthemed .fc-today {
+    /*background: transparent !important;*/
+}
+
+#dp .ui-datepicker-inline{
+    width: 270px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    height: auto;
+}
+
+a.ui-datepicker-next.ui-corner-all:hover,
+a.ui-datepicker-prev.ui-corner-all:hover {
+    background: white !important;
+    border: 0px !important;
+    border-radius: 0px !important;
+    cursor:pointer;
+}
+
+.ui-icon-circle-triangle-e{
+    background-image: url("../images/ico_right arrow.svg") !important;
+    background-position: -3px !important;
+    background-size: 16px !important;
+}
+
+.ui-icon-circle-triangle-w {
+    background-image: url("../images/ico_left arrow.svg") !important;
+    background-position: 3px !important;
+    background-size: 16px !important;
+}
+
+
+
+/* nhr  2016-7-13*/
+
+#new_Appointment_notification {
+    background: #73CEF4;
+    width: 400px;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    display:none;
+    font-family: 'Open Sans', sans-serif;
+    z-index: 5;
+} 
+
+#new_Appointment_notification>span {
+    margin-left: 40px;
+    color:black;
+}
+
+
+/*summary calender css*/
+
+.summary-datepicker-wrapper{
+    box-shadow: 1px 1px 10px #444;
+    width: 270px;
+    padding: 15px;
+    background: #FFF;
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    border-radius: 2px;
+    display: none;
+    background: #F4F4F4;
+}
+
+.history-range-wrapper{
+    box-shadow: 1px 1px 10px #444;
+    width: 400px;
+    padding: 15px 0;
+    padding-top: 30px;
+    background: #FFF;
+    position: absolute;
+    top: 65px;
+    left: 130px;
+    border-radius: 2px;
+    display: none;
+    background: #F4F4F4;
+    z-index: 10;
+}
+
+.transac-statement .history-range-wrapper{
+    left: 130px;
+}
+
+.history-range-wrapper .ui-state-default, 
+.history-range-wrapper .ui-widget-content .ui-state-default, 
+.history-range-wrapper .ui-widget-header .ui-state-default {
+    top: 0px !important;
+}
+
+.history-range-wrapper .ui-widget-header {
+    font-size: 14px !important;
+}
+
+
+
+.history-range-wrapper .ui-datepicker th ,
+.ui-datepicker td {
+    font-size: 10px;
+    text-align: right;
+}
+
+.history-range-wrapper .ui-datepicker .ui-datepicker-prev span, 
+.history-range-wrapper .ui-datepicker .ui-datepicker-next span {
+    top: 30%;
+}
+
+
+.summary-datepicker-wrapper .ui-widget-content{
+    margin: 10px;
+}
+
+.ui-datepicker-multi-2 .ui-datepicker-group {
+    width: 50% !important;
+}
+
+.ui-datepicker.ui-datepicker-multi {
+    width: auto !important;
+}
+
+.history-range-wrapper input {
+    width: 25%;
+    padding: 2%;
+    border: 1px solid #999;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: #FFF;
+    margin: 0 35px;
+    margin-bottom: 10px;
+}
+
+
+#summary-datepicker th ,
+.history-range-wrapper th {
+    text-align: center !important;
+}
+
+#summary-datepicker td a,
+.history-range-wrapper td a {
+    width: 32px;
+}
+
+#summary-datepicker .ui-datepicker-hover a ,
+.history-range-wrapper .ui-datepicker-hover a {
+    color: white !important;
+    background: #1b9bd7 none repeat scroll 0 0 !important;
+    border-radius: 4px !important;
+    width: 32px;
+}
+
+#summary-datepicker .ui-datepicker-select a ,
+.history-range-wrapper .ui-datepicker-select a {
+    color: white !important;
+    background: #1b9bd7 none repeat scroll 0 0 !important;
+    border-radius: 4px !important;
+    width: 32px;
+}
+
+.blockUI-hide .blockOverlay {
+    background-color: #FFF !important;
+    background-image: none;
+}
+
+.blockUI-hide .blockMsg h1{
+    padding: 40px;
+    border: 1px solid #999;
+    border-radius: 5px;
+}
+
+.blockUI-hide .blockMsg h1{
+    color: #000 !important;
+    font-family: 'Open Sans' !important;
+    font-size: 15px !important;
+}
+
+.fc-license-message
+{
+    display: none;
+}
+
+div.fc-scroller
+{
+    overflow-y: hidden!important;
+}

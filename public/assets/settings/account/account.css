@@ -1,0 +1,14 @@
+
+.acc-lbl {
+	font-size: 15px;
+    color: #666666;
+}
+
+.acc-dropdown {
+	border: 1px solid #999999; 
+	height: 23px !important; 
+	color: #666666 !important;
+	background: white !important;
+    width: 90px !important;
+    text-align: left !important;
+}

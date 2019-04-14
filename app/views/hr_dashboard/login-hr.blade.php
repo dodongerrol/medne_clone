@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="hr">
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-78188906-2"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-78188906-2');
+	</script>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Mednefits: Modern Employees Digital Benefits</title>
+	<link rel="shortcut icon" href="assets/hr-dashboard/img/icons/favicon.ico" type="image/ico">
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-8344843655918366",
+        enable_page_level_ads: true
+      });
+    </script>
+	{{ HTML::style('assets/hr-dashboard/css/bootstrap.min.css') }}
+	{{ HTML::style('assets/hr-dashboard/css/font-awesome.min.css') }}
+	{{ HTML::style('assets/hr-dashboard/css/style.css') }}
+	<!-- {{ HTML::style('assets/hr-dashboard/css/responsive.css') }} -->
+
+</head>
+<body login-section>
+	<div class="container">
+		<div class="login-need-help-container">
+			<a href="#" class="pull-right need-help-text tooltips">
+				<h3>Need help?</h3>
+				<div class="tooltip-container">
+					<h3 class="tooltip-title">We're here to help.</h3>
+					<h3 class="tooltip-phone-email-title">You may ring us</h3>
+					<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
+					<h3 class="tooltip-phone-email-details">Mon - Fri 10:00 to 19:00</h3>
+					<br>
+					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
+					<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
+				</div>
+			</a>
+		</div>
+		<div class="col-sm-12 col-md-12 col-lg-12">
+			<img src="assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+			<h2 class="text-center text-below-image">for business</h2>
+			<form class="med-form" ng-submit="loginHr()">
+				<div class="form-group">
+					<input type="email" name="email" class="form-control med-input" placeholder="Email Address" ng-model="login_details.email" required>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="login_details.password" required style="margin-bottom: 15px">
+				</div>
+				<div class="checkbox">
+			    <label style="color: #777;font-size: 15px;">
+			      <input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed in
+			    </label>
+			  </div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">Log in</button>
+				</div>
+				<span ng-if="ng_fail">*Please check your login credentials</span>
+				<a href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot password?</a>
+			</form>
+		</div>
+	</div>
+</body>
+
+
+	{{ HTML::script('assets/hr-dashboard/js/jquery.min.js') }}
+	{{ HTML::script('assets/hr-dashboard/js/bootstrap.min.js') }}
+	{{ HTML::script('assets/hr-dashboard/js/parallax.min.js') }}
+	{{ HTML::script('assets/hr-dashboard/js/angular.min.js') }}
+	{{ HTML::script('assets/hr-dashboard/process/hr_login.js') }}
+</html>

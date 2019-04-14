@@ -1,0 +1,205 @@
+<div id="main-content" style="padding: 10px" appointments-directive>
+	<div id="loading-container">
+		<div id="loading-selected"></div>
+		<div>Fetching...</div>
+	</div>
+    <div id="appointment-options" class="options" hidden>
+        <div class="col-md-6">
+            <div class="form-inline">
+                <button class="btn btn-info" data-toggle="modal" data-target="#search-clinic">Add <i class="fa fa-plus"></i></button>
+            </div>
+            <div class="white-space-20"></div>
+        </div>
+    </div>
+	<div class="upcoming" hidden>
+
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		  	Upcoming Appointments
+		  </div>
+
+		  <div class="panel-body">
+			<a href="" ng-repeat="list in ::appointment_list.upcoming">
+				<div class="col-md-3 no-padding appointment">
+					<div class="appointment-wrapper">
+						<div class="icon">
+							<img src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive" ng-if="!list.clinic.image_url" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out">
+							<img ng-src="{{::list.clinic.image_url}}" class="img-responsive" ng-if="list.clinic.image_url" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out">
+						</div>
+						<div class="info">
+							<h5 ng-bind="::list.doctor.name" style="text-transform: capitalize;"></h5>
+							<p ng-bind="::list.clinic.name" style="text-transform: capitalize;"></p>
+						</div>
+						<div class="track text-center">
+                        <!-- data-toggle="modal" data-target="#trackModal" -->
+							<button class="btn btn-primary" ng-click="showAppointment(list.booking.booking_id)">TRACK</button>
+						</div>
+						
+					</div>
+				</div>
+			</a>
+		  </div>
+		</div>
+	</div>
+
+	<div class="past" hidden>
+
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+		  	Past Appointments
+		  </div>
+
+		  <div class="panel-body">
+			<a href="" ng-repeat="list in ::appointment_list.history" ng-click="showAppointment(list.booking.booking_id)">
+				<div class="col-md-3 no-padding appointment">
+					<div class="appointment-wrapper">
+						<div class="icon">
+							<img src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive" ng-if="!list.clinic.image_url" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out">
+							<img ng-src="{{::list.clinic.image_url}}" class="img-responsive" ng-if="list.clinic.image_url" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out">
+						</div>
+						<div class="info">
+							<h5 ng-bind="::list.doctor.name" style="text-transform: capitalize;"></h5>
+							<p ng-bind="::list.clinic.name" style="text-transform: capitalize;"></p>
+						</div>
+						<div class="track text-right">
+							<p ng-bind="formatDate(list.booking.book_date)"></p>
+						</div>
+					</div>
+				</div>
+			</a>
+		  </div>
+		</div>
+	</div>
+
+<!-- Modal -->
+<div class="modal fade" id="trackModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document" style="width: 500px;">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: #FFF">&times;</span></button>
+
+        <h4 class="modal-title color-black" id="myModalLabel">Your Appointment is at</h4>
+        <h2 class="text-center">
+        	<span ng-bind="appointment_details.booking.time"></span>
+        </h2>
+        <p class="text-left color-black padding-0-10">
+        	DATE 
+        	<span class="pull-right">
+        		STATUS
+        	</span>
+        </p>
+        <p class="text-left padding-0-10"> 
+        	<span ng-bind="formatDateAppointmentDisplay(appointment_details.booking.book_date)"></span>
+            <span class="pull-right" ng-if="appointment_details.booking.appoint_status == 0">UPCOMING</span>
+        	<span class="pull-right" ng-if="appointment_details.booking.appoint_status == 2">CONCLUDED</span>
+        </p>
+      </div>
+      <!-- BODY -->
+      <div class="modal-body">
+        <p class="titles">Your Procedure</p>
+        <p>
+        	<b>
+        	<span ng-bind="appointment_details.procedure.name"></span>
+        	<span class="pull-right" ng-bind="appointment_details.procedure.price"></span>
+        	</b>
+        </p>
+        <span class="time color-gray">60</span>
+
+        <p class="titles">Your Doctor</p>
+        <div class="w-image">
+        	<div class="img">
+        		<img src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out" ng-if="!appointment_details.doctor.image_url">
+                <img ng-src="{{ appointment_details.doctor.image_url }}" class="img-responsive" ng-image-appear responsive transition-duration="1s" animation="fillIn" animation-duration="1s" easing="ease-out" ng-if="appointment_details.doctor.image_url">
+        	</div>
+        	<div class="info">
+        		<p><b ng-bind="appointment_details.doctor.name"></b></p>
+        		<p class="color-blue" ng-bind="appointment_details.clinic.name"></p>
+        	</div>
+        </div>
+
+        <p class="titles">Clinic Details</p>
+        <div class="w-image">
+        	<div class="img">
+        		<img ng-src="{{ appointment_details.clinic.image_url }}" class="img-responsive" >
+        	</div>
+        	<div class="info">
+        		<p><b ng-bind="appointment_details.clinic.name"></b></p>
+        		<p class="address color-gray" ng-bind="appointment_details.clinic.address"></p>
+        	</div>
+        </div>
+
+        <p class="titles" ng-if="appointment_details.transaction.status == true">Payment Summary</p>
+
+        <div class="col-md-4 text-center no-padding" ng-if="appointment_details.transaction.status == true">
+        	<h4>Final Amount</h4>
+        	<p><b>S$ <span ng-bind="appointment_details.transaction.final_amount"></span></b></p>
+        </div>
+
+        <div class="col-md-4 text-center no-padding" ng-if="appointment_details.transaction.status == true">
+        	<h4>Credit Deducted</h4>
+        	<p><b>S$ <span ng-bind="appointment_details.transaction.wallet_deducted"></span></b></p>
+        </div>
+
+        <div class="col-md-4 text-center no-padding" ng-if="appointment_details.transaction.status == true">
+        	<h4>Balance Paid</h4>
+        	<p><b>S$ <span ng-bind="appointment_details.transaction.balance_paid"></span></b></p>
+        </div>
+
+      </div>
+
+      <div class="modal-footer" ng-if="appointment_details.booking.appoint_status == 0">
+        <!-- <button type="button" class="btn btn-success">CALL CLINIC</button> -->
+        <button type="button" class="btn btn-info" ng-click="cancelAppointment(appointment_details.booking.booking_id, appointment_details.clinic.clinic_id)">CANCEL APPOINTMENT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+    <div class="modal fade get-clinc-search" id="search-clinic" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form ng-submit="searchClinic()">
+                <div class="modal-header">
+                    <h5>Search Clinic Name</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="name" class="form-control" placeholder="Clinic Name" ng-model="search.clinic_name" required />
+                    <div class="row">
+                        <div class="col-md-12 favourite" style="margin-left: 5px; margin-top: 5px;" ng-repeat="list in search_list">
+                            <div class="favourite-wrapper" id="fav_{{ list.clinic_id }}">
+                                <a ng-click="goToClinic(list)" href="">
+                                    <div class="icon">
+                                        <img ng-src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive" ng-if="!list.image_url">
+                                        <img ng-src="{{list.image_url}}" class="img-responsive" ng-if="list.image_url">
+                                    </div>
+                                    <div class="info">
+                                        <h5 ng-bind="list.name" style="text-transform: capitalize;"></h5>
+                                        <p ng-if="list.open_status == 1"> <i class="fa fa-circle"></i> Now Open </p>
+                                        <p ng-if="list.open_status == 0"> <i class="fa fa-circle" style="color: red!important;"></i> Close </p>
+                                    </div>
+                                </a>
+                                <!-- <div class="fav text-center" ng-if="list.favourite == 0">
+                                    <a href="" ng-click="addToFavourite(list)">
+                                        <i class="fa fa-heart-o" id="fav_icon_{{ list.clinic_id }}"></i>
+                                    </a>
+                                </div>
+                                <div class="fav text-center" ng-if="list.favourite == 1">
+                                    <a href="" ng-click="addToFavourite(list)" >
+                                        <i class="fa fa-heart" id="fav_icon_{{ list.clinic_id }}"></i>
+                                    </a>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>

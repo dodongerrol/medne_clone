@@ -1,0 +1,144 @@
+<!-- This modal is for Employee Overview page only -->
+
+<div employee-list-directive>
+<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="edit-employee-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" role="document" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-header" style="background-color: #33a2d4;padding: 20px;">
+                <img src="../assets/hr-dashboard/img/icons/close.svg" style="width: 20px;cursor: pointer;" class="pull-right" data-dismiss="modal">
+                <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;"><span ng-bind="empModal_arr[emp_active].name"></span></h4>
+                <br>
+                <h6 style="color: #fff;margin-bottom: 0;"><span ng-bind="empModal_arr[emp_active].company"></span></h6>
+            </div>
+            <div class="modal-body" style="padding-bottom: 25px;">
+                <p class="text-center">
+                    <span ng-if="(emp_active+1) > 1" class="prev-next-arrows-modal" ng-click="prevEmp()"><i class="fa fa-angle-left fa-lg" style="right: 1px;"></i></span>
+                    <span style="font-weight: bold;color: #33a2d4;margin: 0 8px;">EMPLOYEE <span ng-bind="emp_active + 1"></span> OF <span ng-bind="empModal_arr.length"></span></span>
+                    <span ng-if="(emp_active+1) < empModal_arr.length" class="prev-next-arrows-modal" ng-click="nextEmp()"><i class="fa fa-angle-right fa-lg" style="left: 1px;"></i></span>
+                </p>
+                <form class="form edit-employee-details-form" style="height: 280px;padding-left: 20px;margin-top: 15px;">
+                    <div class="form-group">
+                        <label class="employee-overview-edit-details-label">First Name</label>
+                        <input type="text" class="form-control input-edit-employee-overview-details" ng-model="empModal_arr[emp_active].fname">
+                    </div>
+                    <div class="form-group">
+                        <label class="employee-overview-edit-details-label">Last Name</label>
+                        <input type="text" class="form-control input-edit-employee-overview-details" ng-model="empModal_arr[emp_active].lname">
+                    </div>
+                    <div class="form-group">
+                        <label class="employee-overview-edit-details-label">Date of Birth</label>
+                        <input type="text" class="form-control input-edit-employee-overview-details dob-datepicker" ng-model="empModal_arr[emp_active].dob">
+                    </div>
+                    <div class="form-group">
+                        <label class="employee-overview-edit-details-label">NRIC/FIN</label>
+                        <input type="text" class="form-control input-edit-employee-overview-details" ng-model="empModal_arr[emp_active].nric">
+                    </div>
+                    <div class="form-group">
+                        <label class="employee-overview-edit-details-label">Work Email</label>
+                        <input type="text" class="form-control input-edit-employee-overview-details" ng-model="empModal_arr[emp_active].email">
+                    </div>
+                    <div class="form-group">
+                        <label class="employee-overview-edit-details-label">Mobile</label>
+                        <input type="text" class="form-control input-edit-employee-overview-details" ng-model="empModal_arr[emp_active].phone_no">
+                    </div>
+                    <div class="form-group">
+                        <label class="employee-overview-edit-details-label">Job Title</label>
+                        <select class="form-control input-edit-employee-overview-details" ng-model="empModal_arr[emp_active].job_title">
+                            <!-- For Current Job Title -->
+                            <option ng-repeat="job in job_list">{{job.job_title}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" ng-if="options.accessibility == 1">
+                        <br>
+                        <p class="weight-700 color-black2 font-18" style="margin-bottom: 15px">Credit Allocation</p>
+                        <div class="edit-spending-type-container">
+                            <button ng-class="{ 'active': editCreditSpendingType == 0 }" class="btn btn-default btn-medical" ng-click="setSpendType(0)">Medical</button>
+                            <button ng-class="{ 'active': editCreditSpendingType == 1 }" class="btn btn-default btn-wellness" ng-click="setSpendType(1)">Wellness</button>
+                        </div>
+
+                        <div class="col-md-6 no-padding">
+                            <p ng-if="editCreditSpendingType == 0" class="weight-700">S$<span class="val" ng-bind="empModal_arr[emp_active].allocation.credits_allocation">0.00</span> <span>Allocation</span></p>
+                            <p ng-if="editCreditSpendingType == 1" class="weight-700">S$<span class="val" ng-bind="empModal_arr[emp_active].allocation.credits_allocation_wellness">0.00</span> <span>Allocation</span></p>
+
+                            <p ng-if="editCreditSpendingType == 0" class="weight-700">S$<span class="val" ng-bind="empModal_arr[emp_active].allocation.credits_spent">0.00</span> <span>Usage</span></p>
+                            <p ng-if="editCreditSpendingType == 1" class="weight-700">S$<span class="val" ng-bind="empModal_arr[emp_active].allocation.credits_spent_wellness">0.00</span> <span>Usage</span></p>
+
+                            <button ng-if="showAssign == false" ng-click="showForm()" class="btn btn-default custom-btn">Assign Credits</button>
+                        </div>
+
+                        <div ng-show="showAssign == true"  class="col-md-6">
+                            <div class="edit-trans-type-container">
+                                <button ng-class="{ 'active': editCreditTransactionType == 0 }" class="btn btn-default btn-add" ng-click="setTransType(0)">Add</button>
+                                <button ng-class="{ 'active': editCreditTransactionType == 1 }" class="btn btn-default btn-deduct" ng-click="setTransType(1)">Deduct</button>
+                            </div>
+                        </div>
+
+                        <p ng-if="err == true" class="text-error" ng-bind="status_message"></p>
+                        <p ng-if="succ == true" class="text-error" ng-bind="status_message" style="color:green !important"></p>
+
+                        <div id="assign-form" ng-show="showAssign == true" class="col-md-12 no-padding-left">
+                            <div class="form-group no-padding-left col-md-10">
+                                <br>
+                                <div class="input-group">
+                                  <input id="ass_credits" valid-number type="text" class="form-control" placeholder="Credits to assign." ng-model="credits" />
+                                  <span class="input-group-btn">
+                                    <button data-toggle="modal" data-target="#input-pass" class="btn btn-primary custom-btn" style="padding: 5px 12px;border-radius: 0 4px 4px 0;box-shadow: none;">Assign</button>
+                                  </span>
+                                  <a href="" class="pull-right" ng-click="hideForm()" style="position: relative;left:10px;top: -8px"><i class="fa fa-times color-black"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer" style="border: 0;padding: 5px 39px 20px;">
+                <div class="status-wrapper pull-right" style="height: 20px;width: 20px;text-align: center;margin-top: 8px;margin-left: 10px;display: none">
+                        <i class="fa fa-check" style="color: green;font-size: 20px"></i>
+                </div>
+                <button ng-click="updateEmp()" class="pull-right edit-employee-details-button" style="border: solid 1px #0392cf;background-color: #0392cf;color: #fff;">UPDATE
+                    <div class="preloader-wrapper big active" style="height: 15px;width: 15px;top: 3px;display: none">
+                        <div class="spinner-layer spinner-white-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                </button>
+
+                <!-- <button class="pull-right edit-employee-details-button" style="border: solid 1px #ff7373;color: #ff7373;margin-right: 18px;">REMOVE</button> -->
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="input-pass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
+  <div class="modal-dialog" role="document" style="width: 350px;margin-top: 200px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><b>Input Password</b></h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <input type="password" class="form-control" ng-model="passCredit">
+            <p ng-if="show_error" class="text-error">{{err_mess}}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-default" ng-click="closePass()" style="color: #333;background-color: #fff;">Cancel</button>
+        <button type="button" class="btn btn-primary custom-btn" ng-click="passwordCredit(passCredit)">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>

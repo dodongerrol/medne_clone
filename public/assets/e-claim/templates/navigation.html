@@ -1,0 +1,92 @@
+<nav id="main-navigation" class="navbar " >
+  <div class="container-fluid">
+    <div class="navbar-header" style="margin-right: 0px;">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="javascript:void(0)" ui-sref="home">
+        <img src="../assets/e-claim/img/new-assets/Mednefits-Icons.png" style="width: 45px;">
+      </a>
+    </div>
+
+    <div class="collapse navbar-collapse text-center" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-no-float navbar-center">
+        <li class=""><a href="javascript:void(0)" ui-sref="home" ui-sref-active="active">Home</a></li>
+        <li class=""><a href="javascript:void(0)" ui-sref="activity" ui-sref-active="active">Activity</a></li>
+        <li class=""><a href="javascript:void(0)" ui-sref="e-claim" ui-sref-active="active">Submit E-claim</a></li>
+        <li class="logout-li-click"><a href="javascript:void(0)" ng-click="home.logout()">Logout</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right right-nav">
+        <li class="help-li">
+          <a href="#">Need help?</a>
+          <div class="help-container text-left">
+            <div class="help-arrow"></div>
+            <h3 class="color-blue-custom weight-700">We're here to help.</h3>
+            <div class="white-space-20"></div>
+            <div class="white-space-10"></div>
+            <p class="color-black3 weight-700">You may ring us</p>
+            <p class="color-gray weight-700">+65 6254 7889</p>
+            <p class="color-gray weight-700">Mon - Fri 10:00 to 19:00</p>
+            <div class="white-space-20"></div>
+            <p class="color-black3 weight-700">Drop us a note, anytime</p>
+            <p class="color-gray weight-700">happiness@mednefits.com</p>
+          </div>
+        </li>
+        <li class="logout-li">
+          <a href="javascript:void(0)">
+            <img src="../assets/e-claim/img/new-assets/Home---Profile-(grey).png" style="width: 30px;">
+          </a>
+          <div class="logout-container text-left">
+            <ul class="nav navbar-nav">
+              <li><a href="javascript:void(0)" ng-click="home.updatePasswordModalShow()">Update Password</a></li>
+              <li><a href="javascript:void(0)" ng-click="home.logout()">Logout</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Modal -->
+<div class="modal fade" id="update-pass-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form ng-submit="home.updatePassword(home.updatePassData)">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <p class="modal-title color-white" id="myModalLabel">Update Password</p>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Current Password</label>
+          <input type="password" class="form-control" ng-model="home.updatePassData.curr_password"/>
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" class="form-control" ng-model="home.updatePassData.new_password"/>
+        </div>
+        <div class="form-group">
+          <label>Re-type Password</label>
+          <input type="password" class="form-control" ng-model="home.updatePassData.retype_password"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-close" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-save">Update</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  $( '.logout-li' ).click(function(){
+    $( '.logout-container' ).toggle();
+  });
+</script>

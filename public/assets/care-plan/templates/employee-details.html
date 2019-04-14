@@ -1,0 +1,55 @@
+<div class="comp-details-wrapper center-align" employee-details-directive>
+	<div id="form-one" >
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-20"></div>
+				<div class="white-space-20"></div>
+				<div class="white-space-50"></div>
+				<p class="color-gray font-20 weight-700">Coming Soon...</p>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('select').material_select();
+
+	    var $input = $('.datepicker').pickadate({
+		    min : true,
+		    format: 'd mmmm yyyy',
+		    onSet : function(date){
+		    	// scope.grayItem();
+		    	$(".picker").css({'display':'none'});
+		    	// picker.stop();
+		    },
+		    onClose : function(){
+		    	// $(".picker").css({'display':'none'});
+		    	// picker.stop();
+		    },
+		    onRender : function(){
+		    	// picker.start();
+		    },
+		    closeOnSelect: true,
+			closeOnClear: true,
+		  });
+
+	   	var picker = $input.pickadate('picker');
+
+	   	$("#btn-five").click(function(){
+	   		$("#form-one").hide();
+	   		$("#form-two").fadeIn();
+	   	});
+
+	   	$("#btn-six").click(function(){
+	   		$("#form-two").hide();
+	   		$("#form-three").fadeIn();
+	   	});
+
+	   	$("#btn-seven").click(function(){
+	   		$("#form-three").hide();
+	   		$("#form-four").fadeIn();
+	   	});
+    });
+</script>

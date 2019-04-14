@@ -1,0 +1,109 @@
+<!-- This modal is for Employee Overview page only -->
+
+
+<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="replace-employee" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" employee-list-directive>
+    <div class="modal-dialog modal-lg" role="document" style="width: 800px;">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-body">
+                <img src="../assets/hr-dashboard/img/icons/close-blue.svg" style="width: 20px;cursor: pointer;margin-top: 10px;margin-right: 10px;" class="pull-right" data-dismiss="modal">
+                <h6 class="text-center" style="margin-top: 50px;color: #a7b0b7;">EMPLOYEE <span ng-bind="emp_active + 1"></span> OF <span ng-bind="empModal_arr.length"></span><br>Replacing <span ng-bind="empModal_arr[emp_active].name"></span></h6>
+                <h3 class="text-center" style="color: #5b5b5b;">Please key in the new employee details</h3>
+                <h5 class="text-center status-wrapper" style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</h5>
+                <div class="row">
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-8">
+                        <form class="form">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">First /Given Name</label>
+                                    <input type="text" class="form-control replace-employee-modal-input" ng-model="replace_input.fname">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">Last / Family Name</label>
+                                    <input type="text" class="form-control replace-employee-modal-input" ng-model="replace_input.lname">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">
+                                        <input type="radio" ng-value="true" name="id_status" ng-model="replace_input.nric_status" ng-change="toggleNRIC(replace_input.nric_status,'nric')" style="position: relative;top: 2px;left: 0;opacity: 1;">
+                                        NRIC
+                                    </label>
+                                    <label class="replace-employee-modal-label">
+                                        <input type="radio" ng-value="true" name="id_status" ng-model="replace_input.fin_status" ng-change="toggleNRIC(replace_input.fin_status,'fin')" style="position: relative;top: 2px;left: 0;opacity: 1;">
+                                        FIN
+                                    </label>
+                                    <input type="text" class="form-control replace-employee-modal-input" ng-model="replace_input.nric">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">Date of Birth</label>
+                                    <input type="text" class="form-control replace-employee-modal-input replace-datepicker" ng-model="replace_input.dob">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">Work Email</label>
+                                    <input type="email" class="form-control replace-employee-modal-input" ng-model="replace_input.email">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">Mobile</label>
+                                    <input type="text" class="form-control replace-employee-modal-input" ng-model="replace_input.phone_no">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">Job Title</label>
+                                    <select class="form-control replace-employee-modal-input" ng-model="replace_input.job_title">
+                                        <!-- For Current Job Title -->
+                                        <option ng-repeat="job in job_list">{{job.job_title}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="replace-employee-modal-label">Date of Transfer</label>
+                                    <input type="text" class="form-control replace-employee-modal-input datepicker" ng-model="replace_input.plan_start">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <p ng-if="invalid_email" class="text-error text-left">Invalid Email</p>
+                                <p ng-if="invalid_nric" class="text-error text-left">Invalid NRIC</p>
+                                <p ng-if="error_message" class="text-error text-left">{{error_message}}</p>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="status-wrapper pull-right" style="height: 20px;width: 20px;text-align: center;margin-top: 30px;margin-left: 10px;display: none">
+                                        <i class="fa fa-check" style="color: green;font-size: 30px"></i>
+                                </div>
+                                <button type="submit" ng-click="replaceEmp()" class="pull-right replace-employee-update-button update-replace">
+                                UPDATE
+                                <div class="preloader-wrapper big active" style="height: 15px;width: 15px;top: 3px;display: none">
+                                    <div class="spinner-layer spinner-white-only">
+                                      <div class="circle-clipper left">
+                                        <div class="circle"></div>
+                                      </div><div class="gap-patch">
+                                        <div class="circle"></div>
+                                      </div><div class="circle-clipper right">
+                                        <div class="circle"></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </button>
+
+                                <button ng-click="nextEmp()" class="pull-right replace-employee-update-button next-replace" style="display: none">
+                                NEXT EMPLOYEE
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

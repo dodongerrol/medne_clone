@@ -1,0 +1,58 @@
+<div id="main-content" style="padding: 10px;" clinic-maps-directive>
+	<div id="loading-container" hidden>
+		<div id="loading-selected"></div>
+		<div>Fetching...</div>
+	</div>
+
+	<div class="options" id="add-favourite">
+        <div class="col-md-6">
+            <div class="form-inline">
+                <button id="map-btn" class="btn btn-info" ng-click="toggleView()">Map View <i class="fa fa-globe"></i></button>
+                <button id="list-btn" class="btn btn-info" ng-click="toggleView()" style="display: none">List View <i class="fa fa-list"></i></button>
+            </div>
+            <div class="white-space-20"></div>
+        </div>
+
+    </div>
+
+    <div class="col-md-12" ng-if="!clinic_list">
+		<h3> No Nearby Clinics Found </h3>
+		<p>Note: Please check if Geolocation service is enabled</p>
+	</div>
+
+	<div id="fav-container">
+		<div class="col-md-3 no-padding favourite" ng-repeat=" list in clinic_list ">
+			<div class="favourite-wrapper" >
+			<!-- ng-click="findClinicDetails(list.clinic_id)" -->
+				<a href="#/appointment-create/{{list.clinic_id}}/home">
+					<div class="icon">
+						<img ng-src="https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png" class="img-responsive" ng-if="!list.image_url">
+						<img ng-src="{{::list.image_url}}" class="img-responsive" ng-if="list.image_url">
+					</div>
+					<div class="info">
+						<h5 ng-bind="::list.name | limitTo: 20" style="text-transform: capitalize;"></h5>
+						<p ng-bind="::list.address | limitTo: 15"></p>
+						<p ng-if="list.open_status == 1"> <i class="fa fa-circle"></i> Now Open </p>
+						<p ng-if="list.open_status == 0"> <i class="fa fa-circle" style="color: red!important;"></i> Close </p>
+					</div>
+				</a>
+				<div class="fav text-center">
+					<a  ng-if="list.favourite == 1" ng-click="toggleFavs(list,1)" href=""><i class="fa fa-heart" ></i></a>
+	
+					<a ng-if="list.favourite == 0" ng-click="toggleFavs(list,0)" href=""><i class="fa fa-heart-o" ></i></a>
+					
+				</div>
+				
+			</div>
+		</div>
+
+	</div>
+
+	<div id="map-container">
+		<div class="col-md-12 no-padding" >
+			<div class="map-wrapper" >
+				<div id="map" style="width: 100%;min-height: 500px"></div>
+			</div>
+		</div>
+	</div>
+</div>

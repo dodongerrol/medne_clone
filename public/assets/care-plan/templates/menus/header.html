@@ -1,0 +1,146 @@
+
+<header>
+
+    <nav class="main-navbar blue darken-3">
+      <div class="nav-wrapper">
+        <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+
+        <ul id="nav-mobile" class="left hide-on-med-and-down main-nav-list">
+          <li><a href="javascript:void(0)"><img src="../user/img/mednefits logo v3 (white) LARGE.png" class="responsive-img" style="width: 150px;margin: 10px 0;"></a></li>
+          <li id="dashboard"><a ui-sref="dashboard">Dashboard</a></li>
+          <li id="calendar"><a ui-sref="calendar">Calendar</a></li>
+          <li id="settings"><a ui-sref="settings">Settings</a></li>
+          <li id="sms"><a href ng-click="user.smsClicked()">SMS</a></li>
+          <!-- <li>24/7 Support : 62547889</li> -->
+        </ul>
+
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li>
+            <a href="javascript:void(0)" id="signout" ng-click="user.logOut()" class="btn-floating light-blue darken-3 tooltipped" style="padding: 6px 9px;" data-position="bottom" data-tooltip="Sign Out"> 
+              <img src="../clinic/img/Logout-button.png" class="responsive-img" style="width: 20px;">
+            </a>
+          </li>
+        </ul>
+
+        <ul class="right hide-on-med-and-down corp-wrapper" hidden>
+          <li>
+            <a href="javascript:void(0)" class="btn-floating light-blue darken-3 tooltipped" ng-click="user.showCorporateForm()" style="width: 40px;height: 40px;" data-position="bottom" data-tooltip="Search Corporate Users Here">
+              <i ng-if="!user.corpActive" class="material-icons" style="line-height: 40px;">people</i>
+              <i ng-if="user.corpActive" class="material-icons" style="line-height: 40px;">close</i>
+            </a>
+          </li>
+        </ul>
+
+        <ul id="corp-input" class="right hide-on-med-and-down corp-wrapper scale-transition scale-out" hidden>
+          <li style="width: 300px;">
+            <input id="ic-number-input" type="text" placeholder="Search IC Number" class="validate autocomplete" ng-model="user.corp_number" >
+          </li>
+          <li>
+             <a href="javascript:void(0)" ng-click="user.getByCorpNumber(corp_number)" class="waves-effect waves-light btn" style="height: 40px;margin-left: 0;padding: 0 10px;display: inline-block;">
+              <i class="material-icons" style="line-height: 40px;">search</i>
+            </a>
+          </li>
+          
+        </ul>
+
+        
+
+        <ul class="side-nav" id="mobile-demo">
+          <li id="dashboard"><a ui-sref="dashboard">Dashboard</a></li>
+          <li id="calendar"><a ui-sref="calendar">Calendar</a></li>
+          <li id="settings"><a ui-sref="settings">Settings</a></li>
+          <li id="sms"><a href ng-click="user.smsClicked()">SMS</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="sms-modal" class="modal" style="width: 40%;">
+      <div class="modal-header">
+        <h3 class="color-white"><b>Mednefits SMS Platform</b> <a href class="pull-right modal-close"> <i class="fa fa-times color-blue-gray"></i> </a></h3>
+      </div>
+      <div class="modal-content">
+          <div class="row modal-nav no-margin">
+            <div class="col s12 no-padding">
+              <ul class="new-appointment-li nav-inline left">
+                <li class="active"><a>Send SMS via Mednefits</a></li>
+              </ul>
+            </div>
+          </div>
+          <form class="section" style="padding: 20px 30px;">
+            <div id="booking-wrapper">
+              <div class="row">
+                <div class="col s2">
+                  <h5>Name</h5>
+                </div>
+
+                <div class="col s9">
+                  <input type="text" class="validate"  placeholder="Sender's Name" ng-model="user.sms.name" required />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col s2">
+                  <h5>Phone</h5>
+                </div>
+
+                <div class="col s4 ">
+                  <select  material-select ng-model="user.sms.phone_code" required>
+                    <option ng-repeat="list in user.area_codes" value="{{list.dial_code}}" >{{list.dial_code}} - {{list.code}}</option>
+                  </select>
+                </div>
+                <div class="col s5 ">
+                  <input type="text" class="validate" placeholder="Phone Number" ng-model="user.sms.phone_num" style="width: 83% !important;" />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col s2">
+                  <h5>Message</h5>
+                </div>
+
+                <div class="col s9">
+                  <textarea id="textarea1" class="materialize-textarea" placeholder="Message" ng-model="user.sms.message" style="min-height: 50px !important;width: 90%;"></textarea>
+                </div>
+              </div>
+            </div>
+          </form>
+      </div>
+      <div class="modal-footer center-align">
+        <div ng-hide="user.spin">
+          <button  class="modal-action btn cyan lighten-1 no-float" ng-click="user.sendSMS()">Send Message</button>
+          <button  class="modal-action modal-close btn cyan lighten-1 no-float">Cancel</button>
+        </div>
+        <div class="preloader-wrapper active" style="margin-left: 40px;" ng-if="user.spin">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div><div class="gap-patch">
+              <div class="circle"></div>
+            </div><div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</header>
+
+<script type="text/javascript">
+  $( document ).ready(function(){
+      $(".button-collapse").sideNav();
+
+      $('.tooltipped').tooltip({delay: 50});
+
+      $('.modal').modal({
+        dismissible: false,
+        endingTop: '5%', 
+        ready: function(modal, trigger) { 
+              $('body').css('width','100%');
+          },
+          complete: function() { 
+            $('input').val("");
+
+          }
+      });
+  });
+</script>

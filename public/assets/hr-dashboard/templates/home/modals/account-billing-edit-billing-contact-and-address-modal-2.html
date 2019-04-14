@@ -1,0 +1,36 @@
+<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="account-billing-edit-billing-contact-and-address-modal-2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" edit-details-directive>
+    <div class="modal-dialog" role="document" style="width: 400px;">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-header" style="background-color: #33a2d4;padding: 20px;">
+                <img src="assets/hr-dashboard/img/icons/close.svg" style="width: 20px;cursor: pointer;" class="pull-right" data-dismiss="modal">
+                <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Edit Billing Contact & Address</h4>
+            </div>
+            <div class="modal-body" style="padding-bottom: 50px;">
+                <form class="form edit-employee-details-form">
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-model="billing_address.billing_address.company_name">
+                    </div>
+                    <div class="form-group">
+                        <label>Billing Address</label>
+                        <textarea class="form-control input-edit-employee-details" rows="2" cols="4" style="resize: none" ng-model="billing_address.billing_address.billing_address">
+                            
+                        </textarea>
+                        <!-- <input type="text" class="form-control input-edit-employee-details">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control input-edit-employee-details"> -->
+                    </div>
+                    <div class="form-group">
+                        <label>Postal Code</label>
+                        <input type="text" class="form-control input-edit-employee-details" ng-model="billing_address.billing_address.postal">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border: 0;padding: 5px 39px 20px;">
+                <button class="pull-right edit-employee-details-button" style="border: solid 1px #0392cf;background-color: #0392cf;color: #fff;" ng-click="updateBillingAddress()">UPDATE</button>
+                <button class="pull-right edit-employee-details-button" style="border: solid 1px #ff7373;color: #ff7373;margin-right: 18px;" data-dismiss="modal">CANCEL</button>
+            </div>
+        </div>
+    </div>
+</div>

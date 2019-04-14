@@ -1,0 +1,306 @@
+<script type="text/javascript">
+		window.base_url = window.location.origin + '/app/';
+		var key = "";
+		$.ajax({
+			url: base_url + 'get/token',
+			type: 'GET'
+		}).done(function(response){
+			console.log(response);
+			key = response;
+			setKey();
+		});
+
+
+		function setKey( ) {
+			var stripe = Stripe(key);
+	    var elements = stripe.elements();
+	    Stripe.setPublishableKey(key);
+		}
+    
+    function onSubmitDo () {
+      document.getElementById('payment-error').innerHTML = "";
+      Stripe.card.createToken( document.getElementById('payment-form'), myStripeResponseHandler );
+          
+      return false;
+      
+    };
+    function myStripeResponseHandler ( status, response ) {
+      
+      console.log( status );
+      console.log( response );
+    	$('#pay-loader').fadeIn();
+    	$('#stripe-btn').attr('disabled', true);
+      if ( response.error ) {
+        document.getElementById('payment-error').innerHTML = response.error.message;
+        $('#pay-loader').fadeOut();
+        $('#stripe-btn').attr('disabled', false);
+        return false;
+      } else {
+        var tokenInput = document.createElement("input");
+        tokenInput.type = "hidden";
+        tokenInput.name = "stripeToken";
+        tokenInput.value = response.id;
+        var paymentForm = document.getElementById('payment-form');
+        paymentForm.appendChild(tokenInput);
+        paymentForm.submit();
+      }
+      
+   };
+
+   function getToken( ){
+
+   }
+</script>
+
+<div class="payment-wrapper center-align" payment-directive>
+	<div id="form-one" >
+		<div class="row">
+			<div class="col s12">
+				<div class="white-space-50"></div>
+				<h1 class="font-40 weight-500 color-dark-grey">Payment</h1>
+				<div class="white-space-20"></div>
+				<div class="white-space-20"></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<div class="payment-type-wrapper center-align">
+					<div ng-hide="userDetails_data.cover_type == 'individual'" class="plan-type">
+						<div class="icon-container" hidden>
+							<div class="white-space-50"></div>
+							<div class="preloader-wrapper big active">
+							    <div class="spinner-layer spinner-blue-only">
+							      <div class="circle-clipper left">
+							        <div class="circle"></div>
+							      </div><div class="gap-patch">
+							        <div class="circle"></div>
+							      </div><div class="circle-clipper right">
+							        <div class="circle"></div>
+							      </div>
+							    </div>
+							  </div>
+						</div>	
+						<div class="icon-hide">
+							<div class="img-wrapper">
+								<img src="../assets/care-plan/img/care-packages/Cheque.png">
+							</div>
+							<div class="white-space-20"></div>
+							<h4 class="color-dark-grey weight-700">CHEQUE</h4>
+							<p class="no-margin-bottom">
+						      <input name="plan" type="radio" id="plan1" ng-click="selectPayment(1)"/>
+						      <label for="plan1"></label>
+						    </p>
+					    </div>
+					</div>
+
+					<div class="plan-type" ng-class="{is_individual : userDetails_data.cover_type == 'individual' }">
+						<div class="icon-container" hidden>
+							<div class="white-space-50"></div>
+							<div class="preloader-wrapper big active">
+							    <div class="spinner-layer spinner-blue-only">
+							      <div class="circle-clipper left">
+							        <div class="circle"></div>
+							      </div><div class="gap-patch">
+							        <div class="circle"></div>
+							      </div><div class="circle-clipper right">
+							        <div class="circle"></div>
+							      </div>
+							    </div>
+							  </div>
+						</div>	
+						<div class="icon-hide">
+							<div class="img-wrapper">
+								<img src="../assets/care-plan/img/care-packages/Credit-card.png">
+							</div>
+							<div class="white-space-20"></div>
+							<h4 class="color-dark-grey weight-700">CREDIT CARD</h4>
+							<p ng-hide="userDetails_data.cover_type == 'individual'" class="no-margin-bottom">
+						      <input name="plan" type="radio" id="plan2" ng-click="selectPayment(2)" />
+						      <label for="plan2"></label>
+						    </p>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s12">
+				<p ng-if="payment_selected == 1"><b>Please mail your company cheque over at least 5 working days before the plan start date</b></p>
+				<p ng-if="payment_selected == 0 && payBtnClicked" class="text-error"><b>Please select a payment option</b></p>
+				<div clas s="white-space-50"></div>
+			</div>
+		</div>
+
+		<div class="row margin-bottom-50">
+			<div class="col s12">
+				<button id="payPaymentButton" ng-click="payButtonClicked()" class="btn btn-large blue white-text font-20 radius-8">
+					PAY S$<span ng-bind="amount"></span> / YR
+					<div class="preloader-wrapper small active" style="top: 10px; display: none;" id="pay-loader">
+				    <div class="spinner-layer spinner-white-only">
+				      <div class="circle-clipper left">
+				        <div class="circle"></div>
+				      </div><div class="gap-patch">
+				        <div class="circle"></div>
+				      </div><div class="circle-clipper right">
+				        <div class="circle"></div>
+				      </div>
+				    </div>
+				  </div>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="form-two" hidden>
+		<div class="row no-margin-bottom">
+			<div class="col s12">
+				<div class="white-space-50"></div>
+				<h1 class="font-30 weight-500 color-dark-grey">Pay S$<span id="plan_amount"></span> for<br>the first year</h1>
+			</div>
+		</div>
+
+		<div class="row margin-bottom-50">
+			<div class="col s12">
+				<h4 class="color-dark-grey">We'll automatically continue your membership <br> using the same payment method on a yearly basis</h4>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col s4 offset-s4">
+				<form class="left-align">
+					<div class="row margin-bottom-50">
+						<div class="input-field col s12" >
+				          <input id="name-card" type="text" class="validate" placeholder=" " ng-model="userDetails_data.cardholder_name">
+				          <label for="name-card" class="font-15 weight-700 color-dark-grey active">Name on Card</label>
+				          <br>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-50">
+						<div class="input-field col s12" >
+				          <input id="number-card" type="text" class="validate" placeholder=" " ng-model="userDetails_data.card_number">
+				          <label for="number-card" class="font-15 weight-700 color-dark-grey active">Card Number</label>
+				          <br>
+				        </div>
+					</div>	
+
+					<div class="row margin-bottom-50">
+						<div class="input-field col s6" >
+				          <input id="exp-date" type="text" class="datepicker" placeholder="mm/yyyy" ng-model="userDetails_data.card_expiry" ng-click="datePickerClicked()">
+				          <label for="exp-date" class="font-15 weight-700 color-dark-grey active">Expiry Date</label>
+				          <br>
+				        </div>
+
+				        <div class="input-field col s6" >
+				          <input id="cvc" type="text" class="validate" placeholder=" " ng-model="userDetails_data.card_cvc">
+				          <label for="cvc" class="font-15 weight-700 color-dark-grey active">CVC</label>
+				          <br>
+				        </div>
+					</div>	
+
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<p id="payment-error" class="text-error"></p>
+						</div>
+					</div>
+
+					<div class="row margin-bottom-30">
+				        <div class="input-field col s12 center-align">
+				          <button ng-click="payStripe()" id="stripe-btn" class="btn btn-large blue white-text font-20 radius-8" >
+				          	PAY S$<span ng-bind="amount | number: 2"></span> / YR
+				          	<div class="preloader-wrapper small active" style="top: 10px; display: none;" id="pay-loader">
+									    <div class="spinner-layer spinner-white-only">
+									      <div class="circle-clipper left">
+									        <div class="circle"></div>
+									      </div><div class="gap-patch">
+									        <div class="circle"></div>
+									      </div><div class="circle-clipper right">
+									        <div class="circle"></div>
+									      </div>
+									    </div>
+									  </div>
+				          </button>
+				        </div>
+					</div>	
+
+				</form>
+			</div>
+		</div>
+
+		<div class="row" hidden>
+			<div class="col s4 offset-s4 text-left">
+				<form action="/payment/insert/corporate_credit_payment" method="POST" id="payment-form" onsubmit="return onSubmitDo()">
+ 
+			        Cardholder Name
+			        <input type="text" size="20" data-stripe="name" name="cardName" ng-model="userDetails_data.cardholder_name" />
+
+			        Card Number
+			        <input type="text" size="20" data-stripe="number" name="number" ng-model="userDetails_data.card_number"/>
+			        CVC
+			        <input type="text" size="4" data-stripe="cvc" ng-model="userDetails_data.card_cvc"/>
+
+			        Expiration (MM/YYYY)
+			        <input id="card_month" type="text" size="2" data-stripe="exp-month" name="exp-month" ng-model="userDetails_data.card_exp_month"/>
+			        <input id="card_year" type="text" size="4" data-stripe="exp-year" name="exp-year" ng-model="userDetails_data.card_exp_year"/>
+			       
+			        Email Address
+			        <input type="text" size = "25" name="emailAddress" ng-model="userDetails_data.card_email"/>
+			        <input type="text" size = "25" name="customer_buy_start_id" ng-model="userDetails_data.customer_buy_start_id"/>
+			    
+			        <button id="submitStripe" type="submit">submit</button>
+
+			  </form>
+
+			</div>
+		</div>
+		
+	</div>
+	
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    var $input = $('.datepicker').pickadate({
+		    min : true,
+		    format: 'd mmmm yyyy',
+		    onSet : function(date){
+		    	// scope.grayItem();
+		    	$(".picker").css({'display':'none'});
+		    	// picker.stop();
+		    },
+		    onClose : function(){
+		    	// $(".picker").css({'display':'none'});
+		    	// picker.stop();
+		    },
+		    onRender : function(){
+		    	// picker.start();
+		    },
+		    closeOnSelect: true,
+			closeOnClear: true,
+		  });
+
+	   	var picker = $input.pickadate('picker');
+
+	   	$("#btn-ten").click(function(){
+	   		$("#form-one").hide();
+	   		$("#form-two").fadeIn();
+	   	});
+
+	   	$("#btn-eleven").click(function(){
+	   		$("#form-two").hide();
+	   		$("#success-form").fadeIn();
+	   	});
+
+
+    });
+</script>
+
+<style type="text/css">
+	.picker__date-display,
+	.picker__table{
+		display: none;
+	}
+</style>

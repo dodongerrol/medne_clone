@@ -1,0 +1,581 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Clinic-Settings</title>
+ 
+  
+<link href="medicloudv2.css" rel="stylesheet" type="text/css">
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nunito">
+<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Montserrat">
+<link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+
+
+  
+<!--JQUERY TIME PICKER CSS-->
+<script src="http://dev.medicloud.sg/medicloud_v001/public/assets/js/jquery-1.11.1.js"></script>
+<!--<script type="text/javascript" src="../bootstrap/js/bootstrap.min.js"></script>-->
+
+
+<script src="http://dev.medicloud.sg/medicloud_v001/public/assets/admin/moment-with-locales.js"></script>
+<script src="http://dev.medicloud.sg/medicloud_v001/public/assets/admin/bootstrap-datetimepicker.js"></script>
+<!--END JQUERY TIME PICKER CSS-->
+<!--JQUERY TIME PICKER CSS-->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+
+<link media="all" type="text/css" rel="stylesheet" href="http://dev.medicloud.sg/medicloud_v001/public/assets/admin/bootstrap-datetimepicker.css">
+
+
+<!--END JQUERY TIME PICKER CSS--> 
+</head>
+
+<body>
+<div id="main-container">
+  
+  <div class="header">
+  
+    <div class="section-left">
+      <div class="logo-container">
+        <img src="../images/mc-v2-logo.png" width="261" height="52"  alt=""/>
+      </div><!--END LOGO CONTAINER--> 
+    </div><!--END SECTION RIGHT-->
+    
+   <div class="section-right">
+     <div id="main-nav">
+     	<ul>
+     		<li><a href="#">HOME</a></li>
+            <li><a href="#">ANALYTICS</a></li>
+            <li class="active"><a href="#">SETTINGS</a></li>
+            <li><a href="#">LOGOUT</a></li>
+          <div class="clear"></div>
+        </ul>
+     </div><!--END OF -->
+   </div><!--END SECTION RIGHT-->
+    
+  </div><!--END HEADER-->
+  
+  <div class="clear"></div>
+  
+  
+  
+<div id="clinic-form-container">
+ 
+  <div class="form-nav">
+  <a href="#"> 
+  <div class="nav-btn">
+      
+          <div class="btn-icn">
+            <img src="../images/icn-home.png" width="100%" alt=""/>
+          </div><!--END OF BTN ICN-->
+      
+      		<div class="btn-name"> 
+                <div class="btn-name-title">Clinic Details </div> 
+                <div class="btn-name-sub">Manage Clinic information</div>
+            </div><!--END OF BTN NAME-->
+            <div class="clear"></div>
+            
+            
+     </div><!--END OF NAV BTN-->
+     </a>
+     
+     
+     
+      <a href="#"> 
+  <div class="nav-btn">
+      
+          <div class="btn-icn">
+            <img src="../images/icn-clock.png" width="100%" alt=""/>
+          </div><!--END OF BTN ICN-->
+      
+      		<div class="btn-name"> 
+                <div class="btn-name-title">Opening Times</div> 
+                <div class="btn-name-sub">Business Hours and Holidays</div>
+            </div><!--END OF BTN NAME-->
+            <div class="clear"></div>
+            
+            
+     </div><!--END OF NAV BTN-->
+     </a>
+     
+     
+     
+     
+     <a href="#"> 
+  <div class="nav-btn">
+      
+          <div class="btn-icn">
+            <img src="../images/icn-pad.png" width="100%" alt=""/>
+          </div><!--END OF BTN ICN-->
+      
+      		<div class="btn-name"> 
+                <div class="btn-name-title">Procedures</div> 
+                <div class="btn-name-sub">Manage Procedures and Duration</div>
+            </div><!--END OF BTN NAME-->
+            <div class="clear"></div>
+            
+            
+     </div><!--END OF NAV BTN-->
+     </a>
+     
+     
+     
+     
+      <a href="#"> 
+  <div class="nav-btn active">
+      
+          <div class="btn-icn">
+            <img src="../images/icn-people.png" width="100%" alt=""/>
+          </div><!--END OF BTN ICN-->
+      
+      		<div class="btn-name "> 
+                <div class="btn-name-title">Doctors</div> 
+                <div class="btn-name-sub">Manage Doctors and Availability</div>
+            </div><!--END OF BTN NAME-->
+            <div class="clear"></div>
+            
+            
+     </div><!--END OF NAV BTN-->
+     </a>
+     
+     
+     
+     <a href="#"> 
+  <div class="nav-btn ">
+      
+          <div class="btn-icn">
+            <img src="../images/icn-circle.png" width="100%" alt=""/>
+          </div><!--END OF BTN ICN-->
+      
+      		<div class="btn-name"> 
+                <div class="btn-name-title">Update Password</div> 
+                <div class="btn-name-sub">Keep your System Safe and Secure</div>
+            </div><!--END OF BTN NAME-->
+            <div class="clear"></div>
+            
+            
+     </div><!--END OF NAV BTN-->
+     </a>
+     
+     
+     
+      <a href="#"> 
+  <div class="nav-btn b-bottom">
+      
+          <div class="btn-icn">
+            <img src="../images/icn-settings.png" width="100%" alt=""/>
+          </div><!--END OF BTN ICN-->
+      
+      		<div class="btn-name"> 
+                <div class="btn-name-title">Other Settings</div> 
+                <div class="btn-name-sub">Lanugage, Currency, Etc</div>
+            </div><!--END OF BTN NAME-->
+            <div class="clear"></div>
+            
+            
+     </div><!--END OF NAV BTN-->
+     </a>
+     
+     
+     
+     
+     
+  </div><!--END OF FORM NAV-->
+  
+   
+   
+   <div class="form-nav-page">
+   <div class="dr-option-nav">
+   <ul>
+   <li><a href="#">VIEW DOCTORS</a></li>
+   <li><a href="#" class="active">SET AVAILABILITY</a></li>
+   <li><a href="#" >ADD DOCTOR</a></li>
+   </ul>
+   </div> <!--END OF DR OPTION NAV-->
+   
+   <div class="clear"></div>
+   
+   <div class="search-bar">
+   <div class="field-name">
+        <div class="dr-available-profile-image fl">
+        <img src="../images/sample2.png" width="60" height="60"  alt=""/>
+        </div><!--END OF DR AVAILABL PROFILE IMAGE-->
+   </div><!--END OF FIELD NAME-->
+         
+         <div class="field-container-dr-available">
+  			<div class="field-name">
+         		<label class="label-dr-available">Select A Doctor</label>
+        		 </div><!--END OF FIELD NAME--> 
+         <div class="clear"></div>
+         	<div class="field-type">
+         		<input class="label-dr-available-input fl" type="text">
+              <label class="label-dr-available fl mar-left-2 mar-t2 font-type-oxygen l-gray S12">Phone:</label>
+              <label class="label-dr-available fl mar-t2 font-type-oxygen d-gray S2 padding-top-2 mar-left-3">8888 0925</label>
+                 </div><!--END OF FIELD TYPE-->
+     	 </div><!--END OF FIELD CONTAINER DR AVAILABLE-->
+   <div class="clear"></div>    
+   </div><!--END OF SEARCH BAR-->
+   <div class="clear"></div>
+   
+   <div class="dr-available-select-container">
+     <div class="dr-available-day">
+     <label>SELECT DAYS</label>
+     </div><!--END OF DR AVAILABLE DAY-->
+      <div class="clear"></div>
+     <div class="selection-available-day">
+       <div class="day-box">MON</div>
+       <div class="day-box">TUE</div>
+       <div class="day-box">WED</div>
+       <div class="day-box-gray">THU</div>
+       <div class="day-box-gray">FRI</div>
+       <div class="day-box-gray">SAT</div>
+       <div class="day-box-gray mar-0">SUN</div>
+       <div class="clear"></div>
+     </div><!--END OF SELECTION AVAILABLE DAY-->
+     
+     
+     <div class="dr-available-time">
+       <div class="time-container-available fl">
+               <div class="dr-available-time2">
+             <label>START TIME</label>
+             </div><!--END OF DR AVAILABLE TIME-->
+     <div class="clear"></div>
+             <div class="field-type">
+             
+             
+             
+             <!--JQUERY TIME PICKER-->
+            <div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='startTime'>
+                    <input id='startTime' type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+               $('#startTime').datetimepicker({
+			format: 'LT',
+			useCurrent: true
+			
+		});
+
+            });
+        </script>
+    </div>
+</div>
+             
+  <!--END JQUERY TIME PICKER-->            
+             
+                 <!--<input class="time-input fl" type="text">-->
+              </div><!--END OF FIELD TYPE-->
+       </div><!--END OF TIME CONTAINER AVAILABLE-->
+       
+       
+       
+       <div class="time-container-available fl">
+               <div class="dr-available-time2">
+             <label>END TIME</label>
+             </div><!--END OF DR AVAILABLE TIME-->
+     <div class="clear"></div>
+             <div class="field-type">
+                  <!--JQUERY TIME PICKER-->
+            <div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='endTime'>
+                    <input id='endTime' type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+               $('#endTime').datetimepicker({
+			format: 'LT',
+			useCurrent: true
+		});
+
+            });
+        </script>
+    </div>
+</div>
+             
+  <!--END JQUERY TIME PICKER-->  
+              </div><!--END OF FIELD TYPE-->
+       </div><!--END OF TIME CONTAINER AVAILABLE-->
+       
+        <div class="field-container "> 
+           <div class="btn-time font-type-Montserrat mar-t4">ADD TIME</div>
+         <div class="clear"></div>   
+         </div>
+       
+       
+        <div class="clear"></div>
+       
+     </div><!--END OF AVAILABLE TIME-->
+     
+     
+     
+     <div class="availability-day-graph">
+   		  <div class="dr-available-title mar-left-2 fl">
+             <label>DAYS OF THE WEEK</label>
+             </div><!--END OF DR AVAILABLE TITLE-->
+             
+          <div class="dr-available-title fl padding-left-4 ">
+                 <label>AVAILABILITY</label>
+                 </div><!--END OF DR AVAILABLE TITLE-->
+          <div class="clear"></div>
+           
+           
+          <div class="dr-time-bar-container">
+          		<div class="dr-detail-inner">
+      				 <label >Mon, Tue, Wed</label>
+        				<label class=" label2">10:00am - 5:00pm</label>
+        				<div class="icn-close"><img width="17" height="21" alt="" src="../images/icn-close-dark.png"></div>
+         			<div class="clear"></div>
+       			</div>
+          </div><!--END OF TIME BAR CONTAINER-->
+          
+          
+          
+          <div class="dr-time-bar-container ">
+          		<div class="dr-detail-inner mar-t">
+      				 <label >Mon, Tue, Wed</label>
+        				<label class=" label2">10:00am - 5:00pm</label>
+        				<div class="icn-close"><img width="17" height="21" alt="" src="../images/icn-close-dark.png"></div>
+         			<div class="clear"></div>
+       			</div>
+          </div><!--END OF TIME BAR CONTAINER-->
+          
+          
+          
+          
+          <div class="dr-time-bar-container ">
+          		<div class="dr-detail-inner mar-t">
+      				 <label >Thu, Fri</label>
+        				<label class=" label2">10:00am - 5:00pm</label>
+        				<div class="icn-close"><img width="17" height="21" alt="" src="../images/icn-close-dark.png"></div>
+         			<div class="clear"></div>
+       			</div>
+          </div><!--END OF TIME BAR CONTAINER-->
+          
+          
+          
+          
+          
+          <div class="dr-time-bar-container ">
+          		<div class="dr-detail-inner mar-t">
+      				 <label class="l-gray2" >Sat</label>
+        				<label class=" label2">10:00am - 5:00pm</label>
+        				<div class="icn-close"><img width="17" height="21" alt="" src="../images/icn-close-dark.png"></div>
+         			<div class="clear"></div>
+       			</div>
+          </div><!--END OF TIME BAR CONTAINER-->
+           <div class="clear"></div>    
+     </div><!--END OF AVAILABILITY DAY GRAPH-->
+     
+     <div class="time-option-container">
+     
+     
+      <div class="field-type">
+                  <input class="check " id="checkbox1" type="checkbox" name="checkbox" value="1" checked="checked"><label for="checkbox1">Repeat Weekly</label>
+              </div><!--END OF FIELD TYPE-->
+              
+        <div class="clear"></div>      
+     </div> <!--END OF TIME OPTION CONTAINER-->
+     </div><!--END OF DR AVAILABLE SELECT CONTAINER-->
+     <div class="line"></div>
+     
+     
+     
+     
+     <div class="holiday-container">
+     
+     
+     
+     <div class="field-container">
+         <div class="field-name">
+         <label>HOLIDAYS</label>
+         </div><!--END OF FIELD NAME--> 
+         <div class="field-type">
+         <input class="input-date" type="text">
+         </div><!--END OF FIELD TYPE-->
+       </div><!--END OF FIELD CONTAINER-->
+     
+     
+     
+       <div class="radio-btn-container">
+         <div class="radio">
+          <input id="radio1" type="radio" name="radio" value="1" checked="checked"><label for="radio1"><span><span></span></span>Full Day</label>
+          </div> 
+        </div><!--END OF RADIO BTN CONTAINER-->
+       <div class="clear"></div>
+       <div class="radio-btn-container">
+         <div class="radio"><input id="radio1" type="radio" name="radio" value="1" checked="checked"><label for="radio1"><span><span></span></span>Unavailable on selected hours</label></div> 
+       </div><!--END OF RADIO BTN CONTAINER-->
+       <div class="clear"></div>
+       
+       
+       
+       
+       
+       <div class="holiday-time">
+		<div class="dr-available-time">
+  			<div class="time-container-available fl">
+                <div class="field-type">
+                                  <!--JQUERY TIME PICKER-->
+            <div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='from'>
+                    <input id='from' type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+               $('#from').datetimepicker({
+			format: 'LT',
+			useCurrent: true
+		});
+
+            });
+        </script>
+    </div>
+</div>
+             
+  <!--END JQUERY TIME PICKER--> 
+                </div><!--END OF FIELD TYPE-->
+             		<div class="clear"></div>
+                    <div class="dr-available-time2">
+                     <label>Unavailable From</label>
+                     </div><!--END OF DR AVAILABLE TIME-->
+       		</div><!--END OF TIME CONTAINER AVAILABLE-->
+       
+       
+       
+              
+              
+              
+               <div class="time-container-available fl">
+                     <div class="field-type">
+                                      <!--JQUERY TIME PICKER-->
+            <div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' id='Till'>
+                    <input id='Till' type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+               $('#Till').datetimepicker({
+			format: 'LT',
+			useCurrent: true
+		});
+
+            });
+        </script>
+    </div>
+</div>
+             
+  <!--END JQUERY TIME PICKER--> 
+                            </div><!--END OF FIELD TYPE-->
+                     <div class="clear"></div>
+                         <div class="dr-available-time2">
+                            <label>Unavailable till</label>
+                                </div><!--END OF DR AVAILABLE TIME-->
+               </div><!--END OF TIME CONTAINER AVAILABLE-->
+       
+        <div class="field-container "> 
+           <div class="btn-holiday font-type-Montserrat mar-t3">ADD HOLIDAY</div>
+         <div class="clear"></div>   
+         </div>
+       
+       
+        <div class="clear"></div>
+       
+   </div><!--END OF DR AVAILABLE TIME -->  
+    </div><!--END OF HOLIDAY TIME-->   
+       
+       
+       <div class="holiday-graph">
+   		  <div class="holiday-title mar-left-2 fl">
+             <label>DATE</label>
+             </div><!--END OF DR AVAILABLE TITLE-->
+             
+          <div class="holiday-title2 fl padding-left-4 ">
+                 <label>UNAVAILABLE</label>
+                 </div><!--END OF DR AVAILABLE TITLE-->
+          <div class="clear"></div>
+           
+           
+          <div class="holiday-bar-container">
+          		<div class="dr-detail-inner">
+      				 <label>September 25, 2015</label>
+        				<label class=" label2">2:00pm - 5:00pm</label>
+        				<div class="icn-close"><img width="17" height="21" src="../images/icn-close-dark.png" alt=""></div>
+         			<div class="clear"></div>
+       			</div>
+                 <div class="clear"></div>
+          </div><!--END OF TIME BAR CONTAINER-->
+          
+          
+          
+          <div class="holiday-bar-container">
+          		<div class="dr-detail-inner">
+      				 <label>October 2, 2015</label>
+        				<label class=" label2">Full Day</label>
+        				<div class="icn-close"><img width="17" height="21" src="../images/icn-close-dark.png" alt=""></div>
+         			<div class="clear"></div>
+       			</div>
+                 <div class="clear"></div>
+          </div><!--END OF TIME BAR CONTAINER-->
+          
+          <div class="clear"></div>    
+     </div>
+       
+       
+       
+       
+     <div class="field-container mar-left-4  mar-t "> 
+           <div class="btn-update font-type-Montserrat ">Update Changes</div>
+            <div class="btn-cancel font-type-Montserrat ">Cancel</div>
+         </div>  
+       
+     </div><!--END OF HOLIDAY CONTAINER-->
+   </div><!--END OF FORM NAV PAGE-->
+  
+  <div class="clear"></div>
+  
+  
+</div><!--END OF CLINIC FORM CONTAINER-->
+
+
+
+
+
+
+
+
+</div><!--END OF MAIN CONTAINER-->
+</body>
+</html>

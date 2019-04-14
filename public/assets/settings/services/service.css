@@ -1,0 +1,26 @@
+.service-details {
+	padding: 0px;
+    border-top: 1px solid #C1C1C1;
+    /*border-bottom: 1px solid #A5A5A5;*/
+    /* border-left: 3px solid #A5A5A5; */
+    cursor: pointer;
+}
+
+#btn-service-add, #btn-service-save{
+	background: #1667AC;
+    color: #FFFFFD;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-weight: bold;
+}
+
+#btn-service-cancel{
+	background: #FFFFFD;
+	border: 1px solid #d9d9d9;
+        font-weight: bold;
+}
+
+.txt_bg{
+	background: white;
+    border: 1px solid #d9d9d9;
+}

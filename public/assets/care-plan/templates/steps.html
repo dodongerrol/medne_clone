@@ -1,0 +1,72 @@
+<div id="steps-container" class="main-container" steps-directive>
+	<div class="header-wrapper ">
+		<div class="row no-margin-bottom">
+			<div class="col s5">
+				<img src="../assets/care-plan/img/mednefits logo v3 (blue) LARGE.png" class="responsive-img" style="width: 150px;">
+			</div>
+			<div class="col s7 right-align header-opt" >
+				<!-- <div class="white-space-10"></div> -->
+				<button id="payTop-btn" class="btn btn-large blue white-text font-20 radius-8" hidden>
+					PAY S$<span>0</span> / YR 
+					<div class="icon-wrapper" hidden>
+						<div class="preloader-wrapper big active">
+						    <div class="spinner-layer spinner-white-only">
+						      <div class="circle-clipper left">
+						        <div class="circle"></div>
+						      </div><div class="gap-patch">
+						        <div class="circle"></div>
+						      </div><div class="circle-clipper right">
+						        <div class="circle"></div>
+						      </div>
+						    </div>
+					  </div>
+					 </div>
+				</button>
+				<a href="javascript:void(0)" ng-click="backButton()"><i class="material-icons font-25" style="position: relative;top: 15px">arrow_back</i></a>
+				
+				<div class="drop" style="position: relative;">
+					<a href="javascript:void(0)"><i class="material-icons font-25" style="position: relative;top: 15px">help_outline</i></a>
+
+					<div class="help">
+						<div class="arrow-drop"></div>
+						<div class="help-container">
+							<h4 class="color-blue">We're here to help.</h4>
+							<p class="color-dark-grey no-margin-bottom">You may ring us</p>
+							<p class="color-gray no-margin">+65 6254 7889</p>
+							<p class="color-gray no-margin">Mon - Fri 10:00 to 19:00</p>
+							<p class="color-dark-grey no-margin-bottom">Drop us a note, anytime</p>
+							<p class="color-gray no-margin">happiness@mednefits.com</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row no-margin-bottom">
+			<div class="col s12">
+				<nav class="steps-nav center-align">
+				    <div class="nav-wrapper inline-block">
+				      <div class="col s12 step-li">
+				        <a id="intro-step" class="breadcrumb done">Introduction</a>
+				        <a id="plan-step" class="breadcrumb active">Plan</a>
+				        <a id="comp-step" class="breadcrumb">Company Details</a>
+				        <a id="payment-step" class="breadcrumb">Payment</a>
+				        <a id="emp-step" class="breadcrumb">Employee Details</a>
+				      </div>
+				    </div>
+				  </nav>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="step-wrapper">
+		<div ui-view="step"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		
+   	});
+</script>

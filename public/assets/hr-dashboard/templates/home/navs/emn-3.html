@@ -1,0 +1,90 @@
+<div class="top-navbar">
+	<div class="container">
+		<img ui-sref="benefits-dashboard" src="../../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="top-logo pull-left pointer-cursor">
+		<span class="pull-right account-dropdown">
+			<a onclick="myAccount()">
+				<img src="../../assets/hr-dashboard/img/icons/down-arrow.svg" class="arrow-down pull-right">
+				<img src="../../assets/hr-dashboard/img/user.png" class="user-icon pull-right">
+			</a>
+		</span>
+		<div class="account-list-container">
+			<ul>
+				<li>
+					<a href="">Account & Billing</a>
+				</li>
+				<li>
+					<a href="">Plan Coverage</a>
+				</li>
+				<li>
+					<!-- <a href="/company-benefits-dashboard-logout">Log Out</a> -->
+					<a href="javascript:void(0)" id="logout-btn">Log Out</a>
+				</li>
+			</ul>
+		</div>
+		<a href="javascript:void(0)" class="pull-right need-help-text tooltips">
+			<h3>Need help?</h3>
+			<div class="tooltip-container">
+				<h3 class="tooltip-title">We're here to help.</h3>
+				<h3 class="tooltip-phone-email-title">You may ring us</h3>
+				<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
+				<h3 class="tooltip-phone-email-details">Mon - Fri 10:00 to 19:00</h3>
+				<br>
+				<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
+				<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
+			</div>
+		</a>
+	</div>
+	<div class="navbar-blue-bg dl-template-container">
+		<div class="container">
+			<div class="dl-template">
+				<div class="excel-import-wizard-content text-center">
+					<h1 class="pull-left">EXCEL IMPORT</h1>
+					<!-- 
+						If in cogratulation page, the numbers(1,2,3,4) are in wizard-done class
+					 -->
+					<ul>
+						<li class="text-center wizard-done">
+							<a href="">
+								<p>
+									<span>1</span>
+								</p>
+								<span>Download</span>
+							</a>
+						</li>
+						<li class="text-center wizard-done">
+							<a href="">
+								<p>
+									<span>2</span>
+								</p>
+								<span>Prepare</span>
+							</a>
+						</li>
+						<li class="text-center wizard-active">
+							<a href="">
+								<p>
+									<span>3</span>
+								</p>
+								<span>Upload</span>
+							</a>
+						</li>
+						<li class="text-center">
+							<a href="">
+								<p>
+									<span>4</span>
+								</p>
+								<span>Preview</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$('#logout-btn').click(function( ){
+		window.localStorage.removeItem('token');
+		window.location.href = window.location.origin + '/business-portal-login';
+	});
+</script>

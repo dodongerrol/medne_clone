@@ -1,0 +1,337 @@
+<div dashboard-directive class="home-dashboard-container">
+	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;" >
+		<div class="container">
+			<div class="welcome-container">
+				<h4>Overview</h4>
+				<div class="arrow-up"></div>
+			</div>
+			<div class="welcome-container">
+				<div class="dropdown" ng-if="options.accessibility == 1">
+				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Employee
+				  </h4>
+				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
+				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				  </ul>
+				</div>
+				<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
+				<div class="arrow-up-2"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="activity">Activity</h4>
+				<div class="arrow-up-3" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container" ng-if="options.accessibility == 1">
+				<h4 ui-sref="e-claim">Claim</h4>
+				<div class="arrow-up-4" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="statement">Statement</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="account-and-payment">Account</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="hrdb-body-container" style="padding-top: 180px;">
+		<div class="container">
+			<div class="hrbd-body-box">
+				<div class="col-lg-8">
+					<div class="mednefits-box blue-bg" style="box-shadow: none;">
+						<div class="mednefits-body-box">
+							<img src="../../assets/hr-dashboard/img/overview.png" class="center-block" style="height: 50px;">
+							<!-- <h2 class="text-center text-white" style="font-weight: bold!important;" ng-bind="options.company_name"></h2> -->
+							<h2 class="text-center text-white" style="font-weight: bold;">
+								<span ng-if="isMorning">Good morning,</span>
+								<span ng-if="isAfternoon">Good afternoon,</span>
+								<span ng-if="isEvening">Good evening,</span>
+								<span ng-bind="intro.contact_name"></span>
+							</h2>
+							<!-- <h3 class="text-center text-white weight-700">Welcome to your team benefits dashboard</h3> -->
+							<!-- <h5 class="text-center " style="color: #dddddd;" ng-if="progress.in_progress != 0 && !plan_status.expire">We realise you have yet to enroll all your team into the plan. You have<br>until <span ng-bind="progress.plan_end_date">DD/MM/YYYY</span> to enroll them in.</h5> -->
+							<h5 class="text-center text-white body-subtext"><strong ng-bind="intro.company_name"></strong> is covering <strong ng-if="intro.dependents"><span ng-bind="intro.total_enrolled"></span> employees & dependents</strong> <strong ng-if="!intro.dependents"><span ng-bind="intro.total_enrolled"></span> employees</strong> from <strong ng-bind="intro.plan_start"> 1 January 2018</strong> and ends on <strong ng-bind="intro.plan_end"> 31 December 2018</strong></h5>
+							<button ng-click="goToEnroll()" class="btn btn-info med-button center-block" ng-if="progress.in_progress != 0 && !plan_status.expire">Employee Enrollment</button>
+						</div>
+					</div>
+
+					<div class="col-lg-12">
+						<h4 style="font-size: 15px;font-weight: bold;color: #585858;">TASK</h4>
+					</div>
+					<div class="col-lg-12">
+						<div class="task-box-list" ng-repeat="list in task_lists">
+							<div class="mednefits-box task-box-1" style="background-color: #fff;">
+
+								<div class="task-box" ng-if="list.type == 'expiring_plan'">
+									<h5 class="task-title">
+										<span ng-bind="list.message"></span></span>
+										</span>
+									</h5>
+								</div>
+
+								<div class="task-box" ng-if="list.type == 'pending_activation'">
+									<h5 class="task-title">
+										<!-- <span ng-bind="list.total_employees"></span> employee accounts 
+										<span ng-if="list.total_dependents">and <span ng-bind="list.total_dependents"></span> dependent accounts</span> will be activated once payment is receive from Mednefits. 
+										<span ng-if="list.active_plan.cheque == 'true'"> -->
+											Payment for Plan Subscription is due on <span ng-bind="list.invoice_due">DD/MM/YYYY</span>. Please kindly make payment as soon as possible, Thank you.
+											<!-- As your payment method is by <span ng-if="list.active_plan.cheque == 'true'">cheque</span><span ng-if="list.active_plan.credit == 'true'">credit</span>, we have yet to recieve your payment. Payment is due on <span ng-bind="list.invoice_due">DD/MM/YYYY</span> -->
+										<!-- </span> -->
+									</h5>
+								</div>
+
+
+								<div class="task-box" ng-if="list.type == 'pending_enrollment' && list.total_employees > 0">
+									<h5 class="task-title">
+										<span ng-bind="list.total_employees"></span> employees have yet to enroll into the company benefits plan. <a href="" ng-click="goToEnroll()">Enroll them now.</a> 
+									</h5>
+								</div>
+
+								<div class="task-box" ng-if="list.type == 'pending_enrollment_dependent' && list.total_employees > 0">
+									<h5 class="task-title">
+										<span ng-bind="list.total_employees"></span> dependents have yet to enroll into the company benefits plan.
+										</span>
+									</h5>
+								</div>
+
+								<div class="task-box" ng-if="list.type == 'vacant_seat'">
+									<h5 class="task-title">
+										Schedule for Vacant Seat Enrollment for <span ng-if="list.user_type == 'employee'">Employee</span> <span ng-if="list.user_type == 'dependent'">Dependent</span> is <span ng-bind="list.date_of_enrollment"></span>. <a href="/company-benefits-dashboard/#/vacant-seat-enrollment?vacant_id={{list.replacement_seat_id}}&type={{list.user_type}}">Enroll the new Employee</a> that will occupy this seat now.</span>
+									</h5>
+								</div>
+
+								<!-- <div class="task-box" ng-if="list.type == 'pending_active_plan_enrollment'">
+									<h5 class="task-title">
+										You have pending enrollment from your previous purchase of plan. <a href="javascript:void(0)" ui-sref="enrollment-options">Enroll them now.</a>
+										</span>
+									</h5>
+								</div> -->
+							</div>
+						</div>
+
+						<div class="loader-container task-load" style="height: 100px;padding-top: 5%;">
+							<div class="preloader-wrapper active">
+							    <div class="spinner-layer spinner-blue-only">
+							      <div class="circle-clipper left">
+							        <div class="circle"></div>
+							      </div><div class="gap-patch">
+							        <div class="circle"></div>
+							      </div><div class="circle-clipper right">
+							        <div class="circle"></div>
+							      </div>
+							    </div>
+							  </div>
+						</div>
+							
+						<!-- 
+						<div class="mednefits-box" style="background-color: #fff;margin-top: 20px;">
+							<div class="mednefits-header-box">
+								<h5 class="mednefits-header-title weight-700">Updates</h5>
+							</div>
+							<div class="mednefits-body-box">
+								<br><br>
+							</div>
+						</div> -->
+						<div class="col-lg-12 billing-status-title">
+							<h4 style="font-size: 15px;font-weight: bold;color: #585858;">BILLING STATUS</h4>
+						</div>
+						<div class="mednefits-box billing-status-box" style="background-color: #fff;">
+							<div class="plan-subscription-container">
+								<h5>Plan Subscription</h5>
+								<h6 class="subscription-current-balance">Current balance due</h6>
+								<h4 class="subscription-price">S$ <span ng-bind="total_plan_due"></span></h4>
+							</div>
+							<div class="health-spending-accounts-container">
+								<h5>Health Spending Accounts</h5>
+								<h6 class="subscription-current-balance">Current balance due</h6>
+								<h4 class="subscription-price">S$ <span ng-bind="total_spending.spending_total_due"></span></h4>
+								<h6 class="subscription-date" ng-if="total_spending.due_date">Due by <span ng-bind="total_spending.due_date"></span></h6>
+							</div>
+							<div class="view-invoice-button">
+								<button ui-sref="transactions">VIEW INVOICE</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-4 no-padding">
+					<div class="col-lg-12" ng-if="options.accessibility == 1">
+						<div class="mednefits-box total-company-credits" style="background-color: #fff;height: 330px;margin-bottom: 20px;">
+							<div class="mednefits-header-box"> 
+								<!-- <h5 class="mednefits-header-title weight-700">Company Mednefits Credits</h5> -->
+								<h5 class="mednefits-header-title weight-700">Total Company Credits</h5>
+							</div>
+
+							<div class="home-spending-type-container">
+								<p class="weight-700" style="color: #333;">Spending Account</p>
+								<button class="btn btn-default btn-medical" ng-class="{'active' : spendingAccountType == 0}" ng-click="selectSpending(0)">Medical</button>
+								<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingAccountType == 1}" ng-click="selectSpending(1)">Wellness</button>
+							</div>
+
+							<div class="task-box" ng-if="list.type == 'pending_activation'">
+								<h5 class="task-title">
+									<span ng-bind="list.total_employees"></span> employee accounts will be activated once payment is receive from Mednefits. <span ng-if="list.active_plan.cheque == 'true'">
+										As your payment method is by <span ng-if="list.active_plan.cheque == 'true'">cheque</span><span ng-if="progress.active_plan.credit == 'true'">credit</span>, we have yet to recieve your payment. Payment is due on <span ng-bind="list.invoice_due">DD/MM/YYYY</span>
+									</span>
+								</h5>
+							</div>
+							<div class="mednefits-body-box credit-box" hidden>
+								<div class="row">
+									<div class="col-md-12 credit-allocated-container">
+										<h1 ng-if="spendingAccountType == 0" class="no-margin credit-amount">S$ <span ng-bind="credits.allocated"></span></h1>
+										<h1 ng-if="spendingAccountType == 1" class="no-margin credit-amount">S$ <span ng-bind="credits.allocated_wellness"></span></h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">ALLOCATED</p>
+									</div>
+
+									<div class="col-md-12 credit-spent-container" style="margin-top: 20px;">
+										<h1 ng-if="spendingAccountType == 0" class="no-margin credit-amount">S$ <span ng-bind="credits.spent"></span></h1>
+										<h1 ng-if="spendingAccountType == 1" class="no-margin credit-amount">S$ <span ng-bind="credits.spent_wellness"></span></h1>
+										<p class="no-margin credit-text">SPENT</p>
+									</div>
+								</div>
+							</div>
+							<div class="loader-container credit-load">
+								<div class="preloader-wrapper active">
+								    <div class="spinner-layer spinner-blue-only">
+								      <div class="circle-clipper left">
+								        <div class="circle"></div>
+								      </div><div class="gap-patch">
+								        <div class="circle"></div>
+								      </div><div class="circle-clipper right">
+								        <div class="circle"></div>
+								      </div>
+								    </div>
+								  </div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-12" ng-if="options.accessibility != 1" style="display: none;">
+						<div class="mednefits-box" style="background-color: #fff;margin-bottom: 20px;">
+							<div class="mednefits-header-box">
+								<h5 class="mednefits-header-title weight-700">Employee Enrollment Status</h5>
+							</div>
+							<div class="mednefits-body-box">
+								<div class="row">
+									<div class="col-lg-6" style="margin-top: 10px;">
+										<!-- <div class="circle-graph-light"></div>
+										<div class="circle-graph-blue"></div> -->
+										<div class="graph-container position-relative ">
+											<div id="progressPieGraph" class="no-modebar"></div>
+										</div>
+									</div>
+									<div class="col-lg-6" style="padding-top: 24px;">
+										<p class="pull-left cirle-legend-text"><span class="circle-legend pull-left" style="background-color: #0392cf;">&nbsp;</span>Completed</p>
+										<p class="pull-right cirle-legend-text" ng-bind="progress.completed">0</p>
+										<p class="pull-left cirle-legend-text"><span class="circle-legend pull-left" style="background-color: #99d2eb;">&nbsp;</span>In-Progress</p>
+										<p class="pull-right cirle-legend-text" ng-bind="progress.in_progress">0</p>
+										<p class="pull-left" style="font-size: 13px;margin-left: -25px;margin-bottom: 0;font-size: 11px;">*Employee enrollment ends<br><span ng-bind="progress.plan_end_date">DD/MM/YYYY</span></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-lg-12" style="display: none;">
+						<div ng-if="options.accessibility == 1" class="mednefits-box" style="background-color: #fff;">
+							<div class="mednefits-header-box">
+								<h5 class="mednefits-header-title weight-700">Employee Enrollment Status</h5>
+							</div>
+							<div class="mednefits-body-box">
+								<div class="row">
+									<div class="col-lg-6" style="margin-top: 10px;">
+										<!-- <div class="circle-graph-light"></div>
+										<div class="circle-graph-blue"></div> -->
+										<div class="graph-container position-relative ">
+											<div id="progressPieGraph" class="no-modebar"></div>
+										</div>
+									</div>
+									<div class="col-lg-6" style="padding-top: 24px;">
+										<p class="pull-left cirle-legend-text"><span class="circle-legend pull-left" style="background-color: #0392cf;">&nbsp;</span>Completed</p>
+										<p class="pull-right cirle-legend-text" ng-bind="progress.completed">0</p>
+										<p class="pull-left cirle-legend-text"><span class="circle-legend pull-left" style="background-color: #99d2eb;">&nbsp;</span>In-Progress</p>
+										<p class="pull-right cirle-legend-text" ng-bind="progress.in_progress">0</p>
+										<p class="pull-left" style="font-size: 13px;margin-left: -25px;margin-bottom: 0;font-size: 11px;">*Employee enrollment ends<br><span ng-bind="progress.plan_end_date">DD/MM/YYYY</span></p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="mednefits-box" style="background-color: #fff;margin-top: 20px;">
+							<div class="mednefits-header-box">
+								<h5 class="mednefits-header-title weight-700">Frequently Asked Questions</h5>
+							</div>
+							<div class="mednefits-body-box">
+								<ul class="faqs-list">
+									<li>
+										<a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">Plan contract</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal2">Add new employee</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal3">Removing existing employee</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal4">Replace existing employee</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal5">Cancel plan</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal6">Data privacy</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-12">
+						 <div class="mednefits-box employee-enrollment-box" style="background-color: #fff;">
+							<div class="mednefits-header-box">
+								<h5 class="mednefits-header-title weight-700">Employee Enrollment Status</h5>
+							</div>
+							<div class="mednefits-body-box">
+								<div class="">
+									<h3 class="enrollment-status-number" ng-bind="progress.total_employees"></h3>
+									<h3 class="enrollment-status-text">Total number of seats</h3>
+								</div>
+								<div class="">
+									<h3 class="enrollment-status-number" ng-bind="progress.completed"></h3>
+									<h3 class="enrollment-status-text">Occupied seats</h3>
+								</div>
+								<div class="">
+									<h3 class="enrollment-status-number" ng-bind="progress.in_progress"></h3>
+									<h3 class="enrollment-status-text">Vacant seats</h3>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-12" ng-if="dependents.status">
+						<div class="mednefits-box dependent-enrollment-box" style="background-color: #fff;">
+							<div class="mednefits-header-box">
+								<h5 class="mednefits-header-title weight-700">Dependent Enrollment Status</h5>
+							</div>
+							<div class="mednefits-body-box">
+								<div class="">
+									<h3 class="enrollment-status-number" ng-bind="dependents.total_number_of_seats"></h3>
+									<h3 class="enrollment-status-text">Total number of seats</h3>
+								</div>
+								<div class="">
+									<h3 class="enrollment-status-number" ng-bind="dependents.occupied_seats"></h3>
+									<h3 class="enrollment-status-text">Occupied seats</h3>
+								</div>
+								<div class="">
+									<h3 class="enrollment-status-number" ng-bind="dependents.vacant_seats"></h3>
+									<h3 class="enrollment-status-text">Vacant seats</h3>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

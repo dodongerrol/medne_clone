@@ -1,0 +1,60 @@
+
+
+<div id="login-content" ng-controller="MainCtrl as login" >
+	<div class="sk-double-bounce" id="loader-home" hidden>
+	    <div class="sk-child sk-double-bounce1"></div>
+	    <div class="sk-child sk-double-bounce2"></div>
+	</div>
+	<div class="col-md-12 text-center login-logo">
+		<img src="../assets/userWeb/img/mednefits logo v3 (white) LARGE.png" class="img-20">
+	</div>
+
+	
+	<div class="login-wrapper text-center" style="padding: 20px 50px !important;">
+		
+
+		<div class="white-space-10"></div>
+		<h5><b>HEALTH PROFESSIONAL SIGNUP</b></h5>
+		<div class="white-space-1"></div>
+		<h5><b>Create Your Account</b></h5>
+		<div class="white-space-10"></div>
+
+		<form ng-submit="login.signUp()">
+			<div class="form-group">
+				<input id="phone" type="tel" class="form-control" name="phone" placeholder="Phone Number" autofocus required>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" name="fname" placeholder="Full Name" ng-model="login.new_user.full_name" required>
+			</div>
+			<div class="form-group">
+				<input type="email" class="form-control" name="email" placeholder="Email" ng-model="login.new_user.email" required>
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control" name="password" placeholder="Password" ng-model="login.new_user.password"  required>
+			</div>
+
+			<div class="form-group">
+				<input type="password" class="form-control" name="confirm-password" placeholder="Confirm Password" ng-model="login.new_user.confirm_password"  required>
+			</div>
+
+
+			<div class="form-group" id="error_message" style="display: none;">
+				<button type="button" class="btn btn-danger form-control"><span ng-bind="login.error"></span></button>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-info form-control"> Sign Up</button>
+			</div>
+			<div class="form-group">
+				<p class="text-center" style="font-size: 12px;">Already have an account? <a href="javascript:void(0)" ui-sref="login" style="color: #2C9FD7">Login</a></p>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$("#phone").intlTelInput({
+		'separateDialCode' : true
+	});
+</script>
+
+

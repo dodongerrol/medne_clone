@@ -1,0 +1,95 @@
+<div first-time-login-directive>
+	<div class="main-container">
+		<div class="first-time-login-container">
+
+			<div class="details-form">
+				<div class="medne-logo">
+					<img src="../../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png">
+				</div>
+				<form>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>First Name</label>
+							<input type="text" class="form-control" ng-model="formData.fName">
+						</div>
+						<div class="form-group">
+							<label>Last Name</label>
+							<input type="text" class="form-control" ng-model="formData.lName">
+						</div>
+						<div class="form-group">
+							<label>Date of Birth</label>
+							<div class='input-group date' id='datetimepicker1'>
+								<input type='text' class="form-control" ng-model="formData.bDay" />
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+						<div class="form-group mobile-input">
+							<label>Phone</label>
+							<div class="phone-are-box">
+								<span>+</span>
+								<input type="number" class="form-control area-code" ng-model="formData.areaCode">
+								<input type="number" class="form-control phone-number" ng-model="formData.mNumber">
+							</div>
+						</div>
+						<div class="form-group">
+							<label>Address</label>
+							<input type="text" class="form-control" ng-model="formData.address">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>City</label>
+							<input type="text" class="form-control" ng-model="formData.city">
+						</div>
+						<div class="form-group">
+							<label>Country</label>
+							<input type="text" class="form-control" ng-model="formData.country">
+						</div>
+						<div class="form-group">
+							<label>Postal Code</label>
+							<input type="text" class="form-control" ng-model="formData.postal">
+						</div>
+						<div class="form-group">
+							<label>Password</label>
+
+							<div class="form-hint">To conform with our Strong Password policy, you are required to use
+								a sufficiently strong password. Password must be more than 7 characters.</div>
+
+							<input type="{{ typePassword ? 'text' : 'password' }}" class="form-control ok-password" ng-class="(joinTeamForm.password.$dirty && 
+							joinTeamForm.password.$invalid) ? 'error' : ''" id="password" name="password" placeholder="Enter Password"
+								ng-required="true" ng-model="formData.password">
+
+							<div class="show-hide-pass">
+								<a href="#" ng-click="togglePassword()"> <i ng-class="toggleEye ? 'fa fa-eye-slash' : 'fa fa-eye'"
+										aria-hidden="true"></i> </a>
+								<!-- class="fa fa-eye" -->
+							</div>
+
+							<!-- <div class="label password-count" ng-class="password.length > 8 ? 'label-success' : 'label-danger'"
+								ng-cloak>{{ password | passwordCount:8 }}</div> -->
+
+							<div class="strength-meter">
+								<div class="strength-meter-fill" data-strength="{{passwordStrength}}"></div>
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label>Re-Type Password</label>
+							<input type="password" class="form-control" ng-class="passMatch" ng-model="formData.password2"
+								ng-keyup="checkPassMatch()">
+						</div>
+					</div>
+
+
+
+					<div class="col-md-12 text-right">
+						<button class="btn btn-ftime-submit" ng-click="submit(formData)">Submit</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>

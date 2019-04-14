@@ -1,0 +1,40 @@
+<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+	<div class="container">
+		<!--
+		<div class="welcome-container">
+			<h4 ui-sref="benefits-dashboard">Overview</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
+		</div>-->	
+		<div class="welcome-container enrollment-nav">
+			<h4 class="container-title" >Enrollment</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+	</div>
+</div>
+<div id="enroll-option-wrapper" enrollment-options-directive>
+	<div class="hrdb-body-container ">
+		<div class="container">
+			<div class="col-lg-12">
+				<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Let’s get to know more about your team.</h1>
+				<div class="white-space-20"></div>
+				<div class="enrollment-options-container center-block">
+					<div class="enrollment-options-subheading">
+						<p>Does your team benefits package require custom tiering?</p>
+						<p>Such as different benefits budget for different hierarchy in the company.</p>
+					</div>
+					<div class="enrollment-options-button">
+						<button ng-class="{'active': isRequiredTiering == false}" ng-click="toggleEnrollmentOptions(false)">No</button>
+						<button ng-class="{'active': isRequiredTiering == true}" ng-click="toggleEnrollmentOptions(true)">Yes</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div class="prev-next-buttons-container">
+		<div class="container">
+			<button ng-click="backButton()" class="pull-left btn btn-info back-btn" style="background-color: transparent;color: #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button>
+			<button ng-click="enrollmentNextBtn()"  class="pull-right btn btn-info next-wizard-button" ng-disabled="isOptionSelected == false">NEXT</button>
+		</div>
+	</div>
+</div>

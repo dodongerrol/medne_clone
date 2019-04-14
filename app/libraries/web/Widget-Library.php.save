@@ -1,0 +1,334 @@
+<?php
+/**
+* nhr
+*/
+use Carbon\Carbon;
+class Widget_Library {
+
+	function __construct()
+	{
+		# code...
+	}
+
+
+	// get clinic base on search key name
+	public static function getClinicByName($clinicName)
+	{
+		return DB::table('clinic')->where('Name', 'LIKE', '%'.$clinicName.'%')->get();
+	}
+
+	// for medical partners only
+	public static function getClinicMedicalPartners($clinic_name) {
+		$medical_partners = ['The Clinic @ Aperia', 'The Clinic @ Fusionopolis', 'The Clinic @ Capitagreen', 'The Clinic @ One George Street', 'The Clinic @ Campus', 'Clinic @ Business City'];
+		$only_aesthetics = ["Only Group (Raffles Place)", "Only Group (Capitol Piazza)", "Only Group (I12 Katong)", "Only Group (Holland Village)", "Only Group (Pacific Plaza)", "Only Group (Orchard Road)", "Only Group (Dhoby Ghaut)"];
+		$dental_clinic = ["Dental Focus Capitol Clinic", "Dental Focus People's Park Clinic", "Urban Dental London (Chinatown Point)"];
+		$cmc = ["CMC (Yishun)", "CMC 中国中医 (Bugis)", "CMC 中国中医 (Bukit Merah)", "CMC 中国中医 (Jurong East)"];
+		if($clinic_name == 'medical_partners') {
+				return DB::table('clinic')->whereIn('Name', $medical_partners)->where('Active', 1)->get();
+		} else if($clinic_name == 'only_group') {
+				return DB::table('clinic')->whereIn('Name', $only_aesthetics)->where('Active', 1)->get();
+		} else if($clinic_name == 'dental_focus') {
+			return DB::table('clinic')->whereIn('Name', $dental_clinic)->where('Active', 1)->get();
+		} else if ($clinic_name == 'cmc') {
+			return DB::table('clinic')->whereIn('Name', $cmc)->where('Active', 1)->get();
+		}
+	}
+
+// get clinic data only
+	public static function getClinicDataOnly($clinicid)
+	{
+		StringHelper::Set_Default_Timezone();
+    //     $currentdate = date('d-m-Y');
+    //     $allDoctors = Clinic_Library::FindAllClinicDoctors($clinicid);
+    //     $findClinicDetails = Clinic_Library::FindClinicDetails($clinicid);
+ 	// 	 $findClinicprocedures = Clinic_Library::FindClinicProcedures($clinicid);
+		 //
+    //     $dataArray['doctors'] = $allDoctors;
+    //     $dataArray['procedure'] = $findClinicprocedures;
+    //     $dataArray['clincID'] = $clinicid;
+    //     $dataArray['clincname'] = $findClinicDetails->Name;
+    //     $dataArray['title'] = "Doctor widget";
+				//
+        // return $dataArray;
+		return DB::table('clinic')->select('clinic.ClinicID', 'clinic.Name', 'clinic.Address', 'clinic.City', 'clinic.Country', 'clinic.Lat', 'clinic.Lng')->skip(2000)->take(6)->get();
+	}
+
+	public static function getClinicData($clinicid)
+	{
+		StringHelper::Set_Default_Timezone();
+        $currentdate = date('d-m-Y');
+        $allDoctors = Clinic_Library::FindAllClinicDoctors($clinicid);
+        $findClinicDetails = Clinic_Library::FindClinicDetails($clinicid);
+ 		$findClinicprocedures = Clinic_Library::FindClinicProcedures($clinicid);
+
+        $dataArray['doctors'] = $allDoctors;
+        $dataArray['procedure'] = $findClinicprocedures;
+        $dataArray['clincID'] = $clinicid;
+        $dataArray['clincname'] = $findClinicDetails->Name;
+        $dataArray['title'] = "Doctor widget";
+        $view = View::make('widget.doctor-widget',$dataArray);
+       	return $view;
+	}
+
+	public static function loadDoctorProcedure()
+	{
+		 $allInputs = Input::all();
+		 $doctorID = $allInputs['docID'];
+		 $clinicID = $allInputs['clinicID'];
+
+		return $doctorProcedures = Doctor_Library::FindDoctorProcedures($clinicID,$doctorID);
+	}
+
+    public static function loadProcedureDoctor()
+    {   
+         $allInputs = Input::all();
+         $procedureID = $allInputs['procedureID'];
+         $clinicID = $allInputs['clinicID'];
+
+        $dp = new DoctorProcedures();
+       $doctorlist = $dp->FindDoctorsByProcedure($procedureID, $clinicID);
+
+         return $doctorlist;
+
+    }
+
+    //  public static function loadProcedureDoctor()
+    // {
+    //      $allInputs = Input::all();
+    //      $procedureID = $allInputs['procedureID'];
+    //      $clinicID = $allInputs['clinicID'];
+
+    //      $dp = new DoctorProcedures();
+    //      $doctorlist = $dp->FindDoctorsByProcedure($procedureID, $clinicID);
+
+    //      return $doctorlist;
+
+    // }
+
+
+	public static function loadEndTime()
+	{
+		  $allInputs = Input::all();
+        StringHelper::Set_Default_Timezone();
+		 $time = strtotime($allInputs['time']);
+		 $duration = $allInputs['duration'];
+
+		$findEndTime = String_Helper_Web::FindEndTime($time,$duration);
+
+		return $findEndTime;
+
+	}
+
+
+	public static function NewClinicAppointment($clinicdata){
+
+        $allInputs = Input::all();
+        // StringHelper::Set_Default_Timezone();
+        $currentDate = date('d-m-Y');
+
+        $allInputs['starttime'] = strtotime($allInputs['starttime']);
+        $allInputs['endtime'] = strtotime($allInputs['endtime']);
+
+
+        $userexistStatus = 0;
+        $findClinicDetails = Clinic_Library::FindClinicDetails($clinicdata->Ref_ID);
+        if($findClinicDetails && !empty($allInputs)){
+            $findPlusSign = substr($allInputs['phone'], 0, 1);
+            if($findPlusSign == 0){
+                $PhoneOnly = $allInputs['code'].substr($allInputs['phone'], 1);
+            }else{
+                $PhoneOnly = $allInputs['code'].$allInputs['phone'];
+            }
+
+            //$findUser = Auth_Library::FindRealUser($allInputs['nric'],$allInputs['email']);
+            $findUser = Auth_Library::FindUserEmail($allInputs['email']);
+            if($findUser){
+                //$userid = $findUser->UserID;
+                $userid = $findUser;
+                $userexistStatus = 1;
+            }else{
+                $pw = StringHelper::get_random_password(8);
+
+                $userData['name'] = $allInputs['name'];
+                $userData['usertype'] = 1;
+                $userData['email'] = $allInputs['email'];
+                $userData['nric'] = $allInputs['nric'];
+                $userData['code'] = $allInputs['code'];
+                $userData['mobile'] = $PhoneOnly;
+
+                $userData['address'] = '';
+                $userData['city'] = '';
+                $userData['state'] = '';
+                $userData['zip'] = '';
+
+                $userData['ref_id'] = 0;
+                $userData['activelink'] = null;
+                $userData['status'] = 0;
+                $userData['source'] = 3;//widget;
+                $userData['pw'] = StringHelper::encode($pw);
+
+                $newuser = Auth_Library::AddNewUser($userData);
+                if($newuser){
+                    $userid = $newuser;
+                    // nhr 2016/7/25
+
+                    // $emailDdata['emailPage']= 'email-templates.welcome';
+                    // $emailDdata['emailTo']= $allInputs['email'];
+                    // $emailDdata['pw']= $pw;
+                    // $emailDdata['emailName']= $allInputs['name'];
+                    // $emailDdata['emailSubject'] = 'Thank you for registering with us';
+                    // EmailHelper::sendEmail($emailDdata);
+// dd($emailDdata);
+                }else{
+                    return 0;
+                }
+            }
+            $wallet = new Wallet( );
+            $procedure = new ClinicProcedures( );
+            $transaction_data = new Transaction( );
+
+            $getProcedure = $procedure->ClinicProcedureByID($allInputs['procedureid']);
+
+            $wallet_id = $wallet->getWalletId($userid);
+            
+            $bookingtime = $allInputs['endtime'] - $allInputs['starttime'];
+            $slottime = abs($bookingtime)/60;
+
+
+            //$existingAppointment = General_Library::FindExistingAppointment($allInputs['doctorid'],strtotime($allInputs['bookdate']),$allInputs['starttime'],$allInputs['endtime']);
+            $existingAppointment = General_Library::FindExistingAppointment($allInputs['doctorid'],strtotime($allInputs['bookdate']));
+
+            $activeAppointment = 0;
+            if($existingAppointment){
+                foreach($existingAppointment as $appointExist){
+                    if($activeAppointment ==0){
+                        if(($appointExist->StartTime <= $allInputs['starttime'] && $appointExist->EndTime > $allInputs['starttime']) || ($appointExist->StartTime < $allInputs['endtime'] && $appointExist->EndTime >= $allInputs['endtime'])){
+                            $activeAppointment = 1;
+                        }
+                    }
+                }
+            }
+
+            if($activeAppointment==1 || ($activeAppointment !=1 && $slottime != $allInputs['duration'])){
+                return 1;
+            }
+            //return 1;
+            $starttime = date('h:i A',$allInputs['starttime']);
+            $endtime = date('h:i A',$allInputs['endtime']);
+            $bookArray['userid'] = $userid;
+            $bookArray['clinictimeid'] = $allInputs['clinictimeid'];
+            $bookArray['doctorid'] = $allInputs['doctorid'];
+            $bookArray['procedureid'] = $allInputs['procedureid'];
+            //$bookArray['starttime'] = $allInputs['starttime'];
+            //$bookArray['endtime'] = $allInputs['endtime'];
+            $bookArray['starttime'] = strtotime($allInputs['bookdate'].$starttime);
+            $bookArray['endtime'] = strtotime($allInputs['bookdate'].$endtime);
+                //$bookArray['slotplace'] = $allInputs['slotplace'];
+            $bookArray['remarks'] = $allInputs['remarks'];
+            $bookArray['bookdate'] = strtotime($allInputs['bookdate']);
+            $bookArray['mediatype'] = 1;
+            $bookArray['patient']=$allInputs['name'];
+            $bookArray['price']=$allInputs['price'];
+
+            $s = strtotime($allInputs['bookdate'].$starttime);
+            $e = strtotime($allInputs['bookdate'].$endtime);
+
+            $duration = ($e-$s)/60;
+            $bookArray['duration']=$duration;
+            // $bookArray['duration']=0;
+
+            $newBooking = General_Library::NewAppointment($bookArray);
+            if($newBooking){
+                $findUserDetails = Auth_Library::FindUserDetails($userid);
+                $findDoctorDetails = Doctor_Library::FindDoctorDetails($allInputs['doctorid']);
+                $findClinicProcedure = General_Library::FindClinicProcedure($allInputs['procedureid']);
+                //Update User Details
+                if($userexistStatus==1){
+                    $userupdate['userid'] = $findUserDetails->UserID;
+                    $userupdate['NRIC'] = $allInputs['nric'];
+                    $userupdate['Name'] = $allInputs['name'];
+                    $userupdate['PhoneCode'] = $allInputs['code'];
+                    $userupdate['PhoneNo'] = $PhoneOnly;
+                    Auth_Library::UpdateUsers($userupdate);
+                }
+                //Send SMS
+                if(StringHelper::Deployment()==1){
+                    // $smsMessage = "Hello ".$findUserDetails->Name." your booking with ".$findDoctorDetails->Name." at ".$findClinicDetails->Name." is confirmed on ".$allInputs['bookdate']." from ".date('h:i A',$allInputs['starttime'])." to ".date('h:i A',$allInputs['endtime']).". Thank you for using medicloud.";
+
+                  $smsMessage = "Hello ".$findUserDetails->Name." your appointment with ".$findDoctorDetails->Name." at ".$findClinicDetails->Name.", ".$findClinicDetails->Address.", Ph:".$findClinicDetails->Phone." is confirmed for ".date('d-m-Y',strtotime($allInputs['bookdate'])).", ".date('h:i A',$allInputs['endtime']).". Your appointment ID is: ".$newBooking.", thank you for using Medicloud. Get the free app at www.medicloud.sg";
+
+                    $sendSMS = StringHelper::SendOTPSMS($findUserDetails->PhoneNo,$smsMessage);
+                }
+
+                if($findClinicProcedure){
+                    $procedurename = $findClinicProcedure->Name;
+                }else{
+                    $procedurename = null;
+                }
+                //Send Email User
+                $formatDate = date('l, j F Y',strtotime($allInputs['bookdate']));
+                $emailDdata['bookingid'] = $newBooking;
+                $emailDdata['remarks'] = $allInputs['remarks'];
+                $emailDdata['bookingTime'] = date('h:i A',$allInputs['starttime']).' - '.date('h:i A',$allInputs['endtime']);
+                $emailDdata['bookingNo'] = 0;
+                $emailDdata['bookingDate'] = $formatDate;
+                $emailDdata['doctorName'] = $findDoctorDetails->Name;
+                $emailDdata['doctorSpeciality'] = $findDoctorDetails->Specialty;
+                $emailDdata['clinicName'] = $findClinicDetails->Name;
+                $emailDdata['clinicPhoneCode'] = $findClinicDetails->Phone_Code;
+                $emailDdata['clinicPhone'] = $findClinicDetails->Phone;
+                $emailDdata['clinicAddress'] = $findClinicDetails->Address;
+                $emailDdata['clinicProcedure'] = $procedurename;
+                $emailDdata['emailName']= $findUserDetails->Name;
+                $emailDdata['emailPhone']= $findUserDetails->PhoneNo;
+                $emailDdata['emailPage']= 'email-templates.booking';
+                $emailDdata['emailTo']= $findUserDetails->Email;
+                $emailDdata['emailSubject'] = 'Thank you for making your clinic reservation';
+                if(StringHelper::Deployment()==1){
+                    EmailHelper::sendEmail($emailDdata);
+                }//Send email to Doctor
+                $emailDdata['emailPage']= 'email-templates.booking-doctor';
+                $emailDdata['emailTo']= $findDoctorDetails->Email;
+                if(StringHelper::Deployment()==1){
+                    EmailHelper::sendEmail($emailDdata);
+                }//Send email to Doctor
+                $emailDdata['emailPage']= 'email-templates.booking-doctor';
+                $emailDdata['emailTo']= $clinicdata->Email;
+                // EmailHelper::sendEmail($emailDdata);
+
+                $event_id = Clinic_Library::insertGoogleCalenderAppointment($bookArray,$findDoctorDetails); //nhr
+                $ua = new UserAppoinment();
+                $ua->updateUserAppointment(array('event_type'=>3,'Gc_event_id'=>$event_id),$newBooking);
+
+                // save transaction data
+                $transaction = array(
+                    'wallet_id'             => $wallet_id,
+                    'ClinicID'              => $allInputs['clinicID'],
+                    'UserID'                => $userid,
+                    'ProcedureID'           => $allInputs['procedureid'],
+                    'DoctorID'              => $allInputs['doctorid'],
+                    'AppointmenID'          => $newBooking,
+                    'amount_to_pay'         => $getProcedure->Price,
+                    'total_transaction'     => null,
+                    'balance_transaction'   => null,
+                    'medi_percent'          => 0.1,
+                    'date_of_transaction'   => Carbon::now(),
+                    'created_at'            =>  Carbon::now(),
+                    'updated_at'            =>  Carbon::now()
+                );
+
+                $transaction_data->createTransaction($transaction);
+                return $newBooking;
+
+
+            }else{
+                return 0;
+            }
+        }else{
+            return 0;
+        }
+    }
+
+
+}
+ ?>

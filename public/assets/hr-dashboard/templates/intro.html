@@ -1,0 +1,104 @@
+<div intro-directive>
+
+	<div class="main-container" hidden>
+		<div class="hrdb-body-container" id="sample">
+			<div class="container">
+				<div class="body-content">
+					<div class="row">
+						<div class="col-lg-12">
+							<img src="../../assets/hr-dashboard/img/welcome.png" class="pull-right" id="welcome-image">
+							<h2 class="header-greet-msg">Hi <span ng-bind="customer.contact_name"></span>, ready to get started?</h2>
+							<p class="header-text-msg">
+								Some of those sections below have been completed. For the uncompleted sections
+								<br>make sure you have the required information on hand in order to make this process faster.
+								<br>Give us a call at +65 6254 7889 if you have any questions.
+							</p>
+						</div>
+					</div>
+					
+					<div class="row body-summary-content">
+						<div class="col-lg-12">
+							<p>What to expect:</p>
+							<table class="table table-bordered summary-table" style="height: 450px;">
+								<thead>
+									<tr>
+										<th>
+											<span class="num-circle">1</span>
+											<h1>Select plan and<br>provide company information</h1>
+										</th>
+										<th>
+											<span class="num-circle">2</span>
+											<h1>Input payment details<br>and send payment</h1>
+										</th>
+										<th>
+											<span class="num-circle">3</span>
+											<h1>Enroll all full time<br>employess into this plan</h1>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-center icon" style="vertical-align: middle;">
+											<img src="../../assets/hr-dashboard/img/icons/verified.png" >
+										</td>
+										<td class="icon" ng-class="{'text-center' : intro_data.paid == true, 'vl-middle' : intro_data.paid == true}">
+											<img ng-if="intro_data.paid == true" src="../../assets/hr-dashboard/img/icons/verified.png" >
+											
+											<span ng-if="intro_data.paid == false">
+												<p>Required information:</p>
+												<ul>
+													<li>Payee cheque information (company name, address,ACRA number) can be found in invoice</li>
+												</ul>
+												<ul>
+													<li>You may download the invoice from Welcome Email or the company portal under Account & Billing.</li>
+												</ul>
+											</span>
+										</td>
+										<td class="icon" ng-class="{'text-center' : intro_data.employee_count > 0, 'vl-middle' : intro_data.employee_count > 0}">
+											<img ng-if="intro_data.employee_count > 0" src="../../assets/hr-dashboard/img/icons/verified.png" >
+											<span ng-if="intro_data.employee_count == 0">
+												<p>Required information</p>
+												<ul>
+													<li>Employee full name, last name</li>
+													<li>Employee date of birth</li>
+													<li>Employee NRIC/FIN</li>
+													<li>Employee work email</li>
+													<li>Employee mobile number</li>
+													<li>Employee job title</li>
+												</ul>
+												<ul ng-if="intro_data.dependent_status">
+													<li>Dependent first name, last name</li>
+													<li>Dependent date of birth</li>
+													<li>Dependent NRIC/FIN</li>
+													<li>Dependent relationship</li>
+												</ul>
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> 
+		<div class="lets-go-container">
+		<!-- ui-sref="privacy-policy" -->
+			<button ng-click="navigateChoice()" class="btn btn-info med-button center-block">LET'S GO</button>
+		</div>
+	</div>
+
+	<div class="loader-container">
+		<div class="preloader-wrapper big active">
+		    <div class="spinner-layer spinner-blue-only">
+		      <div class="circle-clipper left">
+		        <div class="circle"></div>
+		      </div><div class="gap-patch">
+		        <div class="circle"></div>
+		      </div><div class="circle-clipper right">
+		        <div class="circle"></div>
+		      </div>
+		    </div>
+		  </div>
+	</div>
+</div>

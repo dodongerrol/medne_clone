@@ -1,0 +1,222 @@
+
+.detail-tab li a {
+	height: 30px;
+	color: #5F6565;
+}
+
+.detail-tab > .row > .nav-tabs li > a,
+.detail-tab > .row > .nav-tabs > li > a:hover,
+.detail-tab > .row > .nav-tabs > li > a:focus {
+  border-color: white;
+  background: transparent;
+  font-weight: normal;
+}
+
+.detail-tab > .row > .nav-tabs .active > a,
+.detail-tab > .row > .nav-tabs .active > a:hover,
+.detail-tab > .row > .nav-tabs .active > a:focus {
+	border-color: white;
+    background: transparent;
+    color: black !important;
+    font-weight: bold;
+}
+
+.detail-tab > .row > .nav-tabs li > a > b{
+  font-weight: normal;
+}
+
+.detail-tab > .row > .nav-tabs .active > a > b{
+    font-weight: bold;
+}
+
+.staff-doctor{
+	padding: 0px; 
+	padding-top: 20px; 
+	padding-left: 25px;
+    padding-bottom: 10px;
+}
+
+.detail-lbl {
+	float: right;
+    padding-right: 15px;
+    padding-top: 5px;
+    font-size: 14px;
+    color: #666666;
+}
+
+.line-break {
+	padding-bottom: 20px;
+    border-bottom: 1px solid #DCDCDC;
+}
+
+.staff-btn{
+	background: #1b9bd7;
+    border: 0px;
+    color: white;
+    width: 75px;
+    height: 35px;
+    border-radius: 5px;
+}
+
+#staff-doctor-email{
+	color: #333333;
+}
+
+.bottom-padding {
+	padding-bottom: 13px;
+}
+
+.popover-title {
+	background:#D8F5F9;
+        color: #666666;
+}
+
+/* nhr  */
+
+.lbl-left {
+    padding-right: 15px;
+    padding-top: 10px;
+    font-size: 14px;
+}
+
+.staff-plus-btn {
+    font-size: smaller;
+    border: 2px solid; 
+    border-radius: 50%; 
+    padding: 3px;
+    cursor: pointer;
+}
+
+.no-padding {
+    padding: 0px;
+}
+
+
+
+/* -- Staff Tab - Doctor Breaks -- */
+
+.staff-break-btn {
+	background: #1b9bd7;
+    border: 0px;
+    color: white;
+    width: 85px;
+    height: 26px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.doc-break-time {
+	color: #777676;
+    background: white;
+    border: 1px solid #BFBFBF;
+}
+
+
+/* -- Staff Tab - Time Off -- */
+
+
+.time-off-icon {
+    font-size: 25px;
+    color: #999999;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+#time-off-add-btn {
+    border: 1px solid #777;
+    padding: 8px;
+    border-radius: 5px;
+    color: #666666;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.staff-day-checkbox input[type=checkbox] {
+    display: none;
+}
+
+.staff-day-checkbox label:before {
+    content: "\2713";
+    font-size: 18px;
+    font-weight: bold;
+    color: transparent;
+    text-align: center;
+    line-height: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 5px;
+}
+
+.staff-day-checkbox input[type=checkbox]:checked + label:before {
+	content: "\2713";
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(27, 155, 215);
+    text-align: center;
+    line-height: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 5px;
+}
+
+.scoll-panel {
+    height: 300px;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#btn-doctor-pop .popover {
+  width:200px;
+  height:250px;
+}
+
+.popover{
+    font-family: 'Open Sans', sans-serif;
+}
+
+.pop-input {
+    border: 1px solid #929292 !important;
+}
+
+.pop-add-btn{
+    background: #1597D1;
+    color: white;
+    border: 0px;
+    height: 25px;
+    width: 75px;
+}
+
+.pop-add-btn:hover, .pop-add-btn:focus{
+    background: #1597D1;
+    color: white;
+    border: 0px;
+    height: 25px;
+    width: 75px;
+}
+
+.pop-close-btn{
+    margin-left: 10px;
+    background: white;
+    color: black;
+    border: 1px solid #929292;
+    height: 25px;
+    width: 55px;
+
+}
+
+.break-btn-disable {
+    background: #EDEDEB;
+    border: 0px;
+    color: #ACACAA;
+    width: 85px;
+    height: 26px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.font-type-open-sans {
+    font-family: 'Open Sans', sans-serif !important;
+}

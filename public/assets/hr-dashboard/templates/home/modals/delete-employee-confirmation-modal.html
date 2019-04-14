@@ -1,0 +1,17 @@
+<!-- This modal is for Employee Overview page only -->
+
+
+<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="delete-employee-confirmation-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" employee-list-directive>
+    <div class="modal-dialog modal-lg" role="document" style="width: 500px;">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-header" style="background-color: #ff6864;padding: 20px;height: 200px;\">
+                <!-- <img src="assets/hr-dashboard/img/icons/close.svg" style="width: 20px;cursor: pointer;" class="pull-right" data-dismiss="modal"> -->
+                <h1 class="modal-title pull-left" id="exampleModalLabel" style="color: #fff;margin: 40px 20px;">Hold on a sec <br> <span style="font-size: 16px;">Are you sure you want to delete the <span ng-bind="empModal_arr.length"></span> employee(s)?</span></h1>
+            </div>
+            <div class="modal-body">
+                <button class="delete-modal-del-button" ng-click="deleteEmp()">Withdraw</button>
+                <button class="delete-modal-cancel-button" data-dismiss="modal">NO</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,312 @@
+/*large display css*/
+/*@media only screen and (max-width : 1980px) and (orientation : landscape)  {*/
+@media only screen 
+and (min-width : 1824px) {
+
+    .appointments {
+        margin-top: 21px;
+        width: 50%;
+    }
+	
+	
+	.appoint-counter {
+    float: left;
+    margin-bottom: 2.5%;
+    margin-left: 21%;
+    margin-top: 2%;
+    text-align: center;
+    width: 90%;
+}
+    
+    /*.queue-number {
+        font-family: "Nunito",sans-serif !important;
+        margin-left: 36%;
+    }*/
+    .queue-number2{
+        
+        font-family: "Nunito",sans-serif !important;
+        /*margin-left: 26%;*/
+        margin-left: 0%;
+        font-size: 7em;
+        color: #1b9bd7;
+    }
+
+    .mc-btn-booknow {
+    background-color: #12d537;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    height: 35px;
+    margin: 34px auto 0 0;
+    padding-top: 13px;
+    text-align: center;
+    width: 188px;
+}
+
+    .appointments2 {
+        margin-top: 21px;
+        width: 33%;
+    }
+    
+    
+    
+    #ui-datepicker-div{ top:25% !important; left: 5.6% !important;}
+    
+    .page-number { width: 20%;  margin: 41px auto 0;   }
+
+    .page-number .number {
+
+        border-radius: 10px;
+        color: #00aeef;
+        float: left;
+        font-size: 14px;
+        height: 30px;
+        list-style: outside none none;
+        margin-right: 2px;
+        padding-top: 5px;
+        text-align: center;
+        text-decoration: none;
+        width: 32px;
+    } 
+
+
+    .page-number .number:hover  {
+        background-color: #00aeef;
+        border-radius: 10px;
+        color: #fff;
+        float: left;
+        font-size: 14px;
+        height: 30px;
+        list-style: outside none none;
+        margin-right: 2px;
+        padding-top: 5px;
+        text-align: center;
+        text-decoration: none;
+        width: 32px;
+    } 
+
+
+
+    .num-selected  {
+        background-color: #00aeef;
+        border-radius: 10px;
+        color: #fff !important;
+        float: left;
+        font-size: 14px;
+        height: 30px;
+        list-style: outside none none;
+        margin-right: 2px;
+        padding-top: 5px;
+        text-align: center;
+        text-decoration: none;
+        width: 32px;
+    } 
+   /* .event-container3 {
+        margin-left: 19%;
+        width: 50%;
+    }*/
+    
+    
+    
+    .queue-bar-blue {
+    background-color: #c8eafb;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 10px;
+    margin-left: 26%;
+    width: 460px;
+}
+
+
+
+
+.mc-btn-stop2{
+    background-color:#ff0000;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    height: 35px;
+    margin: 34px auto 0 5%;
+    padding-top: 13px;
+    text-align: center;
+    width: 188px;
+}
+
+.queue-bar-gray { background-color: #f4f4f4; border-left: 1px solid #95d3f0; cursor: pointer !important; height: 60px; margin-left: 26%; margin-bottom: 10px; width: 460px; }
+
+.queue-bar-dblue { background-color: #1b9bd7; border-left: 1px solid #95d3f0; cursor: pointer !important; height: 60px; margin-left:26%; margin-bottom: 10px; width: 460px; }
+.queue-bar-white { background-color: #ffffff; cursor: pointer !important; height: 60px; margin-left: 26%; margin-bottom: 10px; width: 460px; }
+
+
+/*.btn-wrapper2{ margin-left:28%;}*/
+
+
+
+
+
+
+}
+
+@media 
+(-webkit-min-device-pixel-ratio: 2), 
+(min-resolution: 192dpi) { 
+    
+    
+    .mc-calendar4 {
+    background-color:#c8eafb;
+    border-radius: 8px !important;
+    float: left;
+    height: 26px;
+    left: 20% !important;
+    margin-bottom: 5%;
+    margin-left: 67px;
+    margin-top: 10px;
+    padding: 15px;
+    width: 16%;
+}
+.page-number2 .number {
+   
+    border-radius: 10px;
+    color: #00aeef;
+    float: left;
+    font-size: 14px;
+    height: 28px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 5px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+.page-number2 .number:hover  {
+    background-color: #00aeef;
+    border-radius: 10px;
+    color: #fff;
+    float: left;
+    font-size: 14px;
+    height: 28px;
+    list-style: outside none none;
+    margin-right: 2px;
+    padding-top: 5px;
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+}  
+
+.num-selected  {
+    background-color: #00aeef;
+    border-radius: 10px;
+    color: #fff !important;
+    float: left;
+    font-size: 14px;
+    height: 28px;
+    list-style: outside none none;
+    margin-right: 2px;
+/*    padding-top: 10px;*/
+    text-align: center;
+    text-decoration: none;
+    width: 32px;
+} 
+
+
+.event-container3 {
+    /*width: 50%;*/
+	margin-left:none;
+}
+
+
+.queue-number{
+    color: #1b9bd7;
+    font-family: "Nunito",sans-serif !important;
+    margin-left: 18% !important;
+   /* margin-left: 36%;*/
+	
+}
+
+
+.appoint-counter {
+    float: left;
+    margin-bottom: 2.5%;
+    margin-left: 7%;
+    margin-top: 2%;
+    text-align: center;
+    width: 90%;
+}
+
+
+
+
+.queue-bar-blue {
+    background-color: #c8eafb;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 10px;
+    margin-left: 17%;
+    width: 460px;
+}
+
+
+.mc-calendar-day .mc-day { font-size: 14px; color: #cccccc; float: left; height: 35px; width: 170px; padding-top: 28px; text-align: center; }
+.mc-day-option-container .mc-day-block { /*background-color: #9CF;*/ height: 73px; width: 160px; margin-right: 10px; float: left }
+/*.mc-day-option-container .mc-day-block-last { background-color: #9CF; height: 73px; width: 165px; float: left }*/
+
+.mc-day-block .mc-slot1 { color: #666666; font-size: 12px; height: 30px; margin-bottom: 1px; padding: 6px 0 0 5px; width: 150px; background-color: #1b9bd7; }
+.mc-day-block .mc-slot2 { color: #666666; font-size: 12px; height: 30px; margin-bottom: 1px; padding: 6px 0 0 5px; width: 150px; background-color: #1b9bd7; }
+    
+}
+
+
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail {
+    float: left;
+    height: auto;
+    padding: 20px 0 0 120px;
+    width: 50%;
+}
+.mc-container .mc-background-color .mc-doctor-profile-container .mc-dr-profile-detail .mc-dr-profile-image {
+    border-radius: 8px !important;
+    float: left;
+    height: 125px;
+    margin-top: 4%;
+    width: 125px;
+}
+.appoint-counter {
+    float: left;
+    margin-bottom: 2.5%;
+    margin-left: 11%;
+    margin-top: 2%;
+    text-align: center;
+    width: 90%;
+}
+
+.queue-bar-gray {
+    background-color: #f4f4f4;
+    border-left: 1px solid #95d3f0;
+    cursor: pointer !important;
+    height: 60px;
+    margin-bottom: 10px;
+/*    margin-left: 26% !important;*/
+    width: 460px;
+}
+.event-container3 {
+    padding-left: 13%;
+    width: 50%;
+}
+
+/*.mc-bg-white .mc-container .mc-background-color .mc-calendar .mc-date-toggle-container {
+    height: 28px;
+    margin-left: 29% !important;
+    margin-top: 24px;
+    width: 285px;
+}
+.mc-day-option-container .mc-day-block {
+    float: left;
+    height: 73px;
+    margin-right: 10px;
+    width: 13.7% !important;
+}*/
