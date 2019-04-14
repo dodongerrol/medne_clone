@@ -11,7 +11,7 @@ app.directive('eclaimSubmitDirective', [
 			link: function link( scope, element, attributeSet ) {
 				console.log("eclaimSubmitDirective Runnning !");
 
-				scope.step_active = 2;
+				scope.step_active = 1;
 				scope.eclaim = {};
 				scope.eclaim.selectedDayTime = 'AM';
 				scope.receipts = [];
