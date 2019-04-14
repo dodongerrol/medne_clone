@@ -55,25 +55,21 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-
-      // 'host'      => 'localhost',
-      //  'database'  => 'medicloud_v3',
-      //  'username'  => 'root',
-      //  'password'  => 'medicloud',
-
-
-
-
-  		'host'      => 'localhost',
-      'database'  => 'medicloud_v3',
-      'username'  => 'root',
-      'password'  => '',
-
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix'    => 'medi_',
-		),
-
+		'read' => array(
+                        // Return a random host
+                        'host' => 'medicloud-db-replica-2.ceszful8sael.ap-southeast-1.rds.amazonaws.com',
+                        'host' => 'medicloud-db-read-replica.ceszful8sael.ap-southeast-1.rds.amazonaws.com'
+                ),
+                'write' => array(
+                        'host' => 'medicloud-db.ceszful8sael.ap-southeast-1.rds.amazonaws.com'
+                ),
+                'database'  => 'medicloud_v3',
+                'username'  => 'medicloud',
+                'password'  => 'medi657cloud',
+                        'charset'   => 'utf8',
+                        'collation' => 'utf8_unicode_ci',
+                        'prefix'    => 'medi_',
+                ),
 		'pgsql' => array(
 			'driver'   => 'pgsql',
 			'host'     => 'localhost',
