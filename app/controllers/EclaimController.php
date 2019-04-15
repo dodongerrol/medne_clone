@@ -6788,5 +6788,62 @@ public function checkOutofNetwork()
 		return array('status' => FALSE, 'message' => 'No Similar In-Network Transaction for this E-Claim.');
 	}
 }
+
+public function revertPending( )
+{
+	$result = self::checkSession();
+	$input = Input::all();
+
+	if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
+		return array('status' => false, 'message' => 'E Claim ID is required.');
+	}
+
+	$e_claim = DB::table('e_claim')->where('e_claim_id', $input['e_claim_id'])->first();
+
+	if(!$e_claim) {
+		return array('status' => false, 'messae' => 'E Claim does not exist.');
+	}
+
+	if((int)$e_claim->status == 0) {
+		return array('status' => false, 'message' => 'E Claim status is already pending.');
+	}
+
+	$owner_id = StringHelper::getUserId($e_claim->user_id);
+
+	if((int)$e_claim->status == 1) {
+		// delete logs for approved credits and check spending type
+		if($e_claim->spending_type == 'medical') {
+			$table_wallet_history = 'wallet_history';
+		} else {
+			$table_wallet_history = 'wellness_wallet_history';
+		}
+
+		// find e_claim transaction
+		$e_claim_log = DB::table($table_wallet_history)
+						->where('id', $e_claim->e_claim_id)
+						->where('logs', 'deducted_from_e_claim')
+						->where('where_spend', 'e_claim_transaction')
+						->first();
+		if($e_claim_log) {
+			$e_claim_log = DB::table($table_wallet_history)
+						->where('id', $e_claim->e_claim_id)
+						->where('logs', 'deducted_from_e_claim')
+						->where('where_spend', 'e_claim_transaction')
+						->delete();
+
+			DB::table('e_claim')
+					->where('e_claim_id', $e_claim->e_claim_id)
+					->update(['status' => 0]);
+		}
+
+	} else if((int)$e_claim->status == 2) {
+		// update to pending
+		$result = DB::table('e_claim')
+					->where('e_claim_id', $e_claim->e_claim_id)
+					->update(['status' => 0]);
+	}
+
+	return array('status' => true, 'message' => 'E Claim data status revert to pending.');
+}
 }
 ?>
