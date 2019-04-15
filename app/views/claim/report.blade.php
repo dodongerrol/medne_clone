@@ -332,7 +332,8 @@
 				    			<div class="input-group date" ng-cloak>
 								  <input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="@{{ placeholder }}" name="amount" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="list.amount">
 								  <span class="input-group-addon amount-add" id="sizing-addon2">
-								  	S$
+								  	<i ng-if="clinic.currency_type == 'sgd'">S$</i>
+								  	<i ng-if="clinic.currency_type == 'myr'">RM</i>
 								  </span>
 								</div>
 				    		</td>
@@ -393,7 +394,7 @@
 					    		</td>
 					    		<td>
 					    		<!-- ng-disabled="list.amount == 0" -->
-					    			<button type="button" id="submit_btn_@{{$index}}" class="btn btn-primary btn-submit" ng-click="submitData(list, $index)">
+					    			<button type="button" id="submit_btn_@{{$index}}" class="btn btn-primary btn-submit" ng-click="toggleClaimSummaryModal(list, $index)">
 					    				Submit
 					    				<img src="{{ URL::asset('images/loading_apple.gif') }}" style="width: 15px;" class="load_state" id="loader_@{{$index}}">
 					    			</button>
@@ -649,7 +650,7 @@
 			  		</p>
 			  	</div>
 		      <div class="modal-content isDoneChecking" style="" hidden>
-		      	<div class="modal-header"">
+		      	<div class="modal-header">
 		      		You have similar transactions with this user.
 		      		<p style="font-size: 12px;padding-left: 4px;">Please check and make sure it is not a duplicate claim entry.</p>
 			      </div>
@@ -838,6 +839,71 @@
 			      </div>
 			    </div>
 			  </div>
+			</div>
+
+			<!-- Modal -->
+			<div class="modal fade" id="summary-claim-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			  <div class="modal-dialog" role="document" >
+		      <div class="modal-content">
+		      	<div class="modal-header">
+		      		<p>Please check your claim before you proceed.</p>
+			      </div>
+		        <div class="modal-body">
+		        	<div class="top-content">
+		        		<div ng-if="selected_submit_data.transaction_id" class="row-summary">
+		        			<div class="img-wrapper">
+		        				<img src="../../e-template-img/Trans-ID---Mednefits-Credits-Email.png">
+		        			</div>
+		        			<p><label>Transaction ID:</label> <span ng-bind="selected_submit_data.transaction_id">ELYDI8</span></p>
+		        		</div>
+		        		<div class="row-summary">
+		        			<div class="img-wrapper">
+		        				<img src="../../e-template-img/clock.png">
+		        			</div>
+		        			<p><label>Transaction Date:</label> <span ng-bind="selected_submit_data.display_book_date">15 April 2019, 11:49am</span></p>
+		        		</div>
+		        	</div>
+		        	<div class="middle-content">
+		        		<div class="column-details">
+		        			<label>Member</label>
+		        			<p ng-bind="selected_submit_data.name">Terinn Teo</p>
+		        		</div>
+		        		<div class="column-details">
+		        			<label>NRIC</label>
+		        			<p ng-bind="selected_submit_data.nric">S345D3</p>
+		        		</div>
+		        		<div class="column-details">
+		        			<label>Payment Type</label>
+		        			<p>Cash</p>
+		        		</div>
+		        	</div>
+		        	<div class="bottom-content">
+		        		<div class="item">
+			        		<label>Item/Service</label>
+			        		<div class="item-content">	
+			        			<div class="img-wrapper">
+			        				<img src="../../e-template-img/services-icon/General-Practitioner.png">
+			        			</div>
+			        			<p ng-bind="selected_submit_data.procedures">Lorem Ipsum</p>
+			        		</div>
+		        		</div>
+
+		        		<div class="item2">
+		        			<label>Cash:</label> 
+		        			<p>
+		        				<span ng-if="clinic.currency_type == 'sgd'">S$</span> 
+		        				<span ng-if="clinic.currency_type == 'myr'">RM</span> 
+		        				<span ng-bind="selected_submit_data.amount | number:2">15.00</span>
+		        			</p>
+		        		</div>
+		        	</div>
+		        </div>
+		        <div class="modal-footer">
+			      	<button class="btn btn-cancel-claim" data-dismiss="modal">Cancel</button>
+			      	<button class="btn" ng-click="submitData( selected_submit_data, selected_submit_data.index )">Proceed</button>
+				    </div>
+		      </div>
+		    </div>
 			</div>
 
 
