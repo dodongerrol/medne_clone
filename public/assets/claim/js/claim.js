@@ -935,6 +935,13 @@ app.directive("claimDirective", [
           );
         };
 
+        scope.toggleClaimSummaryModal = function( data, index ){
+          console.log( data );
+          scope.selected_submit_data = data;
+          scope.selected_submit_data.index = index;
+          $('#summary-claim-modal').modal('show');
+        }
+
         scope.submitData = function(data, index) {
           data.currency_type = scope.clinic.currency_type;
           if (data.amount < 0) {
@@ -970,6 +977,7 @@ app.directive("claimDirective", [
                       if(!response.status) {
                         sweetAlert("Oooops!", response.message, "error");
                       } else {
+                        $('#summary-claim-modal').modal('hide');
                         $localStorage.$reset();
                         // $('#submit_btn_' + index).attr('disabled', true);
                         // $('#loader_' + index).show();
