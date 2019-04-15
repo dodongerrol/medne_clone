@@ -10179,7 +10179,7 @@ class BenefitsDashboardController extends \BaseController {
 		$end = date('Y-m-d', strtotime($input['end']));
 
 		$company_credits = DB::table('customer_credits')->where('customer_id', $session->customer_buy_start_id)->first();
-
+		$start = date('Y-m-d', strtotime($company_credits->created_at));
 		// check if customer has a credit reset in medical
 		$customer_credit_reset_medical = DB::table('credit_reset')
 		->where('id', $session->customer_buy_start_id)
