@@ -3453,7 +3453,7 @@ public function getHrActivity( )
 {
 	$input = Input::all();
 	$START = time();
-	$start = date('Y-m-d', strtotime($input['start']));
+	// $start = date('Y-m-d', strtotime($input['start']));
 	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$paginate = [];
@@ -3500,6 +3500,7 @@ public function getHrActivity( )
         // get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
+	$wallet = DB::table('customer_credits')->where('customer_id', $session->customer_buy_start_id)->first();
 	$corporate_members = DB::table('corporate_members')
 	->where('corporate_id', $account->corporate_id)
 	->paginate(10);
@@ -3510,7 +3511,8 @@ public function getHrActivity( )
 	$paginate['per_page'] = $corporate_members->getPerPage();
 	$paginate['to'] = $corporate_members->getTo();
 	$paginate['total'] = $corporate_members->getTotal();
-        // return $corporate_members;
+    
+    $start = date('Y-m-d', strtotime($wallet->created_at));
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
@@ -3525,7 +3527,6 @@ public function getHrActivity( )
 
             // get wallet reset date
 		$wallet_reset = PlanHelper::getResetWalletDate($member->user_id, $spending_type, $start, $input['end'], 'employee');
-    // return array('result' => $wallet_reset);
 		if($wallet_reset) {
 			$wallet_start_date = $wallet_reset;
 		} else {
@@ -3589,9 +3590,9 @@ public function getHrActivity( )
 					if($trans->deleted == 0 || $trans->deleted == "0") {
 						$in_network_spent += $trans->credit_cost;
 
-                            // if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
-						$total_in_network_transactions++;
-                            // }
+                        if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
+							$total_in_network_transactions++;
+                        }
 
 						if($trans->lite_plan_enabled == 1) {
 							$logs_lite_plan = DB::table($table_wallet_history)
@@ -3846,7 +3847,7 @@ public function getHrActivity( )
 						$status_text = FALSE;
 					}
 
-                        // if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
+                        if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
                             $transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
                             $format = array(
@@ -3886,7 +3887,7 @@ public function getHrActivity( )
                                 'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null
                             );
                             array_push($transaction_details, $format);
-                        // }
+                        }
 				}
 			}
 		}
