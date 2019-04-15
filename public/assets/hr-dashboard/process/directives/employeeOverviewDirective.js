@@ -150,10 +150,10 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.enrollMoreEmployees = function(){
-          localStorage.setItem('fromEmpOverview', false);
-          $state.go('create-team-benefits-tiers');
-          // localStorage.setItem('fromEmpOverview', true);
-          // $state.go('enrollment-options');
+          // localStorage.setItem('fromEmpOverview', false);
+          // $state.go('create-team-benefits-tiers');
+          localStorage.setItem('fromEmpOverview', true);
+          $state.go('enrollment-options');
           $('body').css('overflow','auto');
         }
 
