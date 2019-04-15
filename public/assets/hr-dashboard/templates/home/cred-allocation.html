@@ -128,6 +128,13 @@
 		            <span ng-if="emp.creditAllocSpendingType == 1" style="width: 75px;display: inline-block;font-size: 12px;font-weight: 700;">S$<span ng-bind="emp.spending_account.wellness.credits_spent_wellness"></span></span>
 		            <span style="font-size: 12px;font-weight: 700;">Spent</span> 
 		          </p>
+
+		          <p style="margin: 2px 0">
+		            <span ng-if="emp.creditAllocSpendingType == 0" style="width: 75px;display: inline-block;font-size: 12px;font-weight: 700;">S$<span ng-bind="emp.spending_account.medical.balance"></span></span>
+		            <span ng-if="emp.creditAllocSpendingType == 1" style="width: 75px;display: inline-block;font-size: 12px;font-weight: 700;">S$<span ng-bind="emp.spending_account.wellness.balance"></span></span>
+		            <span style="font-size: 12px;font-weight: 700;">Balance</span> 
+		          </p>
+
 		          <div class="white-space-10"></div>
 
 		          <span class="inputAdd" ng-if="emp.creditAllocTransactionType == 0">
