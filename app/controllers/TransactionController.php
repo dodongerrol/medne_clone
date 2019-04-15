@@ -2080,15 +2080,30 @@ class TransactionController extends BaseController {
 		return $format;
 	}
 
-	public function getSpecificTransactionDetails($id)
+	public function getSpecificTransactionDetails( )
 	{
+		$input = Input::all();
+
+		if(empty($input['transaction_id']) || $input['transaction_id'] == null) {
+			return array('status' => false, 'message' => 'Transaction ID is required.');
+		}
+
+		// check transaction id existence
+
 		$getSessionData = StringHelper::getMainSession(3);
-		$clinic = DB::table('clinic')->where('ClinicID', $getSessionData->Ref_ID)->first();
+		
+		$trans_check = DB::table('transaction_history')
+							->where('transaction_id', $input['transaction_id'])
+							->where('ClinicID', $getSessionData->Ref_ID)
+							->first();
+		if(!$trans_check) {
+			return array('status' => false, 'message' => 'Transaction does not exist.');
+		}
 
 		$transaction = DB::table('transaction_history')
 		->join('user', 'user.UserID', '=', 'transaction_history.UserID')
 		->where('transaction_history.ClinicID', $getSessionData->Ref_ID)
-		->where('transaction_history.transaction_id', $id)
+		->where('transaction_history.transaction_id', $input['transaction_id'])
 		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.currency_type', 'transaction_history.currency_amount')
 		->first();
 

@@ -1272,7 +1272,7 @@ Route::group(array('prefix' => 'app'), function()
         // get pusher config and channel
         Route::get('pusher/config', 'HomeController@getPusherConfig');
         // get specific transaction details
-        Route::get('clinic/transaction_specific/{id}', 'TransactionController@getSpecificTransactionDetails');
+        Route::get('clinic/transaction_specific', 'TransactionController@getSpecificTransactionDetails');
         // delete transaction
         Route::post('clinic/delete_transaction', 'TransactionController@deleteTransaction');
         // transaction dashboard
