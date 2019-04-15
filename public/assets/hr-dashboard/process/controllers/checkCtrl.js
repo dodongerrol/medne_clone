@@ -16,11 +16,11 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 			// console.log('no token');
 			$http.get(window.location.origin + '/get-hr-session')
 				.then(function(result){
-					console.log(result);
+					// console.log(result);
 					// get config for realtime notification
 					$http.get(window.location.origin + '/config/notification')
 					.then(function(response){
-						// console.log(response);
+						console.log(response);
 						OneSignal.push(["init", {
 					      appId: response.data,
 					      autoRegister: true, // Set to true to automatically prompt visitors 

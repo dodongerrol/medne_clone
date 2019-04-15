@@ -2419,11 +2419,10 @@ class BenefitsDashboardController extends \BaseController {
 			$total_medical_allocation = $total_allocation;
 			$total_medical_allocated = $allocated - $deleted_employee_allocation - $total_deduction_credits;
 
-			$total_wellness_allocation = $total_allocation_wellness;
 			$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness - $total_deduction_credits_wellness;
 
 			$credits = $total_medical_allocation - $total_medical_allocated;
-			$credits_wellness = $total_wellness_allocation = $total_wellnesss_allocated;
+			$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
 
 			if($company_credits->balance != $credits) {
 				// update medical credits
@@ -2449,8 +2448,8 @@ class BenefitsDashboardController extends \BaseController {
 			'company_credits_wellness' => $credits_wellness,
 			'total_deduction_credits_wellness' => $total_deduction_credits_wellness,
 			'spent_wellness'	=> number_format($get_allocation_spent_wellness, 2),
-			'medical_balance'	=> $credits,
-			'wellness_balance'	=> $credits_wellness
+			'medical_balance'	=> number_format($credits, 2),
+			'wellness_balance'	=> number_format($credits_wellness, 2)
 		);
 	}
 
@@ -10180,7 +10179,7 @@ class BenefitsDashboardController extends \BaseController {
 		$end = date('Y-m-d', strtotime($input['end']));
 
 		$company_credits = DB::table('customer_credits')->where('customer_id', $session->customer_buy_start_id)->first();
-
+		$start = date('Y-m-d', strtotime($company_credits->created_at));
 		// check if customer has a credit reset in medical
 		$customer_credit_reset_medical = DB::table('credit_reset')
 		->where('id', $session->customer_buy_start_id)
