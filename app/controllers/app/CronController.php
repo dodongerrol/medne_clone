@@ -633,7 +633,7 @@ class CronController extends \BaseController {
                 // update user and set to inactive
                 DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
                 PlanHelper::removeDependentAccounts($removed_employee->user_id, $removed_employee->date_withdraw);
-                if((int)$removed_employee->vacate_seat == 1 && (int)$removed_employee->keep_seat == 0) {
+                if((int)$removed_employee->vacate_seat == 1) {
                     PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($removed_employee->user_id);
                 }
             }
