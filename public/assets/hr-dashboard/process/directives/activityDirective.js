@@ -288,12 +288,12 @@ app.directive('activityPage', [
 							scope.activity.allocation += response.data.data.allocation;
 							scope.activity.pending_e_claim_amount += response.data.data.pending_e_claim_amount;
 
-							scope.activity.in_network_breakdown.dental_care_breakdown += response.data.data.in_network_breakdown.dental_care_breakdown;
-							scope.activity.in_network_breakdown.general_practitioner_breakdown += response.data.data.in_network_breakdown.general_practitioner_breakdown;
-							scope.activity.in_network_breakdown.health_screening_breakdown += response.data.data.in_network_breakdown.health_screening_breakdown;
-							scope.activity.in_network_breakdown.health_specialist_breakdown += response.data.data.in_network_breakdown.health_specialist_breakdown;
-							scope.activity.in_network_breakdown.tcm_breakdown += response.data.data.in_network_breakdown.tcm_breakdown;
-							scope.activity.in_network_breakdown.wellness_breakdown += response.data.data.in_network_breakdown.wellness_breakdown;
+							// scope.activity.in_network_breakdown.dental_care_breakdown += response.data.data.in_network_breakdown.dental_care_breakdown;
+							// scope.activity.in_network_breakdown.general_practitioner_breakdown += response.data.data.in_network_breakdown.general_practitioner_breakdown;
+							// scope.activity.in_network_breakdown.health_screening_breakdown += response.data.data.in_network_breakdown.health_screening_breakdown;
+							// scope.activity.in_network_breakdown.health_specialist_breakdown += response.data.data.in_network_breakdown.health_specialist_breakdown;
+							// scope.activity.in_network_breakdown.tcm_breakdown += response.data.data.in_network_breakdown.tcm_breakdown;
+							// scope.activity.in_network_breakdown.wellness_breakdown += response.data.data.in_network_breakdown.wellness_breakdown;
 
 							// console.log('scope.activity.in_network_breakdown.general_practitioner_breakdown / scope.activity.in_network_spending_format_number * 100: ' + scope.activity.in_network_breakdown.general_practitioner_breakdown / scope.activity.in_network_spending_format_number * 100);
 							// console.log('general_practitioner_breakdown: ' + scope.activity.in_network_breakdown.general_practitioner_breakdown);
@@ -313,14 +313,14 @@ app.directive('activityPage', [
 									}
 								}
 							}else{
-								if( scope.activity.in_network_spending_format_number != 0 ){
-									scope.activity.in_network_breakdown.dental_care_breakdown = (scope.activity.in_network_breakdown.dental_care_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.general_practitioner_breakdown = (scope.activity.in_network_breakdown.general_practitioner_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.health_screening_breakdown = (scope.activity.in_network_breakdown.health_screening_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.health_specialist_breakdown = (scope.activity.in_network_breakdown.health_specialist_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.tcm_breakdown = (scope.activity.in_network_breakdown.tcm_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.wellness_breakdown = (scope.activity.in_network_breakdown.wellness_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-								}
+								// if( scope.activity.in_network_spending_format_number != 0 ){
+								// 	scope.activity.in_network_breakdown.dental_care_breakdown = (scope.activity.in_network_breakdown.dental_care_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.general_practitioner_breakdown = (scope.activity.in_network_breakdown.general_practitioner_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.health_screening_breakdown = (scope.activity.in_network_breakdown.health_screening_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.health_specialist_breakdown = (scope.activity.in_network_breakdown.health_specialist_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.tcm_breakdown = (scope.activity.in_network_breakdown.tcm_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.wellness_breakdown = (scope.activity.in_network_breakdown.wellness_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// }
 
 								// scope.filterActivityByDateInNetwork( scope.activity.in_network_transactions );
 								// scope.filterActivityByDateEclaim( scope.activity.e_claim_transactions );
@@ -414,14 +414,14 @@ app.directive('activityPage', [
 							if( response.data.last_page > 0 && scope.currentPage != response.data.last_page ){
 								scope.fetchNextPage( data );
 							}else{
-								if( scope.activity.in_network_spending_format_number != 0 ){
-									scope.activity.in_network_breakdown.dental_care_breakdown = (scope.activity.in_network_breakdown.dental_care_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.general_practitioner_breakdown = (scope.activity.in_network_breakdown.general_practitioner_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.health_screening_breakdown = (scope.activity.in_network_breakdown.health_screening_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.health_specialist_breakdown = (scope.activity.in_network_breakdown.health_specialist_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.tcm_breakdown = (scope.activity.in_network_breakdown.tcm_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-									scope.activity.in_network_breakdown.wellness_breakdown = (scope.activity.in_network_breakdown.wellness_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
-								}
+								// if( scope.activity.in_network_spending_format_number != 0 ){
+								// 	scope.activity.in_network_breakdown.dental_care_breakdown = (scope.activity.in_network_breakdown.dental_care_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.general_practitioner_breakdown = (scope.activity.in_network_breakdown.general_practitioner_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.health_screening_breakdown = (scope.activity.in_network_breakdown.health_screening_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.health_specialist_breakdown = (scope.activity.in_network_breakdown.health_specialist_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.tcm_breakdown = (scope.activity.in_network_breakdown.tcm_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// 	scope.activity.in_network_breakdown.wellness_breakdown = (scope.activity.in_network_breakdown.wellness_breakdown / scope.activity.in_network_spending_format_number * 100).toFixed(2);
+								// }
 
 								// scope.filterActivityByDateInNetwork( scope.activity.in_network_transactions );
 								// scope.filterActivityByDateEclaim( scope.activity.e_claim_transactions );
