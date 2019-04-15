@@ -2419,11 +2419,10 @@ class BenefitsDashboardController extends \BaseController {
 			$total_medical_allocation = $total_allocation;
 			$total_medical_allocated = $allocated - $deleted_employee_allocation - $total_deduction_credits;
 
-			$total_wellness_allocation = $total_allocation_wellness;
 			$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness - $total_deduction_credits_wellness;
 
 			$credits = $total_medical_allocation - $total_medical_allocated;
-			$credits_wellness = $total_wellness_allocation = $total_wellnesss_allocated;
+			$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
 
 			if($company_credits->balance != $credits) {
 				// update medical credits
