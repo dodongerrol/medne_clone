@@ -329,8 +329,8 @@
 			            </div>
 				    		</td>
 				    		<td>
-				    			<div class="input-group date">
-								  <input id="claimAmountInput" valid-number type="text" class="form-control " placeholder="Enter Amount" name="amount" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="list.amount">
+				    			<div class="input-group date" ng-cloak>
+								  <input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="@{{ placeholder }}" name="amount" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="list.amount">
 								  <span class="input-group-addon amount-add" id="sizing-addon2">
 								  	S$
 								  </span>
@@ -386,6 +386,8 @@
 					    			</span>
 					    		</td>
 					    		<td>
+					    			<span ng-if="clinic.currency_type == 'myr'">RM</span>
+					    			<span ng-if="clinic.currency_type == 'sgd'">SGD</span>
 					    			<input valid-number type="text" placeholder="Enter Amount" ng-model="list.amount" ng-value="list.amount">
 					    			<!-- <span>S$<span ng-bind="list.amount"></span></span> -->
 					    		</td>
@@ -508,16 +510,16 @@
 			    			<span ng-bind="list.procedure_name"></span>
 			    		</td>
 			    		<td style="text-align: center;">
-			    			<span>S$<span ng-bind="list.mednefits_fee"></span></span>
-			    			<span ng-if="list.currency_type == 'myr'">(RM<span ng-bind="list.mednefits_fee * list.currency_amount | number: 2"></span>)</span>
+			    			<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.mednefits_fee"></span></span>
+			    			<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.mednefits_fee * list.currency_amount | number: 2"></span></span>
 			    		</td>
 			    		<td style="text-align: center;">
-			    			<span>S$<span ng-bind="list.mednefits_credits"></span></span>
-			    			<span ng-if="list.currency_type == 'myr'">(RM<span ng-bind="list.mednefits_credits * list.currency_amount | number: 2"></span>)</span>
+			    			<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.mednefits_credits"></span></span>
+			    			<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.mednefits_credits * list.currency_amount | number: 2"></span></span>
 			    		</td>
 			    		<td style="text-align: center;">
-			    			<span>S$<span ng-bind="list.cash"></span></span>
-			    			<span ng-if="list.currency_type == 'myr'">(RM<span ng-bind="list.cash * list.currency_amount | number: 2"></span>)</span>
+			    			<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.cash"></span></span>
+			    			<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.cash * list.currency_amount | number: 2"></span></span>
 			    		</td>
 			    		<td>
 			    			<button type="button" id="delete_btn_@{{list.trans_id}}" class="btn btn-danger btn-remove" ng-click="removeBackDate(list)" ng-if="list.deleted_option == 'refund' && !list.deleted">Refund</button>

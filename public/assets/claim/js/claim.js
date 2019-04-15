@@ -936,12 +936,15 @@ app.directive("claimDirective", [
         };
 
         scope.submitData = function(data, index) {
+          data.currency_type = scope.clinic.currency_type;
           if (data.amount < 0) {
             swal("Ooops!", "Amount should not be negative.", "error");
             return false;
           }
 
           data.currency_amount = scope.conversion.current_myr;
+          // console.log(data);
+          // return false;
           swal({
               title: "Are you sure?",
               text: "This transaction data will be save.",
@@ -958,6 +961,9 @@ app.directive("claimDirective", [
                 scope.$apply(function() {
                   $("#submit_btn_" + index).attr("disabled", true);
                   $("#loader_" + index).show();
+                  if(data.currency_type == 'myr') {
+                    data.amount = data.amount / data.currency_amount;
+                  }
                   $http.post(base_url + "clinic/save/claim/transaction", data)
                     .success(function(response) {
 
@@ -1156,10 +1162,18 @@ app.directive("claimDirective", [
           return status;
         };
 
+        scope.placeholder = null;
         // get clinic details
         scope.getClinicDetails = function() {
           $http.get(base_url + "clinic/details").success(function(response) {
             scope.clinic = response.clinic;
+
+            if(scope.clinic.currency_type == "myr") {
+              scope.placeholder = "Enter Amount in MYR";
+            } else {
+              scope.placeholder = "Enter Amount in SGD";
+            }
+
             var stored_list = localStorageService.get("trans_table_" + scope.clinic.ClinicID);
             if ( stored_list != null ) {
               angular.forEach(stored_list, function(value, key) {
