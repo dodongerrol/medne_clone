@@ -2448,8 +2448,8 @@ class BenefitsDashboardController extends \BaseController {
 			'company_credits_wellness' => $credits_wellness,
 			'total_deduction_credits_wellness' => $total_deduction_credits_wellness,
 			'spent_wellness'	=> number_format($get_allocation_spent_wellness, 2),
-			'medical_balance'	=> $credits,
-			'wellness_balance'	=> $credits_wellness
+			'medical_balance'	=> number_format($credits, 2),
+			'wellness_balance'	=> number_format($credits_wellness, 2)
 		);
 	}
 
