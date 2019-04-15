@@ -199,7 +199,7 @@ class PlanHelper {
 
 		$plan_user = DB::table('user_plan_type')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
 
-		$data['start_date'] = date('d F Y', strtotime($plan_user->plan_start));
+		$data['start_date'] = date('F d, Y', strtotime($plan_user->plan_start));
 
 		if((int)$active_plan->plan_extention_enable == 1) {
 			$plan_user_history = DB::table('user_plan_history')
@@ -240,9 +240,9 @@ class PlanHelper {
 			
 			if((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
 				$temp_valid_date = date('Y-m-d', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
-				$data['valid_date'] = date('Y-m-d', strtotime('-1 day', strtotime($temp_valid_date)));
+				$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
 			} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-				$data['valid_date'] = date('Y-m-d', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+				$data['valid_date'] = date('F d, Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
 			}
 		} else {
 			$plan_user_history = DB::table('user_plan_history')
@@ -278,15 +278,16 @@ class PlanHelper {
 
 			if((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
 				$temp_valid_date = date('Y-m-d', strtotime('+'.$first_active_plan->duration, strtotime($plan->plan_start)));
-				$data['valid_date'] = date('Y-m-d', strtotime('-1 day', strtotime($temp_valid_date)));
+				$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
 			} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-				$data['valid_date'] = date('Y-m-d', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+				$data['valid_date'] = date('F d, Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
 			}
 		}
 
 		$data['fullname'] = ucwords($user_details->Name);
 		$data['user_id'] = $user_details->UserID;
 		$data['nric'] = $user_details->NRIC;
+		$data['user_type'] = "employee";
 
 		if(date('Y-m-d') > date('Y-m-d', strtotime($data['valid_date']))) {
 			$data['expired'] = TRUE;
@@ -3798,6 +3799,34 @@ class PlanHelper {
 			}
 
 			return array('status' => false, 'emp_status' => 'active');
+		}
+
+		public static function getDependentPlanCoverage($user_id)
+		{
+			$dependent_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->first();
+
+            $dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
+
+            $plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+
+            $active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+            $data['plan_start'] = date('F d, Y', strtotime($dependent_plan_history->plan_start));
+
+            if((int)$dependent_plan_history->fixed == 1 || $dependent_plan_history->fixed == "1") {
+                $temp_valid_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+                $data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
+            } else if($dependent_plan_history->fixed == 0 | $dependent_plan_history->fixed == "0") {
+                $data['valid_date'] = date('F d, Y', strtotime('+'. $plan_user->duration, strtotime($dependent_plan_history->plan_start)));
+            }
+
+            if(date('Y-m-d') > date('Y-m-d', strtotime($data['valid_date']))) {
+				$data['expired'] = TRUE;
+			} else {
+				$data['expired'] = FALSE;
+			}
+			$data['user_type'] = "dependents";
+
+			return $data;
 		}
 	}
 	?>
