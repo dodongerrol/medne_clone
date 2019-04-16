@@ -876,6 +876,10 @@
 		        			<label>Payment Type</label>
 		        			<p>Cash</p>
 		        		</div>
+		        		<div class="column-details">
+		        			<label>Currency Type</label>
+		        			<p ng-bind="clinic.currency_type">MYR</p>
+		        		</div>
 		        	</div>
 		        	<div class="bottom-content">
 		        		<div class="item">
