@@ -878,7 +878,7 @@
 		        		</div>
 		        		<div class="column-details">
 		        			<label>Currency Type</label>
-		        			<p ng-bind="clinic.currency_type">MYR</p>
+		        			<p ng-bind="clinic.currency_type" style="text-transform: uppercase;">MYR</p>
 		        		</div>
 		        	</div>
 		        	<div class="bottom-content">
@@ -886,7 +886,7 @@
 			        		<label>Item/Service</label>
 			        		<div class="item-content">	
 			        			<div class="img-wrapper">
-			        				<img src="../../e-template-img/services-icon/General-Practitioner.png">
+			        				<img ng-src="@{{ clinic.clinic_type_image }}">
 			        			</div>
 			        			<p ng-bind="selected_submit_data.procedures">Lorem Ipsum</p>
 			        		</div>
