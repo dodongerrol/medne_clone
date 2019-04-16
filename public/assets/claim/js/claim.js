@@ -168,7 +168,7 @@ app.directive("claimDirective", [
 
         scope.selected_hour = parseInt(moment().format("hh"));
         scope.selected_minute = parseInt(moment().format("mm"));
-        // var socket = io.connect('https://sockets.medicloud.sg');
+        var socket = io.connect('https://sockets.medicloud.sg');
 
         var visit_date_dp = null;
 
@@ -935,13 +935,23 @@ app.directive("claimDirective", [
           );
         };
 
+        scope.toggleClaimSummaryModal = function( data, index ){
+          console.log( data );
+          scope.selected_submit_data = data;
+          scope.selected_submit_data.index = index;
+          $('#summary-claim-modal').modal('show');
+        }
+
         scope.submitData = function(data, index) {
+          data.currency_type = scope.clinic.currency_type;
           if (data.amount < 0) {
             swal("Ooops!", "Amount should not be negative.", "error");
             return false;
           }
 
           data.currency_amount = scope.conversion.current_myr;
+          // console.log(data);
+          // return false;
           swal({
               title: "Are you sure?",
               text: "This transaction data will be save.",
@@ -958,12 +968,17 @@ app.directive("claimDirective", [
                 scope.$apply(function() {
                   $("#submit_btn_" + index).attr("disabled", true);
                   $("#loader_" + index).show();
+                  if(data.currency_type == 'myr') {
+                    data.amount = data.amount / data.currency_amount;
+                    // data.amount = data.amount.toFixed(2);
+                  }
                   $http.post(base_url + "clinic/save/claim/transaction", data)
                     .success(function(response) {
 
                       if(!response.status) {
                         sweetAlert("Oooops!", response.message, "error");
                       } else {
+                        $('#summary-claim-modal').modal('hide');
                         $localStorage.$reset();
                         // $('#submit_btn_' + index).attr('disabled', true);
                         // $('#loader_' + index).show();
@@ -1156,10 +1171,18 @@ app.directive("claimDirective", [
           return status;
         };
 
+        scope.placeholder = null;
         // get clinic details
         scope.getClinicDetails = function() {
           $http.get(base_url + "clinic/details").success(function(response) {
             scope.clinic = response.clinic;
+
+            if(scope.clinic.currency_type == "myr") {
+              scope.placeholder = "Enter Amount in MYR";
+            } else {
+              scope.placeholder = "Enter Amount in SGD";
+            }
+
             var stored_list = localStorageService.get("trans_table_" + scope.clinic.ClinicID);
             if ( stored_list != null ) {
               angular.forEach(stored_list, function(value, key) {
@@ -1211,71 +1234,122 @@ app.directive("claimDirective", [
         };
 
         // get pusher config
+        // scope.getPusherConfig = function(connection) {
+        //   console.log('connection', connection);
+        //   // socket.on(connection, function (data) {
+        //   //   console.log(data);
+        //   // });
+        //   $http.get(base_url + "pusher/config").success(function(response) {
+        //     console.log(response);
+        //     scope.notification.pusher = new Pusher(response.key, {
+        //       cluster: "ap1"
+        //     });
+        //     scope.notification.channel = scope.notification.pusher.subscribe(
+        //       response.channel
+        //     );
+        //     scope.notification.channel.bind(
+        //       connection,
+        //       function(data) {
+        //         console.log(data);
+        //         if (parseInt(data.ClinicID) == parseInt(scope.clinic.ClinicID)) {
+        //           // check if transaction is already push to the array of claim_list
+
+        //           if (!scope.checkDataClaimLists(data.id)) {
+        //             $http.get(base_url + "clinic/transaction_specific/" + data.id)
+        //               .success(function(response) {
+        //                 setTimeout(function() {
+        //                   scope.load_status = true;
+        //                 }, 100);
+
+        //                 var procedures = [];
+        //                 angular.forEach( response.procedure_ids, function(value, key){ 
+        //                   $http.get( base_url + "clinic/get/service/details/" + value )
+        //                     .then(function(response){
+        //                       procedures.push( response.data );
+        //                     });
+        //                 });
+
+        //                 var data = {
+        //                   nric: response.NRIC,
+        //                   procedure: response.ProcedureID,
+        //                   procedures: procedures,
+        //                   display_book_date: response.date_of_transaction,
+        //                   book_date: moment(
+        //                     response.date_of_transaction
+        //                   ).format("YYYY-MM-DD"),
+        //                   id: response.UserID,
+        //                   amount: response.procedure_cost,
+        //                   back_date: 0,
+        //                   health_provider: response.health_provider,
+        //                   multiple_procedures: response.multiple_procedures,
+        //                   procedure_ids: response.procedure_ids,
+        //                   transaction_id: response.transaction_id
+        //                 };
+
+        //                 $http.get( base_url + "clinic/get/user/details/" + response.UserID )
+        //                   .then(function(response2){
+        //                     data.name = response2.data[0].Name;
+        //                     data.user_type = response2.data[0].UserType;
+        //                     data.access_type = response2.data[0].access_type;
+        //                     scope.claim_list.push(data);
+        //                   });
+                        
+        //               });
+        //           }
+        //         }
+        //       }
+        //     );
+        //   });
+        // };
         scope.getPusherConfig = function(connection) {
           console.log('connection', connection);
-          // socket.on(connection, function (data) {
-          //   console.log(data);
-          // });
-          $http.get(base_url + "pusher/config").success(function(response) {
-            console.log(response);
-            scope.notification.pusher = new Pusher(response.key, {
-              cluster: "ap1"
-            });
-            scope.notification.channel = scope.notification.pusher.subscribe(
-              response.channel
-            );
-            scope.notification.channel.bind(
-              connection,
-              function(data) {
-                console.log(data);
-                if (parseInt(data.ClinicID) == parseInt(scope.clinic.ClinicID)) {
+          socket.on(connection, function (data) {
+            console.log(data);
+            if (parseInt(data.clinic_id) == parseInt(scope.clinic.ClinicID)) {
                   // check if transaction is already push to the array of claim_list
+                if (!scope.checkDataClaimLists(data.transaction_id)) {
+                  $http.get(base_url + "clinic/transaction_specific?transaction_id=" + data.transaction_id)
+                    .success(function(response) {
+                      setTimeout(function() {
+                        scope.load_status = true;
+                      }, 100);
 
-                  if (!scope.checkDataClaimLists(data.id)) {
-                    $http.get(base_url + "clinic/transaction_specific/" + data.id)
-                      .success(function(response) {
-                        setTimeout(function() {
-                          scope.load_status = true;
-                        }, 100);
-
-                        var procedures = [];
-                        angular.forEach( response.procedure_ids, function(value, key){ 
-                          $http.get( base_url + "clinic/get/service/details/" + value )
-                            .then(function(response){
-                              procedures.push( response.data );
-                            });
-                        });
-
-                        var data = {
-                          nric: response.NRIC,
-                          procedure: response.ProcedureID,
-                          procedures: procedures,
-                          display_book_date: response.date_of_transaction,
-                          book_date: moment(
-                            response.date_of_transaction
-                          ).format("YYYY-MM-DD"),
-                          id: response.UserID,
-                          amount: response.procedure_cost,
-                          back_date: 0,
-                          health_provider: response.health_provider,
-                          multiple_procedures: response.multiple_procedures,
-                          procedure_ids: response.procedure_ids,
-                          transaction_id: response.transaction_id
-                        };
-
-                        $http.get( base_url + "clinic/get/user/details/" + response.UserID )
-                          .then(function(response2){
-                            data.name = response2.data[0].Name;
-                            data.user_type = response2.data[0].UserType;
-                            data.access_type = response2.data[0].access_type;
-                            scope.claim_list.push(data);
+                      var procedures = [];
+                      angular.forEach( response.procedure_ids, function(value, key){ 
+                        $http.get( base_url + "clinic/get/service/details/" + value )
+                          .then(function(response){
+                            procedures.push( response.data );
                           });
-                        
                       });
-                  }
+
+                      var data = {
+                        nric: response.NRIC,
+                        procedure: response.ProcedureID,
+                        procedures: procedures,
+                        display_book_date: response.date_of_transaction,
+                        book_date: moment(
+                          response.date_of_transaction
+                        ).format("YYYY-MM-DD"),
+                        id: response.UserID,
+                        amount: response.procedure_cost,
+                        back_date: 0,
+                        health_provider: response.health_provider,
+                        multiple_procedures: response.multiple_procedures,
+                        procedure_ids: response.procedure_ids,
+                        transaction_id: response.transaction_id
+                      };
+
+                      $http.get( base_url + "clinic/get/user/details/" + response.UserID )
+                        .then(function(response2){
+                          data.name = response2.data[0].Name;
+                          data.user_type = response2.data[0].UserType;
+                          data.access_type = response2.data[0].access_type;
+                          scope.claim_list.push(data);
+                        });
+                      
+                    });
                 }
               }
-            );
           });
         };
 
@@ -1294,7 +1368,7 @@ app.directive("claimDirective", [
         // scope.getMyrValue();
         scope.getClinicDetails();
         scope.getClinicSocketConnection();
-        scope.getPusherConfig();
+        // scope.getPusherConfig();
         scope.getHeathProvider();
         scope.getBackDateTransaction();
         scope.getServices();
