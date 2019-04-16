@@ -798,7 +798,7 @@ class PlanHelper {
 		->first();
 
 		$active_plan = DB::table('customer_active_plan')
-		->where('customer_start_buy_id', $customer_id)
+		->where('plan_id', $plan->customer_plan_id)
 		->first();
 
 		if((int)$active_plan->plan_extention_enable == 1) {
