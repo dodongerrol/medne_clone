@@ -18,8 +18,10 @@
 				scope.filter_text = 'All';
 				scope.filter_num = 1;
 
-				scope.rangePicker_start = moment().startOf('year').format( 'DD/MM/YYYY' );
+				scope.rangePicker_start = moment().startOf('month').format( 'DD/MM/YYYY' );
 				scope.rangePicker_end = moment().format( 'DD/MM/YYYY' );
+				$("#rangePicker_start").text( scope.rangePicker_start );
+				$("#rangePicker_end").text( scope.rangePicker_end );
 
 				scope.showCustomPicker = false;
 				scope.year_active = 1;
@@ -39,6 +41,10 @@
 				scope.selected_transaction = {};
 				scope.selected_duplicate_transactions = [];
 
+				scope.receipts_all = [];
+				scope.receipts_pending = [];
+				scope.receipts_approved = [];
+				scope.receipts_rejected = [];
 				scope.receipts_arr = [];
 
 				var monthToday = moment().format('MM');
@@ -72,8 +78,12 @@
 					scope.eclaimSpendingType = opt;
 					scope.eclaimSpendingTypeSelected = opt == 0 ? 'medical' : 'wellness';
 					scope.current_page = 1;
-					var range_data = date_slider.getValue();
-			    var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+					// var range_data = date_slider.getValue();
+			  //   var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+			  	var activity_search = {
+				  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
+				  };
 					if(scope.search.user_id) {
 		    		scope.searchEmployeeActivity(scope.search.user_id);
 		    	}else{
@@ -126,6 +136,7 @@
 						scope.toggleLoading();
 						$('.download-receipt-message').show();
 						$('.download-receipt-message .total').text( scope.receipts_arr.length );
+						zip = new JSZip();
 					}
 					$('.download-receipt-message .ctr').text( scope.download_receipts_ctr + 1 );
 					var transaction = scope.receipts_arr[scope.download_receipts_ctr];
@@ -211,13 +222,18 @@
 					scope.filter_num = num;
 					if( num == 1 ){
 						scope.filter_text = 'All';
+						scope.receipts_arr = scope.receipts_all;
 					}else if( num == 2 ){
 						scope.filter_text = 'Pending';
+						scope.receipts_arr = scope.receipts_pending;
 					}else if( num == 3 ){
 						scope.filter_text = 'Approved';
+						scope.receipts_arr = scope.receipts_approved;
 					}else{
 						scope.filter_text = 'Rejected';
+						scope.receipts_arr = scope.receipts_rejected;
 					}
+					console.log( scope.receipts_arr );
 				}
 
 				scope.hideReasonInput = function( list ){
@@ -367,6 +383,16 @@
 										temp_arr.push(value2);
 										if( key2 == ( value.files.length-1 ) ){
 											scope.receipts_arr.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											scope.receipts_all.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											if( value.status == 0 ){
+												scope.receipts_pending.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											}
+											if( value.status == 1 ){
+												scope.receipts_approved.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											}
+											if( value.status == 2 ){
+												scope.receipts_rejected.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											}
 										}
 									})
 								});
@@ -400,6 +426,10 @@
 						from : 0,
 						to: 0
 					}
+					scope.receipts_all = [];
+					scope.receipts_pending = [];
+					scope.receipts_approved = [];
+					scope.receipts_rejected = [];
 					scope.receipts_arr = [];
 					hrActivity.getEclaimActivity(data)
 					.then(function(response){
@@ -432,6 +462,16 @@
 										temp_arr.push(value2);
 										if( key2 == ( value.files.length-1 ) ){
 											scope.receipts_arr.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											scope.receipts_all.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											if( value.status == 0 ){
+												scope.receipts_pending.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											}
+											if( value.status == 1 ){
+												scope.receipts_approved.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											}
+											if( value.status == 2 ){
+												scope.receipts_rejected.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+											}
 										}
 									})
 								});
@@ -536,8 +576,12 @@
 					// scope.temp_no_search_activity = {};
 					// console.log(scope.activity);
 
-					var range_data = date_slider.getValue();
-			    var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+					// var range_data = date_slider.getValue();
+			    // var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+			    var activity_search = {
+				  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
+				  };
 					scope.searchActivity( activity_search );
 
 					// setTimeout(function() {
@@ -680,14 +724,65 @@
 						yearToday = moment().subtract(1,'years').format('YYYY');
 					}
 
-					var range_data = date_slider.getValue();
+					// var range_data = date_slider.getValue();
 
-		    	var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+		   //  	var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+		   		var activity_search = {
+				  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
+				  };
 		    	if(scope.search.user_id) {
 		    		scope.searchEmployeeActivity(scope.search.user_id);
 		    	} else {
 						scope.searchActivity( activity_search );
 		    	}
+				}
+
+				scope.applyDates = function(){
+					var activity_search = {
+				  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
+				  };
+					if(scope.search.user_id) {
+		    		scope.searchEmployeeActivity(scope.search.user_id);
+		    	} else {
+						scope.searchActivity( activity_search );
+		    	}
+				}
+
+				scope.initializeNewCustomDatePicker = function(){
+					setTimeout(function() {
+						$('.btn-custom-start').daterangepicker({
+							autoUpdateInput : true,
+							autoApply : true,
+							singleDatePicker: true,
+							startDate : moment( scope.rangePicker_start, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
+						}, function(start, end, label) {
+							scope.currentPage = 1;
+						  scope.rangePicker_start = moment( start ).format( 'DD/MM/YYYY' );
+							$("#rangePicker_start").text( scope.rangePicker_start );
+							$('.btn-custom-end').data('daterangepicker').setMinDate( start );
+
+							if( scope.rangePicker_end && ( moment(scope.rangePicker_end,'DD/MM/YYYY') < moment(scope.rangePicker_start,'DD/MM/YYYY') ) ){
+								scope.rangePicker_end = moment( start ).format( 'DD/MM/YYYY' );
+								$("#rangePicker_end").text( scope.rangePicker_end );
+							}
+						});
+
+						$('.btn-custom-end').daterangepicker({
+							autoUpdateInput : true,
+							autoApply : true,
+							singleDatePicker: true,
+							startDate : moment( scope.rangePicker_end, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
+						}, function(start, end, label) {
+						  scope.currentPage = 1;
+						  scope.rangePicker_end = moment( end ).format( 'DD/MM/YYYY' );
+							$("#rangePicker_end").text( scope.rangePicker_end );
+						});
+
+						// $("#rangePicker_start").text( scope.rangePicker_start );
+						// $("#rangePicker_end").text( scope.rangePicker_end );
+					}, 100);
 				}
 
 				scope.initializeRangeSlider = function( ){
@@ -738,12 +833,17 @@
 	        	});
 
 					scope.getEmployeeLists( );
-					scope.initializeRangeSlider( );
+					// scope.initializeRangeSlider( );
+					scope.initializeNewCustomDatePicker();
 
 					setTimeout(function() {
 						// var activity_search = scope.getFirstEndDate( 4 , 12 );	
-						var range_data = date_slider.getValue();
-				    var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+						// var range_data = date_slider.getValue();
+				  //   var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+				  	var activity_search = {
+					  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
+							end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
+					  };
 						scope.searchActivity( activity_search );
 					}, 500);
 				}
