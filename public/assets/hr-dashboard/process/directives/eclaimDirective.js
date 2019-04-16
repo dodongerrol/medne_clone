@@ -136,6 +136,7 @@
 						scope.toggleLoading();
 						$('.download-receipt-message').show();
 						$('.download-receipt-message .total').text( scope.receipts_arr.length );
+						zip = new JSZip();
 					}
 					$('.download-receipt-message .ctr').text( scope.download_receipts_ctr + 1 );
 					var transaction = scope.receipts_arr[scope.download_receipts_ctr];
@@ -232,6 +233,7 @@
 						scope.filter_text = 'Rejected';
 						scope.receipts_arr = scope.receipts_rejected;
 					}
+					console.log( scope.receipts_arr );
 				}
 
 				scope.hideReasonInput = function( list ){
