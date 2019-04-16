@@ -169,24 +169,26 @@
 
 							<div class="costs-box no-padding">
 								<div class="benefit-box eclaim-border-right">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.balance | number:2">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">S$ <span ng-bind="credits.total_medical_employee_balance">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">S$ <span ng-bind="credits.total_wellness_employee_balance">0.00</span></h5>
 									<p class="color-gray2 font-12 weight-700 no-margin">BALANCE</p>
 								</div>
 							</div>
 
 							<div class="costs-box no-padding">
 								<div class="benefit-box eclaim-border-right">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.allocation | number:2">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">S$ <span ng-bind="credits.total_medical_employee_allocated">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">S$ <span ng-bind="credits.total_wellness_employee_allocated">0.00</span></h5>
 									<p class="color-gray2 font-12 weight-700 no-margin">ALLOCATED</p>
 								</div>
 							</div>
 
-							<div class="costs-box no-padding">
+							<!-- <div class="costs-box no-padding">
 								<div class="benefit-box eclaim-border-right">
 									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.pending_e_claim_amount | number:2">0.00</span></h5>
 									<p class="color-gray2 font-12 weight-700 no-margin">PENDING E-CLAIM APPROVAL</p>
 								</div>
-							</div>
+							</div> -->
 
 							<div class="costs-box no-padding">
 								<div class="benefit-box ">
@@ -220,7 +222,7 @@
 							<div class="white-space-30"></div>
 						</div>
 
-						<div ng-if="options.accessibility == 1" >
+						<!-- <div ng-if="options.accessibility == 1" >
 							<div class="col-md-12 no-padding">
 								<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
 								<div class="white-space-20"></div>
@@ -322,11 +324,11 @@
 							<div class="col-md-12">
 								<div class="white-space-30"></div>
 							</div>
-						</div>
+						</div> -->
 
 					</div>
 
-					<div class="no-benefits-container" ng-if="options.accessibility == 0" >
+					<!-- <div class="no-benefits-container" ng-if="options.accessibility == 0" >
 
 						<div class="col-md-12 no-padding">
 							<div class="white-space-20"></div>
@@ -430,7 +432,7 @@
 							</div>
 						</div>
 
-					</div>
+					</div> -->
 
 				</div>
 			</div>

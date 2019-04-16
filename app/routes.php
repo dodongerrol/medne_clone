@@ -344,6 +344,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post("hr/employee_reset_account", 'BenefitsDashboardController@employeeResetAccount');
 	// download in-network-transactions
 	Route::get('hr/download_in_network_transactions', 'BenefitsDashboardController@downloadInNetwork');
+	// revert to pending e-claim
+	Route::post('hr/revert_pending_e_claim', 'EclaimController@revertPending');
 });
 	// check out-of-network transaction duplicates
 	Route::get('hr/check_duplicate_transaction', 'EclaimController@checkOutofNetwork');

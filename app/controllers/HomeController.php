@@ -66,7 +66,7 @@ public function getPusherConfig( )
 }
 public function getNotificationConfig( )
 {
-  $config = \Notification::config();
+  $config = Notification::config();
   return $config['app_id'];
 }
 
