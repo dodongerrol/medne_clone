@@ -332,8 +332,8 @@
 				    			<div class="input-group date" ng-cloak>
 								  <input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="@{{ placeholder }}" name="amount" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="list.amount">
 								  <span class="input-group-addon amount-add" id="sizing-addon2">
-								  	<i ng-if="clinic.currency_type == 'sgd'">S$</i>
-								  	<i ng-if="clinic.currency_type == 'myr'">RM</i>
+								  	<span ng-if="clinic.currency_type == 'sgd'">S$</span>
+								  	<span ng-if="clinic.currency_type == 'myr'">RM</span>
 								  </span>
 								</div>
 				    		</td>
