@@ -2823,11 +2823,13 @@ class BenefitsDashboardController extends \BaseController {
 			$e_claim_amount_pending_medication = DB::table('e_claim')
 			->whereIn('user_id', $ids)
 			->where('spending_type', 'medical')
+			->where('status', 0)
 			->sum('amount');
 
 			// get pending allocation for wellness
 			$e_claim_amount_pending_wellness = DB::table('e_claim')
 			->whereIn('user_id', $ids)
+			->where('status', 0)
 			->where('spending_type', 'wellness')
 			->sum('amount');
 
