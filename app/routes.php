@@ -1288,10 +1288,10 @@ Route::group(array('prefix' => 'app'), function()
         Route::post('clinic/update_procedure_scan_pay_status', 'App_ClinicController@scanPayStatus');
         // get clinic socket connection
         Route::get('clinic_socket_connection', 'HomeController@getClinicSocketDetails');
+		// api for check transaction duplication
+		Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
     });
 
-	// api for check transaction duplication
-	Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
 });
 
 // admin login for all platforms

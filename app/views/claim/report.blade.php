@@ -666,7 +666,7 @@
 		        			</span>
 		        		</p>
 		        		<p><label>Date:</label> <span ng-bind="your_transaction.date">Jun 14,2016</span></p>
-		        		<p><label>Amount:</label> S$<span ng-bind="temp_list[0].amount">50.00</span></p>
+		        		<p><label>Amount:</label> <span ng-if="clinic.currency_type == 'sgd'">S$</span><span ng-if="clinic.currency_type == 'myr'">RM</span><span ng-bind="temp_list[0].amount | number: 2">50.00</span></p>
 		        		<p><label>Type:</label> <span ng-bind="your_transaction.type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
 		        	</div>
 
@@ -675,10 +675,10 @@
 
 		        		<div ng-repeat="list in other_transaction" class="similar">
 			        		<p><label>Name:</label> <span ng-bind="list.user_name">Allan Alzula</span></p>
-		        		<p><label>Service:</label> <span ng-bind="list.service">Dental</span></p>
-		        		<p><label>Date:</label> <span ng-bind="list.date_of_transaction">Jun 14,2016</span></p>
-		        		<p><label>Amount:</label> S$<span ng-bind="list.procedure_cost">50.00</span></p>
-		        		<p><label>Type:</label> <span ng-bind="list.transaction_type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
+			        		<p><label>Service:</label> <span ng-bind="list.service">Dental</span></p>
+			        		<p><label>Date:</label> <span ng-bind="list.date_of_transaction">Jun 14,2016</span></p>
+			        		<p><label>Amount:</label> <span ng-bind="list.currency_symbol"></span><span ng-bind="list.procedure_cost">50.00</span></p>
+			        		<p><label>Type:</label> <span ng-bind="list.transaction_type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
 		        		</div>
 		        	</div>
 		        </div>

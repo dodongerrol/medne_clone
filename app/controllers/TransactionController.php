@@ -326,7 +326,7 @@ class TransactionController extends BaseController {
 					'date_of_transaction'	=> date('Y-m-d H:i:s', strtotime($input['transaction_date'])),
 					'claim_date'			=> date('Y-m-d H:i:s'),
 					'ClinicID'				=> $clinic_id,
-					'procedure_cost'		=> number_format($input['amount'], 2),
+					'procedure_cost'		=> $input['amount'],
 					'AppointmenID'			=> 0,
 					'revenue'				=> 0,
 					'debit'					=> 0,
@@ -3196,7 +3196,7 @@ class TransactionController extends BaseController {
 		->where("transaction_history.UserID", $input['user_id'])
 		->where("transaction_history.date_of_transaction", "like", "%".$date."%")
 		->where("transaction_history.deleted", 0)
-		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value')
+		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.currency_type', 'transaction_history.currency_amount')
 		->orderBy('transaction_history.created_at', 'desc')
 		->get();
 
@@ -3257,6 +3257,15 @@ class TransactionController extends BaseController {
 				$transaction_status = 'REMOVED';
 			}
 
+			$amount = 0;
+			$currency_symbol = "S$";
+			if($trans->currency_type == "myr") {
+				$amount = $trans->procedure_cost * $trans->currency_amount;
+				$currency_symbol = "RM";
+			} else {
+				$amount = $trans->procedure_cost;
+			}
+
 			$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(
 				'ClinicID'					=> $trans->ClinicID,
@@ -3265,12 +3274,13 @@ class TransactionController extends BaseController {
 				'UserID'					=> $trans->UserID,
 				'date_of_transaction'		=> date('d F Y, h:i a', strtotime($trans->date_of_transaction)),
 				'paid'						=> $trans->paid,
-				'procedure_cost'			=> number_format($trans->procedure_cost, 2),
+				'procedure_cost'			=> number_format($amount, 2),
 				'service'					=> $procedure,
 				'transaction_id'			=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 				'user_name'					=> ucwords($trans->user_name),
 				'transaction_type'			=> $transaction_type,
-				'transaction_status'		=> $transaction_status
+				'transaction_status'		=> $transaction_status,
+				'currency_symbol'			=> $currency_symbol
 			);
 			array_push($format, $temp);
 		}

@@ -970,6 +970,7 @@ app.directive("claimDirective", [
                   $("#loader_" + index).show();
                   if(data.currency_type == 'myr') {
                     data.amount = data.amount / data.currency_amount;
+                    // data.amount = data.amount.toFixed(2);
                   }
                   $http.post(base_url + "clinic/save/claim/transaction", data)
                     .success(function(response) {
