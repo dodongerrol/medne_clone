@@ -8,10 +8,6 @@
 
 			if($config == 1) {
 				return array(
-					// 'app_id'	=> '6dc4b805-0589-4bc1-98ef-ddc2ea8797e6',
-					// 'token'		=> 'NTM3MTgwMjItN2YzZC00ZjdkLThkZWUtMDgzNWU2NThlMjY4'
-					// 'app_id'	=> '3cc0159d-dbda-403f-893a-b3812e752679',
-					// 'token'		=> 'ZGRjN2YwOWItMDNlOS00MTNiLWFmNTQtODY1YTRjODg1ZTYz'
 					'app_id'	=> '013e34e7-7eed-4a88-9f13-d00a610e61fc',
 					'token'		=> 'OWVjMTNlMTAtNjRhYy00NTljLWI5YTEtZjU4OTMxOWRlNGUw'
 				);

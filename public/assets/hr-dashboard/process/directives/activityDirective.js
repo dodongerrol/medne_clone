@@ -24,8 +24,8 @@ app.directive('activityPage', [
 				scope.inNetwork_pagination = {};
 				scope.outNetwork_pagination = {};
 
-				scope.rangePicker_start = moment().startOf('year').format( 'DD/MM/YYYY' );
-				scope.rangePicker_end = moment().endOf('month').format( 'DD/MM/YYYY' );
+				scope.rangePicker_start = moment().startOf('month').format( 'DD/MM/YYYY' );
+				scope.rangePicker_end = moment().format( 'DD/MM/YYYY' );
 				$("#rangePicker_start").text( scope.rangePicker_start );
 				$("#rangePicker_end").text( scope.rangePicker_end );
 
@@ -270,23 +270,23 @@ app.directive('activityPage', [
 							scope.activity.total_in_network_transactions += response.data.data.total_in_network_transactions;
 							scope.activity.total_spent_format_number += response.data.data.total_spent_format_number;
 							
-							if( response.data.data.balance.indexOf(',') > -1 ){
-								response.data.data.balance = response.data.data.balance.replace(",", "");
-							}
-							if( response.data.data.allocation.indexOf(',') > -1 ){
-								response.data.data.allocation = response.data.data.allocation.replace(",", "");
-							}
-							if( response.data.data.pending_e_claim_amount.indexOf(',') > -1 ){
-								response.data.data.pending_e_claim_amount = response.data.data.pending_e_claim_amount.replace(",", "");
-							}
+							// if( response.data.data.balance.indexOf(',') > -1 ){
+							// 	response.data.data.balance = response.data.data.balance.replace(",", "");
+							// }
+							// if( response.data.data.allocation.indexOf(',') > -1 ){
+							// 	response.data.data.allocation = response.data.data.allocation.replace(",", "");
+							// }
+							// if( response.data.data.pending_e_claim_amount.indexOf(',') > -1 ){
+							// 	response.data.data.pending_e_claim_amount = response.data.data.pending_e_claim_amount.replace(",", "");
+							// }
 
-							response.data.data.balance = parseFloat( response.data.data.balance );
-							response.data.data.allocation = parseFloat( response.data.data.allocation );
-							response.data.data.pending_e_claim_amount = parseFloat( response.data.data.pending_e_claim_amount );
+							// response.data.data.balance = parseFloat( response.data.data.balance );
+							// response.data.data.allocation = parseFloat( response.data.data.allocation );
+							// response.data.data.pending_e_claim_amount = parseFloat( response.data.data.pending_e_claim_amount );
 
-							scope.activity.balance += response.data.data.balance;
-							scope.activity.allocation += response.data.data.allocation;
-							scope.activity.pending_e_claim_amount += response.data.data.pending_e_claim_amount;
+							// scope.activity.balance += response.data.data.balance;
+							// scope.activity.allocation += response.data.data.allocation;
+							// scope.activity.pending_e_claim_amount += response.data.data.pending_e_claim_amount;
 
 							// scope.activity.in_network_breakdown.dental_care_breakdown += response.data.data.in_network_breakdown.dental_care_breakdown;
 							// scope.activity.in_network_breakdown.general_practitioner_breakdown += response.data.data.in_network_breakdown.general_practitioner_breakdown;
@@ -339,6 +339,7 @@ app.directive('activityPage', [
 								scope.hideLoading();
 
 								scope.togglePointerEvents();
+								scope.currentPage = 1;
 								// scope.stockACtivityData();
 							}
 						}
@@ -390,19 +391,19 @@ app.directive('activityPage', [
 							scope.activity.total_lite_plan_consultation = response.data.data.total_lite_plan_consultation;
 
 
-							if( scope.activity.balance.indexOf(',') > -1 ){
-								scope.activity.balance = scope.activity.balance.replace(",", "");
-							}
-							if( scope.activity.allocation.indexOf(',') > -1 ){
-								scope.activity.allocation = scope.activity.allocation.replace(",", "");
-							}
-							if( scope.activity.pending_e_claim_amount.indexOf(',') > -1 ){
-								scope.activity.pending_e_claim_amount = scope.activity.pending_e_claim_amount.replace(",", "");
-							}
+							// if( scope.activity.balance.indexOf(',') > -1 ){
+							// 	scope.activity.balance = scope.activity.balance.replace(",", "");
+							// }
+							// if( scope.activity.allocation.indexOf(',') > -1 ){
+							// 	scope.activity.allocation = scope.activity.allocation.replace(",", "");
+							// }
+							// if( scope.activity.pending_e_claim_amount.indexOf(',') > -1 ){
+							// 	scope.activity.pending_e_claim_amount = scope.activity.pending_e_claim_amount.replace(",", "");
+							// }
 
-							scope.activity.balance = parseFloat( scope.activity.balance );
-							scope.activity.allocation = parseFloat( scope.activity.allocation );
-							scope.activity.pending_e_claim_amount = parseFloat( scope.activity.pending_e_claim_amount );
+							// scope.activity.balance = parseFloat( scope.activity.balance );
+							// scope.activity.allocation = parseFloat( scope.activity.allocation );
+							// scope.activity.pending_e_claim_amount = parseFloat( scope.activity.pending_e_claim_amount );
 
 							if( scope.activity.total_spent_format_number > 0 ){
 								scope.spent_progress_percentage = ( scope.activity.in_network_spending_format_number / scope.activity.total_spent_format_number ) * 100;
@@ -946,7 +947,18 @@ app.directive('activityPage', [
 					}, 500);
 				};
 
+				scope.credits = {};
+
+				scope.dashCredits = function( ) {
+		        	hrSettings.getCheckCredits()
+					.then(function(response){
+						console.log(response);
+	      				scope.credits = response.data;
+					});
+		        }
+
 				scope.onLoad( );
+				scope.dashCredits( );
 
 				$(document).on('click', ".per-page", function(ev) {
 					$(".per-page-drop").fadeIn();

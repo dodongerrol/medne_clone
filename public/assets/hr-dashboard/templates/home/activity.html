@@ -169,24 +169,26 @@
 
 							<div class="costs-box no-padding">
 								<div class="benefit-box eclaim-border-right">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.balance | number:2">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">S$ <span ng-bind="credits.total_medical_employee_balance">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">S$ <span ng-bind="credits.total_wellness_employee_balance">0.00</span></h5>
 									<p class="color-gray2 font-12 weight-700 no-margin">BALANCE</p>
 								</div>
 							</div>
 
 							<div class="costs-box no-padding">
 								<div class="benefit-box eclaim-border-right">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.allocation | number:2">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">S$ <span ng-bind="credits.total_medical_employee_allocated">0.00</span></h5>
+									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">S$ <span ng-bind="credits.total_wellness_employee_allocated">0.00</span></h5>
 									<p class="color-gray2 font-12 weight-700 no-margin">ALLOCATED</p>
 								</div>
 							</div>
 
-							<div class="costs-box no-padding">
+							<!-- <div class="costs-box no-padding">
 								<div class="benefit-box eclaim-border-right">
 									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.pending_e_claim_amount | number:2">0.00</span></h5>
 									<p class="color-gray2 font-12 weight-700 no-margin">PENDING E-CLAIM APPROVAL</p>
 								</div>
-							</div>
+							</div> -->
 
 							<div class="costs-box no-padding">
 								<div class="benefit-box ">
