@@ -38,7 +38,7 @@
 
 <div class="hrdb-body-container" style="background-color: #f5f5f5;padding-top: 180px;padding-bottom: 0;">
 	<div class="container">
-		<div class="col-md-12 text-center disable-cursor-off">
+		<!-- <div class="col-md-12 text-center disable-cursor-off">
 			<div class="slider-container">
 				<p class="color-gray text-left weight-700 activity-date-header">
 					<span style="margin-right: 10px;">Select a timeframe </span>
@@ -72,6 +72,41 @@
 				</div>
 			</div>
 			<div class="white-space-30"></div>
+		</div> -->
+
+		<div class="col-md-12">
+			<div class="body-container">
+				<p class="color-gray text-left weight-700">
+					<span style="margin-right: 10px;">Select a timeframe </span>
+				</p>
+			</div>
+		</div>
+
+		<div class="col-md-12 disable-cursor-off">
+			<div class="body-container activity-header-calendar">
+				<div class="date-selection-container">
+					<div class="custom-date-selector btn-custom-date" style="display: inline-block;">
+						<button class="btn btn-custom-start">
+							<i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
+							<span id="rangePicker_start">01/01/2018</span>
+							<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
+						</button>
+
+						<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
+
+						<button class="btn btn-custom-end">
+							<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
+							<span id="rangePicker_end">04/01/2018</span>
+							<i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
+						</button>
+
+						<button class="btn btn-apply" ng-click="applyDates()">
+							Apply
+						</button>
+					</div>
+				</div>
+
+			</div>
 		</div>
 
 		<div class="col-md-12 disable-cursor-off">
