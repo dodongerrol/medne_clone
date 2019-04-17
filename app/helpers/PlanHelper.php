@@ -230,12 +230,12 @@ class PlanHelper {
 			->where('customer_plan_id', $active_plan->plan_id)
 			->first();
 
-			$active_plan_extension = DB::table('plan_extensions')
-			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
-			->first();
-			
 			$first_active_plan = DB::table('customer_active_plan')
 			->where('plan_id', $active_plan->plan_id)
+			->first();
+
+			$active_plan_extension = DB::table('plan_extensions')
+			->where('customer_active_plan_id', $first_active_plan->customer_active_plan_id)
 			->first();
 			
 			if((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {

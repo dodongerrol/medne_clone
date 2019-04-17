@@ -1849,17 +1849,17 @@ public function getNewClinicDetails($id)
            $user_type = PlanHelper::getUserAccountType($findUserID);
 
            if($user_type == "employee") {
-            $plan_coverage = PlanHelper::checkEmployeePlanStatus($findUserID);
-        } else {
-            $plan_coverage = PlanHelper::getDependentPlanCoverage($findUserID);
-        }
+                $plan_coverage = PlanHelper::checkEmployeePlanStatus($findUserID);
+            } else {
+                $plan_coverage = PlanHelper::getDependentPlanCoverage($findUserID);
+            }
 
-        if($plan_coverage['expired'] == true) {
-           $returnObject->status = FALSE;
-           $returnObject->message = 'Employee Plan Coverage is expired';
-           $returnObject->data = $plan_coverage;
-           return Response::json($returnObject);
-       }
+            if($plan_coverage['expired'] == true) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Employee Plan Coverage is expired';
+               $returnObject->data = $plan_coverage;
+               return Response::json($returnObject);
+           }
 
            // return $plan_coverage;
 
