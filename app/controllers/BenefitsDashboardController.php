@@ -11630,21 +11630,24 @@ class BenefitsDashboardController extends \BaseController {
 							$amount = $invoice->individual_price * $invoice->employees;
 						}
 					} else {
-						if((int)$active->new_head_count == 0) {
-							$amount = $invoice->individual_price * $invoice->employees;
-						} else {
-							$first_plan = DB::table('customer_active_plan')->where('plan_id', $active->plan_id)->first();
-							$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
+						// if((int)$active->new_head_count == 0) {
+						// 	$amount = $invoice->individual_price * $invoice->employees;
+						// } else {
+						// 	$first_plan = DB::table('customer_active_plan')->where('plan_id', $active->plan_id)->first();
+						// 	$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
 
-							if($first_plan->duration || $first_plan->duration != "") {
-								$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
-							} else {
-								$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-							}
+						// 	if($first_plan->duration || $first_plan->duration != "") {
+						// 		$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
+						// 	} else {
+						// 		$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+						// 	}
 
-							$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $end_plan_date);
-							$amount = $invoice->employees * $calculated_prices;
-						}
+						// 	$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $end_plan_date);
+						// 	$amount = $invoice->employees * $calculated_prices;
+						// }
+						$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($active->customer_start_buy_id);
+						$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date['plan_end']);
+						$amount = $calculated_prices * $invoice->employees;
 					}
 
 					$total_due += $amount;
