@@ -1862,7 +1862,7 @@ public function getNewClinicDetails($id)
            }
 
            // return $plan_coverage;
-
+           $user = DB::table('user')->where('UserID', $findUserID)->first();
            $procedures = DB::table('clinic_procedure')
            ->where('ClinicID', $id)
            ->where('scan_pay_show', 1)
@@ -1906,6 +1906,8 @@ public function getNewClinicDetails($id)
         $jsonArray['website'] = $website;
         $jsonArray['custom_title'] = $custitle;
         $jsonArray['clinic_price'] = $clprice;
+        $jsonArray['member'] = ucwords($user->Name);
+        $jsonArray['nric'] = $user->NRIC;
         $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
         if($clinic->currency_type == "myr") {
@@ -1923,7 +1925,7 @@ public function getNewClinicDetails($id)
        ->where('plan_tier_users.status', 1)
        ->where('plan_tier_users.user_id', $findUserID)
        ->first();
-       
+
        $cap_currency_symbol = "S$";
        $cap_amount = 0;
         if($plan_tier) {
