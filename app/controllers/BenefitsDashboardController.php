@@ -10729,46 +10729,60 @@ class BenefitsDashboardController extends \BaseController {
 				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 			}
 			$calculated_prices_end_date = $end_plan_date;
+			$check->plan_amount = number_format($invoice->employees, $invoice->individual_price * $invoice->employees, 2);
 		} else {
-			$first_plan = DB::table('customer_active_plan')->where('plan_id', $check->plan_id)->first();
-			$duration = null;
-			if((int)$first_plan->plan_extention_enable == 1) {
-				$plan_extension = DB::table('plan_extensions')
-				->where('customer_active_plan_id', $first_plan->customer_active_plan_id)
-				->first();
-				$duration = $plan_extension->duration;
-			} else {
-				$duration = $first_plan->duration;
-			}
+			// $first_plan = DB::table('customer_active_plan')->where('plan_id', $check->plan_id)->first();
+			// $duration = null;
+			// if((int)$first_plan->plan_extention_enable == 1) {
+			// 	$plan_extension = DB::table('plan_extensions')
+			// 	->where('customer_active_plan_id', $first_plan->customer_active_plan_id)
+			// 	->first();
+			// 	$duration = $plan_extension->duration;
+			// } else {
+			// 	$duration = $first_plan->duration;
+			// }
 
-            // $check->plan_amount = number_format(self::calculateInvoicePlanPrice($invoice->employees, $invoice->individual_price, $check->plan_start, $end_plan_date) * $invoice->employees, 2);
-			if($check->new_head_count == 0) {
-				if($check->duration || $check->duration != "") {
-					$end_plan_date = date('Y-m-d', strtotime('+'.$check->duration, strtotime($plan->plan_start)));
-				} else {
-					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-				}
-				$check->plan_amount = number_format($invoice->individual_price * $invoice->employees, 2);
-			} else {
-				$first_plan = DB::table('customer_active_plan')->where('plan_id', $check->plan_id)->first();
-				$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
-				$check->plan_amount = number_format(self::calculateInvoicePlanPrice($invoice->employees, $invoice->individual_price, $check->plan_start, $end_plan_date) * $invoice->employees, 2);
-			}
-            // $check->employees = $invoice->employees;
-        // } else {
-        //     $check->plan_amount = number_format($invoice->individual_price * $invoice->employees, 2);
-        //     // $check->employees = $invoice->employees;
-        // }
-			$end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
+   //          // $check->plan_amount = number_format(self::calculateInvoicePlanPrice($invoice->employees, $invoice->individual_price, $check->plan_start, $end_plan_date) * $invoice->employees, 2);
+			// if($check->new_head_count == 0) {
+			// 	if($check->duration || $check->duration != "") {
+			// 		$end_plan_date = date('Y-m-d', strtotime('+'.$check->duration, strtotime($plan->plan_start)));
+			// 	} else {
+			// 		$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+			// 	}
+			// 	$check->plan_amount = number_format($invoice->individual_price * $invoice->employees, 2);
+			// } else {
+			// 	$first_plan = DB::table('customer_active_plan')->where('plan_id', $check->plan_id)->first();
+			// 	$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
+			// 	$check->plan_amount = number_format(self::calculateInvoicePlanPrice($invoice->employees, $invoice->individual_price, $check->plan_start, $end_plan_date) * $invoice->employees, 2);
+			// }
+   //          // $check->employees = $invoice->employees;
+   //      // } else {
+   //      //     $check->plan_amount = number_format($invoice->individual_price * $invoice->employees, 2);
+   //      //     // $check->employees = $invoice->employees;
+   //      // }
+			// $end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
 
-			if($check->account_type != "trial_plan") {
-				$calculated_prices_end_date = date('Y-m-d', strtotime('+'.$check->duration, strtotime($plan->plan_start)));
-			} else {
-				$calculated_prices_end_date = $end_plan_date;
-			}
+			// if($check->account_type != "trial_plan") {
+			// 	$calculated_prices_end_date = date('Y-m-d', strtotime('+'.$check->duration, strtotime($plan->plan_start)));
+			// } else {
+			// 	$calculated_prices_end_date = $end_plan_date;
+			// }
+			$calculated_prices_end_date = null;
+			$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($check->customer_start_buy_id);
+			$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
+			$duration = PlanHelper::getPlanDuration($check->customer_start_buy_id, $check->plan_start);
+
+			// if($check->account_type != "trial_plan") {
+			//   $calculated_prices_end_date = date('Y-m-d', strtotime('+'.$check->duration, strtotime($plan->plan_start)));
+			// } else {
+			//   $calculated_prices_end_date = $end_plan_date;
+			// }
+			$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $check->plan_start, $calculated_prices_end_date);
+			$check->plan_amount = number_format($calculated_prices * $invoice->employees, 2);
+			$check->new_head_count = true;
 		}
 
-		$check->plan_amount = number_format(self::calculateInvoicePlanPriceCompany($invoice->employees, $invoice->individual_price, $check->plan_start, $calculated_prices_end_date) * $invoice->employees, 2);
+		
 		$check->employees = $invoice->employees;
 
         // count number of pending enrollment
