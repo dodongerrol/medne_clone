@@ -1833,6 +1833,22 @@ class PlanHelper {
 			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance);
 		}
 
+		public static function getPlanDuration($customer_id, $plan_start)
+		{
+			$plan_coverage = self::getCompanyPlanDates($customer_id);
+			$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
+			$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
+
+			$interval = date_diff($date_plan_start, $date_new_plan_start);
+			if($interval->m + (1) == 1) {
+				$duration = $interval->m + (1). ' month';
+			} else {
+				$duration = $interval->m + (1). ' months';
+			}
+
+			return $duration;
+		}
+
 		public static function createUserPlanHistory($user_id, $customer_id)
 		{
 			$plan = DB::table('customer_plan')
