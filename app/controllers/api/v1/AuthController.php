@@ -1863,111 +1863,111 @@ public function getNewClinicDetails($id)
 
            // return $plan_coverage;
 
-       $procedures = DB::table('clinic_procedure')
-       ->where('ClinicID', $id)
-       ->where('scan_pay_show', 1)
-       ->where('Active', 1)
-       ->get();
-       if(!$procedures) {
-           $returnObject->status = FALSE;
-           $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
-           return Response::json($returnObject);
+           $procedures = DB::table('clinic_procedure')
+           ->where('ClinicID', $id)
+           ->where('scan_pay_show', 1)
+           ->where('Active', 1)
+           ->get();
+           if(!$procedures) {
+               $returnObject->status = FALSE;
+               $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
+               return Response::json($returnObject);
+           }
+
+                                // format clinic data
+           ($clinic->Email) ? $email = $clinic->Email : $email = null;
+           ($clinic->Description) ? $descr = $clinic->Description : $descr = null;
+           ($clinic->Website) ? $website = $clinic->Website : $website = null;
+           ($clinic->Custom_title) ? $custitle = $clinic->Custom_title : $custitle = null;
+           ($clinic->Clinic_Price) ? $clprice = $clinic->Clinic_Price : $clprice = null;
+
+           if(strpos($clinic->Phone_Code, '+') !== false) {
+               if(strpos($clinic->Phone, '+') !== false) {
+                  $jsonArray['telephone'] = $clinic->Phone;
+              } else {
+                  $jsonArray['telephone'] = $clinic->Phone_Code.$clinic->Phone;
+              }
+          } else {
+             if(strpos($clinic->Phone, '+') !== false) {
+                $jsonArray['telephone']= $clinic->Phone;
+            } else {
+                $jsonArray['telephone']= '+'.$clinic->Phone;
+            }
+        }
+
+        $jsonArray['clinic_id'] = $clinic->ClinicID;
+        $jsonArray['name'] = $clinic->CLName;
+        $jsonArray['email'] = $email;
+        $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLState.' '.$clinic->CLPostal;
+        $jsonArray['image_url'] = $clinic->CLImage;
+        $jsonArray['lattitude'] = $clinic->CLLat;
+        $jsonArray['longitude'] = $clinic->CLLng;
+        $jsonArray['description'] = $descr;
+        $jsonArray['website'] = $website;
+        $jsonArray['custom_title'] = $custitle;
+        $jsonArray['clinic_price'] = $clprice;
+        $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+
+        if($clinic->currency_type == "myr") {
+           $currency = "RM";
+           $balance = number_format($current_balance * 3, 2);
+       } else {
+           $currency = "S$";
+           $balance = number_format($current_balance, 2);
        }
 
-                            // format clinic data
-       ($clinic->Email) ? $email = $clinic->Email : $email = null;
-       ($clinic->Description) ? $descr = $clinic->Description : $descr = null;
-       ($clinic->Website) ? $website = $clinic->Website : $website = null;
-       ($clinic->Custom_title) ? $custitle = $clinic->Custom_title : $custitle = null;
-       ($clinic->Clinic_Price) ? $clprice = $clinic->Clinic_Price : $clprice = null;
-
-       if(strpos($clinic->Phone_Code, '+') !== false) {
-           if(strpos($clinic->Phone, '+') !== false) {
-              $jsonArray['telephone'] = $clinic->Phone;
-          } else {
-              $jsonArray['telephone'] = $clinic->Phone_Code.$clinic->Phone;
-          }
-      } else {
-         if(strpos($clinic->Phone, '+') !== false) {
-            $jsonArray['telephone']= $clinic->Phone;
+            // check if employee has plan tier cap
+       $plan_tier = DB::table('plan_tiers')
+       ->join('plan_tier_users', 'plan_tier_users.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
+       ->where('plan_tiers.active', 1)
+       ->where('plan_tier_users.status', 1)
+       ->where('plan_tier_users.user_id', $findUserID)
+       ->first();
+       
+       $cap_currency_symbol = "S$";
+       $cap_amount = 0;
+        if($plan_tier) {
+            $cap_amount = $plan_tier->gp_cap_per_visit;
         } else {
-            $jsonArray['telephone']= '+'.$clinic->Phone;
+            $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+            if($wallet->cap_per_visit_medical > 0) {
+                $cap_amount = $wallet->cap_per_visit_medical;
+            }
         }
-    }
 
-    $jsonArray['clinic_id'] = $clinic->ClinicID;
-    $jsonArray['name'] = $clinic->CLName;
-    $jsonArray['email'] = $email;
-    $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLState.' '.$clinic->CLPostal;
-    $jsonArray['image_url'] = $clinic->CLImage;
-    $jsonArray['lattitude'] = $clinic->CLLat;
-    $jsonArray['longitude'] = $clinic->CLLng;
-    $jsonArray['description'] = $descr;
-    $jsonArray['website'] = $website;
-    $jsonArray['custom_title'] = $custitle;
-    $jsonArray['clinic_price'] = $clprice;
-    $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+        $jsonArray['current_balance'] = $currency.' '.$balance;
+        $jsonArray['current_balance_in_sgd'] = $current_balance;
+        $jsonArray['currency_symbol'] = $currency;
+        $jsonArray['cap_currency_symbol'] = $cap_currency_symbol;
+        $jsonArray['cap_per_visit_amount'] = $cap_amount;
 
-    if($clinic->currency_type == "myr") {
-       $currency = "RM";
-       $balance = number_format($current_balance * 3, 2);
-   } else {
-       $currency = "S$";
-       $balance = number_format($current_balance, 2);
-   }
+        $check_in_time = date('Y-m-d H:i:s');
+        $check_in_data = array(
+          'user_id'         => $findUserID,
+          'clinic_id'       => $clinic->ClinicID,
+          'check_in_time'   => $check_in_time,
+          'check_out_time'  => $check_in_time,
+          'check_in_type'   => 'in_network_transaction'
+        );
 
-        // check if employee has plan tier cap
-   $plan_tier = DB::table('plan_tiers')
-   ->join('plan_tier_users', 'plan_tier_users.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
-   ->where('plan_tiers.active', 1)
-   ->where('plan_tier_users.status', 1)
-   ->where('plan_tier_users.user_id', $findUserID)
-   ->first();
-
-   $cap_currency_symbol = "S$";
-   $cap_amount = 0;
-    if($plan_tier) {
-        $cap_amount = $plan_tier->gp_cap_per_visit;
-    } else {
-        $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
-        if($wallet->cap_per_visit_medical > 0) {
-            $cap_amount = $wallet->cap_per_visit_medical;
+        $check_in_class = new EmployeeClinicCheckIn( );
+                // // create clinic check in data
+        $check_in = $check_in_class->createData($check_in_data);
+        $jsonArray['check_in_id'] = $check_in->id;
+        $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
+        $returnObject->data = $jsonArray;
+        $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
+        return Response::json($returnObject);
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
         }
-    }
-
-    $jsonArray['current_balance'] = $currency.' '.$balance;
-    $jsonArray['current_balance_in_sgd'] = $current_balance;
-    $jsonArray['currency_symbol'] = $currency;
-    $jsonArray['cap_currency_symbol'] = $cap_currency_symbol;
-    $jsonArray['cap_per_visit_amount'] = $cap_amount;
-
-    $check_in_time = date('Y-m-d H:i:s');
-    $check_in_data = array(
-      'user_id'         => $findUserID,
-      'clinic_id'       => $clinic->ClinicID,
-      'check_in_time'   => $check_in_time,
-      'check_out_time'  => $check_in_time,
-      'check_in_type'   => 'in_network_transaction'
-    );
-
-    $check_in_class = new EmployeeClinicCheckIn( );
-            // // create clinic check in data
-    $check_in = $check_in_class->createData($check_in_data);
-    $jsonArray['check_in_id'] = $check_in->id;
-    $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
-    $returnObject->data = $jsonArray;
-    $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
-    return Response::json($returnObject);
-    } else {
-      $returnObject->status = FALSE;
-      $returnObject->message = StringHelper::errorMessage("Token");
-      return Response::json($returnObject);
-    }
-    } else {
-       $returnObject->status = FALSE;
-       $returnObject->message = StringHelper::errorMessage("Token");
-       return Response::json($returnObject);
-    }
+        } else {
+           $returnObject->status = FALSE;
+           $returnObject->message = StringHelper::errorMessage("Token");
+           return Response::json($returnObject);
+        }
     } else {
       $returnObject->status = FALSE;
       $returnObject->message = StringHelper::errorMessage("Token");
