@@ -1914,7 +1914,6 @@ public function getNewClinicDetails($id)
         } else {
          $currency = "S$";
          $balance = number_format($current_balance, 2);
-
         }
 
         // check if employee has plan tier cap
@@ -1928,6 +1927,11 @@ public function getNewClinicDetails($id)
         $cap_amount = 0;
         if($plan_tier) {
             $cap_amount = $plan_tier->gp_cap_per_visit;
+        } else {
+            $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+            if($wallet->cap_per_visit_medical > 0) {
+                $cap_amount = $wallet->cap_per_visit_medical;
+            }
         }
 
         $jsonArray['current_balance'] = $currency.' '.$balance;
@@ -5184,14 +5188,14 @@ public function payCreditsNew( )
        // check user credits and amount key in
 
        $spending_type = "medical";
-       $credits = DB::table('e_wallet')->where('UserID', $user_id)->first();
+       $wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
 
        if($clinic_type->spending_type == "medical") {
-         $user_credits = self::floatvalue($credits->balance);
+         $user_credits = self::floatvalue($wallet_user->balance);
          $spending_type = "medical";
        } else {
-         $user_credits = self::floatvalue($credits->wellness_balance);
+         $user_credits = self::floatvalue($wallet_user->wellness_balance);
          $spending_type = "wellness";
        }
 
@@ -5209,53 +5213,51 @@ public function payCreditsNew( )
 
     // check if user has a plan tier
     $plan_tier = PlanHelper::getEmployeePlanTier($customer_id);
-
+    $cap_amount = 0;
     if($plan_tier) {
-        // check medical cap
-       if($plan_tier->medical_annual_cap != 0) {
-        $medical_cap = PlanHelper::getEmployeeAnnualCapMedical($user_id);
+      // if((int)$clinic_type->consultation == 1) {
+        //   if($plan_tier->gp_cap_per_visit != 0) {
+        //    if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+        //     $total_credits = self::floatvalue($total_amount) + $co_paid_amount;
+        //   } else {
+        //     $total_credits =self::floatvalue($total_amount);
+        //   }
 
-        if($medical_cap > $plan_tier->medical_annual_cap) {
-         $returnObject->status = FALSE;
-         $returnObject->message = 'You have hit the maximum medical annual cap as you are in Plan Tier member.';
-         $returnObject->sub_mesage = 'Your maximum medical annual cap is '.number_format($plan_tier->medical_annual_cap, 2).'.';
-         return Response::json($returnObject);
-       }
-      }
-
-      if($plan_tier->wellness_annual_cap != 0) {
-        $wellness_cap = PlanHelper::getEmployeeAnnualCapWellness($user_id);
-
-        if($medical_cap > $plan_tier->wellness_annual_cap) {
-         $returnObject->status = FALSE;
-         $returnObject->message = 'You have hit the maximum wellness annual cap as you are in Plan Tier member.';
-         $returnObject->sub_mesage = 'Your maximum medical annual cap is '.number_format($plan_tier->medical_annual_cap, 2).'.';
-         return Response::json($returnObject);
-       }
-      }
-
-      if((int)$clinic_type->consultation == 1) {
-          if($plan_tier->gp_cap_per_visit != 0) {
-           if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-            $total_credits = self::floatvalue($total_amount) + $co_paid_amount;
-          } else {
-            $total_credits =self::floatvalue($total_amount);
-          }
-
-          if($total_credits > $plan_tier->gp_cap_per_visit) {
-            $returnObject->status = FALSE;
-            $returnObject->message = 'You have hit the maximum GP CAP PER VISIT as you are in Plan Tier member.';
-            $returnObject->sub_mesage = 'You can only pay '.number_format($plan_tier->gp_cap_per_visit, 2).' Per GP Visit.';
-            return Response::json($returnObject);
-          }
+        //   if($total_credits > $plan_tier->gp_cap_per_visit) {
+        //     $returnObject->status = FALSE;
+        //     $returnObject->message = 'You have hit the maximum GP CAP PER VISIT as you are in Plan Tier member.';
+        //     $returnObject->sub_mesage = 'You can only pay '.number_format($plan_tier->gp_cap_per_visit, 2).' Per GP Visit.';
+        //     return Response::json($returnObject);
+        //   }
+        // }
+      // }
+        $cap_amount = $plan_tier->gp_cap_per_visit;
+    } else {
+        if($wallet_user->cap_per_visit_medical > 0) {
+            $cap_amount = $wallet_user->cap_per_visit_medical;
         }
-      }
     }
 
-                        // return "yeah";
+    $credits = 0;
+    $cash = 0;
+    $half_credits = false;
+    // return $cap_amount;
+    if($cap_amount > 0) {
+        if($total_amount > $cap_amount) {
+            $cash = $total_amount - $cap_amount;
+            $credits = $cap_amount;
+            $half_credits = true;
+        } else {
+            $credits = $total_amount;
+        }
+    } else {
+        $credits = $total_amount;
+        $cash_cost = 0;
+    }
+    // return array('credits' => $credits, 'cash' => $cash, 'half_credits' => $half_credits);
 
     if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-         $total_credits = self::floatvalue($total_amount) + $co_paid_amount;
+         $total_credits = self::floatvalue($credits) + $co_paid_amount;
          if($total_credits > $user_credits) {
           $returnObject->status = FALSE;
           $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
@@ -5263,8 +5265,8 @@ public function payCreditsNew( )
           return Response::json($returnObject);
         } 
     } else {
-        $total_credits = self::floatvalue($total_amount);
-        if(self::floatvalue($total_amount) > $user_credits) {
+        $total_credits = self::floatvalue($credits);
+        if(self::floatvalue($credits) > $user_credits) {
           $returnObject->status = FALSE;
           $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
           $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
@@ -5311,8 +5313,8 @@ public function payCreditsNew( )
      'medi_percent'          => $clinic->medicloud_transaction_fees,
      'currency_type'         => $clinic->currency_type,
      'wallet_use'            => 1,
-     'current_wallet_amount' => $credits->balance,
-     'credit_cost'           => $total_amount ,
+     'current_wallet_amount' => $wallet_user->balance,
+     'credit_cost'           => $credits,
      'paid'                  => 1,
      'co_paid_status'            => $co_paid_status,
      'co_paid_amount'            => $co_paid_amount,
@@ -5322,7 +5324,9 @@ public function payCreditsNew( )
      'mobile'                => 1,
      'multiple_service_selection' => $multiple_service_selection,
      'currency_type'         => $clinic->currency_type,
-     'lite_plan_enabled'     => $lite_plan_enabled
+     'lite_plan_enabled'     => $lite_plan_enabled,
+     'cash_cost'            => $cash,
+     'half_credits'          => $half_credits == true ? 1 : 0
     );
 
     if((int)$clinic_type->lite_plan_enabled == 1 && $lite_plan_status) {
@@ -5375,20 +5379,20 @@ public function payCreditsNew( )
     $history = new WalletHistory( );
     if($spending_type == "medical") {
          $credits_logs = array(
-          'wallet_id'     => $credits->wallet_id,
-          'credit'        => $total_amount,
+          'wallet_id'     => $wallet_user->wallet_id,
+          'credit'        => $credits,
           'logs'          => 'deducted_from_mobile_payment',
-          'running_balance' => $credits->balance - $total_amount,
+          'running_balance' => $wallet_user->balance - $credits,
           'where_spend'   => 'in_network_transaction',
           'id'            => $transaction_id
         );
 
          if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
           $lite_plan_credits_log = array(
-           'wallet_id'     => $credits->wallet_id,
+           'wallet_id'     => $wallet_user->wallet_id,
            'credit'        => $co_paid_amount,
            'logs'          => 'deducted_from_mobile_payment',
-           'running_balance' => $credits->balance - $total_amount - $co_paid_amount,
+           'running_balance' => $wallet_user->balance - $credits - $co_paid_amount,
            'where_spend'   => 'in_network_transaction',
            'id'            => $transaction_id,
            'lite_plan_enabled' => 1,
@@ -5396,20 +5400,20 @@ public function payCreditsNew( )
         }
         } else {
          $credits_logs = array(
-          'wallet_id'     => $credits->wallet_id,
+          'wallet_id'     => $wallet_user->wallet_id,
           'credit'        => $input_amount,
           'logs'          => 'deducted_from_mobile_payment',
-          'running_balance' => $credits->wellness_balance - $total_amount,
+          'running_balance' => $wallet_user->wellness_balance - $credits,
           'where_spend'   => 'in_network_transaction',
           'id'            => $transaction_id
         );
 
          if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
           $lite_plan_credits_log = array(
-           'wallet_id'     => $credits->wallet_id,
+           'wallet_id'     => $wallet_user->wallet_id,
            'credit'        => $co_paid_amount,
            'logs'          => 'deducted_from_mobile_payment',
-           'running_balance' => $credits->balance - $total_amount - $co_paid_amount,
+           'running_balance' => $wallet_user->balance - $credits - $co_paid_amount,
            'where_spend'   => 'in_network_transaction',
            'id'            => $transaction_id,
            'lite_plan_enabled' => 1,
@@ -5466,12 +5470,15 @@ public function payCreditsNew( )
 
       $transaction_results = array(
         'clinic_name'       => ucwords($clinic->Name),
-        'amount'            => number_format($input_amount, 2),
+        'total_payment'     => number_format($total_amount, 2),
+        'credits'            => number_format($credits, 2),
+        'cash'              => $cash,
         'transaction_time'  => date('Y-m-d h:i', strtotime($result->created_at)),
         'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)).$trans_id,
         'services'          => $procedure,
         'currency_symbol'   => $email_currency_symbol,
-        'dependent_user'    => $dependent_user
+        'dependent_user'    => $dependent_user,
+        'half_credits_payment' => $half_credits
       );
 
 
@@ -5498,6 +5505,10 @@ public function payCreditsNew( )
         }
       }
 
+       $returnObject->status = TRUE;
+       $returnObject->message = 'Payment Successfull';
+       $returnObject->data = $transaction_results;
+       return Response::json($returnObject);
       // send email
       $email['member'] = ucwords($user->Name);
       $email['credits'] = number_format($input_amount, 2);
@@ -5545,7 +5556,7 @@ public function payCreditsNew( )
        $returnObject->data = $transaction_results;
       } catch(Exception $e) {
         $email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
-        $email['logs'] = 'Mobile Payment Credits Send Email Attachments - '.$e->getMessage();
+        $email['logs'] = 'Mobile Payment Credits Send Email Attachments - '.$e;
         $email['emailSubject'] = 'Error log.';
         EmailHelper::sendErrorLogs($email);
         $returnObject->status = TRUE;
@@ -5555,7 +5566,7 @@ public function payCreditsNew( )
 
       } catch(Exception $e) {
        $email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
-       $email['logs'] = 'Mobile Payment Credits - '.$e->getMessage();
+       $email['logs'] = 'Mobile Payment Credits - '.$e;
        $email['emailSubject'] = 'Error log. - Transaction ID: '.$transaction_id.' Wallet History ID: '.$wallet_history_id;
 
 
@@ -5563,19 +5574,17 @@ public function payCreditsNew( )
        $transaction->deleteFailedTransactionHistory($transaction_id);
        // delete failed wallet history
        if($spending_type == "medical") {
-        $history->deleteFailedWalletHistory($wallet_history_id);
-                                                      // credits back
-        $wallet->addCredits($user_id, $input['amount']);
-      } else {
-        \WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
-        $wallet->addWellnessCredits($user_id, $input['amount']);
-      }
-
-      $returnObject->status = FALSE;
-      $returnObject->message = 'Payment unsuccessfull. Please try again later';
-
-      EmailHelper::sendErrorLogs($email);
-      }
+            $history->deleteFailedWalletHistory($wallet_history_id);
+             // credits back
+            $wallet->addCredits($user_id, $credits);
+        } else {
+            \WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
+            $wallet->addWellnessCredits($user_id, $credits);
+        }
+            $returnObject->status = FALSE;
+            $returnObject->message = 'Payment unsuccessfull. Please try again later';
+            EmailHelper::sendErrorLogs($email);
+        }
 
 
       } else {
@@ -5585,7 +5594,7 @@ public function payCreditsNew( )
 
       } catch(Exception $e) {
        $email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
-       $email['logs'] = 'Mobile Payment Credits - '.$e->getMessage();
+       $email['logs'] = 'Mobile Payment Credits - '.$e;
        $email['emailSubject'] = 'Error log. - Transaction ID: '.$transaction_id;
 
                                           // delete transaction history log
@@ -5602,7 +5611,7 @@ public function payCreditsNew( )
        $returnObject->message = 'Cannot process payment credits. Please try again.';
                                   // send email logs
        $email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
-       $email['logs'] = 'Mobile Payment Credits - '.$e->getMessage();
+       $email['logs'] = 'Mobile Payment Credits - '.$e;
        $email['emailSubject'] = 'Error log.';
        EmailHelper::sendErrorLogs($email);
       }
