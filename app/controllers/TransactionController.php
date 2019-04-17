@@ -2624,9 +2624,9 @@ class TransactionController extends BaseController {
 				}
 
 
-				// if($trans->paid == 1 && $trans->deleted == 0 || $trans->paid == "1" && $trans->deleted == "0") {
-				// 	$mednefits_total_fee += $fee;
-				// }
+				if((int)$trans->paid == 1 && $trans->deleted == 0) {
+					$mednefits_total_fee += $fee;
+				}
 
 				// if($trans->deleted == 1 && $trans->refunded == 1 || $trans->deleted == "1" && $trans->refunded == "1") {
 				// 	$transaction_status = 'REFUNDED';
