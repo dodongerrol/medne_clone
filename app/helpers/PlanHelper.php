@@ -1859,7 +1859,6 @@ class PlanHelper {
 		{
 			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime($end))));
 			$days = $diff->format('%a');
-
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 			$remaining_days = $days;
 
