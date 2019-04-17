@@ -1591,14 +1591,14 @@ class TransactionController extends BaseController {
 		->where(function($query) use ($clinic_id, $start, $end){
 			$query->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.paid', 1)
-			->where('transaction_history.procedure_cost', ">", 0)
+			->where('transaction_history.procedure_cost', ">=", 0)
 			->where('transaction_history.claim_date', '>=', $start)
 			->where('transaction_history.claim_date', '<=', $end);
 		})
 		->orWhere(function($query) use ($clinic_id, $start, $end){
 			$query->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.paid', 1)
-			->where('transaction_history.procedure_cost', ">", 0)
+			->where('transaction_history.procedure_cost', ">=", 0)
 			->where('transaction_history.created_at', '>=', $start)
 			->where('transaction_history.created_at', '<=', $end);
 		})
@@ -1811,14 +1811,14 @@ class TransactionController extends BaseController {
 				->where(function($query) use ($clinic_id, $nric, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
 					->where('user.NRIC', 'like', '%'.$nric.'%')
-					->where('transaction_history.procedure_cost', ">", 0)
+					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.created_at', '>=', $start)
 					->where('transaction_history.created_at', '<=', $end);
 				})
 				->orWhere(function($query) use ($clinic_id, $nric, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
 					->where('user.NRIC', 'like', '%'.$nric.'%')
-					->where('transaction_history.procedure_cost', ">", 0)
+					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.claim_date', '>=', $start)
 					->where('transaction_history.claim_date', '<=', $end);
 				})
@@ -1830,14 +1830,14 @@ class TransactionController extends BaseController {
 				->join('user', 'user.UserID', '=', 'transaction_history.UserID')
 				->where(function($query) use ($clinic_id, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
-					->where('transaction_history.procedure_cost', ">", 0)
+					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.claim_date', '>=', $start)
 					->where('transaction_history.claim_date', '<=', $end);
 					
 				})
 				->orWhere(function($query) use ($clinic_id, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
-					->where('transaction_history.procedure_cost', ">", 0)
+					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.created_at', '>=', $start)
 					->where('transaction_history.created_at', '<=', $end);
 				})
@@ -1851,7 +1851,7 @@ class TransactionController extends BaseController {
 			->join('user', 'user.UserID', '=', 'transaction_history.UserID')
 			->where('transaction_history.ClinicID', $clinic_id)
 			->where('user.NRIC', 'like', '%'.$input['nric'].'%')
-			->where('transaction_history.procedure_cost', ">", 0)
+			->where('transaction_history.procedure_cost', ">=", 0)
 				// ->where('transaction_history.date_of_transaction', '>=', $start)
 				// ->where('transaction_history.date_of_transaction', '<=', $end)
 			->orderBy('transaction_history.created_at', 'desc')
@@ -1887,7 +1887,7 @@ class TransactionController extends BaseController {
 	        //     }
 	        // }
 
-			if($trans->co_paid_status == 0 || $trans->co_paid_status == "0") {
+			if((int)$trans->co_paid_status == 0) {
 				if(strrpos($trans->clinic_discount, '%')) {
 					$percentage = chop($trans->clinic_discount, '%');
 					if($trans->credit_cost > 0) {
@@ -1911,7 +1911,7 @@ class TransactionController extends BaseController {
 					}
 				}
 				$text = "non co paid";
-			} else if($trans->co_paid_status == 1 || $trans->co_paid_status == "1"){
+			} else if((int)$trans->co_paid_status == 1){
 				// $fee = $trans->co_paid_amount;
 				// $text = "co paid";
 				if(strrpos($trans->clinic_discount, '%')) {
@@ -1939,7 +1939,7 @@ class TransactionController extends BaseController {
 				}
 			}
 
-			if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+			if((int)$trans->multiple_service_selection == 1)
 			{
           // get multiple service
 				$service_lists = DB::table('transaction_services')
@@ -2488,14 +2488,14 @@ class TransactionController extends BaseController {
 		->where(function($query) use ($clinic_id, $start, $end){
 			$query->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.paid', 1)
-			->where('transaction_history.procedure_cost', ">", 0)
+			->where('transaction_history.procedure_cost', ">=", 0)
 			->where('transaction_history.claim_date', '>=', $start)
 			->where('transaction_history.claim_date', '<=', $end);
 		})
 		->orWhere(function($query) use ($clinic_id, $start, $end){
 			$query->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.paid', 1)
-			->where('transaction_history.procedure_cost', ">", 0)
+			->where('transaction_history.procedure_cost', ">=", 0)
 			->where('transaction_history.created_at', '>=', $start)
 			->where('transaction_history.created_at', '<=', $end);
 		})
