@@ -4065,10 +4065,10 @@ class BenefitsDashboardController extends \BaseController {
 				}
 				$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
 				// $calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $plan->plan_start, $calculated_prices_end_date);
-				$data['price']          = number_format($calculated_prices, 2);
-				$data['amount']					= number_format($get_invoice->employees * $calculated_prices, 2);
-				$data['total']					= number_format($get_invoice->employees * $calculated_prices, 2);
-				$data['amount_due']     = number_format($get_invoice->employees * $calculated_prices, 2);
+				$data['price']          = number_format($get_invoice->individual_price, 2);
+				$data['amount']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
+				$data['total']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
+				$data['amount_due']     = number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 			} else {
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
 				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date['plan_end']);
