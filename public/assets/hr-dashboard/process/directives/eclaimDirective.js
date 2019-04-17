@@ -520,15 +520,10 @@
 					scope.toggleLoading();
 					scope.temp_no_search_activity = scope.activity;
 					scope.receipts_arr = [];
-					var range_data = date_slider.getValue();
-					var activity_search = null;
-					if( scope.showCustomPicker ){
-						activity_search = {
-							start: moment( scope.rangePicker_start,'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-							end: moment( scope.rangePicker_end ,'DD/MM/YYYY').format('YYYY-MM-DD'),
-						}
-					}else{
-						activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
+					// var range_data = date_slider.getValue();
+					var activity_search = {
+						start: moment( scope.rangePicker_start,'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+						end: moment( scope.rangePicker_end ,'DD/MM/YYYY').format('YYYY-MM-DD'),
 					}
 					scope.search.user_id = user_id;
 					activity_search.user_id = user_id;
