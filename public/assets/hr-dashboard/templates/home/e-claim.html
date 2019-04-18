@@ -353,7 +353,11 @@
 										<div ng-if="list.status == 0 && !list.showReasonInput && !list.showRemarksInput" class="btn-wrapper" >
 											<button class="btn btn-approve font-medium2" ng-click="updateStatus(list,1)">Approve Claim</button>
 											<button class="btn btn-reject font-medium2" ng-click="updateStatus(list,2)">Reject Claim</button>
-											<button class="btn btn-check-trans font-medium2" ng-click="checkTransStatus(list)">Check Transaction Duplicates</button>
+											<!-- <button class="btn btn-check-trans font-medium2" ng-click="checkTransStatus(list)">Check Transaction Duplicates</button> -->
+										</div>
+
+										<div ng-if="list.status != 0 && !list.showReasonInput && !list.showRemarksInput" class="btn-wrapper" >
+											<button class="btn btn-check-trans font-medium2" ng-click="updateStatus(list,3)">Revert Status</button>
 										</div>
 
 										<div ng-if="list.showReasonInput" class="form-group reason-wrapper" style="text-align: left;display:block;width: 240px;margin: 0 auto;">
