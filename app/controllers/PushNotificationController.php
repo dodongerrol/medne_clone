@@ -22,6 +22,7 @@ class PushNotificationController extends \BaseController {
 			$authSession = new OauthSessions();
 			$getRequestHeader = StringHelper::requestHeader();
 			if(!empty($getRequestHeader['Authorization'])){
+				$AccessToken = new Api_V1_AccessTokenController();
 				$getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   				if($getAccessToken){
 					$findUserID = $authSession->findUserID($getAccessToken->session_id);
