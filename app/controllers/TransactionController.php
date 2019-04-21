@@ -244,6 +244,7 @@ class TransactionController extends BaseController {
 	    	$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
 	    	$lite_plan_status = false;
 	    	$clinic_peak_status = false;
+	    	$consultation_fees = $clinic_data->consultation_fees;
             $lite_plan_status = StringHelper::newLitePlanStatus($input['id']);
 	    	
             if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
@@ -290,7 +291,7 @@ class TransactionController extends BaseController {
 					$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
 					// return var_dump($user_peak);
 					if($user_peak) {
-					  if($clinic_data->co_paid_status == 1 || $clinic_data->co_paid_status == "1") {
+					  if((int)$clinic_data->co_paid_status == 1) {
 					    $gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
 					    $co_paid_amount = $clinic_data->peak_hour_amount + $gst;
 					    $co_paid_status = $clinic_data->co_paid_status;
@@ -298,9 +299,9 @@ class TransactionController extends BaseController {
 					    $co_paid_amount = $clinic_data->peak_hour_amount;
 					    $co_paid_status = $clinic_data->co_paid_status;
 					  }
-					} 
-					else {
-					  if($clinic_data->co_paid_status == 1 || $clinic_data->co_paid_status == "1") {
+					  $consultation_fees = $co_paid_amount;
+					} else {
+					  if((int)$clinic_data->co_paid_status == 1) {
 					    $gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
 					    $co_paid_amount = $clinic_data->co_paid_amount + $gst;
 					    $co_paid_status = $clinic_data->co_paid_status;
@@ -309,8 +310,8 @@ class TransactionController extends BaseController {
 					    $co_paid_status = $clinic_data->co_paid_status;
 					  }
 					}
-					} else {
-					if($clinic_data->co_paid_status == 1 || $clinic_data->co_paid_status == "1") {
+				} else {
+					if((int)$clinic_data->co_paid_status == 1) {
 					  $gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
 					  $co_paid_amount = $clinic_data->co_paid_amount + $gst;
 					  $co_paid_status = $clinic_data->co_paid_status;
@@ -345,7 +346,8 @@ class TransactionController extends BaseController {
 					'multiple_service_selection' => $multiple,
 					'currency_type'			=> $clinic_data->currency_type,
 					'currency_amount'			=> $input['currency_amount'] ? $input['currency_amount'] : 3,
-					'lite_plan_enabled'     => $lite_plan_enabled
+					'lite_plan_enabled'     => $lite_plan_enabled,
+					'consultation_fees'		=> $consultation_fees
 				);
 
 				if($clinic_peak_status) {
@@ -374,14 +376,14 @@ class TransactionController extends BaseController {
 						}
 						// check user credits and deduct
 
-						if($balance >= $co_paid_amount) {
+						if($balance >= $consultation_fees) {
 							$wallet = new Wallet( );
 							// deduct wallet
 							$lite_plan_credits_log = array(
 								'wallet_id'     => $wallet_data->wallet_id,
-								'credit'        => $co_paid_amount,
+								'credit'        => $consultation_fees,
 								'logs'          => 'deducted_from_mobile_payment',
-								'running_balance' => $balance - $co_paid_amount,
+								'running_balance' => $balance - $consultation_fees,
 								'where_spend'   => 'in_network_transaction',
 								'id'            => $result->id,
 								'lite_plan_enabled' => 1,
@@ -460,17 +462,18 @@ class TransactionController extends BaseController {
 					$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
 					// return var_dump($user_peak);
 					if($user_peak) {
-						if($clinic_data->co_paid_status == 1 || $clinic_data->co_paid_status == "1") {
+						if((int)$clinic_data->co_paid_status == 1) {
 							$gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
 							$co_paid_amount = $clinic_data->peak_hour_amount + $gst;
 							$co_paid_status = $clinic_data->co_paid_status;
+
 						} else {
 							$co_paid_amount = $clinic_data->peak_hour_amount;
 							$co_paid_status = $clinic_data->co_paid_status;
 						}
-					} 
-					else {
-						if($clinic_data->co_paid_status == 1 || $clinic_data->co_paid_status == "1") {
+						$consultation_fees = $co_paid_amount;
+					} else {
+						if((int)$clinic_data->co_paid_status == 1) {
 							$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
 							$co_paid_amount = $clinic_data->co_paid_amount + $gst;
 							$co_paid_status = $clinic_data->co_paid_status;
@@ -480,7 +483,7 @@ class TransactionController extends BaseController {
 						}
 					}
 				} else {
-					if($clinic_data->co_paid_status == 1 || $clinic_data->co_paid_status == "1") {
+					if((int)$clinic_data->co_paid_status == 1) {
 						$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
 						$co_paid_amount = $clinic_data->co_paid_amount + $gst;
 						$co_paid_status = $clinic_data->co_paid_status;
@@ -499,7 +502,8 @@ class TransactionController extends BaseController {
 					'clinic_discount'	=> $clinic_data->discount,
 					'paid'				=> 1,
 					'currency_type'		=> $clinic_data->currency_type,
-					'currency_amount'	=> $input['currency_amount'] ? $input['currency_amount'] : 3
+					'currency_amount'	=> $input['currency_amount'] ? $input['currency_amount'] : 3,
+					'consultation_fees'	=> $consultation_fees
 				);
 
 				if($clinic_peak_status) {
@@ -524,14 +528,14 @@ class TransactionController extends BaseController {
 						}
 						// check user credits and deduct
 
-						if($balance >= $co_paid_amount) {
+						if($balance >= $consultation_fees) {
 							$wallet = new Wallet( );
 							// deduct wallet
 							$lite_plan_credits_log = array(
 								'wallet_id'     => $wallet_data->wallet_id,
-								'credit'        => $co_paid_amount,
+								'credit'        => $consultation_fees,
 								'logs'          => 'deducted_from_mobile_payment',
-								'running_balance' => $balance - $co_paid_amount,
+								'running_balance' => $balance - $consultation_fees,
 								'where_spend'   => 'in_network_transaction',
 								'id'            => $input['transaction_id'],
 								'lite_plan_enabled' => 1,
@@ -768,8 +772,8 @@ class TransactionController extends BaseController {
 					if($transaction->lite_plan_enabled == 1) {
 						$wallet_history_lite_plan = array(
 							'wallet_id'			=> $wallet->wallet_id,
-							'credit'			=> $transaction->co_paid_amount,
-							'running_balance'	=> $wallet->balance + $transaction->credit_cost + $transaction->co_paid_amount,
+							'credit'			=> $transaction->consultation_fees,
+							'running_balance'	=> $wallet->balance + $transaction->credit_cost + $transaction->consultation_fees,
 							'logs'				=> "credits_back_from_in_network",
 							'where_spend'		=> "credits_back_from_in_network",
 							"id"				=> $transaction->transaction_id,
@@ -796,12 +800,12 @@ class TransactionController extends BaseController {
 							if($spending_type == "medical") {
 								$result = $wallet_class->addCredits($user_id, $transaction->credit_cost);
 								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-									$wallet_class->addCredits($user_id, $transaction->co_paid_amount);
+									$wallet_class->addCredits($user_id, $transaction->consultation_fees);
 								}
 							} else {
 								$result = $wallet_class->addWellnessCredits($user_id, $transaction->credit_cost);
 								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-									$wallet_class->addWellnessCredits($user_id, $transaction->co_paid_amount);
+									$wallet_class->addWellnessCredits($user_id, $transaction->consultation_fees);
 								}
 							}
 
@@ -896,7 +900,7 @@ class TransactionController extends BaseController {
 							$total_credits = $transaction->credit_cost;
 
 							if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-								$total_credits = $transaction->credit_cost + $transaction->co_paid_amount;
+								$total_credits = $transaction->credit_cost + $transaction->consultation_fees;
 							}
 
 							$email['member'] = ucwords($user->Name);
@@ -915,7 +919,7 @@ class TransactionController extends BaseController {
 							$email['clinic_type_image'] = $image;
 							$email['emailPage'] = 'email-templates.member-refunded-transaction';
 							$email['lite_plan_status'] = $lite_plan_status;
-							$email['consultation'] = number_format($transaction->co_paid_amount, 2);
+							$email['consultation'] = number_format($transaction->consultation_fees, 2);
 							$email['total_credits'] = number_format($total_credits, 2);
 							$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
 							EmailHelper::sendEmailRefundWithAttachment($email);
@@ -1603,7 +1607,7 @@ class TransactionController extends BaseController {
 			->where('transaction_history.created_at', '<=', $end);
 		})
 		->orderBy('transaction_history.created_at', 'desc')
-		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.credit_divisor', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type')
+		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.credit_divisor', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.consultation_fees')
 		->get();
 		foreach ($transactions as $key => $trans) {
 

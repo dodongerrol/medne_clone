@@ -234,7 +234,8 @@
 				$mednefits_fee = 0;
 				$consultation = 0;
 				$trans = Transaction::where('transaction_id', $transaction->transaction_id)
-							->where('deleted', 0)->where('paid', 1)
+							->where('deleted', 0)
+							->where('paid', 1)
 							->first();
 							
 				if($trans) {
@@ -243,7 +244,7 @@
 	                $service_cash = false;
 	                $service_credits = false;
 
-					if($trans['deleted'] == 0 || $trans['deleted'] == "0") {
+					if((int)$trans['deleted'] == 0) {
 						$in_network_transactions += $trans['credit_cost'];
 
 						if($trans['spending_type'] == 'medical') {
@@ -272,8 +273,8 @@
 	                            $consultation_credits = true;
 	                            $service_credits = true;
 	                        } else if(floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 0){
-	                            $total_consultation += floatval($trans['co_paid_amount']);
-	                            $consultation = number_format($trans['co_paid_amount'], 2);
+	                            $total_consultation += floatval($trans['consultation_fees']);
+	                            $consultation = number_format($trans['consultation_fees'], 2);
 	                        }
 	                    }
 
@@ -337,13 +338,13 @@
 							$procedure_cost = number_format($trans['procedure_cost'], 2);
 							$treatment = number_format($trans->credit_cost, 2);
 							// $consultation = 0;
-							if($trans['health_provider_done'] == 1 || $trans['health_provider_done'] == "1") {
+							if((int)$trans['health_provider_done'] == 1) {
 							  $receipt_status = TRUE;
 							  $health_provider_status = TRUE;
 							  $payment_type = "Cash";
 							  $transaction_type = "cash";
-							  	if((int)$trans['lite_plan_enabled'] == 1 || $trans['lite_plan_enabled'] == "1") {
-		                        	$total_amount = number_format($trans['co_paid_amount'], 2);
+							  	if((int)$trans['lite_plan_enabled'] == 1) {
+		                        	$total_amount = number_format($trans['consultation_fees'], 2);
 		                        	$procedure_cost = "0.00";
 		                        	$treatment = 0;
                       				// $consultation = number_format($trans['co_paid_amount'], 2);
@@ -352,8 +353,8 @@
 							  $payment_type = "Mednefits Credits";
 							  $transaction_type = "credits";
 							  $health_provider_status = FALSE;
-							  if((int)$trans['lite_plan_enabled'] == 1 || $trans['lite_plan_enabled'] == "1") {
-		                        	$total_amount = number_format($trans['credit_cost'] + $trans['co_paid_amount'], 2);
+							  if((int)$trans['lite_plan_enabled'] == 1) {
+		                        	$total_amount = number_format($trans['credit_cost'] + $trans['consultation_fees'], 2);
 		                        	$treatment = number_format($trans->credit_cost, 2);
                        				// $consultation = number_format($trans->co_paid_amount, 2);
 		                    	}
@@ -447,7 +448,6 @@
 								'procedure_cost'	=> $procedure_cost,
 								'clinic_type_and_service' => $clinic_name,
 								'service'			=> $procedure,
-								'clinic_type_name'	=> $clinic_type_name,
 								'date_of_transaction' => date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 								'member'            => ucwords($customer->Name),
 								'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
@@ -613,7 +613,7 @@
     								->where('transaction_history.deleted', 0)
     								->where('transaction_history.paid', 1)
     								->where('transaction_history.lite_plan_enabled', 1)
-    								->sum('transaction_history.co_paid_amount');
+    								->sum('transaction_history.consultation_fees');
 			}
 
 			if((int)$data->statement_status == 1) {
@@ -806,7 +806,7 @@
 	                            $consultation_credits = true;
 	                            $service_credits = true;
 	                        } else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
-	                            $total_consultation += floatval($trans->co_paid_amount);
+	                            $total_consultation += floatval($trans->consultation_fees);
 	                        }
 	                    }
 	                }
