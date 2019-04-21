@@ -193,7 +193,7 @@
 			<td>{{ $trans['member'] }}</td>
 			<td>{{ $trans['nric'] }}</td>
           	<td>{{ $trans['date_of_transaction'] }}</td>
-			<td>{{ $trans['clinic_type'] }}</td>
+			<td>{{ $trans['clinic_type_name'] }}</td>
 			<td>{{ $trans['clinic_type_and_service'] }}</td>
 			<td>{{ $trans['clinic_name'] }}</td>
 			<td>S${{ $trans['total_amount'] }}</td>

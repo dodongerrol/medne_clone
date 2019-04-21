@@ -2173,7 +2173,7 @@ public function payCredits( )
                         // check user credits and amount key in
        $spending_type = "medical";
        $credits = DB::table('e_wallet')->where('UserID', $user_id)->first();
-
+       $consultation_fees = $clinic->consultation_fees;
 
        if($clinic_type->spending_type == "medical") {
          $user_credits = self::floatvalue($credits->balance);
@@ -2209,6 +2209,7 @@ public function payCredits( )
            $co_paid_amount = $clinic->peak_hour_amount;
            $co_paid_status = $clinic->co_paid_status;
          }
+         $consultation_fees = $co_paid_amount;
        } else {
         if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
          $gst = $clinic->co_paid_amount * $clinic->gst_percent;
@@ -2260,7 +2261,7 @@ public function payCredits( )
         if((int)$clinic_type->consultation == 1) {
               if($plan_tier->gp_cap_per_visit != 0) {
                if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-                $total_credits = self::floatvalue($total_amount) + $co_paid_amount;
+                $total_credits = self::floatvalue($total_amount) + $consultation_fees;
               } else {
                 $total_credits =self::floatvalue($total_amount);
               }
@@ -2280,7 +2281,7 @@ public function payCredits( )
                         // return "yeah";
 
     if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-         $total_credits = self::floatvalue($total_amount) + $co_paid_amount;
+         $total_credits = self::floatvalue($total_amount) + $consultation_fees;
          if($total_credits > $user_credits) {
           $returnObject->status = FALSE;
           $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
@@ -2349,7 +2350,8 @@ public function payCredits( )
      'mobile'                => 1,
      'multiple_service_selection' => $multiple_service_selection,
      'currency_type'         => $clinic->currency_type,
-     'lite_plan_enabled'     => $lite_plan_enabled
+     'lite_plan_enabled'     => $lite_plan_enabled,
+     'consultation_fees'     => $consultation_fees
     );
 
     if((int)$clinic_type->lite_plan_enabled == 1 && $lite_plan_status) {
@@ -2415,9 +2417,9 @@ public function payCredits( )
          if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
           $lite_plan_credits_log = array(
            'wallet_id'     => $credits->wallet_id,
-           'credit'        => $co_paid_amount,
+           'credit'        => $consultation_fees,
            'logs'          => 'deducted_from_mobile_payment',
-           'running_balance' => $credits->balance - $total_amount - $co_paid_amount,
+           'running_balance' => $credits->balance - $total_amount - $consultation_fees,
            'where_spend'   => 'in_network_transaction',
            'id'            => $transaction_id,
            'lite_plan_enabled' => 1,
@@ -2436,9 +2438,9 @@ public function payCredits( )
          if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
           $lite_plan_credits_log = array(
            'wallet_id'     => $credits->wallet_id,
-           'credit'        => $co_paid_amount,
+           'credit'        => $consultation_fees,
            'logs'          => 'deducted_from_mobile_payment',
-           'running_balance' => $credits->balance - $total_amount - $co_paid_amount,
+           'running_balance' => $credits->balance - $total_amount - $consultation_fees,
            'where_spend'   => 'in_network_transaction',
            'id'            => $transaction_id,
            'lite_plan_enabled' => 1,
@@ -2471,13 +2473,13 @@ public function payCredits( )
             $wallet->deductCredits($user_id, $total_amount);
 
             if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-             $wallet->deductCredits($user_id, $co_paid_amount);
+             $wallet->deductCredits($user_id, $consultation_fees);
            }
          } else {
           $wallet->deductWellnessCredits($user_id, $total_amount);
 
           if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-           $wallet->deductWellnessCredits($user_id, $co_paid_amount);
+           $wallet->deductWellnessCredits($user_id, $consultation_fees);
          }
         }
 
@@ -2588,7 +2590,7 @@ public function payCredits( )
         $email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
         $email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE ;
         $email['total_amount'] = number_format($total_credits, 2);
-        $email['consultation'] = $consultation;
+        $email['consultation'] = $consultation_fees;
         $email['currency_symbol'] = $email_currency_symbol;
         $email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
         try {
@@ -4070,7 +4072,7 @@ public function getNetworkTransactions( )
    $health_provider_status = TRUE;
                                 // $receipt_status = TRUE;
    if((int)$trans->lite_plan_enabled == 1) {
-    $total_amount = number_format($cost + $trans->co_paid_amount, 2);
+    $total_amount = number_format($cost + $trans->consultation_fees, 2);
   } else {
     $total_amount = number_format($cost, 2);
   }
@@ -4078,7 +4080,7 @@ public function getNetworkTransactions( )
 } else {
  $health_provider_status = FALSE;
  if((int)$trans->lite_plan_enabled == 1) {
-  $total_amount = number_format($cost + $trans->co_paid_amount, 2);
+  $total_amount = number_format($cost + $trans->consultation_fees, 2);
 } else {
   $total_amount = number_format($cost, 2);
 }
@@ -4165,7 +4167,6 @@ public function getInNetworkDetails($id)
    $procedure_temp = "";
 
    if((int)$transaction->lite_plan_enabled == 1) {
-                            // $total_consultation += floatval($trans->co_paid_amount);
 
     if($transaction->spending_type == 'medical') {
      $table_wallet_history = 'wallet_history';
@@ -4179,14 +4180,11 @@ public function getInNetworkDetails($id)
    ->where('id', $transaction->transaction_id)
    ->first();
 
-   if($transaction->credit_cost > 0 && $transaction->lite_plan_use_credits === 0 || $logs_lite_plan && $transaction->credit_cost > 0 && $transaction->lite_plan_use_credits === "0") {
+   if($logs_lite_plan && (int)$transaction->credit_cost > 0 && (int)$transaction->lite_plan_use_credits == 0) {
      $consultation_credits = true;
-                                // $service_credits = true;
-   } else if($transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === 1 || $logs_lite_plan && $transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === "1"){
+   } else if($transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === 1){
      $consultation_credits = true;
-                                // $service_credits = true;
    } else if($transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === 0 || $transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === "0"){
-                                // $total_consultation += floatval($trans->co_paid_amount);
    }
  }
 
@@ -4286,13 +4284,13 @@ $procedure_cost = number_format($transaction->procedure_cost, 2);
 if($transaction->health_provider_done == 1 || $transaction->health_provider_done == "1") {
   $payment_type = 'Cash';
   if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
-   $total_amount = $transaction->procedure_cost + $transaction->co_paid_amount;
+   $total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
  }
 } else {
   $payment_type = 'Mednefits Credits';
   $service_credits = true;
   if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
-   $total_amount = $transaction->procedure_cost + $transaction->co_paid_amount;
+   $total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
  } else {
    $total_amount = $transaction->procedure_cost;
  }
@@ -4321,7 +4319,7 @@ $transaction_details = array(
   'payment_type'      => $payment_type,
   'service_credits'   => $service_credits,
   'consultation_credits' => $consultation_credits,
-  'consultation'      => (int)$transaction->lite_plan_enabled == 1 ? number_format($transaction->co_paid_amount, 2) : "0.00",
+  'consultation'      => (int)$transaction->lite_plan_enabled == 1 ? number_format($transaction->consultation_fees, 2) : "0.00",
   'lite_plan'         => $lite_plan_status,
   'wallet_status'     => $wallet_status,
   'lite_plan_enabled' => $transaction->lite_plan_enabled
