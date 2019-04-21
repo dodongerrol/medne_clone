@@ -295,11 +295,11 @@ class TransactionController extends BaseController {
 					    $gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
 					    $co_paid_amount = $clinic_data->peak_hour_amount + $gst;
 					    $co_paid_status = $clinic_data->co_paid_status;
+					  	$consultation_fees = $co_paid_amount;
 					  } else {
 					    $co_paid_amount = $clinic_data->peak_hour_amount;
 					    $co_paid_status = $clinic_data->co_paid_status;
 					  }
-					  $consultation_fees = $co_paid_amount;
 					} else {
 					  if((int)$clinic_data->co_paid_status == 1) {
 					    $gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
@@ -460,18 +460,16 @@ class TransactionController extends BaseController {
 
 					// check user company peak status
 					$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
-					// return var_dump($user_peak);
 					if($user_peak) {
 						if((int)$clinic_data->co_paid_status == 1) {
 							$gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
 							$co_paid_amount = $clinic_data->peak_hour_amount + $gst;
 							$co_paid_status = $clinic_data->co_paid_status;
-
+							$consultation_fees = $co_paid_amount;
 						} else {
 							$co_paid_amount = $clinic_data->peak_hour_amount;
 							$co_paid_status = $clinic_data->co_paid_status;
 						}
-						$consultation_fees = $co_paid_amount;
 					} else {
 						if((int)$clinic_data->co_paid_status == 1) {
 							$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;

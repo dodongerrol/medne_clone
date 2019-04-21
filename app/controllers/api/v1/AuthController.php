@@ -2205,11 +2205,11 @@ public function payCredits( )
            $gst = $clinic->peak_hour_amount * $clinic->gst_percent;
            $co_paid_amount = $clinic->peak_hour_amount + $gst;
            $co_paid_status = $clinic->co_paid_status;
+           $consultation_fees = $co_paid_amount;
          } else {
            $co_paid_amount = $clinic->peak_hour_amount;
            $co_paid_status = $clinic->co_paid_status;
          }
-         $consultation_fees = $co_paid_amount;
        } else {
         if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
          $gst = $clinic->co_paid_amount * $clinic->gst_percent;
