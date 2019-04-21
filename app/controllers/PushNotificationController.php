@@ -16,8 +16,19 @@ class PushNotificationController extends \BaseController {
 
 		$user_id = null;
 
-		if(!empty($input['user_id']) || $input['user_id'] != null) {
-			$user_id = $input['user_id'];
+		if(empty($input['user_id']) || $input['user_id'] == null) {
+			$authSession = new OauthSessions();
+			$getRequestHeader = StringHelper::requestHeader();
+			if(!empty($getRequestHeader['Authorization'])){
+				$AccessToken = new Api_V1_AccessTokenController();
+				$getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+  				if($getAccessToken){
+					$findUserID = $authSession->findUserID($getAccessToken->session_id);
+		   			if($findUserID){
+		   				$input['user_id'] = $findUserID;
+		   			}
+  				}
+			}
 		}
 
 		$device_token = new DeviceTokens();
