@@ -66,8 +66,8 @@ public function getPusherConfig( )
 }
 public function getNotificationConfig( )
 {
-  $config = \Notification::config();
-  return trim($config['app_id']);
+  $config = Notification::config();
+  return $config['app_id'];
 }
 
 public function getCompanyForgotPasswordView( )

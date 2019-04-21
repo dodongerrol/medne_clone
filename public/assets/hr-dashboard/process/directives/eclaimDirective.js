@@ -245,11 +245,32 @@
 					if( num == 1 ){
 						list.showReasonInput = false;
 						list.showRemarksInput = true;
-					}else{
+					}
+					if( num == 2 ){
 						list.showReasonInput = true;
 						list.showRemarksInput = false;
 					}
-		
+					if( num == 3 ){
+						// list.showReasonInput = true;
+						// list.showRemarksInput = false;
+						scope.toggleLoading();
+						var data = {
+							e_claim_id : list.trans_id
+						}
+						hrActivity.revertEclaim( data )
+							.then(function(response){
+								console.log(response);
+								if( response.data.status == true ){
+									list.status = 0;
+									list.status_text = 'Pending';
+									list.res = true;
+									list.message = response.data.message;
+								}else{
+									swal( 'Oops!', response.data.message, 'error' );
+								}
+								scope.toggleLoading();
+							});
+					}
 				}
 
 				scope.updateStatusToApprove = function( list, num ){

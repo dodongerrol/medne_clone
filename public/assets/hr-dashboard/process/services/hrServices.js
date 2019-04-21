@@ -390,5 +390,9 @@ service.factory("hrActivity", function($http, serverUrl) {
     return serverUrl.url + "/hr/statement_download/" + id;
   };
 
+  hrFactory.revertEclaim = function( data ) {
+    return $http.post(serverUrl.url + "/hr/revert_pending_e_claim", data);
+  };
+
   return hrFactory;
 });

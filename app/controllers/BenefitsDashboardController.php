@@ -2232,6 +2232,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('user_type', 'company')
 			->orderBy('created_at', 'desc')
 			->first();
+			// return array('res' => $customer_credit_reset_wellness);
 			if($customer_credit_reset_wellness) {
 				$start = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
 				$temp_total_allocation_wellness = DB::table('customer_credits')
@@ -2239,7 +2240,7 @@ class BenefitsDashboardController extends \BaseController {
 				->where('customer_credits.customer_id', $customer_id)
 				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
 				// ->where('customer_wellness_credits_logs.created_at', '>=', date('Y-m-d', strtotime($start)))
-				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
 				->sum('customer_wellness_credits_logs.credit');
 
 				$temp_total_deduction_wellness = DB::table('customer_credits')
@@ -2247,7 +2248,7 @@ class BenefitsDashboardController extends \BaseController {
 				->where('customer_credits.customer_id', $customer_id)
 				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
 				// ->where('customer_wellness_credits_logs.created_at', '>=', date('Y-m-d', strtotime($start)))
-				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
 				->sum('customer_wellness_credits_logs.credit');
 			} else {
 				$temp_total_allocation_wellness = DB::table('customer_credits')
@@ -2263,7 +2264,6 @@ class BenefitsDashboardController extends \BaseController {
 				->sum('customer_wellness_credits_logs.credit');
 			}
 			$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
-
 	        // return array('medical' => $total_allocation, 'wellness' => $total_allocation_wellness);
 
 			$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
@@ -2435,21 +2435,18 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-
 		return array(
-			'total_allocation' => number_format($total_medical_allocation, 2), 
-			'allocated' => number_format($total_medical_allocated, 2),
+			'total_medical_company_allocation' => number_format($total_medical_allocation, 2),
+			'total_medical_company_unallocation' => number_format($credits, 2),
+			'total_medical_employee_allocated' => number_format($total_medical_allocated, 2),
+			'total_medical_employee_spent'		=> number_format($get_allocation_spent, 2),
+			'total_medical_employee_balance' => number_format($total_medical_allocated - $get_allocation_spent, 2),
+			'total_medical_wellness_allocation' => number_format($total_allocation_wellness, 2),
+			'total_medical_wellness_unallocation' => number_format($credits_wellness, 2),
+			'total_wellness_employee_allocated' => number_format($total_wellnesss_allocated, 2),
+			'total_wellness_employee_spent'		=> number_format($get_allocation_spent_wellness, 2),
+			'total_wellness_employee_balance' => number_format($total_wellnesss_allocated - $get_allocation_spent_wellness, 2),
 			'company_id' => $result->customer_buy_start_id,
-			'company_credits' => $credits,
-			'total_deduction_credits' => $total_deduction_credits,
-			'spent'	=> number_format($get_allocation_spent, 2),
-			'total_allocation_wellness' => number_format($total_allocation_wellness, 2), 
-			'allocated_wellness' => number_format($allocated_wellness - $deleted_employee_allocation_wellness - $total_deduction_credits_wellness, 2),
-			'company_credits_wellness' => $credits_wellness,
-			'total_deduction_credits_wellness' => $total_deduction_credits_wellness,
-			'spent_wellness'	=> number_format($get_allocation_spent_wellness, 2),
-			'medical_balance'	=> number_format($credits, 2),
-			'wellness_balance'	=> number_format($credits_wellness, 2)
 		);
 	}
 
