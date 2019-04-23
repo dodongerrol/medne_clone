@@ -189,7 +189,7 @@ class CronController extends \BaseController {
                 DB::table('customer_replace_employee')
                         ->where('customer_replace_employee_id', $deactivate->customer_replace_employee_id)
                         ->update(['deactive_employee_status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
-                PlanHelper::removeDependentAccounts($replace_id, $replace->expired_and_activate);
+                PlanHelper::removeDependentAccounts($replace_id, $deactivate->expired_and_activate);
             }
 
         }
