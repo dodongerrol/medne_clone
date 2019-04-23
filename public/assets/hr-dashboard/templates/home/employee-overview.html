@@ -626,6 +626,7 @@
 			<label class="review-container">
 				<input type="checkbox" ng-model="remove_employee_data.reserve" ng-click="changeRemoveOption(2)">
 				<span class="review-prepare-template-text">I'm not ready to pre-enroll the new joiner, please hold the seat for future hire.</span>
+				<span class="review-prepare-template-text" style="font-size: 10px;line-height: 1;">*Note: Once this employee is removed, the occupied seat will move to a vacant seat.</span>
 				<span class="review-checkmark"></span>
 			</label>
 			<label ng-if="refund_status == true" class="review-container">
@@ -798,6 +799,11 @@
 					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="health_spending_summary.medical.pending_e_claim | number : 2">50.00</span></span>
 					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="health_spending_summary.wellness.pending_e_claim | number : 2">50.00</span></span>
 				</div>
+				<div class="balance-container weight-700">
+					<strong class="font-helvetica-medium">Balance</strong>
+					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
+				</div>
 			</div>
 			<span ng-if="health_spending_summary.medical && health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
 			<span ng-if="health_spending_summary.medical && health_spending_summary.medical.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
@@ -830,6 +836,10 @@
 					Pending claim
 					<span>S$ <span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
 				</div>
+				<div class="balance-container weight-700">
+					<strong class="font-helvetica-medium">Balance</strong>
+					<span>S$ <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
+				</div>
 			</div>
 				<span ng-if="health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
 				<span ng-if="health_spending_summary.medical.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
@@ -858,6 +868,10 @@
 					<div class="pending-claim-container weight-700">
 						Pending claim
 						<span>S$ <span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
+					</div>
+					<div class="balance-container weight-700">
+						<strong class="font-helvetica-medium">Balance</strong>
+						<span>S$ <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
 					</div>
 				</div>
 				<span ng-if="health_spending_summary.wellness.exceed == false" class="spending-account-status on-track weight-700">On Track</span>

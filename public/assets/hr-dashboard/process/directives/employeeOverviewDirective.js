@@ -724,6 +724,7 @@ app.directive("employeeOverviewDirective", [
                   $('.employee-replacement-wrapper').fadeIn();
                 }
                 scope.isReplaceEmpShow = true;
+                scope.replace_emp_data.plan_start = moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).add(1,'days').format('DD/MM/YYYY');
               }
               if( scope.remove_employee_data.reserve == true ){
                 // $('.hold-seat-wrapper').fadeIn();
@@ -773,27 +774,27 @@ app.directive("employeeOverviewDirective", [
             }else{
               // scope.replaceEmployee( scope.replace_emp_data );
               if( scope.checkReplaceEmployeeForm( scope.replace_emp_data ) == true ){
-                swal({
-                  title: "Confirm",
-                  text: "Are you sure you want to replace existing employee?",
-                  type: "warning",
-                  showCancelButton: true,
-                  confirmButtonColor: "#0392CF",
-                  confirmButtonText: "Replace",
-                  cancelButtonText: "No",
-                  closeOnConfirm: true,
-                  customClass: "updateEmp"
-                },
-                function(isConfirm){
-                  if(isConfirm){
+                // swal({
+                //   title: "Confirm",
+                //   text: "Are you sure you want to replace existing employee?",
+                //   type: "warning",
+                //   showCancelButton: true,
+                //   confirmButtonColor: "#0392CF",
+                //   confirmButtonText: "Replace",
+                //   cancelButtonText: "No",
+                //   closeOnConfirm: true,
+                //   customClass: "updateEmp"
+                // },
+                // function(isConfirm){
+                //   if(isConfirm){
                     scope.getSpendingAccountSummary( scope.remove_employee_data.last_day_coverage );
                     $('.employee-replacement-wrapper').hide();
                     $(".account-summary-wrapper").fadeIn();
                     scope.reset();
                     scope.isHealthSpendingAccountSummaryShow = true;
                     scope.getSession();
-                  }
-                });
+                //   }
+                // });
               }
             }
           }else if( scope.isReserveEmpShow == true ){
@@ -952,19 +953,19 @@ app.directive("employeeOverviewDirective", [
         scope.replaceDependent = function( data ){
           // console.log( data );
           if( scope.checkDependentForm( data ) == true ){
-            swal({
-              title: "Confirm",
-              text: "Are you sure you want to replace existing employee?",
-              type: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#0392CF",
-              confirmButtonText: "Replace",
-              cancelButtonText: "No",
-              closeOnConfirm: true,
-              customClass: "updateEmp"
-            },
-            function(isConfirm){
-              if(isConfirm){
+            // swal({
+            //   title: "Confirm",
+            //   text: "Are you sure you want to replace existing employee?",
+            //   type: "warning",
+            //   showCancelButton: true,
+            //   confirmButtonColor: "#0392CF",
+            //   confirmButtonText: "Replace",
+            //   cancelButtonText: "No",
+            //   closeOnConfirm: true,
+            //   customClass: "updateEmp"
+            // },
+            // function(isConfirm){
+            //   if(isConfirm){
                 scope.showLoading();
                 data.last_day_coverage = moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
                 data.plan_start = moment( data.start_date, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
@@ -987,8 +988,8 @@ app.directive("employeeOverviewDirective", [
                       swal('Error!', response.data.message, 'error');
                     }
                   });
-              }
-            });
+            //   }
+            // });
           }
         }
 
