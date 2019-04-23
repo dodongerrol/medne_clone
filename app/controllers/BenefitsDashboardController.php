@@ -3525,14 +3525,14 @@ class BenefitsDashboardController extends \BaseController {
 				// set company members removed to 1
 				DB::table('corporate_members')->where('user_id',$replace_id)->update(['removed_status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
 
-				$user_plan_history = new UserPlanHistory();
+				$user_plan_history_class = new UserPlanHistory();
 				$user_plan_history_data = array(
 					'user_id'		=> $replace_id,
 					'type'			=> "deleted_expired",
 					'date'			=> date('Y-m-d', strtotime($input['last_day_coverage'])),
 					'customer_active_plan_id' => $active_plan->customer_active_plan_id
 				);
-				$user_plan_history->createUserPlanHistory($user_plan_history_data);
+				$user_plan_history_class->createUserPlanHistory($user_plan_history_data);
 				$deactive_employee_status = 1;
 
 			}
