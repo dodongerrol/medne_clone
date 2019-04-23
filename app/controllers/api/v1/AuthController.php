@@ -1943,20 +1943,20 @@ public function getNewClinicDetails($id)
         $jsonArray['cap_currency_symbol'] = $cap_currency_symbol;
         $jsonArray['cap_per_visit_amount'] = $cap_amount;
 
-        $check_in_time = date('Y-m-d H:i:s');
-        $check_in_data = array(
-          'user_id'         => $findUserID,
-          'clinic_id'       => $clinic->ClinicID,
-          'check_in_time'   => $check_in_time,
-          'check_out_time'  => $check_in_time,
-          'check_in_type'   => 'in_network_transaction'
-        );
+        // $check_in_time = date('Y-m-d H:i:s');
+        // $check_in_data = array(
+        //   'user_id'         => $findUserID,
+        //   'clinic_id'       => $clinic->ClinicID,
+        //   'check_in_time'   => $check_in_time,
+        //   'check_out_time'  => $check_in_time,
+        //   'check_in_type'   => 'in_network_transaction'
+        // );
 
-        $check_in_class = new EmployeeClinicCheckIn( );
+        // $check_in_class = new EmployeeClinicCheckIn( );
                 // // create clinic check in data
-        $check_in = $check_in_class->createData($check_in_data);
-        $jsonArray['check_in_id'] = $check_in->id;
-        $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
+        // $check_in = $check_in_class->createData($check_in_data);
+        // $jsonArray['check_in_id'] = $check_in->id;
+        // $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
         return Response::json($returnObject);
@@ -3417,19 +3417,19 @@ public function notifyClinicDirectPayment( )
                             // send realtime update to claim clinic admin
                   PusherHelper::sendClinicClaimNotification($result, $input['clinic_id']);
 
-      // check if check_in_id exist
-                  if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
-        // check check_in_id data
-                    $check_in = DB::table('user_check_in_clinic')
-                    ->where('check_in_id', $input['check_in_id'])
-                    ->first();
-                    if($check_in) {
-          // update check in date
-                      DB::table('user_check_in_clinic')
-                      ->where('check_in_id', $input['check_in_id'])
-                      ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id]);
-                  }
-              }
+                  // // check if check_in_id exist
+                  // if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
+                  // // check check_in_id data
+                  //   $check_in = DB::table('user_check_in_clinic')
+                  //   ->where('check_in_id', $input['check_in_id'])
+                  //   ->first();
+                  //   if($check_in) {
+                  // // update check in date
+                  //     DB::table('user_check_in_clinic')
+                  //     ->where('check_in_id', $input['check_in_id'])
+                  //     ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id]);
+                  //   }
+                  // }
 
               $returnObject->status = TRUE;
               $returnObject->message = 'Transaction Done.';
