@@ -364,12 +364,12 @@ app.directive("employeeOverviewDirective", [
             swal( 'Error!', 'Start Date is required.', 'error' );
             return false;
           }
-          if( data.medical_credits > scope.credit_status.medical_balance ){
+          if( data.medical_credits > scope.credit_status.total_medical_employee_balance_number ){
             swal( 'Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error' );
             return false;
           }
-          if( data.wellness_credits > scope.credit_status.wellness_balance ){
-            swal( 'Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error' );
+          if( data.wellness_credits > scope.credit_status.total_wellness_employee_balance_number ){
+            swal( 'Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error' );
             return false;
           }
 
@@ -549,6 +549,7 @@ app.directive("employeeOverviewDirective", [
             $(".hrdb-body-container").hide();
             $(".employee-information-wrapper").fadeIn();
           }else{
+            scope.selectedEmployee_index = null;
             scope.isEmployeeShow = false;
             $(".hrdb-body-container").fadeIn();
             $(".employee-information-wrapper").hide();
@@ -630,12 +631,27 @@ app.directive("employeeOverviewDirective", [
                   value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                   value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
                   value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
-                  value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
+                  // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
                 });
                 $(".employee-overview-pagination").hide();
                 scope.hideLoading();
+                scope.isSearchEmp = true;
+
+                console.log( scope.selectedEmployee );
+                if( scope.selectedEmployee_index != null ){
+                  scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
+                  if( scope.selectedEmployee.plan_tier != null || scope.selectedEmployee.plan_tier ){
+                    scope.addActiveDependent_index = scope.selectedEmployee.plan_tier.dependent_enrolled_count + 1;
+                  }else{
+                    scope.addActiveDependent_index = scope.progress.completed + 1;
+                  }
+                  scope.fetchRefundStatus( scope.selectedEmployee.user_id );
+                  scope.getEmpPlans( scope.selectedEmployee.user_id );
+                  scope.getEmpDependents( scope.selectedEmployee.user_id );
+                }
               });
           }else{
+            scope.isSearchEmp = false;
             scope.removeSearchEmp();
           }
         };
@@ -732,7 +748,7 @@ app.directive("employeeOverviewDirective", [
                 if( scope.isDeleteDependent == true ){
                   scope.reserveDependent( );
                 }else{
-                  scope.getSpendingAccountSummary( scope.remove_employee_data.last_day_coverage );
+                  scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                   $('.employee-standalone-pro-wrapper').hide();
                   $(".account-summary-wrapper").fadeIn();
                   scope.reset();
@@ -757,7 +773,7 @@ app.directive("employeeOverviewDirective", [
                 },
                 function(isConfirm){
                   if(isConfirm){
-                    scope.getSpendingAccountSummary( scope.remove_employee_data.last_day_coverage );
+                    scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                     $('.employee-standalone-pro-wrapper').hide();
                     $(".account-summary-wrapper").fadeIn();
                     scope.reset();
@@ -787,7 +803,7 @@ app.directive("employeeOverviewDirective", [
                 // },
                 // function(isConfirm){
                 //   if(isConfirm){
-                    scope.getSpendingAccountSummary( scope.remove_employee_data.last_day_coverage );
+                    scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                     $('.employee-replacement-wrapper').hide();
                     $(".account-summary-wrapper").fadeIn();
                     scope.reset();
@@ -857,7 +873,7 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.getSpendingAccountSummary = function( last_date_of_coverage ){
-          dependentsSettings.fetchEmpAccountSummary( scope.selectedEmployee.user_id, scope.selected_customer_id, moment( last_date_of_coverage , 'DD/MM/YYYY' ).format('YYYY-MM-DD') )
+          dependentsSettings.fetchEmpAccountSummary( scope.selectedEmployee.user_id, scope.selected_customer_id, moment(last_date_of_coverage, 'MM/DD/YYYY').format('YYYY-MM-DD'))
             .then(function(response){
               console.log( response );
               scope.health_spending_summary = response.data;
@@ -1032,7 +1048,7 @@ app.directive("employeeOverviewDirective", [
                 value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                 value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
                 value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
-                value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
+                // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
               });
               $(".loader-table").hide();
               $(".main-table").fadeIn();
@@ -1331,7 +1347,11 @@ app.directive("employeeOverviewDirective", [
               // console.log( response );
               scope.selected_customer_id = response.data.customer_buy_start_id;
               scope.options.accessibility = response.data.accessibility;
-              scope.getEmployeeList(scope.page_active);
+              if( scope.isSearchEmp ){
+                scope.searchEmployee(scope.inputSearch);
+              }else{
+                scope.getEmployeeList(scope.page_active);
+              }
               scope.getProgress();
             });
         }

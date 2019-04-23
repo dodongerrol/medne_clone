@@ -94,7 +94,7 @@
 									<span class="status-color active"></span>
 									<span>Active</span>
 								</div>
-								<div class="status-details-container" ng-if="!emp.account_status">
+								<div class="status-details-container" ng-if="!emp.account_status || emp.emp_status == 'deleted'">
 									<span class="status-color removed"></span>
 									<span>Removed</span>
 								</div>	
