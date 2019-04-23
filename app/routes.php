@@ -1,4 +1,4 @@
-	<?php
+<?php
 
 /*
 |--------------------------------------------------------------------------
@@ -954,6 +954,7 @@ Route::group(array('prefix' => 'v2'), function()
 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
 		    // check user pin
 		    Route::post('clinic/send_payment', 'Api_V1_AuthController@payCredits');
+		    Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
 		    // send notification to clinic when customer will pay directly to clinic
 		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
 		    // save photo receipt
