@@ -1592,9 +1592,9 @@ class PlanHelper {
 
 		public static function allocateCreditBaseInActivePlan($id, $credit, $type)
 		{
-			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $id)->orderBy('created_at', 'desc')->first();
+			// $plan = DB::table('customer_plan')->where('customer_buy_start_id', $id)->orderBy('created_at', 'desc')->first();
 
-			$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
+			$active_plans = DB::table('customer_active_plan')->where('customer_start_buy_id', $id)->get();
 
 			foreach($active_plans as $key => $active) {
 				$total_medical_allocation = 0;
@@ -2407,33 +2407,57 @@ class PlanHelper {
 				->first();
 			}
 
+			$deactive_employee_status = 0;
 			// check if replacement is today
-			if($last_day_of_coverage > $date_today) {
-				$replace_data = array(
-					'old_id'				=> $replace_id,
-					'active_plan_id'		=> $active_plan->customer_active_plan_id,
-					'expired_and_activate'	=> date('Y-m-d', strtotime($input['last_day_coverage'])),
-					'start_date'			=> date('Y-m-d', strtotime($input['plan_start'])),
-					'status'				=> 0,
-					'replace_status'		=> 0,
-					'deactive_employee_status' => 0,
-					'first_name'			=> $input['first_name'],
-					'last_name'				=> $input['last_name'],
-					'nric'					=> $input['nric'],
-					'dob'					=> date('Y-m-d', strtotime($input['dob'])),
-					'postal_code'			=> $input['postal_code'],
-					'medical'				=> $input['medical_credits'],
-					'wellness'				=> $input['wellness_credits']
+			if(date('Y-m-d') >= $last_day_of_coverage) {
+				$user_data = array(
+					'Active'	=> 0,
+					'updated_at' => date('Y-m-d')
 				);
+				// update user and set to inactive
+				DB::table('user')->where('UserID', $replace_id)->update($user_data);
+				// set company members removed to 1
+				DB::table('corporate_members')->where('user_id',$replace_id)->update(['removed_status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
 
-				$result = $replace->createReplaceEmployee($replace_data);
-				if($result) {
-					return array('status' => true, 'message' => 'Old Employee will be deactivated by '.date('d F Y', strtotime($input['last_day_coverage'])).' and new employee will be created by '.date('d F Y', strtotime($input['plan_start'])));
-				}
-			} else {
+				$user_plan_history_class = new UserPlanHistory();
+				$user_plan_history_data = array(
+					'user_id'		=> $replace_id,
+					'type'			=> "deleted_expired",
+					'date'			=> date('Y-m-d', strtotime($input['last_day_coverage'])),
+					'customer_active_plan_id' => $active_plan->customer_active_plan_id
+				);
+				$user_plan_history_class->createUserPlanHistory($user_plan_history_data);
+				$deactive_employee_status = 1;
+			}
+				// $replace_data = array(
+				// 	'old_id'				=> $replace_id,
+				// 	'active_plan_id'		=> $active_plan->customer_active_plan_id,
+				// 	'expired_and_activate'	=> date('Y-m-d', strtotime($input['last_day_coverage'])),
+				// 	'start_date'			=> date('Y-m-d', strtotime($input['plan_start'])),
+				// 	'status'				=> 0,
+				// 	'replace_status'		=> 0,
+				// 	'deactive_employee_status' => 0,
+				// 	'first_name'			=> $input['first_name'],
+				// 	'last_name'				=> $input['last_name'],
+				// 	'nric'					=> $input['nric'],
+				// 	'dob'					=> date('Y-m-d', strtotime($input['dob'])),
+				// 	'postal_code'			=> $input['postal_code'],
+				// 	'medical'				=> $input['medical_credits'],
+				// 	'wellness'				=> $input['wellness_credits']
+				// );
+
+				// $result = $replace->createReplaceEmployee($replace_data);
+				// if($result) {
+				// 	return array('status' => true, 'message' => 'Old Employee will be deactivated by '.date('d F Y', strtotime($input['last_day_coverage'])).' and new employee will be created by '.date('d F Y', strtotime($input['plan_start'])));
+				// }
+			// } else {
 				$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
-
 				$password = StringHelper::get_random_password(8);
+				$pending = 1;
+
+				if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
+					$pending = 0;
+				}
 				$data = array(
 					'Name'          => $input['first_name'].' '.$input['last_name'],
 					'Password'  => md5($password),
@@ -2444,6 +2468,7 @@ class PlanHelper {
 					'Job_Title'  => 'Other',
 					'DOB'       => $input['dob'],
 					'Zip_Code'  => $input['postal_code'],
+					'pending'		=> $pending,
 					'Active'        => 1
 				);
 
@@ -2606,25 +2631,10 @@ class PlanHelper {
 						);              
 						$replace->updateCustomerReplace($replace_employee->customer_replace_employee_id, $replace_data);
 					} else {
-						$user_data = array(
-							'Active'    => 0,
-							'updated_at' => date('Y-m-d')
-						);
-	                    // update user and set to inactive
-						DB::table('user')->where('UserID', $replace_id)->update($user_data);
-	                    // set company members removed to 1
-						DB::table('corporate_members')
-						->where('user_id', $replace_id)
-						->update(['removed_status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
-
-						$user_plan_history = new UserPlanHistory();
-						$user_plan_history_data = array(
-							'user_id'       => $replace_id,
-							'type'          => "deleted_expired",
-							'date'          => date('Y-m-d', strtotime($input['last_day_coverage'])),
-							'customer_active_plan_id' => $active_plan->customer_active_plan_id
-						);
-						$user_plan_history->createUserPlanHistory($user_plan_history_data);
+						$status = 0;
+						if($deactive_employee_status == 1) {
+							$status = 1;
+						}
 
 						$replace_data = array(
 							'old_id'                => $replace_id,
@@ -2632,9 +2642,9 @@ class PlanHelper {
 							'active_plan_id'        => $active_plan->customer_active_plan_id,
 							'expired_and_activate'  => date('Y-m-d', strtotime($input['last_day_coverage'])),
 							'start_date'            => date('Y-m-d', strtotime($input['plan_start'])),
-							'status'                => 1,
+							'status'                => $status,
 							'replace_status'        => 1,
-							'deactive_employee_status' => 1
+							'deactive_employee_status' => $deactive_employee_status
 						);
 						$replace->createReplaceEmployee($replace_data);
 					}
@@ -2676,7 +2686,7 @@ class PlanHelper {
 				} else {
 					return array('status' => false, 'message' => 'Failed to replace employee.');
 				}
-			}
+			// }
 
 		}
 
@@ -3765,29 +3775,29 @@ class PlanHelper {
 					if($replacement->start_date == null) {
 						$schedule = 'Removed '.date('d/m/Y', strtotime($replacement->expired_and_activate));
 					} else {
-						$schedule = 'Deleted at '.date('d/m/Y', strtotime($replacement->expired_and_activate));
+						$schedule = 'Removed '.date('d/m/Y', strtotime($replacement->expired_and_activate));
 					}
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('d/m/Y', strtotime($replacement->start_date)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
-				} else if((int)$replacement->status == 0 && (int)$replacement->replace_status == 0) {
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
+				} else if((int)$replacement->deactive_employee_status == 0 && (int)$replacement->replace_status == 0) {
 					// to be replace
 					$schedule_status = true;
-					if($replacement->start_date) {
-						$schedule = 'Scheduled to remove on '.date('d/m/Y', strtotime($replacement->start_date));
+					if($replacement->expired_and_activate) {
+						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->expired_and_activate));
 					} else {
-						$schedule = 'Scheduled to remove on '.date('d/m/Y', strtotime($replacement->expired_and_activate));
+						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
 					}
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('F d, Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
 				} else {
 					//
 					$schedule_status = true;
 					if($replacement->start_date) {
-						$schedule = 'Scheduled to remove on '.date('d/m/Y', strtotime($replacement->start_date));
+						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
 					} else {
-						$schedule = 'Scheduled to remove on '.date('d/m/Y', strtotime($replacement->expired_and_activate));
+						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->expired_and_activate));
 					}
 				}
 
-				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('d/m/Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
 			}
 
 			$deleted_accounts = DB::table("customer_plan_withdraw")->where("user_id", $user_id)->first();
@@ -3797,8 +3807,8 @@ class PlanHelper {
 				$plan_withdraw = true;
 				if((int)$deleted_accounts->refund_status == 0) {
 					$schedule_status = true;
-					$schedule = "Scheduled to remove on ".date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('F d, Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+					$schedule = "Last Day of Coverage/End Date ".date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
 				} else if((int)$deleted_accounts->refund_status == 1 || (int)$deleted_accounts->refund_status == 2) {
 					$schedule_status = false;
 					$schedule = 'Removed on '.date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
@@ -3806,10 +3816,10 @@ class PlanHelper {
 					if($deleted_accounts->refund_status == 2 && $deleted_accounts->date_withdraw > date('Y-m-d')) {
 						// schedule
 						$schedule_status = true;
-						$schedule = 'Scheduled to remove on '.date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
+						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
 					}
 
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('d/m/Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
 				}
 			}
 

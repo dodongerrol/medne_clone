@@ -115,6 +115,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->FIN = '';
                 $this->Image = 'https://res.cloudinary.com/www-medicloud-sg/image/upload/v1427972951/ls7ipl3y7mmhlukbuz6r.png';
                 $this->Active = 1; //to active user
+                $this->pending = $data['pending'];
                 $this->created_at = time();
                 $this->updated_at = time();
                 $this->UserType = 5; // for users
