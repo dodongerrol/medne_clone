@@ -191,7 +191,24 @@ class CronController extends \BaseController {
                         ->update(['deactive_employee_status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
                 PlanHelper::removeDependentAccounts($replace_id, $deactivate->expired_and_activate);
             }
+        }
 
+        $employee_pending = DB::table('customer_replace_employee')
+                            ->where('start_date', $date)
+                            ->get();
+
+        foreach ($employee_pending as $key => $pending) {
+           $user = DB::table('user')->where('UserID', $pending->new_id)->first();
+
+           if((int)$user->pending == 1) {
+            // update pending to 0
+             $user_data = array(
+                'pending'    => 0,
+                'updated_at' => date('Y-m-d')
+            );
+            // update user and set to inactive
+            DB::table('user')->where('UserID', $pending->new_id)->update($user_data);
+           }
         }
 
         // dependents replacement
