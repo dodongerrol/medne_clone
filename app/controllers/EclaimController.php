@@ -5116,6 +5116,9 @@ public function searchEmployeeEclaimActivity( )
 	->orderBy('created_at', 'desc')
 	->get();
 	foreach($e_claim_result as $key => $res) {
+		$approved_status = FALSE;
+		$rejected_status = FALSE;
+		
 		if($res->status == 0) {
 			$status_text = 'Pending';
 			$pending += $res->amount;
@@ -5125,6 +5128,7 @@ public function searchEmployeeEclaimActivity( )
 		} else if($res->status == 2) {
 			$status_text = 'Rejected';
 			$rejected += $res->amount;
+			$rejected_status = TRUE;
 		} else {
 			$status_text = 'Pending';
 			$pending += $res->amount;
@@ -5188,8 +5192,8 @@ public function searchEmployeeEclaimActivity( )
 			'status'            => $res->status,
 			'status_text'       => $status_text,
 			'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
-			'approved_date'     => date('d F Y h:i A', strtotime($res->updated_at)),
-			'rejected_date'     => date('d F Y h:i A', strtotime($res->updated_at)),
+			'approved_date'        => $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
+			'rejected_date'        => $rejected_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 			'time'              => $res->time,
 			'service'           => $res->service,
 			'merchant'          => $res->merchant,
@@ -5197,6 +5201,7 @@ public function searchEmployeeEclaimActivity( )
 			'member'            => ucwords($member->Name),
 			'type'              => 'E-Claim',
 			'transaction_id'    => 'MNF'.$id,
+			'trans_id'          => $res->e_claim_id,
 			'files'             => $doc_files,
 			'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,
 			'receipt_status'    => $e_claim_receipt_status,
@@ -5204,9 +5209,10 @@ public function searchEmployeeEclaimActivity( )
 			'owner_account'       => $sub_account,
 			'sub_account_type'  => $sub_account_type,
 			'rejected_reason'   => $res->rejected_reason,
-			'spending_type'     => ucwords($spending_type),
+			'spending_type'     => ucwords($res->spending_type),
 			'approved_status'   => $approved_status,
-			'relationship'      => $relationship
+			'relationship'      => $relationship,
+			'remarks'			=> $res->rejected_reason
 		);
 
 		array_push($e_claim, $temp);
