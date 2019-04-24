@@ -791,8 +791,8 @@
 				</div>
 				<div class="spent-container weight-700">
 					Spent
-					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="(health_spending_summary.medical.current_usage - health_spending_summary.medical.pending_e_claim) | number : 2">650.00</span></span>
-					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="(health_spending_summary.wellness.current_usage - health_spending_summary.wellness.pending_e_claim) | number : 2">650.00</span></span>
+					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
+					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 				</div>
 				<div class="pending-claim-container weight-700">
 					Pending claim
@@ -830,7 +830,7 @@
 				</div>
 				<div class="spent-container weight-700">
 					Spent
-					<span>S$ <span ng-bind="(health_spending_summary.medical.current_usage - health_spending_summary.medical.pending_e_claim)">650.00</span></span>
+					<span>S$ <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
 				</div>
 				<div class="pending-claim-container weight-700">
 					Pending claim
@@ -863,7 +863,7 @@
 					</div>
 					<div class="spent-container weight-700">
 						Spent
-						<span>S$ <span ng-bind="(health_spending_summary.wellness.current_usage - health_spending_summary.wellness.pending_e_claim)">650.00</span></span>
+						<span>S$ <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 					</div>
 					<div class="pending-claim-container weight-700">
 						Pending claim

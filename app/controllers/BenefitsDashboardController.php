@@ -11746,6 +11746,17 @@ class BenefitsDashboardController extends \BaseController {
 		->where('status', 0)
 		->sum('amount');
 
+		// get pro allocation medical
+		// $pro_allocation_medical = DB::table('wallet_history')
+		// 							->where('wallet_id', $wallet->wallet_id)
+		// 							->where('logs', 'pro_allocation')
+		// 							->sum('credit');
+
+		// $pro_allocation_wellness = DB::table('wellness_wallet_history')
+		// 							->where('wallet_id', $wallet->wallet_id)
+		// 							->where('logs', 'pro_allocation')
+		// 							->sum('credit');
+
 		
 		foreach ($medical_wallet_history as $key => $history) {
 			if($history->logs == "added_by_hr") {
@@ -11907,7 +11918,7 @@ class BenefitsDashboardController extends \BaseController {
 				'pending_e_claim'		=> number_format($pending_e_claim_wellness, 2),
 				'exceed'				=> $exceed_wellness,
 				'exceeded_by'			=> number_format($total_wellness_spent - $total_pro_wellness_allocation, 2),
-				'balance'				=> $wellness_balance
+				'balance'				=> number_format($wellness_balance, 2)
 			);
 		// } else {
 		// 	$wellness = false;
