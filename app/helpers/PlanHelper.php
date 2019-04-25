@@ -1207,7 +1207,8 @@ class PlanHelper {
 				'Job_Title'     => $data_enrollee->job_title,
 				'Active'        => 1,
 				'Zip_Code'      => $data_enrollee->postal_code,
-				'DOB'           => $data_enrollee->dob
+				'DOB'           => $data_enrollee->dob,
+				'pending'		=> 0
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
