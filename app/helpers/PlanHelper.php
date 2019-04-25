@@ -1859,7 +1859,7 @@ class PlanHelper {
 		}
 		public static function calculateInvoicePlanPrice($default_price, $start, $end)
 		{
-			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime($end))));
+			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
 			$days = $diff->format('%a');
 
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
@@ -1868,6 +1868,23 @@ class PlanHelper {
 			$cost_plan_and_days = ($default_price / $total_days);
 			return $cost_plan_and_days * $remaining_days;
 		}
+
+		public static function getPlanDuration($customer_id, $plan_start)
+		{
+			$plan_coverage = self::getCompanyPlanDates($customer_id);
+			$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
+			$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
+
+			$interval = date_diff($date_plan_start, $date_new_plan_start);
+			if($interval->m + (1) == 1) {
+				$duration = $interval->m + (1). ' month';
+			} else {
+				$duration = $interval->m + (1). ' months';
+			}
+
+			return $duration;
+		}
+
 		public static function getCorporateUserByAllocated($corporate_id, $customer_id) 
 		{
 			$customer_credit_reset_medical = DB::table('credit_reset')
