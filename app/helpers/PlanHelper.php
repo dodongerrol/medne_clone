@@ -1593,9 +1593,9 @@ class PlanHelper {
 
 		public static function allocateCreditBaseInActivePlan($id, $credit, $type)
 		{
-			// $plan = DB::table('customer_plan')->where('customer_buy_start_id', $id)->orderBy('created_at', 'desc')->first();
+			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $id)->orderBy('created_at', 'desc')->first();
 
-			$active_plans = DB::table('customer_active_plan')->where('customer_start_buy_id', $id)->get();
+			$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
 
 			foreach($active_plans as $key => $active) {
 				$total_medical_allocation = 0;
