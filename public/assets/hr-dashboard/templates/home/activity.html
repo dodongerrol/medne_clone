@@ -199,7 +199,7 @@
 							</div>
 						</div>
 
-						<div class="col-md-10 no-padding">
+						<div class="col-md-7 no-padding">
 							<div class="white-space-20"></div>
 							<div class="spent-box text-left">
 								<p class="color-black3 weight-700 font-16">Spending Breakdown</p>
@@ -220,6 +220,25 @@
 								</div>
 							</div>
 							<div class="white-space-30"></div>
+						</div>
+
+						<div class="col-md-5" style="padding-top: 60px;padding-left: 35px;" ng-if="activity.lite_plan">
+							<div class="col-md-12" style="padding-bottom: 10px;">
+								<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
+							</div>
+							<div class="col-md-7">
+								<div class="network-box" style="margin: 0">
+									<div class="img-wrapper">
+										<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+									</div>
+									<div class="net-desc">
+										<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-5">
+								<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
+							</div>
 						</div>
 
 						<!-- <div ng-if="options.accessibility == 1" >
