@@ -2169,6 +2169,7 @@ class BenefitsDashboardController extends \BaseController {
 		$allocated_wellness = 0;
 		$total_allocation_wellness = 0;
 		$deleted_employee_allocation_wellness = 0;
+		$total_wellnesss_allocated = 0;
 		$total_deduction_credits_wellness = 0;
 		$total_medical_allocation = 0;
 		$total_medical_allocated = 0;
