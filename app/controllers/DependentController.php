@@ -605,7 +605,10 @@ class DependentController extends \BaseController {
 
 			if(!empty($name[0]) && !empty($name[1])) {
 				$first_name = $name[0];
-				$last_name = $name[1];
+				for( $i = 1; $i < count( $name ) - 1; $i++ ){
+					$first_name .= ' ' . $name[$i];
+				}
+				$last_name =  $name[ sizeof($name) - 1 ];
 			} else {
 				$first_name = $dependent->Name;
 				$last_name = $dependent->Name;
