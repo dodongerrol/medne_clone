@@ -152,7 +152,7 @@ class ArrayHelperMobile{
             $jsonArray = $returnArray;
             return $jsonArray;
         }else{
-            $jsonArray = null;
+            $jsonArray = [];
             return $jsonArray;
         }  
     }
