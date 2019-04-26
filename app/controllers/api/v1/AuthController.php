@@ -2236,10 +2236,11 @@ public function payCredits( )
          }
 
           $peak_amount = 0;
-          $clinic_co_payment = TransactionHelper::getCoPayment($clinic);
+          $clinic_co_payment = TransactionHelper::getCoPayment($clinic, $consultation_fees);
           $peak_amount = $clinic_co_payment['peak_amount'];
           $co_paid_amount = $clinic_co_payment['co_paid_amount'];
           $co_paid_status = $clinic_co_payment['co_paid_status'];
+          $consultation_fees = $clinic_co_payment['consultation_fees'];
           // // check clinic peak hours
           // $result = ClinicHelper::getCheckClinicPeakHour($clinic, date('Y-m-d H:i:s'));
           // if($result['status']) {
