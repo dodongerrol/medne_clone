@@ -237,7 +237,7 @@ class ArrayHelperMobile{
                 
             return $doctorArray;
         }else{
-            $doctorArray = null;
+            $doctorArray = [];
             return $doctorArray;
         }
     }
