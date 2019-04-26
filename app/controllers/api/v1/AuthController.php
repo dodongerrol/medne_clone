@@ -1856,7 +1856,7 @@ public function getNewClinicDetails($id)
 
             if($plan_coverage['expired'] == true) {
                $returnObject->status = FALSE;
-               $returnObject->message = 'Employee Plan Coverage is expired';
+               $returnObject->message = 'Employee Plan Coverage has expired';
                $returnObject->data = $plan_coverage;
                return Response::json($returnObject);
            }
