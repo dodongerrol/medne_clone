@@ -46,7 +46,7 @@ class Clinic_Library_v1{
                 $jsonArray['doctors'] = ArrayHelperMobile::ClinicDoctors($doctorsForClinic);   
             }else{
                 $jsonArray['doctor_count'] = 0;
-                $jsonArray['doctors'] = null;
+                $jsonArray['doctors'] = [];
             }
             $jsonArray['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($clinicProcedures);
             
