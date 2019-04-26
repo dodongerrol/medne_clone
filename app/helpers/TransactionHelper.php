@@ -55,9 +55,10 @@ class TransactionHelper
 	    return array('type' => $type, 'image' => $image);
 	}
 
-	public static function getCoPayment($clinic)
+	public static function getCoPayment($clinic, $consultation_fees)
 	{
 		$peak_amount = 0;
+		$consultation_fees = $consultation_fees;
 
       // check clinic peak hours
        $result = ClinicHelper::getCheckClinicPeakHour($clinic, date('Y-m-d H:i:s'));
@@ -67,16 +68,17 @@ class TransactionHelper
         // check user company peak status
          $user_peak = PlanHelper::getUserCompanyPeakStatus($user_id);
          if($user_peak) {
-          if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
+          if((int)$clinic->co_paid_status == 1) {
            $gst = $clinic->peak_hour_amount * $clinic->gst_percent;
            $co_paid_amount = $clinic->peak_hour_amount + $gst;
            $co_paid_status = $clinic->co_paid_status;
+           $consultation_fees = $co_paid_amount;
          } else {
            $co_paid_amount = $clinic->peak_hour_amount;
            $co_paid_status = $clinic->co_paid_status;
          }
        } else {
-        if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
+        if((int)$clinic->co_paid_status == 1) {
          $gst = $clinic->co_paid_amount * $clinic->gst_percent;
          $co_paid_amount = $clinic->co_paid_amount + $gst;
          $co_paid_status = $clinic->co_paid_status;
@@ -86,7 +88,7 @@ class TransactionHelper
        }
      }
     } else {
-       if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
+       if((int)$clinic->co_paid_status == 1) {
         $gst = $clinic->co_paid_amount * $clinic->gst_percent;
         $co_paid_amount = $clinic->co_paid_amount + $gst;
         $co_paid_status = $clinic->co_paid_status;
@@ -96,7 +98,7 @@ class TransactionHelper
       }
     }
 
-    return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount);
+    	return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => $co_paid_amount);
 	}
 }
 ?>
