@@ -119,7 +119,7 @@ class EclaimController extends \BaseController {
 		// $check_plan = PlanHelper::checkEmployeePlanStatus($employee->UserID);
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
-				return array('status' => FALSE, 'message' => 'Employee Plan is expired. You cannot submit an e-claim request.');
+				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
 			}
 		}
 
@@ -136,20 +136,26 @@ class EclaimController extends \BaseController {
 
         // check user pending e-claims amount
 		$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
-
 		$total_claim_amount = $check_user_balance->balance - $claim_amounts;
-        // return $total_claim_amount;
-		if(floatval($input['amount']) > floatval($total_claim_amount)) {
-			return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
+		$amount = trim($input['amount']);
+		$total_claim_amount = trim($total_claim_amount);
+		// return $total_claim_amount;
+        // $input['amount'] = (float)$input['amount'];
+        // return array('amount' => gettype((double)$input['amount']), 'total_amount' => gettype($total_claim_amount));
+		// return ($amount > $total_claim_amount ? 1 : 0);
+		// $input['amount'] = (float)$input['amount'];
+		// (float)$total_claim_amount
+		if($amount > $total_claim_amount) {
+			return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
 		}
-
+		// return "yeah";
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
 		$data = array(
 			'user_id'	=> $input['user_id'],
 			'service'	=> $input['service'],
 			'merchant'	=> $input['merchant'],
-			'amount'	=> $input['amount'],
+			'amount'	=> $amount,
 			'date'		=> date('Y-m-d', strtotime($input['date'])),
 			'time'		=> $time,
 			'spending_type' => 'medical'
@@ -158,7 +164,6 @@ class EclaimController extends \BaseController {
 		try {
 			$result = $claim->createEclaim($data);
 			$id = $result->id;
-
 
 			if($result) {
 				$e_claim_docs = new EclaimDocs( );

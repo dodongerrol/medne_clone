@@ -4996,7 +4996,10 @@ public function createEclaim( )
          $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
      }
 
-     if(floatval($input['amount']) > floatval($claim_amounts)) {
+     $amount = trim($input['amount']);
+     $claim_amounts = trim($claim_amounts);
+
+     if($amount > $claim_amounts) {
          $returnObject->status = FALSE;
          $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
          return Response::json($returnObject);
