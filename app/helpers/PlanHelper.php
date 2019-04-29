@@ -3273,7 +3273,7 @@ class PlanHelper {
 			}
 		}
 
-		public static function removeDependentAccounts($user_id, $expiry_date)
+		public static function removeDependentAccounts($user_id, $expiry_date, $refund_status, $vacate_seat)
 		{
 			$dependents = DB::table('employee_family_coverage_sub_accounts')
 			->where('owner_id', $user_id)
@@ -3292,7 +3292,7 @@ class PlanHelper {
 
 				if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan") {
                     // create refund
-					$refund = self::removeDependent($dependent->user_id, $expiry_date);
+					$refund = self::removeDependent($dependent->user_id, $expiry_date, $refund_status, $vacate_seat);
 				} else {
 					$dependent_plan = DB::table('dependent_plan_history')
 					->where('user_id', $dependent->user_id)

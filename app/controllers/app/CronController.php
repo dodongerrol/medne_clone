@@ -568,7 +568,7 @@ class CronController extends \BaseController {
 
     public function createAutomaticDeletion( )
     {
-        $date = date('Y-m-d', strtotime('2019-04-30'));
+        $date = date('Y-m-d');
         $employee = 0;
         $dependents = 0;
         $withdraw = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 0)->get();
@@ -603,6 +603,7 @@ class CronController extends \BaseController {
                 DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
             }
             $refund_status = false;
+            $keep_seat = false;
 
             if((int)$user->refund_status == 0) {
                 $refund_status = true;
@@ -610,10 +611,13 @@ class CronController extends \BaseController {
 
             \PlanWithdraw::where('user_id', $user->user_id)->update(['refund_status' => 1]);
             // update customer plan draw to 1
-            if($user->keep_seat == 0) {
+            if((int)$user->keep_seat == 0) {
                 PlanHelper::updateNewCustomerPlanStatusDeleteUser($user->user_id, $refund_status);
+            } else if((int)$user->vacate_seat == 1) {
+                PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($user->user_id);
+                $keep_seat = true;
             }
-            PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw);
+            PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw, $refund_status, $keep_seat);
             $employee++;
 
             try {
@@ -630,6 +634,7 @@ class CronController extends \BaseController {
 
         // remove refunded = 2
         $removes = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
+        // return $removes;
         foreach ($removes as $key => $removed_employee) {
             $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
             // set company members removed to 1
@@ -649,10 +654,15 @@ class CronController extends \BaseController {
                 );
                 // update user and set to inactive
                 DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
-                PlanHelper::removeDependentAccounts($removed_employee->user_id, $removed_employee->date_withdraw);
                 if((int)$removed_employee->vacate_seat == 1) {
                     PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($removed_employee->user_id);
                 }
+            }
+
+            try {
+                PlanHelper::removeDependentAccounts($removed_employee->user_id, $removed_employee->date_withdraw, true, true);
+            } catch(Exception $e) {
+                // return $e->getMessage();
             }
             // update customer plan draw to 1
         }
