@@ -568,7 +568,7 @@ class CronController extends \BaseController {
 
     public function createAutomaticDeletion( )
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('2019-04-30'));
         $employee = 0;
         $dependents = 0;
         $withdraw = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 0)->get();
