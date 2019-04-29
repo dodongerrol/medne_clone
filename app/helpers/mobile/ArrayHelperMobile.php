@@ -152,7 +152,7 @@ class ArrayHelperMobile{
             $jsonArray = $returnArray;
             return $jsonArray;
         }else{
-            $jsonArray = null;
+            $jsonArray = [];
             return $jsonArray;
         }  
     }
@@ -237,7 +237,7 @@ class ArrayHelperMobile{
                 
             return $doctorArray;
         }else{
-            $doctorArray = null;
+            $doctorArray = [];
             return $doctorArray;
         }
     }
