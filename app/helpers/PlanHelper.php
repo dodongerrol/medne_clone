@@ -2431,264 +2431,242 @@ class PlanHelper {
 				$user_plan_history_class->createUserPlanHistory($user_plan_history_data);
 				$deactive_employee_status = 1;
 			}
-				// $replace_data = array(
-				// 	'old_id'				=> $replace_id,
-				// 	'active_plan_id'		=> $active_plan->customer_active_plan_id,
-				// 	'expired_and_activate'	=> date('Y-m-d', strtotime($input['last_day_coverage'])),
-				// 	'start_date'			=> date('Y-m-d', strtotime($input['plan_start'])),
-				// 	'status'				=> 0,
-				// 	'replace_status'		=> 0,
-				// 	'deactive_employee_status' => 0,
-				// 	'first_name'			=> $input['first_name'],
-				// 	'last_name'				=> $input['last_name'],
-				// 	'nric'					=> $input['nric'],
-				// 	'dob'					=> date('Y-m-d', strtotime($input['dob'])),
-				// 	'postal_code'			=> $input['postal_code'],
-				// 	'medical'				=> $input['medical_credits'],
-				// 	'wellness'				=> $input['wellness_credits']
-				// );
 
-				// $result = $replace->createReplaceEmployee($replace_data);
-				// if($result) {
-				// 	return array('status' => true, 'message' => 'Old Employee will be deactivated by '.date('d F Y', strtotime($input['last_day_coverage'])).' and new employee will be created by '.date('d F Y', strtotime($input['plan_start'])));
-				// }
-			// } else {
-				$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
-				$password = StringHelper::get_random_password(8);
-				$pending = 1;
+			$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
+			$password = StringHelper::get_random_password(8);
+			$pending = 1;
 
-				if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
-					$pending = 0;
+			if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
+				$pending = 0;
+			}
+			$data = array(
+				'Name'          => $input['first_name'].' '.$input['last_name'],
+				'Password'  => md5($password),
+				'Email'         => $input['email'],
+				'PhoneNo'       => $input['mobile'],
+				'PhoneCode' => NULL,
+				'NRIC'          => $input['nric'],
+				'Job_Title'  => 'Other',
+				'DOB'       => $input['dob'],
+				'Zip_Code'  => $input['postal_code'],
+				'pending'		=> $pending,
+				'Active'        => 1
+			);
+
+			$user_id = $user->createUserFromCorporate($data);
+
+			if($user_id) {
+				$corporate_member = array(
+					'corporate_id'      => $corporate->corporate_id,
+					'user_id'           => $user_id,
+					'first_name'        => $input['first_name'],
+					'last_name'         => $input['last_name'],
+					'type'              => 'member',
+					'created_at'        => date('Y-m-d H:i:s'),
+					'updated_at'        => date('Y-m-d H:i:s'),
+				);
+				DB::table('corporate_members')->insert($corporate_member);
+				$plan_type = new UserPlanType();
+				$check_plan_type = $plan_type->checkUserPlanType($user_id);
+
+				if($check_plan_type == 0) {
+					$group_package = new PackagePlanGroup();
+					$bundle = new Bundle();
+					$user_package = new UserPackage();
+
+					$group_package_id = $group_package->getPackagePlanGroupDefault();
+					$result_bundle = $bundle->getBundle($group_package_id);
+
+					foreach ($result_bundle as $key => $value) {
+						$user_package->createUserPackage($value->care_package_id, $user_id);
+					}
+
+					$plan_type_data = array(
+						'user_id'               => $user_id,
+						'package_group_id'      => $group_package_id,
+						'duration'              => '1 year',
+						'plan_start'            => date('Y-m-d', strtotime($input['plan_start']))
+					);
+					$plan_type->createUserPlanType($plan_type_data);
 				}
-				$data = array(
-					'Name'          => $input['first_name'].' '.$input['last_name'],
-					'Password'  => md5($password),
-					'Email'         => $input['email'],
-					'PhoneNo'       => $input['mobile'],
-					'PhoneCode' => NULL,
-					'NRIC'          => $input['nric'],
-					'Job_Title'  => 'Other',
-					'DOB'       => $input['dob'],
-					'Zip_Code'  => $input['postal_code'],
-					'pending'		=> $pending,
-					'Active'        => 1
+
+                // store user plan history
+				$user_plan_history = new UserPlanHistory();
+				$user_plan_history_data = array(
+					'user_id'       => $user_id,
+					'type'          => "started",
+					'date'          => date('Y-m-d', strtotime($input['plan_start'])),
+					'customer_active_plan_id' => $active_plan->customer_active_plan_id
 				);
 
-				$user_id = $user->createUserFromCorporate($data);
+				$user_plan_history->createUserPlanHistory($user_plan_history_data);
 
-				if($user_id) {
-					$corporate_member = array(
-						'corporate_id'      => $corporate->corporate_id,
-						'user_id'           => $user_id,
-						'first_name'        => $input['first_name'],
-						'last_name'         => $input['last_name'],
-						'type'              => 'member',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s'),
-					);
-					DB::table('corporate_members')->insert($corporate_member);
-					$plan_type = new UserPlanType();
-					$check_plan_type = $plan_type->checkUserPlanType($user_id);
+				$wallet = \Wallet::where('UserID', $user_id)->first();
+				$data_create_history = array(
+					'wallet_id'             => $wallet->wallet_id,
+					'credit'                    => 0,
+					'running_balance' => 0,
+					'logs'                      => 'wallet_created',
+					'customer_active_plan_id' => $active_plan->customer_active_plan_id
+				);
+				\WalletHistory::create($data_create_history);
 
-					if($check_plan_type == 0) {
-						$group_package = new PackagePlanGroup();
-						$bundle = new Bundle();
-						$user_package = new UserPackage();
+				if($medical > 0) {
+                    // medical credits
+					if($customer->balance >= $medical) {
 
-						$group_package_id = $group_package->getPackagePlanGroupDefault();
-						$result_bundle = $bundle->getBundle($group_package_id);
+						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $medical, "medical");
 
-						foreach ($result_bundle as $key => $value) {
-							$user_package->createUserPackage($value->care_package_id, $user_id);
-						}
-
-						$plan_type_data = array(
-							'user_id'               => $user_id,
-							'package_group_id'      => $group_package_id,
-							'duration'              => '1 year',
-							'plan_start'            => date('Y-m-d', strtotime($input['plan_start']))
-						);
-						$plan_type->createUserPlanType($plan_type_data);
-					}
-
-	                // store user plan history
-					$user_plan_history = new UserPlanHistory();
-					$user_plan_history_data = array(
-						'user_id'       => $user_id,
-						'type'          => "started",
-						'date'          => date('Y-m-d', strtotime($input['plan_start'])),
-						'customer_active_plan_id' => $active_plan->customer_active_plan_id
-					);
-
-					$user_plan_history->createUserPlanHistory($user_plan_history_data);
-
-					$wallet = \Wallet::where('UserID', $user_id)->first();
-					$data_create_history = array(
-						'wallet_id'             => $wallet->wallet_id,
-						'credit'                    => 0,
-						'running_balance' => 0,
-						'logs'                      => 'wallet_created',
-						'customer_active_plan_id' => $active_plan->customer_active_plan_id
-					);
-					\WalletHistory::create($data_create_history);
-
-					if($medical > 0) {
-	                    // medical credits
-						if($customer->balance >= $medical) {
-
-							$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $medical, "medical");
-
-							if($result_customer_active_plan) {
-								$customer_active_plan_id = $result_customer_active_plan;
-							} else {
-								$customer_active_plan_id = NULL;
-							}
-
-	                        // give credits
-							$wallet_class = new Wallet();
-							$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-							$update_wallet = $wallet_class->addCredits($user_id, $medical);
-
-							$employee_logs = new WalletHistory();
-
-							$wallet_history = array(
-								'wallet_id'     => $wallet->wallet_id,
-								'credit'            => $medical,
-								'logs'              => 'added_by_hr',
-								'running_balance'   => $medical,
-								'customer_active_plan_id' => $customer_active_plan_id
-							);
-
-							$employee_logs->createWalletHistory($wallet_history);
-							$customer_credits = new CustomerCredits();
-
-							$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $medical);
-							
-							if($customer_credits_result) {
-								$company_deduct_logs = array(
-									'customer_credits_id'   => $customer->customer_credits_id,
-									'credit'                => $medical,
-									'logs'                  => 'added_employee_credits',
-									'user_id'               => $user_id,
-									'running_balance'       => $customer->balance - $medical,
-									'customer_active_plan_id' => $customer_active_plan_id
-								);
-
-								$customer_credit_logs = new CustomerCreditLogs( );
-								$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
-							}
-						}
-					}
-
-					if($wellness > 0) {
-	                    // wellness credits
-						if($customer->wellness_credits >= $wellness) {
-							$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
-
-							if($result_customer_active_plan) {
-								$customer_active_plan_id = $result_customer_active_plan;
-							} else {
-								$customer_active_plan_id = NULL;
-							}
-	                        // give credits
-							$wallet_class = new Wallet();
-							$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-							$update_wallet = $wallet_class->addWellnessCredits($user_id, $wellness);
-
-							$wallet_history = array(
-								'wallet_id'     => $wallet->wallet_id,
-								'credit'        => $wellness,
-								'logs'          => 'added_by_hr',
-								'running_balance'   => $wellness,
-								'customer_active_plan_id' => $customer_active_plan_id
-							);
-
-							\WellnessWalletHistory::create($wallet_history);
-							$customer_credits = new CustomerCredits();
-							$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $wellness);
-							
-							if($customer_credits_result) {
-								$company_deduct_logs = array(
-									'customer_credits_id'   => $customer->customer_credits_id,
-									'credit'                => $wellness,
-									'logs'                  => 'added_employee_credits',
-									'user_id'               => $user_id,
-									'running_balance'       => $customer->wellness_credits - $wellness,
-									'customer_active_plan_id' => $customer_active_plan_id
-								);
-								$customer_credits_logs = new CustomerWellnessCreditLogs();
-								$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
-							}
-						}
-					}
-
-					if($schedule) {
-						$replace_employee = DB::table('customer_replace_employee')
-						->where('old_id', $replace_id)
-						->first();
-						$replace_data = array(
-							'new_id'                => $user_id,
-							'status'                => 1,
-							'replace_status'        => 1
-						);              
-						$replace->updateCustomerReplace($replace_employee->customer_replace_employee_id, $replace_data);
-					} else {
-						$status = 0;
-						if($deactive_employee_status == 1) {
-							$status = 1;
-						}
-
-						$replace_data = array(
-							'old_id'                => $replace_id,
-							'new_id'                => $user_id,
-							'active_plan_id'        => $active_plan->customer_active_plan_id,
-							'expired_and_activate'  => date('Y-m-d', strtotime($input['last_day_coverage'])),
-							'start_date'            => date('Y-m-d', strtotime($input['plan_start'])),
-							'status'                => $status,
-							'replace_status'        => 1,
-							'deactive_employee_status' => $deactive_employee_status
-						);
-						$replace->createReplaceEmployee($replace_data);
-					}
-
-					$user = DB::table('user')->where('UserID', $user_id)->first();
-					$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
-
-					if($user) {
-						if($user->communication_type == "sms") {
-							$compose = [];
-							$compose['name'] = $user->Name;
-							$compose['company'] = $company->company_name;
-							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
-							$compose['email'] = $user->Email;
-							$compose['nric'] = $user->NRIC;
-							$compose['password'] = $password;
-							$compose['phone'] = $user->PhoneNo;
-
-							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
-							$result_sms = SmsHelper::sendSms($compose);
-
+						if($result_customer_active_plan) {
+							$customer_active_plan_id = $result_customer_active_plan;
 						} else {
-							$email_data['company']   = ucwords($company->company_name);
-							$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
-							$email_data['name'] = $input['first_name'].' '.$input['last_name'];
-							$email_data['emailTo']   = $input['email'];
-							$email_data['email']   = $input['email'];
-							$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-							$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
-							$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
-							$email_data['pw'] = $password;
-							$email_data['url'] = url('/');
-							$email_data['plan'] = $active_plan;
-							EmailHelper::sendEmail($email_data);
+							$customer_active_plan_id = NULL;
+						}
+
+                        // give credits
+						$wallet_class = new Wallet();
+						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+						$update_wallet = $wallet_class->addCredits($user_id, $medical);
+
+						$employee_logs = new WalletHistory();
+
+						$wallet_history = array(
+							'wallet_id'     => $wallet->wallet_id,
+							'credit'            => $medical,
+							'logs'              => 'added_by_hr',
+							'running_balance'   => $medical,
+							'customer_active_plan_id' => $customer_active_plan_id
+						);
+
+						$employee_logs->createWalletHistory($wallet_history);
+						$customer_credits = new CustomerCredits();
+
+						$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $medical);
+						
+						if($customer_credits_result) {
+							$company_deduct_logs = array(
+								'customer_credits_id'   => $customer->customer_credits_id,
+								'credit'                => $medical,
+								'logs'                  => 'added_employee_credits',
+								'user_id'               => $user_id,
+								'running_balance'       => $customer->balance - $medical,
+								'customer_active_plan_id' => $customer_active_plan_id
+							);
+
+							$customer_credit_logs = new CustomerCreditLogs( );
+							$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 						}
 					}
-
-					return array('status' => true, 'message' => 'Employee Replaced.');
-				} else {
-					return array('status' => false, 'message' => 'Failed to replace employee.');
 				}
-			// }
+
+				if($wellness > 0) {
+                    // wellness credits
+					if($customer->wellness_credits >= $wellness) {
+						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
+
+						if($result_customer_active_plan) {
+							$customer_active_plan_id = $result_customer_active_plan;
+						} else {
+							$customer_active_plan_id = NULL;
+						}
+                        // give credits
+						$wallet_class = new Wallet();
+						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+						$update_wallet = $wallet_class->addWellnessCredits($user_id, $wellness);
+
+						$wallet_history = array(
+							'wallet_id'     => $wallet->wallet_id,
+							'credit'        => $wellness,
+							'logs'          => 'added_by_hr',
+							'running_balance'   => $wellness,
+							'customer_active_plan_id' => $customer_active_plan_id
+						);
+
+						\WellnessWalletHistory::create($wallet_history);
+						$customer_credits = new CustomerCredits();
+						$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $wellness);
+						
+						if($customer_credits_result) {
+							$company_deduct_logs = array(
+								'customer_credits_id'   => $customer->customer_credits_id,
+								'credit'                => $wellness,
+								'logs'                  => 'added_employee_credits',
+								'user_id'               => $user_id,
+								'running_balance'       => $customer->wellness_credits - $wellness,
+								'customer_active_plan_id' => $customer_active_plan_id
+							);
+							$customer_credits_logs = new CustomerWellnessCreditLogs();
+							$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+						}
+					}
+				}
+
+				if($schedule) {
+					$replace_employee = DB::table('customer_replace_employee')
+					->where('old_id', $replace_id)
+					->first();
+					$replace_data = array(
+						'new_id'                => $user_id,
+						'status'                => 1,
+						'replace_status'        => 1
+					);              
+					$replace->updateCustomerReplace($replace_employee->customer_replace_employee_id, $replace_data);
+				} else {
+					$status = 0;
+					if($deactive_employee_status == 1) {
+						$status = 1;
+					}
+
+					$replace_data = array(
+						'old_id'                => $replace_id,
+						'new_id'                => $user_id,
+						'active_plan_id'        => $active_plan->customer_active_plan_id,
+						'expired_and_activate'  => date('Y-m-d', strtotime($input['last_day_coverage'])),
+						'start_date'            => date('Y-m-d', strtotime($input['plan_start'])),
+						'status'                => $status,
+						'replace_status'        => 1,
+						'deactive_employee_status' => $deactive_employee_status
+					);
+					$replace->createReplaceEmployee($replace_data);
+				}
+
+				$user = DB::table('user')->where('UserID', $user_id)->first();
+				$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
+				// check for dependents
+				if($user) {
+					if($user->communication_type == "sms") {
+						$compose = [];
+						$compose['name'] = $user->Name;
+						$compose['company'] = $company->company_name;
+						$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
+						$compose['email'] = $user->Email;
+						$compose['nric'] = $user->NRIC;
+						$compose['password'] = $password;
+						$compose['phone'] = $user->PhoneNo;
+
+						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+						$result_sms = SmsHelper::sendSms($compose);
+
+					} else {
+						$email_data['company']   = ucwords($company->company_name);
+						$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
+						$email_data['name'] = $input['first_name'].' '.$input['last_name'];
+						$email_data['emailTo']   = $input['email'];
+						$email_data['email']   = $input['email'];
+						$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+						$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+						$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
+						$email_data['pw'] = $password;
+						$email_data['url'] = url('/');
+						$email_data['plan'] = $active_plan;
+						EmailHelper::sendEmail($email_data);
+					}
+				}
+
+				return array('status' => true, 'message' => 'Employee Replaced.');
+			} else {
+				return array('status' => false, 'message' => 'Failed to replace employee.');
+			}
 
 		}
 
@@ -3254,7 +3232,47 @@ class PlanHelper {
 			return array('status' => false);
 		}
 
-		public static function removeDependentAccounts($user_id, $expiry_date)
+		public static function revemoDependentAccounts($user_id, $expiry)
+		{
+			$dependents = DB::table('employee_family_coverage_sub_accounts')
+			->where('owner_id', $user_id)
+			->where('deleted', 0)
+			->get();
+
+			$date = date('Y-m-d');
+
+			foreach ($dependents as $key => $dependent) {
+				if($date >= $expiry) {
+				// create refund and delete now
+					try {
+						$result = self::removeDependent($dependent->user_id, $expiry, true, false);
+						if(!$result) {
+							return array('status' => FALSE, 'message' => 'Failed to create withdraw dependent. Please contact Mednefits and report the issue.');
+						}
+					} catch(Exception $e) {
+						$email = [];
+						$email['end_point'] = url('hr/with_draw_dependent', $parameter = array(), $secure = null);
+						$email['logs'] = 'Withdraw Dependent Failed - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+						// return array('status' => FALSE, 'message' => 'Failed to create withdraw employee. Please contact Mednefits and report the issue.');
+					}
+				} else {
+					try {
+						$result = self::createDependentWithdraw($dependent->user_id, $expiry, true, true, false);
+					} catch(Exception $e) {
+						$email = [];
+						$email['end_point'] = url('hr/with_draw_dependent', $parameter = array(), $secure = null);
+						$email['logs'] = 'Withdraw Dependent Failed - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+						// return array('status' => FALSE, 'message' => 'Failed to create withdraw dependent. Please contact Mednefits and report the issue.');
+					}
+				}
+			}
+		}
+
+		public static function removeDependentAccounts($user_id, $expiry_date, $refund_status, $vacate_seat)
 		{
 			$dependents = DB::table('employee_family_coverage_sub_accounts')
 			->where('owner_id', $user_id)
@@ -3273,7 +3291,7 @@ class PlanHelper {
 
 				if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan") {
                     // create refund
-					$refund = self::removeDependent($dependent->user_id, $expiry_date);
+					$refund = self::removeDependent($dependent->user_id, $expiry_date, $refund_status, $vacate_seat);
 				} else {
 					$dependent_plan = DB::table('dependent_plan_history')
 					->where('user_id', $dependent->user_id)
