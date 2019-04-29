@@ -608,14 +608,19 @@ class CronController extends \BaseController {
                 $refund_status = true;
             }
 
+            $keep_seat = false;
             \PlanWithdraw::where('user_id', $user->user_id)->update(['refund_status' => 1]);
             // update customer plan draw to 1
             if((int)$user->keep_seat == 0) {
                 PlanHelper::updateNewCustomerPlanStatusDeleteUser($user->user_id, $refund_status);
             } else if((int)$user->vacate_seat == 1) {
                 PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($user->user_id);
+                $keep_seat = true;
             }
-            PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw);
+
+
+
+            PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw, $refund_status, $keep_seat);
             $employee++;
 
             try {
