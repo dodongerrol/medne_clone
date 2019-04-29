@@ -21,10 +21,12 @@
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bootstrap.min.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/css/font-awesome.min.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/claim/css/style.css?_={{ $date->format('U') }}">
 
 </head>
 <body>
+	@include('common.home_header')
 	<div ui-view="main"></div>
 </body>
 

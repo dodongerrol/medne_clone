@@ -8,7 +8,15 @@ app.directive("claimDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("claimDirective running!");
         
-        
+        scope.verifyNRIC = function(){
+          $('#modalNRIC').modal('show');
+          console.log('clicked');
+        }
+
+        scope.manualClaim = function(){
+          $('#modalManual').modal('show');
+          console.log('clicked');
+        }
       }
     };
   }

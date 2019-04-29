@@ -1,0 +1,362 @@
+body,
+.claim-wrapper {
+  font-family: 'helvetica light', sans-serif;
+  font-weight: 400;
+  background: #efeff4 !important;
+  color: var(--grayDark);
+}
+
+/* gloabl css */
+:root {
+  --primary: #17578c;
+  --secondary: #55c8fb;
+  --light: #fff;
+  --grayDark: #4a4a4a;
+  --graylight: #ebebeb;
+  --danger: #ff5757;
+}
+
+.mybg-primary {
+  background: var(--primary);
+}
+
+.mybg-secondary {
+  background: var(--secondary);
+}
+
+.mybg-grayDark {
+  background: var(--grayDark);
+}
+
+.mybg-graylight {
+  background: var(--graylight);
+}
+
+.mybg-light {
+  background: var(--light);
+}
+
+.mybg-red {
+  background: var(--danger);
+}
+
+.myColor-primary {
+  color: var(--primary);
+}
+
+.myColor-secondary {
+  color: var(--secondary);
+}
+
+.myColor-grayDark {
+  color: var(--grayDark);
+}
+
+.myColor-graylight {
+  color: var(--graylight);
+}
+
+.myColor-light {
+  color: var(--light);
+}
+
+.myColor-red {
+  color: var(--danger);
+}
+
+.buttons-primary {
+  cursor: pointer;
+  width: 15%;
+  border: none;
+  color: var(--light);
+  padding: 15px 35px;
+
+  -webkit-box-shadow: 1px 5px 5px 0px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 5px 5px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 5px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
+.buttons-secondary {
+  cursor: pointer;
+  width: 15%;
+  border: none;
+  color: var(--light);
+  padding: 15px 35px;
+
+  -webkit-box-shadow: 1px 5px 5px 0px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 5px 5px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 5px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
+.option-button {
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  border-radius: 5px;
+  padding: 6px 12px;
+
+}
+
+.filter {
+  position: relative;
+  top: 4px;
+  transform: translate(-5%, 0%);
+}
+
+.text-strong {
+  font-weight: bold !important;
+}
+
+/* content css */
+.claim-content {
+  margin: 50px 30px;
+}
+
+section {
+  margin-top: 25px;
+}
+
+/* Card css */
+.card {
+  padding: 25px 40px !important;
+  background: #ffffff;
+
+  -webkit-box-shadow: 0px 3px 5px 1px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 3px 5px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 3px 5px 1px rgba(0, 0, 0, 0.3);
+}
+
+.card-title-wrapper {
+  width: 20% !important;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.transactions h4 {
+  padding-right: 15px;
+}
+
+.transactions .search {
+  border: unset;
+  border-radius: 4px;
+  background: #ebebeb;
+  color: #4a4a4a;
+  height: 32px;
+  width: 135px;
+  padding: 0 10px;
+}
+
+.transactions .search-icon {
+  position: relative;
+  left: -30px;
+  border: unset;
+  border-radius: 4px;
+  background: #bbbbbb;
+  color: #ebebeb;
+  height: 34px;
+  width: 45px;
+  padding: 0 10px;
+}
+
+.transactions .btn-date {
+  border: 1px solid #ebebeb;
+  border-radius: 4px;
+  background: unset;
+  color: #4a4a4a;
+  height: 32px;
+  width: 135px;
+  padding: 0 10px;
+}
+
+span.arrow-right {
+  padding: 0 15px;
+}
+
+.transactions .search-wrapper {
+  width: fit-content;
+}
+
+.transactions .date-wrapper {
+  padding-left: 15px;
+}
+
+
+.buttons button {
+  margin-right: 15px;
+}
+
+.btn-nric,
+.btn-manual {
+  font-size: 21px;
+  line-height: 1.1;
+}
+
+/* table styles */
+
+.table-registration,
+.table-successfulTransaction,
+.table-nric,
+.table-manual {
+  margin-top: 15px;
+  width: 100%;
+}
+
+.table-registration thead,
+.table-successfulTransaction thead,
+.table-nric thead,
+.table-manual thead {
+  border-bottom: .5px solid var(--graylight);
+}
+
+.table-registration th,
+.table-successfulTransaction th,
+.table-nric th,
+.table-manual th {
+  padding-bottom: 15px;
+}
+
+
+.table-registration th:nth-child(1),
+.table-registration td:nth-child(1),
+.registration .card-title {
+  padding-left: 30px;
+  width: 20%;
+}
+
+.table-registration th:nth-child(2),
+.table-registration td:nth-child(2) {
+  width: 20%;
+}
+
+.table-registration th:nth-child(3),
+.table-registration td:nth-child(3),
+.table-registration th:nth-child(4),
+.table-registration td:nth-child(4) {
+  width: 10%;
+}
+
+.table-registration td,
+.table-successfulTransaction td,
+.table-nric td,
+.table-manual td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-weight: bold;
+}
+
+/* modal styles */
+
+.nric-modalWrapper {
+  border-radius: unset !important;
+  min-width: 500px !important;
+  min-height: 250px;
+  top: unset !important;
+  transform: translate(-15%, 50%);
+}
+
+.manual-modalWrapper {
+  border-radius: unset !important;
+  min-width: 1170px !important;
+  min-height: 250px;
+  top: unset !important;
+  transform: translate(-37%, 50%);
+}
+
+.nric-wrapper,
+.manual-wrapper {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.nric-wrapper .nric-title,
+.manual-wrapper .manual-title {
+  font-size: 18px;
+  line-height: 1.1;
+  font-weight: bold;
+}
+
+.nric-content-wrapper,
+.manual-content-wrapper {
+  padding-top: 10px;
+}
+
+.search-button button {
+  border-radius: 3px;
+  background: #638db1;
+  position: relative;
+  left: -15px;
+  color: var(--light);
+}
+
+.manual-form {
+  width: 65%;
+  background: #fff;
+  border-radius: 2px;
+  border: 1px solid #4a4a4a6e;
+  height: 28px;
+  padding: 8px 14px;
+}
+
+.container-fluid.manual-wrapper {
+  padding: 20px 50px;
+}
+
+.table-nric td,
+.table-manual td {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.table-manual th:nth-child(1),
+.table-manual td:nth-child(1) {
+  padding-left: 30px;
+}
+
+.table-manual th:nth-child(2) {
+  width: 15%;
+}
+
+.table-manual td:nth-child(3),
+.table-manual td:nth-child(4),
+.table-manual td:nth-child(5) {
+  width: 20%;
+}
+
+.table-manual td:nth-child(3) .manual-form,
+.table-manual td:nth-child(4) .manual-form,
+.table-manual td:nth-child(5) .manual-form {
+  width: 75% !important;
+}
+
+.table-manual td:nth-child(6) {
+  width: 10%;
+}
+
+.table-manual td:nth-child(6) button {
+  border-radius: 3px;
+  background: #638db1;
+  position: relative;
+  left: -15px;
+  color: var(--light);
+}
+
+.table-manual td:nth-child(5) .SgDollar {
+  position: absolute;
+  transform: translate(-170%, 70%);
+}
+
+.am-pm {
+  float: right;
+  position: absolute;
+  transform: translate(113%, -73%);
+  border-left: 1px solid #4a4a4a6e;
+  padding-left: 5px;
+  padding: 12px 0 12px 10px;
+  margin-left: 10px;
+}
+
+
+
+/* override bootsrap */

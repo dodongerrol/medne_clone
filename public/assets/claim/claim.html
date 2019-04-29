@@ -1,3 +1,256 @@
 <div class="claim-container" claim-directive>
-	html here
+	<div class="claim-wrapper">
+		<!-- content here -->
+		<div class="claim-content">
+			<section class="buttons">
+				<button ng-click="verifyNRIC()" class="buttons-primary mybg-primary btn-nric">Verify User by NRIC</button>
+				<button ng-click="manualClaim()" class="buttons-secondary mybg-secondary btn-manual">Manual Claims</button>
+			</section>
+
+			<section class="registration">
+				<div class="card registration container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<h4 class="card-title">Registration</h4>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="container-fluid">
+							<table class="table-registration table-hover">
+								<thead>
+									<th>Registration Date/Time</th>
+									<th>Name</th>
+									<th>NIRC</th>
+									<th>Cap Per Visit</th>
+									<th>Remarks</th>
+								</thead>
+								<tbody>
+									<tr>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td><button class="option-button mybg-red">Cancel</button></td>
+									</tr>
+									<tr>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td><button class="option-button mybg-red">Cancel</button></td>
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</section>
+
+			<section class="successful-transactions">
+				<div class="card transactions container-fluid">
+
+					<div class="row">
+						<div class="col-md-3 card-title-wrapper">
+							<h4 class="card-title">Successful Transactions</h4>
+						</div>
+						<div class="filter">
+							<div class="col-md-2 search-wrapper">
+								<input class="search" type="text" placeholder="Search by NRIC">
+								<button class="search-icon"><i class="fa fa-search" aria-hidden="true"
+										style="font-size:18px; font-weight: 300;"></i></button>
+							</div>
+
+							<div class="col-md-5 text-left date-wrapper">
+								<button class="btn-date">
+									<span class="text-center">
+										<i class="fa fa-calendar" aria-hidden="true" style="padding-right:15px;"></i><span>04/25/2019 <i
+												class="fa fa-chevron-down" style="padding-left:15px;" aria-hidden="true"></i></span>
+									</span>
+								</button>
+								<span class="arrow-right">
+									<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+								</span>
+								<button class="btn-date">
+									<span class="text-center">
+										<i class="fa fa-calendar" aria-hidden="true" style="padding-right:15px;"></i><span>04/25/2019 <i
+												class="fa fa-chevron-down" style="padding-left:15px;" aria-hidden="true"></i></span>
+									</span>
+								</button>
+							</div>
+						</div>
+						<!-- End Filter -->
+					</div>
+
+					<div class="row">
+						<div class="container-fluid">
+							<table class="table-successfulTransaction table-hover">
+								<thead>
+									<th>Registration Date/Time</th>
+									<th>Payment Date/Time</th>
+									<th>Transaction ID</th>
+									<th>Name</th>
+									<th>NIRC</th>
+									<th>Service</th>
+									<th>Mednefits Fee</th>
+									<th>Mednefits Credit</th>
+									<th>Cash</th>
+									<th>Option</th>
+								</thead>
+								<tbody>
+									<tr>
+										<td>01 April 2019, 03:57pm</td>
+										<td>04 April 2019, 03:57pm</td>
+										<td>MED013675</td>
+										<td>Kum Kin Cheong</td>
+										<td>G8472947H</td>
+										<td>Medicine & Treatment</td>
+										<td>S$13.91</td>
+										<td>S$20.00</td>
+										<td>S$0.00</td>
+										<td><button class="option-button mybg-red">Cancel</button></td>
+									</tr>
+									<tr>
+										<td>01 April 2019, 03:57pm</td>
+										<td>04 April 2019, 03:57pm</td>
+										<td>MED013675</td>
+										<td>Kum Kin Cheong</td>
+										<td>G8472947H</td>
+										<td>Medicine & Treatment</td>
+										<td>S$13.91</td>
+										<td>S$20.00</td>
+										<td>S$0.00</td>
+										<td><button class="option-button mybg-red">Cancel</button></td>
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<!-- Modals -->
+				<div id="modalNRIC" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNRICModalLabel">
+					<div class="modal-dialog modal-sm" role="document">
+						<div class="modal-content nric-modalWrapper">
+							<div class="container nric-wrapper">
+								<div class="row">
+									<div class="col-md-11 nric-tittle-wrapper">
+										<h4 class="nric-title">Verify User by NRIC</h4>
+									</div>
+								</div>
+								<div class="row nric-content-wrapper">
+									<div class="col-md-5 search-box">
+										<input class="form-control text-strong" type="text" placeholder="Search">
+									</div>
+									<div class="col-md-3 search-button">
+										<button class="btn btn-lg">Search</button>
+									</div>
+								</div>
+								<div class="row nric-content-wrapper">
+									<div class="col-md-11">
+										<table class="table-nric">
+											<thead>
+												<tr>
+													<th>Name</th>
+													<th>NRIC</th>
+													<th>Status</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Alfred</td>
+													<td>G8472947H</td>
+													<td>Active</td>
+												</tr>
+												<tr>
+													<td>Alfred</td>
+													<td>G8472947H</td>
+													<td>Active</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- modal Manual -->
+				<div id="modalManual" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myManualModalLabel">
+					<div class="modal-dialog modal-sm" role="document">
+						<div class="modal-content manual-modalWrapper">
+							<div class="container-fluid manual-wrapper">
+								<div class="row">
+									<div class="container-fluid manual-tittle-wrapper">
+										<h4 class="manual-title">Manual Claim</h4>
+									</div>
+								</div>
+								<div class="row">
+									<div class="container-fluid manual-content-wrapper">
+
+										<table class="table-manual">
+											<thead>
+												<tr>
+													<th>NRIC</th>
+													<th>Service</th>
+													<th>Date of Visit</th>
+													<th>Time of Visit</th>
+													<th>Cash</th>
+													<th>Option</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>
+														<input class="manual-form" type="text" placeholder="Search NRIC">
+													</td>
+													<td>
+														<input class="manual-form" type="text" placeholder="Select Procedure">
+													</td>
+													<td>
+														<button class="manual-form date">
+															<span class="text-center">
+																<span>5 April, 2019 </span> <i class="fa fa-calendar myColor-secondary"
+																	aria-hidden="true" style="float: right; position: relative; top: 3px;"></i>
+															</span>
+														</button>
+													</td>
+													<td>
+														<button class="manual-form time text-center">
+															<div>
+																<span>
+																	<i class="fa fa-calendar myColor-secondary" aria-hidden="true"
+																		style="float:left; position: relative; top: 3px;"></i>
+																</span>
+																<span>10:00</span>
+															</div>
+															<span class="am-pm">AM</span>
+														</button>
+													</td>
+													<td>
+														<input class="manual-form" type="number" placeholder="Enter Amount"> <span
+															class="SgDollar myColor-secondary">S$</span>
+													</td>
+													<td>
+														<button class="btn btn-lg">Submit</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
 </div>
