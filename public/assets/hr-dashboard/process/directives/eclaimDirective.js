@@ -2,7 +2,8 @@
 	"hrActivity",
 	"hrSettings",
 	"$timeout",
-	function directive(hrActivity, hrSettings, $timeout) {
+	"$compile",
+	function directive(hrActivity, hrSettings, $timeout, $compile) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -32,6 +33,10 @@
 				scope.eclaimSpendingType = 0;
 
 				scope.csv_e_claim_transactions = [];
+				scope.csv_e_claim_transactions_pending = [];
+				scope.csv_e_claim_transactions_approved = [];
+				scope.csv_e_claim_transactions_rejected = [];
+				scope.csv_dl = [];
 
 				scope.fetching_data = {
 					from : 1,
@@ -139,13 +144,14 @@
 						zip = new JSZip();
 					}
 					$('.download-receipt-message .ctr').text( scope.download_receipts_ctr + 1 );
+					var zipfilename = moment( scope.rangePicker_start, 'DD/MM/YYYY' ).format('DD MMM') + ' to ' + moment( scope.rangePicker_end, 'DD/MM/YYYY' ).format('DD MMM YYYY') + ' ' + scope.company_details;
 					var transaction = scope.receipts_arr[scope.download_receipts_ctr];
 					var main_folder = zip.folder( transaction.filename );
 					angular.forEach( transaction.files , function( value, key ){
 						var filename = $.trim( value.file.split('/').pop() );
-						var img = main_folder.folder("images");
-						var pdf = main_folder.folder("pdf");
-						var xls = main_folder.folder("xls");
+						// var img = main_folder.folder("images");
+						// var pdf = main_folder.folder("pdf");
+						// var xls = main_folder.folder("xls");
 						var promise = $.ajax({
 			        url: value.file,
 			        method: 'GET',
@@ -155,21 +161,22 @@
 			    	});
 				    promise.then(function(a,b,c){
 				    	console.log( scope.download_receipts_ctr, b );
-				    	if( value.file_type == 'pdf' ){
-								pdf.file(filename, promise);
-							}
-							if( value.file_type == 'image' ){
-								img.file(filename,promise);
-							}
-							if( value.file_type == 'xls' ){
-								xls.file(filename,promise);
-							}
+				   //  	if( value.file_type == 'pdf' ){
+							// 	pdf.file(filename, promise);
+							// }
+							// if( value.file_type == 'image' ){
+							// 	img.file(filename,promise);
+							// }
+							// if( value.file_type == 'xls' ){
+							// 	xls.file(filename,promise);
+							// }
+							main_folder.file(filename, promise);
 							if( key == transaction.files.length-1 ){
 								if( scope.download_receipts_ctr == (scope.receipts_arr.length-1) ){
 									$timeout(function() {
 										zip.generateAsync({type:"blob"})
 											.then(function(content) {
-										    saveAs(content, "e_claim_receipts.zip");
+										    saveAs(content, zipfilename + ".zip");
 											});
 										scope.download_receipts_ctr = 0;
 										scope.toggleLoading();
@@ -192,7 +199,7 @@
 									$timeout(function() {
 										zip.generateAsync({type:"blob"})
 											.then(function(content) {
-										    saveAs(content, "e_claim_receipts.zip");
+										    saveAs(content, zipfilename + ".zip");
 											});
 										scope.download_receipts_ctr = 0;
 										scope.toggleLoading();
@@ -219,21 +226,27 @@
 				}
 
 				scope.filterTransactions = function( num ){
+					scope.showLoading();
 					scope.filter_num = num;
 					if( num == 1 ){
 						scope.filter_text = 'All';
 						scope.receipts_arr = scope.receipts_all;
+						scope.csv_dl = scope.csv_e_claim_transactions;
 					}else if( num == 2 ){
 						scope.filter_text = 'Pending';
 						scope.receipts_arr = scope.receipts_pending;
+						scope.csv_dl = scope.csv_e_claim_transactions_pending;
 					}else if( num == 3 ){
 						scope.filter_text = 'Approved';
 						scope.receipts_arr = scope.receipts_approved;
+						scope.csv_dl = scope.csv_e_claim_transactions_approved;
 					}else{
 						scope.filter_text = 'Rejected';
 						scope.receipts_arr = scope.receipts_rejected;
+						scope.csv_dl = scope.csv_e_claim_transactions_rejected;
 					}
-					console.log( scope.receipts_arr );
+					// console.log( scope.receipts_arr );
+					scope.hideLoading();
 				}
 
 				scope.hideReasonInput = function( list ){
@@ -407,12 +420,15 @@
 											scope.receipts_all.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
 											if( value.status == 0 ){
 												scope.receipts_pending.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+												scope.csv_e_claim_transactions_pending.push( value );
 											}
 											if( value.status == 1 ){
 												scope.receipts_approved.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+												scope.csv_e_claim_transactions_approved.push( value );
 											}
 											if( value.status == 2 ){
 												scope.receipts_rejected.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+												scope.csv_e_claim_transactions_rejected.push( value );
 											}
 										}
 									})
@@ -420,6 +436,8 @@
 							}else{
 								$('.btn-receipts').attr( 'disabled', true );
 							}
+
+							scope.csv_dl = scope.csv_e_claim_transactions;
 
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
@@ -452,6 +470,10 @@
 					scope.receipts_approved = [];
 					scope.receipts_rejected = [];
 					scope.receipts_arr = [];
+					scope.csv_e_claim_transactions = [];
+					scope.csv_e_claim_transactions_pending = [];
+					scope.csv_e_claim_transactions_approved = [];
+					scope.csv_e_claim_transactions_rejected = [];
 					hrActivity.getEclaimActivity(data)
 					.then(function(response){
 						console.log(response);
@@ -486,12 +508,15 @@
 											scope.receipts_all.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
 											if( value.status == 0 ){
 												scope.receipts_pending.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+												scope.csv_e_claim_transactions_pending.push( value );
 											}
 											if( value.status == 1 ){
 												scope.receipts_approved.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+												scope.csv_e_claim_transactions_approved.push( value );
 											}
 											if( value.status == 2 ){
 												scope.receipts_rejected.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
+												scope.csv_e_claim_transactions_rejected.push( value );
 											}
 										}
 									})
@@ -500,6 +525,7 @@
 								$('.btn-receipts').attr( 'disabled', true );
 							}
 							
+							scope.csv_dl = scope.csv_e_claim_transactions;
 
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
@@ -842,6 +868,14 @@
 			    $( "#global_message" ).text(message);
 			  }
 
+			  scope.getCompanyDetails = function( ) {
+        	hrSettings.getCompanyDetails( )
+        	.then(function(response){
+        		console.log(response);
+        		scope.company_details = response.data.data;
+        	});
+        }
+
 				scope.onLoad = function( ){
 					hrSettings.getSession( )
 						.then(function(response){
@@ -851,6 +885,7 @@
 					scope.getEmployeeLists( );
 					// scope.initializeRangeSlider( );
 					scope.initializeNewCustomDatePicker();
+					scope.getCompanyDetails();
 
 					setTimeout(function() {
 						// var activity_search = scope.getFirstEndDate( 4 , 12 );	
