@@ -233,7 +233,8 @@
 						scope.filter_text = 'Rejected';
 						scope.receipts_arr = scope.receipts_rejected;
 					}
-					console.log( scope.receipts_arr );
+					// console.log( scope.receipts_arr );
+					console.log( scope.filtered_trans );
 				}
 
 				scope.hideReasonInput = function( list ){
@@ -646,9 +647,11 @@
 					if ( pointer_trap == false ) {
 						$( ".disable-cursor-off" ).addClass( "disable-cursor-on" );
 						pointer_trap = true;
+						scope.isLoading = true;
 					}else{
 						$( ".disable-cursor-off" ).removeClass( "disable-cursor-on" );
 						pointer_trap = false;
+						scope.isLoading = false;
 					}
 				}
 
