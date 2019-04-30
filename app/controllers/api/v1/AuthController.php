@@ -4727,7 +4727,7 @@ public function getEclaimDetails($id)
                            $fil = url('').'/receipts/'.$doc->doc_file;
                        }
                    } else if($doc->file_type == "image") {
-                      $fil = $doc->doc_file;
+                      $fil = FileHelper::formatImageAutoQuality($doc->doc_file);
                   }
 
                   $temp_doc = array(
