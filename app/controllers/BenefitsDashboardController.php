@@ -3429,13 +3429,13 @@ class BenefitsDashboardController extends \BaseController {
 		$medical = 0;
 		$wellness = 0;
 
-		if(isset($input['medical'])) {
+		// if(isset($input['medical'])) {
 			$medical = $input['medical_credits'];
-		}
+		// }
 
-		if(isset($input['wellness'])) {
+		// if(isset($input['wellness'])) {
 			$wellness = $input['wellness_credits'];
-		}
+		// }
 		// return $medical;
 
 		// check if employee exit
@@ -3753,6 +3753,7 @@ class BenefitsDashboardController extends \BaseController {
 			$status = 0;
 			if($deactive_employee_status == 1) {
 				$status = 1;
+				PlanHelper::removeDependentAccountsReplace($replace_id, date('Y-m-d', strtotime($input['last_day_coverage'])));
 			}
 
 			$replace_data = array(
@@ -11624,8 +11625,8 @@ class BenefitsDashboardController extends \BaseController {
 	public function getEmployeeSpendingAccountSummaryNew( )
 	{
 		$input = Input::all();
-		$customer_id = $input['customer_id'];
-		// $customer_id = PlanHelper::getCusomerIdToken();
+		// $customer_id = $input['customer_id'];
+		$customer_id = PlanHelper::getCusomerIdToken();
 
 		if(empty($input['employee_id']) || $input['employee_id'] == null) {
 			return array('status' => false, 'message' => 'Employee ID is required.');
@@ -12044,6 +12045,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($has_medical_allocation || $has_wellness_allocation) {
 			if(isset($input['calibrate_welless']) || isset($input['calibrate_medical'])) {
+				PlanHelper::reCalculateCompanyBalance();
 				return array('status' => true, 'message' => 'Spending Account successfully updated to Pro Allocation credits.');
 			}
 		}
