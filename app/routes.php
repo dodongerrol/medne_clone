@@ -11,17 +11,19 @@
 |
 */
 
+Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
+
 Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 
-Route::get('test_employee_reset', 'testcontroller@getUserEmployee');
+// Route::get('test_employee_reset', 'testcontroller@getUserEmployee');
 // test rouote for sms password reset
-Route::post('test_sms', 'testcontroller@testSMSsend');
+// Route::post('test_sms', 'testcontroller@testSMSsend');
 // test route for sms enroll
-Route::post('test_sms_enroll', 'testcontroller@testSendSmsEnroll');
+// Route::post('test_sms_enroll', 'testcontroller@testSendSmsEnroll');
 // test nric
-Route::post('test_nric', 'testcontroller@testNRIC');
+// Route::post('test_nric', 'testcontroller@testNRIC');
 // test employee plan coverage status
-Route::get('test_employee_plan_coverage', 'testcontroller@testGetuserPlanCoverage');
+// Route::get('test_employee_plan_coverage', 'testcontroller@testGetuserPlanCoverage');
 
 // cron jobs
 // care plan expiration

@@ -555,4 +555,15 @@ class testcontroller extends BaseController {
 		}
 	}
 
+	public function ImageAutoQuality( )
+	{
+		// $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1517808489/kocdivwhilut0ohwfk5s.png";
+		// return FileHelper::formatImageAutoQuality($image);
+		$images = DB::table('e_claim_docs')
+					->where('file_type', 'image')
+					->get();
+
+		return $images;
+	}
+
 }
