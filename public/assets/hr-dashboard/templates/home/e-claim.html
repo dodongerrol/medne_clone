@@ -209,7 +209,9 @@
 
 						<p class="color-black3 font-14 weight-700">
 							<span class="font-medium2">
-								<span ng-bind="filtered_trans.length">154</span> Total Transactions 
+								<span ng-if="!isLoading" ng-bind="filtered_trans.length">154</span> 
+								<span ng-if="isLoading">0</span> 
+								Total Transactions 
 							</span>
 
 							<span class="pull-right">Total Claim 

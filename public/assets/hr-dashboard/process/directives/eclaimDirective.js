@@ -672,9 +672,11 @@
 					if ( pointer_trap == false ) {
 						$( ".disable-cursor-off" ).addClass( "disable-cursor-on" );
 						pointer_trap = true;
+						scope.isLoading = true;
 					}else{
 						$( ".disable-cursor-off" ).removeClass( "disable-cursor-on" );
 						pointer_trap = false;
+						scope.isLoading = false;
 					}
 				}
 
