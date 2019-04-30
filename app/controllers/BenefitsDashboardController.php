@@ -11699,16 +11699,26 @@ class BenefitsDashboardController extends \BaseController {
 		->where('status', 0)
 		->sum('amount');
 
+		$usage_date = date('d/m/Y');
 		// get pro allocation medical
-		// $pro_allocation_medical = DB::table('wallet_history')
-		// 							->where('wallet_id', $wallet->wallet_id)
-		// 							->where('logs', 'pro_allocation')
-		// 							->sum('credit');
+		$pro_allocation_medical_date = DB::table('wallet_history')
+									->where('wallet_id', $wallet->wallet_id)
+									->where('logs', 'pro_allocation')
+									->orderBy('created_at', 'desc')
+									->first();
 
-		// $pro_allocation_wellness = DB::table('wellness_wallet_history')
-		// 							->where('wallet_id', $wallet->wallet_id)
-		// 							->where('logs', 'pro_allocation')
-		// 							->sum('credit');
+		if($pro_allocation_medical_date) {
+			$usage_date = date('d/m/Y', strtotime($pro_allocation_medical_date->created_at));
+		} else {
+			$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
+										->where('wallet_id', $wallet->wallet_id)
+										->orderBy('created_at', 'desc')
+										->first();
+			if($pro_allocation_wellness_date) {
+				$usage_date = date('d/m/Y', strtotime($pro_allocation_wellness_date->created_at));
+			}
+		}
+
 
 		
 		foreach ($medical_wallet_history as $key => $history) {
@@ -11850,7 +11860,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($total_allocation_wellness > 0) {
 			$has_wellness_allocation = true;
-		} 
+		}
+
+		// return array('has_wellness_allocation' => $has_wellness_allocation);
 			// else {
 		// 	$total_current_usage_wellness = 0;
 		// 	$total_pro_wellness_allocation = 0;
@@ -11881,7 +11893,7 @@ class BenefitsDashboardController extends \BaseController {
 			'pro_rated_start' => date('d/m/Y', strtotime($coverage['plan_start'])),
 			'pro_rated_end' => date('d/m/Y', strtotime($last_day_coverage)),
 			'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
-			'usage_end'		=> date('d/m/Y')
+			'usage_end'		=> $usage_date
 		);
 
 		if($has_medical_allocation) {
@@ -11959,7 +11971,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($has_wellness_allocation) {
 			// start calibration for medical
-			if(isset($input['calibrate_welless'])) {
+			if(isset($input['calibrate_wellness'])) {
 				if($input['calibrate_wellness'] == true && $total_allocation_wellness > 0 && $exceed == false) {
 					$new_allocation = $total_pro_wellness_allocation;
 					$to_return_to_company = $total_allocation_wellness - $total_pro_wellness_allocation;
@@ -11967,6 +11979,8 @@ class BenefitsDashboardController extends \BaseController {
 					$new_allocation = $total_pro_wellness_allocation;
 					$to_return_to_company = $total_allocation_wellness - $total_wellness_spent;
 				}
+
+				// return array('new_allocation' => $new_allocation, 'to_return_to_company' => $to_return_to_company);
 
 				if($input['calibrate_wellness'] == true && $total_allocation_wellness > 0 ) {
 					$calibrated_wellness = DB::table('wellness_wallet_history')
