@@ -3430,13 +3430,13 @@ class BenefitsDashboardController extends \BaseController {
 		$medical = 0;
 		$wellness = 0;
 
-		if(isset($input['medical'])) {
+		// if(isset($input['medical'])) {
 			$medical = $input['medical_credits'];
-		}
+		// }
 
-		if(isset($input['wellness'])) {
+		// if(isset($input['wellness'])) {
 			$wellness = $input['wellness_credits'];
-		}
+		// }
 		// return $medical;
 
 		// check if employee exit
@@ -3754,6 +3754,7 @@ class BenefitsDashboardController extends \BaseController {
 			$status = 0;
 			if($deactive_employee_status == 1) {
 				$status = 1;
+				PlanHelper::removeDependentAccountsReplace($replace_id, date('Y-m-d', strtotime($input['last_day_coverage'])));
 			}
 
 			$replace_data = array(
@@ -4039,7 +4040,11 @@ class BenefitsDashboardController extends \BaseController {
 				$data['amount']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				$data['total']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				$data['amount_due']     = number_format($get_invoice->employees * $get_invoice->individual_price, 2);
-				$data['calculated_prices'] = $get_invoice->individual_price;
+				if((int)$get_invoice->override_total_amount_status == 1) {
+					$calculated_prices = $get_invoice->override_total_amount;
+				} else {
+					$data['calculated_prices'] = $get_invoice->individual_price;
+				}
 			} else {
 				// $first_plan = DB::table('customer_active_plan')->where('plan_id', $get_active_plan->plan_id)->first();
 				// $duration = null;
@@ -4063,7 +4068,11 @@ class BenefitsDashboardController extends \BaseController {
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
 				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
-				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+				if((int)$get_invoice->override_total_amount_status == 1) {
+					$calculated_prices = $get_invoice->override_total_amount;
+				} else {
+					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+				}
 				// $duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
 				$data['price']          = number_format($calculated_prices, 2);
 				$data['amount']					= number_format($get_invoice->employees * $calculated_prices, 2);
@@ -4965,13 +4974,24 @@ class BenefitsDashboardController extends \BaseController {
 				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 			}
 			$calculated_prices_end_date = $end_plan_date;
+			if((int)$invoice->override_total_amount_status == 1) {
+				$calculated_prices = $invoice->override_total_amount;
+			} else {
+				$calculated_prices = $invoice->individual_price;
+			}
 		} else {
 			// $first_plan = DB::table('customer_active_plan')->where('plan_id', $active_plan->plan_id)->first();
 			$duration = null;
 			$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($active_plan->customer_start_buy_id);
 			$end_plan_date = $calculated_prices_end_date['plan_end'];
 			$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
-			$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active_plan->plan_start, $calculated_prices_end_date);
+
+			if((int)$invoice->override_total_amount_status == 1) {
+				$calculated_prices = $invoice->override_total_amount;
+			} else {
+				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active_plan->plan_start, $calculated_prices_end_date);
+			}
+
 			$duration = PlanHelper::getPlanDuration($active_plan->customer_start_buy_id, $active_plan->plan_start);
 			// return $calculated_prices;
 			// if($active_plan->account_type != "trial_plan") {
@@ -10445,12 +10465,21 @@ class BenefitsDashboardController extends \BaseController {
 					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 				}
 				$calculated_prices_end_date = $end_plan_date;
-				$calculated_prices = $invoice->individual_price;
+				if((int)$invoice->override_total_amount_status == 1) {
+					$calculated_prices = $invoice->override_total_amount;
+				} else {
+					$calculated_prices = $invoice->individual_price;
+				}
 			} else {
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($active->customer_start_buy_id);
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
 				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
-				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date);
+
+				if((int)$invoice->override_total_amount_status == 1) {
+					$calculated_prices = $invoice->override_total_amount;
+				} else {
+					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date);
+				}
 			}
 
 			$active->plan_amount = number_format($calculated_prices * $invoice->employees, 2);
@@ -10628,7 +10657,11 @@ class BenefitsDashboardController extends \BaseController {
 				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 			}
 			$calculated_prices_end_date = $end_plan_date;
-			$calculated_prices = $invoice->individual_price;
+			if((int)$invoice->override_total_amount_status == 1) {
+				$calculated_prices = $invoice->override_total_amount;
+			} else {
+				$calculated_prices = $invoice->individual_price;
+			}
 		} else {
 			// $first_plan = DB::table('customer_active_plan')->where('plan_id', $check->plan_id)->first();
 			// $duration = null;
@@ -10669,7 +10702,11 @@ class BenefitsDashboardController extends \BaseController {
 			$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($check->customer_start_buy_id);
 			$end_plan_date = $calculated_prices_end_date['plan_end'];
 			$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
-			$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $check->plan_start, $calculated_prices_end_date);
+			if((int)$invoice->override_total_amount_status == 1) {
+				$calculated_prices = $invoice->override_total_amount;
+			} else {
+				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $check->plan_start, $calculated_prices_end_date);
+			}
 				
 		}
 
@@ -11533,7 +11570,12 @@ class BenefitsDashboardController extends \BaseController {
 								$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 							}
 
-							$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $end_plan_date);
+							if((int)$invoice->override_total_amount_status == 1) {
+								$calculated_prices = $invoice->override_total_amount;
+							} else {
+								$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $end_plan_date);
+
+							}
 							$amount = $invoice->employees * $calculated_prices;
 						}
 					}
@@ -11625,8 +11667,8 @@ class BenefitsDashboardController extends \BaseController {
 	public function getEmployeeSpendingAccountSummaryNew( )
 	{
 		$input = Input::all();
-		$customer_id = $input['customer_id'];
-		// $customer_id = PlanHelper::getCusomerIdToken();
+		// $customer_id = $input['customer_id'];
+		$customer_id = PlanHelper::getCusomerIdToken();
 
 		if(empty($input['employee_id']) || $input['employee_id'] == null) {
 			return array('status' => false, 'message' => 'Employee ID is required.');
@@ -11700,16 +11742,26 @@ class BenefitsDashboardController extends \BaseController {
 		->where('status', 0)
 		->sum('amount');
 
+		$usage_date = date('d/m/Y');
 		// get pro allocation medical
-		// $pro_allocation_medical = DB::table('wallet_history')
-		// 							->where('wallet_id', $wallet->wallet_id)
-		// 							->where('logs', 'pro_allocation')
-		// 							->sum('credit');
+		$pro_allocation_medical_date = DB::table('wallet_history')
+									->where('wallet_id', $wallet->wallet_id)
+									->where('logs', 'pro_allocation')
+									->orderBy('created_at', 'desc')
+									->first();
 
-		// $pro_allocation_wellness = DB::table('wellness_wallet_history')
-		// 							->where('wallet_id', $wallet->wallet_id)
-		// 							->where('logs', 'pro_allocation')
-		// 							->sum('credit');
+		if($pro_allocation_medical_date) {
+			$usage_date = date('d/m/Y', strtotime($pro_allocation_medical_date->created_at));
+		} else {
+			$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
+										->where('wallet_id', $wallet->wallet_id)
+										->orderBy('created_at', 'desc')
+										->first();
+			if($pro_allocation_wellness_date) {
+				$usage_date = date('d/m/Y', strtotime($pro_allocation_wellness_date->created_at));
+			}
+		}
+
 
 		
 		foreach ($medical_wallet_history as $key => $history) {
@@ -11851,7 +11903,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($total_allocation_wellness > 0) {
 			$has_wellness_allocation = true;
-		} 
+		}
+
+		// return array('has_wellness_allocation' => $has_wellness_allocation);
 			// else {
 		// 	$total_current_usage_wellness = 0;
 		// 	$total_pro_wellness_allocation = 0;
@@ -11882,7 +11936,7 @@ class BenefitsDashboardController extends \BaseController {
 			'pro_rated_start' => date('d/m/Y', strtotime($coverage['plan_start'])),
 			'pro_rated_end' => date('d/m/Y', strtotime($last_day_coverage)),
 			'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
-			'usage_end'		=> date('d/m/Y')
+			'usage_end'		=> $usage_date
 		);
 
 		if($has_medical_allocation) {
@@ -11960,7 +12014,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($has_wellness_allocation) {
 			// start calibration for medical
-			if(isset($input['calibrate_welless'])) {
+			if(isset($input['calibrate_wellness'])) {
 				if($input['calibrate_wellness'] == true && $total_allocation_wellness > 0 && $exceed == false) {
 					$new_allocation = $total_pro_wellness_allocation;
 					$to_return_to_company = $total_allocation_wellness - $total_pro_wellness_allocation;
@@ -11968,6 +12022,8 @@ class BenefitsDashboardController extends \BaseController {
 					$new_allocation = $total_pro_wellness_allocation;
 					$to_return_to_company = $total_allocation_wellness - $total_wellness_spent;
 				}
+
+				// return array('new_allocation' => $new_allocation, 'to_return_to_company' => $to_return_to_company);
 
 				if($input['calibrate_wellness'] == true && $total_allocation_wellness > 0 ) {
 					$calibrated_wellness = DB::table('wellness_wallet_history')
@@ -12031,6 +12087,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($has_medical_allocation || $has_wellness_allocation) {
 			if(isset($input['calibrate_welless']) || isset($input['calibrate_medical'])) {
+				PlanHelper::reCalculateCompanyBalance();
 				return array('status' => true, 'message' => 'Spending Account successfully updated to Pro Allocation credits.');
 			}
 		}
