@@ -3203,6 +3203,7 @@ class BenefitsDashboardController extends \BaseController {
 			// 	$user_plan_history->createUserPlanHistory($user_plan_history_data);
 			// }
 			$withdraw->createPlanWithdraw($data);
+			PlanHelper::revemoDependentAccounts($user_id, date('Y-m-d', strtotime($expiry_date)));
 			return TRUE;
 		} catch(Exception $e) {
 			$email = [];
@@ -3326,6 +3327,7 @@ class BenefitsDashboardController extends \BaseController {
 			DB::table('user')->where('UserID', $id)->update($user_data);
 			// set company members removed to 1
 			DB::table('corporate_members')->where('user_id', $id)->update(['removed_status' => 1]);
+			PlanHelper::revemoDependentAccounts($id, date('Y-m-d', strtotime($expiry_date)));
 			if($refund_status == false) {
 				PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($id);
 			} else {
@@ -11590,13 +11592,29 @@ class BenefitsDashboardController extends \BaseController {
 		$check_dependents = DB::table('dependent_plans')->where('customer_plan_id', $plan_status->customer_plan_id)->first();
 
 		if($check_dependents) {
-			$dependents = DB::table('dependent_plan_status')
-			->where('customer_plan_id', $plan_status->customer_plan_id)
-			->orderBy('created_at', 'desc')
-			->first();
-
-			$total_enrolled_dependents = $dependents->total_enrolled_dependents;
+			// $dependents = DB::table('dependent_plan_status')
+			// ->where('customer_plan_id', $plan_status->customer_plan_id)
+			// ->orderBy('created_at', 'desc')
+			// ->first();
+			// return $plan_status->customer_plan_id;
+			$dependent_ids = [];
+			$dependents = DB::table('dependent_plans')
+								->where('customer_plan_id', $plan_status->customer_plan_id)
+								->get();
+			foreach ($dependents as $key => $dependent) {
+				$dependent_ids[] = $dependent->dependent_plan_id;
+			}
+			// return $dependent_ids;
+			// $total_enrolled_dependents = $dependents->total_enrolled_dependents;
+			$total_enrolled_dependents = DB::table('employee_family_coverage_sub_accounts')
+											->join('dependent_plan_history', 'dependent_plan_history.user_id', '=', 'employee_family_coverage_sub_accounts.user_id')
+											->whereIn('dependent_plan_history.dependent_plan_id', $dependent_ids)
+											->where('employee_family_coverage_sub_accounts.deleted', 0)
+											->count();
+			// return $total_enrolled_dependents;
 		}
+
+		// return $plan_status->enrolled_employees;
 
 		$total_members = $plan_status->enrolled_employees + $total_enrolled_dependents;
 
