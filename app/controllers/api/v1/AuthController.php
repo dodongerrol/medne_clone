@@ -1943,20 +1943,20 @@ public function getNewClinicDetails($id)
         $jsonArray['cap_currency_symbol'] = $cap_currency_symbol;
         $jsonArray['cap_per_visit_amount'] = $cap_amount;
 
-        // $check_in_time = date('Y-m-d H:i:s');
-        // $check_in_data = array(
-        //   'user_id'         => $findUserID,
-        //   'clinic_id'       => $clinic->ClinicID,
-        //   'check_in_time'   => $check_in_time,
-        //   'check_out_time'  => $check_in_time,
-        //   'check_in_type'   => 'in_network_transaction'
-        // );
+        $check_in_time = date('Y-m-d H:i:s');
+        $check_in_data = array(
+          'user_id'         => $findUserID,
+          'clinic_id'       => $clinic->ClinicID,
+          'check_in_time'   => $check_in_time,
+          'check_out_time'  => $check_in_time,
+          'check_in_type'   => 'in_network_transaction'
+        );
 
-        // $check_in_class = new EmployeeClinicCheckIn( );
-                // // create clinic check in data
-        // $check_in = $check_in_class->createData($check_in_data);
-        // $jsonArray['check_in_id'] = $check_in->id;
-        // $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
+        $check_in_class = new EmployeeClinicCheckIn( );
+                // create clinic check in data
+        $check_in = $check_in_class->createData($check_in_data);
+        $jsonArray['check_in_id'] = $check_in->id;
+        $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
         return Response::json($returnObject);
@@ -4698,7 +4698,7 @@ public function getEclaimDetails($id)
                            $fil = url('').'/receipts/'.$doc->doc_file;
                        }
                    } else if($doc->file_type == "image") {
-                      $fil = $doc->doc_file;
+                      $fil = FileHelper::formatImageAutoQuality($doc->doc_file);
                   }
 
                   $temp_doc = array(
