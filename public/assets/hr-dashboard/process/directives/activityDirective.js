@@ -158,7 +158,7 @@ app.directive('activityPage', [
 				scope.showDetails = function( e, list ){
 					scope.selected_list = list;
 					// var height = $( e.currentTarget ).offset().top - $( '.transactions-container' ).offset().top - 120;
-					var height = 50;
+					var height = 70;
 					$( '.transaction-tr' ).removeClass('active');
 
 					if( temp_list == null || temp_list != list){
@@ -167,7 +167,7 @@ app.directive('activityPage', [
 						$( ".main-transac-container" ).animate({'left':'-13%'}, 'slow');
 						$( ".trans-pagination-shadow" ).css({'margin-right':'75px'});
 						$( ".hidden-details-container" ).css({'top': height+'px'});
-						$( ".hidden-details-container" ).animate({'right':'3%'}, 'slow');
+						$( ".hidden-details-container" ).animate({'right':'1%'}, 'slow');
 					}else{
 						temp_list = null;
 						$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
