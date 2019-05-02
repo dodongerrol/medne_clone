@@ -157,7 +157,8 @@ app.directive('activityPage', [
 
 				scope.showDetails = function( e, list ){
 					scope.selected_list = list;
-					var height = $( e.currentTarget ).offset().top - $( '.transactions-container' ).offset().top - 120;
+					// var height = $( e.currentTarget ).offset().top - $( '.transactions-container' ).offset().top - 120;
+					var height = 50;
 					$( '.transaction-tr' ).removeClass('active');
 
 					if( temp_list == null || temp_list != list){
