@@ -11961,7 +11961,7 @@ class BenefitsDashboardController extends \BaseController {
 					->first();
 
 					if($calibrated_medical) {
-						return array('status' => false, 'message' => 'Medical Spending Account Pro Allication is already updated.');
+						return array('status' => false, 'message' => 'Medical Spending Account Pro Allocation is already updated.');
 					}
 					// begin medical callibration
 					$calibrate_medical_data = array(
@@ -12032,7 +12032,7 @@ class BenefitsDashboardController extends \BaseController {
 					->first();
 
 					if($calibrated_wellness) {
-						return array('status' => false, 'message' => 'Wellness Spending Account Pro Allication is already updated.');
+						return array('status' => false, 'message' => 'Wellness Spending Account Pro Allocation is already updated.');
 					}
 
 					$new_balance = $total_pro_wellness_allocation - $total_wellness_spent;
