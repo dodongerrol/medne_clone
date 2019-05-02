@@ -231,8 +231,10 @@
 						</p>
 
 						<div style="text-align: right;">
-							<button class="btn btn-csv" ng-json-export-excel data="csv_dl" report-fields="{
-								member: 'MEMBER', 
+							<button class="btn btn-csv" ng-json-export-excel data="csv_e_claim_transactions" report-fields="{
+								member: 'MEMBER',
+								claim_member_type: 'CLAIM MEMBER TYPE',
+								employee_dependent_name: 'DEPENDENT OF',
 								claim_date: 'CLAIM DATE', 
 								visit_date: 'VISIT DATE',
 								transaction_id: 'TRANSACTION #',
