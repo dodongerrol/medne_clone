@@ -5409,6 +5409,8 @@ public function hrEclaimActivity( )
 				'receipt_status'    => $e_claim_receipt_status,
 				'owner_id'          => $owner_id,
 				'owner_account'       => $sub_account,
+				'employee_dependent_name' => $sub_account ? $sub_account : null,
+				'claim_member_type'       => $relationship ? 'DEPENDENT' : 'EMPLOYEE',
 				'sub_account_type'  => $sub_account_type,
 				'rejected_reason'   => $res->rejected_reason,
 				'spending_type'     => ucwords($res->spending_type),
