@@ -11,9 +11,10 @@
 |
 */
 
-Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
-
+// Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
 Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
+// Route::post('upload_image', 'testcontroller@uploadImage');
+Route::get('update_clinic_default_image', 'testcontroller@updateClinicDefaultImage');
 
 // Route::get('test_employee_reset', 'testcontroller@getUserEmployee');
 // test rouote for sms password reset
