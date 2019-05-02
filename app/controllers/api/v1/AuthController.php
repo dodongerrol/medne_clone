@@ -2237,7 +2237,6 @@ public function payCredits( )
 
           $peak_amount = 0;
           $clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
-          return $clinic_co_payment;
           $peak_amount = $clinic_co_payment['peak_amount'];
           $co_paid_amount = $clinic_co_payment['co_paid_amount'];
           $co_paid_status = $clinic_co_payment['co_paid_status'];
