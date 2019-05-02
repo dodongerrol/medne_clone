@@ -167,7 +167,7 @@ app.directive('activityPage', [
 						$( ".main-transac-container" ).animate({'left':'-13%'}, 'slow');
 						$( ".trans-pagination-shadow" ).css({'margin-right':'75px'});
 						$( ".hidden-details-container" ).css({'top': height+'px'});
-						$( ".hidden-details-container" ).animate({'right':'3%'}, 'slow');
+						$( ".hidden-details-container" ).animate({'right':'1%'}, 'slow');
 					}else{
 						temp_list = null;
 						$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
