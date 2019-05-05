@@ -359,6 +359,10 @@ app.directive('activityPage', [
 					$("#fetching_users").show();
 					$(".searchActivityLoader").show();
 					$(".searchActivityLoader2").show();
+					temp_list = null;
+					$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
+					$( ".trans-pagination-shadow" ).css({'margin-right':'0'});
+					$( ".hidden-details-container" ).animate({'right':'-100%'}, 'slow');
 					data.page = 1;
 					data.spending_type = scope.activitySpendingTypeSelected;
 					scope.fetch_ctr = 1;
@@ -548,6 +552,10 @@ app.directive('activityPage', [
 				scope.searchEmployeeActivity = function(user_id) {
 					scope.searchActivityPagination();
 					scope.toggleLoading();
+					temp_list = null;
+					$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
+					$( ".trans-pagination-shadow" ).css({'margin-right':'0'});
+					$( ".hidden-details-container" ).animate({'right':'-100%'}, 'slow');
 					var activity_search = null;
 					scope.currentPage = 1;
 					activity_search = {

@@ -639,26 +639,26 @@ class EclaimController extends \BaseController {
 		$allocation = DB::table('e_wallet')
 		->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
 		->where('e_wallet.UserID', $user_id)
-		->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
-		->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
+		// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
+		// ->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
 		->where($table_wallet_history.'.logs', 'added_by_hr')
 		->sum($table_wallet_history.'.credit');
 
 		$deducted_allocation = DB::table('e_wallet')
 		->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-		->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
-		->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
+		// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
+		// ->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
 		->where('e_wallet.UserID', $user_id)
 		->where('logs', 'deducted_by_hr')
 		->sum($table_wallet_history.'.credit');
 
-		$total_allocation = DB::table('e_wallet')
-		->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-		->where('e_wallet.UserID', $user_id)
-		->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
-		->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
-		->where($table_wallet_history.'.logs', 'added_by_hr')
-		->sum($table_wallet_history.'.credit');
+		// $total_allocation = DB::table('e_wallet')
+		// ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+		// ->where('e_wallet.UserID', $user_id)
+		// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
+		// ->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
+		// ->where($table_wallet_history.'.logs', 'added_by_hr')
+		// ->sum($table_wallet_history.'.credit');
 
 		$e_claim_total = DB::table($table_wallet_history)
 		->where('wallet_id', $wallet->wallet_id)
