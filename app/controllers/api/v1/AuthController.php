@@ -1255,78 +1255,78 @@ return Response::json($returnObject);
     }
 }
 
-$format = array(
-  'clinic_name'       => $clinic->Name,
-  'clinic_image'      => $clinic->image,
-  'amount'            => number_format($total_amount, 2),
-  'clinic_type_and_service' => $clinic_name,
-  'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
-  'customer'          => ucwords($customer->Name),
-  'transaction_id'    => $trans->transaction_id,
-  'receipt_status'    => $receipt_status,
-  'cash_status'       => $health_provider_status,
-  'credit_status'     => $credit_status,
-  'user_id'           => $trans->UserID,
-  'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
-);
+  $format = array(
+    'clinic_name'       => $clinic->Name,
+    'clinic_image'      => $clinic->image,
+    'amount'            => number_format($total_amount, 2),
+    'clinic_type_and_service' => $clinic_name,
+    'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
+    'customer'          => ucwords($customer->Name),
+    'transaction_id'    => $trans->transaction_id,
+    'receipt_status'    => $receipt_status,
+    'cash_status'       => $health_provider_status,
+    'credit_status'     => $credit_status,
+    'user_id'           => $trans->UserID,
+    'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
+  );
 
-array_push($transaction_details, $format);
-}
-}
-
-
-$in_network_spent = $in_network_temp_spent - $credits_back;
-$current_spending = $in_network_spent + $e_claim_spent;
-$allocation = $temp_allocation - $deducted_allocation;
-PlanHelper::reCalculateEmployeeBalance($user_id);
-
-$pro_allocation = DB::table($table_wallet_history)
-->where('wallet_id', $wallet->wallet_id)
-->where('logs', 'pro_allocation')
-->sum('credit');
+  array_push($transaction_details, $format);
+  }
+  }
 
 
-if($pro_allocation > 0) {
-    $balance = $pro_allocation - $current_spending;
-    if($balance < 0) {
-        $balance = 0;
-    }
-} else {
-    $balance = $allocation - $current_spending;
-}
+  $in_network_spent = $in_network_temp_spent - $credits_back;
+  $current_spending = $in_network_spent + $e_claim_spent;
+  $allocation = $temp_allocation - $deducted_allocation;
+  PlanHelper::reCalculateEmployeeBalance($user_id);
 
-$wallet_data = array(
-  'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
-  'spending_type'             => $spending_type,
-  'wallet_id'                 => $wallet->wallet_id,
-  'balance'                   => number_format($balance, 2),
-  'in_network_credits_spent'  => number_format($in_network_spent, 2),
-  'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
-  'e_claim_transactions'      => $e_claim,
-  'in_network_transactions'   => $transaction_details,
-  'currency_symbol'           => "S$"
-);
+  $pro_allocation = DB::table($table_wallet_history)
+  ->where('wallet_id', $wallet->wallet_id)
+  ->where('logs', 'pro_allocation')
+  ->sum('credit');
 
-$returnObject->status = true;
-$returnObject->message = "Success";
-$returnObject->data = $wallet_data;
 
-return Response::json($returnObject);
-} else {
+  if($pro_allocation > 0) {
+      $balance = $pro_allocation - $current_spending;
+      if($balance < 0) {
+          $balance = 0;
+      }
+  } else {
+      $balance = $allocation - $current_spending;
+  }
+
+  $wallet_data = array(
+    'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
+    'spending_type'             => $spending_type,
+    'wallet_id'                 => $wallet->wallet_id,
+    'balance'                   => number_format($balance, 2),
+    'in_network_credits_spent'  => number_format($in_network_spent, 2),
+    'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
+    'e_claim_transactions'      => $e_claim,
+    'in_network_transactions'   => $transaction_details,
+    'currency_symbol'           => "S$"
+  );
+
+  $returnObject->status = true;
+  $returnObject->message = "Success";
+  $returnObject->data = $wallet_data;
+
+  return Response::json($returnObject);
+  } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+  }
+  } else {
+     $returnObject->status = FALSE;
+     $returnObject->message = StringHelper::errorMessage("Token");
+     return Response::json($returnObject);
+  }
+  } else {
     $returnObject->status = FALSE;
     $returnObject->message = StringHelper::errorMessage("Token");
     return Response::json($returnObject);
-}
-} else {
-   $returnObject->status = FALSE;
-   $returnObject->message = StringHelper::errorMessage("Token");
-   return Response::json($returnObject);
-}
-} else {
-  $returnObject->status = FALSE;
-  $returnObject->message = StringHelper::errorMessage("Token");
-  return Response::json($returnObject);
-}
+  }
 
 }
 
