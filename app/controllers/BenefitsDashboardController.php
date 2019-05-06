@@ -11696,12 +11696,13 @@ class BenefitsDashboardController extends \BaseController {
 		$end = new DateTime(date('Y-m-d', strtotime($coverage['plan_end'])));
 		$diff = $start->diff($end);
 		$plan_duration = $diff->days + 1;
-
+		// return $plan_duration;
 		// get empployee plan coverage from last day of employee
 		$coverage_end = new DateTime($last_day_coverage);
 		$diff_coverage = $start->diff($coverage_end);
 		$coverage_diff = $diff_coverage->days + 1;
 		
+		// return $coverage_diff;
 		// get total allocation of employee from plan start and plan end
 		$employee_credit_reset_medical = DB::table('credit_reset')
 		->where('id', $check_employee->UserID)
@@ -11795,6 +11796,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$total_current_usage = $total_medical_spent + $pending_e_claim_medical;
 		$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
+		// $total_pro_medical_allocation = ($total_allocation_medical / $plan_duration) * $coverage_diff;
 		if($total_allocation_medical > 0) {
 			$has_medical_allocation = true;
 		} 
