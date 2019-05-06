@@ -1041,8 +1041,10 @@ return Response::json($returnObject);
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
                 if($spending_type == 'medical') {
                   $table_wallet_history = 'wallet_history';
+                  $history_column_id = "wallet_history_id";
               } else {
                   $table_wallet_history = 'wellness_wallet_history';
+                  $history_column_id = "wellness_wallet_history_id";
               }
 
               $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
@@ -1055,6 +1057,7 @@ return Response::json($returnObject);
               ->first();
 
               if($wallet_reset) {
+                $wallet_history_id = $wallet_reset->wallet_history_id;
                   $e_claim_spent = DB::table($table_wallet_history)
                   ->where('wallet_id', $wallet->wallet_id)
                   ->where('where_spend', 'e_claim_transaction')
@@ -1090,26 +1093,27 @@ return Response::json($returnObject);
               }
 
               if($wallet_reset) {
+                  $wallet_history_id = $wallet_reset->wallet_history_id;
                   // get credits allocation
                   $temp_allocation = DB::table('e_wallet')
                   ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
                   ->where('e_wallet.UserID', $user_id)
                   ->whereIn('logs', ['added_by_hr'])
-                  ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                  ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
                   ->sum($table_wallet_history.'.credit');
 
                   $deducted_allocation = DB::table('e_wallet')
                   ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
                   ->where('e_wallet.UserID', $user_id)
                   ->whereIn('logs', ['deducted_by_hr'])
-                  ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                  ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
                   ->sum($table_wallet_history.'.credit');
 
                   $pro_allocation_deduction = DB::table('e_wallet')
                   ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
                   ->where('e_wallet.UserID', $user_id)
                   ->where('logs', 'pro_allocation_deduction')
-                  ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                  ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
                   ->sum($table_wallet_history.'.credit');
               } else {
                       // get credits allocation
