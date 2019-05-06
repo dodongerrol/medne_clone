@@ -11,10 +11,12 @@
 |
 */
 
+// get currencies
+Route::get('get/currency_lists', 'testcontroller@getCurrencyLists');
 // Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
 Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 // Route::post('upload_image', 'testcontroller@uploadImage');
-Route::get('update_clinic_default_image', 'testcontroller@updateClinicDefaultImage');
+// Route::get('update_clinic_default_image', 'testcontroller@updateClinicDefaultImage');
 
 // Route::get('test_employee_reset', 'testcontroller@getUserEmployee');
 // test rouote for sms password reset
@@ -991,6 +993,8 @@ Route::group(array('prefix' => 'v2'), function()
 		    Route::get("user/member_lists", 'Api_V1_AuthController@getFamilCoverageAccounts');
 		    // save device token
 			Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
+			// get currency lists
+			Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
 	 	});
 	});
 });

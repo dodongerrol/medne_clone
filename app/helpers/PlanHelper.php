@@ -370,6 +370,7 @@ class PlanHelper {
 		->first();
 
 		if($wallet_reset) {
+			$wallet_history_id = $wallet_reset->wallet_history_id;
                 // get all medical credits transactions from transaction history
 			$e_claim_spent = DB::table('wallet_history')
 			->where('wallet_id', $wallet->wallet_id)
@@ -393,18 +394,21 @@ class PlanHelper {
 			->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
 			->where('e_wallet.UserID', $user_id)
 			->whereIn('wallet_history.logs', ['added_by_hr'])
-			->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+			->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+			// ->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
 			->sum('wallet_history.credit');
 
 			$deducted_allocation = DB::table('e_wallet')
 			->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
 			->where('e_wallet.UserID', $user_id)
 			->whereIn('wallet_history.logs', ['deducted_by_hr'])
-			->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+			->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+			// ->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
 			->sum('wallet_history.credit');
 			$pro_allocation_deduction = DB::table('wallet_history')
 			->where('wallet_id', $wallet->wallet_id)
-			->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+			->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+			// ->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
 			->where('logs', 'pro_allocation_deduction')
 			->sum('credit');
 		} else {
@@ -1709,10 +1713,12 @@ class PlanHelper {
 
 			if($employee_credit_reset_medical) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
+				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
 				$wallet_history = DB::table('wallet_history')
-				->where('wallet_id', $wallet_id)
-				->where('created_at', '>=', date('Y-m-d', strtotime($start)))
-				->get();
+								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+								->where('e_wallet.UserID', $user_id)
+								->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet_id)->get();
 			}
@@ -1780,9 +1786,12 @@ class PlanHelper {
 			->first();
 			if($employee_credit_reset_wellness) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
+				$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
 				$wallet_history = DB::table('wellness_wallet_history')
-				->where('wallet_id', $wallet_id)
-				->where('created_at', '>=', date('Y-m-d', strtotime($start)))
+				->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+				->where('e_wallet.UserID', $user_id)
+				->where('wellness_wallet_history.wellness_wallet_history_id',  '>=', $wallet_history_id)
+				// ->where('created_at', '>=', date('Y-m-d', strtotime($start)))
 				->get();
 			} else {
 				$wallet_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet_id)->get();
@@ -1958,6 +1967,22 @@ class PlanHelper {
 			}
 
 			return $users_allocation;
+		}
+
+		public static function getResetWallet($user_id, $spending_type, $start, $end, $type)
+		{
+			$wallet_reset = DB::table('credit_reset')
+			->where('id', $user_id)
+			->where('user_type', $type)
+			->where('spending_type', $spending_type)
+			->where('date_resetted', '<=', $end)
+			->first();
+
+			if($wallet_reset) {
+				return $wallet_reset;
+			} else {
+				return false;
+			}
 		}
 
 		public static function getResetWalletDate($user_id, $spending_type, $start, $end, $type)

@@ -2296,12 +2296,12 @@ class BenefitsDashboardController extends \BaseController {
 
 				if($employee_credit_reset_medical) {
 					$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
-	    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_medical->date_resetted);
+	    			$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
 					$wallet_history = DB::table('wallet_history')
-					->where('wallet_id', $wallet->wallet_id)
-					->where('created_at', '>=', date('Y-m-d', strtotime($start)))
-	    								// ->where('created_at', '<=', $end)
-					->get();
+									->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+									->where('e_wallet.UserID', $user->UserID)
+									->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+									->get();
 				} else {
 					$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
 				}
@@ -2357,12 +2357,12 @@ class BenefitsDashboardController extends \BaseController {
 				->first();
 				if($employee_credit_reset_wellness) {
 					$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
-	    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_wellness->date_resetted);
+	    			$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
 					$wallet_wellness_history = DB::table('wellness_wallet_history')
-					->where('wallet_id', $wallet->wallet_id)
-					->where('created_at', '>=', date('Y-m-d', strtotime($start)))
-	    										// ->where('created_at', '<=', $end)
-					->get();
+												->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+												->where('e_wallet.UserID', $user->UserID)
+												->where('wellness_wallet_history.wellness_wallet_history_id',  '>=', $wallet_history_id)
+												->get();
 				} else {
 					$wallet_wellness_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
 				}
