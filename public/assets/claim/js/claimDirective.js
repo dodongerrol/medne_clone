@@ -11,8 +11,12 @@ app.directive("claimDirective", [
         scope.clinic = {};
         scope.backdate_list = {};
         scope.add_claim_data = {
+          amount : 0,
           selected_service_ids : [],
           selected_service : [],
+          daytime : 'AM',
+          visit_time : moment().format('hh:mm'),
+          visit_date : moment().format('DD MMM, YYYY'),
         };
         scope.claim_list = [];
         scope.service_list = [];
@@ -23,6 +27,8 @@ app.directive("claimDirective", [
         scope.selected_start_date = moment().startOf('month').format('MM/DD/YYYY');
         scope.selected_end_date = moment().format('MM/DD/YYYY');
         scope.isSearchNRIC = false;
+        scope.selected_hour = parseInt(moment().format("hh"));
+        scope.selected_minute = parseInt(moment().format("mm"));
 
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
@@ -44,7 +50,53 @@ app.directive("claimDirective", [
         }
         scope.showTimePicker = function(){
           $(".timepicker-container").fadeIn();
+          $(".daytime-container").hide();
+          scope.setVisitTime();
         }
+        scope.showTimeDayDrop = function(){
+          $(".daytime-container").fadeIn();
+          $(".timepicker-container").hide();
+        }
+        scope.pickDayTime = function( opt ){
+          scope.add_claim_data.daytime = opt;
+          $(".daytime-container").hide();
+        }
+        scope.addHour = function( opt ) {
+          if (scope.selected_hour < 12) {
+            scope.selected_hour++;
+          } else {
+            scope.selected_hour = 1;
+          }
+          scope.setVisitTime( opt );
+        };
+        scope.deductHour = function( opt ){
+          if (scope.selected_hour > 1) {
+            scope.selected_hour--;
+          } else {
+            scope.selected_hour = 12;
+          }
+          scope.setVisitTime( opt );
+        };
+        scope.addMinute = function( opt ){
+          if (scope.selected_minute < 59) {
+            scope.selected_minute++;
+          } else {
+            scope.selected_minute = 0;
+          }
+          scope.setVisitTime(opt);
+        };
+        scope.deductMinute = function( opt ){
+          if (scope.selected_minute > 0) {
+            scope.selected_minute--;
+          } else {
+            scope.selected_minute = 59;
+          }
+          scope.setVisitTime(opt);
+        };
+        scope.setVisitTime = function( opt ){
+          var hour = "" + (scope.selected_hour < 10 ? 0 : "") + scope.selected_hour + ":" + (scope.selected_minute < 10 ? 0 : "") + scope.selected_minute;
+          scope.add_claim_data.visit_time = hour;
+        };
 
 
 
@@ -231,7 +283,7 @@ app.directive("claimDirective", [
         }
 
         scope.onLoad = function (){
-          // scope.getClinicDetails();
+          scope.getClinicDetails();
           // scope.getClinicSocketConnection();
           // scope.getHeathProvider();
           scope.getSuccessfullTransactions();
@@ -249,8 +301,12 @@ app.directive("claimDirective", [
             scope.search_member = "";
           })
           $("body").click(function(e){
-            if ( $(e.target).parents(".autocp-form").length === 0) {
-              $(".services-list-container").hide();
+            if ( $(e.target).parents(".service-td").length === 0) {
+              $(".service-drop").hide();
+            }
+            if ( $(e.target).parents(".datepicker-td").length === 0) {
+              $(".timepicker-container").hide();
+              $(".daytime-container").hide();
             }
           });
         // ================== //

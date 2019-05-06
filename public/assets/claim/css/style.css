@@ -327,11 +327,12 @@ span.arrow-right {
   border: 1px solid #4a4a4a6e;
   height: 28px;
   padding: 8px 14px;
+  margin-bottom: 5px;
 }
 
 .manual-form.date{
   display: flex;
-  height: 46px;
+  height: 44px;
   padding: 0;
   align-items: center;
   width: 90% !important;
@@ -354,7 +355,7 @@ span.arrow-right {
 
 .manual-form.time{
   display: flex;
-  height: 46px;
+  height: 44px;
   padding: 0;
   align-items: center;
   width: 90% !important;
@@ -391,27 +392,32 @@ span.arrow-right {
   padding-top: 20px;
   padding-bottom: 20px;
   position: relative;
+  vertical-align: top;
 }
 
 .table-manual th:nth-child(1),
 .table-manual td:nth-child(1) {
   padding-left: 30px;
+  width: 150px;
 }
 
-.table-manual th:nth-child(2) {
-  width: 15%;
+.table-manual th:nth-child(2),
+.table-manual tr td:nth-child(2) {
+  width: 20%;
 }
 
 .table-manual td:nth-child(3),
-.table-manual td:nth-child(4),
-.table-manual td:nth-child(5) {
+.table-manual td:nth-child(4){
   width: 20%;
+}
+.table-manual td:nth-child(5) {
+  width: 15%;
 }
 
 .table-manual td:nth-child(3) .manual-form,
 .table-manual td:nth-child(4) .manual-form,
 .table-manual td:nth-child(5) .manual-form {
-  width: 75% !important;
+  /*width: 75% !important;*/
 }
 
 .table-manual td:nth-child(6) {
@@ -422,7 +428,7 @@ span.arrow-right {
   border-radius: 3px;
   background: #638db1;
   position: relative;
-  left: -15px;
+  /*left: -15px;*/
   color: var(--light);
 }
 
@@ -489,13 +495,17 @@ span.arrow-right {
   padding: 5px;
 }
 
+#modalManual .service-td .manual-form{
+  width: 75%;
+}
+
 #modalManual .service-drop{
-  position: absolute;
-  top: 68px;
-  left: 0px;
+  /* position: absolute; */
+  /* top: 68px; */
+  /* left: 0px; */
+  /* min-width: 200px; */
   z-index: 99;
   background: #FFF;
-  min-width: 200px;
   border: 1px solid #999;
   display: none;
 }
@@ -506,16 +516,20 @@ span.arrow-right {
   font-weight: 700;
   cursor: pointer;
 }
+#modalManual .service-drop .service-list span{
+  flex: 1;
+}
+#modalManual .service-drop .service-list span.remove-span{
+  width: 20px;
+  text-align: right;
+  flex: none;
+}
 #modalManual .service-drop .service-list:not(:last-child){
   border-bottom: 1px solid #999;
 }
-#modalManual input[type="number"]::-webkit-outer-spin-button,
-#modalManual input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-#modalManual input[type="number"] {
-    -moz-appearance: textfield;
+
+.cursor-pointer{
+  cursor: pointer;
 }
 
 .datepicker,
@@ -538,6 +552,7 @@ span.arrow-right {
   font-size: 16px;
   padding: 5px;
   border-bottom: 1px solid #f9f9f9;
+  cursor: pointer;
 }
 
 /*===== TIMEPICKER =====*/
