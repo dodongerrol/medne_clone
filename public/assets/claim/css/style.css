@@ -497,6 +497,7 @@ span.arrow-right {
   background: #FFF;
   min-width: 200px;
   border: 1px solid #999;
+  display: none;
 }
 #modalManual .service-drop .service-list{
   display: flex;

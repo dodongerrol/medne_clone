@@ -223,8 +223,8 @@
 														</div>
 													</td>
 													<td>
-														<input class="manual-form" type="text" placeholder="Select Procedure" ng-focus="showServiceDrop()" ng-blur=hideServiceDrop()>
-														<div ng-if="isSeviceDropShow" class="service-drop">
+														<input class="manual-form" type="text" placeholder="Select Procedure" ng-focus="showServiceDrop()">
+														<div class="service-drop">
 
 															<div class="service-list" ng-repeat="list in service_list">
 																<span ng-bind="list.name" ng-click="selectService( list )"></span>
@@ -244,7 +244,7 @@
 															<div class="left-icon-wrapper">
 																<i class="fa fa-clock-o myColor-secondary" aria-hidden="true"></i>
 															</div>
-															<input type="text" >
+															<input type="text" ng-focus="showTimePicker()">
 															<div class="right-icon-wrapper">
 																<span>AM</span>
 															</div>
