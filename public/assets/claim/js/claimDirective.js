@@ -35,18 +35,37 @@ app.directive("claimDirective", [
         }
         scope.manualClaim = function(){
           $('#modalManual').modal('show');
+          scope.add_claim_data = {
+            amount : 0,
+            selected_service_ids : [],
+            selected_service : [],
+            daytime : 'AM',
+            visit_time : moment().format('hh:mm'),
+            visit_date : moment().format('DD MMM, YYYY'),
+          };
         }
         scope.showServiceDrop = function(){
           $(".service-drop").fadeIn();
         }
         scope.selectNRIC = function( data ){
+          scope.add_claim_data.selected_nric_data = data;
           scope.add_claim_data.nric = data.nric;
           scope.isSearchNRIC = false;
+          console.log( scope.add_claim_data );
         }
         scope.selectService = function( data ){
           $(".service-drop").hide();
-          scope.add_claim_data.selected_service_ids.push( data.id );
-          scope.add_claim_data.selected_service.push( data.name );
+          if( $.inArray( data.name, scope.add_claim_data.selected_service ) < 0 ){
+            data.selected = true;
+            scope.add_claim_data.selected_service_ids.push( data.id );
+            scope.add_claim_data.selected_service.push( data.name );
+          }
+        }
+        scope.removeService = function( data ){
+          var index = $.inArray( data.name, scope.add_claim_data.selected_service );
+          scope.add_claim_data.selected_service_ids.splice( index, 1 );
+          scope.add_claim_data.selected_service.splice( index, 1 );
+          data.selected = false;
         }
         scope.showTimePicker = function(){
           $(".timepicker-container").fadeIn();
@@ -97,10 +116,92 @@ app.directive("claimDirective", [
           var hour = "" + (scope.selected_hour < 10 ? 0 : "") + scope.selected_hour + ":" + (scope.selected_minute < 10 ? 0 : "") + scope.selected_minute;
           scope.add_claim_data.visit_time = hour;
         };
+        scope.checkClaimForm = function( data ) {
+          if (!data.selected_nric_data) {
+            swal("Ooops!", "Please select Name from the NRIC drop down result.", "error");
+            return false;
+          }
+          if (!data.visit_date) {
+            swal("Ooops!", "Please select the visit date.", "error");
+            return false;
+          }
+          if (data.selected_service_ids.length == 0) {
+            swal("Ooops!","Please select a procedure/service.","error");
+            return false;
+          }
+          if(!data.visit_time) {
+            swal("Ooops!", "Please enter time of transaction.", "error");
+            return false;
+          }
+          if (data.amount < 0) {
+            swal("Ooops!", "Negative values are not allowed.", "error");
+            return false;
+          }
+
+          return true;
+        }
 
 
 
         // === REQUESTS === //
+          scope.addClaim = function( ) {
+            console.log( scope.add_claim_data );
+            if( scope.checkClaimForm( scope.add_claim_data ) == true ){
+              data.currency_type = scope.clinic.currency_type;
+              swal({
+                  title: "Are you sure?",
+                  text: "This transaction data will be save.",
+                  type: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#DD6B55",
+                  confirmButtonText: "Yes!",
+                  cancelButtonText: "Cancel",
+                  closeOnConfirm: true,
+                  closeOnCancel: true
+                },
+                function(isConfirm) {
+                  if (isConfirm) {
+                    $http.post(base_url + "clinic/save/claim/transaction", data)
+                      .success(function(response) {
+                        if(!response.status) {
+                          swal("Oooops!", response.message, "error");
+                        } else {
+                          swal("Success!","The Transaction Successfully Saved.","success");
+                          $('#modalManual').modal('hide');
+                        }
+                      });
+                  }
+                }
+              );
+            }
+          }
+          scope.checkClaim = function(){
+            $( '#check-claim-modal' ).modal( 'show' );
+            $('.isNotDoneChecking').show();
+            $('.isDoneChecking').hide();
+            var data = {
+              user_id: scope.add_claim_data.selected_nric_data.id,
+              date_transaction : moment( scope.add_claim_data.visit_date ).format('YYYY-MM-DD'),
+              amount : scope.add_claim_data.amount,
+            }
+            console.log( data );
+            $http.post(base_url + "check_duplicate_transaction", data)
+            .then(function(response) {
+              // console.log(response);
+              if( response.data.status == true && response.data.error == 0){
+                scope.your_transaction = response.data.new_transaction;
+                scope.other_transaction = response.data.duplicates;
+                $('.isNotDoneChecking').hide();
+                $('.isDoneChecking').show();
+              }else{
+                $( '#check-claim-modal' ).modal( 'hide' );
+                scope.addClaim();
+              }
+            })
+            .catch(function(err){
+              $('#check-claim-modal').modal('hide');
+            });
+          }
           scope.getServices = function() {
             $http.get(base_url + "clinic/get/services")
               .success(function(response) {
@@ -296,7 +397,6 @@ app.directive("claimDirective", [
 
         // ===== JQUERY ===== //
           $('.modal').on('hide.bs.modal', function () {
-            scope.users_arr = [];
             scope.users_arr = [];
             scope.search_member = "";
           })
