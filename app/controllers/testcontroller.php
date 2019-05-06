@@ -583,4 +583,8 @@ class testcontroller extends BaseController {
 		return $images;
 	}
 
+	public function getCurrencyLists( )
+	{
+		return EclaimHelper::getCurrencies();
+	}
 }
