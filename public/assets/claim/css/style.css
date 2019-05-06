@@ -4,6 +4,17 @@ body,
   font-weight: 400;
   background: #efeff4 !important;
   color: var(--grayDark);
+
+}
+
+button,
+button:focus{
+  outline: none;
+}
+
+input,
+input:focus{
+  outline: none;
 }
 
 /* gloabl css */
@@ -166,8 +177,24 @@ section {
   background: unset;
   color: #4a4a4a;
   height: 32px;
-  width: 135px;
-  padding: 0 10px;
+  width: 160px;
+  display: flex;
+  align-items: center;
+  /*padding: 0 10px;*/
+}
+.transactions .btn-date .left-icon-wrapper {
+  width: 30px;
+  margin-right: 5px;
+  text-align: center;
+}
+.transactions .btn-date .right-icon-wrapper {
+  width: 30px;
+  margin-left: 5px;
+  text-align: center;
+}
+.transactions .btn-date input{
+  background: #FFF;
+  flex: 1;
 }
 
 span.arrow-right {
@@ -180,7 +207,10 @@ span.arrow-right {
 
 .transactions .date-wrapper {
   padding-left: 15px;
+  display: flex;
+  align-items: center;
 }
+
 
 
 .buttons button {
@@ -299,6 +329,59 @@ span.arrow-right {
   padding: 8px 14px;
 }
 
+.manual-form.date{
+  display: flex;
+  height: 46px;
+  padding: 0;
+  align-items: center;
+  width: 90% !important;
+}
+.manual-form.date input{
+  flex: 1;
+  background: #FFF;
+  padding-left: 14px;
+}
+.manual-form.date .icon-wrapper{
+  width: 30px;
+  margin-left: 10px;
+  text-align: center;
+}
+
+.manual-form.date .icon-wrapper i{
+  font-size: 20px; 
+}
+
+
+.manual-form.time{
+  display: flex;
+  height: 46px;
+  padding: 0;
+  align-items: center;
+  width: 90% !important;
+}
+.manual-form.time input{
+  flex: 1;
+  background: #FFF;
+  padding: 0;
+  border-radius: 0;
+}
+.manual-form.time .left-icon-wrapper{
+  width: 30px;
+  margin-right: 10px;
+  text-align: center;
+}
+.manual-form.time .left-icon-wrapper i{
+  font-size: 20px; 
+}
+.manual-form.time .right-icon-wrapper{
+  width: 30px;
+  margin: 0 10px;
+  text-align: center;
+}
+.manual-form.time .right-icon-wrapper i{
+  font-size: 20px; 
+}
+
 .container-fluid.manual-wrapper {
   padding: 20px 50px;
 }
@@ -307,6 +390,7 @@ span.arrow-right {
 .table-manual td {
   padding-top: 20px;
   padding-bottom: 20px;
+  position: relative;
 }
 
 .table-manual th:nth-child(1),
@@ -357,6 +441,135 @@ span.arrow-right {
   margin-left: 10px;
 }
 
+#modalManual .nric-drop{
+  position: absolute;
+  top: 67px;
+  left: 30px;
+  text-shadow: 0 -1px 0 #286090;
+  background-image: -webkit-linear-gradient(top, #337ab7 0%, #2b669a 100%);
+  background-image: -o-linear-gradient(top, #337ab7 0%, #2b669a 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#337ab7), to(#2b669a));
+  background-image: linear-gradient(to bottom, #337ab7 0%, #2b669a 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff337ab7', endColorstr='#ff2b669a', GradientType=0);
+  background-repeat: repeat-x;
+  border-color: #2b669a;
+  z-index: 99;
+  border-radius: 3px;
+  max-height: 200px;
+  overflow-x: auto;
+}
+#modalManual .nric-drop .nric-list{
+  display: flex;
+  /*width: 100%;*/
+  z-index: 999999;
+  padding: 5px 15px;
+  color: #FFF;
+  font-weight: 700;
+  border-bottom: 1px solid #8eb7da;
+  cursor: pointer;
+}
+#modalManual .nric-list .img-wrapper{
+  width: 50px;
+}
+#modalManual .nric-list .img-wrapper img{
+  width: 100%;
+  border-radius: 50%;
+}
+#modalManual .nric-list .details{
+  flex: 1;
+}
+#modalManual .nric-list .details p{
+  margin-bottom: 3px;
+  margin-left: 10px;
+}
+#modalManual .nric-list .details p.nric{
+  background-color: #d9edf7;
+  color: #31708f;
+  display: inline-block;
+  padding: 5px;
+}
 
+#modalManual .service-drop{
+  position: absolute;
+  top: 68px;
+  left: 0px;
+  z-index: 99;
+  background: #FFF;
+  min-width: 200px;
+  border: 1px solid #999;
+}
+#modalManual .service-drop .service-list{
+  display: flex;
+  padding: 10px 15px;
+  color: #444;
+  font-weight: 700;
+  cursor: pointer;
+}
+#modalManual .service-drop .service-list:not(:last-child){
+  border-bottom: 1px solid #999;
+}
+#modalManual input[type="number"]::-webkit-outer-spin-button,
+#modalManual input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#modalManual input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.datepicker,
+.datepicker *{
+  font-family: 'helvetica light' !important;
+}
+
+.daytime-container{
+  position: absolute;
+  top: 69px;
+  right: 9%;
+  z-index: 99;
+  background: #FFF;
+  width: 50px;
+  border: 1px solid #999;
+  text-align: center;
+  display: none;
+}
+.daytime-container .daytime{
+  font-size: 16px;
+  padding: 5px;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+/*===== TIMEPICKER =====*/
+  .timepicker-container{
+    position: absolute;
+    top: 69px;
+    left: 0px;
+    z-index: 99;
+    background: #FFF;
+    width: 90%;
+    border: 1px solid #999;
+    text-align: center;
+    display: none;
+  }
+  .timepicker-container .top,
+  .timepicker-container .middle,
+  .timepicker-container .bottom{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .timepicker-container .divider{
+    width: 20px;
+    text-align: center;
+  }
+  .timepicker-container .arrow,
+  .timepicker-container .hour-wrapper,
+  .timepicker-container .minute-wrapper{
+    flex: 1;
+    cursor: pointer;
+    padding: 10px;
+    color: #999;
+  }
+/*======================*/
 
 /* override bootsrap */

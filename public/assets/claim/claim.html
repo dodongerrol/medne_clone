@@ -26,7 +26,7 @@
 									<th>Remarks</th>
 								</thead>
 								<tbody>
-									<tr>
+									<!-- <tr>
 										<td>test</td>
 										<td>test</td>
 										<td>test</td>
@@ -39,7 +39,7 @@
 										<td>test</td>
 										<td>test</td>
 										<td><button class="option-button mybg-red">Cancel</button></td>
-									</tr>
+									</tr> -->
 
 								</tbody>
 							</table>
@@ -64,21 +64,27 @@
 							</div>
 
 							<div class="col-md-5 text-left date-wrapper">
-								<button class="btn-date">
-									<span class="text-center">
-										<i class="fa fa-calendar" aria-hidden="true" style="padding-right:15px;"></i><span>04/25/2019 <i
-												class="fa fa-chevron-down" style="padding-left:15px;" aria-hidden="true"></i></span>
-									</span>
-								</button>
+								<div class="btn-date">
+									<div class="left-icon-wrapper">
+										<i class="fa fa-calendar" aria-hidden="true"></i>
+									</div>
+									<input type="text" class="start-datepicker">
+									<div class="right-icon-wrapper">
+										<i class="fa fa-chevron-down" aria-hidden="true"></i>
+									</div>
+								</div>
 								<span class="arrow-right">
 									<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
 								</span>
-								<button class="btn-date">
-									<span class="text-center">
-										<i class="fa fa-calendar" aria-hidden="true" style="padding-right:15px;"></i><span>04/25/2019 <i
-												class="fa fa-chevron-down" style="padding-left:15px;" aria-hidden="true"></i></span>
-									</span>
-								</button>
+								<div class="btn-date">
+									<div class="left-icon-wrapper">
+										<i class="fa fa-calendar" aria-hidden="true"></i>
+									</div>
+									<input type="text" class="end-datepicker">
+									<div class="right-icon-wrapper">
+										<i class="fa fa-chevron-down" aria-hidden="true"></i>
+									</div>
+								</div>
 							</div>
 						</div>
 						<!-- End Filter -->
@@ -100,19 +106,7 @@
 									<th>Option</th>
 								</thead>
 								<tbody>
-									<tr>
-										<td>01 April 2019, 03:57pm</td>
-										<td>04 April 2019, 03:57pm</td>
-										<td>MED013675</td>
-										<td>Kum Kin Cheong</td>
-										<td>G8472947H</td>
-										<td>Medicine & Treatment</td>
-										<td>S$13.91</td>
-										<td>S$20.00</td>
-										<td>S$0.00</td>
-										<td><button class="option-button mybg-red">Cancel</button></td>
-									</tr>
-									<tr>
+									<tr ng-repeat="list in backdate_list">
 										<td>01 April 2019, 03:57pm</td>
 										<td>04 April 2019, 03:57pm</td>
 										<td>MED013675</td>
@@ -144,12 +138,14 @@
 									</div>
 								</div>
 								<div class="row nric-content-wrapper">
-									<div class="col-md-5 search-box">
-										<input class="form-control text-strong" type="text" placeholder="Search">
-									</div>
-									<div class="col-md-3 search-button">
-										<button class="btn btn-lg">Search</button>
-									</div>
+									<form ng-submit="getAllUsers( search_member )">
+										<div class="col-md-5 search-box">
+											<input class="form-control text-strong" type="text" placeholder="Search" ng-model="search_member">
+										</div>
+										<div class="col-md-3 search-button">
+											<button class="btn btn-lg">Search</button>
+										</div>
+									</form>
 								</div>
 								<div class="row nric-content-wrapper">
 									<div class="col-md-11">
@@ -162,15 +158,13 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
-													<td>Alfred</td>
-													<td>G8472947H</td>
-													<td>Active</td>
-												</tr>
-												<tr>
-													<td>Alfred</td>
-													<td>G8472947H</td>
-													<td>Active</td>
+												<tr ng-repeat="list in users_arr">
+													<td ng-bind="list.name">Alfred</td>
+													<td ng-bind="list.nric">G8472947H</td>
+													<td>
+														<span ng-if="list.active">Active</span>
+														<span ng-if="!list.active">Inactive</span>
+													</td>
 												</tr>
 											</tbody>
 										</table>
@@ -208,30 +202,92 @@
 											<tbody>
 												<tr>
 													<td>
-														<input class="manual-form" type="text" placeholder="Search NRIC">
-													</td>
-													<td>
-														<input class="manual-form" type="text" placeholder="Select Procedure">
-													</td>
-													<td>
-														<button class="manual-form date">
-															<span class="text-center">
-																<span>5 April, 2019 </span> <i class="fa fa-calendar myColor-secondary"
-																	aria-hidden="true" style="float: right; position: relative; top: 3px;"></i>
-															</span>
-														</button>
-													</td>
-													<td>
-														<button class="manual-form time text-center">
-															<div>
-																<span>
-																	<i class="fa fa-clock-o myColor-secondary" aria-hidden="true"
-																		style="float:left; position: relative; top: 3px;"></i>
-																</span>
-																<span>10:00</span>
+														<input class="manual-form" type="text" placeholder="Search NRIC" ng-model="add_claim_data.nric" ng-change="getAllUsers( add_claim_data.nric )">
+														<div ng-if="isSearchNRIC" class="nric-drop">
+															<div class="nric-list" ng-repeat="list in users_arr" ng-click="selectNRIC( list )">
+																<div class="img-wrapper">
+																	<img ng-src="{{ list.image }}">
+																</div>
+																<div class="details">
+																	<p ng-bind="list.name">Lorem Ipsum</p>
+																	<p ng-bind="list.email">email.com</p>
+																	<p ng-bind="list.nric" class="nric">NRIC</p>
+																	<p>
+																		<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 1">Invidual User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 2">Dependent User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 3">Dependent User</span>
+																	</p>
+																</div>
 															</div>
-															<span class="am-pm">AM</span>
-														</button>
+														</div>
+													</td>
+													<td>
+														<input class="manual-form" type="text" placeholder="Select Procedure" ng-focus="showServiceDrop()" ng-blur=hideServiceDrop()>
+														<div ng-if="isSeviceDropShow" class="service-drop">
+
+															<div class="service-list" ng-repeat="list in service_list">
+																<span ng-bind="list.name" ng-click="selectService( list )"></span>
+															</div>
+														</div>
+													</td>
+													<td>
+														<div class="manual-form date" style="width: 90% !important;">
+															<input type="text" class="datepicker">
+															<div class="icon-wrapper">
+																<i class="fa fa-calendar myColor-secondary" aria-hidden="true"></i>
+															</div>
+														</div>
+													</td>
+													<td>
+														<div class="manual-form time" style="width: 90% !important;">
+															<div class="left-icon-wrapper">
+																<i class="fa fa-clock-o myColor-secondary" aria-hidden="true"></i>
+															</div>
+															<input type="text" >
+															<div class="right-icon-wrapper">
+																<span>AM</span>
+															</div>
+														</div>
+
+														<div class="timepicker-container">
+															<div class="top">
+																<div class="arrow">
+																	<i class="fa fa-caret-up"></i>
+																</div>
+																<div class="divider">
+																</div>
+																<div class="arrow">
+																	<i class="fa fa-caret-up"></i>
+																</div>
+															</div>
+															<div class="middle">
+																<div class="hour-wrapper">
+																	<span class="hour">00</span>
+																</div>
+																<div class="divider">
+																	:
+																</div>
+																<div class="minute-wrapper">
+																	<span class="minute">00</span>
+																</div>
+															</div>
+															<div class="bottom">
+																<div class="arrow">
+																	<i class="fa fa-caret-down"></i>
+																</div>
+																<div class="divider">
+																</div>
+																<div class="arrow">
+																	<i class="fa fa-caret-down"></i>
+																</div>
+															</div>
+														</div>
+
+														<div class="daytime-container">
+															<div class="daytime">AM</div>
+															<div class="daytime">PM</div>
+														</div>
 													</td>
 													<td>
 														<input class="manual-form" type="number" placeholder="Enter Amount"> <span
