@@ -4057,7 +4057,7 @@ public function getNetworkTransactions( )
             $transaction_details = [];
             $ids = StringHelper::getSubAccountsID($findUserID);
             $transactions = DB::table('transaction_history')->whereIn('UserID', $ids)->orderBy('created_at', 'desc')->get();
-            foreach ($transactions as $key => $trans) {
+              foreach ($transactions as $key => $trans) {
                if($trans) {
                   $receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
                   $clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
@@ -4116,29 +4116,42 @@ public function getNetworkTransactions( )
 
              $total_amount = $cost;
 
-             if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
+             if((int)$trans->health_provider_done == 1) {
                  $receipt_status = TRUE;
                  $health_provider_status = TRUE;
-                                // $receipt_status = TRUE;
+                 // $receipt_status = TRUE;
                  if((int)$trans->lite_plan_enabled == 1) {
-                    $total_amount = number_format($cost + $trans->co_paid_amount, 2);
+                    $total_amount = $cost + $trans->consultation_fees;
                 } else {
-                    $total_amount = number_format($cost, 2);
+                    $total_amount = $cost;
                 }
                 $type = "cash";
             } else {
                $health_provider_status = FALSE;
                if((int)$trans->lite_plan_enabled == 1) {
-                  $total_amount = number_format($cost + $trans->co_paid_amount, 2);
+                  $total_amount = $cost + $trans->consultation_fees;
               } else {
-                  $total_amount = number_format($cost, 2);
+                  $total_amount = $cost;
               }
               $type = "credits";
           }
 
+          $currency_symbol = null;
+          $converted_amount = null;
+
+          if($trans->currency_type == "sgd") {
+            $currency_symbol = "S$";
+            $converted_amount = $total_amount;
+          } else if($trans->currency_type == "myr") {
+            $currency_symbol = "RM";
+            $converted_amount = $total_amount / $trans->currency_amount;
+          }
+
           $format = array(
            'clinic_name'       => $clinic->Name,
-           'amount'            => $total_amount,
+           'amount'            => number_format($total_amount, 2),
+           'converted_amount'  => number_format($converted_amount, 2),
+           'currency_symbol'   => $currency_symbol,
            'clinic_type_and_service' => $clinic_name,
            'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
            'customer'          => ucwords($customer->Name),
@@ -4215,14 +4228,12 @@ public function getInNetworkDetails($id)
              $customer = DB::table('user')->where('UserID', $transaction->UserID)->first();
              $procedure_temp = "";
 
-             if((int)$transaction->lite_plan_enabled == 1) {
-                            // $total_consultation += floatval($trans->co_paid_amount);
-
+              if((int)$transaction->lite_plan_enabled == 1) {
                 if($transaction->spending_type == 'medical') {
                    $table_wallet_history = 'wallet_history';
-               } else {
-                   $table_wallet_history = 'wellness_wallet_history';
-               }
+                 } else {
+                     $table_wallet_history = 'wellness_wallet_history';
+                 }
 
                $logs_lite_plan = DB::table($table_wallet_history)
                ->where('logs', 'deducted_from_mobile_payment')
@@ -4230,16 +4241,21 @@ public function getInNetworkDetails($id)
                ->where('id', $transaction->transaction_id)
                ->first();
 
-               if($transaction->credit_cost > 0 && $transaction->lite_plan_use_credits === 0 || $logs_lite_plan && $transaction->credit_cost > 0 && $transaction->lite_plan_use_credits === "0") {
-                   $consultation_credits = true;
-                                // $service_credits = true;
-               } else if($transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === 1 || $logs_lite_plan && $transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === "1"){
-                   $consultation_credits = true;
-                                // $service_credits = true;
-               } else if($transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === 0 || $transaction->procedure_cost >= 0 && $transaction->lite_plan_use_credits === "0"){
-                                // $total_consultation += floatval($trans->co_paid_amount);
+               if($logs_lite_plan && $transaction->credit_cost > 0 && (int)$transaction->lite_plan_use_credits == 0) {
+                 $consultation_credits = true;
+                  // $service_credits = true;
+                  $consultation = $logs_lite_plan->credit;
+               } else if($logs_lite_plan && $transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 1) {
+                 $consultation_credits = true;
+                  // $service_credits = true;
+                  $consultation = $logs_lite_plan->credit;
+               } else if($transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 0) {
+                // $total_consultation += floatval($trans->co_paid_amount);
+                  $consultation = floatval($transaction->consultation_fees);
+               } else {
+                $consultation = floatval($transaction->consultation_fees);
                }
-           }
+              }
 
                         // get services
            if($transaction->multiple_service_selection == 1 || $transaction->multiple_service_selection == "1")
@@ -4255,18 +4271,18 @@ public function getInNetworkDetails($id)
                  $procedure = rtrim($procedure_temp, ',');
              }
              $service = $procedure;
-         } else {
-          $service_lists = DB::table('clinic_procedure')
-          ->where('ProcedureID', $transaction->ProcedureID)
-          ->first();
-          if($service_lists) {
-             $procedure = ucwords($service_lists->Name);
-             $service = $procedure;
-         } else {
-                                // $procedure = "";
-             $service = ucwords($clinic_type->Name);
-         }
-     }
+           } else {
+              $service_lists = DB::table('clinic_procedure')
+              ->where('ProcedureID', $transaction->ProcedureID)
+              ->first();
+              if($service_lists) {
+                 $procedure = ucwords($service_lists->Name);
+                 $service = $procedure;
+             } else {
+                                    // $procedure = "";
+                 $service = ucwords($clinic_type->Name);
+             }
+          }
 
      $type = "";
      $image = "";
@@ -4290,94 +4306,114 @@ public function getInNetworkDetails($id)
          $type = "Health Specialist";
          $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
      }
- } else {
-  $find_head = DB::table('clinic_types')
-  ->where('ClinicTypeID', $clinic_type->sub_id)
-  ->first();
-  if($find_head->Name == "General Practitioner") {
-     $type = "General Practitioner";
-     $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
- } else if($find_head->Name == "Dental Care") {
-     $type = "Dental Care";
-     $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
- } else if($find_head->Name == "Traditional Chinese Medicine") {
-     $type = "Traditional Chinese Medicine";
-     $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
- } else if($find_head->Name == "Health Screening") {
-     $type = "Health Screening";
-     $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
- } else if($find_head->Name == "Wellness") {
-     $type = "Wellness";
-     $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
- } else if($find_head->Name == "Health Specialist") {
-     $type = "Health Specialist";
-     $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
- }
-}
+   } else {
+    $find_head = DB::table('clinic_types')
+    ->where('ClinicTypeID', $clinic_type->sub_id)
+    ->first();
+    if($find_head->Name == "General Practitioner") {
+       $type = "General Practitioner";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
+   } else if($find_head->Name == "Dental Care") {
+       $type = "Dental Care";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+   } else if($find_head->Name == "Traditional Chinese Medicine") {
+       $type = "Traditional Chinese Medicine";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+   } else if($find_head->Name == "Health Screening") {
+       $type = "Health Screening";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
+   } else if($find_head->Name == "Wellness") {
+       $type = "Wellness";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
+   } else if($find_head->Name == "Health Specialist") {
+       $type = "Health Specialist";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
+   }
+  }
 
-$total_amount = $transaction->procedure_cost;
+  $total_amount = $transaction->procedure_cost;
 
-                        // check if there is a receipt image
-                        // $receipt = DB::table('user_image_receipt')->where('transaction_id', $transaction->transaction_id)->count();
+                          // check if there is a receipt image
+                          // $receipt = DB::table('user_image_receipt')->where('transaction_id', $transaction->transaction_id)->count();
 
-                        // if($receipt > 0) {
-                        //     $receipt_status = TRUE;
-                        // } else {
-                        //     $receipt_status = FALSE;
-                        // }
+                          // if($receipt > 0) {
+                          //     $receipt_status = TRUE;
+                          // } else {
+                          //     $receipt_status = FALSE;
+                          // }
 
-                        // if($transaction->health_provider_done == 1 || $transaction->health_provider_done == "1") {
-                        //     $receipt_status = TRUE;
-                        //     $health_provider_status = TRUE;
-                        //     // $receipt_status = TRUE;
-                        // } else {
-                        //     $health_provider_status = FALSE;
-                        // }
-$procedure_cost = number_format($transaction->procedure_cost, 2);
-if($transaction->health_provider_done == 1 || $transaction->health_provider_done == "1") {
-  $payment_type = 'Cash';
-  if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
-     $total_amount = $transaction->procedure_cost + $transaction->co_paid_amount;
- }
-} else {
-  $payment_type = 'Mednefits Credits';
-  $service_credits = true;
-  if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
-     $total_amount = $transaction->procedure_cost + $transaction->co_paid_amount;
- } else {
-     $total_amount = $transaction->procedure_cost;
- }
-}
-$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
+                          // if($transaction->health_provider_done == 1 || $transaction->health_provider_done == "1") {
+                          //     $receipt_status = TRUE;
+                          //     $health_provider_status = TRUE;
+                          //     // $receipt_status = TRUE;
+                          // } else {
+                          //     $health_provider_status = FALSE;
+                          // }
+  $procedure_cost = number_format($transaction->procedure_cost, 2);
+  if($transaction->health_provider_done == 1 || $transaction->health_provider_done == "1") {
+    $payment_type = 'Cash';
+    if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
+       $total_amount = $transaction->procedure_cost + $transaction->co_paid_amount;
+   }
+  } else {
+    $payment_type = 'Mednefits Credits';
+    $service_credits = true;
+    if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
+       $total_amount = $transaction->procedure_cost + $transaction->co_paid_amount;
+   } else {
+       $total_amount = $transaction->procedure_cost;
+   }
+  }
+  $lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
 
-if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == false) {
-  $service_credits = false;
-  $consultation_credits = false;
-  $lite_plan_status = false;
-}
+  if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == false) {
+    $service_credits = false;
+    $consultation_credits = false;
+    $lite_plan_status = false;
+  }
 
+  $currency_symbol = null;
+  $converted_amount = null;
+  $consultation = null;
+  $converted_consultation = null;
+  $converted_procedure_cost = null;
 
-$transaction_details = array(
-  'clinic_name'       => $clinic->Name,
-  'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
-  'clinic_type'       => $type,
-  'clinic_type_image' => $image,
-  'amount'      => number_format($total_amount, 2),
-  'procedure_cost'    => $procedure_cost,
-  'services' => $service,
-  'date_of_transaction' => date('d F Y, h:ia', strtotime($transaction->created_at)),
-  'customer'            => ucwords($customer->Name),
-  'transaction_id'    => (string)$id,
-  'user_id'           => (string)$transaction->UserID,
-  'payment_type'      => $payment_type,
-  'service_credits'   => $service_credits,
-  'consultation_credits' => $consultation_credits,
-  'consultation'      => (int)$transaction->lite_plan_enabled == 1 ? number_format($transaction->co_paid_amount, 2) : "0.00",
-  'lite_plan'         => $lite_plan_status,
-  'wallet_status'     => $wallet_status,
-  'lite_plan_enabled' => $transaction->lite_plan_enabled
+  if($transaction->currency_type == "sgd") {
+    $currency_symbol = "S$";
+    $converted_amount = $total_amount;
+    $converted_procedure_cost = $procedure_cost;
+    $converted_consultation = (int)$transaction->lite_plan_enabled == 1 ? number_format($consultation, 2) : "0.00";
+  } else if($transaction->currency_type == "myr") {
+    $currency_symbol = "RM";
+    $converted_amount = $total_amount / $transaction->currency_amount;
+    $converted_procedure_cost = $procedure_cost / $transaction->currency_amount;
+    $converted_consultation = (int)$transaction->lite_plan_enabled == 1 ? number_format($consultation / $transaction->currency_amount, 2) : "0.00";
+  }
 
-);
+  $transaction_details = array(
+    'clinic_name'       => $clinic->Name,
+    'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
+    'clinic_type'       => $type,
+    'clinic_type_image' => $image,
+    'amount'      => number_format($total_amount, 2),
+    'converted_amount' => number_format($converted_amount, 2),
+    'procedure_cost'    => $procedure_cost,
+    'converted_procedure_cost' => number_format($converted_procedure_cost, 2),
+    'services' => $service,
+    'date_of_transaction' => date('d F Y, h:ia', strtotime($transaction->created_at)),
+    'customer'            => ucwords($customer->Name),
+    'transaction_id'    => (string)$id,
+    'user_id'           => (string)$transaction->UserID,
+    'payment_type'      => $payment_type,
+    'service_credits'   => $service_credits,
+    'consultation_credits' => $consultation_credits,
+    'consultation'      => (int)$transaction->lite_plan_enabled == 1 ? number_format($consultation, 2) : "0.00",
+    'converted_consultation'  => $converted_consultation,
+    'lite_plan'         => $lite_plan_status,
+    'wallet_status'     => $wallet_status,
+    'lite_plan_enabled' => $transaction->lite_plan_enabled
+
+  );
 }
 
 $returnObject->data = $transaction_details;
@@ -5017,6 +5053,11 @@ public function createEclaim( )
          'spending_type' => $input['spending_type']
      );
 
+     if(Input::has('currency_type') && $input['currency_type'] != null) {
+      $data['currency_type'] = $input['currency_type'];
+      $data['currency_value'] = $input['currency_exchange_rate'];
+     }
+
      try {
          $result = $claim->createEclaim($data);
          $id = $result->id;
@@ -5637,4 +5678,13 @@ public function payCreditsNew( )
         return Response::json($returnObject);
     }
     }
+
+  public function getCurrencyLists( )
+  {
+
+    $returnObject = new stdClass();
+    $returnObject->status = TRUE;
+    $returnObject->data = EclaimHelper::getCurrencies();
+    return Response::json($returnObject);
+  }
 }

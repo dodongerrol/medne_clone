@@ -7154,228 +7154,228 @@ public function generateMonthlyCompanyInvoice( )
 	EmailHelper::sendEmail($emailDdata);
 }
 
-public function getTotalCreditsInNetworkTransactions($corporate_id, $start, $temp_end, $plan)
-{
+	public function getTotalCreditsInNetworkTransactions($corporate_id, $start, $temp_end, $plan)
+	{
 
-	$total_credits = 0;
-	$total_consultation = 0;
-	$corporate_members = DB::table('corporate_members')->where('corporate_id', $corporate_id)->get();
-	$lite_plan = false;
-	$end = date('Y-m-d', strtotime('+23 hours', strtotime($temp_end)));
+		$total_credits = 0;
+		$total_consultation = 0;
+		$corporate_members = DB::table('corporate_members')->where('corporate_id', $corporate_id)->get();
+		$lite_plan = false;
+		$end = date('Y-m-d', strtotime('+23 hours', strtotime($temp_end)));
 
-	if($plan->account_type === "lite_plan" || $plan->account_type == "insurance_bundle" && $plan->secondary_account_type == "insurance_bundle_lite") {
-		$lite_plan = true;
-	}
+		if($plan->account_type === "lite_plan" || $plan->account_type == "insurance_bundle" && $plan->secondary_account_type == "insurance_bundle_lite") {
+			$lite_plan = true;
+		}
 
-	foreach ($corporate_members as $key => $member) {
-		$ids = StringHelper::getSubAccountsID($member->user_id);
-            // get in-network transactions
-		$total_credits += DB::table('transaction_history')
-		->whereIn('UserID', $ids)
-		->where('date_of_transaction', '>=', $start)
-		->where('date_of_transaction', '<=', $end)
-		->where('credit_cost', '>', 0)
-		->where('deleted', 0)
-		->where('paid', 1)
-		->sum('credit_cost');
-		if($lite_plan) {
-			$total_consultation += DB::table('transaction_history')
+		foreach ($corporate_members as $key => $member) {
+			$ids = StringHelper::getSubAccountsID($member->user_id);
+	            // get in-network transactions
+			$total_credits += DB::table('transaction_history')
 			->whereIn('UserID', $ids)
 			->where('date_of_transaction', '>=', $start)
 			->where('date_of_transaction', '<=', $end)
-			->where('lite_plan_enabled', 1)
+			->where('credit_cost', '>', 0)
 			->where('deleted', 0)
 			->where('paid', 1)
-			->sum('co_paid_amount');
+			->sum('credit_cost');
+			if($lite_plan) {
+				$total_consultation += DB::table('transaction_history')
+				->whereIn('UserID', $ids)
+				->where('date_of_transaction', '>=', $start)
+				->where('date_of_transaction', '<=', $end)
+				->where('lite_plan_enabled', 1)
+				->where('deleted', 0)
+				->where('paid', 1)
+				->sum('co_paid_amount');
+			}
 		}
+
+		return array('total_credits' => $total_credits, 'total_consultation' => $total_consultation);
 	}
 
-	return array('total_credits' => $total_credits, 'total_consultation' => $total_consultation);
-}
+	public function loginEmployeeAdmin( )
+	{
+		$input = Input::all();
 
-public function loginEmployeeAdmin( )
-{
-	$input = Input::all();
+		$check = DB::table('user')->where('UserType', 5)->where('Email', $input['email'])->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
 
-	$check = DB::table('user')->where('UserType', 5)->where('Email', $input['email'])->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
+		if($check) {
+			Session::put('employee-session', $check->UserID);
+	    return Redirect::to('member-portal/#/home');
+	            // return array('status' => TRUE, 'message' => 'Success.');
+		}
 
-	if($check) {
-		Session::put('employee-session', $check->UserID);
-    return Redirect::to('member-portal/#/home');
-            // return array('status' => TRUE, 'message' => 'Success.');
+		return array('status' => FALSE, 'message' => 'Invalid Credentials.');
 	}
 
-	return array('status' => FALSE, 'message' => 'Invalid Credentials.');
-}
+	public function checkOutofNetwork()
+	{
+		$input = Input::all();
 
-public function checkOutofNetwork()
-{
-	$input = Input::all();
+		$e_claim = DB::table('e_claim')->where('e_claim_id', $input['id'])->first();
 
-	$e_claim = DB::table('e_claim')->where('e_claim_id', $input['id'])->first();
+		if(!$e_claim) {
+			return array('status' => FALSE, 'message' => 'E-Claim does not exist.');
+		}
 
-	if(!$e_claim) {
-		return array('status' => FALSE, 'message' => 'E-Claim does not exist.');
-	}
+		$user_id = $e_claim->user_id;
+		$start = date('Y-m-d H:i:s' , strtotime($e_claim->date));
+		$end = date('Y-m-d H:i:s' , strtotime('+23 hours', strtotime($e_claim->date)));
 
-	$user_id = $e_claim->user_id;
-	$start = date('Y-m-d H:i:s' , strtotime($e_claim->date));
-	$end = date('Y-m-d H:i:s' , strtotime('+23 hours', strtotime($e_claim->date)));
+		$in_networks = DB::table('transaction_history')
+		->where('UserID', $user_id)
+		->where('date_of_transaction', '>=', $start)
+		->where('date_of_transaction', '<=', $end)
+		->get();
 
-	$in_networks = DB::table('transaction_history')
-	->where('UserID', $user_id)
-	->where('date_of_transaction', '>=', $start)
-	->where('date_of_transaction', '<=', $end)
-	->get();
+		if(sizeof($in_networks) > 0) {
+			$transaction_details = [];
+			foreach ($in_networks as $key => $trans) {
+				$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
+				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
+				$procedure_temp = "";
+				$user = DB::table('user')->where('UserID', $trans->UserID)->first();
 
-	if(sizeof($in_networks) > 0) {
-		$transaction_details = [];
-		foreach ($in_networks as $key => $trans) {
-			$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
-			$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
-			$procedure_temp = "";
-			$user = DB::table('user')->where('UserID', $trans->UserID)->first();
+				if((int)$trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+				{
+	                    // get multiple service
+					$service_lists = DB::table('transaction_services')
+					->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
+					->where('transaction_services.transaction_id', $trans->transaction_id)
+					->get();
 
-			if((int)$trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
-			{
-                    // get multiple service
-				$service_lists = DB::table('transaction_services')
-				->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
-				->where('transaction_services.transaction_id', $trans->transaction_id)
-				->get();
-
-				foreach ($service_lists as $key => $service) {
-					if(sizeof($service_lists) - 2 == $key) {
-						$procedure_temp .= ucwords($service->Name).' and ';
-					} else {
-						$procedure_temp .= ucwords($service->Name).',';
+					foreach ($service_lists as $key => $service) {
+						if(sizeof($service_lists) - 2 == $key) {
+							$procedure_temp .= ucwords($service->Name).' and ';
+						} else {
+							$procedure_temp .= ucwords($service->Name).',';
+						}
+						$procedure = rtrim($procedure_temp, ',');
 					}
-					$procedure = rtrim($procedure_temp, ',');
-				}
-				$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
-			} else {
-				$service_lists = DB::table('clinic_procedure')
-				->where('ProcedureID', $trans->ProcedureID)
-				->first();
-				if($service_lists) {
-					$procedure = ucwords($service_lists->Name);
 					$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
 				} else {
-                        // $procedure = "";
-					$clinic_name = ucwords($clinic_type->Name);
+					$service_lists = DB::table('clinic_procedure')
+					->where('ProcedureID', $trans->ProcedureID)
+					->first();
+					if($service_lists) {
+						$procedure = ucwords($service_lists->Name);
+						$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
+					} else {
+	                        // $procedure = "";
+						$clinic_name = ucwords($clinic_type->Name);
+					}
 				}
+
+				$total_amount = number_format($trans->procedure_cost, 2);
+
+				if((int)$trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
+					$payment_type = "Cash";
+					if((int)$trans->lite_plan_enabled == 1) {
+						$total_amount = number_format($trans->procedure_cost + $trans->co_paid_amount, 2);
+					}
+				} else {
+					$payment_type = "Mednefits Credits";
+					if((int)$trans->lite_plan_enabled == 1) {
+						$total_amount = number_format($trans->credit_cost + $trans->co_paid_amount, 2);
+					}
+				}
+
+				$refund_text = 'NO';
+
+				if((int)$trans->refunded == 1 && (int)$trans->deleted == 1 || $trans->refunded == "1" && $trans->deleted == "1") {
+					$status_text = 'REFUNDED';
+					$refund_text = 'YES';
+				} else if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 1 || $trans->health_provider_done == "1" && $trans->deleted == "1") {
+					$status_text = 'REMOVED';
+					$refund_text = 'YES';
+				} else {
+					$status_text = FALSE;
+				}
+
+				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+				$format = array(
+					'name'       				=> ucwords($user->Name),
+					'clinic_name'       => $clinic->Name,
+					'amount'            => $total_amount,
+					'procedure'         => $procedure,
+					'clinic_type_and_service' => $clinic_name,
+					'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
+					'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
+					'user_id'           => $trans->UserID,
+					'type'              => 'In-Network',
+					'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
+					'refund_text'       => $refund_text,
+					'status_text'       => $status_text,
+					'payment_type'      => $payment_type,
+					'consultation'      => (int) $trans->lite_plan_enabled == 1 ? number_format($trans->co_paid_amount, 2) : "0.00",
+					'lite_plan'         => (int)$trans->lite_plan_enabled == 1 ? true : false,
+					'spending_type'		=> ucwords($trans->spending_type)
+				);
+
+				array_push($transaction_details, $format);
 			}
 
-			$total_amount = number_format($trans->procedure_cost, 2);
-
-			if((int)$trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
-				$payment_type = "Cash";
-				if((int)$trans->lite_plan_enabled == 1) {
-					$total_amount = number_format($trans->procedure_cost + $trans->co_paid_amount, 2);
-				}
-			} else {
-				$payment_type = "Mednefits Credits";
-				if((int)$trans->lite_plan_enabled == 1) {
-					$total_amount = number_format($trans->credit_cost + $trans->co_paid_amount, 2);
-				}
-			}
-
-			$refund_text = 'NO';
-
-			if((int)$trans->refunded == 1 && (int)$trans->deleted == 1 || $trans->refunded == "1" && $trans->deleted == "1") {
-				$status_text = 'REFUNDED';
-				$refund_text = 'YES';
-			} else if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 1 || $trans->health_provider_done == "1" && $trans->deleted == "1") {
-				$status_text = 'REMOVED';
-				$refund_text = 'YES';
-			} else {
-				$status_text = FALSE;
-			}
-
-			$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
-			$format = array(
-				'name'       				=> ucwords($user->Name),
-				'clinic_name'       => $clinic->Name,
-				'amount'            => $total_amount,
-				'procedure'         => $procedure,
-				'clinic_type_and_service' => $clinic_name,
-				'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
-				'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
-				'user_id'           => $trans->UserID,
-				'type'              => 'In-Network',
-				'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
-				'refund_text'       => $refund_text,
-				'status_text'       => $status_text,
-				'payment_type'      => $payment_type,
-				'consultation'      => (int) $trans->lite_plan_enabled == 1 ? number_format($trans->co_paid_amount, 2) : "0.00",
-				'lite_plan'         => (int)$trans->lite_plan_enabled == 1 ? true : false,
-				'spending_type'		=> ucwords($trans->spending_type)
-			);
-
-			array_push($transaction_details, $format);
-		}
-
-		return array('status' => TRUE, 'data' => $transaction_details);
-	} else {
-		return array('status' => FALSE, 'message' => 'No Similar In-Network Transaction for this E-Claim.');
-	}
-}
-
-public function revertPending( )
-{
-	$result = self::checkSession();
-	$input = Input::all();
-
-	if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
-		return array('status' => false, 'message' => 'E Claim ID is required.');
-	}
-
-	$e_claim = DB::table('e_claim')->where('e_claim_id', $input['e_claim_id'])->first();
-
-	if(!$e_claim) {
-		return array('status' => false, 'messae' => 'E Claim does not exist.');
-	}
-
-	if((int)$e_claim->status == 0) {
-		return array('status' => false, 'message' => 'E Claim status is already pending.');
-	}
-
-	$owner_id = StringHelper::getUserId($e_claim->user_id);
-
-	if((int)$e_claim->status == 1) {
-		// delete logs for approved credits and check spending type
-		if($e_claim->spending_type == 'medical') {
-			$table_wallet_history = 'wallet_history';
+			return array('status' => TRUE, 'data' => $transaction_details);
 		} else {
-			$table_wallet_history = 'wellness_wallet_history';
+			return array('status' => FALSE, 'message' => 'No Similar In-Network Transaction for this E-Claim.');
 		}
-
-		// find e_claim transaction
-		$e_claim_log = DB::table($table_wallet_history)
-						->where('id', $e_claim->e_claim_id)
-						->where('logs', 'deducted_from_e_claim')
-						->where('where_spend', 'e_claim_transaction')
-						->first();
-		if($e_claim_log) {
-			$e_claim_log = DB::table($table_wallet_history)
-						->where('id', $e_claim->e_claim_id)
-						->where('logs', 'deducted_from_e_claim')
-						->where('where_spend', 'e_claim_transaction')
-						->delete();
-
-			DB::table('e_claim')
-					->where('e_claim_id', $e_claim->e_claim_id)
-					->update(['status' => 0]);
-		}
-
-	} else if((int)$e_claim->status == 2) {
-		// update to pending
-		$result = DB::table('e_claim')
-					->where('e_claim_id', $e_claim->e_claim_id)
-					->update(['status' => 0]);
 	}
 
-	return array('status' => true, 'message' => 'E Claim data status revert to pending.');
-}
+	public function revertPending( )
+	{
+		$result = self::checkSession();
+		$input = Input::all();
+
+		if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
+			return array('status' => false, 'message' => 'E Claim ID is required.');
+		}
+
+		$e_claim = DB::table('e_claim')->where('e_claim_id', $input['e_claim_id'])->first();
+
+		if(!$e_claim) {
+			return array('status' => false, 'messae' => 'E Claim does not exist.');
+		}
+
+		if((int)$e_claim->status == 0) {
+			return array('status' => false, 'message' => 'E Claim status is already pending.');
+		}
+
+		$owner_id = StringHelper::getUserId($e_claim->user_id);
+
+		if((int)$e_claim->status == 1) {
+			// delete logs for approved credits and check spending type
+			if($e_claim->spending_type == 'medical') {
+				$table_wallet_history = 'wallet_history';
+			} else {
+				$table_wallet_history = 'wellness_wallet_history';
+			}
+
+			// find e_claim transaction
+			$e_claim_log = DB::table($table_wallet_history)
+							->where('id', $e_claim->e_claim_id)
+							->where('logs', 'deducted_from_e_claim')
+							->where('where_spend', 'e_claim_transaction')
+							->first();
+			if($e_claim_log) {
+				$e_claim_log = DB::table($table_wallet_history)
+							->where('id', $e_claim->e_claim_id)
+							->where('logs', 'deducted_from_e_claim')
+							->where('where_spend', 'e_claim_transaction')
+							->delete();
+
+				DB::table('e_claim')
+						->where('e_claim_id', $e_claim->e_claim_id)
+						->update(['status' => 0]);
+			}
+
+		} else if((int)$e_claim->status == 2) {
+			// update to pending
+			$result = DB::table('e_claim')
+						->where('e_claim_id', $e_claim->e_claim_id)
+						->update(['status' => 0]);
+		}
+
+		return array('status' => true, 'message' => 'E Claim data status revert to pending.');
+	}
 }
 ?>
