@@ -5691,4 +5691,112 @@ public function payCreditsNew( )
     $returnObject->data = EclaimHelper::getCurrencies();
     return Response::json($returnObject);
   }
+
+  public function getAppUpdateNotification( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+     if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+           $findUserID = $authSession->findUserID($getAccessToken->session_id);
+           if($findUserID){
+              $returnObject->status = TRUE;
+              $returnObject->message = 'Success.';
+
+              $user_id = StringHelper::getUserId($findUserID);
+              $notification = DB::table('user_notification')
+                                ->where('user_id', $user_id)
+                                ->where('notified', 0)
+                                ->where('type', 'app_update')
+                                ->where('platform', 'all')
+                                ->orderBy('created_at', 'desc')
+                                ->first();
+              if($notification) {
+                $temp = array(
+                  'notification_id' => $notification->user_notification_id,
+                  'message'         => $notification->data
+                );
+                $returnObject->data = $temp;
+              } else {
+                $returnObject->data = null;
+              }
+             return Response::json($returnObject);
+         } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+      }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
+
+  public function updateUserNotification( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+    $input = Input::all();
+
+    if(empty($input['notification_id']) || $input['notification_id'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'Notification ID is required.';
+      return Response::json($returnObject);
+    }
+
+     if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+           $findUserID = $authSession->findUserID($getAccessToken->session_id);
+           if($findUserID){
+            $returnObject->status = TRUE;
+            $returnObject->message = 'Success.';
+            $user_id = StringHelper::getUserId($findUserID);
+            // check if notification exits
+            $check = DB::table('user_notification')
+                    ->where('user_notification_id', $input['notification_id'])
+                    ->where('user_id', $user_id)
+                    ->where('type', 'app_update')
+                    ->where('platform', 'all')
+                    ->first();
+
+            if(!$check) {
+              $returnObject->status = FALSE;
+              $returnObject->message = 'User Notification does not exist.';
+              return Response::json($returnObject);
+            }
+
+            DB::table('user_notification')
+              ->where('user_notification_id', $input['notification_id'])
+              ->update(['notified' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
+              
+            return Response::json($returnObject);
+         } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+      }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
 }
