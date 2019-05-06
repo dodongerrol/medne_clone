@@ -121,7 +121,7 @@ class CronController extends \BaseController {
                             ->where('start_date', '<=', $date)
                             ->where('replace_status', 0)
                             ->get();
-        
+                            
         foreach ($replacements as $key => $replace) {
             $active_plan = DB::table('customer_active_plan')
                             ->where('customer_active_plan_id', $replace->active_plan_id)
@@ -138,10 +138,11 @@ class CronController extends \BaseController {
             $input['dob'] = $replace->dob;
             $input['postal_code'] = $replace->postal_code;
             $input['plan_start'] = $replace->start_date;
+            // $input['last_day_coverage'] = 
             $medical = $replace->medical;
             $wellness = $replace->wellness;
 
-            $result = PlanHelper::createReplacementEmployee($replace_id, $input, $id, true, $medical, $wellness);
+            $result = PlanHelper::createReplacementEmployeeSchedule($replace_id, $input, $id, true, $medical, $wellness);
             $employees++;
             try {
                 $admin_logs = array(
