@@ -59,6 +59,7 @@ class TransactionHelper
 	{
 		$peak_amount = 0;
 		$consultation_fees = 0;
+    $clinic_peak_status = false;
 
       // check clinic peak hours
       $result = ClinicHelper::getCheckClinicPeakHour($clinic, $date);
@@ -121,7 +122,7 @@ class TransactionHelper
       }
     }
 
-    return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => $consultation_fees);
+    return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => $consultation_fees, 'clinic_peak_status' => $clinic_peak_status);
 	}
 }
 ?>
