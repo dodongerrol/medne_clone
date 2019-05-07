@@ -1286,7 +1286,7 @@ Route::group(array('prefix' => 'app'), function()
         // get pusher config and channel
         Route::get('pusher/config', 'HomeController@getPusherConfig');
         // get specific transaction details
-        Route::get('clinic/transaction_specific/{id}', 'TransactionController@getSpecificTransactionDetails');
+        Route::get('clinic/transaction_specific', 'TransactionController@getSpecificTransactionDetails');
         // delete transaction
         Route::post('clinic/delete_transaction', 'TransactionController@deleteTransaction');
         // transaction dashboard
@@ -1302,10 +1302,10 @@ Route::group(array('prefix' => 'app'), function()
         Route::post('clinic/update_procedure_scan_pay_status', 'App_ClinicController@scanPayStatus');
         // get clinic socket connection
         Route::get('clinic_socket_connection', 'HomeController@getClinicSocketDetails');
+		// api for check transaction duplication
+		Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
     });
 
-	// api for check transaction duplication
-	Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
 });
 
 // admin login for all platforms

@@ -2828,6 +2828,7 @@ class BenefitsDashboardController extends \BaseController {
 			// get pending allocation for wellness
 			$e_claim_amount_pending_wellness = DB::table('e_claim')
 			->whereIn('user_id', $ids)
+			->where('status', 0)
 			->where('spending_type', 'wellness')
 			->where('status', 0)
 			->sum('amount');
@@ -4044,11 +4045,12 @@ class BenefitsDashboardController extends \BaseController {
 			$calculated_prices_end_date = null;
 			if((int)$get_active_plan->new_head_count == 0) {
 				if($get_active_plan->duration || $get_active_plan->duration != "") {
-					$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($company_plan->plan_start)));
+					$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($calculated_prices_end_date['plan_start'])));
 				} else {
 					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($company_plan->plan_start)));
 				}
 				$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
+				// $calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $plan->plan_start, $calculated_prices_end_date);
 				$data['price']          = number_format($get_invoice->individual_price, 2);
 				$data['amount']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				$data['total']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
@@ -4077,6 +4079,7 @@ class BenefitsDashboardController extends \BaseController {
 				// } else {
 				// 	$calculated_prices_end_date = $end_plan_date;
 				// }
+
 				// $duration = null;
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
@@ -4100,7 +4103,6 @@ class BenefitsDashboardController extends \BaseController {
 			// $data['number_employess'] = $get_invoice->employees;
 			$data['plan_start']     = $plan->plan_start;
 			$data['plan_end'] 			= $end_plan_date;
-
 
 			$temp_invoice = array(
 				'transaction'		=> 'Invoice - '.$data['invoice_number'],
@@ -10645,6 +10647,13 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$active->dependents = $dependent_plans;
+
+			$employee_occcupied = DB::table('user_plan_history')
+			->where('customer_active_plan_id', $active->customer_active_plan_id)
+			->where('type', 'started')
+			->count();
+			$active->occupied = $employee_occcupied > $active->employees ? $active->employees : $employee_occcupied;
+			$active->vacant = $employee_occcupied > $active->employees ? 0 : $active->employees - $employee_occcupied;
 		}
 
 		return array('status' => TRUE, 'data' => $active_plans);

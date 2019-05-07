@@ -812,7 +812,7 @@ class PlanHelper {
 		->first();
 
 		$active_plan = DB::table('customer_active_plan')
-		->where('customer_start_buy_id', $customer_id)
+		->where('plan_id', $plan->customer_plan_id)
 		->first();
 
 		if((int)$active_plan->plan_extention_enable == 1) {
@@ -1866,6 +1866,22 @@ class PlanHelper {
 			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance);
 		}
 
+		public static function getPlanDuration($customer_id, $plan_start)
+		{
+			$plan_coverage = self::getCompanyPlanDates($customer_id);
+			$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
+			$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
+
+			$interval = date_diff($date_plan_start, $date_new_plan_start);
+			if($interval->m + (1) == 1) {
+				$duration = $interval->m + (1). ' month';
+			} else {
+				$duration = $interval->m + (1). ' months';
+			}
+
+			return $duration;
+		}
+
 		public static function createUserPlanHistory($user_id, $customer_id)
 		{
 			$plan = DB::table('customer_plan')
@@ -1892,28 +1908,11 @@ class PlanHelper {
 		{
 			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
 			$days = $diff->format('%a');
-
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 			$remaining_days = $days;
 
 			$cost_plan_and_days = ($default_price / $total_days);
 			return $cost_plan_and_days * $remaining_days;
-		}
-
-		public static function getPlanDuration($customer_id, $plan_start)
-		{
-			$plan_coverage = self::getCompanyPlanDates($customer_id);
-			$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
-			$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
-
-			$interval = date_diff($date_plan_start, $date_new_plan_start);
-			if($interval->m + (1) == 1) {
-				$duration = $interval->m + (1). ' month';
-			} else {
-				$duration = $interval->m + (1). ' months';
-			}
-
-			return $duration;
 		}
 
 		public static function getCorporateUserByAllocated($corporate_id, $customer_id) 
@@ -4623,4 +4622,4 @@ class PlanHelper {
 			);
 		}
 	}
-	?>
+?>

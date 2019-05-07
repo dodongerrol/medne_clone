@@ -36,7 +36,7 @@ class PusherHelper {
 		return $pusher->trigger([$channel['channel']], $sub, $data);
 	}
 
-	public static function sendClinicClaimNotification($data, $clinic_id)
+	public static function sendClinicClaimNotification($transaction_id, $clinic_id)
 	{
 
 		$clinic = DB::table('user')->where('Ref_ID', $clinic_id)->where('UserType', 3)->first();
@@ -45,10 +45,17 @@ class PusherHelper {
 			$clinic_id = $clinic_id;
     		$user_id = $clinic->UserID;
     		$connection = StringHelper::socketConnection($clinic_id, $user_id);
+    		$payload = array(
+    			'connection_type'	=> $connection,
+    			'clinic_id'			=> $clinic_id,
+    			'transaction_id'	=> $transaction_id
+    		);
+    		$api = "https://sockets.medicloud.sg/sockets/send_clinic_claim_notification";
 
-			$pusher = self::config( );
-			$channel = self::getChannel( );
-			return $pusher->trigger([$channel['channel']], $connection, $data);
+    		return httpLibrary::postHttp($api, $payload, []);
+			// $pusher = self::config( );
+			// $channel = self::getChannel( );
+			// return $pusher->trigger([$channel['channel']], $connection, $data);
 		}
 
 	}
