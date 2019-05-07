@@ -326,6 +326,7 @@ class TransactionController extends BaseController {
 				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
 				$co_paid_status = $clinic_co_payment['co_paid_status'];
 				$consultation_fees = $clinic_co_payment['consultation_fees'];
+				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 
 				$temp = array(
 					'UserID'				=> $input['id'],
@@ -464,6 +465,7 @@ class TransactionController extends BaseController {
 				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
 				$co_paid_status = $clinic_co_payment['co_paid_status'];
 				$consultation_fees = $clinic_co_payment['consultation_fees'];
+				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 				// $result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $transaction_data->date_of_transaction);
 				// if($result['status']) {
 				// 	$peak_amount = $result['amount'];
