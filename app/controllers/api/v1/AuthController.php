@@ -1059,22 +1059,30 @@ return Response::json($returnObject);
               if($wallet_reset) {
                 $wallet_history_id = $wallet_reset->wallet_history_id;
                   $e_claim_spent = DB::table($table_wallet_history)
-                  ->where('wallet_id', $wallet->wallet_id)
-                  ->where('where_spend', 'e_claim_transaction')
-                  ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                  ->sum('credit');
+                                ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.where_spend', 'e_claim_transaction')
+                                ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                                // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                                ->sum('credit');
 
                   $in_network_temp_spent = DB::table($table_wallet_history)
-                  ->where('wallet_id', $wallet->wallet_id)
-                  ->where('where_spend', 'in_network_transaction')
-                  ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                  ->sum('credit');
+                                ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.where_spend', 'in_network_transaction')
+                                ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                                // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                                ->sum('credit');
 
                   $credits_back = DB::table($table_wallet_history)
-                  ->where('wallet_id', $wallet->wallet_id)
-                  ->where('where_spend', 'credits_back_from_in_network')
-                  ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                  ->sum('credit');
+                                ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.where_spend', 'credits_back_from_in_network')
+                                ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                                // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                                ->sum('credit');
               } else {
                   $e_claim_spent = DB::table($table_wallet_history)
                   ->where('wallet_id', $wallet->wallet_id)
