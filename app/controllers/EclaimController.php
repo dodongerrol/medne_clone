@@ -206,6 +206,7 @@ class EclaimController extends \BaseController {
                     // send notification
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
 					Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
+					// EclaimHelper::sendEclaimEmail($user_id, $id);
 				}
 				return array('status' => TRUE, 'message' => 'Success.', 'data' => $result);
 			}
@@ -233,6 +234,27 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
 
+		$ids = [];
+        // get real userid for dependents
+		$type = StringHelper::checkUserType($input['user_id']);
+		if((int)$type['user_type'] == 5 && (int)$type['access_type'] == 0 || (int)$type['user_type'] == 5 && (int)$type['access_type'] == 1)
+		{
+			$user_id = $input['user_id'];
+			$customer_id = $input['user_id'];
+			$email_address = $check->Email;
+			$ids[] = $user_id;
+		} else {
+            // find owner
+			$owner = DB::table('employee_family_coverage_sub_accounts')
+			->where('user_id', $input['user_id'])
+			->first();
+			$user_id = $owner->owner_id;
+			$user_email = DB::table('user')->where('UserID', $user_id)->first();
+			$email_address = $user_email->Email;
+			$customer_id = $input['user_id'];
+			$ids = [$user_id, $customer_id];
+		}
+
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($employee->UserID);
 
@@ -250,7 +272,7 @@ class EclaimController extends \BaseController {
 		}
 
          // check user pending e-claims amount
-		$claim_amounts = self::checkPendingEclaimsWellness($employee->UserID);
+		$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
 
 		$total_claim_amount = $check_user_balance->wellness_balance - $claim_amounts;
         // return $total_claim_amount;
@@ -318,6 +340,7 @@ class EclaimController extends \BaseController {
                     // send notification
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
 					Notification::sendNotificationToHR('Employee E-Claim Wellness', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
+					// EclaimHelper::sendEclaimEmail($user_id, $id);
 				}
 				return array('status' => TRUE, 'message' => 'Success.', 'data' => $result);
 			}
@@ -5533,6 +5556,7 @@ public function updateEclaimStatus( )
 
                         // send notification to browser
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
+					// EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 				} catch(Exception $e) {
 					$email = [];
 					$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
@@ -5573,6 +5597,7 @@ public function updateEclaimStatus( )
 						$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
                             // send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
+						// EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 					}
 				} catch(Exception $e) {
 					$email = [];
@@ -5597,10 +5622,12 @@ public function updateEclaimStatus( )
 
 	} else {
 		try {
+			$employee = StringHelper::getUserId($e_claim_details->user_id);
 			$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 			$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
                 // send notification to browser
 			Notification::sendNotificationEmployee('Claim Rejected - Mednefits', 'Your E-claim submission has been rejected with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/rejected.png");
+			// EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 		} catch(Exception $e) {
 			$email = [];
 			$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
