@@ -842,7 +842,8 @@ app.directive("employeeOverviewDirective", [
               .then(function(response){
                 // console.log( response );
                 if( response.data.status ){
-                  swal('Success!', response.data.message, 'success');
+                  // swal('Success!', response.data.message, 'success');
+                  swal('Success!', "Member has successfully scheduled for remove and credits updated according.", 'success');
                   $('.health-spending-account-wrapper').hide();
                   $('.prev-next-buttons-container').hide();
                   $('.employee-information-wrapper').fadeIn();
