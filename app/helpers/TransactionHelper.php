@@ -61,7 +61,7 @@ class TransactionHelper
 		$consultation_fees = 0;
 
       // check clinic peak hours
-       $result = ClinicHelper::getCheckClinicPeakHour($clinic, $date);
+      $result = ClinicHelper::getCheckClinicPeakHour($clinic, $date);
       if($result['status']) {
          $peak_amount = $result['amount'];
          $clinic_peak_status = true;
@@ -69,28 +69,28 @@ class TransactionHelper
          $user_peak = PlanHelper::getUserCompanyPeakStatus($user_id);
          if($user_peak) {
           if((int)$clinic->co_paid_status == 1) {
-           $gst = $clinic->peak_hour_amount * $clinic->gst_percent;
-           $co_paid_amount = $clinic->peak_hour_amount + $gst;
+           $gst = $peak_amount * $clinic->gst_percent;
+           $co_paid_amount = $peak_amount + $gst;
            $co_paid_status = $clinic->co_paid_status;
          } else {
-           $co_paid_amount = $clinic->peak_hour_amount;
+           $co_paid_amount = $peak_amount;
            $co_paid_status = $clinic->co_paid_status;
          }
 
          if((int)$clinic->consultation_gst_status == 1) {
-         	$consult_gst = $clinic->peak_hour_amount * $clinic->gst_percent;
-         	$consult_paid_amount = $clinic->peak_hour_amount + $consult_gst;
+         	$consult_gst = $peak_amount * $clinic->gst_percent;
+         	$consult_paid_amount = $peak_amount + $consult_gst;
          	$consultation_fees = $consult_paid_amount;
          } else {
-         	$consultation_fees = $clinic->peak_hour_amount;
+         	$consultation_fees = $peak_amount;
          }
        } else {
         if((int)$clinic->co_paid_status == 1) {
-         $gst = $clinic->co_paid_amount * $clinic->gst_percent;
-         $co_paid_amount = $clinic->co_paid_amount + $gst;
+         $gst = $peak_amount * $clinic->gst_percent;
+         $co_paid_amount = $peak_amount + $gst;
          $co_paid_status = $clinic->co_paid_status;
        } else {
-         $co_paid_amount = $clinic->co_paid_amount;
+         $co_paid_amount = $peak_amount;
          $co_paid_status = $clinic->co_paid_status;
        }
 
@@ -99,11 +99,11 @@ class TransactionHelper
        	$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
        	$consultation_fees = $consult_paid_amount;
        } else {
-       	$consultation_fees = $clinic->peak_hour_amount;
+       	$consultation_fees = $peak_amount;
        }
      }
     } else {
-       if((int)$clinic->co_paid_status == 1) {
+      if((int)$clinic->co_paid_status == 1) {
         $gst = $clinic->co_paid_amount * $clinic->gst_percent;
         $co_paid_amount = $clinic->co_paid_amount + $gst;
         $co_paid_status = $clinic->co_paid_status;
@@ -113,12 +113,12 @@ class TransactionHelper
       }
 
       if((int)$clinic->consultation_gst_status == 1) {
-       	$consult_gst = $clinic->consultation_fees * $clinic->gst_percent;
-       	$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
-       	$consultation_fees = $consult_paid_amount;
-       } else {
-       	$consultation_fees = $clinic->consultation_fees;
-       }
+      	$consult_gst = $clinic->consultation_fees * $clinic->gst_percent;
+      	$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
+      	$consultation_fees = $consult_paid_amount;
+      } else {
+      	$consultation_fees = $clinic->consultation_fees;
+      }
     }
 
     return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => $consultation_fees);
