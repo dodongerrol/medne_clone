@@ -373,21 +373,30 @@ class PlanHelper {
 			$wallet_history_id = $wallet_reset->wallet_history_id;
                 // get all medical credits transactions from transaction history
 			$e_claim_spent = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'e_claim_transaction')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+                            ->where('wallet_history.wallet_id', $wallet->wallet_id)
+                            ->where('wallet_history.where_spend', 'e_claim_transaction')
+                            ->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+							// ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+							->sum('credit');
 
 			$in_network_temp_spent = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'in_network_transaction')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+                            ->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.where_spend', 'in_network_transaction')
+							->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+							// ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+							->sum('credit');
+
 			$credits_back = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'credits_back_from_in_network')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+                            ->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.where_spend', 'credits_back_from_in_network')
+							->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+							// ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+							->sum('credit');
 			$in_network_spent = $in_network_temp_spent - $credits_back;
 
 			$temp_allocation = DB::table('e_wallet')
