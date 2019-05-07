@@ -3731,18 +3731,32 @@ class BenefitsDashboardController extends \BaseController {
 						SmsHelper::sendSms($compose);
 
 					} else {
-						$email_data['company']   = ucwords($company->company_name);
-						$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
-						$email_data['name'] = $input['first_name'].' '.$input['last_name'];
-						$email_data['emailTo']   = $input['email'];
-						$email_data['email']   = $input['email'];
-						$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-						$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
-						$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
-						$email_data['pw'] = $password;
-						$email_data['url'] = url('/');
-						$email_data['plan'] = $active_plan;
-						EmailHelper::sendEmail($email_data);
+						if($input['email']) {
+							$email_data['company']   = ucwords($company->company_name);
+							$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['name'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['emailTo']   = $input['email'];
+							$email_data['email']   = $input['email'];
+							$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+							$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+							$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
+							$email_data['pw'] = $password;
+							$email_data['url'] = url('/');
+							$email_data['plan'] = $active_plan;
+							EmailHelper::sendEmail($email_data);
+						} else {
+							$compose = [];
+							$compose['name'] = $user->Name;
+							$compose['company'] = $company->company_name;
+							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
+							$compose['email'] = $user->Email;
+							$compose['nric'] = $user->NRIC;
+							$compose['password'] = $password;
+							$compose['phone'] = $user->PhoneNo;
+
+							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+							SmsHelper::sendSms($compose);
+						}
 					}
 				}
 
