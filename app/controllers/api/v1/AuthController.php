@@ -1059,22 +1059,30 @@ return Response::json($returnObject);
               if($wallet_reset) {
                 $wallet_history_id = $wallet_reset->wallet_history_id;
                   $e_claim_spent = DB::table($table_wallet_history)
-                  ->where('wallet_id', $wallet->wallet_id)
-                  ->where('where_spend', 'e_claim_transaction')
-                  ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                  ->sum('credit');
+                                ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.where_spend', 'e_claim_transaction')
+                                ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                                // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                                ->sum('credit');
 
                   $in_network_temp_spent = DB::table($table_wallet_history)
-                  ->where('wallet_id', $wallet->wallet_id)
-                  ->where('where_spend', 'in_network_transaction')
-                  ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                  ->sum('credit');
+                                ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.where_spend', 'in_network_transaction')
+                                ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                                // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                                ->sum('credit');
 
                   $credits_back = DB::table($table_wallet_history)
-                  ->where('wallet_id', $wallet->wallet_id)
-                  ->where('where_spend', 'credits_back_from_in_network')
-                  ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                  ->sum('credit');
+                                ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                                ->where($table_wallet_history.'.where_spend', 'credits_back_from_in_network')
+                                ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                                // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                                ->sum('credit');
               } else {
                   $e_claim_spent = DB::table($table_wallet_history)
                   ->where('wallet_id', $wallet->wallet_id)
@@ -5667,5 +5675,113 @@ public function payCreditsNew( )
     $returnObject->status = TRUE;
     $returnObject->data = EclaimHelper::getCurrencies();
     return Response::json($returnObject);
+  }
+
+  public function getAppUpdateNotification( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+     if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+           $findUserID = $authSession->findUserID($getAccessToken->session_id);
+           if($findUserID){
+              $returnObject->status = TRUE;
+              $returnObject->message = 'Success.';
+
+              $user_id = StringHelper::getUserId($findUserID);
+              $notification = DB::table('user_notification')
+                                ->where('user_id', $user_id)
+                                ->where('notified', 0)
+                                ->where('type', 'app_update')
+                                ->where('platform', 'all')
+                                ->orderBy('created_at', 'desc')
+                                ->first();
+              if($notification) {
+                $temp = array(
+                  'notification_id' => $notification->user_notification_id,
+                  'message'         => $notification->data
+                );
+                $returnObject->data = $temp;
+              } else {
+                $returnObject->data = null;
+              }
+             return Response::json($returnObject);
+         } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+      }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
+
+  public function updateUserNotification( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+    $input = Input::all();
+
+    if(empty($input['notification_id']) || $input['notification_id'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'Notification ID is required.';
+      return Response::json($returnObject);
+    }
+
+     if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+           $findUserID = $authSession->findUserID($getAccessToken->session_id);
+           if($findUserID){
+            $returnObject->status = TRUE;
+            $returnObject->message = 'Success.';
+            $user_id = StringHelper::getUserId($findUserID);
+            // check if notification exits
+            $check = DB::table('user_notification')
+                    ->where('user_notification_id', $input['notification_id'])
+                    ->where('user_id', $user_id)
+                    ->where('type', 'app_update')
+                    ->where('platform', 'all')
+                    ->first();
+
+            if(!$check) {
+              $returnObject->status = FALSE;
+              $returnObject->message = 'User Notification does not exist.';
+              return Response::json($returnObject);
+            }
+
+            DB::table('user_notification')
+              ->where('user_notification_id', $input['notification_id'])
+              ->update(['notified' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
+              
+            return Response::json($returnObject);
+         } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+      }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
   }
 }

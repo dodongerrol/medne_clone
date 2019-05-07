@@ -995,6 +995,10 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
 			// get currency lists
 			Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
+			// get app notification message
+			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
+			// update notification to read
+			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
 	 	});
 	});
 });
