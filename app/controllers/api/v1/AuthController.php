@@ -5106,6 +5106,7 @@ public function createEclaim( )
                               // send notification
            $user = DB::table('user')->where('UserID', $findUserID)->first();
            Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
+           // EclaimHelper::sendEclaimEmail($user_id, $id);
        }
        $returnObject->status = TRUE;
        $returnObject->message = 'E-Claim successfully created.';

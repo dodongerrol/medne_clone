@@ -56,7 +56,7 @@
         </div>
 
         <div style="padding: 0 20px">
-          <p>Dear {{ $name }},</p>
+          <p>Dear {{ $emailName }},</p>
 
           <p style="font-weight: 700;font-size: 25px;margin: 30px 0;color: #0392cf;">Your E-claim Has Been Approved!</p>
 
@@ -64,7 +64,7 @@
 
           <p>Login to find out more details regarding the rejected claim. If you have any questions, please contact your company administrator.</p>
 
-          <a href="https://s3-ap-southeast-1.amazonaws.com/mednefits/pdf/Mednefits+Guide+for+Members.pdf" style="width:170px;margin: 20px 30px 30px 0;padding: 14px 0px;border: none;border-radius: 4px;background: #3b84f1;color: #FFF;display: inline-block;font-size: 12px;text-decoration: none;text-align: center;">View Claim</a>
+          <a href="{{ $url }}/member-portal#/activity" style="width:170px;margin: 20px 30px 30px 0;padding: 14px 0px;border: none;border-radius: 4px;background: #3b84f1;color: #FFF;display: inline-block;font-size: 12px;text-decoration: none;text-align: center;">View Claim</a>
 
           <p style="font-size: 25px;color: #0392cf;font-weight: 700;margin-top: 60px;">Need help?</p>
 

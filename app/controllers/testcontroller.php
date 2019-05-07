@@ -587,4 +587,10 @@ class testcontroller extends BaseController {
 	{
 		return EclaimHelper::getCurrencies();
 	}
+
+	public function testEclaimSendEmail( )
+	{
+		$input = Input::all();
+		return EclaimHelper::sendEclaimEmail($input['user_id'], $input['e_claim_id']);
+	}
 }

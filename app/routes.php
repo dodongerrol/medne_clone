@@ -11,6 +11,8 @@
 |
 */
 
+// test send e-claim emial
+Route::post('test_send_e_claim', 'testcontroller@testEclaimSendEmail');
 // get currencies
 Route::get('get/currency_lists', 'testcontroller@getCurrencyLists');
 // Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
