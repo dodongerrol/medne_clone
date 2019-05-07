@@ -1423,8 +1423,25 @@ class PlanHelper {
 					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 					$email_data['pw'] = $password;
 					EmailHelper::sendEmail($email_data);
-					// $api = "https://api.medicloud.sg/employees/welcome_email";
-					// \httpLibrary::postHttp($api, $email_data, []);
+				} else {
+					if($data_enrollee->mobile) {
+						$user = DB::table('user')->where('UserID', $user_id)->first();
+						$phone = SmsHelper::formatNumber($user);
+
+						if($phone) {
+							$compose = [];
+							$compose['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+							$compose['company'] = $company->company_name;
+							$compose['plan_start'] = date('F d, Y', strtotime($start_date));
+							$compose['email'] = $data_enrollee->email;
+							$compose['nric'] = $data_enrollee->nric;
+							$compose['password'] = $password;
+							$compose['phone'] = $phone;
+
+							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+							$result_sms = SmsHelper::sendSms($compose);
+						}
+					}
 				}
 			} else if($communication_type == "sms"){
 				if($data_enrollee->mobile) {
@@ -1443,10 +1460,6 @@ class PlanHelper {
 
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 						$result_sms = SmsHelper::sendSms($compose);
-
-						// if($result_sms['status'] == true) {
-						// 	return array('status' => true, 'message' => 'Employee Enrolled.', 'total_dependents_enrolled' => $total_dependents_count, 'total_employee_enrolled' => 1);
-						// }
 					}
 				}				
 			} else {
@@ -1853,6 +1866,22 @@ class PlanHelper {
 			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance);
 		}
 
+		public static function getPlanDuration($customer_id, $plan_start)
+		{
+			$plan_coverage = self::getCompanyPlanDates($customer_id);
+			$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
+			$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
+
+			$interval = date_diff($date_plan_start, $date_new_plan_start);
+			if($interval->m + (1) == 1) {
+				$duration = $interval->m + (1). ' month';
+			} else {
+				$duration = $interval->m + (1). ' months';
+			}
+
+			return $duration;
+		}
+
 		public static function createUserPlanHistory($user_id, $customer_id)
 		{
 			$plan = DB::table('customer_plan')
@@ -1879,28 +1908,11 @@ class PlanHelper {
 		{
 			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
 			$days = $diff->format('%a');
-
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 			$remaining_days = $days;
 
 			$cost_plan_and_days = ($default_price / $total_days);
 			return $cost_plan_and_days * $remaining_days;
-		}
-
-		public static function getPlanDuration($customer_id, $plan_start)
-		{
-			$plan_coverage = self::getCompanyPlanDates($customer_id);
-			$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
-			$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
-
-			$interval = date_diff($date_plan_start, $date_new_plan_start);
-			if($interval->m + (1) == 1) {
-				$duration = $interval->m + (1). ' month';
-			} else {
-				$duration = $interval->m + (1). ' months';
-			}
-
-			return $duration;
 		}
 
 		public static function getCorporateUserByAllocated($corporate_id, $customer_id) 
@@ -2683,20 +2695,33 @@ class PlanHelper {
 
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 						$result_sms = SmsHelper::sendSms($compose);
-
 					} else {
-						$email_data['company']   = ucwords($company->company_name);
-						$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
-						$email_data['name'] = $input['first_name'].' '.$input['last_name'];
-						$email_data['emailTo']   = $input['email'];
-						$email_data['email']   = $input['email'];
-						$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-						$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
-						$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
-						$email_data['pw'] = $password;
-						$email_data['url'] = url('/');
-						$email_data['plan'] = $active_plan;
-						EmailHelper::sendEmail($email_data);
+						if($input['email']) {
+							$email_data['company']   = ucwords($company->company_name);
+							$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['name'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['emailTo']   = $input['email'];
+							$email_data['email']   = $input['email'];
+							$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+							$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+							$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
+							$email_data['pw'] = $password;
+							$email_data['url'] = url('/');
+							$email_data['plan'] = $active_plan;
+							EmailHelper::sendEmail($email_data);
+						} else {
+							$compose = [];
+							$compose['name'] = $user->Name;
+							$compose['company'] = $company->company_name;
+							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
+							$compose['email'] = $user->Email;
+							$compose['nric'] = $user->NRIC;
+							$compose['password'] = $password;
+							$compose['phone'] = $user->PhoneNo;
+
+							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+							$result_sms = SmsHelper::sendSms($compose);
+						}
 					}
 				}
 
@@ -4111,27 +4136,50 @@ class PlanHelper {
 
 			if($result) {
 				if($user->communication_type == "email") {
-					$user_plan_history = DB::table('user_plan_history')
-											->where('user_id', $employee_id)
-											->orderBy('created_at', 'desc')
+					if($user->Email) {
+						$user_plan_history = DB::table('user_plan_history')
+												->where('user_id', $employee_id)
+												->orderBy('created_at', 'desc')
+												->first();
+						$active_plan = DB::table('customer_active_plan')
+											->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 											->first();
-					$active_plan = DB::table('customer_active_plan')
-										->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-										->first();
 
-					$emailDdata['emailName']= ucwords($user->Name);
-					$emailDdata['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-					$emailDdata['emailTo']= $user->Email;
-					$emailDdata['email']= $user->Email;
-					$emailDdata['name']= $user->Name;
-					$emailDdata['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
-					$emailDdata['pw'] = $password;
-					$emailDdata['plan'] = $active_plan;
-					$emailDdata['user_id'] = $employee_id;
-					$emailDdata['company'] = ucwords($corporate->company_name);
-					$emailDdata['start_date'] = date('F d, Y', strtotime($start_date));
-					\EmailHelper::sendEmail($emailDdata);
-					return array('status' => true, 'message' => 'Employee Account Resetted and sent using email.');
+						$emailDdata['emailName']= ucwords($user->Name);
+						$emailDdata['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+						$emailDdata['emailTo']= $user->Email;
+						$emailDdata['email']= $user->Email;
+						$emailDdata['name']= $user->Name;
+						$emailDdata['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+						$emailDdata['pw'] = $password;
+						$emailDdata['plan'] = $active_plan;
+						$emailDdata['user_id'] = $employee_id;
+						$emailDdata['company'] = ucwords($corporate->company_name);
+						$emailDdata['start_date'] = date('F d, Y', strtotime($start_date));
+						\EmailHelper::sendEmail($emailDdata);
+						return array('status' => true, 'message' => 'Employee Account Resetted and sent using email.');
+					} else {
+						if($user->PhoneNo) {
+							$phone = SmsHelper::formatNumber($user);
+
+		                    if($phone) {
+		                    	$compose = [];
+								$compose['name'] = $user->Name;
+								$compose['company'] = $corporate->company_name;
+								$compose['plan_start'] = date('F d, Y', strtotime($start_date));
+								$compose['email'] = $user->Email;
+								$compose['nric'] = $user->NRIC;
+								$compose['password'] = $password;
+								$compose['phone'] = $phone;
+
+								$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+								$result_sms = SmsHelper::sendSms($compose);
+								return array('status' => true, 'message' => 'Employee Account Resetted and sent using sms.');
+		                    } else {
+		                    	return array('status' => false, 'message' => 'Employee Account Resetted and but was not able to send using sms because of mobile phone number malformed. Please update the mobile phone of this employee to be able to send an sms.');
+		                    }
+						}
+					}
 				} else {
 					if($user->PhoneNo) {
 						$phone = SmsHelper::formatNumber($user);
@@ -4574,4 +4622,4 @@ class PlanHelper {
 			);
 		}
 	}
-	?>
+?>

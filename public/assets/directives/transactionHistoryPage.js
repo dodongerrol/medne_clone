@@ -140,35 +140,67 @@ function getTransactions( data ){
 
 	      	if(list[i].deleted == true) {
 		      	if( list[i].currency_type == "myr" ){
-		      		$( '.trans-history-tbl tbody' ).append('<tr>' +
-									'<td>' + list[i].date_of_transaction + '</td>' +
-									'<td>' +
-										list[i].transaction_id +
-										'<br />' +
-										'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
-									'</td>'	+
-									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
-									'<td>' + list[i].procedure_name + '</td>' +
-									'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-								'</tr>');
+		      		if(list[i].deleted == true) {
+		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
+							'<td>' + list[i].date_of_transaction + '</td>' +
+							'<td>' +
+								list[i].transaction_id +
+								'<br />' +
+								'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
+							'</td>'	+
+							'<td>' + list[i].user_name + '</td>' + 
+							'<td>' + list[i].NRIC + '</td>' +
+							'<td>' + list[i].procedure_name + '</td>' +
+							'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+							'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+							'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+						'</tr>');
+		      		} else {
+		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
+							'<td>' + list[i].date_of_transaction + '</td>' +
+							'<td>' +
+								list[i].transaction_id +
+							'</td>'	+
+							'<td>' + list[i].user_name + '</td>' + 
+							'<td>' + list[i].NRIC + '</td>' +
+							'<td>' + list[i].procedure_name + '</td>' +
+							'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+							'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+							'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+						'</tr>');
+		      		}
+		      		
 		      	}else{
-		      		$( '.trans-history-tbl tbody' ).append('<tr>' +
-									'<td>' + list[i].date_of_transaction + '</td>' +
-									'<td>' +
-										list[i].transaction_id +
-										'<br />' +
-										'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
-									'</td>'	+
-									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
-									'<td>' + list[i].procedure_name + '</td>' +
-									'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
-									'<td>S$ ' + list[i].mednefits_credits + '</td>' +
-									'<td>S$ ' + list[i].cash + '</td>' +
-								'</tr>');
+		      		if(list[i].deleted == true) {
+		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
+							'<td>' + list[i].date_of_transaction + '</td>' +
+							'<td>' +
+								list[i].transaction_id +
+								'<br />' +
+								'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
+							'</td>'	+
+							'<td>' + list[i].user_name + '</td>' + 
+							'<td>' + list[i].NRIC + '</td>' +
+							'<td>' + list[i].procedure_name + '</td>' +
+							'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
+							'<td>S$ ' + list[i].mednefits_credits + '</td>' +
+							'<td>S$ ' + list[i].cash + '</td>' +
+						'</tr>');
+		      		} else {
+		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
+							'<td>' + list[i].date_of_transaction + '</td>' +
+							'<td>' +
+								list[i].transaction_id +
+							'</td>'	+
+							'<td>' + list[i].user_name + '</td>' + 
+							'<td>' + list[i].NRIC + '</td>' +
+							'<td>' + list[i].procedure_name + '</td>' +
+							'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
+							'<td>S$ ' + list[i].mednefits_credits + '</td>' +
+							'<td>S$ ' + list[i].cash + '</td>' +
+						'</tr>');
+		      		}
+		      		
 		      	}
 	      	} else {
 	      		if( list[i].currency_type == "myr" ){

@@ -148,6 +148,7 @@
 					var transaction = scope.receipts_arr[scope.download_receipts_ctr];
 					var main_folder = zip.folder( transaction.filename );
 					angular.forEach( transaction.files , function( value, key ){
+						console.log(value );
 						var filename = $.trim( value.file.split('/').pop() );
 						// var img = main_folder.folder("images");
 						// var pdf = main_folder.folder("pdf");

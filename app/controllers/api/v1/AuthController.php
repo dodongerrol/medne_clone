@@ -3403,7 +3403,7 @@ public function notifyClinicDirectPayment( )
                   Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
 
                             // send realtime update to claim clinic admin
-                  PusherHelper::sendClinicClaimNotification($result, $input['clinic_id']);
+                  PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
 
                   // // check if check_in_id exist
                   // if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {

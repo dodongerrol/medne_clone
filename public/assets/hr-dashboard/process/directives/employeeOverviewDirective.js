@@ -854,6 +854,7 @@ app.directive("employeeOverviewDirective", [
                 }
               });
           }else{
+            swal('Success!', "Member has successfully scheduled for remove.", 'success');
             $('.health-spending-account-wrapper').hide();
             $('.prev-next-buttons-container').hide();
             $('.employee-information-wrapper').fadeIn();

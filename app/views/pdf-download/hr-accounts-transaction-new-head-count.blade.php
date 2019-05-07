@@ -209,7 +209,7 @@
           	<p>End Date: {{ $plan_end }} (same as {{ $same_as_invoice }})</p>
 					<p>Note: {{ $notes }}</p>
           </td>
-          <td><b>1</b></td>
+          <td><b>{{ $number_employess }}</b></td>
           <td><b>S$ {{ $price }}</b></td>
           <td><b>S$ {{ $amount }}</b></td>
         </tr>

@@ -373,8 +373,11 @@ class Clinic_Library {
         $clinic_type = new ClinicTypes();
 
         $clinic_details['clinic'] = $clinic->ClinicDetail($id);
+        $clinic_details['clinic']['currency_amount'] = 3.00;
         // return $clinic_details['clinic']['Clinic_Type'];
         $clinic_details['clinic_type'] = $clinic_type->getClinicType($clinic_details['clinic']['Clinic_Type']);
+        $clinic_type = ClinicHelper::getClinicTypeImage($clinic_details['clinic_type']);
+        $clinic_details['clinic']['clinic_type_image'] = $clinic_type['image'];
         return $clinic_details;
     }
     
