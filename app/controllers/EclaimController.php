@@ -5199,15 +5199,18 @@ public function searchEmployeeEclaimActivity( )
 					} else {
 						$fil = url('').'/receipts/'.$doc->doc_file;
 					}
+					$image_link = null;
 				} else if($doc->file_type == "image") {
 					$fil = $doc->doc_file;
+					$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 30);
 				}
 
 				$temp_doc = array(
 					'e_claim_doc_id'    => $doc->e_claim_doc_id,
 					'e_claim_id'            => $doc->e_claim_id,
 					'file'                      => $fil,
-					'file_type'             => $doc->file_type
+					'file_type'             => $doc->file_type,
+					'image_link'	 	=> $image_link
 				);
 
 				array_push($doc_files, $temp_doc);
@@ -5395,15 +5398,18 @@ public function hrEclaimActivity( )
 						} else {
 							$fil = url('').'/receipts/'.$doc->doc_file;
 						}
+						$image_link = null;
 					} else if($doc->file_type == "image") {
 						$fil = $doc->doc_file;
+						$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 30);
 					}
 
 					$temp_doc = array(
 						'e_claim_doc_id'    => $doc->e_claim_doc_id,
 						'e_claim_id'            => $doc->e_claim_id,
 						'file'                      => $fil,
-						'file_type'             => $doc->file_type
+						'file_type'             => $doc->file_type,
+						'image_link'		=> $image_link
 					);
 
 					array_push($doc_files, $temp_doc);
