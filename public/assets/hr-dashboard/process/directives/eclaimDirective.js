@@ -154,7 +154,7 @@
 						// var pdf = main_folder.folder("pdf");
 						// var xls = main_folder.folder("xls");
 						var promise = $.ajax({
-			        url: value.file,
+			        url: value.image_link,
 			        method: 'GET',
 			        xhrFields: {
 			          responseType: 'blob'

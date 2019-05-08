@@ -4227,7 +4227,7 @@ class PlanHelper {
 					} else {
 						$schedule = 'Removed '.date('d/m/Y', strtotime($replacement->expired_and_activate));
 					}
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
 				} else if((int)$replacement->deactive_employee_status == 0 && (int)$replacement->replace_status == 0) {
 					// to be replace
 					$schedule_status = true;
@@ -4236,18 +4236,18 @@ class PlanHelper {
 					} else {
 						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
 					}
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
 				} else {
 					//
 					$schedule_status = true;
-					if($replacement->start_date) {
-						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
-					} else {
+					if($replacement->expired_and_activate) {
 						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->expired_and_activate));
+					} else {
+						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
 					}
 				}
 
-				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
 			}
 
 			$deleted_accounts = DB::table("customer_plan_withdraw")->where("user_id", $user_id)->first();

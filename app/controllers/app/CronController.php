@@ -113,7 +113,7 @@ class CronController extends \BaseController {
 
     public function activateReplaceNewEmployee( )
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('-1 day'));
         $employees = 0;
         $dependent_accounts = 0;
         $replace_accounts = 0;
@@ -377,7 +377,7 @@ class CronController extends \BaseController {
     
     public function activateRemoveReplaceEmployee( )
     {
-        $date = date('Y-m-d');
+       $date = date('Y-m-d', strtotime('-1 day'));
 
         $removes = DB::table('customer_replace_employee')
                             ->where('expired_and_activate', $date)
@@ -445,7 +445,7 @@ class CronController extends \BaseController {
 
     public function removeEmployeeSeat( )
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('-1 day'));
         $success = 0;
         $dependent_success = 0;
 
@@ -569,7 +569,7 @@ class CronController extends \BaseController {
 
     public function createAutomaticDeletion( )
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('-1 day'));
         $employee = 0;
         $dependents = 0;
         $withdraw = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 0)->get();
