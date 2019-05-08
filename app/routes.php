@@ -437,42 +437,42 @@ Route::get('app/corporate/get_doctor_procedures/{id}', 'CorporateController@getD
 
 // landing page
 
-Route::get('/', 'HomeController@index');
-Route::get('/index', 'HomeController@index');
-Route::get('/health-professionals', 'HomeController@healthProfessionals');
-Route::get('/corporate', 'HomeController@corporate');
-Route::get('/privacy-policy', 'HomeController@privacy');
-Route::get('/promo', 'HomeController@promo');
-Route::get('/terms', 'HomeController@terms');
-Route::get('/get_quote', 'HomeController@quote');
+// Route::get('/', 'HomeController@index');
+// Route::get('/index', 'HomeController@index');
+// Route::get('/health-professionals', 'HomeController@healthProfessionals');
+// Route::get('/corporate', 'HomeController@corporate');
+// Route::get('/privacy-policy', 'HomeController@privacy');
+// Route::get('/promo', 'HomeController@promo');
+// Route::get('/terms', 'HomeController@terms');
+// Route::get('/get_quote', 'HomeController@quote');
 
 
 // Route::get('/', 'HomeController@temp_index');
 Route::get('/', 'HomeController@introPageLogin');
-Route::get('/employers', 'HomeController@temp_index');
-Route::get('/individuals', 'HomeController@individual');
-Route::get('/health-partner', 'HomeController@health_partner');
-Route::get('/our-story', 'HomeController@our_story');
-Route::get('/get-mednefits', 'HomeController@get_mednefits');
+// Route::get('/employers', 'HomeController@temp_index');
+// Route::get('/individuals', 'HomeController@individual');
+// Route::get('/health-partner', 'HomeController@health_partner');
+// Route::get('/our-story', 'HomeController@our_story');
+// Route::get('/get-mednefits', 'HomeController@get_mednefits');
 
-Route::get('/provider-terms', 'HomeController@provider_terms');
-Route::get('/user-terms', 'HomeController@user_terms');
-Route::get('/privacy', 'HomeController@privacy_policy');
-Route::get('/insurance-license', 'HomeController@insurance_license');
+// Route::get('/provider-terms', 'HomeController@provider_terms');
+// Route::get('/user-terms', 'HomeController@user_terms');
+// Route::get('/privacy', 'HomeController@privacy_policy');
+// Route::get('/insurance-license', 'HomeController@insurance_license');
 
-Route::get('/buy-insurance', 'HomeController@buy_insurance');
-Route::get('/bonus-credits', 'HomeController@bonus_credits');
-Route::get('/health-benefits', 'HomeController@health_benefits');
-Route::get('/our-health-partners', 'HomeController@our_health_partners');
+// Route::get('/buy-insurance', 'HomeController@buy_insurance');
+// Route::get('/bonus-credits', 'HomeController@bonus_credits');
+// Route::get('/health-benefits', 'HomeController@health_benefits');
+// Route::get('/our-health-partners', 'HomeController@our_health_partners');
 
-Route::get('/how-it-works', 'HomeController@how_it_works');
+// Route::get('/how-it-works', 'HomeController@how_it_works');
 
-Route::get('/outpatient-care', 'HomeController@outpatient_care');
-Route::get('/hospital-care', 'HomeController@hospital_care');
-Route::get('/try-three-months', 'HomeController@try_three_months');
-Route::get('/mednefits-care-plan', 'HomeController@mednefits_care_plan');
-Route::get('/mednefits-employer', 'HomeController@mednefits_employer');
-Route::get('/mednefits-care-bundle-corporate-insurance', 'HomeController@mednefits_care_bundle_corporate');
+// Route::get('/outpatient-care', 'HomeController@outpatient_care');
+// Route::get('/hospital-care', 'HomeController@hospital_care');
+// Route::get('/try-three-months', 'HomeController@try_three_months');
+// Route::get('/mednefits-care-plan', 'HomeController@mednefits_care_plan');
+// Route::get('/mednefits-employer', 'HomeController@mednefits_employer');
+// Route::get('/mednefits-care-bundle-corporate-insurance', 'HomeController@mednefits_care_bundle_corporate');
 
 Route::post('app/contact','HomeController@contactMedicloud');
 Route::post('app/subscribe','HomeController@subscribeMedicloud');
