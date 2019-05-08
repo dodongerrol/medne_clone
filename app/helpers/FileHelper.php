@@ -32,5 +32,24 @@ class FileHelper
 
 		return $new_image;
 	}
+
+	public static function formatImageAutoQualityCustomer($image, $quality)
+	{
+		$splits = explode("/v", $image);
+		// $new_image = $split[0].'/q_auto/v'.$split[1];
+		$new_image = "";
+		$count = count($splits);
+
+		foreach ($splits as $key => $split) {
+			if($key == 1) {
+				$new_image .= '/q_'.$quality.'/v';
+			} else if($key == $count - 1) {
+				$new_image .= '/v';
+			} 
+			$new_image .= $split;
+		}
+
+		return $new_image;
+	}
 }
 ?>
