@@ -766,6 +766,46 @@ class CronController extends \BaseController {
         return array('status' => true, 'employee' => $employee, 'dependent' => $dependents);
     }
 
+    public function removeDepdentsEmployeeAccounts( )
+    {
+        $date = date('Y-m-d');
+
+        $withdraws = DB::table('customer_plan_withdraw')
+                        ->where('date_withdraw', '<', $date)
+                        // ->where('refund_status', 0)
+                        ->get();
+
+        $format = 0;
+
+        foreach ($withdraws as $key => $employee) {
+            $type = null;
+            // $dependents = DB::table('employee_family_coverage_sub_accounts')
+                            // ->where('deleted', 0)
+                            // ->get();
+
+            if((int)$employee->refund_status == 1) {
+                $type = "refund";
+                PlanHelper::removeDependentAccounts($employee->user_id, $employee->date_withdraw, true, false);
+                // foreach ($dependents as $key => $dependent) {
+                // }
+            } else {
+                $type = "no_refund";
+                PlanHelper::removeDependentAccounts($employee->user_id, $employee->date_withdraw, false, true);
+            }
+
+
+            // $temp = array(
+            //     'user_id' => $employee->user_id,
+            //     'dependents'    => $dependents
+            // );
+
+            // array_push($format, $temp);
+            $format++;
+        }
+
+        return $format;
+    }
+
 
                 
 	/**
