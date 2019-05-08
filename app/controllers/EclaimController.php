@@ -5202,7 +5202,7 @@ public function searchEmployeeEclaimActivity( )
 					$image_link = null;
 				} else if($doc->file_type == "image") {
 					$fil = $doc->doc_file;
-					$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 30);
+					$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 40);
 				}
 
 				$temp_doc = array(
@@ -5401,7 +5401,7 @@ public function hrEclaimActivity( )
 						$image_link = null;
 					} else if($doc->file_type == "image") {
 						$fil = $doc->doc_file;
-						$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 30);
+						$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 40);
 					}
 
 					$temp_doc = array(
