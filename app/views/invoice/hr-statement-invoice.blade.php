@@ -198,7 +198,7 @@
           </div>
           <div class="col-md-12">
             <div class="charges-row">
-              <p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right">S$ {{ number_format($statement_in_network_amount, 2) }}</span></p>
+              <p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right">S$ {{ $statement_in_network_amount }}</span></p>
               <p class="weight-700 no-margin" style="color:#777;padding-bottom: 15px;font-size: 14px;">Statement for {{ $statement_start_date }} - {{ $statement_end_date }}</p>
               @if($lite_plan)
               <p class="color-black3 weight-700 no-margin" style="padding: 0 0 0 50px;">Consultation Spent - General Practitioner <span class="pull-right">S$ {{ $total_consultation }}</span></p>
