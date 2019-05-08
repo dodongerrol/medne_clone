@@ -54,6 +54,9 @@ Route::get('app/cron/activate_remove_employee', 'CronController@activateRemoveRe
 Route::get('app/cron/remove_employee_seat', 'CronController@removeEmployeeSeat');
 // Route::get('app/cron/withdrawal_deletion_account', 'BenefitsDashboardController@createAutomaticDeletion');
 
+// remove dependents from employee deletion
+Route::get('app/cron/remove_dependent_from_employee', 'CronController@removeDepdentsEmployeeAccounts');
+
 // test api for deactivate user
 Route::get('test_deactivate_user', 'HomeController@testDeactivateUser');
 // pdf for members coverage
