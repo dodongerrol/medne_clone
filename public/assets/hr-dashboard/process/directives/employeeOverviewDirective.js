@@ -1434,7 +1434,7 @@ app.directive("employeeOverviewDirective", [
           $('.last-day-coverage-datepicker').datepicker().on('hide',function(evt){
             var val = $(this).val();
             if( val == "" ){
-              $('.last-day-coverage-datepicker').datepicker('setDate', moment().format('DD/MM/YYYY') );
+              $('.last-day-coverage-datepicker').datepicker('setDate', moment( scope.remove_employee_data.last_day_coverage ).format('MM/DD/YYYY') );
             }
           })
 
