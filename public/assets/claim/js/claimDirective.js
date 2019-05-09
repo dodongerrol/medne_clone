@@ -147,10 +147,10 @@ app.directive("claimDirective", [
           scope.addClaim = function( ) {
             console.log( scope.add_claim_data );
             if( scope.checkClaimForm( scope.add_claim_data ) == true ){
-              data.currency_type = scope.clinic.currency_type;
+              scope.add_claim_data.currency_type = scope.clinic.currency_type;
               swal({
                   title: "Are you sure?",
-                  text: "This transaction data will be save.",
+                  text: "This transaction data will be saved.",
                   type: "warning",
                   showCancelButton: true,
                   confirmButtonColor: "#DD6B55",
@@ -161,7 +161,7 @@ app.directive("claimDirective", [
                 },
                 function(isConfirm) {
                   if (isConfirm) {
-                    $http.post(base_url + "clinic/save/claim/transaction", data)
+                    $http.post(base_url + "clinic/save/claim/transaction", scope.add_claim_data)
                       .success(function(response) {
                         if(!response.status) {
                           swal("Oooops!", response.message, "error");
@@ -343,16 +343,12 @@ app.directive("claimDirective", [
               }
             });
           };
-          scope.getAllUsers = function( data ) {
-            if( data.length >= 2 ){
-              $http.get(base_url + "clinic/get/all/users?q=" + data)
+          scope.searchUserByNRIC = function(search) {
+            if (search) {
+              $http.get(base_url + "clinic/search_all_users?q=" + search)
                 .success(function(response) {
-                  console.log( response );
-                  scope.users_arr = response.items;
-                  scope.isSearchNRIC = true;
+                  scope.users_arr = response.results;
                 });
-            }else{
-              scope.isSearchNRIC = false;
             }
           };
           scope.getSuccessfullTransactions = function() {
