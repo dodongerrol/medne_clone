@@ -439,7 +439,7 @@
 							}
 
 							scope.csv_dl = scope.csv_e_claim_transactions;
-
+							scope.current_page = 1;
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
 							setTimeout(function() {
@@ -486,7 +486,8 @@
 							from : response.data.from,
 							to: response.data.total
 						}
-
+						console.log( scope.current_page );
+						console.log( response.data.last_page );
 						if( response.data.last_page > 0 && scope.current_page != response.data.last_page ){
 							scope.fetchNextPage(data);
 						}else{
@@ -527,7 +528,7 @@
 							}
 							
 							scope.csv_dl = scope.csv_e_claim_transactions;
-
+							scope.current_page = 1;
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
 							setTimeout(function() {

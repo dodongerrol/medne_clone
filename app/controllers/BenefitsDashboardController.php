@@ -391,7 +391,9 @@ class BenefitsDashboardController extends \BaseController {
 					foreach ($temp_users as $key => $user) {
 
 						$check_user = DB::table('user')->where('Email', $user->work_email)->where('Active', 1)->where('UserType', 5)->count();
-						$check_temp_user = DB::table('customer_temp_enrollment')->where('email', $user->work_email)->where('enrolled_status', 'false')->count();
+						$check_temp_user = DB::table('customer_temp_enrollment')
+											->where('email', $user->work_email)->where('enrolled_status', 'false')
+											->count();
 
 						if(filter_var($user->work_email, FILTER_VALIDATE_EMAIL)) {
 							$email_error = false;
