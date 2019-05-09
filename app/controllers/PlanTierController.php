@@ -433,7 +433,7 @@ class PlanTierController extends \BaseController {
 				'nric'					=> $user['nric'],
 				'dob'					=> $user['dob'],
 				'email'					=> !empty($user['email']) ? $user['email'] : null,
-				'mobile'				=> $user['mobile'],
+				'mobile'				=> !empty($user['mobile']) ? $user['mobile'] : null,
 				'job_title'				=> 'Other',
 				'credits'				=> $user['medical_credits'],
 				'wellness_credits'		=> $user['medical_credits'],
