@@ -149,7 +149,7 @@ class SpendingInvoiceController extends \BaseController {
 				'TRANSACTION ID'	=> $trans['transaction_id'],
 				'MEMBER' 	=> $trans['member'],
 				'DATE'		=> $trans['date_of_transaction'],
-				'ITEMS/SERVICE' => $trans['clinic_type'].' - '.$trans['clinic_type_and_service'],
+				'ITEMS/SERVICE' => $trans['service'],
 				'PROVIDER'	=> $trans['clinic_name'],
 				'TOTAL AMOUNT'	=> $trans['total_amount']
 			);
