@@ -1390,11 +1390,11 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.onLoad = function( ){
-					if( localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true ){
-						scope.isTiering = true;
-					}else{
-						scope.isTiering = false;
-					}
+					// if( localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true ){
+					// 	scope.isTiering = true;
+					// }else{
+					// 	scope.isTiering = false;
+					// }
 
 					scope.getProgress();
 					scope.companyDependents();
