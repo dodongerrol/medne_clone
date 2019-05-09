@@ -58,7 +58,7 @@ class EclaimHelper
     if($environment == "production") {
       $email['url'] = "https://medicloud.sg";
     } else if($environment == "stage") {
-      $email['url'] = "https//staging.medicloud.sg";
+      $email['url'] = "http://staging.medicloud.sg";
     } else {
       $email['url'] = "http://medicloud.local";
     }
