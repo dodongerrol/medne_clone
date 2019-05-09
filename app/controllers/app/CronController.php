@@ -113,7 +113,7 @@ class CronController extends \BaseController {
 
     public function activateReplaceNewEmployee( )
     {
-        $date = date('Y-m-d', strtotime('+2 day'));
+        $date = date('Y-m-d', strtotime('-1 day'));
         // return $date;
         $employees = 0;
         $dependent_accounts = 0;
