@@ -177,7 +177,23 @@
 							<!-- <button ng-if="net_active == 'inNetWorkTable'" class="btn btn-csv" ng-json-export-excel data="dl_in_network" report-fields="{member: 'MEMBER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', clinic_name: 'PROVIDER', amount: 'TOTAL AMOUNT', receipt_files: 'MEDICATION', receipt_status: 'TREATMENT'}" filename="'In-Network-Transactions'" separator=",">CSV</button> -->
 							<button ng-if="net_active == 'inNetWorkTable'" class="btn btn-csv" ng-click="downloadFullINPDF(overview.statement, 'csv')">CSV</button>
 
-							<button ng-if="net_active == 'outNetWorkTable'" class="btn btn-csv" ng-json-export-excel data="dl_eclaim" report-fields="{approved_date: 'APPROVED DATE', claim_date: 'CLAIM DATE', transaction_id: 'TRANSACTION ID', service: 'ITEM/SERVICE', merchant: 'PROVIDER', amount: 'TOTAL AMOUNT', member: 'EMPLOYEE'}" filename="'E-Claim-Transactions'" separator=",">CSV</button>
+							<button ng-if="net_active == 'outNetWorkTable'" class="btn btn-csv" ng-json-export-excel data="dl_eclaim" report-fields="{
+								member: 'MEMBER',
+								claim_member_type: 'CLAIM MEMBER TYPE',
+								sub_account: 'EMPLOYEE',
+								claim_date: 'CLAIM DATE', 
+								visit_date: 'VISIT DATE',
+								transaction_id: 'TRANSACTION #',
+								service: 'CLAIM TYPE',
+								merchant: 'PROVIDER',
+								spending_type: 'SPENDING ACCOUNT',
+								amount: 'TOTAL AMOUNT',
+								type: 'TYPE',
+								status_text: 'STATUS',
+								approved_date: 'APPROVED DATE',
+								rejected_date: 'REJECTED DATE',
+								rejected_reason: 'REJECTED REASON',
+							}" filename="'E-Claim-Transactions'" separator=",">CSV</button>
 						</div>
 					</div>
 
