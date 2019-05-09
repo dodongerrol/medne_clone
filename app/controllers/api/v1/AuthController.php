@@ -1922,13 +1922,7 @@ public function getNewClinicDetails($id)
         $jsonArray['nric'] = $user->NRIC;
         $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
-        if($clinic->currency_type == "myr") {
-           $currency = "RM";
-           $balance = number_format($current_balance * 3, 2);
-       } else {
-           $currency = "S$";
-           $balance = number_format($current_balance, 2);
-       }
+        
 
             // check if employee has plan tier cap
        $plan_tier = DB::table('plan_tiers')
@@ -1947,6 +1941,15 @@ public function getNewClinicDetails($id)
             if($wallet->cap_per_visit_medical > 0) {
                 $cap_amount = $wallet->cap_per_visit_medical;
             }
+        }
+
+        if($clinic->currency_type == "myr") {
+           $currency = "RM";
+           $balance = number_format($current_balance * 3, 2);
+           $cap_amount = $cap_amount * 3;
+        } else {
+           $currency = "S$";
+           $balance = number_format($current_balance, 2);
         }
 
         $jsonArray['current_balance'] = $currency.' '.$balance;
