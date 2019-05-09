@@ -1731,7 +1731,7 @@ class EclaimController extends \BaseController {
 					'clinic_image'      => $clinic->image,
 					'amount'            => number_format($total_amount, 2),
 					'clinic_type_and_service' => $clinic_name,
-					'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
+					'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
 					'customer'          => ucwords($customer->Name),
 					'transaction_id'    => $trans->transaction_id,
 					// 'receipt_status'    => $receipt_status,

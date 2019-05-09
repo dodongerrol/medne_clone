@@ -873,7 +873,7 @@ class PlanHelper {
 		$email_error = false;
 		$email_message = '';
 
-		if(is_null($user['mobile'])) {
+		if(!empty($user['mobile'])) {
 			$mobile_error = false;
 			$mobile_message = '';
 		} else {

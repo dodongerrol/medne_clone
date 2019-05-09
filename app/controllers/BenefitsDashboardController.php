@@ -10750,11 +10750,11 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
         // check if there is a payment refund
-		$refund = DB::table('payment_refund')->where('customer_active_plan_id', $id)->first();
+		$refund = DB::table('payment_refund')->where('customer_active_plan_id', $check->customer_active_plan_id)->first();
 
 		if($refund) {
-			$employees = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $id)->count();
-			$withdraw_amount = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $id)->sum('amount');
+			$employees = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $check->customer_active_plan_id)->count();
+			$withdraw_amount = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $check->customer_active_plan_id)->sum('amount');
 			$refund_data = array(
 				'cancellation_number' => $refund->cancellation_number,
 				'employees'           => $employees,
