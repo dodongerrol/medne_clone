@@ -95,6 +95,8 @@
 				<tr class="thead">
 					<th></th>
 					<th>APPROVED DATE</th>
+					<th>CLAIM MEMBER TYPE</th>
+					<th>EMPLOYEE</th>
 					<th>CLAIM DATE</th>
 					<th>ITEM/SERVICE</th>
 					<th>PROVIDER</th>
@@ -109,6 +111,8 @@
 						<i class="status-box approved" >Approved</i>
 					</td>
 					<td>{{ $data['approved_date'] }}</td>
+					<td>{{ $data['employee_dependent_name'] }}</td>
+					<td>{{ $data['claim_member_type'] }}</td>
 					<td>{{ $data['claim_date'] }}</td>
 					<td>{{ $data['service'] }}</td>
 					<td>{{ $data['merchant'] }}</td>
