@@ -1922,13 +1922,7 @@ public function getNewClinicDetails($id)
         $jsonArray['nric'] = $user->NRIC;
         $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
-        if($clinic->currency_type == "myr") {
-           $currency = "RM";
-           $balance = number_format($current_balance * 3, 2);
-       } else {
-           $currency = "S$";
-           $balance = number_format($current_balance, 2);
-       }
+        
 
             // check if employee has plan tier cap
        $plan_tier = DB::table('plan_tiers')
@@ -1947,6 +1941,15 @@ public function getNewClinicDetails($id)
             if($wallet->cap_per_visit_medical > 0) {
                 $cap_amount = $wallet->cap_per_visit_medical;
             }
+        }
+
+        if($clinic->currency_type == "myr") {
+           $currency = "RM";
+           $balance = number_format($current_balance * 3, 2);
+           $cap_amount = $cap_amount * 3;
+        } else {
+           $currency = "S$";
+           $balance = number_format($current_balance, 2);
         }
 
         $jsonArray['current_balance'] = $currency.' '.$balance;
@@ -5238,6 +5241,7 @@ public function payCreditsNew( )
            $input_amount = self::floatvalue($input['amount']);
            if($clinic->currency_type == "myr") {
                $total_amount = $input_amount / 3;
+               // $total_amount = $input_amount;
            } else {
                $total_amount = $input_amount;
            }
@@ -5293,7 +5297,7 @@ public function payCreditsNew( )
         }
     // return array('credits' => $credits, 'cash' => $cash, 'half_credits' => $half_credits);
 
-        if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+      if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
            $total_credits = self::floatvalue($credits) + $co_paid_amount;
            if($total_credits > $user_credits) {
               $returnObject->status = FALSE;
@@ -5303,13 +5307,15 @@ public function payCreditsNew( )
           } 
       } else {
         $total_credits = self::floatvalue($credits);
-        if(self::floatvalue($credits) > $user_credits) {
-          $returnObject->status = FALSE;
-          $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
-          $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-          return Response::json($returnObject);
+          if(self::floatvalue($credits) > $user_credits) {
+            $returnObject->status = FALSE;
+            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
+            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+            return Response::json($returnObject);
+        }
       }
-  }  
+
+  // return $credits;
 
 
                        // else {
@@ -5509,8 +5515,8 @@ public function payCreditsNew( )
     $transaction_results = array(
         'clinic_name'       => ucwords($clinic->Name),
         'total_payment'     => number_format($total_amount, 2),
-        'credits'            => number_format($credits, 2),
-        'cash'              => $cash,
+        'credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
+        'cash'              => number_format($cash, 2),
         'transaction_time'  => date('Y-m-d h:i', strtotime($result->created_at)),
         'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)).$trans_id,
         'services'          => $procedure,
@@ -5543,12 +5549,14 @@ public function payCreditsNew( )
       }
     }
 
+    // return $transaction_results;
+
     $returnObject->status = TRUE;
     $returnObject->message = 'Payment Successfull';
     $returnObject->data = $transaction_results;
           // send email
     $email['member'] = ucwords($user->Name);
-    $email['credits'] = number_format($input_amount, 2);
+    $email['credits'] = $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2);
     $email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
     $email['trans_id'] = $transaction_id;
     $email['transaction_date'] = date('d F Y, h:ia');
@@ -5568,10 +5576,11 @@ public function payCreditsNew( )
     $email['dl_url'] = url();
     $email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
     $email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE ;
-    $email['total_amount'] = number_format($total_credits, 2);
+    $email['total_amount'] = $clinic->currency_type == "myr" ? number_format($total_credits * 3, 2) : number_format($total_credits, 2);
     $email['consultation'] = $consultation_fees;
     $email['currency_symbol'] = $email_currency_symbol;
     $email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
+    // return $email;
     try {
         EmailHelper::sendPaymentAttachment($email);
             // send to clinic
