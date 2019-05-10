@@ -4512,7 +4512,7 @@ public function getHrActivity( )
 				$status_text = 'Pending';
 			}
 
-			if(date('Y-m-d', strtotime($res->created_at)) >= $start && date('Y-m-d', strtotime($res->created_at)) <= $end) {
+			// if(date('Y-m-d', strtotime($res->created_at)) >= $start && date('Y-m-d', strtotime($res->created_at)) <= $end) {
 				if($res->status == 1) {
 
 					$member = DB::table('user')->where('UserID', $res->user_id)->first();
@@ -4584,7 +4584,7 @@ public function getHrActivity( )
 					);
 
 					array_push($e_claim, $temp);
-				}
+				// }
 			}
 
 		}
