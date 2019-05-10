@@ -4605,6 +4605,7 @@ public function getHrActivity( )
 		'in_network_transactions' => $transaction_details,
 		'in_network_spending_format_number' => $in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
+		'e_claim_transactions'	=> $e_claim,
 		'total_in_network_spent'    => number_format($total_in_network_spent, 2),
 		'total_in_network_spent_format_number'    => $total_in_network_spent,
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
