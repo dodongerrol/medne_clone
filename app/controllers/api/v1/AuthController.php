@@ -1945,6 +1945,7 @@ public function getNewClinicDetails($id)
 
         if($clinic->currency_type == "myr") {
            $currency = "RM";
+           $cap_currency_symbol = "RM";
            $balance = number_format($current_balance * 3, 2);
            $cap_amount = $cap_amount * 3;
         } else {
@@ -4971,6 +4972,9 @@ public function createEclaim( )
                   return Response::json($returnObject);
               }
 
+              // check if file is image
+              
+
               $result_type = in_array($file->getClientOriginalExtension(), $file_types);
               if(!$result_type) {
                   $returnObject->status = FALSE;
@@ -5516,7 +5520,7 @@ public function payCreditsNew( )
         'clinic_name'       => ucwords($clinic->Name),
         'total_payment'     => number_format($total_amount, 2),
         'credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
-        'cash'              => number_format($cash, 2),
+        'cash'              => $clinic->currency_type == "myr" ? number_format($cash * 3, 2) : number_format($cash, 2),
         'transaction_time'  => date('Y-m-d h:i', strtotime($result->created_at)),
         'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)).$trans_id,
         'services'          => $procedure,
@@ -5524,7 +5528,6 @@ public function payCreditsNew( )
         'dependent_user'    => $dependent_user,
         'half_credits_payment' => $half_credits
     );
-
 
     Notification::sendNotification('Customer Payment - Mednefits', 'User '.ucwords($user->Name).' has made a payment for '.$procedure.' at '.$currency_symbol.$input_amount.' to your clinic', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
 
