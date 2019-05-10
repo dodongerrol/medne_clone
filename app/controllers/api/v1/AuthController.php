@@ -4970,6 +4970,9 @@ public function createEclaim( )
                   return Response::json($returnObject);
               }
 
+              // check if file is image
+              
+
               $result_type = in_array($file->getClientOriginalExtension(), $file_types);
               if(!$result_type) {
                   $returnObject->status = FALSE;
