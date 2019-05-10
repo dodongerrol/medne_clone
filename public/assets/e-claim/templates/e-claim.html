@@ -52,7 +52,7 @@
 					  <div class="form-group col-md-12">
 					    <label>Provider<span>*</span></label>
 					    <div class="input-wrapper">
-					    	<input type="text" class="form-control" style="width: 100%" placeholder="Mednefits Pte Ltd" ng-model="eclaim.merchant">
+					    	<input type="text" class="form-control provider-input" style="width: 100%" placeholder="Mednefits Pte Ltd" ng-model="eclaim.merchant">
 					    </div>
 					  </div>
 					  <div class="form-group col-md-12 visit-date-form" >
@@ -74,7 +74,7 @@
 								  	<img src="../assets/e-claim/img/new-assets/Submit-E-Claim---Visit-Time.png" style="width: 18px;">
 								  </span>
 
-								  <input valid-time id="visitTimeInput" ng-disabled="!eclaim.visit_date" type="text" class="form-control eclaim-date-picker" aria-describedby="sizing-addon2" style="border-right: none;padding: 6px 8px;" ng-model="eclaim.visit_time" ng-blur="visitTimeChanged( eclaim.visit_time )" ng-focus="hideVisitTime()">
+								  <input valid-time id="visitTimeInput" ng-disabled="!eclaim.visit_date" type="text" class="form-control eclaim-date-picker" aria-describedby="sizing-addon2" style="border-right: none;padding: 6px 8px;" ng-model="eclaim.visit_time" ng-blur="visitTimeChanged( eclaim.visit_time )" ng-focus="showVisitTime()">
 
 								  <span class="input-group-addon visit-time-drop-btn" ng-click="showVisitTime( )">
 								  	<i class="fa fa-caret-down"></i>
@@ -218,7 +218,7 @@
 
 						<div class="form-group col-xs-12 col-sm-12 col-md-12">
 					  	<button ng-disabled="upload_ctr > 0 || upload_active == 0" ng-click="saveUploads()" class="btn btn-default btn-next pull-right">Next</button>
-					  	<button ng-click="backStep()" class="btn btn-default btn-back pull-right">Back</button>
+					  	<button ng-click="backStep()" class="btn btn-default btn-back pull-right" style="background: #999;margin-right: 10px;">Back</button>
 					  </div>
 					</form>
 				</div>
@@ -227,31 +227,31 @@
 					<form class="form-inline">
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
 					    <p class="color-blue-custom">
-					    	<label class="color-black3">Spending Account<span>*</span></label> 
+					    	<label class="color-black3">Spending Account<span></span></label> 
 					    	<span style="text-transform: capitalize;" ng-bind="eclaim.spending_type"></span>
 					    </p>
 					  </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
 					    <p class="color-blue-custom">
-					    	<label class="color-black3">Claim Type<span>*</span></label> 
+					    	<label class="color-black3">Claim Type<span></span></label> 
 					    	<span ng-bind="eclaim.service_selected">General Practice</span>
 					    </p>
 					  </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
 					    <p class="color-blue-custom">
-					    	<label class="color-black3">Provider<span>*</span></label> 
+					    	<label class="color-black3">Provider<span></span></label> 
 					    	<span ng-bind="eclaim.merchant">General Practice</span>
 					    </p>
 					  </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
 					    <p class="color-blue-custom">
-					    	<label class="color-black3">Visit Date<span>*</span></label> 
+					    	<label class="color-black3">Visit Date<span></span></label> 
 					    	<span ng-bind="eclaim.visit_date">25 April 2017</span>
 					    </p>
 					  </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12" >
 					    <p class="color-blue-custom">
-					    	<label class="color-black3">Visit Time<span>*</span></label>
+					    	<label class="color-black3">Visit Time<span></span></label>
 					    	<span>
 					    		<span ng-bind="eclaim.visit_time">3:30</span><span ng-bind="eclaim.selectedDayTime">pm</span>
 					    	</span>
@@ -260,18 +260,18 @@
             </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
 					    <p class="color-blue-custom">
-					    	<label class="color-black3">Claim Amount<span>*</span></label> 
+					    	<label class="color-black3">Claim Amount<span></span></label> 
 					    	<span>S$ <span ng-bind="eclaim.claim_amount | number"></span></span>
 					    </p>
 					  </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
 					    <p class="color-blue-custom">
-					    	<label class="color-black3">Member<span>*</span></label> 
+					    	<label class="color-black3">Member<span></span></label> 
 					    	<span ng-bind="eclaim.member_selected.name">Spectacle</span>
 					    </p>
 					  </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12 claim-img-wrapper">
-					    <label>Receipt<span>*</span></label>
+					    <label>Receipt<span></span></label>
 					    <div class="receipt-imgs">
 					    	<div ng-repeat="img in eclaim.receipts" style="display: inline-block;">
 					    		<img ng-if="img.receipt_type == 'image'" ng-src="{{img.receipt_file}}" style="">
@@ -286,7 +286,7 @@
 					  	<div class="white-space-50"></div>
 					  	<div class="white-space-20"></div> -->
 					  	<button ng-click="submitEclaim()" class="btn btn-default btn-next pull-right">Submit</button>
-					  	<button ng-if="submitFailed" ng-click="backStep()" class="btn btn-default btn-back pull-right">Back</button>
+					  	<button ng-click="backStep()" class="btn btn-default btn-back pull-right" style="background: #999;margin-right: 10px;">Back</button>
 					  </div>
 					</form>
 				</div>
