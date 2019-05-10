@@ -22,6 +22,7 @@ app.directive("claimDirective", [
         scope.service_list = [];
         scope.services = [];
         scope.users_arr = [];
+        scope.users_nric_arr = [];
         scope.placeholder = "";
         scope.search_member = "";
         scope.selected_start_date = moment().startOf('month').format('MM/DD/YYYY');
@@ -142,12 +143,20 @@ app.directive("claimDirective", [
         }
 
 
-
         // === REQUESTS === //
           scope.addClaim = function( ) {
             console.log( scope.add_claim_data );
             if( scope.checkClaimForm( scope.add_claim_data ) == true ){
+              scope.add_claim_data.id = scope.add_claim_data.selected_nric_data.id;
+              scope.add_claim_data.back_date = 1;
+              console.log( scope.add_claim_data.visit_date + " " + scope.add_claim_data.visit_time + " " + scope.add_claim_data.daytime );
+              scope.add_claim_data.transaction_date = moment( scope.add_claim_data.visit_date + " " + scope.add_claim_data.visit_time + " " + scope.add_claim_data.daytime, "DD MMM, YYYY hh:mm A" ).format('YYYY-MM-DD hh:mm A');;
+              scope.add_claim_data.procedure_ids = scope.add_claim_data.selected_service_ids;
               scope.add_claim_data.currency_type = scope.clinic.currency_type;
+              scope.add_claim_data.currency_amount = (scope.add_claim_data.currency_type == 'sgd') ? scope.add_claim_data.amount : scope.add_claim_data.amount * 3;
+              scope.add_claim_data.health_provider = 0;
+              // scope.add_claim_data.transaction_id = 0;
+
               swal({
                   title: "Are you sure?",
                   text: "This transaction data will be saved.",
@@ -349,6 +358,17 @@ app.directive("claimDirective", [
                 .success(function(response) {
                   scope.users_arr = response.results;
                 });
+            }
+          };
+          scope.getAllUsers = function(search) {
+            if (search) {
+              $http.get(base_url + "clinic/get/all/users?q=" + search)
+                .success(function(response) {
+                  scope.users_nric_arr = response.items;
+                  scope.isSearchNRIC = true;
+                });
+            }else{
+              scope.isSearchNRIC = false;
             }
           };
           scope.getSuccessfullTransactions = function() {

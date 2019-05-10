@@ -204,7 +204,7 @@
 													<td>
 														<input class="manual-form" type="text" placeholder="Search NRIC" ng-model="add_claim_data.nric" ng-change="getAllUsers( add_claim_data.nric )">
 														<div ng-if="isSearchNRIC" class="nric-drop">
-															<div class="nric-list" ng-repeat="list in users_arr" ng-click="selectNRIC( list )">
+															<div class="nric-list" ng-repeat="list in users_nric_arr" ng-click="selectNRIC( list )">
 																<div class="img-wrapper">
 																	<img ng-src="{{ list.image }}">
 																</div>
