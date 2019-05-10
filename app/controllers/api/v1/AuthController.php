@@ -1945,6 +1945,7 @@ public function getNewClinicDetails($id)
 
         if($clinic->currency_type == "myr") {
            $currency = "RM";
+           $cap_currency_symbol = "RM";
            $balance = number_format($current_balance * 3, 2);
            $cap_amount = $cap_amount * 3;
         } else {
