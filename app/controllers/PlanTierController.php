@@ -376,7 +376,7 @@ class PlanTierController extends \BaseController {
 		
 		if($dependent_plan_status) {
 			$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
-			if($total_dependents < 0) {
+			if($total_dependents <= 0 && $total_dependents_entry > 0) {
 				return array(
 					'status'	=> FALSE,
 					'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
