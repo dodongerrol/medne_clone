@@ -537,6 +537,8 @@ class BenefitsDashboardController extends \BaseController {
 							"start_date_message"	=> $start_date_message
 						);
 
+						$user->mobile = preg_replace('/\s+/', '', $user->mobile);
+
 						$temp_enrollment_data = array(
 							'customer_buy_start_id'			=> $result->customer_buy_start_id,
 							'active_plan_id'				=> $active_plan->customer_active_plan_id,
