@@ -2312,11 +2312,12 @@ class BenefitsDashboardController extends \BaseController {
 				$in_network_temp_spent_wellness = 0;
 				$credits_back_wellness = 0;
 
-				$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
+				$wallet = DB::table('e_wallet')->where('UserID', $user)->orderBy('created_at', 'desc')->first();
+				$member = DB::table('corporate_members')->where('user_id', $user)->first();
 
 				// check if employee has reset credits
 				$employee_credit_reset_medical = DB::table('credit_reset')
-				->where('id', $user->UserID)
+				->where('id', $user)
 				->where('spending_type', 'medical')
 				->where('user_type', 'employee')
 				->orderBy('created_at', 'desc')
@@ -2372,7 +2373,7 @@ class BenefitsDashboardController extends \BaseController {
 					$allocation = $get_allocation;
 					$total_deduction_credits += $deducted_allocation;
 
-					if($user->removed_status == 1) {
+					if($member->removed_status == 1) {
 						$deleted_employee_allocation += $get_allocation - $deducted_allocation;
 					}
 				}
@@ -2382,7 +2383,7 @@ class BenefitsDashboardController extends \BaseController {
 				$allocated += $allocation;
 
 				$employee_credit_reset_wellness = DB::table('credit_reset')
-				->where('id', $user->UserID)
+				->where('id', $user)
 				->where('spending_type', 'wellness')
 				->where('user_type', 'employee')
 				->orderBy('created_at', 'desc')
@@ -2438,7 +2439,7 @@ class BenefitsDashboardController extends \BaseController {
 					$allocation = $allocation_wellness;
 					$total_deduction_credits_wellness += $deducted_allocation_wellness;
 
-					if($user->removed_status == 1) {
+					if($member->removed_status == 1) {
 						$deleted_employee_allocation_wellness += $get_allocation_wellness - $deducted_allocation_wellness;
 					}
 				}
