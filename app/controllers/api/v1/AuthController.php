@@ -4961,7 +4961,7 @@ public function createEclaim( )
                $returnObject->message = 'Time of Visit must be a time (00:00 AM/PM).';
                return Response::json($returnObject);
            }
-
+           $rules = array('file' => 'mimes:jpeg,png,gif,bmp,pdf,doc,docx');
                     // loop through the files ang validate
            foreach (Input::file('files') as $key => $file) {
             // return var_dump($file);
@@ -4973,14 +4973,18 @@ public function createEclaim( )
 
               // check if file is image
               
-
-              $result_type = in_array($file->getClientOriginalExtension(), $file_types);
-              if(!$result_type) {
-                  $returnObject->status = FALSE;
-                  $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF and Excel.';
+              $validator = Validator::make(array('file' => $file), $rules);
+              // $result_type = in_array($file->getClientOriginalExtension(), $file_types);
+              // if(!$result_type) {
+              //     $returnObject->status = FALSE;
+              //     $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF and Excel.';
+              //     return Response::json($returnObject);
+              // }
+              if($validator->fails()){
+                $returnObject->status = FALSE;
+                  $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF or Excel.';
                   return Response::json($returnObject);
               }
-
               $file_size = $file->getSize();
     // check file size if exceeds 10 mb
               if($file_size > 10000000) {
