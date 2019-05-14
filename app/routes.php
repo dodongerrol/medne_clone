@@ -362,6 +362,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get employee spending account summary
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
+	// update cap per visit of employee
+	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 
 
 // intro login for clinic
