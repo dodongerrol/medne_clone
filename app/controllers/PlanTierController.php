@@ -376,16 +376,13 @@ class PlanTierController extends \BaseController {
 		
 		if($dependent_plan_status) {
 			$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
-			if($total_dependents <= 0) {
+			if($total_dependents < 0) {
 				return array(
 					'status'	=> FALSE,
 					'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
 				);
 			}
-		} else {
-			// return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
 		}
-
 
 		if($plan_tier_id) {
 			if($plan_tier->dependent_head_count > 0) {
@@ -623,6 +620,9 @@ class PlanTierController extends \BaseController {
 		}
 		
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
+
+		$mobile = preg_replace('/\s+/', '', $input['mobile']);
+
 		$data = array(
 			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
 			'first_name'				=> $input['first_name'],
@@ -630,7 +630,7 @@ class PlanTierController extends \BaseController {
 			'nric'						=> $input['nric'],
 			'dob'						=> $input['dob'],
 			'email'						=> $input['email'],
-			'mobile'					=> $input['mobile'],
+			'mobile'					=> $mobile,
 			'mobile_area_code'			=> $input['mobile_area_code'],
 			'job_title'					=> $input['job_title'],
 			'credits'					=> $input['medical_credits'],
