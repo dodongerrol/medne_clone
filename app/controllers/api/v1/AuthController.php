@@ -5282,7 +5282,7 @@ public function payCreditsNew( )
             $cap_amount = $plan_tier->gp_cap_per_visit;
         } else {
             if($wallet_user->cap_per_visit_medical > 0) {
-                $cap_amount = $wallet_user->cap_per_visit_medical;
+              $cap_amount = $wallet_user->cap_per_visit_medical;
             }
         }
 
@@ -5377,7 +5377,8 @@ public function payCreditsNew( )
        'lite_plan_enabled'     => $lite_plan_enabled,
        'cash_cost'            => $cash,
        'half_credits'          => $half_credits == true ? 1 : 0,
-       'consultation_fees'      => $consultation_fees
+       'consultation_fees'      => $consultation_fees,
+       'cap_per_visit'        => $cap_amount
     );
 
     if((int)$clinic_type->lite_plan_enabled == 1 && $lite_plan_status) {
