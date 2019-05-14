@@ -4322,6 +4322,7 @@ public function getInNetworkDetails($id)
    }
   }
 
+  $half_credits = false;
   $total_amount = $transaction->procedure_cost;
 
                           // check if there is a receipt image
@@ -4347,7 +4348,12 @@ public function getInNetworkDetails($id)
        $total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
    }
   } else {
-    $payment_type = 'Mednefits Credits';
+    if($transaction->credit_cost > 0 && $transaction->cash_cost > 0) {
+      $payment_type = 'Mednefits Credits + Cash';
+      $half_credits = true;
+    } else {
+      $payment_type = 'Mednefits Credits';
+    }
     $service_credits = true;
     if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
        $total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
@@ -4402,7 +4408,12 @@ public function getInNetworkDetails($id)
     'converted_consultation'  => $converted_consultation,
     'lite_plan'         => $lite_plan_status,
     'wallet_status'     => $wallet_status,
-    'lite_plan_enabled' => $transaction->lite_plan_enabled
+    'lite_plan_enabled' => $transaction->lite_plan_enabled,
+    'cap_transaction'   => $half_credits,
+    'cap_per_visit'     => $transaction->currency_type == "myr" ? "RM ".number_format($transaction->cap_per_visit / $transaction->currency_amount, 2) : "S$".number_format($transaction->cap_per_visit, 2),
+    'paid_by_cash'      => $transaction->currency_type == "myr" ? "RM ".number_format($transaction->cash_cost / $transaction->currency_amount, 2) : "S$".number_format($transaction->cash_cost, 2),
+    'paid_by_credits'      => $transaction->currency_type == "myr" ? "RM ".number_format($transaction->credit_cost / $transaction->currency_amount, 2) : "S$".number_format($transaction->credit_cost, 2),
+    "currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$"
   );
 }
 
