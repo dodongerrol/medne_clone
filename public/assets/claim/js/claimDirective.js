@@ -1,7 +1,8 @@
 app.directive("claimDirective", [
   "$http",
   "$state",
-  function directive($http, $state) {
+  "socket",
+  function directive($http, $state, socket) {
     return {
       restrict: "A",
       scope: true,
@@ -30,6 +31,7 @@ app.directive("claimDirective", [
         scope.isSearchNRIC = false;
         scope.selected_hour = parseInt(moment().format("hh"));
         scope.selected_minute = parseInt(moment().format("mm"));
+        scope.searchTrans_text = "";
 
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
@@ -144,6 +146,34 @@ app.directive("claimDirective", [
 
 
         // === REQUESTS === //
+          scope.cancelBackDateTransaction = function( data ){
+            swal({
+              title: "Are you sure?",
+              text: "This transaction data will be removed.",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Yes!",
+              cancelButtonText: "Cancel",
+              closeOnConfirm: true,
+              closeOnCancel: true
+            },
+            function(isConfirm) {
+              if (isConfirm) {
+                scope.showLoading();
+                $http.get( base_url + "clinic/remove/transaction?id=" + data.trans_id )
+                  .success(function(response) {
+                    scope.hideLoading();
+                    if (response.status) {
+                      swal("Success!", response.message, "success");
+                      scope.getSuccessfullTransactions();
+                    } else {
+                      swal("Ooops!", response.message, "error");
+                    }
+                  });
+              }
+            });
+          }
           scope.addClaim = function( ) {
             console.log( scope.add_claim_data );
             if( scope.checkClaimForm( scope.add_claim_data ) == true ){
@@ -170,11 +200,14 @@ app.directive("claimDirective", [
                 },
                 function(isConfirm) {
                   if (isConfirm) {
+                    scope.showLoading();
                     $http.post(base_url + "clinic/save/claim/transaction", scope.add_claim_data)
                       .success(function(response) {
+                        scope.hideLoading();
                         if(!response.status) {
                           swal("Oooops!", response.message, "error");
                         } else {
+                          scope.getSuccessfullTransactions();
                           swal("Success!","The Transaction Successfully Saved.","success");
                           $('#modalManual').modal('hide');
                         }
@@ -228,29 +261,27 @@ app.directive("claimDirective", [
                 } else {
                   scope.placeholder = "Enter Amount in SGD";
                 }
-                // var stored_list = localStorageService.get("trans_table_" + scope.clinic.ClinicID);
-                // if ( stored_list != null ) {
-                //   angular.forEach(stored_list, function(value, key) {
-                //     scope.claim_list.push( value );
-                //   })
-                // }
               });
           };
-          scope.searchByNric = function() {
-            if (scope.search.length > 5) {
-              var data = {
-                nric: scope.searchNRIC,
-                start_date: scope.selected_start_date,
-                end_date: scope.selected_end_date,
-              }
-              $http.post(base_url + "clinic/search_by_nric_transactions", data)
-                .success(function(response) {
-                  scope.backdate_list = response;
-                  scope.toggleBackLoading();
-                });
+          scope.searchByNric = function( data ) {
+            var data = {
+              nric: data,
+              start_date: scope.selected_start_date,
+              end_date: scope.selected_end_date,
             }
+            scope.showLoading();
+            $http.post(base_url + "clinic/search_by_nric_transactions", data)
+              .success(function(response) {
+                scope.backdate_list = response;
+                scope.hideLoading();
+              });
           };
-          scope.getHeathProvider = function() {
+          scope.searchNRICchanged = function( data ){
+            if( data == '' ){
+              scope.getSuccessfullTransactions();
+            }
+          }
+          scope.getHealthProvider = function() {
             $http.get(base_url + "clinic/get/health_provider/transaction")
               .success(function(response) {
                 angular.forEach(response, function(value, key) {
@@ -299,50 +330,56 @@ app.directive("claimDirective", [
                 });
               });
           };
+          scope.checkDataClaimLists = function(id) {
+            var status = false;
+            angular.forEach( scope.claim_list, function( value, key ){
+              if( value.transaction_id == id ){
+                status = true;
+              }
+            });
+            return status;
+          };
           scope.getPusherConfig = function(connection) {
-            // console.log('connection', connection);
-            // socket.on(connection, function (data) {
-            //   console.log(data);
-            //   if (parseInt(data.clinic_id) == parseInt(scope.clinic.ClinicID)) {
-            //         // check if transaction is already push to the array of claim_list
-            //       if (!scope.checkDataClaimLists(data.transaction_id)) {
-            //         $http.get(base_url + "clinic/transaction_specific?transaction_id=" + data.transaction_id)
-            //           .success(function(response) {
-            //             setTimeout(function() {
-            //               scope.load_status = true;
-            //             }, 100);
-            //             var procedures = [];
-            //             angular.forEach( response.procedure_ids, function(value, key){ 
-            //               $http.get( base_url + "clinic/get/service/details/" + value )
-            //                 .then(function(response){
-            //                   procedures.push( response.data );
-            //                 });
-            //             });
-            //             var data = {
-            //               nric: response.NRIC,
-            //               procedure: response.ProcedureID,
-            //               procedures: procedures,
-            //               display_book_date: response.date_of_transaction,
-            //               book_date: moment( response.date_of_transaction ).format("YYYY-MM-DD"),
-            //               id: response.UserID,
-            //               amount: response.procedure_cost,
-            //               back_date: 0,
-            //               health_provider: response.health_provider,
-            //               multiple_procedures: response.multiple_procedures,
-            //               procedure_ids: response.procedure_ids,
-            //               transaction_id: response.transaction_id
-            //             };
-            //             $http.get( base_url + "clinic/get/user/details/" + response.UserID )
-            //               .then(function(response2){
-            //                 data.name = response2.data[0].Name;
-            //                 data.user_type = response2.data[0].UserType;
-            //                 data.access_type = response2.data[0].access_type;
-            //                 scope.claim_list.push(data);
-            //               });
-            //           });
-            //       }
-            //     }
-            // });
+            console.log('connection', connection);
+            socket.on(connection, function (data) {
+              console.log(data);
+              if (parseInt(data.clinic_id) == parseInt(scope.clinic.ClinicID)) {
+                    // check if transaction is already push to the array of claim_list
+                  if (!scope.checkDataClaimLists(data.transaction_id)) {
+                    $http.get(base_url + "clinic/transaction_specific?transaction_id=" + data.transaction_id)
+                      .success(function(response) {
+                        var procedures = [];
+                        angular.forEach( response.procedure_ids, function(value, key){ 
+                          $http.get( base_url + "clinic/get/service/details/" + value )
+                            .then(function(response){
+                              procedures.push( response.data );
+                            });
+                        });
+                        var data = {
+                          nric: response.NRIC,
+                          procedure: response.ProcedureID,
+                          procedures: procedures,
+                          display_book_date: response.date_of_transaction,
+                          book_date: moment( response.date_of_transaction ).format("YYYY-MM-DD"),
+                          id: response.UserID,
+                          amount: response.procedure_cost,
+                          back_date: 0,
+                          health_provider: response.health_provider,
+                          multiple_procedures: response.multiple_procedures,
+                          procedure_ids: response.procedure_ids,
+                          transaction_id: response.transaction_id
+                        };
+                        $http.get( base_url + "clinic/get/user/details/" + response.UserID )
+                          .then(function(response2){
+                            data.name = response2.data[0].Name;
+                            data.user_type = response2.data[0].UserType;
+                            data.access_type = response2.data[0].access_type;
+                            scope.claim_list.push(data);
+                          });
+                      });
+                  }
+                }
+            });
           };
           scope.getClinicSocketConnection = function( ) {
             $http.get(base_url + 'clinic_socket_connection')
@@ -354,8 +391,10 @@ app.directive("claimDirective", [
           };
           scope.searchUserByNRIC = function(search) {
             if (search) {
+              scope.showLoading();
               $http.get(base_url + "clinic/search_all_users?q=" + search)
                 .success(function(response) {
+                  scope.hideLoading();
                   scope.users_arr = response.results;
                 });
             }
@@ -372,14 +411,22 @@ app.directive("claimDirective", [
             }
           };
           scope.getSuccessfullTransactions = function() {
+            scope.showLoading();
             $http.get(base_url + "clinic/all_transactions")
               .success(function(response) {
                 console.log( response );
+                scope.hideLoading();
                 scope.backdate_list = response;
               });
           };
         // ================ //
 
+        scope.showStartdate = function(){
+          $('.start-datepicker').datepicker('show');
+        }
+        scope.showEnddate = function(){
+          $('.end-datepicker').datepicker('show');
+        }
         scope.initializeDatePickers = function(){
           setTimeout(function() {
             $('.datepicker').datepicker({
@@ -389,20 +436,44 @@ app.directive("claimDirective", [
 
             $('.start-datepicker').datepicker({
               format: "mm/dd/yyyy",
-              maxDate: new Date()
+              // maxDate: new Date()
+            }).on( 'changeDate', function(e) {
+              // console.log( e );
+              $('.start-datepicker').datepicker('hide');
+              var date = moment( e.date ).format('MM/DD/YYYY');
+              if( date > scope.selected_end_date ){
+                scope.selected_end_date = date;
+                $('.end-datepicker').datepicker('update', date);
+                $('.end-datepicker').datepicker('setStartDate', date);
+              }
+
+              scope.searchByNric( scope.searchTrans_text );
             });
 
             $('.end-datepicker').datepicker({
               format: "mm/dd/yyyy",
-              maxDate: new Date()
+              startDate: new Date()
+            }).on( 'changeDate', function(e) {
+              // console.log( e );
+              $('.end-datepicker').datepicker('hide');
+              scope.searchByNric( scope.searchTrans_text );
             });
+
           }, 500);
+        }
+        scope.showLoading = function( ){
+          $( ".main-loader" ).fadeIn(); 
+        }
+        scope.hideLoading = function( ){
+          setTimeout(function() {
+            $( ".main-loader" ).fadeOut();
+          },1000)
         }
 
         scope.onLoad = function (){
           scope.getClinicDetails();
-          // scope.getClinicSocketConnection();
-          // scope.getHeathProvider();
+          scope.getClinicSocketConnection();
+          scope.getHealthProvider();
           scope.getSuccessfullTransactions();
           scope.getServices();
           scope.initializeDatePickers();

@@ -25,12 +25,31 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/daterangepicker.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/css/font-awesome.min.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/sweetalert.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/claim/css/claim-loader.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/claim/css/style.css?_={{ $date->format('U') }}">
 
 </head>
 <body>
 	@include('common.home_header')
 	<div ui-view="main"></div>
+
+	<div class="main-loader" hidden>
+		<div class="circle-loader">
+			<div class="preloader-container">
+				<div class="preloader-wrapper big active">
+			    <div class="spinner-layer spinner-blue-only">
+			      <div class="circle-clipper left">
+			        <div class="circle"></div>
+			      </div><div class="gap-patch">
+			        <div class="circle"></div>
+			      </div><div class="circle-clipper right">
+			        <div class="circle"></div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+	</div>
 </body>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/calendar/moment/moment.js?_={{ $date->format('U') }}"></script>

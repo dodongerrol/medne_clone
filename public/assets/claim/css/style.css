@@ -105,7 +105,12 @@ input:focus{
   color: #fff;
   border-radius: 5px;
   padding: 6px 12px;
+}
 
+.option-label {
+  border: 2px solid var(--danger);
+  padding: 6px !important;
+  font-size: 12px !important;
 }
 
 .filter {
@@ -117,6 +122,34 @@ input:focus{
 .text-strong {
   font-weight: bold !important;
 }
+
+/* cash tooltip */
+  .tooltip-cash{
+    position: absolute;
+    left: -20px;
+    top: 20px;
+    margin: 0;
+    width: 300px;
+    line-height: 1.3;
+    font-family: 'Helvetica Light';
+    font-weight: 700;
+    color: #444;
+    background: #c1c3c5;
+    padding: 8px 15px;
+    border-radius: 4px;
+    display: none;
+    z-index: 99;
+  }
+
+  .cash-tooltip{
+    color: #0190CD;
+    position: relative;
+  }
+
+  .cash-tooltip:hover .tooltip-cash{
+    display: block;
+  }
+/* ------------ */
 
 /* content css */
 .claim-content {
@@ -180,7 +213,11 @@ section {
   width: 160px;
   display: flex;
   align-items: center;
+  cursor: pointer;
   /*padding: 0 10px;*/
+}
+.transactions .btn-date input{
+  cursor: pointer;
 }
 .transactions .btn-date .left-icon-wrapper {
   width: 30px;
@@ -225,6 +262,7 @@ span.arrow-right {
 
 /* table styles */
 
+.table-trans-preview,
 .table-registration,
 .table-successfulTransaction,
 .table-nric,
@@ -233,6 +271,7 @@ span.arrow-right {
   width: 100%;
 }
 
+.table-trans-preview thead,
 .table-registration thead,
 .table-successfulTransaction thead,
 .table-nric thead,
@@ -240,6 +279,7 @@ span.arrow-right {
   border-bottom: .5px solid var(--graylight);
 }
 
+.table-trans-preview th,
 .table-registration th,
 .table-successfulTransaction th,
 .table-nric th,
@@ -248,6 +288,8 @@ span.arrow-right {
 }
 
 
+.table-trans-preview th:nth-child(1),
+.table-trans-preview td:nth-child(1),
 .table-registration th:nth-child(1),
 .table-registration td:nth-child(1),
 .registration .card-title {
@@ -255,11 +297,17 @@ span.arrow-right {
   width: 20%;
 }
 
+.table-trans-preview th:nth-child(2),
+.table-trans-preview td:nth-child(2),
 .table-registration th:nth-child(2),
 .table-registration td:nth-child(2) {
   width: 20%;
 }
 
+.table-trans-preview th:nth-child(3),
+.table-trans-preview td:nth-child(3),
+.table-trans-preview th:nth-child(4),
+.table-trans-preview td:nth-child(4),
 .table-registration th:nth-child(3),
 .table-registration td:nth-child(3),
 .table-registration th:nth-child(4),
@@ -268,6 +316,7 @@ span.arrow-right {
 }
 
 .table-registration td,
+.table-trans-preview td,
 .table-successfulTransaction td,
 .table-nric td,
 .table-manual td {
@@ -587,5 +636,6 @@ span.arrow-right {
     color: #999;
   }
 /*======================*/
+
 
 /* override bootsrap */

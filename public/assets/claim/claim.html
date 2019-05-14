@@ -49,6 +49,67 @@
 				</div>
 			</section>
 
+			<section class="trans-preview">
+				<div class="card registration container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<h4 class="card-title">Pay Direct Transaction Preview:</h4>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="container-fluid">
+							<table class="table-trans-preview table-hover">
+								<thead>
+									<th>Date/Time of Visit</th>
+									<th>Name</th>
+									<th>NRIC</th>
+									<th>Service</th>
+									<th>
+										Cash
+										<i class="fa fa-info-circle cash-tooltip">
+						        	<p class="tooltip-cash">This is the amount, Mednefits Member paid to you either in Cash/Nets/Credit Card.</p>
+						        </i>
+									</th>
+									<th>Option</th>
+								</thead>
+								<tbody>
+									<tr ng-repeat="list in claim_list">
+										<td ng-bind="list.display_book_date"></td>
+										<td>
+											<span ng-bind="list.name"></span> - 
+						    			<span ng-if="list.user_type == 1">Public User</span> 
+						    			<span ng-if="list.user_type == 5 && list.access_type == 1">Invidual User</span>
+						    			<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User</span>
+						    			<span ng-if="list.user_type == 5 && list.access_type == 2 || list.user_type == 5 && list.access_type == 3">Dependent User</span>
+										</td>
+										<td ng-bind="list.nric"></td>
+										<td>
+											<span ng-repeat="service in list.procedures track by $index">
+						    				<span ng-bind="service"></span>
+						    				<span ng-if="$index != list.procedures.length-1">,</span>
+					    				</span>
+										</td>
+										<td>
+											<span ng-if="clinic.currency_type == 'myr'">RM</span>
+						    			<span ng-if="clinic.currency_type == 'sgd'">SGD</span>
+						    			<input valid-number type="text" placeholder="Enter Amount" ng-model="list.amount" ng-value="list.amount">
+										</td>
+										<td>
+											<button type="button" class="btn btn-primary btn-submit" ng-click="toggleClaimSummaryModal(list, $index)">
+						    				Submit
+						    			</button>
+						    			<button type="button" class="btn btn-danger btn-remove" ng-click="remove(list)">Remove</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</section>
+
 			<section class="successful-transactions">
 				<div class="card transactions container-fluid">
 
@@ -58,17 +119,17 @@
 						</div>
 						<div class="filter">
 							<div class="col-md-2 search-wrapper">
-								<input class="search" type="text" placeholder="Search by NRIC">
-								<button class="search-icon"><i class="fa fa-search" aria-hidden="true"
+								<input class="search" type="text" placeholder="Search by NRIC" ng-model="searchTrans_text" ng-change="searchNRICchanged( searchTrans_text )">
+								<button class="search-icon" ng-click="searchByNric( searchTrans_text );"><i class="fa fa-search" aria-hidden="true"
 										style="font-size:18px; font-weight: 300;"></i></button>
 							</div>
 
 							<div class="col-md-5 text-left date-wrapper">
-								<div class="btn-date">
+								<div class="btn-date" ng-click="showStartdate()">
 									<div class="left-icon-wrapper">
 										<i class="fa fa-calendar" aria-hidden="true"></i>
 									</div>
-									<input type="text" class="start-datepicker">
+									<input type="text" class="start-datepicker" ng-model="selected_start_date" readonly>
 									<div class="right-icon-wrapper">
 										<i class="fa fa-chevron-down" aria-hidden="true"></i>
 									</div>
@@ -76,11 +137,11 @@
 								<span class="arrow-right">
 									<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
 								</span>
-								<div class="btn-date">
+								<div class="btn-date" ng-click="showEnddate()">
 									<div class="left-icon-wrapper">
 										<i class="fa fa-calendar" aria-hidden="true"></i>
 									</div>
-									<input type="text" class="end-datepicker">
+									<input type="text" class="end-datepicker" ng-model="selected_end_date">
 									<div class="right-icon-wrapper">
 										<i class="fa fa-chevron-down" aria-hidden="true"></i>
 									</div>
@@ -106,17 +167,35 @@
 									<th>Option</th>
 								</thead>
 								<tbody>
-									<tr ng-repeat="list in backdate_list">
-										<td>01 April 2019, 03:57pm</td>
-										<td>04 April 2019, 03:57pm</td>
-										<td>MED013675</td>
-										<td>Kum Kin Cheong</td>
-										<td>G8472947H</td>
-										<td>Medicine & Treatment</td>
-										<td>S$13.91</td>
-										<td>S$20.00</td>
-										<td>S$0.00</td>
-										<td><button class="option-button mybg-red">Cancel</button></td>
+									<tr ng-if="backdate_list.length == 0">
+						     		<td colspan="10" class="text-center">No Transactions found</td>
+						     	</tr>
+									<tr ng-repeat="list in backdate_list track by $index">
+										<td ng-bind="list.date_of_transaction">01 April 2019, 03:57pm</td>
+										<td ng-bind="list.claim_date">04 April 2019, 03:57pm</td>
+										<td ng-bind="list.transaction_id">MED013675</td>
+										<td ng-bind="list.user_name">Kum Kin Cheong</td>
+										<td ng-bind="list.NRIC">G8472947H</td>
+										<td ng-bind="list.procedure_name">Medicine & Treatment</td>
+										<td>
+											<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.mednefits_fee"></span></span>
+			    						<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.mednefits_fee * list.currency_amount | number: 2"></span></span>
+			    					</td>
+										<td>
+											<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.mednefits_credits"></span></span>
+			    						<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.mednefits_credits * list.currency_amount | number: 2"></span></span>
+										</td>
+										<td>
+											<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.cash"></span></span>
+			    						<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.cash * list.currency_amount | number: 2"></span></span>
+										</td>
+										<td>
+											<button ng-if="list.deleted_option == 'remove' && !list.deleted" class="option-button mybg-red" ng-click="cancelBackDateTransaction(list)">Remove</button>
+											<button ng-if="list.deleted_option == 'refund' && !list.deleted" class="option-button mybg-grayDark" ng-click="cancelBackDateTransaction(list)">Refund</button>
+
+											<label class="option-label myColor-red" ng-if="list.data_status == 'removed' && list.deleted">REMOVED</label>
+			    						<label class="option-label myColor-red" ng-if="list.data_status == 'refunded' && list.deleted">REFUNDED</label>
+										</td>
 									</tr>
 
 								</tbody>
