@@ -6148,6 +6148,7 @@ ul.typeahead li a.dropdown-item
 
 
 	.employee-plan,
+	.employee-cap,
 	.employee-plan-cover,
 	.employee-tier-wrapper,
 	.employee-info-start-date,
@@ -6161,6 +6162,7 @@ ul.typeahead li a.dropdown-item
 	}
 
 	.employee-plan span,
+	.employee-cap span,
 	.employee-plan-cover span, 
 	.employee-tier-container span,
 	.employee-info-start-date span,
@@ -6179,6 +6181,11 @@ ul.typeahead li a.dropdown-item
     display: grid;
     grid-template-columns: 1fr 2fr;
     text-align: left;
+	}
+
+	.employee-cap{
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 	}
 
 
@@ -6513,6 +6520,19 @@ ul.typeahead li a.dropdown-item
 	.employee-settings-wrapper .btn i{
     font-size: 18px;
     margin-right: 8px;
+	}
+
+	.employee-settings-wrapper .btn i.fa-dollar{
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    border-radius: 50%;
+    padding: 0px;
+    color: #FFF;
+    background: #656565;
+    font-size: 14px;
+    text-align: center;
+    vertical-align: top;
 	}
 
 /* ADD A DEPENDENT */
@@ -7155,6 +7175,35 @@ ul.typeahead li a.dropdown-item
 
 /*-------------------------------------*/
 
+/* MANAGE CAP PER VISIT MODAL */
+	#manage-cap-modal .modal-header{
+		background: #2F3E4E;
+	}
+	#manage-cap-modal .modal-header .modal-title{
+		color: #FFF;
+	}
+	#manage-cap-modal .modal-body{
+		padding: 20px 50px 50px 25px;
+	}
+	#manage-cap-modal .modal-body .input-group{
+    width: 90%;
+	}
+	#manage-cap-modal .modal-body .input-group .input-group-addon{
+    color: #6DABD6;
+    background: #FFF;
+    font-family: Arial;
+    font-size: 16px;
+    width: 50px;
+	}
+	#manage-cap-modal .modal-footer{
+		border: none;
+	}
+	#manage-cap-modal .modal-footer .custom-btn{
+		font-size: 12px;
+    border-radius: 2px;
+    padding: 10px 15px;
+	}
+/*----------------------------*/
 
 /*------- DUPLCATE TRANSACTION MODAL --------*/
 	#check-duplicate-modal .your-transaction{

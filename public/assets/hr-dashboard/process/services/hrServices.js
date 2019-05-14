@@ -324,6 +324,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.resetAccount = function(data) {
     return $http.post(serverUrl.url + "/hr/employee_reset_account", data);
   };
+
+  hrFactory.updateCapPerVisit = function(data) {
+    return $http.post(serverUrl.url + "/hr/update_employee_cap", data);
+  };
   
   return hrFactory;
 });
