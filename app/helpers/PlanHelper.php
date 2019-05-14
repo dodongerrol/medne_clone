@@ -1917,77 +1917,108 @@ class PlanHelper {
 
 		public static function getCorporateUserByAllocated($corporate_id, $customer_id) 
 		{
-			$customer_credit_reset_medical = DB::table('credit_reset')
-			->where('id', $customer_id)
-			->where('spending_type', 'medical')
-			->where('user_type', 'company')
-			->orderBy('created_at', 'desc')
-			->first();
+			$users_medical = [];
+			$users_wellness = [];
 
-			if($customer_credit_reset_medical) {
-				$allocation_medical_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
-				->where('credit_reset.user_type', 'employee')
-				->where("corporate_members.corporate_id", $corporate_id)
-				->where("wallet_history.logs", "added_by_hr")
-				->orderBy('credit_reset.created_at', 'desc')
-				->groupBy("corporate_members.user_id")
-				->get();
-			} else {
-				$allocation_medical_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->where("corporate_members.corporate_id", $corporate_id)
-				->where("wallet_history.logs", "added_by_hr")
-				->groupBy("corporate_members.user_id")
-				->get();
+			$users_medical_temp = DB::table('corporate_members')
+								->join('e_wallet', 'e_wallet.UserID', '=', 'corporate_members.user_id')
+								->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+								->where('corporate_members.corporate_id', $corporate_id)
+								->where('wallet_history.logs', 'added_by_hr')
+								->groupBy('corporate_members.user_id')
+								->get();
+
+			foreach ($users_medical_temp as $key => $medical) {
+				$users_medical[] = $medical->user_id;
+			}
+			// return sizeof($users_medical);
+			$users_wellness_temp = DB::table('corporate_members')
+								->join('e_wallet', 'e_wallet.UserID', '=', 'corporate_members.user_id')
+								->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+								->where('corporate_members.corporate_id', $corporate_id)
+								->where('wellness_wallet_history.logs', 'added_by_hr')
+								->groupBy('corporate_members.user_id')
+								->get();
+			
+			foreach ($users_wellness_temp as $key => $medical) {
+				$users_wellness[] = $medical->user_id;
 			}
 
-			$customer_credit_reset_wellness = DB::table('credit_reset')
-			->where('id', $customer_id)
-			->where('spending_type', 'wellness')
-			->where('user_type', 'company')
-			->orderBy('created_at', 'desc')
-			->first();
+			// $array_medical = json_decode(json_encode($users_medical), true);
+			// $array_wellness = json_decode(json_encode($users_wellness), true);
+			$new_array = array_unique(array_merge($users_medical, $users_wellness));
+			return $new_array;
+			// $customer_credit_reset_medical = DB::table('credit_reset')
+			// ->where('id', $customer_id)
+			// ->where('spending_type', 'medical')
+			// ->where('user_type', 'company')
+			// ->orderBy('created_at', 'desc')
+			// ->first();
 
-			if($customer_credit_reset_wellness) {
-				$allocation_wellness_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
-				->where('credit_reset.user_type', 'employee')
-				->where("corporate_members.corporate_id", $corporate_id)
-				->where("wellness_wallet_history.logs", "added_by_hr")
-				->orderBy('credit_reset.created_at', 'desc')
-				->groupBy("corporate_members.user_id")
-				->get();
-			} else {
-				$allocation_wellness_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->where("corporate_members.corporate_id", $corporate_id)
-				->whereIn("wellness_wallet_history.logs", ["added_by_hr"])
-				->groupBy("corporate_members.user_id")
-				->get();
-			}
+			// if($customer_credit_reset_medical) {
+			// 	$allocation_medical_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
+			// 	->where('credit_reset.user_type', 'employee')
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->where("wallet_history.logs", "added_by_hr")
+			// 	->orderBy('credit_reset.created_at', 'desc')
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// } else {
+			// 	$allocation_medical_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->where("wallet_history.logs", "added_by_hr")
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// }
+
+			// $customer_credit_reset_wellness = DB::table('credit_reset')
+			// ->where('id', $customer_id)
+			// ->where('spending_type', 'wellness')
+			// ->where('user_type', 'company')
+			// ->orderBy('created_at', 'desc')
+			// ->first();
+
+			// if($customer_credit_reset_wellness) {
+			// 	$allocation_wellness_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
+			// 	->where('credit_reset.user_type', 'employee')
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->where("wellness_wallet_history.logs", "added_by_hr")
+			// 	->orderBy('credit_reset.created_at', 'desc')
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// } else {
+			// 	$allocation_wellness_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->whereIn("wellness_wallet_history.logs", ["added_by_hr"])
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// }
 
 
 
-			$allocation_users = array_merge($allocation_medical_users, $allocation_wellness_users);
+			// $allocation_users = array_merge($allocation_medical_users, $allocation_wellness_users);
 
-			$id_arr = array();
-			$users_allocation = array();
+			// $id_arr = array();
+			// $users_allocation = array();
 
-			for( $x = 0; $x < count($allocation_users); $x++ ){
-				if( !in_array( $allocation_users[$x]->user_id , $id_arr) ){
-					array_push( $id_arr, $allocation_users[$x]->user_id );
-					array_push( $users_allocation, $allocation_users[$x] );
-				}
-			}
+			// for( $x = 0; $x < count($allocation_users); $x++ ){
+			// 	if( !in_array( $allocation_users[$x]->user_id , $id_arr) ){
+			// 		array_push( $id_arr, $allocation_users[$x]->user_id );
+			// 		array_push( $users_allocation, $allocation_users[$x] );
+			// 	}
+			// }
 
-			return $users_allocation;
+			// return $users_allocation;
 		}
 
 		public static function getResetWallet($user_id, $spending_type, $start, $end, $type)
