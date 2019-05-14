@@ -113,7 +113,8 @@ class CronController extends \BaseController {
 
     public function activateReplaceNewEmployee( )
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('-1 day'));
+        // return $date;
         $employees = 0;
         $dependent_accounts = 0;
         $replace_accounts = 0;
@@ -121,7 +122,7 @@ class CronController extends \BaseController {
                             ->where('start_date', '<=', $date)
                             ->where('replace_status', 0)
                             ->get();
-        
+                            
         foreach ($replacements as $key => $replace) {
             $active_plan = DB::table('customer_active_plan')
                             ->where('customer_active_plan_id', $replace->active_plan_id)
@@ -138,10 +139,11 @@ class CronController extends \BaseController {
             $input['dob'] = $replace->dob;
             $input['postal_code'] = $replace->postal_code;
             $input['plan_start'] = $replace->start_date;
+            // $input['last_day_coverage'] = 
             $medical = $replace->medical;
             $wellness = $replace->wellness;
 
-            $result = PlanHelper::createReplacementEmployee($replace_id, $input, $id, true, $medical, $wellness);
+            $result = PlanHelper::createReplacementEmployeeSchedule($replace_id, $input, $id, true, $medical, $wellness);
             $employees++;
             try {
                 $admin_logs = array(
@@ -189,14 +191,14 @@ class CronController extends \BaseController {
                 DB::table('customer_replace_employee')
                         ->where('customer_replace_employee_id', $deactivate->customer_replace_employee_id)
                         ->update(['deactive_employee_status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
-                PlanHelper::removeDependentAccounts($replace_id, $deactivate->expired_and_activate);
+                PlanHelper::removeDependentAccountsReplace($replace_id, $deactivate->expired_and_activate);
             }
         }
 
         $employee_pending = DB::table('customer_replace_employee')
-                            ->where('start_date', $date)
+                            ->where('start_date', '<=', $date)
                             ->get();
-
+        // return $employee_pending;
         foreach ($employee_pending as $key => $pending) {
            $user = DB::table('user')->where('UserID', $pending->new_id)->first();
 
@@ -210,6 +212,8 @@ class CronController extends \BaseController {
             DB::table('user')->where('UserID', $pending->new_id)->update($user_data);
            }
         }
+
+        // return $employee_pending;
 
         // dependents replacement
         $dependents = DB::table('customer_replace_dependent')
@@ -376,7 +380,7 @@ class CronController extends \BaseController {
     
     public function activateRemoveReplaceEmployee( )
     {
-        $date = date('Y-m-d');
+       $date = date('Y-m-d', strtotime('-1 day'));
 
         $removes = DB::table('customer_replace_employee')
                             ->where('expired_and_activate', $date)
@@ -444,7 +448,7 @@ class CronController extends \BaseController {
 
     public function removeEmployeeSeat( )
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('-1 day'));
         $success = 0;
         $dependent_success = 0;
 
@@ -568,7 +572,7 @@ class CronController extends \BaseController {
 
     public function createAutomaticDeletion( )
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('-1 day'));
         $employee = 0;
         $dependents = 0;
         $withdraw = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 0)->get();
@@ -603,6 +607,7 @@ class CronController extends \BaseController {
                 DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
             }
             $refund_status = false;
+            $keep_seat = false;
 
             if((int)$user->refund_status == 0) {
                 $refund_status = true;
@@ -614,8 +619,9 @@ class CronController extends \BaseController {
                 PlanHelper::updateNewCustomerPlanStatusDeleteUser($user->user_id, $refund_status);
             } else if((int)$user->vacate_seat == 1) {
                 PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($user->user_id);
+                $keep_seat = true;
             }
-            PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw);
+            PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw, $refund_status, $keep_seat);
             $employee++;
 
             try {
@@ -632,6 +638,7 @@ class CronController extends \BaseController {
 
         // remove refunded = 2
         $removes = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
+        // return $removes;
         foreach ($removes as $key => $removed_employee) {
             $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
             // set company members removed to 1
@@ -651,10 +658,15 @@ class CronController extends \BaseController {
                 );
                 // update user and set to inactive
                 DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
-                PlanHelper::removeDependentAccounts($removed_employee->user_id, $removed_employee->date_withdraw);
                 if((int)$removed_employee->vacate_seat == 1) {
                     PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($removed_employee->user_id);
                 }
+            }
+
+            try {
+                PlanHelper::removeDependentAccounts($removed_employee->user_id, $removed_employee->date_withdraw, true, true);
+            } catch(Exception $e) {
+                // return $e->getMessage();
             }
             // update customer plan draw to 1
         }
@@ -755,6 +767,46 @@ class CronController extends \BaseController {
         }
 
         return array('status' => true, 'employee' => $employee, 'dependent' => $dependents);
+    }
+
+    public function removeDepdentsEmployeeAccounts( )
+    {
+        $date = date('Y-m-d');
+
+        $withdraws = DB::table('customer_plan_withdraw')
+                        ->where('date_withdraw', '<', $date)
+                        // ->where('refund_status', 0)
+                        ->get();
+
+        $format = 0;
+
+        foreach ($withdraws as $key => $employee) {
+            $type = null;
+            // $dependents = DB::table('employee_family_coverage_sub_accounts')
+                            // ->where('deleted', 0)
+                            // ->get();
+
+            if((int)$employee->refund_status == 1) {
+                $type = "refund";
+                PlanHelper::removeDependentAccounts($employee->user_id, $employee->date_withdraw, true, false);
+                // foreach ($dependents as $key => $dependent) {
+                // }
+            } else {
+                $type = "no_refund";
+                PlanHelper::removeDependentAccounts($employee->user_id, $employee->date_withdraw, false, true);
+            }
+
+
+            // $temp = array(
+            //     'user_id' => $employee->user_id,
+            //     'dependents'    => $dependents
+            // );
+
+            // array_push($format, $temp);
+            $format++;
+        }
+
+        return $format;
     }
 
 

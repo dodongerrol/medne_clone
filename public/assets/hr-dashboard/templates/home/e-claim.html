@@ -77,7 +77,7 @@
 		<div class="col-md-12">
 			<div class="body-container">
 				<p class="color-gray text-left weight-700">
-					<span style="margin-right: 10px;">Select a timeframe </span>
+					<span style="margin-right: 10px;">Select a timeframe (Claim Date)</span>
 				</p>
 			</div>
 		</div>
@@ -209,7 +209,9 @@
 
 						<p class="color-black3 font-14 weight-700">
 							<span class="font-medium2">
-								<span ng-bind="filtered_trans.length">154</span> Total Transactions 
+								<span ng-if="!isLoading" ng-bind="filtered_trans.length">154</span> 
+								<span ng-if="isLoading">0</span> 
+								Total Transactions 
 							</span>
 
 							<span class="pull-right">Total Claim 
@@ -229,8 +231,10 @@
 						</p>
 
 						<div style="text-align: right;">
-							<button class="btn btn-csv" ng-json-export-excel data="csv_e_claim_transactions" report-fields="{
-								member: 'MEMBER', 
+							<button class="btn btn-csv" ng-json-export-excel data="csv_dl" report-fields="{
+								member: 'MEMBER',
+								claim_member_type: 'CLAIM MEMBER TYPE',
+								employee_dependent_name: 'EMPLOYEE',
 								claim_date: 'CLAIM DATE', 
 								visit_date: 'VISIT DATE',
 								transaction_id: 'TRANSACTION #',
@@ -398,15 +402,19 @@
 										<div ng-if="list.showReasonInput" class="form-group reason-wrapper" style="text-align: left;display:block;width: 240px;margin: 0 auto;">
 											<label>Reason</label>
 											<input type="text" ng-model="list.reason" class="form-control" style="border-radius: 0;border-width: 0 0 1px 0;" />
-											<button class="btn font-medium" ng-click="hideReasonInput(list)">Cancel</button>
-											<button class="btn btn-reject font-medium" style="background: #de6f6f" ng-click="updateStatusToReject(list,2)">Proceed</button>
+											<div style="width: 100%;text-align: center;">
+												<button class="btn font-medium" ng-click="hideReasonInput(list)">Cancel</button>
+												<button class="btn btn-reject font-medium" style="background: #de6f6f" ng-click="updateStatusToReject(list,2)">Proceed</button>
+											</div>
 										</div>
 
 										<div ng-if="list.showRemarksInput" class="form-group reason-wrapper" style="text-align: left;display:block;width: 240px;margin: 0 auto;">
 											<label>Remarks</label>
 											<input type="text" ng-model="list.reason" class="form-control" style="border-radius: 0;border-width: 0 0 1px 0;" />
-											<button class="btn font-medium" ng-click="hideReasonInput(list)">Cancel</button>
-											<button class="btn btn-reject font-medium" style="background: #0086D3" ng-click="updateStatusToApprove(list,1)">Proceed</button>
+											<div style="width: 100%;text-align: center;">
+												<button class="btn font-medium" ng-click="hideReasonInput(list)">Cancel</button>
+												<button class="btn btn-reject font-medium" style="background: #0086D3" ng-click="updateStatusToApprove(list,1)">Proceed</button>
+											</div>
 										</div>
 									</div>
 

@@ -282,44 +282,51 @@ class TransactionController extends BaseController {
 				// if($input['multiple_procedures'] == false) {
 				$peak_amount = 0;
 				// if((int)$clinic_data->peak_hour_status == 1) {
-				$result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $input['transaction_date']);
-				if($result['status']) {
-					$peak_amount = $result['amount'];
-					$clinic_peak_status = true;
+				// $result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $input['transaction_date']);
+				// if($result['status']) {
+				// 	$peak_amount = $result['amount'];
+				// 	$clinic_peak_status = true;
 
-					// check user company peak status
-					$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
-					// return var_dump($user_peak);
-					if($user_peak) {
-						if((int)$clinic_data->co_paid_status == 1) {
-							$gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
-							$co_paid_amount = $clinic_data->peak_hour_amount + $gst;
-							$co_paid_status = $clinic_data->co_paid_status;
-							$consultation_fees = $co_paid_amount;
-						} else {
-							$co_paid_amount = $clinic_data->peak_hour_amount;
-							$co_paid_status = $clinic_data->co_paid_status;
-						}
-					} else {
-						if((int)$clinic_data->co_paid_status == 1) {
-							$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-							$co_paid_amount = $clinic_data->co_paid_amount + $gst;
-							$co_paid_status = $clinic_data->co_paid_status;
-						} else {
-							$co_paid_amount = $clinic_data->co_paid_amount;
-							$co_paid_status = $clinic_data->co_paid_status;
-						}
-					}
-				} else {
-					if((int)$clinic_data->co_paid_status == 1) {
-						$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-						$co_paid_amount = $clinic_data->co_paid_amount + $gst;
-						$co_paid_status = $clinic_data->co_paid_status;
-					} else {
-						$co_paid_amount = $clinic_data->co_paid_amount;
-						$co_paid_status = $clinic_data->co_paid_status;
-					}
-				}
+				// 	// check user company peak status
+				// 	$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
+				// 	// return var_dump($user_peak);
+				// 	if($user_peak) {
+				// 	  if((int)$clinic_data->co_paid_status == 1) {
+				// 	    $gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
+				// 	    $co_paid_amount = $clinic_data->peak_hour_amount + $gst;
+				// 	    $co_paid_status = $clinic_data->co_paid_status;
+				// 	  } else {
+				// 	    $co_paid_amount = $clinic_data->peak_hour_amount;
+				// 	    $co_paid_status = $clinic_data->co_paid_status;
+				// 	  }
+				// 	  $consultation_fees = $co_paid_amount;
+				// 	} else {
+				// 	  if((int)$clinic_data->co_paid_status == 1) {
+				// 	    $gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
+				// 	    $co_paid_amount = $clinic_data->co_paid_amount + $gst;
+				// 	    $co_paid_status = $clinic_data->co_paid_status;
+				// 	  } else {
+				// 	    $co_paid_amount = $clinic_data->co_paid_amount;
+				// 	    $co_paid_status = $clinic_data->co_paid_status;
+				// 	  }
+				// 	}
+				// } else {
+				// 	if((int)$clinic_data->co_paid_status == 1) {
+				// 	  $gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
+				// 	  $co_paid_amount = $clinic_data->co_paid_amount + $gst;
+				// 	  $co_paid_status = $clinic_data->co_paid_status;
+				// 	} else {
+				// 	  $co_paid_amount = $clinic_data->co_paid_amount;
+				// 	  $co_paid_status = $clinic_data->co_paid_status;
+				// 	}
+				// }
+
+				$clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $input['transaction_date'], $owner_id);
+				$peak_amount = $clinic_co_payment['peak_amount'];
+				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
+				$co_paid_status = $clinic_co_payment['co_paid_status'];
+				$consultation_fees = $clinic_co_payment['consultation_fees'];
+				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 
 				$temp = array(
 					'UserID'				=> $input['id'],
@@ -454,43 +461,51 @@ class TransactionController extends BaseController {
 				}
 
 				$peak_amount = 0;
-				$result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $transaction_data->date_of_transaction);
-				if($result['status']) {
-					$peak_amount = $result['amount'];
-					$clinic_peak_status = true;
+				$clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $transaction_data->date_of_transaction, $owner_id);
+				$peak_amount = $clinic_co_payment['peak_amount'];
+				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
+				$co_paid_status = $clinic_co_payment['co_paid_status'];
+				$consultation_fees = $clinic_co_payment['consultation_fees'];
+				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
+				// $result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $transaction_data->date_of_transaction);
+				// if($result['status']) {
+				// 	$peak_amount = $result['amount'];
+				// 	$clinic_peak_status = true;
 
-					// check user company peak status
-					$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
-					if($user_peak) {
-						if((int)$clinic_data->co_paid_status == 1) {
-							$gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
-							$co_paid_amount = $clinic_data->peak_hour_amount + $gst;
-							$co_paid_status = $clinic_data->co_paid_status;
-							$consultation_fees = $co_paid_amount;
-						} else {
-							$co_paid_amount = $clinic_data->peak_hour_amount;
-							$co_paid_status = $clinic_data->co_paid_status;
-						}
-					} else {
-						if((int)$clinic_data->co_paid_status == 1) {
-							$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-							$co_paid_amount = $clinic_data->co_paid_amount + $gst;
-							$co_paid_status = $clinic_data->co_paid_status;
-						} else {
-							$co_paid_amount = $clinic_data->co_paid_amount;
-							$co_paid_status = $clinic_data->co_paid_status;
-						}
-					}
-				} else {
-					if((int)$clinic_data->co_paid_status == 1) {
-						$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-						$co_paid_amount = $clinic_data->co_paid_amount + $gst;
-						$co_paid_status = $clinic_data->co_paid_status;
-					} else {
-						$co_paid_amount = $clinic_data->co_paid_amount;
-						$co_paid_status = $clinic_data->co_paid_status;
-					}
-				}
+				// 	// check user company peak status
+				// 	$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
+				// 	// return var_dump($user_peak);
+				// 	if($user_peak) {
+				// 		if((int)$clinic_data->co_paid_status == 1) {
+				// 			$gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
+				// 			$co_paid_amount = $clinic_data->peak_hour_amount + $gst;
+				// 			$co_paid_status = $clinic_data->co_paid_status;
+
+				// 		} else {
+				// 			$co_paid_amount = $clinic_data->peak_hour_amount;
+				// 			$co_paid_status = $clinic_data->co_paid_status;
+				// 		}
+				// 		$consultation_fees = $co_paid_amount;
+				// 	} else {
+				// 		if((int)$clinic_data->co_paid_status == 1) {
+				// 			$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
+				// 			$co_paid_amount = $clinic_data->co_paid_amount + $gst;
+				// 			$co_paid_status = $clinic_data->co_paid_status;
+				// 		} else {
+				// 			$co_paid_amount = $clinic_data->co_paid_amount;
+				// 			$co_paid_status = $clinic_data->co_paid_status;
+				// 		}
+				// 	}
+				// } else {
+				// 	if((int)$clinic_data->co_paid_status == 1) {
+				// 		$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
+				// 		$co_paid_amount = $clinic_data->co_paid_amount + $gst;
+				// 		$co_paid_status = $clinic_data->co_paid_status;
+				// 	} else {
+				// 		$co_paid_amount = $clinic_data->co_paid_amount;
+				// 		$co_paid_status = $clinic_data->co_paid_status;
+				// 	}
+				// }
 
 				$temp = array(
 					'procedure_cost' 	=> $input['amount'],
@@ -1814,6 +1829,7 @@ class TransactionController extends BaseController {
 				->where(function($query) use ($clinic_id, $nric, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
 					->where('user.NRIC', 'like', '%'.$nric.'%')
+					->where('transaction_history.paid', 1)
 					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.created_at', '>=', $start)
 					->where('transaction_history.created_at', '<=', $end);
@@ -1821,6 +1837,7 @@ class TransactionController extends BaseController {
 				->orWhere(function($query) use ($clinic_id, $nric, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
 					->where('user.NRIC', 'like', '%'.$nric.'%')
+					->where('transaction_history.paid', 1)
 					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.claim_date', '>=', $start)
 					->where('transaction_history.claim_date', '<=', $end);
@@ -1834,6 +1851,7 @@ class TransactionController extends BaseController {
 				->where(function($query) use ($clinic_id, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
 					->where('transaction_history.procedure_cost', ">=", 0)
+					->where('transaction_history.paid', 1)
 					->where('transaction_history.claim_date', '>=', $start)
 					->where('transaction_history.claim_date', '<=', $end);
 					
@@ -1841,6 +1859,7 @@ class TransactionController extends BaseController {
 				->orWhere(function($query) use ($clinic_id, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
 					->where('transaction_history.procedure_cost', ">=", 0)
+					->where('transaction_history.paid', 1)
 					->where('transaction_history.created_at', '>=', $start)
 					->where('transaction_history.created_at', '<=', $end);
 				})
@@ -1854,6 +1873,7 @@ class TransactionController extends BaseController {
 			->join('user', 'user.UserID', '=', 'transaction_history.UserID')
 			->where('transaction_history.ClinicID', $clinic_id)
 			->where('user.NRIC', 'like', '%'.$input['nric'].'%')
+			->where('transaction_history.paid', 0)
 			->where('transaction_history.procedure_cost', ">=", 0)
 				// ->where('transaction_history.date_of_transaction', '>=', $start)
 				// ->where('transaction_history.date_of_transaction', '<=', $end)

@@ -11,17 +11,24 @@
 |
 */
 
+// test send e-claim emial
+Route::post('test_send_e_claim', 'testcontroller@testEclaimSendEmail');
+// get currencies
+Route::get('get/currency_lists', 'testcontroller@getCurrencyLists');
+// Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
 Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
+// Route::post('upload_image', 'testcontroller@uploadImage');
+// Route::get('update_clinic_default_image', 'testcontroller@updateClinicDefaultImage');
 
-Route::get('test_employee_reset', 'testcontroller@getUserEmployee');
+// Route::get('test_employee_reset', 'testcontroller@getUserEmployee');
 // test rouote for sms password reset
-Route::post('test_sms', 'testcontroller@testSMSsend');
+// Route::post('test_sms', 'testcontroller@testSMSsend');
 // test route for sms enroll
-Route::post('test_sms_enroll', 'testcontroller@testSendSmsEnroll');
+// Route::post('test_sms_enroll', 'testcontroller@testSendSmsEnroll');
 // test nric
-Route::post('test_nric', 'testcontroller@testNRIC');
+// Route::post('test_nric', 'testcontroller@testNRIC');
 // test employee plan coverage status
-Route::get('test_employee_plan_coverage', 'testcontroller@testGetuserPlanCoverage');
+// Route::get('test_employee_plan_coverage', 'testcontroller@testGetuserPlanCoverage');
 
 // cron jobs
 // care plan expiration
@@ -46,6 +53,9 @@ Route::get('app/cron/activate_remove_employee', 'CronController@activateRemoveRe
 // cron for deactive employee seat
 Route::get('app/cron/remove_employee_seat', 'CronController@removeEmployeeSeat');
 // Route::get('app/cron/withdrawal_deletion_account', 'BenefitsDashboardController@createAutomaticDeletion');
+
+// remove dependents from employee deletion
+Route::get('app/cron/remove_dependent_from_employee', 'CronController@removeDepdentsEmployeeAccounts');
 
 // test api for deactivate user
 Route::get('test_deactivate_user', 'HomeController@testDeactivateUser');
@@ -430,42 +440,42 @@ Route::get('app/corporate/get_doctor_procedures/{id}', 'CorporateController@getD
 
 // landing page
 
-Route::get('/', 'HomeController@index');
-Route::get('/index', 'HomeController@index');
-Route::get('/health-professionals', 'HomeController@healthProfessionals');
-Route::get('/corporate', 'HomeController@corporate');
-Route::get('/privacy-policy', 'HomeController@privacy');
-Route::get('/promo', 'HomeController@promo');
-Route::get('/terms', 'HomeController@terms');
-Route::get('/get_quote', 'HomeController@quote');
+// Route::get('/', 'HomeController@index');
+// Route::get('/index', 'HomeController@index');
+// Route::get('/health-professionals', 'HomeController@healthProfessionals');
+// Route::get('/corporate', 'HomeController@corporate');
+// Route::get('/privacy-policy', 'HomeController@privacy');
+// Route::get('/promo', 'HomeController@promo');
+// Route::get('/terms', 'HomeController@terms');
+// Route::get('/get_quote', 'HomeController@quote');
 
 
 // Route::get('/', 'HomeController@temp_index');
 Route::get('/', 'HomeController@introPageLogin');
-Route::get('/employers', 'HomeController@temp_index');
-Route::get('/individuals', 'HomeController@individual');
-Route::get('/health-partner', 'HomeController@health_partner');
-Route::get('/our-story', 'HomeController@our_story');
-Route::get('/get-mednefits', 'HomeController@get_mednefits');
+// Route::get('/employers', 'HomeController@temp_index');
+// Route::get('/individuals', 'HomeController@individual');
+// Route::get('/health-partner', 'HomeController@health_partner');
+// Route::get('/our-story', 'HomeController@our_story');
+// Route::get('/get-mednefits', 'HomeController@get_mednefits');
 
-Route::get('/provider-terms', 'HomeController@provider_terms');
-Route::get('/user-terms', 'HomeController@user_terms');
-Route::get('/privacy', 'HomeController@privacy_policy');
-Route::get('/insurance-license', 'HomeController@insurance_license');
+// Route::get('/provider-terms', 'HomeController@provider_terms');
+// Route::get('/user-terms', 'HomeController@user_terms');
+// Route::get('/privacy', 'HomeController@privacy_policy');
+// Route::get('/insurance-license', 'HomeController@insurance_license');
 
-Route::get('/buy-insurance', 'HomeController@buy_insurance');
-Route::get('/bonus-credits', 'HomeController@bonus_credits');
-Route::get('/health-benefits', 'HomeController@health_benefits');
-Route::get('/our-health-partners', 'HomeController@our_health_partners');
+// Route::get('/buy-insurance', 'HomeController@buy_insurance');
+// Route::get('/bonus-credits', 'HomeController@bonus_credits');
+// Route::get('/health-benefits', 'HomeController@health_benefits');
+// Route::get('/our-health-partners', 'HomeController@our_health_partners');
 
-Route::get('/how-it-works', 'HomeController@how_it_works');
+// Route::get('/how-it-works', 'HomeController@how_it_works');
 
-Route::get('/outpatient-care', 'HomeController@outpatient_care');
-Route::get('/hospital-care', 'HomeController@hospital_care');
-Route::get('/try-three-months', 'HomeController@try_three_months');
-Route::get('/mednefits-care-plan', 'HomeController@mednefits_care_plan');
-Route::get('/mednefits-employer', 'HomeController@mednefits_employer');
-Route::get('/mednefits-care-bundle-corporate-insurance', 'HomeController@mednefits_care_bundle_corporate');
+// Route::get('/outpatient-care', 'HomeController@outpatient_care');
+// Route::get('/hospital-care', 'HomeController@hospital_care');
+// Route::get('/try-three-months', 'HomeController@try_three_months');
+// Route::get('/mednefits-care-plan', 'HomeController@mednefits_care_plan');
+// Route::get('/mednefits-employer', 'HomeController@mednefits_employer');
+// Route::get('/mednefits-care-bundle-corporate-insurance', 'HomeController@mednefits_care_bundle_corporate');
 
 Route::post('app/contact','HomeController@contactMedicloud');
 Route::post('app/subscribe','HomeController@subscribeMedicloud');
@@ -988,6 +998,12 @@ Route::group(array('prefix' => 'v2'), function()
 		    Route::get("user/member_lists", 'Api_V1_AuthController@getFamilCoverageAccounts');
 		    // save device token
 			Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
+			// get currency lists
+			Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
+			// get app notification message
+			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
+			// update notification to read
+			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
 	 	});
 	});
 });

@@ -842,7 +842,8 @@ app.directive("employeeOverviewDirective", [
               .then(function(response){
                 // console.log( response );
                 if( response.data.status ){
-                  swal('Success!', response.data.message, 'success');
+                  // swal('Success!', response.data.message, 'success');
+                  swal('Success!', "Member has successfully scheduled for remove and credits updated according.", 'success');
                   $('.health-spending-account-wrapper').hide();
                   $('.prev-next-buttons-container').hide();
                   $('.employee-information-wrapper').fadeIn();
@@ -853,6 +854,7 @@ app.directive("employeeOverviewDirective", [
                 }
               });
           }else{
+            swal('Success!', "Member has successfully scheduled for remove.", 'success');
             $('.health-spending-account-wrapper').hide();
             $('.prev-next-buttons-container').hide();
             $('.employee-information-wrapper').fadeIn();
@@ -1432,7 +1434,7 @@ app.directive("employeeOverviewDirective", [
           $('.last-day-coverage-datepicker').datepicker().on('hide',function(evt){
             var val = $(this).val();
             if( val == "" ){
-              $('.last-day-coverage-datepicker').datepicker('setDate', moment().format('DD/MM/YYYY') );
+              $('.last-day-coverage-datepicker').datepicker('setDate', moment( scope.remove_employee_data.last_day_coverage ).format('MM/DD/YYYY') );
             }
           })
 

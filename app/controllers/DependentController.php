@@ -54,7 +54,7 @@ class DependentController extends \BaseController {
 
 				$temp_file = time().$file->getClientOriginalName();
 				$file->move('excel_upload', $temp_file);
-				$data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->get();
+				$data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
 				// return $data_array;
 				$headerRow = $data_array->first()->keys();
 				$temp_users = [];
@@ -252,6 +252,8 @@ class DependentController extends \BaseController {
 					$user['plan_start'] = $user['start_date'];
 					$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
+					$mobile = preg_replace('/\s+/', '', $user['mobile']);
+
 					$temp_enrollment_data = array(
 						'customer_buy_start_id'	=> $customer_id,
 						'active_plan_id'		=> $customer_active_plan_id,
@@ -261,7 +263,7 @@ class DependentController extends \BaseController {
 						'nric'					=> $user['nric'],
 						'dob'					=> $user['dob'],
 						'email'					=> $user['email'],
-						'mobile'				=> trim($user['mobile']),
+						'mobile'				=> trim($mobile),
 						'mobile_area_code'		=> trim($user['mobile_area_code']),
 						'job_title'				=> $user['job_title'],
 						'credits'				=> $user['medical_credits'],

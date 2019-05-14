@@ -469,6 +469,18 @@ app.directive('eclaimSubmitDirective', [
         
         
 
+
+        $('body').on('keypress', '.provider-input', function (event) {
+        	console.log('sdfds');
+				    var regex = new RegExp("^[a-zA-Z0-9]+$");
+				    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+				    if (!regex.test(key)) {
+				    	scope.showToast( 'Special characters are not allowed for provider name.' );
+				       event.preventDefault();
+				       return false;
+				    }
+				});
+
 			}
 		}
 	}

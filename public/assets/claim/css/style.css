@@ -306,8 +306,7 @@ span.arrow-right {
 
 .table-trans-preview th:nth-child(3),
 .table-trans-preview td:nth-child(3),
-.table-trans-preview th:nth-child(4),
-.table-trans-preview td:nth-child(4),
+
 .table-registration th:nth-child(3),
 .table-registration td:nth-child(3),
 .table-registration th:nth-child(4),
@@ -323,6 +322,17 @@ span.arrow-right {
   padding-top: 10px;
   padding-bottom: 10px;
   font-weight: bold;
+}
+
+.table-trans-preview .btn-submit{
+  background: #265a88!important;
+  border-radius: 0px;
+  color: #FFF;
+}
+.table-trans-preview .btn-remove{
+  background: var(--danger) !important;
+  border-radius: 0px;
+  color: #FFF;
 }
 
 /* modal styles */
@@ -636,6 +646,132 @@ span.arrow-right {
     color: #999;
   }
 /*======================*/
+
+/*===== SUMMARY CLAIM MODAL =====*/
+  #summary-claim-modal .modal-dialog{
+    width: 550px;
+  }
+  #summary-claim-modal .modal-content{
+    margin-bottom: 50px;
+    top: auto;
+  }
+  #summary-claim-modal .modal-header{
+    background: #0492CF;
+    border-radius: 4px 4px 0 0;
+  }
+  #summary-claim-modal .modal-header p{
+    margin: 0;
+    font-size: 18px;
+    text-align: center;
+  }
+  #summary-claim-modal .modal-body{
+    background: #FFF;
+    padding: 0;
+    box-sizing: border-box !important;
+  }
+  #summary-claim-modal .modal-body *{
+    box-sizing: border-box !important;
+  }
+  #summary-claim-modal .top-content{
+    background: #f7f7f7;
+    padding: 10px 40px;
+  }
+  #summary-claim-modal .top-content .row-summary{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 10px 0;
+  }
+  #summary-claim-modal .top-content .row-summary:not(:last-child){
+    border-bottom: 1px solid #d9d9d9;
+  }
+  #summary-claim-modal .top-content .row-summary .img-wrapper{
+    width: 30px;
+    margin-right: 20px;
+  }
+  #summary-claim-modal .top-content .row-summary .img-wrapper img{
+    width: 100%;
+  }
+  #summary-claim-modal .top-content .row-summary p{
+    margin: 0;
+    flex: 1;
+  }
+  #summary-claim-modal .top-content .row-summary p label{
+    display: inline-block;
+    vertical-align: middle;
+    width: 150px;
+    color: #999;
+  }
+  #summary-claim-modal .top-content .row-summary p span{
+    display: inline-block;
+    font-size: 18px;
+  }
+  #summary-claim-modal .middle-content{
+    padding: 20px 40px 0 40px;
+    width: 100%;
+    display: inline-block;
+  }
+  #summary-claim-modal .middle-content .column-details{
+    float: left;
+    width: 45%;
+    margin: 10px 10px 10px 0;
+    height: 80px;
+  }
+  #summary-claim-modal .middle-content .column-details label{
+    color: #999;
+  }
+  #summary-claim-modal .middle-content .column-details p{
+    margin: 0;
+    font-size: 18px;
+  }
+  #summary-claim-modal .bottom-content{
+    display: flex;
+    width: 100%;
+    padding: 0px 40px 20px 40px;
+  }
+  #summary-claim-modal .bottom-content label{
+    color: #999;
+    margin-bottom: 10px;
+  }
+  #summary-claim-modal .bottom-content p{
+    margin: 0;
+    font-size: 18px;
+  }
+  #summary-claim-modal .bottom-content .item{
+    flex: 2;
+  }
+  #summary-claim-modal .bottom-content .item2{
+    flex: 1;
+  }
+
+  #summary-claim-modal .bottom-content .item-content{
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+  }
+  #summary-claim-modal .bottom-content .item-content .img-wrapper{
+    width: 35px;
+    margin-right: 20px;
+  }
+  #summary-claim-modal .bottom-content .item-content .img-wrapper img{
+    width: 100%;
+  }
+  #summary-claim-modal .modal-footer{
+    border: none;
+    padding: 15px 40px !important;
+    margin: 0 !important;
+  }
+  #summary-claim-modal .modal-footer button{
+    background: #265a88;
+    color: #FFF;
+    font-weight: 700;
+    border-radius: 2px;
+    padding: 10px 15px;
+  }
+  #summary-claim-modal .modal-footer button.btn-cancel-claim{
+    background: #d42f2f;
+  }
+/*===============================*/
 
 
 /* override bootsrap */

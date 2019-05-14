@@ -32,6 +32,7 @@ app.directive("claimDirective", [
         scope.selected_hour = parseInt(moment().format("hh"));
         scope.selected_minute = parseInt(moment().format("mm"));
         scope.searchTrans_text = "";
+        scope.selected_submit_data = {};
 
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
@@ -143,6 +144,12 @@ app.directive("claimDirective", [
 
           return true;
         }
+        scope.toggleClaimSummaryModal = function( data, index ){
+          // console.log( data );
+          scope.selected_submit_data = data;
+          scope.selected_submit_data.index = index;
+          $('#summary-claim-modal').modal('show');
+        }
 
 
         // === REQUESTS === //
@@ -173,6 +180,64 @@ app.directive("claimDirective", [
                   });
               }
             });
+          }
+          scope.removeTransPreview = function(data) {
+            swal({
+              title: "Confirm",
+              text: "Are you sure you want to delete this transaction?",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Yes",
+              cancelButtonText: "Cancel",
+              closeOnConfirm: true,
+              closeOnCancel: true
+            },
+            function(isConfirm) {
+              if (isConfirm) {
+                // delete transaction
+                $http.post(base_url + "clinic/delete_transaction", { transaction_id: data.transaction_id })
+                  .success(function(response) {
+                    swal("Success!", response.message, "success");
+                    scope.claim_list.splice( scope.claim_list.indexOf(data), 1 );
+                  });
+              }
+            });
+          };
+          scope.submitSummaryClaimData = function( data ){
+            console.log( data );
+            swal({
+              title: "Are you sure?",
+              text: "This transaction data will be saved.",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Yes!",
+              cancelButtonText: "Cancel",
+              closeOnConfirm: true,
+              closeOnCancel: true
+            },
+            function(isConfirm) {
+              if (isConfirm) {
+                data.currency_type = scope.clinic.currency_type;
+                data.currency_amount = (data.currency_type == 'sgd') ? data.amount : data.amount * 3;
+                scope.showLoading();
+                $http.post(base_url + "clinic/save/claim/transaction", data)
+                  .success(function(response) {
+                    scope.hideLoading();
+                    if(!response.status) {
+                      swal("Oooops!", response.message, "error");
+                    } else {
+                      scope.getSuccessfullTransactions();
+                      scope.claim_list.splice( scope.claim_list.indexOf(data), 1 );
+                      swal("Success!","The Transaction Successfully Saved.","success");
+                      $('#modalManual').modal('hide');
+                      $('#summary-claim-modal').modal('hide');
+                    }
+                  });
+              }
+            }
+          );
           }
           scope.addClaim = function( ) {
             console.log( scope.add_claim_data );
@@ -210,6 +275,7 @@ app.directive("claimDirective", [
                           scope.getSuccessfullTransactions();
                           swal("Success!","The Transaction Successfully Saved.","success");
                           $('#modalManual').modal('hide');
+                          $('#summary-claim-modal').modal('hide');
                         }
                       });
                   }

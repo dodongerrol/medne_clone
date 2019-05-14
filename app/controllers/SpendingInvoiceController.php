@@ -149,7 +149,7 @@ class SpendingInvoiceController extends \BaseController {
 				'TRANSACTION ID'	=> $trans['transaction_id'],
 				'MEMBER' 	=> $trans['member'],
 				'DATE'		=> $trans['date_of_transaction'],
-				'ITEMS/SERVICE' => $trans['clinic_type'].' - '.$trans['clinic_type_and_service'],
+				'ITEMS/SERVICE' => $trans['service'],
 				'PROVIDER'	=> $trans['clinic_name'],
 				'TOTAL AMOUNT'	=> $trans['total_amount']
 			);
@@ -401,7 +401,7 @@ class SpendingInvoiceController extends \BaseController {
         $format['statement'] = date('d F', strtotime($statement->statement_start_date)).' - '.date('d F Y', strtotime($statement->statement_end_date));
         $format['transaction_details'] = $e_claims['e_claim_transactions'];
 
-        // return View::make('pdf-download/hr-statement-full-eclaim', $format);
+        // return View::make('pdf-download.hr-statement-full-eclaim', $format);
 
         $pdf = PDF::loadView('pdf-download.hr-statement-full-eclaim', $format);
             $pdf->getDomPDF()->get_option('enable_html5_parser');

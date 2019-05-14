@@ -370,41 +370,54 @@ class PlanHelper {
 		->first();
 
 		if($wallet_reset) {
+			$wallet_history_id = $wallet_reset->wallet_history_id;
                 // get all medical credits transactions from transaction history
 			$e_claim_spent = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'e_claim_transaction')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+                            ->where('wallet_history.wallet_id', $wallet->wallet_id)
+                            ->where('wallet_history.where_spend', 'e_claim_transaction')
+                            ->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+							// ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+							->sum('credit');
 
 			$in_network_temp_spent = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'in_network_transaction')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+                            ->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.where_spend', 'in_network_transaction')
+							->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+							// ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+							->sum('credit');
+
 			$credits_back = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'credits_back_from_in_network')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+                            ->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wallet_history.where_spend', 'credits_back_from_in_network')
+							->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+							// ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+							->sum('credit');
 			$in_network_spent = $in_network_temp_spent - $credits_back;
 
 			$temp_allocation = DB::table('e_wallet')
 			->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
 			->where('e_wallet.UserID', $user_id)
 			->whereIn('wallet_history.logs', ['added_by_hr'])
-			->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+			->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+			// ->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
 			->sum('wallet_history.credit');
 
 			$deducted_allocation = DB::table('e_wallet')
 			->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
 			->where('e_wallet.UserID', $user_id)
 			->whereIn('wallet_history.logs', ['deducted_by_hr'])
-			->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+			->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+			// ->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
 			->sum('wallet_history.credit');
 			$pro_allocation_deduction = DB::table('wallet_history')
 			->where('wallet_id', $wallet->wallet_id)
-			->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+			->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+			// ->where('wallet_history.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
 			->where('logs', 'pro_allocation_deduction')
 			->sum('credit');
 		} else {
@@ -860,7 +873,7 @@ class PlanHelper {
 		$email_error = false;
 		$email_message = '';
 
-		if(is_null($user['mobile'])) {
+		if(!empty($user['mobile'])) {
 			$mobile_error = false;
 			$mobile_message = '';
 		} else {
@@ -1410,8 +1423,25 @@ class PlanHelper {
 					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 					$email_data['pw'] = $password;
 					EmailHelper::sendEmail($email_data);
-					// $api = "https://api.medicloud.sg/employees/welcome_email";
-					// \httpLibrary::postHttp($api, $email_data, []);
+				} else {
+					if($data_enrollee->mobile) {
+						$user = DB::table('user')->where('UserID', $user_id)->first();
+						$phone = SmsHelper::formatNumber($user);
+
+						if($phone) {
+							$compose = [];
+							$compose['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+							$compose['company'] = $company->company_name;
+							$compose['plan_start'] = date('F d, Y', strtotime($start_date));
+							$compose['email'] = $data_enrollee->email;
+							$compose['nric'] = $data_enrollee->nric;
+							$compose['password'] = $password;
+							$compose['phone'] = $phone;
+
+							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+							$result_sms = SmsHelper::sendSms($compose);
+						}
+					}
 				}
 			} else if($communication_type == "sms"){
 				if($data_enrollee->mobile) {
@@ -1430,10 +1460,6 @@ class PlanHelper {
 
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 						$result_sms = SmsHelper::sendSms($compose);
-
-						// if($result_sms['status'] == true) {
-						// 	return array('status' => true, 'message' => 'Employee Enrolled.', 'total_dependents_enrolled' => $total_dependents_count, 'total_employee_enrolled' => 1);
-						// }
 					}
 				}				
 			} else {
@@ -1709,10 +1735,12 @@ class PlanHelper {
 
 			if($employee_credit_reset_medical) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
+				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
 				$wallet_history = DB::table('wallet_history')
-				->where('wallet_id', $wallet_id)
-				->where('created_at', '>=', date('Y-m-d', strtotime($start)))
-				->get();
+								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+								->where('e_wallet.UserID', $user_id)
+								->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet_id)->get();
 			}
@@ -1780,9 +1808,12 @@ class PlanHelper {
 			->first();
 			if($employee_credit_reset_wellness) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
+				$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
 				$wallet_history = DB::table('wellness_wallet_history')
-				->where('wallet_id', $wallet_id)
-				->where('created_at', '>=', date('Y-m-d', strtotime($start)))
+				->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+				->where('e_wallet.UserID', $user_id)
+				->where('wellness_wallet_history.wellness_wallet_history_id',  '>=', $wallet_history_id)
+				// ->where('created_at', '>=', date('Y-m-d', strtotime($start)))
 				->get();
 			} else {
 				$wallet_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet_id)->get();
@@ -1875,7 +1906,7 @@ class PlanHelper {
 		}
 		public static function calculateInvoicePlanPrice($default_price, $start, $end)
 		{
-			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime($end))));
+			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
 			$days = $diff->format('%a');
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 			$remaining_days = $days;
@@ -1883,79 +1914,127 @@ class PlanHelper {
 			$cost_plan_and_days = ($default_price / $total_days);
 			return $cost_plan_and_days * $remaining_days;
 		}
+
 		public static function getCorporateUserByAllocated($corporate_id, $customer_id) 
 		{
-			$customer_credit_reset_medical = DB::table('credit_reset')
-			->where('id', $customer_id)
-			->where('spending_type', 'medical')
-			->where('user_type', 'company')
-			->orderBy('created_at', 'desc')
+			$users_medical = [];
+			$users_wellness = [];
+
+			$users_medical_temp = DB::table('corporate_members')
+								->join('e_wallet', 'e_wallet.UserID', '=', 'corporate_members.user_id')
+								->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+								->where('corporate_members.corporate_id', $corporate_id)
+								->where('wallet_history.logs', 'added_by_hr')
+								->groupBy('corporate_members.user_id')
+								->get();
+
+			foreach ($users_medical_temp as $key => $medical) {
+				$users_medical[] = $medical->user_id;
+			}
+			// return sizeof($users_medical);
+			$users_wellness_temp = DB::table('corporate_members')
+								->join('e_wallet', 'e_wallet.UserID', '=', 'corporate_members.user_id')
+								->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+								->where('corporate_members.corporate_id', $corporate_id)
+								->where('wellness_wallet_history.logs', 'added_by_hr')
+								->groupBy('corporate_members.user_id')
+								->get();
+			
+			foreach ($users_wellness_temp as $key => $medical) {
+				$users_wellness[] = $medical->user_id;
+			}
+
+			// $array_medical = json_decode(json_encode($users_medical), true);
+			// $array_wellness = json_decode(json_encode($users_wellness), true);
+			$new_array = array_unique(array_merge($users_medical, $users_wellness));
+			return $new_array;
+			// $customer_credit_reset_medical = DB::table('credit_reset')
+			// ->where('id', $customer_id)
+			// ->where('spending_type', 'medical')
+			// ->where('user_type', 'company')
+			// ->orderBy('created_at', 'desc')
+			// ->first();
+
+			// if($customer_credit_reset_medical) {
+			// 	$allocation_medical_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
+			// 	->where('credit_reset.user_type', 'employee')
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->where("wallet_history.logs", "added_by_hr")
+			// 	->orderBy('credit_reset.created_at', 'desc')
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// } else {
+			// 	$allocation_medical_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->where("wallet_history.logs", "added_by_hr")
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// }
+
+			// $customer_credit_reset_wellness = DB::table('credit_reset')
+			// ->where('id', $customer_id)
+			// ->where('spending_type', 'wellness')
+			// ->where('user_type', 'company')
+			// ->orderBy('created_at', 'desc')
+			// ->first();
+
+			// if($customer_credit_reset_wellness) {
+			// 	$allocation_wellness_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
+			// 	->where('credit_reset.user_type', 'employee')
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->where("wellness_wallet_history.logs", "added_by_hr")
+			// 	->orderBy('credit_reset.created_at', 'desc')
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// } else {
+			// 	$allocation_wellness_users = DB::table("corporate_members")
+			// 	->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
+			// 	->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
+			// 	->where("corporate_members.corporate_id", $corporate_id)
+			// 	->whereIn("wellness_wallet_history.logs", ["added_by_hr"])
+			// 	->groupBy("corporate_members.user_id")
+			// 	->get();
+			// }
+
+
+
+			// $allocation_users = array_merge($allocation_medical_users, $allocation_wellness_users);
+
+			// $id_arr = array();
+			// $users_allocation = array();
+
+			// for( $x = 0; $x < count($allocation_users); $x++ ){
+			// 	if( !in_array( $allocation_users[$x]->user_id , $id_arr) ){
+			// 		array_push( $id_arr, $allocation_users[$x]->user_id );
+			// 		array_push( $users_allocation, $allocation_users[$x] );
+			// 	}
+			// }
+
+			// return $users_allocation;
+		}
+
+		public static function getResetWallet($user_id, $spending_type, $start, $end, $type)
+		{
+			$wallet_reset = DB::table('credit_reset')
+			->where('id', $user_id)
+			->where('user_type', $type)
+			->where('spending_type', $spending_type)
+			->where('date_resetted', '<=', $end)
 			->first();
 
-			if($customer_credit_reset_medical) {
-				$allocation_medical_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
-				->where('credit_reset.user_type', 'employee')
-				->where("corporate_members.corporate_id", $corporate_id)
-				->where("wallet_history.logs", "added_by_hr")
-				->orderBy('credit_reset.created_at', 'desc')
-				->groupBy("corporate_members.user_id")
-				->get();
+			if($wallet_reset) {
+				return $wallet_reset;
 			} else {
-				$allocation_medical_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wallet_history", "wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->where("corporate_members.corporate_id", $corporate_id)
-				->where("wallet_history.logs", "added_by_hr")
-				->groupBy("corporate_members.user_id")
-				->get();
+				return false;
 			}
-
-			$customer_credit_reset_wellness = DB::table('credit_reset')
-			->where('id', $customer_id)
-			->where('spending_type', 'wellness')
-			->where('user_type', 'company')
-			->orderBy('created_at', 'desc')
-			->first();
-
-			if($customer_credit_reset_wellness) {
-				$allocation_wellness_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->join('credit_reset', 'credit_reset.id', '=', 'e_wallet.UserID')
-				->where('credit_reset.user_type', 'employee')
-				->where("corporate_members.corporate_id", $corporate_id)
-				->where("wellness_wallet_history.logs", "added_by_hr")
-				->orderBy('credit_reset.created_at', 'desc')
-				->groupBy("corporate_members.user_id")
-				->get();
-			} else {
-				$allocation_wellness_users = DB::table("corporate_members")
-				->join("e_wallet", "e_wallet.UserID", "=", "corporate_members.user_id")
-				->join("wellness_wallet_history", "wellness_wallet_history.wallet_id", "=", "e_wallet.wallet_id")
-				->where("corporate_members.corporate_id", $corporate_id)
-				->whereIn("wellness_wallet_history.logs", ["added_by_hr"])
-				->groupBy("corporate_members.user_id")
-				->get();
-			}
-
-
-
-			$allocation_users = array_merge($allocation_medical_users, $allocation_wellness_users);
-
-			$id_arr = array();
-			$users_allocation = array();
-
-			for( $x = 0; $x < count($allocation_users); $x++ ){
-				if( !in_array( $allocation_users[$x]->user_id , $id_arr) ){
-					array_push( $id_arr, $allocation_users[$x]->user_id );
-					array_push( $users_allocation, $allocation_users[$x] );
-				}
-			}
-
-			return $users_allocation;
 		}
 
 		public static function getResetWalletDate($user_id, $spending_type, $start, $end, $type)
@@ -2430,244 +2509,225 @@ class PlanHelper {
 				$user_plan_history_class->createUserPlanHistory($user_plan_history_data);
 				$deactive_employee_status = 1;
 			}
-				// $replace_data = array(
-				// 	'old_id'				=> $replace_id,
-				// 	'active_plan_id'		=> $active_plan->customer_active_plan_id,
-				// 	'expired_and_activate'	=> date('Y-m-d', strtotime($input['last_day_coverage'])),
-				// 	'start_date'			=> date('Y-m-d', strtotime($input['plan_start'])),
-				// 	'status'				=> 0,
-				// 	'replace_status'		=> 0,
-				// 	'deactive_employee_status' => 0,
-				// 	'first_name'			=> $input['first_name'],
-				// 	'last_name'				=> $input['last_name'],
-				// 	'nric'					=> $input['nric'],
-				// 	'dob'					=> date('Y-m-d', strtotime($input['dob'])),
-				// 	'postal_code'			=> $input['postal_code'],
-				// 	'medical'				=> $input['medical_credits'],
-				// 	'wellness'				=> $input['wellness_credits']
-				// );
 
-				// $result = $replace->createReplaceEmployee($replace_data);
-				// if($result) {
-				// 	return array('status' => true, 'message' => 'Old Employee will be deactivated by '.date('d F Y', strtotime($input['last_day_coverage'])).' and new employee will be created by '.date('d F Y', strtotime($input['plan_start'])));
-				// }
-			// } else {
-				$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
-				$password = StringHelper::get_random_password(8);
-				$pending = 1;
+			$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
+			$password = StringHelper::get_random_password(8);
+			$pending = 1;
 
-				if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
-					$pending = 0;
+			if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
+				$pending = 0;
+			}
+			$data = array(
+				'Name'          => $input['first_name'].' '.$input['last_name'],
+				'Password'  => md5($password),
+				'Email'         => $input['email'],
+				'PhoneNo'       => $input['mobile'],
+				'PhoneCode' => NULL,
+				'NRIC'          => $input['nric'],
+				'Job_Title'  => 'Other',
+				'DOB'       => $input['dob'],
+				'Zip_Code'  => $input['postal_code'],
+				'pending'		=> $pending,
+				'Active'        => 1
+			);
+
+			$user_id = $user->createUserFromCorporate($data);
+
+			if($user_id) {
+				$corporate_member = array(
+					'corporate_id'      => $corporate->corporate_id,
+					'user_id'           => $user_id,
+					'first_name'        => $input['first_name'],
+					'last_name'         => $input['last_name'],
+					'type'              => 'member',
+					'created_at'        => date('Y-m-d H:i:s'),
+					'updated_at'        => date('Y-m-d H:i:s'),
+				);
+				DB::table('corporate_members')->insert($corporate_member);
+				$plan_type = new UserPlanType();
+				$check_plan_type = $plan_type->checkUserPlanType($user_id);
+
+				if($check_plan_type == 0) {
+					$group_package = new PackagePlanGroup();
+					$bundle = new Bundle();
+					$user_package = new UserPackage();
+
+					$group_package_id = $group_package->getPackagePlanGroupDefault();
+					$result_bundle = $bundle->getBundle($group_package_id);
+
+					foreach ($result_bundle as $key => $value) {
+						$user_package->createUserPackage($value->care_package_id, $user_id);
+					}
+
+					$plan_type_data = array(
+						'user_id'               => $user_id,
+						'package_group_id'      => $group_package_id,
+						'duration'              => '1 year',
+						'plan_start'            => date('Y-m-d', strtotime($input['plan_start']))
+					);
+					$plan_type->createUserPlanType($plan_type_data);
 				}
-				$data = array(
-					'Name'          => $input['first_name'].' '.$input['last_name'],
-					'Password'  => md5($password),
-					'Email'         => $input['email'],
-					'PhoneNo'       => $input['mobile'],
-					'PhoneCode' => NULL,
-					'NRIC'          => $input['nric'],
-					'Job_Title'  => 'Other',
-					'DOB'       => $input['dob'],
-					'Zip_Code'  => $input['postal_code'],
-					'pending'		=> $pending,
-					'Active'        => 1
+
+                // store user plan history
+				$user_plan_history = new UserPlanHistory();
+				$user_plan_history_data = array(
+					'user_id'       => $user_id,
+					'type'          => "started",
+					'date'          => date('Y-m-d', strtotime($input['plan_start'])),
+					'customer_active_plan_id' => $active_plan->customer_active_plan_id
 				);
 
-				$user_id = $user->createUserFromCorporate($data);
+				$user_plan_history->createUserPlanHistory($user_plan_history_data);
 
-				if($user_id) {
-					$corporate_member = array(
-						'corporate_id'      => $corporate->corporate_id,
-						'user_id'           => $user_id,
-						'first_name'        => $input['first_name'],
-						'last_name'         => $input['last_name'],
-						'type'              => 'member',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s'),
-					);
-					DB::table('corporate_members')->insert($corporate_member);
-					$plan_type = new UserPlanType();
-					$check_plan_type = $plan_type->checkUserPlanType($user_id);
+				$wallet = \Wallet::where('UserID', $user_id)->first();
+				$data_create_history = array(
+					'wallet_id'             => $wallet->wallet_id,
+					'credit'                    => 0,
+					'running_balance' => 0,
+					'logs'                      => 'wallet_created',
+					'customer_active_plan_id' => $active_plan->customer_active_plan_id
+				);
+				\WalletHistory::create($data_create_history);
 
-					if($check_plan_type == 0) {
-						$group_package = new PackagePlanGroup();
-						$bundle = new Bundle();
-						$user_package = new UserPackage();
+				if($medical > 0) {
+                    // medical credits
+					if($customer->balance >= $medical) {
 
-						$group_package_id = $group_package->getPackagePlanGroupDefault();
-						$result_bundle = $bundle->getBundle($group_package_id);
+						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $medical, "medical");
 
-						foreach ($result_bundle as $key => $value) {
-							$user_package->createUserPackage($value->care_package_id, $user_id);
-						}
-
-						$plan_type_data = array(
-							'user_id'               => $user_id,
-							'package_group_id'      => $group_package_id,
-							'duration'              => '1 year',
-							'plan_start'            => date('Y-m-d', strtotime($input['plan_start']))
-						);
-						$plan_type->createUserPlanType($plan_type_data);
-					}
-
-	                // store user plan history
-					$user_plan_history = new UserPlanHistory();
-					$user_plan_history_data = array(
-						'user_id'       => $user_id,
-						'type'          => "started",
-						'date'          => date('Y-m-d', strtotime($input['plan_start'])),
-						'customer_active_plan_id' => $active_plan->customer_active_plan_id
-					);
-
-					$user_plan_history->createUserPlanHistory($user_plan_history_data);
-
-					$wallet = \Wallet::where('UserID', $user_id)->first();
-					$data_create_history = array(
-						'wallet_id'             => $wallet->wallet_id,
-						'credit'                    => 0,
-						'running_balance' => 0,
-						'logs'                      => 'wallet_created',
-						'customer_active_plan_id' => $active_plan->customer_active_plan_id
-					);
-					\WalletHistory::create($data_create_history);
-
-					if($medical > 0) {
-	                    // medical credits
-						if($customer->balance >= $medical) {
-
-							$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $medical, "medical");
-
-							if($result_customer_active_plan) {
-								$customer_active_plan_id = $result_customer_active_plan;
-							} else {
-								$customer_active_plan_id = NULL;
-							}
-
-	                        // give credits
-							$wallet_class = new Wallet();
-							$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-							$update_wallet = $wallet_class->addCredits($user_id, $medical);
-
-							$employee_logs = new WalletHistory();
-
-							$wallet_history = array(
-								'wallet_id'     => $wallet->wallet_id,
-								'credit'            => $medical,
-								'logs'              => 'added_by_hr',
-								'running_balance'   => $medical,
-								'customer_active_plan_id' => $customer_active_plan_id
-							);
-
-							$employee_logs->createWalletHistory($wallet_history);
-							$customer_credits = new CustomerCredits();
-
-							$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $medical);
-							
-							if($customer_credits_result) {
-								$company_deduct_logs = array(
-									'customer_credits_id'   => $customer->customer_credits_id,
-									'credit'                => $medical,
-									'logs'                  => 'added_employee_credits',
-									'user_id'               => $user_id,
-									'running_balance'       => $customer->balance - $medical,
-									'customer_active_plan_id' => $customer_active_plan_id
-								);
-
-								$customer_credit_logs = new CustomerCreditLogs( );
-								$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
-							}
-						}
-					}
-
-					if($wellness > 0) {
-	                    // wellness credits
-						if($customer->wellness_credits >= $wellness) {
-							$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
-
-							if($result_customer_active_plan) {
-								$customer_active_plan_id = $result_customer_active_plan;
-							} else {
-								$customer_active_plan_id = NULL;
-							}
-	                        // give credits
-							$wallet_class = new Wallet();
-							$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-							$update_wallet = $wallet_class->addWellnessCredits($user_id, $wellness);
-
-							$wallet_history = array(
-								'wallet_id'     => $wallet->wallet_id,
-								'credit'        => $wellness,
-								'logs'          => 'added_by_hr',
-								'running_balance'   => $wellness,
-								'customer_active_plan_id' => $customer_active_plan_id
-							);
-
-							\WellnessWalletHistory::create($wallet_history);
-							$customer_credits = new CustomerCredits();
-							$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $wellness);
-							
-							if($customer_credits_result) {
-								$company_deduct_logs = array(
-									'customer_credits_id'   => $customer->customer_credits_id,
-									'credit'                => $wellness,
-									'logs'                  => 'added_employee_credits',
-									'user_id'               => $user_id,
-									'running_balance'       => $customer->wellness_credits - $wellness,
-									'customer_active_plan_id' => $customer_active_plan_id
-								);
-								$customer_credits_logs = new CustomerWellnessCreditLogs();
-								$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
-							}
-						}
-					}
-
-					if($schedule) {
-						$replace_employee = DB::table('customer_replace_employee')
-						->where('old_id', $replace_id)
-						->first();
-						$replace_data = array(
-							'new_id'                => $user_id,
-							'status'                => 1,
-							'replace_status'        => 1
-						);              
-						$replace->updateCustomerReplace($replace_employee->customer_replace_employee_id, $replace_data);
-					} else {
-						$status = 0;
-						if($deactive_employee_status == 1) {
-							$status = 1;
-						}
-
-						$replace_data = array(
-							'old_id'                => $replace_id,
-							'new_id'                => $user_id,
-							'active_plan_id'        => $active_plan->customer_active_plan_id,
-							'expired_and_activate'  => date('Y-m-d', strtotime($input['last_day_coverage'])),
-							'start_date'            => date('Y-m-d', strtotime($input['plan_start'])),
-							'status'                => $status,
-							'replace_status'        => 1,
-							'deactive_employee_status' => $deactive_employee_status
-						);
-						$replace->createReplaceEmployee($replace_data);
-					}
-
-					$user = DB::table('user')->where('UserID', $user_id)->first();
-					$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
-
-					if($user) {
-						if($user->communication_type == "sms") {
-							$compose = [];
-							$compose['name'] = $user->Name;
-							$compose['company'] = $company->company_name;
-							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
-							$compose['email'] = $user->Email;
-							$compose['nric'] = $user->NRIC;
-							$compose['password'] = $password;
-							$compose['phone'] = $user->PhoneNo;
-
-							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
-							$result_sms = SmsHelper::sendSms($compose);
-
+						if($result_customer_active_plan) {
+							$customer_active_plan_id = $result_customer_active_plan;
 						} else {
+							$customer_active_plan_id = NULL;
+						}
+
+                        // give credits
+						$wallet_class = new Wallet();
+						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+						$update_wallet = $wallet_class->addCredits($user_id, $medical);
+
+						$employee_logs = new WalletHistory();
+
+						$wallet_history = array(
+							'wallet_id'     => $wallet->wallet_id,
+							'credit'            => $medical,
+							'logs'              => 'added_by_hr',
+							'running_balance'   => $medical,
+							'customer_active_plan_id' => $customer_active_plan_id
+						);
+
+						$employee_logs->createWalletHistory($wallet_history);
+						$customer_credits = new CustomerCredits();
+
+						$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $medical);
+						
+						if($customer_credits_result) {
+							$company_deduct_logs = array(
+								'customer_credits_id'   => $customer->customer_credits_id,
+								'credit'                => $medical,
+								'logs'                  => 'added_employee_credits',
+								'user_id'               => $user_id,
+								'running_balance'       => $customer->balance - $medical,
+								'customer_active_plan_id' => $customer_active_plan_id
+							);
+
+							$customer_credit_logs = new CustomerCreditLogs( );
+							$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+						}
+					}
+				}
+
+				if($wellness > 0) {
+                    // wellness credits
+					if($customer->wellness_credits >= $wellness) {
+						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
+
+						if($result_customer_active_plan) {
+							$customer_active_plan_id = $result_customer_active_plan;
+						} else {
+							$customer_active_plan_id = NULL;
+						}
+                        // give credits
+						$wallet_class = new Wallet();
+						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+						$update_wallet = $wallet_class->addWellnessCredits($user_id, $wellness);
+
+						$wallet_history = array(
+							'wallet_id'     => $wallet->wallet_id,
+							'credit'        => $wellness,
+							'logs'          => 'added_by_hr',
+							'running_balance'   => $wellness,
+							'customer_active_plan_id' => $customer_active_plan_id
+						);
+
+						\WellnessWalletHistory::create($wallet_history);
+						$customer_credits = new CustomerCredits();
+						$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $wellness);
+						
+						if($customer_credits_result) {
+							$company_deduct_logs = array(
+								'customer_credits_id'   => $customer->customer_credits_id,
+								'credit'                => $wellness,
+								'logs'                  => 'added_employee_credits',
+								'user_id'               => $user_id,
+								'running_balance'       => $customer->wellness_credits - $wellness,
+								'customer_active_plan_id' => $customer_active_plan_id
+							);
+							$customer_credits_logs = new CustomerWellnessCreditLogs();
+							$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+						}
+					}
+				}
+
+				if($schedule) {
+					$replace_employee = DB::table('customer_replace_employee')
+					->where('old_id', $replace_id)
+					->first();
+					$replace_data = array(
+						'new_id'                => $user_id,
+						'status'                => 1,
+						'replace_status'        => 1
+					);              
+					$replace->updateCustomerReplace($replace_employee->customer_replace_employee_id, $replace_data);
+				} else {
+					$status = 0;
+					if($deactive_employee_status == 1) {
+						$status = 1;
+						// remove dependents
+						self::removeDependentAccountsReplace($replace_id, date('Y-m-d', strtotime($input['last_day_coverage'])));
+					}
+
+					$replace_data = array(
+						'old_id'                => $replace_id,
+						'new_id'                => $user_id,
+						'active_plan_id'        => $active_plan->customer_active_plan_id,
+						'expired_and_activate'  => date('Y-m-d', strtotime($input['last_day_coverage'])),
+						'start_date'            => date('Y-m-d', strtotime($input['plan_start'])),
+						'status'                => $status,
+						'replace_status'        => 1,
+						'deactive_employee_status' => $deactive_employee_status
+					);
+					$replace->createReplaceEmployee($replace_data);
+				}
+
+				$user = DB::table('user')->where('UserID', $user_id)->first();
+				$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
+				// check for dependents
+				if($user) {
+					if($user->communication_type == "sms") {
+						$compose = [];
+						$compose['name'] = $user->Name;
+						$compose['company'] = $company->company_name;
+						$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
+						$compose['email'] = $user->Email;
+						$compose['nric'] = $user->NRIC;
+						$compose['password'] = $password;
+						$compose['phone'] = $user->PhoneNo;
+
+						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+						$result_sms = SmsHelper::sendSms($compose);
+					} else {
+						if($input['email']) {
 							$email_data['company']   = ucwords($company->company_name);
 							$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
 							$email_data['name'] = $input['first_name'].' '.$input['last_name'];
@@ -2680,14 +2740,287 @@ class PlanHelper {
 							$email_data['url'] = url('/');
 							$email_data['plan'] = $active_plan;
 							EmailHelper::sendEmail($email_data);
+						} else {
+							$compose = [];
+							$compose['name'] = $user->Name;
+							$compose['company'] = $company->company_name;
+							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
+							$compose['email'] = $user->Email;
+							$compose['nric'] = $user->NRIC;
+							$compose['password'] = $password;
+							$compose['phone'] = $user->PhoneNo;
+
+							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+							$result_sms = SmsHelper::sendSms($compose);
 						}
 					}
-
-					return array('status' => true, 'message' => 'Employee Replaced.');
-				} else {
-					return array('status' => false, 'message' => 'Failed to replace employee.');
 				}
-			// }
+
+				return array('status' => true, 'message' => 'Employee Replaced.');
+			} else {
+				return array('status' => false, 'message' => 'Failed to replace employee.');
+			}
+
+		}
+
+		public static function createReplacementEmployeeSchedule($replace_id, $input, $id, $schedule, $medical, $wellness)
+		{
+			$replace = new CustomerReplaceEmployee( );
+			$date_today = date('Y-m-d');
+	    	// $last_day_of_coverage = date('Y-m-d', strtotime($input['last_day_coverage']));
+			$plan_start = date('Y-m-d', strtotime($input['plan_start']));
+			
+			$user_plan_history = DB::table('user_plan_history')
+			->where('user_id', $replace_id)
+			->where('type', 'started')
+			->orderBy('created_at', 'desc')
+			->first();
+			
+			if(!$user_plan_history) {
+				$active_plan = DB::table('customer_active_plan')
+				->where('customer_start_buy_id', $id)
+				->orderBy('created_at', 'desc')
+				->first();
+			} else {
+				$active_plan = DB::table('customer_active_plan')
+				->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+				->first();
+			}
+            // return $wellness;
+			$user = new User();
+            // check company credits
+			$customer = DB::table('customer_credits')->where('customer_id', $id)->first();
+
+			$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
+			$password = StringHelper::get_random_password(8);
+			$pending = 1;
+
+			if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
+				$pending = 0;
+			}
+			$data = array(
+				'Name'          => $input['first_name'].' '.$input['last_name'],
+				'Password'  => md5($password),
+				'Email'         => $input['email'],
+				'PhoneNo'       => $input['mobile'],
+				'PhoneCode' => NULL,
+				'NRIC'          => $input['nric'],
+				'Job_Title'  => 'Other',
+				'DOB'       => $input['dob'],
+				'Zip_Code'  => $input['postal_code'],
+				'pending'		=> $pending,
+				'Active'        => 1
+			);
+
+			$user_id = $user->createUserFromCorporate($data);
+
+			if($user_id) {
+				$corporate_member = array(
+					'corporate_id'      => $corporate->corporate_id,
+					'user_id'           => $user_id,
+					'first_name'        => $input['first_name'],
+					'last_name'         => $input['last_name'],
+					'type'              => 'member',
+					'created_at'        => date('Y-m-d H:i:s'),
+					'updated_at'        => date('Y-m-d H:i:s'),
+				);
+				DB::table('corporate_members')->insert($corporate_member);
+				$plan_type = new UserPlanType();
+				$check_plan_type = $plan_type->checkUserPlanType($user_id);
+
+				if($check_plan_type == 0) {
+					$group_package = new PackagePlanGroup();
+					$bundle = new Bundle();
+					$user_package = new UserPackage();
+
+					$group_package_id = $group_package->getPackagePlanGroupDefault();
+					$result_bundle = $bundle->getBundle($group_package_id);
+
+					foreach ($result_bundle as $key => $value) {
+						$user_package->createUserPackage($value->care_package_id, $user_id);
+					}
+
+					$plan_type_data = array(
+						'user_id'               => $user_id,
+						'package_group_id'      => $group_package_id,
+						'duration'              => '1 year',
+						'plan_start'            => date('Y-m-d', strtotime($input['plan_start']))
+					);
+					$plan_type->createUserPlanType($plan_type_data);
+				}
+
+                // store user plan history
+				$user_plan_history = new UserPlanHistory();
+				$user_plan_history_data = array(
+					'user_id'       => $user_id,
+					'type'          => "started",
+					'date'          => date('Y-m-d', strtotime($input['plan_start'])),
+					'customer_active_plan_id' => $active_plan->customer_active_plan_id
+				);
+
+				$user_plan_history->createUserPlanHistory($user_plan_history_data);
+
+				$wallet = \Wallet::where('UserID', $user_id)->first();
+				$data_create_history = array(
+					'wallet_id'             => $wallet->wallet_id,
+					'credit'                    => 0,
+					'running_balance' => 0,
+					'logs'                      => 'wallet_created',
+					'customer_active_plan_id' => $active_plan->customer_active_plan_id
+				);
+				\WalletHistory::create($data_create_history);
+
+				if($medical > 0) {
+                    // medical credits
+					if($customer->balance >= $medical) {
+
+						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $medical, "medical");
+
+						if($result_customer_active_plan) {
+							$customer_active_plan_id = $result_customer_active_plan;
+						} else {
+							$customer_active_plan_id = NULL;
+						}
+
+                        // give credits
+						$wallet_class = new Wallet();
+						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+						$update_wallet = $wallet_class->addCredits($user_id, $medical);
+
+						$employee_logs = new WalletHistory();
+
+						$wallet_history = array(
+							'wallet_id'     => $wallet->wallet_id,
+							'credit'            => $medical,
+							'logs'              => 'added_by_hr',
+							'running_balance'   => $medical,
+							'customer_active_plan_id' => $customer_active_plan_id
+						);
+
+						$employee_logs->createWalletHistory($wallet_history);
+						$customer_credits = new CustomerCredits();
+
+						$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $medical);
+						
+						if($customer_credits_result) {
+							$company_deduct_logs = array(
+								'customer_credits_id'   => $customer->customer_credits_id,
+								'credit'                => $medical,
+								'logs'                  => 'added_employee_credits',
+								'user_id'               => $user_id,
+								'running_balance'       => $customer->balance - $medical,
+								'customer_active_plan_id' => $customer_active_plan_id
+							);
+
+							$customer_credit_logs = new CustomerCreditLogs( );
+							$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+						}
+					}
+				}
+
+				if($wellness > 0) {
+                    // wellness credits
+					if($customer->wellness_credits >= $wellness) {
+						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
+
+						if($result_customer_active_plan) {
+							$customer_active_plan_id = $result_customer_active_plan;
+						} else {
+							$customer_active_plan_id = NULL;
+						}
+                        // give credits
+						$wallet_class = new Wallet();
+						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+						$update_wallet = $wallet_class->addWellnessCredits($user_id, $wellness);
+
+						$wallet_history = array(
+							'wallet_id'     => $wallet->wallet_id,
+							'credit'        => $wellness,
+							'logs'          => 'added_by_hr',
+							'running_balance'   => $wellness,
+							'customer_active_plan_id' => $customer_active_plan_id
+						);
+
+						\WellnessWalletHistory::create($wallet_history);
+						$customer_credits = new CustomerCredits();
+						$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $wellness);
+						
+						if($customer_credits_result) {
+							$company_deduct_logs = array(
+								'customer_credits_id'   => $customer->customer_credits_id,
+								'credit'                => $wellness,
+								'logs'                  => 'added_employee_credits',
+								'user_id'               => $user_id,
+								'running_balance'       => $customer->wellness_credits - $wellness,
+								'customer_active_plan_id' => $customer_active_plan_id
+							);
+							$customer_credits_logs = new CustomerWellnessCreditLogs();
+							$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+						}
+					}
+				}
+
+				$replace_employee = DB::table('customer_replace_employee')
+				->where('old_id', $replace_id)
+				->first();
+				$replace_data = array(
+					'new_id'                => $user_id,
+					'status'                => 1,
+					'replace_status'        => 1
+				);              
+				$replace->updateCustomerReplace($replace_employee->customer_replace_employee_id, $replace_data);
+
+				$user = DB::table('user')->where('UserID', $user_id)->first();
+				$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
+				// check for dependents
+				if($user) {
+					if($user->communication_type == "sms") {
+						$compose = [];
+						$compose['name'] = $user->Name;
+						$compose['company'] = $company->company_name;
+						$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
+						$compose['email'] = $user->Email;
+						$compose['nric'] = $user->NRIC;
+						$compose['password'] = $password;
+						$compose['phone'] = $user->PhoneNo;
+
+						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+						$result_sms = SmsHelper::sendSms($compose);
+
+					} else {
+						if($input['email']) {
+							$email_data['company']   = ucwords($company->company_name);
+							$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['name'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['emailTo']   = $input['email'];
+							$email_data['email']   = $input['email'];
+							$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+							$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+							$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
+							$email_data['pw'] = $password;
+							$email_data['url'] = url('/');
+							$email_data['plan'] = $active_plan;
+							EmailHelper::sendEmail($email_data);
+						} else {
+							$compose = [];
+							$compose['name'] = $user->Name;
+							$compose['company'] = $company->company_name;
+							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
+							$compose['email'] = $user->Email;
+							$compose['nric'] = $user->NRIC;
+							$compose['password'] = $password;
+							$compose['phone'] = $user->PhoneNo;
+
+							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+							$result_sms = SmsHelper::sendSms($compose);
+						}
+					}
+				}
+
+				return array('status' => true, 'message' => 'Employee Replaced.');
+			} else {
+				return array('status' => false, 'message' => 'Failed to replace employee.');
+			}
 
 		}
 
@@ -3253,7 +3586,131 @@ class PlanHelper {
 			return array('status' => false);
 		}
 
-		public static function removeDependentAccounts($user_id, $expiry_date)
+		public static function revemoDependentAccounts($user_id, $expiry)
+		{
+			$dependents = DB::table('employee_family_coverage_sub_accounts')
+			->where('owner_id', $user_id)
+			->where('deleted', 0)
+			->get();
+
+			$date = date('Y-m-d');
+
+			foreach ($dependents as $key => $dependent) {
+				if($date >= $expiry) {
+				// create refund and delete now
+					try {
+						$result = self::removeDependent($dependent->user_id, $expiry, true, false);
+						if(!$result) {
+							return array('status' => FALSE, 'message' => 'Failed to create withdraw dependent. Please contact Mednefits and report the issue.');
+						}
+					} catch(Exception $e) {
+						$email = [];
+						$email['end_point'] = url('hr/with_draw_dependent', $parameter = array(), $secure = null);
+						$email['logs'] = 'Withdraw Dependent Failed - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+						// return array('status' => FALSE, 'message' => 'Failed to create withdraw employee. Please contact Mednefits and report the issue.');
+					}
+				} else {
+					try {
+						$result = self::createDependentWithdraw($dependent->user_id, $expiry, true, true, false);
+					} catch(Exception $e) {
+						$email = [];
+						$email['end_point'] = url('hr/with_draw_dependent', $parameter = array(), $secure = null);
+						$email['logs'] = 'Withdraw Dependent Failed - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+						// return array('status' => FALSE, 'message' => 'Failed to create withdraw dependent. Please contact Mednefits and report the issue.');
+					}
+				}
+			}
+		}
+
+		public static function removeDependentAccountsReplace($user_id, $expiry_date)
+		{
+			$dependents = DB::table('employee_family_coverage_sub_accounts')
+			->where('owner_id', $user_id)
+			->where('deleted', 0)
+			->get();
+
+			foreach ($dependents as $key => $dependent) {
+                // check if dependent plan is refundable
+				$dependepent_plan_history = DB::table('dependent_plan_history')
+				->where('user_id', $dependent->user_id)
+				->orderBy('created_at', 'desc')
+				->first();
+				$dependent_plan = DB::table('dependent_plans')
+				->where('dependent_plan_id', $dependepent_plan_history->dependent_plan_id)
+				->first();
+
+				// if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan") {
+    //                 // create refund
+				// 	$refund = self::removeDependent($dependent->user_id, $expiry_date, $refund_status, $vacate_seat);
+				// } else {
+					$dependent_plan = DB::table('dependent_plan_history')
+					->where('user_id', $dependent->user_id)
+					->where('type', 'started')
+					->orderBy('created_at', 'desc')
+					->first();
+
+                    // save history
+					$depent_plan_history = new DependentPlanHistory();
+					$user_plan_history_data = array(
+						'user_id'       => $dependent->user_id,
+						'type'          => "deleted_expired",
+						'plan_start'          => $expiry_date,
+						'dependent_plan_id' => $dependent_plan->dependent_plan_id,
+						'duration'      => $dependent_plan->duration,
+						'package_group_id' => $dependent_plan->package_group_id,
+						'fixed'         => $dependent_plan->fixed
+					);
+
+					try {
+						$depent_plan_history->createData($user_plan_history_data);
+                        // $user = DB::table('user')->where('UserID', $dependent->user_id)->first();
+						$user_data = array(
+							'Active'    => 0
+						);
+                        // update user and set to inactive
+						DB::table('user')->where('UserID', $dependent->user_id)->update($user_data);
+                        // set company members removed to 1
+						DB::table('employee_family_coverage_sub_accounts')
+						->where('user_id', $dependent->user_id)->update(['deleted' => 1, 'deleted_at' => date('Y-m-d H:i:s')]);
+						self::updateCustomerDependentPlanStatusDeleteUser($dependent->user_id);
+                        // check if dependent has plan tier
+						$plan_tier_user = DB::table('plan_tier_users')
+						->where('user_id', $dependent->user_id)
+						->first();
+						if($plan_tier_user) {
+                            // update status
+							DB::table('plan_tier_users')
+							->where('user_id', $dependent->user_id)
+							->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                            // update plan tier dependent count
+							$tier = new PlanTier();
+							$tier->decrementDependentEnrolledHeadCount($plan_tier_user->plan_tier_id);
+						}
+					} catch(Exception $e) {
+						$email = [];
+						$email['end_point'] = url('hr/remove_dependent_account', $parameter = array(), $secure = null);
+						$email['logs'] = 'Remove Dependent Account Failed - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+					}
+				// }
+
+				$admin_logs = array(
+	                'admin_id'  => null,
+	                'type'      => 'removed_dependent_schedule_system_generate',
+	                'data'      => SystemLogLibrary::serializeData($dependent)
+	            );
+	            SystemLogLibrary::createAdminLog($admin_logs);
+			}
+
+			return true;
+		}
+
+		public static function removeDependentAccounts($user_id, $expiry_date, $refund_status, $vacate_seat)
 		{
 			$dependents = DB::table('employee_family_coverage_sub_accounts')
 			->where('owner_id', $user_id)
@@ -3272,7 +3729,7 @@ class PlanHelper {
 
 				if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan") {
                     // create refund
-					$refund = self::removeDependent($dependent->user_id, $expiry_date);
+					$refund = self::removeDependent($dependent->user_id, $expiry_date, $refund_status, $vacate_seat);
 				} else {
 					$dependent_plan = DB::table('dependent_plan_history')
 					->where('user_id', $dependent->user_id)
@@ -3710,27 +4167,50 @@ class PlanHelper {
 
 			if($result) {
 				if($user->communication_type == "email") {
-					$user_plan_history = DB::table('user_plan_history')
-											->where('user_id', $employee_id)
-											->orderBy('created_at', 'desc')
+					if($user->Email) {
+						$user_plan_history = DB::table('user_plan_history')
+												->where('user_id', $employee_id)
+												->orderBy('created_at', 'desc')
+												->first();
+						$active_plan = DB::table('customer_active_plan')
+											->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 											->first();
-					$active_plan = DB::table('customer_active_plan')
-										->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-										->first();
 
-					$emailDdata['emailName']= ucwords($user->Name);
-					$emailDdata['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-					$emailDdata['emailTo']= $user->Email;
-					$emailDdata['email']= $user->Email;
-					$emailDdata['name']= $user->Name;
-					$emailDdata['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
-					$emailDdata['pw'] = $password;
-					$emailDdata['plan'] = $active_plan;
-					$emailDdata['user_id'] = $employee_id;
-					$emailDdata['company'] = ucwords($corporate->company_name);
-					$emailDdata['start_date'] = date('F d, Y', strtotime($start_date));
-					\EmailHelper::sendEmail($emailDdata);
-					return array('status' => true, 'message' => 'Employee Account Resetted and sent using email.');
+						$emailDdata['emailName']= ucwords($user->Name);
+						$emailDdata['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+						$emailDdata['emailTo']= $user->Email;
+						$emailDdata['email']= $user->Email;
+						$emailDdata['name']= $user->Name;
+						$emailDdata['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+						$emailDdata['pw'] = $password;
+						$emailDdata['plan'] = $active_plan;
+						$emailDdata['user_id'] = $employee_id;
+						$emailDdata['company'] = ucwords($corporate->company_name);
+						$emailDdata['start_date'] = date('F d, Y', strtotime($start_date));
+						\EmailHelper::sendEmail($emailDdata);
+						return array('status' => true, 'message' => 'Employee Account Resetted and sent using email.');
+					} else {
+						if($user->PhoneNo) {
+							$phone = SmsHelper::formatNumber($user);
+
+		                    if($phone) {
+		                    	$compose = [];
+								$compose['name'] = $user->Name;
+								$compose['company'] = $corporate->company_name;
+								$compose['plan_start'] = date('F d, Y', strtotime($start_date));
+								$compose['email'] = $user->Email;
+								$compose['nric'] = $user->NRIC;
+								$compose['password'] = $password;
+								$compose['phone'] = $phone;
+
+								$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+								$result_sms = SmsHelper::sendSms($compose);
+								return array('status' => true, 'message' => 'Employee Account Resetted and sent using sms.');
+		                    } else {
+		                    	return array('status' => false, 'message' => 'Employee Account Resetted and but was not able to send using sms because of mobile phone number malformed. Please update the mobile phone of this employee to be able to send an sms.');
+		                    }
+						}
+					}
 				} else {
 					if($user->PhoneNo) {
 						$phone = SmsHelper::formatNumber($user);
@@ -3778,7 +4258,7 @@ class PlanHelper {
 					} else {
 						$schedule = 'Removed '.date('d/m/Y', strtotime($replacement->expired_and_activate));
 					}
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
 				} else if((int)$replacement->deactive_employee_status == 0 && (int)$replacement->replace_status == 0) {
 					// to be replace
 					$schedule_status = true;
@@ -3787,18 +4267,18 @@ class PlanHelper {
 					} else {
 						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
 					}
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
 				} else {
 					//
 					$schedule_status = true;
-					if($replacement->start_date) {
-						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
-					} else {
+					if($replacement->expired_and_activate) {
 						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->expired_and_activate));
+					} else {
+						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($replacement->start_date));
 					}
 				}
 
-				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->start_date)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
 			}
 
 			$deleted_accounts = DB::table("customer_plan_withdraw")->where("user_id", $user_id)->first();
@@ -3853,6 +4333,324 @@ class PlanHelper {
 			$data['user_type'] = "dependents";
 
 			return $data;
+		}
+
+		public static function hrStatus( )
+		{
+			$hr = StringHelper::getJwtHrSession();
+			$settings = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
+
+			if((int)$settings->qr_payment == 1 && (int)$settings->wallet == 1) {
+				$accessibility = 1;
+			} else {
+				$accessibility = 0;
+			}
+
+			$session = array(
+				'hr_dashboard_id'				=> $hr->hr_dashboard_id,
+				'customer_buy_start_id'			=> $hr->customer_buy_start_id,
+				'qr_payment'					=> $settings->qr_payment,
+				'wallet'						=> $settings->wallet,
+				'accessibility'					=> $accessibility,
+				'expire_in'						=> $hr->expire_in,
+				'signed_in'						=> $hr->signed_in
+			);
+			return $session;
+		}
+
+		public static function reCalculateCompanyBalance( )
+		{
+			$result = StringHelper::getJwtHrSession();
+			$customer_id = $result->customer_buy_start_id;
+			$allocated = 0;
+			$total_allocation = 0;
+			$deleted_employee_allocation = 0;
+			$total_deduction_credits = 0;
+
+			$allocated_wellness = 0;
+			$total_allocation_wellness = 0;
+			$deleted_employee_allocation_wellness = 0;
+			$total_wellnesss_allocated = 0;
+			$total_deduction_credits_wellness = 0;
+			$total_medical_allocation = 0;
+			$total_medical_allocated = 0;
+			$credits = 0;
+			$get_allocation_spent = 0;
+			$credits_wellness = 0;
+			$get_allocation_spent_wellness = 0;
+
+			$check_accessibility = self::hrStatus( );
+
+			if($check_accessibility['accessibility'] == 1) {
+				$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+
+		    	// check if customer has a credit reset in medical
+				$customer_credit_reset_medical = DB::table('credit_reset')
+				->where('id', $customer_id)
+				->where('spending_type', 'medical')
+				->where('user_type', 'company')
+				->orderBy('created_at', 'desc')
+				->first();
+
+				if($customer_credit_reset_medical) {
+					// $start = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
+		    		// $end = SpendingInvoiceLibrary::getEndDate($customer_credit_reset_medical->date_resetted);
+					$temp_total_allocation = DB::table('customer_credits')
+					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_credit_logs.logs', 'admin_added_credits')
+					// ->where('customer_credit_logs.created_at', '>=', date('Y-m-d', strtotime($start)))
+					->where('customer_credit_logs.customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+					->sum('customer_credit_logs.credit');
+
+					$temp_total_deduction = DB::table('customer_credits')
+					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_credit_logs.logs', 'admin_deducted_credits')
+					// ->where('customer_credit_logs.created_at', '>=', date('Y-m-d', strtotime($start)))
+					->where('customer_credit_logs.customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+					->sum('customer_credit_logs.credit');
+				} else {
+					$temp_total_allocation = DB::table('customer_credits')
+					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_credit_logs.logs', 'admin_added_credits')
+					->sum('customer_credit_logs.credit');
+
+					$temp_total_deduction = DB::table('customer_credits')
+					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_credit_logs.logs', 'admin_deducted_credits')
+					->sum('customer_credit_logs.credit');
+
+				}
+				$total_allocation = $temp_total_allocation - $temp_total_deduction;
+
+
+			    // check if customer has a credit reset in medical
+				$customer_credit_reset_wellness = DB::table('credit_reset')
+				->where('id', $customer_id)
+				->where('spending_type', 'wellness')
+				->where('user_type', 'company')
+				->orderBy('created_at', 'desc')
+				->first();
+				// return array('res' => $customer_credit_reset_wellness);
+				if($customer_credit_reset_wellness) {
+					$start = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
+					$temp_total_allocation_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
+					// ->where('customer_wellness_credits_logs.created_at', '>=', date('Y-m-d', strtotime($start)))
+					->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+					->sum('customer_wellness_credits_logs.credit');
+
+					$temp_total_deduction_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
+					// ->where('customer_wellness_credits_logs.created_at', '>=', date('Y-m-d', strtotime($start)))
+					->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+					->sum('customer_wellness_credits_logs.credit');
+				} else {
+					$temp_total_allocation_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
+					->sum('customer_wellness_credits_logs.credit');
+
+					$temp_total_deduction_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
+					->sum('customer_wellness_credits_logs.credit');
+				}
+				$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
+		        // return array('medical' => $total_allocation, 'wellness' => $total_allocation_wellness);
+
+				$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+		        // return $user_allocated;
+				$get_allocation_spent = 0;
+				$get_allocation_spent_wellness = 0;
+				foreach ($user_allocated as $key => $user) {
+					$get_allocation = 0;
+					$deducted_allocation = 0;
+					$e_claim_spent = 0;
+					$in_network_temp_spent = 0;
+					$credits_back = 0;
+
+					$get_allocation_wellness = 0;
+					$deducted_allocation_wellness = 0;
+					$e_claim_spent_wellness = 0;
+					$in_network_temp_spent_wellness = 0;
+					$credits_back_wellness = 0;
+
+					$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
+
+					// check if employee has reset credits
+					$employee_credit_reset_medical = DB::table('credit_reset')
+					->where('id', $user->UserID)
+					->where('spending_type', 'medical')
+					->where('user_type', 'employee')
+					->orderBy('created_at', 'desc')
+					->first();
+
+					if($employee_credit_reset_medical) {
+						$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
+		    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_medical->date_resetted);
+						$wallet_history = DB::table('wallet_history')
+						->where('wallet_id', $wallet->wallet_id)
+						->where('created_at', '>=', date('Y-m-d', strtotime($start)))
+		    								// ->where('created_at', '<=', $end)
+						->get();
+					} else {
+						$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
+					}
+
+					foreach ($wallet_history as $key => $history) {
+						if($history->logs == "added_by_hr") {
+							$get_allocation += $history->credit;
+						}
+
+						if($history->logs == "deducted_by_hr") {
+							$deducted_allocation += $history->credit;
+						}
+
+						if($history->where_spend == "e_claim_transaction") {
+							$e_claim_spent += $history->credit;
+						}
+
+						if($history->where_spend == "in_network_transaction") {
+							$in_network_temp_spent += $history->credit;
+						}
+
+						if($history->where_spend == "credits_back_from_in_network") {
+							$credits_back += $history->credit;
+						}
+					}
+
+
+					$pro_allocation_medical = DB::table('wallet_history')
+					->where('wallet_id', $wallet->wallet_id)
+					->where('logs', 'pro_allocation')
+					->sum('credit');
+
+					if($pro_allocation_medical > 0) {
+						$allocation = $pro_allocation_medical;
+					} else {
+						$allocation = $get_allocation;
+						$total_deduction_credits += $deducted_allocation;
+
+						if($user->removed_status == 1) {
+							$deleted_employee_allocation += $get_allocation - $deducted_allocation;
+						}
+					}
+
+					$get_allocation_spent += $in_network_temp_spent - $credits_back + $e_claim_spent;
+					
+					$allocated += $allocation;
+
+					$employee_credit_reset_wellness = DB::table('credit_reset')
+					->where('id', $user->UserID)
+					->where('spending_type', 'wellness')
+					->where('user_type', 'employee')
+					->orderBy('created_at', 'desc')
+					->first();
+					if($employee_credit_reset_wellness) {
+						$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
+		    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_wellness->date_resetted);
+						$wallet_wellness_history = DB::table('wellness_wallet_history')
+						->where('wallet_id', $wallet->wallet_id)
+						->where('created_at', '>=', date('Y-m-d', strtotime($start)))
+		    										// ->where('created_at', '<=', $end)
+						->get();
+					} else {
+						$wallet_wellness_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
+					}
+
+					foreach ($wallet_wellness_history as $key => $history) {
+						if($history->logs == "added_by_hr") {
+							$get_allocation_wellness += $history->credit;
+						}
+
+						if($history->logs == "deducted_by_hr") {
+							$deducted_allocation_wellness += $history->credit;
+						}
+
+						if($history->where_spend == "e_claim_transaction") {
+							$e_claim_spent_wellness += $history->credit;
+						}
+
+						if($history->where_spend == "in_network_transaction") {
+							$in_network_temp_spent_wellness += $history->credit;
+						}
+
+						if($history->where_spend == "credits_back_from_in_network") {
+							$credits_back_wellness += $history->credit;
+						}
+					}
+					
+					$allocation_wellness = $get_allocation_wellness;
+
+					$pro_allocation_wellness = DB::table('wellness_wallet_history')
+					->where('wallet_id', $wallet->wallet_id)
+					->where('logs', 'pro_allocation')
+					->sum('credit');
+
+					if($pro_allocation_wellness > 0) {
+						$allocation = $pro_allocation_wellness;
+					} else {
+						$allocation = $allocation_wellness;
+						$total_deduction_credits_wellness += $deducted_allocation_wellness;
+
+						if($user->removed_status == 1) {
+							$deleted_employee_allocation_wellness += $get_allocation_wellness - $deducted_allocation_wellness;
+						}
+					}
+
+					$get_allocation_spent_wellness += $in_network_temp_spent_wellness - $credits_back_wellness + $e_claim_spent_wellness;
+					$allocated_wellness += $allocation_wellness;
+				}
+
+
+				// $total_allocated = $total_allocation - $allocated - $deleted_employee_allocation + $total_deduction_credits;
+
+				$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+
+				$total_medical_allocation = $total_allocation;
+				$total_medical_allocated = $allocated - $deleted_employee_allocation - $total_deduction_credits;
+
+				$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness - $total_deduction_credits_wellness;
+
+				$credits = $total_medical_allocation - $total_medical_allocated;
+				$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
+
+				if($company_credits->balance != $credits) {
+					// update medical credits
+					\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
+				}
+
+				if($company_credits->wellness_credits != $credits_wellness) {
+					// update wellness credits
+					\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
+				}
+			}
+
+			return array(
+				'total_medical_company_allocation' => number_format($total_medical_allocation, 2),
+				'total_medical_company_unallocation' => number_format($credits, 2),
+				'total_medical_employee_allocated' => number_format($total_medical_allocated, 2),
+				'total_medical_employee_spent'		=> number_format($get_allocation_spent, 2),
+				'total_medical_employee_balance' => number_format($total_medical_allocated - $get_allocation_spent, 2),
+				'total_medical_employee_balance_number' => $total_medical_allocated - $get_allocation_spent,
+				'total_medical_wellness_allocation' => number_format($total_allocation_wellness, 2),
+				'total_medical_wellness_unallocation' => number_format($credits_wellness, 2),
+				'total_wellness_employee_allocated' => number_format($total_wellnesss_allocated, 2),
+				'total_wellness_employee_spent'		=> number_format($get_allocation_spent_wellness, 2),
+				'total_wellness_employee_balance' => number_format($total_wellnesss_allocated - $get_allocation_spent_wellness, 2),
+				'total_wellness_employee_balance_number' => $total_wellnesss_allocated - $get_allocation_spent_wellness,
+				'company_id' => $result->customer_buy_start_id,
+			);
 		}
 	}
 ?>

@@ -530,7 +530,6 @@
 	                $status_text = 'Approved';
 	                $total_e_claim_spent += $res->amount;
 
-
 	                $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
 	                // check user if it is spouse or dependent
@@ -541,6 +540,7 @@
 	                    $sub_account_type = $temp_sub->user_type;
 	                    $owner_id = $temp_sub->owner_id;
 	                    $dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+	                     $relationship = FALSE;
 	                } else {
 	                    $sub_account = FALSE;
 	                    $sub_account_type = FALSE;
@@ -560,6 +560,8 @@
 	                    'merchant'          => $res->merchant,
 	                    'amount'            => $res->amount,
 	                    'member'            => ucwords($member->Name),
+	                    'employee_dependent_name' => $sub_account ? $sub_account : null,
+	                    'claim_member_type'       => $dependent_relationship ? 'DEPENDENT' : 'EMPLOYEE',
 	                    'type'              => 'E-Claim',
 	                    'transaction_id'    => 'MNF'.$id,
 	                    'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,

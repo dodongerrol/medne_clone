@@ -16,6 +16,7 @@
 	<meta http-equiv='cache-control' content='no-cache'>
 	<meta http-equiv='expires' content='-1'>
 	<meta http-equiv='pragma' content='no-cache'>
+	<meta name="google-site-verification" content="WPMtMxZexNrXxam6mJ0ZnfXmyk5JRJ8z6nwNVHe7JK8" />
 	<title>Mednefits: Modern Employees Digital Benefits</title>
 	<link rel="shortcut icon" href="../assets/hr-dashboard/img/icons/favicon.ico" type="image/ico">
 

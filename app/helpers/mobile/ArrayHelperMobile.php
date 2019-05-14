@@ -92,7 +92,7 @@ class ArrayHelperMobile{
             $jsonArray['name']= $clinicData->CLName;
             $jsonArray['email']= $email;
             $jsonArray['address']= $clinicData->CLAddress.' '.$clinicData->CLCity.' '.$clinicData->CLState.' '.$clinicData->CLPostal;
-            $jsonArray['image_url']= $clinicData->CLImage;
+            $jsonArray['image_url']= FileHelper::formatImageAutoQuality($clinicData->CLImage);
             $jsonArray['lattitude']= $clinicData->CLLat;
             $jsonArray['longitude']= $clinicData->CLLng;
             $jsonArray['telephone']= $clinicData->Phone;   
@@ -152,7 +152,7 @@ class ArrayHelperMobile{
             $jsonArray = $returnArray;
             return $jsonArray;
         }else{
-            $jsonArray = null;
+            $jsonArray = [];
             return $jsonArray;
         }  
     }
@@ -237,7 +237,7 @@ class ArrayHelperMobile{
                 
             return $doctorArray;
         }else{
-            $doctorArray = null;
+            $doctorArray = [];
             return $doctorArray;
         }
     }

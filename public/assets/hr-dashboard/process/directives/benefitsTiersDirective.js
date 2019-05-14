@@ -944,11 +944,12 @@ app.directive('benefitsTiersDirective', [
 						if( key == scope.employee_arr.length-1 ){
 
 							angular.forEach( emp_arr,function(value,key){
-								value.dob = moment( value.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
+								console.log( value.dob );
+								value.dob = moment( value.dob ).format('YYYY-MM-DD');
 								value.plan_start = moment( value.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
 								angular.forEach( value.dependents,function(value2,key2){
-									value2.dob = moment( value2.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
+									value2.dob = moment( value2.dob ).format('YYYY-MM-DD');
 									value2.plan_start = moment( value2.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
 								})
 							});
@@ -1390,11 +1391,11 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.onLoad = function( ){
-					if( localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true ){
-						scope.isTiering = true;
-					}else{
-						scope.isTiering = false;
-					}
+					// if( localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true ){
+					// 	scope.isTiering = true;
+					// }else{
+					// 	scope.isTiering = false;
+					// }
 
 					scope.getProgress();
 					scope.companyDependents();

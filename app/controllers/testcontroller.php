@@ -555,4 +555,42 @@ class testcontroller extends BaseController {
 		}
 	}
 
+	public function uploadImage( )
+	{
+	 if(Input::file('file')){
+          $uploadFile = Image_Library::CloudinaryUploadFileWithResizer(Input::file('file'), 150, 150);
+          if($uploadFile){
+              return $uploadFile;
+          }
+      } 
+	}
+
+	public function updateClinicDefaultImage( )
+	{
+		return DB::table('clinic')
+					->where('image', 'https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png')
+					->update(['image' => 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1556768437/rhknwowt6mjrmslv0a8i.png']);
+	}
+
+	public function ImageAutoQuality( )
+	{
+		$image = "https://res.cloudinary.com/www-medicloud-sg/image/upload/v1439208475/medilogo_cn6d0x.png";
+		return FileHelper::formatImageAutoQuality($image);
+		// $images = DB::table('e_claim_docs')
+		// 			->where('file_type', 'image')
+		// 			->get();
+
+		return $images;
+	}
+
+	public function getCurrencyLists( )
+	{
+		return EclaimHelper::getCurrencies();
+	}
+
+	public function testEclaimSendEmail( )
+	{
+		$input = Input::all();
+		return EclaimHelper::sendEclaimEmail($input['user_id'], $input['e_claim_id']);
+	}
 }
