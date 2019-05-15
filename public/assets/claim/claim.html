@@ -208,12 +208,14 @@
 			<section>
 				<!-- Modals -->
 				<div id="modalNRIC" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNRICModalLabel">
-					<div class="modal-dialog modal-sm" role="document">
+					<div class="modal-dialog" role="document">
 						<div class="modal-content nric-modalWrapper">
 							<div class="container nric-wrapper">
 								<div class="row">
 									<div class="col-md-11 nric-tittle-wrapper">
-										<h4 class="nric-title">Verify User by NRIC</h4>
+										<h4 class="nric-title">Verify User by NRIC
+											<i class="fa fa-times" data-dismiss="modal" style="cursor: pointer;float: right;"></i>
+										</h4>
 									</div>
 								</div>
 								<div class="row nric-content-wrapper">
@@ -261,7 +263,7 @@
 							<div class="container-fluid manual-wrapper">
 								<div class="row">
 									<div class="container-fluid manual-tittle-wrapper">
-										<h4 class="manual-title">Manual Claim</h4>
+										<h4 class="manual-title">Manual Claim <i class="fa fa-times" data-dismiss="modal" style="cursor: pointer;float: right;"></i></h4>
 									</div>
 								</div>
 								<div class="row">
@@ -505,6 +507,33 @@
 					    </div>
 			      </div>
 			    </div>
+				</div>
+
+				<div class="modal fade" id="e-card-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document" style="width: 450px;">
+				    <div class="modal-content" style="top: 0;border-radius: 8px;">
+				      <div class="modal-body" style="overflow: hidden;background: #f8f8f8;border-radius: 8px;padding: 10px 15px 30px 30px;">
+				      	<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: relative;top: -6px;right: -6px"><span aria-hidden="true" style="color: #000 !important;font-size: 25px !important;">&times;</span></button>
+
+				      	<div class="ecard-container">
+					      	<img src="../../e-template-img/mednefits logo v3 (blue-box) LARGE.png" style="width:50px;margin-bottom: 10px;">
+					      	<p style="font-size: 20px;color: #319EF4" ng-bind="e_card_data.fullname">Allan Cheam Alzula</p>
+					      	<p style="color: #333" >Member ID : <span ng-bind="e_card_data.member_id">5685</span> </p>
+					      	<p style="color: #333"><span ng-bind="e_card_data.plan_type">Corporate</span></p>
+					      	<p style="color: #333">Company : <span ng-bind="e_card_data.company_name">Allan Test</span></p>
+					      	<p style="margin-bottom: 10px;color: #333">Start Date : <span ng-bind="e_card_data.start_date">04 September 2017</span></p>
+					      	<p style="margin-bottom: 10px;color: #333">Valid Thru : <span ng-bind="e_card_data.valid_date">31 July 2018</span></p>
+					      	<p style="margin-bottom: 10px;color: #333">Your Basic Coverage</p>
+					      	<div class="coverage-box">
+					      		<div class="cov-item" ng-repeat="list in e_card_data.packages">
+					      			<div class="col-md-4" style="padding-left: 0;" ng-bind="list.package_name"></div>
+					      			<div class="col-md-6" ng-bind="list.package_description"></div>
+					      		</div>
+					      	</div>
+				      	</div>
+				      </div>
+				    </div>
+				  </div>
 				</div>
 				
 			</section>
