@@ -66,4 +66,10 @@
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/claim/js/app.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/claim/js/claimDirective.js?_={{ $date->format('U') }}"></script>
+
+	<script>
+	    $(document).ready(function(){
+	        $('.dropdown-toggle').dropdown()
+	    });
+	</script>
 </html>

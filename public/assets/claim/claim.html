@@ -49,7 +49,7 @@
 				</div>
 			</section>
 
-			<section class="trans-preview">
+			<section ng-if="claim_list.length > 0" class="trans-preview">
 				<div class="card registration container-fluid">
 					<div class="row">
 						<div class="col-md-12">
@@ -241,8 +241,8 @@
 													<td ng-bind="list.name">Alfred</td>
 													<td ng-bind="list.nric">G8472947H</td>
 													<td>
-														<span ng-if="list.active">Active</span>
-														<span ng-if="!list.active">Inactive</span>
+														<span ng-if="list.status == 1">Active</span>
+														<span ng-if="list.status == 0">Inactive</span>
 													</td>
 												</tr>
 											</tbody>
@@ -403,7 +403,7 @@
 			      		You have similar transactions with this user.
 			      		<p style="font-size: 12px;padding-left: 4px;">Please check and make sure it is not a duplicate claim entry.</p>
 				      </div>
-			        <div class="modal-body" style="padding: 0px;background: #fff;border-radius: 0 0 6px 6px;">
+			        <div class="modal-body" style="background: #fff;border-radius: 0 0 6px 6px;">
 			        	<div class="your-transaction">
 			        		<p style="font-size: 20px;margin-bottom: 10px;border-bottom: 1px solid #ccc;">Your transaction </p>
 			        		<p><label>Name:</label> <span ng-bind="your_transaction.name">Allan Alzula</span></p>
@@ -433,7 +433,7 @@
 			        </div>
 			        <div class="modal-footer">
 				      	<button class="btn btn-primary" style="background: #b52c2c !important;border-radius: 2px;padding: 10px 30px;" data-dismiss="modal" >Cancel</button>
-				      	<button class="btn btn-success" style="background: #0190CD !important;border-radius: 2px;padding: 10px 30px;" ng-click="add()">Proceed</button>
+				      	<button class="btn btn-success" style="background: #0190CD !important;border-radius: 2px;padding: 10px 30px;" ng-click="addClaim()">Proceed</button>
 					    </div>
 			      </div>
 			    </div>

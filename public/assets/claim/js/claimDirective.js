@@ -27,7 +27,7 @@ app.directive("claimDirective", [
         scope.placeholder = "";
         scope.search_member = "";
         scope.selected_start_date = moment().startOf('month').format('MM/DD/YYYY');
-        scope.selected_end_date = moment().format('MM/DD/YYYY');
+        scope.selected_end_date = moment().endOf('month').format('MM/DD/YYYY');
         scope.isSearchNRIC = false;
         scope.selected_hour = parseInt(moment().format("hh"));
         scope.selected_minute = parseInt(moment().format("mm"));
@@ -241,6 +241,7 @@ app.directive("claimDirective", [
           }
           scope.addClaim = function( ) {
             console.log( scope.add_claim_data );
+            $("#check-claim-modal").modal('hide');
             if( scope.checkClaimForm( scope.add_claim_data ) == true ){
               scope.add_claim_data.id = scope.add_claim_data.selected_nric_data.id;
               scope.add_claim_data.back_date = 1;
@@ -502,26 +503,31 @@ app.directive("claimDirective", [
 
             $('.start-datepicker').datepicker({
               format: "mm/dd/yyyy",
+              viewMode: "months", 
+              minViewMode: "months"
               // maxDate: new Date()
             }).on( 'changeDate', function(e) {
               // console.log( e );
               $('.start-datepicker').datepicker('hide');
-              var date = moment( e.date ).format('MM/DD/YYYY');
+              scope.selected_start_date = moment( e.date ).startOf('month').format('MM/DD/YYYY');
+              var date = moment( e.date ).startOf('month').format('MM/DD/YYYY');
               if( date > scope.selected_end_date ){
-                scope.selected_end_date = date;
-                $('.end-datepicker').datepicker('update', date);
-                $('.end-datepicker').datepicker('setStartDate', date);
+                scope.selected_end_date = moment( e.date ).endOf('month').format('MM/DD/YYYY');
+                $('.end-datepicker').datepicker('update', scope.selected_end_date);
               }
-
+              $('.end-datepicker').datepicker('setStartDate', scope.selected_start_date);
               scope.searchByNric( scope.searchTrans_text );
             });
 
             $('.end-datepicker').datepicker({
               format: "mm/dd/yyyy",
-              startDate: new Date()
+              startDate: new Date(),
+              viewMode: "months", 
+              minViewMode: "months"
             }).on( 'changeDate', function(e) {
               // console.log( e );
               $('.end-datepicker').datepicker('hide');
+              scope.selected_end_date = moment( e.date ).endOf('month').format('MM/DD/YYYY');
               scope.searchByNric( scope.searchTrans_text );
             });
 

@@ -773,5 +773,19 @@ span.arrow-right {
   }
 /*===============================*/
 
+/*====== CHECK CLAIM MODAL ======*/
+  #check-claim-modal p{
+    margin-left: 0;
+    padding-left: 0;
+  }
+  #check-claim-modal .similar{
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0 !important;
+  }
+  #check-claim-modal .modal-footer{
+    margin: 0 15px !important;
+    border: none;
+  }
+
 
 /* override bootsrap */
