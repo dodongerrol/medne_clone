@@ -220,7 +220,8 @@ app.directive("claimDirective", [
             function(isConfirm) {
               if (isConfirm) {
                 data.currency_type = scope.clinic.currency_type;
-                data.currency_amount = (data.currency_type == 'sgd') ? data.amount : data.amount * 3;
+                // data.currency_amount = (data.currency_type == 'sgd') ? data.amount : data.amount * 3;
+                data.currency_amount = scope.clinic.currency_amount;
                 scope.showLoading();
                 $http.post(base_url + "clinic/save/claim/transaction", data)
                   .success(function(response) {
