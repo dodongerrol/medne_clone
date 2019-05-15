@@ -3077,7 +3077,7 @@ span.number-with-circle {
 
 .transaction-rows{
   /*max-height: 1400px;*/
-  height: 500px;
+  height: 600px;
   overflow-y: auto;
   margin: 30px 75px 0 75px;
 }

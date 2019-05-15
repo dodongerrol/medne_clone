@@ -685,12 +685,14 @@
 						</div>
 					</div>
 					<div class="details-right">
-						<p style="margin-bottom: 5px;"><span>S$ <span ng-bind="selected_list.amount"></span</span></p>
+						<p style="margin-bottom: 5px;"><span>S$ <span ng-bind="selected_list.amount"></span></span></p>
 						<span ng-if="selected_list.lite_plan">
 							<p style="line-height: 1;color: #555;" ng-bind="selected_list.procedure"></p>
 							<p style="line-height: 1;margin-bottom: 10px;"><span>S$ <span ng-bind="selected_list.procedure_cost"></span></span></p>
 							<p style="line-height: 1;color: #555;">Consultation</p>
-							<p style="line-height: 1;margin-bottom: 20px;"><span>S$ <span ng-bind="selected_list.consultation"></span</span></p>
+							<p style="line-height: 1;margin-bottom: 20px;">
+								<span>S$ <span ng-bind="selected_list.consultation"></span></span>
+							</p>
 						</span>
 					</div>
 				</div>
@@ -701,6 +703,31 @@
 					</div>
 					<div class="details-right">
 						<p><span ng-bind="selected_list.type">In-Network</span></p>
+					</div>
+				</div>
+
+				<div ng-if="selected_list.cap_transaction" class="details-row">
+					<div class="details-left">
+						<p><label>Caps per visit</label></p>
+					</div>
+					<div class="details-right">
+						<p>S$ <span ng-bind="selected_list.cap_per_visit"></span></p>
+					</div>
+				</div>
+				<div ng-if="selected_list.cap_transaction" class="details-row">
+					<div class="details-left">
+						<p><label>Paid by Credits</label></p>
+					</div>
+					<div class="details-right">
+						<p>S$ <span ng-bind="selected_list.paid_by_credits"></span></p>
+					</div>
+				</div>
+				<div ng-if="selected_list.cap_transaction" class="details-row">
+					<div class="details-left">
+						<p><label>Paid by Cash</label></p>
+					</div>
+					<div class="details-right">
+						<p>S$ <span ng-bind="selected_list.paid_by_cash"></span></p>
 					</div>
 				</div>
 
