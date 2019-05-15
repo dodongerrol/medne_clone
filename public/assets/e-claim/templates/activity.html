@@ -105,7 +105,7 @@
 			<div class="white-space-10"></div>
 
 			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left">
-				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6">S$ <span ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00'"></span></h4>
+				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6">S$ <span ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span></h4>
 				<p class="color-gray font-12 weight-700">TOTAL ALLOCATION</p>
 				<div class="white-space-10"></div>
 				<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6">S$ <span ng-bind="(activity_results.balance) ? activity_results.balance : 00"></span></h4>
