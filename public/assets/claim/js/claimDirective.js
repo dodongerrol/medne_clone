@@ -33,6 +33,7 @@ app.directive("claimDirective", [
         scope.selected_minute = parseInt(moment().format("mm"));
         scope.searchTrans_text = "";
         scope.selected_submit_data = {};
+        scope.e_card_data = {};
 
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
@@ -55,7 +56,16 @@ app.directive("claimDirective", [
           scope.add_claim_data.selected_nric_data = data;
           scope.add_claim_data.nric = data.nric;
           scope.isSearchNRIC = false;
-          console.log( scope.add_claim_data );
+          $http.get(base_url + "clinic/get/special_user/details/" + data.id)
+            .success(function(response){
+              // console.log(response);
+              if(response.public_user && response.no_data) {
+
+              } else {
+                scope.e_card_data = response;
+                $('#e-card-modal').modal('show');
+              }
+            })
         }
         scope.selectService = function( data ){
           $(".service-drop").hide();

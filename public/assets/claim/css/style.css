@@ -341,8 +341,8 @@ span.arrow-right {
   border-radius: unset !important;
   min-width: 500px !important;
   min-height: 250px;
-  top: unset !important;
-  transform: translate(-15%, 50%);
+  /*top: unset !important;*/
+  /*transform: translate(-15%, 50%);*/
 }
 
 .manual-modalWrapper {
@@ -786,6 +786,37 @@ span.arrow-right {
     margin: 0 15px !important;
     border: none;
   }
+/*===============================*/
+
+/*====== E-CARD MODAL ======*/
+  #e-card-modal .modal-body p{
+    margin-left: 0;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  #e-card-modal .coverage-box{
+    color: #111;
+    font-size: 12px;
+    overflow-y: auto;
+    max-height: 200px;
+  }
+
+  #e-card-modal .coverage-box .cov-item{
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  #e-card-modal .ecard-container{
+    background: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    overflow: hidden;
+  }
+/*===============================*/
 
 
 /* override bootsrap */
