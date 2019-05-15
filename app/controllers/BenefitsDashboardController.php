@@ -2081,6 +2081,17 @@ class BenefitsDashboardController extends \BaseController {
 				$emp_status = 'deleted';
 			}
 
+			$cap_per_visit = $wallet->cap_per_visit_medical;
+
+			if($plan_tier) {
+				if($wallet->cap_per_visit_medical != 0 || $wallet->cap_per_visit_medical != null) {
+					$plan_tier->gp_cap_per_visit = $wallet->cap_per_visit_medical;
+				} else {
+					$cap_per_visit = $plan_tier->gp_cap_per_visit;
+				}
+			}
+
+
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -2088,6 +2099,7 @@ class BenefitsDashboardController extends \BaseController {
 				),
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
+				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
 				'first_name'			=> $first_name,
 				'last_name'				=> $last_name,
@@ -2900,6 +2912,16 @@ class BenefitsDashboardController extends \BaseController {
 				$phone_no = $user->PhoneCode.$user->PhoneNo;
 			}
 
+			$cap_per_visit = $wallet->cap_per_visit_medical;
+
+			if($plan_tier) {
+				if($wallet->cap_per_visit_medical != 0 || $wallet->cap_per_visit_medical != null) {
+					$plan_tier->gp_cap_per_visit = $wallet->cap_per_visit_medical;
+				} else {
+					$cap_per_visit = $plan_tier->gp_cap_per_visit;
+				}
+			}
+
 			$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
 			if((int)$user->Active == 0) {
 				$emp_status = 'deleted';
@@ -2911,6 +2933,7 @@ class BenefitsDashboardController extends \BaseController {
 				),
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
+				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
 				'first_name'			=> $first_name,
 				'last_name'				=> $last_name,

@@ -1925,19 +1925,30 @@ public function getNewClinicDetails($id)
         
 
             // check if employee has plan tier cap
-       $plan_tier = DB::table('plan_tiers')
-       ->join('plan_tier_users', 'plan_tier_users.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
-       ->where('plan_tiers.active', 1)
-       ->where('plan_tier_users.status', 1)
-       ->where('plan_tier_users.user_id', $findUserID)
-       ->first();
+        $customer_id = PlanHelper::getCustomerId($owner_id);
+        $plan_tier = null;
 
+        if($customer_id) {
+         $plan_tier = DB::table('plan_tiers')
+         ->join('plan_tier_users', 'plan_tier_users.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
+         ->where('plan_tiers.active', 1)
+         ->where('plan_tier_users.status', 1)
+         ->where('plan_tier_users.user_id', $findUserID)
+         ->where('plan_tiers.customer_id', $customer_id)
+         ->first();
+        }
+       
        $cap_currency_symbol = "S$";
        $cap_amount = 0;
+       $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+
         if($plan_tier) {
-            $cap_amount = $plan_tier->gp_cap_per_visit;
+            if($wallet->cap_per_visit_medical != 0 || $wallet->cap_per_visit_medical != null) {
+              $cap_amount = $wallet->cap_per_visit_medical;
+            } else {
+              $cap_amount = $plan_tier->gp_cap_per_visit;
+            }
         } else {
-            $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
             if($wallet->cap_per_visit_medical > 0) {
                 $cap_amount = $wallet->cap_per_visit_medical;
             }
@@ -5271,32 +5282,20 @@ public function payCreditsNew( )
            $consultation_fees = $clinic_co_payment['consultation_fees'];
 
     // check if user has a plan tier
-           $plan_tier = PlanHelper::getEmployeePlanTier($customer_id);
+           $plan_tier = PlanHelper::getEmployeePlanTier($customer_id, $user_id);
            $cap_amount = 0;
            if($plan_tier) {
-      // if((int)$clinic_type->consultation == 1) {
-        //   if($plan_tier->gp_cap_per_visit != 0) {
-        //    if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-        //     $total_credits = self::floatvalue($total_amount) + $co_paid_amount;
-        //   } else {
-        //     $total_credits =self::floatvalue($total_amount);
-        //   }
-
-        //   if($total_credits > $plan_tier->gp_cap_per_visit) {
-        //     $returnObject->status = FALSE;
-        //     $returnObject->message = 'You have hit the maximum GP CAP PER VISIT as you are in Plan Tier member.';
-        //     $returnObject->sub_mesage = 'You can only pay '.number_format($plan_tier->gp_cap_per_visit, 2).' Per GP Visit.';
-        //     return Response::json($returnObject);
-        //   }
-        // }
-      // }
-            $cap_amount = $plan_tier->gp_cap_per_visit;
-        } else {
-            if($wallet_user->cap_per_visit_medical > 0) {
+            if($wallet_user->cap_per_visit_medical != 0 || $wallet_user->cap_per_visit_medical != null) {
               $cap_amount = $wallet_user->cap_per_visit_medical;
+            } else {
+              $cap_amount = $plan_tier->gp_cap_per_visit;
             }
-        }
-
+          } else {
+              if($wallet_user->cap_per_visit_medical > 0) {
+                $cap_amount = $wallet_user->cap_per_visit_medical;
+              }
+          }
+          
         $credits = 0;
         $cash = 0;
         $half_credits = false;
