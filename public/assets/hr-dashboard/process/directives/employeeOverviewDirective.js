@@ -174,10 +174,10 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.enrollMoreEmployees = function(){
-          localStorage.setItem('fromEmpOverview', false);
-          $state.go('create-team-benefits-tiers');
-          // localStorage.setItem('fromEmpOverview', true);
-          // $state.go('enrollment-options');
+          // localStorage.setItem('fromEmpOverview', false);
+          // $state.go('create-team-benefits-tiers');
+          localStorage.setItem('fromEmpOverview', true);
+          $state.go('enrollment-options');
           $('body').css('overflow','auto');
         }
 
@@ -1073,7 +1073,8 @@ app.directive("employeeOverviewDirective", [
               angular.forEach(scope.employees.data, function(value, key) {
                 value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                 value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
-                value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
+                value.start_date_format = moment( value.start_date ).format("MM/DD/YYYY");
+                // value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
                 // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
               });
               $(".loader-table").hide();

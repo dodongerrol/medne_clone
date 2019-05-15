@@ -171,8 +171,8 @@ app.directive('benefitsTiersDirective', [
 				scope.backBtn = function(){
 					scope.isEditActive = false;
 					if( scope.isTierBtn == true ){
-						// $state.go('enrollment-options');
-						$state.go('benefits-dashboard');
+						$state.go('enrollment-options');
+						// $state.go('benefits-dashboard');
 					}else if( scope.isTierInput == true ){
 						scope.isTierInput = false;
 						if( scope.tier_arr.length > 0 ){
@@ -181,23 +181,23 @@ app.directive('benefitsTiersDirective', [
 							scope.isTierBtn = true;
 						}
 					}else if( scope.isTierSummary == true ){
-						// $state.go('enrollment-options');
-						$state.go('benefits-dashboard');
+						$state.go('enrollment-options');
+						// $state.go('benefits-dashboard');
 					}else if( scope.isEnrollmentOptions == true ){
-						// if( scope.isTiering == true || scope.isTiering == 'true' ){
-						// 	scope.isTierSummary = true;
-						// 	scope.isEnrollmentOptions = false;
-						// }else{
-						// 	$state.go('enrollment-options');
-						// }
-						$state.go('benefits-dashboard');
+						if( scope.isTiering == true || scope.isTiering == 'true' ){
+							scope.isTierSummary = true;
+							scope.isEnrollmentOptions = false;
+						}else{
+							$state.go('enrollment-options');
+						}
+						// $state.go('benefits-dashboard');
 					}else if( scope.isExcel == true || scope.isWebInput == true ){
 						scope.isEnrollmentOptions = true;
 						scope.isExcel = false;
 						scope.isWebInput = false;
 						$('.summary-right-container').hide();
 					}else if( scope.isReviewEnroll == true ){
-						// $state.go('enrollment-options');
+						$state.go('enrollment-options');
 						localStorage.setItem('fromEmpOverview', false);
           				// $state.go('create-team-benefits-tiers');
           				scope.isReviewEnroll = false;
@@ -1391,11 +1391,11 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.onLoad = function( ){
-					// if( localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true ){
-					// 	scope.isTiering = true;
-					// }else{
-					// 	scope.isTiering = false;
-					// }
+					if( localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true ){
+						scope.isTiering = true;
+					}else{
+						scope.isTiering = false;
+					}
 
 					scope.getProgress();
 					scope.companyDependents();
