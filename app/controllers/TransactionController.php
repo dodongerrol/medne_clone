@@ -237,23 +237,23 @@ class TransactionController extends BaseController {
 		$clinic_id = $getSessionData->Ref_ID;
 		$clinic_data = DB::table('clinic')->where('ClinicID', $clinic_id)->first();
 
-	    if($getSessionData != FALSE){
-	    	$user_id = $input['id'];
-	    	$owner_id = StringHelper::getUserId($user_id);
-	    	$transaction = new Transaction();
-	    	$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
-	    	$lite_plan_status = false;
-	    	$clinic_peak_status = false;
-	    	$consultation_fees = $clinic_data->consultation_fees;
-            $lite_plan_status = StringHelper::newLitePlanStatus($input['id']);
-	    	
-            if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-                $lite_plan_enabled = 1;
-            } else {
-                $lite_plan_enabled = 0;
-            }
+		if($getSessionData != FALSE){
+			$user_id = $input['id'];
+			$owner_id = StringHelper::getUserId($user_id);
+			$transaction = new Transaction();
+			$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
+			$lite_plan_status = false;
+			$clinic_peak_status = false;
+			$consultation_fees = $clinic_data->consultation_fees;
+			$lite_plan_status = StringHelper::newLitePlanStatus($input['id']);
 
-			if($input['back_date'] == 1 || $input['back_date'] == "1") {
+			if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+				$lite_plan_enabled = 1;
+			} else {
+				$lite_plan_enabled = 0;
+			}
+
+			if((int)$input['back_date'] == 1) {
 				// check if is a valid date
 				if(!strtotime($input['transaction_date'])) {
 					return array('status' => FALSE, 'message' => 'Date/Time of Visit is not a valid date.');
@@ -326,6 +326,7 @@ class TransactionController extends BaseController {
 				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
 				$co_paid_status = $clinic_co_payment['co_paid_status'];
 				$consultation_fees = $clinic_co_payment['consultation_fees'];
+				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 
 				$temp = array(
 					'UserID'				=> $input['id'],
@@ -451,7 +452,8 @@ class TransactionController extends BaseController {
 					EmailHelper::sendErrorLogs($email);
 					return array('status' => FALSE, 'message' => 'Failed to save transaction.');
 				}
-			} else if((int)$input['health_provider'] == 1) {
+			} else {
+			  // } else if((int)$input['health_provider'] == 1) {
 				$clinic_peak_status = false;
 				$transaction_data = DB::table('transaction_history')->where('transaction_id', $input['transaction_id'])->first();
 				if(!is_numeric($input['amount'])) {
@@ -464,6 +466,7 @@ class TransactionController extends BaseController {
 				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
 				$co_paid_status = $clinic_co_payment['co_paid_status'];
 				$consultation_fees = $clinic_co_payment['consultation_fees'];
+				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 				// $result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $transaction_data->date_of_transaction);
 				// if($result['status']) {
 				// 	$peak_amount = $result['amount'];
@@ -1630,10 +1633,10 @@ class TransactionController extends BaseController {
 			$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
 
 			if($trans->spending_type == 'medical') {
-	          $table_wallet_history = 'wallet_history';
-	        } else {
-	          $table_wallet_history = 'wellness_wallet_history';
-	        }
+				$table_wallet_history = 'wallet_history';
+			} else {
+				$table_wallet_history = 'wellness_wallet_history';
+			}
 
 	        // if((int)$trans->lite_plan_enabled == 1) {
 	        //     $logs_lite_plan = DB::table($table_wallet_history)
@@ -1888,10 +1891,10 @@ class TransactionController extends BaseController {
 			$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
 			
 			if($trans->spending_type == 'medical') {
-	          $table_wallet_history = 'wallet_history';
-	        } else {
-	          $table_wallet_history = 'wellness_wallet_history';
-	        }
+				$table_wallet_history = 'wallet_history';
+			} else {
+				$table_wallet_history = 'wellness_wallet_history';
+			}
 
 	        // if((int)$trans->lite_plan_enabled == 1) {
 	        //     $logs_lite_plan = DB::table($table_wallet_history)
@@ -2113,9 +2116,9 @@ class TransactionController extends BaseController {
 		$getSessionData = StringHelper::getMainSession(3);
 		
 		$trans_check = DB::table('transaction_history')
-							->where('transaction_id', $input['transaction_id'])
-							->where('ClinicID', $getSessionData->Ref_ID)
-							->first();
+		->where('transaction_id', $input['transaction_id'])
+		->where('ClinicID', $getSessionData->Ref_ID)
+		->first();
 		if(!$trans_check) {
 			return array('status' => false, 'message' => 'Transaction does not exist.');
 		}
@@ -2311,24 +2314,24 @@ class TransactionController extends BaseController {
 				}
 
 				if($trans->spending_type == 'medical') {
-		          $table_wallet_history = 'wallet_history';
-		        } else {
-		          $table_wallet_history = 'wellness_wallet_history';
-		        }
+					$table_wallet_history = 'wallet_history';
+				} else {
+					$table_wallet_history = 'wellness_wallet_history';
+				}
 
-		        if((int)$trans->lite_plan_enabled == 1) {
-		            $logs_lite_plan = DB::table($table_wallet_history)
-		            ->where('logs', 'deducted_from_mobile_payment')
-		            ->where('lite_plan_enabled', 1)
-		            ->where('id', $trans->transaction_id)
-		            ->first();
+				if((int)$trans->lite_plan_enabled == 1) {
+					$logs_lite_plan = DB::table($table_wallet_history)
+					->where('logs', 'deducted_from_mobile_payment')
+					->where('lite_plan_enabled', 1)
+					->where('id', $trans->transaction_id)
+					->first();
 
-		            if($logs_lite_plan && floatval($trans->credit_cost) > 0 && (int)$trans->lite_plan_use_credits == 0) {
-		                $mednefits_credits += floatval($trans->co_paid_amount);
-		            } else if($logs_lite_plan && floatval($trans->procedure_cost) >= 0 && (int)$trans->lite_plan_use_credits == 1){
-		                $mednefits_credits += floatval($trans->co_paid_amount);
-		            }
-		        }
+					if($logs_lite_plan && floatval($trans->credit_cost) > 0 && (int)$trans->lite_plan_use_credits == 0) {
+						$mednefits_credits += floatval($trans->co_paid_amount);
+					} else if($logs_lite_plan && floatval($trans->procedure_cost) >= 0 && (int)$trans->lite_plan_use_credits == 1){
+						$mednefits_credits += floatval($trans->co_paid_amount);
+					}
+				}
 
 				if($trans->co_paid_status == 0) {
 					if(strrpos($trans->clinic_discount, '%')) {
@@ -2531,10 +2534,10 @@ class TransactionController extends BaseController {
 				$transaction_status = '';
 				$mednefits_credits = 0;
 				if($trans->spending_type == 'medical') {
-		          $table_wallet_history = 'wallet_history';
-		        } else {
-		          $table_wallet_history = 'wellness_wallet_history';
-		        }
+					$table_wallet_history = 'wallet_history';
+				} else {
+					$table_wallet_history = 'wellness_wallet_history';
+				}
 
 		        // if((int)$trans->lite_plan_enabled == 1) {
 		        //     $logs_lite_plan = DB::table($table_wallet_history)
@@ -2744,10 +2747,10 @@ class TransactionController extends BaseController {
 				$transaction_status = '';
 				$mednefits_credits = 0;
 				if($trans->spending_type == 'medical') {
-		          $table_wallet_history = 'wallet_history';
-		        } else {
-		          $table_wallet_history = 'wellness_wallet_history';
-		        }
+					$table_wallet_history = 'wallet_history';
+				} else {
+					$table_wallet_history = 'wellness_wallet_history';
+				}
 
 		        // if((int)$trans->lite_plan_enabled == 1) {
 		        //     $logs_lite_plan = DB::table($table_wallet_history)

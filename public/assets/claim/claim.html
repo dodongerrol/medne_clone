@@ -1,0 +1,513 @@
+<div class="claim-container" claim-directive>
+	<div class="claim-wrapper">
+		<!-- content here -->
+		<div class="claim-content">
+			<section class="buttons">
+				<button ng-click="verifyNRIC()" class="buttons-primary mybg-primary btn-nric">Verify User by NRIC</button>
+				<button ng-click="manualClaim()" class="buttons-secondary mybg-secondary btn-manual">Manual Claims</button>
+			</section>
+
+			<section class="registration">
+				<div class="card registration container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<h4 class="card-title">Registration</h4>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="container-fluid">
+							<table class="table-registration table-hover">
+								<thead>
+									<th>Registration Date/Time</th>
+									<th>Name</th>
+									<th>NIRC</th>
+									<th>Cap Per Visit</th>
+									<th>Remarks</th>
+								</thead>
+								<tbody>
+									<!-- <tr>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td><button class="option-button mybg-red">Cancel</button></td>
+									</tr>
+									<tr>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td>test</td>
+										<td><button class="option-button mybg-red">Cancel</button></td>
+									</tr> -->
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</section>
+
+			<section ng-if="claim_list.length > 0" class="trans-preview">
+				<div class="card registration container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<h4 class="card-title">Pay Direct Transaction Preview:</h4>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="container-fluid">
+							<table class="table-trans-preview">
+								<thead>
+									<th>Date/Time of Visit</th>
+									<th>Name</th>
+									<th>NRIC</th>
+									<th>Service</th>
+									<th>
+										Cash
+										<i class="fa fa-info-circle cash-tooltip">
+						        	<p class="tooltip-cash">This is the amount, Mednefits Member paid to you either in Cash/Nets/Credit Card.</p>
+						        </i>
+									</th>
+									<th>Option</th>
+								</thead>
+								<tbody>
+									<tr ng-repeat="list in claim_list">
+										<td ng-bind="list.display_book_date"></td>
+										<td>
+											<span ng-bind="list.name"></span> - 
+						    			<span ng-if="list.user_type == 1">Public User</span> 
+						    			<span ng-if="list.user_type == 5 && list.access_type == 1">Invidual User</span>
+						    			<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User</span>
+						    			<span ng-if="list.user_type == 5 && list.access_type == 2 || list.user_type == 5 && list.access_type == 3">Dependent User</span>
+										</td>
+										<td ng-bind="list.nric"></td>
+										<td>
+											<span ng-repeat="service in list.procedures track by $index">
+						    				<span ng-bind="service"></span>
+						    				<span ng-if="$index != list.procedures.length-1">,</span>
+					    				</span>
+										</td>
+										<td>
+											<span ng-if="clinic.currency_type == 'myr'">RM</span>
+						    			<span ng-if="clinic.currency_type == 'sgd'">SGD</span>
+						    			<input valid-number type="text" placeholder="Enter Amount" ng-model="list.amount" ng-value="list.amount">
+										</td>
+										<td>
+											<button type="button" class="btn btn-primary btn-submit" ng-click="toggleClaimSummaryModal(list, $index)">
+						    				Submit
+						    			</button>
+						    			<button type="button" class="btn btn-danger btn-remove" ng-click="removeTransPreview(list)">Remove</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</section>
+
+			<section class="successful-transactions">
+				<div class="card transactions container-fluid">
+
+					<div class="row">
+						<div class="col-md-3 card-title-wrapper">
+							<h4 class="card-title">Successful Transactions</h4>
+						</div>
+						<div class="filter">
+							<div class="col-md-2 search-wrapper">
+								<input class="search" type="text" placeholder="Search by NRIC" ng-model="searchTrans_text" ng-change="searchNRICchanged( searchTrans_text )">
+								<button class="search-icon" ng-click="searchByNric( searchTrans_text );"><i class="fa fa-search" aria-hidden="true"
+										style="font-size:18px; font-weight: 300;"></i></button>
+							</div>
+
+							<div class="col-md-5 text-left date-wrapper">
+								<div class="btn-date" ng-click="showStartdate()">
+									<div class="left-icon-wrapper">
+										<i class="fa fa-calendar" aria-hidden="true"></i>
+									</div>
+									<input type="text" class="start-datepicker" ng-model="selected_start_date" readonly>
+									<div class="right-icon-wrapper">
+										<i class="fa fa-chevron-down" aria-hidden="true"></i>
+									</div>
+								</div>
+								<span class="arrow-right">
+									<i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+								</span>
+								<div class="btn-date" ng-click="showEnddate()">
+									<div class="left-icon-wrapper">
+										<i class="fa fa-calendar" aria-hidden="true"></i>
+									</div>
+									<input type="text" class="end-datepicker" ng-model="selected_end_date">
+									<div class="right-icon-wrapper">
+										<i class="fa fa-chevron-down" aria-hidden="true"></i>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- End Filter -->
+					</div>
+
+					<div class="row">
+						<div class="container-fluid">
+							<table class="table-successfulTransaction table-hover">
+								<thead>
+									<th>Registration Date/Time</th>
+									<th>Payment Date/Time</th>
+									<th>Transaction ID</th>
+									<th>Name</th>
+									<th>NIRC</th>
+									<th>Service</th>
+									<th>Mednefits Fee</th>
+									<th>Mednefits Credit</th>
+									<th>Cash</th>
+									<th>Option</th>
+								</thead>
+								<tbody>
+									<tr ng-if="backdate_list.length == 0">
+						     		<td colspan="10" class="text-center">No Transactions found</td>
+						     	</tr>
+									<tr ng-repeat="list in backdate_list track by $index">
+										<td ng-bind="list.date_of_transaction">01 April 2019, 03:57pm</td>
+										<td ng-bind="list.claim_date">04 April 2019, 03:57pm</td>
+										<td ng-bind="list.transaction_id">MED013675</td>
+										<td ng-bind="list.user_name">Kum Kin Cheong</td>
+										<td ng-bind="list.NRIC">G8472947H</td>
+										<td ng-bind="list.procedure_name">Medicine & Treatment</td>
+										<td>
+											<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.mednefits_fee"></span></span>
+			    						<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.mednefits_fee * list.currency_amount | number: 2"></span></span>
+			    					</td>
+										<td>
+											<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.mednefits_credits"></span></span>
+			    						<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.mednefits_credits * list.currency_amount | number: 2"></span></span>
+										</td>
+										<td>
+											<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.cash"></span></span>
+			    						<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.cash * list.currency_amount | number: 2"></span></span>
+										</td>
+										<td>
+											<button ng-if="list.deleted_option == 'remove' && !list.deleted" class="option-button mybg-red" ng-click="cancelBackDateTransaction(list)">Remove</button>
+											<button ng-if="list.deleted_option == 'refund' && !list.deleted" class="option-button mybg-grayDark" ng-click="cancelBackDateTransaction(list)">Refund</button>
+
+											<label class="option-label myColor-red" ng-if="list.data_status == 'removed' && list.deleted">REMOVED</label>
+			    						<label class="option-label myColor-red" ng-if="list.data_status == 'refunded' && list.deleted">REFUNDED</label>
+										</td>
+									</tr>
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<!-- Modals -->
+				<div id="modalNRIC" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myNRICModalLabel">
+					<div class="modal-dialog modal-sm" role="document">
+						<div class="modal-content nric-modalWrapper">
+							<div class="container nric-wrapper">
+								<div class="row">
+									<div class="col-md-11 nric-tittle-wrapper">
+										<h4 class="nric-title">Verify User by NRIC</h4>
+									</div>
+								</div>
+								<div class="row nric-content-wrapper">
+									<form ng-submit="searchUserByNRIC( search_member )">
+										<div class="col-md-5 search-box">
+											<input class="form-control text-strong" type="text" placeholder="Search" ng-model="search_member">
+										</div>
+										<div class="col-md-3 search-button">
+											<button class="btn btn-lg">Search</button>
+										</div>
+									</form>
+								</div>
+								<div class="row nric-content-wrapper">
+									<div class="col-md-11">
+										<table class="table-nric">
+											<thead>
+												<tr>
+													<th>Name</th>
+													<th>NRIC</th>
+													<th>Status</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="list in users_arr">
+													<td ng-bind="list.name">Alfred</td>
+													<td ng-bind="list.nric">G8472947H</td>
+													<td>
+														<span ng-if="list.status == 1">Active</span>
+														<span ng-if="list.status == 0">Inactive</span>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- modal Manual -->
+				<div id="modalManual" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myManualModalLabel">
+					<div class="modal-dialog modal-sm" role="document">
+						<div class="modal-content manual-modalWrapper">
+							<div class="container-fluid manual-wrapper">
+								<div class="row">
+									<div class="container-fluid manual-tittle-wrapper">
+										<h4 class="manual-title">Manual Claim</h4>
+									</div>
+								</div>
+								<div class="row">
+									<div class="container-fluid manual-content-wrapper">
+
+										<table class="table-manual">
+											<thead>
+												<tr>
+													<th>NRIC</th>
+													<th>Service</th>
+													<th>Date of Visit</th>
+													<th>Time of Visit</th>
+													<th>Cash</th>
+													<th>Option</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>
+														<input class="manual-form" type="text" placeholder="Search NRIC" ng-model="add_claim_data.nric" ng-change="getAllUsers( add_claim_data.nric )">
+														<div ng-if="isSearchNRIC" class="nric-drop">
+															<div class="nric-list" ng-repeat="list in users_nric_arr" ng-click="selectNRIC( list )">
+																<div class="img-wrapper">
+																	<img ng-src="{{ list.image }}">
+																</div>
+																<div class="details">
+																	<p ng-bind="list.name">Lorem Ipsum</p>
+																	<p ng-bind="list.email">email.com</p>
+																	<p ng-bind="list.nric" class="nric">NRIC</p>
+																	<p>
+																		<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 1">Invidual User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 2">Dependent User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 3">Dependent User</span>
+																	</p>
+																</div>
+															</div>
+														</div>
+													</td>
+													<td class="service-td">
+														<input ng-if="add_claim_data.selected_service.length == 0" class="manual-form" type="text" placeholder="Select Procedure" ng-click="showServiceDrop()">
+														<input ng-if="add_claim_data.selected_service.length > 0" class="manual-form" type="text" ng-repeat="list in add_claim_data.selected_service" placeholder="Select Procedure" ng-model="list" ng-click="showServiceDrop()">
+														<div class="service-drop">
+															<div class="service-list" ng-repeat="list in service_list">
+																<span ng-bind="list.name" ng-click="selectService( list )"></span>
+																<span class="remove-span" ng-if="list.selected" ng-click="removeService( list )"><i class="fa fa-times"></i></span>
+															</div>
+														</div>
+													</td>
+													<td>
+														<div class="manual-form date" style="width: 90% !important;">
+															<input type="text" class="datepicker" ng-model="add_claim_data.visit_date">
+															<div class="icon-wrapper">
+																<i class="fa fa-calendar myColor-secondary" aria-hidden="true"></i>
+															</div>
+														</div>
+													</td>
+													<td class="datepicker-td">
+														<div class="manual-form time" style="width: 90% !important;">
+															<div class="left-icon-wrapper">
+																<i class="fa fa-clock-o myColor-secondary" aria-hidden="true"></i>
+															</div>
+															<input type="text" ng-focus="showTimePicker()" ng-model="add_claim_data.visit_time">
+															<div class="right-icon-wrapper cursor-pointer" ng-click="showTimeDayDrop()">
+																<span ng-bind="add_claim_data.daytime">AM</span>
+															</div>
+														</div>
+
+														<div class="timepicker-container">
+															<div class="top">
+																<div class="arrow" ng-click="addHour()">
+																	<i class="fa fa-caret-up"></i>
+																</div>
+																<div class="divider">
+																</div>
+																<div class="arrow" ng-click="addMinute()">
+																	<i class="fa fa-caret-up"></i>
+																</div>
+															</div>
+															<div class="middle">
+																<div class="hour-wrapper">
+																	<span ng-if="selected_hour < 10">0</span><span ng-bind="selected_hour">01</span>
+																</div>
+																<div class="divider">
+																	:
+																</div>
+																<div class="minute-wrapper">
+																	<span ng-if="selected_minute < 10">0</span><span ng-bind="selected_minute">59</span>
+																</div>
+															</div>
+															<div class="bottom">
+																<div class="arrow" ng-click="deductHour()">
+																	<i class="fa fa-caret-down"></i>
+																</div>
+																<div class="divider">
+																</div>
+																<div class="arrow" ng-click="deductMinute()">
+																	<i class="fa fa-caret-down"></i>
+																</div>
+															</div>
+														</div>
+
+														<div class="daytime-container">
+															<div class="daytime" ng-click="pickDayTime('AM')">AM</div>
+															<div class="daytime" ng-click="pickDayTime('PM')">PM</div>
+														</div>
+													</td>
+													<td>
+														<input valid-number class="manual-form" type="text" placeholder="{{ placeholder }}" ng-model="add_claim_data.amount"> 
+														<span ng-if="clinic.currency_type == 'sgd'" class="SgDollar myColor-secondary">S$</span>
+														<span ng-if="clinic.currency_type == 'myr'" class="SgDollar myColor-secondary">RM</span>
+													</td>
+													<td>
+														<button ng-disabled="!add_claim_data.nric || add_claim_data.selected_service_ids.length == 0 || !add_claim_data.visit_time" class="btn btn-lg" ng-click="checkClaim()">Submit</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal fade" id="check-claim-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document" style="width: 550px;">
+				  	<div class="modal-content isNotDoneChecking" style="height: 65px;text-align: center;padding: 40px;">
+				  		<p>
+				  			<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+				  		</p>
+				  		<p>
+				  			Checking...
+				  		</p>
+				  	</div>
+			      <div class="modal-content isDoneChecking" style="" hidden>
+			      	<div class="modal-header">
+			      		You have similar transactions with this user.
+			      		<p style="font-size: 12px;padding-left: 4px;">Please check and make sure it is not a duplicate claim entry.</p>
+				      </div>
+			        <div class="modal-body" style="background: #fff;border-radius: 0 0 6px 6px;">
+			        	<div class="your-transaction">
+			        		<p style="font-size: 20px;margin-bottom: 10px;border-bottom: 1px solid #ccc;">Your transaction </p>
+			        		<p><label>Name:</label> <span ng-bind="your_transaction.name">Allan Alzula</span></p>
+			        		<p>
+			        			<label>Service:</label> 
+			        			<span ng-repeat="list in service_selected">
+			        				<span ng-bind="list.name">Dental</span>
+			        				<span ng-if="service_selected.length > 1">,</span>
+			        			</span>
+			        		</p>
+			        		<p><label>Date:</label> <span ng-bind="your_transaction.date">Jun 14,2016</span></p>
+			        		<p><label>Amount:</label> <span ng-if="clinic.currency_type == 'sgd'">S$</span><span ng-if="clinic.currency_type == 'myr'">RM</span><span ng-bind="temp_list[0].amount | number: 2">50.00</span></p>
+			        		<p><label>Type:</label> <span ng-bind="your_transaction.type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
+			        	</div>
+
+			        	<div class="other-transaction">
+			        		<p style="font-size: 20px;margin-bottom: 10px;border-bottom: 1px solid #ccc;">Similar transactions </p>
+
+			        		<div ng-repeat="list in other_transaction" class="similar">
+				        		<p><label>Name:</label> <span ng-bind="list.user_name">Allan Alzula</span></p>
+				        		<p><label>Service:</label> <span ng-bind="list.service">Dental</span></p>
+				        		<p><label>Date:</label> <span ng-bind="list.date_of_transaction">Jun 14,2016</span></p>
+				        		<p><label>Amount:</label> <span ng-bind="list.currency_symbol"></span><span ng-bind="list.procedure_cost">50.00</span></p>
+				        		<p><label>Type:</label> <span ng-bind="list.transaction_type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
+			        		</div>
+			        	</div>
+			        </div>
+			        <div class="modal-footer">
+				      	<button class="btn btn-primary" style="background: #b52c2c !important;border-radius: 2px;padding: 10px 30px;" data-dismiss="modal" >Cancel</button>
+				      	<button class="btn btn-success" style="background: #0190CD !important;border-radius: 2px;padding: 10px 30px;" ng-click="addClaim()">Proceed</button>
+					    </div>
+			      </div>
+			    </div>
+				</div>
+
+				<div class="modal fade" id="summary-claim-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				  <div class="modal-dialog" role="document">
+			      <div class="modal-content">
+			      	<div class="modal-header">
+			      		<p>Please check your claim before you proceed.</p>
+				      </div>
+			        <div class="modal-body">
+			        	<div class="top-content">
+			        		<div ng-if="selected_submit_data.transaction_id" class="row-summary">
+			        			<div class="img-wrapper">
+			        				<img src="../../e-template-img/Trans-ID---Mednefits-Credits-Email.png">
+			        			</div>
+			        			<p><label>Transaction ID:</label> <span ng-bind="selected_submit_data.transaction_id">ELYDI8</span></p>
+			        		</div>
+			        		<div class="row-summary">
+			        			<div class="img-wrapper">
+			        				<img src="../../e-template-img/clock.png">
+			        			</div>
+			        			<p><label>Transaction Date:</label> <span ng-bind="selected_submit_data.display_book_date">15 April 2019, 11:49am</span></p>
+			        		</div>
+			        	</div>
+			        	<div class="middle-content">
+			        		<div class="column-details">
+			        			<label>Member</label>
+			        			<p ng-bind="selected_submit_data.name">Terinn Teo</p>
+			        		</div>
+			        		<div class="column-details">
+			        			<label>NRIC</label>
+			        			<p ng-bind="selected_submit_data.nric">S345D3</p>
+			        		</div>
+			        		<div class="column-details">
+			        			<label>Payment Type</label>
+			        			<p>Cash</p>
+			        		</div>
+			        		<div class="column-details">
+			        			<label>Currency Type</label>
+			        			<p ng-bind="clinic.currency_type" style="text-transform: uppercase;">MYR</p>
+			        		</div>
+			        	</div>
+			        	<div class="bottom-content">
+			        		<div class="item">
+				        		<label>Item/Service</label>
+				        		<div class="item-content">	
+				        			<div class="img-wrapper">
+				        				<img ng-src="{{ clinic.clinic_type_image }}">
+				        			</div>
+				        			<p ng-bind="selected_submit_data.procedures">Lorem Ipsum</p>
+				        		</div>
+			        		</div>
+
+			        		<div class="item2">
+			        			<label>Cash:</label> 
+			        			<p>
+			        				<span ng-if="clinic.currency_type == 'sgd'">S$</span> 
+			        				<span ng-if="clinic.currency_type == 'myr'">RM</span> 
+			        				<span ng-bind="selected_submit_data.amount | number:2">15.00</span>
+			        			</p>
+			        		</div>
+			        	</div>
+			        </div>
+			        <div class="modal-footer">
+				      	<button class="btn btn-cancel-claim" data-dismiss="modal">Cancel</button>
+			      		<button class="btn" ng-click="submitSummaryClaimData( selected_submit_data, selected_submit_data.index )">Proceed</button>
+					    </div>
+			      </div>
+			    </div>
+				</div>
+				
+			</section>
+		</div>
+	</div>
+</div>

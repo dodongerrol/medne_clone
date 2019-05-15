@@ -637,7 +637,7 @@ public function claimReportPage()
   if($getSessionData != FALSE){
     $dataArray['title'] = "Claim Report Page";
     $dataArray['clincID'] = $getSessionData->Ref_ID;
-    return View::make('claim.report', $dataArray);
+    return View::make('clinic.claim', $dataArray);
   }else{
 
     return Redirect::to('provider-portal-login');

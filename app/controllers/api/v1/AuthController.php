@@ -2268,11 +2268,12 @@ public function payCredits( )
           $co_paid_amount = $clinic_co_payment['co_paid_amount'];
           $co_paid_status = $clinic_co_payment['co_paid_status'];
           $consultation_fees = $clinic_co_payment['consultation_fees'];
+          $clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
           // // check clinic peak hours
           // $result = ClinicHelper::getCheckClinicPeakHour($clinic, date('Y-m-d H:i:s'));
           // if($result['status']) {
           //   $peak_amount = $result['amount'];
-          //   $clinic_peak_status = true;
+          //   
 
           //   // check user company peak status
           //   $user_peak = PlanHelper::getUserCompanyPeakStatus($user_id);
