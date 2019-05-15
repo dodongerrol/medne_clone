@@ -123,21 +123,21 @@
 							<td class="medical-details-container">
 								<div class="medical-details">
 									<strong>Allocation:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.medical.credits_allocation">1,000.00</span></span>
+									<span>S$ <span ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
 								</div>
 								<div class="medical-details">
 									<strong>Balance:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.medical.balance">1,000.00</span></span>
+									<span>S$ <span ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
 								</div>
 							</td>
 							<td class="wellness-details-container">
 								<div class="wellness-details">
 									<strong>Allocation:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness">1,000.00</span></span>
+									<span>S$ <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
 								</div>
 								<div class="wellness-details">
 									<strong>Balance:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.wellness.balance">1,000.00</span></span>
+									<span>S$ <span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
 								</div>
 							</td>
 						</tr>
@@ -256,7 +256,7 @@
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-container">
 						<strong class="font-helvetica-medium">Allocation</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.credits_allocation">1,000.00</span></span>
+						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
 					</div>
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleMedicalUsage()" class="usage-container">
@@ -268,17 +268,17 @@
 						<div ng-if="isMedicalUsageShow" class="usage-dropdown-details">
 							<div class="usage-details">
 								<span>Spent:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.credits_spent">650</span></span>
+								<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.credits_spent | number : 2">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication">50</span></span>
+								<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication | number : 2">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.balance">300.00</span></span>
+						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.balance | number: 2">300.00</span></span>
 					</div>
 				</div>
 
@@ -286,7 +286,7 @@
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-container">
 						<strong class="font-helvetica-medium">Allocation</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness">500.00</span></span>
+						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
 					</div>
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleWellnessUsage()" class="usage-container">
@@ -298,17 +298,17 @@
 						<div ng-if="isWellnessUsageShow" class="usage-dropdown-details">
 							<div class="usage-details">
 								<span>Spent:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness">650</span></span>
+								<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness | number: 2">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness">50</span></span>
+								<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness | number: 2">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.balance">380.00</span></span>
+						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.balance | number: 2">380.00</span></span>
 					</div>
 				</div>
 

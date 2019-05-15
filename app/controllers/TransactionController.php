@@ -467,45 +467,6 @@ class TransactionController extends BaseController {
 				$co_paid_status = $clinic_co_payment['co_paid_status'];
 				$consultation_fees = $clinic_co_payment['consultation_fees'];
 				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
-				// $result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $transaction_data->date_of_transaction);
-				// if($result['status']) {
-				// 	$peak_amount = $result['amount'];
-				// 	$clinic_peak_status = true;
-
-				// 	// check user company peak status
-				// 	$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
-				// 	// return var_dump($user_peak);
-				// 	if($user_peak) {
-				// 		if((int)$clinic_data->co_paid_status == 1) {
-				// 			$gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
-				// 			$co_paid_amount = $clinic_data->peak_hour_amount + $gst;
-				// 			$co_paid_status = $clinic_data->co_paid_status;
-
-				// 		} else {
-				// 			$co_paid_amount = $clinic_data->peak_hour_amount;
-				// 			$co_paid_status = $clinic_data->co_paid_status;
-				// 		}
-				// 		$consultation_fees = $co_paid_amount;
-				// 	} else {
-				// 		if((int)$clinic_data->co_paid_status == 1) {
-				// 			$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-				// 			$co_paid_amount = $clinic_data->co_paid_amount + $gst;
-				// 			$co_paid_status = $clinic_data->co_paid_status;
-				// 		} else {
-				// 			$co_paid_amount = $clinic_data->co_paid_amount;
-				// 			$co_paid_status = $clinic_data->co_paid_status;
-				// 		}
-				// 	}
-				// } else {
-				// 	if((int)$clinic_data->co_paid_status == 1) {
-				// 		$gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-				// 		$co_paid_amount = $clinic_data->co_paid_amount + $gst;
-				// 		$co_paid_status = $clinic_data->co_paid_status;
-				// 	} else {
-				// 		$co_paid_amount = $clinic_data->co_paid_amount;
-				// 		$co_paid_status = $clinic_data->co_paid_status;
-				// 	}
-				// }
 
 				$temp = array(
 					'procedure_cost' 	=> $input['amount'],

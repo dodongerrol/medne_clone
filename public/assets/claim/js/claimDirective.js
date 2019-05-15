@@ -249,7 +249,8 @@ app.directive("claimDirective", [
               scope.add_claim_data.transaction_date = moment( scope.add_claim_data.visit_date + " " + scope.add_claim_data.visit_time + " " + scope.add_claim_data.daytime, "DD MMM, YYYY hh:mm A" ).format('YYYY-MM-DD hh:mm A');;
               scope.add_claim_data.procedure_ids = scope.add_claim_data.selected_service_ids;
               scope.add_claim_data.currency_type = scope.clinic.currency_type;
-              scope.add_claim_data.currency_amount = (scope.add_claim_data.currency_type == 'sgd') ? scope.add_claim_data.amount : scope.add_claim_data.amount * 3;
+              // scope.add_claim_data.currency_amount = (scope.add_claim_data.currency_type == 'sgd') ? scope.add_claim_data.amount : scope.add_claim_data.amount * 3;
+              scope.add_claim_data.currency_amount = scope.clinic.currency_amount;
               scope.add_claim_data.health_provider = 0;
               // scope.add_claim_data.transaction_id = 0;
 
