@@ -362,6 +362,32 @@
 											</div>
 										</div>
 
+										<div ng-if="list.cap_transaction" class="trans-row">
+											<div class="label-wrapper">
+												<p><label>Caps per visit</label></p>
+											</div>
+											<div class="desc-wrapper">
+												<p><span class="color-gray2" ng-bind="list.cap_per_visit">Filbert Tan</span></p>
+											</div>
+										</div>
+										<div ng-if="list.cap_transaction" class="trans-row">
+											<div class="label-wrapper">
+												<p><label>Paid by Credits</label></p>
+											</div>
+											<div class="desc-wrapper">
+												<p><span class="color-gray2" ng-bind="list.paid_by_credits">Filbert Tan</span></p>
+											</div>
+										</div>
+										<div ng-if="list.cap_transaction" class="trans-row">
+											<div class="label-wrapper">
+												<p><label>Paid by Cash</label></p>
+											</div>
+											<div class="desc-wrapper">
+												<p><span class="color-gray2" ng-bind="list.paid_by_cash">Filbert Tan</span></p>
+											</div>
+										</div>
+
+
 										<p ng-if="list.status_text" style="text-align:center;background: rgb(79, 151, 98);color: white;padding: 10px;width: 28%;margin-left: 135px;" ng-bind="list.status_text"></p>
 									</div>
 								</div>
