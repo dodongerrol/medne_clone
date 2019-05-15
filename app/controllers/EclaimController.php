@@ -862,6 +862,8 @@ class EclaimController extends \BaseController {
 					$total_credits += $trans->credit_cost;
 				}
 
+				$half_credits = false;
+
 				if((int)$trans->health_provider_done == 1) {
 					$receipt_status = TRUE;
 					$health_provider_status = TRUE;
@@ -876,8 +878,15 @@ class EclaimController extends \BaseController {
 					$health_provider_status = FALSE;
 					$credit_status = TRUE;
 					$transaction_type = "credits";
-					$payment_type = "Mednefits Credits";
 					$cash = number_format($trans->credit_cost, 2);
+
+					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+				      $payment_type = 'Mednefits Credits + Cash';
+				      $half_credits = true;
+				    } else {
+				      $payment_type = 'Mednefits Credits';
+				    }
+
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						$total_amount = number_format($trans->credit_cost + $trans->consultation_fees, 2);
 					}
@@ -976,7 +985,12 @@ class EclaimController extends \BaseController {
 					'lite_plan'         => (int)$trans->lite_plan_enabled == 1 ? true : false,
 					'consultation_credits' => $consultation_credits,
 					'service_credits'   => $service_credits,
-					'transaction_type'  => $transaction_type
+					'transaction_type'  => $transaction_type,
+					'cap_transaction'   => $half_credits,
+				    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
+				    'paid_by_cash'      => number_format($trans->cash_cost, 2),
+				    'paid_by_credits'   => number_format($trans->credit_cost, 2),
+				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$"
 				);
 
 				array_push($transaction_details, $format);
@@ -2887,6 +2901,7 @@ public function getActivityInNetworkTransactions( )
 					$owner_id = $customer->UserID;
 				}
 
+				$half_credits = false;
 				$total_amount = number_format($trans->procedure_cost, 2);
 
 				if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
@@ -2903,7 +2918,12 @@ public function getActivityInNetworkTransactions( )
 						$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
 					}
 				} else {
-					$payment_type = "Mednefits Credits";
+					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+				      $payment_type = 'Mednefits Credits + Cash';
+				      $half_credits = true;
+				    } else {
+				      $payment_type = 'Mednefits Credits';
+				    }
 					$transaction_type = "credits";
 					$cash = number_format($trans->credit_cost, 2);
 					if($trans->deleted == 0 || $trans->deleted == "0") {
@@ -2951,7 +2971,6 @@ public function getActivityInNetworkTransactions( )
 					$status_text = FALSE;
 				}
 
-
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 				$format = array(
@@ -2988,7 +3007,12 @@ public function getActivityInNetworkTransactions( )
 					'service_credits'   => $service_credits,
 					'transaction_type'  => $transaction_type,
 					'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null,
-					'dependent_relationship'    => $dependent_relationship
+					'dependent_relationship'    => $dependent_relationship,
+					'cap_transaction'   => $half_credits,
+				    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
+				    'paid_by_cash'      => number_format($trans->cash_cost, 2),
+				    'paid_by_credits'   => number_format($trans->credit_cost, 2),
+				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$"
 				);
 
 				array_push($transaction_details, $format);
