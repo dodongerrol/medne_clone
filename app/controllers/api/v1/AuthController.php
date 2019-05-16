@@ -1941,9 +1941,8 @@ public function getNewClinicDetails($id)
        $cap_currency_symbol = "S$";
        $cap_amount = 0;
        $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
-
         if($plan_tier) {
-            if($wallet->cap_per_visit_medical != 0 || $wallet->cap_per_visit_medical != null) {
+            if($wallet->cap_per_visit_medical > 0) {
               $cap_amount = $wallet->cap_per_visit_medical;
             } else {
               $cap_amount = $plan_tier->gp_cap_per_visit;
