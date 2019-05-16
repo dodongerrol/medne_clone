@@ -4422,9 +4422,9 @@ public function getInNetworkDetails($id)
     'wallet_status'     => $wallet_status,
     'lite_plan_enabled' => $transaction->lite_plan_enabled,
     'cap_transaction'   => $half_credits,
-    'cap_per_visit'     => $transaction->currency_type == "myr" ? "RM ".number_format($transaction->cap_per_visit / $transaction->currency_amount, 2) : "S$".number_format($transaction->cap_per_visit, 2),
-    'paid_by_cash'      => $transaction->currency_type == "myr" ? "RM ".number_format($transaction->cash_cost / $transaction->currency_amount, 2) : "S$".number_format($transaction->cash_cost, 2),
-    'paid_by_credits'      => $transaction->currency_type == "myr" ? "RM ".number_format($transaction->credit_cost / $transaction->currency_amount, 2) : "S$".number_format($transaction->credit_cost, 2),
+    'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit / $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
+    'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost / $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
+    'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($transaction->credit_cost / $transaction->currency_amount, 2) : number_format($transaction->credit_cost, 2),
     "currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$"
   );
 }
@@ -4687,6 +4687,13 @@ public function getEclaimTransactions( )
 
               $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
+              if($res->currency_type == "myr") {
+                $currency_symbol = "RM";
+                $res->amount = $res->amount * 3;
+              } else {
+                $currency_symbol = "S$";
+              }
+
               $temp = array(
                   'status'            => $res->status,
                   'claim_date'        => date('d F Y', strtotime($res->date)),
@@ -4704,7 +4711,8 @@ public function getEclaimTransactions( )
                   'month'             => date('M', strtotime($res->approved_date)),
                   'day'               => date('d', strtotime($res->approved_date)),
                   'time'              => date('h:ia', strtotime($res->approved_date)),
-                  'spending_type'     => $res->spending_type
+                  'spending_type'     => $res->spending_type,
+                  'currency_symbol'   => $currency_symbol
               );
 
               array_push($e_claim, $temp);
@@ -4814,6 +4822,13 @@ public function getEclaimDetails($id)
               $date = date('d F Y, h:i A', strtotime($transaction->updated_at));
           }
 
+          if($transaction->currency_type == "myr") {
+            $currency_symbol = "RM";
+            $transaction->amount = $transaction->amount * 3;
+          } else {
+            $currency_symbol = "S$";
+          }
+
           $id = str_pad($transaction->e_claim_id, 6, "0", STR_PAD_LEFT);
           $temp = array(
               'status_text'       => $status_text,
@@ -4835,6 +4850,7 @@ public function getEclaimDetails($id)
               'rejected_status'   => $rejected_status,
               'rejected_message'   => $transaction->rejected_reason,
               'spending_type'     => ucwords($transaction->spending_type),
+              'currency_symbol'   => $currency_symbol
           );
           $returnObject->status = TRUE;
           $returnObject->data = $temp;
