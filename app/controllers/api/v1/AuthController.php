@@ -1950,7 +1950,9 @@ public function getNewClinicDetails($id)
             }
         } else {
             if($wallet->cap_per_visit_medical > 0) {
-                $cap_amount = $wallet->cap_per_visit_medical;
+              $cap_amount = $wallet->cap_per_visit_medical;
+            } else {
+              $cap_amount = $plan_tier->gp_cap_per_visit;
             }
         }
 
