@@ -945,8 +945,9 @@ app.directive('benefitsTiersDirective', [
 
 							angular.forEach( emp_arr,function(value,key){
 								console.log( value.dob );
-								value.dob = moment( value.dob ).format('YYYY-MM-DD');
-								value.plan_start = moment( value.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
+								// value.dob = moment( value.dob ).format('YYYY-MM-DD');
+								// value.plan_start = moment( value.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
+								// value.plan_start = moment( value.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
 								angular.forEach( value.dependents,function(value2,key2){
 									value2.dob = moment( value2.dob ).format('YYYY-MM-DD');
