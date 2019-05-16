@@ -232,7 +232,7 @@ class DependentController extends \BaseController {
 						}
 					}
 				}
-
+				// return $temp_users;
 				// get active plan id for member
 				$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 				$customer_active_plan = DB::table('customer_active_plan')
@@ -269,7 +269,7 @@ class DependentController extends \BaseController {
 						'credits'				=> $user['medical_credits'],
 						'wellness_credits'		=> $user['wellness_credits'],
 						'postal_code'			=> trim($user['postal_code']),
-						'start_date'			=> date('d/m/Y', strtotime($user['plan_start'])),
+						'start_date'			=> $user['plan_start'],
 						'error_logs'			=> serialize($error_member_logs)
 					);
 
