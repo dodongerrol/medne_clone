@@ -31,6 +31,7 @@
 
 			      if( data.modal == 'account-billing-edit-billing-contact-and-address2' ){
 			      	scope.billing_address = data.data;
+			      	console.log(scope.billing_address);
 			      }
 
 			      if( data.modal == 'account-billing-edit-payment-information' ){
@@ -212,22 +213,22 @@
 							if(isConfirm){
 								var data;
 
-								if( scope.billing_address.billing_contact_status == true ){
+								// if( scope.billing_address.billing_contact_status == true ){
 									data = {
-										billing_contact_status  : true ,
-										company_name : scope.billing_address.billing_address.company_name,
-										billing_address	: scope.billing_address.billing_address.billing_address,
-										postal	: scope.billing_address.billing_address.postal,
+										// billing_contact_status  : true ,
+										company_name : scope.billing_address.business_information.company_name,
+										billing_address	: scope.billing_address.billing_contact.billing_address,
+										postal	: scope.billing_address.billing_contact.postal,
 									}
-								}else{
+								// }else{
 
-									data = {
-										billing_contact_status  : false ,
-										company_name : scope.billing_address.billing_address.company_name,
-										billing_address	: scope.billing_address.billing_address.billing_address,
-										postal	: scope.billing_address.billing_address.postal,
-									}
-								}
+								// 	data = {
+								// 		billing_contact_status  : false ,
+								// 		company_name : scope.billing_address.billing_address.company_name,
+								// 		billing_address	: scope.billing_address.billing_address.billing_address,
+								// 		postal	: scope.billing_address.billing_address.postal,
+								// 	}
+								// }
 
 
 								hrSettings.updateBillingAddress( data )
@@ -261,26 +262,25 @@
 							if(isConfirm){
 								var data;
 
-								if( scope.billing_contact.billing_contact_status == true ){
+								// if( scope.billing_contact.billing_contact_status == true ){
 									data = {
-										billing_contact_status  : true ,
-										first_name : scope.billing_contact.business_contact.first_name,
-										last_name	: scope.billing_contact.business_contact.last_name,
-										job_title	: scope.billing_contact.business_contact.job_title,
-										work_email	: scope.billing_contact.business_contact.work_email,
-										phone	: scope.billing_contact.business_contact.phone,
+										// billing_contact_status  : true ,
+										customer_billing_contact_id: scope.billing_contact.billing_contact.customer_billing_contact_id,
+										first_name : scope.billing_contact.billing_contact.first_name,
+										last_name	: scope.billing_contact.billing_contact.last_name,
+										work_email	: scope.billing_contact.billing_contact.work_email,
 									}
-								}else{
+								// }else{
 
-									data = {
-										billing_contact_status  : false ,
-										first_name : scope.billing_contact.business_contact.first_name,
-										last_name	: scope.billing_contact.business_contact.last_name,
-										job_title	: scope.billing_contact.business_contact.job_title,
-										work_email	: scope.billing_contact.business_contact.work_email,
-										phone	: scope.billing_contact.business_contact.phone,
-									}
-								}
+								// 	data = {
+								// 		billing_contact_status  : false ,
+								// 		first_name : scope.billing_contact.business_contact.first_name,
+								// 		last_name	: scope.billing_contact.business_contact.last_name,
+								// 		job_title	: scope.billing_contact.business_contact.job_title,
+								// 		work_email	: scope.billing_contact.business_contact.work_email,
+								// 		phone	: scope.billing_contact.business_contact.phone,
+								// 	}
+								// }
 
 
 								hrSettings.updateBillingContact( data )

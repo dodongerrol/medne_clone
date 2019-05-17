@@ -102,13 +102,14 @@
 	        $lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 
 	        $business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
+	        $billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
 
-	        if($business_contact->billing_status === true || $business_contact->billing_status === "true") {
-	            $contact_name = $business_contact->first_name.' '.$business_contact->last_name;
-	        } else {
-	            $contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
-	            $contact_name = $contact->billing_name;
-	        }
+	        // if($business_contact->billing_status === true || $business_contact->billing_status === "true") {
+	        //     $contact_name = $business_contact->first_name.' '.$business_contact->last_name;
+	        // } else {
+	        //     $contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
+	        //     $contact_name = $contact->billing_name;
+	        // }
 
 	        $total_e_claim_amount = 0;
 	        $total_in_network_amount = 0;
@@ -192,9 +193,9 @@
 	            'statement_due'             => $statement_due,
 	            'statement_start_date'      => $start,
 	            'statement_end_date'        => $end,
-	            'statement_contact_name'    => $contact_name,
-	            'statement_contact_number'  => $business_contact->phone,
-	            'statement_contact_email'   => $business_contact->work_email,
+	            'statement_contact_name'    => $billing_contact->first_name.' '.$billing_contact->last_name,
+	            'statement_contact_number'  => $billing_contact->phone,
+	            'statement_contact_email'   => $billing_contact->billing_email,
 	            'statement_in_network_amount'   => $total_in_network_amount,
 	            'statement_e_claim_amount'       => $total_e_claim_amount
 	        );
