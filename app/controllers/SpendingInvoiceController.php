@@ -208,8 +208,9 @@ class SpendingInvoiceController extends \BaseController {
 		set_time_limit(900);
 		$companies = DB::table('corporate')
                     ->join('customer_link_customer_buy', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
+                    // ->where('customer_link_customer_buy.customer_buy_start_id', 1)
                     ->get();
-
+        // return $companies;
         $start = date('Y-m-01', strtotime('-1 month'));
         $temp_end = date('Y-m-t', strtotime('-1 month'));
         // $start = date('Y-m-01');
@@ -306,6 +307,13 @@ class SpendingInvoiceController extends \BaseController {
                              if((int)$check->spending_notification == 1) {
                                 // send to email with attachment
                                 EmailHelper::sendEmailCompanyInvoiceWithAttachment($new_statement);
+                                $business_contact = DB::table('customer_business_contact')
+                                    ->where('customer_buy_start_id', $statement['customer_id'])
+                                    ->first();
+                                if($business_contact) {
+                                    $new_statement['emailTo'] = $business_contact->work_email ? $business_contact->work_email : 'developer.mednefits@gmail.com';
+                                    EmailHelper::sendEmailCompanyInvoiceWithAttachment($new_statement);
+                                }
                             }
                             try {
                                 $admin_logs = array(
