@@ -1937,7 +1937,9 @@ public function getNewClinicDetails($id)
          ->where('plan_tiers.customer_id', $customer_id)
          ->first();
         }
-       
+        
+        // return array('res' => $plan_tier);
+
        $cap_currency_symbol = "S$";
        $cap_amount = 0;
        $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
@@ -5303,7 +5305,7 @@ public function payCreditsNew( )
            $plan_tier = PlanHelper::getEmployeePlanTier($customer_id, $user_id);
            $cap_amount = 0;
            if($plan_tier) {
-            if($wallet_user->cap_per_visit_medical != 0 || $wallet_user->cap_per_visit_medical != null) {
+            if($wallet_user->cap_per_visit_medical > 0) {
               $cap_amount = $wallet_user->cap_per_visit_medical;
             } else {
               $cap_amount = $plan_tier->gp_cap_per_visit;

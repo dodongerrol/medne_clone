@@ -2084,7 +2084,7 @@ class BenefitsDashboardController extends \BaseController {
 			$cap_per_visit = $wallet->cap_per_visit_medical;
 
 			if($plan_tier) {
-				if($wallet->cap_per_visit_medical != 0 || $wallet->cap_per_visit_medical != null) {
+				if($wallet->cap_per_visit_medical > 0) {
 					$plan_tier->gp_cap_per_visit = $wallet->cap_per_visit_medical;
 				} else {
 					$cap_per_visit = $plan_tier->gp_cap_per_visit;
