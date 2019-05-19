@@ -1097,13 +1097,13 @@ app.directive('benefitsTiersDirective', [
 								first_name: emp.employee.first_name,
 								last_name: emp.employee.last_name,
 								nric: emp.employee.nric,
-								dob: moment(emp.employee.dob, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+								dob: moment(emp.employee.dob, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 								email: emp.employee.email,
 								mobile: emp.employee.mobile,
 								job_title: emp.employee.job_title,
 								medical_credits: parseInt(emp.employee.credits),
 								wellness_credits: parseInt(emp.employee.wellness_credits),
-								plan_start: moment(emp.employee.start_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+								plan_start: moment(emp.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 								postal_code: emp.employee.postal_code,
 								mobile_area_code: emp.employee.mobile_area_code
 							}
