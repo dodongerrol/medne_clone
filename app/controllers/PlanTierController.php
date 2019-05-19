@@ -433,7 +433,7 @@ class PlanTierController extends \BaseController {
 				'mobile'				=> !empty($user['mobile']) ? $user['mobile'] : null,
 				'job_title'				=> 'Other',
 				'credits'				=> $user['medical_credits'],
-				'wellness_credits'		=> $user['medical_credits'],
+				'wellness_credits'		=> $user['wellness_credits'],
 				'start_date'			=> $user['plan_start'],
 				'postal_code'			=> $postal_code,
 				'error_logs'			=> serialize($error_member_logs)
@@ -636,7 +636,7 @@ class PlanTierController extends \BaseController {
 			'credits'					=> $input['medical_credits'],
 			'wellness_credits'			=> $input['wellness_credits'],
 			'postal_code'				=> $postal_code,
-			'start_date'				=> date('d/m/Y', strtotime($input['plan_start'])),
+			'start_date'				=> $input['plan_start'],
 			'error_logs'				=> serialize($error_logs)
 		);
 		$result = $temp_enroll->updateEnrollee($data);
