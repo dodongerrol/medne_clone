@@ -541,12 +541,20 @@
 	                    $sub_account_type = $temp_sub->user_type;
 	                    $owner_id = $temp_sub->owner_id;
 	                    $dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-	                     $relationship = FALSE;
+	                    $relationship = FALSE;
+	                    $bank_account_number = $temp_account->bank_account;
+						$bank_name = $temp_account->bank_name;
+						$bank_code = $temp_account->bank_code;
+						$bank_brh = $temp_account->bank_brh;
 	                } else {
 	                    $sub_account = FALSE;
 	                    $sub_account_type = FALSE;
 	                    $owner_id = $member->UserID;
 	                    $dependent_relationship = FALSE;
+	                    $bank_account_number = $member->bank_account;
+						$bank_name = $member->bank_name;
+						$bank_code = $member->bank_code;
+						$bank_brh = $member->bank_brh;
 	                }
 
 	                $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
@@ -573,7 +581,12 @@
 	                    'day'               => date('d', strtotime($res->approved_date)),
 	                    'approved_time'              => date('h:ia', strtotime($res->approved_date)),
 	                    'spending_type'     => $res->spending_type,
-	                    'dependent_relationship'	=> $dependent_relationship
+	                    'dependent_relationship'	=> $dependent_relationship,
+	                    'bank_account_number' => $bank_account_number,
+						'bank_name'					=> $bank_name,
+						'bank_code'					=> $bank_code,
+						'bank_brh'					=> $bank_brh,
+						'nric'							=> $member->NRIC
 	                );
 
 	                array_push($e_claim, $temp);

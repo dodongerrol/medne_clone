@@ -2334,6 +2334,7 @@ class BenefitsDashboardController extends \BaseController {
 					$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $wallet->wallet_id)
 									->where('wallet_history_id',  '>=', $wallet_history_id)
+									->where('created_at', '>=', $start)
 									->get();
 				} else {
 					$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
@@ -2476,7 +2477,7 @@ class BenefitsDashboardController extends \BaseController {
 			'total_medical_company_allocation' => number_format($total_medical_allocation, 2),
 			'total_medical_company_unallocation' => number_format($credits, 2),
 			'total_medical_employee_allocated' => number_format($total_medical_allocated, 2),
-			'total_medical_employee_spent'		=> number_format($get_allocation_spent, 2),
+			'total_medical_employee_spent'		=> $get_allocation_spent < 0 ? "0.00" : number_format($get_allocation_spent, 2),
 			'total_medical_employee_balance' => number_format($total_medical_allocated - $get_allocation_spent, 2),
 			'total_medical_employee_balance_number' => $total_medical_allocated - $get_allocation_spent,
 			'total_medical_wellness_allocation' => number_format($total_allocation_wellness, 2),
