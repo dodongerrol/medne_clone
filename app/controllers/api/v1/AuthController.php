@@ -4444,9 +4444,9 @@ public function getInNetworkDetails($id)
     'wallet_status'     => $wallet_status,
     'lite_plan_enabled' => $transaction->lite_plan_enabled,
     'cap_transaction'   => $half_credits,
-    'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit / $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
-    'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost / $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
-    'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($transaction->credit_cost / $transaction->currency_amount, 2) : number_format($transaction->credit_cost, 2),
+    'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit * $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
+    'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost * $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
+    'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($transaction->credit_cost * $transaction->currency_amount, 2) : number_format($transaction->credit_cost, 2),
     "currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$"
   );
 }
