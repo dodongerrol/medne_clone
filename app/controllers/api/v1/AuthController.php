@@ -4280,6 +4280,28 @@ public function getInNetworkDetails($id)
                }
               }
 
+              $doc_files = [];
+              foreach ($receipt_images as $key => $doc) {
+                 if($doc->type == "pdf" || $doc->type == "xls") {
+                    if(StringHelper::Deployment()==1){
+                       $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
+                   } else {
+                       $fil = url('').'/receipts/'.$doc->file;
+                   }
+                 } else if($doc->type == "image") {
+                    $fil = FileHelper::formatImageAutoQuality($doc->file);
+                }
+
+                $temp_doc = array(
+                    'transaction_doc_id'    => $doc->image_receipt_id,
+                    'transaction_id'            => $doc->transaction_id,
+                    'file'                      => $fil,
+                    'file_type'             => $doc->type
+                );
+
+                array_push($doc_files, $temp_doc);
+              }
+
                         // get services
            if($transaction->multiple_service_selection == 1 || $transaction->multiple_service_selection == "1")
            {
@@ -4445,7 +4467,8 @@ public function getInNetworkDetails($id)
     'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit * $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
     'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost * $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
     'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($transaction->credit_cost * $transaction->currency_amount, 2) : number_format($transaction->credit_cost, 2),
-    "currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$"
+    "currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$",
+    'files'             => $doc_files
   );
 }
 
