@@ -63,6 +63,7 @@ class SpendingInvoiceController extends \BaseController {
                             ->count();
         if($statement_check == 0) {
             $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end, $plan);
+            return $statement;
             if($statement) {
                 $statement_id = $statement->id;
             } else {
@@ -205,9 +206,10 @@ class SpendingInvoiceController extends \BaseController {
 
 	public function generateMonthlyCompanyInvoice( )
 	{
-		set_time_limit(900);
+		set_time_limit(1000);
 		$companies = DB::table('corporate')
                     ->join('customer_link_customer_buy', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
+                    // ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_link_customer_buy.customer_buy_start_id')
                     // ->where('customer_link_customer_buy.customer_buy_start_id', 1)
                     ->get();
         // return $companies;
