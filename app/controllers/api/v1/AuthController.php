@@ -1173,6 +1173,13 @@ return Response::json($returnObject);
                     $doc_files = FALSE;
                 }
 
+                if($res->currency_type == "myr") {
+                  $currency_symbol = "RM";
+                  $res->amount = $res->amount * 3;
+                } else {
+                  $currency_symbol = "S$";
+                }
+
                 $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
                 $temp = array(
@@ -1188,7 +1195,8 @@ return Response::json($returnObject);
                     'receipt_status' => $doc_files,
                     'transaction_id' => $res->e_claim_id,
                     'visit_date'  => date('d F Y', strtotime($res->date)).', '.$res->time,
-                    'spending_type' => $res->spending_type
+                    'spending_type' => $res->spending_type,
+                    'currency_symbol'   => $currency_symbol
                 );
 
                 array_push($e_claim, $temp);
@@ -1226,65 +1234,75 @@ return Response::json($returnObject);
                       $procedure_temp .= ucwords($service->Name).',';
                   }
                   $procedure = rtrim($procedure_temp, ',');
+                    }
+                    $clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
+                } else {
+                    $service_lists = DB::table('clinic_procedure')
+                    ->where('ProcedureID', $trans->ProcedureID)
+                    ->first();
+                    if($service_lists) {
+                      $procedure = ucwords($service_lists->Name);
+                      $clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
+                  } else {
+                                      // $procedure = "";
+                      $clinic_name = ucwords($clinic_type->Name);
+                  }
               }
-              $clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
-          } else {
-              $service_lists = DB::table('clinic_procedure')
-              ->where('ProcedureID', $trans->ProcedureID)
-              ->first();
-              if($service_lists) {
-                $procedure = ucwords($service_lists->Name);
-                $clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
-            } else {
-                                // $procedure = "";
-                $clinic_name = ucwords($clinic_type->Name);
-            }
-        }
 
                         // check if there is a receipt image
-        $receipt = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->count();
+              $receipt = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->count();
 
-        if($receipt > 0) {
-          $receipt_status = TRUE;
-      } else {
-          $receipt_status = FALSE;
+              if($receipt > 0) {
+                $receipt_status = TRUE;
+            } else {
+                $receipt_status = FALSE;
+            }
+
+            $total_amount = $trans->procedure_cost;
+
+            if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
+                $receipt_status = TRUE;
+                $health_provider_status = TRUE;
+                $credit_status = FALSE;
+                if($trans->lite_plan_enabled == 1) {
+                  $total_amount = $trans->procedure_cost + $trans->co_paid_amount;
+              }
+          } else {
+            $health_provider_status = FALSE;
+            $credit_status = TRUE;
+
+            if((int)$trans->lite_plan_enabled == 1) {
+              $total_amount = $trans->procedure_cost + $trans->co_paid_amount;
+          }
       }
 
-      $total_amount = $trans->procedure_cost;
+      if($trans->currency_type == "sgd") {
+        $currency_symbol = "S$";
+        $converted_amount = $total_amount;
+      } else if($trans->currency_type == "myr") {
+        $currency_symbol = "RM";
+        $converted_amount = $total_amount * $trans->currency_amount;
+      }
 
-      if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
-          $receipt_status = TRUE;
-          $health_provider_status = TRUE;
-          $credit_status = FALSE;
-          if($trans->lite_plan_enabled == 1) {
-            $total_amount = $trans->procedure_cost + $trans->co_paid_amount;
-        }
-    } else {
-      $health_provider_status = FALSE;
-      $credit_status = TRUE;
+      $format = array(
+        'clinic_name'       => $clinic->Name,
+        'clinic_image'      => $clinic->image,
+        'amount'            => number_format($total_amount, 2),
+        'converted_amount'  => number_format($converted_amount, 2),
+        'clinic_type_and_service' => $clinic_name,
+        'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
+        'customer'          => ucwords($customer->Name),
+        'transaction_id'    => $trans->transaction_id,
+        'receipt_status'    => $receipt_status,
+        'cash_status'       => $health_provider_status,
+        'credit_status'     => $credit_status,
+        'user_id'           => $trans->UserID,
+        'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
+        'currency_symbol'   => $currency_symbol
+      );
 
-      if((int)$trans->lite_plan_enabled == 1) {
-        $total_amount = $trans->procedure_cost + $trans->co_paid_amount;
+      array_push($transaction_details, $format);
     }
-}
-
-  $format = array(
-    'clinic_name'       => $clinic->Name,
-    'clinic_image'      => $clinic->image,
-    'amount'            => number_format($total_amount, 2),
-    'clinic_type_and_service' => $clinic_name,
-    'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
-    'customer'          => ucwords($customer->Name),
-    'transaction_id'    => $trans->transaction_id,
-    'receipt_status'    => $receipt_status,
-    'cash_status'       => $health_provider_status,
-    'credit_status'     => $credit_status,
-    'user_id'           => $trans->UserID,
-    'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
-  );
-
-  array_push($transaction_details, $format);
-  }
   }
 
 
@@ -4151,7 +4169,7 @@ public function getNetworkTransactions( )
             $converted_amount = $total_amount;
           } else if($trans->currency_type == "myr") {
             $currency_symbol = "RM";
-            $converted_amount = $total_amount / $trans->currency_amount;
+            $converted_amount = $total_amount * $trans->currency_amount;
           }
 
           $format = array(
@@ -4398,9 +4416,9 @@ public function getInNetworkDetails($id)
     $converted_consultation = (int)$transaction->lite_plan_enabled == 1 ? number_format($consultation, 2) : "0.00";
   } else if($transaction->currency_type == "myr") {
     $currency_symbol = "RM";
-    $converted_amount = $total_amount / $transaction->currency_amount;
-    $converted_procedure_cost = $procedure_cost / $transaction->currency_amount;
-    $converted_consultation = (int)$transaction->lite_plan_enabled == 1 ? number_format($consultation / $transaction->currency_amount, 2) : "0.00";
+    $converted_amount = $total_amount * $transaction->currency_amount;
+    $converted_procedure_cost = $procedure_cost * $transaction->currency_amount;
+    $converted_consultation = (int)$transaction->lite_plan_enabled == 1 ? number_format($consultation * $transaction->currency_amount, 2) : "0.00";
   }
 
   $transaction_details = array(
