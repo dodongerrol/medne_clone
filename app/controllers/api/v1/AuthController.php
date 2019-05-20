@@ -1020,6 +1020,7 @@ return Response::json($returnObject);
 
         public function getUserWallet( )
         {
+
           $AccessToken = new Api_V1_AccessTokenController();
           $returnObject = new stdClass();
           $authSession = new OauthSessions();
