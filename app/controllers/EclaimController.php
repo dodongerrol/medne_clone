@@ -4977,7 +4977,7 @@ public function searchEmployeeActivity( )
 				$status_text = FALSE;
 			}
 
-			if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
+			// if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
 
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
@@ -5017,7 +5017,7 @@ public function searchEmployeeActivity( )
 				);
 
 				array_push($transaction_details, $format);
-			}
+			// }
 
             // }
 		}
@@ -5099,14 +5099,14 @@ public function searchEmployeeActivity( )
 
 	$total_spent = $e_claim_spent + $in_network_spent;
 
-	$in_network_breakdown = array(
-		'general_practitioner_breakdown' => $general_practitioner_breakdown > 0 ? number_format($general_practitioner_breakdown / $in_network_spent * 100, 0) : 0,
-		'health_screening_breakdown'     => $health_screening_breakdown > 0 ? number_format($health_screening_breakdown / $in_network_spent * 100, 0) : 0,
-		'dental_care_breakdown'          => $dental_care_breakdown > 0 ? number_format($dental_care_breakdown / $in_network_spent * 100, 0) : 0,
-		'tcm_breakdown'                  => $tcm_breakdown > 0 ? number_format($tcm_breakdown / $in_network_spent * 100, 0) : 0,
-		'health_specialist_breakdown'    => $health_specialist_breakdown > 0 ? number_format($health_specialist_breakdown / $in_network_spent * 100, 0) : 0,
-		'wellness_breakdown'             => $wellness_breakdown > 0 ? number_format($wellness_breakdown / $in_network_spent * 100, 0) : 0
-	);
+	// $in_network_breakdown = array(
+	// 	'general_practitioner_breakdown' => $general_practitioner_breakdown > 0 ? number_format($general_practitioner_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'health_screening_breakdown'     => $health_screening_breakdown > 0 ? number_format($health_screening_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'dental_care_breakdown'          => $dental_care_breakdown > 0 ? number_format($dental_care_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'tcm_breakdown'                  => $tcm_breakdown > 0 ? number_format($tcm_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'health_specialist_breakdown'    => $health_specialist_breakdown > 0 ? number_format($health_specialist_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'wellness_breakdown'             => $wellness_breakdown > 0 ? number_format($wellness_breakdown / $in_network_spent * 100, 0) : 0
+	// );
 
 	$balance = $total_allocation - $total_spent - $deducted_allocation;
 	$grand_total_credits_cash = $total_credits - $deleted_transaction_credits - $deleted_transaction_cash;
@@ -5119,7 +5119,7 @@ public function searchEmployeeActivity( )
 		'pending_e_claim_amount' => number_format($e_claim_pending, 2),
 		'in_network_spent'  => number_format($in_network_spent, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
-		'in_network_breakdown' => $in_network_breakdown,
+		// 'in_network_breakdown' => $in_network_breakdown,
 		'in_network_transactions' => $transaction_details,
 		'e_claim_transactions'  => $e_claim,
 		'employee'          => ucwords($user->Name),
