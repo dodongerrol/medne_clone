@@ -340,10 +340,18 @@ service.factory("hrActivity", function($http, serverUrl) {
   };
 
   hrFactory.getHrActivityInNetworkWithPagination = function(data) {
-    return $http.get(serverUrl.url + "/hr/get_activity_in_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id);
+    var url = serverUrl.url + "/hr/get_activity_in_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id;
+    if( data.user_id ){
+      url += ("&user_id=" + data.user_id);
+    }
+    return $http.get( url );
   };
   hrFactory.getHrActivityOutNetworkWithPagination = function(data) {
-    return $http.get(serverUrl.url + "/hr/get_activity_out_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id);
+    var url = serverUrl.url + "/hr/get_activity_out_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id;
+    if( data.user_id ){
+      url += ("&user_id=" + data.user_id);
+    }
+    return $http.get( url );
   };
 
   hrFactory.getEmployeeLists = function() {

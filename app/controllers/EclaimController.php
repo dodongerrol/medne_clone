@@ -2481,7 +2481,7 @@ public function getActivityOutNetworkTransactions( )
 
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
-	if(!empty($input['user_id']) && $input['user_id'] == null) {
+	if(!empty($input['user_id']) && $input['user_id'] != null) {
 		$e_claim_result = DB::table('corporate_members')
 		->join('e_claim', 'e_claim.user_id', '=', 'corporate_members.user_id')
 		->where('corporate_members.corporate_id', $account->corporate_id)
@@ -2610,7 +2610,6 @@ public function getActivityInNetworkTransactions( )
 	$customer_id = $session->customer_buy_start_id;
         // $customer_id = $input['customer_id'];
 
-
 	$start = date('Y-m-d', strtotime($input['start']));
 	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
@@ -2651,7 +2650,7 @@ public function getActivityInNetworkTransactions( )
 	$total_lite_plan_consultation = 0;
 	$paginate = [];
 
-	if(!empty($input['user_id']) && $input['user_id'] == null) {
+	if(!empty($input['user_id']) && $input['user_id'] != null) {
 		$transactions = DB::table('corporate_members')
 		->join('transaction_history', 'transaction_history.UserID', '=', 'corporate_members.user_id')
 		->where('corporate_members.corporate_id', $account->corporate_id)

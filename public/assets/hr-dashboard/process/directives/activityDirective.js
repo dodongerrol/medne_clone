@@ -469,6 +469,9 @@ app.directive('activityPage', [
 						spending_type : scope.activitySpendingTypeSelected,
 						customer_id : scope.selected_customer_id
 					}
+					if( scope.search.user_id ){
+						data.user_id = scope.search.user_id;
+					}
 					hrActivity.getHrActivityInNetworkWithPagination(data)
 					.then(function(response){
 						// console.log(response);
@@ -488,6 +491,9 @@ app.directive('activityPage', [
 						per_page : scope.outNetwork_perPage,
 						spending_type : scope.activitySpendingTypeSelected,
 						customer_id : scope.selected_customer_id
+					}
+					if( scope.search.user_id ){
+						data.user_id = scope.search.user_id;
 					}
 					hrActivity.getHrActivityOutNetworkWithPagination(data)
 					.then(function(response){
@@ -550,7 +556,7 @@ app.directive('activityPage', [
 				}
 
 				scope.searchEmployeeActivity = function(user_id) {
-					scope.searchActivityPagination();
+					
 					scope.toggleLoading();
 					temp_list = null;
 					$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
@@ -566,6 +572,7 @@ app.directive('activityPage', [
 					activity_search.user_id = user_id;
 					activity_search.spending_type = scope.activitySpendingTypeSelected;
 					scope.search.close = true;
+					scope.searchActivityPagination();
 					hrActivity.searchEmployeeActivity(activity_search)
 					.then(function(response){
 						scope.toggleLoading();
