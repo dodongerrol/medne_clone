@@ -350,6 +350,7 @@ class EclaimController extends \BaseController {
 			$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
 			$email['logs'] = 'E-Claim Submission Wellness - '.$e->getMessage();
 			$email['emailSubject'] = 'Error log.';
+			// send
 			EmailHelper::sendErrorLogs($email);
 			return array('status' => FALSE, 'message' => 'Error.');
 		}
