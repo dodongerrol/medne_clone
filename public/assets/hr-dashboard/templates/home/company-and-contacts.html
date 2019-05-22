@@ -114,9 +114,9 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td ng-bind="company_contacts.business_contact.first_name">Filbert</td>
-						<td ng-bind="company_contacts.business_contact.last_name">Tan</td>
-						<td ng-bind="company_contacts.business_contact.work_email">filber@mednefits.com</td>
+						<td ng-bind="company_contacts.billing_contact.first_name">Filbert</td>
+						<td ng-bind="company_contacts.billing_contact.last_name">Tan</td>
+						<td ng-bind="company_contacts.billing_contact.work_email">filber@mednefits.com</td>
 						<td class="v-align">
 							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-billing-contact-and-address-modal" ng-click="openEditBillingModal(company_contacts)">Edit</button>
 						</td>
@@ -133,7 +133,7 @@
 					<tr>
 						<td class="v-align" ng-bind="company_contacts.business_information.company_name">Mednefits Pte Ltd.</td>
 						<td >
-							<span ng-bind="company_contacts.business_information.company_address" style="max-width: 250px;display: inline-block;word-break: break-word;"></span>
+							<span ng-bind="company_contacts.billing_contact.billing_address" style="max-width: 250px;display: inline-block;word-break: break-word;"></span>
 							<!-- 7 Temasek Boulevard<br>
 							#18-02<br>
 							Suntec Tower One<br>

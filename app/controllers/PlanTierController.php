@@ -413,12 +413,12 @@ class PlanTierController extends \BaseController {
 				$postal_code = $user['postal_code'];
 			}
       
-      $user['plan_start'] = date('Y-m-d', strtotime($user['plan_start']));
-      $user['dob'] = date('Y-m-d', strtotime($user['dob']));
+      // $user['plan_start'] = date('Y-m-d', strtotime($user['plan_start']));
+      // $user['dob'] = date('Y-m-d',s strtotime($user['dob']));
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
-			$plan_start_temp = date_create_from_format("Y-m-d", $user['plan_start']);
-			$plan_start = date_format($plan_start_temp, "d/m/Y");
+			// $plan_start_temp = date_create_from_format("Y-m-d", $user['plan_start']);
+			// $plan_start = date_format($plan_start_temp, "d/m/Y");
 			// return $plan_start;
 
 			$temp_enrollment_data = array(
@@ -433,8 +433,8 @@ class PlanTierController extends \BaseController {
 				'mobile'				=> !empty($user['mobile']) ? $user['mobile'] : null,
 				'job_title'				=> 'Other',
 				'credits'				=> $user['medical_credits'],
-				'wellness_credits'		=> $user['medical_credits'],
-				'start_date'			=> $plan_start,
+				'wellness_credits'		=> $user['wellness_credits'],
+				'start_date'			=> $user['plan_start'],
 				'postal_code'			=> $postal_code,
 				'error_logs'			=> serialize($error_member_logs)
 			);
@@ -502,16 +502,16 @@ class PlanTierController extends \BaseController {
 					->get();
 
 		foreach ($enrolles as $key => $enroll) {
-			if($enroll->dob) {
-				$enroll_dob = date_create_from_format("Y-m-d", $enroll->dob);
-				if($enroll_dob) {
-					$enroll->dob = date_format($enroll_dob, "d/m/Y");
-				} else {
-					$enroll->dob = date('d/m/Y', strtotime($enroll->dob));
-				}
-			} else {
-				$enroll->dob = null;
-			}
+			// if($enroll->dob) {
+			// 	$enroll_dob = date_create_from_format("Y-m-d", $enroll->dob);
+			// 	if($enroll_dob) {
+			// 		$enroll->dob = date_format($enroll_dob, "d/m/Y");
+			// 	} else {
+			// 		$enroll->dob = date('d/m/Y', strtotime($enroll->dob));
+			// 	}
+			// } else {
+			// 	$enroll->dob = null;
+			// }
 
 			if($enroll->mobile_area_code) {
 				$enroll->format_mobile = "+".$enroll->mobile_area_code.$enroll->mobile;
@@ -636,7 +636,7 @@ class PlanTierController extends \BaseController {
 			'credits'					=> $input['medical_credits'],
 			'wellness_credits'			=> $input['wellness_credits'],
 			'postal_code'				=> $postal_code,
-			'start_date'				=> date('d/m/Y', strtotime($input['plan_start'])),
+			'start_date'				=> $input['plan_start'],
 			'error_logs'				=> serialize($error_logs)
 		);
 		$result = $temp_enroll->updateEnrollee($data);

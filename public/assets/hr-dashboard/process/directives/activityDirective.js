@@ -460,7 +460,7 @@ app.directive('activityPage', [
 
 				scope.getInNetworkPagination = function( ){
 					scope.activity_dates = [];
-					scope.toggleLoading();
+					// scope.toggleLoading();
 					var data = {
 						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -469,10 +469,13 @@ app.directive('activityPage', [
 						spending_type : scope.activitySpendingTypeSelected,
 						customer_id : scope.selected_customer_id
 					}
+					if( scope.search.user_id ){
+						data.user_id = scope.search.user_id;
+					}
 					hrActivity.getHrActivityInNetworkWithPagination(data)
 					.then(function(response){
 						// console.log(response);
-						scope.toggleLoading();
+						// scope.toggleLoading();
 						scope.inNetwork_pagination = response.data;
 
 						scope.filterActivityByDateInNetwork( response.data.data );
@@ -480,7 +483,7 @@ app.directive('activityPage', [
 				}
 				scope.getOutNetworkPagination = function(){
 					scope.eclaim_dates = [];
-					scope.toggleLoading();
+					// scope.toggleLoading();
 					var data = {
 						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -489,10 +492,13 @@ app.directive('activityPage', [
 						spending_type : scope.activitySpendingTypeSelected,
 						customer_id : scope.selected_customer_id
 					}
+					if( scope.search.user_id ){
+						data.user_id = scope.search.user_id;
+					}
 					hrActivity.getHrActivityOutNetworkWithPagination(data)
 					.then(function(response){
 						// console.log(response);
-						scope.toggleLoading();
+						// scope.toggleLoading();
 						scope.outNetwork_pagination = response.data;
 
 						scope.filterActivityByDateEclaim( response.data.data );
@@ -550,7 +556,7 @@ app.directive('activityPage', [
 				}
 
 				scope.searchEmployeeActivity = function(user_id) {
-					scope.searchActivityPagination();
+					
 					scope.toggleLoading();
 					temp_list = null;
 					$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
@@ -607,6 +613,7 @@ app.directive('activityPage', [
 							
 							scope.filterActivityByDateInNetwork( scope.activity.in_network_transactions );
 							scope.filterActivityByDateEclaim( scope.activity.e_claim_transactions );
+							scope.searchActivityPagination();
 						}
 					});
 				};
