@@ -1740,6 +1740,7 @@ class PlanHelper {
 			->where('user_type', 'employee')
 			->orderBy('created_at', 'desc')
 			->first();
+			$user = DB::table('user')->where('UserID', $user_id)->first();
 
 			if($employee_credit_reset_medical) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
@@ -1784,7 +1785,7 @@ class PlanHelper {
 			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back - $deducted_by_hr_medical;
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 
-			if($pro_allocation > 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent;
 				if($balance < 0) {
@@ -1814,6 +1815,8 @@ class PlanHelper {
 			->where('user_type', 'employee')
 			->orderBy('created_at', 'desc')
 			->first();
+			$user = DB::table('user')->where('UserID', $user_id)->first();
+
 			if($employee_credit_reset_wellness) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
 				$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
@@ -1860,7 +1863,7 @@ class PlanHelper {
 			$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
 			
 
-			if($pro_allocation > 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation_wellness = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent_wellness;
 				if($balance < 0) {
@@ -4508,6 +4511,7 @@ class PlanHelper {
 					->where('user_type', 'employee')
 					->orderBy('created_at', 'desc')
 					->first();
+					$user = DB::table('user')->where('UserID', $user->UserID)->first();
 
 					if($employee_credit_reset_medical) {
 						$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
@@ -4549,7 +4553,7 @@ class PlanHelper {
 					->where('logs', 'pro_allocation')
 					->sum('credit');
 
-					if($pro_allocation_medical > 0) {
+					if($pro_allocation_medical > 0 && (int)$user->Active == 0) {
 						$allocation = $pro_allocation_medical;
 					} else {
 						$allocation = $get_allocation;
@@ -4570,6 +4574,7 @@ class PlanHelper {
 					->where('user_type', 'employee')
 					->orderBy('created_at', 'desc')
 					->first();
+
 					if($employee_credit_reset_wellness) {
 						$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
 		    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_wellness->date_resetted);
@@ -4611,7 +4616,7 @@ class PlanHelper {
 					->where('logs', 'pro_allocation')
 					->sum('credit');
 
-					if($pro_allocation_wellness > 0) {
+					if($pro_allocation_wellness > 0 && (int)$user->Active == 0) {
 						$allocation = $pro_allocation_wellness;
 					} else {
 						$allocation = $allocation_wellness;

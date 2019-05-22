@@ -228,9 +228,9 @@ class EclaimController extends \BaseController {
 		$employee = StringHelper::getEmployeeSession( );
         // $employee = new stdClass();
 		$input = Input::all();
-		$check = DB::table('user')->where('UserID', $input['user_id'])->count( );
+		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
         // $employee->UserID = $input['user_id'];
-		if($check == 0) {
+		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
 
@@ -350,6 +350,7 @@ class EclaimController extends \BaseController {
 			$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
 			$email['logs'] = 'E-Claim Submission Wellness - '.$e->getMessage();
 			$email['emailSubject'] = 'Error log.';
+			// send
 			EmailHelper::sendErrorLogs($email);
 			return array('status' => FALSE, 'message' => 'Error.');
 		}
