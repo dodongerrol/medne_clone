@@ -307,7 +307,9 @@ app.directive("companyContactsDirective", [
         scope.getPlanSubscriptions = function(){
           hrSettings.getPlanSubs().then(function(response) {
             scope.plan_subs = response.data;
-            // console.log(response);
+            console.log(response);
+            scope.plan_subs.start_date = moment( scope.plan_subs.start_date, 'DD/MM/YYYY' ).format( 'DD MMMM YYYY' );
+            scope.plan_subs.end_date = moment( scope.plan_subs.end_date, 'DD/MM/YYYY' ).format( 'DD MMMM YYYY' );
             setTimeout(function() {
               $(".info-container").fadeIn();
               $(".loader-container").hide();
@@ -317,7 +319,11 @@ app.directive("companyContactsDirective", [
 
         scope.getActiveCompPlans = function(){
           hrSettings.getCompActivePlans().then(function(response) {
+            console.log(response);
             scope.comp_active_plans = response.data.data;
+            angular.forEach( scope.comp_active_plans, function( value, key ){
+              value.plan_start = moment( value.plan_start ).format( 'DD MMMM YYYY' );
+            });
             setTimeout(function() {
               $(".info-container").fadeIn();
               $(".loader-container").hide();
