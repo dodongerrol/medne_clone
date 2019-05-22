@@ -654,7 +654,7 @@ app.directive("employeeOverviewDirective", [
                   angular.forEach(scope.employees.data, function(value, key) {
                   value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                   value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
-                  value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
+                  value.start_date = moment( value.start_date ).format("DD/MM/YYYY");
                   // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
                 });
                 $(".employee-overview-pagination").hide();
@@ -1073,8 +1073,7 @@ app.directive("employeeOverviewDirective", [
               angular.forEach(scope.employees.data, function(value, key) {
                 value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                 value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
-                value.start_date_format = moment( value.start_date ).format("MM/DD/YYYY");
-                // value.start_date = moment( value.start_date ).format("MM/DD/YYYY");
+                value.start_date = moment( value.start_date ).format("DD/MM/YYYY");
                 // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
               });
               $(".loader-table").hide();
@@ -1429,7 +1428,7 @@ app.directive("employeeOverviewDirective", [
           var dt = new Date();
           dt.setFullYear(new Date().getFullYear()-18);
           $('.datepicker').datepicker({
-            format: 'mm/dd/yyyy',
+            format: 'dd/mm/yyyy',
             // endDate : dt
           });
 
@@ -1441,7 +1440,7 @@ app.directive("employeeOverviewDirective", [
           })
 
           $('.start-date-datepicker-dependent').datepicker({
-            format: 'mm/dd/yyyy',
+            format: 'dd/mm/yyyy',
           });
 
           $('.start-date-datepicker-dependent').datepicker().on('hide',function(evt){
@@ -1459,7 +1458,7 @@ app.directive("employeeOverviewDirective", [
           $('.last-day-coverage-datepicker').datepicker().on('hide',function(evt){
             var val = $(this).val();
             if( val == "" ){
-              $('.last-day-coverage-datepicker').datepicker('setDate', moment( scope.remove_employee_data.last_day_coverage ).format('MM/DD/YYYY') );
+              $('.last-day-coverage-datepicker').datepicker('setDate', moment( scope.remove_employee_data.last_day_coverage ).format('DD/MM/YYYY') );
             }
           })
 
