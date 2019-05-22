@@ -2346,6 +2346,7 @@ class BenefitsDashboardController extends \BaseController {
 					$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $wallet->wallet_id)
 									->where('wallet_history_id',  '>=', $wallet_history_id)
+									->where('created_at', '>=', $start)
 									->get();
 				} else {
 					$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
@@ -2488,7 +2489,7 @@ class BenefitsDashboardController extends \BaseController {
 			'total_medical_company_allocation' => number_format($total_medical_allocation, 2),
 			'total_medical_company_unallocation' => number_format($credits, 2),
 			'total_medical_employee_allocated' => number_format($total_medical_allocated, 2),
-			'total_medical_employee_spent'		=> number_format($get_allocation_spent, 2),
+			'total_medical_employee_spent'		=> $get_allocation_spent < 0 ? "0.00" : number_format($get_allocation_spent, 2),
 			'total_medical_employee_balance' => number_format($total_medical_allocated - $get_allocation_spent, 2),
 			'total_medical_employee_balance_number' => $total_medical_allocated - $get_allocation_spent,
 			'total_medical_wellness_allocation' => number_format($total_allocation_wellness, 2),
@@ -3886,41 +3887,98 @@ class BenefitsDashboardController extends \BaseController {
 		$result = self::checkSession();
 
 		$business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+
 		$business_information = DB::table('customer_business_information')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+
 		$payment_method = DB::table('customer_payment_method')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 
-		if($business_contact->billing_contact == "true") {
-			$business_contact_details = $business_contact;
-			$billing_contact_status = false;
-		} else {
-			$business_contact_details = DB::table('customer_billing_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
-			$billing_contact_status = true;
+		$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+
+		if(!$billing_contact) {
+			$billing_contact_create = array(
+				'customer_buy_start_id'	=> $result->customer_buy_start_id,
+				'billing_name'			=> $business_information->company_name,
+				'first_name'			=> $business_contact->first_name,
+				'last_name'				=> $business_contact->last_name,
+				'billing_address'		=> $business_information->company_address,
+				'billing_email'			=> $business_contact->work_email,
+				'postal'				=> $business_information->postal_code,
+				'phone'					=> $business_contact->phone,
+				'created_at'			=> date('Y-m-d H:i:s'),
+				'updated_at'			=> date('Y-m-d H:i:s')
+			);
+
+			DB::table('customer_billing_contact')->insert($billing_contact_create);
+			$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 		}
 
-		if($business_contact->billing_address == "false") {
-			$business_billing_address = array(
-				'company_name'	=> $business_information->company_name,
-				'billing_address' => $business_information->company_address,
-				'postal'				=> $business_information->postal_code
-			);
-			$billing_address_status = false;
-		} else {
-			$temp_data = DB::table('customer_billing_address')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
-			$business_billing_address = array(
-				'company_name'		=> $business_information->company_name,
-				'billing_address' => $temp_data->billing_address,
-				'postal'					=> $temp_data->postal_code
-			);
-			$billing_address_status = true;
-		}
+		$business_contact_details = array(
+			'customer_business_contact_id' => $business_contact->customer_business_contact_id,
+			'first_name'		=> $business_contact->first_name,
+			'last_name'			=> $business_contact->last_name,
+			'work_email'		=> $business_contact->work_email,
+			'phone'				=> $business_contact->phone,
+			'job_title'			=> $business_contact->job_title
+		);
+
+		// $name = explode(" ", trim($billing_contact->billing_name));
+		// $first_name = $name;
+		// $last_name = null;
+		// if(!empty($name[0]) && !empty($name[1])) {
+		// 	$first_name = $name[0];
+
+		// 	for( $i = 1; $i < count( $name ) - 1; $i++ ){
+		// 		$first_name .= ' ' . $name[$i];
+		// 	}
+			
+		// 	$last_name =  $name[ sizeof($name) - 1 ];
+		// } else {
+		// 	$first_name = $billing_contact->billing_name;
+		// 	$last_name = $billing_contact->billing_name;
+		// }
+
+		$billing_contact_details = array(
+			'customer_billing_contact_id' => $billing_contact->customer_billing_contact_id,
+			'first_name'		=> $billing_contact->first_name,
+			'last_name'			=> $billing_contact->last_name,
+			'work_email'		=> $billing_contact->billing_email,
+			'billing_address'	=> $billing_contact->billing_address,
+			'postal'			=> $billing_contact->postal
+		);
+
+		// if($business_contact->billing_contact == "true") {
+		// 	$business_contact_details = $business_contact;
+			// $billing_contact_status = false;
+		// } else {
+		// 	$business_contact_details = DB::table('customer_billing_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		// 	$billing_contact_status = true;
+		// }
+
+		// if($business_contact->billing_address == "false") {
+		// 	$business_billing_address = array(
+		// 		'company_name'	=> $business_information->company_name,
+		// 		'billing_address' => $business_information->company_address,
+		// 		'postal'				=> $business_information->postal_code
+		// 	);
+			// $billing_address_status = false;
+		// } else {
+		// 	$temp_data = DB::table('customer_billing_address')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		// 	$business_billing_address = array(
+		// 		'company_name'		=> $business_information->company_name,
+		// 		'billing_address' => $temp_data->billing_address,
+		// 		'postal'					=> $temp_data->postal_code
+		// 	);
+		// 	$billing_address_status = true;
+		// }
 
 		$data = array(
 			'business_information'	=> $business_information,
 			'business_contact'			=> $business_contact_details,
-			'billing_address'				=> $business_billing_address,
+			'billing_contact'		=> $billing_contact_details,
+			// 'billing_address'				=> $business_billing_address,
 			'payment_method'				=> $payment_method,
-			'billing_contact_status' => $billing_contact_status,
-			'billing_address_status' => $billing_address_status
+			// 'billing_contact_status' => $billing_contact_status,
+			// 'billing_address_status' => $billing_address_status
 		);
 
 		return array(
@@ -4007,47 +4065,58 @@ class BenefitsDashboardController extends \BaseController {
 		$input = Input::all();
 		$result = self::checkSession();
 
-		if($input['billing_contact_status'] == false || $input['billing_contact_status'] == "false") {
-			$check = DB::table('customer_business_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
+		// customer_billing_contact_id
+		$details = array(
+			'first_name'		=> $input['first_name'],
+			'last_name'			=> $input['last_name'],
+			'billing_email'		=> $input['work_email'],
+			'updated_at'		=> date('Y-m-d H:i:s')
+		);
 
-			if($check == 0) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> 'No business contact exist'
-				);
-			}
+		$result = DB::table('customer_billing_contact')
+					->where('customer_billing_contact_id', $input['customer_billing_contact_id'])
+					->update($details);
+		// if($input['billing_contact_status'] == false || $input['billing_contact_status'] == "false") {
+		// 	$check = DB::table('customer_business_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
 
-			$business_contact = new CorporateBusinessContact();
-			$data = array(
-				'first_name'	=> $input['first_name'],
-				'last_name'		=> $input['last_name'],
-				// 'job_title'		=> $input['job_title'],
-				'work_email'	=> $input['work_email'],
-				// 'phone'				=> $input['phone']
-			);
+		// 	if($check == 0) {
+		// 		return array(
+		// 			'status'	=> FALSE,
+		// 			'message'	=> 'No business contact exist'
+		// 		);
+		// 	}
 
-			$result = $business_contact->updateBusinessContactbyCustomerID($result->customer_buy_start_id, $data);
-		} else {
-			$check = DB::table('customer_billing_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
+		// 	$business_contact = new CorporateBusinessContact();
+		// 	$data = array(
+		// 		'first_name'	=> $input['first_name'],
+		// 		'last_name'		=> $input['last_name'],
+		// 		// 'job_title'		=> $input['job_title'],
+		// 		'work_email'	=> $input['work_email'],
+		// 		// 'phone'				=> $input['phone']
+		// 	);
 
-			if($check == 0) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> 'No business contact exist'
-				);
-			}
-			$billing_contact = new CorporateBillingContact();
+		// 	$result = $business_contact->updateBusinessContactbyCustomerID($result->customer_buy_start_id, $data);
+		// } else {
+		// 	$check = DB::table('customer_billing_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
 
-			$data = array(
-				'first_name'	=> $input['first_name'],
-				'last_name'		=> $input['last_name'],
-				// 'job_title'		=> $input['job_title'],
-				'work_email'	=> $input['work_email'],
-				// 'phone'				=> $input['phone']
-			);
+		// 	if($check == 0) {
+		// 		return array(
+		// 			'status'	=> FALSE,
+		// 			'message'	=> 'No business contact exist'
+		// 		);
+		// 	}
+		// 	$billing_contact = new CorporateBillingContact();
 
-			$result = $billing_contact->updateBillingContactbyCustomerID($result->customer_buy_start_id, $data);
-		}
+		// 	$data = array(
+		// 		'first_name'	=> $input['first_name'],
+		// 		'last_name'		=> $input['last_name'],
+		// 		// 'job_title'		=> $input['job_title'],
+		// 		'work_email'	=> $input['work_email'],
+		// 		// 'phone'				=> $input['phone']
+		// 	);
+
+		// 	$result = $billing_contact->updateBillingContactbyCustomerID($result->customer_buy_start_id, $data);
+		// }
 
 		if($result) {
 			return array(
@@ -6838,68 +6907,75 @@ class BenefitsDashboardController extends \BaseController {
 		$result = self::checkSession();
 		$input = Input::all();
 
-		if($input['billing_contact_status'] == false || $input['billing_contact_status'] == "false") {
-			$check = DB::table('customer_business_information')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
-			$billing_address = new CorporateBusinessInformation();
+		$details = array(
+			'billing_address'	=> $input['billing_address'],
+			'postal'			=> $input['postal'],
+			'updated_at'		=> date('Y-m-d H:i:s')
+		);
 
-			$data = array(
-				'company_name'		=> $input['company_name'],
-				'company_address'	=> $input['billing_address'],
-				'postal_code'		=> $input['postal']
-			);
+		DB::table('customer_billing_contact')
+			->where('customer_buy_start_id', $result->customer_buy_start_id)
+			->update($details);
 
-			if($check == 0) {
-				// return array(
-				// 	'status'	=> FALSE,
-				// 	'message'	=> 'No billing address exist'
-				// );
-				// create
-				$result = $billing_address->createCorporateBusinessInformation($result->customer_buy_start_id, $data);
-			}
+		DB::table('customer_business_information')
+			->where('customer_buy_start_id', $result->customer_buy_start_id)
+			->update(['company_name' => $input['company_name'], 'updated_at' => date('Y-m-d H:i:s')]);
+
+		// if($input['billing_contact_status'] == false || $input['billing_contact_status'] == "false") {
+		// 	$check = DB::table('customer_business_information')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
+		// 	$billing_address = new CorporateBusinessInformation();
+
+		// 	$data = array(
+		// 		'company_name'		=> $input['company_name'],
+		// 		'company_address'	=> $input['billing_address'],
+		// 		'postal_code'		=> $input['postal']
+		// 	);
+
+		// 	if($check == 0) {
+		// 		// return array(
+		// 		// 	'status'	=> FALSE,
+		// 		// 	'message'	=> 'No billing address exist'
+		// 		// );
+		// 		// create
+		// 		$result = $billing_address->createCorporateBusinessInformation($result->customer_buy_start_id, $data);
+		// 	}
 
 
-			$get_link_id = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
-			DB::table('corporate')->where('corporate_id', $get_link_id->corporate_id)->update(['company_name' => $input['company_name']]);
-			$result = $billing_address->updateusinessInfo($result->customer_buy_start_id, $data);
-			// return $result;
-		} else {
+		// 	$get_link_id = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		// 	DB::table('corporate')->where('corporate_id', $get_link_id->corporate_id)->update(['company_name' => $input['company_name']]);
+		// 	$result = $billing_address->updateusinessInfo($result->customer_buy_start_id, $data);
+		// 	// return $result;
+		// } else {
 
-			$check = DB::table('customer_billing_address')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
+		// 	$check = DB::table('customer_billing_address')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
 
-			if($check == 0) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> 'No billing address exist'
-				);
-			}
+		// 	if($check == 0) {
+		// 		return array(
+		// 			'status'	=> FALSE,
+		// 			'message'	=> 'No billing address exist'
+		// 		);
+		// 	}
 
-			$billing_address = new CorporateBillingAddress();
-			$data = array(
-				'billing_address'	=> $input['billing_address'],
-				'postal_code'			=> $input['postal']
-			);
-			$business_information = new CorporateBusinessInformation();
+		// 	$billing_address = new CorporateBillingAddress();
+		// 	$data = array(
+		// 		'billing_address'	=> $input['billing_address'],
+		// 		'postal_code'			=> $input['postal']
+		// 	);
+		// 	$business_information = new CorporateBusinessInformation();
 
-			$data_information = array(
-				'company_name'	=> $input['company_name'],
-			);
+		// 	$data_information = array(
+		// 		'company_name'	=> $input['company_name'],
+		// 	);
 
-			$business_information->updateusinessInfo($result->customer_buy_start_id, $data_information);
-			$get_link_id = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
-			DB::table('corporate')->where('corporate_id', $get_link_id->corporate_id)->update(['company_name' => $input['company_name']]);
-			$result = $billing_address->updateBillingAddress($result->customer_buy_start_id, $data);
-		}
-
-		if($result) {
-			return array(
-				'status'	=> TRUE,
-				'message'	=> 'Success.'
-			);
-		}
+		// 	$business_information->updateusinessInfo($result->customer_buy_start_id, $data_information);
+		// 	$get_link_id = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		// 	DB::table('corporate')->where('corporate_id', $get_link_id->corporate_id)->update(['company_name' => $input['company_name']]);
+		// 	$result = $billing_address->updateBillingAddress($result->customer_buy_start_id, $data);
+		// }
 
 		return array(
-			'status'	=> FALSE,
-			'message'	=> 'Failed.'
+			'status'	=> TRUE,
+			'message'	=> 'Success.'
 		);
 	}
 

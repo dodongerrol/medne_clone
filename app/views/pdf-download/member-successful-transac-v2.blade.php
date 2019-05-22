@@ -236,7 +236,7 @@
             Your Receipt
           </p>
           <p style="font-size: 44px;font-weight: 700;margin-top: 0;">
-            {{ $currency_symbol }} <span>{{ $credits }}</span>
+            {{ $currency_symbol }} <span>{{ $total_amount }}</span>
           </p>
 
         </div>

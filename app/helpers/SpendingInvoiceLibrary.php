@@ -102,13 +102,14 @@
 	        $lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 
 	        $business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
+	        $billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
 
-	        if($business_contact->billing_status === true || $business_contact->billing_status === "true") {
-	            $contact_name = $business_contact->first_name.' '.$business_contact->last_name;
-	        } else {
-	            $contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
-	            $contact_name = $contact->billing_name;
-	        }
+	        // if($business_contact->billing_status === true || $business_contact->billing_status === "true") {
+	        //     $contact_name = $business_contact->first_name.' '.$business_contact->last_name;
+	        // } else {
+	        //     $contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
+	        //     $contact_name = $contact->billing_name;
+	        // }
 
 	        $total_e_claim_amount = 0;
 	        $total_in_network_amount = 0;
@@ -192,9 +193,9 @@
 	            'statement_due'             => $statement_due,
 	            'statement_start_date'      => $start,
 	            'statement_end_date'        => $end,
-	            'statement_contact_name'    => $contact_name,
-	            'statement_contact_number'  => $business_contact->phone,
-	            'statement_contact_email'   => $business_contact->work_email,
+	            'statement_contact_name'    => $billing_contact->first_name.' '.$billing_contact->last_name,
+	            'statement_contact_number'  => $billing_contact->phone,
+	            'statement_contact_email'   => $billing_contact->billing_email,
 	            'statement_in_network_amount'   => $total_in_network_amount,
 	            'statement_e_claim_amount'       => $total_e_claim_amount
 	        );
@@ -554,12 +555,20 @@
 	                    $sub_account_type = $temp_sub->user_type;
 	                    $owner_id = $temp_sub->owner_id;
 	                    $dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-	                     $relationship = FALSE;
+	                    $relationship = FALSE;
+	                    $bank_account_number = $temp_account->bank_account;
+						$bank_name = $temp_account->bank_name;
+						$bank_code = $temp_account->bank_code;
+						$bank_brh = $temp_account->bank_brh;
 	                } else {
 	                    $sub_account = FALSE;
 	                    $sub_account_type = FALSE;
 	                    $owner_id = $member->UserID;
 	                    $dependent_relationship = FALSE;
+	                    $bank_account_number = $member->bank_account;
+						$bank_name = $member->bank_name;
+						$bank_code = $member->bank_code;
+						$bank_brh = $member->bank_brh;
 	                }
 
 	                $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
@@ -586,7 +595,12 @@
 	                    'day'               => date('d', strtotime($res->approved_date)),
 	                    'approved_time'              => date('h:ia', strtotime($res->approved_date)),
 	                    'spending_type'     => $res->spending_type,
-	                    'dependent_relationship'	=> $dependent_relationship
+	                    'dependent_relationship'	=> $dependent_relationship,
+	                    'bank_account_number' => $bank_account_number,
+						'bank_name'					=> $bank_name,
+						'bank_code'					=> $bank_code,
+						'bank_brh'					=> $bank_brh,
+						'nric'							=> $member->NRIC
 	                );
 
 	                array_push($e_claim, $temp);

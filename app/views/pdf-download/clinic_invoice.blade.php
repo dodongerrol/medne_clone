@@ -227,11 +227,11 @@
       </div> -->
 
       <div class="col-md-12 notes" style="padding-left: 30px;">
-        <p style="margin-bottom: 10px"><b>Notes</b></p>
+        <!-- <p style="margin-bottom: 10px"><b>Notes</b></p>
         <p>Payment method: Bank Transfer/Cheque</p>
         <p>Payee's Name: <span class="invoice_bank_name">{{ $bank_details ? $bank_details->bank_name : 'N/a' }}</span></p>
         <p>Account Type: <span class="invoice_account_type">{{ $bank_details ? $bank_details->bank_account_type : 'N/a' }}</span></p>
-        <p>Payee's Account Number: <span class="invoice_account_number">{{ $bank_details ? $bank_details->bank_account_number : 'N/a' }}</span></p>
+        <p>Payee's Account Number: <span class="invoice_account_number">{{ $bank_details ? $bank_details->bank_account_number : 'N/a' }}</span></p> -->
         <img class="stamp" src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/Mednefits_Company_Stamp-01.png">
       </div>
 

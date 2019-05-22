@@ -233,6 +233,7 @@
 						<div style="text-align: right;">
 							<button class="btn btn-csv" ng-json-export-excel data="csv_dl" report-fields="{
 								member: 'MEMBER',
+								nric: 'NRIC',
 								claim_member_type: 'CLAIM MEMBER TYPE',
 								employee_dependent_name: 'EMPLOYEE',
 								claim_date: 'CLAIM DATE', 
@@ -247,6 +248,9 @@
 								approved_date: 'APPROVED DATE',
 								rejected_date: 'REJECTED DATE',
 								rejected_reason: 'REJECTED REASON',
+								bank_account_number: 'BANK ACCOUNT NUMBER', 
+								bank_code: 'BANK CODE', 
+								bank_brh: 'BRANCH CODE'
 								}" filename="'E-Claim-Transactions'" separator=",">Download CSV <i class="fa fa-download"></i></button>
 
 							<button class="btn btn-receipts" ng-click="downloadAllReceipts(  )">

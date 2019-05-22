@@ -2495,7 +2495,7 @@ public function getActivityOutNetworkTransactions( )
 
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
-	if(!empty($input['user_id']) && $input['user_id'] == null) {
+	if(!empty($input['user_id']) && $input['user_id'] != null) {
 		$e_claim_result = DB::table('corporate_members')
 		->join('e_claim', 'e_claim.user_id', '=', 'corporate_members.user_id')
 		->where('corporate_members.corporate_id', $account->corporate_id)
@@ -2624,7 +2624,6 @@ public function getActivityInNetworkTransactions( )
 	$customer_id = $session->customer_buy_start_id;
         // $customer_id = $input['customer_id'];
 
-
 	$start = date('Y-m-d', strtotime($input['start']));
 	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
@@ -2665,7 +2664,7 @@ public function getActivityInNetworkTransactions( )
 	$total_lite_plan_consultation = 0;
 	$paginate = [];
 
-	if(!empty($input['user_id']) && $input['user_id'] == null) {
+	if(!empty($input['user_id']) && $input['user_id'] != null) {
 		$transactions = DB::table('corporate_members')
 		->join('transaction_history', 'transaction_history.UserID', '=', 'corporate_members.user_id')
 		->where('corporate_members.corporate_id', $account->corporate_id)
@@ -4548,10 +4547,18 @@ public function getHrActivity( )
 						$sub_account = ucwords($temp_account->Name);
 						$sub_account_type = $temp_sub->user_type;
 						$owner_id = $temp_sub->owner_id;
+						$bank_account_number = $temp_account->bank_account;
+						$bank_name = $temp_account->bank_name;
+						$bank_code = $temp_account->bank_code;
+						$bank_brh = $temp_account->bank_brh;
 					} else {
 						$sub_account = FALSE;
 						$sub_account_type = FALSE;
 						$owner_id = $member->UserID;
+						$bank_account_number = $member->bank_account;
+						$bank_name = $member->bank_name;
+						$bank_code = $member->bank_code;
+						$bank_brh = $member->bank_brh;
 					}
 
                         // get docs
@@ -4604,7 +4611,12 @@ public function getHrActivity( )
 						'time'              => date('h:ia', strtotime($res->approved_date)),
 						'receipt_status'    => $e_claim_receipt_status,
 						'files'             => $doc_files,
-						'spending_type'     => ucwords($res->spending_type)
+						'spending_type'     => ucwords($res->spending_type),
+						'bank_account_number' => $bank_account_number,
+						'bank_name'					=> $bank_name,
+						'bank_code'					=> $bank_code,
+						'bank_brh'					=> $bank_brh,
+						'nric'							=> $member->NRIC
 					);
 
 					array_push($e_claim, $temp);
@@ -4731,7 +4743,7 @@ public function searchEmployeeActivity( )
         // get e claim
 	$e_claim_result = DB::table('e_claim')
 	->whereIn('user_id', $ids)
-	->where('created_at', '>=', $wallet_start_date)
+	->where('created_at', '>=', $start)
 	->where('created_at', '<=', $spending_end_date)
 	->where('spending_type', $spending_type)
 	->orderBy('created_at', 'desc')
@@ -4741,7 +4753,7 @@ public function searchEmployeeActivity( )
 	->whereIn('UserID', $ids)
 	->where('spending_type', $spending_type)
                         // ->where('in_network', 1)
-	->where('date_of_transaction', '>=', $wallet_start_date)
+	->where('date_of_transaction', '>=', $start)
 	->where('date_of_transaction', '<=', $spending_end_date)
 	->orderBy('date_of_transaction', 'desc')
 	->get();
@@ -4755,9 +4767,9 @@ public function searchEmployeeActivity( )
 
 			if($trans->deleted == 0 || $trans->deleted == "0") {
 				$in_network_spent += $trans->credit_cost;
-				if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
+				// if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
 					$total_in_network_transactions++;
-				}
+				// }
 
 				if($trans->lite_plan_enabled == 1) {
 					$logs_lite_plan = DB::table($table_wallet_history)
@@ -4989,7 +5001,7 @@ public function searchEmployeeActivity( )
 				$status_text = FALSE;
 			}
 
-			if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
+			// if(date('Y-m-d', strtotime($trans->date_of_transaction)) >= $start && date('Y-m-d', strtotime($trans->date_of_transaction)) <= $end) {
 
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
@@ -5029,7 +5041,7 @@ public function searchEmployeeActivity( )
 				);
 
 				array_push($transaction_details, $format);
-			}
+			// }
 
             // }
 		}
@@ -5061,10 +5073,18 @@ public function searchEmployeeActivity( )
 					$sub_account = ucwords($temp_account->Name);
 					$sub_account_type = $temp_sub->user_type;
 					$owner_id = $temp_sub->owner_id;
+					$bank_account_number = $temp_account->bank_account;
+					$bank_name = $temp_account->bank_name;
+					$bank_code = $temp_account->bank_code;
+					$bank_brh = $temp_account->bank_brh;
 				} else {
 					$sub_account = FALSE;
 					$sub_account_type = FALSE;
 					$owner_id = $member->UserID;
+					$bank_account_number = $member->bank_account;
+					$bank_name = $member->bank_name;
+					$bank_code = $member->bank_code;
+					$bank_brh = $member->bank_brh;
 				}
 
 				$temp = array(
@@ -5086,7 +5106,12 @@ public function searchEmployeeActivity( )
 					'month'             => date('M', strtotime($res->approved_date)),
 					'day'               => date('d', strtotime($res->approved_date)),
 					'time'              => date('h:ia', strtotime($res->approved_date)),
-					'spending_type'     => $spending_type == 'medical' ? 'Medical' : 'Wellness'
+					'spending_type'     => $spending_type == 'medical' ? 'Medical' : 'Wellness',
+					'bank_account_number' => $bank_account_number,
+					'bank_name'					=> $bank_name,
+					'bank_code'					=> $bank_code,
+					'bank_brh'					=> $bank_brh,
+					'nric'							=> $member->NRIC
 				);
 
 				array_push($e_claim, $temp);
@@ -5098,14 +5123,14 @@ public function searchEmployeeActivity( )
 
 	$total_spent = $e_claim_spent + $in_network_spent;
 
-	$in_network_breakdown = array(
-		'general_practitioner_breakdown' => $general_practitioner_breakdown > 0 ? number_format($general_practitioner_breakdown / $in_network_spent * 100, 0) : 0,
-		'health_screening_breakdown'     => $health_screening_breakdown > 0 ? number_format($health_screening_breakdown / $in_network_spent * 100, 0) : 0,
-		'dental_care_breakdown'          => $dental_care_breakdown > 0 ? number_format($dental_care_breakdown / $in_network_spent * 100, 0) : 0,
-		'tcm_breakdown'                  => $tcm_breakdown > 0 ? number_format($tcm_breakdown / $in_network_spent * 100, 0) : 0,
-		'health_specialist_breakdown'    => $health_specialist_breakdown > 0 ? number_format($health_specialist_breakdown / $in_network_spent * 100, 0) : 0,
-		'wellness_breakdown'             => $wellness_breakdown > 0 ? number_format($wellness_breakdown / $in_network_spent * 100, 0) : 0
-	);
+	// $in_network_breakdown = array(
+	// 	'general_practitioner_breakdown' => $general_practitioner_breakdown > 0 ? number_format($general_practitioner_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'health_screening_breakdown'     => $health_screening_breakdown > 0 ? number_format($health_screening_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'dental_care_breakdown'          => $dental_care_breakdown > 0 ? number_format($dental_care_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'tcm_breakdown'                  => $tcm_breakdown > 0 ? number_format($tcm_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'health_specialist_breakdown'    => $health_specialist_breakdown > 0 ? number_format($health_specialist_breakdown / $in_network_spent * 100, 0) : 0,
+	// 	'wellness_breakdown'             => $wellness_breakdown > 0 ? number_format($wellness_breakdown / $in_network_spent * 100, 0) : 0
+	// );
 
 	$balance = $total_allocation - $total_spent - $deducted_allocation;
 	$grand_total_credits_cash = $total_credits - $deleted_transaction_credits - $deleted_transaction_cash;
@@ -5118,7 +5143,7 @@ public function searchEmployeeActivity( )
 		'pending_e_claim_amount' => number_format($e_claim_pending, 2),
 		'in_network_spent'  => number_format($in_network_spent, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
-		'in_network_breakdown' => $in_network_breakdown,
+		// 'in_network_breakdown' => $in_network_breakdown,
 		'in_network_transactions' => $transaction_details,
 		'e_claim_transactions'  => $e_claim,
 		'employee'          => ucwords($user->Name),
@@ -5254,11 +5279,19 @@ public function searchEmployeeEclaimActivity( )
 			$sub_account_type = $temp_sub->user_type;
 			$owner_id = $temp_sub->owner_id;
 			$relationship = ucwords($temp_sub->relationship);
+			$bank_account_number = $temp_account->bank_account;
+			$bank_name = $temp_account->bank_name;
+			$bank_code = $temp_account->bank_code;
+			$bank_brh = $temp_account->bank_brh;
 		} else {
 			$sub_account = FALSE;
 			$sub_account_type = FALSE;
 			$owner_id = $member->UserID;
 			$relationship = false;
+			$bank_account_number = $member->bank_account;
+			$bank_name = $member->bank_name;
+			$bank_code = $member->bank_code;
+			$bank_brh = $member->bank_brh;
 		}
 
 		if($res->status == 1) {
@@ -5291,7 +5324,12 @@ public function searchEmployeeEclaimActivity( )
 			'spending_type'     => ucwords($res->spending_type),
 			'approved_status'   => $approved_status,
 			'relationship'      => $relationship,
-			'remarks'			=> $res->rejected_reason
+			'remarks'			=> $res->rejected_reason,
+			'bank_account_number' => $bank_account_number,
+			'bank_name'					=> $bank_name,
+			'bank_code'					=> $bank_code,
+			'bank_brh'					=> $bank_brh,
+			'nric'							=> $member->NRIC
 		);
 
 		array_push($e_claim, $temp);
@@ -5453,11 +5491,19 @@ public function hrEclaimActivity( )
 				$sub_account_type = $temp_sub->user_type;
 				$owner_id = $temp_sub->owner_id;
 				$relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+				$bank_account_number = $temp_account->bank_account;
+				$bank_name = $temp_account->bank_name;
+				$bank_code = $temp_account->bank_code;
+				$bank_brh = $temp_account->bank_brh;
 			} else {
 				$sub_account = FALSE;
 				$sub_account_type = FALSE;
 				$owner_id = $member->UserID;
 				$relationship = false;
+				$bank_account_number = $member->bank_account;
+				$bank_name = $member->bank_name;
+				$bank_code = $member->bank_code;
+				$bank_brh = $member->bank_brh;
 			}
 
 			if($res->status == 1) {
@@ -5491,7 +5537,12 @@ public function hrEclaimActivity( )
 				'spending_type'     => ucwords($res->spending_type),
 				'approved_status'   => $approved_status,
 				'relationship'      => $relationship,
-				'remarks'			=> $res->rejected_reason
+				'remarks'			=> $res->rejected_reason,
+				'bank_account_number' => $bank_account_number,
+				'bank_name'					=> $bank_name,
+				'bank_code'					=> $bank_code,
+				'bank_brh'					=> $bank_brh,
+				'nric'							=> $member->NRIC
 			);
 
 			array_push($e_claim, $temp);

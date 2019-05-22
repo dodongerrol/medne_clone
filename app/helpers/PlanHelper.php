@@ -790,6 +790,13 @@ class PlanHelper {
 		// return ($icArray[8] === $theAlpha);
 	}
 
+	public static function isDate($string) {
+	    $matches = array();
+	    $pattern = '/^([0-9]{1,2})\\/([0-9]{1,2})\\/([0-9]{4})$/';
+	    if (!preg_match($pattern, $string, $matches)) return false;
+	    if (!checkdate($matches[2], $matches[1], $matches[3])) return false;
+	    return true;
+	}
 
 	public static function validateStartDate($dateStr)
 	{ 
@@ -930,7 +937,7 @@ class PlanHelper {
 			$dob_error = true;
 			$dob_message = '*Date of Birth is empty';
 		} else {
-			$validate = self::validateStartDate($user['dob']);
+			$validate = self::isDate($user['dob']);
 			if(!$validate) {
 				$dob_error = true;
 				$dob_message = '*Date of Birth is not a valid date.';
@@ -978,7 +985,7 @@ class PlanHelper {
 			$start_date_message = '*Start Date is empty';
 			$start_date_result = false;
 		} else {
-			$validate = self::validateStartDate($user['plan_start']);
+			$validate = self::isDate($user['plan_start']);
 			if(!$validate) {
 				$start_date_error = true;
 				$start_date_message = '*Start Date is invalid date.';
@@ -987,7 +994,7 @@ class PlanHelper {
 				$plan = self::getCompanyPlanDates($customer_id);
 				$start = strtotime($plan['plan_start']);
 				$end = strtotime($plan['plan_end']);
-				$plan_start = strtotime($user['plan_start']);
+				$plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
 				if($plan_start >= $start && $plan_start <= $end) {
 					$start_date_error = false;
 					$start_date_message = '';
@@ -1210,6 +1217,7 @@ class PlanHelper {
 			}
 
 			$password = StringHelper::get_random_password(8);
+			$dob = $plan_start = date_format(date_create_from_format('d/m/Y', $data_enrollee->dob), 'Y-m-d');
 			$data = array(
 				'Name'          => $data_enrollee->first_name.' '.$data_enrollee->last_name,
 				'Password'      => md5($password),
@@ -1220,7 +1228,7 @@ class PlanHelper {
 				'Job_Title'     => $data_enrollee->job_title,
 				'Active'        => 1,
 				'Zip_Code'      => $data_enrollee->postal_code,
-				'DOB'           => $data_enrollee->dob,
+				'DOB'           => $dob,
 				'pending'		=> 0
 			);
 
