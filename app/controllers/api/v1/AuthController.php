@@ -2616,6 +2616,7 @@ public function payCredits( )
                     $email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
                     $email['emailSubject'] = 'Member - Successful Transaction';
                     $email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
+                    // $email['emailTo'] = 'allan.alzula.work@gmail.com';
                     $email['emailName'] = ucwords($user->Name);
                     $email['url'] = 'http://staging.medicloud.sg';
                     $email['clinic_type_image'] = $image;
@@ -2623,7 +2624,7 @@ public function payCredits( )
                     $email['emailPage'] = 'email-templates.member-successful-transaction-v2';
                     $email['dl_url'] = url();
                     $email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
-                    $email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE ;
+                    $email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FALSE ;
                     $email['total_amount'] = number_format($total_credits, 2);
                     $email['consultation'] = $consultation_fees;
                     $email['currency_symbol'] = $email_currency_symbol;
