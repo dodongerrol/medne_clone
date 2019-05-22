@@ -205,7 +205,7 @@
 				<tbody>
 					<tr ng-hide="ref == null" ng-repeat="ref in refunds">
 						<td class="v-align">Withdraw - <span ng-bind="ref.total_employees">1</span> employee</td>
-						<td class="v-align" ng-bind="ref.date_withdraw">22/12/2017</td>
+						<td class="v-align" ng-bind="ref.date_withdraw | date:'dd/MM/yyyy'">22/12/2017</td>
 						<td class="v-align amount-text">S$<span ng-bind="ref.total_amount">1</span></td>
 						<td class="v-align">
 							<span ng-if="ref.refund_data.status == 1">Refunded</span>
