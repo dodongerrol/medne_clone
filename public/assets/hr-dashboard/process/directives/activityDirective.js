@@ -460,7 +460,7 @@ app.directive('activityPage', [
 
 				scope.getInNetworkPagination = function( ){
 					scope.activity_dates = [];
-					scope.toggleLoading();
+					// scope.toggleLoading();
 					var data = {
 						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -475,7 +475,7 @@ app.directive('activityPage', [
 					hrActivity.getHrActivityInNetworkWithPagination(data)
 					.then(function(response){
 						// console.log(response);
-						scope.toggleLoading();
+						// scope.toggleLoading();
 						scope.inNetwork_pagination = response.data;
 
 						scope.filterActivityByDateInNetwork( response.data.data );
@@ -483,7 +483,7 @@ app.directive('activityPage', [
 				}
 				scope.getOutNetworkPagination = function(){
 					scope.eclaim_dates = [];
-					scope.toggleLoading();
+					// scope.toggleLoading();
 					var data = {
 						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -498,7 +498,7 @@ app.directive('activityPage', [
 					hrActivity.getHrActivityOutNetworkWithPagination(data)
 					.then(function(response){
 						// console.log(response);
-						scope.toggleLoading();
+						// scope.toggleLoading();
 						scope.outNetwork_pagination = response.data;
 
 						scope.filterActivityByDateEclaim( response.data.data );
@@ -572,7 +572,6 @@ app.directive('activityPage', [
 					activity_search.user_id = user_id;
 					activity_search.spending_type = scope.activitySpendingTypeSelected;
 					scope.search.close = true;
-					scope.searchActivityPagination();
 					hrActivity.searchEmployeeActivity(activity_search)
 					.then(function(response){
 						scope.toggleLoading();
@@ -614,6 +613,7 @@ app.directive('activityPage', [
 							
 							scope.filterActivityByDateInNetwork( scope.activity.in_network_transactions );
 							scope.filterActivityByDateEclaim( scope.activity.e_claim_transactions );
+							scope.searchActivityPagination();
 						}
 					});
 				};
