@@ -316,6 +316,18 @@ class SpendingInvoiceController extends \BaseController {
                                     $new_statement['emailTo'] = $business_contact->work_email ? $business_contact->work_email : 'developer.mednefits@gmail.com';
                                     EmailHelper::sendEmailCompanyInvoiceWithAttachment($new_statement);
                                 }
+
+                                // get company contacts
+                                $company_contacts = DB::table('company_contacts')
+                                                        ->where('customer_id', $statement['customer_id'])
+                                                        ->where('active', 1)
+                                                        ->where('send_email_billing', 1)
+                                                        ->get();
+
+                                foreach ($company_contacts as $key => $contact) {
+                                    $billing['emailTo'] = $contact->email ? $contact->email : 'developer.mednefits@gmail.com';
+                                    EmailHelper::sendEmailCompanyInvoiceWithAttachment($billing);
+                                }
                             }
                             try {
                                 $admin_logs = array(
