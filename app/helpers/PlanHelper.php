@@ -1229,7 +1229,8 @@ class PlanHelper {
 				'Active'        => 1,
 				'Zip_Code'      => $data_enrollee->postal_code,
 				'DOB'           => $dob,
-				'pending'		=> 0
+				'pending'		=> 0,
+				'communication_type'	=> $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -1469,12 +1470,26 @@ class PlanHelper {
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 						$result_sms = SmsHelper::sendSms($compose);
 					}
-				}				
+				} else {
+					$email_data = [];
+					$email_data['company']   = ucwords($company->company_name);
+					$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['emailTo']   = $data_enrollee->email;
+					$email_data['email'] = $data_enrollee->email;
+		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
+					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+					$email_data['start_date'] = date('d F Y', strtotime($start_date));
+					$email_data['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['plan'] = $active_plan;
+					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+					$email_data['pw'] = $password;
+					EmailHelper::sendEmail($email_data);
+				}	
 			} else {
 				$email_data = [];
 				$email_data['company']   = ucwords($company->company_name);
 				$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
-				$email_data['emailTo']   = $data_enrollee->email;
+				$email_data['emailTo']   = $data_enrollee->email ? $data_enrollee->email : 'info@medicloud.sg';
 				$email_data['email'] = 'info@medicloud.sg';
 				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 				$email_data['start_date'] = date('d F Y', strtotime($start_date));
@@ -1740,6 +1755,7 @@ class PlanHelper {
 			->where('user_type', 'employee')
 			->orderBy('created_at', 'desc')
 			->first();
+			$user = DB::table('user')->where('UserID', $user_id)->first();
 
 			if($employee_credit_reset_medical) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
@@ -1784,7 +1800,7 @@ class PlanHelper {
 			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back - $deducted_by_hr_medical;
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 
-			if($pro_allocation > 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent;
 				if($balance < 0) {
@@ -1814,6 +1830,8 @@ class PlanHelper {
 			->where('user_type', 'employee')
 			->orderBy('created_at', 'desc')
 			->first();
+			$user = DB::table('user')->where('UserID', $user_id)->first();
+
 			if($employee_credit_reset_wellness) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
 				$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
@@ -1860,7 +1878,7 @@ class PlanHelper {
 			$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
 			
 
-			if($pro_allocation > 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation_wellness = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent_wellness;
 				if($balance < 0) {
@@ -2525,6 +2543,15 @@ class PlanHelper {
 			if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
 				$pending = 0;
 			}
+
+			if($input['email']) {
+				$communication_type = "email";
+			} else if($input['mobile']) {
+				$communication_type = "sms";
+			} else {
+				$communication_type = "email";
+			}
+
 			$data = array(
 				'Name'          => $input['first_name'].' '.$input['last_name'],
 				'Password'  => md5($password),
@@ -2536,7 +2563,8 @@ class PlanHelper {
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
 				'pending'		=> $pending,
-				'Active'        => 1
+				'Active'        => 1,
+				'communication_type' => $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -4502,6 +4530,7 @@ class PlanHelper {
 					->where('user_type', 'employee')
 					->orderBy('created_at', 'desc')
 					->first();
+					$user = DB::table('user')->where('UserID', $user->UserID)->first();
 
 					if($employee_credit_reset_medical) {
 						$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
@@ -4543,7 +4572,7 @@ class PlanHelper {
 					->where('logs', 'pro_allocation')
 					->sum('credit');
 
-					if($pro_allocation_medical > 0) {
+					if($pro_allocation_medical > 0 && (int)$user->Active == 0) {
 						$allocation = $pro_allocation_medical;
 					} else {
 						$allocation = $get_allocation;
@@ -4564,6 +4593,7 @@ class PlanHelper {
 					->where('user_type', 'employee')
 					->orderBy('created_at', 'desc')
 					->first();
+
 					if($employee_credit_reset_wellness) {
 						$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
 		    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_wellness->date_resetted);
@@ -4605,7 +4635,7 @@ class PlanHelper {
 					->where('logs', 'pro_allocation')
 					->sum('credit');
 
-					if($pro_allocation_wellness > 0) {
+					if($pro_allocation_wellness > 0 && (int)$user->Active == 0) {
 						$allocation = $pro_allocation_wellness;
 					} else {
 						$allocation = $allocation_wellness;
