@@ -3590,6 +3590,14 @@ class BenefitsDashboardController extends \BaseController {
 				$pending = 0;
 			}
 
+			if($input['email']) {
+				$communication_type = "email";
+			} else if($input['mobile']) {
+				$communication_type = "sms";
+			} else {
+				$communication_type = "email";
+			}
+
 			$data = array(
 				'Name'          => $input['first_name'].' '.$input['last_name'],
 				'Password'  => md5($password),
@@ -3601,7 +3609,8 @@ class BenefitsDashboardController extends \BaseController {
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
 				'Active'        => 1,
-				'pending'		=> $pending
+				'pending'		=> $pending,
+				'communication_type' => $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
