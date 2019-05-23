@@ -1310,6 +1310,7 @@ return Response::json($returnObject);
   $current_spending = $in_network_spent + $e_claim_spent;
   $allocation = $temp_allocation - $deducted_allocation;
   PlanHelper::reCalculateEmployeeBalance($user_id);
+  $user = DB::table('user')->where('UserID', $user_id)->first();
 
   $pro_allocation = DB::table($table_wallet_history)
   ->where('wallet_id', $wallet->wallet_id)
@@ -1317,7 +1318,7 @@ return Response::json($returnObject);
   ->sum('credit');
 
 
-  if($pro_allocation > 0) {
+  if($pro_allocation > 0 && (int)$user->Active == 0) {
       $balance = $pro_allocation - $current_spending;
       if($balance < 0) {
           $balance = 0;

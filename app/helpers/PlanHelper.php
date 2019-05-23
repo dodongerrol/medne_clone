@@ -464,7 +464,9 @@ class PlanHelper {
 									->where('wallet_id', $wallet->wallet_id)
 									->where('logs', 'pro_allocation')
 									->sum('credit');
-		if($pro_allocation > 0) {
+		$user = DB::table('user')->where('UserID', $user_id)->first();
+
+		if($pro_allocation > 0 && (int)$user->Active == 0) {
 			$allocation = $pro_allocation;
 			$current_balance = $pro_allocation - $current_spending;
 			if($current_balance < 0) {
