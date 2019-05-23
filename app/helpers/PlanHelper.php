@@ -1229,7 +1229,8 @@ class PlanHelper {
 				'Active'        => 1,
 				'Zip_Code'      => $data_enrollee->postal_code,
 				'DOB'           => $dob,
-				'pending'		=> 0
+				'pending'		=> 0,
+				'communication_type'	=> $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -1469,12 +1470,26 @@ class PlanHelper {
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 						$result_sms = SmsHelper::sendSms($compose);
 					}
-				}				
+				} else {
+					$email_data = [];
+					$email_data['company']   = ucwords($company->company_name);
+					$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['emailTo']   = $data_enrollee->email;
+					$email_data['email'] = $data_enrollee->email;
+		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
+					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+					$email_data['start_date'] = date('d F Y', strtotime($start_date));
+					$email_data['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['plan'] = $active_plan;
+					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+					$email_data['pw'] = $password;
+					EmailHelper::sendEmail($email_data);
+				}	
 			} else {
 				$email_data = [];
 				$email_data['company']   = ucwords($company->company_name);
 				$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
-				$email_data['emailTo']   = $data_enrollee->email;
+				$email_data['emailTo']   = $data_enrollee->email ? $data_enrollee->email : 'info@medicloud.sg';
 				$email_data['email'] = 'info@medicloud.sg';
 				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 				$email_data['start_date'] = date('d F Y', strtotime($start_date));
@@ -2528,6 +2543,15 @@ class PlanHelper {
 			if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
 				$pending = 0;
 			}
+
+			if($input['email']) {
+				$communication_type = "email";
+			} else if($input['mobile']) {
+				$communication_type = "sms";
+			} else {
+				$communication_type = "email";
+			}
+
 			$data = array(
 				'Name'          => $input['first_name'].' '.$input['last_name'],
 				'Password'  => md5($password),
@@ -2539,7 +2563,8 @@ class PlanHelper {
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
 				'pending'		=> $pending,
-				'Active'        => 1
+				'Active'        => 1,
+				'communication_type' => $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
