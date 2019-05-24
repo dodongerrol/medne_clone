@@ -5038,6 +5038,15 @@ public function createEclaim( )
                return Response::json($returnObject);
            }
 
+           // validate wellness
+           $spending = ["medical", "wellness"];
+
+           if(!in_array($input['spending_type'], $spending)) {
+             $returnObject->status = FALSE;
+             $returnObject->message = 'Spending Account should be medical or wellness only.';
+             return Response::json($returnObject);
+           }
+
            $validate_date = SpendingInvoiceLibrary::validateStartDate($input['date']);
 
            if(!$validate_date) {
