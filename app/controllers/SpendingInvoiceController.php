@@ -63,7 +63,6 @@ class SpendingInvoiceController extends \BaseController {
                             ->count();
         if($statement_check == 0) {
             $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end, $plan);
-            return $statement;
             if($statement) {
                 $statement_id = $statement->id;
             } else {
