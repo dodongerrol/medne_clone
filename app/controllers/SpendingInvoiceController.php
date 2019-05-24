@@ -63,6 +63,7 @@ class SpendingInvoiceController extends \BaseController {
                             ->count();
         if($statement_check == 0) {
             $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end, $plan);
+            return $statement;
             if($statement) {
                 $statement_id = $statement->id;
             } else {
@@ -205,9 +206,10 @@ class SpendingInvoiceController extends \BaseController {
 
 	public function generateMonthlyCompanyInvoice( )
 	{
-		set_time_limit(900);
+		set_time_limit(1000);
 		$companies = DB::table('corporate')
                     ->join('customer_link_customer_buy', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
+                    // ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_link_customer_buy.customer_buy_start_id')
                     // ->where('customer_link_customer_buy.customer_buy_start_id', 1)
                     ->get();
         // return $companies;
@@ -313,6 +315,18 @@ class SpendingInvoiceController extends \BaseController {
                                 if($business_contact) {
                                     $new_statement['emailTo'] = $business_contact->work_email ? $business_contact->work_email : 'developer.mednefits@gmail.com';
                                     EmailHelper::sendEmailCompanyInvoiceWithAttachment($new_statement);
+                                }
+
+                                // get company contacts
+                                $company_contacts = DB::table('company_contacts')
+                                                        ->where('customer_id', $statement['customer_id'])
+                                                        ->where('active', 1)
+                                                        ->where('send_email_billing', 1)
+                                                        ->get();
+
+                                foreach ($company_contacts as $key => $contact) {
+                                    $billing['emailTo'] = $contact->email ? $contact->email : 'developer.mednefits@gmail.com';
+                                    EmailHelper::sendEmailCompanyInvoiceWithAttachment($billing);
                                 }
                             }
                             try {
