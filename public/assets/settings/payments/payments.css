@@ -399,3 +399,39 @@
     display: inline-block;
     width: 300px;
 }
+
+.statement-options{
+    display: flex;
+    width: 100%;
+}
+.statement-calendar-picker{
+    width: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #bbb;
+    border-radius: 4px;
+    height: 36px;
+    cursor: pointer;
+}
+.statement-calendar-picker .icon-wrapper{
+    width: 35px;
+    text-align: center;
+}
+.statement-calendar-picker .icon-wrapper i{
+    color: #777;
+}
+.statement-calendar-picker input{
+    flex: 1;
+    background: #FFF;
+    color: #777;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+}
+#statement-date-go-btn{
+    background: #1B9BD7 !important;
+    border: none !important;
+    color: #FFF !important;
+    margin-left: 10px;
+}
