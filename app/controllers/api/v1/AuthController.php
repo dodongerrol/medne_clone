@@ -5092,156 +5092,156 @@ public function createEclaim( )
         $user_id = StringHelper::getUserId($findUserID);
         $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
-        if(!$check_user_balance) {
-         $returnObject->status = FALSE;
-         $returnObject->message = 'User does not have a wallet data.';
-         return Response::json($returnObject);
-     }
+            if(!$check_user_balance) {
+             $returnObject->status = FALSE;
+             $returnObject->message = 'User does not have a wallet data.';
+             return Response::json($returnObject);
+         }
 
-                    // recalculate employee balance
-     PlanHelper::reCalculateEmployeeBalance($user_id);
+                        // recalculate employee balance
+         PlanHelper::reCalculateEmployeeBalance($user_id);
 
-     if($input['spending_type'] == "medical") {
-         $balance = $check_user_balance->balance;
-     } else {
-         $balance = $check_user_balance->wellness_balance;
-     }
+         if($input['spending_type'] == "medical") {
+             $balance = $check_user_balance->balance;
+         } else {
+             $balance = $check_user_balance->wellness_balance;
+         }
 
-     if($input['amount'] > $balance) {
-         $returnObject->status = FALSE;
-         $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
-         return Response::json($returnObject);
-     }
+         if($input['amount'] > $balance) {
+             $returnObject->status = FALSE;
+             $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+             return Response::json($returnObject);
+         }
 
-       // $check_pending = self::checkPendingEclaims($ids, $input['spending_type']);
-     $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
-     if($input['spending_type'] == "medical") {
-         $claim_amounts = $check_user_balance->balance - $check_pending;
-     } else {
-         $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
-     }
+           // $check_pending = self::checkPendingEclaims($ids, $input['spending_type']);
+         $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
+         if($input['spending_type'] == "medical") {
+             $claim_amounts = $check_user_balance->balance - $check_pending;
+         } else {
+             $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
+         }
 
-     $amount = trim($input['amount']);
-     $claim_amounts = trim($claim_amounts);
+         $amount = trim($input['amount']);
+         $claim_amounts = trim($claim_amounts);
 
-     if($amount > $claim_amounts) {
-         $returnObject->status = FALSE;
-         $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
-         return Response::json($returnObject);
-     }
+         if($amount > $claim_amounts) {
+             $returnObject->status = FALSE;
+             $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
+             return Response::json($returnObject);
+         }
 
-     $time = date('h:i A', strtotime($input['time']));
-     $claim = new Eclaim();
-     $data = array(
-         'user_id'   => $input['user_id'],
-         'service'   => $input['service'],
-         'merchant'  => $input['merchant'],
-         'amount'    => $input['amount'],
-         'date'      => date('Y-m-d', strtotime($input['date'])),
-         'time'      => $time,
-         'spending_type' => $input['spending_type']
-     );
+         $time = date('h:i A', strtotime($input['time']));
+         $claim = new Eclaim();
+         $data = array(
+             'user_id'   => $input['user_id'],
+             'service'   => $input['service'],
+             'merchant'  => $input['merchant'],
+             'amount'    => $input['amount'],
+             'date'      => date('Y-m-d', strtotime($input['date'])),
+             'time'      => $time,
+             'spending_type' => $input['spending_type']
+         );
 
-     if(Input::has('currency_type') && $input['currency_type'] != null) {
-      $data['currency_type'] = $input['currency_type'];
-      $data['currency_value'] = $input['currency_exchange_rate'];
-     }
+         if(Input::has('currency_type') && $input['currency_type'] != null) {
+          $data['currency_type'] = $input['currency_type'];
+          $data['currency_value'] = $input['currency_exchange_rate'];
+         }
 
-     try {
-         $result = $claim->createEclaim($data);
-         $id = $result->id;
+         try {
+             $result = $claim->createEclaim($data);
+             $id = $result->id;
 
-         if($result) {
-            $e_claim_docs = new EclaimDocs( );
-                          // loop ang process
-            foreach (Input::file('files') as $key => $file) {
-               $file_name = time().' - '.$file->getClientOriginalName();
-               if($file->getClientOriginalExtension() == "pdf") {
-                  $receipt_file = $file_name;
-                  $receipt_type = "pdf";
-                  $file->move(public_path().'/receipts/', $file_name);
-              } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
-                  $receipt_file = $file_name;
-                  $receipt_type = "xls";
-                  $file->move(public_path().'/receipts/', $file_name);
-              } else {
-                    // $image = \Cloudinary\Uploader::upload($file->getPathName());
-                  $image = \Cloudinary\Uploader::upload($file->getRealPath());
-                  $receipt_file = $image['secure_url'];
-                  $receipt_type = "image";
-              }
+             if($result) {
+                $e_claim_docs = new EclaimDocs( );
+                              // loop ang process
+                foreach (Input::file('files') as $key => $file) {
+                   $file_name = time().' - '.$file->getClientOriginalName();
+                   if($file->getClientOriginalExtension() == "pdf") {
+                      $receipt_file = $file_name;
+                      $receipt_type = "pdf";
+                      $file->move(public_path().'/receipts/', $file_name);
+                  } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
+                      $receipt_file = $file_name;
+                      $receipt_type = "xls";
+                      $file->move(public_path().'/receipts/', $file_name);
+                  } else {
+                        // $image = \Cloudinary\Uploader::upload($file->getPathName());
+                      $image = \Cloudinary\Uploader::upload($file->getRealPath());
+                      $receipt_file = $image['secure_url'];
+                      $receipt_type = "image";
+                  }
 
-              $e_claim_docs = new EclaimDocs( );
+                  $e_claim_docs = new EclaimDocs( );
 
-              $receipt = array(
-                  'e_claim_id'    => $id,
-                  'doc_file'      => $receipt_file,
-                  'file_type'     => $receipt_type
-              );
+                  $receipt = array(
+                      'e_claim_id'    => $id,
+                      'doc_file'      => $receipt_file,
+                      'file_type'     => $receipt_type
+                  );
 
-              $result_doc = $e_claim_docs->createEclaimDocs($receipt);
-              if($result_doc) {
-                  if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
-                                    //   aws
-                     $s3 = AWS::get('s3');
-                     $s3->putObject(array(
-                        'Bucket'     => 'mednefits',
-                        'Key'        => 'receipts/'.$file_name,
-                        'SourceFile' => public_path().'/receipts/'.$file_name,
-                    ));
-                 }
-             } else {
-                $email = [];
-                $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
-                $email['logs'] = 'E-Claim Mobile Receipt Submission - '.$e;
-                $email['emailSubject'] = 'Error log.';
-                EmailHelper::sendErrorLogs($email);
-                $returnObject->status = TRUE;
-                $returnObject->message = 'E-Claim created successfully but failed to create E-Receipt.';
+                  $result_doc = $e_claim_docs->createEclaimDocs($receipt);
+                  if($result_doc) {
+                      if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
+                                        //   aws
+                         $s3 = AWS::get('s3');
+                         $s3->putObject(array(
+                            'Bucket'     => 'mednefits',
+                            'Key'        => 'receipts/'.$file_name,
+                            'SourceFile' => public_path().'/receipts/'.$file_name,
+                        ));
+                     }
+                 } else {
+                    $email = [];
+                    $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
+                    $email['logs'] = 'E-Claim Mobile Receipt Submission - '.$e;
+                    $email['emailSubject'] = 'Error log.';
+                    EmailHelper::sendErrorLogs($email);
+                    $returnObject->status = TRUE;
+                    $returnObject->message = 'E-Claim created successfully but failed to create E-Receipt.';
+                }
             }
-        }
 
-                          // get customer id
-        $customer_id = StringHelper::getCustomerId($user_id);
+                              // get customer id
+            $customer_id = StringHelper::getCustomerId($user_id);
 
-        if($customer_id) {
-                              // send notification
-           $user = DB::table('user')->where('UserID', $findUserID)->first();
-           Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
-           EclaimHelper::sendEclaimEmail($user_id, $id);
+            if($customer_id) {
+                                  // send notification
+               $user = DB::table('user')->where('UserID', $findUserID)->first();
+               Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
+               EclaimHelper::sendEclaimEmail($user_id, $id);
+           }
+           $returnObject->status = TRUE;
+           $returnObject->message = 'E-Claim successfully created.';
+
        }
-       $returnObject->status = TRUE;
-       $returnObject->message = 'E-Claim successfully created.';
+    } catch(Exception $e) {
+                                // send email logs
+       $email = [];
+       $email['end_point'] = url('v1/user/create_e_claim', $parameter = array(), $secure = null);
+       $email['logs'] = 'E-Claim Submission - '.$e;
+       $email['emailSubject'] = 'Error log.';
+       DB::table('e_claim')->where('e_claim_id', $id)->delete();
+       EmailHelper::sendErrorLogs($email);
+       $returnObject->status = FALSE;
+       $returnObject->message = 'E-Claim failed to create. Please contact Mednefits Team.';
+    }
 
-   }
-} catch(Exception $e) {
-                            // send email logs
-   $email = [];
-   $email['end_point'] = url('v1/user/create_e_claim', $parameter = array(), $secure = null);
-   $email['logs'] = 'E-Claim Submission - '.$e;
-   $email['emailSubject'] = 'Error log.';
-   DB::table('e_claim')->where('e_claim_id', $id)->delete();
-   EmailHelper::sendErrorLogs($email);
-   $returnObject->status = FALSE;
-   $returnObject->message = 'E-Claim failed to create. Please contact Mednefits Team.';
-}
-
-return Response::json($returnObject);
-} else {
-  $returnObject->status = FALSE;
-  $returnObject->message = StringHelper::errorMessage("Token");
-  return Response::json($returnObject);
-}
-} else {
-   $returnObject->status = FALSE;
-   $returnObject->message = StringHelper::errorMessage("Token");
-   return Response::json($returnObject);
-}
-} else {
-  $returnObject->status = FALSE;
-  $returnObject->message = StringHelper::errorMessage("Token");
-  return Response::json($returnObject);
-}
+    return Response::json($returnObject);
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+    } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+    }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
 }
 
 public function payCreditsNew( )
