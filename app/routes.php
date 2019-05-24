@@ -356,11 +356,11 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/download_in_network_transactions', 'BenefitsDashboardController@downloadInNetwork');
 	// revert to pending e-claim
 	Route::post('hr/revert_pending_e_claim', 'EclaimController@revertPending');
-});
 	// check out-of-network transaction duplicates
 	Route::get('hr/check_duplicate_transaction', 'EclaimController@checkOutofNetwork');
 	// get employee spending account summary
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
+});
 	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 
 

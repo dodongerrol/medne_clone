@@ -95,7 +95,7 @@
 		public static function createStatement($customer_id, $start, $end)
 		{
 			$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 	        $corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
 
 	        $lite_plan = false;
@@ -103,13 +103,6 @@
 
 	        $business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
 	        $billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
-
-	        // if($business_contact->billing_status === true || $business_contact->billing_status === "true") {
-	        //     $contact_name = $business_contact->first_name.' '.$business_contact->last_name;
-	        // } else {
-	        //     $contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
-	        //     $contact_name = $contact->billing_name;
-	        // }
 
 	        $total_e_claim_amount = 0;
 	        $total_in_network_amount = 0;
@@ -184,13 +177,25 @@
 
 	        $number = str_pad($statement + 1, 8, "0", STR_PAD_LEFT);
 
-	        $statement_date = date('Y-m-d', strtotime('+1 month', strtotime($start)));
-	        $statement_due = date('Y-m-d', strtotime('+15 days', strtotime($statement_date)));
+	        $spending_invoice_day = $customer->spending_default_invoice_day;
+	        $day = date('t', strtotime('+1 month', strtotime($start)));
+	        // return $day;
+	        if((int)$spending_invoice_day == 31) {
+	        	if((int)$spending_invoice_day > (int)$day) {
+	        		$statement_date = date('Y-m-'.$day, strtotime('+1 month', strtotime($start)));
+	        	} else {
+	        		$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+	        	}
+	        } else {
+		        $statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+	        }
+
+		    $statement_due = date('Y-m-d', strtotime('+15 days', strtotime($statement_date)));
 	        $statement_data = array(
 	            'statement_customer_id'     => $customer_id,
 	            'statement_number'          => 'MC'.$number,
-	            'statement_date'            => $statement_date,
-	            'statement_due'             => $statement_due,
+	            'statement_date'            => date('Y-m-d', strtotime($statement_date)),
+	            'statement_due'             => date('Y-m-d', strtotime($statement_due)),
 	            'statement_start_date'      => $start,
 	            'statement_end_date'        => $end,
 	            'statement_contact_name'    => $billing_contact->first_name.' '.$billing_contact->last_name,
@@ -474,8 +479,8 @@
 								'consultation'		=> number_format($consultation, 2),
 								'service_credits'   => $service_credits,
 								'transaction_type'  => $transaction_type,
-								'treatment'			=> number_format($treatment, 2),
-								'amount'			=> number_format($treatment, 2),
+								'treatment'			=> $treatment,
+								'amount'			=> $treatment,
 								'spending_type'		=> $trans->spending_type,
 								'dependent_relationship'	=> $dependent_relationship,
 								'lite_plan'			=> (int)$trans['lite_plan_enabled'] == 1 ? true : false
