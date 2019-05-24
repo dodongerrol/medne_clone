@@ -3613,6 +3613,14 @@ class BenefitsDashboardController extends \BaseController {
 				$pending = 0;
 			}
 
+			if($input['email']) {
+				$communication_type = "email";
+			} else if($input['mobile']) {
+				$communication_type = "sms";
+			} else {
+				$communication_type = "email";
+			}
+
 			$data = array(
 				'Name'          => $input['first_name'].' '.$input['last_name'],
 				'Password'  => md5($password),
@@ -3624,7 +3632,8 @@ class BenefitsDashboardController extends \BaseController {
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
 				'Active'        => 1,
-				'pending'		=> $pending
+				'pending'		=> $pending,
+				'communication_type' => $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -6921,6 +6930,10 @@ class BenefitsDashboardController extends \BaseController {
 			->where('customer_buy_start_id', $result->customer_buy_start_id)
 			->update(['company_name' => $input['company_name'], 'updated_at' => date('Y-m-d H:i:s')]);
 
+		$account_link = DB::table('customer_link_customer_buy')
+							->where('customer_buy_start_id', $result->customer_buy_start_id)
+							->first();
+		DB::table('corporate')->where('corporate_id', $account_link->corporate_id)->update(['company_name' => $input['company_name'], 'updated_at' => date('Y-m-d H:i:s')]);
 		// if($input['billing_contact_status'] == false || $input['billing_contact_status'] == "false") {
 		// 	$check = DB::table('customer_business_information')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
 		// 	$billing_address = new CorporateBusinessInformation();

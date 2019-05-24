@@ -200,6 +200,7 @@ app.directive('benefitsTiersDirective', [
 						$state.go('enrollment-options');
 						localStorage.setItem('fromEmpOverview', false);
           				// $state.go('create-team-benefits-tiers');
+          				scope.isAllPreviewEmpChecked = false;
           				scope.isReviewEnroll = false;
           				scope.isEnrollmentOptions = true;
 					}else if( scope.downloadWithDependentsCheckbox == true ){

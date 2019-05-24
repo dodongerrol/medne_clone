@@ -122,6 +122,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->access_type = 0; // for users
                 $this->source_type = 1;
                 $this->Job_Title = $data['Job_Title'];
+                $this->communication_type = !empty($data['communication_type']) ? $data['communication_type'] : "email";
                 if($this->save()){
                     $insertedId = $this->id;
                     $wallet = new Wallet( );
