@@ -1229,7 +1229,8 @@ class PlanHelper {
 				'Active'        => 1,
 				'Zip_Code'      => $data_enrollee->postal_code,
 				'DOB'           => $dob,
-				'pending'		=> 0
+				'pending'		=> 0,
+				'communication_type'	=> $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -1469,12 +1470,26 @@ class PlanHelper {
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 						$result_sms = SmsHelper::sendSms($compose);
 					}
-				}				
+				} else {
+					$email_data = [];
+					$email_data['company']   = ucwords($company->company_name);
+					$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['emailTo']   = $data_enrollee->email;
+					$email_data['email'] = $data_enrollee->email;
+		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
+					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+					$email_data['start_date'] = date('d F Y', strtotime($start_date));
+					$email_data['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['plan'] = $active_plan;
+					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+					$email_data['pw'] = $password;
+					EmailHelper::sendEmail($email_data);
+				}	
 			} else {
 				$email_data = [];
 				$email_data['company']   = ucwords($company->company_name);
 				$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
-				$email_data['emailTo']   = $data_enrollee->email;
+				$email_data['emailTo']   = $data_enrollee->email ? $data_enrollee->email : 'info@medicloud.sg';
 				$email_data['email'] = 'info@medicloud.sg';
 				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 				$email_data['start_date'] = date('d F Y', strtotime($start_date));
@@ -1740,6 +1755,7 @@ class PlanHelper {
 			->where('user_type', 'employee')
 			->orderBy('created_at', 'desc')
 			->first();
+			$user = DB::table('user')->where('UserID', $user_id)->first();
 
 			if($employee_credit_reset_medical) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
@@ -1784,7 +1800,7 @@ class PlanHelper {
 			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back - $deducted_by_hr_medical;
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 
-			if($pro_allocation > 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent;
 				if($balance < 0) {
@@ -1814,6 +1830,8 @@ class PlanHelper {
 			->where('user_type', 'employee')
 			->orderBy('created_at', 'desc')
 			->first();
+			$user = DB::table('user')->where('UserID', $user_id)->first();
+
 			if($employee_credit_reset_wellness) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
 				$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
@@ -1860,7 +1878,7 @@ class PlanHelper {
 			$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
 			
 
-			if($pro_allocation > 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation_wellness = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent_wellness;
 				if($balance < 0) {
@@ -2525,6 +2543,15 @@ class PlanHelper {
 			if(date('Y-m-d') >= date('Y-m-d', strtotime($input['plan_start']))) {
 				$pending = 0;
 			}
+
+			if($input['email']) {
+				$communication_type = "email";
+			} else if($input['mobile']) {
+				$communication_type = "sms";
+			} else {
+				$communication_type = "email";
+			}
+
 			$data = array(
 				'Name'          => $input['first_name'].' '.$input['last_name'],
 				'Password'  => md5($password),
@@ -2536,7 +2563,8 @@ class PlanHelper {
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
 				'pending'		=> $pending,
-				'Active'        => 1
+				'Active'        => 1,
+				'communication_type' => $communication_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -4257,6 +4285,7 @@ class PlanHelper {
 			$deleted = false;
 			$plan_withdraw = false;
 			$status = null;
+			$emp_status = null;
 
 			if($replacement) {
 				if((int)$replacement->deactive_employee_status == 1 && (int)$replacement->status == 1 && (int)$replacement->replace_status == 1) {
@@ -4286,7 +4315,13 @@ class PlanHelper {
 					}
 				}
 
-				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+				if(date('Y-m-d') > $replacement->expired_and_activate) {
+					$emp_status = 'pending_deletion';
+				} else {
+					$emp_status = 'shedule';
+				}
+
+				return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($replacement->expired_and_activate)), 'deleted' => false, 'plan_withdraw' => $plan_withdraw, 'emp_status' => $emp_status);
 			}
 
 			$deleted_accounts = DB::table("customer_plan_withdraw")->where("user_id", $user_id)->first();
@@ -4297,7 +4332,14 @@ class PlanHelper {
 				if((int)$deleted_accounts->refund_status == 0) {
 					$schedule_status = true;
 					$schedule = "Last Day of Coverage/End Date ".date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'schedule');
+					
+					if(date('Y-m-d') > $deleted_accounts->date_withdraw) {
+						$emp_status = 'pending_deletion';
+					} else {
+						$emp_status = 'shedule';
+					}
+
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => $emp_status);
 				} else if((int)$deleted_accounts->refund_status == 1 || (int)$deleted_accounts->refund_status == 2) {
 					$schedule_status = false;
 					$schedule = 'Removed on '.date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
@@ -4308,7 +4350,13 @@ class PlanHelper {
 						$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
 					}
 
-					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => 'deleted');
+					if(date('Y-m-d') > $deleted_accounts->date_withdraw) {
+						$emp_status = 'pending_deletion';
+					} else {
+						$emp_status = 'shedule';
+					}
+
+					return array('status' => true, 'schedule' => $schedule, 'schedule_status' => $schedule_status, 'expiry_date' => date('m/d/Y', strtotime($deleted_accounts->date_withdraw)), 'deleted' => true, 'plan_withdraw' => $plan_withdraw, 'emp_status' => $emp_status);
 				}
 			}
 
@@ -4476,148 +4524,159 @@ class PlanHelper {
 				$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
 		        // return array('medical' => $total_allocation, 'wellness' => $total_allocation_wellness);
 
-				$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+				$user_allocated = self::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
 		        // return $user_allocated;
 				$get_allocation_spent = 0;
 				$get_allocation_spent_wellness = 0;
 				foreach ($user_allocated as $key => $user) {
-					$get_allocation = 0;
-					$deducted_allocation = 0;
-					$e_claim_spent = 0;
-					$in_network_temp_spent = 0;
-					$credits_back = 0;
+					if($user) {
+						$get_allocation = 0;
+						$deducted_allocation = 0;
+						$e_claim_spent = 0;
+						$in_network_temp_spent = 0;
+						$credits_back = 0;
 
-					$get_allocation_wellness = 0;
-					$deducted_allocation_wellness = 0;
-					$e_claim_spent_wellness = 0;
-					$in_network_temp_spent_wellness = 0;
-					$credits_back_wellness = 0;
+						$get_allocation_wellness = 0;
+						$deducted_allocation_wellness = 0;
+						$e_claim_spent_wellness = 0;
+						$in_network_temp_spent_wellness = 0;
+						$credits_back_wellness = 0;
 
-					$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
+						$wallet = DB::table('e_wallet')->where('UserID', $user)->orderBy('created_at', 'desc')->first();
 
-					// check if employee has reset credits
-					$employee_credit_reset_medical = DB::table('credit_reset')
-					->where('id', $user->UserID)
-					->where('spending_type', 'medical')
-					->where('user_type', 'employee')
-					->orderBy('created_at', 'desc')
-					->first();
-
-					if($employee_credit_reset_medical) {
-						$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
-		    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_medical->date_resetted);
-						$wallet_history = DB::table('wallet_history')
+						$pro_allocation_medical = DB::table('wallet_history')
 						->where('wallet_id', $wallet->wallet_id)
-						->where('created_at', '>=', date('Y-m-d', strtotime($start)))
-		    								// ->where('created_at', '<=', $end)
-						->get();
-					} else {
-						$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
-					}
+						->where('logs', 'pro_allocation')
+						->sum('credit');
+						
+						$member = DB::table('corporate_members')->where('user_id', $user)->first();
 
-					foreach ($wallet_history as $key => $history) {
-						if($history->logs == "added_by_hr") {
-							$get_allocation += $history->credit;
+						if($pro_allocation_medical == 0) {
+							// check if employee has reset credits
+							$employee_credit_reset_medical = DB::table('credit_reset')
+							->where('id', $user)
+							->where('spending_type', 'medical')
+							->where('user_type', 'employee')
+							->orderBy('created_at', 'desc')
+							->first();
+
+							if($employee_credit_reset_medical) {
+								$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
+				    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_medical->date_resetted);
+								$wallet_history = DB::table('wallet_history')
+								->where('wallet_id', $wallet->wallet_id)
+								->where('created_at', '>=', date('Y-m-d', strtotime($start)))
+				    								// ->where('created_at', '<=', $end)
+								->get();
+							} else {
+								$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
+							}
+
+							foreach ($wallet_history as $key => $history) {
+								if($history->logs == "added_by_hr") {
+									$get_allocation += $history->credit;
+								}
+
+								if($history->logs == "deducted_by_hr") {
+									$deducted_allocation += $history->credit;
+								}
+
+								if($history->where_spend == "e_claim_transaction") {
+									$e_claim_spent += $history->credit;
+								}
+
+								if($history->where_spend == "in_network_transaction") {
+									$in_network_temp_spent += $history->credit;
+								}
+
+								if($history->where_spend == "credits_back_from_in_network") {
+									$credits_back += $history->credit;
+								}
+							}
+
+							if($pro_allocation_medical > 0) {
+								$allocation = $pro_allocation_medical;
+							} else {
+								$allocation = $get_allocation;
+								$total_deduction_credits += $deducted_allocation;
+
+								if((int)$member->removed_status == 1) {
+									$deleted_employee_allocation += $get_allocation - $deducted_allocation;
+								}
+							}
+
+							$get_allocation_spent += $in_network_temp_spent - $credits_back + $e_claim_spent;
+							
+							$allocated += $allocation;
+
 						}
 
-						if($history->logs == "deducted_by_hr") {
-							$deducted_allocation += $history->credit;
-						}
-
-						if($history->where_spend == "e_claim_transaction") {
-							$e_claim_spent += $history->credit;
-						}
-
-						if($history->where_spend == "in_network_transaction") {
-							$in_network_temp_spent += $history->credit;
-						}
-
-						if($history->where_spend == "credits_back_from_in_network") {
-							$credits_back += $history->credit;
-						}
-					}
-
-
-					$pro_allocation_medical = DB::table('wallet_history')
-					->where('wallet_id', $wallet->wallet_id)
-					->where('logs', 'pro_allocation')
-					->sum('credit');
-
-					if($pro_allocation_medical > 0) {
-						$allocation = $pro_allocation_medical;
-					} else {
-						$allocation = $get_allocation;
-						$total_deduction_credits += $deducted_allocation;
-
-						if($user->removed_status == 1) {
-							$deleted_employee_allocation += $get_allocation - $deducted_allocation;
-						}
-					}
-
-					$get_allocation_spent += $in_network_temp_spent - $credits_back + $e_claim_spent;
-					
-					$allocated += $allocation;
-
-					$employee_credit_reset_wellness = DB::table('credit_reset')
-					->where('id', $user->UserID)
-					->where('spending_type', 'wellness')
-					->where('user_type', 'employee')
-					->orderBy('created_at', 'desc')
-					->first();
-					if($employee_credit_reset_wellness) {
-						$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
-		    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_wellness->date_resetted);
-						$wallet_wellness_history = DB::table('wellness_wallet_history')
+						$pro_allocation_wellness = DB::table('wellness_wallet_history')
 						->where('wallet_id', $wallet->wallet_id)
-						->where('created_at', '>=', date('Y-m-d', strtotime($start)))
-		    										// ->where('created_at', '<=', $end)
-						->get();
-					} else {
-						$wallet_wellness_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
+						->where('logs', 'pro_allocation')
+						->sum('credit');
+
+						if($pro_allocation_wellness == 0) {
+							$employee_credit_reset_wellness = DB::table('credit_reset')
+							->where('id', $user)
+							->where('spending_type', 'wellness')
+							->where('user_type', 'employee')
+							->orderBy('created_at', 'desc')
+							->first();
+
+							if($employee_credit_reset_wellness) {
+								$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
+				    			// $end = SpendingInvoiceLibrary::getEndDate($employee_credit_reset_wellness->date_resetted);
+								$wallet_wellness_history = DB::table('wellness_wallet_history')
+								->where('wallet_id', $wallet->wallet_id)
+								->where('created_at', '>=', date('Y-m-d', strtotime($start)))
+				    										// ->where('created_at', '<=', $end)
+								->get();
+							} else {
+								$wallet_wellness_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
+							}
+
+							foreach ($wallet_wellness_history as $key => $history) {
+								if($history->logs == "added_by_hr") {
+									$get_allocation_wellness += $history->credit;
+								}
+
+								if($history->logs == "deducted_by_hr") {
+									$deducted_allocation_wellness += $history->credit;
+								}
+
+								if($history->where_spend == "e_claim_transaction") {
+									$e_claim_spent_wellness += $history->credit;
+								}
+
+								if($history->where_spend == "in_network_transaction") {
+									$in_network_temp_spent_wellness += $history->credit;
+								}
+
+								if($history->where_spend == "credits_back_from_in_network") {
+									$credits_back_wellness += $history->credit;
+								}
+							}
+							
+							$allocation_wellness = $get_allocation_wellness;
+
+
+							if($pro_allocation_wellness > 0) {
+								$allocation = $pro_allocation_wellness;
+							} else {
+								$allocation = $allocation_wellness;
+								$total_deduction_credits_wellness += $deducted_allocation_wellness;
+
+								if((int)$member->removed_status == 1) {
+									$deleted_employee_allocation_wellness += $get_allocation_wellness - $deducted_allocation_wellness;
+								}
+							}
+
+							$get_allocation_spent_wellness += $in_network_temp_spent_wellness - $credits_back_wellness + $e_claim_spent_wellness;
+							$allocated_wellness += $allocation_wellness;
+						}						
 					}
 
-					foreach ($wallet_wellness_history as $key => $history) {
-						if($history->logs == "added_by_hr") {
-							$get_allocation_wellness += $history->credit;
-						}
-
-						if($history->logs == "deducted_by_hr") {
-							$deducted_allocation_wellness += $history->credit;
-						}
-
-						if($history->where_spend == "e_claim_transaction") {
-							$e_claim_spent_wellness += $history->credit;
-						}
-
-						if($history->where_spend == "in_network_transaction") {
-							$in_network_temp_spent_wellness += $history->credit;
-						}
-
-						if($history->where_spend == "credits_back_from_in_network") {
-							$credits_back_wellness += $history->credit;
-						}
-					}
-					
-					$allocation_wellness = $get_allocation_wellness;
-
-					$pro_allocation_wellness = DB::table('wellness_wallet_history')
-					->where('wallet_id', $wallet->wallet_id)
-					->where('logs', 'pro_allocation')
-					->sum('credit');
-
-					if($pro_allocation_wellness > 0) {
-						$allocation = $pro_allocation_wellness;
-					} else {
-						$allocation = $allocation_wellness;
-						$total_deduction_credits_wellness += $deducted_allocation_wellness;
-
-						if($user->removed_status == 1) {
-							$deleted_employee_allocation_wellness += $get_allocation_wellness - $deducted_allocation_wellness;
-						}
-					}
-
-					$get_allocation_spent_wellness += $in_network_temp_spent_wellness - $credits_back_wellness + $e_claim_spent_wellness;
-					$allocated_wellness += $allocation_wellness;
 				}
 
 
