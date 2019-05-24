@@ -4948,6 +4948,12 @@ public function createEclaim( )
                return Response::json($returnObject);
            }
 
+           if(empty($input['spending_type']) || $input['spending_type'] == null) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Spending Account is required (Medical or Wellness)';
+               return Response::json($returnObject);
+           }
+
            $validate_date = SpendingInvoiceLibrary::validateStartDate($input['date']);
 
            if(!$validate_date) {
