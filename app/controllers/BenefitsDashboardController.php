@@ -2377,8 +2377,10 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 
-				if($pro_allocation_medical == 0) {
+				if($pro_allocation_medical > 0) {
 					$allocation = 0;
+					// $deleted_employee_allocation = 0;
+					// $total_deduction_credits = 0;
 				}
 
 				$get_allocation_spent += $in_network_temp_spent - $credits_back + $e_claim_spent;
@@ -2451,8 +2453,9 @@ class BenefitsDashboardController extends \BaseController {
 
 				$get_allocation_spent_wellness += $in_network_temp_spent_wellness - $credits_back_wellness + $e_claim_spent_wellness;
 
-				if($pro_allocation_wellness == 0) {
+				if($pro_allocation_wellness > 0) {
 					$allocation_wellness = 0;
+					// $deleted_employee_allocation_wellness = 0;
 				}
 				
 				$allocated_wellness += $allocation_wellness;
