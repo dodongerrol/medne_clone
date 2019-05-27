@@ -75,6 +75,24 @@ function loadPaymentStatement() {
       $("#setting-navigation").height($(window).height() - 52);
       $("#payments-side-list").height($(window).height() - 52);
     }
+
+    $("#statement-calendar").datepicker({
+      format : 'yyyy',
+      minViewMode : 'years',
+    });
+
+    $(".statement-calendar-picker").click(function(e){
+      $("#statement-calendar").datepicker('show');
+    });
+
+    $('#statement-calendar').datepicker()
+      .on("changeDate", function(e) {
+        $("#statement-calendar").datepicker('hide');
+        console.log( e.date );
+        invoice_selected_date = moment( e.date ).format(  );
+      });
+
+    $("#statement-calendar").datepicker('setDate', moment().format('YYYY') );
   });
 }
 
@@ -220,19 +238,19 @@ function getClinicStatementList() {
 }
 
 function getClinicStatementListRange(date) {
-  var month = date.getMonth();
-  var day = date.getDay();
-  var year = date.getFullYear();
-  var firstDay = new Date(date.getFullYear(), month, 1);
-  var lastDay = new Date(date.getFullYear(), month + 1, 0);
+  // var month = date.getMonth();
+  // var day = date.getDay();
+  // var year = date.getFullYear();
+  // var firstDay = new Date(date.getFullYear(), month, 1);
+  // var lastDay = new Date(date.getFullYear(), month + 1, 0);
 
-  $(".statement-payment-range .month").text( moment().month(month).format("MMM") );
-  $(".statement-payment-range .year").text( moment().year(year).format("YYYY") );
+  // $(".statement-payment-range .month").text( moment().month(month).format("MMM") );
+  // $(".statement-payment-range .year").text( moment().year(year).format("YYYY") );
 
   var data = {
     clinic_id: $("#clinicID").val(),
-    start: moment(firstDay).format("MMM D, YYYY"),
-    end: moment(lastDay).format("MMM D, YYYY")
+    start: moment(invoice_selected_date).startOf('month').format("MMM D, YYYY"),
+    end: moment(invoice_selected_date).endOf('month').format("MMM D, YYYY")
   };
 
   $.ajax({
@@ -335,22 +353,22 @@ function initializeStatementCalendar() {
   var minDate = new Date(start);
   console.log(minDate);
 
-  $("#statement-calendar").datepicker({
-    changeMonth: true,
-    changeYear: true,
-    minDate: minDate,
-    onChangeMonthYear: function(year, month, obj) {
-      console.log(obj);
+  // $("#statement-calendar").datepicker({
+  //   changeMonth: true,
+  //   changeYear: true,
+  //   minDate: minDate,
+  //   onChangeMonthYear: function(year, month, obj) {
+  //     console.log(obj);
 
-      $(".statement-payment-range .month").text( moment().month(month - 1).format("MMM") );
-      $(".statement-payment-range .year").text( year );
+  //     $(".statement-payment-range .month").text( moment().month(month - 1).format("MMM") );
+  //     $(".statement-payment-range .year").text( year );
 
-      invoice_selected_date = moment().month(month - 1).format("MMMM") + " " + obj.selectedDay + ", " + year;
-      invoice_selected_date = new Date(invoice_selected_date);
+  //     invoice_selected_date = moment().month(month - 1).format("MMMM") + " " + obj.selectedDay + ", " + year;
+  //     invoice_selected_date = new Date(invoice_selected_date);
 
-      console.log(invoice_selected_date);
-    }
-  });
+  //     console.log(invoice_selected_date);
+  //   }
+  // });
 }
 
 $("body").on("click", "#payment-history-range-btn", function() {
@@ -563,12 +581,7 @@ function getClinicInvoiceList(date) {
 $("body").on("click", "#statement-date-go-btn", function() {
   console.log(invoice_selected_date);
 
-  if (invoice_selected_date != null) {
-    getClinicStatementListRange(invoice_selected_date);
-  } else {
-    var date = new Date();
-    getClinicStatementListRange(date);
-  }
+  getClinicStatementListRange(invoice_selected_date);
 });
 
 // STATEMENT OF ACCOUNT VIEW

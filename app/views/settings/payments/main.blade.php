@@ -1,3 +1,6 @@
+{{ HTML::style('assets/hr-dashboard/css/bootstrap-datepicker.min.css') }}
+{{ HTML::script('assets/hr-dashboard/js/bootstrap-datepicker.min.js') }}
+
 
 {{ HTML::script('assets/settings/payments/payments.js') }}
 {{ HTML::style('assets/css/font-awesome.min.css') }}

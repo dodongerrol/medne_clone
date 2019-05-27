@@ -33,166 +33,160 @@ class InvoiceController extends \BaseController {
 	    $clinic = new Clinic();
 	    $transaction = new Transaction();
 	    $statement = new StatementOfAccount();
-	    $get_clinic_id = $invoice->checkStatementInvoice($start, $input['clinic_id']);
+	    $get_clinic_ids = $invoice->checkStatementInvoice($start, $input['clinic_id']);
 
 	    // return $get_clinic_id;
 
-	    $all_payment_records = $payment_record->getPaymentRecordByInvoiceListClinic($get_clinic_id['invoice_id']);
-	    // return $all_payment_records;
-	    foreach ($all_payment_records as $key => $value) {
-	    	$check_statement = $statement->checkGenerateStatus($value->payment_record_id);
-	    	if($check_statement == 1) {
-			    $total = 0;
+	    foreach ($get_clinic_ids as $key => $get_clinic_id) {
+		    $all_payment_records = $payment_record->getPaymentRecordByInvoiceListClinic($get_clinic_id['invoice_id']);
+		    // return $all_payment_records;
+		    foreach ($all_payment_records as $key => $value) {
+		    	$check_statement = $statement->checkGenerateStatus($value->payment_record_id);
+		    	if($check_statement == 1) {
+				    $total = 0;
 
-			    $invoice_data['payment'] = $payment_record->getPaymentRecordClinic($value->invoice_id);
-			    $invoice_data['clinic'] = $clinic->ClinicDetails($value->clinic_id);
-			    $invoice_data['invoice'] = $invoice->getInvoiceClinic($value->invoice_id);
+				    $invoice_data['payment'] = $payment_record->getPaymentRecordClinic($value->invoice_id);
+				    $invoice_data['clinic'] = $clinic->ClinicDetails($value->clinic_id);
+				    $invoice_data['invoice'] = $invoice->getInvoiceClinic($value->invoice_id);
 
-			    $transactions = [];
-			    $details = [];
-			    $total = 0;
-			    $mednefits_total_fee = 0;
-			    $mednefits_total_credits = 0;
-			    $total_cash = 0;
-			    $total_procedure = 0;
-			    $total_percentage = 0;
-			    $total_transaction = 0;
-			    $total_fees = 0;
-			    $total_credits_transactions = 0;
-			    $total_cash_transactions = 0;
-			    $amount_due = null;
-			    $transaction_results = $invoice_record_detail->getTransaction($value->invoice_id);
+				    $transactions = [];
+				    $details = [];
+				    $total = 0;
+				    $mednefits_total_fee = 0;
+				    $mednefits_total_credits = 0;
+				    $total_cash = 0;
+				    $total_procedure = 0;
+				    $total_percentage = 0;
+				    $total_transaction = 0;
+				    $total_fees = 0;
+				    $total_credits_transactions = 0;
+				    $total_cash_transactions = 0;
+				    $amount_due = null;
+				    $transaction_results = $invoice_record_detail->getTransaction($value->invoice_id);
 
-			    foreach ($transaction_results as $key => $transact) {
+				    foreach ($transaction_results as $key => $transact) {
 
-		    		$trans = DB::table('transaction_history')
-								->join('user', 'user.UserID', '=', 'transaction_history.UserID')
-								->where('transaction_history.transaction_id', $transact->transaction_id)
-								->where('transaction_history.deleted', 0)
-								->where('transaction_history.paid', 1)
-								->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.gst_percent_value')
-								->first();
+			    		$trans = DB::table('transaction_history')
+									->join('user', 'user.UserID', '=', 'transaction_history.UserID')
+									->where('transaction_history.transaction_id', $transact->transaction_id)
+									->where('transaction_history.deleted', 0)
+									->where('transaction_history.paid', 1)
+									->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.gst_percent_value')
+									->first();
 
-		    		if($trans) {
-		    			if($trans->deleted == 0 || $trans->deleted == "0") {
-		    				$procedure_temp = "";
-						    $procedure = "";
-								$procedure_ids = [];
-								$mednefits_total_fee += $trans->credit_cost;
-								if($trans->paid == 1 && $trans->deleted == 0 || $trans->paid == "1" && $trans->deleted == "0") {
-									$mednefits_total_credits += $trans->credit_cost;
-								}
-
-								if($trans->co_paid_status == 0) {
-									if(strrpos($trans->clinic_discount, '%')) {
-										$percentage = chop($trans->clinic_discount, '%');
-										if($trans->credit_cost > 0) {
-											$amount = $trans->credit_cost;
-										} else {
-											$amount = $trans->procedure_cost;
-										}
-
-										$total_percentage = $percentage + $trans->medi_percent;
-
-										$formatted_percentage = $total_percentage / 100;
-										$temp_fee = $amount / ( 1 - $formatted_percentage );
-										// if non gst
-										$mednefits_pecent = $trans->medi_percent / 100;
-										$fee = $temp_fee * $mednefits_pecent;
-									} else {
-										$fee = number_format((float)$trans->co_paid_amount, 2);
+			    		if($trans) {
+			    			if($trans->deleted == 0 || $trans->deleted == "0") {
+			    				$procedure_temp = "";
+							    $procedure = "";
+									$procedure_ids = [];
+									$mednefits_total_fee += $trans->credit_cost;
+									if($trans->paid == 1 && $trans->deleted == 0 || $trans->paid == "1" && $trans->deleted == "0") {
+										$mednefits_total_credits += $trans->credit_cost;
 									}
-								} else {
-									if(strrpos($trans->clinic_discount, '%')) {
-										$percentage = chop($trans->clinic_discount, '%');
-										if($trans->credit_cost > 0) {
-											$amount = $trans->credit_cost;
+
+									if($trans->co_paid_status == 0) {
+										if(strrpos($trans->clinic_discount, '%')) {
+											$percentage = chop($trans->clinic_discount, '%');
+											if($trans->credit_cost > 0) {
+												$amount = $trans->credit_cost;
+											} else {
+												$amount = $trans->procedure_cost;
+											}
+
+											$total_percentage = $percentage + $trans->medi_percent;
+
+											$formatted_percentage = $total_percentage / 100;
+											$temp_fee = $amount / ( 1 - $formatted_percentage );
+											// if non gst
+											$mednefits_pecent = $trans->medi_percent / 100;
+											$fee = $temp_fee * $mednefits_pecent;
 										} else {
-											$amount = $trans->procedure_cost;
+											$fee = number_format((float)$trans->co_paid_amount, 2);
 										}
-
-										$total_percentage = $percentage + $trans->medi_percent;
-
-										$formatted_percentage = $total_percentage / 100;
-										$temp_fee = $amount / ( 1 - $formatted_percentage );
-										// if non gst
-										$mednefits_pecent = $trans->medi_percent / 100;
-										$temp_mednefits_fee = $temp_fee * $mednefits_pecent;
-										$fee = $temp_mednefits_fee * $trans->gst_percent_value;
 									} else {
-										$fee = number_format((float)$trans->co_paid_amount, 2);
+										if(strrpos($trans->clinic_discount, '%')) {
+											$percentage = chop($trans->clinic_discount, '%');
+											if($trans->credit_cost > 0) {
+												$amount = $trans->credit_cost;
+											} else {
+												$amount = $trans->procedure_cost;
+											}
+
+											$total_percentage = $percentage + $trans->medi_percent;
+
+											$formatted_percentage = $total_percentage / 100;
+											$temp_fee = $amount / ( 1 - $formatted_percentage );
+											// if non gst
+											$mednefits_pecent = $trans->medi_percent / 100;
+											$temp_mednefits_fee = $temp_fee * $mednefits_pecent;
+											$fee = $temp_mednefits_fee * $trans->gst_percent_value;
+										} else {
+											$fee = number_format((float)$trans->co_paid_amount, 2);
+										}
 									}
-								}
-								$total_fees += $fee;
+									$total_fees += $fee;
 
-						    if($trans->credit_cost > 0) {
-						    	$mednefits_credits = number_format($trans->credit_cost, 2);
-						    	$cash = 0.00;
-						    	$total_credits_transactions++;
-						    } else {
-						    	$mednefits_credits = 00;
-						    	$cash = number_format($trans->procedure_cost);
-						    	$total_cash_transactions++;
-						    }
+							    if($trans->credit_cost > 0) {
+							    	$mednefits_credits = number_format($trans->credit_cost, 2);
+							    	$cash = 0.00;
+							    	$total_credits_transactions++;
+							    } else {
+							    	$mednefits_credits = 00;
+							    	$cash = number_format($trans->procedure_cost);
+							    	$total_cash_transactions++;
+							    }
 
-						    if($trans->health_provider_done == 1 && $trans->credit_cost == 0 || $trans->health_provider_done == "1" && $trans->credit_cost == "0") {
-						    	$total_cash += $trans->procedure_cost;
-						    }
+							    if($trans->health_provider_done == 1 && $trans->credit_cost == 0 || $trans->health_provider_done == "1" && $trans->credit_cost == "0") {
+							    	$total_cash += $trans->procedure_cost;
+							    }
 
-						    $mednefits_total_fee += $fee;
-						    $total_transaction++;
-		    			}
+							    $mednefits_total_fee += $fee;
+							    $total_transaction++;
+			    			}
 
-		    		}
+			    		}
 
+			    }
+			    
+			    $paid_amount = (float)$value->amount_paid;
+			    // $transactions['transaction_lists'] = $transaction_data;
+			    $invoice_record = array(
+			    	'clinic_id'		=> $invoice_data['invoice']['clinic_id'],
+			    	'invoice_id'	=> $invoice_data['invoice']['invoice_id'],
+			    	'start_date'	=> date('Y-m-01', strtotime($invoice_data['invoice']['start_date'])),
+			    	'end_date'		=> date('Y-m-t', strtotime($invoice_data['invoice']['start_date'])),
+			    	'created_at'	=> $invoice_data['invoice']['created_at'],
+			    	'updated_at'	=> $invoice_data['invoice']['updated_at']
+			    );
+			    $transactions['period'] = date('j M', strtotime($invoice_data['invoice']['start_date'])).' - '.date('j M Y', strtotime($invoice_data['invoice']['end_date']));
+			    $transactions['invoice_record'] = $invoice_record;
+			    $transactions['invoice_due'] = $invoice_record['end_date'];
+			    $transactions['total'] = number_format($mednefits_total_fee, 2);
+			    $transactions['mednefits_fee'] = number_format($mednefits_total_fee, 2);
+			    $transactions['mednefits_credits'] = number_format($mednefits_total_credits, 2);
+			    $transactions['total_cash'] = number_format($total_cash, 2);
+			    $transactions['clinic'] = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
+			    // $transactions['total_transaction'] = sizeof($transaction_data);
+			    $transactions['total_transaction'] = $total_transaction;
+			    $transactions['total_fees'] = number_format($total_fees, 2);
+			    $transactions['total_credits_transactions'] = $total_credits_transactions;
+					$transactions['total_cash_transactions'] = $total_cash_transactions;
+					$transactions['payment'] = $value;
+			    $balance = $mednefits_total_fee - $paid_amount;
+
+			    if($balance > 0) {
+			    	$amount_due = number_format($balance, 2);
+			    } else {
+			    	$amount_due = number_format(0, 2);
+			    }
+			    $transactions['amount_due'] = $amount_due;
+
+			    $all_invoice[] = $transactions;
 		    }
-
-		   //  if($mednefits_total_fee > 0) {
-		  	// 	DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "true"]);
-		  	// } else {
-		  	// 	DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "false"]);
-		  	// }
-
-		    // $get_payment_record = $payment_record->getPaymentRecord($check_payment_record);
-		    // $get_payment_details = $bank->getBankDetails($input['clinic_id']);
-		    // $transactions['payment_record'] = $get_payment_record;
-		    // $transactions['bank_details'] = $get_payment_details;
-		    $paid_amount = (float)$value->amount_paid;
-		    // $transactions['transaction_lists'] = $transaction_data;
-		    $invoice_record = array(
-		    	'clinic_id'		=> $invoice_data['invoice']['clinic_id'],
-		    	'invoice_id'	=> $invoice_data['invoice']['invoice_id'],
-		    	'start_date'	=> date('Y-m-01', strtotime($invoice_data['invoice']['start_date'])),
-		    	'end_date'		=> date('Y-m-t', strtotime($invoice_data['invoice']['start_date'])),
-		    	'created_at'	=> $invoice_data['invoice']['created_at'],
-		    	'updated_at'	=> $invoice_data['invoice']['updated_at']
-		    );
-		    $transactions['period'] = date('j M', strtotime($invoice_data['invoice']['start_date'])).' - '.date('j M Y', strtotime($invoice_data['invoice']['end_date']));
-		    $transactions['invoice_record'] = $invoice_record;
-		    $transactions['invoice_due'] = $invoice_record['end_date'];
-		    $transactions['total'] = number_format($mednefits_total_fee, 2);
-		    $transactions['mednefits_fee'] = number_format($mednefits_total_fee, 2);
-		    $transactions['mednefits_credits'] = number_format($mednefits_total_credits, 2);
-		    $transactions['total_cash'] = number_format($total_cash, 2);
-		    $transactions['clinic'] = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
-		    // $transactions['total_transaction'] = sizeof($transaction_data);
-		    $transactions['total_transaction'] = $total_transaction;
-		    $transactions['total_fees'] = number_format($total_fees, 2);
-		    $transactions['total_credits_transactions'] = $total_credits_transactions;
-				$transactions['total_cash_transactions'] = $total_cash_transactions;
-				$transactions['payment'] = $value;
-		    $balance = $mednefits_total_fee - $paid_amount;
-
-		    if($balance > 0) {
-		    	$amount_due = number_format($balance, 2);
-		    } else {
-		    	$amount_due = number_format(0, 2);
-		    }
-		    $transactions['amount_due'] = $amount_due;
-
-		    $all_invoice[] = $transactions;
+		  	}
+	    	
 	    }
-	  	}
+
 
 	    $data['result'] = $all_invoice;
 	    // return $data;
