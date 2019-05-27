@@ -429,7 +429,12 @@ class EclaimController extends \BaseController {
 		$input = Input::all();
 		$receipt_all = [];
 
-		$check = DB::table('e_claim')->where('e_claim_id', $input['e_claim_id'])->count();
+		if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
+			return array('status' => false, 'message' => 'E-Claim ID is required.');
+		}
+
+		$id = $transaction_id = (int)preg_replace('/[^0-9]/', '', $input['e_claim_id']);
+		$check = DB::table('e_claim')->where('e_claim_id', $id)->count();
 
 		if($check == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim data does not exist.');
@@ -464,7 +469,7 @@ class EclaimController extends \BaseController {
 
 			$e_claim_docs = new EclaimDocs( );
 			$receipt = array(
-				'e_claim_id'    => $input['e_claim_id'],
+				'e_claim_id'    => $id,
 				'doc_file'      => $receipt_file,
 				'file_type'     => $receipt_type
 			);
