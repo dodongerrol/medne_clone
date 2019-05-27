@@ -1176,7 +1176,7 @@ return Response::json($returnObject);
 
                   if($res->currency_type == "myr") {
                     $currency_symbol = "RM";
-                    $res->amount = $res->amount * 3;
+                    $res->amount = $res->amount / 3;
                   } else {
                     $currency_symbol = "S$";
                   }
