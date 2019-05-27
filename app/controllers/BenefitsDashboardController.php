@@ -8213,20 +8213,22 @@ class BenefitsDashboardController extends \BaseController {
 			$hr  = new HRDashboard();
 			$result = $hr->updateCorporateHrDashboard($account->hr_dashboard_id, $data);
 			$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $account->customer_buy_start_id)->first();
-			
-			$config = StringHelper::Deployment( );
+			$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $account->customer_buy_start_id)->first();
+			$contacts = DB::table('company_contacts')->where('customer_id', $account->customer_buy_start_id)->get();
 
-			if($config == 1) {
-				$data = array(
-					'email' => $input['email'],
-					'name'	=> ucwords($contact->first_name),
-					'context'	=> "Forgot your company password?",
-					'activeLink'	=> $server.'/app/resetcompanypassword?token='.$reset_link
-				);
-				$url = "https://api.medicloud.sg/hr/reset_pass";
-				// $url = "http://localhost:3000/hr/reset_pass";
-				return ApiHelper::resetPassword($data, $url);
-			} else {
+			// $config = StringHelper::Deployment( );
+
+			// if($config == 1) {
+			// 	$data = array(
+			// 		'email' => $input['email'],
+			// 		'name'	=> ucwords($contact->first_name),
+			// 		'context'	=> "Forgot your company password?",
+			// 		'activeLink'	=> $server.'/app/resetcompanypassword?token='.$reset_link
+			// 	);
+			// 	$url = "https://api.medicloud.sg/hr/reset_pass";
+			// 	// $url = "http://localhost:3000/hr/reset_pass";
+			// 	return ApiHelper::resetPassword($data, $url);
+			// } else {
 				$emailDdata['emailName']= ucwords($contact->first_name);
 	      		// $emailDdata['emailPage']= 'email-templates.hr-password-reset';
 				$emailDdata['emailPage']= 'email-templates.latest-templates.global-reset-password-template';
@@ -8238,9 +8240,30 @@ class BenefitsDashboardController extends \BaseController {
 				$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;
 				EmailHelper::sendEmail($emailDdata);
 
-				$emailDdata['emailTo']= $contact->work_email;
-				EmailHelper::sendEmail($emailDdata);	
-			}
+				if($contact) {
+					if((int)$contact->send_email_communication == 1) {
+						$emailDdata['emailTo']= $contact->work_email;
+						EmailHelper::sendEmail($emailDdata);
+					}
+				}
+
+				if($billing_contact) {
+					if((int)$billing_contact->send_email_communication == 1) {
+						$emailDdata['emailTo']= $billing_contact->billing_email;
+						EmailHelper::sendEmail($emailDdata);
+					}
+				}
+
+				if(sizeof($contacts) > 0) {
+					foreach ($contacts as $key => $cont) {
+						if((int)$cont->send_email_communication == 1) {
+							$emailDdata['emailTo']= $cont->email;
+							EmailHelper::sendEmail($emailDdata);
+						}
+					}
+				}
+
+			// }
 		}
 
 		return array(
