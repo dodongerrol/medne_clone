@@ -19,10 +19,11 @@ class InvoiceRecord extends Eloquent {
 
   public function checkStatementInvoice($start, $id)
   {
-    $start_date = date('Y-m-01', strtotime('-1 month', strtotime($start)));
-    return InvoiceRecord::where('start_date', $start_date)
+    // $start_date = date('Y-m-01', strtotime('-1 month', strtotime($start)));
+    $start_date = date('Y', strtotime($start));
+    return InvoiceRecord::whereYear('start_date','=', $start_date)
               ->where('clinic_id', $id)
-              ->first();
+              ->get();
   }
 
   public function getInvoiceByDate($start, $id)
