@@ -8240,28 +8240,28 @@ class BenefitsDashboardController extends \BaseController {
 				$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;
 				EmailHelper::sendEmail($emailDdata);
 
-				if($contact) {
-					if((int)$contact->send_email_communication == 1) {
-						$emailDdata['emailTo']= $contact->work_email;
-						EmailHelper::sendEmail($emailDdata);
-					}
-				}
+				// if($contact) {
+				// 	if((int)$contact->send_email_communication == 1) {
+				// 		$emailDdata['emailTo']= $contact->work_email;
+				// 		EmailHelper::sendEmail($emailDdata);
+				// 	}
+				// }
 
-				if($billing_contact) {
-					if((int)$billing_contact->send_email_communication == 1) {
-						$emailDdata['emailTo']= $billing_contact->billing_email;
-						EmailHelper::sendEmail($emailDdata);
-					}
-				}
+				// if($billing_contact) {
+				// 	if((int)$billing_contact->send_email_communication == 1) {
+				// 		$emailDdata['emailTo']= $billing_contact->billing_email;
+				// 		EmailHelper::sendEmail($emailDdata);
+				// 	}
+				// }
 
-				if(sizeof($contacts) > 0) {
-					foreach ($contacts as $key => $cont) {
-						if((int)$cont->send_email_communication == 1) {
-							$emailDdata['emailTo']= $cont->email;
-							EmailHelper::sendEmail($emailDdata);
-						}
-					}
-				}
+				// if(sizeof($contacts) > 0) {
+				// 	foreach ($contacts as $key => $cont) {
+				// 		if((int)$cont->send_email_communication == 1) {
+				// 			$emailDdata['emailTo']= $cont->email;
+				// 			EmailHelper::sendEmail($emailDdata);
+				// 		}
+				// 	}
+				// }
 
 			// }
 		}
