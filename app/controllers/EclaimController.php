@@ -429,7 +429,12 @@ class EclaimController extends \BaseController {
 		$input = Input::all();
 		$receipt_all = [];
 
-		$check = DB::table('e_claim')->where('e_claim_id', $input['e_claim_id'])->count();
+		if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
+			return array('status' => false, 'message' => 'E-Claim ID is required.');
+		}
+
+		$id = $transaction_id = (int)preg_replace('/[^0-9]/', '', $input['e_claim_id']);
+		$check = DB::table('e_claim')->where('e_claim_id', $id)->count();
 
 		if($check == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim data does not exist.');
@@ -448,14 +453,26 @@ class EclaimController extends \BaseController {
 
 			$file = $input['file'];
 			$file_name = time().' - '.$file->getClientOriginalName();
+			$s3 = AWS::get('s3');
+
 			if($file->getClientOriginalExtension() == "pdf") {
 				$receipt_file = $file_name;
 				$receipt_type = "pdf";
 				$file->move(public_path().'/receipts/', $file_name);
+				$s3->putObject(array(
+					'Bucket'     => 'mednefits',
+					'Key'        => 'receipts/'.$file_name,
+					'SourceFile' => public_path().'/receipts/'.$file_name,
+				));
 			} else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
 				$receipt_file = $file_name;
 				$receipt_type = "xls";
 				$file->move(public_path().'/receipts/', $file_name);
+				$s3->putObject(array(
+					'Bucket'     => 'mednefits',
+					'Key'        => 'receipts/'.$file_name,
+					'SourceFile' => public_path().'/receipts/'.$file_name,
+				));
 			} else {
 				$image = \Cloudinary\Uploader::upload($file->getPathName());
 				$receipt_file = $image['secure_url'];
@@ -464,7 +481,7 @@ class EclaimController extends \BaseController {
 
 			$e_claim_docs = new EclaimDocs( );
 			$receipt = array(
-				'e_claim_id'    => $input['e_claim_id'],
+				'e_claim_id'    => $id,
 				'doc_file'      => $receipt_file,
 				'file_type'     => $receipt_type
 			);

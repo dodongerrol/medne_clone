@@ -2313,8 +2313,14 @@ class BenefitsDashboardController extends \BaseController {
 				$credits_back_wellness = 0;
 
 				$wallet = DB::table('e_wallet')->where('UserID', $user)->orderBy('created_at', 'desc')->first();
-				$member = DB::table('corporate_members')->where('user_id', $user)->first();
 
+				$pro_allocation_medical = DB::table('wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation')
+				->sum('credit');
+
+
+				$member = DB::table('corporate_members')->where('user_id', $user)->first();
 				// check if employee has reset credits
 				$employee_credit_reset_medical = DB::table('credit_reset')
 				->where('id', $user)
@@ -2326,11 +2332,6 @@ class BenefitsDashboardController extends \BaseController {
 				if($employee_credit_reset_medical) {
 					$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
 	    			$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
-					// $wallet_history = DB::table('wallet_history')
-					// 				->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
-					// 				->where('e_wallet.UserID', $user->UserID)
-					// 				->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
-					// 				->get();
 					$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $wallet->wallet_id)
 									->where('wallet_history_id',  '>=', $wallet_history_id)
@@ -2363,10 +2364,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 
 
-				$pro_allocation_medical = DB::table('wallet_history')
-				->where('wallet_id', $wallet->wallet_id)
-				->where('logs', 'pro_allocation')
-				->sum('credit');
+				
 
 				if($pro_allocation_medical > 0) {
 					$allocation = $pro_allocation_medical;
@@ -2379,10 +2377,23 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 
+				if($pro_allocation_medical > 0) {
+					$allocation = 0;
+					// $deleted_employee_allocation = 0;
+					// $total_deduction_credits = 0;
+				}
+
 				$get_allocation_spent += $in_network_temp_spent - $credits_back + $e_claim_spent;
 				
 				$allocated += $allocation;
 
+				$pro_allocation_wellness = DB::table('wellness_wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation')
+				->sum('credit');
+
+
+				
 				$employee_credit_reset_wellness = DB::table('credit_reset')
 				->where('id', $user)
 				->where('spending_type', 'wellness')
@@ -2429,11 +2440,6 @@ class BenefitsDashboardController extends \BaseController {
 				
 				$allocation_wellness = $get_allocation_wellness;
 
-				$pro_allocation_wellness = DB::table('wellness_wallet_history')
-				->where('wallet_id', $wallet->wallet_id)
-				->where('logs', 'pro_allocation')
-				->sum('credit');
-
 				if($pro_allocation_wellness > 0) {
 					$allocation = $pro_allocation_wellness;
 				} else {
@@ -2446,6 +2452,12 @@ class BenefitsDashboardController extends \BaseController {
 				}
 
 				$get_allocation_spent_wellness += $in_network_temp_spent_wellness - $credits_back_wellness + $e_claim_spent_wellness;
+
+				if($pro_allocation_wellness > 0) {
+					$allocation_wellness = 0;
+					// $deleted_employee_allocation_wellness = 0;
+				}
+				
 				$allocated_wellness += $allocation_wellness;
 			}
 
@@ -11814,6 +11826,7 @@ class BenefitsDashboardController extends \BaseController {
 
 	public function getEmployeeSpendingAccountSummaryNew( )
 	{
+		// return PlanHelper::reCalculateCompanyBalance();
 		$input = Input::all();
 		// $customer_id = $input['customer_id'];
 		$customer_id = PlanHelper::getCusomerIdToken();
@@ -11911,8 +11924,6 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-
-		
 		foreach ($medical_wallet_history as $key => $history) {
 			if($history->logs == "added_by_hr") {
 				$total_allocation_medical_temp += $history->credit;
