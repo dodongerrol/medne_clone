@@ -1999,16 +1999,21 @@ public function getNewClinicDetails($id)
           'clinic_id'       => $clinic->ClinicID,
           'check_in_time'   => $check_in_time,
           'check_out_time'  => $check_in_time,
-          'check_in_type'   => 'in_network_transaction'
+          'check_in_type'   => 'in_network_transaction',
+          'cap_per_visit'   => $cap_amount,
+          'currency_symbol' => $cap_currency_symbol == "RM$" ? "myr" : "sgd",
+          'currency_value'  => $cap_currency_symbol == "RM$" ? 3.00 : 0.00,
         );
 
         $check_in_class = new EmployeeClinicCheckIn( );
-                // create clinic check in data
+        // create clinic check in data
         $check_in = $check_in_class->createData($check_in_data);
         $jsonArray['check_in_id'] = $check_in->id;
         $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
+        // send socket connection
+        PusherHelper::sendClinicCheckInNotification($check_in->id, $clinic->ClinicID);
         return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;

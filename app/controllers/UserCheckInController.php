@@ -77,9 +77,88 @@ class UserCheckInController extends \BaseController {
 	public function checkUserPin( )
 	{
 		$input = Input::all();
-    $user = new User();
+	    $user = new User();
 
-    return $user->checkUserPin($input['user_id'], $input['pin']);
+	    return $user->checkUserPin($input['user_id'], $input['pin']);
+	}
+
+	public function getClinicCheckInLists( )
+	{
+		$getSessionData = StringHelper::getMainSession(3);
+		$clinic_id = $getSessionData->Ref_ID;
+		
+		if($getSessionData != FALSE){
+			$format = [];
+			$check_ins = DB::table('user_check_in_clinic')
+							->where('clinic_id', $clinic_id)
+							->where('check_in_type', 'in_network_transaction')
+							->where('status', 0)
+							->get();
+
+			foreach ($check_ins as $key => $check) {
+				$user = DB::table('user')->where('UserID', $check->user_id)->first();
+				$cap_per_visit = 0;
+				if($user) {
+					$temp = array(
+						'check_in_id' 	=> $check->check_in_id,
+						'clinic_id'		=> $check->clinic_id,
+						'registration_date' => date('d F Y, h:i a', strtotime($check->check_in_time)),
+						'transaction_id'	=> $check->id,
+						'cap_per_visit'		=> $check->cap_per_visit,
+						'currency_symbol'	=> $check->currency_symbol == "myr" ? 'RM' : 'S$',
+						'name'			=> ucwords($user->Name),
+						'nric'			=> $user->NRIC,
+						'remarks'		=> (int)$check->status == 0 ? 'Pending' : 'Done'
+					);
+
+					array_push($format, $temp);
+				}
+			}
+
+			return array('status' => true, 'data' => $format);
+		} else {
+			return array('status' => false, 'message' => 'Session expired.');
+		}
+	}
+
+	public function getSpecificCheckIn( )
+	{
+		$input = Input::all();
+
+		if(empty($input['check_in_id']) || $input['check_in_id'] == null) {
+			return array('status' => false, 'message' => 'Check In ID is required.');
+		}
+
+		$check = DB::table('user_check_in_clinic')
+							->where('check_in_id', $input['check_in_id'])
+							->where('clinic_id', $clinic_id)
+							->where('check_in_type', 'in_network_transaction')
+							->where('status', 0)
+							->first();
+
+		if(!$check) {
+			return array('status' => false, 'message' => 'Check In data does not exist.');
+		}
+
+		$user = DB::table('user')->where('UserID', $check->user_id)->first();
+				$cap_per_visit = 0;
+		if($user) {
+			$temp = array(
+				'check_in_id' 	=> $check->check_in_id,
+				'clinic_id'		=> $check->clinic_id,
+				'registration_date' => date('d F Y, h:i a', strtotime($check->check_in_time)),
+				'transaction_id'	=> $check->id,
+				'cap_per_visit'		=> $check->cap_per_visit,
+				'currency_symbol'	=> $check->currency_symbol == "myr" ? 'RM' : 'S$',
+				'name'			=> ucwords($user->Name),
+				'nric'			=> $user->NRIC,
+				'remarks'		=> (int)$check->status == 0 ? 'Pending' : 'Done'
+			);
+
+			return array('status' => true, 'data' => $temp);
+		} else {
+			return array('status' => false, 'message' => 'Member does not exist.');
+		}
 	}
 
 }

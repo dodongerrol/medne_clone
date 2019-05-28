@@ -460,11 +460,23 @@ app.directive("claimDirective", [
                 }
             });
           };
+
+          scope.getCheckInConfig = function(connection) {
+            console.log('connection check in', connection);
+            socket.on(connection, function (data) {
+              console.log(data);
+              if (parseInt(data.clinic_id) == parseInt(scope.clinic.ClinicID)) {
+                 
+              }
+            });
+          };
+
           scope.getClinicSocketConnection = function( ) {
             $http.get(base_url + 'clinic_socket_connection')
             .then(function(response){
               if(response.data.status) {
-                scope.getPusherConfig(response.data.socket_connection);
+                scope.getPusherConfig(response.data.socket_connection_pay_direct);
+                scope.getCheckInConfig(response.data.socket_connection_check_in);
               }
             });
           };

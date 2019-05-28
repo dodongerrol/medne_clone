@@ -1367,9 +1367,10 @@ public function getClinicSocketDetails( )
   $getSessionData = StringHelper::getMainSession(3);
   $clinic_id = $getSessionData->Ref_ID;
   $user_id = $getSessionData->UserID;
-  $connection = StringHelper::socketConnection($clinic_id, $user_id);
+  $connection_pay_direct = StringHelper::socketConnection($clinic_id, $user_id);
+  $connection_check_in = StringHelper::socketConnectionCheckIn($clinic_id, $user_id);
 
-  return array('status' => TRUE, 'socket_connection' => $connection);
+  return array('status' => TRUE, 'socket_connection_pay_direct' => $connection_pay_direct, 'socket_connection_check_in' => $connection_check_in);
 }
 
 public function testSocketConnection( )
