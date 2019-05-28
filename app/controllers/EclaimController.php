@@ -1788,7 +1788,7 @@ class EclaimController extends \BaseController {
 			'current_spending_format_number' => $current_spending,
 			'e_claim'						=> $e_claim,
 			'in_network_transactions' => $transaction_details,
-			'balance'           => number_format($balance, 2),
+			'balance'           => $balance >= 0 ? number_format($balance, 2) : "0.00",
 			'spending_type'	=> $spending_type
 		);
 	}
