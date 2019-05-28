@@ -1369,8 +1369,9 @@ public function getClinicSocketDetails( )
   $user_id = $getSessionData->UserID;
   $connection_pay_direct = StringHelper::socketConnection($clinic_id, $user_id);
   $connection_check_in = StringHelper::socketConnectionCheckIn($clinic_id, $user_id);
+  $connection_check_in_remove = StringHelper::socketConnectionCheckInRemove($clinic_id, $user_id);
 
-  return array('status' => TRUE, 'socket_connection_pay_direct' => $connection_pay_direct, 'socket_connection_check_in' => $connection_check_in);
+  return array('status' => TRUE, 'socket_connection_pay_direct' => $connection_pay_direct, 'socket_connection_check_in' => $connection_check_in, 'connection_check_in_remove' => $connection_check_in_remove);
 }
 
 public function testSocketConnection( )

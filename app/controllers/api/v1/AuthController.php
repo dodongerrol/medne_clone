@@ -5839,6 +5839,63 @@ public function payCreditsNew( )
     }
   }
 
+  public function removeCheckIn( ) 
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+    $input = Input::all();
+
+    if(empty($input['check_in_id']) || $input['check_in_id'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'Check-In ID is required.';
+      return Response::json($returnObject);
+    }
+
+    if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+           $findUserID = $authSession->findUserID($getAccessToken->session_id);
+           if($findUserID){
+            $returnObject->status = TRUE;
+            $returnObject->message = 'Success.';
+            // check if notification exits
+            $check = DB::table('user_check_in_clinic')
+                    ->where('check_in_id', $input['check_in_id'])
+                    ->where('user_id', $findUserID)
+                    ->where('status', 0)
+                    ->first();
+
+            if(!$check) {
+              $returnObject->status = FALSE;
+              $returnObject->message = 'Check In data not found.';
+              return Response::json($returnObject);
+            }
+
+            DB::table('user_check_in_clinic')
+                    ->where('check_in_id', $input['check_in_id'])
+                    ->where('user_id', $findUserID)
+                    ->delete();
+            PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check->clinic_id);
+            return Response::json($returnObject);
+         } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+      }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
+
   public function updateUserNotification( )
   {
     $AccessToken = new Api_V1_AccessTokenController();

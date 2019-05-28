@@ -34,6 +34,8 @@ app.directive("claimDirective", [
         scope.searchTrans_text = "";
         scope.selected_submit_data = {};
         scope.e_card_data = {};
+        scope.registration_arr = [];
+        scope.isLoading = false;
 
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
@@ -163,6 +165,34 @@ app.directive("claimDirective", [
 
 
         // === REQUESTS === //
+          scope.cancelRegistrationData = function( data ){
+            swal({
+              title: "Are you sure?",
+              text: "This will be removed.",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Yes!",
+              cancelButtonText: "Cancel",
+              closeOnConfirm: true,
+              closeOnCancel: true
+            },
+            function(isConfirm) {
+              if (isConfirm) {
+                scope.showLoading();
+                $http.post( base_url + "clinic/remove_specific_check_in", data)
+                  .success(function(response) {
+                    scope.hideLoading();
+                    if (response.status) {
+                      swal("Success!", response.message, "success");
+                      scope.getClinicCheckIns();
+                    } else {
+                      swal("Ooops!", response.message, "error");
+                    }
+                  });
+              }
+            });
+          }
           scope.cancelBackDateTransaction = function( data ){
             swal({
               title: "Are you sure?",
@@ -247,8 +277,7 @@ app.directive("claimDirective", [
                     }
                   });
               }
-            }
-          );
+            });
           }
           scope.addClaim = function( ) {
             console.log( scope.add_claim_data );
@@ -461,12 +490,43 @@ app.directive("claimDirective", [
             });
           };
 
+          scope.getClinicCheckIns = function( ) {
+            $http.get(base_url + 'clinic/get_check_in_lists')
+            .then(function(response){
+              console.log(response);
+              scope.registration_arr = response.data.data;
+            });
+          }
+
           scope.getCheckInConfig = function(connection) {
             console.log('connection check in', connection);
             socket.on(connection, function (data) {
               console.log(data);
               if (parseInt(data.clinic_id) == parseInt(scope.clinic.ClinicID)) {
-                 
+                // scope.showLoading();
+                scope.isLoading = true;
+                $http.get(base_url + 'clinic/get_specific_check_in?check_in_id=' + data.check_in_id)
+                .then(function(response){
+                  console.log(response);
+                  // scope.hideLoading();
+                  scope.isLoading = false;
+                  scope.registration_arr.push( response.data.data );
+                });
+              }
+            });
+          };
+
+          scope.getCheckInConfigRemove = function(connection) {
+            console.log('connection check in remove', connection);
+            socket.on(connection, function (data) {
+              console.log(data);
+              if (parseInt(data.clinic_id) == parseInt(scope.clinic.ClinicID)) {
+                // scope.showLoading();
+                scope.isLoading = true;
+                scope.getClinicCheckIns();
+                setTimeout(function() {
+                  scope.isLoading = false;
+                }, 100);
               }
             });
           };
@@ -477,6 +537,7 @@ app.directive("claimDirective", [
               if(response.data.status) {
                 scope.getPusherConfig(response.data.socket_connection_pay_direct);
                 scope.getCheckInConfig(response.data.socket_connection_check_in);
+                scope.getCheckInConfigRemove(response.data.connection_check_in_remove);
               }
             });
           };
@@ -573,6 +634,7 @@ app.directive("claimDirective", [
           scope.getSuccessfullTransactions();
           scope.getServices();
           scope.initializeDatePickers();
+          scope.getClinicCheckIns();
         }
 
         scope.onLoad();

@@ -11,7 +11,7 @@
 				<div class="card registration container-fluid">
 					<div class="row">
 						<div class="col-md-12">
-							<h4 class="card-title">Registration</h4>
+							<h4 class="card-title" style="margin-left: -35px;"><span ng-if="isLoading" style="margin-right: 10px;"><i class="fa fa-circle-o-notch fa-spin"></i></span> Registration </h4>
 						</div>
 					</div>
 
@@ -24,22 +24,20 @@
 									<th>NIRC</th>
 									<th>Cap Per Visit</th>
 									<th>Remarks</th>
+									<th style="width: 10%;">Option</th>
 								</thead>
 								<tbody>
-									<!-- <tr>
-										<td>test</td>
-										<td>test</td>
-										<td>test</td>
-										<td>test</td>
-										<td><button class="option-button mybg-red">Cancel</button></td>
+									<tr ng-repeat="list in registration_arr">
+										<td ng-bind="list.registration_date"></td>
+										<td ng-bind="list.name"></td>
+										<td ng-bind="list.nric"></td>
+										<td>
+											<span ng-bind="list.currency_symbol"></span>
+											<span ng-bind="list.cap_per_visit"></span>
+										</td>
+										<td ng-bind="list.remarks"></td>
+										<td><button class="option-button mybg-red" ng-click="cancelRegistrationData(list)">Remove</button></td>
 									</tr>
-									<tr>
-										<td>test</td>
-										<td>test</td>
-										<td>test</td>
-										<td>test</td>
-										<td><button class="option-button mybg-red">Cancel</button></td>
-									</tr> -->
 
 								</tbody>
 							</table>
@@ -148,7 +146,7 @@
 								</div>
 							</div>
 						</div>
-						<!-- End Filter -->
+						<!-- End Filter
 					</div>
 
 					<div class="row">
