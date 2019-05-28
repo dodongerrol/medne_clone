@@ -120,6 +120,24 @@ function loadPaymentInvoice() {
       $("#setting-navigation").height($(window).height() - 52);
       $("#payments-side-list").height($(window).height() - 52);
     }
+
+    $("#invoice-statement-calendar").datepicker({
+      format : 'MM yyyy',
+      minViewMode : 'months',
+    });
+
+    $(".statement-calendar-picker").click(function(e){
+      $("#invoice-statement-calendar").datepicker('show');
+    });
+
+    $('#invoice-statement-calendar').datepicker()
+      .on("changeDate", function(e) {
+        $("#invoice-statement-calendar").datepicker('hide');
+        console.log( e.date );
+        invoice_selected_date = moment( e.date );
+      });
+
+    $("#invoice-statement-calendar").datepicker('setDate', moment().format('MMM YYYY') );
   });
 }
 
@@ -353,22 +371,22 @@ function initializeStatementCalendar() {
   var minDate = new Date(start);
   console.log(minDate);
 
-  $("#invoice-statement-calendar").datepicker({
-    changeMonth: true,
-    changeYear: true,
-    minDate: minDate,
-    onChangeMonthYear: function(year, month, obj) {
-      console.log(obj);
+  // $("#statement-calendar").datepicker({
+  //   changeMonth: true,
+  //   changeYear: true,
+  //   minDate: minDate,
+  //   onChangeMonthYear: function(year, month, obj) {
+  //     console.log(obj);
 
-      $(".statement-payment-range .month").text( moment().month(month - 1).format("MMM") );
-      $(".statement-payment-range .year").text( year );
+  //     $(".statement-payment-range .month").text( moment().month(month - 1).format("MMM") );
+  //     $(".statement-payment-range .year").text( year );
 
-      invoice_selected_date = moment().month(month - 1).format("MMMM") + " " + obj.selectedDay + ", " + year;
-      invoice_selected_date = new Date(invoice_selected_date);
+  //     invoice_selected_date = moment().month(month - 1).format("MMMM") + " " + obj.selectedDay + ", " + year;
+  //     invoice_selected_date = new Date(invoice_selected_date);
 
-      console.log(invoice_selected_date);
-    }
-  });
+  //     console.log(invoice_selected_date);
+  //   }
+  // });
 }
 
 $("body").on("click", "#payment-history-range-btn", function() {
@@ -468,22 +486,21 @@ $("body").on("click", "#invoice-date-go-btn", function() {
 });
 
 function getClinicInvoiceList(date) {
-  console.log("IM IN");
   $(".statement-wrapper").hide();
   $("#invoice-download-as-pdf").hide();
-  var month = date.getMonth();
-  var day = date.getDay();
-  var year = date.getFullYear();
-  var firstDay = new Date(date.getFullYear(), month, 1);
-  var lastDay = new Date(date.getFullYear(), month + 1, 0);
+  // var month = date.getMonth();
+  // var day = date.getDay();
+  // var year = date.getFullYear();
+  // var firstDay = new Date(date.getFullYear(), month, 1);
+  // var lastDay = new Date(date.getFullYear(), month + 1, 0);
 
-  $(".statement-payment-range .month").text( moment().month(month).format("MMM") );
-  $(".statement-payment-range .year").text( moment().year(year).format("YYYY") );
+  // $(".statement-payment-range .month").text( moment().month(month).format("MMM") );
+  // $(".statement-payment-range .year").text( moment().year(year).format("YYYY") );
 
   var data = {
     clinic_id: $("#clinicID").val(),
-    start_date: moment(firstDay).format("MMM D, YYYY"),
-    end_date: moment(lastDay).format("MMM D, YYYY")
+    start_date: moment(date).startOf('month').format("MMM D, YYYY"),
+    end_date: moment(date).endOf('month').format("MMM D, YYYY")
   };
 
   // console.log(data);
@@ -506,10 +523,10 @@ function getClinicInvoiceList(date) {
       $("#error-log").hide();
       $("#invoice-items-table").html("");
       if (data) {
-        $(".invoice_day_start").text(firstDay.getDate());
-        $(".invoice_day_end").text(lastDay.getDate());
-        $(".invoice_month").text(moment().month(month).format("MMM"));
-        $(".invoice_year").text(moment().year(year).format("YYYY"));
+        $(".invoice_day_start").text( data.start_date );
+        $(".invoice_day_end").text( data.end_date );
+        $(".invoice_month").text( moment( data.start_date ).format("MMM") );
+        $(".invoice_year").text( moment( data.start_date ).format("YYYY") );
 
         for( var i = 0; i < data.transaction_lists.length; i++ ){
           $("#invoice-items-table").append('<tr>' +
