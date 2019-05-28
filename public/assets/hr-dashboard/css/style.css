@@ -7209,6 +7209,39 @@ ul.typeahead li a.dropdown-item
 	}
 /*----------------------------------------*/
 
+.right-add-tier-btn {
+	text-align: right;
+	color: #2c3e50;
+	margin-top: 40px;
+}
+
+.right-add-tier-btn h4 {
+	font-weight: 600;
+	margin-bottom: 20px;
+	text-align: right;
+}
+
+.right-add-tier-btn button {
+	background: transparent;
+	border: 2px dashed #d6d6d6;
+	border-radius: 50%;
+}
+
+.right-add-tier-btn button:hover {
+	border: 2px solid #0392cf;
+}
+
+.right-add-tier-btn button {
+	background: transparent;
+    border: 2px dashed #d6d6d6;
+    border-radius: 50%;
+    height: 70px;
+    width: 70px;
+}
+
+.right-add-tier-btn button img {
+	height: 16px;
+}
 
 @media only screen and (max-width : 900px) {
 	.intro-login-container .platforms-box {
