@@ -1881,11 +1881,11 @@ public function getNewClinicDetails($id)
            ->where('scan_pay_show', 1)
            ->where('Active', 1)
            ->get();
-           if(!$procedures) {
-               $returnObject->status = FALSE;
-               $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
-               return Response::json($returnObject);
-           }
+           // if(!$procedures) {
+           //     $returnObject->status = FALSE;
+           //     $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
+           //     return Response::json($returnObject);
+           // }
 
                                 // format clinic data
            ($clinic->Email) ? $email = $clinic->Email : $email = null;
