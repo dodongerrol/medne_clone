@@ -215,7 +215,7 @@
 						<strong class="font-helvetica-medium">Plan Covers</strong>
 						<span><span ng-bind="selectedEmployee.dependents + 1">3</span> People</span>
 					</div>
-					<div class="employee-cap" ng-if="selectedEmployee.gp_cap_per_visit != null && selectedEmployee.plan_tier == nul">
+					<div class="employee-cap" ng-if="selectedEmployee.gp_cap_per_visit != null && selectedEmployee.plan_tier == null">
 						<p class="font-helvetica-medium">Cap</p><span></span>
 						<strong>GP Cap per Visit</strong>
 						<span>S$<span ng-bind="selectedEmployee.gp_cap_per_visit">50</span></span>
