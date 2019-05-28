@@ -120,8 +120,8 @@
 	                                // ->where('health_provider_done', 0)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
-	                                ->where('date_of_transaction', '>=', $start)
-	                                ->where('date_of_transaction', '<=', $end)
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
 	                                ->orderBy('created_at', 'desc')
 	                                ->get();
 
@@ -133,8 +133,8 @@
 	                                ->where('lite_plan_enabled', 0)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
-	                                ->where('date_of_transaction', '>=', $start)
-	                                ->where('date_of_transaction', '<=', $end)
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
 	                                ->orderBy('created_at', 'desc')
 	                                ->get();
 	                $in_network = array_merge($temp_trans, $temp_trans_lite_plan);
@@ -713,8 +713,8 @@
 	                                // ->where('health_provider_done', 0)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
-	                                ->where('date_of_transaction', '>=', $start)
-	                                ->where('date_of_transaction', '<=', $end)
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
 	                                ->orderBy('created_at', 'desc')
 	                                ->get();
 
@@ -726,8 +726,8 @@
 	                                ->where('lite_plan_enabled', 0)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
-	                                ->where('date_of_transaction', '>=', $start)
-	                                ->where('date_of_transaction', '<=', $end)
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
 	                                ->orderBy('created_at', 'desc')
 	                                ->get();
 	                $in_network = array_merge($temp_trans, $temp_trans_lite_plan);
@@ -781,8 +781,8 @@
 	                                ->where('lite_plan_enabled', 1)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
-	                                ->where('date_of_transaction', '>=', $start)
-	                                ->where('date_of_transaction', '<=', $end)
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
 	                                ->orderBy('created_at', 'desc')
 	                                ->get();
 
@@ -792,8 +792,8 @@
 	                                ->where('credit_cost', '>', 0)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
-	                                ->where('date_of_transaction', '>=', $start)
-	                                ->where('date_of_transaction', '<=', $end)
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
 	                                ->orderBy('created_at', 'desc')
 	                                ->get();
 	                $transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
@@ -805,9 +805,9 @@
 	                                // ->where('in_network', 1)
 	                                ->where('health_provider_done', 0)
 	                                ->where('deleted', 0)
-	                                ->where('date_of_transaction', '>=', $start)
-	                                ->where('date_of_transaction', '<=', $end)
-	                                ->orderBy('date_of_transaction', 'desc')
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
+	                                ->orderBy('created_at', 'desc')
 	                                ->get();
 	                
 	            }

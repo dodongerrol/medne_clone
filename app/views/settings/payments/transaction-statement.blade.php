@@ -26,30 +26,17 @@
         <span style="padding-top: 15px; font-size: large; font-weight: bold;">View Statement of Account</span>
     </div>
 
-    <div class="col-md-12" style="padding: 0px; padding-bottom: 20px; border-bottom: 1px solid #ccc;">
-    	<!-- Split button -->
-		<div class="btn-group">
-		  <button type="button" class="btn btn-default btn-date-text">
-		  	<span class="statement-payment-range"><span class="month">Jan</span> <span class="year">2017</span></span> 
-		  	<!-- -  -->
-            <!-- <span id="payment-history-range-to">Sep 21</span> -->
-		  </button>
-		  <button id="statement-payment-range-btn" type="button" class="btn btn-default" >
-		    <span class="caret"></span>
-		    <span class="sr-only">Toggle Dropdown</span>
-		  </button>
-		</div>
-
-            <div class="statement-wrapper">
-                <a id="statement-datepicker" href="#" style="position: absolute;top: 3px;right: 17px;"><i class="fa fa-times-circle red" style="font-size: 15px;"></i></a>
-
-                <div id="statement-calendar">
-
-                </div>     
-            </div>
-
-        <button id="statement-date-go-btn" class="btn btn-default btn-go">Go</button> 
-
+    <div class="statement-options" style="padding: 0px; padding-bottom: 20px; border-bottom: 1px solid #ccc;">
+    	<div class="statement-calendar-picker">
+    		<div class="icon-wrapper">
+    			<i class="fa fa-calendar"></i>
+    		</div>
+    		<input id="statement-calendar" type="text" ng-model="statement_monthyear" readonly>
+    		<div class="icon-wrapper">
+    			<i class="fa fa-caret-down"></i>
+    		</div>
+    	</div>
+    	<button id="statement-date-go-btn" class="btn">Go</button>
         <!-- <a href="javascript:void(0)" id="payment-history-download" class="btn btn-default btn-export" disabled><i class="glyphicon glyphicon-file"></i>  Export as .PDF</a> -->
     </div>
 
@@ -222,3 +209,7 @@
 
 	window.localStorage.setItem('statement-view', false);
 </script>
+
+
+
+

@@ -292,6 +292,7 @@ class ArrayHelperMobile{
         }
     }
     public static function ClinicProcedures($clinicprocedures){
+        $procedureArray = [];
         if(!empty($clinicprocedures)){
             foreach($clinicprocedures as $clProcedure){
                 $dataArray = self::ClinicProcedureDetails($clProcedure);
@@ -303,7 +304,7 @@ class ArrayHelperMobile{
             }
             return $procedureArray;
         }else{
-            $procedureArray = null;
+            // $procedureArray = null;
             return $procedureArray;
         }
     }
