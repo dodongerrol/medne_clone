@@ -1312,7 +1312,7 @@ return Response::json($returnObject);
       'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
       'spending_type'             => $spending_type,
       'wallet_id'                 => $wallet->wallet_id,
-      'balance'                   => number_format($balance, 2),
+      'balance'                   => $balance >= ? number_format($balance, 2) : "0.00",
       'in_network_credits_spent'  => number_format($in_network_spent, 2),
       'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
       'e_claim_transactions'      => $e_claim,
