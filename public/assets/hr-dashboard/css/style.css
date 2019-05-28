@@ -3313,6 +3313,8 @@ span.number-with-circle {
   /* margin-right: 25px; */
   margin-top: 20px;
   padding: 38px 5px;
+  /*height: 500px;
+  overflow-y: auto;*/
 }
 
 .hidden-details-container img{
@@ -3401,6 +3403,24 @@ span.number-with-circle {
   margin: 20px auto 0 auto;
   font-weight: 300;
   font-size: 14px;
+}
+
+.hidden-details-container .trans-receipts-wrapper{
+  padding: 20px 30px;
+}
+.hidden-details-container .click_box_wrapper a{
+	width: 55px;
+	height: 55px;
+}
+.hidden-details-container .trans-receipts-wrapper img{
+	border-radius: 0;
+	width: 55px;
+	height: 55px;
+}
+.hidden-details-container .click_box{
+	width: 55px;
+	height: 55px;
+	line-height: 58px;
 }
 
 input.typeahead
@@ -7209,6 +7229,39 @@ ul.typeahead li a.dropdown-item
 	}
 /*----------------------------------------*/
 
+.right-add-tier-btn {
+	text-align: right;
+	color: #2c3e50;
+	margin-top: 40px;
+}
+
+.right-add-tier-btn h4 {
+	font-weight: 600;
+	margin-bottom: 20px;
+	text-align: right;
+}
+
+.right-add-tier-btn button {
+	background: transparent;
+	border: 2px dashed #d6d6d6;
+	border-radius: 50%;
+}
+
+.right-add-tier-btn button:hover {
+	border: 2px solid #0392cf;
+}
+
+.right-add-tier-btn button {
+	background: transparent;
+    border: 2px dashed #d6d6d6;
+    border-radius: 50%;
+    height: 70px;
+    width: 70px;
+}
+
+.right-add-tier-btn button img {
+	height: 16px;
+}
 
 @media only screen and (max-width : 900px) {
 	.intro-login-container .platforms-box {

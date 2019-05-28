@@ -2797,10 +2797,32 @@ public function getActivityInNetworkTransactions( )
 				}
 
                         // check if there is a receipt image
-				$receipt = DB::table('user_image_receipt')
-				->where('transaction_id', $trans->transaction_id)->count();
+				$receipts = DB::table('user_image_receipt')
+							->where('transaction_id', $trans->transaction_id)
+							->get();
 
-				if($receipt > 0) {
+				$doc_files = [];
+				if(sizeof($receipts) > 0) {
+					foreach ($receipts as $key => $doc) {
+						if($doc->type == "pdf" || $doc->type == "xls") {
+							if(StringHelper::Deployment()==1){
+							   $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
+							} else {
+							   $fil = url('').'/receipts/'.$doc->file;
+							}
+						} else if($doc->type == "image") {
+							$fil = FileHelper::formatImageAutoQuality($doc->file);
+						}
+
+						$temp_doc = array(
+							'tranasaction_doc_id'    => $doc->image_receipt_id,
+							'transaction_id'            => $doc->transaction_id,
+							'file'                      => $fil,
+							'file_type'             => $doc->type
+						);
+
+						array_push($doc_files, $temp_doc);
+					}
 					$receipt_status = TRUE;
 				} else {
 					$receipt_status = FALSE;
@@ -3005,7 +3027,8 @@ public function getActivityInNetworkTransactions( )
 					'service_credits'   => $service_credits,
 					'transaction_type'  => $transaction_type,
 					'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null,
-					'dependent_relationship'    => $dependent_relationship
+					'dependent_relationship'    => $dependent_relationship,
+					'files'				=> $doc_files
 				);
 
 				array_push($transaction_details, $format);
