@@ -2810,7 +2810,7 @@ public function getActivityInNetworkTransactions( )
 							} else {
 							   $fil = url('').'/receipts/'.$doc->file;
 							}
-						} else if($doc->file_type == "image") {
+						} else if($doc->type == "image") {
 							$fil = FileHelper::formatImageAutoQuality($doc->file);
 						}
 
