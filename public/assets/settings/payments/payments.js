@@ -353,22 +353,22 @@ function initializeStatementCalendar() {
   var minDate = new Date(start);
   console.log(minDate);
 
-  // $("#statement-calendar").datepicker({
-  //   changeMonth: true,
-  //   changeYear: true,
-  //   minDate: minDate,
-  //   onChangeMonthYear: function(year, month, obj) {
-  //     console.log(obj);
+  $("#invoice-statement-calendar").datepicker({
+    changeMonth: true,
+    changeYear: true,
+    minDate: minDate,
+    onChangeMonthYear: function(year, month, obj) {
+      console.log(obj);
 
-  //     $(".statement-payment-range .month").text( moment().month(month - 1).format("MMM") );
-  //     $(".statement-payment-range .year").text( year );
+      $(".statement-payment-range .month").text( moment().month(month - 1).format("MMM") );
+      $(".statement-payment-range .year").text( year );
 
-  //     invoice_selected_date = moment().month(month - 1).format("MMMM") + " " + obj.selectedDay + ", " + year;
-  //     invoice_selected_date = new Date(invoice_selected_date);
+      invoice_selected_date = moment().month(month - 1).format("MMMM") + " " + obj.selectedDay + ", " + year;
+      invoice_selected_date = new Date(invoice_selected_date);
 
-  //     console.log(invoice_selected_date);
-  //   }
-  // });
+      console.log(invoice_selected_date);
+    }
+  });
 }
 
 $("body").on("click", "#payment-history-range-btn", function() {

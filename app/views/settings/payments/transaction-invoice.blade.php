@@ -45,7 +45,7 @@
             <div class="statement-wrapper">
                 <a id="statement-datepicker" href="#" style="position: absolute;top: 3px;right: 17px;"><i class="fa fa-times-circle red" style="font-size: 15px;"></i></a>
 
-                <div id="statement-calendar">
+                <div id="invoice-statement-calendar">
 
                 </div>
             </div>
