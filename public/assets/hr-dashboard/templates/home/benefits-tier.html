@@ -64,7 +64,13 @@
 				<div class="team-benefits-tiers-wrapper tier-feature-item" style="">
 					<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Team benefits tiers.</h1>
 					<div class="white-space-20"></div>
-					<div class="team-benefits-tiers-container account-tier-container" style="">
+
+					<div class="benefits-tier-btn-content" style="display: none;">
+						<h4>Add a tier</h4>
+						<button ng-click="toggleAddTier()"><img src="../assets/hr-dashboard/img/plus-gray.png"></button>
+					</div>
+
+					<div class="team-benefits-tiers-container account-tier-container" style="display: none;">
 							<h4>Manage your team benefits tiers here.</h4>
 
 							<div class="summary-details-wrapper">
@@ -72,7 +78,7 @@
 									<div class="benefits-tier-summary-btn-content active">
 										<button class="active" ng-class="{'isDone' : list.member_enrolled_count > 0}">Tier 
 											<span ng-bind="$index + 1">1</span> 
-											<span ng-bind="list.member_enrolled_count">5</span>/<span ng-bind="list.member_head_count">10</span>
+											<span ng-bind="list.member_enrolled_count">5</span>/<span ng-bind="list.member_head_count + list.dependent_head_count">10</span>
 										</button>
 										<span ng-click="toggleEditTier( list, $index+1 )">Edit</span>
 									</div>
@@ -94,6 +100,12 @@
 								</div>
 							</div>
 
+							<div class="white-space-50"></div>
+
+							<div class="right-add-tier-btn">
+								<h4>Add a tier</h4>
+								<button ng-click="toggleAddTier()"><img src="../assets/hr-dashboard/img/plus-gray.png"></button>
+							</div>	
 					</div>
 
 					<div class="tier-item-container tier-feature-item account-tier-edit-container" style="display: none;">
@@ -123,7 +135,84 @@
 	  									</div>
 										</div>
 									</div>
+									<div class="input-wrapper gp-toggle">
+										<label>Add GP cap per visit?</label>
+										<div class="btn-wrapper">
+											<button class="btn" ng-class="{'active' : tier_data.gp_cap_status}" ng-click="toggleGPcapStatus(true)">Yes</button>
+											<button class="btn" ng-class="{'active' : !tier_data.gp_cap_status}" ng-click="toggleGPcapStatus(false)">No</button>
+										</div>
+									</div>
+									<div ng-if="tier_data.gp_cap_status" class="input-wrapper">
+										<label>GP cap per visit</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.gp_cap_per_visit">
+	  									<div class="icon-item">
+	  										S
+	    									<i class="fa fa-usd icon"></i>
+	  									</div>
+										</div>
+									</div>
 									<div class="input-wrapper">
+										<label>Employee headcount</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.member_head_count">
+	    								<div class="icon-item">
+	    									<i class="fa fa-users icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="input-wrapper">
+										<label>Dependent headcount</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.dependent_head_count">
+	    								<div class="icon-item">
+	    									<i class="fa fa-users icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="tier-item-button">
+										<button class="btn-delete-tier" ng-click="removeTier()">Remove</button>
+										<button ng-click="saveTierData( tier_data )">Save &amp; Continue</button>
+									</div>
+								</div>
+							</div>
+					</div>
+
+					<div class="tier-item-container tier-feature-item account-tier-add-container" style="display: none;">
+							<div class="tier-item-form">
+								<div class="tier-item-header">
+									<h4>Tier <span ng-bind="tier_data.index">1</span></h4>
+									<img src="../assets/hr-dashboard/img/icons/close.svg" ng-click="toggleAddTier()">
+								</div>
+								<div class="tier-item-body">
+									<div class="input-wrapper">
+										<label>Medical annual cap</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.medical_annual_cap">
+											<div class="icon-item">
+												S
+	    									<i class="fa fa-usd icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="input-wrapper">
+										<label>Wellness annual cap</label>
+										<div class="input-container">
+											<input type="number" ng-model="tier_data.wellness_annual_cap">
+	  									<div class="icon-item">
+	  										S
+	    									<i class="fa fa-usd icon"></i>
+	  									</div>
+										</div>
+									</div>
+									<div class="input-wrapper gp-toggle">
+										<label>Add GP cap per visit?</label>
+										<div class="btn-wrapper">
+											<button class="btn" ng-class="{'active' : tier_data.gp_cap_status}" ng-click="toggleGPcapStatus(true)">Yes</button>
+											<button class="btn" ng-class="{'active' : !tier_data.gp_cap_status}" ng-click="toggleGPcapStatus(false)">No</button>
+										</div>
+									</div>
+									<div ng-if="tier_data.gp_cap_status" class="input-wrapper">
 										<label>GP cap per visit</label>
 										<div class="input-container">
 											<input type="number" ng-model="tier_data.gp_cap_per_visit">

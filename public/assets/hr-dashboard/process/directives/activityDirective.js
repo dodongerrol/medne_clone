@@ -1,7 +1,8 @@
 app.directive('activityPage', [
 	"hrActivity",
 	"hrSettings",
-	function directive(hrActivity, hrSettings) {
+	"$timeout",
+	function directive(hrActivity, hrSettings, $timeout) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -62,6 +63,31 @@ app.directive('activityPage', [
 
 
 				scope.pagesToDisplay = 5;
+
+				scope.showPreview = function( img , ev){
+					var url = "http://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
+
+					$(ev.target).closest(".click_box_wrapper").find(".preview-box").fadeIn();
+
+					if( img.file_type == 'image' ){
+						$(".preview-box img").show();
+						$(".preview-box .img-container").css({'width': '500px'});
+						$(".preview-box iframe").hide();
+						$(".preview-box img").attr('img-fix-orientation', img.file);
+
+						$(".preview-box img").attr('src', img.file);
+					}else{
+						$(".preview-box iframe").show();
+						$(".preview-box .img-container").css({'width': '80%'});
+						$(".preview-box img").hide();
+						$(".preview-box #src-view-data").attr('src', img.file);
+					}
+				}
+
+				scope.hidePreview = function( img ){
+					$(".preview-box").fadeOut();
+				}
+
         scope.startIndex = function(active_page, last_page){
           if( active_page > ((scope.pagesToDisplay / 2) + 1 )) {
             if ((active_page + Math.floor(scope.pagesToDisplay / 2)) > last_page) {
@@ -174,6 +200,19 @@ app.directive('activityPage', [
 						$( ".trans-pagination-shadow" ).css({'margin-right':'0'});
 						$( ".hidden-details-container" ).animate({'right':'-100%'}, 'slow');
 					}
+					console.log( $( ".hidden-details-container" ).height() );
+					console.log( $( ".transaction-rows" ).height() );
+
+					$timeout(function() {
+						if( $( ".hidden-details-container" ).height() > $( ".transaction-rows" ).height() - 100 ){
+							$( ".hidden-details-container" ).css('height', $( ".transaction-rows" ).height());
+							$( ".hidden-details-container" ).css('overflow-y', 'auto');
+						}else{
+							$( ".hidden-details-container" ).css('height', 'auto');
+							$( ".hidden-details-container" ).css('overflow', 'inherit');
+						}
+					}, 500);
+					
 				}
 
 				scope.filterActivityByDateInNetwork = function( data ){
@@ -479,6 +518,8 @@ app.directive('activityPage', [
 						scope.inNetwork_pagination = response.data;
 
 						scope.filterActivityByDateInNetwork( response.data.data );
+
+						$('.transaction-rows').css('height', $(window).innerHeight() );
 					});
 				}
 				scope.getOutNetworkPagination = function(){
