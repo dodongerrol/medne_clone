@@ -3313,6 +3313,8 @@ span.number-with-circle {
   /* margin-right: 25px; */
   margin-top: 20px;
   padding: 38px 5px;
+  /*height: 500px;
+  overflow-y: auto;*/
 }
 
 .hidden-details-container img{
@@ -3401,6 +3403,24 @@ span.number-with-circle {
   margin: 20px auto 0 auto;
   font-weight: 300;
   font-size: 14px;
+}
+
+.hidden-details-container .trans-receipts-wrapper{
+  padding: 20px 30px;
+}
+.hidden-details-container .click_box_wrapper a{
+	width: 55px;
+	height: 55px;
+}
+.hidden-details-container .trans-receipts-wrapper img{
+	border-radius: 0;
+	width: 55px;
+	height: 55px;
+}
+.hidden-details-container .click_box{
+	width: 55px;
+	height: 55px;
+	line-height: 58px;
 }
 
 input.typeahead
