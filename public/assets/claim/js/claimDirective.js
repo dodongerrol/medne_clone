@@ -2,7 +2,8 @@ app.directive("claimDirective", [
   "$http",
   "$state",
   "socket",
-  function directive($http, $state, socket) {
+  "$timeout",
+  function directive($http, $state, socket, $timeout) {
     return {
       restrict: "A",
       scope: true,
@@ -361,8 +362,10 @@ app.directive("claimDirective", [
               });
           };
           scope.getClinicDetails = function() {
+            scope.showLoading();
             $http.get(base_url + "clinic/details")
               .success(function(response) {
+                scope.hideLoading();
                 scope.clinic = response.clinic;
                 if(scope.clinic.currency_type == "myr") {
                   scope.placeholder = "Enter Amount in MYR";
@@ -524,9 +527,11 @@ app.directive("claimDirective", [
                 // scope.showLoading();
                 scope.isLoading = true;
                 scope.getClinicCheckIns();
-                setTimeout(function() {
+                scope.getSuccessfullTransactions();
+
+                $timeout(function() {
                   scope.isLoading = false;
-                }, 100);
+                }, 1000);
               }
             });
           };
@@ -563,11 +568,11 @@ app.directive("claimDirective", [
             }
           };
           scope.getSuccessfullTransactions = function() {
-            scope.showLoading();
+            // scope.showLoading();
             $http.get(base_url + "clinic/all_transactions")
               .success(function(response) {
                 console.log( response );
-                scope.hideLoading();
+                // scope.hideLoading();
                 scope.backdate_list = response;
               });
           };

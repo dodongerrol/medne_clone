@@ -3449,19 +3449,20 @@ public function notifyClinicDirectPayment( )
                             // send realtime update to claim clinic admin
                   PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
 
-                  // // check if check_in_id exist
-                  // if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
-                  // // check check_in_id data
-                  //   $check_in = DB::table('user_check_in_clinic')
-                  //   ->where('check_in_id', $input['check_in_id'])
-                  //   ->first();
-                  //   if($check_in) {
-                  // // update check in date
-                  //     DB::table('user_check_in_clinic')
-                  //     ->where('check_in_id', $input['check_in_id'])
-                  //     ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id]);
-                  //   }
-                  // }
+                  // check if check_in_id exist
+                  if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
+                  // check check_in_id data
+                    $check_in = DB::table('user_check_in_clinic')
+                    ->where('check_in_id', $input['check_in_id'])
+                    ->first();
+                    if($check_in) {
+                  // update check in date
+                      DB::table('user_check_in_clinic')
+                      ->where('check_in_id', $input['check_in_id'])
+                      ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+                      PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
+                    }
+                  }
 
               $returnObject->status = TRUE;
               $returnObject->message = 'Transaction Done.';
@@ -5646,7 +5647,8 @@ public function payCreditsNew( )
               // update check in date
           DB::table('user_check_in_clinic')
           ->where('check_in_id', $input['check_in_id'])
-          ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id]);
+          ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+          PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
       }
     }
 
