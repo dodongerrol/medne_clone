@@ -94,6 +94,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/bootstrap-datetimepicker.min.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/daterangepicker.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/jquery-ui.min.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/jszip.min.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/js/offline.min.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/exif.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/angular-fix-image-orientation.js?_={{ $date->format('U') }}"></script>
