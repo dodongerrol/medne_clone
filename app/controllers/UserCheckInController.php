@@ -108,7 +108,8 @@ class UserCheckInController extends \BaseController {
 						'currency_symbol'	=> $check->currency_symbol == "myr" ? 'RM' : 'S$',
 						'name'			=> ucwords($user->Name),
 						'nric'			=> $user->NRIC,
-						'remarks'		=> (int)$check->status == 0 ? 'Pending' : 'Done'
+						'remarks'		=> (int)$check->status == 0 ? 'Pending' : 'Done',
+						'expiry'		=> date('Y-m-d H:i:s', strtotime('+120 minutes', strtotime($check->check_in_time)))
 					);
 
 					array_push($format, $temp);
@@ -156,7 +157,8 @@ class UserCheckInController extends \BaseController {
 					'currency_symbol'	=> $check->currency_symbol == "myr" ? 'RM' : 'S$',
 					'name'			=> ucwords($user->Name),
 					'nric'			=> $user->NRIC,
-					'remarks'		=> (int)$check->status == 0 ? 'Pending' : 'Done'
+					'remarks'		=> (int)$check->status == 0 ? 'Pending' : 'Done',
+					'expiry'		=> date('Y-m-d H:i:s', strtotime('+120 minutes', strtotime($check->check_in_time)))
 				);
 
 				return array('status' => true, 'data' => $temp);
@@ -198,6 +200,50 @@ class UserCheckInController extends \BaseController {
 				->where('status', 0)
 				->delete();
 			return array('status' => true, 'message' => 'Success');
+		} else {
+			return array('status' => false, 'message' => 'Session expired.');
+		}
+	}
+
+	public function checkCheckInAutoDelete( )
+	{
+		$input = Input::all();
+
+		$getSessionData = StringHelper::getMainSession(3);
+		$clinic_id = $getSessionData->Ref_ID;
+
+		if($getSessionData != FALSE){
+			if(empty($input['check_in_id']) || $input['check_in_id'] == null) {
+				return array('status' => false, 'message' => 'Check In ID is required.');
+			}
+
+			$check = DB::table('user_check_in_clinic')
+								->where('check_in_id', $input['check_in_id'])
+								->where('clinic_id', $clinic_id)
+								->where('check_in_type', 'in_network_transaction')
+								->where('status', 0)
+								->first();
+
+			if(!$check) {
+				return array('status' => false, 'message' => 'Check In data does not exist.');
+			}
+
+			$expiry = date('Y-m-d H:i:s', strtotime('+120 minutes', strtotime($check->check_in_time)));
+			$date = date('Y-m-d H:i:s');
+
+			if($date > $expiry) {
+				// delete
+				DB::table('user_check_in_clinic')
+					->where('check_in_id', $input['check_in_id'])
+					->where('clinic_id', $clinic_id)
+					->where('check_in_type', 'in_network_transaction')
+					->where('status', 0)
+					->delete();
+				return array('status' => true, 'message' => 'Success');
+			} else {
+				return array('status' => false, 'message' => 'Expiry date not yet in time.');
+			}
+			
 		} else {
 			return array('status' => false, 'message' => 'Session expired.');
 		}

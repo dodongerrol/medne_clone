@@ -1319,6 +1319,8 @@ Route::group(array('prefix' => 'app'), function()
 		Route::get('clinic/get_specific_check_in','UserCheckInController@getSpecificCheckIn');
 		// remove specific check in data
 		Route::post('clinic/remove_specific_check_in', 'UserCheckInController@deleteSpecificCheckIn');
+		// remove specific check in data
+		Route::get('clinic/auto_remove_check_in', 'UserCheckInController@checkCheckInAutoDelete');
     });
 
 });
