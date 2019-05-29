@@ -1996,7 +1996,7 @@ public function getNewClinicDetails($id)
 
         $check_in_time = date('Y-m-d H:i:s');
         
-        if(!empty($input['check_in_time']) || $input['check_in_time'] != null) {
+        if(!empty($input['check_in_time']) && $input['check_in_time'] != null) {
           $check_in_time = date('Y-m-d H:i:s', strtotime($input['check_in_time']));
         }
 
