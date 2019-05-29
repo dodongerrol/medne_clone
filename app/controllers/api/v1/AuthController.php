@@ -2227,7 +2227,7 @@ public function payCredits( )
          // check user credits and amount key in
          $spending_type = "medical";
          $credits = DB::table('e_wallet')->where('UserID', $user_id)->first();
-         $consultation_fees = $clinic->consultation_fees;
+         $consultation_fees = 0;
 
          if($clinic_type->spending_type == "medical") {
              $user_credits = self::floatvalue($credits->balance);
@@ -2249,7 +2249,7 @@ public function payCredits( )
           $peak_amount = $clinic_co_payment['peak_amount'];
           $co_paid_amount = $clinic_co_payment['co_paid_amount'];
           $co_paid_status = $clinic_co_payment['co_paid_status'];
-          $consultation_fees = $clinic_co_payment['consultation_fees'];
+          $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic->consultation_fees : $clinic_co_payment['consultation_fees'];
           // // check clinic peak hours
           // $result = ClinicHelper::getCheckClinicPeakHour($clinic, date('Y-m-d H:i:s'));
           // if($result['status']) {
@@ -5239,7 +5239,7 @@ public function payCreditsNew( )
         // get clinic info and type
            $clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
            $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
-           $consultation_fees = $clinic->consultation_fees;
+           $consultation_fees = 0;
        // check user credits and amount key in
 
            $spending_type = "medical";
@@ -5266,7 +5266,7 @@ public function payCreditsNew( )
            $peak_amount = $clinic_co_payment['peak_amount'];
            $co_paid_amount = $clinic_co_payment['co_paid_amount'];
            $co_paid_status = $clinic_co_payment['co_paid_status'];
-           $consultation_fees = $clinic_co_payment['consultation_fees'];
+           $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic->consultation_fees : $clinic_co_payment['consultation_fees'];
 
     // check if user has a plan tier
            $plan_tier = PlanHelper::getEmployeePlanTier($customer_id);
