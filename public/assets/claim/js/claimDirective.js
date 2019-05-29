@@ -508,7 +508,7 @@ app.directive("claimDirective", [
               var duration = moment.duration( moment(date_now).diff( moment(expiry_date) ) );
               var hours = duration.asMinutes();
               console.log( hours );
-              if( hours >= 120  ){
+              if( hours >= 0  ){
                 scope.autoRemoveRegData( value.check_in_id, key );
               }
             });
