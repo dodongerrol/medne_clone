@@ -1181,7 +1181,7 @@ return Response::json($returnObject);
                 'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
                 'customer'          => ucwords($customer->Name),
                 'transaction_id'    => $trans->transaction_id,
-                'receipt_status'    => $receipt_status,
+                // 'receipt_status'    => $receipt_status,
                 'cash_status'       => $health_provider_status,
                 'credit_status'     => $credit_status,
                 'user_id'           => $trans->UserID,
