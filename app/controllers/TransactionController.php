@@ -244,7 +244,7 @@ class TransactionController extends BaseController {
 	    	$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
 	    	$lite_plan_status = false;
 	    	$clinic_peak_status = false;
-	    	$consultation_fees = $clinic_data->consultation_fees;
+	    	$consultation_fees = 0;
             $lite_plan_status = StringHelper::newLitePlanStatus($input['id']);
 	    	
             if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
@@ -279,54 +279,13 @@ class TransactionController extends BaseController {
 					$multiple = 1;
 				}
 
-				// if($input['multiple_procedures'] == false) {
 				$peak_amount = 0;
-				// if((int)$clinic_data->peak_hour_status == 1) {
-				// $result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $input['transaction_date']);
-				// if($result['status']) {
-				// 	$peak_amount = $result['amount'];
-				// 	$clinic_peak_status = true;
-
-				// 	// check user company peak status
-				// 	$user_peak = PlanHelper::getUserCompanyPeakStatus($owner_id);
-				// 	// return var_dump($user_peak);
-				// 	if($user_peak) {
-				// 	  if((int)$clinic_data->co_paid_status == 1) {
-				// 	    $gst = $clinic_data->peak_hour_amount * $clinic_data->gst_percent;
-				// 	    $co_paid_amount = $clinic_data->peak_hour_amount + $gst;
-				// 	    $co_paid_status = $clinic_data->co_paid_status;
-				// 	  } else {
-				// 	    $co_paid_amount = $clinic_data->peak_hour_amount;
-				// 	    $co_paid_status = $clinic_data->co_paid_status;
-				// 	  }
-				// 	  $consultation_fees = $co_paid_amount;
-				// 	} else {
-				// 	  if((int)$clinic_data->co_paid_status == 1) {
-				// 	    $gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-				// 	    $co_paid_amount = $clinic_data->co_paid_amount + $gst;
-				// 	    $co_paid_status = $clinic_data->co_paid_status;
-				// 	  } else {
-				// 	    $co_paid_amount = $clinic_data->co_paid_amount;
-				// 	    $co_paid_status = $clinic_data->co_paid_status;
-				// 	  }
-				// 	}
-				// } else {
-				// 	if((int)$clinic_data->co_paid_status == 1) {
-				// 	  $gst = $clinic_data->co_paid_amount * $clinic_data->gst_percent;
-				// 	  $co_paid_amount = $clinic_data->co_paid_amount + $gst;
-				// 	  $co_paid_status = $clinic_data->co_paid_status;
-				// 	} else {
-				// 	  $co_paid_amount = $clinic_data->co_paid_amount;
-				// 	  $co_paid_status = $clinic_data->co_paid_status;
-				// 	}
-				// }
-
 				$clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $input['transaction_date'], $owner_id);
 				$peak_amount = $clinic_co_payment['peak_amount'];
 				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
 				$co_paid_status = $clinic_co_payment['co_paid_status'];
-				$consultation_fees = $clinic_co_payment['consultation_fees'];
 				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
+				$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
 
 				$temp = array(
 					'UserID'				=> $input['id'],
@@ -464,8 +423,8 @@ class TransactionController extends BaseController {
 				$peak_amount = $clinic_co_payment['peak_amount'];
 				$co_paid_amount = $clinic_co_payment['co_paid_amount'];
 				$co_paid_status = $clinic_co_payment['co_paid_status'];
-				$consultation_fees = $clinic_co_payment['consultation_fees'];
 				$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
+				$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
 				// $result = ClinicHelper::getCheckClinicPeakHour($clinic_data, $transaction_data->date_of_transaction);
 				// if($result['status']) {
 				// 	$peak_amount = $result['amount'];
