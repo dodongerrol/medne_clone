@@ -1811,7 +1811,7 @@ class PlanHelper {
 				$balance = $allocation - $get_allocation_spent;
 			}
 
-			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance);
+			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp);
 		}
 
 		public static function memberWellnessAllocatedCredits($wallet_id, $user_id)
@@ -1889,7 +1889,7 @@ class PlanHelper {
 				$balance = $allocation_wellness - $get_allocation_spent_wellness;
 			}
 
-			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance);
+			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness);
 		}
 
 		public static function getPlanDuration($customer_id, $plan_start)

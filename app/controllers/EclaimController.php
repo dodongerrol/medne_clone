@@ -1480,11 +1480,8 @@ class EclaimController extends \BaseController {
 		$input = Input::all();
 
 		$spending_type = !empty($input['spending_type']) ? $input['spending_type'] : 'medical';
-		if($spending_type == 'medical') {
-			$table_wallet_history = 'wallet_history';
-		} else {
-			$table_wallet_history = 'wellness_wallet_history';
-		}
+		
+
 
 		$e_claim = [];
 		$transaction_details = [];
@@ -1496,64 +1493,46 @@ class EclaimController extends \BaseController {
         // get user wallet_id
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 
-		$wallet_reset = DB::table('credit_reset')
-		->where('id', $user_id)
-		->where('user_type', 'employee')
-		->where('spending_type', $spending_type)
-		->orderBy('created_at', 'desc')
-		->first();
-
-		if($wallet_reset) {
-			$e_claim_spent = DB::table($table_wallet_history)
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'e_claim_transaction')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
-
-			$in_network_temp_spent = DB::table($table_wallet_history)
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'in_network_transaction')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
-			$credits_back = DB::table($table_wallet_history)
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'credits_back_from_in_network')
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum('credit');
-
-			// get in-network transactions
-			$transactions = DB::table('transaction_history')
-			->whereIn('UserID', $ids)
-			->where('spending_type', $spending_type)
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->orderBy('created_at', 'desc')
-			->take(3)
-			->get();
-
-			// get e_claim last 3 transactions
-			$e_claim_result = DB::table('e_claim')
-			->where('spending_type', $spending_type)
-			->whereIn('user_id', $ids)
-			->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->orderBy('created_at', 'desc')
-			->take(3)
-			->get();
-
+		if($spending_type == 'medical') {
+			$table_wallet_history = 'wallet_history';
+			$credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
 		} else {
-			$e_claim_spent = DB::table($table_wallet_history)
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'e_claim_transaction')
-			->sum('credit');
+			$table_wallet_history = 'wellness_wallet_history';
+			$credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
+		}
 
-			$in_network_temp_spent = DB::table($table_wallet_history)
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'in_network_transaction')
-			->sum('credit');
-			$credits_back = DB::table($table_wallet_history)
-			->where('wallet_id', $wallet->wallet_id)
-			->where('where_spend', 'credits_back_from_in_network')
-			->sum('credit');
+		$allocation = $credit_data['allocation'];
+		$current_spending = $credit_data['get_allocation_spent'];
+		$e_claim_spent = $credit_data['e_claim_spent'];
+		$in_network_spent = $credit_data['in_network_spent'];
+		$balance = $credit_data['balance'];
+		// $wallet_reset = DB::table('credit_reset')
+		// ->where('id', $user_id)
+		// ->where('user_type', 'employee')
+		// ->where('spending_type', $spending_type)
+		// ->orderBy('created_at', 'desc')
+		// ->first();
 
+		// if($wallet_reset) {
+		// 	// get in-network transactions
+		// 	$transactions = DB::table('transaction_history')
+		// 	->whereIn('UserID', $ids)
+		// 	->where('spending_type', $spending_type)
+		// 	->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+		// 	->orderBy('created_at', 'desc')
+		// 	->take(3)
+		// 	->get();
+
+		// // 	// get e_claim last 3 transactions
+		// 	$e_claim_result = DB::table('e_claim')
+		// 	->where('spending_type', $spending_type)
+		// 	->whereIn('user_id', $ids)
+		// 	->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+		// 	->orderBy('created_at', 'desc')
+		// 	->take(3)
+		// 	->get();
+
+		// } else {
 			// get in-network transactions
 			$transactions = DB::table('transaction_history')
 			->whereIn('UserID', $ids)
@@ -1569,67 +1548,7 @@ class EclaimController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->take(3)
 			->get();
-		}
-
-		$in_network_spent = $in_network_temp_spent - $credits_back;
-
-		if($wallet_reset) {
-			$wallet_history_id = $wallet_reset->wallet_history_id;
-
-			if($spending_type == 'medical') {
-				$history_column_id = "wallet_history_id";
-			} else {
-				$history_column_id = "wellness_wallet_history_id";
-			}
-            // get credits allocation
-			$temp_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->whereIn('logs', ['added_by_hr'])
-			->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-			// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum($table_wallet_history.'.credit');
-
-			$deducted_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->whereIn('logs', ['deducted_by_hr'])
-			->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-			// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum($table_wallet_history.'.credit');
-
-			$pro_allocation_deduction = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->where('logs', 'pro_allocation_deduction')
-			->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-			// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-			->sum($table_wallet_history.'.credit');
-		} else {
-        	// get credits allocation
-			$temp_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->whereIn('logs', ['added_by_hr'])
-			->sum($table_wallet_history.'.credit');
-			$deducted_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->whereIn('logs', ['deducted_by_hr'])
-			->sum($table_wallet_history.'.credit');
-			$pro_allocation_deduction = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->where('logs', 'pro_allocation_deduction')
-			->sum($table_wallet_history.'.credit');
-		}
-
-		$allocation = $temp_allocation - $deducted_allocation - $pro_allocation_deduction;
-
-		$pro_allocation = DB::table($table_wallet_history)
-									->where('wallet_id', $wallet->wallet_id)
-									->where('logs', 'pro_allocation')
-									->sum('credit');
+		// }
 
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
@@ -1761,18 +1680,6 @@ class EclaimController extends \BaseController {
 
 				array_push($transaction_details, $format);
 			}
-		}
-
-		$current_spending = $in_network_spent + $e_claim_spent;
-
-		if($pro_allocation > 0) {
-			$allocation = $pro_allocation;
-			$balance = $pro_allocation - $current_spending;
-			if($balance < 0) {
-				$balance = 0;
-			}
-		} else {
-			$balance = $allocation - $current_spending;
 		}
 
         // recalculate employee
