@@ -497,7 +497,8 @@ app.directive("claimDirective", [
               .then(function(response){
                 console.log(response);
                 if( response.data.status ){
-                  scope.registration_arr.splice( key, 1 );
+                  // scope.registration_arr.splice( key, 1 );
+                  scope.getClinicCheckIns();
                 }
               });
           }
@@ -512,11 +513,10 @@ app.directive("claimDirective", [
               if( hours >= 0  ){
                 scope.autoRemoveRegData( value.check_in_id, key );
               }
-
-              if( key == scope.registration_arr.length-1 ){
-                $timeout.cancel( reg_timeout );
-                scope.getClinicCheckIns();
-              }
+              // if( key == scope.registration_arr.length-1 ){
+              //   $timeout.cancel( reg_timeout );
+                
+              // }
             });
             reg_timeout = $timeout(function() {
               scope.checkExpiredRegistrations();
