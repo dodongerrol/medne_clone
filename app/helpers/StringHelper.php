@@ -1052,6 +1052,40 @@ public static function get_random_password($length)
         return "claim-notification-event_clinic_".$dev."_".$clinic_id."_".$user_id;
     }
 
+    public static function socketConnectionCheckIn($clinic_id, $user_id)
+    {
+        
+        $config = Config::get('config.deployment');
+        $dev = "";
+
+        if($config == "Production"){
+          $dev = "production";
+        }elseif($config == "Development") {
+          $dev = "development";
+        }else{
+          $dev = "local";
+        }
+
+        return "check-in-notification-event_clinic_".$dev."_".$clinic_id."_".$user_id;
+    }
+
+    public static function socketConnectionCheckInRemove($clinic_id, $user_id)
+    {
+        
+        $config = Config::get('config.deployment');
+        $dev = "";
+
+        if($config == "Production"){
+          $dev = "production";
+        }elseif($config == "Development") {
+          $dev = "development";
+        }else{
+          $dev = "local";
+        }
+
+        return "check-in-remove-notification-event_clinic_".$dev."_".$clinic_id."_".$user_id;
+    }
+
      public static function validIdentification($number)
     {
         return true;

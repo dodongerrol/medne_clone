@@ -429,7 +429,12 @@ class EclaimController extends \BaseController {
 		$input = Input::all();
 		$receipt_all = [];
 
-		$check = DB::table('e_claim')->where('e_claim_id', $input['e_claim_id'])->count();
+		if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
+			return array('status' => false, 'message' => 'E-Claim ID is required.');
+		}
+
+		$id = $transaction_id = (int)preg_replace('/[^0-9]/', '', $input['e_claim_id']);
+		$check = DB::table('e_claim')->where('e_claim_id', $id)->count();
 
 		if($check == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim data does not exist.');
@@ -448,14 +453,26 @@ class EclaimController extends \BaseController {
 
 			$file = $input['file'];
 			$file_name = time().' - '.$file->getClientOriginalName();
+			$s3 = AWS::get('s3');
+
 			if($file->getClientOriginalExtension() == "pdf") {
 				$receipt_file = $file_name;
 				$receipt_type = "pdf";
 				$file->move(public_path().'/receipts/', $file_name);
+				$s3->putObject(array(
+					'Bucket'     => 'mednefits',
+					'Key'        => 'receipts/'.$file_name,
+					'SourceFile' => public_path().'/receipts/'.$file_name,
+				));
 			} else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
 				$receipt_file = $file_name;
 				$receipt_type = "xls";
 				$file->move(public_path().'/receipts/', $file_name);
+				$s3->putObject(array(
+					'Bucket'     => 'mednefits',
+					'Key'        => 'receipts/'.$file_name,
+					'SourceFile' => public_path().'/receipts/'.$file_name,
+				));
 			} else {
 				$image = \Cloudinary\Uploader::upload($file->getPathName());
 				$receipt_file = $image['secure_url'];
@@ -464,7 +481,7 @@ class EclaimController extends \BaseController {
 
 			$e_claim_docs = new EclaimDocs( );
 			$receipt = array(
-				'e_claim_id'    => $input['e_claim_id'],
+				'e_claim_id'    => $id,
 				'doc_file'      => $receipt_file,
 				'file_type'     => $receipt_type
 			);
@@ -1785,7 +1802,7 @@ class EclaimController extends \BaseController {
 			'current_spending_format_number' => $current_spending,
 			'e_claim'						=> $e_claim,
 			'in_network_transactions' => $transaction_details,
-			'balance'           => number_format($balance, 2),
+			'balance'           => $balance >= 0 ? number_format($balance, 2) : "0.00",
 			'spending_type'	=> $spending_type
 		);
 	}
@@ -2794,10 +2811,32 @@ public function getActivityInNetworkTransactions( )
 				}
 
                         // check if there is a receipt image
-				$receipt = DB::table('user_image_receipt')
-				->where('transaction_id', $trans->transaction_id)->count();
+				$receipts = DB::table('user_image_receipt')
+							->where('transaction_id', $trans->transaction_id)
+							->get();
 
-				if($receipt > 0) {
+				$doc_files = [];
+				if(sizeof($receipts) > 0) {
+					foreach ($receipts as $key => $doc) {
+						if($doc->type == "pdf" || $doc->type == "xls") {
+							if(StringHelper::Deployment()==1){
+							   $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
+							} else {
+							   $fil = url('').'/receipts/'.$doc->file;
+							}
+						} else if($doc->type == "image") {
+							$fil = FileHelper::formatImageAutoQuality($doc->file);
+						}
+
+						$temp_doc = array(
+							'tranasaction_doc_id'    => $doc->image_receipt_id,
+							'transaction_id'            => $doc->transaction_id,
+							'file'                      => $fil,
+							'file_type'             => $doc->type
+						);
+
+						array_push($doc_files, $temp_doc);
+					}
 					$receipt_status = TRUE;
 				} else {
 					$receipt_status = FALSE;
@@ -3012,7 +3051,8 @@ public function getActivityInNetworkTransactions( )
 				    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
 				    'paid_by_cash'      => number_format($trans->cash_cost, 2),
 				    'paid_by_credits'   => number_format($trans->credit_cost, 2),
-				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$"
+				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$",
+					'files'				=> $doc_files
 				);
 
 				array_push($transaction_details, $format);

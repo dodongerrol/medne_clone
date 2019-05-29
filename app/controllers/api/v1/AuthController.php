@@ -1333,7 +1333,7 @@ return Response::json($returnObject);
       'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
       'spending_type'             => $spending_type,
       'wallet_id'                 => $wallet->wallet_id,
-      'balance'                   => number_format($balance, 2),
+      'balance'                   => $balance >= 0 ? number_format($balance, 2) : "0.00",
       'in_network_credits_spent'  => number_format($in_network_spent, 2),
       'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
       'e_claim_transactions'      => $e_claim,
@@ -1843,16 +1843,17 @@ public function getEcardDetails( )
 
 public function getNewClinicDetails($id)
 {
-   $AccessToken = new Api_V1_AccessTokenController();
-   $returnObject = new stdClass();
-   $authSession = new OauthSessions();
-        // $input = Input::all();
-   $getRequestHeader = StringHelper::requestHeader();
-        // if(StringHelper::Deployment() == 1){
-   $returnObject->production = TRUE;
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $input = Input::all();
+    $getRequestHeader = StringHelper::requestHeader();
+      // if(StringHelper::Deployment() == 1){
+    $returnObject->production = TRUE;
         // } else {
         //     $returnObject->production = FALSE;
         // }
+
    if(!empty($getRequestHeader['Authorization'])){
       $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
       if($getAccessToken){
@@ -1902,11 +1903,11 @@ public function getNewClinicDetails($id)
            ->where('scan_pay_show', 1)
            ->where('Active', 1)
            ->get();
-           if(!$procedures) {
-               $returnObject->status = FALSE;
-               $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
-               return Response::json($returnObject);
-           }
+           // if(!$procedures) {
+           //     $returnObject->status = FALSE;
+           //     $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
+           //     return Response::json($returnObject);
+           // }
 
                                 // format clinic data
            ($clinic->Email) ? $email = $clinic->Email : $email = null;
@@ -1994,21 +1995,32 @@ public function getNewClinicDetails($id)
         $jsonArray['cap_per_visit_amount'] = $cap_amount;
 
         $check_in_time = date('Y-m-d H:i:s');
+        
+        if(!empty($input['check_in_time']) && $input['check_in_time'] != null) {
+          $check_in_time = date('Y-m-d H:i:s', strtotime($input['check_in_time']));
+        }
+
         $check_in_data = array(
           'user_id'         => $findUserID,
           'clinic_id'       => $clinic->ClinicID,
           'check_in_time'   => $check_in_time,
           'check_out_time'  => $check_in_time,
-          'check_in_type'   => 'in_network_transaction'
+          'check_in_type'   => 'in_network_transaction',
+          'cap_per_visit'   => $cap_amount,
+          'currency_symbol' => $cap_currency_symbol == "RM$" ? "myr" : "sgd",
+          'currency_value'  => $cap_currency_symbol == "RM$" ? 3.00 : 0.00,
         );
 
+
         $check_in_class = new EmployeeClinicCheckIn( );
-                // create clinic check in data
+        // create clinic check in data
         $check_in = $check_in_class->createData($check_in_data);
         $jsonArray['check_in_id'] = $check_in->id;
         $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
+        // send socket connection
+        PusherHelper::sendClinicCheckInNotification($check_in->id, $clinic->ClinicID);
         return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;
@@ -3444,19 +3456,20 @@ public function notifyClinicDirectPayment( )
                             // send realtime update to claim clinic admin
                   PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
 
-                  // // check if check_in_id exist
-                  // if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
-                  // // check check_in_id data
-                  //   $check_in = DB::table('user_check_in_clinic')
-                  //   ->where('check_in_id', $input['check_in_id'])
-                  //   ->first();
-                  //   if($check_in) {
-                  // // update check in date
-                  //     DB::table('user_check_in_clinic')
-                  //     ->where('check_in_id', $input['check_in_id'])
-                  //     ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id]);
-                  //   }
-                  // }
+                  // check if check_in_id exist
+                  if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
+                  // check check_in_id data
+                    $check_in = DB::table('user_check_in_clinic')
+                    ->where('check_in_id', $input['check_in_id'])
+                    ->first();
+                    if($check_in) {
+                  // update check in date
+                      DB::table('user_check_in_clinic')
+                      ->where('check_in_id', $input['check_in_id'])
+                      ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+                      PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
+                    }
+                  }
 
               $returnObject->status = TRUE;
               $returnObject->message = 'Transaction Done.';
@@ -5641,7 +5654,8 @@ public function payCreditsNew( )
               // update check in date
           DB::table('user_check_in_clinic')
           ->where('check_in_id', $input['check_in_id'])
-          ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id]);
+          ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+          PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
       }
     }
 
@@ -5817,6 +5831,63 @@ public function payCreditsNew( )
                 $returnObject->data = null;
               }
              return Response::json($returnObject);
+         } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+      }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
+
+  public function removeCheckIn( ) 
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+    $input = Input::all();
+
+    if(empty($input['check_in_id']) || $input['check_in_id'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'Check-In ID is required.';
+      return Response::json($returnObject);
+    }
+
+    if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+           $findUserID = $authSession->findUserID($getAccessToken->session_id);
+           if($findUserID){
+            $returnObject->status = TRUE;
+            $returnObject->message = 'Success.';
+            // check if notification exits
+            $check = DB::table('user_check_in_clinic')
+                    ->where('check_in_id', $input['check_in_id'])
+                    ->where('user_id', $findUserID)
+                    ->where('status', 0)
+                    ->first();
+
+            if(!$check) {
+              $returnObject->status = FALSE;
+              $returnObject->message = 'Check In data not found.';
+              return Response::json($returnObject);
+            }
+
+            DB::table('user_check_in_clinic')
+                    ->where('check_in_id', $input['check_in_id'])
+                    ->where('user_id', $findUserID)
+                    ->delete();
+            PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check->clinic_id);
+            return Response::json($returnObject);
          } else {
             $returnObject->status = FALSE;
             $returnObject->message = StringHelper::errorMessage("Token");

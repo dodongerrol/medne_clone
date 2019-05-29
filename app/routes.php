@@ -1006,6 +1006,8 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
 			// update notification to read
 			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
+			// remove check in data
+			Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
 	 	});
 	});
 });
@@ -1311,6 +1313,12 @@ Route::group(array('prefix' => 'app'), function()
         Route::get('clinic_socket_connection', 'HomeController@getClinicSocketDetails');
 		// api for check transaction duplication
 		Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
+		// get check in transactions
+		Route::get('clinic/get_check_in_lists', 'UserCheckInController@getClinicCheckInLists');
+		// get specific check in data
+		Route::get('clinic/get_specific_check_in','UserCheckInController@getSpecificCheckIn');
+		// remove specific check in data
+		Route::post('clinic/remove_specific_check_in', 'UserCheckInController@deleteSpecificCheckIn');
     });
 
 });

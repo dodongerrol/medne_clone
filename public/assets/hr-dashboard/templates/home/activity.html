@@ -732,8 +732,34 @@
 				</div>
 
 				<div class="white-space-20"></div>
+
 				<button ng-disabled="selected_list.receipt_status == false" ng-click="downloadReceipt(selected_list.files, selected_list)" class="btn btn-download">Download Receipt</button>
-				<div class="white-space-20"></div>
+				<div class="trans-receipts-wrapper">
+					<div class="click_box_wrapper" ng-repeat="img in selected_list.files" style="display: inline-block;position: relative;">
+						<a href="javascript:void(0)" ng-click="showPreview(img, $event)" >
+							<div class="click_box">
+								<i class="fa fa-plus color-white font-25"></i>
+							</div>
+
+							<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
+							<img ng-if="img.type == 'excel' || img.file_type == 'excel' || img.file_type == 'xls' || img.file_type == 'xls' || img.type == 'xlxs' || img.file_type == 'xlxs'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
+							<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+						</a>
+
+						<div class="preview-box">
+							<div class="img-container">
+								<a href="javascript:void(0)" class="hidePreview" ng-click="hidePreview()">
+									<i class="fa fa-times" ></i>
+								</a>
+
+								<img img-fix-orientation="img.file" hidden>
+
+								<iframe id="src-view-data" src style="width:100%; height: 500px;border: none;" hidden>
+								</iframe>
+							</div>
+						</div>
+					</div>
+				</div>
 				<a href="/download/transaction_receipt/{{selected_list.trans_id}}" target="_blank" ng-if="selected_list.type == 'Mednefits Credits'" class="btn btn-download" style="background: #51BEF2 !important;">Mednefits E-Receipt</a>
 			</div>
 		</div>
@@ -958,8 +984,33 @@
 					</div>
 				</div>
 
-				<div class="white-space-20"></div>
 				<button ng-disabled="selected_list.receipt_status == false" ng-click="downloadReceipt(selected_list.files, selected_list)" class="btn btn-download">Download Receipt</button>
+				<div class="trans-receipts-wrapper">
+					<div class="click_box_wrapper" ng-repeat="img in selected_list.files" style="display: inline-block;position: relative;">
+						<a href="javascript:void(0)" ng-click="showPreview(img, $event)" >
+							<div class="click_box">
+								<i class="fa fa-plus color-white font-25"></i>
+							</div>
+
+							<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
+							<img ng-if="img.type == 'excel' || img.file_type == 'excel' || img.file_type == 'xls' || img.file_type == 'xls' || img.type == 'xlxs' || img.file_type == 'xlxs'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
+							<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+						</a>
+
+						<div class="preview-box">
+							<div class="img-container">
+								<a href="javascript:void(0)" class="hidePreview" ng-click="hidePreview()">
+									<i class="fa fa-times" ></i>
+								</a>
+
+								<img img-fix-orientation="img.file" hidden>
+
+								<iframe id="src-view-data" src style="width:100%; height: 500px;border: none;" hidden>
+								</iframe>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
