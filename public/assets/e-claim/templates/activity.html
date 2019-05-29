@@ -367,12 +367,13 @@
 								</div>
 
 								<div class="col-xs-12 col-sm-3 col-md-4 no-padding xs-text-center">
-									<button ng-disabled="list.transaction_files && list.transaction_files.length > 0 || list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceipt(list)">
+									<!-- list.transaction_files && list.transaction_files.length > 0 ||  -->
+									<button ng-disabled="list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceipt(list)">
 										Upload Receipt
 										<span ng-if="list.uploading"><i class="fa fa-circle-o-notch fa-spin"></i></span>
 									</button>
 
-									<button ng-disabled="!list.transaction_files || list.transaction_files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.transaction_files)">
+									<button ng-disabled="!list.transaction_files || list.transaction_files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.transaction_files, list)">
 										Download Receipt
 									</button>
 									<p ng-if="list.upload_err" class="text-error" ng-bind="list.upload_err_message">Upload Failed.</p>
@@ -484,12 +485,13 @@
 							</div>
 
 							<div class="col-xs-12 col-sm-3 col-md-4 no-padding xs-text-center">
-								<button ng-disabled="list.files && list.files.length > 0 || list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceiptOut(list)">
+								<!-- list.files && list.files.length > 0 ||  -->
+								<button ng-disabled="list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceiptOut(list)">
 									Upload Receipt
 									<span ng-if="list.uploading"><i class="fa fa-circle-o-notch fa-spin"></i></span>
 								</button>
 
-								<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.files)">
+								<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.transaction_files, list)">
 									Download Receipt
 								</button>
 
