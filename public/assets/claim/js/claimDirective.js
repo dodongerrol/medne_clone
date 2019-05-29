@@ -501,6 +501,7 @@ app.directive("claimDirective", [
                 }
               });
           }
+          var reg_timeout = null;
           scope.checkExpiredRegistrations = function(){
             angular.forEach( scope.registration_arr, function( value, key ){
               var expiry_date = moment( value.expiry );
@@ -511,20 +512,22 @@ app.directive("claimDirective", [
               if( hours >= 0  ){
                 scope.autoRemoveRegData( value.check_in_id, key );
               }
+
+              if( key == scope.registration_arr.length-1 ){
+                $timeout.cancel( reg_timeout );
+                scope.getClinicCheckIns();
+              }
             });
-            $timeout(function() {
+            reg_timeout = $timeout(function() {
               scope.checkExpiredRegistrations();
-            }, 60000);
+            }, 30000);
           }
           scope.getClinicCheckIns = function( ) {
             $http.get(base_url + 'clinic/get_check_in_lists')
             .then(function(response){
               console.log(response);
               scope.registration_arr = response.data.data;
-
-              if( scope.registration_arr.length > 0 ){
-                scope.checkExpiredRegistrations();
-              }
+              scope.checkExpiredRegistrations();
             });
           }
           scope.getCheckInConfig = function(connection) {
