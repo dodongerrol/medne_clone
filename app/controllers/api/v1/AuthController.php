@@ -4359,7 +4359,7 @@ public function getInNetworkDetails($id)
 
   $currency_symbol = null;
   $converted_amount = null;
-  $consultation = null;
+  // $consultation = null;
   $converted_consultation = null;
   $converted_procedure_cost = null;
 
