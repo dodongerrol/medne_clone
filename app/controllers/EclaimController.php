@@ -1099,7 +1099,7 @@ class EclaimController extends \BaseController {
 			'e_claim_spent'			   => number_format($e_claim_spent, 2),
 			'total_allocation'		   => number_format($final_allocation, 2),
 			'total_spent'			   => number_format($total_spent, 2),
-			'balance'				   => number_format($balance, 2),
+			'balance'				   => $balance >= 0 ? number_format($balance, 2) : "0.00",
 			'total_in_network_transactions' => $total_in_network_transactions,
 			'total_deleted_in_network_transactions' => $total_deleted_in_network_transactions,
 			'total_in_network_spent'    => number_format($total_in_network_spent, 2),
