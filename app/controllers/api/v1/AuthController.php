@@ -1843,16 +1843,17 @@ public function getEcardDetails( )
 
 public function getNewClinicDetails($id)
 {
-   $AccessToken = new Api_V1_AccessTokenController();
-   $returnObject = new stdClass();
-   $authSession = new OauthSessions();
-        // $input = Input::all();
-   $getRequestHeader = StringHelper::requestHeader();
-        // if(StringHelper::Deployment() == 1){
-   $returnObject->production = TRUE;
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $input = Input::all();
+    $getRequestHeader = StringHelper::requestHeader();
+      // if(StringHelper::Deployment() == 1){
+    $returnObject->production = TRUE;
         // } else {
         //     $returnObject->production = FALSE;
         // }
+
    if(!empty($getRequestHeader['Authorization'])){
       $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
       if($getAccessToken){
@@ -1994,6 +1995,11 @@ public function getNewClinicDetails($id)
         $jsonArray['cap_per_visit_amount'] = $cap_amount;
 
         $check_in_time = date('Y-m-d H:i:s');
+        
+        if(!empty($input['check_in_time']) || $input['check_in_time'] != null) {
+          $check_in_time = date('Y-m-d H:i:s', strtotime($input['check_in_time']));
+        }
+
         $check_in_data = array(
           'user_id'         => $findUserID,
           'clinic_id'       => $clinic->ClinicID,
@@ -2004,6 +2010,7 @@ public function getNewClinicDetails($id)
           'currency_symbol' => $cap_currency_symbol == "RM$" ? "myr" : "sgd",
           'currency_value'  => $cap_currency_symbol == "RM$" ? 3.00 : 0.00,
         );
+
 
         $check_in_class = new EmployeeClinicCheckIn( );
         // create clinic check in data
