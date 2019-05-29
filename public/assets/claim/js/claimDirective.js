@@ -492,16 +492,25 @@ app.directive("claimDirective", [
                 }
             });
           };
-          scope.autoRemoveRegData = function( id ){
+          scope.autoRemoveRegData = function( id, key ){
             $http.get(base_url + 'clinic/auto_remove_check_in?check_in_id=' + id)
               .then(function(response){
                 console.log(response);
+                if( response.data.status ){
+                  scope.registration_arr.splice( key, 1 );
+                }
               });
           }
           scope.checkExpiredRegistrations = function(){
             angular.forEach( scope.registration_arr, function( value, key ){
-              console.log( value );
-
+              var expiry_date = moment( value.expiry );
+              var date_now = moment();
+              var duration = moment.duration( moment(date_now).diff( moment(expiry_date) ) );
+              var hours = duration.asMinutes();
+              console.log( hours );
+              if( hours >= 120  ){
+                scope.autoRemoveRegData( value.check_in_id, key );
+              }
             });
             $timeout(function() {
               scope.checkExpiredRegistrations();
