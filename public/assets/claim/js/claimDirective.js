@@ -492,15 +492,32 @@ app.directive("claimDirective", [
                 }
             });
           };
+          scope.autoRemoveRegData = function( id ){
+            $http.get(base_url + 'clinic/auto_remove_check_in?check_in_id=' + id)
+              .then(function(response){
+                console.log(response);
+              });
+          }
+          scope.checkExpiredRegistrations = function(){
+            angular.forEach( scope.registration_arr, function( value, key ){
+              console.log( value );
 
+            });
+            $timeout(function() {
+              scope.checkExpiredRegistrations();
+            }, 60000);
+          }
           scope.getClinicCheckIns = function( ) {
             $http.get(base_url + 'clinic/get_check_in_lists')
             .then(function(response){
               console.log(response);
               scope.registration_arr = response.data.data;
+
+              if( scope.registration_arr.length > 0 ){
+                scope.checkExpiredRegistrations();
+              }
             });
           }
-
           scope.getCheckInConfig = function(connection) {
             console.log('connection check in', connection);
             socket.on(connection, function (data) {
@@ -518,7 +535,6 @@ app.directive("claimDirective", [
               }
             });
           };
-
           scope.getCheckInConfigRemove = function(connection) {
             console.log('connection check in remove', connection);
             socket.on(connection, function (data) {
@@ -535,7 +551,6 @@ app.directive("claimDirective", [
               }
             });
           };
-
           scope.getClinicSocketConnection = function( ) {
             $http.get(base_url + 'clinic_socket_connection')
             .then(function(response){
