@@ -1039,110 +1039,112 @@ return Response::json($returnObject);
                 $user_id = StringHelper::getUserId($findUserID);
 
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+                $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
                 if($spending_type == 'medical') {
                     $table_wallet_history = 'wallet_history';
                     $history_column_id = "wallet_history_id";
+                    $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
                 } else {
                     $table_wallet_history = 'wellness_wallet_history';
                     $history_column_id = "wellness_wallet_history_id";
+                    $credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
                 }
 
-                $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 
-                $wallet_reset = DB::table('credit_reset')
-                ->where('id', $user_id)
-                ->where('user_type', 'employee')
-                ->where('spending_type', $spending_type)
-                ->orderBy('created_at', 'desc')
-                ->first();
+                // $wallet_reset = DB::table('credit_reset')
+                // ->where('id', $user_id)
+                // ->where('user_type', 'employee')
+                // ->where('spending_type', $spending_type)
+                // ->orderBy('created_at', 'desc')
+                // ->first();
 
-                if($wallet_reset) {
-                  $wallet_history_id = $wallet_reset->wallet_history_id;
-                    $e_claim_spent = DB::table($table_wallet_history)
-                                  ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
-                                  ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
-                                  ->where($table_wallet_history.'.where_spend', 'e_claim_transaction')
-                                  ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
-                                  // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                                  ->sum('credit');
+                // if($wallet_reset) {
+                //   $wallet_history_id = $wallet_reset->wallet_history_id;
+                //     $e_claim_spent = DB::table($table_wallet_history)
+                //                   ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                //                   ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                //                   ->where($table_wallet_history.'.where_spend', 'e_claim_transaction')
+                //                   ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                //                   // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                //                   ->sum('credit');
 
-                    $in_network_temp_spent = DB::table($table_wallet_history)
-                                  ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
-                                  ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
-                                  ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
-                                  ->where($table_wallet_history.'.where_spend', 'in_network_transaction')
-                                  ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
-                                  // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                                  ->sum('credit');
+                //     $in_network_temp_spent = DB::table($table_wallet_history)
+                //                   ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                //                   ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                //                   ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                //                   ->where($table_wallet_history.'.where_spend', 'in_network_transaction')
+                //                   ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                //                   // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                //                   ->sum('credit');
 
-                    $credits_back = DB::table($table_wallet_history)
-                                  ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
-                                  ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
-                                  ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
-                                  ->where($table_wallet_history.'.where_spend', 'credits_back_from_in_network')
-                                  ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
-                                  // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-                                  ->sum('credit');
-                } else {
-                    $e_claim_spent = DB::table($table_wallet_history)
-                    ->where('wallet_id', $wallet->wallet_id)
-                    ->where('where_spend', 'e_claim_transaction')
-                    ->sum('credit');
+                //     $credits_back = DB::table($table_wallet_history)
+                //                   ->join('e_wallet', 'e_wallet.wallet_id', '=', $table_wallet_history.'.wallet_id')
+                //                   ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                //                   ->where($table_wallet_history.'.wallet_id', $wallet->wallet_id)
+                //                   ->where($table_wallet_history.'.where_spend', 'credits_back_from_in_network')
+                //                   ->where($table_wallet_history.'.'.$history_column_id, '>=', $wallet_history_id)
+                //                   // ->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
+                //                   ->sum('credit');
+                // } else {
+                //     $e_claim_spent = DB::table($table_wallet_history)
+                //     ->where('wallet_id', $wallet->wallet_id)
+                //     ->where('where_spend', 'e_claim_transaction')
+                //     ->sum('credit');
 
-                    $in_network_temp_spent = DB::table($table_wallet_history)
-                    ->where('wallet_id', $wallet->wallet_id)
-                    ->where('where_spend', 'in_network_transaction')
-                    ->sum('credit');
+                //     $in_network_temp_spent = DB::table($table_wallet_history)
+                //     ->where('wallet_id', $wallet->wallet_id)
+                //     ->where('where_spend', 'in_network_transaction')
+                //     ->sum('credit');
 
-                    $credits_back = DB::table($table_wallet_history)
-                    ->where('wallet_id', $wallet->wallet_id)
-                    ->where('where_spend', 'credits_back_from_in_network')
-                    ->sum('credit');
-                }
+                //     $credits_back = DB::table($table_wallet_history)
+                //     ->where('wallet_id', $wallet->wallet_id)
+                //     ->where('where_spend', 'credits_back_from_in_network')
+                //     ->sum('credit');
+                // }
 
-                if($wallet_reset) {
-                    $wallet_history_id = $wallet_reset->wallet_history_id;
-                    // get credits allocation
-                    $temp_allocation = DB::table('e_wallet')
-                    ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-                    ->where('e_wallet.UserID', $user_id)
-                    ->whereIn('logs', ['added_by_hr'])
-                    ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-                    ->sum($table_wallet_history.'.credit');
+                // if($wallet_reset) {
+                //     $wallet_history_id = $wallet_reset->wallet_history_id;
+                //     // get credits allocation
+                //     $temp_allocation = DB::table('e_wallet')
+                //     ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+                //     ->where('e_wallet.UserID', $user_id)
+                //     ->whereIn('logs', ['added_by_hr'])
+                //     ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+                //     ->sum($table_wallet_history.'.credit');
 
-                    $deducted_allocation = DB::table('e_wallet')
-                    ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-                    ->where('e_wallet.UserID', $user_id)
-                    ->whereIn('logs', ['deducted_by_hr'])
-                    ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-                    ->sum($table_wallet_history.'.credit');
+                //     $deducted_allocation = DB::table('e_wallet')
+                //     ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+                //     ->where('e_wallet.UserID', $user_id)
+                //     ->whereIn('logs', ['deducted_by_hr'])
+                //     ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+                //     ->sum($table_wallet_history.'.credit');
 
-                    $pro_allocation_deduction = DB::table('e_wallet')
-                    ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-                    ->where('e_wallet.UserID', $user_id)
-                    ->where('logs', 'pro_allocation_deduction')
-                    ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-                    ->sum($table_wallet_history.'.credit');
-                } else {
-                        // get credits allocation
-                    $temp_allocation = DB::table('e_wallet')
-                    ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-                    ->where('e_wallet.UserID', $user_id)
-                    ->whereIn('logs', ['added_by_hr'])
-                    ->sum($table_wallet_history.'.credit');
+                //     $pro_allocation_deduction = DB::table('e_wallet')
+                //     ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+                //     ->where('e_wallet.UserID', $user_id)
+                //     ->where('logs', 'pro_allocation_deduction')
+                //     ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+                //     ->sum($table_wallet_history.'.credit');
+                // } else {
+                //         // get credits allocation
+                //     $temp_allocation = DB::table('e_wallet')
+                //     ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+                //     ->where('e_wallet.UserID', $user_id)
+                //     ->whereIn('logs', ['added_by_hr'])
+                //     ->sum($table_wallet_history.'.credit');
 
-                    $deducted_allocation = DB::table('e_wallet')
-                    ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-                    ->where('e_wallet.UserID', $user_id)
-                    ->whereIn('logs', ['deducted_by_hr'])
-                    ->sum($table_wallet_history.'.credit');
+                //     $deducted_allocation = DB::table('e_wallet')
+                //     ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+                //     ->where('e_wallet.UserID', $user_id)
+                //     ->whereIn('logs', ['deducted_by_hr'])
+                //     ->sum($table_wallet_history.'.credit');
 
-                    $pro_allocation_deduction = DB::table('e_wallet')
-                    ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-                    ->where('e_wallet.UserID', $user_id)
-                    ->where('logs', 'pro_allocation_deduction')
-                    ->sum($table_wallet_history.'.credit');
-                }
+                //     $pro_allocation_deduction = DB::table('e_wallet')
+                //     ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+                //     ->where('e_wallet.UserID', $user_id)
+                //     ->where('logs', 'pro_allocation_deduction')
+                //     ->sum($table_wallet_history.'.credit');
+                // }
 
                 $e_claim_result = DB::table('e_claim')
                 ->whereIn('user_id', $ids)
@@ -1164,13 +1166,13 @@ return Response::json($returnObject);
 
 
                         // get docs
-                  $docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
+                  // $docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
 
-                  if(sizeof($docs) > 0) {
-                      $doc_files = TRUE;
-                  } else {
-                      $doc_files = FALSE;
-                  }
+                  // if(sizeof($docs) > 0) {
+                  //     $doc_files = TRUE;
+                  // } else {
+                  //     $doc_files = FALSE;
+                  // }
 
                   $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
@@ -1184,7 +1186,7 @@ return Response::json($returnObject);
                       'amount'      => number_format($res->amount, 2),
                       'member'      => ucwords($member->Name),
                       'type'        => 'E-Claim',
-                      'receipt_status' => $doc_files,
+                      // 'receipt_status' => $doc_files,
                       'transaction_id' => $res->e_claim_id,
                       'visit_date'  => date('d F Y', strtotime($res->date)).', '.$res->time,
                       'spending_type' => $res->spending_type
@@ -1203,7 +1205,7 @@ return Response::json($returnObject);
 
               foreach ($transactions as $key => $trans) {
                 if($trans) {
-                  $receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
+                  // $receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
                   $clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
                   $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
                   $customer = DB::table('user')->where('UserID', $trans->UserID)->first();
@@ -1241,13 +1243,13 @@ return Response::json($returnObject);
             }
 
                             // check if there is a receipt image
-            $receipt = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->count();
+          //   $receipt = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->count();
 
-            if($receipt > 0) {
-              $receipt_status = TRUE;
-          } else {
-              $receipt_status = FALSE;
-          }
+          //   if($receipt > 0) {
+          //     $receipt_status = TRUE;
+          // } else {
+          //     $receipt_status = FALSE;
+          // }
 
           $total_amount = $trans->procedure_cost;
 
@@ -1275,7 +1277,7 @@ return Response::json($returnObject);
         'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
         'customer'          => ucwords($customer->Name),
         'transaction_id'    => $trans->transaction_id,
-        'receipt_status'    => $receipt_status,
+        // 'receipt_status'    => $receipt_status,
         'cash_status'       => $health_provider_status,
         'credit_status'     => $credit_status,
         'user_id'           => $trans->UserID,
@@ -1286,32 +1288,22 @@ return Response::json($returnObject);
       }
     }
 
+    $allocation = $credit_data['allocation'];
+    $current_spending = $credit_data['get_allocation_spent'];
+    $e_claim_spent = $credit_data['e_claim_spent'];
+    $in_network_spent = $credit_data['in_network_spent'];
+    $balance = $credit_data['balance'];
 
-    $in_network_spent = $in_network_temp_spent - $credits_back;
-    $current_spending = $in_network_spent + $e_claim_spent;
-    $allocation = $temp_allocation - $deducted_allocation;
+    // $in_network_spent = $in_network_temp_spent - $credits_back;
+    // $current_spending = $in_network_spent + $e_claim_spent;
+    // $allocation = $temp_allocation - $deducted_allocation;
     PlanHelper::reCalculateEmployeeBalance($user_id);
-    $user = DB::table('user')->where('UserID', $user_id)->first();
 
-    $pro_allocation = DB::table($table_wallet_history)
-    ->where('wallet_id', $wallet->wallet_id)
-    ->where('logs', 'pro_allocation')
-    ->sum('credit');
-
-
-    if($pro_allocation > 0 && (int)$user->Active == 0) {
-        $balance = $pro_allocation - $current_spending;
-        if($balance < 0) {
-            $balance = 0;
-        }
-    } else {
-        $balance = $allocation - $current_spending;
-    }
 
     $wallet_data = array(
       'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
       'spending_type'             => $spending_type,
-      'wallet_id'                 => $wallet->wallet_id,
+      // 'wallet_id'                 => $wallet->wallet_id,
       'balance'                   => $balance >= 0 ? number_format($balance, 2) : "0.00",
       'in_network_credits_spent'  => number_format($in_network_spent, 2),
       'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
