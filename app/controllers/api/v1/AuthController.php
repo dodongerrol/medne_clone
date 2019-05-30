@@ -4782,7 +4782,7 @@ public function getEclaimDetails($id)
           if($transaction->status == 1) {
               $date = date('d F Y, h:i A', strtotime($transaction->approved_date));
           } else {
-              $date = date('d F Y, h:i A', strtotime($transaction->updated_at));
+              $date = date('d F Y', strtotime($transaction->date)).', '.$transaction->time;
           }
 
           $id = str_pad($transaction->e_claim_id, 6, "0", STR_PAD_LEFT);
