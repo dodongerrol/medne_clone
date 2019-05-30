@@ -4661,7 +4661,7 @@ public function getEclaimTransactions( )
 
               $temp = array(
                   'status'            => $res->status,
-                  'claim_date'        => date('d F Y', strtotime($res->date)),
+                  'claim_date'        => date('d F Y', strtotime($res->created_at)),
                   'time'              => $res->time,
                   'service'           => ucwords($res->service),
                   'merchant'          => ucwords($res->merchant),
