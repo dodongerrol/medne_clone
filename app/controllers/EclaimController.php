@@ -4193,7 +4193,7 @@ public function getHrActivity( )
 								$service_credits = true;
 								$total_lite_plan_consultation += floatval($logs_lite_plan->credit);
 							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
-								$total_lite_plan_consultation += floatval($trans->co_paid_amount);
+								$total_lite_plan_consultation += floatval($trans->consultation_fees);
 							}
 						}
 					} else {
@@ -4278,7 +4278,7 @@ public function getHrActivity( )
 							if($trans->deleted == 0) {
 								$general_practitioner_breakdown += $trans->credit_cost;
 								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
-									$general_practitioner_breakdown += $trans->co_paid_amount;
+									$general_practitioner_breakdown += $trans->consultation_fees;
 								}
 							}
 						} else if($clinic_type->Name == "Dental Care") {
@@ -4316,7 +4316,7 @@ public function getHrActivity( )
 							if($trans->deleted == 0) {
 								$general_practitioner_breakdown += $trans->credit_cost;
 								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
-									$general_practitioner_breakdown += $trans->co_paid_amount;
+									$general_practitioner_breakdown += $trans->consultation_fees;
 								}
 							}
 						} else if($find_head->Name == "Dental Care") {
@@ -4373,7 +4373,7 @@ public function getHrActivity( )
                                 // $total_cash_transactions_deleted++;
 						}
 						if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
-							$total_amount = number_format($trans->procedure_cost + $trans->co_paid_amount, 2);
+							$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
 						}
 					} else {
 						$payment_type = "Mednefits Credits";
@@ -4388,7 +4388,7 @@ public function getHrActivity( )
 						}
 
 						if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
-							$total_amount = number_format($trans->procedure_cost + $trans->co_paid_amount, 2);
+							$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
 						}
 					}
 
@@ -4397,13 +4397,13 @@ public function getHrActivity( )
 						$total_in_network_spent_cash_transaction += $trans->procedure_cost;
 						$total_cash_transactions++;
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += $trans->procedure_cost + $trans->co_paid_amount;
+								$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
 							} else {
 								$total_in_network_spent += $trans->procedure_cost;
 							}
 					} else if($trans->credit_cost > 0 && $trans->deleted == 0 || $trans->credit_cost > "0" && $trans->deleted == "0") {
 						if((int)$trans->lite_plan_enabled == 1) {
-							$total_in_network_spent += $trans->credit_cost + $trans->co_paid_amount;
+							$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
 						} else {
 							$total_in_network_spent += $trans->credit_cost;
 						}
@@ -4456,7 +4456,7 @@ public function getHrActivity( )
                         'cash'              => $cash,
                         'status_text'       => $status_text,
                         'spending_type'     => ucwords($trans->spending_type),
-                        'consultation'      => (int)$trans->lite_plan_enabled == 1 ?number_format($trans->co_paid_amount, 2) : "0.00",
+                        'consultation'      => (int)$trans->lite_plan_enabled == 1 ?number_format($trans->consultation_fees, 2) : "0.00",
                         'lite_plan'         => (int)$trans->lite_plan_enabled == 1 ? true : false,
                         'consultation_credits' => $consultation_credits,
                         'service_credits'   => $service_credits,

@@ -96,13 +96,56 @@ app.directive('activityDirective', [
 					}
 				}
 
-				scope.downloadReceipt = function( res ){
-					angular.forEach( res, function(value,key){
-						var link = document.createElement("a");
-				    link.download = 'download';
-				    link.href = value.file;
-				    link.click();
-					});
+				scope.downloadReceipt = function( res, all_data ){
+					scope.toggleLoading();
+
+					if( res.length > 1 ){
+						var zip = new JSZip();
+
+						angular.forEach( res, function(value,key){
+							var filename = $.trim( value.file.split('/').pop() );
+							var promise = $.ajax({
+				        url: value.file,
+				        method: 'GET',
+				        xhrFields: {
+				          responseType: 'blob'
+				        }
+					    });
+
+							zip.file(filename, promise);
+							
+							if( key == (res.length-1) ){
+								zip.generateAsync({type:"blob"}).then(function(content) {
+							    saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
+								});
+								scope.toggleLoading();
+							}
+						})
+					}else{
+
+						angular.forEach( res, function(value,key){
+							var filename = $.trim( value.file.split('/').pop() );
+							$.ajax({
+				        url: value.file,
+				        method: 'GET',
+				        xhrFields: {
+				          responseType: 'blob'
+				        },
+				        success: function (data) {
+			            var a = document.createElement('a');
+			            var url = window.URL.createObjectURL(data);
+			            a.href = url;
+			            a.download = filename;
+			            a.click();
+			            window.URL.revokeObjectURL(url);
+
+			            if( key == (res.length-1) ){
+			            	scope.toggleLoading();
+			            }
+				        }
+					    });
+						});
+					}
 				}
 
 				scope.spendingType = function( opt ){
