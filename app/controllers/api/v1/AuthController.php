@@ -4757,7 +4757,7 @@ public function getEclaimDetails($id)
           if($transaction->status == 1) {
               $date = date('d F Y, h:i A', strtotime($transaction->approved_date));
           } else {
-              $date = date('d F Y, h:i A', strtotime($transaction->updated_at));
+              $date = date('d F Y', strtotime($transaction->date)).', '.$transaction->time;
           }
 
           if($transaction->currency_type == "myr") {
