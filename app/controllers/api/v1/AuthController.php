@@ -1823,9 +1823,7 @@ public function getNewClinicDetails($id)
         $jsonArray['nric'] = $user->NRIC;
         $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
-        
-
-            // check if employee has plan tier cap
+        // check if employee has plan tier cap
         $customer_id = PlanHelper::getCustomerId($owner_id);
         $plan_tier = null;
 
@@ -1838,8 +1836,6 @@ public function getNewClinicDetails($id)
          ->where('plan_tiers.customer_id', $customer_id)
          ->first();
         }
-        
-        // return array('res' => $plan_tier);
 
        $cap_currency_symbol = "S$";
        $cap_amount = 0;
@@ -1889,7 +1885,6 @@ public function getNewClinicDetails($id)
           'currency_value'  => $cap_currency_symbol == "RM$" ? 3.00 : 0.00,
         );
 
-
         $check_in_class = new EmployeeClinicCheckIn( );
         // create clinic check in data
         $check_in = $check_in_class->createData($check_in_data);
@@ -1897,8 +1892,24 @@ public function getNewClinicDetails($id)
         $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
+
+        // get transaction consultation
+        $returnObject->data['consultation_fee_symbol'] = "S$";
+        $consultation_status = StringHelper::newLitePlanStatus($findUserID);
+        $returnObject->data['consultation_status'] = $consultation_status;
+        if($consultation_status == true) {
+          $clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $owner_id);
+          $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
+          $returnObject->data['consultation_fees'] = $clinic->currency_type == "myr" ? $consultation_fees * 3.00 : $consultation_fees;
+          $returnObject->data['consultation_fee_symbol'] = $clinic->currency_type == "myr" ? "RM" : "S$";
+        } else {
+          $returnObject->data['consultation_fee_symbol'] = null;
+          $returnObject->data['consultation_fees'] = null;
+        }
+
+        // $returnObject->data['consultation_status'] = StringHelper::newLitePlanStatus($findUserID);
         // send socket connection
-        PusherHelper::sendClinicCheckInNotification($check_in->id, $clinic->ClinicID);
+        // PusherHelper::sendClinicCheckInNotification($check_in->id, $clinic->ClinicID);
         return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;
