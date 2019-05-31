@@ -183,14 +183,6 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
       url: serverUrl.url + "/upload/excel_enrollment",
       data: data
     });
-    // return $.ajax({
-    //    	type: "POST",
-    //   	url: serverUrl.url + '/upload/excel_enrollment',
-    //   	data: file,
-    //      	processData: false,
-    //      	contentType: false,
-    //       	enctype: 'multipart/form-data',
-    // });
   };
 
   hrFactory.newPurchaseUploadExcel = function(data) {
@@ -198,14 +190,6 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
       url: serverUrl.url + "/hr/new_purchase_active_plan/excel",
       data: data
     });
-    // return $.ajax({
-    //    	type: "POST",
-    //   	url: serverUrl.url + '/hr/new_purchase_active_plan/excel',
-    //   	data: file,
-    //      	processData: false,
-    //      	contentType: false,
-    //       	enctype: 'multipart/form-data',
-    // });
   };
 
   hrFactory.getCredits = function(id) {
@@ -332,7 +316,7 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
 
 
-service.factory("hrActivity", function($http, serverUrl) {
+service.factory("hrActivity", function($http, serverUrl, Upload) {
   var hrFactory = {};
 
   hrFactory.getHrActivity = function(data) {
@@ -400,6 +384,13 @@ service.factory("hrActivity", function($http, serverUrl) {
 
   hrFactory.revertEclaim = function( data ) {
     return $http.post(serverUrl.url + "/hr/revert_pending_e_claim", data);
+  };
+
+  hrFactory.uploadOutNetworkReceipt = function(data) {
+    return Upload.upload({
+      url: serverUrl.url + "/hr/upload_e_claim_receipt",
+      data: data
+    });
   };
 
   return hrFactory;
