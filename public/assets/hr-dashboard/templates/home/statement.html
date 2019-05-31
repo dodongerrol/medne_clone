@@ -508,7 +508,7 @@
 											</div>
 
 											<div class="col-md-4 no-padding ">
-												<button class="btn-download-receipt" ng-click="downloadReceipt(list.files)">
+												<button class="btn-download-receipt" ng-disabled="!list.receipt_files || list.receipt_files.length == 0" ng-click="downloadReceipt(list.receipt_files, list)">
 													Download Receipt
 												</button>
 
@@ -628,12 +628,13 @@
 											</div>
 
 											<div class="col-md-4 no-padding ">
-												<button ng-disabled="list.files && list.files.length > 0 || list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceiptOut(list)">
+												<!-- list.files && list.files.length > 0 ||  -->
+												<button ng-disabled="list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceiptOut(list)">
 													Upload Receipt
 													<span ng-if="list.uploading"><i class="fa fa-circle-o-notch fa-spin"></i></span>
 												</button>
 
-												<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.files)">
+												<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.files, list)">
 													Download Receipt
 												</button>
 

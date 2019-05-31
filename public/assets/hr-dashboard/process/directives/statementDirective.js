@@ -62,16 +62,86 @@ app.directive('statementPage', [
 					scope.net_active = net;
 				}
 
-				scope.downloadReceipt = function( res ) {
+				scope.downloadReceipt = function( res, all_data ){
+					scope.toggleLoading();
 
-					angular.forEach( res, function(value,key){
-						var link = document.createElement("a");
-				    link.download = 'download';
-				    link.href = value.file;
-				    link.click();
-						// window.location = value.file ;
-					});
+					if( res.length > 1 ){
+						var zip = new JSZip();
 
+						angular.forEach( res, function(value,key){
+							var filename = $.trim( value.file.split('/').pop() );
+							var img = zip.folder("images");
+							var promise = $.ajax({
+				        url: value.file,
+				        method: 'GET',
+				        xhrFields: {
+				          responseType: 'blob'
+				        }
+					    });
+
+							if( value.file_type == 'pdf' ){
+								zip.file(filename, promise);
+							}
+							if( value.file_type == 'image' ){
+								img.file(filename,promise);
+							}
+							
+							if( key == (res.length-1) ){
+								zip.generateAsync({type:"blob"}).then(function(content) {
+							    saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
+								});
+								scope.toggleLoading();
+							}
+						})
+					}else{
+
+						angular.forEach( res, function(value,key){
+							var filename = $.trim( value.file.split('/').pop() );
+							$.ajax({
+				        url: value.file,
+				        method: 'GET',
+				        xhrFields: {
+				          responseType: 'blob'
+				        },
+				        success: function (data) {
+			            var a = document.createElement('a');
+			            var url = window.URL.createObjectURL(data);
+			            a.href = url;
+			            a.download = filename;
+			            a.click();
+			            window.URL.revokeObjectURL(url);
+
+			            if( key == (res.length-1) ){
+			            	scope.toggleLoading();
+			            }
+				        }
+					    });
+						});
+					}
+				}
+
+				scope.uploadReceiptOut = function( list ){
+					if( !list.files ){
+						list.files = [];
+					}
+					list.uploading = true;
+					var data = {
+						file : list.upload, 
+						e_claim_id : list.transaction_id
+					}
+					hrActivity.uploadOutNetworkReceipt( data )
+						.then(function(response){
+							// console.log(response);
+							list.uploading = false;
+							if( response.data.status == true ){
+								response.data.receipt = response.data.file_link;
+								list.files.push( response.data.receipt );
+							}
+						})
+						.catch(function(response){
+							// console.log(response);
+							list.uploading = false;
+						});
 				}
 
 				scope.openDetails = function( list ) {
