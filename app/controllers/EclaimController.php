@@ -7431,5 +7431,88 @@ public function generateMonthlyCompanyInvoice( )
 
 		return array('status' => true, 'message' => 'E Claim data status revert to pending.');
 	}
+
+	public function uploadOutOfNetworkReceipt( )
+	{
+		$input = Input::all();
+
+		if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
+			return array('status' => false, 'message' => 'E Claim ID is required.');
+		}
+
+		if(empty(Input::file('file')) || Input::file('file') == null) {
+			return array('status' => false, 'message' => 'Please input a file.');
+		}
+
+		$transaction_id = (int)preg_replace('/[^0-9]/', '', $input['e_claim_id']);
+
+		$rules = array(
+      'file' => 'required | mimes:jpeg,jpg,png,pdf,xls,xlsx',
+	  );
+
+		$file_types = ["jpeg","jpg","png","pdf","xls","xlsx","PNG", "JPG", "JPEG"];
+		$file = Input::file('file');
+		$validator = Validator::make(array('file' => $file), $rules);
+
+		if($validator->fails()){
+			return array('status' => false, 'message' => $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF or Excel.');
+    }
+
+    $check = DB::table('e_claim')->where('e_claim_id', $transaction_id)->first();
+
+    if(!$check) {
+    	return array('status' => false, 'message' => 'E Claim does not exist.');
+    }
+
+    $file_name = time().' - '.$file->getClientOriginalName();
+    $file_link = array();
+    if($file->getClientOriginalExtension() == "pdf") {
+        $receipt_file = $file_name;
+        $receipt_type = "pdf";
+        $file->move(public_path().'/receipts/', $file_name);
+        $file_link['file'] = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$file_name;
+    } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
+        $receipt_file = $file_name;
+        $receipt_type = "xls";
+        $file->move(public_path().'/receipts/', $file_name);
+        $file_link['file'] = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$file_name;
+    } else {
+        $image = \Cloudinary\Uploader::upload($file->getRealPath());
+        $receipt_file = $image['secure_url'];
+        $receipt_type = "image";
+        $file_link['file'] = $image['secure_url'];
+    }
+    $file_link['type'] = $receipt_type;
+
+    $e_claim_docs = new EclaimDocs( );
+
+    $receipt = array(
+        'e_claim_id'    => $transaction_id,
+        'doc_file'      => $receipt_file,
+        'file_type'     => $receipt_type
+    );
+
+    $result_doc = $e_claim_docs->createEclaimDocs($receipt);
+
+    if($result_doc) {
+        if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
+                          //   aws
+           $s3 = AWS::get('s3');
+           $s3->putObject(array(
+              'Bucket'     => 'mednefits',
+              'Key'        => 'receipts/'.$file_name,
+              'SourceFile' => public_path().'/receipts/'.$file_name,
+          ));
+       }
+       return array('status' => true,  'message' => 'E-Claim Receipt created successfully.', 'file_link' => $file_link);
+     } else {
+        $email = [];
+        $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
+        $email['logs'] = 'E-Claim Mobile Receipt Submission - '.$e;
+        $email['emailSubject'] = 'Error log.';
+        EmailHelper::sendErrorLogs($email);
+        return array('status' => false, 'message' => 'E-Claim created successfully but failed to create E-Receipt.');
+    }
+	}
 }
 ?>
