@@ -45,6 +45,24 @@ class EmailHelper{
         }); 
     }
 
+    public static function sendNewEmailCompanyInvoiceWithAttachment($dataArray) {
+        Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
+            $pdf = PDF::loadView('invoice.hr-statement-invoice', $dataArray);
+            $pdf->getDomPDF()->get_option('enable_html5_parser');
+
+            $pdf_transaction = PDF::loadView('pdf-download.company-transaction-list-invoice', $dataArray);
+            $pdf_transaction->getDomPDF()->get_option('enable_html5_parser');
+            $pdf_transaction->setPaper('A4', 'landscape');
+
+            $message->from('noreply@medicloud.sg', 'MediCloud');
+            $message->to($dataArray['emailTo'],$dataArray['emailName']);
+            $message->subject($dataArray['emailSubject']);
+            $message->cc($dataArray['ccs']);
+            $message->attachData($pdf->output(), $dataArray['statement_number'].'.pdf');
+            $message->attachData($pdf_transaction->output(), $dataArray['statement_number'].'.pdf');
+        }); 
+    }
+
     public static function sendEmailCompanyInvoiceWithAttachment($dataArray) {
         Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $pdf = PDF::loadView('invoice.hr-statement-invoice', $dataArray);
