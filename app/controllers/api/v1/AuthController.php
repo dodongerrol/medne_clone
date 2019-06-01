@@ -5016,11 +5016,11 @@ public function createEclaim( )
                   return Response::json($returnObject);
                 }
                 
-                if (false !== mb_strpos($file->getMimeType(), "video")) {
-                  $returnObject->status = FALSE;
-                  $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
-                  return Response::json($returnObject);
-                }
+                // if (false !== mb_strpos($file->getMimeType(), "video")) {
+                //   $returnObject->status = FALSE;
+                //   $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
+                //   return Response::json($returnObject);
+                // }
               } else {
                 $returnObject->status = FALSE;
                 $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
