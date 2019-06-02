@@ -4903,7 +4903,7 @@ public function createEclaim( )
                return Response::json($returnObject);
            }
 
-           $file_types = ["jpeg","jpg","png","pdf","xls","xlsx","PNG", "JPG", "JPEG"];
+           $file_types = ["jpeg","jpg","png","pdf","xls","xlsx","tif","bmp","tiff"];
 
            if(empty($input['amount']) || $input['amount'] == null) {
                $returnObject->status = FALSE;
@@ -4984,49 +4984,49 @@ public function createEclaim( )
 
               // check if file is image
               
-              $validator = Validator::make(
-                  array('file' => $file),
-                  $rules
-              );
+              // $validator = Validator::make(
+              //     array('file' => $file),
+              //     $rules
+              // );
               // return array('res' => $validator);
-              // $result_type = in_array($file->getClientOriginalExtension(), $file_types);
-              // if(!$result_type) {
-              //     $returnObject->status = FALSE;
-              //     $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF and Excel.';
+              $result_type = in_array(strtolower($file->getClientOriginalExtension()), $file_types);
+              if(!$result_type) {
+                  $returnObject->status = FALSE;
+                  $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image or PDF.';
+                  return Response::json($returnObject);
+              }
+              // if($validator->fails()){
+              //   $returnObject->status = FALSE;
+              //     $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image or PDF';
               //     return Response::json($returnObject);
               // }
-    //           if($validator->fails()){
-    //             $returnObject->status = FALSE;
-    //               $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF or Excel.';
-    //               return Response::json($returnObject);
-    //           }
-    //           $file_size = $file->getSize();
-    // // check file size if exceeds 10 mb
-    //           if($file_size > 10000000) {
-    //             $returnObject->status = FALSE;
-    //             $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
-    //             return Response::json($returnObject);
-    //         }
-              // return $file->getPathName();
-              if($validator->passes()) {
-                $file_size = $file->getSize();
-                // check file size if exceeds 10 mb
-                if($file_size > 10000000) {
-                  $returnObject->status = FALSE;
-                  $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
-                  return Response::json($returnObject);
-                }
-                
-                // if (false !== mb_strpos($file->getMimeType(), "video")) {
-                //   $returnObject->status = FALSE;
-                //   $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
-                //   return Response::json($returnObject);
-                // }
-              } else {
+              $file_size = $file->getSize();
+    // check file size if exceeds 10 mb
+              if($file_size > 10000000) {
                 $returnObject->status = FALSE;
-                $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
+                $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
                 return Response::json($returnObject);
-              }
+            }
+              // return $file->getPathName();
+              // if($validator->passes()) {
+              //   $file_size = $file->getSize();
+              //   // check file size if exceeds 10 mb
+              //   if($file_size > 10000000) {
+              //     $returnObject->status = FALSE;
+              //     $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
+              //     return Response::json($returnObject);
+              //   }
+                
+              //   // if (false !== mb_strpos($file->getMimeType(), "video")) {
+              //   //   $returnObject->status = FALSE;
+              //   //   $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
+              //   //   return Response::json($returnObject);
+              //   // }
+              // } else {
+              //   $returnObject->status = FALSE;
+              //   $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
+              //   return Response::json($returnObject);
+              // }
         }
 
         $returnObject->status = TRUE;
@@ -5108,8 +5108,8 @@ public function createEclaim( )
                   $receipt_type = "xls";
                   $file->move(public_path().'/receipts/', $file_name);
               } else {
-                  $image = \Cloudinary\Uploader::upload($file->getPathName());
-                  // $image = \Cloudinary\Uploader::upload($file->getRealPath());
+                    // $image = \Cloudinary\Uploader::upload($file->getPathName());
+                  $image = \Cloudinary\Uploader::upload($file->getRealPath());
                   $receipt_file = $image['secure_url'];
                   $receipt_type = "image";
               }
