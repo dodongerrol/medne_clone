@@ -5007,6 +5007,7 @@ public function createEclaim( )
     //             $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
     //             return Response::json($returnObject);
     //         }
+              // return $file->getPathName();
               if($validator->passes()) {
                 $file_size = $file->getSize();
                 // check file size if exceeds 10 mb
@@ -5107,8 +5108,8 @@ public function createEclaim( )
                   $receipt_type = "xls";
                   $file->move(public_path().'/receipts/', $file_name);
               } else {
-                    // $image = \Cloudinary\Uploader::upload($file->getPathName());
-                  $image = \Cloudinary\Uploader::upload($file->getRealPath());
+                  $image = \Cloudinary\Uploader::upload($file->getPathName());
+                  // $image = \Cloudinary\Uploader::upload($file->getRealPath());
                   $receipt_file = $image['secure_url'];
                   $receipt_type = "image";
               }
