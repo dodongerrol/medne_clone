@@ -209,13 +209,11 @@ class SpendingInvoiceController extends \BaseController {
 		$companies = DB::table('corporate')
                     ->join('customer_link_customer_buy', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
                     // ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_link_customer_buy.customer_buy_start_id')
-                    // ->where('customer_link_customer_buy.customer_buy_start_id', 1)
+                    // ->where('customer_link_customer_buy.customer_buy_start_id', 126)
                     ->get();
         // return $companies;
         $start = date('Y-m-01', strtotime('-1 month'));
         $temp_end = date('Y-m-t', strtotime('-1 month'));
-        // $start = date('Y-m-01');
-        // $temp_end = date('Y-m-t');
         $end = SpendingInvoiceLibrary::getEndDate($temp_end);
 
         $total_success_generate = 0;
@@ -233,7 +231,7 @@ class SpendingInvoiceController extends \BaseController {
              if($check) {
 
              	$credit_check = SpendingInvoiceLibrary::checkTotalCreditsInNetworkTransactions($company->customer_buy_start_id, $start, $end);
-
+                // return $credit_check;
              	if($credit_check['total_credits'] > 0 || $credit_check['total_consultation'] > 0) {
 
              		$total_credits_generate += $credit_check['total_credits'];
@@ -264,8 +262,7 @@ class SpendingInvoiceController extends \BaseController {
 			        }
 
 			        if($statement_id) {
-				        $statement = SpendingInvoiceLibrary::getInvoiceSpending($statement_id, false);
-				        
+				        $statement = SpendingInvoiceLibrary::getInvoiceSpending($statement_id, true);
                         if($statement && $statement['statement_contact_email']) {
                             $company_details = DB::table('corporate')
                                     ->join('customer_link_customer_buy', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
@@ -302,18 +299,19 @@ class SpendingInvoiceController extends \BaseController {
                                 'emailPage'                     => 'email-templates.company-monthly-invoice',
                                 'emailName'                      => ucwords($company_details->company_name),
                                 'lite_plan'                     => $statement['lite_plan'],
-                                'payment_remarks'               => $statement['payment_remarks']
+                                'payment_remarks'               => $statement['payment_remarks'],
+                                'in_network'                    => $statement['in_network']
                             );
 
                              if((int)$check->spending_notification == 1) {
+                                $ccs = [];
+                                $ccs[] = 'info@medicloud.sg';
                                 // send to email with attachment
-                                EmailHelper::sendEmailCompanyInvoiceWithAttachment($new_statement);
                                 $business_contact = DB::table('customer_business_contact')
                                     ->where('customer_buy_start_id', $statement['customer_id'])
                                     ->first();
-                                if($business_contact) {
-                                    $new_statement['emailTo'] = $business_contact->work_email ? $business_contact->work_email : 'developer.mednefits@gmail.com';
-                                    EmailHelper::sendEmailCompanyInvoiceWithAttachment($new_statement);
+                                if($business_contact && $business_contact->work_email && (int)$business_contact->send_email_billing == 1) {
+                                    $ccs[] = $business_contact->work_email ? $business_contact->work_email : 'developer.mednefits@gmail.com';
                                 }
 
                                 // get company contacts
@@ -324,9 +322,13 @@ class SpendingInvoiceController extends \BaseController {
                                                         ->get();
 
                                 foreach ($company_contacts as $key => $contact) {
-                                    $billing['emailTo'] = $contact->email ? $contact->email : 'developer.mednefits@gmail.com';
-                                    EmailHelper::sendEmailCompanyInvoiceWithAttachment($billing);
+                                    if($contact && $contact->email && (int)$contact->send_email_billing == 1) {
+                                        $ccs[] = $contact->email ? $contact->email : 'developer.mednefits@gmail.com';
+                                    }
                                 }
+
+                                $new_statement['ccs'] = $ccs;
+                                EmailHelper::sendNewEmailCompanyInvoiceWithAttachment($new_statement);
                             }
                             try {
                                 $admin_logs = array(

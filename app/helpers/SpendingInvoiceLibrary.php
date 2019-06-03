@@ -115,7 +115,7 @@
 	                $temp_trans_lite_plan = DB::table('transaction_history')
 	                                ->whereIn('UserID', $ids)
 	                                // ->where('mobile', 1)
-	                                ->where('in_network', 1)
+	                                // ->where('in_network', 1)
 	                                ->where('lite_plan_enabled', 1)
 	                                // ->where('health_provider_done', 0)
 	                                ->where('deleted', 0)
@@ -127,17 +127,19 @@
 
 	                $temp_trans = DB::table('transaction_history')
 	                                ->whereIn('UserID', $ids)
-	                                ->where('mobile', 1)
-	                                ->where('in_network', 1)
-	                                ->where('health_provider_done', 0)
+	                                // ->where('mobile', 1)
+	                                // ->where('in_network', 1)
+	                                // ->where('health_provider_done', 0)
 	                                ->where('lite_plan_enabled', 0)
+	                                ->where('credit_cost', '>', 0)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
 	                                ->where('created_at', '>=', $start)
 	                                ->where('created_at', '<=', $end)
 	                                ->orderBy('created_at', 'desc')
 	                                ->get();
-	                $in_network = array_merge($temp_trans, $temp_trans_lite_plan);
+	                $transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
+	                $in_network = self::my_array_unique($transactions_temp);
 	            // } else {
 	            //     $in_network = DB::table('transaction_history')
 	            //                     ->whereIn('UserID', $ids)
@@ -332,12 +334,14 @@
 							}
 
 							// check if there is a receipt image
-							$receipt = DB::table('user_image_receipt')->where('transaction_id', $trans['transaction_id'])->count();
+							$receipt = DB::table('user_image_receipt')->where('transaction_id', $trans['transaction_id'])->get();
 
-							if($receipt > 0) {
+							if(sizeof($receipt) > 0) {
 							  $receipt_status = TRUE;
+							  $receipt_files = $receipt;
 							} else {
 							  $receipt_status = FALSE;
+							  $receipt_files = FALSE;
 							}
 
 							$half_credits = false;
@@ -467,6 +471,7 @@
 								'member'            => ucwords($customer->Name),
 								'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 								'receipt_status'    => $receipt_status,
+								'receipt_files'      => $receipt_files,
 								'health_provider_status' => $health_provider_status,
 								'user_id'           => $trans['UserID'],
 								'type'              => 'In-Network',
@@ -562,19 +567,52 @@
 	                    $dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
 	                    $relationship = FALSE;
 	                    $bank_account_number = $temp_account->bank_account;
-						$bank_name = $temp_account->bank_name;
-						$bank_code = $temp_account->bank_code;
-						$bank_brh = $temp_account->bank_brh;
+											$bank_name = $temp_account->bank_name;
+											$bank_code = $temp_account->bank_code;
+											$bank_brh = $temp_account->bank_brh;
 	                } else {
 	                    $sub_account = FALSE;
 	                    $sub_account_type = FALSE;
 	                    $owner_id = $member->UserID;
 	                    $dependent_relationship = FALSE;
 	                    $bank_account_number = $member->bank_account;
-						$bank_name = $member->bank_name;
-						$bank_code = $member->bank_code;
-						$bank_brh = $member->bank_brh;
+											$bank_name = $member->bank_name;
+											$bank_code = $member->bank_code;
+											$bank_brh = $member->bank_brh;
 	                }
+
+	                $docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
+
+									if(sizeof($docs) > 0) {
+										$e_claim_receipt_status = TRUE;
+										$doc_files = [];
+										foreach ($docs as $key => $doc) {
+											if($doc->file_type == "pdf" || $doc->file_type == "xls") {
+												if(StringHelper::Deployment()==1){
+													$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+												} else {
+													$fil = url('').'/receipts/'.$doc->doc_file;
+												}
+												$image_link = null;
+											} else if($doc->file_type == "image") {
+												$fil = $doc->doc_file;
+												$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 40);
+											}
+
+											$temp_doc = array(
+												'e_claim_doc_id'    => $doc->e_claim_doc_id,
+												'e_claim_id'            => $doc->e_claim_id,
+												'file'                      => $fil,
+												'file_type'             => $doc->file_type,
+												'image_link'	 	=> $image_link
+											);
+
+											array_push($doc_files, $temp_doc);
+										}
+									} else {
+										$e_claim_receipt_status = FALSE;
+										$doc_files = FALSE;
+									}
 
 	                $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
@@ -602,10 +640,12 @@
 	                    'spending_type'     => $res->spending_type,
 	                    'dependent_relationship'	=> $dependent_relationship,
 	                    'bank_account_number' => $bank_account_number,
-						'bank_name'					=> $bank_name,
-						'bank_code'					=> $bank_code,
-						'bank_brh'					=> $bank_brh,
-						'nric'							=> $member->NRIC
+	                    'files'             => $doc_files,
+	                    'receipt_status'    => $e_claim_receipt_status,
+											'bank_name'					=> $bank_name,
+											'bank_code'					=> $bank_code,
+											'bank_brh'					=> $bank_brh,
+											'nric'							=> $member->NRIC
 	                );
 
 	                array_push($e_claim, $temp);
@@ -705,32 +745,33 @@
 	            $ids = StringHelper::getSubAccountsID($member->user_id);
 
 	            // if($lite_plan) {
-	                $temp_trans_lite_plan = DB::table('transaction_history')
-	                                ->whereIn('UserID', $ids)
-	                                // ->where('mobile', 1)
-	                                ->where('in_network', 1)
-	                                ->where('lite_plan_enabled', 1)
-	                                // ->where('health_provider_done', 0)
-	                                ->where('deleted', 0)
-	                                ->where('paid', 1)
-	                                ->where('created_at', '>=', $start)
-	                                ->where('created_at', '<=', $end)
-	                                ->orderBy('created_at', 'desc')
-	                                ->get();
+	                // $temp_trans_lite_plan = DB::table('transaction_history')
+	                //                 ->whereIn('UserID', $ids)
+	                //                 // ->where('mobile', 1)
+	                //                 // ->where('in_network', 1)
+	                //                 ->where('lite_plan_enabled', 1)
+	                //                 // ->where('health_provider_done', 0)
+	                //                 ->where('deleted', 0)
+	                //                 ->where('paid', 1)
+	                //                 ->where('created_at', '>=', $start)
+	                //                 ->where('created_at', '<=', $end)
+	                //                 ->orderBy('created_at', 'desc')
+	                //                 ->get();
 
-	                $temp_trans = DB::table('transaction_history')
-	                                ->whereIn('UserID', $ids)
-	                                ->where('mobile', 1)
-	                                ->where('in_network', 1)
-	                                ->where('health_provider_done', 0)
-	                                ->where('lite_plan_enabled', 0)
-	                                ->where('deleted', 0)
-	                                ->where('paid', 1)
-	                                ->where('created_at', '>=', $start)
-	                                ->where('created_at', '<=', $end)
-	                                ->orderBy('created_at', 'desc')
-	                                ->get();
-	                $in_network = array_merge($temp_trans, $temp_trans_lite_plan);
+	                // $temp_trans = DB::table('transaction_history')
+	                //                 ->whereIn('UserID', $ids)
+	                //                 // ->where('mobile', 1)
+	                //                 // ->where('in_network', 1)
+	                //                 // ->where('health_provider_done', 0)
+	                //                 ->where('credit_cost', '>', 0)
+	                //                 ->where('lite_plan_enabled', 0)
+	                //                 ->where('deleted', 0)
+	                //                 ->where('paid', 1)
+	                //                 ->where('created_at', '>=', $start)
+	                //                 ->where('created_at', '<=', $end)
+	                //                 ->orderBy('created_at', 'desc')
+	                //                 ->get();
+	                // $in_network = array_merge($temp_trans, $temp_trans_lite_plan);
 	            // } else {
 	            //     $in_network = DB::table('transaction_history')
 	            //                     ->whereIn('UserID', $ids)
@@ -745,6 +786,30 @@
 	            //                     ->get();
 	                
 	            // }
+
+	            $temp_trans_lite_plan = DB::table('transaction_history')
+	                                ->whereIn('UserID', $ids)
+	                                // ->where('in_network', 1)
+	                                ->where('lite_plan_enabled', 1)
+	                                ->where('deleted', 0)
+	                                ->where('paid', 1)
+	                                ->where('created_at', '>=', $start)
+	                                ->where('created_at', '<=', $end)
+	                                ->orderBy('created_at', 'desc')
+	                                ->get();
+
+	            $temp_trans = DB::table('transaction_history')
+	                            ->whereIn('UserID', $ids)
+	                            // ->where('in_network', 1)
+	                            ->where('credit_cost', '>', 0)
+	                            ->where('deleted', 0)
+	                            ->where('paid', 1)
+	                            ->where('created_at', '>=', $start)
+	                            ->where('created_at', '<=', $end)
+	                            ->orderBy('created_at', 'desc')
+	                            ->get();
+	            $transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
+	            $in_network = self::my_array_unique($transactions_temp);
 
 	            foreach ($in_network as $key => $trans) {
 	                array_push($transactions, $trans->transaction_id);
@@ -774,10 +839,10 @@
 	        foreach ($corporate_members as $key => $member) {
 	           $ids = StringHelper::getSubAccountsID($member->user_id);
 
-	            if($lite_plan) {
+	            // if($lite_plan) {
 	                $temp_trans_lite_plan = DB::table('transaction_history')
 	                                ->whereIn('UserID', $ids)
-	                                ->where('in_network', 1)
+	                                // ->where('in_network', 1)
 	                                ->where('lite_plan_enabled', 1)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
@@ -788,7 +853,7 @@
 
 	                $temp_trans = DB::table('transaction_history')
 	                                ->whereIn('UserID', $ids)
-	                                ->where('in_network', 1)
+	                                // ->where('in_network', 1)
 	                                ->where('credit_cost', '>', 0)
 	                                ->where('deleted', 0)
 	                                ->where('paid', 1)
@@ -798,26 +863,27 @@
 	                                ->get();
 	                $transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
 	                $transactions = self::my_array_unique($transactions_temp);
-	            } else {
-	                // get in-network transactions
-	                $transactions = DB::table('transaction_history')
-	                                ->whereIn('UserID', $ids)
-	                                // ->where('in_network', 1)
-	                                ->where('health_provider_done', 0)
-	                                ->where('deleted', 0)
-	                                ->where('created_at', '>=', $start)
-	                                ->where('created_at', '<=', $end)
-	                                ->orderBy('created_at', 'desc')
-	                                ->get();
+	            // } else {
+	            //     // get in-network transactions
+	            //     $transactions = DB::table('transaction_history')
+	            //                     ->whereIn('UserID', $ids)
+	            //                     // ->where('in_network', 1)
+	            //                     ->where('health_provider_done', 0)
+	            //                     ->where('deleted', 0)
+	            //                     ->where('created_at', '>=', $start)
+	            //                     ->where('created_at', '<=', $end)
+	            //                     ->orderBy('created_at', 'desc')
+	            //                     ->get();
 	                
-	            }
+	            // }
 
+	            // return $transactions;
 
 	            // in-network transactions
 	            foreach ($transactions as $key => $trans) {
 	              if($trans) {
 	                $total_transaction_spent += $trans->credit_cost;
-	                if($lite_plan && $trans->lite_plan_enabled == 1) {
+	                if($trans->lite_plan_enabled == 1) {
 
 	                    if($trans->spending_type == 'medical') {
 	                        $table_wallet_history = 'wallet_history';
@@ -825,22 +891,22 @@
 	                        $table_wallet_history = 'wellness_wallet_history';
 	                    }
 
-	                    if($lite_plan && $trans->lite_plan_enabled == 1) {
+	                    if($trans->lite_plan_enabled == 1) {
 	                        $logs_lite_plan = DB::table($table_wallet_history)
 	                        ->where('logs', 'deducted_from_mobile_payment')
 	                        ->where('lite_plan_enabled', 1)
 	                        ->where('id', $trans->transaction_id)
 	                        ->first();
 
-	                        if($logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === 0 || $logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
+	                        if($logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits == 0) {
 	                            $total_consultation += floatval($logs_lite_plan->credit);
 	                            $consultation_credits = true;
 	                            $service_credits = true;
-	                        } else if($logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 1 || $logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
+	                        } else if($logs_lite_plan && $trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits == 1){
 	                            $total_consultation += floatval($logs_lite_plan->credit);
 	                            $consultation_credits = true;
 	                            $service_credits = true;
-	                        } else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
+	                        } else if($trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits == 0){
 	                            $total_consultation += floatval($trans->consultation_fees);
 	                        }
 	                    }
