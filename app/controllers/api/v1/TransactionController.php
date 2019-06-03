@@ -385,8 +385,8 @@ class Api_V1_TransactionController extends \BaseController
 										$email['health_provider_phone'] = $clinic->Phone;
 										$email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
 										$email['emailSubject'] = 'Member - Successful Transaction';
-										// $email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
-										$email['emailTo'] = 'allan.alzula.work@gmail.com';
+										$email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
+										// $email['emailTo'] = 'allan.alzula.work@gmail.com';
 										$email['emailName'] = ucwords($user->Name);
 										$email['url'] = 'http://staging.medicloud.sg';
 										$email['clinic_type_image'] = $image;
@@ -408,8 +408,8 @@ class Api_V1_TransactionController extends \BaseController
 											if($clinic_email) {
 											 $email['emailSubject'] = 'Health Partner - Successful Transaction By Mednefits Credits';
 											 $email['nric'] = $user->NRIC;
-											 // $email['emailTo'] = $clinic_email->Email;
-											 $email['emailTo'] = 'allan.alzula.work@gmail.com';
+											 $email['emailTo'] = $clinic_email->Email;
+											 // $email['emailTo'] = 'allan.alzula.work@gmail.com';
 											 $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
 											 $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
 											 $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
