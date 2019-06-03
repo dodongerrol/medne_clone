@@ -1746,7 +1746,7 @@ public function getNewClinicDetails($id)
                $returnObject->message = 'Clinic not found.';
                return Response::json($returnObject);
            }
-
+           $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
            $owner_id = StringHelper::getUserId($findUserID);
 
                             // check block access
@@ -1863,6 +1863,7 @@ public function getNewClinicDetails($id)
         }
 
         $jsonArray['current_balance'] = $currency.' '.$balance;
+        $jsonArray['balance'] = $current_balance;
         $jsonArray['current_balance_in_sgd'] = $current_balance;
         $jsonArray['currency_symbol'] = $currency;
         $jsonArray['cap_currency_symbol'] = $cap_currency_symbol;
@@ -1897,19 +1898,18 @@ public function getNewClinicDetails($id)
         $returnObject->data['consultation_fee_symbol'] = "S$";
         $consultation_status = StringHelper::newLitePlanStatus($findUserID);
         $returnObject->data['consultation_status'] = $consultation_status;
-        if($consultation_status == true) {
+        if($consultation_status == true && (int)$clinic_type->lite_plan_enabled == 1) {
           $clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $owner_id);
           $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
           $returnObject->data['consultation_fees'] = $clinic->currency_type == "myr" ? $consultation_fees * 3.00 : $consultation_fees;
           $returnObject->data['consultation_fee_symbol'] = $clinic->currency_type == "myr" ? "RM" : "S$";
         } else {
           $returnObject->data['consultation_fee_symbol'] = null;
-          $returnObject->data['consultation_fees'] = null;
+          $returnObject->data['consultation_fees'] = 0;
         }
 
-        // $returnObject->data['consultation_status'] = StringHelper::newLitePlanStatus($findUserID);
         // send socket connection
-        // PusherHelper::sendClinicCheckInNotification($check_in->id, $clinic->ClinicID);
+        PusherHelper::sendClinicCheckInNotification($check_in->id, $clinic->ClinicID);
         return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;

@@ -968,7 +968,8 @@ Route::group(array('prefix' => 'v2'), function()
 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
 		    // check user pin
 		    Route::post('clinic/send_payment', 'Api_V1_AuthController@payCredits');
-		    Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
+		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
+		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
 		    // send notification to clinic when customer will pay directly to clinic
 		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
 		    // save photo receipt
@@ -982,13 +983,15 @@ Route::group(array('prefix' => 'v2'), function()
 		    // update or insert wallet setting
 		    Route::post('user/set_wallet_settings', 'Api_V1_AuthController@setWalletSettings');
 		    // get in-network transaction lists
-		    Route::get('user/in_network_transactions', 'Api_V1_AuthController@getNetworkTransactions');
+		    Route::get('user/in_network_transactions', 'Api_V1_TransactionController@getNetworkTransactions');
 		    // get specific in-network transaction
-		    Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
+		    // Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
+		    Route::get('user/specific_in_network/{id}', 'Api_V1_TransactionController@getInNetworkDetails');
 		    // upload receipt e-claim
 		    // Route::post('user/upload_out_of_network_receipt', 'Api_V1_AuthController@uploadReceipt');
 		    // upload receipt in-network
 		    Route::post('user/upload_in_network_receipt', 'Api_V1_AuthController@uploadInNetworkReceipt');
+		    Route::post('user/upload_in_network_receipt_bulk', 'Api_V1_TransactionController@uploadInNetworkReceiptBulk');
 		    // get e-claim transactions
 		    Route::get('user/e_claim_transactions', 'Api_V1_AuthController@getEclaimTransactions');
 		    Route::get('user/specific_e_claim_transaction/{id}', 'Api_V1_AuthController@getEclaimDetails');

@@ -866,11 +866,13 @@ public static function get_random_password($length)
           $customer_id = self::getCustomerId($id);
 
           if(!$customer_id) {
-              return FALSE;
+            return FALSE;
           }
           
-          $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-
+          $plan = DB::table('customer_plan')
+                    ->where('customer_buy_start_id', $customer_id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
           if($plan->account_type == "lite_plan") {
               return TRUE;
           } else if($plan->account_type == "insurance_bundle" && $plan->secondary_account_type == "insurance_bundle_lite" || $plan->account_type == "trial_plan" && $plan->secondary_account_type == "trial_plan_lite") {

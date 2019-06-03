@@ -124,5 +124,12 @@ class TransactionHelper
 
     return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => $consultation_fees, 'clinic_peak_status' => $clinic_peak_status);
 	}
+
+  public static function floatvalue($val){
+    return str_replace(",", "", $val);
+    $val = str_replace(",",".",$val);
+    $val = preg_replace('/\.(?=.*\.)/', '', $val);
+    return floatval($val);
+  }
 }
 ?>
