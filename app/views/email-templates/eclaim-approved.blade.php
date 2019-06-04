@@ -62,7 +62,7 @@
 
           <p>Your E-claim that was successfully submitted has been approved by your company administrator.</p>
 
-          <p>Login to find out more details regarding the rejected claim. If you have any questions, please contact your company administrator.</p>
+          <p>Login to find out more details regarding the approved claim. If you have any questions, please contact your company administrator.</p>
 
           <a href="{{ $url }}/member-portal#/activity" style="width:170px;margin: 20px 30px 30px 0;padding: 14px 0px;border: none;border-radius: 4px;background: #3b84f1;color: #FFF;display: inline-block;font-size: 12px;text-decoration: none;text-align: center;">View Claim</a>
 
