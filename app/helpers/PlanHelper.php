@@ -1742,7 +1742,6 @@ class PlanHelper {
 		public static function memberMedicalAllocatedCredits($wallet_id, $user_id)
 		{
 			
-			
 			$get_allocation = 0;
 			$deducted_credits = 0;
 			$credits_back = 0;
@@ -1811,19 +1810,26 @@ class PlanHelper {
 
 			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
+			$medical_balance = 0;
 
 			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent;
+				$medical_balance = $balance;
+
 				if($balance < 0) {
 					$balance = 0;
+					$medical_balance = $balance;
 				}
 			} else {
 				$allocation = $get_allocation - $deducted_credits;
 				$balance = $allocation - $get_allocation_spent;
+				$medical_balance = $balance;
 				$total_deduction_credits += $deducted_credits;
+
 				if($user->Active == 0) {
 					$deleted_employee_allocation = $get_allocation - $deducted_credits;
+					$medical_balance = 0;
 				}
 			}
 
@@ -1831,7 +1837,7 @@ class PlanHelper {
 				$allocation = 0;
 			}
 
-			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits);
+			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance);
 		}
 
 		public static function memberWellnessAllocatedCredits($wallet_id, $user_id)
@@ -1900,24 +1906,28 @@ class PlanHelper {
 
 			$get_allocation_spent_temp_wellness = $in_network_wellness_temp_spent - $credits_back_wellness;
 			$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
-			
+			$wellness_balance = 0;
 
 			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation_wellness = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
 				if($balance < 0) {
 					$balance = 0;
+					$wellness_balance = $balance;
 				}
 			} else {
 				$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
 				$total_deduction_credits_wellness = $deducted_wellness_credits;
 				$balance = $allocation_wellness - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
 				if($user->Active == 0) {
 					$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+					$wellness_balance = 0;
 				}
 			}
 
-			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness);
+			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance);
 		}
 
 		public static function getPlanDuration($customer_id, $plan_start)
