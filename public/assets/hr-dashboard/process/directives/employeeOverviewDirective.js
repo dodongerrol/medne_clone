@@ -655,6 +655,8 @@ app.directive("employeeOverviewDirective", [
                   value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                   value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
                   value.start_date = moment( value.start_date ).format("DD/MM/YYYY");
+                  value.start_date_format = moment( value.start_date, 'DD/MM/YYYY' ).format("DD MMMM YYYY");
+                  value.end_date_format = moment( value.expiry_date ).format("DD MMMM YYYY");
                   // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
                 });
                 $(".employee-overview-pagination").hide();
@@ -1074,7 +1076,7 @@ app.directive("employeeOverviewDirective", [
                 value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                 value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
                 value.start_date = moment( value.start_date ).format("DD/MM/YYYY");
-                value.start_date_format = moment( value.start_date ).format("DD MMMM YYYY");
+                value.start_date_format = moment( value.start_date, 'DD/MM/YYYY' ).format("DD MMMM YYYY");
                 value.end_date_format = moment( value.expiry_date ).format("DD MMMM YYYY");
                 // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
               });
