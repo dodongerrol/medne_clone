@@ -415,8 +415,8 @@ class Api_V1_TransactionController extends \BaseController
 										$email['health_provider_phone'] = $clinic->Phone;
 										$email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
 										$email['emailSubject'] = 'Member - Successful Transaction';
-										// $email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
-										$email['emailTo'] = 'allan.alzula.work@gmail.com';
+										$email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
+										// $email['emailTo'] = 'allan.alzula.work@gmail.com';
 										$email['emailName'] = ucwords($user->Name);
 										$email['url'] = 'http://staging.medicloud.sg';
 										$email['clinic_type_image'] = $image;
