@@ -843,6 +843,14 @@ class Api_V1_TransactionController extends \BaseController
 							}
 						}
 
+						$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
+
+						if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == false) {
+							$service_credits = false;
+							$consultation_credits = false;
+							$lite_plan_status = false;
+						}
+
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,
 							'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
@@ -857,7 +865,9 @@ class Api_V1_TransactionController extends \BaseController
 							'consultation_fee'	=> $consultation_fee,
 							'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost * $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
 							'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($transaction->credit_cost * $transaction->currency_amount, 2) : number_format($transaction->credit_cost, 2),
-							'files'             => $doc_files
+							'files'             => $doc_files,
+							'lite_plan'         => $lite_plan_status,
+							'lite_plan_enabled' => $transaction->lite_plan_enabled,
 						);
 
 						$returnObject->data = $transaction_details;
