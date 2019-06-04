@@ -372,6 +372,21 @@ class Api_V1_TransactionController extends \BaseController
 										$type = $clinic_type_properties['type'];
 										$image = $clinic_type_properties['image'];
 
+										// check if check_in_id exist
+										if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
+											// check check_in_id data
+											$check_in = DB::table('user_check_in_clinic')
+											->where('check_in_id', $input['check_in_id'])
+											->first();
+											if($check_in) {
+												// update check in date
+												DB::table('user_check_in_clinic')
+												->where('check_in_id', $input['check_in_id'])
+												->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+												PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
+											}
+										}
+
 										// send email
 										$email['member'] = ucwords($user->Name);
 										$email['credits'] = $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2);
