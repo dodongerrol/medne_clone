@@ -851,7 +851,7 @@ class PlanHelper {
 
 		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
 
-		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
+		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date, 'customer_plan_id' => $plan->customer_plan_id);
 	}
 
 	public static function checkDuplicateNRIC($nric)
@@ -1749,6 +1749,8 @@ class PlanHelper {
 			$deducted_by_hr_medical = 0;
 			$in_network_temp_spent = 0;
 			$e_claim_spent = 0;
+			$deleted_employee_allocation = 0;
+			$total_deduction_credits = 0;
 
             // check if employee has reset credits
 			$employee_credit_reset_medical = DB::table('credit_reset')
@@ -1787,7 +1789,6 @@ class PlanHelper {
 
 				if($history->logs == "deducted_by_hr") {
 					$deducted_credits += $history->credit;
-                    // $deducted_by_hr_medical += $history->credit;
 				}
 
 				if($history->where_spend == "e_claim_transaction") {
@@ -1808,7 +1809,7 @@ class PlanHelper {
 			->where('logs', 'pro_allocation')
 			->sum('credit');
 
-			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back - $deducted_by_hr_medical;
+			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 
 			if($pro_allocation > 0 && (int)$user->Active == 0) {
@@ -1820,9 +1821,17 @@ class PlanHelper {
 			} else {
 				$allocation = $get_allocation - $deducted_credits;
 				$balance = $allocation - $get_allocation_spent;
+				$total_deduction_credits += $deducted_credits;
+				if($user->Active == 0) {
+					$deleted_employee_allocation = $get_allocation - $deducted_credits;
+				}
 			}
 
-			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp);
+			if($pro_allocation > 0) {
+				$allocation = 0;
+			}
+
+			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits);
 		}
 
 		public static function memberWellnessAllocatedCredits($wallet_id, $user_id)
@@ -1833,7 +1842,8 @@ class PlanHelper {
 			$credits_back_wellness = 0;
 			$in_network_wellness_temp_spent = 0;
 			$deducted_wellness_credits = 0;
-			
+			$deleted_employee_allocation_wellness = 0;
+			$total_deduction_credits_wellness = 0;
             // get all user wallet logs wellness
 			$employee_credit_reset_wellness = DB::table('credit_reset')
 			->where('id', $user_id)
@@ -1900,10 +1910,14 @@ class PlanHelper {
 				}
 			} else {
 				$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+				$total_deduction_credits_wellness = $deducted_wellness_credits;
 				$balance = $allocation_wellness - $get_allocation_spent_wellness;
+				if($user->Active == 0) {
+					$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+				}
 			}
 
-			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness);
+			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness);
 		}
 
 		public static function getPlanDuration($customer_id, $plan_start)
