@@ -111,7 +111,21 @@ class Api_V1_TransactionController extends \BaseController
 						$consultation_fees = 0;
 					}
 
-					$input_amount = TransactionHelper::floatvalue($input['input_amount']) + TransactionHelper::floatvalue($consultation_fees);
+					if($clinic->currency_type == "myr") {
+						$input_amount = TransactionHelper::floatvalue($input['input_amount']) + TransactionHelper::floatvalue($consultation_fees * 3);
+					} else {
+						$input_amount = TransactionHelper::floatvalue($input['input_amount']) + TransactionHelper::floatvalue($consultation_fees);
+					}
+
+					// check for lite plan
+					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+						if($consultation_fees > $user_credits) {
+							$returnObject->status = FALSE;
+	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
+	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+	            return Response::json($returnObject);
+						}
+					}
 
 					if($clinic->currency_type == "myr") {
 					  $total_amount = $input_amount / 3;
@@ -119,6 +133,7 @@ class Api_V1_TransactionController extends \BaseController
 					  $total_amount = $input_amount;
 					}
 
+					// return $total_amount;
 					// get details for clinic co paid
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
 					$peak_amount = $clinic_co_payment['peak_amount'];
@@ -355,7 +370,7 @@ class Api_V1_TransactionController extends \BaseController
 
 										$transaction_results = array(
 											'clinic_name'       => ucwords($clinic->Name),
-											'bill_amount'				=> $clinic->currency_type == "myr" ? number_format($input['input_amount'] * 3, 2) : number_format($input['input_amount'], 2),
+											'bill_amount'				=> number_format($input['input_amount'], 2),
 											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($consultation_fees * 3, 2) : number_format($consultation_fees, 2),
 											'total_amount'     => number_format($total_amount, 2),
 											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
@@ -400,8 +415,8 @@ class Api_V1_TransactionController extends \BaseController
 										$email['health_provider_phone'] = $clinic->Phone;
 										$email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
 										$email['emailSubject'] = 'Member - Successful Transaction';
-										$email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
-										// $email['emailTo'] = 'allan.alzula.work@gmail.com';
+										// $email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
+										$email['emailTo'] = 'allan.alzula.work@gmail.com';
 										$email['emailName'] = ucwords($user->Name);
 										$email['url'] = 'http://staging.medicloud.sg';
 										$email['clinic_type_image'] = $image;
@@ -410,7 +425,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['dl_url'] = url();
 										$email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
 										$email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE;
-										$email['total_amount'] = $clinic->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2);
+										$email['total_amount'] = number_format($total_amount, 2);
 										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * 3, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
 										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
