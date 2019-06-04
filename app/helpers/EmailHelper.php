@@ -8,7 +8,6 @@ class EmailHelper{
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
             $message->subject($dataArray['emailSubject']);
             $message->cc(['info@medicloud.sg']);
-            
         }); 
     }
 

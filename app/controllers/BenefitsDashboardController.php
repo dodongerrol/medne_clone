@@ -10238,20 +10238,11 @@ class BenefitsDashboardController extends \BaseController {
 	public function getCompanyExpirePlan( )
 	{
 		$customers = DB::table('customer_buy_start')->get();
-		$end_dates = [];
+		// $end_dates = [];
 		foreach ($customers as $key => $customer) {
-			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer->customer_buy_start_id)->orderby('created_at', 'desc')->first();
-
+			$plan = PlanHelper::getCompanyPlanDates($customer->customer_buy_start_id);
 			if($plan) {
-				// check plan
-				$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
-				if($active_plans->duration || $active_plans->duration != "") {
-					$end_plan_date = date('Y-m-d', strtotime('+'.$active_plans->duration, strtotime($plan->plan_start)));
-				} else {
-					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-				}
-
-				$date = date('Y-m-d', strtotime('-1 month', strtotime($end_plan_date)));
+				$date = date('Y-m-d', strtotime('-1 month', strtotime($plan['plan_end'])));
 
 				$expired = false;
 
@@ -10263,15 +10254,16 @@ class BenefitsDashboardController extends \BaseController {
 
 					$email = [];
 					$email['emailTo'] = $business_contact->work_email;
+					// $email['emailTo'] = 'allan.alzula.work@gmail.com';
 					$email['emailName'] = ucwords($business_contact->first_name).' '.ucwords($business_contact->last_name);
 					$email['emailSubject'] = 'Mednefits Care Plan Expiration';
 					$email['emailPage'] = 'email-templates.company_care_plan_one_month_expiration';
-					$email['date'] = date('F d, Y', strtotime('-1 day', strtotime($end_plan_date)));
+					$email['date'] = date('F d, Y', strtotime($plan['plan_end']));
 					$email['company'] = ucwords($business_info->company_name);
 					EmailHelper::sendEmail($email);
 					$temp = array(
 						'customer_id' => $customer->customer_buy_start_id,
-						'plan_end_date'	=> $end_plan_date,
+						'plan_end_date'	=> $plan['plan_end'],
 						'month_before_date'				=> $date,
 						'status'	=> $expired
 					);
@@ -10287,19 +10279,19 @@ class BenefitsDashboardController extends \BaseController {
 			        }
 				}
 
-				$temp = array(
-					'customer_id' => $customer->customer_buy_start_id,
-					'plan_end_date'	=> $end_plan_date,
-					'month_before_date'				=> $date,
-					'status'	=> $expired
-				);
+				// $temp = array(
+				// 	'customer_id' => $customer->customer_buy_start_id,
+				// 	'plan_end_date'	=> $plan['plan_end'],
+				// 	'month_before_date'				=> $date,
+				// 	'status'	=> $expired
+				// );
 
-				array_push($end_dates, $temp);
+				// array_push($end_dates, $temp);
 				
 			}
 		}
 
-		return $end_dates;
+		// return $end_dates;
 	}
 
 	public function getCompanyTotalAllocation( )
@@ -10462,24 +10454,10 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$session = self::checkSession();
 		$today = date('Y-m-d', strtotime('-1 day'));
-
-		$plan = DB::table('customer_plan')
-		->where('customer_buy_start_id', $session->customer_buy_start_id)
-		->orderBy('created_at', 'desc')
-		->first();
-
-		$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
-
-		$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->first();
-
-		if($active_plans->duration || $active_plans->duration != "") {
-			$end_plan_date = date('Y-m-d', strtotime('+'.$active_plans->duration, strtotime($plan->plan_start)));
-		} else {
-			$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-		}
+		$plan = PlanHelper::getCompanyPlanDates($session->customer_buy_start_id);
 
 		$first_date = strtotime($today);
-		$end_date = strtotime($end_plan_date);
+		$end_date = strtotime($plan['plan_end']);
 		$time_left = $end_date - $first_date;
 		$diff = round((($time_left/24)/60)/60);
 
@@ -10488,16 +10466,18 @@ class BenefitsDashboardController extends \BaseController {
 		$final_end_date = date('Y-m-d', strtotime('-1 day', $end_date));
 
 		$total_dependents = 0;
+		// for employee
+		$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan['customer_plan_id'])->first();
 		// for dependent
 		$dependent_status = DB::table('dependent_plan_status')
-								->where('customer_plan_id', $plan->customer_plan_id)
+								->where('customer_plan_id', $plan['customer_plan_id'])
 								->first();
 
 		if($dependent_status) {
 			$total_dependents = $dependent_status->total_dependents;
 		}
 		return array(
-			'start_date' 	=> date('d/m/Y', strtotime($plan->plan_start)),
+			'start_date' 	=> date('d/m/Y', strtotime($plan['plan_start'])),
 			'end_date'		=> date('d/m/Y', strtotime($final_end_date)),
 			'plan_days_to_expire' => $diff >= 0 ? $diff : 0,
 			'employees'		=> $plan_status->employees_input,
