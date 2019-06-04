@@ -183,7 +183,7 @@
 				<th>MEDICINE & TREATMENT</th>
 				<th>CONSULTATION</th>
 				@endif
-				<th>PAYMENT TYPE</th>
+				<!-- <th>PAYMENT TYPE</th> -->
   			</tr>
 
   			<!-- LOOP HERE -->
@@ -201,7 +201,7 @@
 			<td>{{ $trans['treatment'] }}</td>
 			<td>{{ $trans['consultation'] }}</td>
 			@endif
-			<td>{{ $trans['payment_type'] }}</td>
+			<!-- <td>{{ $trans['payment_type'] }}</td> -->
         </tr>
         @endforeach
     	</table>
