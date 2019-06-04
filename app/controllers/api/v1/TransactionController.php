@@ -869,6 +869,9 @@ class Api_V1_TransactionController extends \BaseController
 							'files'             => $doc_files,
 							'lite_plan'         => $lite_plan_status,
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
+							'cap_transaction'   => $half_credits,
+    						'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit * $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
+							'services' => $service
 						);
 
 						$returnObject->data = $transaction_details;
