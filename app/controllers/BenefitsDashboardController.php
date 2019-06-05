@@ -2180,6 +2180,8 @@ class BenefitsDashboardController extends \BaseController {
 		$get_allocation_spent = 0;
 		$credits_wellness = 0;
 		$get_allocation_spent_wellness = 0;
+		$total_medical_balance = 0;
+		$total_wellness_balance = 0;
 
 		$check_accessibility = self::hrStatus( );
 		if($check_accessibility['accessibility'] == 1) {
@@ -2274,11 +2276,13 @@ class BenefitsDashboardController extends \BaseController {
 				$allocated += $medical_wallet['allocation'];
 				$total_deduction_credits += $medical_wallet['total_deduction_credits'];
 				$deleted_employee_allocation += $medical_wallet['deleted_employee_allocation'];
+				$total_medical_balance += $medical_wallet['medical_balance'];
 
 				$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
 				$allocated_wellness += $wellness_wallet['allocation'];
 				$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
 				$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
+				$total_wellness_balance += $wellness_wallet['wellness_balance'];
 			}
 			
 
@@ -2305,14 +2309,14 @@ class BenefitsDashboardController extends \BaseController {
 			'total_medical_company_unallocation' => number_format($credits, 2),
 			'total_medical_employee_allocated' => number_format($total_medical_allocated, 2),
 			'total_medical_employee_spent'		=> $get_allocation_spent < 0 ? "0.00" : number_format($get_allocation_spent, 2),
-			'total_medical_employee_balance' => number_format($total_medical_allocated - $get_allocation_spent, 2),
-			'total_medical_employee_balance_number' => $total_medical_allocated - $get_allocation_spent,
+			'total_medical_employee_balance' => number_format($total_medical_balance, 2),
+			'total_medical_employee_balance_number' => $total_medical_balance,
 			'total_medical_wellness_allocation' => number_format($total_allocation_wellness, 2),
 			'total_medical_wellness_unallocation' => number_format($credits_wellness, 2),
 			'total_wellness_employee_allocated' => number_format($total_wellnesss_allocated, 2),
 			'total_wellness_employee_spent'		=> number_format($get_allocation_spent_wellness, 2),
-			'total_wellness_employee_balance' => number_format($total_wellnesss_allocated - $get_allocation_spent_wellness, 2),
-			'total_wellness_employee_balance_number' => $total_wellnesss_allocated - $get_allocation_spent_wellness,
+			'total_wellness_employee_balance' => number_format($total_wellness_balance, 2),
+			'total_wellness_employee_balance_number' => $total_wellness_balance,
 			'company_id' => $result->customer_buy_start_id
 		);
 	}
