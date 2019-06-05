@@ -7251,7 +7251,7 @@ public function generateMonthlyCompanyInvoice( )
 	{
 		$input = Input::all();
 
-		$check = DB::table('user')->where('UserType', 5)->where('Email', $input['email'])->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
+		$check = DB::table('user')->where('UserType', 5)->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
 
 		if($check) {
 			Session::put('employee-session', $check->UserID);
