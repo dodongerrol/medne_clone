@@ -2197,10 +2197,12 @@ class BenefitsDashboardController extends \BaseController {
 			->first();
 
 			if($customer_credit_reset_medical) {
+				$date = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
 				$temp_total_allocation = DB::table('customer_credit_logs')
 				->where('customer_credits_id', $company_credits->customer_credits_id)
 				->where('logs', 'admin_added_credits')
-				->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+				// ->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+				->where('created_at', '>=', $date)
 				->sum('credit');
 
 				$temp_total_deduction = DB::table('customer_credit_logs')
@@ -2234,19 +2236,21 @@ class BenefitsDashboardController extends \BaseController {
 			->first();
 
 			if($customer_credit_reset_wellness) {
-				$start = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
+				$date = date('Y-m-d', strtotime($customer_credit_reset_wellness->date_resetted));
 				$temp_total_allocation_wellness = DB::table('customer_credits')
 				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
 				->where('customer_credits.customer_id', $customer_id)
 				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
-				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+				// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+				->where('customer_wellness_credits_logs.created_at', '>=', $date)
 				->sum('customer_wellness_credits_logs.credit');
 
 				$temp_total_deduction_wellness = DB::table('customer_credits')
 				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
 				->where('customer_credits.customer_id', $customer_id)
 				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
-				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+				// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+				->where('customer_wellness_credits_logs.created_at', '>=', $date)
 				->sum('customer_wellness_credits_logs.credit');
 			} else {
 				$temp_total_allocation_wellness = DB::table('customer_credits')
