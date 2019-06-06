@@ -330,7 +330,7 @@
             </div>
           </div>
 
-          @if($lite_plan_status && $lite_plan_enabled == 1)
+          @if($lite_plan_status && $lite_plan_status == true)
           <div style="margin-bottom: 30px;min-height: 54px;">
             <div class="clinic-type-img">
             </div>
