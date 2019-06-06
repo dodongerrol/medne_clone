@@ -8255,13 +8255,13 @@ class BenefitsDashboardController extends \BaseController {
 				$emailDdata['emailName']= ucwords($contact->first_name);
 	      		// $emailDdata['emailPage']= 'email-templates.hr-password-reset';
 				$emailDdata['emailPage']= 'email-templates.latest-templates.global-reset-password-template';
-				$emailDdata['emailTo']= $input['email'];
+				$emailDdata['email']= $input['email'];
 	      		// $emailDdata['password']= $password;
 				$emailDdata['name'] = ucwords($contact->first_name);
 				$emailDdata['context'] = "Forgot your company password?";
 				$emailDdata['emailSubject'] = 'HR/Benefits Password Reset';
 				$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;
-				EmailHelper::sendEmail($emailDdata);
+				// EmailHelper::sendEmail($emailDdata);
 
 				if($contact) {
 					if((int)$contact->send_email_communication == 1 && $contact->work_email) {
