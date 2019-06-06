@@ -1145,21 +1145,36 @@ return Response::json($returnObject);
                   }
 
 
+                  $total_amount = 0;
+
+                 if(strripos($trans->procedure_cost, '$') !== false) {
+                     $temp_cost = explode('$', $trans->procedure_cost);
+                     $cost = $temp_cost[1];
+                 } else {
+                     $cost = floatval($trans->procedure_cost);
+                 }
+
+                $total_amount = $cost;
+
                   $total_amount = $trans->procedure_cost;
 
                   if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
                       $receipt_status = TRUE;
                       $health_provider_status = TRUE;
                       $credit_status = FALSE;
-                      if($trans->lite_plan_enabled == 1) {
-                        $total_amount = $trans->procedure_cost + $trans->co_paid_amount;
-                    }
+                      if((int)$trans->lite_plan_enabled == 1) {
+                          $total_amount = $cost + $trans->consultation_fees;
+                      } else {
+                          $total_amount = $cost;
+                      }
                 } else {
                   $health_provider_status = FALSE;
                   $credit_status = TRUE;
 
                   if((int)$trans->lite_plan_enabled == 1) {
-                    $total_amount = $trans->procedure_cost + $trans->co_paid_amount;
+                      $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                  } else {
+                      $total_amount = $cost;
                   }
                 }
 
@@ -1168,19 +1183,21 @@ return Response::json($returnObject);
                   $converted_amount = $total_amount;
                 } else if($trans->currency_type == "myr") {
                   $currency_symbol = "RM";
-                  $converted_amount = $total_amount * $trans->currency_amount;
+                  $converted_amount = $total_amount * 3;
                 }
 
+              $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
+              $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
               $format = array(
                 'clinic_name'       => $clinic->Name,
                 'clinic_image'      => $clinic->image,
-                'amount'            => number_format($total_amount, 2),
+                'amount'            => number_format($converted_amount, 2),
                 'converted_amount'  => number_format($converted_amount, 2),
                 'clinic_type_and_service' => $clinic_name,
                 'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
                 'customer'          => ucwords($customer->Name),
-                'transaction_id'    => $trans->transaction_id,
+                'transaction_id'    => $transaction_id,
                 // 'receipt_status'    => $receipt_status,
                 'cash_status'       => $health_provider_status,
                 'credit_status'     => $credit_status,

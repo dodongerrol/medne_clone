@@ -667,7 +667,7 @@ class Api_V1_TransactionController extends \BaseController
 
           $format = array(
            'clinic_name'       => $clinic->Name,
-           'amount'            => number_format($total_amount, 2),
+           'amount'            => $trans->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2),
            'converted_amount'  => number_format($converted_amount, 2),
            'currency_symbol'   => $currency_symbol,
            'clinic_type_and_service' => $clinic_name,
