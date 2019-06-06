@@ -5543,20 +5543,24 @@ public function updateEclaimStatus( )
 		// check e-claim if already approve
 		$employee = StringHelper::getUserId($e_claim_details->user_id);
             // check user balance
+		// recalculate balance
+		PlanHelper::reCalculateEmployeeBalance($employee);
 
 		$balance = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 
-
 		if($check->spending_type == "medical") {
-			if($e_claim_details->amount > $balance->balance) {
+			$balance_medical = round($balance->balance, 2);
+			if($e_claim_details->amount > $balance_medical) {
 				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
 			}
 		} else {
-			if($e_claim_details->amount > $balance->wellness_balance) {
+			$balance_wellness = round($balance->wellness_balance, 2);
+			if($e_claim_details->amount > $balance_wellness) {
 				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
 			}
 		}
-            // deduct credit and save logs
+
+        // deduct credit and save logs
 		$wallet_class = new Wallet();
 
             // check what type of spending wallet the e-claim is
@@ -7275,7 +7279,7 @@ public function generateMonthlyCompanyInvoice( )
 	{
 		$input = Input::all();
 
-		$check = DB::table('user')->where('UserType', 5)->where('Email', $input['email'])->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
+		$check = DB::table('user')->where('UserType', 5)->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
 
 		if($check) {
 			Session::put('employee-session', $check->UserID);
