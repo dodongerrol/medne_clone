@@ -5524,17 +5524,19 @@ public function updateEclaimStatus( )
 
 		$balance = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 
-
 		if($check->spending_type == "medical") {
-			if($e_claim_details->amount > $balance->balance) {
+			$balance_medical = round($balance->balance, 2);
+			if($e_claim_details->amount > $balance_medical) {
 				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
 			}
 		} else {
-			if($e_claim_details->amount > $balance->wellness_balance) {
+			$balance_wellness = round($balance->wellness_balance, 2);
+			if($e_claim_details->amount > $balance_wellness) {
 				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
 			}
 		}
-            // deduct credit and save logs
+
+        // deduct credit and save logs
 		$wallet_class = new Wallet();
 
             // check what type of spending wallet the e-claim is
