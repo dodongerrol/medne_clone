@@ -2193,42 +2193,6 @@ public function payCredits( )
           $co_paid_status = $clinic_co_payment['co_paid_status'];
           $clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
           $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic->consultation_fees : $clinic_co_payment['consultation_fees'];
-          // // check clinic peak hours
-          // $result = ClinicHelper::getCheckClinicPeakHour($clinic, date('Y-m-d H:i:s'));
-          // if($result['status']) {
-          //   $peak_amount = $result['amount'];
-          //   
-
-          //   // check user company peak status
-          //   $user_peak = PlanHelper::getUserCompanyPeakStatus($user_id);
-
-          //   if($user_peak) {
-          //     if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
-          //        $gst = $clinic->peak_hour_amount * $clinic->gst_percent;
-          //        $co_paid_amount = $clinic->peak_hour_amount + $gst;
-          //        $co_paid_status = $clinic->co_paid_status;
-          //     } else {
-          //        $co_paid_amount = $clinic->peak_hour_amount;
-          //        $co_paid_status = $clinic->co_paid_status;
-          //     }
-          //     $consultation_fees = $co_paid_amount;
-          //   } else {
-          //     if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
-          //        $gst = $clinic->co_paid_amount * $clinic->gst_percent;
-          //        $co_paid_amount = $clinic->co_paid_amount + $gst;
-          //        $co_paid_status = $clinic->co_paid_status;
-          //     } else {
-          //          if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
-          //             $gst = $clinic->co_paid_amount * $clinic->gst_percent;
-          //             $co_paid_amount = $clinic->co_paid_amount + $gst;
-          //             $co_paid_status = $clinic->co_paid_status;
-          //         } else {
-          //             $co_paid_amount = $clinic->co_paid_amount;
-          //             $co_paid_status = $clinic->co_paid_status;
-          //         }
-          //     }
-          //   }
-          // }
 
           // check if user has a plan tier
           $plan_tier = PlanHelper::getEmployeePlanTier($customer_id);
@@ -2291,7 +2255,7 @@ public function payCredits( )
               }
             } 
           }
-
+          // return $total_credits * 3;
           $transaction = new Transaction();
           $wallet = new Wallet( );
 
@@ -2474,7 +2438,7 @@ public function payCredits( )
                    if($clinic->currency_type == "myr") {
                       $currency_symbol = "RM ";
                       $email_currency_symbol = "RM";
-                      $total_amount = $total_amount * 3;
+                      // $total_amount = $total_amount * 3;
                     } else {
                       $email_currency_symbol = "S$";
                       $currency_symbol = '$SGD ';
@@ -2539,6 +2503,16 @@ public function payCredits( )
                      }
                     }
 
+                    if($clinic->currency_type == "myr") {
+                      if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+                        $final_amount = $total_credits * 3;
+                      } else {
+                        $final_amount = $total_amount * 3;
+                      }
+                    } else {
+                      $final_amount = $total_credits;
+                    }
+
                     $email['member'] = ucwords($user->Name);
                     $email['credits'] = number_format($input_amount, 2);
                     $email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
@@ -2554,18 +2528,17 @@ public function payCredits( )
                     $email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
                     // $email['emailTo'] = 'allan.alzula.work@gmail.com';
                     $email['emailName'] = ucwords($user->Name);
-                    $email['url'] = 'http://staging.medicloud.sg';
                     $email['clinic_type_image'] = $image;
                     $email['transaction_type'] = 'Mednefits Credits';
                     $email['emailPage'] = 'email-templates.member-successful-transaction-v2';
                     $email['dl_url'] = url();
                     $email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
                     $email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FALSE ;
-                    $email['total_amount'] = number_format($total_credits, 2);
+                    $email['total_amount'] = number_format($final_amount, 2);
                     $email['consultation'] = $consultation_fees;
                     $email['currency_symbol'] = $email_currency_symbol;
                     $email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
-
+                    
                     try {
                       EmailHelper::sendPaymentAttachment($email);
                       $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
@@ -2579,7 +2552,7 @@ public function payCredits( )
                          $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
                          $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
                                                           // httpLibrary::postHttp($api, $email, array());
-                         EmailHelper::sendPaymentAttachment($email);
+                         // EmailHelper::sendPaymentAttachment($email);
                        }
                        $returnObject->status = TRUE;
                        $returnObject->message = 'Payment Successfull';
