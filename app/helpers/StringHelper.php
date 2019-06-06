@@ -1111,4 +1111,10 @@ public static function get_random_password($length)
       $str = str_replace('/', '-', $str);
       return is_numeric(strtotime($str));
     }
+
+    public static function floorp($val, $precision)
+    {
+        $mult = pow(10, $precision);       
+        return floor($val * $mult) / $mult;
+    }
 }
