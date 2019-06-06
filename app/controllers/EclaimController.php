@@ -5519,6 +5519,8 @@ public function updateEclaimStatus( )
 		// check e-claim if already approve
 		$employee = StringHelper::getUserId($e_claim_details->user_id);
             // check user balance
+		// recalculate balance
+		PlanHelper::reCalculateEmployeeBalance($employee);
 
 		$balance = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 
