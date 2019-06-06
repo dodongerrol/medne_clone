@@ -219,6 +219,14 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_plan_id', $plan->customer_plan_id)
 		->count();
 
+		if($count_employees > 0) {
+			$paid = true;
+		}
+
+		if($paid == true && $count_employees > 0) {
+			$checks = true;
+		}
+
 		return array('status' => TRUE , 
 			'data' => array('paid' => $paid, 
 				'employee_count' => $count_employees, 
