@@ -187,11 +187,11 @@
 			    						<span ng-if="list.currency_type == 'myr'">RM<span ng-bind="list.cash * list.currency_amount | number: 2"></span></span>
 										</td>
 										<td>
-											<button ng-if="list.deleted_option == 'remove' && !list.deleted" class="option-button mybg-red" ng-click="cancelBackDateTransaction(list)">Remove</button>
-											<button ng-if="list.deleted_option == 'refund' && !list.deleted" class="option-button mybg-grayDark" ng-click="cancelBackDateTransaction(list)">Refund</button>
+											<button ng-if="list.deleted_option == 'remove' && !list.deleted" class="option-button mybg-red" ng-click="cancelBackDateTransaction(list)">Cancel</button>
+											<button ng-if="list.deleted_option == 'refund' && !list.deleted" class="option-button mybg-red" ng-click="cancelBackDateTransaction(list)">Cancel</button>
 
-											<label class="option-label myColor-red" ng-if="list.data_status == 'removed' && list.deleted">REMOVED</label>
-			    						<label class="option-label myColor-red" ng-if="list.data_status == 'refunded' && list.deleted">REFUNDED</label>
+											<label class="option-label removed" ng-if="list.data_status == 'removed' && list.deleted">Removed</label>
+			    						<label class="option-label refunded" ng-if="list.data_status == 'refunded' && list.deleted">Refunded</label>
 										</td>
 									</tr>
 
