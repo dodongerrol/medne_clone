@@ -856,14 +856,26 @@ class Api_V1_TransactionController extends \BaseController
 									$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
 								} else {
 									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
+									
 								}
 							} else {
 								$total_amount = $transaction->procedure_cost;
 							}
 						}
 
-						$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
+						if((int)$transaction->half_credits == 1) {
+							if((int)$transaction->lite_plan_enabled == 1) {
+								$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees ;
+							} else {
+								$bill_amount = 	$transaction->procedure_cost;
+							}
+						} else {
+							$bill_amount = 	$transaction->procedure_cost;
+						}
 
+
+						$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
+						
 						if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == false) {
 							$service_credits = false;
 							$consultation_credits = false;
@@ -901,7 +913,7 @@ class Api_V1_TransactionController extends \BaseController
 							'date_of_transaction' => date('d-m-Y, h:ia', strtotime($transaction->date_of_transaction)),
 							'customer'            => ucwords($customer->Name),
 							'payment_type'		=> $payment_type,
-							'bill_amount'				=> $transaction->currency_type == "myr" ? number_format($transaction->credit_cost * 3, 2) : number_format($transaction->credit_cost, 2),
+							'bill_amount'				=> $transaction->currency_type == "myr" ? number_format($bill_amount * 3, 2) : number_format($bill_amount, 2),
 							'consultation_fee'	=> $consultation_fee,
 							'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost * $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
 							'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($transaction->credit_cost * $transaction->currency_amount, 2) : number_format($transaction->credit_cost, 2),
