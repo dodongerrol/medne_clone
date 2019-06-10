@@ -865,12 +865,16 @@ class Api_V1_TransactionController extends \BaseController
 
 						if((int)$transaction->half_credits == 1) {
 							if((int)$transaction->lite_plan_enabled == 1) {
-								$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees ;
+								$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees;
 							} else {
 								$bill_amount = 	$transaction->procedure_cost;
 							}
 						} else {
-							$bill_amount = 	$transaction->procedure_cost;
+							if((int)$transaction->lite_plan_enabled == 1) {
+								$bill_amount = 	$transaction->procedure_cost - $transaction->consultation_fees;
+							} else {
+								$bill_amount = 	$transaction->procedure_cost;
+							}
 						}
 
 
