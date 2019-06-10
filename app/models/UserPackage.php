@@ -119,7 +119,7 @@ class UserPackage extends Eloquent
 
                         $active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
                         $data['start_date'] = date('d F Y', strtotime($dependent_plan_history->plan_start));
-
+                        
                         if((int)$dependent_plan_history->fixed == 1 || $dependent_plan_history->fixed == "1") {
                             $temp_valid_date = date('d F Y', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
                             $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
