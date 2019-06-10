@@ -1352,16 +1352,21 @@ class DependentController extends \BaseController {
 				$data['amount_due']     = $amount_due;
 			}
 
+			$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->first();
+			$first_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+			$duration = $first_plan->duration;
+
 			if($dependent_plan->duration || $dependent_plan->duration != "") {
-				$end_plan_date = date('Y-m-d', strtotime('+'.$dependent_plan->duration, strtotime($dependent_plan->plan_start)));
+				$end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
 				$data['duration'] = $dependent_plan->duration;
 			} else {
-				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($dependent_plan->plan_start)));
+				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 				$data['duration'] = '12 months';
 			}
 		} else {
 			$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->first();
-			$duration = $dependent_plan->duration;
+			$first_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+			$duration = $first_plan->duration;
 
 			$end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
 			if($dependent_plan->account_type != "trial_plan") {
