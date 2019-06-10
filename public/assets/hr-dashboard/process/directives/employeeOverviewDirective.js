@@ -905,6 +905,7 @@ app.directive("employeeOverviewDirective", [
             .then(function(response){
               console.log( response );
               scope.health_spending_summary = response.data;
+              scope.getTotalMembers();
               // if( scope.health_spending_summary.medical != false || scope.health_spending_summary.wellness != false ){
               //   if( scope.health_spending_summary.medical.exceed == true || scope.health_spending_summary.wellness.exceed == true ){
               //     $(".prev-next-buttons-container").fadeIn();
@@ -1382,6 +1383,7 @@ app.directive("employeeOverviewDirective", [
               }else{
                 scope.getEmployeeList(scope.page_active);
               }
+              scope.getTotalMembers();
               scope.getProgress();
             });
         }
