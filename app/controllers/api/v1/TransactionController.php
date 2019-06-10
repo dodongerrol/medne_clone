@@ -831,12 +831,17 @@ class Api_V1_TransactionController extends \BaseController
 
 						$half_credits = false;
 						$total_amount = $transaction->procedure_cost;
+						$bill_amount = 0;
 
 						$procedure_cost = number_format($transaction->procedure_cost, 2);
 						if((int)$transaction->health_provider_done == 1) {
 							$payment_type = 'Cash';
 							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
-								$total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
+								if((int)$transaction->half_credits == 1) {
+									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
+								} else {
+									$total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
+								}
 							}
 						} else {
 							if($transaction->credit_cost > 0 && $transaction->cash_cost > 0) {
@@ -847,7 +852,11 @@ class Api_V1_TransactionController extends \BaseController
 							}
 							$service_credits = true;
 							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
-								$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+								if((int)$transaction->half_credits == 1) {
+									$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+								} else {
+									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
+								}
 							} else {
 								$total_amount = $transaction->procedure_cost;
 							}
