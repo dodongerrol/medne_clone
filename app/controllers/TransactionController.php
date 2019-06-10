@@ -1541,7 +1541,7 @@ class TransactionController extends BaseController {
 			->where('transaction_history.created_at', '<=', $end);
 		})
 		->orderBy('transaction_history.created_at', 'desc')
-		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.credit_divisor', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.consultation_fees')
+		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.credit_divisor', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.consultation_fees', 'transaction_history.half_credits', 'transaction_history.cash_cost')
 		->get();
 		foreach ($transactions as $key => $trans) {
 
@@ -1557,20 +1557,6 @@ class TransactionController extends BaseController {
 			} else {
 				$table_wallet_history = 'wellness_wallet_history';
 			}
-
-	        // if((int)$trans->lite_plan_enabled == 1) {
-	        //     $logs_lite_plan = DB::table($table_wallet_history)
-	        //     ->where('logs', 'deducted_from_mobile_payment')
-	        //     ->where('lite_plan_enabled', 1)
-	        //     ->where('id', $trans->transaction_id)
-	        //     ->first();
-
-	        //     if($logs_lite_plan && floatval($trans->credit_cost) > 0 && (int)$trans->lite_plan_use_credits == 0) {
-	        //         $mednefits_credits += floatval($trans->co_paid_amount);
-	        //     } else if($logs_lite_plan && floatval($trans->procedure_cost) >= 0 && (int)$trans->lite_plan_use_credits == 1){
-	        //         $mednefits_credits += floatval($trans->co_paid_amount);
-	        //     }
-	        // }
 
 			if($trans->co_paid_status == 0 || $trans->co_paid_status == "0") {
 				
@@ -1686,14 +1672,32 @@ class TransactionController extends BaseController {
 				$option = "refunded";
 			} else {
 				$option = "removed";
-			}			
+			}
+
+			if((int)$trans->half_credits == 1) {
+				$cash = number_format($trans->cash_cost, 2);
+				$mednefits_credits = $trans->credit_cost;
+			}
+
+			$registration_date = null;
+			// get check in time data
+			$check_in_data = DB::table('user_check_in_clinic')
+												->where('user_id', $trans->UserID)
+												->where('clinic_id', $trans->ClinicID)
+												->first();
+
+			if($check_in_data) {
+				$registration_date = date('d F Y, h:i a', strtotime($check_in_data->created_at));
+			} else {
+				$registration_date = date('d F Y, h:i a', strtotime($trans->date_of_transaction));
+			}
 
 			$temp = array(
 				'ClinicID'							=> $trans->ClinicID,
 				'NRIC'									=> $trans->NRIC,
 				'ProcedureID'						=> $procedure_id,
 				'UserID'								=> $trans->UserID,
-				'date_of_transaction'		=> date('d F Y, h:i a', strtotime($trans->date_of_transaction)),
+				'date_of_transaction'		=> $registration_date,
 				'claim_date'				=> $trans->claim_date ? date('d F Y, h:i a', strtotime($trans->claim_date)) : date('d F Y, h:i a', strtotime($trans->created_at)),
 				'paid'									=> $trans->paid,
 				'procedure_cost'				=> $cost,
