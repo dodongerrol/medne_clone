@@ -214,7 +214,7 @@ class Api_V1_TransactionController extends \BaseController
 
 					$date_of_transaction = null;
 
-					if(isset($input['check_out_time']) || $input['check_out_time'] == null) {
+					if(isset($input['check_out_time']) && $input['check_out_time'] != null) {
 						$date_of_transaction = date('Y-m-d H:i:s', strtotime($input['check_out_time']));
 					} else {
 						$date_of_transaction = date('Y-m-d H:i:s');
