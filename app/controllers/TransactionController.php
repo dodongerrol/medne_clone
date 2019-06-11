@@ -1684,10 +1684,11 @@ class TransactionController extends BaseController {
 			$check_in_data = DB::table('user_check_in_clinic')
 												->where('user_id', $trans->UserID)
 												->where('clinic_id', $trans->ClinicID)
+												->where('id', $trans->transaction_id)
 												->first();
 
 			if($check_in_data) {
-				$registration_date = date('d F Y, h:i a', strtotime($check_in_data->created_at));
+				$registration_date = date('d F Y, h:i a', strtotime($check_in_data->check_in_time));
 			} else {
 				$registration_date = date('d F Y, h:i a', strtotime($trans->date_of_transaction));
 			}
