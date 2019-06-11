@@ -212,11 +212,19 @@ class Api_V1_TransactionController extends \BaseController
 						$consultation_fees = 0;
 					}
 
+					$date_of_transaction = null;
+
+					if(!empty($input['check_out_time']) || $input['check_out_time'] == null) {
+						$date_of_transaction = date('Y-m-d H:i:s', strtotime($input['check_out_time']));
+					} else {
+						$date_of_transaction = date('Y-m-d H:i:s');
+					}
+
 					$data = array(
 				   'UserID'                => $customer_id,
 				   'ProcedureID'           => $services,
-				   'date_of_transaction'   => date('Y-m-d H:i:s'),
-				   'claim_date'            => date('Y-m-d H:i:s'),
+				   'date_of_transaction'   => $date_of_transaction,
+				   'claim_date'            => $date_of_transaction,
 				   'ClinicID'              => $input['clinic_id'],
 				   'procedure_cost'        => $total_procedure_cost,
 				   'AppointmenID'          => 0,
@@ -403,7 +411,7 @@ class Api_V1_TransactionController extends \BaseController
 												// update check in date
 												DB::table('user_check_in_clinic')
 												->where('check_in_id', $input['check_in_id'])
-												->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+												->update(['check_out_time' => $date_of_transaction, 'id' => $transaction_id, 'status' => 1]);
 												PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
 											}
 										}
