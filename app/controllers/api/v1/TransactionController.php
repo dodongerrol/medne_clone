@@ -421,7 +421,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['credits'] = $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2);
 										$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
 										$email['trans_id'] = $transaction_id;
-										$email['transaction_date'] = date('d F Y, h:ia');
+										$email['transaction_date'] = date('d F Y, h:ia', strtotime($date_of_transaction));
 										$email['health_provider_name'] = ucwords($clinic->Name);
 										$email['health_provider_address'] = $clinic->Address;
 										$email['health_provider_city'] = $clinic->City;
