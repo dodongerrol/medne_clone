@@ -13,21 +13,6 @@
 
 App::before(function($request)
 {
- /*   if( ! Request::secure() ){
-        return Redirect::secure( Request::path() );
-    }*/
-    // if($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    //     $statusCode = 204;
-
-    //     $headers = [
-    //         'Access-Control-Allow-Origin'      => 'http://medicloud.dev',
-    //         'Allow'                            => 'GET, POST, OPTIONS',
-    //         'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
-    //         'Access-Control-Allow-Credentials' => 'true'
-    //     ];
-
-    //     return Response::make(null, $statusCode, $headers);
-    // }
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: *');
     header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, authorization, X-Request-With');
@@ -97,21 +82,6 @@ Route::filter('auth.clinic', function()
     }
 });
 
-// Route::filter('auth.hr', function()
-// {
-//     $headers = [];
-// 	if(!Session::get('hr-session')){
-//         // return Redirect::to('company-benefits-dashboard-login');
-//         return Response::json('Forbidden', 403, $headers);
-//     } else {
-//         $result = StringHelper::getHrSession();
-//         if(!$result) {
-//             // return Redirect::to('company-benefits-dashboard-login');
-//             return Response::json('Forbidden', 403, $headers);
-//         }
-//     }
-// });
-
 Route::filter('auth.v1', function($request, $response)
 {
     $returnObject = new stdClass();
@@ -129,7 +99,6 @@ Route::filter('auth.v1', function($request, $response)
     if(!StringHelper::requestHeader()){
         return Response::json($returnObject, 200);
     } else {
-        // return StringHelper::requestHeader();
         // check if there is a header authorization
         $token = StringHelper::getToken();
         // return $token;
@@ -171,7 +140,6 @@ Route::filter('auth.v2', function($request, $response)
     header('Accept', 'application/json');
     header('Access-Control-Allow-Credentials: true');
 
-    // return StringHelper::requestHeader();
     if(!StringHelper::requestHeader()){
         return Response::json($returnObject, 200);
     } else {
