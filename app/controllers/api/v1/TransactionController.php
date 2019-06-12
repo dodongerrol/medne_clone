@@ -389,7 +389,7 @@ class Api_V1_TransactionController extends \BaseController
 											'total_amount'     => number_format($total_amount, 2),
 											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
 											'paid_by_cash'              => $clinic->currency_type == "myr" ? number_format($cash * 3, 2) : number_format($cash, 2),
-											'transaction_time'  => date('Y-m-d h:i', strtotime($date_of_transaction)),
+											'transaction_time'  => date('Y-m-d h:ia', strtotime($date_of_transaction)),
 											'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)).$trans_id,
 											'services'          => $procedure,
 											'currency_symbol'   => $email_currency_symbol,
