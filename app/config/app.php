@@ -80,7 +80,7 @@ return array(
 	*/
 
 	//'key' => 'YourSecretKey!!!',
-        'key' => 'medicloud-service-teamsl',
+    'key' => 'medicloud-service-teamsl',
 
 	'cipher' => MCRYPT_RIJNDAEL_128,
 
@@ -125,7 +125,7 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider',
 		'LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider',
-    'Maatwebsite\Excel\ExcelServiceProvider',
+    	'Maatwebsite\Excel\ExcelServiceProvider',
 		'Barryvdh\DomPDF\ServiceProvider',
 		'Aws\Laravel\AwsServiceProvider',
     // 'Aloha\Twilio\Support\Laravel\ServiceProvider',
@@ -203,8 +203,8 @@ return array(
 	),
 
     \Cloudinary::config(array(
-		  "cloud_name" => "dzh9uhsqr",
-		  "api_key" => "322846874496157",
-		  "api_secret" => "qALv36cts3ERnFGD1Wjqx9CH4LI"
-		))
+	  "cloud_name" => "dzh9uhsqr",
+	  "api_key" => "322846874496157",
+	  "api_secret" => "qALv36cts3ERnFGD1Wjqx9CH4LI"
+	))
 );
