@@ -74,6 +74,15 @@ class BenefitsDashboardController extends \BaseController {
 				);
 				$customer_credits->createCustomerCredits($data);
 			}
+
+			$admin_logs = array(
+	            'admin_id'  => $result->hr_dashboard_id,
+	            'admin_type' => 'hr',
+	            'type'      => 'admin_hr_login_portal',
+	            'data'      => SystemLogLibrary::serializeData($input)
+	        );
+	        SystemLogLibrary::createAdminLog($admin_logs);
+
 			return array(
 				'status'	=> TRUE,
 				'message'	=> 'Success.',
@@ -2678,6 +2687,10 @@ class BenefitsDashboardController extends \BaseController {
 	public function searchEmployee( )
 	{
 		$result = self::checkSession();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
+
 		$input = Input::all();
 		$search = $input['search'];
 		$id = $result->customer_buy_start_id;
@@ -2706,14 +2719,6 @@ class BenefitsDashboardController extends \BaseController {
 		->groupBy('user.UserID')
 		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active')
 		->get();
-
-		// $paginate['last_page'] = $users->getLastPage();
-		// $paginate['current_page'] = $users->getCurrentPage();
-		// $paginate['total_page'] = $users->getTotal();
-		// $paginate['from'] = $users->getFrom();
-		// $paginate['to'] = $users->getTo();
-		// $paginate['count'] = $users->count();
-		// return $paginate;
 
 		if(sizeof($users) == 0) {
 			$users = [];
@@ -2980,6 +2985,25 @@ class BenefitsDashboardController extends \BaseController {
 
 		$paginate['status'] = true;
 		$paginate['data'] = $final_user;
+
+		if($admin_id) {
+			$admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_search_employee',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		} else {
+			$admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_search_employee',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		}
+
 		return $paginate;
 	}
 
@@ -2993,6 +3017,9 @@ class BenefitsDashboardController extends \BaseController {
 	public function updateEmployeeDetails( )
 	{
 		$result = self::checkSession();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
 		$input = Input::all();
 
 		$update = array(
@@ -3008,6 +3035,25 @@ class BenefitsDashboardController extends \BaseController {
 
 		try {
 			$user = DB::table('user')->where('UserID', $input['user_id'])->update($update);
+			if($admin_id) {
+				$update['user_id'] = $input['user_id'];
+				$admin_logs = array(
+                    'admin_id'  => $admin_id,
+                    'admin_type' => 'mednefits',
+                    'type'      => 'admin_hr_updated_employee_details',
+                    'data'      => SystemLogLibrary::serializeData($update)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$update['user_id'] = $input['user_id'];
+				$admin_logs = array(
+                    'admin_id'  => $hr_id,
+                    'admin_type' => 'hr',
+                    'type'      => 'admin_hr_updated_employee_details',
+                    'data'      => SystemLogLibrary::serializeData($update)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			}
 			return array(
 				'status'	=> TRUE,
 				'message' => 'Success.'
@@ -3023,6 +3069,10 @@ class BenefitsDashboardController extends \BaseController {
 
 	public function withDrawEmployees( )
 	{
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 		$input = Input::all();
 		$date = date('Y-m-d');
 
@@ -3062,7 +3112,26 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 			}
+
+			if($admin_id) {
+				$admin_logs = array(
+	                'admin_id'  => $admin_id,
+	                'admin_type' => 'mednefits',
+	                'type'      => 'admin_hr_removed_employee',
+	                'data'      => SystemLogLibrary::serializeData($user)
+	            );
+	            SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+	                'admin_id'  => $hr_id,
+	                'admin_type' => 'hr',
+	                'type'      => 'admin_hr_removed_employee',
+	                'data'      => SystemLogLibrary::serializeData($user)
+	            );
+	            SystemLogLibrary::createAdminLog($admin_logs);
+			}
 		}
+
 
 		return array('status' => TRUE, 'message' => 'Withdraw Employee(s) Successful.');
 	}
@@ -3071,6 +3140,10 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$user = Input::all();
 		$date = date('Y-m-d');
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 
 		if(empty($user['user_id']) || $user['user_id'] == null) {
 			return array('status' => false, 'message' => 'Dependent User ID is required.');
@@ -3140,6 +3213,24 @@ class BenefitsDashboardController extends \BaseController {
 				EmailHelper::sendErrorLogs($email);
 				return array('status' => FALSE, 'message' => 'Failed to create withdraw dependent. Please contact Mednefits and report the issue.');
 			}
+		}
+
+		if($admin_id) {
+			$admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_removed_dependent',
+                'data'      => SystemLogLibrary::serializeData($user)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		} else {
+			$admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_removed_dependent',
+                'data'      => SystemLogLibrary::serializeData($user)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
 		}
 
 		return array('status' => TRUE, 'message' => 'Withdraw Dependent Successful.');
@@ -4010,6 +4101,10 @@ class BenefitsDashboardController extends \BaseController {
 
 	public function updateBusinessInformation( )
 	{
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 		$input = Input::all();
 
 		$check = DB::table('customer_business_information')->where('customer_business_information_id', $input['customer_business_information_id'])->count();
@@ -4031,6 +4126,23 @@ class BenefitsDashboardController extends \BaseController {
 		$result = $business_information->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
 
 		if($result) {
+			if($admin_id) {
+				$admin_logs = array(
+	                'admin_id'  => $admin_id,
+	                'admin_type' => 'mednefits',
+	                'type'      => 'admin_hr_updated_company_business_information',
+	                'data'      => SystemLogLibrary::serializeData($input)
+	            );
+	            SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+	                'admin_id'  => $hr_id,
+	                'admin_type' => 'hr',
+	                'type'      => 'admin_hr_updated_company_business_information',
+	                'data'      => SystemLogLibrary::serializeData($input)
+	            );
+	            SystemLogLibrary::createAdminLog($admin_logs);
+			}
 			return array(
 				'status'	=> TRUE,
 				'message'	=> 'Success.'
@@ -4046,6 +4158,10 @@ class BenefitsDashboardController extends \BaseController {
 	public function updateBusinessContact( )
 	{
 		$input = Input::all();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 
 		$check = DB::table('customer_business_contact')->where('customer_business_contact_id', $input['customer_business_contact_id'])->count();
 
@@ -4069,6 +4185,25 @@ class BenefitsDashboardController extends \BaseController {
 		$result = $business_contact->updateBusinessContact($input['customer_business_contact_id'], $data);
 
 		if($result) {
+			$data['customer_business_contact_id'] = $input['customer_business_contact_id'];
+			if($admin_id) {
+				$admin_logs = array(
+                    'admin_id'  => $admin_id,
+                    'admin_type' => 'mednefits',
+                    'type'      => 'admin_hr_updated_company_business_contact',
+                    'data'      => SystemLogLibrary::serializeData($data)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+                    'admin_id'  => $hr_id,
+                    'admin_type' => 'hr',
+                    'type'      => 'admin_hr_updated_company_business_contact',
+                    'data'      => SystemLogLibrary::serializeData($data)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			}
+
 			return array(
 				'status'	=> TRUE,
 				'message'	=> 'Success.'
@@ -4085,6 +4220,9 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 		$result = self::checkSession();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
 
 		// customer_billing_contact_id
 		$details = array(
@@ -4097,49 +4235,25 @@ class BenefitsDashboardController extends \BaseController {
 		$result = DB::table('customer_billing_contact')
 					->where('customer_billing_contact_id', $input['customer_billing_contact_id'])
 					->update($details);
-		// if($input['billing_contact_status'] == false || $input['billing_contact_status'] == "false") {
-		// 	$check = DB::table('customer_business_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
-
-		// 	if($check == 0) {
-		// 		return array(
-		// 			'status'	=> FALSE,
-		// 			'message'	=> 'No business contact exist'
-		// 		);
-		// 	}
-
-		// 	$business_contact = new CorporateBusinessContact();
-		// 	$data = array(
-		// 		'first_name'	=> $input['first_name'],
-		// 		'last_name'		=> $input['last_name'],
-		// 		// 'job_title'		=> $input['job_title'],
-		// 		'work_email'	=> $input['work_email'],
-		// 		// 'phone'				=> $input['phone']
-		// 	);
-
-		// 	$result = $business_contact->updateBusinessContactbyCustomerID($result->customer_buy_start_id, $data);
-		// } else {
-		// 	$check = DB::table('customer_billing_contact')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
-
-		// 	if($check == 0) {
-		// 		return array(
-		// 			'status'	=> FALSE,
-		// 			'message'	=> 'No business contact exist'
-		// 		);
-		// 	}
-		// 	$billing_contact = new CorporateBillingContact();
-
-		// 	$data = array(
-		// 		'first_name'	=> $input['first_name'],
-		// 		'last_name'		=> $input['last_name'],
-		// 		// 'job_title'		=> $input['job_title'],
-		// 		'work_email'	=> $input['work_email'],
-		// 		// 'phone'				=> $input['phone']
-		// 	);
-
-		// 	$result = $billing_contact->updateBillingContactbyCustomerID($result->customer_buy_start_id, $data);
-		// }
 
 		if($result) {
+			if($admin_id) {
+				$admin_logs = array(
+                    'admin_id'  => $admin_id,
+                    'admin_type' => 'mednefits',
+                    'type'      => 'admin_hr_updated_company_billing_contact',
+                    'data'      => SystemLogLibrary::serializeData($input)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+                    'admin_id'  => $hr_id,
+                    'admin_type' => 'hr',
+                    'type'      => 'admin_hr_updated_company_billing_contact',
+                    'data'      => SystemLogLibrary::serializeData($input)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			}
 			return array(
 				'status'	=> TRUE,
 				'message'	=> 'Success.'
@@ -6927,6 +7041,9 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$result = self::checkSession();
 		$input = Input::all();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
 
 		$details = array(
 			'billing_address'	=> $input['billing_address'],
@@ -6946,57 +7063,24 @@ class BenefitsDashboardController extends \BaseController {
 							->where('customer_buy_start_id', $result->customer_buy_start_id)
 							->first();
 		DB::table('corporate')->where('corporate_id', $account_link->corporate_id)->update(['company_name' => $input['company_name'], 'updated_at' => date('Y-m-d H:i:s')]);
-		// if($input['billing_contact_status'] == false || $input['billing_contact_status'] == "false") {
-		// 	$check = DB::table('customer_business_information')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
-		// 	$billing_address = new CorporateBusinessInformation();
 
-		// 	$data = array(
-		// 		'company_name'		=> $input['company_name'],
-		// 		'company_address'	=> $input['billing_address'],
-		// 		'postal_code'		=> $input['postal']
-		// 	);
-
-		// 	if($check == 0) {
-		// 		// return array(
-		// 		// 	'status'	=> FALSE,
-		// 		// 	'message'	=> 'No billing address exist'
-		// 		// );
-		// 		// create
-		// 		$result = $billing_address->createCorporateBusinessInformation($result->customer_buy_start_id, $data);
-		// 	}
-
-
-		// 	$get_link_id = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
-		// 	DB::table('corporate')->where('corporate_id', $get_link_id->corporate_id)->update(['company_name' => $input['company_name']]);
-		// 	$result = $billing_address->updateusinessInfo($result->customer_buy_start_id, $data);
-		// 	// return $result;
-		// } else {
-
-		// 	$check = DB::table('customer_billing_address')->where('customer_buy_start_id', $result->customer_buy_start_id)->count();
-
-		// 	if($check == 0) {
-		// 		return array(
-		// 			'status'	=> FALSE,
-		// 			'message'	=> 'No billing address exist'
-		// 		);
-		// 	}
-
-		// 	$billing_address = new CorporateBillingAddress();
-		// 	$data = array(
-		// 		'billing_address'	=> $input['billing_address'],
-		// 		'postal_code'			=> $input['postal']
-		// 	);
-		// 	$business_information = new CorporateBusinessInformation();
-
-		// 	$data_information = array(
-		// 		'company_name'	=> $input['company_name'],
-		// 	);
-
-		// 	$business_information->updateusinessInfo($result->customer_buy_start_id, $data_information);
-		// 	$get_link_id = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
-		// 	DB::table('corporate')->where('corporate_id', $get_link_id->corporate_id)->update(['company_name' => $input['company_name']]);
-		// 	$result = $billing_address->updateBillingAddress($result->customer_buy_start_id, $data);
-		// }
+		if($admin_id) {
+			$admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_updated_company_billing_address',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		} else {
+			$admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_updated_company_billing_address',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		}
 
 		return array(
 			'status'	=> TRUE,
@@ -8352,6 +8436,9 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 		$result = self::checkSession();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
 
 		if(empty($input['user_id'])) {
 			return array('status' => FALSE, 'message' => 'Please select an employee to allocate/deduct credits.');
@@ -8440,6 +8527,24 @@ class BenefitsDashboardController extends \BaseController {
 							$employee_logs = new WalletHistory();
 							$employee_logs->createWalletHistory($employee_credits_logs);
 
+							if($admin_id) {
+								$admin_logs = array(
+				                    'admin_id'  => $admin_id,
+				                    'admin_type' => 'mednefits',
+				                    'type'      => 'admin_hr_employee_allocate_credits',
+				                    'data'      => SystemLogLibrary::serializeData($input)
+				                );
+				                SystemLogLibrary::createAdminLog($admin_logs);
+							} else {
+								$admin_logs = array(
+				                    'admin_id'  => $hr_id,
+				                    'admin_type' => 'hr',
+				                    'type'      => 'admin_hr_employee_allocate_credits',
+				                    'data'      => SystemLogLibrary::serializeData($input)
+				                );
+				                SystemLogLibrary::createAdminLog($admin_logs);
+							}
+
 							return array(
 								'status'	=> TRUE,
 								'message'	=> 'Employee successfully assigned medical credits $'.number_format($input['credits'], 2).'.'
@@ -8474,6 +8579,23 @@ class BenefitsDashboardController extends \BaseController {
 
 					try {
 						$wallet_result = $wallet->deductCredits($input['user_id'], $input['credits']);
+						if($admin_id) {
+							$admin_logs = array(
+			                    'admin_id'  => $admin_id,
+			                    'admin_type' => 'mednefits',
+			                    'type'      => 'admin_hr_employee_allocate_credits',
+			                    'data'      => SystemLogLibrary::serializeData($input)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						} else {
+							$admin_logs = array(
+			                    'admin_id'  => $hr_id,
+			                    'admin_type' => 'hr',
+			                    'type'      => 'admin_hr_employee_allocate_credits',
+			                    'data'      => SystemLogLibrary::serializeData($input)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						}
 						return array(
 							'status'	=> TRUE,
 							'message'	=> 'Employee successfully deducted medical credits $'.number_format($input['credits'], 2).'.'
@@ -8546,7 +8668,23 @@ class BenefitsDashboardController extends \BaseController {
 							);
 
 							\WellnessWalletHistory::create($employee_credits_logs);
-
+							if($admin_id) {
+								$admin_logs = array(
+				                    'admin_id'  => $admin_id,
+				                    'admin_type' => 'mednefits',
+				                    'type'      => 'admin_hr_employee_allocate_credits',
+				                    'data'      => SystemLogLibrary::serializeData($input)
+				                );
+				                SystemLogLibrary::createAdminLog($admin_logs);
+							} else {
+								$admin_logs = array(
+				                    'admin_id'  => $hr_id,
+				                    'admin_type' => 'hr',
+				                    'type'      => 'admin_hr_employee_allocate_credits',
+				                    'data'      => SystemLogLibrary::serializeData($input)
+				                );
+				                SystemLogLibrary::createAdminLog($admin_logs);
+							}
 							return array(
 								'status'	=> TRUE,
 								'message'	=> 'Employee successfully assigned wellness credits $'.number_format($input['credits'], 2).'.'
@@ -8579,6 +8717,23 @@ class BenefitsDashboardController extends \BaseController {
 
 					try {
 						$wallet_result = $wallet->addWellnessCredits($input['user_id'], $input['credits']);
+						if($admin_id) {
+							$admin_logs = array(
+			                    'admin_id'  => $admin_id,
+			                    'admin_type' => 'mednefits',
+			                    'type'      => 'admin_hr_employee_allocate_credits',
+			                    'data'      => SystemLogLibrary::serializeData($input)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						} else {
+							$admin_logs = array(
+			                    'admin_id'  => $hr_id,
+			                    'admin_type' => 'hr',
+			                    'type'      => 'admin_hr_employee_allocate_credits',
+			                    'data'      => SystemLogLibrary::serializeData($input)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						}
 						return array(
 							'status'	=> TRUE,
 							'message'	=> 'Employee successfully deducted wellness credits $'.number_format($input['credits'], 2).'.'
@@ -8625,6 +8780,9 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 		$result = self::checkSession();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
 
 		$check_user = DB::table('user')->where('UserID', $input['user_id'])->count();
 		if($check_user == 0) {
@@ -8668,6 +8826,23 @@ class BenefitsDashboardController extends \BaseController {
 
 				try {
 					$wallet_result = $wallet->deductCredits($input['user_id'], $input['credits']);
+					if($admin_id) {
+						$admin_logs = array(
+		                    'admin_id'  => $admin_id,
+		                    'admin_type' => 'mednefits',
+		                    'type'      => 'admin_hr_employee_deducted_credits',
+		                    'data'      => SystemLogLibrary::serializeData($input)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					} else {
+						$admin_logs = array(
+		                    'admin_id'  => $hr_id,
+		                    'admin_type' => 'hr',
+		                    'type'      => 'admin_hr_employee_deducted_credits',
+		                    'data'      => SystemLogLibrary::serializeData($input)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					}
 					return array(
 						'status'	=> TRUE,
 						'message'	=> 'Employee successfully deducted medical credits $'.number_format($input['credits'], 2).'.'
@@ -8714,6 +8889,23 @@ class BenefitsDashboardController extends \BaseController {
 
 				try {
 					$wallet_result = $wallet->addWellnessCredits($input['user_id'], $input['credits']);
+					if($admin_id) {
+						$admin_logs = array(
+		                    'admin_id'  => $admin_id,
+		                    'admin_type' => 'mednefits',
+		                    'type'      => 'admin_hr_employee_deducted_credits',
+		                    'data'      => SystemLogLibrary::serializeData($input)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					} else {
+						$admin_logs = array(
+		                    'admin_id'  => $hr_id,
+		                    'admin_type' => 'hr',
+		                    'type'      => 'admin_hr_employee_deducted_credits',
+		                    'data'      => SystemLogLibrary::serializeData($input)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					}
 					return array(
 						'status'	=> TRUE,
 						'message'	=> 'Employee successfully deducted wellness credits $'.number_format($input['credits'], 2).'.'
@@ -9158,6 +9350,9 @@ class BenefitsDashboardController extends \BaseController {
 		$input = Input::all();
 
 		$session = self::checkSession();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $session->hr_dashboard_id;
 
 		$checkPassword = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $session->hr_dashboard_id)->where('password', md5($input['current_password']))->count();
 
@@ -9166,6 +9361,25 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$result = \HRDashboard::where('hr_dashboard_id', $session->hr_dashboard_id)->update(['password' => md5($input['new_password'])]);
+
+		if($admin_id) {
+			$input['hr_dashboard_id'] = $session->hr_dashboard_id;
+			$admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_updated_account_password',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		} else {
+			$admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_updated_account_password',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		}
 
 		return array('status' => TRUE, 'message' => 'Successfully Update HR Account Password.');
 	}
@@ -9907,33 +10121,12 @@ class BenefitsDashboardController extends \BaseController {
 	public function hrLoginAdmin( )
 	{
 		$input = Input::all();
-		// $result = DB::table('customer_hr_dashboard')->where('email', $input['email'])->where('password', $input['password'])->first();
-
-		// if($result) {
-		// 	Session::put('hr-session', $result);
-		// 	$hr = new HRDashboard();
-		// 	$hr->updateCorporateHrDashboard($result->hr_dashboard_id, array('login_ip' => $_SERVER['REMOTE_ADDR']));
-		// 	// Session::put('customer-session-id', $result->customer_buy_start_id);
-		// 	$customer_credits = new CustomerCredits( );
-		// 	$check = $customer_credits->checkCustomerCredits($result->customer_buy_start_id);
-		// 	if($check == 0) {
-		// 		$data = array(
-		// 			'customer_id'	=> $result->customer_buy_start_id,
-		// 			'active'			=> 1
-		// 		);
-		// 		$customer_credits->createCustomerCredits($data);
-		// 	}
-		// 	return Redirect::to('company-benefits-dashboard');
-		// } else {
-		// 	return array(
-		// 		'status'	=> FALSE,
-		// 		'message'	=> 'Invalid credentials.'
-		// 	);
-		// }
 		$data = [];
 		$data['token'] = $input['token'];
+		if(isset($input['admin_id']) && $input['admin_id'] != null) {
+			Session::put('admin-session-id', $input['admin_id']);
+		}
 		return View::make('hr_dashboard.login_hr_via_token', $data);
-		
 	}
 
 	public function updatePlanAccountType( )
@@ -9967,7 +10160,6 @@ class BenefitsDashboardController extends \BaseController {
 	public function newGetCompanyEmployeeWithCredits( )
 	{
 		$result = self::checkSession();
-
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 	    // get user plan
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
