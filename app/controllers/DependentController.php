@@ -390,6 +390,10 @@ class DependentController extends \BaseController {
 	{
 		$input = Input::all();
 		$customer_id = PlanHelper::getCusomerIdToken();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 
 		if(empty($input['employee_id']) || $input['employee_id'] == null) {
 			return array('status' => false, 'message' => 'Employee ID is required.');
@@ -502,6 +506,7 @@ class DependentController extends \BaseController {
 
 				$family_result = DB::table('employee_family_coverage_sub_accounts')->insert($family);
 				if($family_result) {
+					$user['family_data'] = $family;
 					$history = array(
 						'user_id'			=> $user_id,
 						'dependent_plan_id'	=> $dependent_plan_id,
@@ -514,6 +519,7 @@ class DependentController extends \BaseController {
 					);
 
 					DB::table('dependent_plan_history')->insert($history);
+					$user['dependent_history'] = $history;
 					// check if their is a plan tier id
 					if($plan_tier_id) {
 						$tier_history = array(
@@ -527,7 +533,28 @@ class DependentController extends \BaseController {
 						$plan_tier_class->increamentDependentEnrolledHeadCount($plan_tier_id);
 					}
 
+					if($admin_id) {
+						$user['user_id'] = $user_id;
+						$admin_logs = array(
+		                    'admin_id'  => $admin_id,
+		                    'admin_type' => 'mednefits',
+		                    'type'      => 'admin_hr_created_dependent',
+		                    'data'      => SystemLogLibrary::serializeData($user)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					} else {
+						$user['user_id'] = $user_id;
+						$admin_logs = array(
+		                    'admin_id'  => $hr_id,
+		                    'admin_type' => 'hr',
+		                    'type'      => 'admin_hr_created_dependent',
+		                    'data'      => SystemLogLibrary::serializeData($user)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					}
+
 					$dependent_plan_status->incrementEnrolledDependents($planned->customer_plan_id);
+
 				}
 			}
 		}
@@ -633,6 +660,10 @@ class DependentController extends \BaseController {
 
 	public function updateDependentDetails( )
 	{
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 		$input = Input::all();
 		// $customer_id = PlanHelper::getCusomerIdToken();
 
@@ -672,6 +703,25 @@ class DependentController extends \BaseController {
 		$dependent = DB::table('employee_family_coverage_sub_accounts')
 		->where('user_id', $input['user_id'])
 		->update(['relationship' => $input['relationship']]);
+
+		if($admin_id) {
+			$admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_updated_dependent_details',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		} else {
+			$admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_updated_dependent_details',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		}
+
 		return array('status' => true, 'message' => 'Dependent Profile updated.');
 	}
 
