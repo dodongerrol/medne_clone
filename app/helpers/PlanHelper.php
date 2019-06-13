@@ -1169,6 +1169,10 @@ class PlanHelper {
 
 		public static function createEmployee($temp_enrollment_id, $customer_id)
 		{
+			// get admin session from mednefits admin login
+			$admin_id = Session::get('admin-session-id');
+			$hr_data = StringHelper::getJwtHrSession();
+			$hr_id = $hr_data->hr_dashboard_id;
 
 			$data_enrollee = DB::table('customer_temp_enrollment')
 			->where('temp_enrollment_id', $temp_enrollment_id)
@@ -1323,7 +1327,7 @@ class PlanHelper {
 
 					$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $data_enrollee->credits);
 					$customer_credits_left = DB::table('customer_credits')->where('customer_credits_id', $customer->customer_credits_id)->first();
-					
+					$data['medical_credit_history'] = $wallet_history;
 					if($customer_credits_result) {
 						$company_deduct_logs = array(
 							'customer_credits_id'   => $customer->customer_credits_id,
@@ -1366,7 +1370,7 @@ class PlanHelper {
 					\WellnessWalletHistory::create($wallet_history);
 					$customer_credits = new CustomerCredits();
 					$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $data_enrollee->wellness_credits);
-					
+					$data['wellness_credit_history'] = $wallet_history;
 					if($customer_credits_result) {
 						$company_deduct_logs = array(
 							'customer_credits_id'   => $customer->customer_credits_id,
@@ -1500,6 +1504,27 @@ class PlanHelper {
 				EmailHelper::sendEmail($email_data);
 			}
 
+			if($admin_id) {
+				$data['user_id'] = $user_id;
+
+				$admin_logs = array(
+            'admin_id'  => $admin_id,
+            'admin_type' => 'mednefits',
+            'type'      => 'admin_hr_created_employee',
+            'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$data['user_id'] = $user_id;
+				$admin_logs = array(
+              'admin_id'  => $hr_id,
+              'admin_type' => 'hr',
+              'type'      => 'admin_hr_created_employee',
+              'data'      => SystemLogLibrary::serializeData($data)
+          );
+          SystemLogLibrary::createAdminLog($admin_logs);
+			}
+
 			return array('status' => true, 'message' => 'Employee Enrolled.', 'total_dependents_enrolled' => $total_dependents_count, 'total_employee_enrolled' => 1);
             // } catch(Exception $e) {
             //     return $e->getMessage();
@@ -1508,6 +1533,11 @@ class PlanHelper {
 
 		public static function enrollDependents($temp_enrollment_id, $customer_id, $employee_id, $customer_plan_id)
 		{
+			// get admin session from mednefits admin login
+			$admin_id = Session::get('admin-session-id');
+			$hr_data = StringHelper::getJwtHrSession();
+			$hr_id = $hr_data->hr_dashboard_id;
+
 			$dependent_enrollees = DB::table('dependent_temp_enrollment')
 			->where('employee_temp_id', $temp_enrollment_id)
 			->get();
@@ -1554,6 +1584,7 @@ class PlanHelper {
 						$result_family = $family->createData($family_data);
 
 						if($result_family) {
+							$data['family_data'] = $family_data;
 							$history = array(
 								'user_id'           => $user_id,
 								'dependent_plan_id' => $dependent->dependent_plan_id,
@@ -1567,7 +1598,8 @@ class PlanHelper {
 							$result_dependent_history = $dependent_plan_history->createData($history);
 
 							if($result_dependent_history) {
-                                // check if there is a plan tier id
+								$data['dependent_history'] = $history;
+                // check if there is a plan tier id
 								if($dependent->plan_tier_id) {
 									$tier_history = array(
 										'plan_tier_id'              => $dependent->plan_tier_id,
@@ -1585,6 +1617,27 @@ class PlanHelper {
 								$dependent_enrollment->updateEnrollementStatus($dependent->dependent_temp_id);
 
 								$dependent_plan_status->incrementEnrolledDependents($customer_plan_id);
+							}
+							
+							if($admin_id) {
+								$data['user_id'] = $user_id;
+
+								$admin_logs = array(
+				            'admin_id'  => $admin_id,
+				            'admin_type' => 'mednefits',
+				            'type'      => 'admin_hr_created_dependent',
+				            'data'      => SystemLogLibrary::serializeData($data)
+				        );
+				        SystemLogLibrary::createAdminLog($admin_logs);
+							} else {
+								$data['user_id'] = $user_id;
+								$admin_logs = array(
+				              'admin_id'  => $hr_id,
+				              'admin_type' => 'hr',
+				              'type'      => 'admin_hr_created_dependent',
+				              'data'      => SystemLogLibrary::serializeData($data)
+				          );
+				          SystemLogLibrary::createAdminLog($admin_logs);
 							}
 						}
 					}
@@ -4220,6 +4273,10 @@ class PlanHelper {
 
 		public static function resetEmployeeAccount($employee_id)
 		{
+			// get admin session from mednefits admin login
+			$admin_id = Session::get('admin-session-id');
+			$hr_data = StringHelper::getJwtHrSession();
+			$hr_id = $hr_data->hr_dashboard_id;
 			$user = DB::table('user')->where('UserID', $employee_id)->first();
 
 			if(!$user) {
@@ -4260,6 +4317,25 @@ class PlanHelper {
 						$emailDdata['company'] = ucwords($corporate->company_name);
 						$emailDdata['start_date'] = date('F d, Y', strtotime($start_date));
 						\EmailHelper::sendEmail($emailDdata);
+
+						if($admin_id) {
+							$admin_logs = array(
+			                    'admin_id'  => $admin_id,
+			                    'admin_type' => 'mednefits',
+			                    'type'      => 'admin_hr_employee_reset_account_details',
+			                    'data'      => SystemLogLibrary::serializeData($emailDdata)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						} else {
+							$admin_logs = array(
+			                    'admin_id'  => $hr_id,
+			                    'admin_type' => 'hr',
+			                    'type'      => 'admin_hr_employee_reset_account_details',
+			                    'data'      => SystemLogLibrary::serializeData($emailDdata)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						}
+
 						return array('status' => true, 'message' => 'Employee Account Resetted and sent using email.');
 					} else {
 						if($user->PhoneNo) {
@@ -4277,6 +4353,25 @@ class PlanHelper {
 
 								$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 								$result_sms = SmsHelper::sendSms($compose);
+
+								if($admin_id) {
+									$admin_logs = array(
+					                    'admin_id'  => $admin_id,
+					                    'admin_type' => 'mednefits',
+					                    'type'      => 'admin_hr_employee_reset_account_details',
+					                    'data'      => SystemLogLibrary::serializeData($compose)
+					                );
+					                SystemLogLibrary::createAdminLog($admin_logs);
+								} else {
+									$admin_logs = array(
+					                    'admin_id'  => $hr_id,
+					                    'admin_type' => 'hr',
+					                    'type'      => 'admin_hr_employee_reset_account_details',
+					                    'data'      => SystemLogLibrary::serializeData($compose)
+					                );
+					                SystemLogLibrary::createAdminLog($admin_logs);
+								}
+
 								return array('status' => true, 'message' => 'Employee Account Resetted and sent using sms.');
 		                    } else {
 		                    	return array('status' => false, 'message' => 'Employee Account Resetted and but was not able to send using sms because of mobile phone number malformed. Please update the mobile phone of this employee to be able to send an sms.');

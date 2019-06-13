@@ -43,6 +43,13 @@ class EclaimController extends \BaseController {
 
 		if($check) {
 			Session::put('employee-session', $check->UserID);
+			$admin_logs = array(
+        'admin_id'  => $check->UserID,
+        'admin_type' => 'member',
+        'type'      => 'admin_employee_login_portal',
+        'data'      => SystemLogLibrary::serializeData($input)
+      );
+      SystemLogLibrary::createAdminLog($admin_logs);
 			return array('status' => TRUE, 'message' => 'Success.');
 		}
 
@@ -86,6 +93,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimMedical( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
+		$admin_id = Session::get('admin-session-id');
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -207,6 +215,24 @@ class EclaimController extends \BaseController {
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
 					Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
 					EclaimHelper::sendEclaimEmail($user_id, $id);
+					$data['files'] = $input['receipts'];
+					if($admin_id) {
+						$admin_logs = array(
+		                    'admin_id'  => $admin_id,
+		                    'admin_type' => 'mednefits',
+		                    'type'      => 'admin_employee_create_e_claim_details',
+		                    'data'      => SystemLogLibrary::serializeData($data)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					} else {
+						$admin_logs = array(
+		                    'admin_id'  => $employee->UserID,
+		                    'admin_type' => 'member',
+		                    'type'      => 'admin_employee_create_e_claim_details',
+		                    'data'      => SystemLogLibrary::serializeData($data)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					}
 				}
 				return array('status' => TRUE, 'message' => 'Success.', 'data' => $result);
 			}
@@ -226,10 +252,10 @@ class EclaimController extends \BaseController {
 	public function createEclaimWellness( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-        // $employee = new stdClass();
+		$admin_id = Session::get('admin-session-id');
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
-        // $employee->UserID = $input['user_id'];
+
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
@@ -341,6 +367,24 @@ class EclaimController extends \BaseController {
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
 					Notification::sendNotificationToHR('Employee E-Claim Wellness', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
 					EclaimHelper::sendEclaimEmail($user_id, $id);
+					$data['files'] = $input['receipts'];
+					if($admin_id) {
+						$admin_logs = array(
+		                    'admin_id'  => $admin_id,
+		                    'admin_type' => 'mednefits',
+		                    'type'      => 'admin_employee_create_e_claim_details',
+		                    'data'      => SystemLogLibrary::serializeData($data)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					} else {
+						$admin_logs = array(
+		                    'admin_id'  => $employee->UserID,
+		                    'admin_type' => 'member',
+		                    'type'      => 'admin_employee_create_e_claim_details',
+		                    'data'      => SystemLogLibrary::serializeData($data)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					}
 				}
 				return array('status' => TRUE, 'message' => 'Success.', 'data' => $result);
 			}
@@ -427,6 +471,8 @@ class EclaimController extends \BaseController {
 	public function saveEclaim( )
 	{
 		$input = Input::all();
+		$admin_id = Session::get('admin-session-id');
+		$employee = StringHelper::getEmployeeSession( );
 		$receipt_all = [];
 
 		if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
@@ -434,9 +480,9 @@ class EclaimController extends \BaseController {
 		}
 
 		$id = $transaction_id = (int)preg_replace('/[^0-9]/', '', $input['e_claim_id']);
-		$check = DB::table('e_claim')->where('e_claim_id', $id)->count();
+		$check = DB::table('e_claim')->where('e_claim_id', $id)->first();
 
-		if($check == 0) {
+		if(!$check) {
 			return array('status' => FALSE, 'message' => 'E-Claim data does not exist.');
 		}
 
@@ -489,6 +535,27 @@ class EclaimController extends \BaseController {
 			$result = $e_claim_docs->createEclaimDocs($receipt);
 
 			if($result) {
+				if($file->getClientOriginalExtension() == "pdf" || $file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
+					$result->doc_file = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$file_name;
+				}
+				$receipt['user_id'] = $check->user_id;
+				if($admin_id) {
+					$admin_logs = array(
+	                    'admin_id'  => $admin_id,
+	                    'admin_type' => 'mednefits',
+	                    'type'      => 'admin_employee_uploaded_out_of_network_receipt',
+	                    'data'      => SystemLogLibrary::serializeData($receipt)
+	                );
+	                SystemLogLibrary::createAdminLog($admin_logs);
+				} else {
+					$admin_logs = array(
+	                    'admin_id'  => $employee->UserID,
+	                    'admin_type' => 'member',
+	                    'type'      => 'admin_employee_uploaded_out_of_network_receipt',
+	                    'data'      => SystemLogLibrary::serializeData($receipt)
+	                );
+	                SystemLogLibrary::createAdminLog($admin_logs);
+				}
 				return array('status' => TRUE, 'receipt' => $result);
 			} else {
 				return array('status' => FALSE, 'message' => 'Failed to save e-claim receipt.');
@@ -5508,6 +5575,11 @@ public function updateEclaimStatus( )
 		return array('status' => FALSE, 'message' => 'E-Claim data does not exist.');
 	}
 
+	// get admin session from mednefits admin login
+	$admin_id = Session::get('admin-session-id');
+	$hr_data = StringHelper::getJwtHrSession();
+	$hr_id = $hr_data->hr_dashboard_id;
+
 	$e_claim_details = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->first();
 	$e_claim = new Eclaim( );
 
@@ -5558,15 +5630,42 @@ public function updateEclaimStatus( )
 				$wallet_history_id = $deduct_history->id;
 				try {
 					$deduct_result = $wallet_class->deductCredits($employee, $e_claim_details->amount);
+					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 
 					if($deduct_result) {
-						$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 						$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
 					}
 
                         // send notification to browser
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 					EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
+					if($admin_id) {
+						$data = array(
+							'e_claim_id' => $e_claim_id,
+							'status'  	 => $input['status'] == 1 ? true : false,
+							'rejected_reason' => $rejected_reason
+						);
+						$admin_logs = array(
+		                    'admin_id'  => $admin_id,
+		                    'admin_type' => 'mednefits',
+		                    'type'      => 'admin_hr_approved_e_claim',
+		                    'data'      => SystemLogLibrary::serializeData($data)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					} else {
+						$data = array(
+							'e_claim_id' => $e_claim_id,
+							'status'  	 => $input['status'] == 1 ? true : false,
+							'rejected_reason' => $rejected_reason
+						);
+						$admin_logs = array(
+		                    'admin_id'  => $hr_id,
+		                    'admin_type' => 'hr',
+		                    'type'      => 'admin_hr_approved_e_claim',
+		                    'data'      => SystemLogLibrary::serializeData($data)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					}
 				} catch(Exception $e) {
 					$email = [];
 					$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
@@ -5601,13 +5700,40 @@ public function updateEclaimStatus( )
 				$wallet_history_id = $deduct_history->id;
 				try {
 					$deduct_result = $wallet_class->deductWellnessCredits($employee, $e_claim_details->amount);
+					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 
 					if($deduct_result) {
-						$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 						$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
                             // send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 						EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
+						if($admin_id) {
+							$data = array(
+								'e_claim_id' => $e_claim_id,
+								'status'  	 => $input['status'] == 1 ? true : false,
+								'rejected_reason' => $rejected_reason
+							);
+							$admin_logs = array(
+			                    'admin_id'  => $admin_id,
+			                    'admin_type' => 'mednefits',
+			                    'type'      => 'admin_hr_approved_e_claim',
+			                    'data'      => SystemLogLibrary::serializeData($data)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						} else {
+							$data = array(
+								'e_claim_id' => $e_claim_id,
+								'status'  	 => $input['status'] == 1 ? true : false,
+								'rejected_reason' => $rejected_reason
+							);
+							$admin_logs = array(
+			                    'admin_id'  => $hr_id,
+			                    'admin_type' => 'hr',
+			                    'type'      => 'admin_hr_approved_e_claim',
+			                    'data'      => SystemLogLibrary::serializeData($data)
+			                );
+			                SystemLogLibrary::createAdminLog($admin_logs);
+						}
 					}
 				} catch(Exception $e) {
 					$email = [];
@@ -5629,7 +5755,6 @@ public function updateEclaimStatus( )
 			}
 		}
 
-
 	} else {
 		try {
 			$employee = StringHelper::getUserId($e_claim_details->user_id);
@@ -5638,6 +5763,33 @@ public function updateEclaimStatus( )
                 // send notification to browser
 			Notification::sendNotificationEmployee('Claim Rejected - Mednefits', 'Your E-claim submission has been rejected with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/rejected.png");
 			EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
+			if($admin_id) {
+				$data = array(
+					'e_claim_id' => $e_claim_id,
+					'status'  	 => $input['status'] == 1 ? true : false,
+					'rejected_reason' => $rejected_reason
+				);
+				$admin_logs = array(
+	                'admin_id'  => $admin_id,
+	                'admin_type' => 'mednefits',
+	                'type'      => 'admin_hr_rejected_e_claim',
+	                'data'      => SystemLogLibrary::serializeData($data)
+	            );
+	            SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$data = array(
+					'e_claim_id' => $e_claim_id,
+					'status'  	 => $input['status'] == 1 ? true : false,
+					'rejected_reason' => $rejected_reason
+				);
+				$admin_logs = array(
+                    'admin_id'  => $hr_id,
+                    'admin_type' => 'hr',
+                    'type'      => 'admin_hr_approved_e_claim',
+                    'data'      => SystemLogLibrary::serializeData($data)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			}
 		} catch(Exception $e) {
 			$email = [];
 			$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
@@ -6888,6 +7040,8 @@ public function createInNetworkReceipt( )
 	$input = Input::all();
 	$receipt_all = [];
 	$user_id = Session::get('employee-session');
+	// get admin session from mednefits admin login
+	$admin_id = Session::get('admin-session-id');
 
 	$transaction_id = (int)preg_replace('/[^0-9]/', '', $input['transaction_id']);
 
@@ -6946,7 +7100,7 @@ public function createInNetworkReceipt( )
 		$result = $trans_docs->saveReceipt($receipt);
 
 		if($result) {
-			if(StringHelper::Deployment()==1){
+			// if(StringHelper::Deployment()==1){
 				if($aws_upload == true) {
                         //   aws
 					$s3 = AWS::get('s3');
@@ -6955,7 +7109,25 @@ public function createInNetworkReceipt( )
 						'Key'        => 'receipts/'.$file_name,
 						'SourceFile' => public_path().'/receipts/'.$file_name,
 					));
+					$result->file ='https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$file_name;
 				}
+			// }
+			if($admin_id) {
+				$admin_logs = array(
+                    'admin_id'  => $admin_id,
+                    'admin_type' => 'mednefits',
+                    'type'      => 'admin_employee_uploaded_in_network_receipt',
+                    'data'      => SystemLogLibrary::serializeData($receipt)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+                    'admin_id'  => $user_id,
+                    'admin_type' => 'member',
+                    'type'      => 'admin_employee_uploaded_in_network_receipt',
+                    'data'      => SystemLogLibrary::serializeData($receipt)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
 			}
 			return array('status' => TRUE, 'receipt' => $result);
 		} else {
@@ -7256,10 +7428,12 @@ public function generateMonthlyCompanyInvoice( )
 		$input = Input::all();
 
 		$check = DB::table('user')->where('UserType', 5)->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
-
 		if($check) {
 			Session::put('employee-session', $check->UserID);
-	    return Redirect::to('member-portal/#/home');
+			if(isset($input['admin_id']) || $input['admin_id'] != null) {
+				Session::put('admin-session-id', $input['admin_id']);
+			}
+	    	return Redirect::to('member-portal/#/home');
 	            // return array('status' => TRUE, 'message' => 'Success.');
 		}
 
@@ -7383,6 +7557,9 @@ public function generateMonthlyCompanyInvoice( )
 	{
 		$result = self::checkSession();
 		$input = Input::all();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
 
 		if(empty($input['e_claim_id']) || $input['e_claim_id'] == null) {
 			return array('status' => false, 'message' => 'E Claim ID is required.');
@@ -7431,6 +7608,30 @@ public function generateMonthlyCompanyInvoice( )
 			$result = DB::table('e_claim')
 						->where('e_claim_id', $e_claim->e_claim_id)
 						->update(['status' => 0]);
+		}
+
+		if($admin_id) {
+			$data = array(
+				'e_claim_id' => $e_claim->e_claim_id
+			);
+			$admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_revert_to_pending_e_claim',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+		} else {
+			$data = array(
+				'e_claim_id' => $e_claim->e_claim_id
+			);
+			$admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_revert_to_pending_e_claim',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
 		}
 
 		return array('status' => true, 'message' => 'E Claim data status revert to pending.');
