@@ -169,6 +169,22 @@ Route::filter('auth.v2', function($request, $response)
           $returnObject->message = 'You account was deactivated. Please contact Mednefits Team.';
           return Response::json($returnObject, 200);
         }
+
+        $request = Request::instance();
+        $ip = $request->getClientIp();
+        // log
+        $data = array(
+            'ip_address' => $ip,
+            'date'       => date('Y-m-d H:i:s'),
+            'user_id'    => $user->UserID
+        );
+        $admin_logs = array(
+            'admin_id'  => $user->UserID,
+            'admin_type' => 'member',
+            'type'      => 'member_active_state',
+            'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
     }
 });
 
@@ -227,6 +243,22 @@ Route::filter('auth.employee', function()
             return Response::json('Forbidden', 403, $headers);
         }
     }
+
+    $request = Request::instance();
+    $ip = $request->getClientIp();
+    // log
+    $data = array(
+        'ip_address' => $ip,
+        'date'       => date('Y-m-d H:i:s'),
+        'user_id'    => Session::get('employee-session')
+    );
+    $admin_logs = array(
+        'admin_id'  => Session::get('employee-session'),
+        'admin_type' => 'member',
+        'type'      => 'member_active_state',
+        'data'      => SystemLogLibrary::serializeData($data)
+    );
+    SystemLogLibrary::createAdminLog($admin_logs);
 });
 /*
 |--------------------------------------------------------------------------
