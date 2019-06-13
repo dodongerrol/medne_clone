@@ -5785,7 +5785,7 @@ public function updateEclaimStatus( )
 				$admin_logs = array(
                     'admin_id'  => $hr_id,
                     'admin_type' => 'hr',
-                    'type'      => 'admin_hr_approved_e_claim',
+                    'type'      => 'admin_hr_rejected_e_claim',
                     'data'      => SystemLogLibrary::serializeData($data)
                 );
                 SystemLogLibrary::createAdminLog($admin_logs);
