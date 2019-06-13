@@ -70,7 +70,6 @@ app.directive('statementPage', [
 
 						angular.forEach( res, function(value,key){
 							var filename = $.trim( value.file.split('/').pop() );
-							var img = zip.folder("images");
 							var promise = $.ajax({
 				        url: value.file,
 				        method: 'GET',
@@ -79,12 +78,7 @@ app.directive('statementPage', [
 				        }
 					    });
 
-							if( value.file_type == 'pdf' ){
-								zip.file(filename, promise);
-							}
-							if( value.file_type == 'image' ){
-								img.file(filename,promise);
-							}
+							zip.file(filename, promise);
 							
 							if( key == (res.length-1) ){
 								zip.generateAsync({type:"blob"}).then(function(content) {

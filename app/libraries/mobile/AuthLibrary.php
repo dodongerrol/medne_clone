@@ -22,11 +22,17 @@ class AuthLibrary{
             $returnObject->error= "false";
             $returnObject = $token;
             $returnObject->data['promocode'] = null;
+            $admin_logs = array(
+                'admin_id'  => $findUserID,
+                'admin_type' => 'member',
+                'type'      => 'admin_member_login_mobile',
+                'data'      => SystemLogLibrary::serializeData($token)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+
         } else if($token->fields == FALSE) {
             $returnObject = $token;
-        }
-
-        else{
+        } else{
             $returnObject->status = FALSE;
             $returnObject->error = 'invalid_credentials';
             $returnObject->error_description = 'The user credentials were incorrect.';
@@ -671,6 +677,10 @@ public static function FindUserProfile($profileid){
 public static function ChangePassword($profileid){
     $allInputdata = Input::all();
     $returnObject = new stdClass();
+
+    // get admin session from mednefits admin login
+    $admin_id = Session::get('admin-session-id');
+
     if(!empty($allInputdata)){
         $findUser = self::FindUserProfile($profileid);
             // return $findUser;
@@ -681,6 +691,24 @@ public static function ChangePassword($profileid){
                 $updateArray['updated_at'] = time();
                 $updated = self::UpdateUserProfile($updateArray);
                 if($updated){
+                    $allInputdata['user_id'] = $profileid;
+                    if($admin_id) {
+                        $admin_logs = array(
+                            'admin_id'  => $admin_id,
+                            'admin_type' => 'mednefits',
+                            'type'      => 'admin_employee_reset_password',
+                            'data'      => SystemLogLibrary::serializeData($allInputdata)
+                        );
+                        SystemLogLibrary::createAdminLog($admin_logs);
+                    } else {
+                        $admin_logs = array(
+                            'admin_id'  => $profileid,
+                            'admin_type' => 'member',
+                            'type'      => 'admin_employee_reset_password',
+                            'data'      => SystemLogLibrary::serializeData($allInputdata)
+                        );
+                        SystemLogLibrary::createAdminLog($admin_logs);
+                    }
                     $returnObject->status = TRUE;
                     $returnObject->web_message = 'Password updated successfully!';
                 }else{

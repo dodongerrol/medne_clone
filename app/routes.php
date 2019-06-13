@@ -86,7 +86,7 @@ Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardCo
 // authentications for eclaim
 Route::group(array('before' => 'auth.employee'), function( ){
 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
-	Route::post('app/create_e_claim', 'EclaimController@createEclaimMedical');
+	// Route::post('app/create_e_claim', 'EclaimController@createEclaimMedical');
 	Route::get('app/get_e_claims', 'EclaimController@getEclaims');
 	Route::get('app/get_e_claim_details/{id}', 'EclaimController@getEclaimDetails');
 	// upload image
@@ -290,7 +290,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get spending deposits
 	Route::get('hr/get_spending_deposits', 'BenefitsDashboardController@getSpendingDeposits');
 	// get company employees and credits left
-	Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
+	// Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
 	Route::get('hr/details', 'BenefitsDashboardController@getCompanyDetails');
 
 	// plan tier and dependents api

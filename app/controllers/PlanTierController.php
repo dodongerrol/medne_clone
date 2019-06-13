@@ -12,9 +12,12 @@ class PlanTierController extends \BaseController {
 	public function createPlanTier( )
 	{
 		$input = Input::all();
-		// return $input;
-		// $customer_id = $input['customer_id'];
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 		$customer_id = PlanHelper::getCusomerIdToken();
+
 		if(empty($input['medical_annual_cap'])) {
 			return array('status' => false, 'message' => 'Medical Annual Cap is required.');
 		}
@@ -114,6 +117,23 @@ class PlanTierController extends \BaseController {
 		$result = \PlanTier::create($tier);
 
 		if($result) {
+			if($admin_id) {
+				$admin_logs = array(
+                    'admin_id'  => $admin_id,
+                    'admin_type' => 'mednefits',
+                    'type'      => 'admin_hr_created_plan_tier_details',
+                    'data'      => SystemLogLibrary::serializeData($tier)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+                    'admin_id'  => $hr_id,
+                    'admin_type' => 'hr',
+                    'type'      => 'admin_hr_created_plan_tier_details',
+                    'data'      => SystemLogLibrary::serializeData($tier)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			}
 			return array('status' => true, 'message' => 'Plan Tier Created.');
 		}
 
@@ -123,6 +143,10 @@ class PlanTierController extends \BaseController {
 	public function updatePlanTier( )
 	{
 		$input = Input::all();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 
 		$customer_id = PlanHelper::getCusomerIdToken();
 
@@ -212,6 +236,26 @@ class PlanTierController extends \BaseController {
 			$result = \PlanTier::where('plan_tier_id', $input['plan_tier_id'])->update($tier);
 
 			if($result) {
+				if($result) {
+					if($admin_id) {
+						$admin_logs = array(
+		                    'admin_id'  => $admin_id,
+		                    'admin_type' => 'mednefits',
+		                    'type'      => 'admin_hr_updated_plan_tier_details',
+		                    'data'      => SystemLogLibrary::serializeData($input)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					} else {
+						$admin_logs = array(
+		                    'admin_id'  => $hr_id,
+		                    'admin_type' => 'hr',
+		                    'type'      => 'admin_hr_updated_plan_tier_details',
+		                    'data'      => SystemLogLibrary::serializeData($input)
+		                );
+		                SystemLogLibrary::createAdminLog($admin_logs);
+					}
+					return array('status' => true, 'message' => 'Plan Tier Updated.');
+				}
 				return array('status' => true, 'message' => 'Plan Tier Updated.');
 			}
 
@@ -291,6 +335,23 @@ class PlanTierController extends \BaseController {
 		$result = \PlanTier::where('plan_tier_id', $input['plan_tier_id'])->update($tier);
 
 		if($result) {
+			if($admin_id) {
+				$admin_logs = array(
+                    'admin_id'  => $admin_id,
+                    'admin_type' => 'mednefits',
+                    'type'      => 'admin_hr_updated_plan_tier_details',
+                    'data'      => SystemLogLibrary::serializeData($input)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+                    'admin_id'  => $hr_id,
+                    'admin_type' => 'hr',
+                    'type'      => 'admin_hr_updated_plan_tier_details',
+                    'data'      => SystemLogLibrary::serializeData($input)
+                );
+                SystemLogLibrary::createAdminLog($admin_logs);
+			}
 			return array('status' => true, 'message' => 'Plan Tier Updated.');
 		}
 
