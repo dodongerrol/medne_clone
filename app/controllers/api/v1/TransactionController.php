@@ -891,6 +891,12 @@ class Api_V1_TransactionController extends \BaseController
 							}
 						}
 
+						$paid_by_credits = $transaction->credit_cost;
+						if((int)$transaction->lite_plan_enabled == 1) {
+							if($consultation_credits == true) {
+								$paid_by_credits += $consultation;
+							}
+						}
 
 						$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
 						
@@ -934,7 +940,7 @@ class Api_V1_TransactionController extends \BaseController
 							'bill_amount'				=> $transaction->currency_type == "myr" ? number_format($bill_amount * 3, 2) : number_format($bill_amount, 2),
 							'consultation_fee'	=> $consultation_fee,
 							'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost * $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
-							'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($transaction->credit_cost * $transaction->currency_amount, 2) : number_format($transaction->credit_cost, 2),
+							'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($paid_by_credits * $transaction->currency_amount, 2) : number_format($paid_by_credits, 2),
 							'files'             => $doc_files,
 							'lite_plan'         => $lite_plan_status,
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
