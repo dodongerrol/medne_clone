@@ -1,4 +1,5 @@
 <?php
+use Aws\S3\S3Client;
 class EclaimHelper
 {
 	
@@ -64,6 +65,18 @@ class EclaimHelper
     }
 
     return EmailHelper::sendEmail($email);
+  }
+
+  public static function createPreSignedUrl($doc)
+  {
+    $s3 = S3Client::factory( [
+      'region' => 'ap-southeast-1',
+      'version' => 'latest',
+      // 'endpoint' => 'https://mednefits.com',
+      'bucket_endpoint' => true
+    ]);
+
+   return $s3->getObjectUrl('mednefits', "receipts/".$doc, '+20 minutes');
   }
 }
 ?>
