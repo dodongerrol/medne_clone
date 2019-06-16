@@ -930,7 +930,7 @@
 						hrSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
 						.then(function(response){
 							scope.toggleLoading();
-							var url = "http://docs.google.com/viewer?url=" + response.data + "&embedded=true&chrome=true";
+							var url = "https://docs.google.com/viewer?url=" + response.data + "&embedded=true&chrome=true";
 							$(".preview-box iframe").show();
 							$(".preview-box .img-container").css({'width': '80%'});
 							$(".preview-box img").hide();
