@@ -120,6 +120,8 @@ Route::group(array('before' => 'auth.employee'), function( ){
 	Route::get('employee/get_health_partner_lists', 'EclaimController@getHealthPartnerLists');
 	// get user care package
 	Route::get('employee_care_package', 'BenefitsDashboardController@employeePackages');
+	// get doc presigned url
+	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 });
 
 // api for getting local_network
@@ -362,8 +364,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
-});
 	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
+	// get pre signed e-claim doc
+	Route::get('hr/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
+});
 
 
 // intro login for clinic
