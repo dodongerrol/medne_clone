@@ -535,16 +535,16 @@ app.directive('activityDirective', [
 						$(".preview-box iframe").hide();
 						$(".preview-box img").attr('src', img.file);
 					}else{
-						scope.toggleLoading();
-						eclaimSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
-						.then(function(response){
-							scope.toggleLoading();
+						// scope.toggleLoading();
+						// eclaimSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
+						// .then(function(response){
+						// 	scope.toggleLoading();
 							var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
 							$(".preview-box iframe").show();
 							$(".preview-box .img-container").css({'width': '80%'});
 							$(".preview-box img").hide();
 							$(".preview-box #src-view-data").attr('src', url);
-						});
+						// });
 						// $(".preview-box iframe").show();
 						// $(".preview-box .img-container").css({'width': '80%'});
 						// $(".preview-box img").hide();
