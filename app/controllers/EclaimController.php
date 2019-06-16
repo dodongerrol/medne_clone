@@ -5236,7 +5236,8 @@ public function searchEmployeeEclaimActivity( )
 			foreach ($docs as $key => $doc) {
 				if($doc->file_type == "pdf" || $doc->file_type == "xls") {
 					if(StringHelper::Deployment()==1){
-						$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+						// $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+						$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
 					} else {
 						$fil = url('').'/receipts/'.$doc->doc_file;
 					}
@@ -5448,7 +5449,8 @@ public function hrEclaimActivity( )
 				foreach ($docs as $key => $doc) {
 					if($doc->file_type == "pdf" || $doc->file_type == "xls") {
 						if(StringHelper::Deployment()==1){
-							$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+							// $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+							$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
 						} else {
 							$fil = url('').'/receipts/'.$doc->doc_file;
 						}
@@ -7718,6 +7720,43 @@ public function generateMonthlyCompanyInvoice( )
         EmailHelper::sendErrorLogs($email);
         return array('status' => false, 'message' => 'E-Claim created successfully but failed to create E-Receipt.');
     }
+	}
+
+	public function getPresignedEclaimDoc( )
+	{
+		$input = Input::all();
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return array('status' => false, 'message' => 'ID is required.');
+		};
+
+		$doc = DB::table('e_claim_docs')->where('e_claim_doc_id', $input['id'])->first();
+
+		if(!$doc) {
+			return array('status' => false, 'message' => 'E CLaim Doc does not exist.');
+		}
+
+		$file_types = ["pdf", "xls", "xlsx"];
+
+		if(!in_array($doc->file_type, $file_types)) {
+			return array('status' => false, 'message' => 'E CLaim Doc is not a pdf, xls or xlsx.');
+		}
+
+		// $s3 = AWS::get('s3');
+		// $cmd = $s3->getCommand('GetObject', [
+	 //    'Bucket' => 'mednefits',
+	 //    'Key' => "receipts/".$doc->doc_file
+		// ]);
+
+		// // return var_dump($cmd);
+
+		// $request = $s3->createPresignedRequest($cmd, '+20 minutes');
+
+		// // Get the actual presigned-url
+		// $presignedUrl = (string)$request->getUri();
+		// $presignedUrl = $s3->getObjectUrl('mednefits/receipts', $doc->doc_file, '+120 minutes');
+		
+		return EclaimHelper::createPreSignedUrl($doc->doc_file);
 	}
 }
 ?>
