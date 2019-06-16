@@ -366,8 +366,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
 	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// get pre signed e-claim doc
-	Route::get('hr/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 });
+	Route::get('hr/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 
 
 // intro login for clinic
