@@ -73,7 +73,11 @@ class EclaimHelper
       'region' => 'ap-southeast-1',
       'version' => 'latest',
       // 'endpoint' => 'https://mednefits.com',
-      'bucket_endpoint' => true
+      'bucket_endpoint' => true,
+      'credentials' => [
+        'key'    => 'AKIAI6QVQUMRF7RN6T2Q',
+        'secret' => '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',
+      ],
     ]);
 
    return $s3->getObjectUrl('mednefits', "receipts/".$doc, '+20 minutes');
