@@ -525,8 +525,8 @@ app.directive('activityDirective', [
         scope.showPreview = function( img ){
 					console.log(img);
 
-					var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
-					console.log(url);
+					// var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
+					// console.log(url);
 
 					$(".preview-box").fadeIn();
 
@@ -536,10 +536,19 @@ app.directive('activityDirective', [
 						$(".preview-box iframe").hide();
 						$(".preview-box img").attr('src', img.file);
 					}else{
-						$(".preview-box iframe").show();
-						$(".preview-box .img-container").css({'width': '80%'});
-						$(".preview-box img").hide();
-						$(".preview-box #src-view-data").attr('src', url);
+						scope.toggleLoading();
+						eclaimSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
+						.then(function(response){
+							scope.toggleLoading();
+							$(".preview-box iframe").show();
+							$(".preview-box .img-container").css({'width': '80%'});
+							$(".preview-box img").hide();
+							$(".preview-box #src-view-data").attr('src', response.data);
+						});
+						// $(".preview-box iframe").show();
+						// $(".preview-box .img-container").css({'width': '80%'});
+						// $(".preview-box img").hide();
+						// $(".preview-box #src-view-data").attr('src', url);
 					}
 				}
 

@@ -308,6 +308,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.resetAccount = function(data) {
     return $http.post(serverUrl.url + "/hr/employee_reset_account", data);
   };
+
+  hrFactory.getEclaimPresignedUrl = function(data) {
+    return $http.get(serverUrl.url + "/hr/get_e_claim_doc?id=" + data);
+  };
   
   return hrFactory;
 });
