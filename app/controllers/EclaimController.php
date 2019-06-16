@@ -5236,8 +5236,8 @@ public function searchEmployeeEclaimActivity( )
 			foreach ($docs as $key => $doc) {
 				if($doc->file_type == "pdf" || $doc->file_type == "xls") {
 					if(StringHelper::Deployment()==1){
-						// $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
-						$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
+						$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+						// $fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
 					} else {
 						$fil = url('').'/receipts/'.$doc->doc_file;
 					}
@@ -5449,8 +5449,8 @@ public function hrEclaimActivity( )
 				foreach ($docs as $key => $doc) {
 					if($doc->file_type == "pdf" || $doc->file_type == "xls") {
 						if(StringHelper::Deployment()==1){
-							// $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
-							$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
+							$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+							// $fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
 						} else {
 							$fil = url('').'/receipts/'.$doc->doc_file;
 						}
