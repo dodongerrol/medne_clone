@@ -103,7 +103,8 @@ input:focus{
   cursor: pointer;
   border: none;
   color: #fff;
-  border-radius: 3px;
+  border-radius: 0px;
+  /*border-radius: 3px;*/
   padding: 6px 0;
   width: 77px;
   text-align: center;
