@@ -1908,7 +1908,7 @@ public function getNewClinicDetails($id)
         // create clinic check in data
         $check_in = $check_in_class->createData($check_in_data);
         $jsonArray['check_in_id'] = $check_in->id;
-        $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
+        $jsonArray['check_in_time'] = date('d M, h:i a', strtotime($check_in_time));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
 
