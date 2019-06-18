@@ -2319,9 +2319,9 @@ class BenefitsDashboardController extends \BaseController {
 			}
 			
 
-			$total_medical_allocated = $allocated - $deleted_employee_allocation - $total_deduction_credits;
+			$total_medical_allocated = $allocated - $deleted_employee_allocation;
 
-			$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness - $total_deduction_credits_wellness;
+			$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness;
 
 			$credits = $total_medical_allocation - $total_medical_allocated;
 			$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
