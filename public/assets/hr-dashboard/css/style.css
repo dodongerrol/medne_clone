@@ -3639,7 +3639,9 @@ ul.typeahead li a.dropdown-item
 
 .in-network-subtr td .btn-upload-receipt[disabled],
 .in-network-subtr td .btn-download-receipt[disabled]{
-    background: #0086d38a;
+    background: #DFDFDF;
+    color: #9F9F9F!important;
+    /*background: #0086d38a;*/
     cursor: not-allowed;
 }
 
