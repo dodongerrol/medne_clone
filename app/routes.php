@@ -975,7 +975,8 @@ Route::group(array('prefix' => 'v2'), function()
 		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
 		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
 		    // send notification to clinic when customer will pay directly to clinic
-		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+		    // Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+		    Route::post('clinic/payment_direct', 'Api_V1_TransactionController@notifyClinicDirectPayment');
 		    // save photo receipt
 		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
 		    // save photo bulk
