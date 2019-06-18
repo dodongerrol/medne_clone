@@ -155,13 +155,21 @@ class UserCheckInController extends \BaseController {
 			$user = DB::table('user')->where('UserID', $check->user_id)->first();
 					$cap_per_visit = 0;
 			if($user) {
+				$cap_per_visit = 0;
+				$currency_symbol = "";
+				if($check->cap_per_visit == 0) {
+					$cap_per_visit = "Not Applicable";
+				} else {
+					$cap_per_visit = number_format($check->cap_per_visit, 2);
+					$currency_symbol = $check->currency_symbol == "myr" ? 'RM' : 'S$';
+				}
 				$temp = array(
 					'check_in_id' 	=> $check->check_in_id,
 					'clinic_id'		=> $check->clinic_id,
 					'registration_date' => date('d F Y, h:i a', strtotime($check->check_in_time)),
 					'transaction_id'	=> $check->id,
-					'cap_per_visit'		=> $check->cap_per_visit,
-					'currency_symbol'	=> $check->currency_symbol == "myr" ? 'RM' : 'S$',
+					'cap_per_visit'		=> $cap_per_visit,
+					'currency_symbol'	=> $currency_symbol,
 					'name'			=> ucwords($user->Name),
 					'nric'			=> $user->NRIC,
 					'remarks'		=> (int)$check->status == 0 ? 'Pending' : 'Done',

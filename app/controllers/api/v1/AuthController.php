@@ -1900,8 +1900,8 @@ public function getNewClinicDetails($id)
           'check_out_time'  => $check_in_time,
           'check_in_type'   => 'in_network_transaction',
           'cap_per_visit'   => $cap_amount,
-          'currency_symbol' => $cap_currency_symbol == "RM$" ? "myr" : "sgd",
-          'currency_value'  => $cap_currency_symbol == "RM$" ? 3.00 : 0.00,
+          'currency_symbol' => $clinic->currency_type == "myr" ? "myr" : "sgd",
+          'currency_value'  => $clinic->currency_type == "myr" ? 3.00 : 0.00,
         );
 
         $check_in_class = new EmployeeClinicCheckIn( );
