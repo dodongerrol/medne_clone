@@ -1792,6 +1792,14 @@ public function getNewClinicDetails($id)
                return Response::json($returnObject);
             }
 
+            if($plan_coverage['pending'] == true) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Employee Plan Account is still pending';
+               $returnObject->data = $plan_coverage;
+               $returnObject->employee_status = false;
+               return Response::json($returnObject);
+            }
+
            // return $plan_coverage;
            $user = DB::table('user')->where('UserID', $findUserID)->first();
            $procedures = DB::table('clinic_procedure')

@@ -295,6 +295,12 @@ class PlanHelper {
 			$data['expired'] = FALSE;
 		}
 
+		if(date('Y-m-d', strtotime($plan_user->plan_start)) > date('Y-m-d')) {
+			$data['pending'] = true;
+		} else {
+			$data['pending'] = false;
+		}
+
 		return $data;
 	}
 
@@ -4525,6 +4531,13 @@ class PlanHelper {
 			} else {
 				$data['expired'] = FALSE;
 			}
+
+			if(date('Y-m-d', strtotime($dependent_plan_history->plan_start)) > date('Y-m-d')) {
+				$data['pending'] = true;
+			} else {
+				$data['pending'] = false;
+			}
+
 			$data['user_type'] = "dependents";
 
 			return $data;
