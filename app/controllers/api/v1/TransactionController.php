@@ -667,8 +667,10 @@ class Api_V1_TransactionController extends \BaseController
 
            if($lite_plan_status && $clinic_type->lite_plan_enabled == 1) {
               $lite_plan_enabled = 1;
+              $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
            } else {
               $lite_plan_enabled = 0;
+              $consultation_fees = 0;
            }
 
            if($clinic_data->currency_type == "myr") {
@@ -702,7 +704,8 @@ class Api_V1_TransactionController extends \BaseController
                'multiple_service_selection' => $multiple_service_selection,
                'spending_type'         => $clinic_type->spending_type,
                'lite_plan_enabled'     => $lite_plan_enabled,
-               'currency_type'				 => $clinic_data->currency_type
+               'currency_type'				 => $clinic_data->currency_type,
+               'consultation_fees'		 => $consultation_fees
            );
 
            if($clinic_peak_status) {
@@ -730,7 +733,6 @@ class Api_V1_TransactionController extends \BaseController
                   $save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
 
                   if($lite_plan_enabled == 1) {
-                  	$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
 										$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();
 										
 										if($data['spending_type'] == "medical") {
