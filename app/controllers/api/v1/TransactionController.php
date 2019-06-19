@@ -145,7 +145,7 @@ class Api_V1_TransactionController extends \BaseController
 					$peak_amount = $clinic_co_payment['peak_amount'];
 					$co_paid_amount = $clinic_co_payment['co_paid_amount'];
 					$co_paid_status = $clinic_co_payment['co_paid_status'];
-
+					$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 					// check if user has a plan tier
 					$plan_tier = PlanHelper::getEmployeePlanTier($customer_id, $user_id);
 					$cap_amount = 0;
@@ -565,6 +565,286 @@ class Api_V1_TransactionController extends \BaseController
 			$returnObject->status = FALSE;
       $returnObject->message = StringHelper::errorMessage("Token");
       return Response::json($returnObject);
+		}
+	}
+
+	public function notifyClinicDirectPayment( )
+{
+   $AccessToken = new Api_V1_AccessTokenController();
+   $returnObject = new stdClass();
+   $authSession = new OauthSessions();
+   $getRequestHeader = StringHelper::requestHeader();
+   $input = Input::all();
+
+   if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+                // return $findUserID;
+         if($findUserID){
+         		$input_amount = 0;
+            if(!isset($input['services'])) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Please choose a service.';
+               return Response::json($returnObject);
+           } else if(sizeof($input['services']) == 0) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Please choose a service.';
+               return Response::json($returnObject);
+           }
+
+           if(!isset($input['clinic_id'])) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Please choose a clinic.';
+               return Response::json($returnObject);
+           }
+
+           if(isset($input['input_amount'])) {
+           	$input_amount = trim($input['input_amount']);
+           }
+
+        				// check block access
+           $block = PlanHelper::checkCompanyBlockAccess($findUserID, $input['clinic_id']);
+
+           if($block) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
+               return Response::json($returnObject);
+           }
+
+           $returnObject->status = TRUE;
+           $returnObject->message = 'Success.';
+                    // check user type 
+           $type = StringHelper::checkUserType($findUserID);
+           $lite_plan_status = false;
+           $lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
+           $currency = 3.00;
+
+           $user = DB::table('user')->where('UserID', $findUserID)->first();
+           if($type['user_type'] == 5 && $type['access_type'] == 0 || $type['user_type'] == "5" && $type['access_type'] == "0" || $type['user_type'] == 5 && $type['access_type'] == 1 || $type['user_type'] == "5" && $type['access_type'] == "1")
+           {
+               $user_id = $findUserID;
+               $customer_id = $findUserID;
+           } else {
+                        // find owner
+               $owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $findUserID)->first();
+               $user_id = $owner->owner_id;
+                        // $user_id = $findUserID;
+               $customer_id = $findUserID;
+           }
+
+           $transaction = new Transaction();
+           $wallet = new Wallet( );
+           $clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
+           $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
+
+                    // check if multiple services selected
+           $multiple = false;
+           if(sizeof($input['services']) == 1) {
+               $services = $input['services'][0];
+               $multiple_service_selection = 0;
+               $multiple = false;
+           } else {
+               $services = 0;
+               $multiple_service_selection = 1;
+               $multiple = true;
+           }
+
+          $wallet_data = $wallet->getUserWallet($user_id);
+          $date_of_transaction = null;
+
+          if(isset($input['check_out_time']) && $input['check_out_time'] != null) {
+            $date_of_transaction = date('Y-m-d H:i:s', strtotime($input['check_out_time']));
+          } else {
+            $date_of_transaction = date('Y-m-d H:i:s');
+          }
+
+          $clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $date_of_transaction, $user_id);
+          $peak_amount = $clinic_co_payment['peak_amount'];
+          $co_paid_amount = $clinic_co_payment['co_paid_amount'];
+          $co_paid_status = $clinic_co_payment['co_paid_status'];
+          $clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
+
+           if($lite_plan_status && $clinic_type->lite_plan_enabled == 1) {
+              $lite_plan_enabled = 1;
+           } else {
+              $lite_plan_enabled = 0;
+           }
+
+           if($clinic_data->currency_type == "myr") {
+						  $total_amount = $input_amount / 3;
+						} else {
+						  $total_amount = $input_amount;
+						}
+
+           $data = array(
+               'UserID'                => $customer_id,
+               'ProcedureID'           => $services,
+               'date_of_transaction'   => $date_of_transaction,
+               'ClinicID'              => $input['clinic_id'],
+               'procedure_cost'        => $total_amount,
+               'AppointmenID'          => 0,
+               'revenue'               => 0,
+               'debit'                 => 0,
+               'medi_percent'          => $clinic_data->medicloud_transaction_fees,
+               'clinic_discount'       => $clinic_data->discount,
+               'wallet_use'            => 0,
+               'current_wallet_amount' => $wallet_data->balance,
+               'credit_cost'           => 0,
+               'paid'                  => 1,
+               'co_paid_status'        => $co_paid_status,
+               'co_paid_amount'        => $co_paid_amount,
+               'DoctorID'              => 0,
+               'backdate_claim'        => 1,
+               'in_network'            => 1,
+               'mobile'                => 1,
+               'health_provider_done'  => 1,
+               'multiple_service_selection' => $multiple_service_selection,
+               'spending_type'         => $clinic_type->spending_type,
+               'lite_plan_enabled'     => $lite_plan_enabled,
+               'currency_type'				 => $clinic_data->currency_type
+           );
+
+           if($clinic_peak_status) {
+						$data['peak_hour_status'] = 1;
+						if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
+							$gst_peak = $peak_amount * $clinic->gst_percent;
+							$data['peak_hour_amount'] = $peak_amount + $gst_peak;
+						} else {
+							$data['peak_hour_amount'] = $peak_amount;
+						}
+					}
+
+					if($currency) {
+					 $data['currency_amount'] = $currency;
+					}
+					
+           try {
+
+               $result = $transaction->createTransaction($data);
+               $transaction_id = $result->id;
+
+               if($result) {
+                            // insert transation services
+                  $ts = new TransctionServices( );
+                  $save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+
+                  if($lite_plan_enabled == 1) {
+                  	$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
+										$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();
+										
+										if($data['spending_type'] == "medical") {
+											$balance = $wallet_data->balance;
+										} else {
+											$balance = $wallet_data->wellness_balance;
+										}
+										// check user credits and deduct
+
+										if($balance >= $consultation_fees) {
+											$wallet = new Wallet( );
+											// deduct wallet
+											$lite_plan_credits_log = array(
+												'wallet_id'     => $wallet_data->wallet_id,
+												'credit'        => $consultation_fees,
+												'logs'          => 'deducted_from_mobile_payment',
+												'running_balance' => $balance - $consultation_fees,
+												'where_spend'   => 'in_network_transaction',
+												'id'            => $transaction_id,
+												'lite_plan_enabled' => 1,
+											);
+
+											try {
+												// create logs
+												if($data['spending_type'] == "medical") {
+													$deduct_history = \WalletHistory::create($lite_plan_credits_log);
+													$wallet_history_id = $deduct_history->id;
+												} else {
+													$deduct_history = \WellnessWalletHistory::create($lite_plan_credits_log);
+													$wallet_history_id = $deduct_history->id;
+												}
+
+												if($data['spending_type'] == "medical") {
+													$wallet->deductCredits($user_id, $data['co_paid_amount']);
+												} else {
+													$wallet->deductWellnessCredits($user_id, $data['co_paid_amount']);
+												}
+
+												// update transaction
+												$update_trans = array(
+													'lite_plan_use_credits' => 1
+												);
+
+												$transaction->updateTransaction($transaction_id, $update_trans);
+
+											} catch(Exception $e) {
+
+												if($data['spending_type'] == "medical") {
+													$history = new WalletHistory( );
+													$history->deleteFailedWalletHistory($wallet_history_id);
+												} else {
+													\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
+												}
+
+												$email = [];
+												$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
+												$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e;
+												$email['emailSubject'] = 'Error log.';
+												EmailHelper::sendErrorLogs($email);
+												return array('status' => FALSE, 'message' => 'Failed to save transaction.');
+											}
+										}
+									}
+
+                            // send notification to browser
+                  Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
+
+                            // send realtime update to claim clinic admin
+                  // PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
+
+                  // check if check_in_id exist
+                  if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
+                  // check check_in_id data
+                    $check_in = DB::table('user_check_in_clinic')
+                    ->where('check_in_id', $input['check_in_id'])
+                    ->first();
+                    if($check_in) {
+                  // update check in date
+                      DB::table('user_check_in_clinic')
+                      ->where('check_in_id', $input['check_in_id'])
+                      ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+                      PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
+                    }
+                  }
+
+              $returnObject->status = TRUE;
+              $returnObject->message = 'Transaction Done.';
+          }
+			      } catch(Exception $e) {
+			         $returnObject->status = FALSE;
+			         $returnObject->message = 'Cannot process payment direct to health provider. Please try again.';
+			                        // send email logs
+			         $email = [];
+			         $email['end_point'] = url('v1/clinic/payment_direct', $parameter = array(), $secure = null);
+			         $email['logs'] = 'Mobile Payment Direct - '.$e;
+			         $email['emailSubject'] = 'Error log.';
+			         EmailHelper::sendErrorLogs($email);
+			     }
+
+		     	return Response::json($returnObject);
+				 } else {
+				  $returnObject->status = FALSE;
+				  $returnObject->message = StringHelper::errorMessage("Token");
+				  return Response::json($returnObject);
+				}
+			} else {
+			   $returnObject->status = FALSE;
+			   $returnObject->message = StringHelper::errorMessage("Token");
+			   return Response::json($returnObject);
+			}
+		} else {
+		  $returnObject->status = FALSE;
+		  $returnObject->message = StringHelper::errorMessage("Token");
+		  return Response::json($returnObject);
 		}
 	}
 

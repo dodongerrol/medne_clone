@@ -1792,6 +1792,14 @@ public function getNewClinicDetails($id)
                return Response::json($returnObject);
             }
 
+            if($plan_coverage['pending'] == true) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Employee Plan Account is still pending';
+               $returnObject->data = $plan_coverage;
+               $returnObject->employee_status = false;
+               return Response::json($returnObject);
+            }
+
            // return $plan_coverage;
            $user = DB::table('user')->where('UserID', $findUserID)->first();
            $procedures = DB::table('clinic_procedure')
@@ -1900,15 +1908,15 @@ public function getNewClinicDetails($id)
           'check_out_time'  => $check_in_time,
           'check_in_type'   => 'in_network_transaction',
           'cap_per_visit'   => $cap_amount,
-          'currency_symbol' => $cap_currency_symbol == "RM$" ? "myr" : "sgd",
-          'currency_value'  => $cap_currency_symbol == "RM$" ? 3.00 : 0.00,
+          'currency_symbol' => $clinic->currency_type == "myr" ? "myr" : "sgd",
+          'currency_value'  => $clinic->currency_type == "myr" ? 3.00 : 0.00,
         );
 
         $check_in_class = new EmployeeClinicCheckIn( );
         // create clinic check in data
         $check_in = $check_in_class->createData($check_in_data);
         $jsonArray['check_in_id'] = $check_in->id;
-        $jsonArray['check_in_time'] = date('d M, h:ia', strtotime($check_in_time));
+        $jsonArray['check_in_time'] = date('d M, h:i a', strtotime($check_in_time));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
 

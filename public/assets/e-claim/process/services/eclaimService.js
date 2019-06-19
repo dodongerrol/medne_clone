@@ -92,7 +92,11 @@ service.factory("eclaimSettings", function($http, serverUrl, Upload) {
 
   eclaimFactory.getPackages = function( ) {
     return $http.get(serverUrl.url + '/employee_care_package');
-  }
+  };
+
+  eclaimFactory.getEclaimPresignedUrl = function(data) {
+    return $http.get(serverUrl.url + "/employee_care_package/get_e_claim_doc?id=" + data);
+  };
 
   return eclaimFactory;
 });

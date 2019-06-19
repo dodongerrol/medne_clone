@@ -120,6 +120,8 @@ Route::group(array('before' => 'auth.employee'), function( ){
 	Route::get('employee/get_health_partner_lists', 'EclaimController@getHealthPartnerLists');
 	// get user care package
 	Route::get('employee_care_package', 'BenefitsDashboardController@employeePackages');
+	// get doc presigned url
+	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 });
 
 // api for getting local_network
@@ -362,10 +364,12 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
-});
 	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// update cap per visit of employee
 	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
+	// get pre signed e-claim doc
+	Route::get('hr/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
+});
 
 
 // intro login for clinic
@@ -971,7 +975,8 @@ Route::group(array('prefix' => 'v2'), function()
 		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
 		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
 		    // send notification to clinic when customer will pay directly to clinic
-		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+		    // Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+		    Route::post('clinic/payment_direct', 'Api_V1_TransactionController@notifyClinicDirectPayment');
 		    // save photo receipt
 		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
 		    // save photo bulk

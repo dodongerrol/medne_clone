@@ -103,6 +103,7 @@
 
 						angular.forEach( res, function(value,key){
 							var filename = $.trim( value.file.split('/').pop() );
+							console.log('filename', filename);
 							var img = zip.folder("images");
 							var pdf = zip.folder("pdf");
 							var xls = zip.folder("xls");
@@ -114,13 +115,17 @@
 				        }
 					    });
 							if( value.file_type == 'pdf' ){
-								pdf.file(filename, promise);
+								var final_file = filename.replace(/\?.*/,'');
+								console.log('final_file', final_file);
+								pdf.file(final_file, promise);
 							}
 							if( value.file_type == 'image' ){
 								img.file(filename,promise);
 							}
 							if( value.file_type == 'xls' ){
-								xls.file(filename,promise);
+								var final_file = filename.replace(/\?.*/,'');
+								console.log('final_file', final_file);
+								xls.file(final_file,promise);
 							}
 							
 							if( key == (res.length-1) ){
@@ -149,12 +154,12 @@
 					var main_folder = zip.folder( transaction.filename );
 					angular.forEach( transaction.files , function( value, key ){
 						console.log(value );
-						var filename = $.trim( value.file.split('/').pop() );
+						var filename = $.trim( value.file.split('/').pop().replace(/\?.*/,'') );
 						// var img = main_folder.folder("images");
 						// var pdf = main_folder.folder("pdf");
 						// var xls = main_folder.folder("xls");
 						var promise = $.ajax({
-			        url: value.image_link,
+			        url: value.file,
 			        method: 'GET',
 			        xhrFields: {
 			          responseType: 'blob'
@@ -911,8 +916,6 @@
 				scope.onLoad( );
 
 				scope.showPreview = function( img , ev){
-					var url = "http://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
-
 					$(ev.target).closest(".click_box_wrapper").find(".preview-box").fadeIn();
 
 					if( img.file_type == 'image' ){
@@ -923,10 +926,16 @@
 
 						$(".preview-box img").attr('src', img.file);
 					}else{
-						$(".preview-box iframe").show();
-						$(".preview-box .img-container").css({'width': '80%'});
-						$(".preview-box img").hide();
-						$(".preview-box #src-view-data").attr('src', img.file);
+						// scope.toggleLoading();
+						// hrSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
+						// .then(function(response){
+						// 	scope.toggleLoading();
+							// var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
+							$(".preview-box iframe").show();
+							$(".preview-box .img-container").css({'width': '80%'});
+							$(".preview-box img").hide();
+							$(".preview-box #src-view-data").attr('src', img.file);
+						// });
 					}
 				}
 
