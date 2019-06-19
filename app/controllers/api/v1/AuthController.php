@@ -4637,7 +4637,7 @@ public function getEclaimTransactions( )
 
               if($res->currency_type == "myr") {
                 $currency_symbol = "RM";
-                $res->amount = $res->amount * 3;
+                $res->amount = round($res->amount * 3, 2);
               } else {
                 $currency_symbol = "S$";
               }
@@ -4648,7 +4648,7 @@ public function getEclaimTransactions( )
                   'time'              => $res->time,
                   'service'           => ucwords($res->service),
                   'merchant'          => ucwords($res->merchant),
-                  'amount'            => $res->amount,
+                  'amount'            => number_format($res->amount, 2),
                   'member'            => ucwords($member->Name),
                   'type'              => 'E-Claim',
                   'transaction_id'    => 'MNF'.$id,
@@ -4772,7 +4772,7 @@ public function getEclaimDetails($id)
 
           if($transaction->currency_type == "myr") {
             $currency_symbol = "RM";
-            $transaction->amount = $transaction->amount * 3;
+            $transaction->amount = round($transaction->amount * 3, 2);
           } else {
             $currency_symbol = "S$";
           }
@@ -4785,7 +4785,7 @@ public function getEclaimDetails($id)
               'time'              => $transaction->time,
               'service'           => $transaction->service,
               'merchant'          => $transaction->merchant,
-              'amount'            => $transaction->amount,
+              'amount'            => number_format($transaction->amount, 2),
               'member'            => ucwords($member->Name),
               'type'              => 'E-Claim',
               'transaction_id'    => 'MNF'.$id,
@@ -5026,10 +5026,10 @@ public function createEclaim( )
         $user_id = StringHelper::getUserId($findUserID);
         $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
-            if(!$check_user_balance) {
-             $returnObject->status = FALSE;
-             $returnObject->message = 'User does not have a wallet data.';
-             return Response::json($returnObject);
+        if(!$check_user_balance) {
+         $returnObject->status = FALSE;
+         $returnObject->message = 'User does not have a wallet data.';
+         return Response::json($returnObject);
          }
 
                         // recalculate employee balance
@@ -5041,7 +5041,19 @@ public function createEclaim( )
              $balance = $check_user_balance->wellness_balance;
          }
 
-         if($input['amount'] > $balance) {
+         $input_amount = 0;
+
+         if(Input::has('currency_type') && $input['currency_type'] != null) {
+          if($input['currency_type'] == "myr") {
+            $input_amount = $input['currency_exchange_rate'] ? $input['amount'] / $input['currency_exchange_rate'] : $input['amount'] / 3;
+          } else {
+            $input_amount = trim($input['amount']);
+          }
+         } else {
+          $input_amount = trim($input['amount']);
+         }
+
+         if($input_amount > $balance) {
              $returnObject->status = FALSE;
              $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
              return Response::json($returnObject);
@@ -5055,7 +5067,7 @@ public function createEclaim( )
              $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
          }
 
-         $amount = trim($input['amount']);
+         $amount = trim($input_amount);
          $claim_amounts = trim($claim_amounts);
 
          if($amount > $claim_amounts) {
@@ -5070,7 +5082,7 @@ public function createEclaim( )
              'user_id'   => $input['user_id'],
              'service'   => $input['service'],
              'merchant'  => $input['merchant'],
-             'amount'    => $input['amount'],
+             'amount'    => $amount,
              'date'      => date('Y-m-d', strtotime($input['date'])),
              'time'      => $time,
              'spending_type' => $input['spending_type']
@@ -5142,8 +5154,8 @@ public function createEclaim( )
                                   // send notification
                $user = DB::table('user')->where('UserID', $findUserID)->first();
                Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
-               EclaimHelper::sendEclaimEmail($user_id, $id);
            }
+            EclaimHelper::sendEclaimEmail($user_id, $id);
            $returnObject->status = TRUE;
            $returnObject->message = 'E-Claim successfully created.';
 
