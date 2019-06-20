@@ -1086,6 +1086,7 @@ return Response::json($returnObject);
                     'service'     => $res->service,
                     'merchant'    => $res->merchant,
                     'amount'      => number_format($res->amount, 2),
+                    'converted_amount'      => number_format($res->amount, 2),
                     'member'      => ucwords($member->Name),
                     'type'        => 'E-Claim',
                     // 'receipt_status' => $doc_files,
