@@ -1145,6 +1145,8 @@ class Api_V1_TransactionController extends \BaseController
 									$total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
 									$cash_cost = $transaction->procedure_cost;
 								}
+							} else {
+								$cash_cost = $transaction->procedure_cost;
 							}
 						} else {
 							if($transaction->credit_cost > 0 && $transaction->cash_cost > 0) {
