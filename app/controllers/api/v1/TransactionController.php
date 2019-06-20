@@ -249,7 +249,9 @@ class Api_V1_TransactionController extends \BaseController
 				   'cash_cost'            => $cash,
 				   'half_credits'          => $half_payment == true ? 1 : 0,
 				   'consultation_fees'      => $consultation_fees,
-				   'cap_per_visit'        => $cap_amount
+				   'cap_per_visit'        => $cap_amount,
+           'created_at'						 => $date_of_transaction,
+           'updated_at'						 => $date_of_transaction
 					);
 
 					if($clinic_peak_status) {
@@ -653,7 +655,7 @@ class Api_V1_TransactionController extends \BaseController
           $wallet_data = $wallet->getUserWallet($user_id);
           $date_of_transaction = null;
 
-          if(isset($input['check_out_time']) && $input['check_out_time'] != null) {
+          if(!empty($input['check_out_time']) && $input['check_out_time'] != null) {
             $date_of_transaction = date('Y-m-d H:i:s', strtotime($input['check_out_time']));
           } else {
             $date_of_transaction = date('Y-m-d H:i:s');
@@ -705,7 +707,9 @@ class Api_V1_TransactionController extends \BaseController
                'spending_type'         => $clinic_type->spending_type,
                'lite_plan_enabled'     => $lite_plan_enabled,
                'currency_type'				 => $clinic_data->currency_type,
-               'consultation_fees'		 => $consultation_fees
+               'consultation_fees'		 => $consultation_fees,
+               'created_at'						 => $date_of_transaction,
+               'updated_at'						 => $date_of_transaction
            );
 
            if($clinic_peak_status) {
