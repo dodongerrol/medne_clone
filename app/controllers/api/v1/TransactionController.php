@@ -1132,6 +1132,7 @@ class Api_V1_TransactionController extends \BaseController
 						$half_credits = false;
 						$total_amount = $transaction->procedure_cost;
 						$bill_amount = 0;
+						$cash_cost = 0;
 
 						$procedure_cost = number_format($transaction->procedure_cost, 2);
 						if((int)$transaction->health_provider_done == 1) {
@@ -1139,8 +1140,10 @@ class Api_V1_TransactionController extends \BaseController
 							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
 								if((int)$transaction->half_credits == 1) {
 									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
+									$cash_cost = $transation->cash_cost;
 								} else {
 									$total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
+									$cash_cost = $transaction->procedure_cost;
 								}
 							}
 						} else {
@@ -1154,12 +1157,14 @@ class Api_V1_TransactionController extends \BaseController
 							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
 								if((int)$transaction->half_credits == 1) {
 									$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+									$cash_cost = $transaction->cash_cost;
 								} else {
 									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
-									
+									$cash_cost = $trans->procedure_cost;
 								}
 							} else {
 								$total_amount = $transaction->procedure_cost;
+								$cash_cost = $transaction->procedure_cost;
 							}
 						}
 
@@ -1171,7 +1176,11 @@ class Api_V1_TransactionController extends \BaseController
 							}
 						} else {
 							if((int)$transaction->lite_plan_enabled == 1) {
-								$bill_amount = 	$transaction->procedure_cost - $transaction->consultation_fees;
+								if((int)$transaction->lite_plan_use_credits == 1) {
+									$bill_amount = 	$transaction->procedure_cost;
+								} else {
+									$bill_amount = 	$transaction->procedure_cost - $transaction->consultation_fees;
+								}
 							} else {
 								$bill_amount = 	$transaction->procedure_cost;
 							}
@@ -1225,7 +1234,7 @@ class Api_V1_TransactionController extends \BaseController
 							'payment_type'		=> $payment_type,
 							'bill_amount'				=> $transaction->currency_type == "myr" ? number_format($bill_amount * 3, 2) : number_format($bill_amount, 2),
 							'consultation_fee'	=> $consultation_fee,
-							'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($transaction->cash_cost * $transaction->currency_amount, 2) : number_format($transaction->cash_cost, 2),
+							'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($cash_cost * $transaction->currency_amount, 2) : number_format($cash_cost, 2),
 							'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($paid_by_credits * $transaction->currency_amount, 2) : number_format($paid_by_credits, 2),
 							'files'             => $doc_files,
 							'lite_plan'         => $lite_plan_status,
