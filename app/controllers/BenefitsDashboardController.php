@@ -278,6 +278,9 @@ class BenefitsDashboardController extends \BaseController {
 			$added_purchase_status = FALSE;
 		}
 
+		if($in_progress <= 0) {
+			$in_progress = 0;
+		}
 
 		return array(
 			'status'	=> TRUE,
