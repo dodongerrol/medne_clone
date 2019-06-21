@@ -393,6 +393,7 @@ class PlanTierController extends \BaseController {
 							->first();
 
 		$total = $plan_status->employees_input - $plan_status->enrolled_employees;
+		// return $total;
 		// return sizeof($input['employees']);
 		if($total <= 0) {
 			return array(
