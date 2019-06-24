@@ -278,6 +278,9 @@ class BenefitsDashboardController extends \BaseController {
 			$added_purchase_status = FALSE;
 		}
 
+		if($in_progress <= 0) {
+			$in_progress = 0;
+		}
 
 		return array(
 			'status'	=> TRUE,
@@ -3617,14 +3620,13 @@ class BenefitsDashboardController extends \BaseController {
 		$medical = 0;
 		$wellness = 0;
 
-		if(isset($input['medical'])) {
+		// if(!empty($input['medical'])) {
 			$medical = $input['medical_credits'];
-		}
+		// }
 
-		if(isset($input['wellness'])) {
+		// if(!empty($input['wellness'])) {
 			$wellness = $input['wellness_credits'];
-		}
-		// return $medical;
+		// }
 
 		// check if employee exit
 		$employee = DB::table('user')
@@ -12174,6 +12176,7 @@ class BenefitsDashboardController extends \BaseController {
 		} else {
 			$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
 										->where('wallet_id', $wallet->wallet_id)
+										->where('logs', 'pro_allocation')
 										->orderBy('created_at', 'desc')
 										->first();
 			if($pro_allocation_wellness_date) {
@@ -12404,16 +12407,16 @@ class BenefitsDashboardController extends \BaseController {
 					);
 
 					// return credits to company
-					$to_return = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $to_return_to_company,
-						'logs'              => 'deducted_by_hr',
-						'from_pro_allocation'	=> 1,
-						'running_balance'   => $to_return_to_company,
-						'spending_type'     => 'medical',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
-					);
+					// $to_return = array(
+					// 	'wallet_id'         => $wallet->wallet_id,
+					// 	'credit'            => $to_return_to_company,
+					// 	'logs'              => 'deducted_by_hr',
+					// 	'from_pro_allocation'	=> 1,
+					// 	'running_balance'   => $to_return_to_company,
+					// 	'spending_type'     => 'medical',
+					// 	'created_at'        => date('Y-m-d H:i:s'),
+					// 	'updated_at'        => date('Y-m-d H:i:s')
+					// );
 
 					$new_balance = $total_pro_medical_allocation - $total_medical_spent;
 
@@ -12422,7 +12425,7 @@ class BenefitsDashboardController extends \BaseController {
 					}
 					DB::table('wallet_history')->insert($calibrate_medical_data);
 					DB::table('wallet_history')->insert($calibrate_medical_deduction_parameter);
-					DB::table('wallet_history')->insert($to_return);
+					// DB::table('wallet_history')->insert($to_return);
 					DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $new_balance]);
 					
 					// return array('status' => true, 'message' => 'Medical Spending Account successfully updated to Pro Allocation credits.');
@@ -12477,16 +12480,16 @@ class BenefitsDashboardController extends \BaseController {
 					);
 
 					// return credits to company
-					$to_return = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $to_return_to_company,
-						'logs'              => 'deducted_by_hr',
-						'from_pro_allocation'	=> 1,
-						'running_balance'   => $to_return_to_company,
-						'spending_type'     => 'wellness',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
-					);
+					// $to_return = array(
+					// 	'wallet_id'         => $wallet->wallet_id,
+					// 	'credit'            => $to_return_to_company,
+					// 	'logs'              => 'deducted_by_hr',
+					// 	'from_pro_allocation'	=> 1,
+					// 	'running_balance'   => $to_return_to_company,
+					// 	'spending_type'     => 'wellness',
+					// 	'created_at'        => date('Y-m-d H:i:s'),
+					// 	'updated_at'        => date('Y-m-d H:i:s')
+					// );
 
 					
 
@@ -12495,7 +12498,7 @@ class BenefitsDashboardController extends \BaseController {
 					}
 					DB::table('wellness_wallet_history')->insert($calibrate_wellness_data);
 					DB::table('wellness_wallet_history')->insert($calibrate_wellness_deduction_parameter);
-					DB::table('wellness_wallet_history')->insert($to_return);
+					// DB::table('wellness_wallet_history')->insert($to_return);
 					DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['wellness_balance' => $new_balance]);
 					
 					// return array('status' => true, 'message' => 'Wellness Spending Account successfully updated to Pro Allocation credits.');

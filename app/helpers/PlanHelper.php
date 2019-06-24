@@ -1871,7 +1871,7 @@ class PlanHelper {
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 			$medical_balance = 0;
 
-			if($pro_allocation > 0 && (int)$user->Active == 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
 				$allocation = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent;
 				$medical_balance = $balance;
@@ -1893,7 +1893,7 @@ class PlanHelper {
 			}
 
 			if($pro_allocation > 0) {
-				$allocation = 0;
+				$allocation = $pro_allocation;
 			}
 
 			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance);
@@ -1967,7 +1967,7 @@ class PlanHelper {
 			$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
 			$wellness_balance = 0;
 
-			if($pro_allocation > 0 && (int)$user->Active == 0) {
+			if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
 				$allocation_wellness = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent_wellness;
 				$wellness_balance = $balance;
@@ -1984,6 +1984,10 @@ class PlanHelper {
 					$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
 					$wellness_balance = 0;
 				}
+			}
+
+			if($pro_allocation > 0) {
+				$allocation_wellness = $pro_allocation;
 			}
 
 			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance);

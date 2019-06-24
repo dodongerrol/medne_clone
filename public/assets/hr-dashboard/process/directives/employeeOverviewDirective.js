@@ -1105,6 +1105,13 @@ app.directive("employeeOverviewDirective", [
           data.last_day_coverage = moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
           data.replace_id = scope.selectedEmployee.user_id;
           data.plan_start = moment( data.plan_start, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
+          if(!data.medical_credits) {
+            data.medical_credits = 0;
+          }
+
+          if(!data.wellness_credits) {
+            data.wellness_credits = 0;
+          }
           dependentsSettings.replaceEmployee( data )
             .then(function(response){
               scope.hideLoading();

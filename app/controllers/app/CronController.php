@@ -122,7 +122,7 @@ class CronController extends \BaseController {
                             ->where('start_date', '<=', $date)
                             ->where('replace_status', 0)
                             ->get();
-                            
+
         foreach ($replacements as $key => $replace) {
             $active_plan = DB::table('customer_active_plan')
                             ->where('customer_active_plan_id', $replace->active_plan_id)
@@ -380,12 +380,20 @@ class CronController extends \BaseController {
     
     public function activateRemoveReplaceEmployee( )
     {
+       $input = Input::all();
        $date = date('Y-m-d', strtotime('-1 day'));
 
+       if(!empty($input['date']) && $input['date'] != null) {
         $removes = DB::table('customer_replace_employee')
-                            ->where('expired_and_activate', $date)
-                            ->where('deactive_employee_status', 0)
-                            ->get();
+                                ->where('expired_and_activate', $input['date'] )
+                                ->where('deactive_employee_status', 0)
+                                ->get();
+       } else {
+            $removes = DB::table('customer_replace_employee')
+                                ->where('expired_and_activate', $date)
+                                ->where('deactive_employee_status', 0)
+                                ->get();
+       }
 
         $replace = new CustomerReplaceEmployee( );
 
@@ -429,7 +437,7 @@ class CronController extends \BaseController {
                 'deactive_employee_status'        => 1
             );              
             $replace->updateCustomerReplace($remove->customer_replace_employee_id, $replace_data);
-            PlanHelper::removeDependentAccounts($remove->old_id, $remove->expired_and_activate);
+            PlanHelper::removeDependentAccounts($remove->old_id, $remove->expired_and_activate, false, true);
             try {
                 $admin_logs = array(
                     'admin_id'  => null,
