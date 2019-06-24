@@ -32,6 +32,7 @@
         overflow: hidden;
         margin: 10px auto;
         width: 98%;
+        padding-bottom: 50px;
       }
 
       .invoice-content .header{
@@ -135,7 +136,7 @@
         height: 150px;
         position: absolute;
         right: 50px;
-        bottom: 0;
+        bottom: -120px;
       }
 
       .copyright{
