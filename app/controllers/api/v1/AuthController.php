@@ -1069,12 +1069,12 @@ return Response::json($returnObject);
                       $status_text = 'Pending';
                   }
 
-                  if($res->currency_type == "myr") {
-                    $currency_symbol = "RM";
-                    $res->amount = $res->amount * 3;
-                  } else {
+                  // if($res->currency_type == "myr") {
+                  //   $currency_symbol = "RM";
+                  //   $res->amount = $res->amount * 3;
+                  // } else {
                     $currency_symbol = "S$";
-                  }
+                  // }
 
                   $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
@@ -4636,11 +4636,12 @@ public function getEclaimTransactions( )
 
               $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
+              $currency_symbol = "S$";
               if($res->currency_type == "myr") {
-                $currency_symbol = "RM";
-                $res->amount = round($res->amount * 3, 2);
+                // $currency_symbol = "RM";
+                // $res->amount = round($res->amount * 3, 2);
               } else {
-                $currency_symbol = "S$";
+                // $currency_symbol = "S$";
               }
 
               $temp = array(
@@ -4771,12 +4772,12 @@ public function getEclaimDetails($id)
               $date = date('d F Y', strtotime($transaction->date)).', '.$transaction->time;
           }
 
-          if($transaction->currency_type == "myr") {
-            $currency_symbol = "RM";
-            $transaction->amount = round($transaction->amount * 3, 2);
-          } else {
+          // if($transaction->currency_type == "myr") {
+          //   $currency_symbol = "RM";
+          //   $transaction->amount = round($transaction->amount * 3, 2);
+          // } else {
             $currency_symbol = "S$";
-          }
+          // }
 
           $id = str_pad($transaction->e_claim_id, 6, "0", STR_PAD_LEFT);
           $temp = array(
