@@ -80,6 +80,41 @@ Route::filter('auth.clinic', function()
 	if(!Session::get('user-session')){
         return Redirect::to('/provider-portal-login');
     }
+
+    $request = Request::instance();
+    $ip = $request->getClientIp();
+    $date = date('Y-m-d H:i:s');
+    // log
+    $data = array(
+        'ip_address' => $ip,
+        'date'       => $date,
+        'user_id'    => Session::get('user-session')
+    );
+
+    // check for redundancy
+    $check = DB::table('admin_logs')
+                ->where('admin_id', Session::get('user-session'))
+                ->where('admin_type', 'clinic')
+                ->where('created_at', $date)
+                ->first();
+                
+    if(!$check) {
+        $admin_logs = array(
+            'admin_id'  => Session::get('user-session'),
+            'admin_type' => 'clinic',
+            'type'      => 'clinic_active_state',
+            'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
+    } else if(strtotime(date('Y-m-d H:i', strtotime($check->created_at))) != strtotime(date('Y-m-d H:i', strtotime($date)))) {
+        $admin_logs = array(
+            'admin_id'  => Session::get('user-session'),
+            'admin_type' => 'clinic',
+            'type'      => 'clinic_active_state',
+            'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
+    }
 });
 
 Route::filter('auth.v1', function($request, $response)
@@ -187,8 +222,8 @@ Route::filter('auth.v2', function($request, $response)
                     ->where('admin_type', 'member')
                     ->where('created_at', $date)
                     ->first();
-                    
-        // if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($date))) {
+
+        if(!$check) {
             $admin_logs = array(
                 'admin_id'  => $user->UserID,
                 'admin_type' => 'member',
@@ -196,7 +231,15 @@ Route::filter('auth.v2', function($request, $response)
                 'data'      => SystemLogLibrary::serializeData($data)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
-        // }
+        } else if(strtotime(date('Y-m-d H:i', strtotime($check->created_at))) != strtotime(date('Y-m-d H:i', strtotime($date)))) {
+            $admin_logs = array(
+                'admin_id'  => $user->UserID,
+                'admin_type' => 'member',
+                'type'      => 'member_active_state',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        }
     }
 });
 
@@ -253,10 +296,12 @@ Route::filter('auth.jwt_hr', function($request, $response)
         $check = DB::table('admin_logs')
                     ->where('admin_id', $value->hr_dashboard_id)
                     ->where('admin_type', 'hr')
-                    ->where('created_at', $data['date'])
+                    ->where('type', 'hr_active_state')
+                    // ->where('created_at', $data['date'])
+                    ->orderBy('created_at', 'desc')
                     ->first();
 
-        // if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($date))) {
+        if(!$check) {
             $admin_logs = array(
                 'admin_id'  => $value->hr_dashboard_id,
                 'admin_type' => 'hr',
@@ -264,7 +309,15 @@ Route::filter('auth.jwt_hr', function($request, $response)
                 'data'      => SystemLogLibrary::serializeData($data)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
-        // }
+        } else if(strtotime(date('Y-m-d H:i', strtotime($check->created_at))) != strtotime(date('Y-m-d H:i', strtotime($date)))) {
+            $admin_logs = array(
+                'admin_id'  => $value->hr_dashboard_id,
+                'admin_type' => 'hr',
+                'type'      => 'hr_active_state',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        }
 
     }
 });
@@ -301,15 +354,23 @@ Route::filter('auth.employee', function($request, $response)
                     ->where('created_at', $date)
                     ->first();
 
-    // if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($date))) {
+    if(!$check) {
         $admin_logs = array(
-            'admin_id'  => Session::get('employee-session'),
+            'admin_id'  =>  Session::get('employee-session'),
             'admin_type' => 'member',
             'type'      => 'member_active_state',
             'data'      => SystemLogLibrary::serializeData($data)
         );
         SystemLogLibrary::createAdminLog($admin_logs);
-    // }
+    } else if(strtotime(date('Y-m-d H:i', strtotime($check->created_at))) != strtotime(date('Y-m-d H:i', strtotime($date)))) {
+        $admin_logs = array(
+            'admin_id'  =>  Session::get('employee-session'),
+            'admin_type' => 'member',
+            'type'      => 'member_active_state',
+            'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
+    }
 });
 /*
 |--------------------------------------------------------------------------
