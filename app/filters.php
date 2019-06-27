@@ -176,15 +176,26 @@ Route::filter('auth.v2', function($request, $response)
         $data = array(
             'ip_address' => $ip,
             'date'       => date('Y-m-d H:i:s'),
-            'user_id'    => $user->UserID
+            'user_id'    => $user->UserID,
+            'portal'     => 'mobile'
         );
-        $admin_logs = array(
-            'admin_id'  => $user->UserID,
-            'admin_type' => 'member',
-            'type'      => 'member_active_state',
-            'data'      => SystemLogLibrary::serializeData($data)
-        );
-        SystemLogLibrary::createAdminLog($admin_logs);
+
+        // check for redundancy
+        $check = DB::table('admin_logs')
+                    ->where('admin_id', $user->UserID)
+                    ->where('admin_type', 'member')
+                    ->where('created_at', $data['date'])
+                    ->first();
+                    
+        if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($data['date']))) {
+            $admin_logs = array(
+                'admin_id'  => $user->UserID,
+                'admin_type' => 'member',
+                'type'      => 'member_active_state',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        }
     }
 });
 
@@ -195,7 +206,7 @@ Route::filter('auth.headers', function($request, $response) {
     return $response;
 });
 
-Route::filter('auth.jwt_hr', function()
+Route::filter('auth.jwt_hr', function($request, $response)
 {
     $headers = [];
     if(!StringHelper::requestHeader()){
@@ -226,11 +237,38 @@ Route::filter('auth.jwt_hr', function()
                 return Response::json('Ooops! Your login session has expired. Please login again.', 403, $headers);
             }
         }
+
+        $request = Request::instance();
+        $ip = $request->getClientIp();
+        // log
+        $data = array(
+            'ip_address' => $ip,
+            'date'       => date('Y-m-d H:i:s'),
+            'user_id'    => $value->hr_dashboard_id
+        );
+
+        // check for redundancy
+        $check = DB::table('admin_logs')
+                    ->where('admin_id', $value->hr_dashboard_id)
+                    ->where('admin_type', 'hr')
+                    ->where('created_at', $data['date'])
+                    ->first();
+
+        if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($data['date']))) {
+            $admin_logs = array(
+                'admin_id'  => $value->hr_dashboard_id,
+                'admin_type' => 'hr',
+                'type'      => 'hr_active_state',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        }
+
     }
 });
 
 
-Route::filter('auth.employee', function()
+Route::filter('auth.employee', function($request, $response)
 {
     $headers = [];
     if(!Session::get('employee-session')){
@@ -250,15 +288,25 @@ Route::filter('auth.employee', function()
     $data = array(
         'ip_address' => $ip,
         'date'       => date('Y-m-d H:i:s'),
-        'user_id'    => Session::get('employee-session')
+        'user_id'    => Session::get('employee-session'),
+        'portal'     => 'web'
     );
-    $admin_logs = array(
-        'admin_id'  => Session::get('employee-session'),
-        'admin_type' => 'member',
-        'type'      => 'member_active_state',
-        'data'      => SystemLogLibrary::serializeData($data)
-    );
-    SystemLogLibrary::createAdminLog($admin_logs);
+    // check for redundancy
+    $check = DB::table('admin_logs')
+                    ->where('admin_id', Session::get('employee-session'))
+                    ->where('admin_type', 'member')
+                    ->where('created_at', $data['date'])
+                    ->first();
+
+    if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($data['date']))) {
+        $admin_logs = array(
+            'admin_id'  => Session::get('employee-session'),
+            'admin_type' => 'member',
+            'type'      => 'member_active_state',
+            'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
+    }
 });
 /*
 |--------------------------------------------------------------------------
