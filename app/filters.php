@@ -172,10 +172,11 @@ Route::filter('auth.v2', function($request, $response)
 
         $request = Request::instance();
         $ip = $request->getClientIp();
+        $date = date('Y-m-d H:i:s');
         // log
         $data = array(
             'ip_address' => $ip,
-            'date'       => date('Y-m-d H:i:s'),
+            'date'       => $date,
             'user_id'    => $user->UserID,
             'portal'     => 'mobile'
         );
@@ -184,10 +185,10 @@ Route::filter('auth.v2', function($request, $response)
         $check = DB::table('admin_logs')
                     ->where('admin_id', $user->UserID)
                     ->where('admin_type', 'member')
-                    ->where('created_at', $data['date'])
+                    ->where('created_at', $date)
                     ->first();
                     
-        if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($data['date']))) {
+        // if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($date))) {
             $admin_logs = array(
                 'admin_id'  => $user->UserID,
                 'admin_type' => 'member',
@@ -195,7 +196,7 @@ Route::filter('auth.v2', function($request, $response)
                 'data'      => SystemLogLibrary::serializeData($data)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
-        }
+        // }
     }
 });
 
@@ -241,9 +242,10 @@ Route::filter('auth.jwt_hr', function($request, $response)
         $request = Request::instance();
         $ip = $request->getClientIp();
         // log
+        $date = date('Y-m-d H:i:s');
         $data = array(
             'ip_address' => $ip,
-            'date'       => date('Y-m-d H:i:s'),
+            'date'       => $date,
             'user_id'    => $value->hr_dashboard_id
         );
 
@@ -254,7 +256,7 @@ Route::filter('auth.jwt_hr', function($request, $response)
                     ->where('created_at', $data['date'])
                     ->first();
 
-        if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($data['date']))) {
+        // if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($date))) {
             $admin_logs = array(
                 'admin_id'  => $value->hr_dashboard_id,
                 'admin_type' => 'hr',
@@ -262,7 +264,7 @@ Route::filter('auth.jwt_hr', function($request, $response)
                 'data'      => SystemLogLibrary::serializeData($data)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
-        }
+        // }
 
     }
 });
@@ -284,10 +286,11 @@ Route::filter('auth.employee', function($request, $response)
 
     $request = Request::instance();
     $ip = $request->getClientIp();
+    $date = date('Y-m-d H:i:s');
     // log
     $data = array(
         'ip_address' => $ip,
-        'date'       => date('Y-m-d H:i:s'),
+        'date'       => $date,
         'user_id'    => Session::get('employee-session'),
         'portal'     => 'web'
     );
@@ -295,10 +298,10 @@ Route::filter('auth.employee', function($request, $response)
     $check = DB::table('admin_logs')
                     ->where('admin_id', Session::get('employee-session'))
                     ->where('admin_type', 'member')
-                    ->where('created_at', $data['date'])
+                    ->where('created_at', $date)
                     ->first();
 
-    if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($data['date']))) {
+    // if(!$check || date('Y-m-d H:i', strtotime($check->date)) != date('Y-m-d H:i', strtotime($date))) {
         $admin_logs = array(
             'admin_id'  => Session::get('employee-session'),
             'admin_type' => 'member',
@@ -306,7 +309,7 @@ Route::filter('auth.employee', function($request, $response)
             'data'      => SystemLogLibrary::serializeData($data)
         );
         SystemLogLibrary::createAdminLog($admin_logs);
-    }
+    // }
 });
 /*
 |--------------------------------------------------------------------------
