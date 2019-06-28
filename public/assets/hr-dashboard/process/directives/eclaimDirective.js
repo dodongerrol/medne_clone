@@ -102,11 +102,8 @@
 						var zip = new JSZip();
 
 						angular.forEach( res, function(value,key){
-							var filename = $.trim( value.file.split('/').pop() );
-							console.log('filename', filename);
-							var img = zip.folder("images");
-							var pdf = zip.folder("pdf");
-							var xls = zip.folder("xls");
+							var filename = $.trim( value.file.split('/').pop().replace(/\?.*/,'') );
+							var main_folder = zip.folder( all_data.transaction_id + " - " + all_data.member );
 							var promise = $.ajax({
 				        url: value.file,
 				        method: 'GET',
@@ -114,20 +111,7 @@
 				          responseType: 'blob'
 				        }
 					    });
-							if( value.file_type == 'pdf' ){
-								var final_file = filename.replace(/\?.*/,'');
-								console.log('final_file', final_file);
-								pdf.file(final_file, promise);
-							}
-							if( value.file_type == 'image' ){
-								img.file(filename,promise);
-							}
-							if( value.file_type == 'xls' ){
-								var final_file = filename.replace(/\?.*/,'');
-								console.log('final_file', final_file);
-								xls.file(final_file,promise);
-							}
-							
+							main_folder.file(filename, promise);
 							if( key == (res.length-1) ){
 								zip.generateAsync({type:"blob"}).then(function(content) {
 							    saveAs(content, all_data.transaction_id + " - " + all_data.member + ".zip");
