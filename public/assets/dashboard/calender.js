@@ -2374,7 +2374,7 @@ function getAllUsers() {
       // }
       // $('#new-customer #customer-name').attr('id', '');
       $('#new-customer #customer-name').val(suggestion.Name);
-      $('#new-customer #customer-nric').val(suggestion.NRIC);
+      // $('#new-customer #customer-nric').val(suggestion.NRIC);
       $('#new-customer #phone-code').text(suggestion.PhoneCode);
 
       var length = $("#new-customer #phone-code").text().length;
@@ -2390,7 +2390,7 @@ function getAllUsers() {
       $('#new-customer #state-name').val(suggestion.State);
       $('#new-customer #zip-code').val(suggestion.zip);
 
-      NRICValidation ();
+      // NRICValidation ();
 
     }
 

@@ -346,14 +346,14 @@ body { /*background-color: #30F;  height:100vh;*/ }/*BLUE*/
             <br>
 		  		<form class="form-horizontal" id="form-2">
 
-				  <div class="form-group">
+				  <!-- <div class="form-group">
 				    <label for="doctor" class="col-sm-2 col-xs-2 control-label custom-padding-r  ">NRIC/FIN</label>
 
 				    <div class="col-sm-8 col-xs-11" >
 				      {{ Form::text('nric',null, array('class' => 'form-control input-sm input-style', 'id'=>'nric')) }}
 				    </div>
 				  </div>
-				  <br>
+				  <br> -->
 
 
 				  <div class="form-group">
@@ -447,19 +447,19 @@ body { /*background-color: #30F;  height:100vh;*/ }/*BLUE*/
 		  			<table style="margin-bottom: auto !important" class="table borderless">
 		  			<tr class="text-left">
 		  				<td ><span class="field-name">Doctor</span> <p id="sc3-doctor"> </p></td>
-		  				<td ><span class="field-name">NRIC</span> <p id="sc3-nric"> </p></td>
-		  			</tr>
-		  			<tr class="text-left">
 		  				<td ><span class="field-name">Procedure</span> <p id="sc3-procedure"> </p></td>
-		  				<td ><span class="field-name">Name</span> <p id="sc3-name"> </p></td>
+		  				<!-- <td ><span class="field-name">NRIC</span> <p id="sc3-nric"> </p></td> -->
 		  			</tr>
 		  			<tr class="text-left">
-		  				<td ><span class="field-name">Date & Time</span> <p id="sc3-datetime"> </p></td>
+		  				<td ><span class="field-name">Name</span> <p id="sc3-name"> </p></td>
 		  				<td ><span class="field-name">Email and Phone</span> <p id="sc3-emailphone"></p></td>
 		  			</tr>
 		  			<tr class="text-left">
-		  				<td ><span class="field-name">Notes</span> <p id="sc3-notes"></p></td>
+		  				<td ><span class="field-name">Date & Time</span> <p id="sc3-datetime"> </p></td>
 		  				<td ><span class="field-name">Price</span> <p id="sc3-price"></p></td>
+		  			</tr>
+		  			<tr class="text-left">
+		  				<td ><span class="field-name">Notes</span> <p id="sc3-notes"></p></td>
 		  			</tr>
 		  		</table>
 		  		</div>
