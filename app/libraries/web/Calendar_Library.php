@@ -1188,7 +1188,7 @@ class Calendar_Library
 
                     $id = $val->UserID;
                     $Name = $val->Name;
-                    $NRIC = $val->NRIC;
+                    // $NRIC = $val->NRIC;
                     $PhoneCode = $val->PhoneCode;
                     $PhoneNo = $val->PhoneNo;
                     $Email = $val->Email;
@@ -1196,17 +1196,17 @@ class Calendar_Library
                     $City = $val->City;
                     $State = $val->State;
                     $Zip = $val->Zip_Code;
-                    if ($NRIC == null){
-                        $NRIC = '';
-                    }
+                    // if ($NRIC == null){
+                    //     $NRIC = '';
+                    // }
                     if ($PhoneNo == null){
                         $PhoneNo = '';
                     }
 
 
-                    $arr = array('value'=>$NRIC, 'id'=>$id, 'Name'=>$Name, 'NRIC'=>$NRIC, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
+                    $arr = array('value'=>$Email, 'id'=>$id, 'Name'=>$Name, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
 
-                    $arr2 = array('value'=>$PhoneNo, 'id'=>$id, 'Name'=>$Name, 'NRIC'=>$NRIC, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
+                    $arr2 = array('value'=>$PhoneNo, 'id'=>$id, 'Name'=>$Name, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
 
                     array_push($array, $arr);
                     array_push($array, $arr2);
@@ -1217,7 +1217,7 @@ class Calendar_Library
 
 	                    $id = $val->UserID;
 	                    $Name = $val->Name;
-	                    $NRIC = $val->NRIC;
+	                    // $NRIC = $val->NRIC;
 	                    $PhoneCode = $val->PhoneCode;
 	                    $PhoneNo = $val->PhoneNo;
 	                    $Email = $val->Email;
@@ -1225,17 +1225,15 @@ class Calendar_Library
 	                    $City = $val->City;
 	                    $State = $val->State;
 	                    $Zip = $val->Zip_Code;
-	                    if ($NRIC == null){
-	                        $NRIC = '';
-	                    }
+	                    
 	                    if ($PhoneNo == null){
 	                        $PhoneNo = '';
 	                    }
 
 
-	                        $arr = array('value'=>$NRIC, 'id'=>$id, 'Name'=>$Name, 'NRIC'=>$NRIC, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
+	                        $arr = array('value'=>$Email, 'id'=>$id, 'Name'=>$Name, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
 
-	                        $arr2 = array('value'=>$PhoneNo, 'id'=>$id, 'Name'=>$Name, 'NRIC'=>$NRIC, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
+	                        $arr2 = array('value'=>$PhoneNo, 'id'=>$id, 'Name'=>$Name, 'PhoneCode'=>$PhoneCode, 'PhoneNo'=>$PhoneNo, 'Email'=>$Email, 'Address'=>$Address, 'City'=>$City, 'State'=>$State, 'zip'=>$Zip );
 
 	                        array_push($array, $arr);
 	                        array_push($array, $arr2);
@@ -1297,7 +1295,7 @@ public static function saveAppointment($clinicdata)
                 $userData['userid'] = $userid;
                 $userData['Name'] = $allInputs['name'];
                 $userData['Email'] = $allInputs['email'];
-                $userData['NRIC'] = $allInputs['nric'];
+                // $userData['NRIC'] = $allInputs['nric'];
                 $userData['PhoneCode'] = $allInputs['code'];
                 $userData['PhoneNo'] = $PhoneOnly;
                 $userData['Address'] = $allInputs['address'];
@@ -1315,7 +1313,7 @@ public static function saveAppointment($clinicdata)
                 $userData['name'] = $allInputs['name'];
                 $userData['usertype'] = 1;
                 $userData['email'] = $allInputs['email'];
-                $userData['nric'] = $allInputs['nric'];
+                // $userData['nric'] = $allInputs['nric'];
                 $userData['code'] = $allInputs['code'];
                 $userData['mobile'] = $PhoneOnly;
                 $userData['address'] = $allInputs['address'];
@@ -1641,7 +1639,7 @@ public static function updateAppointment($clinicdata)
           $userData['userid'] = $userid;
           $userData['Name'] = $allInputs['name'];
           $userData['Email'] = $allInputs['email'];
-          $userData['NRIC'] = $allInputs['nric'];
+          // $userData['NRIC'] = $allInputs['nric'];
           $userData['PhoneCode'] = $allInputs['code'];
           $userData['PhoneNo'] = $PhoneOnly;
           $userData['Address'] = $allInputs['address'];
@@ -1658,7 +1656,7 @@ public static function updateAppointment($clinicdata)
           $userData['name'] = $allInputs['name'];
           $userData['usertype'] = 1;
           $userData['email'] = $allInputs['email'];
-          $userData['nric'] = $allInputs['nric'];
+          // $userData['nric'] = $allInputs['nric'];
           $userData['code'] = $allInputs['code'];
           $userData['mobile'] = $PhoneOnly;
           $userData['address'] = $allInputs['address'];
