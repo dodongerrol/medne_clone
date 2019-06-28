@@ -528,7 +528,7 @@
 	    <div class="col-xs-10" style="padding-left: 30px">
 		    <div class="right-inner-addon">
 		        <i class="glyphicon glyphicon-search"></i>
-		        <input type="search" class="dropdown-btn" id="search-customer" placeholder="Search By NRIC or Phone Number" />
+		        <input type="search" class="dropdown-btn" id="search-customer" placeholder="Search Email Address or Phone Number" />
 		    </div>
 		</div>
 		<br><br><br>
@@ -554,7 +554,7 @@
 		    </div><br><br><br>
 
 		<!-- NRIC -->
-		    <div class="form-group">
+		   <!--  <div class="form-group">
 		    <label class="details-label col-sm-2">&nbsp;</label>
 
 		    <div class="col-sm-8">
@@ -563,7 +563,7 @@
   					<input type="text" id="customer-nric" class="dropdown-btn input-width" placeholder="NRIC / Fin / Passport" style="height: 27px; width: 335px;">
 		    	</div>
 		    </div>
-		    </div><br><br><br>
+		    </div><br><br><br> -->
 
 		<!-- Telephone -->
 			<div class="form-group">
@@ -651,27 +651,15 @@
 					<span id="doctor-confirm"></span>
 				</div>
 				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
-					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">NRIC</label><br>
-					<span id="nric-confirm"></span>
-				</div>
-			</div>
-
-			<div class="form-group" style="margin-left: 40px;">
-				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
 					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Procedure</label><br>
 					<span id="procedure-confirm"></span>
 				</div>
-				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
-					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Name</label><br>
-					<span id="name-confirm"></span>
-				</div>
 			</div>
 
 			<div class="form-group" style="margin-left: 40px;">
 				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
-					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Date & Time</label><br>
-					<span id="date-confirm"></span><br>
-					<span id="time-confirm"></span>
+					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Name</label><br>
+					<span id="name-confirm"></span>
 				</div>
 				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
 					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Email & Phone</label><br>
@@ -682,13 +670,22 @@
 
 			<div class="form-group" style="margin-left: 40px;">
 				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
-					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Notes</label><br>
-					<span id="notes-confirm"></span>
+					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Date & Time</label><br>
+					<span id="date-confirm"></span><br>
+					<span id="time-confirm"></span>
 				</div>
 				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
 					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Price</label><br>
 					<span id="price-confirm"></span>
 				</div>
+			</div>
+
+			<div class="form-group" style="margin-left: 40px;">
+				<div class="col-md-5" style="height: 70px;margin-bottom: 20px;">
+					<label style="font-size: 14px;font-weight: 700 !important;color: #999;">Notes</label><br>
+					<span id="notes-confirm"></span>
+				</div>
+				
 			</div>
 			<div class="col-sm-12" style="margin-top: 0px;text-align: center;width: 95%;">
 			<button id="back-appointment" class="btn btn-update font-type-Montserrat" style="float: none;">Back</button>
@@ -948,10 +945,6 @@
 		<tr>
 		    <td class="col-sm-2">Customer</td>
 		    <td class="col-sm-8" id="appointment-customer-detail"></td>
-		</tr>
-		<tr>
-		    <td class="col-sm-2">NRIC</td>
-		    <td class="col-sm-8" id="appointment-nric-detail"></td>
 		</tr>
 		<tr>
 		    <td class="col-sm-2">Email</td>
