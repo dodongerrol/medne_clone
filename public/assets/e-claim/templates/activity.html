@@ -517,7 +517,7 @@
 									<span ng-if="list.uploading"><i class="fa fa-circle-o-notch fa-spin"></i></span>
 								</button>
 
-								<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.transaction_files, list)">
+								<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.files, list)">
 									Download Receipt
 								</button>
 

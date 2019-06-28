@@ -192,6 +192,13 @@ class App_AuthController extends \BaseController {
             $findUser = $user->checkLogin($email,$password);
             if($findUser){
               Session::put('user-session', $findUser->UserID);
+              $admin_logs = array(
+                'admin_id'  => $findUser->UserID,
+                'admin_type' => 'clinic',
+                'type'      => 'admin_clinic_login_portal',
+                'data'      => SystemLogLibrary::serializeData(array('email' => $email))
+              );
+              SystemLogLibrary::createAdminLog($admin_logs);
               if($findUser->UserType == 1){
                 return 1;
               }elseif($findUser->UserType == 2){
@@ -214,6 +221,13 @@ class App_AuthController extends \BaseController {
 
         }
         public function LogOutNow(){
+          $admin_logs = array(
+              'admin_id'  => Session::get('user-session'),
+              'admin_type' => 'clinic',
+              'type'      => 'admin_clinic_logout_portal',
+              'data'      => SystemLogLibrary::serializeData(array('date' => date('Y-m-d H:i:s')))
+          );
+          SystemLogLibrary::createAdminLog($admin_logs);
           Session::forget('user-session');
           return Redirect::to('provider-portal-login');
         }
