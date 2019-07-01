@@ -5129,12 +5129,10 @@ public function createEclaim( )
 
                       $result_doc = $e_claim_docs->createEclaimDocs($receipt);
                   } else {
-                    $file_name = time().' - '.$file->getClientOriginalName();
+                    // $file_name = time().' - '.$file->getClientOriginalName();
                     // $receipt_file = $file_name;
                     $file->move(public_path().'/temp_uploads/', $file_name);
-                    $data['file'] = public_path().'/temp_uploads/'.$file_name;
-                    $data['e_claim_id'] = $id;
-                    $result_doc = Queue::push('EclaimFileUploadQueue', $data);
+                    $result_doc = Queue::push('EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
                     $receipt = array(
                       'file_type'     => "image"
                     );
