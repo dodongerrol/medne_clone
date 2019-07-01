@@ -33,8 +33,8 @@ return array(
 	//'host' => 'smtp.mailgun.org',
         //'host' => 'smtp.gmail.com',
         //'host' => 'smtp.mail.yahoo.com',
-        // 'host' => 'smtp.office365.com',
-        'host' => 'smtp.mailgun.org',
+        'host' => 'smtp.office365.com',
+        // 'host' => 'smtp.mailgun.org',
 	/*
 	|--------------------------------------------------------------------------
 	| SMTP Host Port
@@ -90,8 +90,8 @@ return array(
 	*/
 
 	//'username' => 'riz_ris@yahoo.com',
-        // 'username' => 'info@medicloud.sg',
-        'username' => 'postmaster@mg.medicloud.sg',
+        'username' => 'info@medicloud.sg',
+        // 'username' => 'postmaster@mg.medicloud.sg',
     
 
 	/*
@@ -106,8 +106,8 @@ return array(
 	*/
 
 	// 'password' => 'RCbsd724',
-	// 'password'	=> 'sg.medi.com19',
-	'password'	=> 'c0e0797fc017b6c8fd52276d866c9574-39bc661a-95800a3a',
+	'password'	=> 'sg.medi.com19',
+	// 'password'	=> 'c0e0797fc017b6c8fd52276d866c9574-39bc661a-95800a3a',
 	/*
 	|--------------------------------------------------------------------------
 	| Sendmail System Path
