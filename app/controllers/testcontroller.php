@@ -593,4 +593,19 @@ class testcontroller extends BaseController {
 		$input = Input::all();
 		return EclaimHelper::sendEclaimEmail($input['user_id'], $input['e_claim_id']);
 	}
+
+	public function testEclaimUploadQueue( )
+	{
+		$input = Input::all();
+		$data = [];
+		$file = Input::file('file');
+		$file_name = time().' - '.$file->getClientOriginalName();
+		// $receipt_file = $file_name;
+        $file->move(public_path().'/temp_uploads/', $file_name);
+		$data['file'] = public_path().'/temp_uploads/'.$file_name;
+		$data['e_claim_id'] = $input['e_claim_id'];
+		// return $data;
+		// return EclaimFileUploadQueue::fire(null, $data);
+		return Queue::push('EclaimFileUploadQueue', $data);
+	}
 }
