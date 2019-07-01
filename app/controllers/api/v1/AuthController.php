@@ -5108,26 +5108,42 @@ public function createEclaim( )
                       $receipt_file = $file_name;
                       $receipt_type = "pdf";
                       $file->move(public_path().'/receipts/', $file_name);
+
+                      $receipt = array(
+                        'e_claim_id'    => $id,
+                        'doc_file'      => $receipt_file,
+                        'file_type'     => $receipt_type
+                      );
+
+                      $result_doc = $e_claim_docs->createEclaimDocs($receipt);
                   } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
                       $receipt_file = $file_name;
                       $receipt_type = "xls";
                       $file->move(public_path().'/receipts/', $file_name);
+
+                      $receipt = array(
+                        'e_claim_id'    => $id,
+                        'doc_file'      => $receipt_file,
+                        'file_type'     => $receipt_type
+                      );
+
+                      $result_doc = $e_claim_docs->createEclaimDocs($receipt);
                   } else {
-                        // $image = \Cloudinary\Uploader::upload($file->getPathName());
-                      $image = \Cloudinary\Uploader::upload($file->getRealPath());
-                      $receipt_file = $image['secure_url'];
-                      $receipt_type = "image";
+                    $file_name = time().' - '.$file->getClientOriginalName();
+                    // $receipt_file = $file_name;
+                    $file->move(public_path().'/temp_uploads/', $file_name);
+                    $data['file'] = public_path().'/temp_uploads/'.$file_name;
+                    $data['e_claim_id'] = $id;
+                    $result_doc = Queue::push('EclaimFileUploadQueue', $data);
+                    $receipt = array(
+                      'file_type'     => "image"
+                    );
+                    // $image = \Cloudinary\Uploader::upload($file->getPathName());
+                    // $image = \Cloudinary\Uploader::upload($file->getRealPath());
+                    // $receipt_file = $image['secure_url'];
+                    // $receipt_type = "image";
                   }
 
-                  $e_claim_docs = new EclaimDocs( );
-
-                  $receipt = array(
-                      'e_claim_id'    => $id,
-                      'doc_file'      => $receipt_file,
-                      'file_type'     => $receipt_type
-                  );
-
-                  $result_doc = $e_claim_docs->createEclaimDocs($receipt);
                   if($result_doc) {
                       if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
                                         //   aws

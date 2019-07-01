@@ -11,6 +11,8 @@
 |
 */
 
+// test upload e-claim
+Route::post("test_upload_e_claim_queue",'testcontroller@testEclaimUploadQueue');
 // test send e-claim emial
 Route::post('test_send_e_claim', 'testcontroller@testEclaimSendEmail');
 // get currencies

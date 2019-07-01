@@ -219,7 +219,7 @@ class Widget_Library {
                     return 3;
                 }
             } else {
-                $findUser = Auth_Library::FindUserEmail($allInputs['email'], $allInputs['nric']);
+                $findUser = Auth_Library::FindUserEmail($allInputs['email']);
             }
 
             // return $findUser;
@@ -234,7 +234,7 @@ class Widget_Library {
                 $userData['name'] = $allInputs['name'];
                 $userData['usertype'] = 1;
                 $userData['email'] = $allInputs['email'];
-                $userData['nric'] = $allInputs['nric'];
+                // $userData['nric'] = $allInputs['nric'];
                 $userData['code'] = $allInputs['code'];
                 $userData['mobile'] = $PhoneOnly;
 
@@ -327,7 +327,7 @@ class Widget_Library {
                 //Update User Details
                 if($userexistStatus==1){
                     $userupdate['userid'] = $findUserDetails->UserID;
-                    $userupdate['NRIC'] = $allInputs['nric'];
+                    // $userupdate['NRIC'] = $allInputs['nric'];
                     $userupdate['Name'] = $allInputs['name'];
                     $userupdate['PhoneCode'] = $allInputs['code'];
                     $userupdate['PhoneNo'] = $PhoneOnly;
