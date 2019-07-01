@@ -4057,7 +4057,8 @@ class BenefitsDashboardController extends \BaseController {
 			'last_name'			=> $billing_contact->last_name,
 			'work_email'		=> $billing_contact->billing_email,
 			'billing_address'	=> $billing_contact->billing_address,
-			'postal'			=> $billing_contact->postal
+			'postal'			=> $billing_contact->postal,
+			'phone'				=> $billing_contact->phone
 		);
 
 		// if($business_contact->billing_contact == "true") {
