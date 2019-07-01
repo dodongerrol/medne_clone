@@ -5129,7 +5129,7 @@ public function createEclaim( )
 
                       $result_doc = $e_claim_docs->createEclaimDocs($receipt);
                   } else {
-                    // $file_name = time().' - '.$file->getClientOriginalName();
+                    $file_name = StringHelper::get_random_password(6).' - '.$file_name;
                     // $receipt_file = $file_name;
                     $file->move(public_path().'/temp_uploads/', $file_name);
                     $result_doc = Queue::push('EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
@@ -5179,7 +5179,7 @@ public function createEclaim( )
     } catch(Exception $e) {
                                 // send email logs
        $email = [];
-       $email['end_point'] = url('v1/user/create_e_claim', $parameter = array(), $secure = null);
+       $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
        $email['logs'] = 'E-Claim Submission - '.$e;
        $email['emailSubject'] = 'Error log.';
        DB::table('e_claim')->where('e_claim_id', $id)->delete();
