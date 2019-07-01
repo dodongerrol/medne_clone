@@ -5075,68 +5075,65 @@ public function createEclaim( )
             $e_claim_docs = new EclaimDocs( );
                           // loop ang process
             foreach (Input::file('files') as $key => $file) {
-               $file_name = time().' - '.$file->getClientOriginalName();
-               if($file->getClientOriginalExtension() == "pdf") {
-                  $receipt_file = $file_name;
-                  $receipt_type = "pdf";
-                  $file->move(public_path().'/receipts/', $file_name);
+                 $file_name = time().' - '.$file->getClientOriginalName();
+                 if($file->getClientOriginalExtension() == "pdf") {
+                    $receipt_file = $file_name;
+                    $receipt_type = "pdf";
+                    $file->move(public_path().'/receipts/', $file_name);
 
-                  $receipt = array(
+                    $receipt = array(
                       'e_claim_id'    => $id,
                       'doc_file'      => $receipt_file,
                       'file_type'     => $receipt_type
-                  );
+                    );
 
-                  $result_doc = $e_claim_docs->createEclaimDocs($receipt);
-              } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
-                  $receipt_file = $file_name;
-                  $receipt_type = "xls";
-                  $file->move(public_path().'/receipts/', $file_name);
+                    $result_doc = $e_claim_docs->createEclaimDocs($receipt);
+                } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
+                    $receipt_file = $file_name;
+                    $receipt_type = "xls";
+                    $file->move(public_path().'/receipts/', $file_name);
 
-                  $receipt = array(
+                    $receipt = array(
                       'e_claim_id'    => $id,
                       'doc_file'      => $receipt_file,
                       'file_type'     => $receipt_type
-                  );
+                    );
 
-                  $result_doc = $e_claim_docs->createEclaimDocs($receipt);
-              } else {
-                $file_name = time().' - '.$file->getClientOriginalName();
-                // $receipt_file = $file_name;
-                $file->move(public_path().'/temp_uploads/', $file_name);
-                $data['file'] = public_path().'/temp_uploads/'.$file_name;
-                $data['e_claim_id'] = $id;
-                $result_doc = Queue::push('EclaimFileUploadQueue', $data);
-                $receipt = array(
-                  'file_type'     => "image"
-                );
-                  // // $image = \Cloudinary\Uploader::upload($file->getPathName());
+                    $result_doc = $e_claim_docs->createEclaimDocs($receipt);
+                } else {
+                  $file_name = StringHelper::get_random_password(6).' - '.$file_name;
+                  // $receipt_file = $file_name;
+                  $file->move(public_path().'/temp_uploads/', $file_name);
+                  $result_doc = Queue::push('EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
+                  $receipt = array(
+                    'file_type'     => "image"
+                  );
+                  // $image = \Cloudinary\Uploader::upload($file->getPathName());
                   // $image = \Cloudinary\Uploader::upload($file->getRealPath());
                   // $receipt_file = $image['secure_url'];
                   // $receipt_type = "image";
-              }
+                }
 
-              
-              if($result_doc) {
-                  if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
-                                    //   aws
-                     $s3 = AWS::get('s3');
-                     $s3->putObject(array(
-                        'Bucket'     => 'mednefits',
-                        'Key'        => 'receipts/'.$file_name,
-                        'SourceFile' => public_path().'/receipts/'.$file_name,
-                    ));
-                 }
-             } else {
-                $email = [];
-                $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
-                $email['logs'] = 'E-Claim Mobile Receipt Submission - '.$e;
-                $email['emailSubject'] = 'Error log.';
-                EmailHelper::sendErrorLogs($email);
-                $returnObject->status = TRUE;
-                $returnObject->message = 'E-Claim created successfully but failed to create E-Receipt.';
-            }
-        }
+                if($result_doc) {
+                    if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
+                                      //   aws
+                       $s3 = AWS::get('s3');
+                       $s3->putObject(array(
+                          'Bucket'     => 'mednefits',
+                          'Key'        => 'receipts/'.$file_name,
+                          'SourceFile' => public_path().'/receipts/'.$file_name,
+                      ));
+                   }
+               } else {
+                  $email = [];
+                  $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
+                  $email['logs'] = 'E-Claim Mobile Receipt Submission - '.$e;
+                  $email['emailSubject'] = 'Error log.';
+                  EmailHelper::sendErrorLogs($email);
+                  $returnObject->status = TRUE;
+                  $returnObject->message = 'E-Claim created successfully but failed to create E-Receipt.';
+              }
+          }
 
                           // get customer id
         $customer_id = StringHelper::getCustomerId($user_id);
