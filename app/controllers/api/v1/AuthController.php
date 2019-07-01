@@ -1154,7 +1154,7 @@ return Response::json($returnObject);
                 ->get();
 
                 foreach($e_claim_result as $key => $res) {
-                    if($res->status == 0) {
+                  if($res->status == 0) {
                       $status_text = 'Pending';
                   } else if($res->status == 1) {
                       $status_text = 'Approved';
@@ -1288,10 +1288,16 @@ return Response::json($returnObject);
       }
     }
 
-    $allocation = $credit_data['allocation'];
+    // $allocation = $credit_data['allocation'];
+    // $current_spending = $credit_data['get_allocation_spent'];
+    // $e_claim_spent = $credit_data['e_claim_spent'];
+    // $in_network_spent = $credit_data['in_network_spent'];
+    // $balance = $credit_data['balance'];
+
+    $user_spending = TransactionHelper::getInNetworkSpent($user_id, $spending_type);
     $current_spending = $credit_data['get_allocation_spent'];
-    $e_claim_spent = $credit_data['e_claim_spent'];
-    $in_network_spent = $credit_data['in_network_spent'];
+    $e_claim_spent = $user_spending['e_claim_spent'];
+    $in_network_spent = $user_spending['in_network_spent'];
     $balance = $credit_data['balance'];
 
     // $in_network_spent = $in_network_temp_spent - $credits_back;
