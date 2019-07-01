@@ -7,3 +7,4 @@ deployment-config.json
 node_modules
 public/receipts/*
 public/excel_upload/*
+public/temp_uploads/*
