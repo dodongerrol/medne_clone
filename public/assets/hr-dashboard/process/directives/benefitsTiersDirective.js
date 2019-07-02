@@ -1102,8 +1102,8 @@ app.directive('benefitsTiersDirective', [
 								email: emp.employee.email,
 								mobile: emp.employee.mobile,
 								job_title: emp.employee.job_title,
-								medical_credits: parseInt(emp.employee.credits),
-								wellness_credits: parseInt(emp.employee.wellness_credits),
+								medical_credits: parseFloat(emp.employee.credits),
+								wellness_credits: parseFloat(emp.employee.wellness_credits),
 								plan_start: moment(emp.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 								postal_code: emp.employee.postal_code,
 								mobile_area_code: emp.employee.mobile_area_code
