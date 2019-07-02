@@ -63,6 +63,11 @@ return array(
 			'queue'  => 'default',
 		),
 
+		'redis_high' => array(
+			'driver' => 'redis',
+			'queue'  => 'high',
+		),
+
 	),
 
 	/*

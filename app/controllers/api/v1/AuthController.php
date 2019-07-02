@@ -5132,7 +5132,7 @@ public function createEclaim( )
                     $file_name = StringHelper::get_random_password(6).' - '.$file_name;
                     // $receipt_file = $file_name;
                     $file->move(public_path().'/temp_uploads/', $file_name);
-                    $result_doc = Queue::push('\EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
+                    $result_doc = Queue::connection('redis_high')->push('\EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
                     $receipt = array(
                       'file_type'     => "image"
                     );
