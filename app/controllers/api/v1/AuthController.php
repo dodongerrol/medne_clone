@@ -2615,7 +2615,7 @@ public function payCredits( )
                          $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
                          $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
                                                           // httpLibrary::postHttp($api, $email, array());
-                         // EmailHelper::sendPaymentAttachment($email);
+                         EmailHelper::sendPaymentAttachment($email);
                        }
                        $returnObject->status = TRUE;
                        $returnObject->message = 'Payment Successfull';
