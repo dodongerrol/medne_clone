@@ -11,6 +11,8 @@
 |
 */
 
+// test date format
+Route::post('test_format_date', 'testcontroller@testFormatDate');
 // test upload e-claim
 Route::post("test_upload_e_claim_queue",'testcontroller@testEclaimUploadQueue');
 // test send e-claim emial
