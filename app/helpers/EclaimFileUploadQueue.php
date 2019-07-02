@@ -18,7 +18,7 @@ class EclaimFileUploadQueue
 		$e_claim_docs = new EclaimDocs( );
 		$e_claim_docs->createEclaimDocs($receipt);
 		$job->delete();
-		sleep(1);
+		// sleep(1);
 		// return $receipt;
 	}
 }
