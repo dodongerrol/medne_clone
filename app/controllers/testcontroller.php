@@ -606,6 +606,6 @@ class testcontroller extends BaseController {
 		$data['e_claim_id'] = $input['e_claim_id'];
 		// return $data;
 		// return EclaimFileUploadQueue::fire(null, $data);
-		return Queue::push('EclaimFileUploadQueue', $data);
+		return Queue::push('\EclaimFileUploadQueue', $data);
 	}
 }
