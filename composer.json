@@ -30,7 +30,8 @@
       "app/tests/TestCase.php",
       "app/helpers",
       "app/libraries",
-      "public/twilio-php/Twilio"
+      "public/twilio-php/Twilio",
+      "app/helpers/EclaimFileUploadQueue.php"
     ]
   },
   "scripts": {
