@@ -3,7 +3,7 @@
 class EmailHelper{
     public static function sendEmail($dataArray){
         
-        Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
+        Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
             $message->subject($dataArray['emailSubject']);
