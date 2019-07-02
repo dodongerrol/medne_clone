@@ -246,10 +246,23 @@ class DependentController extends \BaseController {
 				foreach ($temp_users as $key => $user) {
 					$credit = 0;
 					$user['email'] = isset($user['work_email']) ? trim($user['work_email']) : null;
-					$user['dob'] = $user['date_of_birth'];
 					$user['job_title'] = 'Other';
 					$user['nric'] = isset($user['nricfin']) ? trim($user['nricfin']) : null;
-					$user['plan_start'] = $user['start_date'];
+					
+					$dob_format = PlanHelper::validateDate($user['date_of_birth'], 'd-m-Y');
+					if($dob_format) {
+						$user['dob'] = date('d/m/Y', strtotime($user['date_of_birth']));
+					} else {
+						$user['dob'] = $user['date_of_birth'];
+					}
+
+					$start_date_format = PlanHelper::validateDate($user['start_date'], 'd-m-Y');
+					if($start_date_format) {
+						$user['plan_start'] = date('d/m/Y', strtotime($user['start_date']));
+					} else {
+						$user['plan_start'] = $user['start_date'];
+					}
+					
 					$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
 					$mobile = preg_replace('/\s+/', '', $user['mobile']);

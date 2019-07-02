@@ -872,6 +872,13 @@ class PlanHelper {
 		}
 	}
 
+	public static function validateDate($date, $format = 'd-m-Y')
+	{
+	    $d = DateTime::createFromFormat($format, $date);
+	    // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+	    return $d && $d->format($format) === $date;
+	}
+
 	public static function enrollmentEmployeeValidation($user, $except_enrolle_email_validation)
 	{
 		$customer_id = self::getCusomerIdToken();
