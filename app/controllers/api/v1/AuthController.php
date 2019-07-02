@@ -5161,7 +5161,7 @@ public function createEclaim( )
                     $returnObject->status = TRUE;
                     $returnObject->message = 'E-Claim created successfully but failed to create E-Receipt.';
                 }
-                sleep(1);
+                // sleep(1);
             }
 
                               // get customer id
