@@ -1239,6 +1239,10 @@ class Api_V1_TransactionController extends \BaseController
 							$lite_plan_status = false;
 						}
 
+						if($transaction->cap_per_visit > 0) {
+							$half_credits = true;
+						}
+
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,
 							'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
