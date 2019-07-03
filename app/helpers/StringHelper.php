@@ -1117,4 +1117,19 @@ public static function get_random_password($length)
         $mult = pow(10, $precision);       
         return floor($val * $mult) / $mult;
     }
+
+    public static function removeRows($data)
+    {
+        foreach($data as $key => $row) {
+            $row = array_filter($row,
+                                function($cell) {
+                                    return !is_null($cell);
+                                }
+                   );
+            if (count($row) == 0) {
+                unset($data[$key]);
+            }
+        }
+        return $data;
+    }
 }
