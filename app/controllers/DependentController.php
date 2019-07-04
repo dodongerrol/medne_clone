@@ -185,6 +185,13 @@ class DependentController extends \BaseController {
 					);
 				}
 
+				if(sizeof($temp_users) > $total) {
+					return array(
+						'status'	=> FALSE,
+						'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
+					);
+				}
+
 				$total_dependents_entry = 0;
 				$total_dependents = 0;
 
