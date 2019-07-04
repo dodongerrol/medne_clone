@@ -1425,9 +1425,81 @@ class Api_V1_TransactionController extends \BaseController
             }
 					}
 
-					$returnObject->status = FALSE;
+					$returnObject->status = TRUE;
           $returnObject->message = 'Success.';
           $returnObject->data = $results;
+          return Response::json($returnObject);
+				} else {
+					$returnObject->status = FALSE;
+					$returnObject->message = StringHelper::errorMessage("Token");
+					return Response::json($returnObject);
+				}
+			} else {
+				$returnObject->status = FALSE;
+				$returnObject->message = StringHelper::errorMessage("Token");
+				return Response::json($returnObject);
+			}
+		} else {
+			$returnObject->status = FALSE;
+			$returnObject->message = StringHelper::errorMessage("Token");
+			return Response::json($returnObject);
+		}
+	}
+
+	public function getCheckInData( )
+	{
+		$AccessToken = new Api_V1_AccessTokenController();
+		$returnObject = new stdClass();
+		$authSession = new OauthSessions();
+		$getRequestHeader = StringHelper::requestHeader();
+		$input = Input::all();
+
+		if(!empty($getRequestHeader['Authorization'])){
+			$getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+
+			if($getAccessToken){
+				$findUserID = $authSession->findUserID($getAccessToken->session_id);
+
+				if($findUserID){
+					$returnObject->status = TRUE;
+					$returnObject->message = 'Success.';
+
+					if(empty($input['check_in_id']) || $input['check_in_id'] == null) {
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Check-In ID is required.';
+						return Response::json($returnObject);
+					}
+
+					$check_in = DB::table('user_check_in_clinic')
+												->where('check_in_id', $input['check_in_id'])
+												->where('status', 0)
+												->first();
+
+					if(!$check_in) {
+						$returnObject->status = FALSE;
+          	$returnObject->message = 'Check In Registration removed by Health Provider. Please make another Check-In Registration.';
+          	$returnObject->check_in_status_removed = true;
+          	return Response::json($returnObject);
+					}
+
+					$user = DB::table('user')->where('UserID', $check_in->user_id)->first();
+					$clinic = DB::table('clinic')->where('ClinicID', $check_in->clinic_id)->first();
+					$data['clinic_id'] = $clinic->ClinicID;
+					$data['clinic_name'] = $clinic->Name;
+					$data['image_url'] = $clinic->image;
+					$data['check_in_time'] = date('d M, h:i a', strtotime($check_in->check_in_time));
+					$data['cap_per_visit_amount'] = $check_in->cap_per_visit;
+					$data['nric'] = $user->NRIC;
+					$data['member'] = ucwords($user->Name);
+					if($check_in->currency_symbol == "myr") {
+					 $cap_currency_symbol = "RM";
+					} else {
+					 $cap_currency_symbol = "S$";
+					}
+					$data['cap_currency_symbol'] = $cap_currency_symbol;
+					$returnObject->status = TRUE;
+          $returnObject->message = 'Success.';
+          $returnObject->data = $data;
           return Response::json($returnObject);
 				} else {
 					$returnObject->status = FALSE;

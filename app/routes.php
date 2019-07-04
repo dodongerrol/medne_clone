@@ -1020,6 +1020,8 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
 			// remove check in data
 			Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
+			// get check_in_id data
+			Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
 	 	});
 	});
 });
