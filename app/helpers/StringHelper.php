@@ -873,7 +873,7 @@ public static function get_random_password($length)
 
           if($plan->account_type === "lite_plan") {
               return TRUE;
-          } else if($plan->account_type === "insurance_bundle" && $plan->secondary_account_type === "insurance_bundle_lite") {
+          } else if($plan->account_type === "insurance_bundle" && $plan->secondary_account_type === "insurance_bundle_lite" || $plan->account_type === "trial_plan" && $plan->secondary_account_type === "trial_plan_lite") {
               return TRUE;
           } else {
               return FALSE;
@@ -889,7 +889,7 @@ public static function get_random_password($length)
                                 ->first();
             if($dependent_plan->account_type === "lite_plan") {
                 return TRUE;
-            } else if($dependent_plan->account_type === "insurance_bundle" && $dependent_plan->secondary_account_type === "insurance_bundle_lite") {
+            } else if($dependent_plan->account_type === "insurance_bundle" && $dependent_plan->secondary_account_type === "insurance_bundle_lite" || $dependent_plan->account_type === "trial_plan" && $dependent_plan->secondary_account_type === "trial_plan_lite") {
               return TRUE;
             } else {
               return FALSE;
@@ -1116,5 +1116,20 @@ public static function get_random_password($length)
     {
         $mult = pow(10, $precision);       
         return floor($val * $mult) / $mult;
+    }
+
+    public static function removeRows($data)
+    {
+        foreach($data as $key => $row) {
+            $row = array_filter($row,
+                                function($cell) {
+                                    return !is_null($cell);
+                                }
+                   );
+            if (count($row) == 0) {
+                unset($data[$key]);
+            }
+        }
+        return $data;
     }
 }

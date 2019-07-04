@@ -28,6 +28,7 @@ app.directive('benefitsTiersDirective', [
 					email : false,
 					postcode : false,
 					relationship : false,
+					plan_start : false,
 				}
 				scope.dependent_data = {};
 				scope.added_dependent_data = {};
@@ -141,14 +142,14 @@ app.directive('benefitsTiersDirective', [
 					}else if( scope.downloadWithDependentsCheckbox == true ){
 						if( scope.reviewExcelData.format && scope.reviewExcelData.name && 
 								scope.reviewExcelData.dob && scope.reviewExcelData.email && 
-								scope.reviewExcelData.postcode ){
+								scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start ){
 							if( scope.downloadWithDependents == true ){
 								if( scope.reviewExcelData.relationship ){
 									scope.downloadWithDependentsCheckbox = false;
 									scope.isUploadFile = true;
 									scope.download_step = 3;
 								}else{
-									swal('Error!','please review your downloaded file and check the boxes.');
+									swal('Error!','please review your downloaded file and check the boxes.','error');
 								}
 							}else{
 								scope.downloadWithDependentsCheckbox = false;
@@ -156,7 +157,7 @@ app.directive('benefitsTiersDirective', [
 								scope.download_step = 3;
 							}
 						}else{
-							swal('Error!','please review your downloaded file and check the boxes.');
+							swal('Error!','please review your downloaded file and check the boxes.','error');
 						}
 						
 					}else if( scope.isUploadFile == true ){
