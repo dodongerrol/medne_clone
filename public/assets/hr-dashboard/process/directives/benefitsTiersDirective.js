@@ -160,11 +160,16 @@ app.directive('benefitsTiersDirective', [
 						}
 						
 					}else if( scope.isUploadFile == true ){
-						scope.isUploadFile = false;
-						scope.getEnrollTempEmployees();
-						scope.isReviewEnroll = true;
-						scope.isFromUpload = true;
-						scope.download_step = 4;
+						if( scope.upload_file_dependent == null){
+							scope.isNextBtnDisabled = true;
+							swal('Error!','please upload a file first.','error');
+						}else{
+							scope.isUploadFile = false;
+							scope.getEnrollTempEmployees();
+							scope.isReviewEnroll = true;
+							scope.isFromUpload = true;
+							scope.download_step = 4;
+						}
 					}
 				}
 
