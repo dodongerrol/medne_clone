@@ -7759,5 +7759,10 @@ public function generateMonthlyCompanyInvoice( )
 		
 		return EclaimHelper::createPreSignedUrl($doc->doc_file);
 	}
+
+	public function downloadEclaimCsv( )
+	{
+		$input = Input::all();
+	}
 }
 ?>
