@@ -37,7 +37,7 @@ app.directive('benefitsTiersDirective', [
 					wellness_credits : 0,
 					dependents : [],
 				};
-				scope.upload_file_dependent = {};
+				scope.upload_file_dependent = null;
 				scope.customer_data = null;
 				scope.selected_edit_tier_index = null;
 				scope.tierSelected = null;
@@ -161,8 +161,8 @@ app.directive('benefitsTiersDirective', [
 						}
 						
 					}else if( scope.isUploadFile == true ){
-						if( scope.upload_file_dependent == null){
-							scope.isNextBtnDisabled = true;
+						console.log( scope.upload_file_dependent );
+						if( scope.upload_file_dependent == null ){
 							swal('Error!','please upload a file first.','error');
 						}else{
 							scope.isUploadFile = false;
@@ -203,17 +203,43 @@ app.directive('benefitsTiersDirective', [
 						scope.isWebInput = false;
 						$('.summary-right-container').hide();
 					}else if( scope.isReviewEnroll == true ){
-						// $state.go('enrollment-options');
-						localStorage.setItem('fromEmpOverview', false);
-          				// $state.go('create-team-benefits-tiers');
-          				scope.isAllPreviewEmpChecked = false;
-          				scope.isReviewEnroll = false;
-          				scope.isEnrollmentOptions = true;
+						swal({
+	            title: "Confirm",
+	            text: "Unsaved data will be deleted, Proceed?",
+	            type: "warning",
+	            showCancelButton: true,
+	            confirmButtonColor: "#0392CF",
+	            confirmButtonText: "Confirm",
+	            cancelButtonText: "No",
+	            closeOnConfirm: true,
+	            customClass: "updateEmp"
+	          },
+	          function(isConfirm){
+	          	if(isConfirm){
+	          		scope.showLoading();
+	          		angular.forEach( scope.temp_employees, function(value,key){
+									dependentsSettings.deleteTempEmployees( value.employee.temp_enrollment_id )
+										.then(function(response){
+											// console.log(response);
+											if( key == scope.temp_employees.length -1 ){
+												scope.hideLoading();
+				          			// $state.go('enrollment-options');
+												localStorage.setItem('fromEmpOverview', false);
+				        				// $state.go('create-team-benefits-tiers');
+				        				scope.isAllPreviewEmpChecked = false;
+				        				scope.isReviewEnroll = false;
+				        				scope.isEnrollmentOptions = true;
+											}
+										});
+								});
+	          	}
+	          });
 					}else if( scope.downloadWithDependentsCheckbox == true ){
 						scope.downloadWithDependentsCheckbox = false;
 						scope.isExcel = true;
 						scope.download_step = 1;
 					}else if( scope.isUploadFile == true ){
+						scope.upload_file_dependent = null;
 						scope.isUploadFile = false;
 						scope.isExcel = true;
 						scope.download_step = 1;
