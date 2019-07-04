@@ -4020,7 +4020,11 @@ public function getNetworkTransactions( )
                     // $type = StringHelper::checkUserType($findUserID);
             $transaction_details = [];
             $ids = StringHelper::getSubAccountsID($findUserID);
-            $transactions = DB::table('transaction_history')->whereIn('UserID', $ids)->orderBy('created_at', 'desc')->get();
+            $transactions = DB::table('transaction_history')
+                                ->whereIn('UserID', $ids)
+                                ->orderBy('created_at', 'desc')
+                                ->where('paid', 1)
+                                ->get();
               foreach ($transactions as $key => $trans) {
                if($trans) {
                   $receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
