@@ -37,7 +37,7 @@ app.directive('benefitsTiersDirective', [
 					wellness_credits : 0,
 					dependents : [],
 				};
-				scope.upload_file_dependent = {};
+				scope.upload_file_dependent = null;
 				scope.customer_data = null;
 				scope.selected_edit_tier_index = null;
 				scope.tierSelected = null;
@@ -161,11 +161,18 @@ app.directive('benefitsTiersDirective', [
 						}
 						
 					}else if( scope.isUploadFile == true ){
-						scope.isUploadFile = false;
-						scope.getEnrollTempEmployees();
-						scope.isReviewEnroll = true;
-						scope.isFromUpload = true;
-						scope.download_step = 4;
+						console.log( scope.upload_file_dependent );
+						if( scope.uploadedFile == false ){
+							swal('Error!','please upload a file first.','error');
+						}else{
+							scope.message = '';
+							scope.uploadedFile = false;
+							scope.isUploadFile = false;
+							scope.getEnrollTempEmployees();
+							scope.isReviewEnroll = true;
+							scope.isFromUpload = true;
+							scope.download_step = 4;
+						}
 					}
 				}
 
@@ -198,17 +205,53 @@ app.directive('benefitsTiersDirective', [
 						scope.isWebInput = false;
 						$('.summary-right-container').hide();
 					}else if( scope.isReviewEnroll == true ){
-						// $state.go('enrollment-options');
+						swal({
+	            title: "Confirm",
+	            text: "Temporary employee data will be deleted, Proceed?",
+	            type: "warning",
+	            showCancelButton: true,
+	            confirmButtonColor: "#0392CF",
+	            confirmButtonText: "Confirm",
+	            cancelButtonText: "No",
+	            closeOnConfirm: true,
+	            customClass: "updateEmp"
+	          },
+	          function(isConfirm){
+	          	if(isConfirm){
+	          		if( scope.temp_employees.length > 0 ){
+	          			scope.showLoading();
+		          		angular.forEach( scope.temp_employees, function(value,key){
+										dependentsSettings.deleteTempEmployees( value.employee.temp_enrollment_id )
+											.then(function(response){
+												// console.log(response);
+												if( key == scope.temp_employees.length -1 ){
+													scope.hideLoading();
+					          			// $state.go('enrollment-options');
+													localStorage.setItem('fromEmpOverview', false);
+					        				// $state.go('create-team-benefits-tiers');
+					        				scope.isAllPreviewEmpChecked = false;
+					        				scope.isReviewEnroll = false;
+					        				scope.isEnrollmentOptions = true;
+												}
+											});
+									});
+	          		}else{
+	          			// $state.go('enrollment-options');
 						localStorage.setItem('fromEmpOverview', false);
-          				// $state.go('create-team-benefits-tiers');
-          				scope.isAllPreviewEmpChecked = false;
-          				scope.isReviewEnroll = false;
-          				scope.isEnrollmentOptions = true;
+        				// $state.go('create-team-benefits-tiers');
+        				scope.isAllPreviewEmpChecked = false;
+        				scope.isReviewEnroll = false;
+        				scope.isEnrollmentOptions = true;
+        				scope.$apply();
+	          		}
+	          	}
+	          });
 					}else if( scope.downloadWithDependentsCheckbox == true ){
 						scope.downloadWithDependentsCheckbox = false;
 						scope.isExcel = true;
 						scope.download_step = 1;
 					}else if( scope.isUploadFile == true ){
+						scope.upload_file_dependent = null;
 						scope.isUploadFile = false;
 						scope.isExcel = true;
 						scope.download_step = 1;
@@ -763,6 +806,8 @@ app.directive('benefitsTiersDirective', [
 					}
 				}
 
+				scope.uploadedFile = false;
+
 				scope.runUpload = function( file ) {
 					// console.log(file);
 					var data = {
@@ -778,12 +823,14 @@ app.directive('benefitsTiersDirective', [
 	        		// console.log( response );
 	        		scope.hideLoading();
 	        		if( response.data.status == true ){
+	        			scope.uploadedFile = true;
 	        			scope.isInvalid = false;
 								scope.isValid = true;
 	        			scope.isNextBtnDisabled = false;
 	        			scope.message = 'Successfully Uploaded.';
 	        			swal( 'Success!', 'uploaded.', 'success' );
 	        		}else{
+	        			scope.uploadedFile = false;
 	        			scope.isInvalid = true;
 								scope.isValid = false;
 	        			scope.isNextBtnDisabled = true;
@@ -1157,11 +1204,13 @@ app.directive('benefitsTiersDirective', [
           },
           function(isConfirm){
             if(isConfirm){
+            	scope.showLoading();
 							angular.forEach( scope.previewTable_arr, function(value,key){
 								dependentsSettings.deleteTempEmployees( value )
 									.then(function(response){
 											// console.log(response);
 											if( (scope.previewTable_arr.length-1) == key ){
+												scope.hideLoading();
 												scope.getEnrollTempEmployees();
 												scope.previewTable_arr = [];
 												// if( scope.temp_employees.length == 0 ){
