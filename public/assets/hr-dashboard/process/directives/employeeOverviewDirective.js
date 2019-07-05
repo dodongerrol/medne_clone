@@ -59,6 +59,7 @@ app.directive("employeeOverviewDirective", [
         scope.isReserveEmpShow = false;
         scope.isDeleteDependent = false;
         scope.dependents_ctr = 0;
+        scope.cap_per_visit = 0;
 
 
 
@@ -76,6 +77,29 @@ app.directive("employeeOverviewDirective", [
             return scope.page_active - Math.floor(scope.pagesToDisplay / 2);
           }    
           return 0;
+        }
+
+
+        scope.manageCap = function(){
+          $("#manage-cap-modal").modal('show');
+        }
+        scope.submitCapPerVisit = function( cap ){
+          scope.showLoading();
+          var data = {
+            employee_id : scope.selectedEmployee.user_id,
+            cap_amount : cap,
+          }
+          hrSettings.updateCapPerVisit( data )
+            .then(function(response){
+              scope.hideLoading();
+              if( response.data.status ){
+                scope.cap_per_visit = 0;
+                swal( 'Success!', response.data.message, 'success' );
+                $("#manage-cap-modal").modal('hide');
+              }else{
+                swal( 'Error!', response.data.message, 'error' );
+              }
+            });
         }
 
         scope.gotToOverview = function(){
@@ -881,6 +905,7 @@ app.directive("employeeOverviewDirective", [
             .then(function(response){
               console.log( response );
               scope.health_spending_summary = response.data;
+              scope.getTotalMembers();
               // if( scope.health_spending_summary.medical != false || scope.health_spending_summary.wellness != false ){
               //   if( scope.health_spending_summary.medical.exceed == true || scope.health_spending_summary.wellness.exceed == true ){
               //     $(".prev-next-buttons-container").fadeIn();
@@ -1365,6 +1390,7 @@ app.directive("employeeOverviewDirective", [
               }else{
                 scope.getEmployeeList(scope.page_active);
               }
+              scope.getTotalMembers();
               scope.getProgress();
             });
         }

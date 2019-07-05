@@ -295,6 +295,12 @@ class PlanHelper {
 			$data['expired'] = FALSE;
 		}
 
+		if(date('Y-m-d', strtotime($plan_user->plan_start)) > date('Y-m-d')) {
+			$data['pending'] = true;
+		} else {
+			$data['pending'] = false;
+		}
+
 		return $data;
 	}
 
@@ -463,7 +469,9 @@ class PlanHelper {
 									->where('wallet_id', $wallet->wallet_id)
 									->where('logs', 'pro_allocation')
 									->sum('credit');
-		if($pro_allocation > 0) {
+		$user = DB::table('user')->where('UserID', $user_id)->first();
+
+		if($pro_allocation > 0 && (int)$user->Active == 0) {
 			$allocation = $pro_allocation;
 			$current_balance = $pro_allocation - $current_spending;
 			if($current_balance < 0) {
@@ -3364,12 +3372,18 @@ class PlanHelper {
 
 		public static function getEmployeePlanTier($user_id)
 		{
-			$plan_tier = DB::table('plan_tier_users')
-			->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
-			->where('plan_tier_users.status', 1)
-			->where('plan_tiers.active', 1)
-			->where('plan_tier_users.user_id', $user_id)
-			->first();
+			$customer_id = self::getCustomerId($user_id);
+			$plan_tier = null;
+
+			if($customer_id) {
+				$plan_tier = DB::table('plan_tier_users')
+				->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
+				->where('plan_tier_users.status', 1)
+				->where('plan_tiers.active', 1)
+				->where('plan_tier_users.user_id', $user_id)
+				->where('plan_tiers.customer_id', $customer_id)
+				->first();
+			}
 
 			if($plan_tier) {
 				return $plan_tier;
@@ -4528,6 +4542,13 @@ class PlanHelper {
 			} else {
 				$data['expired'] = FALSE;
 			}
+
+			if(date('Y-m-d', strtotime($dependent_plan_history->plan_start)) > date('Y-m-d')) {
+				$data['pending'] = true;
+			} else {
+				$data['pending'] = false;
+			}
+
 			$data['user_type'] = "dependents";
 
 			return $data;
@@ -4751,6 +4772,8 @@ class PlanHelper {
 							
 							$allocated += $allocation;
 
+						if((int)$member->removed_status == 1) {
+							$deleted_employee_allocation += $get_allocation - $deducted_allocation;
 						}
 
 						$pro_allocation_wellness = DB::table('wellness_wallet_history')
@@ -4862,4 +4885,5 @@ class PlanHelper {
 			);
 		}
 	}
+}
 ?>

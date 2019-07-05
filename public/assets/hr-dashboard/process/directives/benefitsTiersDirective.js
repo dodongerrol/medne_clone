@@ -192,12 +192,12 @@ app.directive('benefitsTiersDirective', [
 						// $state.go('enrollment-options');
 						$state.go('benefits-dashboard');
 					}else if( scope.isEnrollmentOptions == true ){
-						// if( scope.isTiering == true || scope.isTiering == 'true' ){
-						// 	scope.isTierSummary = true;
-						// 	scope.isEnrollmentOptions = false;
-						// }else{
-						// 	$state.go('enrollment-options');
-						// }
+						if( scope.isTiering == true || scope.isTiering == 'true' ){
+							scope.isTierSummary = true;
+							scope.isEnrollmentOptions = false;
+						}else{
+							// $state.go('enrollment-options');
+						}
 						$state.go('benefits-dashboard');
 					}else if( scope.isExcel == true || scope.isWebInput == true ){
 						scope.isEnrollmentOptions = true;
@@ -206,46 +206,46 @@ app.directive('benefitsTiersDirective', [
 						$('.summary-right-container').hide();
 					}else if( scope.isReviewEnroll == true ){
 						swal({
-	            title: "Confirm",
-	            text: "Temporary employee data will be deleted, Proceed?",
-	            type: "warning",
-	            showCancelButton: true,
-	            confirmButtonColor: "#0392CF",
-	            confirmButtonText: "Confirm",
-	            cancelButtonText: "No",
-	            closeOnConfirm: true,
-	            customClass: "updateEmp"
-	          },
-	          function(isConfirm){
-	          	if(isConfirm){
-	          		if( scope.temp_employees.length > 0 ){
-	          			scope.showLoading();
-		          		angular.forEach( scope.temp_employees, function(value,key){
-										dependentsSettings.deleteTempEmployees( value.employee.temp_enrollment_id )
-											.then(function(response){
-												// console.log(response);
-												if( key == scope.temp_employees.length -1 ){
-													scope.hideLoading();
-					          			// $state.go('enrollment-options');
-													localStorage.setItem('fromEmpOverview', false);
-					        				// $state.go('create-team-benefits-tiers');
-					        				scope.isAllPreviewEmpChecked = false;
-					        				scope.isReviewEnroll = false;
-					        				scope.isEnrollmentOptions = true;
-												}
-											});
-									});
-	          		}else{
-	          			// $state.go('enrollment-options');
-						localStorage.setItem('fromEmpOverview', false);
-        				// $state.go('create-team-benefits-tiers');
-        				scope.isAllPreviewEmpChecked = false;
-        				scope.isReviewEnroll = false;
-        				scope.isEnrollmentOptions = true;
-        				scope.$apply();
-	          		}
-	          	}
-	          });
+				            title: "Confirm",
+				            text: "Temporary employee data will be deleted, Proceed?",
+				            type: "warning",
+				            showCancelButton: true,
+				            confirmButtonColor: "#0392CF",
+				            confirmButtonText: "Confirm",
+				            cancelButtonText: "No",
+				            closeOnConfirm: true,
+				            customClass: "updateEmp"
+				          },
+				          function(isConfirm){
+				          	if(isConfirm){
+				          		if( scope.temp_employees.length > 0 ){
+				          			scope.showLoading();
+					          		angular.forEach( scope.temp_employees, function(value,key){
+													dependentsSettings.deleteTempEmployees( value.employee.temp_enrollment_id )
+														.then(function(response){
+															// console.log(response);
+															if( key == scope.temp_employees.length -1 ){
+																scope.hideLoading();
+								          			// $state.go('enrollment-options');
+																localStorage.setItem('fromEmpOverview', false);
+								        				// $state.go('create-team-benefits-tiers');
+								        				scope.isAllPreviewEmpChecked = false;
+								        				scope.isReviewEnroll = false;
+								        				scope.isEnrollmentOptions = true;
+															}
+														});
+												});
+				          		}else{
+				          			// $state.go('enrollment-options');
+									localStorage.setItem('fromEmpOverview', false);
+			        				// $state.go('create-team-benefits-tiers');
+			        				scope.isAllPreviewEmpChecked = false;
+			        				scope.isReviewEnroll = false;
+			        				scope.isEnrollmentOptions = true;
+			        				scope.$apply();
+				          		}
+				          	}
+				          });
 					}else if( scope.downloadWithDependentsCheckbox == true ){
 						scope.downloadWithDependentsCheckbox = false;
 						scope.isExcel = true;

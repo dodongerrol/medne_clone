@@ -97,6 +97,8 @@ class UserPackage extends Eloquent
             $company = DB::table('corporate')
                     ->where('corporate_id', '=', $corporate_member->corporate_id)
                     ->first();
+            $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->orderBy('created_at', 'desc')->first();
+
             if($company) {
                 if($company && $user_details->UserType == 5 && $user_details->access_type == 0) {
                     $data['company_name']  = ucwords($company->company_name);
@@ -134,6 +136,25 @@ class UserPackage extends Eloquent
                         $data['care_online'] = TRUE;
                         $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
+
+                        // get cap per visit
+                        // check if their is a plan tier
+                        $plan_tier = DB::table('plan_tier_users')
+                        ->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
+                        ->where('plan_tier_users.user_id', $user_id)
+                        ->first();
+                        $cap_per_visit = $wallet->cap_per_visit_medical;
+
+                        if($plan_tier) {
+                            if($wallet->cap_per_visit_medical > 0) {
+                                $cap_per_visit = $wallet->cap_per_visit_medical;
+                            } else {
+                                $cap_per_visit = $plan_tier->gp_cap_per_visit;
+                            }
+                        }
+
+                        $data['cap_per_visit'] = "S$ ".number_format($cap_per_visit, 2);
+                        
                         return $data;
                     } else {
                         $plan_user_history = DB::table('user_plan_history')
@@ -220,6 +241,24 @@ class UserPackage extends Eloquent
                             $data['plan_type'] = PlanHelper::getEmployeePlanType($active_plan->customer_active_plan_id);
                         }
                         $data['care_online'] = TRUE;
+
+                        // get cap per visit
+                        // check if their is a plan tier
+                        $plan_tier = DB::table('plan_tier_users')
+                        ->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
+                        ->where('plan_tier_users.user_id', $user_id)
+                        ->first();
+                        $cap_per_visit = $wallet->cap_per_visit_medical;
+
+                        if($plan_tier) {
+                            if($wallet->cap_per_visit_medical > 0) {
+                                $cap_per_visit = $wallet->cap_per_visit_medical;
+                            } else {
+                                $cap_per_visit = $plan_tier->gp_cap_per_visit;
+                            }
+                        }
+
+                        $data['cap_per_visit'] = "S$ ".number_format($cap_per_visit, 2);
                         return $data;
                     }
                 } else {

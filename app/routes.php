@@ -369,6 +369,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
 	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
+	// update cap per visit of employee
+	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 	// get pre signed e-claim doc
 	Route::get('hr/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 });
@@ -974,9 +976,11 @@ Route::group(array('prefix' => 'v2'), function()
 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
 		    // check user pin
 		    Route::post('clinic/send_payment', 'Api_V1_AuthController@payCredits');
-		    Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
+		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
+		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
 		    // send notification to clinic when customer will pay directly to clinic
-		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+		    // Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+		    Route::post('clinic/payment_direct', 'Api_V1_TransactionController@notifyClinicDirectPayment');
 		    // save photo receipt
 		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
 		    // save photo bulk
@@ -988,13 +992,15 @@ Route::group(array('prefix' => 'v2'), function()
 		    // update or insert wallet setting
 		    Route::post('user/set_wallet_settings', 'Api_V1_AuthController@setWalletSettings');
 		    // get in-network transaction lists
-		    Route::get('user/in_network_transactions', 'Api_V1_AuthController@getNetworkTransactions');
+		    Route::get('user/in_network_transactions', 'Api_V1_TransactionController@getNetworkTransactions');
 		    // get specific in-network transaction
-		    Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
+		    // Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
+		    Route::get('user/specific_in_network/{id}', 'Api_V1_TransactionController@getInNetworkDetails');
 		    // upload receipt e-claim
 		    // Route::post('user/upload_out_of_network_receipt', 'Api_V1_AuthController@uploadReceipt');
 		    // upload receipt in-network
 		    Route::post('user/upload_in_network_receipt', 'Api_V1_AuthController@uploadInNetworkReceipt');
+		    Route::post('user/upload_in_network_receipt_bulk', 'Api_V1_TransactionController@uploadInNetworkReceiptBulk');
 		    // get e-claim transactions
 		    Route::get('user/e_claim_transactions', 'Api_V1_AuthController@getEclaimTransactions');
 		    Route::get('user/specific_e_claim_transaction/{id}', 'Api_V1_AuthController@getEclaimDetails');
@@ -1014,6 +1020,10 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
 			// update notification to read
 			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
+			// remove check in data
+			Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
+			// get check_in_id data
+			Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
 	 	});
 	});
 });
@@ -1319,6 +1329,14 @@ Route::group(array('prefix' => 'app'), function()
         Route::get('clinic_socket_connection', 'HomeController@getClinicSocketDetails');
 		// api for check transaction duplication
 		Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
+		// get check in transactions
+		Route::get('clinic/get_check_in_lists', 'UserCheckInController@getClinicCheckInLists');
+		// get specific check in data
+		Route::get('clinic/get_specific_check_in','UserCheckInController@getSpecificCheckIn');
+		// remove specific check in data
+		Route::post('clinic/remove_specific_check_in', 'UserCheckInController@deleteSpecificCheckIn');
+		// remove specific check in data
+		Route::get('clinic/auto_remove_check_in', 'UserCheckInController@checkCheckInAutoDelete');
     });
 
 });

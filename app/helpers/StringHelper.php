@@ -866,14 +866,16 @@ public static function get_random_password($length)
           $customer_id = self::getCustomerId($id);
 
           if(!$customer_id) {
-              return FALSE;
+            return FALSE;
           }
           
-          $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-
-          if($plan->account_type === "lite_plan") {
+          $plan = DB::table('customer_plan')
+                    ->where('customer_buy_start_id', $customer_id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+          if($plan->account_type == "lite_plan") {
               return TRUE;
-          } else if($plan->account_type === "insurance_bundle" && $plan->secondary_account_type === "insurance_bundle_lite" || $plan->account_type === "trial_plan" && $plan->secondary_account_type === "trial_plan_lite") {
+          } else if($plan->account_type == "insurance_bundle" && $plan->secondary_account_type == "insurance_bundle_lite" || $plan->account_type == "trial_plan" && $plan->secondary_account_type == "trial_plan_lite") {
               return TRUE;
           } else {
               return FALSE;
@@ -887,9 +889,9 @@ public static function get_random_password($length)
             $dependent_plan = DB::table('dependent_plans')
                                 ->where('dependent_plan_id', $dependent_history->dependent_plan_id)
                                 ->first();
-            if($dependent_plan->account_type === "lite_plan") {
+            if($dependent_plan->account_type == "lite_plan") {
                 return TRUE;
-            } else if($dependent_plan->account_type === "insurance_bundle" && $dependent_plan->secondary_account_type === "insurance_bundle_lite" || $dependent_plan->account_type === "trial_plan" && $dependent_plan->secondary_account_type === "trial_plan_lite") {
+            } else if($dependent_plan->account_type == "insurance_bundle" && $dependent_plan->secondary_account_type == "insurance_bundle_lite" || $dependent_plan->account_type == "trial_plan" && $dependent_plan->secondary_account_type == "trial_plan_lite") {
               return TRUE;
             } else {
               return FALSE;
@@ -1050,6 +1052,40 @@ public static function get_random_password($length)
         }
 
         return "claim-notification-event_clinic_".$dev."_".$clinic_id."_".$user_id;
+    }
+
+    public static function socketConnectionCheckIn($clinic_id, $user_id)
+    {
+        
+        $config = Config::get('config.deployment');
+        $dev = "";
+
+        if($config == "Production"){
+          $dev = "production";
+        }elseif($config == "Development") {
+          $dev = "development";
+        }else{
+          $dev = "local";
+        }
+
+        return "check-in-notification-event_clinic_".$dev."_".$clinic_id."_".$user_id;
+    }
+
+    public static function socketConnectionCheckInRemove($clinic_id, $user_id)
+    {
+        
+        $config = Config::get('config.deployment');
+        $dev = "";
+
+        if($config == "Production"){
+          $dev = "production";
+        }elseif($config == "Development") {
+          $dev = "development";
+        }else{
+          $dev = "local";
+        }
+
+        return "check-in-remove-notification-event_clinic_".$dev."_".$clinic_id."_".$user_id;
     }
 
      public static function validIdentification($number)

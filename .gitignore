@@ -8,3 +8,5 @@ node_modules
 public/receipts/*
 public/excel_upload/*
 public/temp_uploads/*
+.DS_Store
+**/.DS_Store

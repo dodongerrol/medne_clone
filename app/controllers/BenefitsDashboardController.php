@@ -2066,17 +2066,17 @@ class BenefitsDashboardController extends \BaseController {
 			->sum('amount');
 
 			$medical = array(
-				'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
-				'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
-				'balance'			=> number_format($medical_credit_data['balance'], 2),
-				'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
+				'credits_allocation' => $medical_credit_data['allocation'],
+				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+				'balance'			=> $medical_credit_data['balance'],
+				'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
 			);
 
 			$wellness = array(
-				'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
-				'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
-				'balance'						=> number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
-				'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
+				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+				'balance'						=> $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
 
 			$name = explode(" ", $user->Name);
@@ -2101,6 +2101,17 @@ class BenefitsDashboardController extends \BaseController {
 				$emp_status = 'deleted';
 			}
 
+			$cap_per_visit = $wallet->cap_per_visit_medical;
+
+			if($plan_tier) {
+				if($wallet->cap_per_visit_medical > 0) {
+					$plan_tier->gp_cap_per_visit = $wallet->cap_per_visit_medical;
+				} else {
+					$cap_per_visit = $plan_tier->gp_cap_per_visit;
+				}
+			}
+
+
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -2108,13 +2119,14 @@ class BenefitsDashboardController extends \BaseController {
 				),
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
+				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
 				'first_name'			=> $first_name,
 				'last_name'				=> $last_name,
 				'email'					=> $user->Email,
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
-				'start_date'			=> $get_employee_plan->plan_start,
+				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
 				'expiry_date'			=> $expiry_date,
 				'wallet_id'				=> $wallet->wallet_id,
 				'credits'				=> number_format($credit_balance, 2),
@@ -2915,17 +2927,17 @@ class BenefitsDashboardController extends \BaseController {
 			->sum('amount');
 
 			$medical = array(
-				'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
-				'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
-				'balance'			=> number_format($medical_credit_data['balance'], 2),
-				'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
+				'credits_allocation' => $medical_credit_data['allocation'],
+				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+				'balance'			=> $medical_credit_data['balance'],
+				'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
 			);
 
 			$wellness = array(
-				'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
-				'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
-				'balance'						=> number_format($wellness_credit_data['balance'], 2),
-				'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
+				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+				'balance'						=> $wellness_credit_data['balance'],
+				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
 
 			$name = explode(" ", $user->Name);
@@ -2944,6 +2956,16 @@ class BenefitsDashboardController extends \BaseController {
 				$phone_no = $user->PhoneCode.$user->PhoneNo;
 			}
 
+			$cap_per_visit = $wallet->cap_per_visit_medical;
+
+			if($plan_tier) {
+				if($wallet->cap_per_visit_medical != 0 || $wallet->cap_per_visit_medical != null) {
+					$plan_tier->gp_cap_per_visit = $wallet->cap_per_visit_medical;
+				} else {
+					$cap_per_visit = $plan_tier->gp_cap_per_visit;
+				}
+			}
+
 			$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
 			if((int)$user->Active == 0) {
 				$emp_status = 'deleted';
@@ -2955,6 +2977,7 @@ class BenefitsDashboardController extends \BaseController {
 				),
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
+				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
 				'first_name'			=> $first_name,
 				'last_name'				=> $last_name,
