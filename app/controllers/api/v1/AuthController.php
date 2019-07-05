@@ -5828,8 +5828,8 @@ public function payCreditsNew( )
                     ->first();
 
             if(!$check) {
-              $returnObject->status = FALSE;
-              $returnObject->message = 'Check In data not found.';
+              $returnObject->status = TRUE;
+              $returnObject->message = 'Success.';
               return Response::json($returnObject);
             }
 
