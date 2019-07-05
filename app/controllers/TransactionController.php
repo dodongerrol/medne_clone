@@ -1676,7 +1676,11 @@ class TransactionController extends BaseController {
 
 			if((int)$trans->half_credits == 1) {
 				$cash = $trans->cash_cost;
-				$mednefits_credits = $trans->credit_cost;
+				// if((int)$trans->lite_plan_enabled == 1 && (int)$trans->lite_plan_use_credits == 0) {
+				// 	$mednefits_credits = $trans->credit_cost + $trans->consultation_fees;
+				// } else {
+					$mednefits_credits = $trans->credit_cost;
+				// }
 			}
 
 			$registration_date = null;

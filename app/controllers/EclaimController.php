@@ -195,6 +195,7 @@ class EclaimController extends \BaseController {
 									'Key'        => 'receipts/'.$file,
 									'SourceFile' => public_path().'/receipts/'.$file,
 								));
+								unlink(public_path().'/receipts/'.$file)
 							}
 						}
 					} catch(Exception $e) {

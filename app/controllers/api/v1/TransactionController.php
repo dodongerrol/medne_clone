@@ -1317,9 +1317,9 @@ class Api_V1_TransactionController extends \BaseController
 
 					$transaction_id = (int)preg_replace('/[^0-9]/', '', $input['transaction_id']);
 
-					$check = DB::table('transaction_history')->where('transaction_id', $transaction_id)->count();
+					$check = DB::table('transaction_history')->where('transaction_id', $transaction_id)->first();
 
-					if($check == 0) {
+					if(!$check) {
 					 $returnObject->status = FALSE;
 					 $returnObject->message = 'Transaction data does not exist.';
 					 return Response::json($returnObject);
@@ -1384,6 +1384,7 @@ class Api_V1_TransactionController extends \BaseController
 						   );
 						    $file->move(public_path().'/receipts/', $file_name);
 						    $aws_upload = true;
+						    $result = $trans_docs->saveReceipt($receipt);
 						} else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
 						    $receipt = array(
 					       'user_id'           => $findUserID,
@@ -1393,17 +1394,28 @@ class Api_V1_TransactionController extends \BaseController
 						   );
 						    $file->move(public_path().'/receipts/', $file_name);
 						    $aws_upload = true;
+						    $result = $trans_docs->saveReceipt($receipt);
 						} else {
-						    $image = \Cloudinary\Uploader::upload($file->getPathName());
-						    $receipt = array(
-					       'user_id'           => $findUserID,
-					       'file'      => $image['secure_url'],
-					       'type'      => "image",
-					       'transaction_id'    => $transaction_id,
-						   );
+							$file_name = StringHelper::get_random_password(6).' - '.$file_name;
+							$file->move(public_path().'/temp_uploads/', $file_name);
+							$result_doc = Queue::connection('redis_high')->push('\InNetworkFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'transaction_id' => $transaction_id, 'user_id' => $check->UserID));
+							  $file_address = url('temp_uploads', $parameter = array(), $secure = null).'/'.$file_name;
+                $result = array(
+                  'file'      => $file_address,
+					       	'type'      => "image",
+					       	'transaction_id'    => $transaction_id,
+					       	'user_id'		=> $check->UserID
+                );
+						   //  $image = \Cloudinary\Uploader::upload($file->getPathName());
+						   //  $receipt = array(
+					    //    'user_id'           => $findUserID,
+					    //    'file'      => $image['secure_url'],
+					    //    'type'      => "image",
+					    //    'transaction_id'    => $transaction_id,
+						   // );
 						}
 
-						$result = $trans_docs->saveReceipt($receipt);
+						
 
 						if($result) {
               // if(StringHelper::Deployment()==1){

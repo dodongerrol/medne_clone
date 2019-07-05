@@ -601,12 +601,12 @@ class testcontroller extends BaseController {
 		$file = Input::file('file');
 		$file_name = time().' - '.$file->getClientOriginalName();
 		// $receipt_file = $file_name;
-        $file->move(public_path().'/temp_uploads/', $file_name);
-		$data['file'] = public_path().'/temp_uploads/'.$file_name;
-		$data['e_claim_id'] = $input['e_claim_id'];
-		// return $data;
+        // $file->move(public_path().'/temp_uploads/', $file_name);
+		// $data['file'] = public_path().'/temp_uploads/'.$file_name;
+		// $data['e_claim_id'] = $input['e_claim_id'];
+		return FileHelper::compress_image($file, public_path().'/temp_uploads', 50);
 		// return EclaimFileUploadQueue::fire(null, $data);
-		return Queue::connection('redis_high')->push('\EclaimFileUploadQueue', $data);
+		// return Queue::connection('redis_high')->push('\EclaimFileUploadQueue', $data);
 	}
 
 	public function testFormatDate( )
