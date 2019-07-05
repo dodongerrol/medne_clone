@@ -445,12 +445,12 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/eventviva/php-image-resize.git",
+                "url": "https://github.com/gumlet/php-image-resize.git",
                 "reference": "405eeef66b5369f14b0e3c381ade8855b11122f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eventviva/php-image-resize/zipball/405eeef66b5369f14b0e3c381ade8855b11122f6",
+                "url": "https://api.github.com/repos/gumlet/php-image-resize/zipball/405eeef66b5369f14b0e3c381ade8855b11122f6",
                 "reference": "405eeef66b5369f14b0e3c381ade8855b11122f6",
                 "shasum": ""
             },
@@ -551,12 +551,12 @@
             "version": "dev-v1-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-api-php-client.git",
+                "url": "https://github.com/googleapis/google-api-php-client.git",
                 "reference": "107dc7d30fa9c6e5b75ce1200665e4fc3adfba6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client/zipball/107dc7d30fa9c6e5b75ce1200665e4fc3adfba6e",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/107dc7d30fa9c6e5b75ce1200665e4fc3adfba6e",
                 "reference": "107dc7d30fa9c6e5b75ce1200665e4fc3adfba6e",
                 "shasum": ""
             },

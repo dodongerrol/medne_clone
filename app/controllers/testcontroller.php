@@ -608,4 +608,12 @@ class testcontroller extends BaseController {
 		// return EclaimFileUploadQueue::fire(null, $data);
 		return Queue::connection('redis_high')->push('\EclaimFileUploadQueue', $data);
 	}
+
+	public function testFormatDate( )
+	{
+		$input = Input::all();
+
+		$result = PlanHelper::validateDate($input['date'], 'd-m-Y');
+		return array('result' => $result, 'date' => date('Y-m-d', strtotime($input['date'])));
+	}
 }

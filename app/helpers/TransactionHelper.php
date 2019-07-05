@@ -125,11 +125,44 @@ class TransactionHelper
     return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => $consultation_fees, 'clinic_peak_status' => $clinic_peak_status);
 	}
 
+
   public static function floatvalue($val){
     return str_replace(",", "", $val);
     $val = str_replace(",",".",$val);
     $val = preg_replace('/\.(?=.*\.)/', '', $val);
     return floatval($val);
+  }
+
+  public static function getInNetworkSpent($user_id, $spending_type)
+  {
+    $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
+
+    if($spending_type == 'medical') {
+      $table_wallet_history = 'wallet_history';
+      $history_column_id = "wallet_history_id";
+    } else {
+      $table_wallet_history = 'wellness_wallet_history';
+      $history_column_id = "wellness_wallet_history_id";
+    }
+
+    $e_claim_spent = DB::table($table_wallet_history)
+    ->where('wallet_id', $wallet->wallet_id)
+    ->where('where_spend', 'e_claim_transaction')
+    ->sum('credit');
+
+    $in_network_temp_spent = DB::table($table_wallet_history)
+    ->where('wallet_id', $wallet->wallet_id)
+    ->where('where_spend', 'in_network_transaction')
+    ->sum('credit');
+
+    $credits_back = DB::table($table_wallet_history)
+    ->where('wallet_id', $wallet->wallet_id)
+    ->where('where_spend', 'credits_back_from_in_network')
+    ->sum('credit');
+
+    $in_network_spent = $in_network_temp_spent - $credits_back;
+    $current_spending = $in_network_spent + $e_claim_spent;
+    return array('in_network_spent' => $in_network_spent, 'e_claim_spent' => $e_claim_spent, 'current_spending' => $current_spending);
   }
 }
 ?>

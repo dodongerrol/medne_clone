@@ -55,7 +55,7 @@ class DependentController extends \BaseController {
 				$temp_file = time().$file->getClientOriginalName();
 				$file->move('excel_upload', $temp_file);
 				$data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
-				// return $data_array;
+
 				$headerRow = $data_array->first()->keys();
 				$temp_users = [];
 				$row_keys = self::getDependentKeys($headerRow);
@@ -83,7 +83,7 @@ class DependentController extends \BaseController {
 						$lname = true;
 					} else if($row == "nricfin") {
 						$nric = true;
-					} else if($row == "date_of_birth") {
+					} else if($row == "date_of_birth" || $row == "date_of_birth_ddmmyyyy") {
 						$dob = true;
 					} elseif ($row == "mobile") {
 						$mobile = true;
@@ -91,7 +91,7 @@ class DependentController extends \BaseController {
 						$wellness_credits = true;
 					} else if($row == "medical_credits") {
 						$medical_credits = true;
-					} else if($row == "start_date") {
+					} else if($row == "start_date" || $row == "start_date_ddmmyyyy") {
 						$start_date = true;
 					} else if($row == "postal_code") {
 						$postal_code = true;
@@ -107,7 +107,7 @@ class DependentController extends \BaseController {
 					);
 				}
 
-				$fakes = [];
+				// $fakes = [];
 				// return $data_array;
 				foreach ($data_array as $key => $row) {
 					$dependents = [];
@@ -118,7 +118,7 @@ class DependentController extends \BaseController {
 						foreach ($row_keys as $key_2 => $value_key) {
 							foreach ($row as $field => $value) {
 								if($field == $value_key) {
-									// if( $value != null ){
+									if( $value != null ){
 										$data_name = self::formatKey($field);
 										if($data_name) {
 											$temp_dependents[$data_name] = $value;
@@ -136,7 +136,7 @@ class DependentController extends \BaseController {
 												}
 											}
 										}
-									// }
+									}
 								}
 							}
 						}
@@ -179,6 +179,13 @@ class DependentController extends \BaseController {
 				$total = $plan_status->employees_input - $plan_status->enrolled_employees;
 
 				if($total <= 0) {
+					return array(
+						'status'	=> FALSE,
+						'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
+					);
+				}
+
+				if(sizeof($temp_users) > $total) {
 					return array(
 						'status'	=> FALSE,
 						'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
@@ -246,10 +253,38 @@ class DependentController extends \BaseController {
 				foreach ($temp_users as $key => $user) {
 					$credit = 0;
 					$user['email'] = isset($user['work_email']) ? trim($user['work_email']) : null;
-					$user['dob'] = $user['date_of_birth'];
 					$user['job_title'] = 'Other';
 					$user['nric'] = isset($user['nricfin']) ? trim($user['nricfin']) : null;
-					$user['plan_start'] = $user['start_date'];
+						
+					if(isset($user['date_of_birth_ddmmyyyy'])) {
+						$dob = $user['date_of_birth_ddmmyyyy'];
+					} else {
+						$dob = $user['date_of_birth'];
+					}
+					$dob_format = PlanHelper::validateDate($dob, 'd/m/Y');
+					if($dob_format) {
+						// $user['dob'] = date('d/m/Y', strtotime($dob));
+						$user['dob'] = $dob;
+					} else {
+						// $user['dob'] = $dob;
+						$user['dob'] = date('d/m/Y', strtotime($dob));
+					}
+
+					if(isset($user['start_date_ddmmyyyy'])) {
+						$start_date = $user['start_date_ddmmyyyy'];
+					} else {
+						$start_date = $user['start_date'];
+					}
+
+					$start_date_format = PlanHelper::validateDate($start_date, 'd/m/Y');
+					if($start_date_format) {
+						// $user['plan_start'] = date('d/m/Y', strtotime($start_date));
+						$user['plan_start'] = $start_date;
+					} else {
+						// $user['plan_start'] = $start_date;
+						$user['plan_start'] = date('d/m/Y', strtotime($start_date));
+					}
+					
 					$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
 					$mobile = preg_replace('/\s+/', '', $user['mobile']);
@@ -266,8 +301,8 @@ class DependentController extends \BaseController {
 						'mobile'				=> trim($mobile),
 						'mobile_area_code'		=> trim($user['mobile_area_code']),
 						'job_title'				=> $user['job_title'],
-						'credits'				=> $user['medical_credits'],
-						'wellness_credits'		=> $user['wellness_credits'],
+						'credits'				=> !$user['medical_credits'] ? 0 : $user['medical_credits'],
+						'wellness_credits'		=> !$user['wellness_credits'] ? 0 : $user['wellness_credits'],
 						'postal_code'			=> trim($user['postal_code']),
 						'start_date'			=> $user['plan_start'],
 						'error_logs'			=> serialize($error_member_logs)
@@ -278,8 +313,9 @@ class DependentController extends \BaseController {
 						if($enroll_result) {
 							if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
 								foreach ($employee['dependents'] as $key => $dependent) {
-									$dependent['plan_start'] = $user['plan_start'];
-									$dependent['dob'] = $dependent['date_of_birth'];
+									$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
+									$dependent['plan_start'] = $plan_start->format('Y-m-d');
+									$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
 									$dependent['nric'] = trim($dependent['nricfin']);
 									$dependent['relationship'] = strtolower($dependent['relationship']);
 									$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($dependent);

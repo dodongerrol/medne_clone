@@ -11,6 +11,8 @@
 |
 */
 
+// test date format
+Route::post('test_format_date', 'testcontroller@testFormatDate');
 // test upload e-claim
 Route::post("test_upload_e_claim_queue",'testcontroller@testEclaimUploadQueue');
 // test send e-claim emial
@@ -372,7 +374,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get pre signed e-claim doc
 	Route::get('hr/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 });
-
+	Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
 
 // intro login for clinic
 Route::get('provider-portal-login', 'HomeController@clinicLogin');

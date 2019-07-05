@@ -1619,6 +1619,7 @@ class EclaimController extends \BaseController {
 			$transactions = DB::table('transaction_history')
 			->whereIn('UserID', $ids)
 			->where('spending_type', $spending_type)
+			->where('paid', 1)
 			->orderBy('created_at', 'desc')
 			->take(3)
 			->get();
@@ -7782,6 +7783,11 @@ public function generateMonthlyCompanyInvoice( )
 		// $presignedUrl = $s3->getObjectUrl('mednefits/receipts', $doc->doc_file, '+120 minutes');
 		
 		return EclaimHelper::createPreSignedUrl($doc->doc_file);
+	}
+
+	public function downloadEclaimCsv( )
+	{
+		$input = Input::all();
 	}
 }
 ?>
