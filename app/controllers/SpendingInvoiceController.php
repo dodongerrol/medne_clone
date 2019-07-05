@@ -146,12 +146,15 @@ class SpendingInvoiceController extends \BaseController {
 		$container = array();
 		foreach ($data['in_network'] as $key => $trans) {
 			$temp = array(
-				'TRANSACTION ID'	=> $trans['transaction_id'],
-				'MEMBER' 	=> $trans['member'],
+				'TRANSACTION #'	=> $trans['transaction_id'],
+				'EMPLOYEE' 	=> $trans['member'],
+                'NRIC'  => $trans['nric'],
 				'DATE'		=> $trans['date_of_transaction'],
-				'ITEMS/SERVICE' => $trans['service'],
-				'PROVIDER'	=> $trans['clinic_name'],
-				'TOTAL AMOUNT'	=> $trans['total_amount']
+                'CATEGORY'      => $trans['clinic_type'],
+                'PROVIDER'      => $trans['clinic_name'],
+				'ITEMS/SERVICE' => $trans['clinic_type_and_service'],
+				'TOTAL AMOUNT'	=> $trans['total_amount'],
+                'PAYMENT TYPE'  => $trans['transaction_type']
 			);
 
 			if($lite_plan) {
