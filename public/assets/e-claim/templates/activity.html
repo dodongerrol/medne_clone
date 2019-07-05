@@ -105,7 +105,7 @@
 			<div class="white-space-10"></div>
 
 			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left">
-				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6">S$ <span ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00'"></span></h4>
+				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6">S$ <span ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span></h4>
 				<p class="color-gray font-12 weight-700">TOTAL ALLOCATION</p>
 				<div class="white-space-10"></div>
 				<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6">S$ <span ng-bind="(activity_results.balance) ? activity_results.balance : 00"></span></h4>
@@ -361,6 +361,32 @@
 												<p><span class="color-gray2" ng-bind="list.member">Filbert Tan</span></p>
 											</div>
 										</div>
+
+										<div ng-if="list.cap_transaction" class="trans-row">
+											<div class="label-wrapper">
+												<p><label>Caps per visit</label></p>
+											</div>
+											<div class="desc-wrapper">
+												<p><span class="color-gray2" ng-bind="list.cap_per_visit">Filbert Tan</span></p>
+											</div>
+										</div>
+										<div ng-if="list.cap_transaction" class="trans-row">
+											<div class="label-wrapper">
+												<p><label>Paid by Credits</label></p>
+											</div>
+											<div class="desc-wrapper">
+												<p><span class="color-gray2" ng-bind="list.paid_by_credits">Filbert Tan</span></p>
+											</div>
+										</div>
+										<div ng-if="list.cap_transaction" class="trans-row">
+											<div class="label-wrapper">
+												<p><label>Paid by Cash</label></p>
+											</div>
+											<div class="desc-wrapper">
+												<p><span class="color-gray2" ng-bind="list.paid_by_cash">Filbert Tan</span></p>
+											</div>
+										</div>
+
 
 										<p ng-if="list.status_text" style="text-align:center;background: rgb(79, 151, 98);color: white;padding: 10px;width: 28%;margin-left: 135px;" ng-bind="list.status_text"></p>
 									</div>

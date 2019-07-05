@@ -344,6 +344,7 @@
 							  $receipt_files = FALSE;
 							}
 
+							$half_credits = false;
 							$total_amount = number_format($trans['credit_cost'], 2);
 							$procedure_cost = number_format($trans['procedure_cost'], 2);
 							$treatment = number_format($trans->credit_cost, 2);
@@ -360,9 +361,17 @@
                       				// $consultation = number_format($trans['co_paid_amount'], 2);
 		                    	}
 							} else {
-							  $payment_type = "Mednefits Credits";
+							  // $payment_type = "Mednefits Credits";
 							  $transaction_type = "credits";
 							  $health_provider_status = FALSE;
+
+								if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+								  $payment_type = 'Mednefits Credits + Cash';
+								  $half_credits = true;
+								} else {
+								  $payment_type = 'Mednefits Credits';
+								}
+
 							  if((int)$trans['lite_plan_enabled'] == 1) {
 		                        	$total_amount = number_format($trans['credit_cost'] + $trans['consultation_fees'], 2);
 		                        	$treatment = number_format($trans->credit_cost, 2);
@@ -488,7 +497,12 @@
 								'amount'			=> $treatment,
 								'spending_type'		=> $trans->spending_type,
 								'dependent_relationship'	=> $dependent_relationship,
-								'lite_plan'			=> (int)$trans['lite_plan_enabled'] == 1 ? true : false
+								'lite_plan'			=> (int)$trans['lite_plan_enabled'] == 1 ? true : false,
+								'cap_transaction'   => $half_credits,
+							    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
+							    'paid_by_cash'      => number_format($trans->cash_cost, 2),
+							    'paid_by_credits'   => number_format($trans->credit_cost, 2),
+							    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$"
 							);
 
 							array_push($transaction_details, $format);

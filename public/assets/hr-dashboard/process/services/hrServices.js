@@ -309,6 +309,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post(serverUrl.url + "/hr/employee_reset_account", data);
   };
 
+  hrFactory.updateCapPerVisit = function(data) {
+    return $http.post(serverUrl.url + "/hr/update_employee_cap", data);
+  };
+  
   hrFactory.getEclaimPresignedUrl = function(data) {
     return $http.get(serverUrl.url + "/hr/get_e_claim_doc?id=" + data);
   };

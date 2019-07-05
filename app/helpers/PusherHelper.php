@@ -53,9 +53,47 @@ class PusherHelper {
     		$api = "https://sockets.medicloud.sg/sockets/send_clinic_claim_notification";
 
     		return httpLibrary::postHttp($api, $payload, []);
-			// $pusher = self::config( );
-			// $channel = self::getChannel( );
-			// return $pusher->trigger([$channel['channel']], $connection, $data);
+		}
+
+	}
+
+	public static function sendClinicCheckInNotification($transaction_id, $clinic_id)
+	{
+
+		$clinic = DB::table('user')->where('Ref_ID', $clinic_id)->where('UserType', 3)->first();
+
+		if($clinic) {
+			$clinic_id = $clinic_id;
+    		$user_id = $clinic->UserID;
+    		$connection = StringHelper::socketConnectionCheckIn($clinic_id, $user_id);
+    		$payload = array(
+    			'connection_type'	=> $connection,
+    			'clinic_id'			=> $clinic_id,
+    			'check_in_id'	=> $transaction_id
+    		);
+    		$api = "https://sockets.medicloud.sg/sockets/send_clinic_check_in";
+
+    		return httpLibrary::postHttp($api, $payload, []);
+		}
+	}
+
+	public static function sendClinicCheckInRemoveNotification($transaction_id, $clinic_id)
+	{
+
+		$clinic = DB::table('user')->where('Ref_ID', $clinic_id)->where('UserType', 3)->first();
+
+		if($clinic) {
+			$clinic_id = $clinic_id;
+    		$user_id = $clinic->UserID;
+    		$connection = StringHelper::socketConnectionCheckInRemove($clinic_id, $user_id);
+    		$payload = array(
+    			'connection_type'	=> $connection,
+    			'clinic_id'			=> $clinic_id,
+    			'check_in_id'	=> $transaction_id
+    		);
+    		$api = "https://sockets.medicloud.sg/sockets/send_clinic_check_in_remove";
+
+    		return httpLibrary::postHttp($api, $payload, []);
 		}
 
 	}

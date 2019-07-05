@@ -477,10 +477,37 @@
 						<div class="white-space-20"></div>
 						<div class="white-space-10"></div>
 
-						<p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', cash: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+						<p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{
+							transaction_id: 'TRANSACTION #',
+				      member: 'EMPLOYEE',
+				      nric: 'NRIC',
+				      date_of_transaction: 'DATE', 
+				      clinic_type: 'CATEGORY', 
+				      clinic_name: 'PROVIDER', 
+				      clinic_type_and_service: 'ITEM/SERVICE',
+				      amount: 'TOTAL AMOUNT', 
+				      transaction_type: 'PAYMENT TYPE'
+				    }" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+						<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
+
 						<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == false" class="color-blue-custom2 font-12 weight-700 pointer-cursor" ng-click="downloadInNetwork()">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
 
-						<p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+						<p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{
+							transaction_id: 'TRANSACTION #',
+				      member: 'EMPLOYEE',
+				      nric: 'NRIC',
+				      date_of_transaction: 'DATE', 
+				      clinic_type: 'CATEGORY', 
+				      clinic_name: 'PROVIDER', 
+				      clinic_type_and_service: 'ITEM/SERVICE',
+				      amount: 'TOTAL AMOUNT', 
+				      transaction_type: 'PAYMENT TYPE',
+				      procedure_cost: 'MEDICINE & TREATMENT',
+				      consultation: 'CONSULTATION',
+				    }" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+						
+						<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
 
 						<p ng-if="outNetWorkTable == true" ng-json-export-excel data="e_claim_transactions" 
 						report-fields="{member: 'EMPLOYEE', nric: 'NRIC', approved_date: 'APPROVED DATE', claim_date: 'CLAIM DATE', visit_date: 'VISIT DATE', transaction_id: 'TRANSACTION #',service: 'ITEM/SERVICE',merchant: 'MERCHANT',amount: 'TOTAL AMOUNT',type: 'TYPE', bank_account_number: 'BANK ACCOUNT NUMBER', bank_code: 'BANK CODE', bank_brh: 'BRANCH CODE'}" filename="'E-Claim-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
@@ -685,12 +712,14 @@
 						</div>
 					</div>
 					<div class="details-right">
-						<p style="margin-bottom: 5px;"><span>S$ <span ng-bind="selected_list.amount"></span</span></p>
+						<p style="margin-bottom: 5px;"><span>S$ <span ng-bind="selected_list.amount"></span></span></p>
 						<span ng-if="selected_list.lite_plan">
 							<p style="line-height: 1;color: #555;" ng-bind="selected_list.procedure"></p>
 							<p style="line-height: 1;margin-bottom: 10px;"><span>S$ <span ng-bind="selected_list.procedure_cost"></span></span></p>
 							<p style="line-height: 1;color: #555;">Consultation</p>
-							<p style="line-height: 1;margin-bottom: 20px;"><span>S$ <span ng-bind="selected_list.consultation"></span</span></p>
+							<p style="line-height: 1;margin-bottom: 20px;">
+								<span>S$ <span ng-bind="selected_list.consultation"></span></span>
+							</p>
 						</span>
 					</div>
 				</div>
@@ -703,6 +732,33 @@
 						<p><span ng-bind="selected_list.type">In-Network</span></p>
 					</div>
 				</div>
+
+				<div ng-if="selected_list.cap_transaction" class="details-row">
+					<div class="details-left">
+						<p><label>Caps per visit</label></p>
+					</div>
+					<div class="details-right">
+						<p>S$ <span ng-bind="selected_list.cap_per_visit"></span></p>
+					</div>
+				</div>
+				<div ng-if="selected_list.cap_transaction" class="details-row">
+					<div class="details-left">
+						<p><label>Paid by Credits</label></p>
+					</div>
+					<div class="details-right">
+						<p>S$ <span ng-bind="selected_list.paid_by_credits"></span></p>
+					</div>
+				</div>
+				<div ng-if="selected_list.cap_transaction" class="details-row">
+					<div class="details-left">
+						<p><label>Paid by Cash</label></p>
+					</div>
+					<div class="details-right">
+						<p>S$ <span ng-bind="selected_list.paid_by_cash"></span></p>
+					</div>
+				</div>
+
+				<div class="white-space-20"></div>
 
 				<button ng-disabled="selected_list.receipt_status == false" ng-click="downloadReceipt(selected_list.files, selected_list)" class="btn btn-download">Download Receipt</button>
 				<div class="trans-receipts-wrapper">

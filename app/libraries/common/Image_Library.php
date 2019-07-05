@@ -133,6 +133,20 @@ class Image_Library{
             return FALSE;
         }
     }
+
+    public static function CloudinaryUploadFileWithResizerNew($file, $width, $height){
+        // $file = Input::file('file');
+        if(!empty($file)){
+            $upload = self::CloudinaryImageUploadResize($file->getPathName(), $width, $height);
+            if(!empty($upload)){
+                return $upload; 
+            }else{
+                return FALSE;
+            }
+        }else{
+            return FALSE;
+        }
+    }
     
     public static function ImageResizing($usertype,$with){
         $file = Input::file('file');

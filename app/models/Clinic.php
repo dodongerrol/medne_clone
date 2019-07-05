@@ -359,7 +359,7 @@ class Clinic extends Eloquent implements UserInterface, RemindableInterface {
      public function FindClinicProfile($clinicid){
          $clinicData = DB::table('clinic')
                 ->join('user', 'clinic.ClinicID', '=', 'user.Ref_ID')
-                ->select('clinic.ClinicID','clinic.Name as CLName','clinic.Clinic_Type','clinic.Description','clinic.Custom_title','clinic.Website','clinic.image as CLImage','clinic.Address as CLAddress','clinic.State as CLState','clinic.City as CLCity','clinic.Postal as CLPostal','clinic.Phone','clinic.Phone_Code','clinic.Lat as CLLat','clinic.Lng as CLLng','clinic.Clinic_Price','clinic.Favourite','user.UserType','user.Email','user.Password','clinic.Personalized_Message', 'clinic.currency_type')  
+                ->select('clinic.ClinicID','clinic.Name as CLName','clinic.Clinic_Type','clinic.Description','clinic.Custom_title','clinic.Website','clinic.image as CLImage','clinic.Address as CLAddress','clinic.State as CLState','clinic.City as CLCity','clinic.Postal as CLPostal','clinic.Phone','clinic.Phone_Code','clinic.Lat as CLLat','clinic.Lng as CLLng','clinic.Clinic_Price','clinic.Favourite','user.UserType','user.Email','user.Password','clinic.Personalized_Message', 'clinic.currency_type', 'clinic.co_paid_status', 'clinic.gst_percent', 'clinic.co_paid_amount', 'clinic.consultation_fees', 'clinic.consultation_gst_status')  
                 // ->where("clinic.Active",1)
                 ->where("user.Active",1)
                 ->where("clinic.ClinicID","=",$clinicid)                  
