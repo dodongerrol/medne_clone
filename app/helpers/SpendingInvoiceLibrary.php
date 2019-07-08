@@ -451,11 +451,15 @@
 							  $sub_account_type = $temp_sub->user_type;
 							  $owner_id = $temp_sub->owner_id;
 							  $dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+							  $employee = ucwords($temp_account->Name);
+							  $dependent = ucwords($customer->Name);
 							} else {
 							  $sub_account = FALSE;
 							  $sub_account_type = FALSE;
 							  $owner_id = $customer->UserID;
 							  $dependent_relationship = FALSE;
+							  $employee = ucwords($customer->Name);
+							  $dependent = null;
 							}
 
 
@@ -469,6 +473,8 @@
 								'service'			=> $procedure,
 								'date_of_transaction' => date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 								'member'            => ucwords($customer->Name),
+								'employee'					=> $employee,
+								'dependent'					=> $dependent,
 								'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 								'receipt_status'    => $receipt_status,
 								'receipt_files'      => $receipt_files,
