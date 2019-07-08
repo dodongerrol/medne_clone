@@ -203,8 +203,8 @@ return array(
 	),
 
     \Cloudinary::config(array(
-	  "cloud_name" => "dzh9uhsqr",
-	  "api_key" => "322846874496157",
-	  "api_secret" => "qALv36cts3ERnFGD1Wjqx9CH4LI"
+	  "cloud_name" => "mednefits-com",
+	  "api_key" => "881921989926795",
+	  "api_secret" => "zNoFc7EHPMtafUEt0r8gxkv4V5U"
 	))
 );

@@ -4976,7 +4976,7 @@ public function createEclaim( )
                return Response::json($returnObject);
            }
            // $rules = array('file' => 'mimes:jpeg,png,gif,bmp,pdf,doc,docx');
-           $rules = array('file' => 'image|max:10000000');
+           $rules = array('file' => 'image|max:20000000');
                     // loop through the files ang validate
            foreach (Input::file('files') as $key => $file) {
             // return var_dump($file);
@@ -4988,13 +4988,33 @@ public function createEclaim( )
 
               // check if file is image
               
-              // $validator = Validator::make(
-              //     array('file' => $file),
-              //     $rules
-              // );
+              $validator = Validator::make(
+                  array('file' => $file),
+                  $rules
+              );
               // return array('res' => $validator);
-              $result_type = in_array(strtolower($file->getClientOriginalExtension()), $file_types);
-              if(!$result_type) {
+              // $result_type = in_array($file->getClientOriginalExtension(), $file_types);
+              // if(!$result_type) {
+              //     $returnObject->status = FALSE;
+              //     $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF and Excel.';
+              //     return Response::json($returnObject);
+              // }
+    //           if($validator->fails()){
+    //             $returnObject->status = FALSE;
+    //               $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF or Excel.';
+    //               return Response::json($returnObject);
+    //           }
+    //           $file_size = $file->getSize();
+    // // check file size if exceeds 10 mb
+    //           if($file_size > 10000000) {
+    //             $returnObject->status = FALSE;
+    //             $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
+    //             return Response::json($returnObject);
+    //         }
+              if($validator->passes()) {
+                $file_size = $file->getSize();
+                // check file size if exceeds 10 mb
+                if($file_size > 20000000) {
                   $returnObject->status = FALSE;
                   $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image or PDF.';
                   return Response::json($returnObject);
