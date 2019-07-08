@@ -1353,7 +1353,7 @@ class Api_V1_TransactionController extends \BaseController
 						if($validator->passes()) {
               $file_size = $file->getSize();
               // check file size if exceeds 10 mb
-              if($file_size > 10000000) {
+              if($file_size > 20000000) {
                 $returnObject->status = FALSE;
                 $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
                 return Response::json($returnObject);
