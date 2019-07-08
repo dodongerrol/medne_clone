@@ -4521,33 +4521,33 @@ class PlanHelper {
 
 		public static function getDependentPlanCoverage($user_id)
 		{
-			// $dependent_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->first();
+			$dependent_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->first();
 
-   //          $dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
+            $dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
 
-   //          $plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+            $plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
-   //          $active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
-   //          $data['plan_start'] = date('F d, Y', strtotime($dependent_plan_history->plan_start));
+            $active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+            $data['plan_start'] = date('F d, Y', strtotime($dependent_plan_history->plan_start));
 
-   //          if((int)$dependent_plan_history->fixed == 1 || $dependent_plan_history->fixed == "1") {
-   //              $temp_valid_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
-   //              $data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
-   //          } else if($dependent_plan_history->fixed == 0 | $dependent_plan_history->fixed == "0") {
-   //              $data['valid_date'] = date('F d, Y', strtotime('+'. $plan_user->duration, strtotime($dependent_plan_history->plan_start)));
-   //          }
+            if((int)$dependent_plan_history->fixed == 1 || $dependent_plan_history->fixed == "1") {
+                $temp_valid_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+                $data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
+            } else if($dependent_plan_history->fixed == 0 | $dependent_plan_history->fixed == "0") {
+                $data['valid_date'] = date('F d, Y', strtotime('+'. $plan_user->duration, strtotime($dependent_plan_history->plan_start)));
+            }
 
-   //          if(date('Y-m-d') > date('Y-m-d', strtotime($data['valid_date']))) {
-			// 	$data['expired'] = TRUE;
-			// } else {
+            if(date('Y-m-d') > date('Y-m-d', strtotime($data['valid_date']))) {
+				$data['expired'] = TRUE;
+			} else {
 				$data['expired'] = FALSE;
-			// }
+			}
 
-			// if(date('Y-m-d', strtotime($dependent_plan_history->plan_start)) > date('Y-m-d')) {
-			// 	$data['pending'] = true;
-			// } else {
+			if(date('Y-m-d', strtotime($dependent_plan_history->plan_start)) > date('Y-m-d')) {
+				$data['pending'] = true;
+			} else {
 				$data['pending'] = false;
-			// }
+			}
 
 			$data['user_type'] = "dependents";
 
