@@ -186,18 +186,18 @@ class EclaimController extends \BaseController {
 
 					try {
 						$e_claim_docs->createEclaimDocs($receipt);
-						if(StringHelper::Deployment()==1){
+						// if(StringHelper::Deployment()==1){
 							if($doc['receipt_type'] != "image") {
                                 //   aws
 								$s3 = AWS::get('s3');
 								$s3->putObject(array(
 									'Bucket'     => 'mednefits',
 									'Key'        => 'receipts/'.$file,
-									'SourceFile' => public_path().'/receipts/'.$file,
+									'SourceFile' => storage_path().'/receipts/'.$file,
 								));
-								unlink(public_path().'/receipts/'.$file);
+								unlink(storage_path().'/receipts/'.$file);
 							}
-						}
+						// }
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
@@ -442,7 +442,7 @@ class EclaimController extends \BaseController {
 					'receipt_type'	=> "pdf"
 				);
                 // upload to folder
-				$file->move(public_path().'/receipts/', $file_name);
+				$file->move(storage_path().'/receipts/', $file_name);
 				// check file
 				$check_file = FileHelper::checkFile($file_name);
 				if(!$check_file) {
@@ -454,7 +454,7 @@ class EclaimController extends \BaseController {
 					'receipt_type'  => "xls"
 				);
                 // upload to folder
-				$file->move(public_path().'/receipts/', $file_name);
+				$file->move(storage_path().'/receipts/', $file_name);
 			} else {
 				$image = \Cloudinary\Uploader::upload($file->getPathName());
 				$receipt = array(
@@ -505,20 +505,20 @@ class EclaimController extends \BaseController {
 			if($file->getClientOriginalExtension() == "pdf") {
 				$receipt_file = $file_name;
 				$receipt_type = "pdf";
-				$file->move(public_path().'/receipts/', $file_name);
+				$file->move(storage_path().'/receipts/', $file_name);
 				$s3->putObject(array(
 					'Bucket'     => 'mednefits',
 					'Key'        => 'receipts/'.$file_name,
-					'SourceFile' => public_path().'/receipts/'.$file_name,
+					'SourceFile' => storage_path().'/receipts/'.$file_name,
 				));
 			} else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
 				$receipt_file = $file_name;
 				$receipt_type = "xls";
-				$file->move(public_path().'/receipts/', $file_name);
+				$file->move(storage_path().'/receipts/', $file_name);
 				$s3->putObject(array(
 					'Bucket'     => 'mednefits',
 					'Key'        => 'receipts/'.$file_name,
-					'SourceFile' => public_path().'/receipts/'.$file_name,
+					'SourceFile' => storage_path().'/receipts/'.$file_name,
 				));
 			} else {
 				$image = \Cloudinary\Uploader::upload($file->getPathName());
@@ -537,7 +537,8 @@ class EclaimController extends \BaseController {
 
 			if($result) {
 				if($file->getClientOriginalExtension() == "pdf" || $file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
-					$result->doc_file = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$file_name;
+					$result->doc_file = EclaimHelper::createPreSignedUrl($file_name);
+					unlink(storage_path().'/receipts/'.$file_name);
 				}
 				$receipt['user_id'] = $check->user_id;
 				if($admin_id) {
@@ -901,7 +902,8 @@ class EclaimController extends \BaseController {
 						if($image->type == "pdf" || $image->type == "excel") {
 							$fil = url('').'/receipts/'.$image->file;
 						} else if($image->type == "image") {
-							$fil = $image->file;
+							// $fil = $image->file;
+							$fil = FileHelper::formatImageAutoQualityCustomer($image->file, 40);
 						}
 
 						$temp_doc = array(
@@ -1002,7 +1004,7 @@ class EclaimController extends \BaseController {
 	                        $cash = $trans->procedure_cost - $trans->consultation_fees;
 	                      }
 	                    }
-	                  } else {
+	                } else {
 	                    $total_amount = $trans->procedure_cost;
 	                    if((int)$trans->half_credits == 1) {
 	                      $cash = $trans->cash_cost;
@@ -1013,7 +1015,8 @@ class EclaimController extends \BaseController {
 	                        $cash = $trans->procedure_cost;
 	                      }
 	                    }
-	                  }
+	                    $payment_type = 'Mednefits Credits';
+	                }
 				}
 
 				$bill_amount = 0;
@@ -1104,7 +1107,7 @@ class EclaimController extends \BaseController {
 					'clinic_name'       => $clinic->Name,
 					'clinic_image'      => $clinic->image,
 					'clinic_type'       => $type,
-					'amount'            => $total_amount,
+					'amount'            => number_format($total_amount, 2),
 					'procedure_cost'    => number_format($bill_amount, 2),
 					'procedure'         => $procedure,
 					'clinic_type_and_service' => $clinic_name,
@@ -2929,7 +2932,8 @@ public function getActivityInNetworkTransactions( )
 							   $fil = url('').'/receipts/'.$doc->file;
 							}
 						} else if($doc->type == "image") {
-							$fil = FileHelper::formatImageAutoQuality($doc->file);
+							// $fil = FileHelper::formatImageAutoQuality($doc->file);
+							$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
 						}
 
 						$temp_doc = array(
@@ -5675,8 +5679,8 @@ public function hrEclaimActivity( )
 						}
 						$image_link = null;
 					} else if($doc->file_type == "image") {
-						$fil = $doc->doc_file;
-						$image_link = FileHelper::formatImageAutoQualityCustomer($fil, 40);
+						$image_link = FileHelper::formatImageAutoQualityCustomer($doc->doc_file, 40);
+						$fil = $image_link;
 					}
 
 					$temp_doc = array(
@@ -7294,7 +7298,7 @@ public function createInNetworkReceipt( )
 				'file'  => $file_name,
 				'type'  => "pdf"
 			);
-			$file->move(public_path().'/receipts/', $file_name);
+			$file->move(storage_path().'/receipts/', $file_name);
 			$aws_upload = true;
 		} else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
 			$receipt = array(
@@ -7303,7 +7307,7 @@ public function createInNetworkReceipt( )
 				'file'  => $file_name,
 				'type'  => "excel"
 			);
-			$file->move(public_path().'/receipts/', $file_name);
+			$file->move(storage_path().'/receipts/', $file_name);
 			$aws_upload = true;
 		} else {
 			$image = \Cloudinary\Uploader::upload($file->getPathName());
@@ -7317,7 +7321,6 @@ public function createInNetworkReceipt( )
 
 
 		$trans_docs = new UserImageReceipt( );
-
 		$result = $trans_docs->saveReceipt($receipt);
 
 		if($result) {
@@ -7328,9 +7331,11 @@ public function createInNetworkReceipt( )
 					$s3->putObject(array(
 						'Bucket'     => 'mednefits',
 						'Key'        => 'receipts/'.$file_name,
-						'SourceFile' => public_path().'/receipts/'.$file_name,
+						'SourceFile' => storage_path().'/receipts/'.$file_name,
 					));
-					$result->file ='https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$file_name;
+					$result->file = EclaimHelper::createPreSignedUrl($file_name);
+					unlink(storage_path().'/receipts/'.$file_name);
+					// $result->file ='https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$file_name;
 				}
 			// }
 			if($admin_id) {

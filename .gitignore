@@ -3,6 +3,7 @@ vendor
 public/assets/bower_components
 public/assets/node_modules
 app/storage/exports*
+app/storage/receipts/*
 deployment-config.json
 node_modules
 public/receipts/*
