@@ -3,7 +3,7 @@ class FileHelper
 {
 	public static function checkFile($file_name)
 	{
-		$file = file(public_path().'/receipts/'.$file_name);
+		$file = file(storage_path().'/receipts/'.$file_name);
 		$endfile = trim($file[count($file) - 1]);
 		$n = "%%EOF";
 
