@@ -955,28 +955,86 @@ class EclaimController extends \BaseController {
 					$health_provider_status = TRUE;
 					$transaction_type = "cash";
 					$payment_type = "Cash";
-					$cash = number_format($trans->procedure_cost);
+					// $cash = number_format($trans->procedure_cost);
 					$credit_status = FALSE;
-					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-						$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
-					}
+					if((int)$trans->lite_plan_enabled == 1) {
+	                    if((int)$trans->half_credits == 1) {
+	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      $cash = $transation->cash_cost;
+	                    } else {
+	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      $cash = $trans->procedure_cost;
+	                    }
+	                  } else {
+	                    if((int)$trans->half_credits == 1) {
+	                      $cash = $trans->cash_cost;
+	                    } else {
+	                      $cash = $trans->procedure_cost;
+	                    }
+	                  }
 				} else {
 					$health_provider_status = FALSE;
 					$credit_status = TRUE;
 					$transaction_type = "credits";
-					$cash = number_format($trans->credit_cost, 2);
+					// $cash = number_format($trans->credit_cost, 2);
 
-					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
-				      $payment_type = 'Mednefits Credits + Cash';
-				      $half_credits = true;
-				    } else {
-				      $payment_type = 'Mednefits Credits';
-				    }
+					// if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+				 //      $payment_type = 'Mednefits Credits + Cash';
+				 //      $half_credits = true;
+				 //    } else {
+				 //      $payment_type = 'Mednefits Credits';
+				 //    }
 
-					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-						$total_amount = number_format($trans->credit_cost + $trans->consultation_fees, 2);
+					// if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
+					// 	$total_amount = number_format($trans->credit_cost + $trans->consultation_fees, 2);
+					// }
+					if((int)$trans->lite_plan_enabled == 1) {
+	                    if((int)$trans->half_credits == 1) {
+	                      $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                      $cash = $trans->cash_cost;
+	                      $payment_type = 'Mednefits Credits + Cash';
+	                    } else {
+	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      if($trans->credit_cost > 0) {
+	                        $cash = 0;
+	                        $payment_type = 'Mednefits Credits';
+	                      } else {
+	                        $cash = $trans->procedure_cost - $trans->consultation_fees;
+	                      }
+	                    }
+	                  } else {
+	                    $total_amount = $trans->procedure_cost;
+	                    if((int)$trans->half_credits == 1) {
+	                      $cash = $trans->cash_cost;
+	                    } else {
+	                      if($trans->credit_cost > 0) {
+	                        $cash = 0;
+	                      } else {
+	                        $cash = $trans->procedure_cost;
+	                      }
+	                    }
+	                  }
+				}
+
+				$bill_amount = 0;
+				if((int)$trans->half_credits == 1) {
+					if((int)$trans->lite_plan_enabled == 1) {
+						$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+					} else {
+						$bill_amount = 	$trans->procedure_cost;
+					}
+				} else {
+					if((int)$trans->lite_plan_enabled == 1) {
+						if((int)$trans->lite_plan_use_credits == 1) {
+							$bill_amount = 	$trans->procedure_cost;
+						} else {
+							$bill_amount = 	$trans->procedure_cost - $trans->consultation_fees;
+						}
+					} else {
+						$bill_amount = 	$trans->procedure_cost;
 					}
 				}
+
 
                 // get clinic type
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
@@ -1047,7 +1105,7 @@ class EclaimController extends \BaseController {
 					'clinic_image'      => $clinic->image,
 					'clinic_type'       => $type,
 					'amount'            => $total_amount,
-					'procedure_cost'    => number_format($trans->procedure_cost, 2),
+					'procedure_cost'    => number_format($bill_amount, 2),
 					'procedure'         => $procedure,
 					'clinic_type_and_service' => $clinic_name,
 					'clinic_type_name'  => $clinic_type_name,
@@ -1688,6 +1746,15 @@ class EclaimController extends \BaseController {
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$customer = DB::table('user')->where('UserID', $trans->UserID)->first();
 				$procedure_temp = "";
+				$wallet_status = false;
+
+				$company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
+
+				if($company_wallet_status) {
+				   if($company_wallet_status == "Health Wallet") {
+				      $wallet_status = true;
+				  }
+				}
 
             // get services
 				if((int)$trans->multiple_service_selection == 1)
@@ -1731,21 +1798,77 @@ class EclaimController extends \BaseController {
 
 				$total_amount = $trans->procedure_cost;
 
-				if((int)$trans->health_provider_done == 1) {
-					$receipt_status = TRUE;
-					$health_provider_status = TRUE;
-					$credit_status = FALSE;
-					if((int)$trans->lite_plan_enabled == 1) {
-						$total_amount = $trans->procedure_cost + $trans->co_paid_amount;
-					}
-				} else {
-					$health_provider_status = FALSE;
-					$credit_status = TRUE;
+				// if((int)$trans->health_provider_done == 1) {
+				// 	$receipt_status = TRUE;
+				// 	$health_provider_status = TRUE;
+				// 	$credit_status = FALSE;
+				// 	if((int)$trans->lite_plan_enabled == 1) {
+				// 		$total_amount = $trans->procedure_cost + $trans->co_paid_amount;
+				// 	}
+				// } else {
+				// 	$health_provider_status = FALSE;
+				// 	$credit_status = TRUE;
 
-					if((int)$trans->lite_plan_enabled == 1) {
-						$total_amount = $trans->procedure_cost + $trans->co_paid_amount;
-					}
-				}
+				// 	if((int)$trans->lite_plan_enabled == 1) {
+				// 		$total_amount = $trans->procedure_cost + $trans->co_paid_amount;
+				// 	}
+				// }
+
+				if(strripos($trans->procedure_cost, '$') !== false) {
+                     $temp_cost = explode('$', $trans->procedure_cost);
+                     $cost = $temp_cost[1];
+                 } else {
+                     $cost = floatval($trans->procedure_cost);
+                 }
+
+				if((int)$trans->health_provider_done == 1) {
+                      $receipt_status = TRUE;
+                      $health_provider_status = TRUE;
+                      $credit_status = FALSE;
+                       if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
+	                    if((int)$trans->half_credits == 1) {
+	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      $cash_cost = $transation->cash_cost;
+	                    } else {
+	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      $cash_cost = $trans->procedure_cost;
+	                    }
+	                  } else {
+	                    if((int)$trans->half_credits == 1) {
+	                      $cash_cost = $trans->cash_cost;
+	                    } else {
+	                      $cash_cost = $trans->procedure_cost;
+	                    }
+	                  }
+                } else {
+                  $health_provider_status = FALSE;
+                  $credit_status = TRUE;
+
+                  if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
+                    if((int)$trans->half_credits == 1) {
+                      $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+                      $cash_cost = $trans->cash_cost;
+                    } else {
+                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+                      if($trans->credit_cost > 0) {
+                        $cash_cost = 0;
+                      } else {
+                        $cash_cost = $trans->procedure_cost - $trans->consultation_fees;
+                      }
+                    }
+                  } else {
+                    $total_amount = $trans->procedure_cost;
+                    if((int)$trans->half_credits == 1) {
+                      $cash_cost = $trans->cash_cost;
+                    } else {
+                      if($trans->credit_cost > 0) {
+                        $cash_cost = 0;
+                      } else {
+                        $cash_cost = $trans->procedure_cost;
+                      }
+                    }
+                  }
+                }
 
 				$format = array(
 					'clinic_name'       => $clinic->Name,
@@ -2700,6 +2823,7 @@ public function getActivityInNetworkTransactions( )
 		$consultation_credits = false;
 		$service_cash = false;
 		$service_credits = false;
+		$consultation = 0;
 
 		if($trans) {
 
@@ -2722,13 +2846,16 @@ public function getActivityInNetworkTransactions( )
 							$consultation_credits = true;
 							$service_credits = true;
 							$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							$consultation = floatval($logs_lite_plan->credit);
 						} else if($logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 1 || $logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
 							$in_network_spent += floatval($logs_lite_plan->credit);
 							$consultation_credits = true;
 							$service_credits = true;
 							$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							$consultation = floatval($logs_lite_plan->credit);
 						} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
 							$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							$consultation = floatval($trans->consultation_fees);
 						}
 					}
 				} else {
@@ -2923,16 +3050,31 @@ public function getActivityInNetworkTransactions( )
 				if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
 					$payment_type = "Cash";
 					$transaction_type = "cash";
-					$cash = number_format($trans->procedure_cost, 2);
-					if($trans->deleted == 0 || $trans->deleted == "0") {
-						$total_cash += $trans->procedure_cost;
-					} else if($trans->deleted == 1 || $trans->deleted == "1") {
-						$deleted_transaction_cash = $trans->procedure_cost;
-                                // $total_cash_transactions_deleted++;
-					}
-					if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
-						$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
-					}
+					// $cash = number_format($trans->procedure_cost, 2);
+					// if($trans->deleted == 0 || $trans->deleted == "0") {
+					// 	$total_cash += $trans->procedure_cost;
+					// } else if($trans->deleted == 1 || $trans->deleted == "1") {
+					// 	$deleted_transaction_cash = $trans->procedure_cost;
+     //                            // $total_cash_transactions_deleted++;
+					// }
+					// if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
+					// 	$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
+					// }
+					if((int)$trans->lite_plan_enabled == 1) {
+	                    if((int)$trans->half_credits == 1) {
+	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      $cash = $transation->cash_cost;
+	                    } else {
+	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      $cash = $trans->procedure_cost;
+	                    }
+                  } else {
+                    if((int)$trans->half_credits == 1) {
+                      $cash = $trans->cash_cost;
+                    } else {
+                      $cash = $trans->procedure_cost;
+                    }
+                  }
 				} else {
 					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 				      $payment_type = 'Mednefits Credits + Cash';
@@ -2941,17 +3083,60 @@ public function getActivityInNetworkTransactions( )
 				      $payment_type = 'Mednefits Credits';
 				    }
 					$transaction_type = "credits";
-					$cash = number_format($trans->credit_cost, 2);
-					if($trans->deleted == 0 || $trans->deleted == "0") {
-						$total_credits += $trans->credit_cost;
+					// $cash = number_format($trans->credit_cost, 2);
+					if((int)$trans->lite_plan_enabled == 1) {
+	                    if((int)$trans->half_credits == 1) {
+	                      $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                      $cash = $trans->cash_cost;
+	                    } else {
+	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      if($trans->credit_cost > 0) {
+	                        $cash = 0;
+	                      } else {
+	                        $cash = $trans->procedure_cost - $trans->consultation_fees;
+	                      }
+	                    }
+	                  } else {
+	                    $total_amount = $trans->procedure_cost;
+	                    if((int)$trans->half_credits == 1) {
+	                      $cash = $trans->cash_cost;
+	                    } else {
+	                      if($trans->credit_cost > 0) {
+	                        $cash = 0;
+	                      } else {
+	                        $cash = $trans->procedure_cost;
+	                      }
+	                    }
+	                  }
+					// if($trans->deleted == 0 || $trans->deleted == "0") {
+					// 	$total_credits += $trans->credit_cost;
 
-					} else if($trans->deleted == 1 || $trans->deleted == "1") {
-						$deleted_transaction_credits = $trans->credit_cost;
-                                // $total_credits_transactions_deleted++;
+					// } else if($trans->deleted == 1 || $trans->deleted == "1") {
+					// 	$deleted_transaction_credits = $trans->credit_cost;
+     //                            // $total_credits_transactions_deleted++;
+					// }
+
+					// if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
+					// 	$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
+					// }
+				}
+
+				$bill_amount = 0;
+				if((int)$trans->half_credits == 1) {
+					if((int)$trans->lite_plan_enabled == 1) {
+						$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+					} else {
+						$bill_amount = 	$trans->procedure_cost;
 					}
-
-					if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
-						$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
+				} else {
+					if((int)$trans->lite_plan_enabled == 1) {
+						if((int)$trans->lite_plan_use_credits == 1) {
+							$bill_amount = 	$trans->procedure_cost;
+						} else {
+							$bill_amount = 	$trans->procedure_cost - $trans->consultation_fees;
+						}
+					} else {
+						$bill_amount = 	$trans->procedure_cost;
 					}
 				}
 
@@ -2987,13 +3172,20 @@ public function getActivityInNetworkTransactions( )
 					$status_text = FALSE;
 				}
 
+				$paid_by_credits = $trans->credit_cost;
+				if((int)$trans->lite_plan_enabled == 1) {
+					if($consultation_credits == true) {
+						$paid_by_credits += $consultation;
+					}
+				}
+
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 				$format = array(
 					'clinic_name'       => $clinic->Name,
 					'clinic_image'      => $clinic->image,
 					'amount'            => $total_amount,
-					'procedure_cost'    => number_format($trans->procedure_cost, 2),
+					'procedure_cost'    => number_format($bill_amount, 2),
 					'clinic_type_and_service' => $clinic_name,
 					'procedure'         => $procedure,
 					'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
@@ -3027,7 +3219,7 @@ public function getActivityInNetworkTransactions( )
 					'cap_transaction'   => $half_credits,
 				    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
 				    'paid_by_cash'      => number_format($trans->cash_cost, 2),
-				    'paid_by_credits'   => number_format($trans->credit_cost, 2),
+				    'paid_by_credits'   => number_format($paid_by_credits, 2),
 				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$",
 					'files'				=> $doc_files
 				);
