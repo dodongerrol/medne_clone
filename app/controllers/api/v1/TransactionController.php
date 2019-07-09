@@ -1243,26 +1243,48 @@ class Api_V1_TransactionController extends \BaseController
 							$half_credits = true;
 						}
 
+						// $transaction_details = array(
+						// 	'clinic_name'       => $clinic->Name,
+						// 	'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
+						// 	'clinic_type'       => $type,
+						// 	'clinic_type_image' => $image,
+						// 	'total_amount'       => $transaction->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2),
+						// 	"currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$",
+						// 	'transaction_id'    => (string)$id,
+						// 	'date_of_transaction' => date('d-m-Y, h:ia', strtotime($transaction->date_of_transaction)),
+						// 	'customer'            => ucwords($customer->Name),
+						// 	'payment_type'		=> $payment_type,
+						// 	'bill_amount'				=> $transaction->currency_type == "myr" ? number_format($bill_amount * 3, 2) : number_format($bill_amount, 2),
+						// 	'consultation_fee'	=> $consultation_fee,
+						// 	'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($cash_cost * $transaction->currency_amount, 2) : number_format($cash_cost, 2),
+						// 	'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($paid_by_credits * $transaction->currency_amount, 2) : number_format($paid_by_credits, 2),
+						// 	'files'             => $doc_files,
+						// 	'lite_plan'         => $lite_plan_status,
+						// 	'lite_plan_enabled' => $transaction->lite_plan_enabled,
+						// 	'cap_transaction'   => $half_credits,
+    		// 			'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit * $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
+						// 	'services' => $service
+						// );
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,
 							'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
 							'clinic_type'       => $type,
 							'clinic_type_image' => $image,
-							'total_amount'       => $transaction->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2),
+							'total_amount'       => number_format($total_amount, 2),
 							"currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$",
 							'transaction_id'    => (string)$id,
 							'date_of_transaction' => date('d-m-Y, h:ia', strtotime($transaction->date_of_transaction)),
 							'customer'            => ucwords($customer->Name),
 							'payment_type'		=> $payment_type,
-							'bill_amount'				=> $transaction->currency_type == "myr" ? number_format($bill_amount * 3, 2) : number_format($bill_amount, 2),
+							'bill_amount'				=> number_format($bill_amount, 2),
 							'consultation_fee'	=> $consultation_fee,
-							'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($cash_cost * $transaction->currency_amount, 2) : number_format($cash_cost, 2),
-							'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($paid_by_credits * $transaction->currency_amount, 2) : number_format($paid_by_credits, 2),
+							'paid_by_cash'      => number_format($cash_cost, 2),
+							'paid_by_credits'      => number_format($paid_by_credits, 2),
 							'files'             => $doc_files,
 							'lite_plan'         => $lite_plan_status,
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
 							'cap_transaction'   => $half_credits,
-    					'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit * $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
+    					'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
 							'services' => $service
 						);
 
