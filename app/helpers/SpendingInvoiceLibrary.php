@@ -338,6 +338,11 @@
 
 							if(sizeof($receipt) > 0) {
 							  $receipt_status = TRUE;
+							  foreach ($receipt as $key => $doc) {
+							  	if($doc->type == "image") {
+							  		$doc->file = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
+							  	}
+							  }
 							  $receipt_files = $receipt;
 							} else {
 							  $receipt_status = FALSE;
