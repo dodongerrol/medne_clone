@@ -1196,7 +1196,7 @@ return Response::json($returnObject);
                       $total_amount = $trans->credit_cost + $trans->consultation_fees;
                       $cash_cost = $transation->cash_cost;
                     } else {
-                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+                      $total_amount = $trans->procedure_cost;
                       $cash_cost = $trans->procedure_cost;
                     }
                   } else {
@@ -1214,7 +1214,8 @@ return Response::json($returnObject);
                       $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
                       $cash_cost = $trans->cash_cost;
                     } else {
-                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+                      // $total_amount = $trans->credit_cost + $trans->consultation_fees;
+                      $total_amount = $trans->procedure_cost;
                       if($trans->credit_cost > 0) {
                         $cash_cost = 0;
                       } else {
