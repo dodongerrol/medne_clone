@@ -616,7 +616,11 @@ app.directive("claimDirective", [
             $('.datepicker').datepicker({
               format: "dd MM, yyyy",
               maxDate: new Date()
+            }).on( 'changeDate', function(e) {
+              console.log( e );
+              scope.add_claim_data.visit_date = moment( e.date ).format('DD MMMM, YYYY');
             });
+
 
             $('.start-datepicker').datepicker({
               format: "mm/dd/yyyy",
