@@ -234,7 +234,7 @@ class Widget_Library {
                 $userData['name'] = $allInputs['name'];
                 $userData['usertype'] = 1;
                 $userData['email'] = $allInputs['email'];
-                // $userData['nric'] = $allInputs['nric'];
+                $userData['nric'] = null;
                 $userData['code'] = $allInputs['code'];
                 $userData['mobile'] = $PhoneOnly;
 
