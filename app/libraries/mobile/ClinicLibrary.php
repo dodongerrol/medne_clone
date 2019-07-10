@@ -461,7 +461,7 @@ class ClinicLibrary{
 
     public static function FindNewNearby($getLat,$getLng,$getType,$page){
         $clinic = new Clinic();
-        $radius = 15;
+        $radius = 10;
         $nearbyData = $clinic->newNearby($getLat,$getLng,$radius,$getType,(int)$page);
         if($nearbyData){
             return $nearbyData;
