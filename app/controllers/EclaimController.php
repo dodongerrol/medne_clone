@@ -964,7 +964,8 @@ class EclaimController extends \BaseController {
 	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
 	                      $cash = $transation->cash_cost;
 	                    } else {
-	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      // $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      $total_amount = $trans->procedure_cost;
 	                      $cash = $trans->procedure_cost;
 	                    }
 	                  } else {
@@ -996,7 +997,8 @@ class EclaimController extends \BaseController {
 	                      $cash = $trans->cash_cost;
 	                      $payment_type = 'Mednefits Credits + Cash';
 	                    } else {
-	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      // $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      $total_amount = $trans->procedure_cost;
 	                      if($trans->credit_cost > 0) {
 	                        $cash = 0;
 	                        $payment_type = 'Mednefits Credits';
@@ -1833,7 +1835,8 @@ class EclaimController extends \BaseController {
 	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
 	                      $cash_cost = $transation->cash_cost;
 	                    } else {
-	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      // $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      $total_amount = $trans->procedure_cost;
 	                      $cash_cost = $trans->procedure_cost;
 	                    }
 	                  } else {
@@ -1852,7 +1855,8 @@ class EclaimController extends \BaseController {
                       $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
                       $cash_cost = $trans->cash_cost;
                     } else {
-                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+                      // $total_amount = $trans->credit_cost + $trans->consultation_fees;
+                      $total_amount = $trans->procedure_cost;
                       if($trans->credit_cost > 0) {
                         $cash_cost = 0;
                       } else {
@@ -3069,6 +3073,7 @@ public function getActivityInNetworkTransactions( )
 	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
 	                      $cash = $transation->cash_cost;
 	                    } else {
+	                      $total_amount = $trans->procedure_cost;
 	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
 	                      $cash = $trans->procedure_cost;
 	                    }
@@ -3093,7 +3098,8 @@ public function getActivityInNetworkTransactions( )
 	                      $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 	                      $cash = $trans->cash_cost;
 	                    } else {
-	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      // $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                      $total_amount = $trans->procedure_cost;
 	                      if($trans->credit_cost > 0) {
 	                        $cash = 0;
 	                      } else {

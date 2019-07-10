@@ -947,7 +947,11 @@ class Api_V1_TransactionController extends \BaseController
             } else {
                $health_provider_status = FALSE;
                if((int)$trans->lite_plan_enabled == 1) {
+               	if((int)$trans->half_credits == 1) {
                   $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+               	} else {
+               		$total_amount = $trans->procedure_cost;
+               	}
               } else {
                   $total_amount = $cost;
               }
@@ -957,31 +961,46 @@ class Api_V1_TransactionController extends \BaseController
           $currency_symbol = null;
           $converted_amount = null;
 
-          if($trans->currency_type == "sgd") {
+          // if($trans->currency_type == "sgd") {
             $currency_symbol = "S$";
             $converted_amount = $total_amount;
-          } else if($trans->currency_type == "myr") {
-            $currency_symbol = "RM";
-            $converted_amount = $total_amount * $trans->currency_amount;
-          }
+          // } else if($trans->currency_type == "myr") {
+          //   $currency_symbol = "RM";
+          //   $converted_amount = $total_amount * $trans->currency_amount;
+          // }
 
-          $format = array(
-           'clinic_name'       => $clinic->Name,
-           'amount'            => $trans->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2),
-           'converted_amount'  => number_format($converted_amount, 2),
-           'currency_symbol'   => $currency_symbol,
-           'clinic_type_and_service' => $clinic_name,
-           'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
-           'customer'          => ucwords($customer->Name),
-           'transaction_id'    => (string)$transaction_id,
-           'receipt_status'    => $receipt_status,
-           'health_provider_status' => $health_provider_status,
-           'user_id'           => (string)$trans->UserID,
-           'type'              => $type,
-           'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
-	       );
+        //   $format = array(
+        //    'clinic_name'       => $clinic->Name,
+        //    'amount'            => $trans->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2),
+        //    'converted_amount'  => number_format($converted_amount, 2),
+        //    'currency_symbol'   => $currency_symbol,
+        //    'clinic_type_and_service' => $clinic_name,
+        //    'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
+        //    'customer'          => ucwords($customer->Name),
+        //    'transaction_id'    => (string)$transaction_id,
+        //    'receipt_status'    => $receipt_status,
+        //    'health_provider_status' => $health_provider_status,
+        //    'user_id'           => (string)$trans->UserID,
+        //    'type'              => $type,
+        //    'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
+	       // );
+					$format = array(
+						'clinic_name'       => $clinic->Name,
+						'amount'            => number_format($total_amount, 2),
+						'converted_amount'  => number_format($converted_amount, 2),
+						'currency_symbol'   => $currency_symbol,
+						'clinic_type_and_service' => $clinic_name,
+						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
+						'customer'          => ucwords($customer->Name),
+						'transaction_id'    => (string)$transaction_id,
+						'receipt_status'    => $receipt_status,
+						'health_provider_status' => $health_provider_status,
+						'user_id'           => (string)$trans->UserID,
+						'type'              => $type,
+						'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
+					);
 
-	          array_push($transaction_details, $format);
+	        array_push($transaction_details, $format);
 	      }
 	  }
 		  $returnObject->data = $transaction_details;
@@ -1207,7 +1226,9 @@ class Api_V1_TransactionController extends \BaseController
 						$paid_by_credits = $transaction->credit_cost;
 						if((int)$transaction->lite_plan_enabled == 1) {
 							if($consultation_credits == true) {
-								$paid_by_credits += $consultation;
+								if((int)$transaction->half_credits == 1) {
+									$paid_by_credits += $consultation;
+								}
 							}
 						}
 
