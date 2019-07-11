@@ -82,7 +82,7 @@ class EclaimHelper
       ],
     ]);
 
-   return $s3->getObjectUrl('mednefits', "receipts/".$doc, '+60 minutes');
+   return $s3->getObjectUrl('mednefits', "receipts/".$doc, '+120 minutes');
   }
 }
 ?>
