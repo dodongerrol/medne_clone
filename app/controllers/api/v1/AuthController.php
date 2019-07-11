@@ -1187,56 +1187,78 @@ return Response::json($returnObject);
                 //   }
                 // }
 
+                // if((int)$trans->health_provider_done == 1) {
+                //   $receipt_status = TRUE;
+                //   $health_provider_status = TRUE;
+                //   $credit_status = FALSE;
+                //   if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
+                //     if((int)$trans->half_credits == 1) {
+                //       $total_amount = $trans->credit_cost + $trans->consultation_fees;
+                //       $cash_cost = $transation->cash_cost;
+                //     } else {
+                //       $total_amount = $trans->procedure_cost;
+                //       $cash_cost = $trans->procedure_cost;
+                //     }
+                //   } else {
+                //     if((int)$trans->half_credits == 1) {
+                //       $cash_cost = $trans->cash_cost;
+                //     } else {
+                //       $cash_cost = $trans->procedure_cost;
+                //     }
+                //   }
+                // } else {
+                //   $health_provider_status = FALSE;
+                //   $credit_status = TRUE;
+                //   if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
+                //     if((int)$trans->half_credits == 1) {
+                //       $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+                //       $cash_cost = $trans->cash_cost;
+                //     } else {
+                //       // $total_amount = $trans->credit_cost + $trans->consultation_fees;
+                //       $total_amount = $trans->procedure_cost;
+                //       if($trans->credit_cost > 0) {
+                //         $cash_cost = 0;
+                //       } else {
+                //         $cash_cost = $trans->procedure_cost - $trans->consultation_fees;
+                //       }
+                //     }
+                //   } else {
+                //     $total_amount = $trans->procedure_cost;
+                //     if((int)$trans->half_credits == 1) {
+                //       $cash_cost = $trans->cash_cost;
+                //     } else {
+                //       if($trans->credit_cost > 0) {
+                //         $cash_cost = 0;
+                //       } else {
+                //         $cash_cost = $trans->procedure_cost;
+                //       }
+                //     }
+                //   }
+                // }
+
                 if((int)$trans->health_provider_done == 1) {
-                  $receipt_status = TRUE;
                   $health_provider_status = TRUE;
                   $credit_status = FALSE;
-                  if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-                    if((int)$trans->half_credits == 1) {
-                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
-                      $cash_cost = $transation->cash_cost;
-                    } else {
-                      $total_amount = $trans->procedure_cost;
-                      $cash_cost = $trans->procedure_cost;
-                    }
+                  if((int)$trans->lite_plan_enabled == 1) {
+                    $total_amount = $cost + $trans->consultation_fees;
                   } else {
-                    if((int)$trans->half_credits == 1) {
-                      $cash_cost = $trans->cash_cost;
-                    } else {
-                      $cash_cost = $trans->procedure_cost;
-                    }
+                    $total_amount = $cost;
                   }
+                  $type = "cash";
                 } else {
                   $health_provider_status = FALSE;
                   $credit_status = TRUE;
-                  if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-                    if((int)$trans->half_credits == 1) {
-                      $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-                      $cash_cost = $trans->cash_cost;
-                    } else {
-                      // $total_amount = $trans->credit_cost + $trans->consultation_fees;
-                      $total_amount = $trans->procedure_cost;
-                      if($trans->credit_cost > 0) {
-                        $cash_cost = 0;
+                    if((int)$trans->lite_plan_enabled == 1) {
+                      if((int)$trans->half_credits == 1) {
+                        $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                       } else {
-                        $cash_cost = $trans->procedure_cost - $trans->consultation_fees;
-                      }
+                        $total_amount = $trans->procedure_cost;
                     }
                   } else {
-                    $total_amount = $trans->procedure_cost;
-                    if((int)$trans->half_credits == 1) {
-                      $cash_cost = $trans->cash_cost;
-                    } else {
-                      if($trans->credit_cost > 0) {
-                        $cash_cost = 0;
-                      } else {
-                        $cash_cost = $trans->procedure_cost;
-                      }
-                    }
+                    $total_amount = $cost;
                   }
+                  $type = "credits";
                 }
-
-
 
                 // if($trans->currency_type == "sgd") {
                   $currency_symbol = "S$";

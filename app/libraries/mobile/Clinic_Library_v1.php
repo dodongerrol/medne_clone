@@ -350,7 +350,7 @@ class Clinic_Library_v1{
         $getLng = Input::get('lng');
         $getType = Input::get('type');
         $page = Input::get('page');
-        $radius = !empty(Input::get('radius')) ? Input::get('radius') : 10;
+        $radius = !empty(Input::get('radius')) ? Input::get('radius') : 0.0000784806152880;
         $returnObject = new stdClass();
         $clinic_type_data = new ClinicTypes();
         $clinictype = (int)$getType; 
@@ -439,7 +439,7 @@ class Clinic_Library_v1{
         $getLat = Input::get('lat');
         $getLng = Input::get('lng');
         $getType = Input::get('type');
-        $radius = !empty(Input::get('radius')) ? Input::get('radius') : 5;
+        $radius = !empty(Input::get('radius')) ? Input::get('radius') : 0.0000784806152880;
         $returnObject = new stdClass();
         $clinic_type_data = new ClinicTypes();
         $clinictypename = $clinic_type_data->getClinicType($getType);
