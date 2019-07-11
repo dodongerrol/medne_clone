@@ -2932,11 +2932,12 @@ public function getActivityInNetworkTransactions( )
 				if(sizeof($receipts) > 0) {
 					foreach ($receipts as $key => $doc) {
 						if($doc->type == "pdf" || $doc->type == "xls") {
-							if(StringHelper::Deployment()==1){
-							   $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
-							} else {
-							   $fil = url('').'/receipts/'.$doc->file;
-							}
+							// if(StringHelper::Deployment()==1){
+							   // $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
+							$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
+							// } else {
+							//    $fil = url('').'/receipts/'.$doc->file;
+							// }
 						} else if($doc->type == "image") {
 							// $fil = FileHelper::formatImageAutoQuality($doc->file);
 							$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
