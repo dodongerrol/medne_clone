@@ -493,20 +493,34 @@ public function summaryDashboard()
   $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
   $data['server'] = $protocol.$hostName;
   $data['date'] = new DateTime();
-  $data['title'] = 'Calendar';
+  // $data['title'] = 'Calendar';
   $getSessionData = StringHelper::getMainSession(3);
-  $doctors = new CalendarController();
-  $doctors = $doctors->getClinicDoctors($getSessionData->Ref_ID);
-  $doctors = json_decode($doctors);
+  if($getSessionData){
+    $sessionData = $getSessionData;
+  }else{
+    return Redirect::to('provider-portal-login');
+  }
+  // $doctors = new CalendarController();
+  // $doctors = $doctors->getClinicDoctors($getSessionData->Ref_ID);
+  // if($doctors) {
+  //   $doctors = json_decode($doctors);
+  //   $Procedure = new CalendarController();
 
-  $Procedure = new CalendarController();
+  //   $Procedure = $Procedure->loadDoctorProcedures($getSessionData->Ref_ID,$doctors[0]->DoctorID);
+  //   if($Procedure) {
+  //     $Procedure = json_decode($Procedure);
+  //   } else {
+  //     $Procedure = null;
+  //   }
+  // } else {
+  //   $Procedure = null;
+  //   $doctors = null;
+  // }
 
-  $Procedure = $Procedure->loadDoctorProcedures($getSessionData->Ref_ID,$doctors[0]->DoctorID);
-  $Procedure = json_decode($Procedure);
 
-  $data['title'] = 'Calendar';
-  $data['doctorlist'] = $doctors;
-  $data['doctorprocedurelist'] = $Procedure;
+  $data['title'] = 'Dashboard';
+  // $data['doctorlist'] = $doctors;
+  // $data['doctorprocedurelist'] = $Procedure;
   $data['clincID'] = $getSessionData->Ref_ID;
   return View::make('dashboard.transaction-dashboard',$data);
 
