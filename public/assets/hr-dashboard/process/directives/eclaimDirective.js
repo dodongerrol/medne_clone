@@ -103,6 +103,7 @@
 
 						angular.forEach( res, function(value,key){
 							var filename = $.trim( value.file.split('/').pop().replace(/\?.*/,'') );
+							filename = filename.substring(0, filename.indexOf('?'));
 							var main_folder = zip.folder( all_data.transaction_id + " - " + all_data.member );
 							var promise = $.ajax({
 				        url: value.file,
@@ -139,6 +140,7 @@
 					angular.forEach( transaction.files , function( value, key ){
 						console.log(value );
 						var filename = $.trim( value.file.split('/').pop().replace(/\?.*/,'') );
+						filename = filename.substring(0, filename.indexOf('?'));
 						// var img = main_folder.folder("images");
 						// var pdf = main_folder.folder("pdf");
 						// var xls = main_folder.folder("xls");

@@ -119,6 +119,7 @@ app.directive('activityPage', [
 
 						angular.forEach( res, function(value,key){
 							var filename = $.trim( value.file.split('/').pop() );
+							filename = filename.substring(0, filename.indexOf('?'));
 							var img = zip.folder("images");
 							var promise = $.ajax({
 				        url: value.file,
@@ -146,25 +147,27 @@ app.directive('activityPage', [
 
 						angular.forEach( res, function(value,key){
 							var filename = $.trim( value.file.split('/').pop() );
+							filename = filename.substring(0, filename.indexOf('?'));
+							console.log(filename);
 							$.ajax({
-				        url: value.file,
-				        method: 'GET',
-				        xhrFields: {
-				          responseType: 'blob'
-				        },
-				        success: function (data) {
-			            var a = document.createElement('a');
-			            var url = window.URL.createObjectURL(data);
-			            a.href = url;
-			            a.download = filename;
-			            a.click();
-			            window.URL.revokeObjectURL(url);
+						        url: value.file,
+						        method: 'GET',
+						        xhrFields: {
+						          responseType: 'blob'
+				        	},
+					        success: function (data) {
+					            var a = document.createElement('a');
+					            var url = window.URL.createObjectURL(data);
+					            a.href = url;
+					            a.download = filename;
+					            a.click();
+					            window.URL.revokeObjectURL(url);
 
-			            if( key == (res.length-1) ){
-			            	scope.toggleLoading();
-			            }
-				        }
-					    });
+						            if( key == (res.length-1) ){
+						            	scope.toggleLoading();
+						            }
+						        }
+						    });
 						});
 					}
 				}

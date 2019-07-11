@@ -493,7 +493,7 @@ class PlanTierController extends \BaseController {
 				'dob'					=> trim($user['dob']),
 				'email'					=> !empty($user['email']) ? trim($user['email']) : null,
 				'mobile'				=> !empty($user['mobile']) ? trim($user['mobile']) : null,
-				'mobile_area_code'		=> !empty($user['mobile_area_code']) ? trim($user['mobile_area_code']) : null,
+				'mobile_area_code'		=> !empty($user['mobile_area_code']) ? trim($user['mobile_area_code']) : 65,
 				'job_title'				=> 'Other',
 				'credits'				=> $user['medical_credits'],
 				'wellness_credits'		=> $user['wellness_credits'],
@@ -575,6 +575,10 @@ class PlanTierController extends \BaseController {
 			// } else {
 			// 	$enroll->dob = null;
 			// }
+
+			if($enroll->email == null) {
+				$enroll->email = '';
+			}
 
 			if($enroll->mobile_area_code) {
 				$enroll->format_mobile = "+".$enroll->mobile_area_code.$enroll->mobile;
