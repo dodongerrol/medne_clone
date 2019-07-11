@@ -448,9 +448,9 @@ class ClinicLibrary{
      * Access       :   Public
      * 
      */
-    public static function FindNearby($getLat,$getLng,$getType){
+    public static function FindNearby($getLat,$getLng,$getType, $radius){
         $clinic = new Clinic();
-        $radius = 15;
+        $radius = $radius;
         $nearbyData = $clinic->Nearby($getLat,$getLng,$radius,$getType);
         if($nearbyData){
             return $nearbyData;
@@ -459,9 +459,9 @@ class ClinicLibrary{
         }
     }
 
-    public static function FindNewNearby($getLat,$getLng,$getType,$page){
+    public static function FindNewNearby($getLat,$getLng,$getType,$page,$radius){
         $clinic = new Clinic();
-        $radius = 10;
+        $radius = $radius;
         $nearbyData = $clinic->newNearby($getLat,$getLng,$radius,$getType,(int)$page);
         if($nearbyData){
             return $nearbyData;
