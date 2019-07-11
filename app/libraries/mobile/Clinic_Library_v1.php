@@ -350,13 +350,14 @@ class Clinic_Library_v1{
         $getLng = Input::get('lng');
         $getType = Input::get('type');
         $page = Input::get('page');
+        $radius = !empty(Input::get('radius')) ? Input::get('radius') : 10;
         $returnObject = new stdClass();
         $clinic_type_data = new ClinicTypes();
         $clinictype = (int)$getType; 
         $clinictypename = $clinic_type_data->getClinicType($getType);
 
         if(!empty($getLat) && !empty($getLng)&& !empty($getType)){
-            $findNearbyData = ClinicLibrary::FindNewNearby($getLat,$getLng,$getType,$page);
+            $findNearbyData = ClinicLibrary::FindNewNearby($getLat,$getLng,$getType,$page, $radius);
             // return $findNearbyData;
             $last_page = (int)$findNearbyData->getLastPage();
             // return $last_page;
@@ -438,13 +439,15 @@ class Clinic_Library_v1{
         $getLat = Input::get('lat');
         $getLng = Input::get('lng');
         $getType = Input::get('type');
+        $radius = !empty(Input::get('radius')) ? Input::get('radius') : 5;
         $returnObject = new stdClass();
         $clinic_type_data = new ClinicTypes();
         $clinictypename = $clinic_type_data->getClinicType($getType);
         $clinictype = (int)$getType; 
         
         if(!empty($getLat) && !empty($getLng)&& !empty($getType)){
-            $findNearbyData = ClinicLibrary::FindNearby($getLat,$getLng,$getType);
+            $findNearbyData = ClinicLibrary::FindNearby($getLat,$getLng,$getType, $radius);
+            // return $findNearbyData;
             // $last_page = (int)$findNearbyData->getLastPage();
             if(sizeof($findNearbyData) > 0) {
                 if($findNearbyData){
