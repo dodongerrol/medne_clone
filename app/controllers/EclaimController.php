@@ -339,7 +339,7 @@ class EclaimController extends \BaseController {
 
 					try {
 						$e_claim_docs->createEclaimDocs($receipt);
-						if(StringHelper::Deployment()==1){
+						// if(StringHelper::Deployment()==1){
 							if($doc['receipt_type'] != "image" || $doc['receipt_type'] !== "image") {
                                 //   aws
 								$s3 = AWS::get('s3');
@@ -349,7 +349,7 @@ class EclaimController extends \BaseController {
 									'SourceFile' => public_path().'/receipts/'.$file,
 								));
 							}
-						}
+						// }
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
@@ -964,8 +964,8 @@ class EclaimController extends \BaseController {
 	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
 	                      $cash = $transation->cash_cost;
 	                    } else {
-	                      // $total_amount = $trans->procedure_cost + $trans->consultation_fees;
-	                      $total_amount = $trans->procedure_cost;
+	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                      // $total_amount = $trans->procedure_cost;
 	                      $cash = $trans->procedure_cost;
 	                    }
 	                  } else {
@@ -1030,10 +1030,18 @@ class EclaimController extends \BaseController {
 					}
 				} else {
 					if((int)$trans->lite_plan_enabled == 1) {
-						if((int)$trans->lite_plan_use_credits == 1) {
-							$bill_amount = 	$trans->procedure_cost;
+						if((int)$trans->health_provider_done == 1) {
+							if((int)$trans->lite_plan_use_credits == 1) {
+								$bill_amount = 	$trans->procedure_cost;
+							} else {
+								$bill_amount = 	$trans->procedure_cost;
+							}
 						} else {
-							$bill_amount = 	$trans->procedure_cost - $trans->consultation_fees;
+							if((int)$trans->lite_plan_use_credits == 1) {
+								$bill_amount = 	$trans->procedure_cost;
+							} else {
+								$bill_amount = 	$trans->procedure_cost - $trans->consultation_fees;
+							}
 						}
 					} else {
 						$bill_amount = 	$trans->procedure_cost;
@@ -1835,8 +1843,11 @@ class EclaimController extends \BaseController {
 	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
 	                      $cash_cost = $transation->cash_cost;
 	                    } else {
-	                      // $total_amount = $trans->procedure_cost + $trans->consultation_fees;
-	                      $total_amount = $trans->procedure_cost;
+	                    	if($trans->credit_cost > 0) {
+	                    		$total_amount = $trans->procedure_cost;
+	                    	} else {
+	                      		$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                    	}
 	                      $cash_cost = $trans->procedure_cost;
 	                    }
 	                  } else {
@@ -3060,16 +3071,6 @@ public function getActivityInNetworkTransactions( )
 				if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
 					$payment_type = "Cash";
 					$transaction_type = "cash";
-					// $cash = number_format($trans->procedure_cost, 2);
-					// if($trans->deleted == 0 || $trans->deleted == "0") {
-					// 	$total_cash += $trans->procedure_cost;
-					// } else if($trans->deleted == 1 || $trans->deleted == "1") {
-					// 	$deleted_transaction_cash = $trans->procedure_cost;
-     //                            // $total_cash_transactions_deleted++;
-					// }
-					// if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
-					// 	$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
-					// }
 					if((int)$trans->lite_plan_enabled == 1) {
 	                    if((int)$trans->half_credits == 1) {
 	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
@@ -3136,7 +3137,11 @@ public function getActivityInNetworkTransactions( )
 				$bill_amount = 0;
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
-						$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+						if((int)$trans->health_provider_done == 1) {
+							$bill_amount = $trans->procedure_cost;
+						} else {
+							$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+						}
 					} else {
 						$bill_amount = 	$trans->procedure_cost;
 					}
@@ -3145,7 +3150,11 @@ public function getActivityInNetworkTransactions( )
 						if((int)$trans->lite_plan_use_credits == 1) {
 							$bill_amount = 	$trans->procedure_cost;
 						} else {
-							$bill_amount = 	$trans->procedure_cost - $trans->consultation_fees;
+							if((int)$trans->health_provider_done == 1) {
+								$bill_amount = 	$trans->procedure_cost;
+							} else {
+								$bill_amount = 	$trans->procedure_cost - $trans->consultation_fees;
+							}
 						}
 					} else {
 						$bill_amount = 	$trans->procedure_cost;

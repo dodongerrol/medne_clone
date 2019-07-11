@@ -420,7 +420,7 @@ class Api_V1_TransactionController extends \BaseController
 
 										// send email
 										$email['member'] = ucwords($user->Name);
-										$email['credits'] = $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2);
+										$email['credits'] = $clinic->currency_type == "myr" ? number_format($total_credits_cost * 3, 2) : number_format($total_credits_cost, 2);
 										$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
 										$email['trans_id'] = $transaction_id;
 										$email['transaction_date'] = date('d F Y, h:ia', strtotime($date_of_transaction));
@@ -956,7 +956,7 @@ class Api_V1_TransactionController extends \BaseController
                   $total_amount = $cost;
               }
               $type = "credits";
-          }
+          	}
 
           $currency_symbol = null;
           $converted_amount = null;
@@ -1207,19 +1207,35 @@ class Api_V1_TransactionController extends \BaseController
 
 						if((int)$transaction->half_credits == 1) {
 							if((int)$transaction->lite_plan_enabled == 1) {
-								$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees;
+								if((int)$transaction->health_provider_done == 1) {
+									$bill_amount = $transaction->procedure_cost;
+								} else {
+									$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees;
+								}
 							} else {
 								$bill_amount = 	$transaction->procedure_cost;
 							}
 						} else {
 							if((int)$transaction->lite_plan_enabled == 1) {
-								if((int)$transaction->lite_plan_use_credits == 1) {
-									$bill_amount = 	$transaction->procedure_cost;
+								if((int)$transaction->health_provider_done == 1) {
+									if((int)$transaction->lite_plan_use_credits == 1) {
+										$bill_amount = 	$transaction->procedure_cost;
+									} else {
+										$bill_amount = 	$transaction->procedure_cost;
+									}
 								} else {
-									$bill_amount = 	$transaction->procedure_cost - $transaction->consultation_fees;
+									if((int)$transaction->lite_plan_use_credits == 1) {
+										$bill_amount = 	$transaction->procedure_cost;
+									} else {
+										$bill_amount = 	$transaction->procedure_cost - $transaction->consultation_fees;
+									}
 								}
 							} else {
-								$bill_amount = 	$transaction->procedure_cost;
+								if((int)$transaction->health_provider_done == 1) {
+									$bill_amount = 	$transaction->procedure_cost;
+								} else {
+									$bill_amount = 	$transaction->procedure_cost;
+								}
 							}
 						}
 
