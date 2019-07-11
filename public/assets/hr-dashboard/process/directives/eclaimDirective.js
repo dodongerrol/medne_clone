@@ -98,13 +98,13 @@
 
 				scope.downloadReceipt = function( res, all_data ) {
 					scope.toggleLoading();
-
 						var zip = new JSZip();
+						var main_folder = zip.folder( all_data.transaction_id + " - " + all_data.member );
 
 						angular.forEach( res, function(value,key){
-							var filename = $.trim( value.file.split('/').pop().replace(/\?.*/,'') );
-							filename = filename.substring(0, filename.indexOf('?'));
-							var main_folder = zip.folder( all_data.transaction_id + " - " + all_data.member );
+							console.log( value );
+							var filename = $.trim( value.file.split('/').pop() );
+							filename = value.file_type == 'pdf' || value.file_type == 'xls' ? filename.substring(0, filename.indexOf('?')) : filename; 
 							var promise = $.ajax({
 				        url: value.file,
 				        method: 'GET',
@@ -139,11 +139,9 @@
 					var main_folder = zip.folder( transaction.filename );
 					angular.forEach( transaction.files , function( value, key ){
 						console.log(value );
-						var filename = $.trim( value.file.split('/').pop().replace(/\?.*/,'') );
-						filename = filename.substring(0, filename.indexOf('?'));
-						// var img = main_folder.folder("images");
-						// var pdf = main_folder.folder("pdf");
-						// var xls = main_folder.folder("xls");
+						var filename = $.trim( value.file.split('/').pop() );
+						filename = value.file_type == 'pdf' || value.file_type == 'xls' ? filename.substring(0, filename.indexOf('?')) : filename; 
+
 						var promise = $.ajax({
 			        url: value.file,
 			        method: 'GET',
@@ -153,15 +151,6 @@
 			    	});
 				    promise.then(function(a,b,c){
 				    	console.log( scope.download_receipts_ctr, b );
-				   //  	if( value.file_type == 'pdf' ){
-							// 	pdf.file(filename, promise);
-							// }
-							// if( value.file_type == 'image' ){
-							// 	img.file(filename,promise);
-							// }
-							// if( value.file_type == 'xls' ){
-							// 	xls.file(filename,promise);
-							// }
 							main_folder.file(filename, promise);
 							if( key == transaction.files.length-1 ){
 								if( scope.download_receipts_ctr == (scope.receipts_arr.length-1) ){
@@ -172,6 +161,7 @@
 											});
 										scope.download_receipts_ctr = 0;
 										scope.toggleLoading();
+										$('.download-receipt-message').hide();
 									}, 1000);
 									
 								}else{
@@ -195,6 +185,7 @@
 											});
 										scope.download_receipts_ctr = 0;
 										scope.toggleLoading();
+										$('.download-receipt-message').hide();
 									}, 1000);
 									
 								}else{

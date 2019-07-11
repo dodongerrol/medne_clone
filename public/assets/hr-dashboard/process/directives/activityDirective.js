@@ -113,63 +113,34 @@ app.directive('activityPage', [
 
 				scope.downloadReceipt = function( res, all_data ){
 					scope.toggleLoading();
+					console.log( all_data );
+					console.log( res );
+					var zip = new JSZip();
+					var main_folder = zip.folder( all_data.member + "_" + all_data.transaction_id );
 
-					if( res.length > 1 ){
-						var zip = new JSZip();
+					angular.forEach( res, function(value,key){
+						console.log( value );
+						var filename = $.trim( value.file.split('/').pop() );
+						filename = value.file_type == 'pdf' || value.file_type == 'xls' ? filename.substring(0, filename.indexOf('?')) : filename; 
 
-						angular.forEach( res, function(value,key){
-							var filename = $.trim( value.file.split('/').pop() );
-							filename = filename.substring(0, filename.indexOf('?'));
-							var img = zip.folder("images");
-							var promise = $.ajax({
-				        url: value.file,
-				        method: 'GET',
-				        xhrFields: {
-				          responseType: 'blob'
-				        }
-					    });
+						var promise = $.ajax({
+			        url: value.file,
+			        method: 'GET',
+			        xhrFields: {
+			          responseType: 'blob'
+			        }
+				    });
 
-							if( value.file_type == 'pdf' ){
-								zip.file(filename, promise);
-							}
-							if( value.file_type == 'image' ){
-								img.file(filename,promise);
-							}
-							
-							if( key == (res.length-1) ){
-								zip.generateAsync({type:"blob"}).then(function(content) {
-							    saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
-								});
-								scope.toggleLoading();
-							}
-						})
-					}else{
-
-						angular.forEach( res, function(value,key){
-							var filename = $.trim( value.file.split('/').pop() );
-							filename = filename.substring(0, filename.indexOf('?'));
-							console.log(filename);
-							$.ajax({
-						        url: value.file,
-						        method: 'GET',
-						        xhrFields: {
-						          responseType: 'blob'
-				        	},
-					        success: function (data) {
-					            var a = document.createElement('a');
-					            var url = window.URL.createObjectURL(data);
-					            a.href = url;
-					            a.download = filename;
-					            a.click();
-					            window.URL.revokeObjectURL(url);
-
-						            if( key == (res.length-1) ){
-						            	scope.toggleLoading();
-						            }
-						        }
-						    });
-						});
-					}
+						main_folder.file(filename, promise);
+						
+						if( key == (res.length-1) ){
+							zip.generateAsync({type:"blob"}).then(function(content) {
+						    saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
+							});
+							scope.toggleLoading();
+						}
+					})
+					
 				}
 
 				scope.setSpendType = function( opt ){
@@ -208,8 +179,6 @@ app.directive('activityPage', [
 						$( ".trans-pagination-shadow" ).css({'margin-right':'0'});
 						$( ".hidden-details-container" ).animate({'right':'-100%'}, 'slow');
 					}
-					console.log( $( ".hidden-details-container" ).height() );
-					console.log( $( ".transaction-rows" ).height() );
 
 					$timeout(function() {
 						if( $( ".hidden-details-container" ).height() > $( ".transaction-rows" ).height() - 100 ){
