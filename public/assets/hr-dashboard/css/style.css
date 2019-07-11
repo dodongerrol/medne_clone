@@ -1,3 +1,9 @@
+.iti__flag {background-image: url("../img/flags.png");}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .iti__flag {background-image: url("../img/flags@2x.png");}
+}
+
 
 html,body{
 	height: 100%;
@@ -4474,6 +4480,7 @@ ul.typeahead li a.dropdown-item
 		position: fixed;
 	  bottom: 0;
 	  left: 0;
+    z-index: 999;
 	}
 
 	.tier-item-container .gp-toggle{
@@ -5316,6 +5323,18 @@ ul.typeahead li a.dropdown-item
 		font-size: 14px;
 		outline: none;
     	padding: 6px 0;
+	}
+
+	.employee-input-wrapper .iti{
+		width: 100%;
+	}
+	.employee-input-wrapper .iti__selected-flag{
+		background: transparent;
+		outline: none;
+	}
+	.employee-input-wrapper .iti--allow-dropdown .iti__flag-container:hover .iti__selected-flag{
+		background: transparent;
+		outline: none;
 	}
 
 	.employee-input-wrapper select {

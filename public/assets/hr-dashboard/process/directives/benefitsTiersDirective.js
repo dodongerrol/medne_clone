@@ -80,6 +80,7 @@ app.directive('benefitsTiersDirective', [
 				scope.isAllPreviewEmpChecked = false;
 				scope.showDependentsAdded = false;
 				
+				var iti = null;
 
 
 				scope.getLetter = function(index) {
@@ -91,6 +92,7 @@ app.directive('benefitsTiersDirective', [
 					scope.selected_emp_dep_tab = opt;
 					if( opt == 1 ){
 						scope.isWebInput = true;
+						scope.inititalizeGeoCode();
 						scope.showDependentsAdded = false;
 						scope.isDependentListShow = false;
 						scope.inititalizeDatepicker();
@@ -130,6 +132,7 @@ app.directive('benefitsTiersDirective', [
 							scope.inititalizeDatepicker();
 							$('.summary-right-container').show();
 							scope.employee_data.dependents = [];
+							scope.inititalizeGeoCode();
 						}
 					}else if( scope.isExcel == true ){
 						if( scope.downloadWithDependents != null ){
@@ -373,6 +376,7 @@ app.directive('benefitsTiersDirective', [
 									scope.isBackBtnDisabled = false;
 									scope.isNextBtnDisabled = false;
 									scope.isWebInput = true;
+									scope.inititalizeGeoCode();
 									scope.inititalizeDatepicker();
 									scope.showDependentsAdded = false;
 									scope.dependent_arr = [];
@@ -460,6 +464,7 @@ app.directive('benefitsTiersDirective', [
 									scope.added_dependent_data = scope.employee_data.dependents[0];
 								}else{
 									scope.isWebInput = true;
+									scope.inititalizeGeoCode();
 									scope.inititalizeDatepicker();
 									scope.showDependentsAdded = false;
 									scope.isDependentListShow = false;
@@ -565,6 +570,7 @@ app.directive('benefitsTiersDirective', [
 							scope.isBackBtnDisabled = false;
 							scope.isNextBtnDisabled = false;
 							scope.isWebInput = true;
+							scope.inititalizeGeoCode();
 							scope.dependent_arr = [];
 							scope.dependent_data = {};
 							scope.dependent_data.plan_start = scope.customer_data.plan.plan_start;
@@ -606,6 +612,7 @@ app.directive('benefitsTiersDirective', [
 					scope.isBackBtnDisabled = false;
 					scope.isNextBtnDisabled = false;
 					scope.isWebInput = true;
+					scope.inititalizeGeoCode();
 					scope.dependent_arr = [];
 					scope.dependent_data = {};
 					scope.dependent_data.plan_start = scope.customer_data.plan.plan_start;
@@ -662,6 +669,7 @@ app.directive('benefitsTiersDirective', [
 							dependents : [],
 							plan_start : scope.customer_data.plan.plan_start
 						};
+						iti.setCountry( "SG" );
 						scope.dependent_data = {};
 						scope.dependent_data.plan_start = scope.customer_data.plan.plan_start;
 						scope.employee_data.plan_start = scope.customer_data.plan.plan_start;
@@ -699,6 +707,7 @@ app.directive('benefitsTiersDirective', [
 									}
 									scope.employee_ctr-=1;
 									scope.employee_data = scope.employee_arr[ scope.employee_ctr ];
+									iti.setCountry( scope.employee_data.mobile_area_code_country );
 									if( scope.employee_data.dependents.length > 0 ){
 										scope.added_dependent_data = scope.employee_data.dependents[0];
 									}
@@ -713,6 +722,7 @@ app.directive('benefitsTiersDirective', [
 						}
 						scope.employee_ctr-=1;
 						scope.employee_data = scope.employee_arr[ scope.employee_ctr ];
+						iti.setCountry( scope.employee_data.mobile_area_code_country );
 						if( scope.employee_data.dependents.length > 0 ){
 							scope.added_dependent_data = scope.employee_data.dependents[0];
 						}
@@ -727,6 +737,7 @@ app.directive('benefitsTiersDirective', [
 								scope.employee_enroll_count++;
 								scope.employee_ctr+=1;
 								scope.employee_data = scope.employee_arr[ scope.employee_ctr];
+								iti.setCountry( scope.employee_data.mobile_area_code_country );
 								if( !scope.employee_data ){
 									scope.employee_data = {
 										medical_credits : 0,
@@ -734,6 +745,7 @@ app.directive('benefitsTiersDirective', [
 										dependents : [],
 										plan_start : scope.customer_data.plan.plan_start
 									};
+									iti.setCountry( "SG" );
 								}
 								if( scope.employee_data.dependents.length > 0 ){
 									scope.added_dependent_data = scope.employee_data.dependents[0];
@@ -746,6 +758,7 @@ app.directive('benefitsTiersDirective', [
 								scope.overall_emp_count++;
 								scope.employee_ctr+=1;
 								scope.employee_data = scope.employee_arr[ scope.employee_ctr];
+								iti.setCountry( scope.employee_data.mobile_area_code_country );
 								if( !scope.employee_data ){
 									scope.employee_data = {
 										medical_credits : 0,
@@ -753,6 +766,7 @@ app.directive('benefitsTiersDirective', [
 										dependents : [],
 										plan_start : scope.customer_data.plan.plan_start
 									};
+									iti.setCountry( "SG" );
 								}
 								if( scope.employee_data.dependents.length > 0 ){
 									scope.added_dependent_data = scope.employee_data.dependents[0];
@@ -1427,6 +1441,25 @@ app.directive('benefitsTiersDirective', [
 								$('.start-date-datepicker-dependent').datepicker('setDate', scope.customer_data.plan.plan_start);
 							}
 						})
+					}, 300);
+				}
+
+				scope.inititalizeGeoCode = function(){
+					$timeout(function() {
+						var input = document.querySelector("#area_code");
+						var settings = {
+		          separateDialCode : true,
+							initialCountry : "SG",
+							autoPlaceholder : "off",
+							utilsScript : "../assets/hr-dashboard/js/utils.js",
+		        };
+		        iti = intlTelInput(input, settings);
+		        input.addEventListener("countrychange", function() {
+						  console.log( iti.getSelectedCountryData() );
+						  scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
+						  scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
+						});
+
 					}, 300);
 				}
 
