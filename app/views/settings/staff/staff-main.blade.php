@@ -5,7 +5,11 @@
 	<div class="staff-side-list" >
 
 		<!-- Doctor side list -->
+		@if($doctors)
 		<input type="hidden" id="h-doctor-id" value="{{ $doctors[0]->DoctorID }}" >
+		@else
+		<input type="hidden" id="h-doctor-id" >
+		@endif
 		<input type="hidden" id="h-staff-id" value="0" >
 
 		<div class="col-md-12" style="padding: 0px; padding-top: 20px; padding-bottom: 20px; border-bottom: 1px solid #D0D0D0;">
@@ -27,7 +31,7 @@
 
 				?>
 				<div class="col-md-12 staff-doctor">
-					<span style="float: left;"><img alt="$doctors[0]->DoctorID" src="{{ URL::asset('assets/images/doctor.png') }}" style="width: 40px;height: 40px"></span>
+					<span style="float: left;"><img src="{{ URL::asset('assets/images/doctor.png') }}" style="width: 40px;height: 40px"></span>
 					<div style="padding-top: 15px;padding-left: 15px;display: inline-block;"><b style="color: {{$c}};" id="{{ $value->DoctorID }}">{{ $value->DocName }}</b></div>
 				</div>
 

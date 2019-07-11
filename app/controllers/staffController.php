@@ -4,7 +4,19 @@ class staffController extends BaseController {
 
 	public function ajaxGetDoctorSettingTab(){
 
-		return View::make('settings.staff.staff-tab-panel');
+        $getSessionData = StringHelper::getMainSession(3);
+            if($getSessionData != FALSE){ 
+                $input = Input::all();
+                $data = Clinic_Library::FindAllClinicDoctors($getSessionData->Ref_ID);
+                
+                if($data) {
+                    return View::make('settings.staff.staff-tab-panel');
+                }
+
+         }else{
+                return Redirect::to('provider-portal-login');
+            }
+		
 
 	}
 
