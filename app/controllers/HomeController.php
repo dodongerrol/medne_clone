@@ -462,20 +462,28 @@ public function showCalender()
    }else{
 
     $doctors = new CalendarController();
-    $doctors = $doctors->getClinicDoctors($getSessionData->Ref_ID);
-    $doctors = json_decode($doctors);
-
-    $Procedure = new CalendarController();
-
-    $Procedure = $Procedure->loadDoctorProcedures($getSessionData->Ref_ID,$doctors[0]->DoctorID);
-    $Procedure = json_decode($Procedure);
+    // $Procedure = new CalendarController();
+    $doctors_lists = $doctors->getClinicDoctors($getSessionData->Ref_ID);
+    
+    if(sizeof($doctors_lists) > 0) {
+      // $doctors_lists = json_decode($doctors_lists);
+      $Procedures = $doctors->loadDoctorProcedures($getSessionData->Ref_ID, $doctors_lists[0]->DoctorID);
+      if($Procedures) {
+        $Procedures = json_decode($Procedures);
+      } else {
+        $Procedures = null;
+      }
+    } else {
+      $doctors_lists = null;
+      $Procedures = null;
+    }
 
     $ua = new UserAppoinment();
     $ua_count = $ua->getClinicAppointments($getSessionData->Ref_ID);
 
     $data['title'] = 'Calendar';
-    $data['doctorlist'] = $doctors;
-    $data['doctorprocedurelist'] = $Procedure;
+    $data['doctorlist'] = $doctors_lists;
+    $data['doctorprocedurelist'] = $Procedures;
     $data['clincID'] = $getSessionData->Ref_ID;
     $data['appCount'] = count($ua_count);
 
@@ -559,23 +567,28 @@ public function showMainCalendarSingleView(){
                 // $clinicDetails = Clinic_Library::ClinicDetailsPage($getSessionData);
 
     $doctors = new CalendarController();
-    $doctors = $doctors->getClinicDoctors($getSessionData->Ref_ID);
-    $doctors = json_decode($doctors);
+    $doctors_lists = $doctors->getClinicDoctors($getSessionData->Ref_ID);
 
-    $Procedure = new CalendarController();
+    if(sizeOf($doctors_lists) > 0) {
+      // $doctors_lists = json_decode($doctors_lists);
+      $Procedure = new CalendarController();
 
-    $Procedure = $Procedure->loadDoctorProcedures($getSessionData->Ref_ID,$doctors[0]->DoctorID);
-    $Procedure = json_decode($Procedure);
+      $Procedure = $Procedure->loadDoctorProcedures($getSessionData->Ref_ID, $doctors_lists[0]->DoctorID);
+      $Procedure = json_decode($Procedure);
+    } else {
+      $Procedure = [];
+      $doctors_lists = [];
+    }
 
     $ua = new UserAppoinment();
     $ua_count = $ua->getClinicAppointments($getSessionData->Ref_ID);
 
     $data['title'] = 'Calendar';
-    $data['doctorlist'] = $doctors;
+    $data['doctorlist'] = $doctors_lists;
     $data['doctorprocedurelist'] = $Procedure;
     $data['clincID'] = $getSessionData->Ref_ID;
     $data['appCount'] = count($ua_count);
-
+    
     $view = View::make('dashboard.calendar_single',$data);
     return $view;
                 // return $clinicDetails;

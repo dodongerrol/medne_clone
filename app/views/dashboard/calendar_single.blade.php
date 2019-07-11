@@ -84,7 +84,7 @@
 			    <div class="col-sm-8" >
 			      <!-- <div class="dropdown"> -->
 					  <label class="dropdown-btn input-width" style="height: 38px; cursor: pointer;" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-					    <i class="glyphicon glyphicon-ok" style="color: #1b9bd7"></i>&nbsp;&nbsp;<span class="doctor-selection" id="{{ $doctorlist[0]->DoctorID }}">{{ $doctorlist[0]->DocName }}</span><div class="ext-right"><i class="glyphicon glyphicon-chevron-down"></i></div>
+					    <i class="glyphicon glyphicon-ok" style="color: #1b9bd7"></i>&nbsp;&nbsp;<span class="doctor-selection" id="{{ sizeOf($doctorlist) ? $doctorlist[0]->DoctorID : ''}}">{{ sizeOf($doctorlist) > 0 ? $doctorlist[0]->DocName : '' }}</span><div class="ext-right"><i class="glyphicon glyphicon-chevron-down"></i></div>
 					  </label>
 					  <ul class="dropdown-menu dropdown-btn ul-width" id="appointment-doctor-list">
 					    <?php foreach ($doctorlist as $val) { ?>
@@ -222,7 +222,7 @@
 			<li id="byDropdown">
 				<div class="dropdown" >
 				<span><img src="{{ URL::asset('assets/images/ico_Profile.svg') }}" alt=""></span>
-		          <span  class="dropdown-toggle doctor-selection" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="{{ $doctorlist[0]->DoctorID }}">{{ $doctorlist[0]->DocName }}</span><span class="caret"></span>
+		          <span  class="dropdown-toggle doctor-selection" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id="{{ sizeOf($doctorlist) > 0 ? $doctorlist[0]->DoctorID : ''}}">{{ sizeOf($doctorlist) > 0 ? $doctorlist[0]->DocName : '' }}</span><span class="caret"></span>
 		          <ul class="dropdown-menu doctor-list">
 		        <?php foreach ($doctorlist as $val) { ?>
 		            <li><a href="#" id="{{ $val->DoctorID}}">{{ $val->DocName}}</a></li>
@@ -357,7 +357,7 @@
   <div class="form-group">
     <label class="col-sm-2 details-label" style="padding: 0px; padding-left: 33px;">Doctor</label>
     <div class="col-sm-8">
-    	<label class="dropdown-btn input-width" data-toggle="dropdown" style="height: 38px; cursor: pointer;"><i class="glyphicon glyphicon-ok" style="color: #1b9bd7"></i>&nbsp;&nbsp;<span class="doctor-selection" id="{{ $doctorlist[0]->DoctorID }}">{{ $doctorlist[0]->DocName }}</span><div class="ext-right"><i class="glyphicon glyphicon-chevron-down"></i></div></label>
+    	<label class="dropdown-btn input-width" data-toggle="dropdown" style="height: 38px; cursor: pointer;"><i class="glyphicon glyphicon-ok" style="color: #1b9bd7"></i>&nbsp;&nbsp;<span class="doctor-selection" id="{{ sizeOf($doctorlist) > 0 ? $doctorlist[0]->DoctorID : ''}}">{{ sizeOf($doctorlist) > 0 ? $doctorlist[0]->DocName : ''}}</span><div class="ext-right"><i class="glyphicon glyphicon-chevron-down"></i></div></label>
     		<ul class="dropdown-menu dropdown-btn ul-width" id="appointment-doctor-list">
 			    <?php foreach ($doctorlist as $val) { ?>
 		        <li><a href="#" id="{{ $val->DoctorID}}">
@@ -741,7 +741,11 @@
   <div class="form-group">
     <label class="col-sm-2 details-label" style="padding: 0px; padding-left: 33px;">Doctor</label>
     <div class="col-sm-8">
+    	@if(sizeOf($doctorlist) > 0)
     	<label class="dropdown-btn input-width" data-toggle="dropdown" style="height: 38px; cursor: pointer;"><i class="glyphicon glyphicon-ok" style="color: #1b9bd7"></i>&nbsp;&nbsp;<span class="doctor-selection" id="{{ $doctorlist[0]->DoctorID }}">{{ $doctorlist[0]->DocName }}</span><div class="ext-right"><i class="glyphicon glyphicon-chevron-down"></i></div></label>
+    	@else
+    	<label class="dropdown-btn input-width" data-toggle="dropdown" style="height: 38px; cursor: pointer;"><i class="glyphicon glyphicon-ok" style="color: #1b9bd7"></i>&nbsp;&nbsp;<span class="doctor-selection"></span><div class="ext-right"><i class="glyphicon glyphicon-chevron-down"></i></div></label>
+    	@endif
     		<ul class="dropdown-menu dropdown-btn ul-width" id="appointment-doctor-list">
 			    <?php foreach ($doctorlist as $val) { ?>
 		        <li><a href="#" id="{{ $val->DoctorID}}">

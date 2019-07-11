@@ -47,7 +47,7 @@ class CalendarController extends \BaseController {
 	{
 		$doctors = new stdClass();
 		$doctoravailability = new DoctorAvailability();
-        $doctors = $doctoravailability->FindAllClinicDoctors($clinicID);
+        return $doctoravailability->FindAllClinicDoctors($clinicID);
 		return json_encode($doctors);
 	}
 
