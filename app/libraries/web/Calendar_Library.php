@@ -958,166 +958,166 @@ class Calendar_Library
 		$start_date = $input['current_date'];
 		$doctorID 	= $input['doctorID'];
 
-		Clinic_Library::syncAppointment($start_date,$doctorID);
+		if($doctorID) {
+			Clinic_Library::syncAppointment($start_date,$doctorID);
 
-		$array = array();
+			$array = array();
 
-		for ($j=0; $j < 7; $j++) {
+			for ($j=0; $j < 7; $j++) {
 
-            $date = date('d-m-Y', strtotime($start_date.' +'.$j.' day'));
+	            $date = date('d-m-Y', strtotime($start_date.' +'.$j.' day'));
 
-			$events = new ExtraEvents();
-            $events = $events->getEvents($doctorID,strtotime($date));
-            if ($events) {
+				$events = new ExtraEvents();
+	            $events = $events->getEvents($doctorID,strtotime($date));
+	            if ($events) {
 
-	            foreach ($events as $val) {
-            		// array_push($array, $val);
+		            foreach ($events as $val) {
+	            		// array_push($array, $val);
 
-	            	$stime = date('Y-m-d\TH:i:s', $val->start_time);
-					$etime = date('Y-m-d\TH:i:s', $val->end_time);
-					$type = $val->type;
+		            	$stime = date('Y-m-d\TH:i:s', $val->start_time);
+						$etime = date('Y-m-d\TH:i:s', $val->end_time);
+						$type = $val->type;
 
-					if ($type==1 && !strpos($val->remarks, "New Mednefits Appointment") && !strpos($val->remarks, "New Medicloud Appointment")) {
-                        $title = 'Google Event';
-                        $backgroundColor = "#f6d6d5";
-                        $borderColor = "#e4b0af";
-                        $color = '';
-                        if ($title=='Blocked') {
-	                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>true, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
-	                    } else {
-	                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>false, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
-	                    }
+						if ($type==1 && !strpos($val->remarks, "New Mednefits Appointment") && !strpos($val->remarks, "New Medicloud Appointment")) {
+	                        $title = 'Google Event';
+	                        $backgroundColor = "#f6d6d5";
+	                        $borderColor = "#e4b0af";
+	                        $color = '';
+	                        if ($title=='Blocked') {
+		                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>true, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
+		                    } else {
+		                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>false, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
+		                    }
 
-						array_push($array, $arr);
-					} else if ($type==2){
-						$title = 'Blocked';
-						$color = '#e5e5e5';
-                        $backgroundColor = "";
-                        $borderColor = "";
-                        if ($title=='Blocked') {
-	                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>true, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
-	                    } else {
-	                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>false, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
-	                    }
-	                    array_push($array, $arr);
-					}
+							array_push($array, $arr);
+						} else if ($type==2){
+							$title = 'Blocked';
+							$color = '#e5e5e5';
+	                        $backgroundColor = "";
+	                        $borderColor = "";
+	                        if ($title=='Blocked') {
+		                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>true, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
+		                    } else {
+		                        $arr = array('id'=>$val->id,'title'=>$title,'start'=>$stime,'end'=> $etime, 'color'=>$color, 'editable'=>false, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor);
+		                    }
+		                    array_push($array, $arr);
+						}
 
-                    
-
-
-
+	                    
 
 
-            // dd($array);
 
+
+
+	            // dd($array);
+
+		            }
 	            }
-            }
 
 
+			}
+			// return $array;
+	        // ------------------------- load doctor breaks --------------------------------
+
+	        $dataArray = array('doctor_id' => $doctorID, 'type' => 3);
+	        $breaks = new ExtraEvents();
+	        $breaks = $breaks->getDoctorBreaks($dataArray);
+
+	        $ClinicTimes = self::getClinicAvailablity($clinicdata->Ref_ID);
+	        $DoctorTimes = General_Library::FindAllClinicTimesNew(2,$doctorID,strtotime(date('d-m-Y')));
+	        // dd($ClinicTimes);
+
+	        foreach ($breaks as $value) {
+
+	            $stime = date("H:i", strtotime($value->start_time));
+	            $etime = date("H:i", strtotime($value->end_time));
+	            $day = $value->day;
+
+	            if ($day=='mon') { $day = 1;}
+	            if ($day=='tue') { $day = 2;}
+	            if ($day=='wed') { $day = 3;}
+	            if ($day=='thu') { $day = 4;}
+	            if ($day=='fri') { $day = 5;}
+	            if ($day=='sat') { $day = 6;}
+	            if ($day=='sun') { $day = 0;}
+
+
+	            foreach ($ClinicTimes as $clinic) {
+
+	                if($clinic->Mon==1){ $clinicday = 1;}
+	                if($clinic->Tue==1){ $clinicday = 2;}
+	                if($clinic->Wed==1){ $clinicday = 3;}
+	                if($clinic->Thu==1){ $clinicday = 4;}
+	                if($clinic->Fri==1){ $clinicday = 5;}
+	                if($clinic->Sat==1){ $clinicday = 6;}
+	                if($clinic->Sun==1){ $clinicday = 0;}
+
+	                if ($day == $clinicday){
+
+	                    if ($clinic->Active == 1) { // check whether clinic is open
+
+
+	                        foreach ($DoctorTimes as $doctor) {
+
+	                            if($doctor->Mon==1){ $doctorday = 1;}
+	                            if($doctor->Tue==1){ $doctorday = 2;}
+	                            if($doctor->Wed==1){ $doctorday = 3;}
+	                            if($doctor->Thu==1){ $doctorday = 4;}
+	                            if($doctor->Fri==1){ $doctorday = 5;}
+	                            if($doctor->Sat==1){ $doctorday = 6;}
+	                            if($doctor->Sun==1){ $doctorday = 0;}
+
+	                            if ($day == $doctorday){
+
+	                                if ($doctor->Active == 1) { // check whether doctor is available
+
+	                                    // dd($etime);
+
+	                                     $arr = array('id'=>$value->id,'title'=>'','start'=>$stime,'end'=> $etime, 'color'=>'#e5e5e5','dow'=> '['.$day.']', 'editable'=>false);
+	                                    array_push($array, $arr);
+
+	                                }
+	                            }
+	                        }
+
+	                    }
+	                }
+	            }
+	        }
+
+
+	        // ````````````````````````````````load time off````````````````````````````````````````````
+
+	        $hol = new ManageHolidays();
+	        $timeoff = $hol->FindExistingClinicHolidays(2,$doctorID);
+
+	        foreach ($timeoff as $v) {
+
+	            $from_holiday = $v->From_Holiday;
+	            $to_holiday = $v->To_Holiday;
+	            $from_time = $v->From_Time;
+	            $to_time = $v->To_Time;
+	            $no_of_days = strtotime($to_holiday)- strtotime($from_holiday);
+	            $no_of_days =  floor($no_of_days/(60*60*24))+1;
+	            $note = "\n".$v->Note;
+
+	            if ($v->From_Time==0) {$from_time = '06.00 AM'; $to_time = '10.00 PM';}
+
+	            for ($i=0; $i < $no_of_days; $i++) {
+
+	                $stime = date('Y-m-d\TH:i:s', date(strtotime("+$i day", strtotime($from_holiday.$from_time))));
+	                $etime = date('Y-m-d\TH:i:s', date(strtotime("+$i day", strtotime($from_holiday.$to_time))));
+	                // $etime = date('Y-m-d\TH:i:s', strtotime($from_holiday.$to_time. '+'.$i.'day'));
+
+	                $arr = array('title' => 'Time Off'.$note, 'start' => $stime, 'end' => $etime, 'color'=>'#e5e5e5','editable' => false);
+	                array_push($array, $arr);
+	            }
+
+	        }
+	        		return $array;
 		}
-		// return $array;
-        // ------------------------- load doctor breaks --------------------------------
 
-        $dataArray = array('doctor_id' => $doctorID, 'type' => 3);
-        $breaks = new ExtraEvents();
-        $breaks = $breaks->getDoctorBreaks($dataArray);
-
-        $ClinicTimes = self::getClinicAvailablity($clinicdata->Ref_ID);
-        $DoctorTimes = General_Library::FindAllClinicTimesNew(2,$doctorID,strtotime(date('d-m-Y')));
-        // dd($ClinicTimes);
-
-        foreach ($breaks as $value) {
-
-            $stime = date("H:i", strtotime($value->start_time));
-            $etime = date("H:i", strtotime($value->end_time));
-            $day = $value->day;
-
-            if ($day=='mon') { $day = 1;}
-            if ($day=='tue') { $day = 2;}
-            if ($day=='wed') { $day = 3;}
-            if ($day=='thu') { $day = 4;}
-            if ($day=='fri') { $day = 5;}
-            if ($day=='sat') { $day = 6;}
-            if ($day=='sun') { $day = 0;}
-
-
-            foreach ($ClinicTimes as $clinic) {
-
-                if($clinic->Mon==1){ $clinicday = 1;}
-                if($clinic->Tue==1){ $clinicday = 2;}
-                if($clinic->Wed==1){ $clinicday = 3;}
-                if($clinic->Thu==1){ $clinicday = 4;}
-                if($clinic->Fri==1){ $clinicday = 5;}
-                if($clinic->Sat==1){ $clinicday = 6;}
-                if($clinic->Sun==1){ $clinicday = 0;}
-
-                if ($day == $clinicday){
-
-                    if ($clinic->Active == 1) { // check whether clinic is open
-
-
-                        foreach ($DoctorTimes as $doctor) {
-
-                            if($doctor->Mon==1){ $doctorday = 1;}
-                            if($doctor->Tue==1){ $doctorday = 2;}
-                            if($doctor->Wed==1){ $doctorday = 3;}
-                            if($doctor->Thu==1){ $doctorday = 4;}
-                            if($doctor->Fri==1){ $doctorday = 5;}
-                            if($doctor->Sat==1){ $doctorday = 6;}
-                            if($doctor->Sun==1){ $doctorday = 0;}
-
-                            if ($day == $doctorday){
-
-                                if ($doctor->Active == 1) { // check whether doctor is available
-
-                                    // dd($etime);
-
-                                     $arr = array('id'=>$value->id,'title'=>'','start'=>$stime,'end'=> $etime, 'color'=>'#e5e5e5','dow'=> '['.$day.']', 'editable'=>false);
-                                    array_push($array, $arr);
-
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-
-        // ````````````````````````````````load time off````````````````````````````````````````````
-
-        $hol = new ManageHolidays();
-        $timeoff = $hol->FindExistingClinicHolidays(2,$doctorID);
-
-        foreach ($timeoff as $v) {
-
-            $from_holiday = $v->From_Holiday;
-            $to_holiday = $v->To_Holiday;
-            $from_time = $v->From_Time;
-            $to_time = $v->To_Time;
-            $no_of_days = strtotime($to_holiday)- strtotime($from_holiday);
-            $no_of_days =  floor($no_of_days/(60*60*24))+1;
-            $note = "\n".$v->Note;
-
-            if ($v->From_Time==0) {$from_time = '06.00 AM'; $to_time = '10.00 PM';}
-
-            for ($i=0; $i < $no_of_days; $i++) {
-
-                $stime = date('Y-m-d\TH:i:s', date(strtotime("+$i day", strtotime($from_holiday.$from_time))));
-                $etime = date('Y-m-d\TH:i:s', date(strtotime("+$i day", strtotime($from_holiday.$to_time))));
-                // $etime = date('Y-m-d\TH:i:s', strtotime($from_holiday.$to_time. '+'.$i.'day'));
-
-                $arr = array('title' => 'Time Off'.$note, 'start' => $stime, 'end' => $etime, 'color'=>'#e5e5e5','editable' => false);
-                array_push($array, $arr);
-            }
-
-        }
-
-
-
-
-		return $array;
+		return [];
 
 	}
 
