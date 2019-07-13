@@ -268,8 +268,6 @@ class Api_V1_TransactionController extends \BaseController
 					 $data['currency_amount'] = $currency;
 					}
 
-					return $total_amount;
-
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;
