@@ -133,12 +133,19 @@ class Api_V1_TransactionController extends \BaseController
 						}
 					}
 
+
 					if($clinic->currency_type == "myr") {
 					  $total_amount = $input_amount / 3;
 					} else {
 					  $total_amount = $input_amount;
 					}
 
+					if($total_amount > $user_credits) {
+						$returnObject->status = FALSE;
+            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
+            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+            return Response::json($returnObject);
+					}
 					// return $total_amount;
 					// get details for clinic co paid
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
@@ -386,7 +393,7 @@ class Api_V1_TransactionController extends \BaseController
 
 										$transaction_results = array(
 											'clinic_name'       => ucwords($clinic->Name),
-											'bill_amount'				=> number_format($input['input_amount'], 2),
+											'bill_amount'				=> number_format(TransactionHelper::floatvalue($input['input_amount']), 2),
 											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($consultation_fees * 3, 2) : number_format($consultation_fees, 2),
 											'total_amount'     => number_format($total_amount, 2),
 											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
