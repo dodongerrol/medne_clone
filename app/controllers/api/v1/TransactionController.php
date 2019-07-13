@@ -950,7 +950,7 @@ class Api_V1_TransactionController extends \BaseController
                	if((int)$trans->half_credits == 1) {
                   $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                	} else {
-               		$total_amount = $trans->procedure_cost;
+               		$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                	}
               } else {
                   $total_amount = $cost;
@@ -1161,7 +1161,7 @@ class Api_V1_TransactionController extends \BaseController
 									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
 									$cash_cost = $transation->cash_cost;
 								} else {
-									$total_amount = $transaction->procedure_cost + $transaction->consultation_fees;
+									$total_amount = $transaction->procedure_cost + $transaction->consultation_fees + $transaction->cash_cost;
 									$cash_cost = $transaction->procedure_cost;
 								}
 							} else {
@@ -1227,7 +1227,7 @@ class Api_V1_TransactionController extends \BaseController
 									if((int)$transaction->lite_plan_use_credits == 1) {
 										$bill_amount = 	$transaction->procedure_cost;
 									} else {
-										$bill_amount = 	$transaction->procedure_cost - $transaction->consultation_fees;
+										$bill_amount = 	$transaction->credit_cost + $transaction->cash_cost;
 									}
 								}
 							} else {
