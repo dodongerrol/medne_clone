@@ -142,7 +142,7 @@ class Api_V1_TransactionController extends \BaseController
 
 					if($total_amount > $user_credits) {
 						$returnObject->status = FALSE;
-            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
+            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
             $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
             return Response::json($returnObject);
 					}
