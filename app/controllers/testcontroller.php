@@ -616,4 +616,15 @@ class testcontroller extends BaseController {
 		$result = PlanHelper::validateDate($input['date'], 'd-m-Y');
 		return array('result' => $result, 'date' => date('Y-m-d', strtotime($input['date'])));
 	}
+
+	public function testGetMedicalBalanceByDate( )
+	{
+		$input = Input::all();
+
+		$user_id = $input['user_id'];
+		$date = $input['date'];
+		$spending_type = $input['spending_type'];
+
+		return EclaimHelper::getSpendingBalance($user_id, $date, $spending_type);
+	}
 }
