@@ -407,10 +407,14 @@ class CalendarController extends \BaseController {
 	{
 		$getSessionData = StringHelper::getMainSession(3);
 
-		$ua = new UserAppoinment();
-		$ua_count = $ua->getClinicAppointments($getSessionData->Ref_ID);
+		if($getSessionData) {
+			$ua = new UserAppoinment();
+			$ua_count = $ua->getClinicAppointments($getSessionData->Ref_ID);
 
-		return count($ua_count);
+			return count($ua_count);
+		} else {
+			return 0;
+		}
 	}
 
 	public function getExistingAppointments($id)
