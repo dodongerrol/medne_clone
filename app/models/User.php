@@ -451,7 +451,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             //$this->Insurance_Policy_No = $dataArray['insurance_policy_no'];
             //$this->Lat = $dataArray['latitude'];
             //$this->Lng = $dataArray['longitude'];
-            $this->NRIC = $dataArray['nric'];
+            // $this->NRIC = $dataArray['nric'];
             //$this->FIN = $dataArray['fin'];
 
             $this->created_at = time();
