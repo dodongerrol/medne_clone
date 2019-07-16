@@ -290,7 +290,13 @@ span.arrow-right {
 .table-successfulTransaction th,
 .table-nric th,
 .table-manual th {
-  padding-bottom: 15px;
+  /*padding-bottom: 15px;*/
+  padding: 0 15px 15px 0px;
+  vertical-align: top;
+}
+
+.table-successfulTransaction th:nth-child(1){
+  padding-left: 0;
 }
 
 
@@ -325,9 +331,11 @@ span.arrow-right {
 .table-successfulTransaction td,
 .table-nric td,
 .table-manual td {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  /*padding-top: 10px;
+  padding-bottom: 10px;*/
+  padding: 10px 15px 10px 0;
   font-weight: bold;
+  vertical-align: top;
 }
 
 .table-trans-preview .btn-submit{
@@ -339,6 +347,13 @@ span.arrow-right {
   background: var(--danger) !important;
   border-radius: 0px;
   color: #FFF;
+}
+
+@media only screen and (max-width : 1200px) {
+  .table-successfulTransaction th,
+  .table-successfulTransaction td{
+    font-size: 13px;
+  }
 }
 
 /* modal styles */
