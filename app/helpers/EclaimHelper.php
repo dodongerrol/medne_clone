@@ -109,27 +109,48 @@ class EclaimHelper
     $total_deduction_credits = 0;
     $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
     $wallet_id = $wallet->wallet_id;
+    $start_date = null;
+    $end_date = null;
 
     $reset = DB::table('credit_reset')
                 ->where('id', $user_id)
                 ->where('spending_type', $spending_type)
                 ->where('user_type', 'employee')
-                // ->where('date_resetted', '<=', date('Y-m-d', strtotime($date)))
                 ->get();
+    
+    $first_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->first();
+    $allocation_date = date('Y-m-d', strtotime($first_wallet_history->created_at));
+    $temp_start_date = $allocation_date;
 
-    return array('res' => $reset);
-    if($reset) {
-      $start = $reset->date_resetted;
-      $wallet_history_id = $reset->wallet_history_id;
+    if(sizeof($reset) > 0) {
+      for( $i = 0; $i < sizeof( $reset ); $i++ ){
+        $temp_end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $reset[$i]->date_resetted ) ) ));
+        if( strtotime( $temp_start_date ) < strtotime($date) && strtotime($date) < strtotime( $temp_end_date ) ){
+          $start_date = $temp_start_date;
+          $end_date = $temp_end_date;
+        }
+        $temp_start_date = $reset[$i]->date_resetted;
+
+        if( $i == (sizeof( $reset )-1) ){
+          if( $start_date == null && $end_date == null ){
+            $start_date = $temp_start_date;
+            $end_date = date('Y-m-d',(strtotime ( '+1 day' , strtotime( date('Y-m-d') ))));
+          }
+        }
+      }
+
       $wallet_history = DB::table($wallet_table_logs)
               ->join('e_wallet', 'e_wallet.wallet_id', '=', $wallet_table_logs.'.wallet_id')
               ->where($wallet_table_logs.'.wallet_id', $wallet_id)
               ->where('e_wallet.UserID', $user_id)
-              ->where($wallet_table_logs.'.created_at',  '>=', $start)
+              ->where($wallet_table_logs.'.created_at',  '>=', $start_date)
+              ->where($wallet_table_logs.'.created_at',  '<=', $end_date)
               ->get();
     } else {
       $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
     }
+
+    // return $wallet_history;
 
     foreach ($wallet_history as $key => $history) {
       if($history->logs == "added_by_hr") {
@@ -181,6 +202,8 @@ class EclaimHelper
     if($pro_allocation > 0) {
       $allocation = $pro_allocation;
     }
+
+    return $balance;
 
     return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
 
