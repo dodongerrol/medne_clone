@@ -132,9 +132,10 @@ class EclaimHelper
           $end_date = $temp_end_date;
         }
         $temp_start_date = $reset[$i]->date_resetted;
-
+        $back_date = true;
         if( $i == (sizeof( $reset )-1) ){
           if( $start_date == null && $end_date == null ){
+            $back_date = false;
             $start_date = $temp_start_date;
             $end_date = date('Y-m-d',(strtotime ( '+1 day' , strtotime( date('Y-m-d') ))));
           }
@@ -149,7 +150,6 @@ class EclaimHelper
               ->where($wallet_table_logs.'.created_at',  '<=', $end_date)
               ->get();
 
-      $back_date = true;
     } else {
       $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
     }
