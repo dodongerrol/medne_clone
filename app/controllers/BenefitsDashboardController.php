@@ -11839,7 +11839,12 @@ class BenefitsDashboardController extends \BaseController {
 		$findUserID = DB::table('user')->where('UserID', $id)->first();
 		if($findUserID){
 			$result = $e_card->newEcardDetails($id);
-			$result['valid_start_claim'] = date('Y-m-d', strtotime($result['start_date']));
+			$first_plan = PlanHelper::getUserFirstPlanStart($id);
+			if($first_plan) {
+				$result['valid_start_claim'] = $first_plan;
+			} else {
+				$result['valid_start_claim'] = date('Y-m-d', strtotime($result['start_date']));
+			}
 			$result['valid_end_claim'] = date('Y-m-d', strtotime($result['valid_date']));
 			return $result;
 		} else {

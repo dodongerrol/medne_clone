@@ -4885,5 +4885,18 @@ class PlanHelper {
 			);
 		}
 	}
+
+	public static function getUserFirstPlanStart($user_id)
+	{
+			$plan_user = DB::table('user_plan_type')
+										->where('user_id', $user_id)
+										->first();
+
+			if($plan_user) {
+				return $plan_user->plan_start;
+			} else {
+				return false;
+			}
+	}
 }
 ?>
