@@ -5147,12 +5147,13 @@ public function createEclaim( )
           $input_amount = trim($input['amount']);
          }
 
-         if($input_amount > $balance) {
+         $amount = trim($input_amount);
+         
+         if($amount > $balance) {
              $returnObject->status = FALSE;
              $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
              return Response::json($returnObject);
          }
-
            // $check_pending = self::checkPendingEclaims($ids, $input['spending_type']);
          $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
          if($input['spending_type'] == "medical") {
@@ -5161,7 +5162,6 @@ public function createEclaim( )
              $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
          }
 
-         $amount = trim($input_amount);
          $claim_amounts = trim($claim_amounts);
 
          if($amount > $claim_amounts) {
