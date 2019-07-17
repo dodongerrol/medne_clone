@@ -137,7 +137,7 @@ class EclaimController extends \BaseController {
         // check if e-claim can proceed
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
         // return $check_user_balance->balance;
-		if($input['amount'] > $check_user_balance->balance) {
+		if($input['amount'] > $check_user_balance->balance || $check_user_balance->balance <= 0) {
 			return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
 		}
 
@@ -147,16 +147,11 @@ class EclaimController extends \BaseController {
 		$total_claim_amount = $check_user_balance->balance - $claim_amounts;
 		$amount = trim($input['amount']);
 		$total_claim_amount = trim($total_claim_amount);
-		// return $total_claim_amount;
-        // $input['amount'] = (float)$input['amount'];
-        // return array('amount' => gettype((double)$input['amount']), 'total_amount' => gettype($total_claim_amount));
-		// return ($amount > $total_claim_amount ? 1 : 0);
-		// $input['amount'] = (float)$input['amount'];
-		// (float)$total_claim_amount
+
 		if($amount > $total_claim_amount) {
 			return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
 		}
-		// return "yeah";
+		
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
 		$data = array(
@@ -294,7 +289,7 @@ class EclaimController extends \BaseController {
         // check if e-claim can proceed
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
 
-		if($input['amount'] > $check_user_balance->wellness_balance) {
+		if($input['amount'] > $check_user_balance->wellness_balance || $check_user_balance->wellness_balance <= 0) {
 			return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 		}
 
