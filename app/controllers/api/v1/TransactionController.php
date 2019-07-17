@@ -1566,6 +1566,18 @@ class Api_V1_TransactionController extends \BaseController
           	return Response::json($returnObject);
 					}
 
+					// check if still valid
+					$check_in_expiry_time = strtotime('+120 minutes', strtotime($check_in->check_in_time));
+					$today = strtotime(date('Y-m-d H:i:s'));
+					// return $check_in_expiry_time;
+					// return date('d M, h:i a', $check_in_expiry_time);
+					if($today > $check_in_expiry_time) {
+						$returnObject->status = FALSE;
+          	$returnObject->message = 'Check In Registration is expired. Please make another Check-In Registration.';
+          	$returnObject->check_in_status_removed = true;
+          	return Response::json($returnObject);
+					}
+
 					$user = DB::table('user')->where('UserID', $check_in->user_id)->first();
 					$clinic = DB::table('clinic')->where('ClinicID', $check_in->clinic_id)->first();
 					$data['clinic_id'] = $clinic->ClinicID;
