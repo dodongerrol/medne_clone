@@ -420,7 +420,7 @@ app.directive('eclaimSubmitDirective', [
 				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
 				    	maxDate : new Date( moment( ) ),
-				    	useCurrent : false
+				    	useCurrent : false,
 				    });
 
 	        	$('#visitDateInput').on('dp.show', function(e){ 
