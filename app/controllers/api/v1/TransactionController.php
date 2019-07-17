@@ -1271,7 +1271,8 @@ class Api_V1_TransactionController extends \BaseController
 							}
 						} else if($transaction->currency_type == "myr") {
 							if((int)$transaction->lite_plan_enabled == 1) {
-								$consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
+								// $consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
+								$consultation_fee = number_format($consultation, 2);
 							}
 						}
 
