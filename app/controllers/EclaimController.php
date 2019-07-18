@@ -101,6 +101,11 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
 
+		// check if their is receipts
+		if(sizeof($input['receipts']) == 0) {
+			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
+		}
+
 		$ids = [];
         // get real userid for dependents
 		$type = StringHelper::checkUserType($input['user_id']);
@@ -190,7 +195,7 @@ class EclaimController extends \BaseController {
 									'Key'        => 'receipts/'.$file,
 									'SourceFile' => storage_path().'/receipts/'.$file,
 								));
-								unlink(storage_path().'/receipts/'.$file);
+								// unlink(storage_path().'/receipts/'.$file);
 							}
 						// }
 					} catch(Exception $e) {
@@ -254,6 +259,11 @@ class EclaimController extends \BaseController {
 
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
+		}
+
+		// check if their is receipts
+		if(sizeof($input['receipts']) == 0) {
+			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
 
 		$ids = [];
@@ -341,14 +351,14 @@ class EclaimController extends \BaseController {
 								$s3->putObject(array(
 									'Bucket'     => 'mednefits',
 									'Key'        => 'receipts/'.$file,
-									'SourceFile' => public_path().'/receipts/'.$file,
+									'SourceFile' => storage_path().'/receipts/'.$file,
 								));
 							}
 						// }
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-						$email['logs'] = 'E-Claim Wellness Submission Save Docs- '.$e->getMessage();
+						$email['logs'] = 'E-Claim Wellness Submission Save Docs- '.$e;
 						$email['emailSubject'] = 'Error log.';
 						EmailHelper::sendErrorLogs($email);
 					}
@@ -388,7 +398,7 @@ class EclaimController extends \BaseController {
             // send email logs
 			$email = [];
 			$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-			$email['logs'] = 'E-Claim Submission Wellness - '.$e->getMessage();
+			$email['logs'] = 'E-Claim Submission Wellness - '.$e;
 			$email['emailSubject'] = 'Error log.';
 			// send
 			EmailHelper::sendErrorLogs($email);
