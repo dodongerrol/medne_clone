@@ -2005,6 +2005,7 @@ public function getNewClinicDetails($id)
         $check_in = $check_in_class->createData($check_in_data);
         $jsonArray['check_in_id'] = $check_in->id;
         $jsonArray['check_in_time'] = date('d M, h:i a', strtotime($check_in_time));
+        $jsonArray['check_in_expiry_time'] = date('Y-m-d H:i:s', strtotime('+120 minutes', strtotime($check_in_time)));
         $returnObject->data = $jsonArray;
         $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
 
@@ -5138,7 +5139,8 @@ public function createEclaim( )
 
          if(Input::has('currency_type') && $input['currency_type'] != null) {
           if(strtolower($input['currency_type']) == "myr") {
-            $input_amount = $input['currency_exchange_rate'] ? $input['amount'] / $input['currency_exchange_rate'] : $input['amount'] / 3;
+            // $input_amount = $input['currency_exchange_rate'] ? $input['amount'] / $input['currency_exchange_rate'] : $input['amount'] / 3;
+            $input_amount = $input['amount'] / 3;
           } else {
             $input_amount = trim($input['amount']);
           }
@@ -5146,12 +5148,13 @@ public function createEclaim( )
           $input_amount = trim($input['amount']);
          }
 
-         if($input_amount > $balance) {
+         $amount = trim($input_amount);
+         
+         if($amount > $balance) {
              $returnObject->status = FALSE;
              $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
              return Response::json($returnObject);
          }
-
            // $check_pending = self::checkPendingEclaims($ids, $input['spending_type']);
          $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
          if($input['spending_type'] == "medical") {
@@ -5160,7 +5163,6 @@ public function createEclaim( )
              $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
          }
 
-         $amount = trim($input_amount);
          $claim_amounts = trim($claim_amounts);
 
          if($amount > $claim_amounts) {

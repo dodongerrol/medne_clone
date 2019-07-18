@@ -1271,7 +1271,8 @@ class Api_V1_TransactionController extends \BaseController
 							}
 						} else if($transaction->currency_type == "myr") {
 							if((int)$transaction->lite_plan_enabled == 1) {
-								$consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
+								// $consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
+								$consultation_fee = number_format($consultation, 2);
 							}
 						}
 
@@ -1566,6 +1567,18 @@ class Api_V1_TransactionController extends \BaseController
 					if(!$check_in) {
 						$returnObject->status = FALSE;
           	$returnObject->message = 'Check In Registration removed by Health Provider. Please make another Check-In Registration.';
+          	$returnObject->check_in_status_removed = true;
+          	return Response::json($returnObject);
+					}
+
+					// check if still valid
+					$check_in_expiry_time = strtotime('+120 minutes', strtotime($check_in->check_in_time));
+					$today = strtotime(date('Y-m-d H:i:s'));
+					// return $check_in_expiry_time;
+					// return date('d M, h:i a', $check_in_expiry_time);
+					if($today > $check_in_expiry_time) {
+						$returnObject->status = FALSE;
+          	$returnObject->message = 'Check In Registration is expired. Please make another Check-In Registration.';
           	$returnObject->check_in_status_removed = true;
           	return Response::json($returnObject);
 					}
