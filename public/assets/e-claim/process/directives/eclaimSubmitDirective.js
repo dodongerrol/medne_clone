@@ -125,7 +125,6 @@ app.directive('eclaimSubmitDirective', [
 				}
 
 				scope.checkVisitTime = function( opt_type ) {
-					console.log(scope.eclaim.visit_date + " " + scope.selected_hour + ":" + scope.selected_minute + " " + scope.eclaim.selectedDayTime)
 					var selected_time = moment( scope.eclaim.visit_date + " " + scope.selected_hour + ":" + scope.selected_minute + " " + scope.eclaim.selectedDayTime, 'MMM DD, YYYY hh:mm A' ).format( 'MM/DD/YYYY hh:mm A' );
 					var curr_time;
 
@@ -134,9 +133,6 @@ app.directive('eclaimSubmitDirective', [
 					}else{
 						curr_time = moment().subtract(1,opt_type).format( 'MM/DD/YYYY hh:mm A' );
 					}
-
-					console.log( selected_time );
-					console.log( curr_time );
 
 					if( moment(selected_time).isSameOrBefore( moment(curr_time) ) ){
 						return true;
@@ -210,16 +206,21 @@ app.directive('eclaimSubmitDirective', [
 					if( !info.visit_date ){
 						scope.showToast( "Please select a visit date" );
 						return false;
+					}else{
+						if( moment(info.visit_date).isBefore( moment( scope.user_status.valid_start_claim ).subtract( 1, 'days' ) ) 
+							|| moment(info.visit_date).isAfter( moment( ).add( 1, 'days' ) ) ){
+							scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( ).format("MM/DD/YYYY") );
+							return false;
+						}
 					}
-
 
 					if( !info.visit_time ){
 						scope.showToast( "Please select a visit time" );
 						return false;
 					}
 
-					if( !info.claim_amount ){
-						scope.showToast( "Please input claim amount" );
+					if( !info.claim_amount || info.claim_amount == 0){
+						scope.showToast( "Claim Amount should be more than 0" );
 						return false;
 					}
 
@@ -419,7 +420,7 @@ app.directive('eclaimSubmitDirective', [
 				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
 				    	maxDate : new Date( moment( ) ),
-				    	useCurrent : false
+				    	useCurrent : false,
 				    });
 
 	        	$('#visitDateInput').on('dp.show', function(e){ 

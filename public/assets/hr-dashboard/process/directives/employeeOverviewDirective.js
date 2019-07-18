@@ -557,7 +557,6 @@ app.directive("employeeOverviewDirective", [
             scope.healthSpendingAccountTabIsShow = false;
             scope.selectedEmployee_index = index;
             scope.selectedEmployee = emp;
-            
             if( scope.selectedEmployee.plan_tier != null || scope.selectedEmployee.plan_tier ){
               scope.addActiveDependent_index = scope.selectedEmployee.plan_tier.dependent_enrolled_count + 1;
             }else{
@@ -1339,8 +1338,11 @@ app.directive("employeeOverviewDirective", [
         scope.getEmpDependents = function( id ) {
           hrSettings.getDependents( id )
             .then(function(response){
-              // console.log(response);
+              console.log(response);
               scope.selected_emp_dependents = response.data.dependents;
+              angular.forEach( scope.selected_emp_dependents, function(value, key) {
+                value.dob = moment( value.dob ).format('DD/MM/YYYY');
+              });
             });
         }
 
