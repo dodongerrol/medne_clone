@@ -729,10 +729,21 @@ class DependentController extends \BaseController {
 			return array('status' => false, 'message' => 'Dependent Relationship is required.');
 		}
 
+		$dob_format = PlanHelper::validateDate($input['dob'], 'd/m/Y');
+		if($dob_format) {
+			// $user['dob'] = date('d/m/Y', strtotime($dob));
+			$input['dob'] = $input['dob'];
+		} else {
+			// $user['dob'] = $dob;
+			$input['dob'] = date('d/m/Y', strtotime($input['dob']));
+		}
+
+		$dob = \DateTime::createFromFormat('d/m/Y', $input['dob']);
+		$dob = $dob->format('Y-m-d');
 		// update profile
 		$profile_data = array(
 			'Name'	=> ucwords($input['first_name']).' '.ucwords($input['last_name']),
-			'DOB'	=> date('Y-m-d', strtotime($input['dob']))
+			'DOB'	=> $dob
 		);
 
 		$profile = DB::table('user')->where('UserID', $input['user_id'])->update($profile_data);

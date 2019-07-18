@@ -5139,7 +5139,8 @@ public function createEclaim( )
 
          if(Input::has('currency_type') && $input['currency_type'] != null) {
           if(strtolower($input['currency_type']) == "myr") {
-            $input_amount = $input['currency_exchange_rate'] ? $input['amount'] / $input['currency_exchange_rate'] : $input['amount'] / 3;
+            // $input_amount = $input['currency_exchange_rate'] ? $input['amount'] / $input['currency_exchange_rate'] : $input['amount'] / 3;
+            $input_amount = $input['amount'] / 3;
           } else {
             $input_amount = trim($input['amount']);
           }
