@@ -1232,6 +1232,11 @@ body,html{
   line-height: 10px !important;
 }
 
+.bootstrap-datetimepicker-widget td.disabled,
+.bootstrap-datetimepicker-widget th.disabled{
+    opacity: .5 !important;
+}
+
 .visit-time-form .bootstrap-datetimepicker-widget table td span {
     display: inline-block;
     width: 24px;
