@@ -217,7 +217,7 @@
 						</div>
 
 						<div class="form-group col-xs-12 col-sm-12 col-md-12">
-					  	<button ng-disabled="upload_ctr > 0 || upload_active == 0" ng-click="saveUploads()" class="btn btn-default btn-next pull-right">Next</button>
+					  	<button ng-disabled="upload_ctr > 0 || upload_active == 0 || receipts.length == 0" ng-click="saveUploads()" class="btn btn-default btn-next pull-right">Next</button>
 					  	<button ng-click="backStep()" class="btn btn-default btn-back pull-right" style="background: #999;margin-right: 10px;">Back</button>
 					  </div>
 					</form>
