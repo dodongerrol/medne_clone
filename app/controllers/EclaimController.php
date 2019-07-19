@@ -706,7 +706,7 @@ class EclaimController extends \BaseController {
 		$start = date('Y-m-d', strtotime($input['start']));
 		$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 		$lite_plan_status = false;
-		$end = PlanHelper::getEndDate($input['end']);
+		$end = PlanHelper::endDate($input['end']);
 
 		$e_claim = [];
 		$transaction_details = [];
@@ -776,7 +776,6 @@ class EclaimController extends \BaseController {
 			->sum($table_wallet_history.'.credit');
 		}
 
-
 		$e_claim_total = DB::table($table_wallet_history)
 		->where('wallet_id', $wallet->wallet_id)
 		->where('where_spend', 'e_claim_transaction')
@@ -788,8 +787,8 @@ class EclaimController extends \BaseController {
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
-		->where('date', '>=', $start)
-		->where('date', '<=', $end)
+		->where('created_at', '>=', $start)
+		->where('created_at', '<=', $end)
 		->orderBy('created_at', 'desc')
 		->get();
         // get in-network transactions
