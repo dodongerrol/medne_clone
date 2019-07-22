@@ -1466,21 +1466,21 @@ class DependentController extends \BaseController {
 			$duration = $first_plan->duration;
 
 			$end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
-			if($dependent_plan->account_type != "trial_plan") {
-				$calculated_prices_end_date = date('Y-m-d', strtotime('+'.$dependent_plan->duration, strtotime($plan->plan_start)));
+			if($dependent_plan->account_type !== "trial_plan") {
+				$calculated_prices_end_date_temp = date('Y-m-d', strtotime('+'.$dependent_plan->duration, strtotime($plan->plan_start)));
+				$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date_temp)));
 			} else {
-				$calculated_prices_end_date = $end_plan_date;
+				$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
 			}
 
-			$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date)));
-
-			$calculated_prices = \PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent_plan->plan_start, $calculated_prices_end_date);
+			$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent_plan->plan_start, $calculated_prices_end_date);
 
 			$data['price']          = number_format($calculated_prices, 2);
 			$amount_due = $data['number_employess'] * $calculated_prices;
 			$data['amount']					= number_format($data['number_employess'] * $calculated_prices, 2);
 			$data['total']					= $data['number_employess'] * $calculated_prices;
-			$data['duration'] = $dependent_plan->duration;
+			// $data['duration'] = $dependent_plan->duration;
+			$data['duration'] = PlanHelper::getPlanDuration($plan->customer_buy_start_id, $dependent_plan->plan_start);
 
 			if((int)$dependent_plan->payment_status == 1) {
 				$data['paid'] = true;
