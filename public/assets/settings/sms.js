@@ -29,12 +29,25 @@ jQuery(document).ready(function($) {
 				var code = $('#phone_code').val('+65');
 				var phone = $('#phone').val('');
 				var message = $('#message').val('');
-
 			} else {
 				$('#send_message').text('Resend');
 				$('.error').css({'display': 'block','color': 'red'});
 				$('.error').html('</br>There is a error sending your message');
 			}
+		})
+		.error(function(error){
+			console.log('error', error);
+			$('#send_message').text('Resend');
+			$('.error').css({'display': 'block','color': 'red'});
+			var message = error.responseJSON.error.message.split(": ");
+			$('.error').html('</br>' + message[1]);
+		})
+		.fail(function(fail) {
+			console.log('fail', fail);
+			$('#send_message').text('Resend');
+			$('.error').css({'display': 'block','color': 'red'});
+			var message = fail.responseJSON.error.message.split(": ");
+			$('.error').html('</br>' + message[1]);
 		});
 		
 

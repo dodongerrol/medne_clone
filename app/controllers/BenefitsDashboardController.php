@@ -8367,7 +8367,7 @@ class BenefitsDashboardController extends \BaseController {
 				$emailDdata['emailPage']= 'email-templates.latest-templates.global-reset-password-template';
 				$emailDdata['email']= $input['email'];
 	      		// $emailDdata['password']= $password;
-				$emailDdata['name'] = ucwords($contact->first_name);
+				$emailDdata['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
 				$emailDdata['context'] = "Forgot your company password?";
 				$emailDdata['emailSubject'] = 'HR/Benefits Password Reset';
 				$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;

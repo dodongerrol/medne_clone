@@ -36,15 +36,15 @@ class Api_V1_TransactionController extends \BaseController
 						return Response::json($returnObject);
 					}
 					// check if input amount is present
-					if(!isset($input['input_amount'])) {
+					if(is_numeric($input['input_amount']) == false) {
 						$returnObject->status = FALSE;
-						$returnObject->message = 'Please enter an amount.';
+						$returnObject->message = 'Amount should be a number.';
 						return Response::json($returnObject);
 					}
 
-					if($input['input_amount'] <= 0) {
+					if($input['input_amount'] < 0) {
 						$returnObject->status = FALSE;
-						$returnObject->message = 'Please enter an amount greater than 0.';
+						$returnObject->message = 'Amount should not be below 0.';
 						return Response::json($returnObject);
 					}
 
