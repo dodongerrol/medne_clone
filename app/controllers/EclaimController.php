@@ -5398,7 +5398,7 @@ public function searchEmployeeEclaimActivity( )
 {
 	$input = Input::all();
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = date('Y-m-d', strtotime($input['end']));
+	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$e_claim = [];
 	$total_e_claim_submitted = 0;
@@ -5594,7 +5594,7 @@ public function hrEclaimActivity( )
 {
 	$input = Input::all();
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
+	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$e_claim = [];
 	$total_e_claim_submitted = 0;
