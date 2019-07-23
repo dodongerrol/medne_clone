@@ -5298,12 +5298,6 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$duration = PlanHelper::getPlanDuration($active_plan->customer_start_buy_id, $active_plan->plan_start);
-			// return $calculated_prices;
-			// if($active_plan->account_type != "trial_plan") {
-			// 	$calculated_prices_end_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
-			// } else {
-			// 	$calculated_prices_end_date = $end_plan_date;
-			// }
 		}
 
 		if($active_plan->account_type == 'stand_alone_plan') {
