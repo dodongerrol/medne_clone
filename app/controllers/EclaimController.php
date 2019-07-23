@@ -815,6 +815,7 @@ class EclaimController extends \BaseController {
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$customer = DB::table('user')->where('UserID', $trans->UserID)->first();
 				$procedure_temp = "";
+				$procedure = "";
 
             // if($trans->procedure_cost >= 0) {
 
@@ -867,7 +868,7 @@ class EclaimController extends \BaseController {
 				}
 
                 // get services
-				if((int)$trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+				if((int)$trans->multiple_service_selection == 1)
 				{
                     // get multiple service
 					$service_lists = DB::table('transaction_services')
@@ -1766,6 +1767,7 @@ class EclaimController extends \BaseController {
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$customer = DB::table('user')->where('UserID', $trans->UserID)->first();
 				$procedure_temp = "";
+				$procedure = "";
 				$wallet_status = false;
 
 				$company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
@@ -2909,9 +2911,10 @@ public function getActivityInNetworkTransactions( )
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$customer = DB::table('user')->where('UserID', $trans->UserID)->first();
 				$procedure_temp = "";
+				$procedure = "";
 
                         // get services
-				if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+				if((int)$trans->multiple_service_selection == 1)
 				{
                             // get multiple service
 					$service_lists = DB::table('transaction_services')
@@ -4499,6 +4502,7 @@ public function getHrActivity( )
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 					$customer = DB::table('user')->where('UserID', $trans->UserID)->first();
 					$procedure_temp = "";
+					$procedure = "";
 
                         // get services
 					if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
@@ -5043,9 +5047,10 @@ public function searchEmployeeActivity( )
 			$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 			$customer = DB::table('user')->where('UserID', $trans->UserID)->first();
 			$procedure_temp = "";
+			$procedure = "";
 
             // get services
-			if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+			if((int)$trans->multiple_service_selection == 1)
 			{
                 // get multiple service
 				$service_lists = DB::table('transaction_services')

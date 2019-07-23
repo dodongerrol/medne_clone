@@ -891,8 +891,9 @@ class Api_V1_TransactionController extends \BaseController
                   $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
                   $customer = DB::table('user')->where('UserID', $trans->UserID)->first();
                   $procedure_temp = "";
+                  $procedure = "";
                             // get services
-                  if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+                  if((int)$trans->multiple_service_selection == 1)
                   {
                                 // get multiple service
                      $service_lists = DB::table('transaction_services')
@@ -1056,6 +1057,7 @@ class Api_V1_TransactionController extends \BaseController
 					$consultation_credits = false;
 					$consultation = 0;
 					$wallet_status = false;
+					$procedure = "";
 
 					$transaction_details = [];
 					$transaction = DB::table('transaction_history')->where('transaction_id', $transaction_id)->first();
@@ -1126,7 +1128,7 @@ class Api_V1_TransactionController extends \BaseController
 						}
 
 						// get services
-						if($transaction->multiple_service_selection == 1 || $transaction->multiple_service_selection == "1")
+						if((int)$transaction->multiple_service_selection == 1)
 						{
 							// get multiple service
 							$service_lists = DB::table('transaction_services')
