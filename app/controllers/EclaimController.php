@@ -7,9 +7,9 @@ class EclaimController extends \BaseController {
 	public function __construct( )
 	{
 		\Cloudinary::config(array(
-			"cloud_name" => "dzh9uhsqr",
-			"api_key" => "322846874496157",
-			"api_secret" => "qALv36cts3ERnFGD1Wjqx9CH4LI"
+			"cloud_name" => "mednefits-com",
+			"api_key" => "881921989926795",
+			"api_secret" => "zNoFc7EHPMtafUEt0r8gxkv4V5U"
 		));
 	}
 
@@ -142,10 +142,11 @@ class EclaimController extends \BaseController {
         // check if e-claim can proceed
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
         // return $check_user_balance->balance;
-		if($input['amount'] > $check_user_balance->balance || $check_user_balance->balance <= 0) {
+        $balance = round($check_user_balance->balance, 2);
+
+		if($input['amount'] > $balance || $balance <= 0) {
 			return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
 		}
-
 
         // check user pending e-claims amount
 		$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
@@ -298,8 +299,9 @@ class EclaimController extends \BaseController {
 
         // check if e-claim can proceed
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
-
-		if($input['amount'] > $check_user_balance->wellness_balance || $check_user_balance->wellness_balance <= 0) {
+		$balance = round($check_user_balance->balance, 2);
+		
+		if($input['amount'] > $balance || $balance <= 0) {
 			return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 		}
 
