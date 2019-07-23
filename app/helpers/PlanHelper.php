@@ -827,7 +827,7 @@ class PlanHelper {
 		->first();
 
 		$active_plan = DB::table('customer_active_plan')
-		->where('plan_id', $plan->customer_plan_id)
+		->where('customer_start_buy_id', $customer_id)
 		->first();
 
 		if((int)$active_plan->plan_extention_enable == 1) {
@@ -857,7 +857,7 @@ class PlanHelper {
 
 		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
 
-		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date, 'customer_plan_id' => $plan->customer_plan_id);
+		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
 	}
 
 	public static function checkDuplicateNRIC($nric)
@@ -2040,14 +2040,13 @@ class PlanHelper {
 		}
 		public static function calculateInvoicePlanPrice($default_price, $start, $end)
 		{
-			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime($end))));
+			$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
 			$days = $diff->format('%a');
-
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 			$remaining_days = $days;
 
-			$cost_plan_and_days = ($default_price / $total_days);
-			return $cost_plan_and_days * $remaining_days;
+			$cost_plan_and_days = ($remaining_days / $total_days);
+			return $cost_plan_and_days * $default_price;
 		}
 
 		public static function getCorporateUserByAllocated($corporate_id, $customer_id) 
