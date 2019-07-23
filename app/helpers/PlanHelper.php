@@ -857,7 +857,7 @@ class PlanHelper {
 
 		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
 
-		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
+		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date, 'customer_plan_id' => $plan->customer_plan_id);
 	}
 
 	public static function checkDuplicateNRIC($nric)
