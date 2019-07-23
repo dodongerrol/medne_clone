@@ -721,8 +721,8 @@ class Api_V1_TransactionController extends \BaseController
 
            if($clinic_peak_status) {
 						$data['peak_hour_status'] = 1;
-						if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
-							$gst_peak = $peak_amount * $clinic->gst_percent;
+						if((int)$clinic_data->co_paid_status == 1) {
+							$gst_peak = $peak_amount * $clinic_data->gst_percent;
 							$data['peak_hour_amount'] = $peak_amount + $gst_peak;
 						} else {
 							$data['peak_hour_amount'] = $peak_amount;
