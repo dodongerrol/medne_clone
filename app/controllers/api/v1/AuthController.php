@@ -1114,6 +1114,7 @@ return Response::json($returnObject);
                   $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
                   $customer = DB::table('user')->where('UserID', $trans->UserID)->first();
                   $procedure_temp = "";
+                  $procedure = "";
 
                   $company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
 
