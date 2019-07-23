@@ -5131,6 +5131,7 @@ public function createEclaim( )
          }
 
          $amount = trim($input_amount);
+         $balance = round($balance, 2);
          
          if($amount > $balance) {
              $returnObject->status = FALSE;
