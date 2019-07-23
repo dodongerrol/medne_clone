@@ -596,9 +596,16 @@ class Api_V1_TransactionController extends \BaseController
                $returnObject->status = FALSE;
                $returnObject->message = 'Please choose a service.';
                return Response::json($returnObject);
-           } else if(sizeof($input['services']) == 0) {
+           } 
+           if(sizeof($input['services']) == 0) {
                $returnObject->status = FALSE;
                $returnObject->message = 'Please choose a service.';
+               return Response::json($returnObject);
+           }
+
+           if(is_array($input['services']) == false) {
+               $returnObject->status = FALSE;
+               $returnObject->message = 'Parameter error. service should be an array';
                return Response::json($returnObject);
            }
 
