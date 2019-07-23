@@ -302,8 +302,9 @@
 							$customer = DB::table('user')->where('UserID', $trans['UserID'])->first();
 							$procedure_temp = "";
 							$services = "";
+							$procedure = "";
 							// get services
-							if($trans['multiple_service_selection'] == 1 || $trans['multiple_service_selection'] == "1")
+							if((int)$trans['multiple_service_selection'] == 1)
 							{
 							  // get multiple service
 							  $service_lists = DB::table('transaction_services')
