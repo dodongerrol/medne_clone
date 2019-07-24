@@ -1449,7 +1449,7 @@ class DependentController extends \BaseController {
 				$data['amount_due']     = $amount_due;
 			}
 
-			$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->first();
+			// $plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->first();
 			$first_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 			$duration = $first_plan->duration;
 
@@ -1461,20 +1461,10 @@ class DependentController extends \BaseController {
 				$data['duration'] = '12 months';
 			}
 		} else {
-			$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->first();
-			$duration = $dependent_plan->duration;
-
-			$end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
-			$end_plan_date = date('Y-m-d', strtotime('-2 day', strtotime($end_plan_date)));
-			// if($dependent_plan->account_type !== "trial_plan") {
-			// 	$calculated_prices_end_date_temp = date('Y-m-d', strtotime('+'.$dependent_plan->duration, strtotime($plan->plan_start)));
-			// 	$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date_temp)));
-			// } else {
-			// 	$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
-			// }
-
-			$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent_plan->plan_start, $end_plan_date);
-
+			$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($plan->customer_buy_start_id);
+			$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
+			$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent_plan->plan_start, $calculated_prices_end_date);
+			$end_plan_date = $calculated_prices_end_date;
 			$data['price']          = number_format($calculated_prices, 2);
 			$amount_due = $data['number_employess'] * $calculated_prices;
 			$data['amount']					= number_format($data['number_employess'] * $calculated_prices, 2);
@@ -1504,7 +1494,7 @@ class DependentController extends \BaseController {
 		$data['dependent_plan_id'] = $dependent_plan->dependent_plan_id;
 		$data['plan_end'] 			= date('F d, Y', strtotime('-1 day', strtotime($end_plan_date)));
 
-	    // return View::make('pdf-download.dependent-invoice-download', $data);
+	    return View::make('pdf-download.dependent-invoice-download', $data);
         $pdf = \PDF::loadView('pdf-download.dependent-invoice-download', $data);
         $pdf->getDomPDF()->get_option('enable_html5_parser');
         $pdf->setPaper('A4', 'portrait');
