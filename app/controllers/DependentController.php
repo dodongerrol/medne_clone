@@ -1494,7 +1494,7 @@ class DependentController extends \BaseController {
 		$data['dependent_plan_id'] = $dependent_plan->dependent_plan_id;
 		$data['plan_end'] 			= date('F d, Y', strtotime('-1 day', strtotime($end_plan_date)));
 
-	    return View::make('pdf-download.dependent-invoice-download', $data);
+	    // return View::make('pdf-download.dependent-invoice-download', $data);
         $pdf = \PDF::loadView('pdf-download.dependent-invoice-download', $data);
         $pdf->getDomPDF()->get_option('enable_html5_parser');
         $pdf->setPaper('A4', 'portrait');
