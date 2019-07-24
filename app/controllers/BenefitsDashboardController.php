@@ -6359,19 +6359,19 @@ class BenefitsDashboardController extends \BaseController {
 
 				$payment = DB::table('customer_cheque_logs')->where('invoice_id', $id)->first();
 
-				if($get_active_plan->paid == "true") {
-					$data['paid'] = true;
-					if($payment) {
-						if(empty($payment->date_received) || $payment->date_received == null) {
-							$data['payment_date'] = date('F d, Y', strtotime($get_active_plan->paid_date));
-						} else {
-							$data['amount_due']     = number_format($amount_due, 2);
-						}
-					} else {
-						$data['paid'] = false;
-						$data['amount_due']     = number_format($amount_due, 2);
-					}
-				} else {
+				// if($get_active_plan->paid == "true") {
+				// 	$data['paid'] = true;
+				// 	if($payment) {
+				// 		if(empty($payment->date_received) || $payment->date_received == null) {
+				// 			$data['payment_date'] = date('F d, Y', strtotime($get_active_plan->paid_date));
+				// 		} else {
+				// 			$data['amount_due']     = number_format($amount_due, 2);
+				// 		}
+				// 	} else {
+				// 		$data['paid'] = false;
+				// 		$data['amount_due']     = number_format($amount_due, 2);
+				// 	}
+				// } else {
 					if($get_active_plan->duration || $get_active_plan->duration != "") {
 						$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($plan->plan_start)));
 						$data['duration'] = $get_active_plan->duration;
@@ -6422,7 +6422,7 @@ class BenefitsDashboardController extends \BaseController {
 						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 						$data['duration'] = '12 months';
 					}
-				}
+				// }
 			}
 		} else {
 			if((int)$invoice->plan_extention_enable == 1) {

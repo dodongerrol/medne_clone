@@ -135,7 +135,7 @@ app.directive('teamBenefitsTierDirective', [
 								if( scope.tier_arr.length > 0 ){
 									$('.account-tier-container').fadeIn();
 								}else{
-									$('.account-tier-add-container').fadeIn();
+									$('.benefits-tier-btn-content').fadeIn();
 								}
 							}else{
 								swal( 'Error!', response.data.message, 'error' );
