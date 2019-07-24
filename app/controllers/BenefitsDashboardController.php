@@ -4498,15 +4498,25 @@ class BenefitsDashboardController extends \BaseController {
 					$duration = $dependent_plan->duration;
 
 					$end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
-					if($dependent_plan->account_type !== "trial_plan") {
-						$calculated_prices_end_date = date('Y-m-d', strtotime('+'.$dependent_plan->duration, strtotime($plan->plan_start)));
-					} else {
-						$calculated_prices_end_date = $end_plan_date;
-					}
+					$end_plan_date = date('Y-m-d', strtotime('-2 day', strtotime($end_plan_date)));
+					// if($dependent_plan->account_type !== "trial_plan") {
+					// 	$calculated_prices_end_date = date('Y-m-d', strtotime('+'.$dependent_plan->duration, strtotime($plan->plan_start)));
+					// } else {
+					// 	$calculated_prices_end_date = $end_plan_date;
+					// }
 
-					$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date)));
+					// $calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date)));
 
-					$calculated_prices = \PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent_plan->plan_start, $calculated_prices_end_date);
+					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent_plan->plan_start, $end_plan_date);
+
+					// $calculated_prices_end_date = PlanHelper::getCompanyPlanDates($plan->customer_buy_start_id);
+					// $end_plan_date = $calculated_prices_end_date['plan_end'];
+					// $calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
+					// if((int)$get_invoice->override_total_amount_status == 1) {
+					// 	$calculated_prices = $get_invoice->override_total_amount;
+					// } else {
+					// 	$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent_plan->plan_start, $calculated_prices_end_date);
+					// }
 
 					$data['price']          = number_format($calculated_prices, 2);
 					$amount_due = $invoice->total_dependents * $calculated_prices;
@@ -11013,8 +11023,12 @@ class BenefitsDashboardController extends \BaseController {
 				$dependent->vacant = $dependent->total_dependents - $occupied;
 
 				if((int)$dependent->new_head_count == 1) {
-					$end_plan_date = date('Y-m-d', strtotime('+'.$dependent->duration, strtotime($dependent->plan_start)));
-					$calculated_prices = self::calculateInvoicePlanPrice($dependent->individual_price, $dependent->plan_start, $end_plan_date);
+					$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent->customer_plan_id)->first();
+					$duration = $dependent->duration;
+
+					$end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
+					$end_plan_date = date('Y-m-d', strtotime('-2 day', strtotime($end_plan_date)));
+					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent->plan_start, $end_plan_date);
 					$dependent->calculated_prices = $calculated_prices;
 					$dependent->amount = number_format($calculated_prices * $dependent->total_dependents, 2);
 				} else {
