@@ -509,8 +509,10 @@
 						
 						<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
 
-						<p ng-if="outNetWorkTable == true" ng-json-export-excel data="e_claim_transactions" 
-						report-fields="{member: 'EMPLOYEE', nric: 'NRIC', approved_date: 'APPROVED DATE', claim_date: 'CLAIM DATE', visit_date: 'VISIT DATE', transaction_id: 'TRANSACTION #',service: 'ITEM/SERVICE',merchant: 'MERCHANT',amount: 'TOTAL AMOUNT',type: 'TYPE', bank_account_number: 'BANK ACCOUNT NUMBER', bank_code: 'BANK CODE', bank_brh: 'BRANCH CODE'}" filename="'E-Claim-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+						<!-- <p ng-if="outNetWorkTable == true" ng-json-export-excel data="e_claim_transactions" 
+						report-fields="{member: 'EMPLOYEE', nric: 'NRIC', approved_date: 'APPROVED DATE', claim_date: 'CLAIM DATE', visit_date: 'VISIT DATE', transaction_id: 'TRANSACTION #',service: 'ITEM/SERVICE',merchant: 'MERCHANT',amount: 'TOTAL AMOUNT',type: 'TYPE', bank_account_number: 'BANK ACCOUNT NUMBER', bank_code: 'BANK CODE', bank_brh: 'BRANCH CODE'}" filename="'E-Claim-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
+
+						<p ng-if="outNetWorkTable == true" ng-click="downloadCSV()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
 					</div>
 				</div>
 			</div>
