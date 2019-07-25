@@ -8025,6 +8025,165 @@ public function generateMonthlyCompanyInvoice( )
 	public function downloadEclaimCsv( )
 	{
 		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		if(empty($input['start']) || $input['start'] == null) {
+			return array('status' => false, 'message' => 'Start Date parameter is required.');
+		}
+
+		if(empty($input['end']) || $input['end'] == null) {
+			return array('status' => false, 'message' => 'End Date parameter is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		$start = date('Y-m-d', strtotime($input['start']));
+		$end = PlanHelper::endDate($input['end']);
+		$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		$container = array();
+
+		if(!empty($input['user_id']) && $input['user_id'] != null) {
+			$corporate_members = DB::table('corporate_members')
+									->where('corporate_id', $account->corporate_id)
+									->where('user_id', $input['user_id'])
+									->get();
+		} else {
+			$corporate_members = DB::table('corporate_members')
+									->where('corporate_id', $account->corporate_id)
+									->get();
+		}
+
+		foreach ($corporate_members as $key => $member) {
+			$ids = StringHelper::getSubAccountsID($member->user_id);
+			if(!empty($input['status']) && (int)$input['status'] == 2) {
+				$e_claim_result = DB::table('e_claim')
+												->whereIn('user_id', $ids)
+												->where('spending_type', $spending_type)
+												->where('status', 0)
+												->where('created_at', '>=', $start)
+												->where('created_at', '<=', $end)
+												->orderBy('created_at', 'desc')
+												->get();
+			} else if(!empty($input['status']) && (int)$input['status'] == 3) {
+				$e_claim_result = DB::table('e_claim')
+												->whereIn('user_id', $ids)
+												->where('spending_type', $spending_type)
+												->where('status', 1)
+												->where('created_at', '>=', $start)
+												->where('created_at', '<=', $end)
+												->orderBy('created_at', 'desc')
+												->get();
+			} else if(!empty($input['status']) && (int)$input['status'] == 4) {
+				$e_claim_result = DB::table('e_claim')
+												->whereIn('user_id', $ids)
+												->where('spending_type', $spending_type)
+												->where('status', 2)
+												->where('created_at', '>=', $start)
+												->where('created_at', '<=', $end)
+												->orderBy('created_at', 'desc')
+												->get();
+			} else {
+				$e_claim_result = DB::table('e_claim')
+												->whereIn('user_id', $ids)
+												->where('spending_type', $spending_type)
+												->where('created_at', '>=', $start)
+												->where('created_at', '<=', $end)
+												->orderBy('created_at', 'desc')
+												->get();
+			}
+
+			foreach($e_claim_result as $key => $res) {
+				$approved_status = FALSE;
+				$rejected_status = FALSE;
+
+				if($res->status == 0) {
+					$status_text = 'Pending';
+				} else if($res->status == 1) {
+					$status_text = 'Approved';
+				} else if($res->status == 2) {
+					$status_text = 'Rejected';
+				} else {
+					$status_text = 'Pending';
+				}
+
+
+	                // get docs
+				$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
+
+
+				$member = DB::table('user')->where('UserID', $res->user_id)->first();
+
+				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
+					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+					$sub_account = ucwords($temp_account->Name);
+					$sub_account_type = $temp_sub->user_type;
+					$owner_id = $temp_sub->owner_id;
+					$relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+					$bank_account_number = $temp_account->bank_account;
+					$bank_name = $temp_account->bank_name;
+					$bank_code = $temp_account->bank_code;
+					$bank_brh = $temp_account->bank_brh;
+				} else {
+					$sub_account = FALSE;
+					$sub_account_type = FALSE;
+					$owner_id = $member->UserID;
+					$relationship = false;
+					$bank_account_number = $member->bank_account;
+					$bank_name = $member->bank_name;
+					$bank_code = $member->bank_code;
+					$bank_brh = $member->bank_brh;
+				}
+
+				if($res->status == 1) {
+					$approved_status = true;
+				}
+
+				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
+				$container[] = array(
+					'MEMBER'						=> ucwords($member->Name),
+					'NRIC'							=> $member->NRIC,
+					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
+					'EMPLOYEE'					=> $sub_account ? $sub_account : null,
+					'CLAIM DATE'				=> date('d F Y h:i A', strtotime($res->created_at)),
+					'VISITE DATE'				=> date('d F Y', strtotime($res->date)).', '.$res->time,
+					'TRANSACTION #'			=> 'MNF'.$id,
+					'CLAIM TYPE'				=> $res->service,
+					'PROVIDER'					=> $res->merchant,
+					'SPENDING ACCOUNT'	=> ucwords($res->spending_type),
+					'TOTAL AMOUNT'			=> number_format($res->amount, 2),
+					'TYPE'							=> 'E-Claim',
+					'STATUS'						=> $status_text,
+					'APPROVED DATE'			=> $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
+					'REJECTED DATE'			=> $rejected_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
+					'REJECTED REASON'		=> $res->rejected_reason,
+					'BANK ACCOUNT NUMBER'	=> $bank_account_number,
+					'BANK CODE'					=> $bank_code,
+					'BRANCH CODE'				=> $bank_brh
+				);
+			}
+		}
+		
+		usort($container, function($a, $b) {
+        return strtotime($b['CLAIM DATE']) - strtotime($a['CLAIM DATE']);
+    });
+
+		// return $container;
+		return \Excel::create('E-Claim Transactions - '.$start.' - '.$input['end'], function($excel) use($container) {
+      $excel->sheet('E-Claim', function($sheet) use($container) {
+          $sheet->fromArray( $container );
+      });
+    })->export('csv');
+
 	}
 }
 ?>
