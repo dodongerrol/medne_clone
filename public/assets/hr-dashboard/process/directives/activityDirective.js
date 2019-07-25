@@ -2,7 +2,8 @@ app.directive('activityPage', [
 	"hrActivity",
 	"hrSettings",
 	"$timeout",
-	function directive(hrActivity, hrSettings, $timeout) {
+	"serverUrl",
+	function directive(hrActivity, hrSettings, $timeout, serverUrl) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -63,6 +64,28 @@ app.directive('activityPage', [
 
 
 				scope.pagesToDisplay = 5;
+
+
+				scope.downloadCSV = function(){
+					var data = {
+						token : window.localStorage.getItem('token'),
+						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						spending_type : scope.activitySpendingTypeSelected,
+						status : 3,
+					}
+					if( scope.search.user_id ){
+						data.user_id = scope.search.user_id;
+					}
+					scope.toggleLoading();
+					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
+			    if( data.user_id ){
+			      api_url += ("&user_id=" + data.user_id);
+			    }
+			    // console.log( api_url );
+			    window.open( api_url );
+			    scope.toggleLoading();
+				}
 
 				scope.showPreview = function( img , ev){
 					$(ev.target).closest(".click_box_wrapper").find(".preview-box").fadeIn();
