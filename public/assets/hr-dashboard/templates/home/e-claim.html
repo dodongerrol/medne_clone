@@ -231,7 +231,7 @@
 						</p>
 
 						<div style="text-align: right;">
-							<button class="btn btn-csv" ng-json-export-excel data="csv_dl" report-fields="{
+							<!-- <button class="btn btn-csv" ng-json-export-excel data="csv_dl" report-fields="{
 								member: 'MEMBER',
 								nric: 'NRIC',
 								claim_member_type: 'CLAIM MEMBER TYPE',
@@ -251,7 +251,10 @@
 								bank_account_number: 'BANK ACCOUNT NUMBER', 
 								bank_code: 'BANK CODE', 
 								bank_brh: 'BRANCH CODE'
-								}" filename="'E-Claim-Transactions'" separator=",">Download CSV <i class="fa fa-download"></i></button>
+								}" filename="'E-Claim-Transactions'" separator=",">Download CSV <i class="fa fa-download"></i></button> -->
+
+							<button class="btn btn-csv" ng-click="downloadCSV()">Download CSV <i class="fa fa-download"></i></button>
+
 
 							<button class="btn btn-receipts" ng-click="downloadAllReceipts(  )">
 								Download receipts <span ng-if="search.user_id">for <span ng-bind="selected_search_user.Name">Allan</span></span> <i class="fa fa-download"></i>
