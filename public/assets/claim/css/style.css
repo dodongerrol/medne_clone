@@ -635,6 +635,10 @@ span.arrow-right {
   cursor: pointer;
 }
 
+.opacity-4{
+  opacity: .4;
+}
+
 /*===== TIMEPICKER =====*/
   .timepicker-container{
     position: absolute;
