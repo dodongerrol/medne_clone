@@ -615,7 +615,7 @@ app.directive("claimDirective", [
           setTimeout(function() {
             $('.datepicker').datepicker({
               format: "dd MM, yyyy",
-              maxDate: new Date()
+              endDate: new Date()
             }).on( 'changeDate', function(e) {
               console.log( e );
               scope.add_claim_data.visit_date = moment( e.date ).format('DD MMMM, YYYY');
@@ -625,8 +625,8 @@ app.directive("claimDirective", [
             $('.start-datepicker').datepicker({
               format: "mm/dd/yyyy",
               viewMode: "months", 
-              minViewMode: "months"
-              // maxDate: new Date()
+              minViewMode: "months",
+              maxDate: new Date(),
             }).on( 'changeDate', function(e) {
               // console.log( e );
               $('.start-datepicker').datepicker('hide');
@@ -644,7 +644,8 @@ app.directive("claimDirective", [
               format: "mm/dd/yyyy",
               startDate: new Date(),
               viewMode: "months", 
-              minViewMode: "months"
+              minViewMode: "months",
+              maxDate: new Date(),
             }).on( 'changeDate', function(e) {
               // console.log( e );
               $('.end-datepicker').datepicker('hide');
