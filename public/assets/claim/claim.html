@@ -311,8 +311,8 @@
 														</div>
 													</td>
 													<td>
-														<div class="manual-form date" style="width: 90% !important;">
-															<input type="text" class="datepicker" ng-model="add_claim_data.visit_date" readonly>
+														<div class="manual-form date" style="width: 90% !important;" ng-class="{'opacity-4' : !e_card_data.member_id}">
+															<input type="text" class="datepicker" ng-model="add_claim_data.visit_date" ng-disabled="!e_card_data.member_id">
 															<div class="icon-wrapper">
 																<i class="fa fa-calendar myColor-secondary" aria-hidden="true"></i>
 															</div>
