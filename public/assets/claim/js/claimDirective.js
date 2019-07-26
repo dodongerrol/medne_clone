@@ -43,6 +43,7 @@ app.directive("claimDirective", [
         }
         scope.manualClaim = function(){
           $('#modalManual').modal('show');
+          scope.e_card_data = {};
           scope.add_claim_data = {
             amount : 0,
             selected_service_ids : [],
@@ -61,11 +62,13 @@ app.directive("claimDirective", [
           scope.isSearchNRIC = false;
           $http.get(base_url + "clinic/get/special_user/details/" + data.id)
             .success(function(response){
-              // console.log(response);
+              console.log(response);
               if(response.public_user && response.no_data) {
 
               } else {
                 scope.e_card_data = response;
+                $('.datepicker').datepicker('setStartDate', moment(scope.e_card_data.valid_start_claim).format('MM/DD/YYYY') );
+                // $('.datepicker').datepicker('setEndDate', moment(scope.e_card_data.valid_end_claim).format('MM/DD/YYYY') );
                 $('#e-card-modal').modal('show');
               }
             })
@@ -615,7 +618,7 @@ app.directive("claimDirective", [
           setTimeout(function() {
             $('.datepicker').datepicker({
               format: "dd MM, yyyy",
-              endDate: new Date()
+              endDate: new Date( )
             }).on( 'changeDate', function(e) {
               console.log( e );
               scope.add_claim_data.visit_date = moment( e.date ).format('DD MMMM, YYYY');
