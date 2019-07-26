@@ -1055,10 +1055,8 @@ class Api_V1_TransactionController extends \BaseController
         if($findUserID){
 					$returnObject->status = TRUE;
 					$returnObject->message = 'Success.';
-					// $user = DB::table('user')->where('UserID', $findUserID)->first();
 					$user_id = StringHelper::getUserId($findUserID);
 					$lite_plan_status = false;
-					        // $lite_plan_status = StringHelper::litePlanStatus($findUserID);
 					$total_amount = 0;
 					$service_credits = false;
 					$consultation_credits = false;
@@ -1258,9 +1256,9 @@ class Api_V1_TransactionController extends \BaseController
 						$paid_by_credits = $transaction->credit_cost;
 						if((int)$transaction->lite_plan_enabled == 1) {
 							if($consultation_credits == true) {
-								if((int)$transaction->half_credits == 1) {
+								// if((int)$transaction->half_credits == 1) {
 									$paid_by_credits += $consultation;
-								}
+								// }
 							}
 						}
 
@@ -1582,7 +1580,11 @@ class Api_V1_TransactionController extends \BaseController
 
 					// check if still valid
 					$check_in_expiry_time = strtotime('+120 minutes', strtotime($check_in->check_in_time));
-					$today = strtotime(date('Y-m-d H:i:s'));
+					if(!empty($input['check_out_time']) && $input['check_out_time'] != null) {
+						$today = strtotime(date('Y-m-d H:i:s', strtotime($input['check_out_time'])));
+					} else {
+						$today = strtotime(date('Y-m-d H:i:s'));
+					}
 					// return $check_in_expiry_time;
 					// return date('d M, h:i a', $check_in_expiry_time);
 					if($today > $check_in_expiry_time) {
