@@ -1443,18 +1443,15 @@ class App_ClinicController extends \BaseController {
         if($findUserID){
             $returnObject->status = TRUE;
             $returnObject->data = $e_card->newEcardDetails($id);
-            return $e_card->newEcardDetails($id);
-            // return json_encode($returnObject);
-            if($returnObject->data == 0) {
-                $returnObject->status = FALSE;
-                $returnObject->message = 'User does not have a package plan.';
-                $returnObject->data = FALSE;
-            } elseif($returnObject->data == -1) {
-                $returnObject->status = FALSE;
-                $returnObject->data = FALSE;
-                $returnObject->message = 'User package plan is not activated yet.';
+            $result = $e_card->newEcardDetails($id);
+            $first_plan = PlanHelper::getUserFirstPlanStart($id);
+            if($first_plan) {
+                $result['valid_start_claim'] = $first_plan;
+            } else {
+                $result['valid_start_claim'] = date('Y-m-d', strtotime($result['start_date']));
             }
-            return Response::json($returnObject);
+            $result['valid_end_claim'] = date('Y-m-d', strtotime($result['valid_date']));
+            return $result;
         } else {
             $returnObject->status = FALSE;
             $returnObject->message = 'User does not exist.';
