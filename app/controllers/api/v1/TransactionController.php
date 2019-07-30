@@ -1477,7 +1477,7 @@ class Api_V1_TransactionController extends \BaseController
 								// $file->move(public_path().'/temp_uploads/', $file_name);
 								// $result_doc = Queue::connection('redis_high')->push('\InNetworkFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'transaction_id' => $transaction_id, 'user_id' => $check->UserID));
 								//   // $file_address = url('temp_uploads', $parameter = array(), $secure = null).'/'.$file_name;
-								// 	$file_address = URL::asset('/temp_uploads/'.$file_name);
+								// 	$file_address = url('temp_uploads', $parameter = array(), $secure = null).$file_name;
 	       //          $result = array(
 	       //            'file'      => $file_address,
 						  //      	'type'      => "image",
@@ -1487,14 +1487,14 @@ class Api_V1_TransactionController extends \BaseController
 						  //      	'created_at'	=> date('Y-m-d H:i:s'),
 						  //      	'updated_at' => date('Y-m-d H:i:s')
 	       //          );
-							    $image = \Cloudinary\Uploader::upload($file->getPathName());
-							    $receipt = array(
-						       'user_id'           => $findUserID,
-						       'file'      => $image['secure_url'],
-						       'type'      => "image",
-						       'transaction_id'    => $transaction_id,
-							   );
-							    $result = $trans_docs->saveReceipt($receipt);
+						    $image = \Cloudinary\Uploader::upload($file->getPathName());
+						    $receipt = array(
+					       'user_id'           => $findUserID,
+					       'file'      => $image['secure_url'],
+					       'type'      => "image",
+					       'transaction_id'    => $transaction_id,
+						   );
+						    $result = $trans_docs->saveReceipt($receipt);
 							}
 
 							if($result) {

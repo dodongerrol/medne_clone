@@ -764,12 +764,14 @@ public static function mainSearch()
         if($clinics==null){
             $returnObject->data['clinics'] = array();
         }else{
+            $clinics = ClinicHelper::removeBlockClinics($clinics);
             $returnObject->data['clinics'] = $clinics;
         }
 
         if($doctors==null){
             $returnObject->data['doctors'] = array();
         }else{
+            $doctors = ClinicHelper::removeBlockClinics($doctors);
             $returnObject->data['doctors'] = $doctors;
         }
         
