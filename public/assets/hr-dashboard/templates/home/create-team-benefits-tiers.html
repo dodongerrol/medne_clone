@@ -371,11 +371,11 @@
 						<form>
 							<div class="employee-input-wrapper">
 								<label for="fname">First / Given Name</label>
-  							<input type="text" name="fname" ng-model="employee_data.first_name">
+  							<input disabled-specific-characters type="text" name="fname" ng-model="employee_data.first_name">
 							</div>
 							<div class="employee-input-wrapper">
 								<label for="fname">Last / Family Name</label>
-  							<input type="text" name="lname" ng-model="employee_data.last_name">
+  							<input disabled-specific-characters type="text" name="lname" ng-model="employee_data.last_name">
 							</div>
 							<div class="employee-input-wrapper nric">
 								<!-- <label for="fname">NRIC / FIN</label> -->
@@ -434,11 +434,11 @@
 						<form>
 							<div class="employee-input-wrapper">
 								<label for="fname">First / Given Name</label>
-  								<input type="text" name="fname" ng-model="dependent_data.first_name">
+  								<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.first_name">
 							</div>
 							<div class="employee-input-wrapper">
 								<label for="fname">Last / Family Name</label>
-  								<input type="text" name="lname" ng-model="dependent_data.last_name">
+  								<input disabled-specific-characters type="text" name="lname" ng-model="dependent_data.last_name">
 							</div>
 							<div class="employee-input-wrapper">
 								<label>NRIC/FIN</label>
@@ -488,11 +488,11 @@
 						<form>
 							<div class="employee-input-wrapper">
 								<label for="fname">First / Given Name</label>
-  								<input type="text" name="fname" ng-model="added_dependent_data.first_name">
+  								<input disabled-specific-characters type="text" name="fname" ng-model="added_dependent_data.first_name">
 							</div>
 							<div class="employee-input-wrapper">
 								<label for="fname">Last / Family Name</label>
-  								<input type="text" name="lname" ng-model="added_dependent_data.last_name">
+  								<input disabled-specific-characters type="text" name="lname" ng-model="added_dependent_data.last_name">
 							</div>
 							<div class="employee-input-wrapper">
 								<label>NRIC/FIN</label>
@@ -598,12 +598,12 @@
                 <form class="form edit-employee-details-form">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.first_name_error == true}" ng-model="selected_edit_details_data.employee.first_name">
+                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.first_name_error == true}" ng-model="selected_edit_details_data.employee.first_name">
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.first_name_message"></span>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.last_name_error == true}" ng-model="selected_edit_details_data.employee.last_name">
+                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.last_name_error == true}" ng-model="selected_edit_details_data.employee.last_name">
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.last_name_message"></span>
                     </div>
                     <div class="form-group">
@@ -653,12 +653,12 @@
                     	<p style="font-weight: 700;color: #333;border-bottom: 1px solid #999;padding: 10px 0;width: 80%;">Dependent <span ng-bind="$index + 1">1</span></p>
                     	<div class="form-group">
 	                        <label>First Name</label>
-	                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.first_name_error == true}" ng-model="list.enrollee.first_name">
+	                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.first_name_error == true}" ng-model="list.enrollee.first_name">
 	                        <span class="error-message" ng-bind="list.error_logs.first_name_message"></span>
 	                    </div>
 	                    <div class="form-group">
 	                        <label>Last Name</label>
-	                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.last_name_error == true}" ng-model="list.enrollee.last_name">
+	                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.last_name_error == true}" ng-model="list.enrollee.last_name">
 	                        <span class="error-message" ng-bind="list.error_logs.last_name_message"></span>
 	                    </div>
 	                    <div class="form-group">
