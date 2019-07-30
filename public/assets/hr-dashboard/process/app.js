@@ -53,6 +53,29 @@ app.filter('cmdate', [
     }
 ])
 
+app.directive('disabledSpecificCharacters', function() {
+  function link(scope, elem, attrs, ngModel) {
+    ngModel.$parsers.push(function(viewValue) {
+      var reg = /^[^`~!@#$%\^&*+={}|[\]\\:';"<>?,/1-9/-]*$/;
+      // var reg = /^[^`~!@#$%\^&*()_+={}|[\]\\:';"<>?,./1-9]*$/;
+      // if view values matches regexp, update model value
+      if (viewValue.match(reg)) {
+        return viewValue;
+      }
+      // keep the model value as it is
+      var transformedValue = ngModel.$modelValue;
+      ngModel.$setViewValue(transformedValue);
+      ngModel.$render();
+      return transformedValue;
+    });
+  }
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: link
+  };      
+});
+
 app.directive('validNumber', function() {
   return {
     require: '?ngModel',
