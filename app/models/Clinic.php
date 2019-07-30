@@ -241,6 +241,8 @@ class Clinic extends Eloquent implements UserInterface, RemindableInterface {
                 ->take(10)
                 // ->Simplepaginate(10);
                 ->get();
+
+            $clinicDataReal = ClinicHelper::removeBlockClinicsFromPaginate($clinicDataReal);
             $paginator = Paginator::make($clinicDataReal, sizeof($clinicData), 10);
             // make pagination
             return $paginator;            

@@ -9,12 +9,12 @@
                 <form class="form edit-employee-details-form">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.first_name_error == true}" ng-model="selected_employee.enrollee.first_name">
+                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.first_name_error == true}" ng-model="selected_employee.enrollee.first_name">
                         <span class="error-message" ng-bind="selected_employee.error_logs.first_name_message"></span>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.last_name_error == true}" ng-model="selected_employee.enrollee.last_name">
+                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_employee.error_logs.last_name_error == true}" ng-model="selected_employee.enrollee.last_name">
                         <span class="error-message" ng-bind="selected_employee.error_logs.last_name_message"></span>
                     </div>
                     <div class="form-group">
