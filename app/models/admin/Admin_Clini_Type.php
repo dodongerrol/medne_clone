@@ -72,7 +72,7 @@ class Admin_Clinic_Type extends Eloquent implements UserInterface, RemindableInt
 
 		foreach ($promotionals as $key => $promotional) {
 			$temp = array(
-				'ClinicTypeID'			=> $promotional->promotional_link_id,
+				'ClinicTypeID'			=> '0'.$promotional->promotional_link_id,
 				'Name'					=> $promotional->name,
 				'clinic_type_image_url'	=> $promotional->image_link,
 				'promotional_link'		=> true,
