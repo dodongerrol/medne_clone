@@ -75,6 +75,7 @@ class Admin_Clinic_Type extends Eloquent implements UserInterface, RemindableInt
 				'ClinicTypeID'			=> '0'.$promotional->promotional_link_id,
 				'Name'					=> $promotional->name,
 				'clinic_type_image_url'	=> $promotional->image_link,
+				'web_link'				=> $promotional->link,
 				'promotional_link'		=> true,
 				'type'					=> $promotional->type
 			);
