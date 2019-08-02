@@ -4342,14 +4342,30 @@ class BenefitsDashboardController extends \BaseController {
 				$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
 				// $calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $plan->plan_start, $calculated_prices_end_date);
 				$data['price']          = number_format($get_invoice->individual_price, 2);
-				$data['amount']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
-				$data['total']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
+				$data['amount']					= $get_invoice->employees * $get_invoice->individual_price;
+				$data['total']					= $get_invoice->employees * $get_invoice->individual_price;
 				$data['amount_due']     = number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				if((int)$get_invoice->override_total_amount_status == 1) {
 					$calculated_prices = $get_invoice->override_total_amount;
 				} else {
 					$data['calculated_prices'] = $get_invoice->individual_price;
 				}
+
+				// get dependent tag
+				$dependent_tags = DB::table('dependent_plans')
+								->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+								->where('tagged', 1)
+								->get();
+				$dependent_amount = 0;
+				$dependent_amount_due = 0;
+
+				foreach ($dependent_tags as $key => $dependent_plan) {
+					$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
+					$data['amount'] += $invoice->individual_price * $invoice->total_dependents;
+				}
+
+				$data['amount'] = number_format($data['amount'], 2);
+				$data['total'] = $data['amount'];
 			} else {
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
