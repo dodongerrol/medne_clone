@@ -967,65 +967,63 @@ class EclaimController extends \BaseController {
 					// $cash = number_format($trans->procedure_cost);
 					$credit_status = FALSE;
 					if((int)$trans->lite_plan_enabled == 1) {
-	                    if((int)$trans->half_credits == 1) {
-	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
-	                      $cash = $transation->cash_cost;
-	                    } else {
-	                      $total_amount = $trans->procedure_cost + $trans->consultation_fees;
-	                      // $total_amount = $trans->procedure_cost;
-	                      $cash = $trans->procedure_cost;
-	                    }
-	                  } else {
-	                    if((int)$trans->half_credits == 1) {
-	                      $cash = $trans->cash_cost;
-	                    } else {
-	                      $cash = $trans->procedure_cost;
-	                    }
-	                  }
+            if((int)$trans->half_credits == 1) {
+              $total_amount = $trans->credit_cost + $trans->consultation_fees;
+              $cash = $transation->cash_cost;
+            } else {
+              $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+              // $total_amount = $trans->procedure_cost;
+              $cash = $trans->procedure_cost;
+            }
+          } else {
+            if((int)$trans->half_credits == 1) {
+              $cash = $trans->cash_cost;
+            } else {
+              $cash = $trans->procedure_cost;
+            }
+          }
 				} else {
 					$health_provider_status = FALSE;
 					$credit_status = TRUE;
 					$transaction_type = "credits";
 					// $cash = number_format($trans->credit_cost, 2);
 
-					// if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
-				 //      $payment_type = 'Mednefits Credits + Cash';
-				 //      $half_credits = true;
-				 //    } else {
-				 //      $payment_type = 'Mednefits Credits';
-				 //    }
+					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+				      $half_credits = true;
+				    } else {
+				    }
 
 					// if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 					// 	$total_amount = number_format($trans->credit_cost + $trans->consultation_fees, 2);
 					// }
 					if((int)$trans->lite_plan_enabled == 1) {
-	                    if((int)$trans->half_credits == 1) {
-	                      $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-	                      $cash = $trans->cash_cost;
-	                      $payment_type = 'Mednefits Credits + Cash';
-	                    } else {
-	                      $total_amount = $trans->credit_cost + $trans->consultation_fees;
-	                      // $total_amount = $trans->procedure_cost;
-	                      if($trans->credit_cost > 0) {
-	                        $cash = 0;
-	                        $payment_type = 'Mednefits Credits';
-	                      } else {
-	                        $cash = $trans->procedure_cost - $trans->consultation_fees;
-	                      }
-	                    }
-	                } else {
-	                    $total_amount = $trans->procedure_cost;
-	                    if((int)$trans->half_credits == 1) {
-	                      $cash = $trans->cash_cost;
-	                    } else {
-	                      if($trans->credit_cost > 0) {
-	                        $cash = 0;
-	                      } else {
-	                        $cash = $trans->procedure_cost;
-	                      }
-	                    }
-	                    $payment_type = 'Mednefits Credits';
-	                }
+	            if((int)$trans->half_credits == 1) {
+	              $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	              $cash = $trans->cash_cost;
+	              $payment_type = 'Mednefits Credits + Cash';
+	            } else {
+	              $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	              // $total_amount = $trans->procedure_cost;
+	              if($trans->credit_cost > 0) {
+	                $cash = 0;
+	                $payment_type = 'Mednefits Credits';
+	              } else {
+	                $cash = $trans->procedure_cost - $trans->consultation_fees;
+	              }
+	            }
+	        } else {
+	            $total_amount = $trans->procedure_cost;
+	            if((int)$trans->half_credits == 1) {
+	              $cash = $trans->cash_cost;
+	            } else {
+	              if($trans->credit_cost > 0) {
+	                $cash = 0;
+	              } else {
+	                $cash = $trans->procedure_cost;
+	              }
+	            }
+	            $payment_type = 'Mednefits Credits';
+	        }
 				}
 
 				$bill_amount = 0;
@@ -1152,10 +1150,10 @@ class EclaimController extends \BaseController {
 					'service_credits'   => $service_credits,
 					'transaction_type'  => $transaction_type,
 					'cap_transaction'   => $half_credits,
-				    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
-				    'paid_by_cash'      => number_format($trans->cash_cost, 2),
-				    'paid_by_credits'   => number_format($trans->credit_cost, 2),
-				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$"
+			    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
+			    'paid_by_cash'      => number_format($trans->cash_cost, 2),
+			    'paid_by_credits'   => number_format($trans->credit_cost, 2),
+			    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$"
 				);
 
 				array_push($transaction_details, $format);
