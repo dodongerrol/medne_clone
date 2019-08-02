@@ -30,6 +30,7 @@ class DependentController extends \BaseController {
 
 	public function uploadExcel( )
 	{
+		set_time_limit(10000);
 		$input = Input::all();
 		$customer_id = PlanHelper::getCusomerIdToken();
 		// $customer_id = $input['customer_id'];
@@ -55,7 +56,6 @@ class DependentController extends \BaseController {
 				$temp_file = time().$file->getClientOriginalName();
 				$file->move('excel_upload', $temp_file);
 				$data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
-
 				$headerRow = $data_array->first()->keys();
 				$temp_users = [];
 				$row_keys = self::getDependentKeys($headerRow);
