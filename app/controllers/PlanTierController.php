@@ -687,7 +687,6 @@ class PlanTierController extends \BaseController {
 		}
 		
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
-
 		$mobile = preg_replace('/\s+/', '', $input['mobile']);
 
 		$data = array(
