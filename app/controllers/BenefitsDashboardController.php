@@ -6921,21 +6921,27 @@ class BenefitsDashboardController extends \BaseController {
 						# code...
 						$refunds = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
 						->count('user_id');
 
 						$amount = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
 						->sum('amount');
-						$temp = array(
-							'customer_active_plan_id' => $withdraw->customer_active_plan_id,
-							'payment_refund_id'		  => $withdraw->payment_refund_id,
-							'total_amount'	=> number_format($amount, 2),
-							'total_employees' => $refunds,
-							'date_withdraw'	 => $withdraw->date_refund,
-							'refund_data'		=> $withdraw
-						);
 
-						array_push($new_data, $temp);
+						if($amount > 0) {
+							$temp = array(
+								'customer_active_plan_id' => $withdraw->customer_active_plan_id,
+								'payment_refund_id'		  => $withdraw->payment_refund_id,
+								'total_amount'	=> number_format($amount, 2),
+								'total_employees' => $refunds,
+								'date_withdraw'	 => $withdraw->date_refund,
+								'refund_data'		=> $withdraw
+							);
+
+							array_push($new_data, $temp);
+						}
+
 					}
 				}
 			}
