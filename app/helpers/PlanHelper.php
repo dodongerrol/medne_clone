@@ -827,7 +827,7 @@ class PlanHelper {
 		->first();
 
 		$active_plan = DB::table('customer_active_plan')
-		->where('customer_start_buy_id', $customer_id)
+		->where('plan_id', $plan->customer_plan_id)
 		->first();
 
 		if((int)$active_plan->plan_extention_enable == 1) {
@@ -1015,7 +1015,7 @@ class PlanHelper {
 					$start_date_message = '';
 				} else {
 					$start_date_error = true;
-					$start_date_message = "*Start Date must be between company's plan start and plan end (".$plan['plan_start']." - ".$plan['plan_end'].").";
+					$start_date_message = "*Start Date must be between company's plan start and plan end (".date('d/m/Y', $start)." - ".date('d/m/Y', $end).").";
 					$start_date_result = false;
 				}
 			}
@@ -1153,7 +1153,7 @@ class PlanHelper {
 						$start_date_message = '';
 					} else {
 						$start_date_error = true;
-						$start_date_message = "*Start Date must be between company's plan start and plan end (".$plan['plan_start']." - ".$plan['plan_end'].").";
+						$start_date_message = "*Start Date must be between company's plan start and plan end (".date('d/m/Y', $start)." - ".date('d/m/Y', $end).").";
 						$start_date_result = false;
 					}
 				}
