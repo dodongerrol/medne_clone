@@ -2215,8 +2215,9 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_balance = 0;
 		$total_wellness_balance = 0;
 
-		$check_accessibility = self::hrStatus( );
-		if($check_accessibility['accessibility'] == 1) {
+		// $check_accessibility = self::hrStatus( );
+		$check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
+		if($check_accessibility == true) {
 			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
