@@ -4898,5 +4898,26 @@ class PlanHelper {
 				return false;
 			}
 	}
+
+	public static function checkCompanyAllocated($customer_id)
+	{
+		$wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+
+		$medical = DB::table('customer_credit_logs')
+						->where('customer_credits_id', $wallet->customer_credits_id)
+						->where('logs', 'added_employee_credits')
+						->first();
+
+		$wellness = DB::table('customer_wellness_credits_logs')
+						->where('customer_credits_id', $wallet->customer_credits_id)
+						->where('logs', 'added_employee_credits')
+						->first();
+
+		if($medical || $wellness) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 ?>
