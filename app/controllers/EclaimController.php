@@ -166,6 +166,7 @@ class EclaimController extends \BaseController {
 			'merchant'	=> $input['merchant'],
 			'amount'	=> $amount,
 			'date'		=> date('Y-m-d', strtotime($input['date'])),
+			'approved_date' => null,
 			'time'		=> $time,
 			'spending_type' => 'medical'
 		);
@@ -245,7 +246,7 @@ class EclaimController extends \BaseController {
 			$email['logs'] = 'E-Claim Submission - '.$e->getMessage();
 			$email['emailSubject'] = 'Error log.';
 			EmailHelper::sendErrorLogs($email);
-			return array('status' => FALSE, 'message' => 'Error.');
+			return array('status' => FALSE, 'message' => 'Error.', 'e' => $e->getMessage());
 		}
 
 		return array('status' => FALSE, 'message' => 'Error.');
@@ -5836,7 +5837,9 @@ public function updateEclaimStatus( )
 		PlanHelper::reCalculateEmployeeBalance($employee);
 
 		$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-		$balance = EclaimHelper::getSpendingBalance($employee, $e_claim_details->created_at, $e_claim_details->spending_type);
+		$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
+		// return $date;
+		$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
 
 		if($check->spending_type == "medical") {
 			$balance_medical = round($balance['balance'], 2);
