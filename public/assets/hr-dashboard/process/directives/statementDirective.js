@@ -85,29 +85,56 @@ app.directive('statementPage', [
 
 				scope.downloadReceipt = function( res, all_data ){
 					scope.toggleLoading();
-					var zip = new JSZip();
-					var main_folder = zip.folder( all_data.member + "_" + all_data.transaction_id );
-					console.log( res );
-					angular.forEach( res, function(value,key){
-						var filename = $.trim( value.file.split('/').pop() );
-						filename = value.file_type == 'pdf' || value.file_type == 'xls' ? filename.substring(0, filename.indexOf('?')) : filename; 
-						var promise = $.ajax({
-			        url: value.file,
-			        method: 'GET',
-			        xhrFields: {
-			          responseType: 'blob'
-			        }
-				    });
 
-						main_folder.file(filename, promise);
-						
-						if( key == (res.length-1) ){
-							zip.generateAsync({type:"blob"}).then(function(content) {
-						    saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
-							});
-							scope.toggleLoading();
-						}
-					})
+					if( res.length > 1 ){
+						var zip = new JSZip();
+
+						angular.forEach( res, function(value,key){
+							var filename = $.trim( value.file.split('/').pop() );
+							filename = filename.substring(0, filename.indexOf('?'));
+							var promise = $.ajax({
+				        url: value.file,
+				        method: 'GET',
+				        xhrFields: {
+				          responseType: 'blob'
+				        }
+					    });
+
+							zip.file(filename, promise);
+							
+							if( key == (res.length-1) ){
+								zip.generateAsync({type:"blob"}).then(function(content) {
+							    saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
+								});
+								scope.toggleLoading();
+							}
+						})
+					}else{
+
+						angular.forEach( res, function(value,key){
+							var filename = $.trim( value.file.split('/').pop() );
+							filename = filename.substring(0, filename.indexOf('?'));
+							$.ajax({
+				        url: value.file,
+				        method: 'GET',
+				        xhrFields: {
+				          responseType: 'blob'
+				        },
+				        success: function (data) {
+			            var a = document.createElement('a');
+			            var url = window.URL.createObjectURL(data);
+			            a.href = url;
+			            a.download = filename;
+			            a.click();
+			            window.URL.revokeObjectURL(url);
+
+			            if( key == (res.length-1) ){
+			            	scope.toggleLoading();
+			            }
+				        }
+					    });
+						});
+					}
 				}
 
 				scope.uploadReceiptOut = function( list ){

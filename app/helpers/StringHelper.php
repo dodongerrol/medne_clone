@@ -875,7 +875,7 @@ public static function get_random_password($length)
                     ->first();
           if($plan->account_type == "lite_plan") {
               return TRUE;
-          } else if($plan->account_type == "insurance_bundle" && $plan->secondary_account_type == "insurance_bundle_lite" || $plan->account_type == "trial_plan" && $plan->secondary_account_type == "trial_plan_lite") {
+          } else if($plan->account_type == "insurance_bundle" && $plan->secondary_account_type == "insurance_bundle_lite" || $plan->account_type == "trial_plan" && $plan->secondary_account_type == "trial_plan_lite" || $plan->account_type == "super_pro_plan") {
               return TRUE;
           } else {
               return FALSE;
@@ -891,7 +891,7 @@ public static function get_random_password($length)
                                 ->first();
             if($dependent_plan->account_type == "lite_plan") {
                 return TRUE;
-            } else if($dependent_plan->account_type == "insurance_bundle" && $dependent_plan->secondary_account_type == "insurance_bundle_lite" || $dependent_plan->account_type == "trial_plan" && $dependent_plan->secondary_account_type == "trial_plan_lite") {
+            } else if($dependent_plan->account_type == "insurance_bundle" && $dependent_plan->secondary_account_type == "insurance_bundle_lite" || $dependent_plan->account_type == "trial_plan" && $dependent_plan->secondary_account_type == "trial_plan_lite" || $plan->account_type == "super_pro_plan") {
               return TRUE;
             } else {
               return FALSE;
@@ -924,7 +924,7 @@ public static function get_random_password($length)
     {
         $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
-        if($plan->account_type === "lite_plan" || $plan->account_type === "insurance_bundle" && $plan->secondary_account_type === "insurance_bundle_lite" || $plan->account_type === "trial_plan" && $plan->secondary_account_type === "trial_plan_lite") {
+        if($plan->account_type === "lite_plan" || $plan->account_type === "insurance_bundle" && $plan->secondary_account_type === "insurance_bundle_lite" || $plan->account_type === "trial_plan" && $plan->secondary_account_type === "trial_plan_lite" || $plan->account_type === "super_pro_plan") {
             return TRUE;
         } else {
             return FALSE;
@@ -1167,5 +1167,25 @@ public static function get_random_password($length)
             }
         }
         return $data;
+    }
+
+    public static function thousandsCurrencyFormat($num) {
+
+      if($num>1000) {
+
+            $x = round($num);
+            $x_number_format = number_format($x);
+            $x_array = explode(',', $x_number_format);
+            $x_parts = array('k', 'm', 'b', 't');
+            $x_count_parts = count($x_array) - 1;
+            $x_display = $x;
+            $x_display = $x_array[0] . ((int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '');
+            $x_display .= $x_parts[$x_count_parts - 1];
+
+            return $x_display;
+
+      }
+
+      return $num;
     }
 }

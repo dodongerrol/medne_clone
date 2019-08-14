@@ -179,9 +179,15 @@
 							</div>
 							<div class="mednefits-body-box credit-box" hidden>
 								<div class="row">
-									<div class="col-md-12 credit-allocated-container">
+									<div class="col-md-12 credit-allocated-container" ng-if="credits.total_medical_employee_allocated != 'UNLIMITED'">
 										<h1 ng-if="spendingAccountType == 0" class="no-margin credit-amount">S$ <span ng-bind="credits.total_medical_employee_allocated"></span></h1>
 										<h1 ng-if="spendingAccountType == 1" class="no-margin credit-amount">S$ <span ng-bind="credits.total_wellness_employee_allocated"></span></h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">ALLOCATED</p>
+									</div>
+
+									<div class="col-md-12 credit-allocated-container" ng-if="credits.total_medical_employee_allocated == 'UNLIMITED'">
+										<h1 ng-if="spendingAccountType == 0" class="no-margin credit-amount"><span ng-bind="credits.total_medical_employee_allocated"></span></h1>
+										<h1 ng-if="spendingAccountType == 1" class="no-margin credit-amount"><span ng-bind="credits.total_wellness_employee_allocated"></span></h1>
 										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">ALLOCATED</p>
 									</div>
 
@@ -191,12 +197,15 @@
 										<p class="no-margin credit-text">SPENT</p>
 									</div>
 
-									<!-- <div class="col-md-12 credit-spent-container" style="margin-top: 20px;">
-										<h1 ng-if="spendingAccountType == 0" class="no-margin credit-amount">S$ <span ng-bind="credits.medical_balance"></span></h1>
-										<h1 ng-if="spendingAccountType == 1" class="no-margin credit-amount">S$ <span ng-bind="credits.wellness_balance"></span></h1> -->
-									<div class="col-md-12 credit-spent-container" style="margin-top: 20px;">
+									<div class="col-md-12 credit-spent-container" style="margin-top: 20px;" ng-if="credits.total_medical_employee_balance != 'UNLIMITED'">
 										<h1 ng-if="spendingAccountType == 0" class="no-margin credit-amount">S$ <span ng-bind="credits.total_medical_employee_balance"></span></h1>
 										<h1 ng-if="spendingAccountType == 1" class="no-margin credit-amount">S$ <span ng-bind="credits.total_wellness_employee_balance"></span></h1>
+										<p class="no-margin credit-text">BALANCE</p>
+									</div>
+
+									<div class="col-md-12 credit-spent-container" style="margin-top: 20px;" ng-if="credits.total_medical_employee_balance == 'UNLIMITED'">
+										<h1 ng-if="spendingAccountType == 0" class="no-margin credit-amount"><span ng-bind="credits.total_medical_employee_balance"></span></h1>
+										<h1 ng-if="spendingAccountType == 1" class="no-margin credit-amount"><span ng-bind="credits.total_wellness_employee_balance"></span></h1>
 										<p class="no-margin credit-text">BALANCE</p>
 									</div>
 								</div>

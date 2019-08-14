@@ -24,8 +24,8 @@ app.directive('dashboardDirective', [
 
 				scope.goToEnroll = function(){
 					localStorage.setItem('fromEmpOverview', false);
-					// $state.go('enrollment-options');
-					$state.go('create-team-benefits-tiers');
+					$state.go('enrollment-options');
+					// $state.go('create-team-benefits-tiers');
 				}
 
 				scope.selectSpending = ( opt ) => {
