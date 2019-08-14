@@ -1,9 +1,9 @@
 <?php
 
 return array(
-     // 'deployment' => "Production",
+      'deployment' => "Production",
    // 'deployment' => "Development",
-    'deployment' => "Testing",
+   // 'deployment' => "Testing",
 
 
 
