@@ -2221,12 +2221,12 @@ class BenefitsDashboardController extends \BaseController {
 		$total_wellness_balance = 0;
 
 		$check_accessibility = self::hrStatus( );
+		$plan = DB::table('customer_plan')
+					->where('customer_buy_start_id', $customer_id)
+					->orderBy('created_at', 'desc')
+					->first();
 		if($check_accessibility['accessibility'] == 1) {
 			// get plan
-			$plan = DB::table('customer_plan')
-						->where('customer_buy_start_id', $customer_id)
-						->orderBy('created_at', 'desc')
-						->first();
 			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
