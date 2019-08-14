@@ -342,8 +342,6 @@
 							  foreach ($receipt as $key => $doc) {
 							  	if($doc->type == "image") {
 							  		$doc->file = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
-							  	} else {
-							  		$doc->file = EclaimHelper::createPreSignedUrl($doc->file);
 							  	}
 							  }
 							  $receipt_files = $receipt;
@@ -459,15 +457,11 @@
 							  $sub_account_type = $temp_sub->user_type;
 							  $owner_id = $temp_sub->owner_id;
 							  $dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-							  $employee = ucwords($temp_account->Name);
-							  $dependent = ucwords($customer->Name);
 							} else {
 							  $sub_account = FALSE;
 							  $sub_account_type = FALSE;
 							  $owner_id = $customer->UserID;
 							  $dependent_relationship = FALSE;
-							  $employee = ucwords($customer->Name);
-							  $dependent = null;
 							}
 
 
@@ -481,8 +475,6 @@
 								'service'			=> $procedure,
 								'date_of_transaction' => date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 								'member'            => ucwords($customer->Name),
-								'employee'					=> $employee,
-								'dependent'					=> $dependent,
 								'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 								'receipt_status'    => $receipt_status,
 								'receipt_files'      => $receipt_files,
@@ -602,12 +594,11 @@
 										$doc_files = [];
 										foreach ($docs as $key => $doc) {
 											if($doc->file_type == "pdf" || $doc->file_type == "xls") {
-												// if(StringHelper::Deployment()==1){
-													// $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
-													$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
-												// } else {
-												// 	$fil = url('').'/receipts/'.$doc->doc_file;
-												// }
+												if(StringHelper::Deployment()==1){
+													$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+												} else {
+													$fil = url('').'/receipts/'.$doc->doc_file;
+												}
 												$image_link = null;
 											} else if($doc->file_type == "image") {
 												$fil = $doc->doc_file;
@@ -729,15 +720,15 @@
     			'statement_id'	=> $data->statement_id,
     			'statement_number' => $data->statement_number,
     			'statement_status'	=> $data->statement_status,
-    			'statement_total_amount' => number_format($results['credits'] + $results['total_consultation'], 2),
-    			'total_in_network_amount'		=> $results['credits'],
-    			'statement_amount_due' => number_format($amount_due, 2),
+    			'statement_total_amount' => floatval($results['credits']) + floatval($results['total_consultation']),
+    			'total_in_network_amount'		=> floatval($results['credits']),
+    			'statement_amount_due' => $amount_due,
     			'consultation_amount_due'	=> $consultation_amount_due,
     			'in_network'				=> $results['transactions'],
 
     			'paid_date'				=> $data->paid_date ? date('j M Y', strtotime($data->paid_date)) : NULL,
     			'payment_remarks' => $data->payment_remarks,
-    			'payment_amount' => number_format($data->paid_amount, 2),
+    			'payment_amount' => $data->paid_amount,
     			'lite_plan'	=> $lite_plan,
     			'total_consultation'	=> $results['total_consultation']
     		);

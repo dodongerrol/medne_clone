@@ -59,19 +59,32 @@ class Admin_Clinic_Type extends Eloquent implements UserInterface, RemindableInt
 
 	public function GetAllClinicTypes()
 	{
-		// $clinicTypeData = DB::table('clinic_types')
-		// 	->select('ClinicTypeID','Name', 'clinic_type_image_url')
-		//     ->where('Active',1)
-		//     ->orderBy('position', 'asc')
-		//     ->get();
-
 		$clinicTypeData = DB::table('clinic_types')
 						->select('ClinicTypeID','Name', 'clinic_type_image_url')
-		    		->where('Active',1)
-		    		->where('head',1)
-		    		->orderBy('position', 'asc')
-		    		->get();
-			return $clinicTypeData;
+			    		->where('Active',1)
+			    		->where('head',1)
+			    		->orderBy('position', 'asc')
+			    		->get();
+		$format = [];
+		$promotionals = DB::table('promotional_links')
+							->where('active', 1)
+							->get();
+
+		foreach ($promotionals as $key => $promotional) {
+			$temp = array(
+				'ClinicTypeID'			=> '0'.$promotional->promotional_link_id,
+				'Name'					=> $promotional->name,
+				'clinic_type_image_url'	=> $promotional->image_link,
+				'web_link'				=> $promotional->link,
+				'promotional_link'		=> true,
+				'type'					=> $promotional->type
+			);
+
+			array_push($format, $temp);
+		}
+
+		return array_merge($clinicTypeData, $format);
+
 	}
 
 	public function NewAllClinicTypes( )

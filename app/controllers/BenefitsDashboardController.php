@@ -127,6 +127,8 @@ class BenefitsDashboardController extends \BaseController {
 			$accessibility = 0;
 		}
 
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
+
 		$session = array(
 			'hr_dashboard_id'				=> $hr->hr_dashboard_id,
 			'customer_buy_start_id'			=> $hr->customer_buy_start_id,
@@ -134,7 +136,8 @@ class BenefitsDashboardController extends \BaseController {
 			'wallet'						=> $settings->wallet,
 			'accessibility'					=> $accessibility,
 			'expire_in'						=> $hr->expire_in,
-			'signed_in'						=> $hr->signed_in
+			'signed_in'						=> $hr->signed_in,
+			'account_type'					=> $plan->account_type
 		);
 		return $session;
 	}
@@ -1960,6 +1963,8 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
 				$plan_name = "Lite Plan";
+			} else if($active_plan->account_type == 'super_pro_plan') {
+				$plan_name = "Super Pro Plan";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -2066,16 +2071,16 @@ class BenefitsDashboardController extends \BaseController {
 			->sum('amount');
 
 			$medical = array(
-				'credits_allocation' => $medical_credit_data['allocation'],
+				'credits_allocation' => $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $medical_credit_data['allocation'],
 				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
-				'balance'			=> $medical_credit_data['balance'],
+				'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
 				'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
 			);
 
 			$wellness = array(
-				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+				'credits_allocation_wellness'	 => $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'],
 				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
-				'balance'						=> $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+				'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
 				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
 
@@ -2215,9 +2220,13 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_balance = 0;
 		$total_wellness_balance = 0;
 
-		// $check_accessibility = self::hrStatus( );
-		$check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
-		if($check_accessibility == true) {
+		$check_accessibility = self::hrStatus( );
+		if($check_accessibility['accessibility'] == 1) {
+			// get plan
+			$plan = DB::table('customer_plan')
+						->where('customer_buy_start_id', $customer_id)
+						->orderBy('created_at', 'desc')
+						->first();
 			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
@@ -2229,77 +2238,84 @@ class BenefitsDashboardController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->first();
 
-			if($customer_credit_reset_medical) {
-				$date = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
-				$temp_total_allocation = DB::table('customer_credit_logs')
-				->where('customer_credits_id', $company_credits->customer_credits_id)
-				->where('logs', 'admin_added_credits')
-				// ->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
-				->where('created_at', '>=', $date)
-				->sum('credit');
+			if($plan->account_type != "super_pro_plan") {
+				if($customer_credit_reset_medical) {
+					$date = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
+					$temp_total_allocation = DB::table('customer_credit_logs')
+					->where('customer_credits_id', $company_credits->customer_credits_id)
+					->where('logs', 'admin_added_credits')
+					// ->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+					->where('created_at', '>=', $date)
+					->sum('credit');
 
-				$temp_total_deduction = DB::table('customer_credit_logs')
-				->where('customer_credits_id', $company_credits->customer_credits_id)
-				->where('logs', 'admin_deducted_credits')
-				->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
-				->sum('credit');
-			} else {
-				$temp_total_allocation = DB::table('customer_credits')
-				->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-				->where('customer_credits.customer_id', $customer_id)
-				->where('customer_credit_logs.logs', 'admin_added_credits')
-				->sum('customer_credit_logs.credit');
+					$temp_total_deduction = DB::table('customer_credit_logs')
+					->where('customer_credits_id', $company_credits->customer_credits_id)
+					->where('logs', 'admin_deducted_credits')
+					->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+					->sum('credit');
+				} else {
+					$temp_total_allocation = DB::table('customer_credits')
+					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_credit_logs.logs', 'admin_added_credits')
+					->sum('customer_credit_logs.credit');
 
-				$temp_total_deduction = DB::table('customer_credits')
-				->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-				->where('customer_credits.customer_id', $customer_id)
-				->where('customer_credit_logs.logs', 'admin_deducted_credits')
-				->sum('customer_credit_logs.credit');
+					$temp_total_deduction = DB::table('customer_credits')
+					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_credit_logs.logs', 'admin_deducted_credits')
+					->sum('customer_credit_logs.credit');
 
+				}
+				$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
 			}
-			$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
 
+			if($plan->account_type != "super_pro_plan") {
+			    // check if customer has a credit reset in medical
+				$customer_credit_reset_wellness = DB::table('credit_reset')
+				->where('id', $customer_id)
+				->where('spending_type', 'wellness')
+				->where('user_type', 'company')
+				->orderBy('created_at', 'desc')
+				->first();
 
-		    // check if customer has a credit reset in medical
-			$customer_credit_reset_wellness = DB::table('credit_reset')
-			->where('id', $customer_id)
-			->where('spending_type', 'wellness')
-			->where('user_type', 'company')
-			->orderBy('created_at', 'desc')
-			->first();
+				if($customer_credit_reset_wellness) {
+					$date = date('Y-m-d', strtotime($customer_credit_reset_wellness->date_resetted));
+					$temp_total_allocation_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
+					// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+					->where('customer_wellness_credits_logs.created_at', '>=', $date)
+					->sum('customer_wellness_credits_logs.credit');
 
-			if($customer_credit_reset_wellness) {
-				$date = date('Y-m-d', strtotime($customer_credit_reset_wellness->date_resetted));
-				$temp_total_allocation_wellness = DB::table('customer_credits')
-				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-				->where('customer_credits.customer_id', $customer_id)
-				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
-				// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
-				->where('customer_wellness_credits_logs.created_at', '>=', $date)
-				->sum('customer_wellness_credits_logs.credit');
+					$temp_total_deduction_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
+					// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
+					->where('customer_wellness_credits_logs.created_at', '>=', $date)
+					->sum('customer_wellness_credits_logs.credit');
+				} else {
+					$temp_total_allocation_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
+					->sum('customer_wellness_credits_logs.credit');
 
-				$temp_total_deduction_wellness = DB::table('customer_credits')
-				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-				->where('customer_credits.customer_id', $customer_id)
-				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
-				// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
-				->where('customer_wellness_credits_logs.created_at', '>=', $date)
-				->sum('customer_wellness_credits_logs.credit');
-			} else {
-				$temp_total_allocation_wellness = DB::table('customer_credits')
-				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-				->where('customer_credits.customer_id', $customer_id)
-				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
-				->sum('customer_wellness_credits_logs.credit');
-
-				$temp_total_deduction_wellness = DB::table('customer_credits')
-				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-				->where('customer_credits.customer_id', $customer_id)
-				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
-				->sum('customer_wellness_credits_logs.credit');
+					$temp_total_deduction_wellness = DB::table('customer_credits')
+					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+					->where('customer_credits.customer_id', $customer_id)
+					->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
+					->sum('customer_wellness_credits_logs.credit');
+				}
+				$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
 			}
-			$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
-			$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+			if($plan->account_type != "super_pro_plan") {
+				$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+			} else {
+				$user_allocated = PlanHelper::getCorporateUserByAllocatedSuperProPlan($account_link->corporate_id, $customer_id);
+			}
 	        // return $user_allocated;
 			$get_allocation_spent = 0;
 			$get_allocation_spent_wellness = 0;
@@ -2330,30 +2346,32 @@ class BenefitsDashboardController extends \BaseController {
 			$credits = $total_medical_allocation - $total_medical_allocated;
 			$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
 
-			if($company_credits->balance != $credits) {
-				// update medical credits
-				\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
-			}
+			if($plan->account_type != "super_pro_plan") {
+				if($company_credits->balance != $credits) {
+					// update medical credits
+					\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
+				}
 
-			if($company_credits->wellness_credits != $credits_wellness) {
-				// update wellness credits
-				\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
+				if($company_credits->wellness_credits != $credits_wellness) {
+					// update wellness credits
+					\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
+				}
 			}
 		}
 		
 		return array(
-			'total_medical_company_allocation' => number_format($total_medical_allocation, 2),
-			'total_medical_company_unallocation' => number_format($credits, 2),
-			'total_medical_employee_allocated' => number_format($total_medical_allocated, 2),
+			'total_medical_company_allocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' :number_format($total_medical_allocation, 2),
+			'total_medical_company_unallocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($credits, 2),
+			'total_medical_employee_allocated' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_medical_allocated, 2),
 			'total_medical_employee_spent'		=> $get_allocation_spent < 0 ? "0.00" : number_format($get_allocation_spent, 2),
-			'total_medical_employee_balance' => number_format($total_medical_balance, 2),
-			'total_medical_employee_balance_number' => $total_medical_balance,
-			'total_medical_wellness_allocation' => number_format($total_allocation_wellness, 2),
-			'total_medical_wellness_unallocation' => number_format($credits_wellness, 2),
-			'total_wellness_employee_allocated' => number_format($total_wellnesss_allocated, 2),
+			'total_medical_employee_balance' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_medical_balance, 2),
+			'total_medical_employee_balance_number' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : $total_medical_balance,
+			'total_medical_wellness_allocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_allocation_wellness, 2),
+			'total_medical_wellness_unallocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($credits_wellness, 2),
+			'total_wellness_employee_allocated' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_wellnesss_allocated, 2),
 			'total_wellness_employee_spent'		=> number_format($get_allocation_spent_wellness, 2),
-			'total_wellness_employee_balance' => number_format($total_wellness_balance, 2),
-			'total_wellness_employee_balance_number' => $total_wellness_balance,
+			'total_wellness_employee_balance' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_wellness_balance, 2),
+			'total_wellness_employee_balance_number' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : $total_wellness_balance,
 			'company_id' => $result->customer_buy_start_id
 		);
 	}

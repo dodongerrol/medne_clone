@@ -129,11 +129,11 @@ class SpendingInvoiceController extends \BaseController {
         			->where('customer_buy_start_id', $result->customer_buy_start_id)
         			->first();
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
-        $statement['sub_total'] = number_format(floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']), 2);
+        $statement['sub_total'] = floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']);
 
         // return View::make('invoice.hr-statement-invoice', $statement);
 		$pdf = PDF::loadView('invoice.hr-statement-invoice', $statement);
-			$pdf->getDomPDF()->get_option('enable_html5_parser');
+		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 
     	return $pdf->stream($statement['company'].' - '.$statement['statement_number'].'.pdf');
@@ -146,15 +146,12 @@ class SpendingInvoiceController extends \BaseController {
 		$container = array();
 		foreach ($data['in_network'] as $key => $trans) {
 			$temp = array(
-				'TRANSACTION #'	=> $trans['transaction_id'],
-				'EMPLOYEE' 	=> $trans['member'],
-                'NRIC'  => $trans['nric'],
+				'TRANSACTION ID'	=> $trans['transaction_id'],
+				'MEMBER' 	=> $trans['member'],
 				'DATE'		=> $trans['date_of_transaction'],
-                'CATEGORY'      => $trans['clinic_type'],
-                'PROVIDER'      => $trans['clinic_name'],
-				'ITEMS/SERVICE' => $trans['clinic_type_and_service'],
-				'TOTAL AMOUNT'	=> $trans['total_amount'],
-                'PAYMENT TYPE'  => $trans['transaction_type']
+				'ITEMS/SERVICE' => $trans['service'],
+				'PROVIDER'	=> $trans['clinic_name'],
+				'TOTAL AMOUNT'	=> $trans['total_amount']
 			);
 
 			if($lite_plan) {

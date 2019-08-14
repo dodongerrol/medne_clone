@@ -1038,6 +1038,15 @@ return Response::json($returnObject);
                 $in_network_spent = 0;
                 $ids = StringHelper::getSubAccountsID($findUserID);
                 $user_id = StringHelper::getUserId($findUserID);
+                $user_plan_history = DB::table('user_plan_history')
+                ->where('user_id', $user_id)
+                ->where('type', 'started')
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+                $customer_active_plan = DB::table('customer_active_plan')
+                            ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                            ->first();
 
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
@@ -1309,20 +1318,25 @@ return Response::json($returnObject);
     // $current_spending = $in_network_spent + $e_claim_spent;
     // $allocation = $temp_allocation - $deducted_allocation;
     PlanHelper::reCalculateEmployeeBalance($user_id);
-    $user = DB::table('user')->where('UserID', $user_id)->first();
 
-
+    if($customer_active_plan->account_type == "super_pro_plan") {
+      $balance = "*****";
+      $currency_symbol = "";
+    } else {
+      // $balance = StringHelper::thousandsCurrencyFormat($balance);
+      $balance = number_format($balance, 2);
+      $currency_symbol = "S$";
+    }
 
     $wallet_data = array(
       'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
       'spending_type'             => $spending_type,
-      // 'wallet_id'                 => $wallet->wallet_id,
-      'balance'                   => $balance >= 0 ? number_format($balance, 2) : "0.00",
+      'balance'                   => $balance,
       'in_network_credits_spent'  => number_format($in_network_spent, 2),
       'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
       'e_claim_transactions'      => $e_claim,
       'in_network_transactions'   => $transaction_details,
-      'currency_symbol'           => "S$"
+      'currency_symbol'           => $currency_symbol
     );
 
     $returnObject->status = true;
@@ -1855,7 +1869,7 @@ public function getNewClinicDetails($id)
            $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
            $owner_id = StringHelper::getUserId($findUserID);
 
-                            // check block access
+            // check block access
            $block = PlanHelper::checkCompanyBlockAccess($owner_id, $id);
 
            if($block) {
@@ -1866,6 +1880,15 @@ public function getNewClinicDetails($id)
 
            // check if employee/user is still coverge
            $user_type = PlanHelper::getUserAccountType($findUserID);
+           $user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $owner_id)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
+
+            $customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 
             if($user_type == "employee") {
               $plan_coverage = PlanHelper::checkEmployeePlanStatus($findUserID);
@@ -1936,7 +1959,11 @@ public function getNewClinicDetails($id)
         $jsonArray['clinic_price'] = $clprice;
         $jsonArray['member'] = ucwords($user->Name);
         $jsonArray['nric'] = $user->NRIC;
-        $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+
+        $current_balance = 0;
+        if($customer_active_plan->account_type != "super_pro_plan") {
+          $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+        }
 
         // check if employee has plan tier cap
         $customer_id = PlanHelper::getCustomerId($owner_id);
@@ -1975,6 +2002,11 @@ public function getNewClinicDetails($id)
         } else {
            $currency = "S$";
            $balance = number_format($current_balance, 2);
+        }
+
+        if($customer_active_plan->account_type == "super_pro_plan") {
+          $balance = 999999999;
+          $current_balance = 999999999;
         }
 
         $jsonArray['current_balance'] = $currency.' '.$balance;
@@ -4990,7 +5022,7 @@ public function createEclaim( )
                return Response::json($returnObject);
            }
 
-           $file_types = ["jpeg","jpg","png","pdf","xls","xlsx","tif","bmp","tiff"];
+           $file_types = ["jpeg","jpg","png","pdf","xls","xlsx","PNG", "JPG", "JPEG"];
 
            if(empty($input['amount']) || $input['amount'] == null) {
                $returnObject->status = FALSE;
@@ -5075,7 +5107,25 @@ public function createEclaim( )
                   array('file' => $file),
                   $rules
               );
-
+              // return array('res' => $validator);
+              // $result_type = in_array($file->getClientOriginalExtension(), $file_types);
+              // if(!$result_type) {
+              //     $returnObject->status = FALSE;
+              //     $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF and Excel.';
+              //     return Response::json($returnObject);
+              // }
+    //           if($validator->fails()){
+    //             $returnObject->status = FALSE;
+    //               $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image, PDF or Excel.';
+    //               return Response::json($returnObject);
+    //           }
+    //           $file_size = $file->getSize();
+    // // check file size if exceeds 10 mb
+    //           if($file_size > 10000000) {
+    //             $returnObject->status = FALSE;
+    //             $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
+    //             return Response::json($returnObject);
+    //         }
               if($validator->passes()) {
                 $file_size = $file->getSize();
                 // check file size if exceeds 10 mb
@@ -5101,26 +5151,19 @@ public function createEclaim( )
         $returnObject->message = 'Success.';
         $ids = StringHelper::getSubAccountsID($findUserID);
         $user_id = StringHelper::getUserId($findUserID);
-        $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+        $user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $user_id)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
 
-        if(!$check_user_balance) {
-         $returnObject->status = FALSE;
-         $returnObject->message = 'User does not have a wallet data.';
-         return Response::json($returnObject);
-         }
+        $customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 
-                        // recalculate employee balance
-         PlanHelper::reCalculateEmployeeBalance($user_id);
+        $input_amount = 0;
 
-         if($input['spending_type'] == "medical") {
-             $balance = $check_user_balance->balance;
-         } else {
-             $balance = $check_user_balance->wellness_balance;
-         }
-
-         $input_amount = 0;
-
-         if(Input::has('currency_type') && $input['currency_type'] != null) {
+        if(Input::has('currency_type') && $input['currency_type'] != null) {
           if(strtolower($input['currency_type']) == "myr") {
             // $input_amount = $input['currency_exchange_rate'] ? $input['amount'] / $input['currency_exchange_rate'] : $input['amount'] / 3;
             $input_amount = $input['amount'] / 3;
@@ -5130,31 +5173,48 @@ public function createEclaim( )
          } else {
           $input_amount = trim($input['amount']);
          }
+        $amount = trim($input_amount);
 
-         $amount = trim($input_amount);
-         $balance = round($balance, 2);
-         
-         if($amount > $balance) {
+        if($customer_active_plan->account_type != "super_pro_plan") {
+          $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+
+          if(!$check_user_balance) {
+           $returnObject->status = FALSE;
+           $returnObject->message = 'User does not have a wallet data.';
+           return Response::json($returnObject);
+           }
+          // recalculate employee balance
+           PlanHelper::reCalculateEmployeeBalance($user_id);
+           if($input['spending_type'] == "medical") {
+               $balance = $check_user_balance->balance;
+           } else {
+               $balance = $check_user_balance->wellness_balance;
+           }
+          $balance = round($balance, 2);
+           
+          if($amount > $balance) {
              $returnObject->status = FALSE;
              $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
              return Response::json($returnObject);
-         }
+          }
            // $check_pending = self::checkPendingEclaims($ids, $input['spending_type']);
-         $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
-         if($input['spending_type'] == "medical") {
+          $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
+          if($input['spending_type'] == "medical") {
              $claim_amounts = $check_user_balance->balance - $check_pending;
-         } else {
+          } else {
              $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
-         }
+          }
 
-         $claim_amounts = trim($claim_amounts);
+          $claim_amounts = trim($claim_amounts);
 
-         if($amount > $claim_amounts) {
+          if($amount > $claim_amounts) {
              $returnObject->status = FALSE;
              $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
              return Response::json($returnObject);
-         }
+          }
+        }
 
+        
          $time = date('h:i A', strtotime($input['time']));
          $claim = new Eclaim();
          $data = array(
@@ -5171,6 +5231,8 @@ public function createEclaim( )
           $data['currency_type'] = strtolower($input['currency_type']);
           $data['currency_value'] = $input['currency_exchange_rate'];
          }
+
+        // return array('res' => $data);
 
          try {
              $result = $claim->createEclaim($data);

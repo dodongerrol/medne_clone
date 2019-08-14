@@ -135,28 +135,42 @@ class EclaimController extends \BaseController {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
 			}
 		}
+		
+		$user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $user_id)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
 
-        // recalculate employee balance
-		PlanHelper::reCalculateEmployeeBalance($user_id);
+        $customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 
-        // check if e-claim can proceed
-		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
-        // return $check_user_balance->balance;
-        $balance = round($check_user_balance->balance, 2);
-
-		if($input['amount'] > $balance || $balance <= 0) {
-			return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
-		}
-
-        // check user pending e-claims amount
-		$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
-		$total_claim_amount = $check_user_balance->balance - $claim_amounts;
 		$amount = trim($input['amount']);
-		$total_claim_amount = trim($total_claim_amount);
+		if($customer_active_plan->account_type != "super_pro_plan") {
+	        // recalculate employee balance
+			PlanHelper::reCalculateEmployeeBalance($user_id);
 
-		if($amount > $total_claim_amount) {
-			return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
+	        // check if e-claim can proceed
+			$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+	        // return $check_user_balance->balance;
+	        $balance = round($check_user_balance->balance, 2);
+
+			if($input['amount'] > $balance || $balance <= 0) {
+				return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
+			}
+
+	        // check user pending e-claims amount
+			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
+			$total_claim_amount = $check_user_balance->balance - $claim_amounts;
+			$total_claim_amount = trim($total_claim_amount);
+			
+			if($amount > $total_claim_amount) {
+				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
+			}
 		}
+
+
 		
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
@@ -166,6 +180,7 @@ class EclaimController extends \BaseController {
 			'merchant'	=> $input['merchant'],
 			'amount'	=> $amount,
 			'date'		=> date('Y-m-d', strtotime($input['date'])),
+			'approved_date' => null,
 			'time'		=> $time,
 			'spending_type' => 'medical'
 		);
@@ -245,7 +260,7 @@ class EclaimController extends \BaseController {
 			$email['logs'] = 'E-Claim Submission - '.$e->getMessage();
 			$email['emailSubject'] = 'Error log.';
 			EmailHelper::sendErrorLogs($email);
-			return array('status' => FALSE, 'message' => 'Error.');
+			return array('status' => FALSE, 'message' => 'Error.', 'e' => $e->getMessage());
 		}
 
 		return array('status' => FALSE, 'message' => 'Error.');
@@ -297,22 +312,34 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-        // check if e-claim can proceed
-		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
-		$balance = round($check_user_balance->balance, 2);
-		
-		if($input['amount'] > $balance || $balance <= 0) {
-			return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
-		}
+		$user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $user_id)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
 
-         // check user pending e-claims amount
-		$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
+        $customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 
-		$total_claim_amount = $check_user_balance->wellness_balance - $claim_amounts;
-        // return $total_claim_amount;
-		if(floatval($input['amount']) > floatval($total_claim_amount)) {
-			return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
-		}
+        if($customer_active_plan->account_type != "super_pro_plan") {
+	        // check if e-claim can proceed
+			$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
+			$balance = round($check_user_balance->balance, 2);
+			
+			if($input['amount'] > $balance || $balance <= 0) {
+				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
+			}
+
+	         // check user pending e-claims amount
+			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
+
+			$total_claim_amount = $check_user_balance->wellness_balance - $claim_amounts;
+	        // return $total_claim_amount;
+			if(floatval($input['amount']) > floatval($total_claim_amount)) {
+				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
+			}
+        }
 
         // return $total_claim_amount;
 
@@ -416,7 +443,7 @@ class EclaimController extends \BaseController {
 		$receipt_all = [];
 
 		if(Input::file('file')) {
-			$file_types = ["jpeg","jpg","png","pdf","xls","xlsx","PNG"];
+			$file_types = ["jpeg","jpg","png","pdf","xls","xlsx","PNG", "JPG", "JPEG"];
 			// $rules = array(
    //              'file' => 'required | mimes:jpeg,jpg,png,pdf,xls,xlsx',
    //          );
@@ -726,6 +753,15 @@ class EclaimController extends \BaseController {
 		$total_employee_lite_plan_spent = 0;
 		$wallet_status = false;
 		$lite_plan_status = StringHelper::litePlanStatus($user_id);
+		$user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $user_id)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
+
+        $customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 
 		$company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
 		if($company_wallet_status) {
@@ -743,39 +779,44 @@ class EclaimController extends \BaseController {
 		}
 
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
-
 		$wallet_reset = PlanHelper::getResetWallet($user_id, $spending_type, $start, $input['end'], 'employee');
-
+		$allocation = 0;
+		$deducted_allocation = 0;
+		$balance = 0;
+		$final_allocation = 0;
 		$spending_end_date = PlanHelper::endDate($input['end']);
-		if($wallet_reset) {
-			$wallet_history_id = $wallet_reset->wallet_history_id;
-			$wallet_start_date = $wallet_reset;
-	        // get credits allocation
-			$allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-			->where($table_wallet_history.'.logs', 'added_by_hr')
-			->sum($table_wallet_history.'.credit');
 
-			$deducted_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-			->where('e_wallet.UserID', $user_id)
-			->where('logs', 'deducted_by_hr')
-			->sum($table_wallet_history.'.credit');
-		} else {
-			$allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->where($table_wallet_history.'.logs', 'added_by_hr')
-			->sum($table_wallet_history.'.credit');
+		if($customer_active_plan->account_type != "super_pro_plan") {
+			if($wallet_reset) {
+				$wallet_history_id = $wallet_reset->wallet_history_id;
+				$wallet_start_date = $wallet_reset;
+		        // get credits allocation
+				$allocation = DB::table('e_wallet')
+				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+				->where('e_wallet.UserID', $user_id)
+				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				->where($table_wallet_history.'.logs', 'added_by_hr')
+				->sum($table_wallet_history.'.credit');
 
-			$deducted_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->where('logs', 'deducted_by_hr')
-			->sum($table_wallet_history.'.credit');
+				$deducted_allocation = DB::table('e_wallet')
+				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				->where('e_wallet.UserID', $user_id)
+				->where('logs', 'deducted_by_hr')
+				->sum($table_wallet_history.'.credit');
+			} else {
+				$allocation = DB::table('e_wallet')
+				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+				->where('e_wallet.UserID', $user_id)
+				->where($table_wallet_history.'.logs', 'added_by_hr')
+				->sum($table_wallet_history.'.credit');
+
+				$deducted_allocation = DB::table('e_wallet')
+				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+				->where('e_wallet.UserID', $user_id)
+				->where('logs', 'deducted_by_hr')
+				->sum($table_wallet_history.'.credit');
+			}
 		}
 
 		$e_claim_total = DB::table($table_wallet_history)
@@ -1233,23 +1274,30 @@ class EclaimController extends \BaseController {
 
 		$total_spent = $in_network_spent + $e_claim_spent;
 		// $balance = $total_allocation - $deducted_allocation - $total_spent;
+		if($customer_active_plan->account_type != "super_pro_plan") {
+			$pro_allocation = DB::table($table_wallet_history)
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation')
+				->sum('credit');
 
-		$pro_allocation = DB::table($table_wallet_history)
-			->where('wallet_id', $wallet->wallet_id)
-			->where('logs', 'pro_allocation')
-			->sum('credit');
 
-
-		if($pro_allocation > 0) {
-			$final_allocation = $pro_allocation;
-			$balance = $pro_allocation - $total_spent;
-			if($balance < 0) {
-				$balance = 0;
+			if($pro_allocation > 0) {
+				$final_allocation = $pro_allocation;
+				$balance = $pro_allocation - $total_spent;
+				if($balance < 0) {
+					$balance = 0;
+				}
+			} else {
+				$final_allocation = $allocation - $deducted_allocation;
+				$balance = $final_allocation - $total_spent;
 			}
-		} else {
-			$final_allocation = $allocation - $deducted_allocation;
-			$balance = $final_allocation - $total_spent;
 		}
+
+		 if($customer_active_plan->account_type != "super_pro_plan") {
+		 	$balance = number_format($balance, 2);
+		 } else {
+		 	$balance = 'UNLIMITED';
+		 }
 
 		return array(
 			'status' 				   => TRUE,
@@ -1257,9 +1305,9 @@ class EclaimController extends \BaseController {
 			'in_network_transactions'  => $transaction_details,
 			'in_network_spent'	       => number_format($in_network_spent, 2),
 			'e_claim_spent'			   => number_format($e_claim_spent, 2),
-			'total_allocation'		   => number_format($final_allocation, 2),
+			'total_allocation'		   => $customer_active_plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($final_allocation, 2),
 			'total_spent'			   => number_format($total_spent, 2),
-			'balance'				   => $balance >= 0 ? number_format($balance, 2) : "0.00",
+			'balance'				   => $balance,
 			'total_in_network_transactions' => $total_in_network_transactions,
 			'total_deleted_in_network_transactions' => $total_deleted_in_network_transactions,
 			'total_in_network_spent'    => number_format($total_in_network_spent, 2),
@@ -1641,7 +1689,15 @@ class EclaimController extends \BaseController {
 
 		$spending_type = !empty($input['spending_type']) ? $input['spending_type'] : 'medical';
 		
+		$user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $user_id)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
 
+        $customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 
 		$e_claim = [];
 		$transaction_details = [];
@@ -1917,6 +1973,12 @@ class EclaimController extends \BaseController {
         // recalculate employee
 		PlanHelper::reCalculateEmployeeBalance($user_id);
 
+		if($customer_active_plan->account_type != "super_pro_plan") {
+			$balance = number_format($balance, 2);
+		} else {
+			$balance = 'UNLIMITED';
+		}
+
 		return array(
 			'current_spending' 	=> number_format($current_spending, 2),
 			'e_claim_spent'			=> number_format($e_claim_spent, 2),
@@ -1927,7 +1989,7 @@ class EclaimController extends \BaseController {
 			'current_spending_format_number' => $current_spending,
 			'e_claim'						=> $e_claim,
 			'in_network_transactions' => $transaction_details,
-			'balance'           => $balance >= 0 ? number_format($balance, 2) : "0.00",
+			'balance'           => $balance,
 			'spending_type'	=> $spending_type
 		);
 	}
@@ -2951,12 +3013,11 @@ public function getActivityInNetworkTransactions( )
 				if(sizeof($receipts) > 0) {
 					foreach ($receipts as $key => $doc) {
 						if($doc->type == "pdf" || $doc->type == "xls") {
-							// if(StringHelper::Deployment()==1){
-							   // $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
-							$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
-							// } else {
-							//    $fil = url('').'/receipts/'.$doc->file;
-							// }
+							if(StringHelper::Deployment()==1){
+							   $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
+							} else {
+							   $fil = url('').'/receipts/'.$doc->file;
+							}
 						} else if($doc->type == "image") {
 							// $fil = FileHelper::formatImageAutoQuality($doc->file);
 							$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
@@ -5830,46 +5891,73 @@ public function updateEclaimStatus( )
 	}
 
 	if($input['status'] == 1 || $input['status'] == "1") {
-		// check e-claim if already approve
 		$employee = StringHelper::getUserId($e_claim_details->user_id);
-            // check user balance
-		// recalculate balance
-		PlanHelper::reCalculateEmployeeBalance($employee);
+		$user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $employee)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
 
-		$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-		$balance = EclaimHelper::getSpendingBalance($employee, $e_claim_details->created_at, $e_claim_details->spending_type);
-
-		if($check->spending_type == "medical") {
-			$balance_medical = round($balance['balance'], 2);
-			if($e_claim_details->amount > $balance_medical) {
-				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
-			}
-		} else {
-			$balance_wellness = round($balance['balance'], 2);
-			if($e_claim_details->amount > $balance_wellness) {
-				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
-			}
-		}
+        $customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 
         // deduct credit and save logs
 		$wallet_class = new Wallet();
+		$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
+		$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
+		// return $date;
+		$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
+
+        if($customer_active_plan->account_type != "super_pro_plan") {
+			// recalculate balance
+			PlanHelper::reCalculateEmployeeBalance($employee);
+			$balance = EclaimHelper::getSpendingBalance($employee, $e_claim_details->created_at, $e_claim_details->spending_type);
+
+			if($check->spending_type == "medical") {
+				$balance_medical = round($balance['balance'], 2);
+				if($e_claim_details->amount > $balance_medical) {
+					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
+				}
+			} else {
+				$balance_wellness = round($balance['balance'], 2);
+				if($e_claim_details->amount > $balance_wellness) {
+					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
+				}
+			}
+        }
+
+        
 
             // check what type of spending wallet the e-claim is
 		if($check->spending_type == "medical") {
-                // create wallet logs
-			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
-			$wallet_logs = array(
-				'wallet_id'     => $wallet->wallet_id,
-				'credit'        => $e_claim_details->amount,
-				'logs'          => 'deducted_from_e_claim',
-				'running_balance' => $balance['balance'] - $e_claim_details->amount,
-				'where_spend'   => 'e_claim_transaction',
-				'id'            => $e_claim_id
-			);
+            // create wallet logs
+			if($customer_active_plan->account_type != "super_pro_plan") {
+				$wallet_logs = array(
+					'wallet_id'     => $wallet->wallet_id,
+					'credit'        => $e_claim_details->amount,
+					'logs'          => 'deducted_from_e_claim',
+					'running_balance' => $balance['balance'] - $e_claim_details->amount,
+					'where_spend'   => 'e_claim_transaction',
+					'id'            => $e_claim_id
+				);
+			} else {
+				$wallet_logs = array(
+					'wallet_id'     => $wallet->wallet_id,
+					'credit'        => $e_claim_details->amount,
+					'logs'          => 'deducted_from_e_claim',
+					'running_balance' => 0,
+					'where_spend'   => 'e_claim_transaction',
+					'id'            => $e_claim_id,
+					'unlimited'		=> 1
+				);
+			}
 
-			if($balance['back_date'] == true) {
-				$wallet_logs['back_date_deduction'] = 1;
-				$wallet_logs['created_at'] = $e_claim_details->created_at;
+			if($customer_active_plan->account_type != "super_pro_plan") {
+				if($balance['back_date'] == true) {
+					$wallet_logs['back_date_deduction'] = 1;
+					$wallet_logs['created_at'] = $e_claim_details->created_at;
+				}
 			}
 
 			$history = new WalletHistory( );
@@ -5878,10 +5966,14 @@ public function updateEclaimStatus( )
 				$deduct_history = $history->createWalletHistory($wallet_logs);
 				$wallet_history_id = $deduct_history->id;
 				try {
-					if($balance['back_date'] == false) {
-						$deduct_result = $wallet_class->deductCredits($employee, $e_claim_details->amount);
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						if($balance['back_date'] == false) {
+							$deduct_result = $wallet_class->deductCredits($employee, $e_claim_details->amount);
+						} else {
+							$deduct_result = true;
+						}
 					} else {
-						$deduct_result =true;
+						$deduct_result = true;
 					}
 					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 
@@ -5938,28 +6030,46 @@ public function updateEclaimStatus( )
 				return array('status' => FALSE, 'message' => 'E-Claim failed to update.');
 			}
 		} else if($check->spending_type == "wellness") {
-			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
-			$wallet_logs = array(
-				'wallet_id'     => $wallet->wallet_id,
-				'credit'        => $e_claim_details->amount,
-				'logs'          => 'deducted_from_e_claim',
-				'running_balance' => $balance['balance'] - $e_claim_details->amount,
-				'where_spend'   => 'e_claim_transaction',
-				'id'            => $e_claim_id,
-				'created_at'	=> $e_claim_details->created_at
-			);
+			if($customer_active_plan->account_type != "super_pro_plan") {
+				$wallet_logs = array(
+					'wallet_id'     => $wallet->wallet_id,
+					'credit'        => $e_claim_details->amount,
+					'logs'          => 'deducted_from_e_claim',
+					'running_balance' => $balance['balance'] - $e_claim_details->amount,
+					'where_spend'   => 'e_claim_transaction',
+					'id'            => $e_claim_id,
+					'created_at'	=> $e_claim_details->created_at
+				);
+			} else {
+				$wallet_logs = array(
+					'wallet_id'     => $wallet->wallet_id,
+					'credit'        => $e_claim_details->amount,
+					'logs'          => 'deducted_from_e_claim',
+					'running_balance' => $balance['balance'] - $e_claim_details->amount,
+					'where_spend'   => 'e_claim_transaction',
+					'id'            => $e_claim_id,
+					'created_at'	=> $e_claim_details->created_at,
+					'unlimited'		=> 1
+				);
+			}
 
-			if($balance['back_date'] == true) {
-				$wallet_logs['back_date_deduction'] = 1;
-				$wallet_logs['created_at'] = $e_claim_details->created_at;
+			if($customer_active_plan->account_type != "super_pro_plan") {
+				if($balance['back_date'] == true) {
+					$wallet_logs['back_date_deduction'] = 1;
+					$wallet_logs['created_at'] = $e_claim_details->created_at;
+				}
 			}
 
 			try {
 				$deduct_history = WellnessWalletHistory::create($wallet_logs);
 				$wallet_history_id = $deduct_history->id;
 				try {
-					if($balance['back_date'] == false) {
-						$deduct_result = $wallet_class->deductWellnessCredits($employee, $e_claim_details->amount);
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						if($balance['back_date'] == false) {
+							$deduct_result = $wallet_class->deductWellnessCredits($employee, $e_claim_details->amount);
+						} else {
+							$deduct_result = true;
+						}
 					} else {
 						$deduct_result = true;
 					}

@@ -123,21 +123,25 @@
 							<td class="medical-details-container">
 								<div class="medical-details">
 									<strong>Allocation:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.medical.credits_allocation != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.medical.credits_allocation == 'UNLIMITED'"><span ng-bind="emp.spending_account.medical.credits_allocation"></span></span>
 								</div>
 								<div class="medical-details">
 									<strong>Balance:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.medical.balance != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.medical.balance == 'UNLIMITED'"><span ng-bind="emp.spending_account.medical.balance"></span></span>
 								</div>
 							</td>
 							<td class="wellness-details-container">
 								<div class="wellness-details">
 									<strong>Allocation:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.wellness.credits_allocation_wellness != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.wellness.credits_allocation_wellness == 'UNLIMITED'"><span ng-bind="emp.spending_account.wellness.credits_allocation_wellness"></span></span>
 								</div>
 								<div class="wellness-details">
 									<strong>Balance:</strong>
-									<span>S$ <span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.wellness.balance != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
+									<span ng-if="emp.spending_account.wellness.balance == 'UNLIMITED'"><span ng-bind="emp.spending_account.wellness.balance"></span></span>
 								</div>
 							</td>
 						</tr>
@@ -254,9 +258,13 @@
 
 				<div class="medical-spending-account">
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
-					<div class="allocation-container">
+					<div class="allocation-container" ng-if="selectedEmployee.spending_account.medical.credits_allocation != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Allocation</strong>
 						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
+					</div>
+					<div class="allocation-container" ng-if="selectedEmployee.spending_account.medical.credits_allocation == 'UNLIMITED'">
+						<strong class="font-helvetica-medium">Allocation</strong>
+						<span><span ng-bind="selectedEmployee.spending_account.medical.credits_allocation"></span></span>
 					</div>
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleMedicalUsage()" class="usage-container">
@@ -276,17 +284,25 @@
 							</div>
 						</div>
 					</div>
-					<div class="balance-container">
+					<div class="balance-container" ng-if="selectedEmployee.spending_account.medical.balance != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
 						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.balance | number: 2">300.00</span></span>
+					</div>
+					<div class="balance-container" ng-if="selectedEmployee.spending_account.medical.balance == 'UNLIMITED'">
+						<strong class="font-helvetica-medium">Balance</strong>
+						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.balance">300.00</span></span>
 					</div>
 				</div>
 
 				<div class="wellness-spending-account">
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
-					<div class="allocation-container">
+					<div class="allocation-container" ng-if="selectedEmployee.spending_account.wellness.credits_allocation_wellness != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Allocation</strong>
 						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
+					</div>
+					<div class="allocation-container" ng-if="selectedEmployee.spending_account.wellness.credits_allocation_wellness == 'UNLIMITED'">
+						<strong class="font-helvetica-medium">Allocation</strong>
+						<span><span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness">500.00</span></span>
 					</div>
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleWellnessUsage()" class="usage-container">
@@ -306,9 +322,13 @@
 							</div>
 						</div>
 					</div>
-					<div class="balance-container">
+					<div class="balance-container" ng-if="selectedEmployee.spending_account.wellness.balance != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
 						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.balance | number: 2">380.00</span></span>
+					</div>
+					<div class="balance-container" ng-if="selectedEmployee.spending_account.wellness.balance == 'UNLIMITED'">
+						<strong class="font-helvetica-medium">Balance</strong>
+						<span><span ng-bind="selectedEmployee.spending_account.wellness.balance">380.00</span></span>
 					</div>
 				</div>
 

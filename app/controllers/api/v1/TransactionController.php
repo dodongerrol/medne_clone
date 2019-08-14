@@ -87,26 +87,36 @@ class Api_V1_TransactionController extends \BaseController
 					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 					$consultation_fees = 0;
+					$user_plan_history = DB::table('user_plan_history')
+                  ->where('user_id', $user_id)
+                  ->where('type', 'started')
+                  ->orderBy('created_at', 'desc')
+                  ->first();
 
+        	$customer_active_plan = DB::table('customer_active_plan')
+                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                  ->first();
 					// recalculate employee balance
          	PlanHelper::reCalculateEmployeeBalance($user_id);
 					// check user credits and amount key in
 					$spending_type = "medical";
 					$wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
-					if($clinic_type->spending_type == "medical") {
-						$user_credits = TransactionHelper::floatvalue($wallet_user->balance);
-						$spending_type = "medical";
-					} else {
-						$user_credits = TransactionHelper::floatvalue($wallet_user->wellness_balance);
-						$spending_type = "wellness";
-					}
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						if($clinic_type->spending_type == "medical") {
+							$user_credits = TransactionHelper::floatvalue($wallet_user->balance);
+							$spending_type = "medical";
+						} else {
+							$user_credits = TransactionHelper::floatvalue($wallet_user->wellness_balance);
+							$spending_type = "wellness";
+						}
 
-					if($user_credits == 0) {
-						$returnObject->status = FALSE;
-            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
-            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-            return Response::json($returnObject);
+						if($user_credits == 0) {
+							$returnObject->status = FALSE;
+	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
+	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+	            return Response::json($returnObject);
+						}
 					}
 
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
@@ -123,13 +133,15 @@ class Api_V1_TransactionController extends \BaseController
 						$input_amount = TransactionHelper::floatvalue($input['input_amount']) + TransactionHelper::floatvalue($consultation_fees);
 					}
 
-					// check for lite plan
-					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-						if($consultation_fees > $user_credits) {
-							$returnObject->status = FALSE;
-	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
-	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-	            return Response::json($returnObject);
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						// check for lite plan
+						if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+							if($consultation_fees > $user_credits) {
+								$returnObject->status = FALSE;
+		            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
+		            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+		            return Response::json($returnObject);
+							}
 						}
 					}
 
@@ -140,12 +152,15 @@ class Api_V1_TransactionController extends \BaseController
 					  $total_amount = $input_amount;
 					}
 
-					if($total_amount > $user_credits) {
-						$returnObject->status = FALSE;
-            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
-            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-            return Response::json($returnObject);
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						if($total_amount > $user_credits) {
+							$returnObject->status = FALSE;
+	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
+	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+	            return Response::json($returnObject);
+						}
 					}
+
 					// return $total_amount;
 					// get details for clinic co paid
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
@@ -187,11 +202,16 @@ class Api_V1_TransactionController extends \BaseController
 						$payment_credits = $total_amount;
 					}
 
-					if($credits > $user_credits) {
-						$credits_temp = $user_credits;
-						$cash = $credits - $user_credits;
-						$credits = $credits_temp;
-						$half_payment = true;
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						if($credits > $user_credits) {
+							$credits_temp = $user_credits;
+							$cash = $credits - $user_credits;
+							$credits = $credits_temp;
+							$half_payment = true;
+						}
+					} else {
+						$cash = 0;
+						$credits = $total_amount;
 					}
 					// return $total_credits;
 					$transaction = new Transaction();
@@ -302,47 +322,77 @@ class Api_V1_TransactionController extends \BaseController
 							$history = new WalletHistory( );
 
 							if($spending_type == "medical") {
-								$credits_logs = array(
-									'wallet_id'     => $wallet_user->wallet_id,
-									'credit'        => $total_credits_cost,
-									'logs'          => 'deducted_from_mobile_payment',
-									'running_balance' => $wallet_user->balance - $total_credits_cost,
-									'where_spend'   => 'in_network_transaction',
-									'id'            => $transaction_id
-								);
-
-								// insert for lite plan
-								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-									$lite_plan_credits_log = array(
-									 'wallet_id'     => $wallet_user->wallet_id,
-									 'credit'        => $consultation_fees,
-									 'logs'          => 'deducted_from_mobile_payment',
-									 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
-									 'where_spend'   => 'in_network_transaction',
-									 'id'            => $transaction_id,
-									 'lite_plan_enabled' => 1,
+								if($customer_active_plan->account_type != "super_pro_plan") {
+									$credits_logs = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $total_credits_cost,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->balance - $total_credits_cost,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id
 									);
+
+									// insert for lite plan
+									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+										$lite_plan_credits_log = array(
+										 'wallet_id'     => $wallet_user->wallet_id,
+										 'credit'        => $consultation_fees,
+										 'logs'          => 'deducted_from_mobile_payment',
+										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+										 'where_spend'   => 'in_network_transaction',
+										 'id'            => $transaction_id,
+										 'lite_plan_enabled' => 1,
+										);
+									}
+								} else {
+									$credits_logs = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $total_credits_cost,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->balance - $total_credits_cost,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'unlimited'			=> 1
+									);
+
+									// insert for lite plan
+									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+										$lite_plan_credits_log = array(
+										 'wallet_id'     => $wallet_user->wallet_id,
+										 'credit'        => $consultation_fees,
+										 'logs'          => 'deducted_from_mobile_payment',
+										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+										 'where_spend'   => 'in_network_transaction',
+										 'id'            => $transaction_id,
+										 'lite_plan_enabled' => 1,
+										 'unlimited'			=> 1
+										);
+									}
 								}
 							} else {
-								$credits_logs = array(
-									'wallet_id'     => $wallet_user->wallet_id,
-									'credit'        => $total_credits_cost,
-									'logs'          => 'deducted_from_mobile_payment',
-									'running_balance' => $wallet_user->wellness_balance - $total_credits_cost - $consultation_fees,
-									'where_spend'   => 'in_network_transaction',
-									'id'            => $transaction_id
-								);
-
-								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-									$lite_plan_credits_log = array(
-									'wallet_id'     => $wallet_user->wallet_id,
-									'credit'        => $consultation_fees,
-									'logs'          => 'deducted_from_mobile_payment',
-									'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
-									'where_spend'   => 'in_network_transaction',
-									'id'            => $transaction_id,
-									'lite_plan_enabled' => 1,
+								if($customer_active_plan->account_type != "super_pro_plan") {
+									$credits_logs = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $total_credits_cost,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->wellness_balance - $total_credits_cost - $consultation_fees,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'unlimited'			=> 1
 									);
+
+									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+										$lite_plan_credits_log = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $consultation_fees,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'lite_plan_enabled' => 1,
+										'unlimited'			=> 1
+										);
+									}
 								}
 							}
 
@@ -365,17 +415,19 @@ class Api_V1_TransactionController extends \BaseController
 
 								if($deduct_history) {
 									try {
-										if($spending_type == "medical") {
-											$wallet->deductCredits($user_id, $payment_credits);
+										if($customer_active_plan->account_type != "super_pro_plan") {
+											if($spending_type == "medical") {
+												$wallet->deductCredits($user_id, $payment_credits);
 
-											if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-												$wallet->deductCredits($user_id, $consultation_fees);
-											}
-										} else {
-											$wallet->deductWellnessCredits($user_id, $payment_credits);
+												if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+													$wallet->deductCredits($user_id, $consultation_fees);
+												}
+											} else {
+												$wallet->deductWellnessCredits($user_id, $payment_credits);
 
-											if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-												$wallet->deductWellnessCredits($user_id, $consultation_fees);
+												if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+													$wallet->deductWellnessCredits($user_id, $consultation_fees);
+												}
 											}
 										}
 
@@ -1487,14 +1539,14 @@ class Api_V1_TransactionController extends \BaseController
 						  //      	'created_at'	=> date('Y-m-d H:i:s'),
 						  //      	'updated_at' => date('Y-m-d H:i:s')
 	       //          );
-							    $image = \Cloudinary\Uploader::upload($file->getPathName());
-							    $receipt = array(
-							       'user_id'           => $findUserID,
-							       'file'      => $image['secure_url'],
-							       'type'      => "image",
-							       'transaction_id'    => $transaction_id,
-								   );
-								$result = $trans_docs->saveReceipt($receipt);
+						    $image = \Cloudinary\Uploader::upload($file->getPathName());
+						    $receipt = array(
+					       'user_id'           => $findUserID,
+					       'file'      => $image['secure_url'],
+					       'type'      => "image",
+					       'transaction_id'    => $transaction_id,
+						   );
+						    $result = $trans_docs->saveReceipt($receipt);
 							}
 
 							if($result) {
