@@ -2215,8 +2215,9 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_balance = 0;
 		$total_wellness_balance = 0;
 
-		$check_accessibility = self::hrStatus( );
-		if($check_accessibility['accessibility'] == 1) {
+		// $check_accessibility = self::hrStatus( );
+		$check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
+		if($check_accessibility == true) {
 			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
@@ -6921,21 +6922,27 @@ class BenefitsDashboardController extends \BaseController {
 						# code...
 						$refunds = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
 						->count('user_id');
 
 						$amount = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
 						->sum('amount');
-						$temp = array(
-							'customer_active_plan_id' => $withdraw->customer_active_plan_id,
-							'payment_refund_id'		  => $withdraw->payment_refund_id,
-							'total_amount'	=> number_format($amount, 2),
-							'total_employees' => $refunds,
-							'date_withdraw'	 => $withdraw->date_refund,
-							'refund_data'		=> $withdraw
-						);
 
-						array_push($new_data, $temp);
+						if($amount > 0) {
+							$temp = array(
+								'customer_active_plan_id' => $withdraw->customer_active_plan_id,
+								'payment_refund_id'		  => $withdraw->payment_refund_id,
+								'total_amount'	=> number_format($amount, 2),
+								'total_employees' => $refunds,
+								'date_withdraw'	 => $withdraw->date_refund,
+								'refund_data'		=> $withdraw
+							);
+
+							array_push($new_data, $temp);
+						}
+
 					}
 				}
 			}
