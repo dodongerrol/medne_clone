@@ -182,8 +182,8 @@ app.directive('benefitsTiersDirective', [
 				scope.backBtn = function(){
 					scope.isEditActive = false;
 					if( scope.isTierBtn == true ){
-						$state.go('enrollment-options');
-						// $state.go('benefits-dashboard');
+						// $state.go('enrollment-options');
+						$state.go('benefits-dashboard');
 					}else if( scope.isTierInput == true ){
 						scope.isTierInput = false;
 						if( scope.tier_arr.length > 0 ){
@@ -192,14 +192,15 @@ app.directive('benefitsTiersDirective', [
 							scope.isTierBtn = true;
 						}
 					}else if( scope.isTierSummary == true ){
-						$state.go('enrollment-options');
-						// $state.go('benefits-dashboard');
+						// $state.go('enrollment-options');
+						$state.go('benefits-dashboard');
 					}else if( scope.isEnrollmentOptions == true ){
 						if( scope.isTiering == true || scope.isTiering == 'true' ){
 							scope.isTierSummary = true;
 							scope.isEnrollmentOptions = false;
 						}else{
-							$state.go('enrollment-options');
+							// $state.go('enrollment-options');
+							$state.go('benefits-dashboard');
 						}
 						// $state.go('benefits-dashboard');
 					}else if( scope.isExcel == true || scope.isWebInput == true ){
