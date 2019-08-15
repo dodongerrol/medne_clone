@@ -325,7 +325,7 @@ class EclaimController extends \BaseController {
         if($customer_active_plan->account_type != "super_pro_plan") {
 	        // check if e-claim can proceed
 			$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
-			$balance = round($check_user_balance->balance, 2);
+			$balance = round($check_user_balance->wellness_balance, 2);
 			
 			if($input['amount'] > $balance || $balance <= 0) {
 				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
@@ -427,11 +427,11 @@ class EclaimController extends \BaseController {
             // send email logs
 			$email = [];
 			$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-			$email['logs'] = 'E-Claim Submission Wellness - '.$e;
+			$email['logs'] = 'E-Claim Submission Wellness - '.$e->getMessage();
 			$email['emailSubject'] = 'Error log.';
 			// send
 			EmailHelper::sendErrorLogs($email);
-			return array('status' => FALSE, 'message' => 'Error.');
+			return array('status' => FALSE, 'message' => 'Error.', 'e' => $e->getMessage());
 		}
 
 		return array('status' => FALSE, 'message' => 'Error.');
