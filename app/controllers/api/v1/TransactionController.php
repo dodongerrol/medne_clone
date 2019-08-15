@@ -518,7 +518,7 @@ class Api_V1_TransactionController extends \BaseController
 											 $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
 											 $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
 											 $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
-											 EmailHelper::sendPaymentAttachment($email);
+											 EmailHelper::sendPaymentAttachmentHealth($email);
 											}
 											$returnObject->status = TRUE;
 											$returnObject->message = 'Payment Successfull';
