@@ -130,13 +130,25 @@ public static function getClinicTypeImage($clinic_type)
         $customer_id = PlanHelper::getCustomerId($findUserID);
         if($customer_id) {
           foreach ($clinics as $key => $clinic) {
-            $block = DB::table('company_block_clinic_access')
+            $company_block = DB::table('company_block_clinic_access')
                           ->where('customer_id', $customer_id)
                           ->where('clinic_id', $clinic['clinic_id'])
+                          ->where('account_type', 'company')
                           ->where('status', 1)
                           ->first();
-            if($block) {
+            if($company_block) {
               unset($clinics[$key]);
+            } else {
+              $employee_block = DB::table('company_block_clinic_access')
+                ->where('customer_id', $findUserID)
+                ->where('clinic_id', $clinic['clinic_id'])
+                ->where('account_type', 'employee')
+                ->where('status', 1)
+                ->first();
+
+              if($employee_block) {
+                unset($clinics[$key]);
+              }
             }
           }
         }
