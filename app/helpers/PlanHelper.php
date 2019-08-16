@@ -4203,15 +4203,26 @@ class PlanHelper {
 				return false;
 			}
 
-			$block = DB::table('company_block_clinic_access')
+			$clinic_block = DB::table('company_block_clinic_access')
 			->where('customer_id', $customer_id)
 			->where('clinic_id', $clinic_id)
+			->where('account_type', 'company')
 			->where('status', 1)
 			->first();
 
-			if($block) {
+			if($clinic_block) {
 				return true;
 			} else {
+				// check for employee
+				$employee_block = DB::table('company_block_clinic_access')
+						->where('customer_id', $user_id)
+						->where('clinic_id', $clinic_id)
+						->where('account_type', 'employee')
+						->where('status', 1)
+						->first();
+				if($employee_block) {
+					return true;
+				}
 				return false;
 			}
 		}
