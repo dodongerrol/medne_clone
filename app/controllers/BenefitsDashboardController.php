@@ -4317,7 +4317,8 @@ class BenefitsDashboardController extends \BaseController {
 			$data = [];
 			$get_active_plan = $active_plan->getActivePlan($plan->customer_active_plan_id);
 			// $check = $invoice->checkCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
-			$get_invoice = $invoice->getCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
+			// $get_invoice = $invoice->getCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
+			$get_invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)->first();
 
 			if($plan->paid == "true") {
 				$data['paid'] = true;
