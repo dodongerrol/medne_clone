@@ -8167,7 +8167,7 @@ public function generateMonthlyCompanyInvoice( )
 					'APPROVED DATE'			=> $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 					'REJECTED DATE'			=> $rejected_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 					'REJECTED REASON'		=> $res->rejected_reason,
-					'BANK ACCOUNT NUMBER'	=> $bank_account_number,
+					'BANK ACCOUNT NUMBER'	=> (string)$bank_account_number,
 					'BANK CODE'					=> $bank_code,
 					'BRANCH CODE'				=> $bank_brh
 				);
@@ -8183,7 +8183,7 @@ public function generateMonthlyCompanyInvoice( )
       $excel->sheet('E-Claim', function($sheet) use($container) {
           $sheet->fromArray( $container );
       });
-    })->export('csv');
+    })->export('xls');
 
 	}
 }
