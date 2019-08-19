@@ -4151,15 +4151,26 @@ class PlanHelper {
 				return false;
 			}
 
-			$block = DB::table('company_block_clinic_access')
+			$clinic_block = DB::table('company_block_clinic_access')
 			->where('customer_id', $customer_id)
 			->where('clinic_id', $clinic_id)
+			->where('account_type', 'company')
 			->where('status', 1)
 			->first();
 
-			if($block) {
+			if($clinic_block) {
 				return true;
 			} else {
+				// check for employee
+				$employee_block = DB::table('company_block_clinic_access')
+						->where('customer_id', $user_id)
+						->where('clinic_id', $clinic_id)
+						->where('account_type', 'employee')
+						->where('status', 1)
+						->first();
+				if($employee_block) {
+					return true;
+				}
 				return false;
 			}
 		}
@@ -4897,6 +4908,27 @@ class PlanHelper {
 			} else {
 				return false;
 			}
+	}
+
+	public static function checkCompanyAllocated($customer_id)
+	{
+		$wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+
+		$medical = DB::table('customer_credit_logs')
+						->where('customer_credits_id', $wallet->customer_credits_id)
+						->where('logs', 'added_employee_credits')
+						->first();
+
+		$wellness = DB::table('customer_wellness_credits_logs')
+						->where('customer_credits_id', $wallet->customer_credits_id)
+						->where('logs', 'added_employee_credits')
+						->first();
+
+		if($medical || $wellness) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

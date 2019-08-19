@@ -2215,8 +2215,9 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_balance = 0;
 		$total_wellness_balance = 0;
 
-		$check_accessibility = self::hrStatus( );
-		if($check_accessibility['accessibility'] == 1) {
+		// $check_accessibility = self::hrStatus( );
+		$check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
+		if($check_accessibility == true) {
 			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
@@ -4316,7 +4317,8 @@ class BenefitsDashboardController extends \BaseController {
 			$data = [];
 			$get_active_plan = $active_plan->getActivePlan($plan->customer_active_plan_id);
 			// $check = $invoice->checkCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
-			$get_invoice = $invoice->getCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
+			// $get_invoice = $invoice->getCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
+			$get_invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)->first();
 
 			if($plan->paid == "true") {
 				$data['paid'] = true;
@@ -5218,7 +5220,7 @@ class BenefitsDashboardController extends \BaseController {
 		} else {
 			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
 			// return $data;
-			// return View::make('pdf-download/hr-accounts-transaction-new-head-count', $data);
+			// return View::make('pdf-doswnload/hr-accounts-transaction-new-head-count', $data);
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction-new-head-count', $data);
 		}
 
@@ -5249,10 +5251,10 @@ class BenefitsDashboardController extends \BaseController {
 	// $count_deleted_employees = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->count();
 		$data['number_employess'] = $invoice->employees;
 		$data['invoice_number'] = $invoice->invoice_number;
-		$data['invoice_date'] = date('M d Y', strtotime($invoice->invoice_date));
-		$data['payment_due'] = date('M d Y', strtotime($invoice->invoice_due));
+		$data['invoice_date'] = date('F d, Y', strtotime($invoice->invoice_date));
+		$data['payment_due'] = date('F d, Y', strtotime($invoice->invoice_due));
 		$data['employees'] = $invoice->employees;
-		$data['start_date'] = date('M d Y', strtotime($active_plan->plan_start));
+		$data['start_date'] = date('F d, Y', strtotime($active_plan->plan_start));
 
 	// if($first_plan->duration || $first_plan->duration != "") {
 	// 	$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
@@ -5349,10 +5351,10 @@ class BenefitsDashboardController extends \BaseController {
 			$data['amount_due']     = number_format($amount_due, 2);
 		}
 
-		$data['plan_end'] 			= date('M d Y', strtotime('-1 day', strtotime($end_plan_date)));
+		$data['plan_end'] 			= date('F d, Y', strtotime($end_plan_date));
 		$data['same_as_invoice'] = $first_plan_invoice->invoice_number;
-		$next_billing = date('M d Y', strtotime('-1 month', strtotime($data['plan_end'])));
-		$data['next_billing'] = date('M d Y', strtotime('-1 day', strtotime($next_billing)));
+		$next_billing = date('F d, Y', strtotime('-1 month', strtotime($data['plan_end'])));
+		$data['next_billing'] = date('F d, Y', strtotime('-1 day', strtotime($next_billing)));
 
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
 

@@ -166,6 +166,7 @@ class EclaimController extends \BaseController {
 			'merchant'	=> $input['merchant'],
 			'amount'	=> $amount,
 			'date'		=> date('Y-m-d', strtotime($input['date'])),
+			'approved_date' => null,
 			'time'		=> $time,
 			'spending_type' => 'medical'
 		);
@@ -245,7 +246,7 @@ class EclaimController extends \BaseController {
 			$email['logs'] = 'E-Claim Submission - '.$e->getMessage();
 			$email['emailSubject'] = 'Error log.';
 			EmailHelper::sendErrorLogs($email);
-			return array('status' => FALSE, 'message' => 'Error.');
+			return array('status' => FALSE, 'message' => 'Error.', 'e' => $e->getMessage());
 		}
 
 		return array('status' => FALSE, 'message' => 'Error.');
@@ -299,7 +300,7 @@ class EclaimController extends \BaseController {
 
         // check if e-claim can proceed
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
-		$balance = round($check_user_balance->balance, 2);
+		$balance = round($check_user_balance->wellness_balance, 2);
 		
 		if($input['amount'] > $balance || $balance <= 0) {
 			return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
@@ -400,11 +401,11 @@ class EclaimController extends \BaseController {
             // send email logs
 			$email = [];
 			$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-			$email['logs'] = 'E-Claim Submission Wellness - '.$e;
+			$email['logs'] = 'E-Claim Submission Wellness - '.$e->getMessage();
 			$email['emailSubject'] = 'Error log.';
 			// send
 			EmailHelper::sendErrorLogs($email);
-			return array('status' => FALSE, 'message' => 'Error.');
+			return array('status' => FALSE, 'message' => 'Error.', 'e' => $e->getMessage());
 		}
 
 		return array('status' => FALSE, 'message' => 'Error.');
@@ -5836,7 +5837,9 @@ public function updateEclaimStatus( )
 		PlanHelper::reCalculateEmployeeBalance($employee);
 
 		$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-		$balance = EclaimHelper::getSpendingBalance($employee, $e_claim_details->created_at, $e_claim_details->spending_type);
+		$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
+		// return $date;
+		$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
 
 		if($check->spending_type == "medical") {
 			$balance_medical = round($balance['balance'], 2);
@@ -8164,7 +8167,7 @@ public function generateMonthlyCompanyInvoice( )
 					'APPROVED DATE'			=> $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 					'REJECTED DATE'			=> $rejected_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 					'REJECTED REASON'		=> $res->rejected_reason,
-					'BANK ACCOUNT NUMBER'	=> $bank_account_number,
+					'BANK ACCOUNT NUMBER'	=> (string)$bank_account_number,
 					'BANK CODE'					=> $bank_code,
 					'BRANCH CODE'				=> $bank_brh
 				);
@@ -8180,7 +8183,7 @@ public function generateMonthlyCompanyInvoice( )
       $excel->sheet('E-Claim', function($sheet) use($container) {
           $sheet->fromArray( $container );
       });
-    })->export('csv');
+    })->export('xls');
 
 	}
 }
