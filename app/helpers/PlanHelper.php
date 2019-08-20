@@ -977,9 +977,9 @@ class PlanHelper {
 			$nric_error = true;
 			$nric_message = '*NRIC/FIN is empty';
 		} else {
-			if(strlen($user['nric']) < 9) {
+			if(strlen($user['nric']) < 12) {
 				$nric_error = true;
-				$nric_message = '*NRIC/FIN is must be 8 characters';
+				$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
 			} else {
 				if(!self::validIdentification($user['nric'])) {
 					$nric_error = true;
@@ -1111,9 +1111,9 @@ class PlanHelper {
 				$nric_error = true;
 				$nric_message = '*NRIC/FIN is empty';
 			} else {
-				if(strlen($user['nric']) < 9) {
+				if(strlen($user['nric']) < 12) {
 					$nric_error = true;
-					$nric_message = '*NRIC/FIN is must be 8 characters';
+					$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
 				} else {
 					$nric_error = false;
 					$nric_message = '';
