@@ -881,6 +881,17 @@ public static function get_random_password($length)
               return FALSE;
           }
         } else {
+            $employee_id = self::getUserId($id);
+            $customer_id = self::getCustomerId($employee_id);
+
+            if(!$customer_id) {
+                return FALSE;
+            }
+          
+            $plan = DB::table('customer_plan')
+                    ->where('customer_buy_start_id', $customer_id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
             // get dependent history
             $dependent_history = DB::table('dependent_plan_history')
                                     ->where('user_id', $id)

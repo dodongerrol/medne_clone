@@ -688,33 +688,33 @@ app.directive('benefitsTiersDirective', [
 					if( scope.employee_arr[ scope.employee_ctr ] == undefined ){
 						scope.employee_arr[ scope.employee_ctr ] = scope.employee_data;
 						// swal({
-	     //        title: "Confirm",
-	     //        text: "Unsaved changes will be deleted. Proceed?",
-	     //        type: "warning",
-	     //        showCancelButton: true,
-	     //        confirmButtonColor: "#0392CF",
-	     //        confirmButtonText: "Yes",
-	     //        cancelButtonText: "No",
-	     //        closeOnConfirm: true,
-	     //        customClass: "updateEmp"
-	     //      },
-	     //      function(isConfirm){
-	     //      	if( isConfirm ){
-	     //      		scope.$apply(function(){
-	          			if( scope.isTiering ){
-										scope.employee_enroll_count-=1;
-									}else{
-										scope.overall_emp_count-=1;
-									}
-									scope.employee_ctr-=1;
-									scope.employee_data = scope.employee_arr[ scope.employee_ctr ];
-									iti.setCountry( scope.employee_data.mobile_area_code_country );
-									if( scope.employee_data.dependents.length > 0 ){
-										scope.added_dependent_data = scope.employee_data.dependents[0];
-									}
-	     //      		});
-	     //      	}
-	     //      });
+		     //        title: "Confirm",
+		     //        text: "Unsaved changes will be deleted. Proceed?",
+		     //        type: "warning",
+		     //        showCancelButton: true,
+		     //        confirmButtonColor: "#0392CF",
+		     //        confirmButtonText: "Yes",
+		     //        cancelButtonText: "No",
+		     //        closeOnConfirm: true,
+		     //        customClass: "updateEmp"
+		     //      },
+		     //      function(isConfirm){
+		     //      	if( isConfirm ){
+		     //      		scope.$apply(function(){
+		          			if( scope.isTiering ){
+											scope.employee_enroll_count-=1;
+										}else{
+											scope.overall_emp_count-=1;
+										}
+										scope.employee_ctr-=1;
+										scope.employee_data = scope.employee_arr[ scope.employee_ctr ];
+										iti.setCountry( scope.employee_data.mobile_area_code_country );
+										if( scope.employee_data.dependents.length > 0 ){
+											scope.added_dependent_data = scope.employee_data.dependents[0];
+										}
+		     //      		});
+		     //      	}
+		     //      });
 					}else{
 						if( scope.isTiering ){
 							scope.employee_enroll_count-=1;
@@ -791,8 +791,16 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.checkNRIC = function(theNric){
-					var nric_pattern = new RegExp('^[stfgSTFG]{1}[0-9]{7}[a-zA-z]{1}$');
-					return nric_pattern.test(theNric);
+					var nric_pattern = null;
+          if( theNric.length == 9 ){
+            nric_pattern = new RegExp("^[stfgSTFG]{1}[0-9]{7}[a-zA-z]{1}$");
+          }else if( theNric.length == 12 ){
+            // nric_pattern = new RegExp("^[0-9]{2}(?:0[1-9]|1[-2])(?:[0-1]|[1-2][0-9]|[3][0-1])[0-9]{6}$");
+            return true;
+          }else{
+            return false;
+          }
+          return nric_pattern.test(theNric);
 				};
 
 				scope.checkEmail = function(email){
@@ -1027,6 +1035,7 @@ app.directive('benefitsTiersDirective', [
 							if( scope.isTiering == true || scope.isTiering == 'true' ){
 								data.plan_tier_id = scope.tierSelected.plan_tier_id;
 							}
+							console.log( data );
 							dependentsSettings.addEnrollEmployees( data )
 							.then(function(response){
 									// console.log( response );
