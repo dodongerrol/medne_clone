@@ -103,9 +103,10 @@
 						var main_folder = zip.folder( all_data.transaction_id + " - " + all_data.member );
 
 						angular.forEach( res, function(value,key){
-							console.log( value );
-							var filename = $.trim( value.file.split('/').pop() );
-							filename = value.file_type == 'pdf' || value.file_type == 'xls' ? filename.substring(0, filename.indexOf('?')) : filename; 
+							var filename = $.trim( value.file.split('/').pop().replace(/\.*/,'') );
+							filename = ( filename.indexOf("?") >= 0 ) ? filename.substring(0, filename.indexOf('?')) : filename;
+							console.log( filename );
+							var main_folder = zip.folder( all_data.transaction_id + " - " + all_data.member );
 							var promise = $.ajax({
 				        url: value.file,
 				        method: 'GET',
@@ -113,6 +114,7 @@
 				          responseType: 'blob'
 				        }
 					    });
+
 							main_folder.file(filename, promise);
 							if( key == (res.length-1) ){
 								zip.generateAsync({type:"blob"}).then(function(content) {
@@ -139,10 +141,13 @@
 					var transaction = scope.receipts_arr[scope.download_receipts_ctr];
 					var main_folder = zip.folder( transaction.filename );
 					angular.forEach( transaction.files , function( value, key ){
-						console.log(value );
-						var filename = $.trim( value.file.split('/').pop() );
-						filename = value.file_type == 'pdf' || value.file_type == 'xls' ? filename.substring(0, filename.indexOf('?')) : filename; 
-
+						console.log( value );
+						var filename = $.trim( value.file.split('/').pop().replace(/\.*/,'') );
+						filename = ( filename.indexOf("?") >= 0 ) ? filename.substring(0, filename.indexOf('?')) : filename;
+						console.log( filename );
+						// var img = main_folder.folder("images");
+						// var pdf = main_folder.folder("pdf");
+						// var xls = main_folder.folder("xls");
 						var promise = $.ajax({
 			        url: value.file,
 			        method: 'GET',
@@ -418,6 +423,9 @@
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
+										if( value2.file_type == 'pdf' ){
+											console.log( value.claim_date );
+										}
 										temp_arr.push(value2);
 										if( key2 == ( value.files.length-1 ) ){
 											scope.receipts_arr.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );
@@ -507,6 +515,9 @@
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
+										if( value2.file_type == 'pdf' ){
+											console.log( value.claim_date );
+										}
 										temp_arr.push(value2);
 										if( key2 == ( value.files.length-1 ) ){
 											scope.receipts_arr.push( { filename: value.transaction_id + ' - ' + value.member, files : temp_arr } );

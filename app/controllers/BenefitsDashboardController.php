@@ -5220,7 +5220,7 @@ class BenefitsDashboardController extends \BaseController {
 		} else {
 			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
 			// return $data;
-			// return View::make('pdf-doswnload/hr-accounts-transaction-new-head-count', $data);
+			// return View::make('pdf-download.hr-accounts-transaction-new-head-count', $data);
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction-new-head-count', $data);
 		}
 
