@@ -382,8 +382,13 @@
 										<td>
 											<span ng-bind="list.member">Filbert Tan</span>
 											<span class="statement-spouse-member" ng-if="list.sub_account_user_type">
-												<span ng-if="list.dependent_relationship != null"><span ng-bind="list.dependent_relationship"></span> of <span ng-bind="list.owner_account"></span></span>
-												<span ng-if="list.dependent_relationship == null">Dependent of <span ng-bind="list.owner_account"></span></span>
+												<span ng-if="list.dependent_relationship != null">
+													<span ng-bind="list.dependent_relationship"></span> of 
+													<span ng-bind="list.owner_account"></span>
+												</span>
+												<span ng-if="list.dependent_relationship == null">Dependent of 
+													<span ng-bind="list.owner_account"></span>
+												</span>
 											</span>
 										</td>
 										<td>
