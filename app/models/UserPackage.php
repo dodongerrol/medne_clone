@@ -113,7 +113,11 @@ class UserPackage extends Eloquent
                     if($dependent_user) {
                         $data['company_name']  = ucwords($company->company_name);
                         // get dependents plan history
-                        $dependent_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->first();
+                        $dependent_plan_history = DB::table('dependent_plan_history')
+                                                    ->where('user_id', $user_id)
+                                                    ->orderBy('created_at', 'desc')
+                                                    ->first();
+
 
                         $dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
 
@@ -136,7 +140,6 @@ class UserPackage extends Eloquent
                         $data['care_online'] = TRUE;
                         $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
-
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')

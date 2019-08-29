@@ -977,7 +977,8 @@ class DependentController extends \BaseController {
 								'expired_date'          => $last_day_of_coverage,
 								'deactivate_dependent_status' => 1,
 								'replace_status'        => 1,
-								'relationship'          => $input['relationship']
+								'relationship'          => $input['relationship'],
+								'postal_code'			=> null
 							);
 
 							$result = $dependent_replace->createReplacement($replace_data);
@@ -999,7 +1000,8 @@ class DependentController extends \BaseController {
 						'last_name'             => $input['last_name'],
 						'nric'                  => $input['nric'],
 						'dob'                   => date('Y-m-d', strtotime($input['dob'])),
-						'relationship'          => $input['relationship']
+						'relationship'          => $input['relationship'],
+						'postal_code'			=> null
 					);
 
 					$result = $dependent_replace->createReplacement($replace_data);
@@ -1022,7 +1024,8 @@ class DependentController extends \BaseController {
 					'last_name'             => $input['last_name'],
 					'nric'                  => $input['nric'],
 					'dob'                   => date('Y-m-d', strtotime($input['dob'])),
-					'relationship'          => $input['relationship']
+					'relationship'          => $input['relationship'],
+					'postal_code'			=> null
 				);
 
 				$result = $dependent_replace->createReplacement($replace_data);

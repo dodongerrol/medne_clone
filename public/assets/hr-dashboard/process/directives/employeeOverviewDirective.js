@@ -1218,6 +1218,15 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.saveDependent = function( data ){ 
+          var dob = moment( data.dob, 'DD/MM/YYYY' );
+          var today = moment();
+          console.log( dob.diff( today, 'days' ) );
+          if( dob.diff( today, 'days' ) <= 0  ){
+            
+          }else{
+            swal('Error!', 'Date of Birth is Invalid.', 'error');
+            return false;
+          }
           swal({
             title: "Confirm",
             text: "Are you sure you want to update this dependent?",
@@ -1441,10 +1450,10 @@ app.directive("employeeOverviewDirective", [
           });
 
           var dt = new Date();
-          dt.setFullYear(new Date().getFullYear()-18);
+          // dt.setFullYear(new Date().getFullYear()-18);
           $('.datepicker').datepicker({
             format: 'dd/mm/yyyy',
-            // endDate : dt
+            endDate : dt
           });
 
           $('.datepicker').datepicker().on('hide',function(evt){
