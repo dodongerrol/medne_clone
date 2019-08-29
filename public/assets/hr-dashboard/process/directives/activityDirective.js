@@ -397,6 +397,10 @@ app.directive('activityPage', [
 								// scope.filterActivityByDateEclaim( scope.activity.e_claim_transactions );
 
 								scope.fetching_data.from = response.data.total;
+								console.log( scope.in_network_transactions );
+								scope.in_network_transactions.sort(function (left, right) {
+									return moment.utc(right.date_of_transaction, 'DD MMMM YYYY, hh:mma').diff(moment.utc(left.date_of_transaction, 'DD MMMM YYYY, hh:mma'))
+								});
 
 								$("#fetching_text").hide();
 								$("#done_fetching_text").show();
@@ -503,6 +507,10 @@ app.directive('activityPage', [
 								// scope.filterActivityByDateEclaim( scope.activity.e_claim_transactions );
 
 								scope.fetching_data.from = response.data.total;
+								console.log( scope.in_network_transactions );
+								scope.in_network_transactions.sort(function (left, right) {
+									return moment.utc(right.date_of_transaction, 'DD MMMM YYYY, hh:mma').diff(moment.utc(left.date_of_transaction, 'DD MMMM YYYY, hh:mma'))
+								});
 
 								$("#fetching_text").hide();
 								$("#done_fetching_text").show();
