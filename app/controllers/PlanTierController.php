@@ -168,9 +168,9 @@ class PlanTierController extends \BaseController {
 			return array('status' => false, 'message' => 'Wellness Annual Cap is required.');
 		}
 
-		if(empty($input['gp_cap_per_visit'])) {
-			return array('status' => false, 'message' => 'GP Cap Per Visit is required.');
-		}
+		// if(empty($input['gp_cap_per_visit'])) {
+		// 	return array('status' => false, 'message' => 'GP Cap Per Visit is required.');
+		// }
 
 		if(empty($input['member_head_count'])) {
 			return array('status' => false, 'message' => 'Member Head Count is required.');

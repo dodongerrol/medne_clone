@@ -197,6 +197,18 @@
 			    }
 
 			    scope.updateBillingAddress = function( ) {
+			    	if( !scope.billing_address.business_information.company_name ){
+			    		swal('Error!', 'Company Name is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.billing_address.billing_contact.billing_address ){
+			    		swal('Error!', 'Billing Address is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.billing_address.billing_contact.postal ){
+			    		swal('Error!', 'Postal Code is required.', 'error');
+			    		return false;
+			    	}
 
 			    	swal({
 						  title: "Confirm",
@@ -247,6 +259,18 @@
 			    }
 
 			    scope.updateBillingContact = function( ) {
+			    	if( !scope.billing_contact.billing_contact.first_name ){
+			    		swal('Error!', 'First Name is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.billing_contact.billing_contact.last_name ){
+			    		swal('Error!', 'Last Name is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.billing_contact.billing_contact.work_email ){
+			    		swal('Error!', 'Email is required.', 'error');
+			    		return false;
+			    	}
 			    	swal({
 						  title: "Confirm",
 						  text: "Are you sure you want to UPDATE your billing contact?",
@@ -299,6 +323,22 @@
 			    }
 
 			    scope.updateContacts = function( ) {
+			    	if( !scope.business_contact.first_name ){
+			    		swal('Error!', 'First Name is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.business_contact.last_name ){
+			    		swal('Error!', 'Last Name is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.business_contact.work_email ){
+			    		swal('Error!', 'Email is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.business_contact.phone ){
+			    		swal('Error!', 'Phone is required.', 'error');
+			    		return false;
+			    	}
 
 			    	swal({
 						  title: "Confirm",
@@ -337,6 +377,14 @@
 			    }
 
 			    scope.updateInfos = function( ) {
+			    	if( !scope.business_info.company_address ){
+			    		swal('Error!', 'Address is required.', 'error');
+			    		return false;
+			    	}
+			    	if( !scope.business_info.postal_code ){
+			    		swal('Error!', 'Postal Code is required.', 'error');
+			    		return false;
+			    	}
 
 			    	swal({
 						  title: "Confirm",
