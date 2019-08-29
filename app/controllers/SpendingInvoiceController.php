@@ -99,7 +99,7 @@ class SpendingInvoiceController extends \BaseController {
 
         // return $statement;
         $sub_total = floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']);
-
+        $statement['statement_in_network_amount'] = number_format($statement['statement_in_network_amount'], 2);
         $temp = array(
             'statement'     			=> $statement,
             'in_network_transactions'    => $statement['in_network'],
@@ -130,7 +130,7 @@ class SpendingInvoiceController extends \BaseController {
         			->first();
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
         $statement['sub_total'] = number_format(floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']), 2);
-
+        $statement['statement_in_network_amount'] = number_format($statement['statement_in_network_amount'], 2);
         // return View::make('invoice.hr-statement-invoice', $statement);
 		$pdf = PDF::loadView('invoice.hr-statement-invoice', $statement);
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
