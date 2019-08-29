@@ -126,8 +126,8 @@ public static function getClinicTypeImage($clinic_type)
 
       if($getAccessToken){
         $findUserID = $authSession->findUserID($getAccessToken->session_id);
-
-        $customer_id = PlanHelper::getCustomerId($findUserID);
+        $owner_id = StringHelper::getUserId($findUserID);
+        $customer_id = PlanHelper::getCustomerId($owner_id);
         if($customer_id) {
           foreach ($clinics as $key => $clinic) {
             $company_block = DB::table('company_block_clinic_access')
@@ -140,7 +140,7 @@ public static function getClinicTypeImage($clinic_type)
               unset($clinics[$key]);
             } else {
               $employee_block = DB::table('company_block_clinic_access')
-                ->where('customer_id', $findUserID)
+                ->where('customer_id', $owner_id)
                 ->where('clinic_id', $clinic['clinic_id'])
                 ->where('account_type', 'employee')
                 ->where('status', 1)
@@ -175,17 +175,28 @@ public static function getClinicTypeImage($clinic_type)
 
       if($getAccessToken){
         $findUserID = $authSession->findUserID($getAccessToken->session_id);
-
-        $customer_id = PlanHelper::getCustomerId($findUserID);
+        $owner_id = StringHelper::getUserId($findUserID);
+        $customer_id = PlanHelper::getCustomerId($owner_id);
         if($customer_id) {
           foreach ($clinics as $key => $clinic) {
             $block = DB::table('company_block_clinic_access')
                           ->where('customer_id', $customer_id)
                           ->where('clinic_id', $clinic->ClinicID)
+                          ->where('account_type', 'company')
                           ->where('status', 1)
                           ->first();
             if($block) {
               unset($clinics[$key]);
+            } else {
+              $block = DB::table('company_block_clinic_access')
+                          ->where('customer_id', $owner_id)
+                          ->where('clinic_id', $clinic->ClinicID)
+                          ->where('account_type', 'employee')
+                          ->where('status', 1)
+                          ->first();
+              if($block) {
+                unset($clinics[$key]);
+              }
             }
           }
         }

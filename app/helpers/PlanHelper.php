@@ -533,6 +533,8 @@ class PlanHelper {
 		->where('wallet', $wallet)
 		->first();
 
+		return $package_group;
+
 		if((int)$dependent_plan_history->package_group_id !== (int)$package_group->package_group_id) {
 			\DependentPlanHistory::where('dependent_plan_history_id', $dependent_plan_history->dependent_plan_history_id)->update(['package_group_id' => $package_group->package_group_id]);
 		}
@@ -3274,7 +3276,7 @@ class PlanHelper {
 					'first_name'    => $input['first_name'],
 					'last_name'     => $input['last_name'],
 					'nric'          => $input['nric'],
-					'dob'           => date('Y-m-d', strtotime($input['dob']))
+					'dob'           => date('Y-m-d', strtotime($input['dob'])),
 				);
 
 				$user_id = self::createDependentAccountUser($user);
@@ -3330,7 +3332,8 @@ class PlanHelper {
 							'expired_date'          => $last_day_of_coverage,
 							'deactivate_dependent_status' => 1,
 							'replace_status'        => 1,
-							'relationship'          => $input['relationship']
+							'relationship'          => $input['relationship'],
+							'postal_code'			=> null
 						);
 
 						$dependent_replace->createReplacement($replace_data);
@@ -3350,7 +3353,8 @@ class PlanHelper {
 					'last_name'             => $input['last_name'],
 					'nric'                  => $input['nric'],
 					'dob'                   => date('Y-m-d', strtotime($input['dob'])),
-					'relationship'          => $input['relationship']
+					'relationship'          => $input['relationship'],
+					'postal_code'			=> null
 				);
 				$dependent_replace->createReplacement($replace_data);
 				return true;

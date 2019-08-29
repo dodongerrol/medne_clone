@@ -21,6 +21,9 @@ app.directive('teamBenefitsTierDirective', [
 					if( scope.editTierIsShow == false ){
 						scope.editTierIsShow = true;
 						scope.tier_data = data;
+						if( scope.tier_data.gp_cap_per_visit > 0 ){
+							scope.tier_data.gp_cap_status = true;
+						}
 						scope.tier_data.index = index;
 						$('.account-tier-container').hide();
 						$('.account-tier-edit-container').fadeIn();
@@ -56,14 +59,14 @@ app.directive('teamBenefitsTierDirective', [
 				}
 
 				scope.saveTierData = function( data ){
-					if( data.medical_annual_cap == 0 || data.wellness_annual_cap == 0 || data.gp_cap_per_visit == 0 || data.member_head_count == 0 || data.dependent_head_count == 0 ){
+					if( data.medical_annual_cap == 0 || data.wellness_annual_cap == 0 || data.member_head_count == 0 || data.dependent_head_count == 0 ){
 						swal( 'Error!', "Input values should be 1 or more", 'error' );
 						return false;
 					}
-					if( data.gp_cap_status == true && (!data.gp_cap_per_visit || data.gp_cap_per_visit == 0) ){
-						swal( 'Error!', "Input values should be 1 or more", 'error' );
-						return false;
-					}
+					// if( data.gp_cap_status == true && (!data.gp_cap_per_visit || data.gp_cap_per_visit == 0) ){
+					// 	swal( 'Error!', "Input values should be 1 or more", 'error' );
+					// 	return false;
+					// }
 
 					scope.showLoading();
 					if( scope.tier_data.plan_tier_id ){
