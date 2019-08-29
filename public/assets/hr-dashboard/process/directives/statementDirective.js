@@ -89,8 +89,9 @@ app.directive('statementPage', [
 					var main_folder = zip.folder( all_data.member + "_" + all_data.transaction_id );
 					console.log( res );
 					angular.forEach( res, function(value,key){
-						var filename = $.trim( value.file.split('/').pop() );
-						filename = value.file_type == 'pdf' || value.file_type == 'xls' ? filename.substring(0, filename.indexOf('?')) : filename; 
+						var filename = $.trim( value.file.split('/').pop().replace(/\.*/,'') );
+						filename = ( filename.indexOf("?") >= 0 ) ? filename.substring(0, filename.indexOf('?')) : filename;
+						console.log( filename );
 						var promise = $.ajax({
 			        url: value.file,
 			        method: 'GET',
@@ -102,6 +103,7 @@ app.directive('statementPage', [
 						main_folder.file(filename, promise);
 						
 						if( key == (res.length-1) ){
+							console.log('asdfsa');
 							zip.generateAsync({type:"blob"}).then(function(content) {
 						    saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
 							});

@@ -3204,7 +3204,7 @@ public function getActivityInNetworkTransactions( )
 				$format = array(
 					'clinic_name'       => $clinic->Name,
 					'clinic_image'      => $clinic->image,
-					'amount'            => $total_amount,
+					'amount'            => number_format($total_amount, 2),
 					'procedure_cost'    => number_format($bill_amount, 2),
 					'clinic_type_and_service' => $clinic_name,
 					'procedure'         => $procedure,
@@ -4443,21 +4443,24 @@ public function getHrActivity( )
 		->orderBy('date_of_transaction', 'desc')
 		->get();
 
-            // in-network transactions
+        // in-network transactions
 		foreach ($transactions as $key => $trans) {
 			$consultation_cash = false;
 			$consultation_credits = false;
 			$service_cash = false;
 			$service_credits = false;
+			$consultation = 0;
 
 			if($trans) {
 
-				// if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
-					if((int)$trans->deleted == 0) {
+				if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
+					if($trans->deleted == 0 || $trans->deleted == "0") {
 						$in_network_spent += $trans->credit_cost;
 						$total_in_network_transactions++;
 
 						if($trans->lite_plan_enabled == 1) {
+
+
 							$logs_lite_plan = DB::table($table_wallet_history)
 							->where('logs', 'deducted_from_mobile_payment')
 							->where('lite_plan_enabled', 1)
@@ -4468,14 +4471,17 @@ public function getHrActivity( )
 								$in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
-								$total_lite_plan_consultation += floatval($logs_lite_plan->credit);
+								$total_lite_plan_consultation += floatval($trans->consultation_fees);
+								$consultation = floatval($logs_lite_plan->credit);
 							} else if($logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 1 || $logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
 								$in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
-								$total_lite_plan_consultation += floatval($logs_lite_plan->credit);
+								$total_lite_plan_consultation += floatval($trans->consultation_fees);
+								$consultation = floatval($logs_lite_plan->credit);
 							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
 								$total_lite_plan_consultation += floatval($trans->consultation_fees);
+								$consultation = floatval($trans->consultation_fees);
 							}
 						}
 					} else {
@@ -4504,10 +4510,10 @@ public function getHrActivity( )
 					$procedure_temp = "";
 					$procedure = "";
 
-                        // get services
-					if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+	                        // get services
+					if((int)$trans->multiple_service_selection == 1)
 					{
-                            // get multiple service
+	                            // get multiple service
 						$service_lists = DB::table('transaction_services')
 						->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
 						->where('transaction_services.transaction_id', $trans->transaction_id)
@@ -4521,34 +4527,55 @@ public function getHrActivity( )
 							}
 							$procedure = rtrim($procedure_temp, ',');
 						}
-						$clinic_name = $procedure;
+						$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
 					} else {
 						$service_lists = DB::table('clinic_procedure')
 						->where('ProcedureID', $trans->ProcedureID)
 						->first();
 						if($service_lists) {
 							$procedure = ucwords($service_lists->Name);
-							$clinic_name = $procedure;
+							$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
 						} else {
-                                // $procedure = "";
+	                                // $procedure = "";
 							$clinic_name = ucwords($clinic_type->Name);
 						}
 					}
 
-                        // check if there is a receipt image
-					$receipt = DB::table('user_image_receipt')
-					->where('transaction_id', $trans->transaction_id)
-					->get();
-					$receipt_data = null;
-					if(sizeof($receipt) > 0) {
+	                        // check if there is a receipt image
+					$receipts = DB::table('user_image_receipt')
+								->where('transaction_id', $trans->transaction_id)
+								->get();
+
+					$doc_files = [];
+					if(sizeof($receipts) > 0) {
+						foreach ($receipts as $key => $doc) {
+							if($doc->type == "pdf" || $doc->type == "xls") {
+								if(StringHelper::Deployment()==1){
+								   $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
+								} else {
+								   $fil = url('').'/receipts/'.$doc->file;
+								}
+							} else if($doc->type == "image") {
+								// $fil = FileHelper::formatImageAutoQuality($doc->file);
+								$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
+							}
+
+							$temp_doc = array(
+								'tranasaction_doc_id'    => $doc->image_receipt_id,
+								'transaction_id'            => $doc->transaction_id,
+								'file'                      => $fil,
+								'file_type'             => $doc->type
+							);
+
+							array_push($doc_files, $temp_doc);
+						}
 						$receipt_status = TRUE;
-						$receipt_data = $receipt;
 					} else {
 						$receipt_status = FALSE;
 					}
 
 					if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
-                            // $receipt_status = TRUE;
+	                            // $receipt_status = TRUE;
 						$health_provider_status = TRUE;
 					} else {
 						$health_provider_status = FALSE;
@@ -4630,48 +4657,103 @@ public function getHrActivity( )
 						}
 					}
 
-                        // check user if it is spouse or dependent
+	                        // check user if it is spouse or dependent
 					if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 						$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 						$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
 						$sub_account = ucwords($temp_account->Name);
 						$sub_account_type = $temp_sub->user_type;
 						$owner_id = $temp_sub->owner_id;
+						$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
 					} else {
 						$sub_account = FALSE;
 						$sub_account_type = FALSE;
+						$dependent_relationship = FALSE;
 						$owner_id = $customer->UserID;
 					}
 
+					$half_credits = false;
 					$total_amount = number_format($trans->procedure_cost, 2);
 
 					if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
 						$payment_type = "Cash";
 						$transaction_type = "cash";
-						$cash = number_format($trans->procedure_cost, 2);
-						if($trans->deleted == 0 || $trans->deleted == "0") {
-							$total_cash += $trans->procedure_cost;
-						} else if($trans->deleted == 1 || $trans->deleted == "1") {
-							$deleted_transaction_cash = $trans->procedure_cost;
-                                // $total_cash_transactions_deleted++;
-						}
-						if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
-							$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
+						if((int)$trans->lite_plan_enabled == 1) {
+	              if((int)$trans->half_credits == 1) {
+	                $total_amount = $trans->credit_cost + $trans->consultation_fees;
+	                $cash = $transation->cash_cost;
+	              } else {
+	                $total_amount = $trans->procedure_cost;
+	                $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+	                $cash = $trans->procedure_cost;
+	              }
+	          } else {
+	            if((int)$trans->half_credits == 1) {
+	              $cash = $trans->cash_cost;
+	            } else {
+	              $cash = $trans->procedure_cost;
+	            }
+	          }
+					} else {
+						if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+					      $payment_type = 'Mednefits Credits + Cash';
+					      $half_credits = true;
+					    } else {
+					      $payment_type = 'Mednefits Credits';
+					    }
+						$transaction_type = "credits";
+						// $cash = number_format($trans->credit_cost, 2);
+						if((int)$trans->lite_plan_enabled == 1) {
+	              if((int)$trans->half_credits == 1) {
+	                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                $cash = $trans->cash_cost;
+	              } else {
+	                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                // $total_amount = $trans->procedure_cost;
+	                if($trans->credit_cost > 0) {
+	                  $cash = 0;
+	                } else {
+	                  $cash = $trans->procedure_cost - $trans->consultation_fees;
+	                }
+	              }
+	            } else {
+	              $total_amount = $trans->procedure_cost;
+	              if((int)$trans->half_credits == 1) {
+	                $cash = $trans->cash_cost;
+	              } else {
+	                if($trans->credit_cost > 0) {
+	                  $cash = 0;
+	                } else {
+	                  $cash = $trans->procedure_cost;
+	                }
+	              }
+	            }
+					}
+
+					$bill_amount = 0;
+					if((int)$trans->half_credits == 1) {
+						if((int)$trans->lite_plan_enabled == 1) {
+							if((int)$trans->health_provider_done == 1) {
+								$bill_amount = $trans->procedure_cost;
+							} else {
+								$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+							}
+						} else {
+							$bill_amount = 	$trans->procedure_cost;
 						}
 					} else {
-						$payment_type = "Mednefits Credits";
-						$transaction_type = "credits";
-						$cash = number_format($trans->credit_cost, 2);
-						if($trans->deleted == 0 || $trans->deleted == "0") {
-							$total_credits += $trans->credit_cost;
-
-						} else if($trans->deleted == 1 || $trans->deleted == "1") {
-							$deleted_transaction_credits = $trans->credit_cost;
-                                // $total_credits_transactions_deleted++;
-						}
-
-						if($lite_plan && $trans->lite_plan_enabled == 1 || $lite_plan && $trans->lite_plan_enabled == "1") {
-							$total_amount = number_format($trans->procedure_cost + $trans->consultation_fees, 2);
+						if((int)$trans->lite_plan_enabled == 1) {
+							if((int)$trans->lite_plan_use_credits == 1) {
+								$bill_amount = 	$trans->procedure_cost;
+							} else {
+								if((int)$trans->health_provider_done == 1) {
+									$bill_amount = 	$trans->procedure_cost;
+								} else {
+									$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
+								}
+							}
+						} else {
+							$bill_amount = 	$trans->procedure_cost;
 						}
 					}
 
@@ -4679,11 +4761,11 @@ public function getHrActivity( )
 						$total_search_cash += $trans->procedure_cost;
 						$total_in_network_spent_cash_transaction += $trans->procedure_cost;
 						$total_cash_transactions++;
-							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
-							} else {
-								$total_in_network_spent += $trans->procedure_cost;
-							}
+						if((int)$trans->lite_plan_enabled == 1) {
+							$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
+						} else {
+							$total_in_network_spent += $trans->procedure_cost;
+						}
 					} else if($trans->credit_cost > 0 && $trans->deleted == 0 || $trans->credit_cost > "0" && $trans->deleted == "0") {
 						if((int)$trans->lite_plan_enabled == 1) {
 							$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
@@ -4707,48 +4789,62 @@ public function getHrActivity( )
 						$status_text = FALSE;
 					}
 
-                    $transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+					$paid_by_credits = $trans->credit_cost;
+					if((int)$trans->lite_plan_enabled == 1) {
+						if($consultation_credits == true) {
+							$paid_by_credits += $consultation;
+						}
+					}
 
-                    $format = array(
-                        'clinic_name'       => $clinic->Name,
-                        'clinic_image'      => $clinic->image,
-                        'amount'            => $total_amount,
-                        'procedure_cost'    => number_format($trans->procedure_cost, 2),
-                        'clinic_type_and_service' => $clinic_name,
-                        'procedure'         => $procedure,
-                        'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
-                        'member'            => ucwords($customer->Name),
-                        'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
-                        'trans_id'          => $trans->transaction_id,
-                        'receipt_status'    => $receipt_status,
-                        'files'     => $receipt_data,
-                        'health_provider_status' => $health_provider_status,
-                        'user_id'           => $trans->UserID,
-                        'type'              => $payment_type,
-                        'month'             => date('M', strtotime($trans->date_of_transaction)),
-                        'day'               => date('d', strtotime($trans->date_of_transaction)),
-                        'time'              => date('h:ia', strtotime($trans->date_of_transaction)),
-                        'clinic_type'       => $type,
-                        'owner_account'     => $sub_account,
-                        'employee_dependent_name'     => $sub_account ? $sub_account : null,
-                        'owner_id'          => $owner_id,
-                        'sub_account_user_type' => $sub_account_type,
-                        'co_paid'           => $trans->co_paid_amount,
-                        'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
-                        'refund_text'       => $refund_text,
-                        'cash'              => $cash,
-                        'status_text'       => $status_text,
-                        'spending_type'     => ucwords($trans->spending_type),
-                        'consultation'      => (int)$trans->lite_plan_enabled == 1 ?number_format($trans->consultation_fees, 2) : "0.00",
-                        'lite_plan'         => (int)$trans->lite_plan_enabled == 1 ? true : false,
-                        'consultation_credits' => $consultation_credits,
-                        'service_credits'   => $service_credits,
-                        'transaction_type'  => $transaction_type,
-                        'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null
-                    );
-                    array_push($transaction_details, $format);
-				// }
+					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+
+					$format = array(
+						'clinic_name'       => $clinic->Name,
+						'clinic_image'      => $clinic->image,
+						'amount'            => number_format($total_amount, 2),
+						'procedure_cost'    => number_format($bill_amount, 2),
+						'clinic_type_and_service' => $clinic_name,
+						'procedure'         => $procedure,
+						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
+						'member'            => ucwords($customer->Name),
+						'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
+						'trans_id'          => $trans->transaction_id,
+						'receipt_status'    => $receipt_status,
+						'health_provider_status' => $health_provider_status,
+						'user_id'           => $trans->UserID,
+						'type'              => $payment_type,
+						'month'             => date('M', strtotime($trans->date_of_transaction)),
+						'day'               => date('d', strtotime($trans->date_of_transaction)),
+						'time'              => date('h:ia', strtotime($trans->date_of_transaction)),
+						'clinic_type'       => $type,
+						'owner_account'     => $sub_account,
+						'owner_id'          => $owner_id,
+						'sub_account_user_type' => $sub_account_type,
+						'co_paid'           => $trans->consultation_fees,
+						'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
+						'refund_text'       => $refund_text,
+						'cash'              => $cash,
+						'status_text'       => $status_text,
+						'spending_type'     => ucwords($trans->spending_type),
+						'consultation'      => (int)$trans->lite_plan_enabled == 1 ?number_format($trans->consultation_fees, 2) : "0.00",
+						'lite_plan'         => (int)$trans->lite_plan_enabled == 1 ? true : false,
+						'consultation_credits' => $consultation_credits,
+						'service_credits'   => $service_credits,
+						'transaction_type'  => $transaction_type,
+						'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null,
+						'dependent_relationship'    => $dependent_relationship,
+						'cap_transaction'   => $half_credits,
+					    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
+					    'paid_by_cash'      => number_format($trans->cash_cost, 2),
+					    'paid_by_credits'   => number_format($paid_by_credits, 2),
+					    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$",
+						'files'				=> $doc_files
+					);
+
+					array_push($transaction_details, $format);
+				}
 			}
+
 		}
 
             // e-claim transactions
