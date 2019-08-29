@@ -10,6 +10,7 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     $('body').css('overflow','auto');
   }
 
+
   $rootScope.$on('$viewContentLoaded', function() {
       $templateCache.removeAll();
    });
@@ -18,7 +19,10 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     window.ga('create', 'UA-78188906-2', 'auto');
     window.ga('set', 'page', toState.url);
     window.ga('send', 'pageview');
-    // console.log( toState.url );
+    console.log( toState.url );
+    if( toState.url != '/e-claim' ){
+      $('.download-receipt-message').hide();
+    }
     if( toState.url != '/employee-overview' ){
       $('body').css('overflow','auto');
     }
