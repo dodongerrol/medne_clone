@@ -2135,7 +2135,7 @@ class BenefitsDashboardController extends \BaseController {
 				'nric'					=> $user->NRIC,
 				'phone_no'				=> $phone_no,
 				'job_title'				=> $user->Job_Title,
-				'dob'					=> date('Y-m-d', strtotime($user->DOB)),
+				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
 				'bank_account'			=> $user->bank_account,
 				'company'				=> ucwords($user->company_name),
