@@ -1237,7 +1237,7 @@ class PlanHelper {
 			}
 
 			$password = StringHelper::get_random_password(8);
-			$dob = $plan_start = date_format(date_create_from_format('d/m/Y', $data_enrollee->dob), 'Y-m-d');
+			$dob = date_format(date_create_from_format('d/m/Y', $data_enrollee->dob), 'Y-m-d');
 			$data = array(
 				'Name'          => $data_enrollee->first_name.' '.$data_enrollee->last_name,
 				'Password'      => md5($password),
