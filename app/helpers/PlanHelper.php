@@ -495,6 +495,7 @@ class PlanHelper {
 		$dependent_plan = DB::table('dependent_plans')
 		->where('dependent_plan_id', $dependent_plan_id)
 		->first();
+
 		$plan = DB::table('customer_plan')
 		->where('customer_plan_id', $dependent_plan->customer_plan_id)
 		->first();
@@ -532,8 +533,6 @@ class PlanHelper {
 		->where('secondary_account_type', $secondary_account_type)
 		->where('wallet', $wallet)
 		->first();
-
-		return $package_group;
 
 		if((int)$dependent_plan_history->package_group_id !== (int)$package_group->package_group_id) {
 			\DependentPlanHistory::where('dependent_plan_history_id', $dependent_plan_history->dependent_plan_history_id)->update(['package_group_id' => $package_group->package_group_id]);
