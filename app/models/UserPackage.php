@@ -118,8 +118,8 @@ class UserPackage extends Eloquent
                                                     ->orderBy('created_at', 'desc')
                                                     ->first();
 
-
                         $dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
+                        // return array('res' => $dependent_plan);
 
                         $plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
