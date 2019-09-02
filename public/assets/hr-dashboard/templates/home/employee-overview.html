@@ -769,8 +769,25 @@
 		<span class="account-summary-name weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
 		<h1 class="text-center weight-700">Health Spending Account Summary</h1>
 		<div class="account-summary-pro-rated weight-700 text-center">Pro-rated allocation from 
-			<span><strong class="font-helvetica-medium">Start</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.pro_rated_start">01/11/2018</span></span> to 
-			<span><strong class="font-helvetica-medium">End</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.pro_rated_end">01/01/2019</span></span>
+			<span>
+				<strong class="font-helvetica-medium">Start</strong> - 
+				<button class="btn btn-custom-start">
+					<i class="fa fa-calendar"></i>
+					<span id="rangePicker_start">01/01/2018</span>
+					<i class="fa fa-caret-down"></i>
+				</button>
+				<!-- <span class="account-summary-date" ng-bind="health_spending_summary.date.pro_rated_start">01/11/2018</span> -->
+			</span> to 
+			<span>
+				<strong class="font-helvetica-medium">End</strong> - 
+				<button class="btn btn-custom-end">
+					<i class="fa fa-calendar"></i>
+					<span id="rangePicker_end">04/01/2018</span>
+					<i class="fa fa-caret-down"></i>
+				</button>
+				<!-- <span class="account-summary-date" ng-bind="health_spending_summary.date.pro_rated_end">01/01/2019</span> -->
+			</span>
+			<button class="btn btn-calculate">Calculate</button>
 		</div>
 		<div class="account-summary-usage weight-700 text-center">Usage from
 			<span><strong class="font-helvetica-medium"> Start</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.usage_start">01/11/2018</span></span> to 

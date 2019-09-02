@@ -6825,6 +6825,33 @@ ul.typeahead li a.dropdown-item
 		text-decoration: underline;
 	}
 
+	.account-summary-pro-rated .btn-custom-start,
+	.account-summary-pro-rated .btn-custom-end{
+    background: #fff;
+    color: #555;
+    font-weight: 700;
+    padding: 5px 8px;
+    box-shadow: none;
+    border: 2px solid #ddd;
+    font-size: 12px;
+	}
+
+	.account-summary-pro-rated .btn-custom-start i:first-child,
+	.account-summary-pro-rated .btn-custom-end i:first-child{
+		margin-left: 8px;
+		font-size: 12px;
+	}
+
+	.account-summary-pro-rated .btn-custom-start i:last-child,
+	.account-summary-pro-rated .btn-custom-end i:last-child{
+		margin-right: 8px;
+		font-size: 12px;
+	}
+
+	.account-summary-pro-rated .btn-calculate{
+		
+	}
+
 	.medical-spending-account-container {
 		border: 1px solid #cbcbcb;
 		background-color: #f9f9f9;
