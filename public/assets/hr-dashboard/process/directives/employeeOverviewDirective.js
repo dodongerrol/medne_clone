@@ -714,6 +714,44 @@ app.directive("employeeOverviewDirective", [
           }, 1000);
         };
 
+        scope.isCalculateBtnActive = false;
+
+        scope.initializeNewCustomDatePicker = function(){
+          setTimeout(function() {
+            $('.btn-custom-start').daterangepicker({
+              autoUpdateInput : true,
+              autoApply : true,
+              singleDatePicker: true,
+              startDate : moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
+            }, function(start, end, label) {
+              scope.rangePicker_start = moment( start ).format( 'DD/MM/YYYY' );
+              $("#rangePicker_start").text( scope.rangePicker_start );
+              $('.btn-custom-end').data('daterangepicker').setMinDate( start );
+
+              if( scope.rangePicker_end && ( moment(scope.rangePicker_end,'DD/MM/YYYY') < moment(scope.rangePicker_start,'DD/MM/YYYY') ) ){
+                scope.rangePicker_end = moment( start ).format( 'DD/MM/YYYY' );
+                $("#rangePicker_end").text( scope.rangePicker_end );
+              }
+            });
+
+            $('.btn-custom-end').daterangepicker({
+              autoUpdateInput : true,
+              autoApply : true,
+              singleDatePicker: true,
+              startDate : moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
+            }, function(start, end, label) {
+              scope.rangePicker_end = moment( end ).format( 'DD/MM/YYYY' );
+              $("#rangePicker_end").text( scope.rangePicker_end );
+            });
+
+            var start = moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'DD/MM/YYYY' );
+            var end = moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'DD/MM/YYYY' );
+            $("#rangePicker_start").text( start );
+            $("#rangePicker_end").text( end );
+            $('.btn-custom-end').data('daterangepicker').setMinDate( start );
+          }, 100);
+        }
+
         scope.removeBackBtn = function(){
           if( scope.isRemoveEmployeeShow == true ){
             $('.employee-information-wrapper').fadeIn();
@@ -738,12 +776,14 @@ app.directive("employeeOverviewDirective", [
             $('.prev-next-buttons-container').hide();
             $(".employee-information-wrapper").fadeIn();
             scope.reset();
+            scope.isCalculateBtnActive = false;
             scope.isEmployeeShow = true;
           }else if( scope.isHealthSpendingAccountShow == true ){
             $('.health-spending-account-wrapper').hide();
             $('.prev-next-buttons-container').hide();
             $(".employee-information-wrapper").fadeIn();
             scope.reset();
+            scope.isCalculateBtnActive = false;
             scope.isEmployeeShow = true;
           }
         }
@@ -776,6 +816,7 @@ app.directive("employeeOverviewDirective", [
                   scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                   $('.employee-standalone-pro-wrapper').hide();
                   $(".account-summary-wrapper").fadeIn();
+                  
                   scope.reset();
                   scope.isHealthSpendingAccountSummaryShow = true;
                   scope.getSession();
@@ -801,6 +842,7 @@ app.directive("employeeOverviewDirective", [
                     scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                     $('.employee-standalone-pro-wrapper').hide();
                     $(".account-summary-wrapper").fadeIn();
+                    
                     scope.reset();
                     scope.isHealthSpendingAccountSummaryShow = true;
                     scope.getSession();
@@ -831,6 +873,7 @@ app.directive("employeeOverviewDirective", [
                     scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                     $('.employee-replacement-wrapper').hide();
                     $(".account-summary-wrapper").fadeIn();
+                    
                     scope.reset();
                     scope.isHealthSpendingAccountSummaryShow = true;
                     scope.getSession();
@@ -846,21 +889,41 @@ app.directive("employeeOverviewDirective", [
               scope.getSpendingAccountSummary();
               $('.hold-seat-wrapper').hide();
               $(".account-summary-wrapper").fadeIn();
+
               scope.reset();
               scope.isHealthSpendingAccountSummaryShow = true;
               scope.getSession();
             }
           }else if( scope.isHealthSpendingAccountSummaryShow == true ){
-            $('.health-spending-account-wrapper').fadeIn();
-            $('.account-summary-wrapper').hide();
-            scope.reset();
-            scope.isHealthSpendingAccountShow = true;
+            if( scope.isCalculateBtnActive == false ){
+
+            }else{
+              $('.health-spending-account-wrapper').fadeIn();
+              $('.account-summary-wrapper').hide();
+              scope.reset();
+              scope.isHealthSpendingAccountShow = true;
+            }
           }
         }
 
 
 
         //----- HTTP REQUESTS -----//
+        scope.calculateHealthSpending = function(){
+          console.log( scope.health_spending_summary.date.pro_rated_start );
+          console.log( scope.health_spending_summary.date.pro_rated_end );
+          var data = {
+            sample : true
+          }
+          scope.showLoading();
+          hrSettings.getProRatedCalculation( data )
+            .then(function(response) {
+              scope.hideLoading();
+              console.log( response );
+              scope.isCalculateBtnActive = true;
+            });
+        }
+
         scope.confirmWalletUpdateBtn = function(){
           if( scope.update_member_wallet_status ){
             dependentsSettings.updateWalletMember( scope.selectedEmployee.user_id, scope.selected_customer_id, scope.health_spending_summary.medical.exceed, scope.health_spending_summary.wellness.exceed, moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD') )
@@ -905,6 +968,7 @@ app.directive("employeeOverviewDirective", [
               console.log( response );
               scope.health_spending_summary = response.data;
               scope.getTotalMembers();
+              scope.initializeNewCustomDatePicker();
               // if( scope.health_spending_summary.medical != false || scope.health_spending_summary.wellness != false ){
               //   if( scope.health_spending_summary.medical.exceed == true || scope.health_spending_summary.wellness.exceed == true ){
               //     $(".prev-next-buttons-container").fadeIn();
@@ -1388,6 +1452,7 @@ app.directive("employeeOverviewDirective", [
           scope.isHealthSpendingAccountShow = false;
           scope.isReplaceEmpShow = false;
           scope.isReserveEmpShow = false;
+          scope.isCalculateBtnActive = false;
         }
 
         scope.getSession = function(){

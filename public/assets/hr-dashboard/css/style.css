@@ -6849,7 +6849,14 @@ ul.typeahead li a.dropdown-item
 	}
 
 	.account-summary-pro-rated .btn-calculate{
-		
+		background-color: #0392cf;
+    color: #fff;
+    border: 0;
+    box-shadow: none;
+    font-size: 12px;
+    border-radius: 0;
+    padding: 6px 16px;
+    cursor: pointer;
 	}
 
 	.medical-spending-account-container {
