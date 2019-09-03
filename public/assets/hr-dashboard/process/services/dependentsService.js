@@ -69,8 +69,12 @@ service.factory("dependentsSettings", function($http, serverUrl, Upload) {
     return $http.post(serverUrl.url + "/hr/create_dependent_accounts", data);
   };
 
-  dependentsFactory.fetchEmpAccountSummary = function( emp_id, customer_id, last_day) {
-    return $http.get(serverUrl.url + "/hr/get_employee_spending_account_summary?employee_id=" + emp_id + "&customer_id=" + customer_id + "&last_date_of_coverage=" + last_day);
+  dependentsFactory.fetchEmpAccountSummary = function( emp_id, customer_id, last_day, dates) {
+    var url = serverUrl.url + "/hr/get_employee_spending_account_summary?employee_id=" + emp_id + "&customer_id=" + customer_id + "&last_date_of_coverage=" + last_day;
+    if( dates ){
+      url += "&pro_allocation_start_date=" + dates.start + "&pro_allocation_end_date=" + dates.end;
+    }
+    return $http.get( url );
   };
 
   dependentsFactory.replaceEmployee = function(data) {

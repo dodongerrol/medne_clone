@@ -716,6 +716,15 @@ app.directive("employeeOverviewDirective", [
 
         scope.isCalculateBtnActive = false;
 
+        scope.calculateHealthSpending = function(){
+          var dates = {
+            start : moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+            end : moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+          }
+          scope.isCalculateBtnActive = true;
+          scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY'), dates );
+        }
+
         scope.initializeNewCustomDatePicker = function(){
           setTimeout(function() {
             $('.btn-custom-start').daterangepicker({
@@ -724,14 +733,14 @@ app.directive("employeeOverviewDirective", [
               singleDatePicker: true,
               startDate : moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
             }, function(start, end, label) {
-              scope.rangePicker_start = moment( start ).format( 'DD/MM/YYYY' );
-              $("#rangePicker_start").text( scope.rangePicker_start );
+              scope.health_spending_summary.date.pro_rated_start = moment( start ).format( 'DD/MM/YYYY' );
+              $("#rangePicker_start").text( scope.health_spending_summary.date.pro_rated_start );
               $('.btn-custom-end').data('daterangepicker').setMinDate( start );
 
-              if( scope.rangePicker_end && ( moment(scope.rangePicker_end,'DD/MM/YYYY') < moment(scope.rangePicker_start,'DD/MM/YYYY') ) ){
-                scope.rangePicker_end = moment( start ).format( 'DD/MM/YYYY' );
-                $("#rangePicker_end").text( scope.rangePicker_end );
-              }
+              // if( scope.rangePicker_end && ( moment(scope.rangePicker_end,'DD/MM/YYYY') < moment(scope.rangePicker_start,'DD/MM/YYYY') ) ){
+              //   scope.rangePicker_end = moment( start ).format( 'DD/MM/YYYY' );
+              //   $("#rangePicker_end").text( scope.rangePicker_end );
+              // }
             });
 
             $('.btn-custom-end').daterangepicker({
@@ -740,8 +749,8 @@ app.directive("employeeOverviewDirective", [
               singleDatePicker: true,
               startDate : moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
             }, function(start, end, label) {
-              scope.rangePicker_end = moment( end ).format( 'DD/MM/YYYY' );
-              $("#rangePicker_end").text( scope.rangePicker_end );
+              scope.health_spending_summary.date.pro_rated_end = moment( end ).format( 'DD/MM/YYYY' );
+              $("#rangePicker_end").text( scope.health_spending_summary.date.pro_rated_end );
             });
 
             var start = moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'DD/MM/YYYY' );
@@ -896,7 +905,8 @@ app.directive("employeeOverviewDirective", [
             }
           }else if( scope.isHealthSpendingAccountSummaryShow == true ){
             if( scope.isCalculateBtnActive == false ){
-
+              swal( 'Error!', 'Please click the calcultate button first.', 'error' );
+              return false;
             }else{
               $('.health-spending-account-wrapper').fadeIn();
               $('.account-summary-wrapper').hide();
@@ -909,20 +919,6 @@ app.directive("employeeOverviewDirective", [
 
 
         //----- HTTP REQUESTS -----//
-        scope.calculateHealthSpending = function(){
-          console.log( scope.health_spending_summary.date.pro_rated_start );
-          console.log( scope.health_spending_summary.date.pro_rated_end );
-          var data = {
-            sample : true
-          }
-          scope.showLoading();
-          hrSettings.getProRatedCalculation( data )
-            .then(function(response) {
-              scope.hideLoading();
-              console.log( response );
-              scope.isCalculateBtnActive = true;
-            });
-        }
 
         scope.confirmWalletUpdateBtn = function(){
           if( scope.update_member_wallet_status ){
@@ -962,13 +958,15 @@ app.directive("employeeOverviewDirective", [
           }
         }
 
-        scope.getSpendingAccountSummary = function( last_date_of_coverage ){
-          dependentsSettings.fetchEmpAccountSummary( scope.selectedEmployee.user_id, scope.selected_customer_id, moment(last_date_of_coverage, 'MM/DD/YYYY').format('YYYY-MM-DD'))
+        scope.getSpendingAccountSummary = function( last_date_of_coverage, dates ){
+          scope.showLoading();
+          dependentsSettings.fetchEmpAccountSummary( scope.selectedEmployee.user_id, scope.selected_customer_id, moment(last_date_of_coverage, 'MM/DD/YYYY').format('YYYY-MM-DD'), dates)
             .then(function(response){
               console.log( response );
               scope.health_spending_summary = response.data;
               scope.getTotalMembers();
               scope.initializeNewCustomDatePicker();
+              scope.hideLoading();
               // if( scope.health_spending_summary.medical != false || scope.health_spending_summary.wellness != false ){
               //   if( scope.health_spending_summary.medical.exceed == true || scope.health_spending_summary.wellness.exceed == true ){
               //     $(".prev-next-buttons-container").fadeIn();

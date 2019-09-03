@@ -12129,6 +12129,7 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		// return PlanHelper::reCalculateCompanyBalance();
 		$input = Input::all();
+		// return $input;
 		// $customer_id = $input['customer_id'];
 		$customer_id = PlanHelper::getCusomerIdToken();
 
@@ -12403,8 +12404,11 @@ class BenefitsDashboardController extends \BaseController {
 				'pro_rated_start' => !empty($input['pro_allocation_start_date']) ? date('d/m/Y', strtotime($input['pro_allocation_start_date'])) : date('d/m/Y', strtotime($coverage['plan_start'])),
 				'pro_rated_end' => !empty($input['pro_allocation_end_date']) ? date('d/m/Y', strtotime($input['pro_allocation_end_date'])) : date('d/m/Y', strtotime($last_day_coverage)),
 				'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
-				'usage_end'		=> $usage_date
+				'usage_end'		=> $usage_date,
+				'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? $input['pro_allocation_start_date'] : null,
+				'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? $input['pro_allocation_end_date'] : null,
 			);
+			// return $date;
 		}
 
 		if($has_medical_allocation) {
