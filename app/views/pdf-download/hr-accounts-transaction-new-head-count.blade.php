@@ -185,7 +185,7 @@
   				<th>Amount</th>
   			</tr>
 
-        <tr class="tbody">
+        <!-- <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
           	<p><b>Benefits Coverage</b></p>
           	<p>Health Screening: 1 Complementary basic health screening for each employee</p>
@@ -198,7 +198,7 @@
           <td><b>1</b></td>
           <td><b>S$ 0.00</b></td>
           <td><b>S$ 0.00</b></td>
-        </tr>
+        </tr> -->
 
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
