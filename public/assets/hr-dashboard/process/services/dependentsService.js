@@ -85,10 +85,11 @@ service.factory("dependentsSettings", function($http, serverUrl, Upload) {
     return $http.post(serverUrl.url + "/hr/create_employee_replace_seat", data);
   };
 
-  dependentsFactory.updateWalletMember = function(emp_id, customer_id, medical, wellness, last_day) {
+  dependentsFactory.updateWalletMember = function(emp_id, customer_id, medical, wellness, last_day, dates) {
     var api_url = serverUrl.url + "/hr/get_employee_spending_account_summary?employee_id=" + emp_id + "&customer_id=" + customer_id + "&last_date_of_coverage=" + last_day;
     // if( wellness == true && medical == true ){
       api_url += "&calibrate_wellness=true&calibrate_medical=true";
+      api_url += "&pro_allocation_start_date=" + dates.start + "&pro_allocation_end_date=" + dates.end;;
     // }else if( wellness == true ){
     //   api_url += "&calibrate_wellness=true";
     // }else{

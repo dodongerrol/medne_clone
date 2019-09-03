@@ -922,7 +922,11 @@ app.directive("employeeOverviewDirective", [
 
         scope.confirmWalletUpdateBtn = function(){
           if( scope.update_member_wallet_status ){
-            dependentsSettings.updateWalletMember( scope.selectedEmployee.user_id, scope.selected_customer_id, scope.health_spending_summary.medical.exceed, scope.health_spending_summary.wellness.exceed, moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD') )
+            var dates = {
+              start : moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+              end : moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+            }
+            dependentsSettings.updateWalletMember( scope.selectedEmployee.user_id, scope.selected_customer_id, scope.health_spending_summary.medical.exceed, scope.health_spending_summary.wellness.exceed, moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD'), dates )
               .then(function(response){
                 // console.log( response );
                 if( response.data.status ){
