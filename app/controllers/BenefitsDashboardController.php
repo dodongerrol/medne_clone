@@ -9438,47 +9438,73 @@ class BenefitsDashboardController extends \BaseController {
 					$amount_due += $user->amount;
 				}
 
-				$employee = DB::table('user')->where('UserID', $user->user_id)->first();
-				$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
+				if((int)$user->has_no_user == 0) {
+					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
+					$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
 
-				$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 
-				$days = $diff->format('%a') + 1;
+					$days = $diff->format('%a') + 1;
 
 
-				$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
-				$remaining_days = $total_days - $days;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$remaining_days = $total_days - $days;
 
-				// return $remaining_days;
-				$cost_plan_and_days = (99/$total_days);
-				$temp_total = $cost_plan_and_days * $remaining_days;
+					// return $remaining_days;
+					$cost_plan_and_days = (99/$total_days);
+					$temp_total = $cost_plan_and_days * $remaining_days;
 
-				$temp_sub_total = $temp_total * 0.70;
+					$temp_sub_total = $temp_total * 0.70;
 
-				// check withdraw amount
-				if($user->amount != $temp_sub_total) {
-					// update amount
-					\PlanWithdraw::where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					// check withdraw amount
+					if($user->amount != $temp_sub_total) {
+						// update amount
+						\PlanWithdraw::where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					}
+
+					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
+
+					$total_refund += $withdraw_data->amount;
+
+					$temp = array(
+						'user_id'			=> $user->user_id,
+						'name'				=> ucwords($employee->Name),
+						'nric'				=> $employee->NRIC,
+						'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> number_format($temp_total, 2),
+						'after_amount' => number_format($withdraw_data->amount, 2),
+						'has_no_user'	=> false
+					);
+				} else {
+					$total_refund += $user->amount;
+					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($user->date_started))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$days = $diff->format('%a') + 1;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$remaining_days = $total_days - $days;
+
+					$temp = array(
+						'user_id'			=> null,
+						'name'				=> null,
+						'nric'				=> null,
+						'period_of_used' => date('d/m/Y', strtotime($user->date_started)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($user->unused)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> number_format($user->amount, 2),
+						'after_amount' => number_format($user->amount, 2),
+						'has_no_user'	=> true
+					);
 				}
 
-				$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
-
-				$total_refund += $withdraw_data->amount;
-
-				$temp = array(
-					'user_id'			=> $user->user_id,
-					'name'				=> ucwords($employee->Name),
-					'nric'				=> $employee->NRIC,
-					'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
-					'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
-					'days_used'			=> $days,
-					'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
-					'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
-					'remaining_days' => $remaining_days,
-					'total_days'		=> $total_days,
-					'before_amount'	=> number_format($temp_total, 2),
-					'after_amount' => number_format($withdraw_data->amount, 2)
-				);
 				array_push($users, $temp);
 			}
 
@@ -12128,17 +12154,29 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 
+
 		// get employee plan duration
-		$start = new DateTime($coverage['plan_start']);
-		$end = new DateTime(date('Y-m-d', strtotime($coverage['plan_end'])));
-		$diff = $start->diff($end);
-		$plan_duration = $diff->days + 1;
-		// return $plan_duration;
+		if(!empty($input['pro_allocation_start_date']) && !empty($input['pro_allocation_end_date'])) {
+			$start = new DateTime($input['pro_allocation_start_date']);
+			$end = new DateTime(date('Y-m-d', strtotime($input['pro_allocation_end_date'])));
+			$diff = $start->diff($end);
+			$coverage_end = new DateTime($input['pro_allocation_end_date']);
+		} else {
+			$end = new DateTime(date('Y-m-d', strtotime($coverage['plan_end'])));
+			$start = new DateTime($coverage['plan_start']);
+			$diff = $start->diff($end);
+			$coverage_end = new DateTime($last_day_coverage);
+
+		}
+
+		$plan_employee_duration = new DateTime($coverage['plan_start']);
+		$plan_employee_duration = $plan_employee_duration->diff(new DateTime(date('Y-m-d', strtotime($coverage['plan_end']))));
+		$plan_duration = $plan_employee_duration->days;
 		// get empployee plan coverage from last day of employee
-		$coverage_end = new DateTime($last_day_coverage);
 		$diff_coverage = $start->diff($coverage_end);
 		$coverage_diff = $diff_coverage->days + 1;
 		
+		// return array('coverage_diff' => $coverage_diff, 'plan_duration' => $plan_duration);
 		// return $coverage_diff;
 		// get total allocation of employee from plan start and plan end
 		$employee_credit_reset_medical = DB::table('credit_reset')
@@ -12200,32 +12238,38 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-		foreach ($medical_wallet_history as $key => $history) {
-			if($history->logs == "added_by_hr") {
-				$total_allocation_medical_temp += $history->credit;
-			}
+		$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
+		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
+		// foreach ($medical_wallet_history as $key => $history) {
+		// 	if($history->logs == "added_by_hr") {
+		// 		$total_allocation_medical_temp += $history->credit;
+		// 	}
 
-			if($history->logs == "deducted_by_hr" && (int)$history->from_pro_allocation == 0) {
-				$total_allocation_medical_deducted += $history->credit;
-			}
+		// 	if($history->logs == "deducted_by_hr" && (int)$history->from_pro_allocation == 0) {
+		// 		$total_allocation_medical_deducted += $history->credit;
+		// 	}
 
-			if($history->where_spend == "e_claim_transaction") {
-				$total_medical_e_claim_spent += $history->credit;
-			}
+		// 	if($history->where_spend == "e_claim_transaction") {
+		// 		$total_medical_e_claim_spent += $history->credit;
+		// 	}
 
-			if($history->where_spend == "in_network_transaction") {
-				$total_medical_in_network_spent += $history->credit;
-			}
+		// 	if($history->where_spend == "in_network_transaction") {
+		// 		$total_medical_in_network_spent += $history->credit;
+		// 	}
 
-			if($history->where_spend == "credits_back_from_in_network") {
-				$total_allocation_medical_credits_back += $history->credit;
-			}
-		}
+		// 	if($history->where_spend == "credits_back_from_in_network") {
+		// 		$total_allocation_medical_credits_back += $history->credit;
+		// 	}
+		// }
 
-		$total_allocation_medical_temp = $total_allocation_medical_temp - $total_allocation_medical_deducted;
-		$total_allocation_medical = $total_allocation_medical_temp;
-		$total_medical_spent_temp = $total_medical_in_network_spent + $total_medical_e_claim_spent;
-		$total_medical_spent = $total_medical_spent_temp - $total_allocation_medical_credits_back;
+		// $total_allocation_medical_temp = $total_allocation_medical_temp - $total_allocation_medical_deducted;
+		// $total_allocation_medical = $total_allocation_medical_temp;
+		// $total_medical_spent_temp = $total_medical_in_network_spent + $total_medical_e_claim_spent;
+		// $total_medical_spent = $total_medical_spent_temp - $total_allocation_medical_credits_back;
+
+		$total_allocation_medical = $medical_credit_data['allocation'];
+		$total_medical_spent = $medical_credit_data['get_allocation_spent'];
+
 		$has_medical_allocation = false;
 
 		$pro_temp = $coverage_diff / $plan_duration;
@@ -12305,31 +12349,8 @@ class BenefitsDashboardController extends \BaseController {
 		->where('status', 0)
 		->sum('amount');
 
-		foreach ($wellness_wallet_history as $key => $history) {
-			if($history->logs == "added_by_hr") {
-				$total_allocation_wellness_temp += $history->credit;
-			}
-
-			if($history->logs == "deducted_by_hr") {
-				$total_allocation_wellness_deducted += $history->credit;
-			}
-
-			if($history->where_spend == "e_claim_transaction") {
-				$total_wellness_e_claim_spent_wellness += $history->credit;
-			}
-
-			if($history->where_spend == "in_network_transaction") {
-				$total_wellness_in_network_spent += $history->credit;
-			}
-
-			if($history->where_spend == "credits_back_from_in_network") {
-				$total_allocation_wellness_credits_back += $history->credit;
-			}
-		}
-
-		$total_allocation_wellness = $total_allocation_wellness_temp - $total_allocation_wellness_deducted;
-		$total_wellness_spent_temp = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness;
-		$total_wellness_spent = $total_wellness_spent_temp - $total_allocation_wellness_credits_back;
+		$total_allocation_wellness = $wellness_credit_data['allocation'];
+		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];;
 
 		$exceed_wellness = false;
 		$total_current_usage_wellness = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness + $pending_e_claim_wellness;
@@ -12369,12 +12390,22 @@ class BenefitsDashboardController extends \BaseController {
 		// 	$wellness = false;
 		// }
 
-		$date = array(
-			'pro_rated_start' => date('d/m/Y', strtotime($coverage['plan_start'])),
-			'pro_rated_end' => date('d/m/Y', strtotime($last_day_coverage)),
-			'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
-			'usage_end'		=> $usage_date
-		);
+
+		if($pro_allocation_medical_date) {
+			$date = array(
+				'pro_rated_start' => $pro_allocation_medical_date->pro_allocation_start_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_start_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
+				'pro_rated_end' => $pro_allocation_medical_date->pro_allocation_end_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_end_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
+				'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
+				'usage_end'		=> $usage_date
+			);
+		} else {
+			$date = array(
+				'pro_rated_start' => !empty($input['pro_allocation_start_date']) ? date('d/m/Y', strtotime($input['pro_allocation_start_date'])) : date('d/m/Y', strtotime($coverage['plan_start'])),
+				'pro_rated_end' => !empty($input['pro_allocation_end_date']) ? date('d/m/Y', strtotime($input['pro_allocation_end_date'])) : date('d/m/Y', strtotime($last_day_coverage)),
+				'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
+				'usage_end'		=> $usage_date
+			);
+		}
 
 		if($has_medical_allocation) {
 			// start calibration for medical
@@ -12407,6 +12438,8 @@ class BenefitsDashboardController extends \BaseController {
 						'logs'              => 'pro_allocation',
 						'running_balance'   => $total_pro_medical_allocation,
 						'spending_type'     => 'medical',
+						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
+						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
 						'updated_at'        => date('Y-m-d H:i:s')
 					);
@@ -12480,6 +12513,8 @@ class BenefitsDashboardController extends \BaseController {
 						'logs'              => 'pro_allocation',
 						'running_balance'   => $total_pro_wellness_allocation,
 						'spending_type'     => 'wellness',
+						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
+						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
 						'updated_at'        => date('Y-m-d H:i:s')
 					);
