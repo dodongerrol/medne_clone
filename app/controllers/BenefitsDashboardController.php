@@ -12172,7 +12172,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$plan_employee_duration = new DateTime($coverage['plan_start']);
 		$plan_employee_duration = $plan_employee_duration->diff(new DateTime(date('Y-m-d', strtotime($coverage['plan_end']))));
-		$plan_duration = $plan_employee_duration->days;
+		$plan_duration = $plan_employee_duration->days + 1;
 		// get empployee plan coverage from last day of employee
 		$diff_coverage = $start->diff($coverage_end);
 		$coverage_diff = $diff_coverage->days + 1;
