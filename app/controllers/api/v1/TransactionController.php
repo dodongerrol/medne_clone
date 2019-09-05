@@ -140,12 +140,12 @@ class Api_V1_TransactionController extends \BaseController
 					  $total_amount = $input_amount;
 					}
 
-					if($total_amount > $user_credits) {
-						$returnObject->status = FALSE;
-            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
-            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-            return Response::json($returnObject);
-					}
+					// if($total_amount > $user_credits) {
+					// 	$returnObject->status = FALSE;
+     //        $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
+     //        $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+     //        return Response::json($returnObject);
+					// }
 					// return $total_amount;
 					// get details for clinic co paid
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
