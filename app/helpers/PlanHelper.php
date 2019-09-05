@@ -1112,7 +1112,7 @@ class PlanHelper {
 				$nric_error = true;
 				$nric_message = '*NRIC/FIN is empty';
 			} else {
-				if(strlen($user['nric']) < 12) {
+				if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
 					$nric_error = true;
 					$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
 				} else {
