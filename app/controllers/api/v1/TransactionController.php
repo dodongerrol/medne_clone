@@ -208,17 +208,17 @@ class Api_V1_TransactionController extends \BaseController
 						$payment_credits = $total_amount;
 					}
 
-					// if($customer_active_plan->account_type != "super_pro_plan") {
-					// 	if($credits > $user_credits) {
-					// 		$credits_temp = $user_credits;
-					// 		$cash = $credits - $user_credits;
-					// 		$credits = $credits_temp;
-					// 		$half_payment = true;
-					// 	}
-					// } else {
-					// 	$cash = 0;
-					// 	$credits = $total_amount;
-					// }
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						if($credits > $user_credits) {
+							$credits_temp = $user_credits;
+							$cash = $credits - $user_credits;
+							$credits = $credits_temp;
+							$half_payment = true;
+						}
+					} else {
+						$cash = 0;
+						$credits = $total_amount;
+					}
 					// return $total_credits;
 					$transaction = new Transaction();
   				$wallet = new Wallet( );
