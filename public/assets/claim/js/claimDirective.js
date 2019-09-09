@@ -583,6 +583,10 @@ app.directive("claimDirective", [
                 .success(function(response) {
                   scope.hideLoading();
                   scope.users_arr = response.results;
+
+                  if( scope.users_arr.length == 0 ){
+                    swal('Error!', 'No Users found.', 'error');
+                  }
                 });
             }
           };

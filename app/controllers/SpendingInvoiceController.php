@@ -394,7 +394,7 @@ class SpendingInvoiceController extends \BaseController {
             
                     $temp = array(
                         'transaction'       => 'Invoice - '.$data->statement_number,
-                        'date_issue'        => date('d/m/Y', strtotime($data->created_at)),
+                        'date_issue'        => date('d/m/Y', strtotime($data->statement_date)),
                         'type'              => 'Invoice',
                         'amount'            => 'S$'.$statement['statement_total_amount'],
                         'status'            => (int)$data->statement_status,
