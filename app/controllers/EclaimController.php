@@ -8360,7 +8360,7 @@ public function generateMonthlyCompanyInvoice( )
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
 					'EMPLOYEE'					=> $sub_account ? $sub_account : null,
 					'CLAIM DATE'				=> date('d F Y h:i A', strtotime($res->created_at)),
-					'VISITE DATE'				=> date('d F Y', strtotime($res->date)).', '.$res->time,
+					'VISITED DATE'				=> date('d F Y', strtotime($res->date)).', '.$res->time,
 					'TRANSACTION #'			=> 'MNF'.$id,
 					'CLAIM TYPE'				=> $res->service,
 					'PROVIDER'					=> $res->merchant,
