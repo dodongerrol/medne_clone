@@ -926,7 +926,7 @@
 			<button ng-if="!isRemoveEmployeeShow" ng-click="removeBackBtn()" class="pull-left btn btn-info back-btn remove-emp-back-btn" >BACK</button>
 			<button ng-if="!isRemoveEmployeeShow && !isHealthSpendingAccountShow && !isHealthSpendingAccountSummaryShow" ng-click="removeNextBtn()" ng-disabled="!remove_employee_data.replace && !remove_employee_data.reserve && !remove_employee_data.remove" class="pull-right btn btn-info next-wizard-button">NEXT</button>
 
-			<button ng-if="isHealthSpendingAccountSummaryShow" ng-click="removeNextBtn()" class="pull-right btn btn-info next-wizard-button">NEXT</button>
+			<button ng-if="isHealthSpendingAccountSummaryShow" ng-disabled="!isCalculateBtnActive" ng-click="removeNextBtn()" class="pull-right btn btn-info next-wizard-button">NEXT</button>
 
 			<button ng-if="isHealthSpendingAccountShow" ng-click="confirmWalletUpdateBtn()" class="pull-right btn-confirm">CONFIRM</button>
 			
