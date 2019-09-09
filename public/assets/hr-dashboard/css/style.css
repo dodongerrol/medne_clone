@@ -1642,9 +1642,9 @@ p.number-of-enrollees.inactive-enroll-text {
 }
 
 .search-employee-icon {
-    position: relative;
+    position: absolute;
     float: right;
-    right: -290px;
+    right: 8px;
     top: 6px;
     color: #0c95d0;
     cursor: pointer;

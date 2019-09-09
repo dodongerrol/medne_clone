@@ -140,12 +140,12 @@ class Api_V1_TransactionController extends \BaseController
 					  $total_amount = $input_amount;
 					}
 
-					if($total_amount > $user_credits) {
-						$returnObject->status = FALSE;
-            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
-            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-            return Response::json($returnObject);
-					}
+					// if($total_amount > $user_credits) {
+					// 	$returnObject->status = FALSE;
+     //        $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
+     //        $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+     //        return Response::json($returnObject);
+					// }
 					// return $total_amount;
 					// get details for clinic co paid
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
@@ -192,6 +192,8 @@ class Api_V1_TransactionController extends \BaseController
 						$cash = $credits - $user_credits;
 						$credits = $credits_temp;
 						$half_payment = true;
+					} else {
+
 					}
 					// return $total_credits;
 					$transaction = new Transaction();
@@ -490,16 +492,16 @@ class Api_V1_TransactionController extends \BaseController
 										$email['emailSubject'] = 'Error log. - Transaction ID: '.$transaction_id.' Wallet History ID: '.$wallet_history_id;
 
 										// delete transaction history log
-										$transaction->deleteFailedTransactionHistory($transaction_id);
-										// delete failed wallet history
-										if($spending_type == "medical") {
-											$history->deleteFailedWalletHistory($wallet_history_id);
-											 // credits back
-											$wallet->addCredits($user_id, $credits);
-										} else {
-											\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
-											$wallet->addWellnessCredits($user_id, $credits);
-										}
+										// $transaction->deleteFailedTransactionHistory($transaction_id);
+										// // delete failed wallet history
+										// if($spending_type == "medical") {
+										// 	$history->deleteFailedWalletHistory($wallet_history_id);
+										// 	 // credits back
+										// 	$wallet->addCredits($user_id, $credits);
+										// } else {
+										// 	\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
+										// 	$wallet->addWellnessCredits($user_id, $credits);
+										// }
 										$returnObject->status = FALSE;
 										$returnObject->message = 'Payment unsuccessfull. Please try again later';
 										EmailHelper::sendErrorLogs($email);
