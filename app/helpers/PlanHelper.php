@@ -304,7 +304,47 @@ class PlanHelper {
 		return $data;
 	}
 
+	public static function getCompanyPlanDatesByPlan($customer_id, $plan_id) 
+	{
+		$plan = DB::table('customer_plan')
+		->where('customer_buy_start_id', $customer_id)
+		->orderBy('created_at', 'desc')
+		->first();
 
+		$active_plan = DB::table('customer_active_plan')
+		->where('plan_id', $plan_id)
+		->first();
+
+		if((int)$active_plan->plan_extention_enable == 1) {
+			$plan_extention = DB::table('plan_extensions')
+			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+			->first();
+			if($plan_extention) {
+				if($plan_extention->duration || $plan_extention->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$plan_extention->duration, strtotime($plan_extention->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan_extention->plan_start)));
+				}
+			} else {
+				if($active_plan->duration || $active_plan->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+				}
+			}
+		} else {
+			if($active_plan->duration || $active_plan->duration != "") {
+				$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+			} else {
+				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+			}
+		}
+
+		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
+
+		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
+	}
+	
 	public static function getCustomerId($id)
 	{
 		$user = DB::table('user')->where('UserID', $id)->first();
@@ -495,6 +535,7 @@ class PlanHelper {
 		$dependent_plan = DB::table('dependent_plans')
 		->where('dependent_plan_id', $dependent_plan_id)
 		->first();
+
 		$plan = DB::table('customer_plan')
 		->where('customer_plan_id', $dependent_plan->customer_plan_id)
 		->first();
@@ -977,9 +1018,9 @@ class PlanHelper {
 			$nric_error = true;
 			$nric_message = '*NRIC/FIN is empty';
 		} else {
-			if(strlen($user['nric']) < 9) {
+			if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
 				$nric_error = true;
-				$nric_message = '*NRIC/FIN is must be 8 characters';
+				$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
 			} else {
 				if(!self::validIdentification($user['nric'])) {
 					$nric_error = true;
@@ -1111,9 +1152,9 @@ class PlanHelper {
 				$nric_error = true;
 				$nric_message = '*NRIC/FIN is empty';
 			} else {
-				if(strlen($user['nric']) < 9) {
+				if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
 					$nric_error = true;
-					$nric_message = '*NRIC/FIN is must be 8 characters';
+					$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
 				} else {
 					$nric_error = false;
 					$nric_message = '';
@@ -1236,7 +1277,7 @@ class PlanHelper {
 			}
 
 			$password = StringHelper::get_random_password(8);
-			$dob = $plan_start = date_format(date_create_from_format('d/m/Y', $data_enrollee->dob), 'Y-m-d');
+			$dob = date_format(date_create_from_format('d/m/Y', $data_enrollee->dob), 'Y-m-d');
 			$data = array(
 				'Name'          => $data_enrollee->first_name.' '.$data_enrollee->last_name,
 				'Password'      => md5($password),
@@ -3222,7 +3263,7 @@ class PlanHelper {
 					'first_name'    => $input['first_name'],
 					'last_name'     => $input['last_name'],
 					'nric'          => $input['nric'],
-					'dob'           => date('Y-m-d', strtotime($input['dob']))
+					'dob'           => date('Y-m-d', strtotime($input['dob'])),
 				);
 
 				$user_id = self::createDependentAccountUser($user);
@@ -3278,7 +3319,8 @@ class PlanHelper {
 							'expired_date'          => $last_day_of_coverage,
 							'deactivate_dependent_status' => 1,
 							'replace_status'        => 1,
-							'relationship'          => $input['relationship']
+							'relationship'          => $input['relationship'],
+							'postal_code'			=> null
 						);
 
 						$dependent_replace->createReplacement($replace_data);
@@ -3298,7 +3340,8 @@ class PlanHelper {
 					'last_name'             => $input['last_name'],
 					'nric'                  => $input['nric'],
 					'dob'                   => date('Y-m-d', strtotime($input['dob'])),
-					'relationship'          => $input['relationship']
+					'relationship'          => $input['relationship'],
+					'postal_code'			=> null
 				);
 				$dependent_replace->createReplacement($replace_data);
 				return true;
@@ -4151,15 +4194,26 @@ class PlanHelper {
 				return false;
 			}
 
-			$block = DB::table('company_block_clinic_access')
+			$clinic_block = DB::table('company_block_clinic_access')
 			->where('customer_id', $customer_id)
 			->where('clinic_id', $clinic_id)
+			->where('account_type', 'company')
 			->where('status', 1)
 			->first();
 
-			if($block) {
+			if($clinic_block) {
 				return true;
 			} else {
+				// check for employee
+				$employee_block = DB::table('company_block_clinic_access')
+						->where('customer_id', $user_id)
+						->where('clinic_id', $clinic_id)
+						->where('account_type', 'employee')
+						->where('status', 1)
+						->first();
+				if($employee_block) {
+					return true;
+				}
 				return false;
 			}
 		}
@@ -4521,7 +4575,11 @@ class PlanHelper {
 
 		public static function getDependentPlanCoverage($user_id)
 		{
-			$dependent_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->first();
+			$dependent_plan_history = DB::table('dependent_plan_history')
+											->where('user_id', $user_id)
+											->where('type', 'started')
+											->orderBy('created_at', 'desc')
+											->first();
 
             $dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
 
@@ -4897,6 +4955,27 @@ class PlanHelper {
 			} else {
 				return false;
 			}
+	}
+
+	public static function checkCompanyAllocated($customer_id)
+	{
+		$wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+
+		$medical = DB::table('customer_credit_logs')
+						->where('customer_credits_id', $wallet->customer_credits_id)
+						->where('logs', 'added_employee_credits')
+						->first();
+
+		$wellness = DB::table('customer_wellness_credits_logs')
+						->where('customer_credits_id', $wallet->customer_credits_id)
+						->where('logs', 'added_employee_credits')
+						->first();
+
+		if($medical || $wellness) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

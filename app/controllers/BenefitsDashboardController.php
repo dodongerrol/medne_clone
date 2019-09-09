@@ -2135,7 +2135,7 @@ class BenefitsDashboardController extends \BaseController {
 				'nric'					=> $user->NRIC,
 				'phone_no'				=> $phone_no,
 				'job_title'				=> $user->Job_Title,
-				'dob'					=> date('Y-m-d', strtotime($user->DOB)),
+				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
 				'bank_account'			=> $user->bank_account,
 				'company'				=> ucwords($user->company_name),
@@ -2215,8 +2215,9 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_balance = 0;
 		$total_wellness_balance = 0;
 
-		$check_accessibility = self::hrStatus( );
-		if($check_accessibility['accessibility'] == 1) {
+		// $check_accessibility = self::hrStatus( );
+		$check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
+		if($check_accessibility == true) {
 			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
@@ -2993,7 +2994,7 @@ class BenefitsDashboardController extends \BaseController {
 				'nric'					=> $user->NRIC,
 				'phone_no'				=> $phone_no,
 				'job_title'				=> $user->Job_Title,
-				'dob'					=> date('Y-m-d', strtotime($user->DOB)),
+				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
 				'bank_account'			=> $user->bank_account,
 				'company'				=> ucwords($user->company_name),
@@ -4316,7 +4317,8 @@ class BenefitsDashboardController extends \BaseController {
 			$data = [];
 			$get_active_plan = $active_plan->getActivePlan($plan->customer_active_plan_id);
 			// $check = $invoice->checkCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
-			$get_invoice = $invoice->getCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
+			// $get_invoice = $invoice->getCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
+			$get_invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)->first();
 
 			if($plan->paid == "true") {
 				$data['paid'] = true;
@@ -4342,14 +4344,30 @@ class BenefitsDashboardController extends \BaseController {
 				$calculated_prices_end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
 				// $calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $plan->plan_start, $calculated_prices_end_date);
 				$data['price']          = number_format($get_invoice->individual_price, 2);
-				$data['amount']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
-				$data['total']					= number_format($get_invoice->employees * $get_invoice->individual_price, 2);
+				$data['amount']					= $get_invoice->employees * $get_invoice->individual_price;
+				$data['total']					= $get_invoice->employees * $get_invoice->individual_price;
 				$data['amount_due']     = number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				if((int)$get_invoice->override_total_amount_status == 1) {
 					$calculated_prices = $get_invoice->override_total_amount;
 				} else {
 					$data['calculated_prices'] = $get_invoice->individual_price;
 				}
+
+				// get dependent tag
+				$dependent_tags = DB::table('dependent_plans')
+								->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+								->where('tagged', 1)
+								->get();
+				$dependent_amount = 0;
+				$dependent_amount_due = 0;
+
+				foreach ($dependent_tags as $key => $dependent_plan) {
+					$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
+					$data['amount'] += $invoice->individual_price * $invoice->total_dependents;
+				}
+
+				$data['amount'] = number_format($data['amount'], 2);
+				$data['total'] = $data['amount'];
 			} else {
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
@@ -5202,7 +5220,7 @@ class BenefitsDashboardController extends \BaseController {
 		} else {
 			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
 			// return $data;
-			// return View::make('pdf-download/hr-accounts-transaction-new-head-count', $data);
+			// return View::make('pdf-download.hr-accounts-transaction-new-head-count', $data);
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction-new-head-count', $data);
 		}
 
@@ -5233,10 +5251,10 @@ class BenefitsDashboardController extends \BaseController {
 	// $count_deleted_employees = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->count();
 		$data['number_employess'] = $invoice->employees;
 		$data['invoice_number'] = $invoice->invoice_number;
-		$data['invoice_date'] = date('M d Y', strtotime($invoice->invoice_date));
-		$data['payment_due'] = date('M d Y', strtotime($invoice->invoice_due));
+		$data['invoice_date'] = date('F d, Y', strtotime($invoice->invoice_date));
+		$data['payment_due'] = date('F d, Y', strtotime($invoice->invoice_due));
 		$data['employees'] = $invoice->employees;
-		$data['start_date'] = date('M d Y', strtotime($active_plan->plan_start));
+		$data['start_date'] = date('F d, Y', strtotime($active_plan->plan_start));
 
 	// if($first_plan->duration || $first_plan->duration != "") {
 	// 	$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
@@ -5333,10 +5351,10 @@ class BenefitsDashboardController extends \BaseController {
 			$data['amount_due']     = number_format($amount_due, 2);
 		}
 
-		$data['plan_end'] 			= date('M d Y', strtotime('-1 day', strtotime($end_plan_date)));
+		$data['plan_end'] 			= date('F d, Y', strtotime($end_plan_date));
 		$data['same_as_invoice'] = $first_plan_invoice->invoice_number;
-		$next_billing = date('M d Y', strtotime('-1 month', strtotime($data['plan_end'])));
-		$data['next_billing'] = date('M d Y', strtotime('-1 day', strtotime($next_billing)));
+		$next_billing = date('F d, Y', strtotime('-1 month', strtotime($data['plan_end'])));
+		$data['next_billing'] = date('F d, Y', strtotime('-1 day', strtotime($next_billing)));
 
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
 
@@ -6905,21 +6923,27 @@ class BenefitsDashboardController extends \BaseController {
 						# code...
 						$refunds = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
 						->count('user_id');
 
 						$amount = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
 						->sum('amount');
-						$temp = array(
-							'customer_active_plan_id' => $withdraw->customer_active_plan_id,
-							'payment_refund_id'		  => $withdraw->payment_refund_id,
-							'total_amount'	=> number_format($amount, 2),
-							'total_employees' => $refunds,
-							'date_withdraw'	 => $withdraw->date_refund,
-							'refund_data'		=> $withdraw
-						);
 
-						array_push($new_data, $temp);
+						if($amount > 0) {
+							$temp = array(
+								'customer_active_plan_id' => $withdraw->customer_active_plan_id,
+								'payment_refund_id'		  => $withdraw->payment_refund_id,
+								'total_amount'	=> number_format($amount, 2),
+								'total_employees' => $refunds,
+								'date_withdraw'	 => $withdraw->date_refund,
+								'refund_data'		=> $withdraw
+							);
+
+							array_push($new_data, $temp);
+						}
+
 					}
 				}
 			}
@@ -9414,47 +9438,73 @@ class BenefitsDashboardController extends \BaseController {
 					$amount_due += $user->amount;
 				}
 
-				$employee = DB::table('user')->where('UserID', $user->user_id)->first();
-				$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
+				if((int)$user->has_no_user == 0) {
+					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
+					$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
 
-				$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 
-				$days = $diff->format('%a') + 1;
+					$days = $diff->format('%a') + 1;
 
 
-				$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
-				$remaining_days = $total_days - $days;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$remaining_days = $total_days - $days;
 
-				// return $remaining_days;
-				$cost_plan_and_days = (99/$total_days);
-				$temp_total = $cost_plan_and_days * $remaining_days;
+					// return $remaining_days;
+					$cost_plan_and_days = (99/$total_days);
+					$temp_total = $cost_plan_and_days * $remaining_days;
 
-				$temp_sub_total = $temp_total * 0.70;
+					$temp_sub_total = $temp_total * 0.70;
 
-				// check withdraw amount
-				if($user->amount != $temp_sub_total) {
-					// update amount
-					\PlanWithdraw::where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					// check withdraw amount
+					if($user->amount != $temp_sub_total) {
+						// update amount
+						\PlanWithdraw::where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					}
+
+					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
+
+					$total_refund += $withdraw_data->amount;
+
+					$temp = array(
+						'user_id'			=> $user->user_id,
+						'name'				=> ucwords($employee->Name),
+						'nric'				=> $employee->NRIC,
+						'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> number_format($temp_total, 2),
+						'after_amount' => number_format($withdraw_data->amount, 2),
+						'has_no_user'	=> false
+					);
+				} else {
+					$total_refund += $user->amount;
+					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($user->date_started))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$days = $diff->format('%a') + 1;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$remaining_days = $total_days - $days;
+
+					$temp = array(
+						'user_id'			=> null,
+						'name'				=> null,
+						'nric'				=> null,
+						'period_of_used' => date('d/m/Y', strtotime($user->date_started)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($user->unused)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> number_format($user->amount, 2),
+						'after_amount' => number_format($user->amount, 2),
+						'has_no_user'	=> true
+					);
 				}
 
-				$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
-
-				$total_refund += $withdraw_data->amount;
-
-				$temp = array(
-					'user_id'			=> $user->user_id,
-					'name'				=> ucwords($employee->Name),
-					'nric'				=> $employee->NRIC,
-					'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
-					'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
-					'days_used'			=> $days,
-					'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
-					'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
-					'remaining_days' => $remaining_days,
-					'total_days'		=> $total_days,
-					'before_amount'	=> number_format($temp_total, 2),
-					'after_amount' => number_format($withdraw_data->amount, 2)
-				);
 				array_push($users, $temp);
 			}
 
@@ -11956,20 +12006,20 @@ class BenefitsDashboardController extends \BaseController {
 						if((int)$active->new_head_count == 0) {
 							$amount = $invoice->individual_price * $invoice->employees;
 						} else {
-							$first_plan = DB::table('customer_active_plan')->where('plan_id', $active->plan_id)->first();
-							$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
+							// $first_plan = DB::table('customer_active_plan')->where('plan_id', $active->plan_id)->first();
+							// $plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
 
-							if($first_plan->duration || $first_plan->duration != "") {
-								$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
-							} else {
-								$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-							}
+							// if($first_plan->duration || $first_plan->duration != "") {
+							// 	$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
+							// } else {
+							// 	$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+							// }
 
 							if((int)$invoice->override_total_amount_status == 1) {
 								$calculated_prices = $invoice->override_total_amount;
 							} else {
-								$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $end_plan_date);
-
+								$plan_dates = PlanHelper::getCompanyPlanDatesByPlan($plan->customer_buy_start_id, $plan->customer_plan_id);
+								$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $plan_dates['plan_end']);
 							}
 							$amount = $invoice->employees * $calculated_prices;
 						}

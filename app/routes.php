@@ -270,7 +270,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/employee_lists', 'BenefitsDashboardController@getCompanyMembers');
 	// get hr e-claim approval
 	Route::get('hr/e_claim_activity', 'EclaimController@hrEclaimActivity');
-	// give e_claim status
+	// give e_claim status************
 	Route::post('hr/e_claim_update_status', 'EclaimController@updateEclaimStatus');
 	// get hr statement
 	// Route::post('hr/get_statement', 'EclaimController@createHrStatement');

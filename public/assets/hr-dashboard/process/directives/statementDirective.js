@@ -91,7 +91,7 @@ app.directive('statementPage', [
 
 						angular.forEach( res, function(value,key){
 							var filename = $.trim( value.file.split('/').pop() );
-							filename = filename.substring(0, filename.indexOf('?'));
+							filename =  filename.substring(0, filename.indexOf('?'));
 							var promise = $.ajax({
 				        url: value.file,
 				        method: 'GET',

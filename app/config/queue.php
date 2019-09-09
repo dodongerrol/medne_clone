@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'default' => 'redis',
+	'default' => 'sync',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -67,6 +67,7 @@ return array(
 			'driver' => 'redis',
 			'queue'  => 'high',
 		),
+		
 		'redis_mail' => array(
 			'driver' => 'redis',
 			'queue'  => 'mail',
