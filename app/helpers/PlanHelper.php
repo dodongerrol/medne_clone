@@ -304,7 +304,47 @@ class PlanHelper {
 		return $data;
 	}
 
+	public static function getCompanyPlanDatesByPlan($customer_id, $plan_id) 
+	{
+		$plan = DB::table('customer_plan')
+		->where('customer_buy_start_id', $customer_id)
+		->orderBy('created_at', 'desc')
+		->first();
 
+		$active_plan = DB::table('customer_active_plan')
+		->where('plan_id', $plan_id)
+		->first();
+
+		if((int)$active_plan->plan_extention_enable == 1) {
+			$plan_extention = DB::table('plan_extensions')
+			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+			->first();
+			if($plan_extention) {
+				if($plan_extention->duration || $plan_extention->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$plan_extention->duration, strtotime($plan_extention->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan_extention->plan_start)));
+				}
+			} else {
+				if($active_plan->duration || $active_plan->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+				}
+			}
+		} else {
+			if($active_plan->duration || $active_plan->duration != "") {
+				$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+			} else {
+				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+			}
+		}
+
+		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
+
+		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
+	}
+	
 	public static function getCustomerId($id)
 	{
 		$user = DB::table('user')->where('UserID', $id)->first();
@@ -1112,7 +1152,7 @@ class PlanHelper {
 				$nric_error = true;
 				$nric_message = '*NRIC/FIN is empty';
 			} else {
-				if(strlen($user['nric']) < 12) {
+				if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
 					$nric_error = true;
 					$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
 				} else {
