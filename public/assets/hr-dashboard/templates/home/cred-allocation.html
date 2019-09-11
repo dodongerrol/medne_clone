@@ -175,9 +175,9 @@
 				</div>
 			</div>
 
-			<div class="col-md-10 col-md-offset-1">
+			<div class="col-md-10 col-md-offset-1" style="text-align: center;">
 				<div class="employee-overview-pagination">
-					<div class="pagintaion-previous-next-container center-block" style="width: 350px;">
+					<!-- <div class="pagintaion-previous-next-container center-block" style="width: 350px;">
 						<a id="pagination-prev" ng-click="prevPage()" ng-if="page_active > 1">
 							<img src="../../assets/hr-dashboard/img/icons/right-arrow-angle.svg" style="margin-bottom: 2px;width: 15px;transform: rotate(180deg);">
 							<span>Prev</span>
@@ -200,6 +200,33 @@
 								</ul>
 							</div>
 						</label>
+					</div> -->
+				</div>
+				<div class="employee-pagination">
+					<div class="prev-pagination" ng-click="prevPage()" ng-class="{'active' : page_active > 1, 'disabled' : page_active < 2}">
+						<i class="fa fa-angle-left" aria-hidden="true"></i>
+						<span>Prev</span>
+					</div>
+					<span ng-repeat="list in range(employees_pagi.last_page) | limitTo:pagesToDisplay:startIndex() track by $index" class="numeric-pagination" ng-class="{'active' : page_active == list}" ng-click="goToPage(list)" ng-bind="list">1</span>
+
+					<div class="next-pagination" ng-click="nextPage()" ng-class="{'active' : page_active < employees_pagi.last_page, 'disabled' : page_active == employees.last_page}">
+						<i class="fa fa-angle-right" aria-hidden="true"></i>
+						<span>Next</span>
+					</div>
+
+					<div class="per-page-pagination" ng-click="togglePage()">
+						<span><span ng-bind="page_ctr">10</span> per page</span>
+						<i class="fa fa-angle-down" aria-hidden="true"></i>
+
+						<div class="per_page">
+							<ul class="nav">
+								<li><a href="javascript:void(0);" ng-click="perPage(5)">5</a></li>
+								<li><a href="javascript:void(0);" ng-click="perPage(10)">10</a></li>
+								<li><a href="javascript:void(0);" ng-click="perPage(20)">20</a></li>
+								<li><a href="javascript:void(0);" ng-click="perPage(50)">50</a></li>
+								<li><a href="javascript:void(0);" ng-click="perPage(100)">100</a></li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
