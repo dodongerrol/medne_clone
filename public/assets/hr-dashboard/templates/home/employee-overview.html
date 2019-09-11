@@ -335,6 +335,10 @@
 					<div class="employee-information-details">
 						<div class="col-1-employee-information-details">
 							<div>
+								<strong class="font-helvetica-medium">Full Name</strong>
+								<span ng-bind="selectedEmployee.fullname">Calvin Harris</span>
+							</div>
+							<!-- <div>
 								<strong class="font-helvetica-medium">First Name</strong>
 								<span ng-bind="selectedEmployee.fname">Calvin</span>
 							</div>
@@ -345,6 +349,10 @@
 							<div>
 								<strong class="font-helvetica-medium">NRIC/FIN</strong>
 								<span ng-bind="selectedEmployee.nric">S8575893G</span>
+							</div> -->
+							<div>
+								<strong class="font-helvetica-medium">Country Code</strong>
+								<span ng-bind="selectedEmployee.country_code">+63</span>
 							</div>
 							<div>
 								<strong class="font-helvetica-medium">Member ID</strong>
@@ -354,12 +362,12 @@
 								<strong class="font-helvetica-medium">Date of Birth</strong>
 								<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
 							</div>
-						</div>
-						<div class="col-2-employee-information-details">
 							<div>
 								<strong class="font-helvetica-medium">Work Email</strong>
 								<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
 							</div>
+						</div>
+						<div class="col-2-employee-information-details">
 							<div>
 								<strong class="font-helvetica-medium">Mobile Number</strong>
 								<span ng-bind="selectedEmployee.phone_no">87589582</span>
@@ -397,6 +405,10 @@
 						<div class="employee-information-details">
 							<div class="col-1-employee-information-details">
 								<div>
+									<strong class="font-helvetica-medium">Full Name</strong>
+									<span ng-bind="list.fullname">Alice Wonderland</span>
+								</div>
+								<!-- <div>
 									<strong class="font-helvetica-medium">First Name</strong>
 									<span ng-bind="list.first_name">Alice</span>
 								</div>
@@ -407,13 +419,13 @@
 								<div>
 									<strong class="font-helvetica-medium">NRIC/FIN</strong>
 									<span ng-bind="list.nric">G84748351</span>
-								</div>
-							</div>
-							<div class="col-2-employee-information-details">
+								</div> -->
 								<div>
 									<strong class="font-helvetica-medium">Date of Birth</strong>
 									<span ng-bind="list.dob | date:'dd/MM/yyyy'">04/03/1984</span>
 								</div> 
+							</div>
+							<div class="col-2-employee-information-details">
 								<div>
 									<strong class="font-helvetica-medium">Relationship</strong>
 									<span ng-if="list.relationship != null" ng-bind="list.relationship">Spouse</span>
@@ -603,6 +615,11 @@
 		<h1 class="text-center weight-700">Remove employee</h1>
 		<form>
 			<div class="remove-employee-input-wrapper">
+				<label for="fname">Full Name</label>
+  			<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.fullname" readonly>
+  			<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.fullname" readonly>
+			</div>
+			<!-- <div class="remove-employee-input-wrapper">
 				<label for="fname">First / Given Name</label>
   			<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.first_name" readonly>
   			<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.first_name" readonly>
@@ -611,7 +628,7 @@
 				<label for="fname">Last / Family Name</label>
   			<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.last_name" readonly>
   			<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.last_name" readonly>
-			</div>
+			</div> -->
 			<div class="last-day-input-wrapper">
 				<label for="fname">Last day of coverage</label>
   				<input type="text" name="fname" class="last-day-coverage-datepicker" ng-model="remove_employee_data.last_day_coverage">
@@ -650,6 +667,10 @@
 			<h1 class="text-center weight-700 font-helvetica-medium">Employee details</h1>
 			<form>
 				<div class="employee-input-wrapper">
+					<label for="fname">Full Name</label>
+	  			<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.fullname">
+				</div>
+				<!-- <div class="employee-input-wrapper">
 					<label for="fname">First / Given Name</label>
 	  			<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.first_name">
 				</div>
@@ -667,7 +688,7 @@
 	            FIN
 	        </label>
 	  			<input type="text" name="nric-fin" ng-model="replace_emp_data.nric">
-				</div>
+				</div> -->
 				<div class="employee-input-wrapper">
 					<label for="fname">Date of Birth</label>
 	  			<input type="text" name="datebirth" class="datepicker" ng-model="replace_emp_data.dob">
@@ -678,7 +699,14 @@
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Mobile</label>
-	  			<input type="text" name="mobile" ng-model="replace_emp_data.mobile">
+	  			<!-- <input type="text" name="mobile" ng-model="replace_emp_data.mobile"> -->
+	  			<div class="edit-country-code-phone-wrapper">
+						<div>
+							<input type="text" class="edit-employee-modal-input edit-country-code-input">
+							<i class="fa fa-caret-down" aria-hidden="true"></i>
+						</div> 
+						<input type="text" name="mobile" ng-model="replace_emp_data.mobile">
+					</div>
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Postal Code</label>
@@ -930,36 +958,48 @@
           <div class="row">
             <div class="col-md-12">
               <form class="form update-form">
-                <div class="col-lg-6">
+              	<div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Full Name</label>
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.fullname">
+                  </div>
+                </div>
+               <!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">First Name</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.fname">
                   </div>
-                </div>
+                </div> -->
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Work Email</label>
                     <input type="email" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.email">
                   </div>
                 </div>
-                <div class="col-lg-6">
+                <!-- <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Last Name</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.lname">
                   </div>
-                </div>
+                </div> -->
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Mobile Number</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.phone_no">
+                    <div class="edit-country-code-phone-wrapper">
+                    	<div>
+                    		<input type="text" class="edit-employee-modal-input edit-country-code-input">
+                    		<i class="fa fa-caret-down" aria-hidden="true"></i>
+                    	</div> 
+                    	<input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.phone_no">
+                    </div>
                   </div>
                 </div>
-                <div class="col-lg-6">
+               <!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">NRIC</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.nric" readonly>
                   </div>
-                </div>
+                </div> -->
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Postal Code</label>
@@ -1039,24 +1079,30 @@
           <div class="row">
             <div class="col-md-12">
               <form class="form update-form">
-                <div class="col-lg-6">
+              	<div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Full Name</label>
+                    <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.fullname">
+                  </div>
+                </div>
+               <!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">First Name</label>
                     <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.first_name">
                   </div>
-                </div>
+                </div> -->
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Date of Birth</label>
                     <input type="text" class="form-control edit-employee-modal-input datepicker" ng-model="selectedDependent.dob">
                   </div>
                 </div>
-                <div class="col-lg-6">
+              <!--   <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Last Name</label>
                     <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.last_name">
                   </div>
-                </div>
+                </div> -->
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Relationship</label>
@@ -1075,12 +1121,12 @@
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.member_id" readonly>
                   </div>
                 </div>
-                <div class="col-lg-6">
+               <!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">NRIC/FIN</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.nric" readonly>
                   </div>
-                </div>
+                </div> -->
                 
                 <div class="col-md-12">
                   <p ng-if="invalid_email" class="text-error text-left">Invalid Email</p>
