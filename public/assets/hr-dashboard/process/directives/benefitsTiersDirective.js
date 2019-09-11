@@ -883,10 +883,24 @@ app.directive('benefitsTiersDirective', [
 							return false;
 						}
 					}
-					// if( !scope.employee_data.mobile ){
-					// 	swal( 'Error!', 'Phone is required.', 'error' );
-					// 	return false;
-					// }
+					if( !scope.employee_data.mobile ){
+						swal( 'Error!', 'Mobile Number is required.', 'error' );
+						return false;
+					}else{
+						// console.log( iti.getSelectedCountryData().iso2 );
+						if( iti.getSelectedCountryData().iso2 == 'sg' && scope.employee_data.mobile.length < 8 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
+							return false;
+						}
+						if( iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 10 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 10 digits.', 'error' );
+							return false;
+						}
+						if( iti.getSelectedCountryData().iso2 == 'ph' && scope.employee_data.mobile.length < 9 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 9 digits.', 'error' );
+							return false;
+						}
+					}
 					if( !scope.employee_data.postal_code ){
 						swal( 'Error!', 'Postal Code is required.', 'error' );
 						return false;
