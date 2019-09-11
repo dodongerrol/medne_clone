@@ -308,7 +308,8 @@ function getCanvas(){
 }
 
 function searchTable(data) {
-	if( data.search.length > 2 ){
+	console.log( data );
+	if( data.search.length > 0 ){
 		$( '.trans-history-tbl tbody' ).html('<tr>' +
 						'<td colspan="7" class="text-center">' +
 							'<h5>Loading...</h5>' +
@@ -610,6 +611,17 @@ setTimeout(function() {
 
 	$( '.search-table' ).keyup(function(){
 		var text = $( ".search-table" ).val();
+		console.log( text );
+		if( text.length == 0 ){
+			var range_data = date_slider.getValue();
+			var activity_search = getFirstEndDate( range_data[0], range_data[1] );
+			console.log(activity_search);
+			getTransactions( activity_search );
+		}
+	});
+
+	$( '.btn-search-tbl' ).click(function(){
+		var text = $( ".search-table" ).val();
 		var range_data = date_slider.getValue();
 		var activity_search = null;
 		
@@ -623,7 +635,7 @@ setTimeout(function() {
 		}
 		
 		// console.log(activity_search);
-		if( text.length > 2 ){
+		if( text.length > 0 ){
 			activity_search.search = text;
 			searchTable( activity_search );
 		}else{
