@@ -323,6 +323,78 @@ Route::filter('auth.jwt_hr', function($request, $response)
 });
 
 
+Route::filter('auth.jwt_employee', function($request, $response)
+{
+    $headers = [];
+    if(!StringHelper::requestHeader()){
+        $headers[]['error'] = true;
+        // return Redirect::to('company-benefits-dashboard-login');
+        return Response::json('You have an invalid token. Please login again', 403, $headers);
+    } else {
+        $headers[]['error'] = true;
+        // check if there is a header authorization
+        $token = StringHelper::getToken();
+        // return $token;
+        if(!$token) {
+            return Response::json('You have an invalid token. Please login again', 403, $headers);
+        }
+
+        $result = StringHelper::getJwtEmployeeSession();
+        if(!$result) {
+            // return Redirect::to('company-benefits-dashboard-login');
+            return Response::json('You account was deactivated. Please contact Mednefits Team.', 401, $headers);
+        }
+
+        // decode and check the properites
+        $secret = Config::get('config.secret_key');
+        $value = JWT::decode($token, $secret);
+
+        if($value->signed_in == false) {
+            if(time() > $value->expire_in) {
+                return Response::json('Ooops! Your login session has expired. Please login again.', 403, $headers);
+            }
+        }
+
+        $request = Request::instance();
+        $ip = $request->getClientIp();
+        // log
+        $date = date('Y-m-d H:i:s');
+        $data = array(
+            'ip_address' => $ip,
+            'date'       => $date,
+            'user_id'    => $value->UserID
+        );
+
+        // check for redundancy
+        $check = DB::table('admin_logs')
+                    ->where('admin_id', $value->UserID)
+                    ->where('admin_type', 'member')
+                    ->where('type', 'member_active_state')
+                    // ->where('created_at', $data['date'])
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+
+        if(!$check) {
+            $admin_logs = array(
+                'admin_id'  => $value->UserID,
+                'admin_type' => 'member',
+                'type'      => 'member_active_state',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        } else if(strtotime(date('Y-m-d H:i', strtotime($check->created_at))) != strtotime(date('Y-m-d H:i', strtotime($date)))) {
+            $admin_logs = array(
+                'admin_id'  => $value->UserID,
+                'admin_type' => 'member',
+                'type'      => 'member_active_state',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        }
+    }
+});
+
+
 Route::filter('auth.employee', function($request, $response)
 {
     $headers = [];

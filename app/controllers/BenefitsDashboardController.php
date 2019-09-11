@@ -11869,8 +11869,8 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$returnObject = new stdClass();
 		$e_card = new UserPackage();
-
-		$id = Session::get('employee-session');
+		$data = StringHelper::getEmployeeSession( );
+		$id = $data->UserID;
 
 		$findUserID = DB::table('user')->where('UserID', $id)->first();
 		if($findUserID){

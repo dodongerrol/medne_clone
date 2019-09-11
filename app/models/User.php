@@ -286,7 +286,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                         ->where('UserType', 5);
                     })
                     ->orWhere(function($query) use ($email){
-                        $query->where('NRIC', $email)
+                        $query->where('PhoneNo', $email)
                         ->where('Active', 1)
                         ->where('UserType', 5);
                     })

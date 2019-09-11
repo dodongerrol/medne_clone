@@ -1,8 +1,29 @@
 var service = angular.module('authService', ['ui.router'])
 
-service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope){
+service.factory('AuthToken', function($window){
+	var authTokenFactory = {};
+	authTokenFactory.getToken = function( ) {
+		return $window.localStorage.getItem('token');
+	}
+	authTokenFactory.setToken = function( token ) {
+		console.log( token );
+		if(token) {
+			return $window.localStorage.setItem('token', token);
+		} else {
+			$window.localStorage.removeItem('token');
+		}
+	}
+	return authTokenFactory;
+});
+
+service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope, AuthToken){
 	var interceptorFactory = {};
 	interceptorFactory.request = function( config ) {
+		var token = AuthToken.getToken( );
+
+		if(token) {
+			config.headers['Authorization'] = token;
+		}
 		// console.log(config);
 		return config;
 	};
