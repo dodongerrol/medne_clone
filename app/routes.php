@@ -564,7 +564,8 @@ Route::post('app/calendar/validatePin','CalendarController@validatePin');
 Route::post('app/calendar/getClinicPinStatus','CalendarController@getClinicPinStatus');
 Route::post('app/calendar/loadAppointmentCount','CalendarController@loadAppointmentCount');
 
-
+// Mobile Exercise
+Route::get('app/mobile-exercise','HomeController@getMobileExercise');
 
 // ----------------------------------- Settings pages ----------------------------------- //
 

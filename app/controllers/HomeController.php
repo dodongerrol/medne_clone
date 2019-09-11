@@ -654,6 +654,15 @@ public function MainSettingsPage(){
     return Redirect::to('provider-portal-login');
   }
 }
+public function getMobileExercise()
+{
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $dataArray['server'] = $protocol.$hostName;
+  $dataArray['date'] = new DateTime();
+  $dataArray['title'] = "Update Details";
+  return View::make('mobile-exercise.index', $dataArray);
+}
 public function claimReportPage()
 {
   $hostName = $_SERVER['HTTP_HOST'];
