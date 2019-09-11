@@ -73,7 +73,8 @@
 								</div>
 							</th>
 							<th class="status-title">Status</th>
-							<th class="nric-fin-title">NRIC/FIN</th>
+							<th class="nric-fin-title">Mobile Number</th>
+							<!-- <th class="nric-fin-title">NRIC/FIN</th> -->
 							<th class="plan-details-title">Plan details</th>
 							<th class="family-coverage-title">Family coverage</th>
 							<th class="spending-account-medical-title">Spending account <span>(medical)</span></th>
@@ -102,7 +103,8 @@
 									<span ng-bind="emp.deletion_text"></span>
 								</div>
 							</td>
-							<td class="nric-fin-details" ng-bind="emp.nric">S8575893G</td>
+							<td class="nric-fin-details" ng-bind="emp.phone_no">12324324</td>
+							<!-- <td class="nric-fin-details" ng-bind="emp.nric">S8575893G</td> -->
 							<td class="plan-start-container">
 								<span ng-bind="emp.plan_tier.plan_tier_name">Tier 1</span>
 								<div class="plan-details">
@@ -351,10 +353,6 @@
 								<span ng-bind="selectedEmployee.nric">S8575893G</span>
 							</div> -->
 							<div>
-								<strong class="font-helvetica-medium">Country Code</strong>
-								<span ng-bind="selectedEmployee.country_code">+63</span>
-							</div>
-							<div>
 								<strong class="font-helvetica-medium">Member ID</strong>
 								<span ng-bind="selectedEmployee.member_id">657834</span>
 							</div>
@@ -363,15 +361,20 @@
 								<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
 							</div>
 							<div>
-								<strong class="font-helvetica-medium">Work Email</strong>
-								<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
+								<strong class="font-helvetica-medium">Country Code</strong>
+								<span ng-bind="selectedEmployee.country_code">+63</span>
 							</div>
-						</div>
-						<div class="col-2-employee-information-details">
 							<div>
 								<strong class="font-helvetica-medium">Mobile Number</strong>
 								<span ng-bind="selectedEmployee.phone_no">87589582</span>
 							</div>
+						</div>
+						<div class="col-2-employee-information-details">
+							<div>
+								<strong class="font-helvetica-medium">Work Email</strong>
+								<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
+							</div>
+							
 							<div>
 								<strong class="font-helvetica-medium">Postal Code</strong>
 								<span ng-bind="selectedEmployee.postal_code">645362</span>
@@ -557,22 +560,11 @@
 			<form>
 				<div class="employee-input-wrapper">
 					<label for="fname">First / Given Name</label>
-  				<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.first_name">
+  				<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.fullname">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Last / Family Name</label>
   				<input disabled-specific-characters type="text" name="lname" ng-model="dependent_data.last_name">
-				</div>
-				<div class="employee-input-wrapper nric">
-					<label>
-	          <input type="radio" ng-value="true" name="id_status" ng-model="nric_status_dependents" style="position: relative;top: 2px;left: 0;opacity: 1;">
-	          NRIC
-	        </label>
-	        <label>
-	          <input type="radio" ng-value="true" name="id_status" ng-model="fin_status_dependents" style="position: relative;top: 2px;left: 0;opacity: 1;">
-	          FIN
-	        </label>
-  				<input type="text" name="nric-fin" ng-model="dependent_data.nric">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Date of Birth</label>
@@ -700,13 +692,7 @@
 				<div class="employee-input-wrapper">
 					<label for="fname">Mobile</label>
 	  			<!-- <input type="text" name="mobile" ng-model="replace_emp_data.mobile"> -->
-	  			<div class="edit-country-code-phone-wrapper">
-						<div>
-							<input type="text" class="edit-employee-modal-input edit-country-code-input">
-							<i class="fa fa-caret-down" aria-hidden="true"></i>
-						</div> 
-						<input type="text" name="mobile" ng-model="replace_emp_data.mobile">
-					</div>
+					<input valid-number id="area_code2" type="text" name="mobile" ng-model="replace_emp_data.mobile">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Postal Code</label>
@@ -737,23 +723,8 @@
 			<h1 class="text-center weight-700 font-helvetica-medium">Dependent details</h1>
 			<form>
 				<div class="employee-input-wrapper">
-					<label for="fname">First / Given Name</label>
-	  			<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.first_name">
-				</div>
-				<div class="employee-input-wrapper">
-					<label for="fname">Last / Family Name</label>
-	  			<input disabled-specific-characters type="text" name="lname" ng-model="replace_emp_data.last_name">
-				</div>
-				<div class="employee-input-wrapper nric">
-					<label>
-	            <input type="radio" ng-value="true" name="id_status" ng-model="nric_status" style="position: relative;top: 2px;left: 0;opacity: 1;">
-	            NRIC
-	        </label>
-	        <label>
-	            <input type="radio" ng-value="true" name="id_status" ng-model="fin_status" style="position: relative;top: 2px;left: 0;opacity: 1;">
-	            FIN
-	        </label>
-	  			<input type="text" name="nric-fin" ng-model="replace_emp_data.nric">
+					<label for="fname">Full Name</label>
+	  			<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.fullname">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Date of Birth</label>
@@ -985,13 +956,7 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Mobile Number</label>
-                    <div class="edit-country-code-phone-wrapper">
-                    	<div>
-                    		<input type="text" class="edit-employee-modal-input edit-country-code-input">
-                    		<i class="fa fa-caret-down" aria-hidden="true"></i>
-                    	</div> 
-                    	<input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.phone_no">
-                    </div>
+                  	<input valid-number id="area_code" type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.phone_no">
                   </div>
                 </div>
                <!--  <div class="col-lg-6">
