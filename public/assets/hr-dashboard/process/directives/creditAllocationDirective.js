@@ -31,9 +31,34 @@ app.directive('creditAllocationDirective', [
 					list.creditAllocTransactionType = opt;
 				}
 
+				scope.range = function (range) {
+					console.log( range );
+			    var arr = []; 
+			    for (var i = 0; i < range; i++) {
+			        arr.push(i+1);
+			    }
+			    return arr;
+				}
+
 				scope.perPage = function(num){
           scope.page_ctr = num;
           scope.page_active = 1;
+          scope.getEmployeeList();
+        };
+
+        scope.pagesToDisplay = 5;
+        scope.startIndex = function(){
+          if( scope.page_active > ((scope.pagesToDisplay / 2) + 1 )) {
+            if ((scope.page_active + Math.floor(scope.pagesToDisplay / 2)) > scope.employees.last_page) {
+              return scope.employees.last_page - scope.pagesToDisplay + 1;
+            }
+            return scope.page_active - Math.floor(scope.pagesToDisplay / 2);
+          }    
+          return 0;
+        }
+
+        scope.goToPage = function(page){
+          scope.page_active = page;
           scope.getEmployeeList();
         };
 
@@ -177,6 +202,7 @@ app.directive('creditAllocationDirective', [
 						.then(function(response){
 							console.log(response);
 							scope.employees = response.data.data;
+							scope.employees_pagi = response.data;
 							scope.emp_last_page = response.data.last_page;
 
 							angular.forEach( scope.employees, function( value, key ){ 
@@ -318,10 +344,20 @@ app.directive('creditAllocationDirective', [
 					});
         }
 
+        $("body").click(function(e){
+          if ( $(e.target).parents(".per-page-pagination").length === 0) {
+            $(".per_page").hide();
+          }
+        });
+
 				// scope.checkCompanyBalance();
 				scope.userCompanyCreditsAllocated();
 	        scope.onLoad();
 				}
+
+
+
+
 		}
 	}
 ]);

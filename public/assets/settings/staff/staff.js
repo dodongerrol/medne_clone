@@ -28,7 +28,7 @@ jQuery(document).ready(function($) {
 		html: 'true',
 		container: 'body',
 	    title : 'Add New Doctor',
-	    content : '<input type="text" class="form-control pop-input" id="pop-doctor-name" placeholder="Doctor Name" style="width: 250px; background: white !important;"><br><input type="text" class="form-control pop-input" id="pop-doctor-email" placeholder="Doctor Email" style="width: 250px; background: white !important;"><br> <button id="doctor-pop-add" class="btn pop-add-btn">Add Doctor</button> <button class="btn pop-close-btn" id="doctor-pop-cancel">Cancel</button>'
+	    content : '<input type="text" class="form-control pop-input" id="pop-doctor-name" placeholder="Doctor Name" style="width: 250px; background: white !important;"><br><input type="text" class="form-control pop-input" id="pop-doctor-email" placeholder="Doctor Email" style="width: 250px; background: white !important;"><br> <button id="doctor-pop-add" class="btn pop-add-btn" style="width: auto;height: auto;">Add Doctor</button> <button class="btn pop-close-btn" id="doctor-pop-cancel" style="width: auto;height: auto;">Cancel</button>'
 	});
 
 // `````````````````````````````````````````````````````````````````````````````````````````````````
