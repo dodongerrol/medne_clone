@@ -55,7 +55,7 @@
 								<div class="input-group">
 									<input class="form-control font-13 search-table" placeholder="Search"/>
 								      <span class="input-group-btn">
-								        <button class="btn btn-default" type="button"><i class="fa fa-search font-18"></i></button>
+								        <button class="btn btn-default btn-search-tbl" type="button"><i class="fa fa-search font-18"></i></button>
 								      </span>
 								</div>
 							</form>
