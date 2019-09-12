@@ -80,6 +80,7 @@ app.directive('benefitsTiersDirective', [
 				scope.isFromUpload = false;
 				scope.isAllPreviewEmpChecked = false;
 				scope.showDependentsAdded = false;
+				scope.isEditDetailModalOpen = false;
 				
 				var iti = null;
 				var iti2 = null;
@@ -404,6 +405,7 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.openEditDetailsModal = function( index ){
+					scope.isEditDetailModalOpen = true;
 					scope.selected_edit_details_data = scope.temp_employees[index];
 					$("#edit-employee-details").modal('show');
 					$('.edit-employee-details-form .datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.dob);
@@ -1470,7 +1472,7 @@ app.directive('benefitsTiersDirective', [
 							utilsScript : "../assets/hr-dashboard/js/utils.js",
 		        };
 
-		        if( scope.employee_data != undefined ){
+		        if( scope.isEditDetailModalOpen == false ){
 		        	var input = document.querySelector("#area_code");
 			        iti = intlTelInput(input, settings);
 			        input.addEventListener("countrychange", function() {
@@ -1479,11 +1481,13 @@ app.directive('benefitsTiersDirective', [
 							  scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
 							});
 		        }
-						if( scope.selected_edit_details_data != undefined ){
+						if( scope.isEditDetailModalOpen == true ){
 							var input2 = document.querySelector("#area_code2");
 							iti2 = intlTelInput(input2, settings);
 			        console.log( scope.selected_edit_details_data.employee.format_mobile );
 							iti2.setNumber( scope.selected_edit_details_data.employee.format_mobile );
+							scope.selected_edit_details_data.employee.mobile = scope.selected_edit_details_data.employee.mobile;
+							$("#area_code2").val( scope.selected_edit_details_data.employee.mobile );
 							input2.addEventListener("countrychange", function() {
 							  console.log( iti2.getSelectedCountryData() );
 							  scope.selected_edit_details_data.employee.mobile_area_code = iti2.getSelectedCountryData().dialCode;
@@ -1590,10 +1594,11 @@ app.directive('benefitsTiersDirective', [
 				})
 
 				$('.modal').on('hidden.bs.modal', function () {
+				  scope.isEditDetailModalOpen = false;
+				  // iti.destroy();
+				  iti2.destroy();
 				  console.log( iti );
 				  console.log( iti2 );
-				  // iti.destroy();
-				  // iti2.destroy();
 				})
 			}
 		}
