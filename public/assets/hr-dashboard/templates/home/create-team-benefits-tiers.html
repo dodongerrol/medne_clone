@@ -631,14 +631,10 @@
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.email_message"></span>
                     </div>
                     <div class="form-group">
-                        <label>Mobile</label>
-                        <input valid-number type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.mobile_error == true}" ng-model="selected_edit_details_data.employee.mobile">
+                        <label style="display: block;">Mobile</label>
+                        <input valid-number id="area_code2"  type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.mobile_error == true}" ng-model="selected_edit_details_data.employee.mobile">
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_message"></span>
-                    </div>
-                    <div class="form-group">
-                        <label>Mobile Area Code</label>
-                        <input valid-number type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.mobile_error == true}" ng-model="selected_edit_details_data.employee.mobile_area_code">
-                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_message"></span>
+                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_area_code_message"></span>
                     </div>
                     <div class="form-group">
                         <label>Medical Credits</label>

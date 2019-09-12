@@ -361,6 +361,7 @@ class PlanTierController extends \BaseController {
 	public function createWebInputTier( )
 	{
 		$input = Input::all();
+		// return $input;
 		// if(empty($input['customer_id']) || $input['customer_id'] == null) {
 		// 	return array('status' => false, 'message' => 'Customer ID is required.');
 		// }
@@ -487,9 +488,7 @@ class PlanTierController extends \BaseController {
 				'customer_buy_start_id'	=> $customer_id,
 				'active_plan_id'		=> $customer_active_plan_id,
 				'plan_tier_id'			=> $plan_tier_id,
-				'first_name'			=> trim($user['first_name']),
-				'last_name'				=> trim($user['last_name']),
-				'nric'					=> trim($user['nric']),
+				'first_name'				=> trim($user['fullname']),
 				'dob'					=> trim($user['dob']),
 				'email'					=> !empty($user['email']) ? trim($user['email']) : null,
 				'mobile'				=> !empty($user['mobile']) ? trim($user['mobile']) : null,
@@ -526,9 +525,7 @@ class PlanTierController extends \BaseController {
 								'employee_temp_id'		=> $enroll_result->id,
 								'dependent_plan_id'		=> $depedent_plan_id,
 								'plan_tier_id'			=> $plan_tier_id,
-								'first_name'			=> $dependent['first_name'],
-								'last_name'				=> $dependent['last_name'],
-								'nric'					=> $dependent['nric'],
+								'first_name'			=> $dependent['fullname'],
 								'dob'					=> $dependent['dob'],
 								'plan_start'			=> $dependent['plan_start'],
 								'relationship'			=> $dependent['relationship'],
@@ -575,7 +572,7 @@ class PlanTierController extends \BaseController {
 			// } else {
 			// 	$enroll->dob = null;
 			// }
-
+			$enroll->fullname = $enroll->first_name;
 			if($enroll->email == null) {
 				$enroll->email = '';
 			}
@@ -610,6 +607,8 @@ class PlanTierController extends \BaseController {
 					} else {
 						$dep->dob = null;
 					}
+
+					$dep->fullname = $dep->first_name;
 					$dep_temp = array(
 						'enrollee'		=> $dep,
 						'error_logs' 	=> $error_logs

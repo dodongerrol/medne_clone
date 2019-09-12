@@ -933,15 +933,28 @@ class PlanHelper {
 		$customer_id = self::getCusomerIdToken();
 		$mobile_error = false;
 		$mobile_message = '';
+		$mobile_area_error = false;
+		$mobile_area_message = '';
 		$email_error = false;
 		$email_message = '';
 
-		if(!empty($user['mobile'])) {
-			$mobile_error = false;
-			$mobile_message = '';
+		if(is_null($user['mobile'])) {
+			$mobile_error = true;
+			$mobile_message = '*Mobile Phone is empty';
 		} else {
-			$mobile_error = false;
-			$mobile_message = '';
+			// check mobile number
+			$check_mobile = DB::table('user')
+												->where('UserType', 5)
+												->where('PhoneNo', $user['mobile'])
+												->where('Active', 1)
+												->first();
+			if($check_mobile) {
+				$mobile_error = true;
+				$mobile_message = '*Mobile Phone No already taken.';
+			} else {
+				$mobile_error = false;
+				$mobile_message = '';
+			}
 		}
 
 		if(!empty($user['email'])) {
@@ -973,20 +986,20 @@ class PlanHelper {
 		}
 
 
-		if(is_null($user['first_name'])) {
-			$first_name_error = true;
-			$first_name_message = '*First Name is empty';
+		if(is_null($user['fullname'])) {
+			$full_name_error = true;
+			$full_name_message = '*Full Name is empty';
 		} else {
-			$first_name_error = false;
-			$first_name_message = '';
+			$full_name_error = false;
+			$full_name_message = '';
 		}
 
-		if(is_null($user['last_name'])) {
-			$last_name_error = true;
-			$last_name_message = '*Last Name is empty';
+		if(is_null($user['mobile_area_code'])) {
+			$mobile_area_error = true;
+			$mobile_area_message = '*Country Code is empty';
 		} else {
-			$last_name_error = false;
-			$last_name_message = '';
+			$mobile_area_error = false;
+			$mobile_area_message = '';
 		}
 
 		if(is_null($user['dob'])) {
@@ -1014,27 +1027,27 @@ class PlanHelper {
 		$nric_error = false;
 		$nric_message = '';
 
-		if(is_null($user['nric'])) {
-			$nric_error = true;
-			$nric_message = '*NRIC/FIN is empty';
-		} else {
-			if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
-				$nric_error = true;
-				$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
-			} else {
-				if(!self::validIdentification($user['nric'])) {
-					$nric_error = true;
-					$nric_message = '*NRIC/FIN is must be valid';
-				}
+		// if(is_null($user['nric'])) {
+		// 	$nric_error = true;
+		// 	$nric_message = '*NRIC/FIN is empty';
+		// } else {
+		// 	if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
+		// 		$nric_error = true;
+		// 		$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
+		// 	} else {
+		// 		if(!self::validIdentification($user['nric'])) {
+		// 			$nric_error = true;
+		// 			$nric_message = '*NRIC/FIN is must be valid';
+		// 		}
 
-				// validate nric existence
-				$validate_nric = self::checkDuplicateNRIC($user['nric']);
-				if($validate_nric) {
-					$nric_error = true;
-					$nric_message = '*NRIC/FIN is assigned to other user. NRIC/FIN is unique for everyone.';
-				}
-			}
-		}
+		// 		// validate nric existence
+		// 		$validate_nric = self::checkDuplicateNRIC($user['nric']);
+		// 		if($validate_nric) {
+		// 			$nric_error = true;
+		// 			$nric_message = '*NRIC/FIN is assigned to other user. NRIC/FIN is unique for everyone.';
+		// 		}
+		// 	}
+		// }
 
 		if(is_null($user['plan_start'])) {
 			$start_date_error = true;
@@ -1073,72 +1086,71 @@ class PlanHelper {
 				$credits_medical_message = '';
 			} else {
 				$credits_medical_error = true;
-				$credits_medical_message = 'Credits is not a number.';                }
+				$credits_medical_message = 'Credits is not a number.';                
 			}
+		}
 
-			if(!isset($user['wellness_credits']) || is_null($user['wellness_credits'])) {
-				$credit_wellness_amount = 0;
+		if(!isset($user['wellness_credits']) || is_null($user['wellness_credits'])) {
+			$credit_wellness_amount = 0;
+			$credits_wellness_error = false;
+			$credits_wellnes_message = '';
+		} else {
+			if(is_numeric($user['wellness_credits'])) {
 				$credits_wellness_error = false;
 				$credits_wellnes_message = '';
 			} else {
-				if(is_numeric($user['wellness_credits'])) {
-					$credits_wellness_error = false;
-					$credits_wellnes_message = '';
-				} else {
-					$credits_wellness_error = true;
-					$credits_wellnes_message = 'Credits is not a number.';
-				}
+				$credits_wellness_error = true;
+				$credits_wellnes_message = 'Credits is not a number.';
 			}
-
-			if($email_error || $first_name_error || $last_name_error | $dob_error || $mobile_error || $postal_code_error || $nric_error || $credits_medical_error || $credits_wellness_error || $start_date_error) {
-				$error_status = true;
-			} else {
-				$error_status = false;
-			}
-
-			return array(
-				'error'                 => $error_status,
-				"email_error"           => $email_error,
-				"email_message"         => $email_message,
-				"first_name_error"      => $first_name_error,
-				"first_name_message"    => $first_name_message,
-				"last_name_error"       => $last_name_error,
-				"last_name_message"     => $last_name_message,
-				"nric_error"            => $nric_error,
-				"nric_message"          => $nric_message,
-				"dob_error"             => $dob_error,
-				"dob_message"           => $dob_message,
-				"mobile_error"          => $mobile_error,
-				"mobile_message"        => $mobile_message,
-				"postal_code_error"       => $postal_code_error,
-				"postal_code_message"     => $postal_code_message,
-				"credits_medical_error" => $credits_medical_error,
-				"credits_medical_message" => $credits_medical_message,
-				"credits_wellness_error" => $credits_wellness_error,
-				"credits_wellnes_message" => $credits_wellnes_message,
-				"start_date_error"      => $start_date_error,
-				"start_date_message"    => $start_date_message
-			);
 		}
+
+		if($email_error || $full_name_error || $dob_error || $mobile_error || $postal_code_error || $mobile_area_error || $credits_medical_error || $credits_wellness_error || $start_date_error) {
+			$error_status = true;
+		} else {
+			$error_status = false;
+		}
+
+		return array(
+			'error'                 => $error_status,
+			"email_error"           => $email_error,
+			"email_message"         => $email_message,
+			"full_name_error"      => $full_name_error,
+			"full_name_message"    => $full_name_message,
+			"dob_error"             => $dob_error,
+			"dob_message"           => $dob_message,
+			"mobile_error"          => $mobile_error,
+			"mobile_message"        => $mobile_message,
+			"mobile_area_error"     => $mobile_area_error,
+			"mobile_area_message"   => $mobile_area_message,
+			"postal_code_error"       => $postal_code_error,
+			"postal_code_message"     => $postal_code_message,
+			"credits_medical_error" => $credits_medical_error,
+			"credits_medical_message" => $credits_medical_message,
+			"credits_wellness_error" => $credits_wellness_error,
+			"credits_wellnes_message" => $credits_wellnes_message,
+			"start_date_error"      => $start_date_error,
+			"start_date_message"    => $start_date_message
+		);
+	}
 
 		public static function enrollmentDepedentValidation($user)
 		{
 			$customer_id = self::getCusomerIdToken();
-			if(is_null($user['first_name'])) {
-				$first_name_error = true;
-				$first_name_message = '*First Name is empty';
+			if(is_null($user['fullname'])) {
+				$full_name_error = true;
+				$full_name_message = '*First Name is empty';
 			} else {
-				$first_name_error = false;
-				$first_name_message = '';
+				$full_name_error = false;
+				$full_name_message = '';
 			}
 
-			if(is_null($user['last_name'])) {
-				$last_name_error = true;
-				$last_name_message = '*Last Name is empty';
-			} else {
-				$last_name_error = false;
-				$last_name_message = '';
-			}
+			// if(is_null($user['last_name'])) {
+			// 	$last_name_error = true;
+			// 	$last_name_message = '*Last Name is empty';
+			// } else {
+			// 	$last_name_error = false;
+			// 	$last_name_message = '';
+			// }
 
 			if(is_null($user['dob'])) {
 				$dob_error = true;
@@ -1148,18 +1160,18 @@ class PlanHelper {
 				$dob_message = '';
 			}
 
-			if(is_null($user['nric'])) {
-				$nric_error = true;
-				$nric_message = '*NRIC/FIN is empty';
-			} else {
-				if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
-					$nric_error = true;
-					$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
-				} else {
-					$nric_error = false;
-					$nric_message = '';
-				}
-			}
+			// if(is_null($user['nric'])) {
+			// 	$nric_error = true;
+			// 	$nric_message = '*NRIC/FIN is empty';
+			// } else {
+			// 	if(strlen($user['nric']) < 9 || strlen($user['nric']) > 12) {
+			// 		$nric_error = true;
+			// 		$nric_message = '*NRIC/FIN is must be 9 or 12 characters';
+			// 	} else {
+			// 		$nric_error = false;
+			// 		$nric_message = '';
+			// 	}
+			// }
 
 			$relationship_error = false;
 			$relationship_message = '';
@@ -1200,7 +1212,7 @@ class PlanHelper {
 				}
 			}
 
-			if($first_name_error || $last_name_error || $dob_error || $nric_error || $start_date_error || $relationship_error) {
+			if($full_name_error || $dob_error || $start_date_error || $relationship_error) {
 				$error_status = true;
 			} else {
 				$error_status = false;
@@ -1208,12 +1220,8 @@ class PlanHelper {
 
 			return array(
 				'error'                 => $error_status,
-				"first_name_error"      => $first_name_error,
-				"first_name_message"    => $first_name_message,
-				"last_name_error"       => $last_name_error,
-				"last_name_message"     => $last_name_message,
-				"nric_error"            => $nric_error,
-				"nric_message"          => $nric_message,
+				"full_name_error"      => $full_name_error,
+				"full_name_message"    => $full_name_message,
 				"dob_error"             => $dob_error,
 				"dob_message"           => $dob_message,
 				"start_date_error"      => $start_date_error,

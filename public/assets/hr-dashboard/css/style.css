@@ -1330,12 +1330,18 @@ p.number-of-enrollees.inactive-enroll-text {
 	Edit Employee Details Reset CSS
 */
 .edit-employee-details-form {
-	height: 230px;
-	overflow: auto;
+	height: 50vh;
+    overflow-y: auto;
 }
 
 .edit-employee-details-form label {
 	color: #616161;
+}
+.edit-employee-details-form .iti--separate-dial-code{
+	width: 100%;
+}
+.edit-employee-details-form .iti--separate-dial-code .iti__country-name{
+	display: none;
 }
 
 .edit-employee-details-form::-webkit-scrollbar {
