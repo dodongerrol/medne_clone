@@ -61,6 +61,7 @@ app.directive("employeeOverviewDirective", [
         scope.dependents_ctr = 0;
         scope.cap_per_visit = 0;
 
+        var iti = null;
 
 
         scope.$on("refresh", function(evt, data){
@@ -232,51 +233,51 @@ app.directive("employeeOverviewDirective", [
 
                 $(`<tr class="family-tr family-tr-` +
                     emp.family_coverage.dependents[i].dependent.UserID + `" style="background:#eee;">
-										<td class="for-checkbox-container"></td>
-										<td>
-											<p><a>` + emp.family_coverage.dependents[i].dependent.Name + `</a></p>
-										</td>
-										<td>
-											<p>---</p>
-										</td>
-										<td>
-											<p>Start Date: <span>` + emp.family_coverage.dependents[i].plan.plan_start + `</span></p>
-											<p>End Date: <span>` + emp.family_coverage.dependents[i].plan.plan_end + `</span></p>
-										</td>
-										<td>
-											<p>Dependent</p>
-										</td>
-										<td>
-											<p class="text-center">
-												S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.dependents[i].spent + `</span>
-												<span>Usage</span>
-											</p>
-										</td>
-									</tr>`).insertAfter($(evt.target).closest("tr"));
+                    <td class="for-checkbox-container"></td>
+                    <td>
+                      <p><a>` + emp.family_coverage.dependents[i].dependent.Name + `</a></p>
+                    </td>
+                    <td>
+                      <p>---</p>
+                    </td>
+                    <td>
+                      <p>Start Date: <span>` + emp.family_coverage.dependents[i].plan.plan_start + `</span></p>
+                      <p>End Date: <span>` + emp.family_coverage.dependents[i].plan.plan_end + `</span></p>
+                    </td>
+                    <td>
+                      <p>Dependent</p>
+                    </td>
+                    <td>
+                      <p class="text-center">
+                        S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.dependents[i].spent + `</span>
+                        <span>Usage</span>
+                      </p>
+                    </td>
+                  </tr>`).insertAfter($(evt.target).closest("tr"));
               }
 
               $(`<tr class="family-tr family-tr-` + emp.user_id + `" style="background:#eee;">
-									<td class="for-checkbox-container"></td>
-									<td>
-										<p><a>` + emp.family_coverage.spouse.spouse.Name + `</a></p>
-									</td>
-									<td>
-										<p>---</p>
-									</td>
-									<td>
-										<p>Start Date: <span>` + emp.family_coverage.spouse.spouse.plan_start + `</span></p>
-										<p>End Date: <span>` + emp.family_coverage.spouse.spouse.plan_end + `</span></p>
-									</td>
-									<td>
-										<p>Spouse</p>
-									</td>
-									<td>
-										<p class="text-center">
-											S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.spouse.spent + `</span>
-											<span>Usage</span>
-										</p>
-									</td>
-								</tr>`).insertAfter($(evt.target).closest("tr"));
+                  <td class="for-checkbox-container"></td>
+                  <td>
+                    <p><a>` + emp.family_coverage.spouse.spouse.Name + `</a></p>
+                  </td>
+                  <td>
+                    <p>---</p>
+                  </td>
+                  <td>
+                    <p>Start Date: <span>` + emp.family_coverage.spouse.spouse.plan_start + `</span></p>
+                    <p>End Date: <span>` + emp.family_coverage.spouse.spouse.plan_end + `</span></p>
+                  </td>
+                  <td>
+                    <p>Spouse</p>
+                  </td>
+                  <td>
+                    <p class="text-center">
+                      S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.spouse.spent + `</span>
+                      <span>Usage</span>
+                    </p>
+                  </td>
+                </tr>`).insertAfter($(evt.target).closest("tr"));
 
               scope.family_temp = emp.user_id;
               scope.family_trap = true;
@@ -305,26 +306,26 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.checkDependentForm = function( data ){
-          if( !data.first_name ){
-            swal( 'Error!', 'First Name is required.', 'error' );
+          if( !data.fullname ){
+            swal( 'Error!', 'Full Name is required.', 'error' );
             return false;
           }
-          if( !data.last_name ){
-            swal( 'Error!', 'Last Name is required.', 'error' );
-            return false;
-          }
-          if( !data.nric ){
-            swal( 'Error!', 'NRIC is required.', 'error' );
-            return false;
-          }else{
-            if( scope.nric_status_dependents == true ){
-              var checkNRIC = scope.checkNRIC(data.nric);
-              if( checkNRIC != true ){
-                swal( 'Error!', 'Invalid NRIC.', 'error' );
-                return false;
-              }
-            } 
-          }
+          // if( !data.last_name ){
+          //   swal( 'Error!', 'Last Name is required.', 'error' );
+          //   return false;
+          // }
+          // if( !data.nric ){
+          //   swal( 'Error!', 'NRIC is required.', 'error' );
+          //   return false;
+          // }else{
+          //   if( scope.nric_status_dependents == true ){
+          //     var checkNRIC = scope.checkNRIC(data.nric);
+          //     if( checkNRIC != true ){
+          //       swal( 'Error!', 'Invalid NRIC.', 'error' );
+          //       return false;
+          //     }
+          //   } 
+          // }
           if( !data.dob ){
             swal( 'Error!', 'Date of Birth is required.', 'error' );
             return false;
@@ -342,27 +343,87 @@ app.directive("employeeOverviewDirective", [
           return true;
         }
 
-        scope.checkReplaceEmployeeForm = function( data ){
-          if( !data.first_name ){
-            swal( 'Error!', 'First Name is required.', 'error' );
+        scope.checkUpdateEmployeeForm = function( data ){
+          if( !data.fullname ){
+            swal( 'Error!', 'Full Name is required.', 'error' );
             return false;
           }
-          if( !data.last_name ){
-            swal( 'Error!', 'Last Name is required.', 'error' );
+          // if( !data.last_name ){
+          //   swal( 'Error!', 'Last Name is required.', 'error' );
+          //   return false;
+          // }
+          // if( !data.nric ){
+          //   swal( 'Error!', 'NRIC is required.', 'error' );
+          //   return false;
+          // }else{
+          //   if( scope.nric_status == true ){
+          //     var checkNRIC = scope.checkNRIC(data.nric);
+          //     if( checkNRIC != true ){
+          //       swal( 'Error!', 'Invalid NRIC.', 'error' );
+          //       return false;
+          //     }
+          //   } 
+          // }
+          if( !data.dob ){
+            swal( 'Error!', 'Date of Birth is required.', 'error' );
             return false;
           }
-          if( !data.nric ){
-            swal( 'Error!', 'NRIC is required.', 'error' );
+          if( !data.email ){
+            swal( 'Error!', 'Email is required.', 'error' );
             return false;
           }else{
-            if( scope.nric_status == true ){
-              var checkNRIC = scope.checkNRIC(data.nric);
-              if( checkNRIC != true ){
-                swal( 'Error!', 'Invalid NRIC.', 'error' );
-                return false;
-              }
-            } 
+            if( scope.checkEmail(data.email) == false ){
+              swal( 'Error!', 'Email is invalid.', 'error' );
+              return false;
+            }
           }
+          if( !data.phone_no ){
+            swal( 'Error!', 'Mobile Number is required.', 'error' );
+            return false;
+          }else{
+            // console.log( iti.getSelectedCountryData().iso2 );
+            if( iti.getSelectedCountryData().iso2 == 'sg' && data.phone_no.length < 8 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
+              return false;
+            }
+            if( iti.getSelectedCountryData().iso2 == 'my' && data.phone_no.length < 10 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 10 digits.', 'error' );
+              return false;
+            }
+            if( iti.getSelectedCountryData().iso2 == 'ph' && data.phone_no.length < 9 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 9 digits.', 'error' );
+              return false;
+            }
+          }
+          if( !data.postal_code ){
+            swal( 'Error!', 'Postal Code is required.', 'error' );
+            return false;
+          }
+
+          return true;
+        }
+
+        scope.checkReplaceEmployeeForm = function( data ){
+          if( !data.fullname ){
+            swal( 'Error!', 'Full Name is required.', 'error' );
+            return false;
+          }
+          // if( !data.last_name ){
+          //   swal( 'Error!', 'Last Name is required.', 'error' );
+          //   return false;
+          // }
+          // if( !data.nric ){
+          //   swal( 'Error!', 'NRIC is required.', 'error' );
+          //   return false;
+          // }else{
+          //   if( scope.nric_status == true ){
+          //     var checkNRIC = scope.checkNRIC(data.nric);
+          //     if( checkNRIC != true ){
+          //       swal( 'Error!', 'Invalid NRIC.', 'error' );
+          //       return false;
+          //     }
+          //   } 
+          // }
           if( !data.dob ){
             swal( 'Error!', 'Date of Birth is required.', 'error' );
             return false;
@@ -377,8 +438,22 @@ app.directive("employeeOverviewDirective", [
             }
           }
           if( !data.mobile ){
-            swal( 'Error!', 'Phone is required.', 'error' );
+            swal( 'Error!', 'Mobile Number is required.', 'error' );
             return false;
+          }else{
+            // console.log( iti.getSelectedCountryData().iso2 );
+            if( iti2.getSelectedCountryData().iso2 == 'sg' && data.mobile.length < 8 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
+              return false;
+            }
+            if( iti2.getSelectedCountryData().iso2 == 'my' && data.mobile.length < 10 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 10 digits.', 'error' );
+              return false;
+            }
+            if( iti2.getSelectedCountryData().iso2 == 'ph' && data.mobile.length < 9 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 9 digits.', 'error' );
+              return false;
+            }
           }
           if( !data.postal_code ){
             swal( 'Error!', 'Postal Code is required.', 'error' );
@@ -541,6 +616,8 @@ app.directive("employeeOverviewDirective", [
         scope.openUpdateEmployeeModal = function(){
 
           $("#update-employee-modal").modal('show');
+
+          scope.inititalizeGeoCode();
         }
 
         scope.openUpdateDependentModal = function(data){
@@ -763,6 +840,7 @@ app.directive("employeeOverviewDirective", [
                   $('.dependent-replacement-wrapper').fadeIn();
                 }else{
                   $('.employee-replacement-wrapper').fadeIn();
+                  scope.inititalizeGeoCode();
                 }
                 scope.isReplaceEmpShow = true;
                 scope.replace_emp_data.plan_start = moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).add(1,'days').format('DD/MM/YYYY');
@@ -1174,6 +1252,9 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.saveEmployee = function( data ){
+          if( scope.checkUpdateEmployeeForm( data ) == false ){
+            return false;
+          }
           swal({
             title: "Confirm",
             text: "Are you sure you want to update this employee?",
@@ -1198,7 +1279,8 @@ app.directive("employeeOverviewDirective", [
                 job_title: data.job_title,
                 postal_code: data.postal_code,
                 bank_account: data.bank_account,
-                user_id: data.user_id
+                user_id: data.user_id,
+                country_code: data.mobile_area_code,
               };
 
               dependentsSettings.updateEmployee( update_data )
@@ -1418,6 +1500,33 @@ app.directive("employeeOverviewDirective", [
             scope.empTabSelected = 0;
             scope.healthSpendingAccountTabIsShow = false;
           }
+        }
+
+        scope.inititalizeGeoCode = function(){
+          $timeout(function() {
+            var input = document.querySelector("#area_code");
+            var input2 = document.querySelector("#area_code2");
+            var settings = {
+              separateDialCode : true,
+              initialCountry : "SG",
+              autoPlaceholder : "off",
+              utilsScript : "../assets/hr-dashboard/js/utils.js",
+            };
+            iti = intlTelInput(input, settings);
+            iti2 = intlTelInput(input2, settings);
+            input.addEventListener("countrychange", function() {
+              console.log( iti.getSelectedCountryData() );
+              scope.selectedEmployee.mobile_area_code = iti.getSelectedCountryData().dialCode;
+              scope.selectedEmployee.mobile_area_code_country = iti.getSelectedCountryData().iso2;
+            });
+
+            input2.addEventListener("countrychange", function() {
+              console.log( iti2.getSelectedCountryData() );
+              scope.replace_emp_data.mobile_area_code = iti2.getSelectedCountryData().dialCode;
+              scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
+            });
+
+          }, 300);
         }
 
         scope.onLoad = function(){
