@@ -77,6 +77,17 @@ class ExtraEvents extends Eloquent implements UserInterface, RemindableInterface
         $events = DB::table('extra_events')
                 ->where('doctor_id', '=', $doctor_id)
                 ->where('date', '=', $date)
+                ->where('type', '=', 3)
+                ->get();
+            //     DB::enableQuerylog();
+            // dd(DB::getQueryLog());
+        return $events; 
+    }
+
+    public function getClinicEvents($clinic_id, $date){           
+        $events = DB::table('extra_events')
+                ->where('clinic_id', '=', $clinic_id)
+                ->where('date', '=', $date)
                 // ->where('type', '=', 1)
                 ->get();
             //     DB::enableQuerylog();
