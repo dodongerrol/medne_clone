@@ -865,25 +865,9 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.checkEmployeeForm = function( ){
-					if( !scope.employee_data.first_name ){
-						swal( 'Error!', 'First Name is required.', 'error' );
+					if( !scope.employee_data.fullname ){
+						swal( 'Error!', 'Full Name is required.', 'error' );
 						return false;
-					}
-					if( !scope.employee_data.last_name ){
-						swal( 'Error!', 'Last Name is required.', 'error' );
-						return false;
-					}
-					if( !scope.employee_data.nric ){
-						swal( 'Error!', 'NRIC is required.', 'error' );
-						return false;
-					}else{
-						if( scope.nric_status == true ){
-							var checkNRIC = scope.checkNRIC(scope.employee_data.nric);
-							if( checkNRIC != true ){
-								swal( 'Error!', 'Invalid NRIC.', 'error' );
-								return false;
-							}
-						}	
 					}
 					if( !scope.employee_data.dob ){
 						swal( 'Error!', 'Date of Birth is required.', 'error' );
@@ -899,10 +883,24 @@ app.directive('benefitsTiersDirective', [
 							return false;
 						}
 					}
-					// if( !scope.employee_data.mobile ){
-					// 	swal( 'Error!', 'Phone is required.', 'error' );
-					// 	return false;
-					// }
+					if( !scope.employee_data.mobile ){
+						swal( 'Error!', 'Mobile Number is required.', 'error' );
+						return false;
+					}else{
+						// console.log( iti.getSelectedCountryData().iso2 );
+						if( iti.getSelectedCountryData().iso2 == 'sg' && scope.employee_data.mobile.length < 8 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
+							return false;
+						}
+						if( iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 10 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 10 digits.', 'error' );
+							return false;
+						}
+						if( iti.getSelectedCountryData().iso2 == 'ph' && scope.employee_data.mobile.length < 9 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 9 digits.', 'error' );
+							return false;
+						}
+					}
 					if( !scope.employee_data.postal_code ){
 						swal( 'Error!', 'Postal Code is required.', 'error' );
 						return false;
@@ -994,7 +992,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.enrollEmployees = function(){
 					var emp_arr = [];
-					if( !scope.employee_data.first_name && !scope.employee_data.last_name && !scope.employee_data.nric && !scope.employee_data.dob 
+					if( !scope.employee_data.fullname  && !scope.employee_data.dob 
 							&& !scope.employee_data.mobile && !scope.employee_data.email && !scope.employee_data.postal_code ){
 
 					}else{
@@ -1008,7 +1006,7 @@ app.directive('benefitsTiersDirective', [
 						}
 					}
 					angular.forEach( scope.employee_arr,function(value,key){
-						if( value.first_name && value.last_name && value.nric && value.dob && value.postal_code && value.plan_start ){
+						if( value.fullname  && value.dob && value.postal_code && value.plan_start ){
 							emp_arr.push( value );
 						}
 
@@ -1084,7 +1082,7 @@ app.directive('benefitsTiersDirective', [
 					scope.hasError = false;
 					$timeout(function() {
 						$("#enrollee-details-tbl tbody").html('');
-						$("#enrollee-details-tbl thead tr").html( $compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>First Name</th><th>Last Name</th><th>NRIC/FIN</th><th>Date of Birth</th><th>Work Email</th><th>Mobile</th><th>Medical Credits</th><th>Wellness Credits</th>')(scope) );
+						$("#enrollee-details-tbl thead tr").html( $compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th><th>Medical Credits</th><th>Wellness Credits</th>')(scope) );
 						dependentsSettings.getTempEmployees( )
 							.then(function(response){
 								// console.log( response );
@@ -1095,18 +1093,18 @@ app.directive('benefitsTiersDirective', [
 									}
 									if( (scope.temp_employees.length-1) == ctr_key ){
 										angular.forEach( scope.temp_employees, function(value, key){
-											// console.log(value);
+											console.log(value);
 											if( value.error_logs.error == true ){
 												scope.hasError = true;
 											}
 											value.success = false;
 											value.fail = false;
 											scope.isTrError = ( value.error_logs.error == true ) ? 'has-error' : '';
-											var html_tr = '<tr class="dependent-hover-container '+ scope.isTrError +' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.first_name + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal('+ key +')">Edit</button></td><td>' + value.employee.last_name + '</td><td>' + value.employee.nric + '</td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>' + value.employee.format_mobile + '</td><td>' + value.employee.credits + '</td><td>' + value.employee.wellness_credits + '</td>';
+											var html_tr = '<tr class="dependent-hover-container '+ scope.isTrError +' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.fullname + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal('+ key +')">Edit</button></td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>' + value.employee.country_code + '</td><td>' + value.employee.format_mobile + '</td><td>' + value.employee.credits + '</td><td>' + value.employee.wellness_credits + '</td>';
 											var emp_ctr = 0;
 											while( emp_ctr != value.dependents.length ){
 												scope.isTrError = ( value.dependents[emp_ctr].error_logs.error == true ) ? 'has-error' : '';
-												html_tr += '<td>' + value.dependents[emp_ctr].enrollee.first_name + '</td><td>' + value.dependents[emp_ctr].enrollee.last_name + '</td><td>' + value.dependents[emp_ctr].enrollee.nric + '</td><td>' + value.dependents[emp_ctr].enrollee.dob + '</td><td>' + value.dependents[emp_ctr].enrollee.relationship + '</td>';
+												html_tr += '<td>' + value.dependents[emp_ctr].enrollee.fullname + '</td><td>' + value.dependents[emp_ctr].enrollee.dob + '</td><td>' + value.dependents[emp_ctr].enrollee.relationship + '</td>';
 												emp_ctr++;
 											}	
 											while( emp_ctr != scope.table_dependents_ctr ){
@@ -1122,9 +1120,7 @@ app.directive('benefitsTiersDirective', [
 												while( while_ctr != scope.table_dependents_ctr ){
 													while_ctr++;
 													$("#enrollee-details-tbl thead tr").append( 
-														'<th>Dependent ' + while_ctr + '<br>First Name</th>' + 
-														'<th>Dependent ' + while_ctr + '<br>Last Name</th>' + 
-														'<th>Dependent ' + while_ctr + '<br>NRIC/FIN</th>' + 
+														'<th>Dependent ' + while_ctr + '<br>Full Name</th>' + 
 														'<th>Dependent ' + while_ctr + '<br>Date of Birth</th>' + 
 														'<th>Dependent ' + while_ctr + '<br>Relationship</th>' 
 													);
@@ -1166,9 +1162,10 @@ app.directive('benefitsTiersDirective', [
           		scope.showLoading();
 							var data = {
 								temp_enrollment_id : emp.employee.temp_enrollment_id,
-								first_name: emp.employee.first_name,
-								last_name: emp.employee.last_name,
-								nric: emp.employee.nric,
+								fullname: emp.employee.fullname,
+								// first_name: emp.employee.first_name,
+								// last_name: emp.employee.last_name,
+								// nric: emp.employee.nric,
 								dob: moment(emp.employee.dob, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 								email: emp.employee.email,
 								mobile: emp.employee.mobile,
@@ -1186,9 +1183,10 @@ app.directive('benefitsTiersDirective', [
 									angular.forEach( emp.dependents, function(value,key){
 										var dep_data = {
 											dependent_temp_id : value.enrollee.dependent_temp_id,
-											first_name : value.enrollee.first_name,
-											last_name : value.enrollee.last_name,
-											nric : value.enrollee.nric,
+											fullname : value.enrollee.fullname,
+											// first_name : value.enrollee.first_name,
+											// last_name : value.enrollee.last_name,
+											// nric : value.enrollee.nric,
 											dob : moment(value.enrollee.dob, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 											plan_start : moment(value.enrollee.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 											relationship : value.enrollee.relationship,

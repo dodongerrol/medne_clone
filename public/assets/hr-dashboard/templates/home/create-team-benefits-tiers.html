@@ -370,15 +370,14 @@
 						</div>
 						<form>
 							<div class="employee-input-wrapper">
-								<label for="fname">First / Given Name</label>
-  							<input disabled-specific-characters type="text" name="fname" ng-model="employee_data.first_name">
+								<label for="fname">Full Name</label>
+  							<input disabled-specific-characters type="text" name="fname" ng-model="employee_data.fullname">
 							</div>
-							<div class="employee-input-wrapper">
+							<!-- <div class="employee-input-wrapper">
 								<label for="fname">Last / Family Name</label>
   							<input disabled-specific-characters type="text" name="lname" ng-model="employee_data.last_name">
-							</div>
-							<div class="employee-input-wrapper nric">
-								<!-- <label for="fname">NRIC / FIN</label> -->
+							</div> -->
+							<!-- <div class="employee-input-wrapper nric">
 								<label>
                     <input type="radio" ng-value="true" name="id_status" ng-model="nric_status" style="position: relative;top: 2px;left: 0;opacity: 1;">
                     NRIC
@@ -388,7 +387,7 @@
                     FIN
                 </label>
   							<input type="text" name="nric-fin" ng-model="employee_data.nric">
-							</div>
+							</div> -->
 							<div class="employee-input-wrapper">
 								<label for="fname">Date of Birth</label>
   							<input type="text" name="datebirth" class="datepicker" ng-model="employee_data.dob" placeholder="DD/MM/YYYY">
@@ -399,7 +398,7 @@
 							</div>
 							<div class="employee-input-wrapper">
 								<label for="fname">Mobile</label>
-  							<input type="text" id="area_code" ng-model="employee_data.mobile">
+  							<input valid-number type="text" id="area_code" ng-model="employee_data.mobile">
 							</div>
 							<div class="employee-input-wrapper">
 								<label for="fname">Postal Code</label>
@@ -433,17 +432,17 @@
 						</div>
 						<form>
 							<div class="employee-input-wrapper">
-								<label for="fname">First / Given Name</label>
-  								<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.first_name">
+								<label for="fname">Full Name</label>
+  								<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.fullname">
 							</div>
-							<div class="employee-input-wrapper">
+							<!-- <div class="employee-input-wrapper">
 								<label for="fname">Last / Family Name</label>
   								<input disabled-specific-characters type="text" name="lname" ng-model="dependent_data.last_name">
 							</div>
 							<div class="employee-input-wrapper">
 								<label>NRIC/FIN</label>
 								<input type="text" name="nric-fin" ng-model="dependent_data.nric">
-							</div>
+							</div> -->
 							<div class="employee-input-wrapper">
 								<label for="fname">Date of Birth</label>
   								<input type="text" name="datebirth" class="datepicker" ng-model="dependent_data.dob" placeholder="DD/MM/YYYY">
@@ -536,10 +535,20 @@
         <h4 style="padding-left: 24px; font-size: 13px;color: #737373;font-weight: bold;">Employee Summary</h4>
       	<ul ng-repeat="list in employee_arr">
       		<li>
-      			<span><span style="font-weight: 700;color: #000;" ng-bind="$index + 1"></span>. <span ng-bind="list.first_name"></span> <span ng-bind="list.last_name"></span></span>
+      			<span>
+      				<span style="font-weight: 700;color: #000;" ng-bind="$index + 1"></span>. 
+      				<span ng-bind="list.fullname"></span>
+	      			<!-- <span ng-bind="list.first_name"></span> 
+	      			<span ng-bind="list.last_name"></span> -->
+      		</span>
       		</li> 
       		<li ng-repeat="dep in list.dependents" style="padding-left: 80px;">
-      			<span><span style="text-transform: lowercase;font-weight: 700;color: #000;" ng-bind="getLetter( $index )"></span>. <span ng-bind="dep.first_name"></span> <span ng-bind="dep.last_name"></span></span>
+      			<span>
+      				<span style="text-transform: lowercase;font-weight: 700;color: #000;" ng-bind="getLetter( $index )"></span>. 
+	      			<span ng-bind="dep.fullname"></span> 
+	      			<!-- <span ng-bind="dep.first_name"></span>
+	      			<span ng-bind="dep.last_name"></span> -->
+      		</span>
       		</li>
       	</ul>
       </div>
@@ -597,11 +606,11 @@
             <div class="modal-body" style="padding-bottom: 50px;">
                 <form class="form edit-employee-details-form">
                     <div class="form-group">
-                        <label>First Name</label>
-                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.first_name_error == true}" ng-model="selected_edit_details_data.employee.first_name">
-                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.first_name_message"></span>
+                        <label>Full Name</label>
+                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.fullname_error == true}" ng-model="selected_edit_details_data.employee.fullname">
+                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.fullname_message"></span>
                     </div>
-                    <div class="form-group">
+                <!--     <div class="form-group">
                         <label>Last Name</label>
                         <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.last_name_error == true}" ng-model="selected_edit_details_data.employee.last_name">
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.last_name_message"></span>
@@ -611,7 +620,7 @@
                         <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.nric_error == true}" ng-model="selected_edit_details_data.employee.nric">
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.nric_message"></span>
                     </div>
-                    <div class="form-group">
+ -->                    <div class="form-group">
                         <label>Date of Birth</label>
                         <input type="text" class="form-control input-edit-employee-details datepicker" ng-class="{'has-input-error':list.selected_edit_details_data.error_logs.dob_error == true}" ng-model="selected_edit_details_data.employee.dob" placeholder="DD/MM/YYYY">
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.dob_message"></span>
@@ -652,11 +661,11 @@
                     <div ng-if="selected_edit_details_data.dependents.length > 0" ng-repeat="list in selected_edit_details_data.dependents" style="margin: 10px 0;">
                     	<p style="font-weight: 700;color: #333;border-bottom: 1px solid #999;padding: 10px 0;width: 80%;">Dependent <span ng-bind="$index + 1">1</span></p>
                     	<div class="form-group">
-	                        <label>First Name</label>
-	                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.first_name_error == true}" ng-model="list.enrollee.first_name">
-	                        <span class="error-message" ng-bind="list.error_logs.first_name_message"></span>
+	                        <label>Full Name</label>
+	                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.fullname_error == true}" ng-model="list.enrollee.fullname">
+	                        <span class="error-message" ng-bind="list.error_logs.fullname_message"></span>
 	                    </div>
-	                    <div class="form-group">
+	               <!--      <div class="form-group">
 	                        <label>Last Name</label>
 	                        <input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.last_name_error == true}" ng-model="list.enrollee.last_name">
 	                        <span class="error-message" ng-bind="list.error_logs.last_name_message"></span>
@@ -665,7 +674,7 @@
 	                        <label>NRIC/FIN</label>
 	                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.nric_error == true}" ng-model="list.enrollee.nric">
 	                        <span class="error-message" ng-bind="list.error_logs.nric_message"></span>
-	                    </div>
+	                    </div> -->
 	                    <div class="form-group">
 	                        <label>Date of Birth</label>
 	                        <input type="text" class="form-control input-edit-employee-details datepicker" ng-class="{'has-input-error':list.error_logs.dob_error == true}" ng-model="list.enrollee.dob" placeholder="DD/MM/YYYY">
