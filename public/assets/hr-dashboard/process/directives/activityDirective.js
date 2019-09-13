@@ -1015,7 +1015,7 @@ app.directive('activityPage', [
 						scope.getOutNetworkPagination();
 					}
 				}
-				scope.outnetworkPageTo = function() {
+				scope.outnetworkPageTo = function(page) {
 					scope.outNetwork_activePage = page;
 					scope.getOutNetworkPagination();
 				}
