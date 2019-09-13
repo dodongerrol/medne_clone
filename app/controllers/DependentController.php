@@ -61,9 +61,8 @@ class DependentController extends \BaseController {
 				$row_keys = self::getDependentKeys($headerRow);
 				$dependents_count = count($row_keys) / 5;
 
-				$fname = false;
-				$lname = false;
-				$nric = false;
+				$fullname = false;
+				// $nric = false;
 				$dob = false;
 				$email = false;
 				$mobile = false;
@@ -77,12 +76,8 @@ class DependentController extends \BaseController {
 				$mobile_area_code = false;
 
 				foreach ($headerRow as $key => $row) {
-					if($row == "first_name") {
-						$fname = true;
-					} else if($row == "last_name") {
-						$lname = true;
-					} else if($row == "nricfin") {
-						$nric = true;
+					if($row == "full_name") {
+						$fullname = true;
 					} else if($row == "date_of_birth" || $row == "date_of_birth_ddmmyyyy") {
 						$dob = true;
 					} elseif ($row == "mobile") {
@@ -100,19 +95,18 @@ class DependentController extends \BaseController {
 					}
 				}
 
-				if(!$fname || !$lname || !$nric || !$dob || !$mobile || !$start_date || !$postal_code || !$mobile_area_code) {
+				if(!$fullname || !$dob || !$mobile || !$start_date || !$postal_code || !$mobile_area_code) {
 					return array(
 						'status'	=> FALSE,
 						'message' => 'Excel is invalid format. Please download the recommended file for Employee Enrollment.'
 					);
 				}
-
-				// $fakes = [];
+				
 				// return $data_array;
 				foreach ($data_array as $key => $row) {
 					$dependents = [];
 					$temp_dependents = [];
-					if($row->first_name !== null) {
+					if($row->full_name !== null) {
 						$dep_ctr = 1;
 						$key_ctr = 1;
 						foreach ($row_keys as $key_2 => $value_key) {
@@ -122,8 +116,8 @@ class DependentController extends \BaseController {
 										$data_name = self::formatKey($field);
 										if($data_name) {
 											$temp_dependents[$data_name] = $value;
-											if( $dep_ctr == 5 ){
-												if($key_ctr == 5) {
+											if( $dep_ctr == 3 ){
+												if($key_ctr == 3) {
 													array_push($dependents, $temp_dependents);
 												}
 												$temp_dependents = [];
@@ -142,13 +136,14 @@ class DependentController extends \BaseController {
 						}
 
 						$row['dependents'] = $dependents;
-						if($row->last_name == null) {
-							$row['last_name'] = $row->first_name;
-						}
+						// if($row->last_name == null) {
+						// 	$row['last_name'] = $row->first_name;
+						// }
 						array_push($temp_users, $row);
 					}
 				}
 				
+				// return $temp_users;
 		        // validate all first
 				if(sizeof($temp_users) == 0) {
 					return array('satus' => false, 'message' => 'Employee/s is required.');
@@ -249,12 +244,14 @@ class DependentController extends \BaseController {
 				$format = [];
 				$temp_enroll = new TempEnrollment();
 				$temp_dependent_enroll = new DependentTempEnrollment();
+
 		        // check employee and dependents validation
 				foreach ($temp_users as $key => $user) {
 					$credit = 0;
 					$user['email'] = isset($user['work_email']) ? trim($user['work_email']) : null;
 					$user['job_title'] = 'Other';
-					$user['nric'] = isset($user['nricfin']) ? trim($user['nricfin']) : null;
+					$user['fullname'] = $user['full_name'];
+					// $user['nric'] = isset($user['nricfin']) ? trim($user['nricfin']) : null;
 						
 					if(isset($user['date_of_birth_ddmmyyyy'])) {
 						$dob = $user['date_of_birth_ddmmyyyy'];
@@ -293,9 +290,9 @@ class DependentController extends \BaseController {
 						'customer_buy_start_id'	=> $customer_id,
 						'active_plan_id'		=> $customer_active_plan_id,
 						'plan_tier_id'			=> $plan_tier_id,
-						'first_name'			=> trim($user['first_name']),
-						'last_name'				=> trim($user['last_name']),
-						'nric'					=> $user['nric'],
+						'first_name'			=> trim($user['fullname']),
+						// 'last_name'				=> trim($user['last_name']),
+						// 'nric'					=> $user['nric'],
 						'dob'					=> $user['dob'],
 						'email'					=> $user['email'],
 						'mobile'				=> trim($mobile),
@@ -316,8 +313,9 @@ class DependentController extends \BaseController {
 									$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
 									$dependent['plan_start'] = $plan_start->format('Y-m-d');
 									$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
-									$dependent['nric'] = trim($dependent['nricfin']);
+									// $dependent['nric'] = trim($dependent['nricfin']);
 									$dependent['relationship'] = strtolower($dependent['relationship']);
+									$dependent['fullname'] = $dependent['full_name'];
 									$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($dependent);
 									// get active plan id for member
 									$depedent_plan_id = PlanHelper::getCompanyAvailableDependenPlanId($customer_id);
@@ -334,9 +332,9 @@ class DependentController extends \BaseController {
 										'employee_temp_id'		=> $enroll_result->id,
 										'dependent_plan_id'		=> $depedent_plan_id,
 										'plan_tier_id'			=> $plan_tier_id,
-										'first_name'			=> trim($dependent['first_name']),
-										'last_name'				=> trim($dependent['last_name']),
-										'nric'					=> $dependent['nric'],
+										'first_name'			=> trim($dependent['fullname']),
+										// 'last_name'				=> trim($dependent['last_name']),
+										// 'nric'					=> $dependent['nric'],
 										'dob'					=> $dependent['dob'],
 										'plan_start'			=> $dependent['plan_start'],
 										'relationship'			=> trim($dependent['relationship']),
@@ -522,9 +520,8 @@ class DependentController extends \BaseController {
 		foreach ($input['dependents'] as $key => $dependent) {
 			// process dependent creation
 			$user = array(
-				'first_name'	=> $dependent['first_name'],
-				'last_name'		=> $dependent['last_name'],
-				'nric'			=> $dependent['nric'],
+				'fullname'	=> $dependent['fullname'],
+				'nric'			=> null,
 				'dob'			=> date('Y-m-d', strtotime($dependent['dob']))
 			);
 
@@ -666,18 +663,18 @@ class DependentController extends \BaseController {
 
 			$dependent->relationship = $dependent->relationship ? $dependent->relationship : 'Dependent';
 
-			$name = explode(" ", $dependent->Name);
+			// $name = explode(" ", $dependent->Name);
 
-			if(!empty($name[0]) && !empty($name[1])) {
-				$first_name = $name[0];
-				for( $i = 1; $i < count( $name ) - 1; $i++ ){
-					$first_name .= ' ' . $name[$i];
-				}
-				$last_name =  $name[ sizeof($name) - 1 ];
-			} else {
-				$first_name = $dependent->Name;
-				$last_name = $dependent->Name;
-			}
+			// if(!empty($name[0]) && !empty($name[1])) {
+			// 	$first_name = $name[0];
+			// 	for( $i = 1; $i < count( $name ) - 1; $i++ ){
+			// 		$first_name .= ' ' . $name[$i];
+			// 	}
+			// 	$last_name =  $name[ sizeof($name) - 1 ];
+			// } else {
+			// 	$first_name = $dependent->Name;
+			// 	$last_name = $dependent->Name;
+			// }
 
 			if($dependent->DOB == null) {
 				$dependent->dob = null;
@@ -685,9 +682,8 @@ class DependentController extends \BaseController {
 				$dependent->dob = date('Y-m-d', strtotime($dependent->DOB));
 			}
 
-			$dependent->first_name = $first_name;
-			$dependent->last_name = $last_name;
-			$dependent->nric = $dependent->NRIC;
+			$dependent->name = $dependent->Name;
+			// $dependent->nric = $dependent->NRIC;
 			$dependent->member_id = str_pad($dependent->UserID, 6, "0", STR_PAD_LEFT);
 		}
 
@@ -713,13 +709,13 @@ class DependentController extends \BaseController {
 			return array('status' => false, 'message' => 'Dependent does not exist.');
 		}
 
-		if(empty($input['first_name']) || $input['first_name'] == null) {
-			return array('status' => false, 'message' => 'Dependent First Name is required.');
+		if(empty($input['name']) || $input['name'] == null) {
+			return array('status' => false, 'message' => 'Dependent Full Name is required.');
 		}
 
-		if(empty($input['last_name']) || $input['last_name'] == null) {
-			return array('status' => false, 'message' => 'Dependent Last Name is required.');
-		}
+		// if(empty($input['last_name']) || $input['last_name'] == null) {
+		// 	return array('status' => false, 'message' => 'Dependent Last Name is required.');
+		// }
 
 		if(empty($input['dob']) || $input['dob'] == null) {
 			return array('status' => false, 'message' => 'Dependent Date of Birth is required.');
@@ -742,7 +738,7 @@ class DependentController extends \BaseController {
 		$dob = $dob->format('Y-m-d');
 		// update profile
 		$profile_data = array(
-			'Name'	=> ucwords($input['first_name']).' '.ucwords($input['last_name']),
+			'Name'	=> ucwords($input['name']),
 			'DOB'	=> $dob
 		);
 
