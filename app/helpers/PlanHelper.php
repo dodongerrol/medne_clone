@@ -2701,7 +2701,7 @@ class PlanHelper {
 				$pending = 0;
 			}
 
-			if($input['email']) {
+			if(!empty($input['email']) && $input['email']) {
 				$communication_type = "email";
 			} else if($input['mobile']) {
 				$communication_type = "sms";
@@ -2710,12 +2710,12 @@ class PlanHelper {
 			}
 
 			$data = array(
-				'Name'          => $input['first_name'].' '.$input['last_name'],
+				'Name'          => $input['fullname'],
 				'Password'  => md5($password),
-				'Email'         => $input['email'],
+				'Email'         => !empty($input['email']) ? $input['email'] : null,
 				'PhoneNo'       => $input['mobile'],
-				'PhoneCode' => NULL,
-				'NRIC'          => $input['nric'],
+				'PhoneCode' => "+".$input['country_code'],
+				'NRIC'          => null,
 				'Job_Title'  => 'Other',
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
@@ -2730,8 +2730,8 @@ class PlanHelper {
 				$corporate_member = array(
 					'corporate_id'      => $corporate->corporate_id,
 					'user_id'           => $user_id,
-					'first_name'        => $input['first_name'],
-					'last_name'         => $input['last_name'],
+					'first_name'        => $input['fullname'],
+					'last_name'         => $input['fullname'],
 					'type'              => 'member',
 					'created_at'        => date('Y-m-d H:i:s'),
 					'updated_at'        => date('Y-m-d H:i:s'),
@@ -2783,7 +2783,7 @@ class PlanHelper {
 				\WalletHistory::create($data_create_history);
 
 				if($medical > 0) {
-                    // medical credits
+          // medical credits
 					if($customer->balance >= $medical) {
 
 						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $medical, "medical");
@@ -2831,7 +2831,7 @@ class PlanHelper {
 				}
 
 				if($wellness > 0) {
-                    // wellness credits
+          // wellness credits
 					if($customer->wellness_credits >= $wellness) {
 						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
 
@@ -2913,7 +2913,7 @@ class PlanHelper {
 						$compose['company'] = $company->company_name;
 						$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
 						$compose['email'] = $user->Email;
-						$compose['nric'] = $user->NRIC;
+						$compose['nric'] = $user->PhoneNo;
 						$compose['password'] = $password;
 						$compose['phone'] = $user->PhoneNo;
 
@@ -2922,10 +2922,10 @@ class PlanHelper {
 					} else {
 						if($input['email']) {
 							$email_data['company']   = ucwords($company->company_name);
-							$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
-							$email_data['name'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['emailName'] = $input['fullname'];
+							$email_data['name'] = $input['fullname'];
 							$email_data['emailTo']   = $input['email'];
-							$email_data['email']   = $input['email'];
+							$email_data['email']   = $input['mobile'];
 							$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 							$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 							$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
@@ -2939,7 +2939,7 @@ class PlanHelper {
 							$compose['company'] = $company->company_name;
 							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
 							$compose['email'] = $user->Email;
-							$compose['nric'] = $user->NRIC;
+							$compose['nric'] = $user->PhoneNo;
 							$compose['password'] = $password;
 							$compose['phone'] = $user->PhoneNo;
 
