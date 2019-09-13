@@ -3,6 +3,10 @@ var service = angular.module("hrService", []);
 service.factory("hrSettings", function($http, serverUrl, Upload) {
   var hrFactory = {};
 
+  hrFactory.getProRatedCalculation = function( data ) {
+    return $http.post(serverUrl.url + "/company-benefits-dashboard", data);
+  };
+
   hrFactory.getCompanyBenefitsDashboard = function() {
     return $http.get(serverUrl.url + "/company-benefits-dashboard");
   };
