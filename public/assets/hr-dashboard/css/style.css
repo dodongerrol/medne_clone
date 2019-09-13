@@ -1330,12 +1330,18 @@ p.number-of-enrollees.inactive-enroll-text {
 	Edit Employee Details Reset CSS
 */
 .edit-employee-details-form {
-	height: 230px;
-	overflow: auto;
+	height: 50vh;
+    overflow-y: auto;
 }
 
 .edit-employee-details-form label {
 	color: #616161;
+}
+.edit-employee-details-form .iti--separate-dial-code{
+	width: 100%;
+}
+.edit-employee-details-form .iti--separate-dial-code .iti__country-name{
+	display: none;
 }
 
 .edit-employee-details-form::-webkit-scrollbar {
@@ -6729,6 +6735,11 @@ ul.typeahead li a.dropdown-item
 		display: block;
 	}
 
+	.employee-replacement-wrapper .iti__country span{
+		display: inline-block;
+		margin: 0;
+	}
+
 	.employee-replacement-wrapper h1 {
 		color:  #283e52;
 		margin: 20px 0;
@@ -6823,6 +6834,40 @@ ul.typeahead li a.dropdown-item
 
 	.account-summary-date {
 		text-decoration: underline;
+	}
+
+	.account-summary-pro-rated .btn-custom-start,
+	.account-summary-pro-rated .btn-custom-end{
+    background: #fff;
+    color: #555;
+    font-weight: 700;
+    padding: 5px 8px;
+    box-shadow: none;
+    border: 2px solid #ddd;
+    font-size: 12px;
+	}
+
+	.account-summary-pro-rated .btn-custom-start i:first-child,
+	.account-summary-pro-rated .btn-custom-end i:first-child{
+		margin-left: 8px;
+		font-size: 12px;
+	}
+
+	.account-summary-pro-rated .btn-custom-start i:last-child,
+	.account-summary-pro-rated .btn-custom-end i:last-child{
+		margin-right: 8px;
+		font-size: 12px;
+	}
+
+	.account-summary-pro-rated .btn-calculate{
+		background-color: #0392cf;
+    color: #fff;
+    border: 0;
+    box-shadow: none;
+    font-size: 12px;
+    border-radius: 0;
+    padding: 6px 16px;
+    cursor: pointer;
 	}
 
 	.medical-spending-account-container {

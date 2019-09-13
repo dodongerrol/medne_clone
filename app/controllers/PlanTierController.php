@@ -361,6 +361,7 @@ class PlanTierController extends \BaseController {
 	public function createWebInputTier( )
 	{
 		$input = Input::all();
+		// return $input;
 		// if(empty($input['customer_id']) || $input['customer_id'] == null) {
 		// 	return array('status' => false, 'message' => 'Customer ID is required.');
 		// }
@@ -487,9 +488,7 @@ class PlanTierController extends \BaseController {
 				'customer_buy_start_id'	=> $customer_id,
 				'active_plan_id'		=> $customer_active_plan_id,
 				'plan_tier_id'			=> $plan_tier_id,
-				'first_name'			=> trim($user['first_name']),
-				'last_name'				=> trim($user['last_name']),
-				'nric'					=> trim($user['nric']),
+				'first_name'				=> trim($user['fullname']),
 				'dob'					=> trim($user['dob']),
 				'email'					=> !empty($user['email']) ? trim($user['email']) : null,
 				'mobile'				=> !empty($user['mobile']) ? trim($user['mobile']) : null,
@@ -526,9 +525,7 @@ class PlanTierController extends \BaseController {
 								'employee_temp_id'		=> $enroll_result->id,
 								'dependent_plan_id'		=> $depedent_plan_id,
 								'plan_tier_id'			=> $plan_tier_id,
-								'first_name'			=> $dependent['first_name'],
-								'last_name'				=> $dependent['last_name'],
-								'nric'					=> $dependent['nric'],
+								'first_name'			=> $dependent['fullname'],
 								'dob'					=> $dependent['dob'],
 								'plan_start'			=> $dependent['plan_start'],
 								'relationship'			=> $dependent['relationship'],
@@ -575,7 +572,7 @@ class PlanTierController extends \BaseController {
 			// } else {
 			// 	$enroll->dob = null;
 			// }
-
+			$enroll->fullname = $enroll->first_name;
 			if($enroll->email == null) {
 				$enroll->email = '';
 			}
@@ -610,6 +607,8 @@ class PlanTierController extends \BaseController {
 					} else {
 						$dep->dob = null;
 					}
+
+					$dep->fullname = $dep->first_name;
 					$dep_temp = array(
 						'enrollee'		=> $dep,
 						'error_logs' 	=> $error_logs
@@ -656,17 +655,17 @@ class PlanTierController extends \BaseController {
 			return array('status' => false, 'message' => 'Employee Enrollee does not exist.');
 		}
 
-		if(empty($input['first_name']) || $input['first_name'] == null) {
-			return array('status' => false, 'message' => 'Employee First Name is required.');
+		if(empty($input['fullname']) || $input['fullname'] == null) {
+			return array('status' => false, 'message' => 'Employee Full Name is required.');
 		}
 
-		if(empty($input['last_name']) || $input['last_name'] == null) {
-			return array('status' => false, 'message' => 'Employee Last Name is required.');
-		}
+		// if(empty($input['last_name']) || $input['last_name'] == null) {
+		// 	return array('status' => false, 'message' => 'Employee Last Name is required.');
+		// }
 
-		if(empty($input['nric']) || $input['nric'] == null) {
-			return array('status' => false, 'message' => 'Employee Enrollee NRIC/FIN is required.');
-		}
+		// if(empty($input['nric']) || $input['nric'] == null) {
+		// 	return array('status' => false, 'message' => 'Employee Enrollee NRIC/FIN is required.');
+		// }
 
 		// if(empty($input['email']) || $input['email'] == null) {
 		// 	return array('status' => false, 'message' => 'Employee Enrollee Email Address is required.');
@@ -676,9 +675,9 @@ class PlanTierController extends \BaseController {
 		// 	return array('status' => false, 'message' => 'Employee Enrollee Mobile is required.');
 		// }
 
-		if(empty($input['job_title']) || $input['job_title'] == null) {
-			return array('status' => false, 'message' => 'Employee Enrollee Job Title is required.');
-		}
+		// if(empty($input['job_title']) || $input['job_title'] == null) {
+		// 	return array('status' => false, 'message' => 'Employee Enrollee Job Title is required.');
+		// }
 
 		$postal_code = null;
 
@@ -691,9 +690,9 @@ class PlanTierController extends \BaseController {
 
 		$data = array(
 			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
-			'first_name'				=> $input['first_name'],
-			'last_name'					=> $input['last_name'],
-			'nric'						=> $input['nric'],
+			'first_name'				=> $input['fullname'],
+			// 'last_name'					=> $input['last_name'],
+			// 'nric'						=> $input['nric'],
 			'dob'						=> $input['dob'],
 			'email'						=> $input['email'],
 			'mobile'					=> $mobile,
@@ -729,17 +728,17 @@ class PlanTierController extends \BaseController {
 			return array('status' => false, 'message' => 'Dependent Enrollee ID is required.');
 		}
 
-		if(empty($input['first_name']) || $input['first_name'] == null) {
-			return array('status' => false, 'message' => 'Dependent Enrollee First Name is required.');
+		if(empty($input['fullname']) || $input['fullname'] == null) {
+			return array('status' => false, 'message' => 'Dependent Enrollee Full Name is required.');
 		}
 
-		if(empty($input['last_name']) || $input['last_name'] == null) {
-			return array('status' => false, 'message' => 'Dependent Enrollee Last Name is required.');
-		}
+		// if(empty($input['last_name']) || $input['last_name'] == null) {
+		// 	return array('status' => false, 'message' => 'Dependent Enrollee Last Name is required.');
+		// }
 
-		if(empty($input['nric']) || $input['nric'] == null) {
-			return array('status' => false, 'message' => 'Dependent Enrollee NRIC/FIN is required.');
-		}
+		// if(empty($input['nric']) || $input['nric'] == null) {
+		// 	return array('status' => false, 'message' => 'Dependent Enrollee NRIC/FIN is required.');
+		// }
 
 		if(empty($input['dob']) || $input['dob'] == null) {
 			return array('status' => false, 'message' => 'Dependent Enrollee Date of Birth is required.');
@@ -762,9 +761,9 @@ class PlanTierController extends \BaseController {
 		$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($input);
 		$temp_enrollment_dependent = array(
 			'dependent_temp_id'		=> $input['dependent_temp_id'],
-			'first_name'			=> $input['first_name'],
-			'last_name'				=> $input['last_name'],
-			'nric'					=> $input['nric'],
+			'first_name'			=> $input['fullname'],
+			// 'last_name'				=> $input['last_name'],
+			// 'nric'					=> $input['nric'],
 			'dob'					=> $input['dob'],
 			'plan_start'			=> $input['plan_start'],
 			'relationship'			=> $input['relationship'],
