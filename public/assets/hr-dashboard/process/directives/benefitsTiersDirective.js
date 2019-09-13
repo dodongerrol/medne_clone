@@ -36,6 +36,7 @@ app.directive('benefitsTiersDirective', [
 					medical_credits : 0,
 					wellness_credits : 0,
 					dependents : [],
+					mobile_area_code : '65',
 				};
 				scope.upload_file_dependent = null;
 				scope.customer_data = null;
@@ -79,8 +80,10 @@ app.directive('benefitsTiersDirective', [
 				scope.isFromUpload = false;
 				scope.isAllPreviewEmpChecked = false;
 				scope.showDependentsAdded = false;
+				scope.isEditDetailModalOpen = false;
 				
 				var iti = null;
+				var iti2 = null;
 
 
 				scope.getLetter = function(index) {
@@ -334,7 +337,8 @@ app.directive('benefitsTiersDirective', [
 							medical_credits : scope.tierSelected.medical_annual_cap,
 							wellness_credits : scope.tierSelected.wellness_annual_cap,
 							dependents : [],
-							plan_start : scope.customer_data.plan.plan_start
+							plan_start : scope.customer_data.plan.plan_start,
+							mobile_area_code : '65',
 						};
 					}
 				}
@@ -402,6 +406,7 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.openEditDetailsModal = function( index ){
+					scope.isEditDetailModalOpen = true;
 					scope.selected_edit_details_data = scope.temp_employees[index];
 					$("#edit-employee-details").modal('show');
 					$('.edit-employee-details-form .datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.dob);
@@ -434,6 +439,7 @@ app.directive('benefitsTiersDirective', [
 							}
 						})
 					}, 300);
+					scope.inititalizeGeoCode();
 				}
 
 				scope.removeDependent = function( index ){
@@ -584,10 +590,10 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.saveActiveDependents = function( ){
-					if( !scope.dependent_data.first_name && !scope.dependent_data.last_name && !scope.dependent_data.nric && 
-								!scope.dependent_data.dob && !scope.dependent_data.relationship && !scope.dependent_data.plan_start ){
+					if( !scope.dependent_data.fullname && !scope.dependent_data.dob && !scope.dependent_data.relationship && !scope.dependent_data.plan_start ){
 					}else{
-						if( scope.checkDependentForm() == true ){scope.dependent_arr.push( scope.dependent_data );
+						if( scope.checkDependentForm() == true ){
+							scope.dependent_arr.push( scope.dependent_data );
 							if( scope.isTiering ){
 								scope.dependents_enroll_count += 1;
 							}else{
@@ -601,6 +607,8 @@ app.directive('benefitsTiersDirective', [
 					}
 					if( scope.employee_data.dependents.length > 0 ){
 						angular.forEach( scope.dependent_arr, function(value, key){
+							console.log( value );
+							value.dob = moment( value.dob ).format('YYYY-MM-DD');
 							scope.employee_data.dependents.push( value );
 						});
 					}else{
@@ -620,6 +628,7 @@ app.directive('benefitsTiersDirective', [
 					scope.dependent_ctr = 0;
 					scope.selected_emp_dep_tab = 1;
 					scope.inititalizeDatepicker();
+					console.log( scope.employee_data );
 				}
 
 				scope.deleteActiveDependents = function(){
@@ -627,7 +636,8 @@ app.directive('benefitsTiersDirective', [
 						medical_credits : 0,
 						wellness_credits : 0,
 						dependents : [],
-						plan_start : scope.customer_data.plan.plan_start
+						plan_start : scope.customer_data.plan.plan_start,
+						mobile_area_code : '65',
 					};
 
 					if( scope.employee_arr[ scope.employee_ctr ] ){
@@ -668,7 +678,8 @@ app.directive('benefitsTiersDirective', [
 							medical_credits : 0,
 							wellness_credits : 0,
 							dependents : [],
-							plan_start : scope.customer_data.plan.plan_start
+							plan_start : scope.customer_data.plan.plan_start,
+							mobile_area_code : '65',
 						};
 						iti.setCountry( "SG" );
 						scope.dependent_data = {};
@@ -744,7 +755,8 @@ app.directive('benefitsTiersDirective', [
 										medical_credits : 0,
 										wellness_credits : 0,
 										dependents : [],
-										plan_start : scope.customer_data.plan.plan_start
+										plan_start : scope.customer_data.plan.plan_start,
+										mobile_area_code : '65',
 									};
 									iti.setCountry( "SG" );
 								}
@@ -765,7 +777,8 @@ app.directive('benefitsTiersDirective', [
 										medical_credits : 0,
 										wellness_credits : 0,
 										dependents : [],
-										plan_start : scope.customer_data.plan.plan_start
+										plan_start : scope.customer_data.plan.plan_start,
+										mobile_area_code : '65',
 									};
 									iti.setCountry( "SG" );
 								}
@@ -866,25 +879,9 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.checkEmployeeForm = function( ){
-					if( !scope.employee_data.first_name ){
-						swal( 'Error!', 'First Name is required.', 'error' );
+					if( !scope.employee_data.fullname ){
+						swal( 'Error!', 'Full Name is required.', 'error' );
 						return false;
-					}
-					if( !scope.employee_data.last_name ){
-						swal( 'Error!', 'Last Name is required.', 'error' );
-						return false;
-					}
-					if( !scope.employee_data.nric ){
-						swal( 'Error!', 'NRIC is required.', 'error' );
-						return false;
-					}else{
-						if( scope.nric_status == true ){
-							var checkNRIC = scope.checkNRIC(scope.employee_data.nric);
-							if( checkNRIC != true ){
-								swal( 'Error!', 'Invalid NRIC.', 'error' );
-								return false;
-							}
-						}	
 					}
 					if( !scope.employee_data.dob ){
 						swal( 'Error!', 'Date of Birth is required.', 'error' );
@@ -900,10 +897,24 @@ app.directive('benefitsTiersDirective', [
 							return false;
 						}
 					}
-					// if( !scope.employee_data.mobile ){
-					// 	swal( 'Error!', 'Phone is required.', 'error' );
-					// 	return false;
-					// }
+					if( !scope.employee_data.mobile ){
+						swal( 'Error!', 'Mobile Number is required.', 'error' );
+						return false;
+					}else{
+						// console.log( iti.getSelectedCountryData().iso2 );
+						if( iti.getSelectedCountryData().iso2 == 'sg' && scope.employee_data.mobile.length < 8 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
+							return false;
+						}
+						if( iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 10 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 10 digits.', 'error' );
+							return false;
+						}
+						if( iti.getSelectedCountryData().iso2 == 'ph' && scope.employee_data.mobile.length < 9 ){
+							swal( 'Error!', 'Mobile Number for your country code should be 9 digits.', 'error' );
+							return false;
+						}
+					}
 					if( !scope.employee_data.postal_code ){
 						swal( 'Error!', 'Postal Code is required.', 'error' );
 						return false;
@@ -917,26 +928,26 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.checkDependentForm = function( ){
-					if( !scope.dependent_data.first_name ){
-						swal( 'Error!', 'First Name is required.', 'error' );
+					if( !scope.dependent_data.fullname ){
+						swal( 'Error!', 'Full Name is required.', 'error' );
 						return false;
 					}
-					if( !scope.dependent_data.last_name ){
-						swal( 'Error!', 'Last Name is required.', 'error' );
-						return false;
-					}
-					if( !scope.dependent_data.nric ){
-						swal( 'Error!', 'NRIC is required.', 'error' );
-						return false;
-					}else{
-						if( scope.nric_status_dependents == true ){
-							var checkNRIC = scope.checkNRIC(scope.dependent_data.nric);
-							if( checkNRIC != true ){
-								swal( 'Error!', 'Invalid NRIC.', 'error' );
-								return false;
-							}
-						}	
-					}
+					// if( !scope.dependent_data.last_name ){
+					// 	swal( 'Error!', 'Last Name is required.', 'error' );
+					// 	return false;
+					// }
+					// if( !scope.dependent_data.nric ){
+					// 	swal( 'Error!', 'NRIC is required.', 'error' );
+					// 	return false;
+					// }else{
+					// 	if( scope.nric_status_dependents == true ){
+					// 		var checkNRIC = scope.checkNRIC(scope.dependent_data.nric);
+					// 		if( checkNRIC != true ){
+					// 			swal( 'Error!', 'Invalid NRIC.', 'error' );
+					// 			return false;
+					// 		}
+					// 	}	
+					// }
 					if( !scope.dependent_data.dob ){
 						swal( 'Error!', 'Date of Birth is required.', 'error' );
 						return false;
@@ -995,13 +1006,14 @@ app.directive('benefitsTiersDirective', [
 
 				scope.enrollEmployees = function(){
 					var emp_arr = [];
-					if( !scope.employee_data.first_name && !scope.employee_data.last_name && !scope.employee_data.nric && !scope.employee_data.dob 
+					if( !scope.employee_data.fullname  && !scope.employee_data.dob 
 							&& !scope.employee_data.mobile && !scope.employee_data.email && !scope.employee_data.postal_code ){
 
 					}else{
 						if( scope.checkEmployeeForm() == true ){
 							if( !scope.employee_arr[scope.employee_ctr] ){
 								scope.employee_data.job_title = 'Others';
+								console.log( scope.employee_data );
 								scope.employee_arr.push( scope.employee_data );
 							}
 						}else{
@@ -1009,7 +1021,7 @@ app.directive('benefitsTiersDirective', [
 						}
 					}
 					angular.forEach( scope.employee_arr,function(value,key){
-						if( value.first_name && value.last_name && value.nric && value.dob && value.postal_code && value.plan_start ){
+						if( value.fullname  && value.dob && value.postal_code && value.plan_start ){
 							emp_arr.push( value );
 						}
 
@@ -1022,7 +1034,8 @@ app.directive('benefitsTiersDirective', [
 								// value.plan_start = moment( value.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
 								angular.forEach( value.dependents,function(value2,key2){
-									value2.dob = moment( value2.dob ).format('YYYY-MM-DD');
+									console.log( value2 );
+									value2.dob = moment( value2.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
 									value2.plan_start = moment( value2.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
 								})
 							});
@@ -1051,7 +1064,8 @@ app.directive('benefitsTiersDirective', [
 												medical_credits : 0,
 												wellness_credits : 0,
 												dependents : [],
-												plan_start : scope.customer_data.plan.plan_start
+												plan_start : scope.customer_data.plan.plan_start,
+												mobile_area_code : '65',
 											};
 										}else{
 											swal( 'Error!', response.data.message, 'error' );
@@ -1085,7 +1099,7 @@ app.directive('benefitsTiersDirective', [
 					scope.hasError = false;
 					$timeout(function() {
 						$("#enrollee-details-tbl tbody").html('');
-						$("#enrollee-details-tbl thead tr").html( $compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>First Name</th><th>Last Name</th><th>NRIC/FIN</th><th>Date of Birth</th><th>Work Email</th><th>Mobile</th><th>Medical Credits</th><th>Wellness Credits</th>')(scope) );
+						$("#enrollee-details-tbl thead tr").html( $compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th><th>Medical Credits</th><th>Wellness Credits</th>')(scope) );
 						dependentsSettings.getTempEmployees( )
 							.then(function(response){
 								// console.log( response );
@@ -1096,18 +1110,18 @@ app.directive('benefitsTiersDirective', [
 									}
 									if( (scope.temp_employees.length-1) == ctr_key ){
 										angular.forEach( scope.temp_employees, function(value, key){
-											// console.log(value);
+											console.log(value);
 											if( value.error_logs.error == true ){
 												scope.hasError = true;
 											}
 											value.success = false;
 											value.fail = false;
 											scope.isTrError = ( value.error_logs.error == true ) ? 'has-error' : '';
-											var html_tr = '<tr class="dependent-hover-container '+ scope.isTrError +' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.first_name + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal('+ key +')">Edit</button></td><td>' + value.employee.last_name + '</td><td>' + value.employee.nric + '</td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>' + value.employee.format_mobile + '</td><td>' + value.employee.credits + '</td><td>' + value.employee.wellness_credits + '</td>';
+											var html_tr = '<tr class="dependent-hover-container '+ scope.isTrError +' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.fullname + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal('+ key +')">Edit</button></td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>+' + value.employee.mobile_area_code + '</td><td>' + value.employee.mobile + '</td><td>' + value.employee.credits + '</td><td>' + value.employee.wellness_credits + '</td>';
 											var emp_ctr = 0;
 											while( emp_ctr != value.dependents.length ){
 												scope.isTrError = ( value.dependents[emp_ctr].error_logs.error == true ) ? 'has-error' : '';
-												html_tr += '<td>' + value.dependents[emp_ctr].enrollee.first_name + '</td><td>' + value.dependents[emp_ctr].enrollee.last_name + '</td><td>' + value.dependents[emp_ctr].enrollee.nric + '</td><td>' + value.dependents[emp_ctr].enrollee.dob + '</td><td>' + value.dependents[emp_ctr].enrollee.relationship + '</td>';
+												html_tr += '<td>' + value.dependents[emp_ctr].enrollee.fullname + '</td><td>' + value.dependents[emp_ctr].enrollee.dob + '</td><td>' + value.dependents[emp_ctr].enrollee.relationship + '</td>';
 												emp_ctr++;
 											}	
 											while( emp_ctr != scope.table_dependents_ctr ){
@@ -1123,9 +1137,7 @@ app.directive('benefitsTiersDirective', [
 												while( while_ctr != scope.table_dependents_ctr ){
 													while_ctr++;
 													$("#enrollee-details-tbl thead tr").append( 
-														'<th>Dependent ' + while_ctr + '<br>First Name</th>' + 
-														'<th>Dependent ' + while_ctr + '<br>Last Name</th>' + 
-														'<th>Dependent ' + while_ctr + '<br>NRIC/FIN</th>' + 
+														'<th>Dependent ' + while_ctr + '<br>Full Name</th>' + 
 														'<th>Dependent ' + while_ctr + '<br>Date of Birth</th>' + 
 														'<th>Dependent ' + while_ctr + '<br>Relationship</th>' 
 													);
@@ -1167,9 +1179,10 @@ app.directive('benefitsTiersDirective', [
           		scope.showLoading();
 							var data = {
 								temp_enrollment_id : emp.employee.temp_enrollment_id,
-								first_name: emp.employee.first_name,
-								last_name: emp.employee.last_name,
-								nric: emp.employee.nric,
+								fullname: emp.employee.fullname,
+								// first_name: emp.employee.first_name,
+								// last_name: emp.employee.last_name,
+								// nric: emp.employee.nric,
 								dob: moment(emp.employee.dob, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 								email: emp.employee.email,
 								mobile: emp.employee.mobile,
@@ -1187,9 +1200,10 @@ app.directive('benefitsTiersDirective', [
 									angular.forEach( emp.dependents, function(value,key){
 										var dep_data = {
 											dependent_temp_id : value.enrollee.dependent_temp_id,
-											first_name : value.enrollee.first_name,
-											last_name : value.enrollee.last_name,
-											nric : value.enrollee.nric,
+											fullname : value.enrollee.fullname,
+											// first_name : value.enrollee.first_name,
+											// last_name : value.enrollee.last_name,
+											// nric : value.enrollee.nric,
 											dob : moment(value.enrollee.dob, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 											plan_start : moment(value.enrollee.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 											relationship : value.enrollee.relationship,
@@ -1313,7 +1327,8 @@ app.directive('benefitsTiersDirective', [
 												medical_credits : 0,
 												wellness_credits : 0,
 												dependents : [],
-												plan_start : scope.customer_data.plan.plan_start
+												plan_start : scope.customer_data.plan.plan_start,
+												mobile_area_code : '65',
 											};
 										}
 									}, 1000);	
@@ -1456,20 +1471,35 @@ app.directive('benefitsTiersDirective', [
 
 				scope.inititalizeGeoCode = function(){
 					$timeout(function() {
-						var input = document.querySelector("#area_code");
 						var settings = {
 		          separateDialCode : true,
 							initialCountry : "SG",
 							autoPlaceholder : "off",
 							utilsScript : "../assets/hr-dashboard/js/utils.js",
 		        };
-		        iti = intlTelInput(input, settings);
-		        input.addEventListener("countrychange", function() {
-						  console.log( iti.getSelectedCountryData() );
-						  scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
-						  scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
-						});
 
+		        if( scope.isEditDetailModalOpen == false ){
+		        	var input = document.querySelector("#area_code");
+			        iti = intlTelInput(input, settings);
+			        input.addEventListener("countrychange", function() {
+							  console.log( iti.getSelectedCountryData() );
+							  scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
+							  scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
+							});
+		        }
+						if( scope.isEditDetailModalOpen == true ){
+							var input2 = document.querySelector("#area_code2");
+							iti2 = intlTelInput(input2, settings);
+			        console.log( scope.selected_edit_details_data.employee.format_mobile );
+							iti2.setNumber( scope.selected_edit_details_data.employee.format_mobile );
+							scope.selected_edit_details_data.employee.mobile = scope.selected_edit_details_data.employee.mobile;
+							$("#area_code2").val( scope.selected_edit_details_data.employee.mobile );
+							input2.addEventListener("countrychange", function() {
+							  console.log( iti2.getSelectedCountryData() );
+							  scope.selected_edit_details_data.employee.mobile_area_code = iti2.getSelectedCountryData().dialCode;
+							  scope.selected_edit_details_data.employee.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
+							});
+						}
 					}, 300);
 				}
 
@@ -1567,6 +1597,14 @@ app.directive('benefitsTiersDirective', [
 					if( val == "" ){
 						$('.start-date-datepicker-dependent').datepicker('setDate', scope.customer_data.plan.plan_start);
 					}
+				})
+
+				$('.modal').on('hidden.bs.modal', function () {
+				  scope.isEditDetailModalOpen = false;
+				  // iti.destroy();
+				  iti2.destroy();
+				  console.log( iti );
+				  console.log( iti2 );
 				})
 			}
 		}
