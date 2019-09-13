@@ -943,18 +943,18 @@ class PlanHelper {
 			$mobile_message = '*Mobile Phone is empty';
 		} else {
 			// check mobile number
-			$check_mobile = DB::table('user')
-												->where('UserType', 5)
-												->where('PhoneNo', $user['mobile'])
-												->where('Active', 1)
-												->first();
-			if($check_mobile) {
-				$mobile_error = true;
-				$mobile_message = '*Mobile Phone No already taken.';
-			} else {
+			// $check_mobile = DB::table('user')
+			// 									->where('UserType', 5)
+			// 									->where('PhoneNo', $user['mobile'])
+			// 									->where('Active', 1)
+			// 									->first();
+			// if($check_mobile) {
+			// 	$mobile_error = true;
+			// 	$mobile_message = '*Mobile Phone No already taken.';
+			// } else {
 				$mobile_error = false;
 				$mobile_message = '';
-			}
+			// }
 		}
 
 		if(!empty($user['email'])) {
@@ -1287,12 +1287,12 @@ class PlanHelper {
 			$password = StringHelper::get_random_password(8);
 			$dob = date_format(date_create_from_format('d/m/Y', $data_enrollee->dob), 'Y-m-d');
 			$data = array(
-				'Name'          => $data_enrollee->first_name.' '.$data_enrollee->last_name,
+				'Name'          => $data_enrollee->first_name,
 				'Password'      => md5($password),
 				'Email'         => $data_enrollee->email,
-				'PhoneNo'       => $data_enrollee->mobile,
+				'PhoneNo'       => (int)$data_enrollee->mobile,
 				'PhoneCode'     => $data_enrollee->mobile_area_code ? '+'.$data_enrollee->mobile_area_code : "+65",
-				'NRIC'          => $data_enrollee->nric,
+				'NRIC'          => null,
 				'Job_Title'     => $data_enrollee->job_title,
 				'Active'        => 1,
 				'Zip_Code'      => $data_enrollee->postal_code,
@@ -1489,13 +1489,13 @@ class PlanHelper {
 				if($data_enrollee->email) {
 					$email_data = [];
 					$email_data['company']   = ucwords($company->company_name);
-					$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['emailName'] = $data_enrollee->first_name;
 					$email_data['emailTo']   = $data_enrollee->email;
 					$email_data['email'] = $data_enrollee->email;
 		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
 					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 					$email_data['start_date'] = date('d F Y', strtotime($start_date));
-					$email_data['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['name'] = $data_enrollee->first_name;
 					$email_data['plan'] = $active_plan;
 					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 					$email_data['pw'] = $password;
@@ -1507,11 +1507,11 @@ class PlanHelper {
 
 						if($phone) {
 							$compose = [];
-							$compose['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+							$compose['name'] = $data_enrollee->first_name;
 							$compose['company'] = $company->company_name;
 							$compose['plan_start'] = date('F d, Y', strtotime($start_date));
 							$compose['email'] = $data_enrollee->email;
-							$compose['nric'] = $data_enrollee->nric;
+							$compose['nric'] = $data_enrollee->mobile;
 							$compose['password'] = $password;
 							$compose['phone'] = $phone;
 
@@ -1531,7 +1531,7 @@ class PlanHelper {
 						$compose['company'] = $company->company_name;
 						$compose['plan_start'] = date('F d, Y', strtotime($start_date));
 						$compose['email'] = $data_enrollee->email;
-						$compose['nric'] = $data_enrollee->nric;
+						$compose['nric'] = $data_enrollee->mobile;
 						$compose['password'] = $password;
 						$compose['phone'] = $phone;
 
@@ -1541,13 +1541,13 @@ class PlanHelper {
 				} else {
 					$email_data = [];
 					$email_data['company']   = ucwords($company->company_name);
-					$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['emailName'] = $data_enrollee->first_name;
 					$email_data['emailTo']   = $data_enrollee->email;
 					$email_data['email'] = $data_enrollee->email;
 		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
 					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 					$email_data['start_date'] = date('d F Y', strtotime($start_date));
-					$email_data['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+					$email_data['name'] = $data_enrollee->first_name;
 					$email_data['plan'] = $active_plan;
 					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 					$email_data['pw'] = $password;
@@ -1556,12 +1556,12 @@ class PlanHelper {
 			} else {
 				$email_data = [];
 				$email_data['company']   = ucwords($company->company_name);
-				$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+				$email_data['emailName'] = $data_enrollee->first_name;
 				$email_data['emailTo']   = $data_enrollee->email ? $data_enrollee->email : 'info@medicloud.sg';
 				$email_data['email'] = 'info@medicloud.sg';
 				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 				$email_data['start_date'] = date('d F Y', strtotime($start_date));
-				$email_data['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
+				$email_data['name'] = $data_enrollee->first_name;
 				$email_data['plan'] = $active_plan;
 				$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 				$email_data['pw'] = $password;
@@ -1618,10 +1618,10 @@ class PlanHelper {
 
 				foreach ($dependent_enrollees as $key => $dependent) {
 					$data = array(
-						'Name'          => $dependent->first_name.' '.$dependent->last_name,
+						'Name'          => $dependent->first_name,
 						'Email'         => 'mednefits',
 						'PhoneCode'     => '+65',
-						'NRIC'          => $dependent->nric,
+						'NRIC'          => null,
 						'Active'        => 1,
 						'DOB'           => $dependent->dob
 					);

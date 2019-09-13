@@ -589,10 +589,10 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.saveActiveDependents = function( ){
-					if( !scope.dependent_data.first_name && !scope.dependent_data.last_name && !scope.dependent_data.nric && 
-								!scope.dependent_data.dob && !scope.dependent_data.relationship && !scope.dependent_data.plan_start ){
+					if( !scope.dependent_data.fullname && !scope.dependent_data.dob && !scope.dependent_data.relationship && !scope.dependent_data.plan_start ){
 					}else{
-						if( scope.checkDependentForm() == true ){scope.dependent_arr.push( scope.dependent_data );
+						if( scope.checkDependentForm() == true ){
+							scope.dependent_arr.push( scope.dependent_data );
 							if( scope.isTiering ){
 								scope.dependents_enroll_count += 1;
 							}else{
@@ -606,6 +606,8 @@ app.directive('benefitsTiersDirective', [
 					}
 					if( scope.employee_data.dependents.length > 0 ){
 						angular.forEach( scope.dependent_arr, function(value, key){
+							console.log( value );
+							value.dob = moment( value.dob ).format('YYYY-MM-DD');
 							scope.employee_data.dependents.push( value );
 						});
 					}else{
@@ -625,6 +627,7 @@ app.directive('benefitsTiersDirective', [
 					scope.dependent_ctr = 0;
 					scope.selected_emp_dep_tab = 1;
 					scope.inititalizeDatepicker();
+					console.log( scope.employee_data );
 				}
 
 				scope.deleteActiveDependents = function(){
@@ -1009,6 +1012,7 @@ app.directive('benefitsTiersDirective', [
 						if( scope.checkEmployeeForm() == true ){
 							if( !scope.employee_arr[scope.employee_ctr] ){
 								scope.employee_data.job_title = 'Others';
+								console.log( scope.employee_data );
 								scope.employee_arr.push( scope.employee_data );
 							}
 						}else{
@@ -1029,7 +1033,8 @@ app.directive('benefitsTiersDirective', [
 								// value.plan_start = moment( value.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
 								angular.forEach( value.dependents,function(value2,key2){
-									value2.dob = moment( value2.dob ).format('YYYY-MM-DD');
+									console.log( value2 );
+									value2.dob = moment( value2.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
 									value2.plan_start = moment( value2.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
 								})
 							});
