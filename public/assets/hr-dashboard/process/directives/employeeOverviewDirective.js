@@ -60,6 +60,7 @@ app.directive("employeeOverviewDirective", [
         scope.isDeleteDependent = false;
         scope.dependents_ctr = 0;
         scope.cap_per_visit = 0;
+        scope.isUpdateEmpInfoModalOpen = false;
 
         var iti = null;
 
@@ -344,7 +345,7 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.checkUpdateEmployeeForm = function( data ){
-          if( !data.fullname ){
+          if( !data.name ){
             swal( 'Error!', 'Full Name is required.', 'error' );
             return false;
           }
@@ -429,8 +430,8 @@ app.directive("employeeOverviewDirective", [
             return false;
           }
           if( !data.email ){
-            swal( 'Error!', 'Email is required.', 'error' );
-            return false;
+            // swal( 'Error!', 'Email is required.', 'error' );
+            // return false;
           }else{
             if( scope.checkEmail(data.email) == false ){
               swal( 'Error!', 'Email is invalid.', 'error' );
@@ -614,16 +615,21 @@ app.directive("employeeOverviewDirective", [
         };
 
         scope.openUpdateEmployeeModal = function(){
-
+          scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
-
+          scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
+          // scope.selectedEmployee.country_code = scope.selectedEmployee.country_code;
+          $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob );
           scope.inititalizeGeoCode();
+          console.log( scope.selectedEmployee );
         }
 
         scope.openUpdateDependentModal = function(data){
           // console.log( data );
           scope.selectedDependent = data;
+          scope.selectedDependent.dob = data.dob;
           $("#update-dependent-modal").modal('show');
+          $('.datepicker').datepicker('setDate', scope.selectedDependent.dob );
         }
 
         scope.toggleEmployee = function(emp, index){
@@ -810,6 +816,7 @@ app.directive("employeeOverviewDirective", [
             $('.hold-seat-wrapper').hide();
             scope.reset();
             scope.isRemoveEmployeeOptionsShow = true;
+            iti2.destroy();
           }else if( scope.isHealthSpendingAccountSummaryShow == true ){
             $('.account-summary-wrapper').hide();
             $('.prev-next-buttons-container').hide();
@@ -929,6 +936,7 @@ app.directive("employeeOverviewDirective", [
               scope.getSession();
             }
           }else if( scope.isHealthSpendingAccountSummaryShow == true ){
+            iti2.destroy();
             $('.health-spending-account-wrapper').fadeIn();
             $('.account-summary-wrapper').hide();
             scope.reset();
@@ -1210,9 +1218,8 @@ app.directive("employeeOverviewDirective", [
 
         scope.saveActiveDependents = function( ){
           // console.log( scope.addDependents_arr );
-          if( !scope.dependent_data.first_name && !scope.dependent_data.last_name && !scope.dependent_data.nric && 
-                !scope.dependent_data.dob ){
-          }else{
+          console.log( scope.dependent_data );
+          if( ( scope.dependent_data.fullname && scope.dependent_data.dob ) || scope.addDependents_arr.length == 0 ){
             if( scope.checkDependentForm( scope.dependent_data ) == true ){
               if( !scope.addDependents_arr[ scope.dependents_ctr ] ){
                 scope.addActiveDependent_index+=1;
@@ -1252,9 +1259,11 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.saveEmployee = function( data ){
+          console.log( data );
           if( scope.checkUpdateEmployeeForm( data ) == false ){
             return false;
           }
+          console.log( data );
           swal({
             title: "Confirm",
             text: "Are you sure you want to update this employee?",
@@ -1269,20 +1278,20 @@ app.directive("employeeOverviewDirective", [
           function(isConfirm){
             if(isConfirm){
               scope.showLoading();
-
+              console.log( data );
               var update_data = {
-                name: data.fname + " " + data.lname,
+                name: data.name,
                 dob: data.dob,
                 nric: data.nric,
                 email: data.email,
                 phone_no: data.phone_no,
+                country_code: data.country_code,
                 job_title: data.job_title,
                 postal_code: data.postal_code,
                 bank_account: data.bank_account,
                 user_id: data.user_id,
-                country_code: data.mobile_area_code,
               };
-
+              console.log( update_data );
               dependentsSettings.updateEmployee( update_data )
                 .then(function(response){
                   scope.hideLoading();
@@ -1505,7 +1514,6 @@ app.directive("employeeOverviewDirective", [
         scope.inititalizeGeoCode = function(){
           $timeout(function() {
             var input = document.querySelector("#area_code");
-            var input2 = document.querySelector("#area_code2");
             var settings = {
               separateDialCode : true,
               initialCountry : "SG",
@@ -1513,19 +1521,23 @@ app.directive("employeeOverviewDirective", [
               utilsScript : "../assets/hr-dashboard/js/utils.js",
             };
             iti = intlTelInput(input, settings);
-            iti2 = intlTelInput(input2, settings);
+            iti.setNumber( scope.selectedEmployee.mobile_no );
+            scope.selectedEmployee.phone_no = scope.selectedEmployee.phone_no;
+            $("#area_code").val( scope.selectedEmployee.phone_no );
             input.addEventListener("countrychange", function() {
               console.log( iti.getSelectedCountryData() );
+              scope.selectedEmployee.country_code = iti.getSelectedCountryData().dialCode;
               scope.selectedEmployee.mobile_area_code = iti.getSelectedCountryData().dialCode;
               scope.selectedEmployee.mobile_area_code_country = iti.getSelectedCountryData().iso2;
             });
 
+            var input2 = document.querySelector("#area_code2");
+            iti2 = intlTelInput(input2, settings);
             input2.addEventListener("countrychange", function() {
               console.log( iti2.getSelectedCountryData() );
               scope.replace_emp_data.mobile_area_code = iti2.getSelectedCountryData().dialCode;
               scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
             });
-
           }, 300);
         }
 
@@ -1617,6 +1629,16 @@ app.directive("employeeOverviewDirective", [
             if( val == "" ){
               $('.future-datepicker').datepicker('setDate', moment().format('DD/MM/YYYY') );
             }
+          })
+
+          $('.modal').on('hidden.bs.modal', function () {
+            if( scope.isUpdateEmpInfoModalOpen == true ){
+              iti.destroy();
+            }
+            scope.isUpdateEmpInfoModalOpen = false;
+            // iti2.destroy();
+            console.log( iti );
+            console.log( iti2 );
           })
 
         // -------------- //

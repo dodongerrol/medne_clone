@@ -103,7 +103,7 @@
 									<span ng-bind="emp.deletion_text"></span>
 								</div>
 							</td>
-							<td class="nric-fin-details" ng-bind="emp.phone_no">12324324</td>
+							<td class="nric-fin-details" ng-bind="emp.mobile_no">12324324</td>
 							<!-- <td class="nric-fin-details" ng-bind="emp.nric">S8575893G</td> -->
 							<td class="plan-start-container">
 								<span ng-bind="emp.plan_tier.plan_tier_name">Tier 1</span>
@@ -338,7 +338,7 @@
 						<div class="col-1-employee-information-details">
 							<div>
 								<strong class="font-helvetica-medium">Full Name</strong>
-								<span ng-bind="selectedEmployee.fullname">Calvin Harris</span>
+								<span ng-bind="selectedEmployee.name">Calvin Harris</span>
 							</div>
 							<!-- <div>
 								<strong class="font-helvetica-medium">First Name</strong>
@@ -409,7 +409,7 @@
 							<div class="col-1-employee-information-details">
 								<div>
 									<strong class="font-helvetica-medium">Full Name</strong>
-									<span ng-bind="list.fullname">Alice Wonderland</span>
+									<span ng-bind="list.name">Alice Wonderland</span>
 								</div>
 								<!-- <div>
 									<strong class="font-helvetica-medium">First Name</strong>
@@ -431,7 +431,7 @@
 							<div class="col-2-employee-information-details">
 								<div>
 									<strong class="font-helvetica-medium">Relationship</strong>
-									<span ng-if="list.relationship != null" ng-bind="list.relationship">Spouse</span>
+									<span style="text-transform: capitalize;" ng-if="list.relationship != null" ng-bind="list.relationship">Spouse</span>
 									<span ng-if="list.relationship == null">Dependent of <span ng-bind="list.Name"></span></span>
 								</div>
 								<div>
@@ -559,12 +559,8 @@
 			</span>
 			<form>
 				<div class="employee-input-wrapper">
-					<label for="fname">First / Given Name</label>
+					<label for="fname">Full Name</label>
   				<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.fullname">
-				</div>
-				<div class="employee-input-wrapper">
-					<label for="fname">Last / Family Name</label>
-  				<input disabled-specific-characters type="text" name="lname" ng-model="dependent_data.last_name">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Date of Birth</label>
@@ -608,8 +604,8 @@
 		<form>
 			<div class="remove-employee-input-wrapper">
 				<label for="fname">Full Name</label>
-  			<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.fullname" readonly>
-  			<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.fullname" readonly>
+  			<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.name" readonly>
+  			<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.name" readonly>
 			</div>
 			<!-- <div class="remove-employee-input-wrapper">
 				<label for="fname">First / Given Name</label>
@@ -621,7 +617,7 @@
   			<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.last_name" readonly>
   			<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.last_name" readonly>
 			</div> -->
-			<div class="last-day-input-wrapper">
+			<div class="last-day-input-wrapper" style="display: inline-block;">
 				<label for="fname">Last day of coverage</label>
   				<input type="text" name="fname" class="last-day-coverage-datepicker" ng-model="remove_employee_data.last_day_coverage">
 			</div>
@@ -932,7 +928,7 @@
               	<div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Full Name</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.fullname">
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.name">
                   </div>
                 </div>
                <!--  <div class="col-lg-6">
@@ -1047,7 +1043,7 @@
               	<div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Full Name</label>
-                    <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.fullname">
+                    <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.name">
                   </div>
                 </div>
                <!--  <div class="col-lg-6">

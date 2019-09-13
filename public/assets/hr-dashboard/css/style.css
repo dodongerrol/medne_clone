@@ -6735,6 +6735,11 @@ ul.typeahead li a.dropdown-item
 		display: block;
 	}
 
+	.employee-replacement-wrapper .iti__country span{
+		display: inline-block;
+		margin: 0;
+	}
+
 	.employee-replacement-wrapper h1 {
 		color:  #283e52;
 		margin: 20px 0;

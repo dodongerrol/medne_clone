@@ -943,18 +943,18 @@ class PlanHelper {
 			$mobile_message = '*Mobile Phone is empty';
 		} else {
 			// check mobile number
-			// $check_mobile = DB::table('user')
-			// 									->where('UserType', 5)
-			// 									->where('PhoneNo', $user['mobile'])
-			// 									->where('Active', 1)
-			// 									->first();
-			// if($check_mobile) {
-			// 	$mobile_error = true;
-			// 	$mobile_message = '*Mobile Phone No already taken.';
-			// } else {
+			$check_mobile = DB::table('user')
+												->where('UserType', 5)
+												->where('PhoneNo', $user['mobile'])
+												->where('Active', 1)
+												->first();
+			if($check_mobile) {
+				$mobile_error = true;
+				$mobile_message = '*Mobile Phone No already taken.';
+			} else {
 				$mobile_error = false;
 				$mobile_message = '';
-			// }
+			}
 		}
 
 		if(!empty($user['email'])) {
@@ -2336,7 +2336,7 @@ class PlanHelper {
 		public static function createDependentAccountUser($data)
 		{
 			$user_data = array(
-				'Name' => $data['first_name'].' '.$data['last_name'],
+				'Name' => $data['fullname'],
 				'UserType' => 5,
 				'access_type' => 2,
 				'Email' => 'mednefits',

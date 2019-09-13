@@ -2079,22 +2079,18 @@ class BenefitsDashboardController extends \BaseController {
 				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
 
-			$name = explode(" ", $user->Name);
+			// $name = explode(" ", $user->Name);
 
-			if(!empty($name[0]) && !empty($name[1])) {
-				$first_name = $name[0];
-				$last_name = $name[1];
-			} else {
-				$first_name = $user->Name;
-				$last_name = $user->Name;
-			}	
+			// if(!empty($name[0]) && !empty($name[1])) {
+			// 	$first_name = $name[0];
+			// 	$last_name = $name[1];
+			// } else {
+			// 	$first_name = $user->Name;
+			// 	$last_name = $user->Name;
+			// }	
 
-			if(strrpos($user->PhoneNo, '+') !== false) {
-				$phone_no = $user->PhoneNo;
-			} else {
-				$phone_no = $user->PhoneCode.$user->PhoneNo;
-			}
-
+			$phone_no = (int)$user->PhoneNo;
+			$country_code = $user->PhoneCode;
 			$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
 
 			if((int)$user->Active == 0) {
@@ -2111,7 +2107,6 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
-
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -2121,8 +2116,6 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_tier'				=> $plan_tier,
 				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
-				'first_name'			=> $first_name,
-				'last_name'				=> $last_name,
 				'email'					=> $user->Email,
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
@@ -2133,7 +2126,9 @@ class BenefitsDashboardController extends \BaseController {
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
 				'nric'					=> $user->NRIC,
+				'mobile_no'				=> $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
+				'country_code'			=> $country_code,
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
@@ -2941,21 +2936,8 @@ class BenefitsDashboardController extends \BaseController {
 				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
 
-			$name = explode(" ", $user->Name);
-
-			if(!empty($name[0]) && !empty($name[1])) {
-				$first_name = $name[0];
-				$last_name = $name[1];
-			} else {
-				$first_name = $user->Name;
-				$last_name = $user->Name;
-			}	
-
-			if(strrpos($user->PhoneNo, '+') !== false) {
-				$phone_no = $user->PhoneNo;
-			} else {
-				$phone_no = $user->PhoneCode.$user->PhoneNo;
-			}
+			$phone_no = (int)$user->PhoneNo;
+			$country_code = $user->PhoneCode;
 
 			$cap_per_visit = $wallet->cap_per_visit_medical;
 
@@ -2980,8 +2962,6 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_tier'				=> $plan_tier,
 				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
-				'first_name'			=> $first_name,
-				'last_name'				=> $last_name,
 				'email'					=> $user->Email,
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
@@ -2992,7 +2972,9 @@ class BenefitsDashboardController extends \BaseController {
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
 				'nric'					=> $user->NRIC,
+				'mobile_no'				=> $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
+				'country_code'			=> $country_code,
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
@@ -3056,6 +3038,7 @@ class BenefitsDashboardController extends \BaseController {
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
 			'PhoneNo'			=> $input['phone_no'],
+			'PhoneCode'			=> "+".$input['country_code'],
 			'DOB'				=> $input['dob'],
 			'Job_Title'			=> $input['job_title']
 		);
@@ -3542,8 +3525,8 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 		$user = new User();
-		// $result = self::checkSession();
-		// $id = $input['customer_id'];
+		
+		return $input;
 		$id = PlanHelper::getCusomerIdToken();
 
 		if(empty($input['replace_id']) || $input['replace_id'] == null) {
