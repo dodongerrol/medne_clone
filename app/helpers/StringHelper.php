@@ -187,6 +187,35 @@ class StringHelper{
             }
         }
 
+        public static function getJwtEmployeeSession()
+        {   
+            $secret = Config::get('config.secret_key');
+            $token = StringHelper::getToken();
+            $result = FALSE;
+            try {
+                $result = JWT::decode($token, $secret);
+            } catch(Exception $e) {
+                return FALSE;
+            }
+
+            if($result) {
+                $employee = DB::table('user')->where('UserID', $result->UserID)->first();
+                if($employee) {
+                    $employee->signed_in = $result->signed_in;
+                    if(isset($result->expire_in)) {
+                        $employee->expire_in = $result->expire_in;
+                    } else {
+                        $employee->expire_in = null;
+                    }
+                    return $employee;
+                } else {
+                    return FALSE;
+                }
+            } else {
+                return FALSE;
+            }
+        }
+
         public static function getToken( )
         {
             $getRequestHeader = getallheaders();
@@ -223,10 +252,22 @@ class StringHelper{
 
         public static function getEmployeeSession( )
         {
-            $value = Session::get('employee-session');
-            $result = DB::table('user')->where('UserID', $value)->first();
-            if($result) {
-                return $result;
+
+            $secret = Config::get('config.secret_key');
+            $token = StringHelper::getToken();
+            $result = FALSE;
+            try {
+                $result = JWT::decode($token, $secret);
+            } catch(Exception $e) {
+                return FALSE;
+            }
+
+            $member = DB::table('user')->where('UserID', $result->UserID)->first();
+            if($member) {
+                if(isset($result->admin_id)) {
+                    $member->admin_id = $result->admin_id;
+                }
+                return $member;
             } else {
                 return FALSE;
             }

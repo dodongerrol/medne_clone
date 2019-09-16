@@ -23,9 +23,9 @@ class EclaimController extends \BaseController {
 	public function loginEmployee( )
 	{
 		$input = Input::all();
-    $email = $input['email'];
+    $email = (int)$input['email'];
     $password = $input['password'];
-
+    // return $email;
 		$check = DB::table('user')
 		->where(function($query) use ($email, $password) {
 			$query->where('UserType', 5)
@@ -48,7 +48,22 @@ class EclaimController extends \BaseController {
 		->first();
 
 		if($check) {
-			Session::put('employee-session', $check->UserID);
+			// Session::put('employee-session', $check->UserID);
+			$jwt = new JWT();
+			$secret = Config::get('config.secret_key');
+
+			if(isset($input['signed_in']) && $input['signed_in'] == true) {
+				$check->signed_in = TRUE;
+			} else {
+				$check->signed_in = FALSE;
+				$check->expire_in = strtotime('+15 days', time());
+			}
+
+			if(isset($input['admin_id']) && $input['admin_id'] != null) {
+				$check->admin_id = $input['admin_id'];
+			}
+			
+			$token = $jwt->encode($check, $secret);
 			$admin_logs = array(
         'admin_id'  => $check->UserID,
         'admin_type' => 'member',
@@ -56,7 +71,8 @@ class EclaimController extends \BaseController {
         'data'      => SystemLogLibrary::serializeData($input)
       );
       SystemLogLibrary::createAdminLog($admin_logs);
-			return array('status' => TRUE, 'message' => 'Success.');
+
+			return array('status' => TRUE, 'message' => 'Success.', 'token' => $token);
 		}
 
 		return array('status' => FALSE, 'message' => 'Invalid Credentials.');
@@ -99,7 +115,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimMedical( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-		$admin_id = Session::get('admin-session-id');
+		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -261,7 +277,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimWellness( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-		$admin_id = Session::get('admin-session-id');
+		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -584,10 +600,12 @@ class EclaimController extends \BaseController {
 	public function getEclaims( )
 	{
 		$final_data = [];
+		$data = StringHelper::getEmployeeSession( );
+
 		$result = DB::table('e_claim')
 							// ->join('e_claim', 'e_claim.user_id', '=', 'user.UserID')
 							// ->join('e_claim_docs', 'e_claim_docs.e_claim_id', '=', 'e_claim.e_claim_id')
-		->where('e_claim.user_id', Session::get('employee-session'))
+		->where('e_claim.user_id', $data->UserID)
 		->get();
 
 		if($result) {
@@ -711,7 +729,8 @@ class EclaimController extends \BaseController {
 	public function getActivity( )
 	{
 		$input = Input::all();
-		$user_id = Session::get('employee-session');
+		$data = StringHelper::getEmployeeSession( );
+		$user_id = $data->UserID;
 		$start = date('Y-m-d', strtotime($input['start']));
 		$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 		$lite_plan_status = false;
@@ -1637,7 +1656,8 @@ class EclaimController extends \BaseController {
 
 	public function currentSpending( )
 	{
-		$user_id = Session::get('employee-session');
+		$user_id = $data = StringHelper::getEmployeeSession( );
+		$user_id = $data->UserID;
 		$check = DB::table('user')->where('UserID', $user_id)->count();
 
 		if($check == 0) {
@@ -6172,7 +6192,8 @@ public function updateEclaimStatus( )
 
 public function getEmployeeMembers( )
 {
-	$user_id = Session::get('employee-session');
+	$data = StringHelper::getEmployeeSession( );
+	$user_id = $data->UserID;
 	$check = DB::table('user')->where('UserID', $user_id)->count();
 
 	if($check == 0) {

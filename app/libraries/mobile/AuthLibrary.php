@@ -570,7 +570,7 @@ public static function Forgot_PasswordV2(){
         $updateArray['userid'] = $findUserID;
         // $updateArray['Password'] = md5($password);
         $updateArray['Recon'] = 0;
-        $updateArray['updated_at'] = time();
+        $updateArray['updated_at'] = date('Y-m-d H:i:s');
         $userUpdated = self::UpdateUserProfile($updateArray);
         // if($userUpdated){
       // return "email";
@@ -688,7 +688,7 @@ public static function ChangePassword($profileid){
             if($findUser->Password == StringHelper::encode($allInputdata['oldpassword'])){
                 $updateArray['userid'] = $findUser->UserID;
                 $updateArray['Password'] = StringHelper::encode($allInputdata['password']);
-                $updateArray['updated_at'] = time();
+                $updateArray['updated_at'] = date('Y-m-d H:i:s');
                 $updated = self::UpdateUserProfile($updateArray);
                 if($updated){
                     $allInputdata['user_id'] = $profileid;

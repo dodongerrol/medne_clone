@@ -86,6 +86,7 @@ login.directive('eclaimLogin', [
 	              scope.password = null;
 	              // $state.go("home");
 	              window.location.href = window.location.origin + '/member-portal#/home';
+                window.localStorage.setItem('token', response.data.token);
 	            } else {
 	              scope.invalid_credentials = true;
 	              swal('Ooops!', response.data.message, 'error');
