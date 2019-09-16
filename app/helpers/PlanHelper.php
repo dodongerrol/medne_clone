@@ -530,6 +530,132 @@ class PlanHelper {
 		return $current_balance;
 	}
 
+	public static function reCalculateEmployeeWellnessBalance($user_id)
+	{
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
+
+		$wallet_reset = DB::table('credit_reset')
+		->where('id', $user_id)
+		->where('user_type', 'employee')
+		->where('spending_type', 'wellness')
+		->orderBy('created_at', 'desc')
+		->first();
+
+		if($wallet_reset) {
+			$wallet_history_id = $wallet_reset->wallet_history_id;
+                // get all medical credits transactions from transaction history
+			$e_claim_spent = DB::table('wellness_wallet_history')
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+                            ->where('wellness_wallet_history.wallet_id', $wallet->wallet_id)
+                            ->where('wellness_wallet_history.where_spend', 'e_claim_transaction')
+                            // ->where('wellness_wallet_history.wellness_wallet_history_id', '>=', $wellness_wallet_history_id)
+							->where('wellness_wallet_history.created_at', '>=', $wallet_reset->date_resetted)
+							->sum('credit');
+
+			$in_network_temp_spent = DB::table('wellness_wallet_history')
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+                            ->where('wellness_wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wellness_wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wellness_wallet_history.where_spend', 'in_network_transaction')
+							// ->where('wellness_wallet_history.wellness_wallet_history_id', '>=', $wellness_wallet_history_id)
+							->where('wellness_wallet_history.created_at', '>=', $wallet_reset->date_resetted)
+							->sum('credit');
+
+			$credits_back = DB::table('wellness_wallet_history')
+							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+                            ->where('wellness_wallet_history.wallet_id', $wallet->wallet_id)
+							->where('wellness_wallet_history.where_spend', 'credits_back_from_in_network')
+							// ->where('wellness_wallet_history.wellness_wallet_history_id', '>=', $wellness_wallet_history_id)
+							->where('wellness_wallet_history.created_at', '>=', $wallet_reset->date_resetted)
+							->sum('credit');
+			$in_network_spent = $in_network_temp_spent - $credits_back;
+
+			$temp_allocation = DB::table('e_wallet')
+			->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+			->where('e_wallet.UserID', $user_id)
+			->whereIn('wellness_wallet_history.logs', ['added_by_hr'])
+			// ->where('wellness_wallet_history.wellness_wallet_history_id',  '>=', $wellness_wallet_history_id)
+			->where('wellness_wallet_history.created_at', '>=', $wallet_reset->date_resetted)
+			->sum('wellness_wallet_history.credit');
+
+			$deducted_allocation = DB::table('e_wallet')
+			->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+			->where('e_wallet.UserID', $user_id)
+			->whereIn('wellness_wallet_history.logs', ['deducted_by_hr'])
+			// ->where('wellness_wallet_history.wellness_wallet_history_id',  '>=', $wellness_wallet_history_id)
+			->where('wellness_wallet_history.created_at', '>=', $wallet_reset->date_resetted)
+			->sum('wellness_wallet_history.credit');
+			$pro_allocation_deduction = DB::table('wellness_wallet_history')
+			->where('wallet_id', $wallet->wallet_id)
+			// ->where('wellness_wallet_history.wellness_wallet_history_id',  '>=', $wellness_wallet_history_id)
+			->where('wellness_wallet_history.created_at', '>=', $wallet_reset->date_resetted)
+			->where('logs', 'pro_allocation_deduction')
+			->sum('credit');
+		} else {
+                // get all medical credits transactions from transaction history
+			$e_claim_spent = DB::table('wellness_wallet_history')
+			->where('wallet_id', $wallet->wallet_id)
+			->where('where_spend', 'e_claim_transaction')
+			->sum('credit');
+
+			$in_network_temp_spent = DB::table('wellness_wallet_history')
+			->where('wallet_id', $wallet->wallet_id)
+			->where('where_spend', 'in_network_transaction')
+			->sum('credit');
+			$credits_back = DB::table('wellness_wallet_history')
+			->where('wallet_id', $wallet->wallet_id)
+			->where('where_spend', 'credits_back_from_in_network')
+			->sum('credit');
+			$in_network_spent = $in_network_temp_spent - $credits_back;
+
+			$temp_allocation = DB::table('e_wallet')
+			->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+			->where('e_wallet.UserID', $user_id)
+			->whereIn('logs', ['added_by_hr'])
+			->sum('wellness_wallet_history.credit');
+
+			$deducted_allocation = DB::table('e_wallet')
+			->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
+			->where('e_wallet.UserID', $user_id)
+			->whereIn('logs', ['deducted_by_hr'])
+			->sum('wellness_wallet_history.credit');
+			$pro_allocation_deduction = DB::table('wellness_wallet_history')
+			->where('wallet_id', $wallet->wallet_id)
+			->where('logs', 'pro_allocation_deduction')
+			->sum('credit');
+		}
+
+
+		$allocation = $temp_allocation - $deducted_allocation - $pro_allocation_deduction;
+		$current_spending = $in_network_spent + $e_claim_spent;
+
+		// $current_balance = $allocation - $current_spending;
+
+		$pro_allocation = DB::table('wellness_wallet_history')
+									->where('wallet_id', $wallet->wallet_id)
+									->where('logs', 'pro_allocation')
+									->sum('credit');
+		$user = DB::table('user')->where('UserID', $user_id)->first();
+
+		if($pro_allocation > 0 && (int)$user->Active == 0) {
+			$allocation = $pro_allocation;
+			$current_balance = $pro_allocation - $current_spending;
+			if($current_balance < 0) {
+				$current_balance = 0;
+			}
+		} else {
+			$current_balance = $allocation - $current_spending;
+		}
+
+		$current_balance = $current_balance >= 0 ? $current_balance : 0;
+        // check and update user wallet
+		if($wallet->balance != $current_balance) {
+			DB::table('e_wallet')->where('UserID', $user_id)->update(['balance' => $current_balance, 'updated_at' => date('Y-m-d h:i:s')]);
+		}
+
+		return $current_balance;
+	}
+
 	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history)
 	{
 		$dependent_plan = DB::table('dependent_plans')
