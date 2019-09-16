@@ -653,7 +653,7 @@ function viewStatement(payment_id, opt) {
       if (opt == "print") {
         setTimeout(function() {
           $("#pdf-print").printElement({
-            pageTitle: data.clinic.Name + " - " + data.payment_record.invoice_number + " ( " + data.due_date.start_date + " - " + data.due_date.end_date + " )"
+            pageTitle: data.clinic.Name + " - " + data.payment_record.invoice_number + " ( " + data.period + " )"
           });
         }, 500);
       } else if ("export-pdf") {
