@@ -2618,10 +2618,10 @@ class TransactionController extends BaseController {
 					'mednefits_credits'			=> number_format($mednefits_credits, 2),
 					'cash'									=> $cash,
 					'procedure_ids'					=> $procedure_ids,
-					'deleted'								=> $trans->deleted == 1 || $trans->deleted == "1" ? TRUE : FALSE,
-					'refunded'							=> $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
+					'deleted'								=> (int)$trans->deleted == 1 ? TRUE : FALSE,
+					'refunded'							=> (int)$trans->refunded == 1 ? TRUE : FALSE,
 					'health_provider'				=> $trans->health_provider_done == 1 || $trans->health_provider_done == "1" || $trans->credit_cost  == 0 || $trans->credit_cost == NULL ? TRUE : FALSE,
-					'transaction_status'		=> $transaction_status,
+					'transaction_status'		=> (int)$trans->deleted == 1 ? $transaction_status : null,
 					'currency_type'				=> $trans->currency_type,
 					'currency_amount'			=> $trans->currency_amount
 				);
