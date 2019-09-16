@@ -21,18 +21,6 @@ class ExtraEvents extends Eloquent implements UserInterface, RemindableInterface
 	 *
 	 * @var array
 	 */
-
-    public function setUpdatedAt($value)
-    {
-      return NULL;
-    }
-
-
-    public function setCreatedAt($value)
-    {
-      return NULL;
-    }
-      
         
       public function insertEvent($dataArray){
 
