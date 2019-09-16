@@ -969,8 +969,8 @@ class Calendar_Library
 				$data_events = new ExtraEvents();
 	            $events = $data_events->getEvents($doctorID, strtotime($date));
 	            $clinic_events = $data_events->findClinicBreaks(strtolower(date('D', strtotime($date))), $clinicdata->Ref_ID);
-	            // array_push($array, array('clinic' => $clinicdata->Ref_ID, 'day' => strtolower(date('D', strtotime($date)))));
-	            // array_push($array, $clinic_events);
+	            // array_push($array, array('doctor_id' => $doctorID, 'day' => strtolower(date('D', strtotime($date)))));
+	            // array_push($array, $events);
 	            if ($events) {
 
 		            foreach ($events as $val) {

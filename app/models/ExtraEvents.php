@@ -22,8 +22,6 @@ class ExtraEvents extends Eloquent implements UserInterface, RemindableInterface
 	 * @var array
 	 */
         
-      
-        
       public function insertEvent($dataArray){
 
              $this->id          = $dataArray['id'];
@@ -77,7 +75,7 @@ class ExtraEvents extends Eloquent implements UserInterface, RemindableInterface
         $events = DB::table('extra_events')
                 ->where('doctor_id', '=', $doctor_id)
                 ->where('date', '=', $date)
-                ->where('type', '=', 3)
+                // ->where('type', '=', 3)
                 ->get();
             //     DB::enableQuerylog();
             // dd(DB::getQueryLog());
