@@ -639,7 +639,7 @@ function viewStatement(payment_id, opt) {
       if (data.payment_record != null) {
         $(".statement_amount_paid").text(data.payment_record.amount_paid);
         $(".statement_invoice_number").text(data.payment_record.invoice_number);
-        $(".statement_amount_total").text(data.total - data.payment_record.amount_paid);
+        $(".statement_amount_total").text(data.ending_balance);
       }
 
       // DUE DATE
