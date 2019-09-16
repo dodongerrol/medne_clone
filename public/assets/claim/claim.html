@@ -3,7 +3,7 @@
 		<!-- content here -->
 		<div class="claim-content">
 			<section class="buttons">
-				<button ng-click="verifyNRIC()" class="buttons-primary mybg-primary btn-nric">Verify User by NRIC</button>
+				<button ng-click="verifyNRIC()" class="buttons-primary mybg-primary btn-nric">Verify User by Mobile Number</button>
 				<button ng-click="manualClaim()" class="buttons-secondary mybg-secondary btn-manual">Manual Claims</button>
 			</section>
 
@@ -21,7 +21,7 @@
 								<thead>
 									<th>Registration Date/Time</th>
 									<th>Name</th>
-									<th>NRIC</th>
+									<!-- <th>NRIC</th> -->
 									<th>Cap Per Visit</th>
 									<th>Remarks</th>
 									<th style="width: 10%;">Option</th>
@@ -30,7 +30,7 @@
 									<tr ng-repeat="list in registration_arr">
 										<td ng-bind="list.registration_date"></td>
 										<td ng-bind="list.name"></td>
-										<td ng-bind="list.nric"></td>
+										<!-- <td ng-bind="list.nric"></td> -->
 										<td>
 											<span ng-bind="list.currency_symbol"></span>
 											<span ng-bind="list.cap_per_visit"></span>
@@ -156,7 +156,7 @@
 									<th>Payment Date/Time</th>
 									<th>Transaction ID</th>
 									<th>Name</th>
-									<th>NRIC</th>
+									<!-- <th>NRIC</th> -->
 									<th>Service</th>
 									<th>Mednefits Fee</th>
 									<th>Mednefits Credit</th>
@@ -172,7 +172,7 @@
 										<td ng-bind="list.claim_date">04 April 2019, 03:57pm</td>
 										<td ng-bind="list.transaction_id">MED013675</td>
 										<td ng-bind="list.user_name">Kum Kin Cheong</td>
-										<td ng-bind="list.NRIC">G8472947H</td>
+										<!-- <td ng-bind="list.NRIC">G8472947H</td> -->
 										<td ng-bind="list.procedure_name">Medicine & Treatment</td>
 										<td>
 											<span ng-if="list.currency_type == 'sgd'">S$<span ng-bind="list.mednefits_fee"></span></span>
@@ -210,7 +210,7 @@
 							<div class="container nric-wrapper">
 								<div class="row">
 									<div class="col-md-11 nric-tittle-wrapper">
-										<h4 class="nric-title">Verify User by NRIC
+										<h4 class="nric-title">Verify User by Mobile Number
 											<i class="fa fa-times" data-dismiss="modal" style="cursor: pointer;float: right;"></i>
 										</h4>
 									</div>
@@ -231,14 +231,14 @@
 											<thead>
 												<tr>
 													<th>Name</th>
-													<th>NRIC</th>
+													<th>Mobile Number</th>
 													<!-- <th>Status</th> -->
 												</tr>
 											</thead>
 											<tbody>
 												<tr ng-repeat="list in users_arr">
 													<td ng-bind="list.name">Alfred</td>
-													<td ng-bind="list.nric">G8472947H</td>
+													<td ng-bind="list.mobile">G8472947H</td>
 													<!-- <td>
 														<span ng-if="list.status == 1">Active</span>
 														<span ng-if="list.status == 0">Inactive</span>
@@ -269,7 +269,8 @@
 										<table class="table-manual">
 											<thead>
 												<tr>
-													<th>NRIC</th>
+													<th>Mobile Number</th>
+													<!-- <th>NRIC</th> -->
 													<th>Service</th>
 													<th>Date of Visit</th>
 													<th>Time of Visit</th>
@@ -279,7 +280,7 @@
 											</thead>
 											<tbody>
 												<tr>
-													<td>
+													<!-- <td>
 														<input class="manual-form" type="text" placeholder="Search NRIC" ng-model="add_claim_data.nric" ng-change="getAllUsers( add_claim_data.nric )">
 														<div ng-if="isSearchNRIC" class="nric-drop">
 															<div class="nric-list" ng-repeat="list in users_nric_arr" ng-click="selectNRIC( list )">
@@ -290,6 +291,28 @@
 																	<p ng-bind="list.name">Lorem Ipsum</p>
 																	<p ng-bind="list.email">email.com</p>
 																	<p ng-bind="list.nric" class="nric">NRIC</p>
+																	<p>
+																		<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 1">Invidual User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 2">Dependent User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 3">Dependent User</span>
+																	</p>
+																</div>
+															</div>
+														</div>
+													</td> -->
+													<td>
+														<input class="manual-form" type="text" placeholder="Search Mobile Number" ng-model="add_claim_data.mobile" ng-change="getAllUsers( add_claim_data.mobile )">
+														<div ng-if="isSearchNRIC" class="nric-drop">
+															<div class="nric-list" ng-repeat="list in users_nric_arr" ng-click="selectNRIC( list )">
+																<div class="img-wrapper">
+																	<img ng-src="{{ list.image }}">
+																</div>
+																<div class="details">
+																	<p ng-bind="list.name">Lorem Ipsum</p>
+																	<p ng-bind="list.email">email.com</p>
+																	<!-- <p ng-bind="list.nric" class="nric">NRIC</p> -->
+																	<p ng-bind="list.mobile" class="mobile">1234</p>
 																	<p>
 																		<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User</span>
 												            <span ng-if="list.user_type == 5 && list.access_type == 1">Invidual User</span>

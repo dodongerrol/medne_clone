@@ -380,6 +380,7 @@ app.directive("claimDirective", [
           scope.searchByNric = function( data ) {
             var data = {
               nric: data,
+              mobile: data,
               start_date: scope.selected_start_date,
               end_date: scope.selected_end_date,
             }

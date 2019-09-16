@@ -77,7 +77,7 @@ input:focus{
 
 .buttons-primary {
   cursor: pointer;
-  width: 300px;
+  width: 15%;
   border: none;
   color: var(--light);
   padding: 15px 35px;
