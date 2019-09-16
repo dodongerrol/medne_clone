@@ -318,6 +318,7 @@ class EclaimController extends \BaseController {
 			}
 		}
 
+<<<<<<< HEAD
 		$user_plan_history = DB::table('user_plan_history')
                   ->where('user_id', $user_id)
                   ->where('type', 'started')
@@ -336,6 +337,17 @@ class EclaimController extends \BaseController {
 			if($input['amount'] > $balance || $balance <= 0) {
 				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 			}
+=======
+		// recalculate employee balance
+		PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+        // check if e-claim can proceed
+		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
+		$balance = round($check_user_balance->wellness_balance, 2);
+		
+		if($input['amount'] > $balance || $balance <= 0) {
+			return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
+		}
+>>>>>>> a3ea85fc8dd7b07cfb8f364b7780fce8f4bcf616
 
 	         // check user pending e-claims amount
 			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
