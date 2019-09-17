@@ -86,8 +86,20 @@
 			</a>
 		</div>
 		<div class="col-sm-12 col-md-12 col-lg-12" id="login-container">
-			<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
-			<h2 class="text-center text-below-image">for member</h2>
+			<div class="login-container-header">
+				<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+				<h2 class="text-center text-below-image">for member</h2>
+			</div>
+			<div class="notification-container">
+				<div>
+					<img src="./assets/images/danger.png">
+				</div>
+				<div>
+					<div class="notification-text">Notification: User ID Change</div>
+					<p>NRIC number and email address will no longer be valid as your user ID. <br>
+					Please click <a class="here-text">here</a> to change your user ID to your mobile number.</p>
+				</div>
+			</div>
 			<form class="med-form" ng-submit="login()">
 				<div class="form-group">
 					<input type="text" name="email" class="form-control med-input" placeholder="Email Address or Mobile Number" ng-model="email" required/>
@@ -109,8 +121,10 @@
 		</div>
 
 		<div class="col-sm-12 col-md-12 col-lg-12" id="forgot-password" hidden>
-			<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
-			<h2 class="text-center text-below-image">for member</h2>
+			<div class="login-container-header">
+				<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+				<h2 class="text-center text-below-image">for member</h2>
+			</div>
 			<form class="med-form" ng-submit="resetPassword()">
 				<div class="form-group">
 					<input type="text" name="email" class="form-control med-input" placeholder="Email Address or Mobile Number" ng-model="login_details.email" required/>
