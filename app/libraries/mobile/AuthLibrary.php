@@ -551,9 +551,23 @@ public static function Forgot_PasswordV2(){
     $email = Input::get ('email');
     $returnObject = new stdClass();
     if(!empty($email)){
-      $findUserID = self::FindUserIDByEmail($email);
-      // return $findUserID;
+      // $findUserID = self::FindUserIDByEmail($email);
+      $findUserID = DB::table('user')->where(function($query) use ($email) {
+                $query->where('Email', $email)
+                ->where('UserType', 5)
+                ->where('Active', 1)
+                ->whereIn('access_type', [1, 0]);
+      })
+      ->orWhere(function($query) use ($email) {
+                $query->where('PhoneNo', (int)$email)
+                ->where('UserType', 5)
+                ->where('Active', 1)
+                ->whereIn('access_type', [1, 0]);
+      })
+      ->first();
+
       if($findUserID){
+        $findUserID = $findUserID->UserID;
         $returnObject->status = TRUE;
             //$returnObject->data['userid'] = $findUserID;
         $returnObject->message = "New password is on the way to your email, check your inbox.";
@@ -572,30 +586,28 @@ public static function Forgot_PasswordV2(){
         $updateArray['Recon'] = 0;
         $updateArray['updated_at'] = date('Y-m-d H:i:s');
         $userUpdated = self::UpdateUserProfile($updateArray);
-        // if($userUpdated){
-      // return "email";
-            $findNewUser = self::FindUserProfile($findUserID);
+        $findNewUser = self::FindUserProfile($findUserID);
 
           if($findNewUser){
               // check type of communication type
               if($findNewUser->communication_type == "email") {
                 $config = StringHelper::Deployment( );
 
-               if($config == 1) {
-                    $data = array(
-                        'email'     => $findNewUser->Email,
-                        'name'      => ucwords($findNewUser->Name),
-                        'context'   => "Forgot your employee password?",
-                        'activeLink'    => $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink
-                    );
-                    $url = "https://api.medicloud.sg/employees/reset_pass";
-                            // $url = "http://localhost:3000/employees/reset_pass";
-                    ApiHelper::resetPassword($data, $url);
-                    $returnObject->status = TRUE;
-                    $returnObject->type = "email";
-                    $returnObject->message = "We’ve sent an email to you with a link to reset your password";
-                    return $returnObject;
-                } else {
+               // if($config == 1) {
+               //      $data = array(
+               //          'email'     => $findNewUser->Email,
+               //          'name'      => ucwords($findNewUser->Name),
+               //          'context'   => "Forgot your employee password?",
+               //          'activeLink'    => $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink
+               //      );
+               //      $url = "https://api.medicloud.sg/employees/reset_pass";
+               //              // $url = "http://localhost:3000/employees/reset_pass";
+               //      ApiHelper::resetPassword($data, $url);
+               //      $returnObject->status = TRUE;
+               //      $returnObject->type = "email";
+               //      $returnObject->message = "We’ve sent an email to you with a link to reset your password";
+               //      return $returnObject;
+               //  } else {
                     $emailDdata['emailName'] = $findNewUser->Name;
                             // $emailDdata['emailPage'] = 'email-templates.reset-password';
                     $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
@@ -611,7 +623,7 @@ public static function Forgot_PasswordV2(){
                     $returnObject->type = "email";
                     $returnObject->message = "We’ve sent an email to you with a link to reset your password";
                     return $returnObject;
-                }
+                // }
               } else {
                   // check phone if valid then send else use email
                   if($findNewUser->PhoneNo) {
@@ -640,17 +652,15 @@ public static function Forgot_PasswordV2(){
                   
               }
           }
-        // }
+        }else{
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Forgot");
+        }
     }else{
         $returnObject->status = FALSE;
-        $returnObject->message = StringHelper::errorMessage("Forgot");
+        $returnObject->message = StringHelper::errorMessage("EmptyValues");
     }
-}else{
-    $returnObject->status = FALSE;
-    $returnObject->message = StringHelper::errorMessage("EmptyValues");
-}
-return $returnObject;
-
+    return $returnObject;
 }
 
 public static function UpdateUserProfile($updateArray){

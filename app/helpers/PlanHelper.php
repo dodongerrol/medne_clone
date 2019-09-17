@@ -4395,7 +4395,7 @@ class PlanHelper {
 						$emailDdata['emailName']= ucwords($user->Name);
 						$emailDdata['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 						$emailDdata['emailTo']= $user->Email;
-						$emailDdata['email']= $user->Email;
+						$emailDdata['email']= $user->PhoneNo;
 						$emailDdata['name']= $user->Name;
 						$emailDdata['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 						$emailDdata['pw'] = $password;
@@ -4433,8 +4433,8 @@ class PlanHelper {
 								$compose['name'] = $user->Name;
 								$compose['company'] = $corporate->company_name;
 								$compose['plan_start'] = date('F d, Y', strtotime($start_date));
-								$compose['email'] = $user->Email;
-								$compose['nric'] = $user->NRIC;
+								$compose['email'] = null;
+								$compose['nric'] = $user->PhoneNo;
 								$compose['password'] = $password;
 								$compose['phone'] = $phone;
 
@@ -4474,8 +4474,8 @@ class PlanHelper {
 							$compose['name'] = $user->Name;
 							$compose['company'] = $corporate->company_name;
 							$compose['plan_start'] = date('F d, Y', strtotime($start_date));
-							$compose['email'] = $user->Email;
-							$compose['nric'] = $user->NRIC;
+							$compose['email'] = null;
+							$compose['nric'] = $user->PhoneNo;
 							$compose['password'] = $password;
 							$compose['phone'] = $phone;
 

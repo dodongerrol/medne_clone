@@ -16,7 +16,7 @@ login.factory("eclaimSettings", function($http, serverUrl) {
   var eclaimFactory = {};
 
   eclaimFactory.resetPassword = function(data) {
-    return $http.post(serverUrl.url + "/v2/auth/forgotpassword", data);
+    return $http.post(serverUrl.url + "v2/auth/forgotpassword", data);
   };
 
   return eclaimFactory;
@@ -86,7 +86,7 @@ login.directive('eclaimLogin', [
 	              scope.password = null;
 	              // $state.go("home");
 	              window.location.href = window.location.origin + '/member-portal#/home';
-                window.localStorage.setItem('token', response.data.token);
+                window.localStorage.setItem('token_member', response.data.token);
 	            } else {
 	              scope.invalid_credentials = true;
 	              swal('Ooops!', response.data.message, 'error');

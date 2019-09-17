@@ -1285,9 +1285,10 @@ public function searchUser( )
   $data = [];
 
   $results = DB::table('user')
-  ->where('NRIC', 'LIKE', '%'.$input['q'].'%')
+  ->where('PhoneNo', 'LIKE', '%'.$input['q'].'%')
+  ->where('UserType', 5)
   ->orderBy('UserID', 'desc')
-  ->select('UserID as id', 'Name as name', 'NRIC as nric', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type', 'Active as status')
+  ->select('UserID as id', 'Name as name', 'PhoneNo as mobile', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type', 'Active as status')
   ->get();
   $data['number_of_results'] = sizeOf($results);
   $data['results'] = $results;

@@ -27,28 +27,19 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
         //User login by Mobile app
         public function authLogin ($email, $password){
-
-            // $users = DB::table('user')
-            //          ->select('UserID')
-            //          ->where('Email', '=', $email)
-            //          ->where('Password', '=', StringHelper::encode($password))
-            //          ->where('Active', '=', 1)
-            //          ->where('UserType', '=', 5)
-            //          // ->orWhere('UserType', '=', 1)
-            //          ->first();
         	  $users = DB::table('user')
                      ->select('UserID')
                      ->where(function($query) use ($email, $password){
-                        $query->where('Email', '=', $email)
-                        ->where('Password', '=', StringHelper::encode($password))
-                        ->where('Active', '=', 1)
-                        ->where('UserType', '=', 5);
+                        $query->where('Email', $email)
+                        ->where('Password', StringHelper::encode($password))
+                        ->where('Active', 1)
+                        ->where('UserType', 5);
                      })
                      ->orWhere(function($query) use ($email, $password){
-                     	  $query->where('NRIC', 'like', '%'.$email.'%')
-                        ->where('Password', '=', StringHelper::encode($password))
-                        ->where('Active', '=', 1)
-                        ->where('UserType', '=', 5);
+                     	  $query->where('PhoneNo', 'like', '%'.(int)$email.'%')
+                        ->where('Password', StringHelper::encode($password))
+                        ->where('Active', 1)
+                        ->where('UserType', 5);
                      })
                      ->first();
 

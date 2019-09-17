@@ -198,7 +198,7 @@ class StringHelper{
                 return FALSE;
             }
 
-            if($result) {
+            if($result && isset($result->UserID)) {
                 $employee = DB::table('user')->where('UserID', $result->UserID)->first();
                 if($employee) {
                     $employee->signed_in = $result->signed_in;

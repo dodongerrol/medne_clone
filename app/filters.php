@@ -342,18 +342,18 @@ Route::filter('auth.jwt_employee', function($request, $response)
         $result = StringHelper::getJwtEmployeeSession();
         if(!$result) {
             // return Redirect::to('company-benefits-dashboard-login');
-            return Response::json('You account was deactivated. Please contact Mednefits Team.', 401, $headers);
+            return Response::json('You have an invalid token. Please login again.', 401, $headers);
         }
 
         // decode and check the properites
         $secret = Config::get('config.secret_key');
         $value = JWT::decode($token, $secret);
 
-        if($value->signed_in == false) {
+        // if($value->signed_in == false) {
             if(time() > $value->expire_in) {
                 return Response::json('Ooops! Your login session has expired. Please login again.', 403, $headers);
             }
-        }
+        // }
 
         $request = Request::instance();
         $ip = $request->getClientIp();
