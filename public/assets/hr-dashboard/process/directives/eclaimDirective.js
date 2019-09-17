@@ -166,6 +166,7 @@
 										    saveAs(content, zipfilename + ".zip");
 											});
 										scope.download_receipts_ctr = 0;
+										$('.download-receipt-message').hide();
 										scope.toggleLoading();
 										$('.download-receipt-message').hide();
 									}, 1000);
@@ -190,6 +191,7 @@
 										    saveAs(content, zipfilename + ".zip");
 											});
 										scope.download_receipts_ctr = 0;
+										$('.download-receipt-message').hide();
 										scope.toggleLoading();
 										$('.download-receipt-message').hide();
 									}, 1000);
