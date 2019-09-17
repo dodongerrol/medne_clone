@@ -639,7 +639,7 @@ function viewStatement(payment_id, opt) {
       if (data.payment_record != null) {
         $(".statement_amount_paid").text(data.payment_record.amount_paid);
         $(".statement_invoice_number").text(data.payment_record.invoice_number);
-        $(".statement_amount_total").text(data.total - data.payment_record.amount_paid);
+        $(".statement_amount_total").text(data.ending_balance);
       }
 
       // DUE DATE
@@ -653,7 +653,7 @@ function viewStatement(payment_id, opt) {
       if (opt == "print") {
         setTimeout(function() {
           $("#pdf-print").printElement({
-            pageTitle: data.clinic.Name + " - " + data.payment_record.invoice_number + " ( " + data.due_date.start_date + " - " + data.due_date.end_date + " )"
+            pageTitle: data.clinic.Name + " - " + data.payment_record.invoice_number + " ( " + data.period + " )"
           });
         }, 500);
       } else if ("export-pdf") {
