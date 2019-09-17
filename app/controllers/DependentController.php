@@ -90,7 +90,7 @@ class DependentController extends \BaseController {
 						$start_date = true;
 					} else if($row == "postal_code") {
 						$postal_code = true;
-					} else if($row == "mobile_area_code") {
+					} else if($row == "mobile_country_code") {
 						$mobile_area_code = true;
 					}
 				}

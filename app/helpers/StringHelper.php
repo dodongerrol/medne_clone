@@ -742,6 +742,8 @@ public static function get_random_password($length)
         {
             $owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $id)->first();
             $user_id = $owner->owner_id;
+        } else {
+            $user_id = $id;
         }
 
         return $user_id;

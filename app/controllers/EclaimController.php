@@ -320,6 +320,8 @@ class EclaimController extends \BaseController {
 			}
 		}
 
+		// recalculate employee balance
+		PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
         // check if e-claim can proceed
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
 		$balance = round($check_user_balance->wellness_balance, 2);

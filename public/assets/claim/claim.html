@@ -117,7 +117,8 @@
 						</div>
 						<div class="filter">
 							<div class="col-md-2 search-wrapper">
-								<input class="search" type="text" placeholder="Search by NRIC" ng-model="searchTrans_text" ng-change="searchNRICchanged( searchTrans_text )">
+								<!-- ng-change="searchNRICchanged( searchTrans_text )" -->
+								<input class="search" type="text" placeholder="Search by Mobile Number" ng-model="searchTrans_text" >
 								<button class="search-icon" ng-click="searchByNric( searchTrans_text );"><i class="fa fa-search" aria-hidden="true"
 										style="font-size:18px; font-weight: 300;"></i></button>
 							</div>
@@ -302,7 +303,7 @@
 														</div>
 													</td> -->
 													<td>
-														<input class="manual-form" type="text" placeholder="Search Mobile Number" ng-model="add_claim_data.mobile" ng-change="getAllUsers( add_claim_data.mobile )">
+														<input class="manual-form" type="text" placeholder="Search Mobile Number" ng-model="add_claim_data.mobile" ng-change="getAllUsers( add_claim_data.mobile )" ng-model-options='{ debounce: 500 }'>
 														<div ng-if="isSearchNRIC" class="nric-drop">
 															<div class="nric-list" ng-repeat="list in users_nric_arr" ng-click="selectNRIC( list )">
 																<div class="img-wrapper">
@@ -314,10 +315,10 @@
 																	<!-- <p ng-bind="list.nric" class="nric">NRIC</p> -->
 																	<p ng-bind="list.mobile" class="mobile">1234</p>
 																	<p>
-																		<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User</span>
+																		<span ng-if="list.user_type == 5 && list.access_type == 0">Corporate User - <span ng-bind="list.company_name"></span></span>
 												            <span ng-if="list.user_type == 5 && list.access_type == 1">Invidual User</span>
-												            <span ng-if="list.user_type == 5 && list.access_type == 2">Dependent User</span>
-												            <span ng-if="list.user_type == 5 && list.access_type == 3">Dependent User</span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 2">Dependent User - <span ng-bind="list.company_name"></span></span>
+												            <span ng-if="list.user_type == 5 && list.access_type == 3">Dependent User - <span ng-bind="list.company_name"></span></span>
 																	</p>
 																</div>
 															</div>
@@ -397,7 +398,7 @@
 														<span ng-if="clinic.currency_type == 'myr'" class="SgDollar myColor-secondary">RM</span>
 													</td>
 													<td>
-														<button ng-disabled="!add_claim_data.nric || add_claim_data.selected_service_ids.length == 0 || !add_claim_data.visit_time" class="btn btn-lg" ng-click="checkClaim()">Submit</button>
+														<button ng-disabled="!add_claim_data.mobile || add_claim_data.selected_service_ids.length == 0 || !add_claim_data.visit_time" class="btn btn-lg" ng-click="checkClaim()">Submit</button>
 													</td>
 												</tr>
 											</tbody>
@@ -487,10 +488,10 @@
 			        			<label>Member</label>
 			        			<p ng-bind="selected_submit_data.name">Terinn Teo</p>
 			        		</div>
-			        		<div class="column-details">
+			        		<!-- <div class="column-details">
 			        			<label>NRIC</label>
 			        			<p ng-bind="selected_submit_data.nric">S345D3</p>
-			        		</div>
+			        		</div> -->
 			        		<div class="column-details">
 			        			<label>Payment Type</label>
 			        			<p>Cash</p>

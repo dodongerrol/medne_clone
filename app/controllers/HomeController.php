@@ -1285,10 +1285,11 @@ public function searchUser( )
   $data = [];
 
   $results = DB::table('user')
-  ->where('PhoneNo', 'LIKE', '%'.$input['q'].'%')
+  ->where('PhoneNo', 'LIKE', '%'.(int)$input['q'].'%')
   ->where('UserType', 5)
   ->orderBy('UserID', 'desc')
   ->select('UserID as id', 'Name as name', 'PhoneNo as mobile', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type', 'Active as status')
+  ->orderBy('UserID')
   ->get();
   $data['number_of_results'] = sizeOf($results);
   $data['results'] = $results;
@@ -1305,10 +1306,11 @@ public function getAllUsers( )
   $getSessionData = StringHelper::getMainSession(3);
   $clinic_id = $getSessionData->Ref_ID;
   $results = DB::table('user')
-  ->where('NRIC', 'LIKE', '%'.$input['q'].'%')
+  ->where('PhoneNo', 'LIKE', '%'.$input['q'].'%')
   ->where('Active', 1)
   ->orderBy('UserType', 'desc')
   ->select('UserID as id', 'Name as name', 'NRIC as nric', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type')
+  ->orderBy('UserID')
   ->get();
   
   foreach ($results as $key => $user) {
@@ -1316,6 +1318,15 @@ public function getAllUsers( )
     $block = PlanHelper::checkCompanyBlockAccess($user->id, $clinic_id);
 
     if(!$block) {
+      $user_id = StringHelper::getUserId($user->id);
+      $customer_id = PlanHelper::getCustomerId($user_id);
+
+      if($customer_id) {
+        $info = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
+        if($info) {
+          $user->company_name = ucwords($info->company_name);
+        }
+      }
       $format[] = $user;
     }
   }
