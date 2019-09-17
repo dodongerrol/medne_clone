@@ -16,7 +16,7 @@ login.factory("eclaimSettings", function($http, serverUrl) {
   var eclaimFactory = {};
 
   eclaimFactory.resetPassword = function(data) {
-    return $http.post(serverUrl.url + "/v2/auth/forgotpassword", data);
+    return $http.post(serverUrl.url + "v2/auth/forgotpassword", data);
   };
 
   return eclaimFactory;
