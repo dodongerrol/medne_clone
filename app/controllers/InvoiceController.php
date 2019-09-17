@@ -1016,7 +1016,7 @@ class InvoiceController extends \BaseController {
     	$amount_due = number_format(0, 2);
     }
     $transactions['amount_due'] = $amount_due;
-
+    $transactions['ending_balance'] = number_format($mednefits_total_fee - $get_payment_record->amount_paid, 2);
 	 //    foreach ($statement_data['transactions']  as $key => $value_2) {
 	 //    	$trans = DB::table('transaction_history')->where('transaction_id', $value_2->transaction_id)
 	 //    						->where('paid', 1)->where('deleted', 0)->first();

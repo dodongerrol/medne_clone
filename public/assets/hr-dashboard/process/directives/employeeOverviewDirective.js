@@ -993,7 +993,6 @@ app.directive("employeeOverviewDirective", [
               swal( 'Error!', 'Please click the calcultate button first.', 'error' );
               return false;
             }else{
-              iti2.destroy();
               $('.health-spending-account-wrapper').fadeIn();
               $('.account-summary-wrapper').hide();
               scope.reset();
