@@ -127,7 +127,7 @@ class EmployeeController extends \BaseController {
        	}
 
         $details['dependents'] = $dependents;
-        return array('status' => true 'data' => $details);
+        return array('status' => true, 'data' => $details);
 	}
 
 	public function updateEmployeeDetails( )
@@ -137,6 +137,18 @@ class EmployeeController extends \BaseController {
 
 		if(!$token) {
 			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		if(empty($input['dob']) || $input['dob'] == null) {
+			return array('status' => false, 'message' => 'DOB is required.');
+		}
+
+		if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+			return array('status' => false, 'message' => 'Mobile Country Code is required.');
+		}
+
+		if(empty($input['mobile']) || $input['mobile'] == null) {
+			return array('status' => false, 'message' => 'Mobile Phone is required.');
 		}
 
 		$secret = Config::get('config.secret_key');
