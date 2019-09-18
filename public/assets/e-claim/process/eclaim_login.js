@@ -40,6 +40,42 @@ login.directive('eclaimLogin', [
         scope.new_password_error = false;
         scope.password_success = false;
 
+
+        scope.deviceOs = null;
+        scope.getOs = function(){
+          var userAgent = window.navigator.userAgent,
+              platform = window.navigator.platform,
+              macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+              windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+              iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+              os = null;
+
+          if (macosPlatforms.indexOf(platform) !== -1) {
+            os = 'Mac OS';
+          } else if (iosPlatforms.indexOf(platform) !== -1) {
+            os = 'iOS';
+          } else if (windowsPlatforms.indexOf(platform) !== -1) {
+            os = 'Windows';
+          } else if (/Android/.test(userAgent)) {
+            os = 'Android';
+          } else if (!os && /Linux/.test(platform)) {
+            os = 'Linux';
+          }
+
+          // return os;
+          scope.deviceOs = os;
+        }
+
+        scope.getOs();
+
+        scope.goToUpdateDetails = function(){
+          if( scope.deviceOs == 'iOS' ){
+            window.location.assign( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          }else{
+            window.open( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          }
+        }
+
         scope.changePassword = function( data ){
           if( data.new_password == data.new_password2 ){
             scope.new_password_error = false;

@@ -97,7 +97,7 @@
 				<div>
 					<div class="notification-text">Notification: User ID Change</div>
 					<p>NRIC number and email address will no longer be valid as your user ID. <br>
-					Please click <a class="here-text">here</a> to change your user ID to your mobile number.</p>
+					Please click <a class="here-text" ng-click="goToUpdateDetails()">here</a> to change your user ID to your mobile number.</p>
 				</div>
 			</div>
 			<form class="med-form" ng-submit="login()">
