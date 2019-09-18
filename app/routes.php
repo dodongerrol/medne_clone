@@ -76,6 +76,14 @@ Route::get('config/notification', 'HomeController@getNotificationConfig');
 // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
+// EMPLOYEE UPDATE EXERCISES
+Route::group(array('prefix' => 'exercise'), function()
+{
+	Route::post('validate_member', 'EmployeeController@validateMember');
+	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
+});
+
+
 Route::get('app/e_claim', 'HomeController@oldeClaim');
 Route::get('member-portal-login', 'HomeController@eClaimLogin');
 Route::get('member-portal', 'HomeController@eClaimHome');
