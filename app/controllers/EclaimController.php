@@ -809,13 +809,15 @@ class EclaimController extends \BaseController {
 				$allocation = DB::table('e_wallet')
 				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
 				->where('e_wallet.UserID', $user_id)
-				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				->where($table_wallet_history.".created_at", '>=', $wallet_start_date)
 				->where($table_wallet_history.'.logs', 'added_by_hr')
 				->sum($table_wallet_history.'.credit');
 
 				$deducted_allocation = DB::table('e_wallet')
 				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				->where($table_wallet_history.".created_at", '>=', $wallet_start_date)
 				->where('e_wallet.UserID', $user_id)
 				->where('logs', 'deducted_by_hr')
 				->sum($table_wallet_history.'.credit');
@@ -828,6 +830,7 @@ class EclaimController extends \BaseController {
 
 				$deducted_allocation = DB::table('e_wallet')
 				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
 				->where('e_wallet.UserID', $user_id)
 				->where('logs', 'deducted_by_hr')
 				->sum($table_wallet_history.'.credit');
@@ -846,17 +849,17 @@ class EclaimController extends \BaseController {
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
 		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
+		->where('created_at', '<=', $spending_end_date)
 		->orderBy('created_at', 'desc')
 		->get();
         // get in-network transactions
 		$transactions = DB::table('transaction_history')
 		->whereIn('UserID', $ids)
 		->where('spending_type', $spending_type)
-		->where('date_of_transaction', '>=', $start)
-		->where('date_of_transaction', '<=', $end)
+		->where('created_at', '>=', $start)
+		->where('created_at', '<=', $spending_end_date)
 		->where('paid', 1)
-		->orderBy('date_of_transaction', 'desc')
+		->orderBy('created_at', 'desc')
 		->get();
 		foreach ($transactions as $key => $trans) {
 			if($trans) {
@@ -903,7 +906,6 @@ class EclaimController extends \BaseController {
 							$total_lite_plan_consultation += floatval($trans->consultation_fees);
 						}
 					}
-
 				} else {
 					$total_deleted_in_network_transactions++;
 					if((int)$trans->lite_plan_enabled == 1) {
