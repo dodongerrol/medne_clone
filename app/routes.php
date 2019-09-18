@@ -979,7 +979,7 @@ Route::group(array('prefix' => 'v2'), function()
 		    // get clinic details from qr code
 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
 		    // check user pin
-		    Route::post('clinic/send_payment', 'Api_V1_AuthController@payCredits');
+		    Route::post('clinic/send_payment', 'Api_V1_TransactionController@payCredits');
 		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
 		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
 		    // send notification to clinic when customer will pay directly to clinic
