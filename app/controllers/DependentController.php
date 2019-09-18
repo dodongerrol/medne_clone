@@ -296,7 +296,7 @@ class DependentController extends \BaseController {
 						'dob'					=> $user['dob'],
 						'email'					=> $user['email'],
 						'mobile'				=> trim($mobile),
-						'mobile_area_code'		=> trim($user['mobile_area_code']),
+						'mobile_area_code'		=> trim($user['mobile_country_code']),
 						'job_title'				=> $user['job_title'],
 						'credits'				=> !$user['medical_credits'] ? 0 : $user['medical_credits'],
 						'wellness_credits'		=> !$user['wellness_credits'] ? 0 : $user['wellness_credits'],

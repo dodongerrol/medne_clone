@@ -7818,15 +7818,18 @@ public function generateMonthlyCompanyInvoice( )
 	{
 		$input = Input::all();
 
-		$check = DB::table('user')->where('UserType', 5)->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
-		if($check) {
-			Session::put('employee-session', $check->UserID);
+		// $check = DB::table('user')->where('UserType', 5)->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
+		// if($check) {
+			// Session::put('employee-session', $check->UserID);
+			$data['token'] = $input['token'];
 			if(isset($input['admin_id']) || $input['admin_id'] != null) {
 				Session::put('admin-session-id', $input['admin_id']);
 			}
-	    	return Redirect::to('member-portal/#/home');
+
+			return View::make('Eclaim.login_member_via_token', $data);
+	    	// return Redirect::to('member-portal/#/home');
 	            // return array('status' => TRUE, 'message' => 'Success.');
-		}
+		// }
 
 		return array('status' => FALSE, 'message' => 'Invalid Credentials.');
 	}
