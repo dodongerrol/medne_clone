@@ -127,8 +127,8 @@ h3.tooltip-phone-email-details {
 }
 
 .mobile-exercise-form-container p {
-  font-size: 15px;
-  font-family: sans-serif;
+  font-size: 18px;
+  font-family: 'Helvetica';
   margin: 0 0 30px;
 }
 
@@ -138,7 +138,7 @@ h3.tooltip-phone-email-details {
 }
 
 .mobile-exercise-form-container input {
-  border: 1px solid #ccc;
+  border: 1px solid #A0A0A0;
   width: 100%;
   border-radius: 4px;
   color: #555;
@@ -150,8 +150,8 @@ h3.tooltip-phone-email-details {
 
 .mobile-exercise-form-container label {
   color: #777;
-  font-size: 14px;
-  font-family: sans-serif;
+  font-size: 18px;
+  font-family: 'Helvetica';
   margin: 0 0 10px;
   display: block;
 }
@@ -165,10 +165,11 @@ h3.tooltip-phone-email-details {
 }
 
 .mobile-exercise-btn-footer >button {
+  font-family: 'Helvetica';
   display: block;
   color: #fff;
   height: 60px;
-  font-size: 16px;
+  font-size: 18px;
   border-radius: 4px;
   width: 100%;
   margin: 0 0 20px;
@@ -208,7 +209,7 @@ h3.tooltip-phone-email-details {
   position: absolute;
   right: 10px;
   top: 20px;
-  color: #777;
+  color: #A0A0A0;
 }
 
 .country-code-input-wrapper >input {
@@ -216,8 +217,8 @@ h3.tooltip-phone-email-details {
 } 
 
 .mobile-exercise-dependent-container .dependent-name-container {
-  font-family: sans-serif;
-  font-size: 14px;
+  font-family: 'Helvetica';
+  font-size: 18px;
   margin: 0 0 20px;
 }
 
