@@ -1936,6 +1936,8 @@ public function getNewClinicDetails($id)
         $jsonArray['clinic_price'] = $clprice;
         $jsonArray['member'] = ucwords($user->Name);
         $jsonArray['nric'] = $user->NRIC;
+        $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
+        $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
         $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
         // check if employee has plan tier cap
