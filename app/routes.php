@@ -76,6 +76,15 @@ Route::get('config/notification', 'HomeController@getNotificationConfig');
 // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
+// EMPLOYEE UPDATE EXERCISES
+Route::group(array('prefix' => 'exercise'), function()
+{
+	Route::post('validate_member', 'EmployeeController@validateMember');
+	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
+	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
+});
+
+
 Route::get('app/e_claim', 'HomeController@oldeClaim');
 Route::get('member-portal-login', 'HomeController@eClaimLogin');
 Route::get('member-portal', 'HomeController@eClaimHome');
@@ -979,7 +988,7 @@ Route::group(array('prefix' => 'v2'), function()
 		    // get clinic details from qr code
 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
 		    // check user pin
-		    Route::post('clinic/send_payment', 'Api_V1_AuthController@payCredits');
+		    Route::post('clinic/send_payment', 'Api_V1_TransactionController@payCredits');
 		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
 		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
 		    // send notification to clinic when customer will pay directly to clinic

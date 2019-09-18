@@ -30,13 +30,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         	  $users = DB::table('user')
                      ->select('UserID')
                      ->where(function($query) use ($email, $password){
-                        $query->where('Email', $email)
+                        return $query->where('Email', $email)
                         ->where('Password', StringHelper::encode($password))
                         ->where('Active', 1)
                         ->where('UserType', 5);
                      })
                      ->orWhere(function($query) use ($email, $password){
-                     	  $query->where('PhoneNo', 'like', '%'.(int)$email.'%')
+                     	return $query->where('PhoneNo', $email)
                         ->where('Password', StringHelper::encode($password))
                         ->where('Active', 1)
                         ->where('UserType', 5);
@@ -44,7 +44,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                      ->first();
 
             if($users){
-                //print_r($users);
                 return $users->UserID;
             }else{
                 return false;

@@ -1070,10 +1070,10 @@ class PlanHelper {
 		} else {
 			// check mobile number
 			$check_mobile = DB::table('user')
-												->where('UserType', 5)
-												->where('PhoneNo', $user['mobile'])
-												->where('Active', 1)
-												->first();
+								->where('UserType', 5)
+								->where('PhoneNo', $user['mobile'])
+								->where('Active', 1)
+								->first();
 			if($check_mobile) {
 				$mobile_error = true;
 				$mobile_message = '*Mobile Phone No already taken.';
@@ -1120,9 +1120,9 @@ class PlanHelper {
 			$full_name_message = '';
 		}
 
-		if(is_null($user['mobile_area_code'])) {
+		if(isset($user['mobile_area_code']) && is_null($user['mobile_area_code']) || isset($inpt['mobile_country_code']) && is_null($user['mobile_country_code'])) {
 			$mobile_area_error = true;
-			$mobile_area_message = '*Country Code is empty';
+			$mobile_area_message = '*Mobile Country Code is empty';
 		} else {
 			$mobile_area_error = false;
 			$mobile_area_message = '';
