@@ -4284,7 +4284,39 @@ class BenefitsDashboardController extends \BaseController {
 		$paginate['last_page'] = $active_plans->getLastPage();
 		$paginate['per_page'] = $active_plans->getPerPage();
 		$paginate['to'] = $active_plans->getTo();
-		$paginate['total'] = $active_plans->getTotal();
+		$added = 0;
+
+		$all_active_plans = DB::table('customer_active_plan')
+		->where('customer_start_buy_id', $result->customer_buy_start_id)
+		->get();
+
+		foreach ($all_active_plans as $key => $plan) {
+			if((int)$plan->plan_extention_enable == 1) {
+				// get plan extention
+				$extention = DB::table('plan_extensions')
+				->where('customer_active_plan_id', $plan->customer_active_plan_id)
+				->first();
+
+				if($extention->enable == 1 && $extention->active == 1) {
+					$invoice_plan_link = DB::table('plan_extension_plan_invoice')
+					->where('plan_extension_id', $extention->plan_extention_id)
+					->first();
+					if($invoice_plan_link) {
+						$invoice = DB::table('corporate_invoice')
+						->where('corporate_invoice_id', $invoice_plan_link->invoice_id)
+						->first();
+						if($invoice) {
+							$added++;
+						}
+					}
+				}
+			}
+
+			$added += DB::table('dependent_plans')
+							->where('customer_active_plan_id', $plan->customer_active_plan_id)
+							->where('tagged', 0)
+							->count();
+		}
 
 		foreach ($active_plans as $key => $plan) {
 			$data = [];
@@ -4508,8 +4540,10 @@ class BenefitsDashboardController extends \BaseController {
 				array_push($transactions, $temp_invoice);
 			}
 		}
-
+		// return $added;
+		$paginate['total'] = $active_plans->getTotal() + $added;
 		$paginate['data'] = $transactions;
+		$paginate['added'] = $added;
 		return $paginate;
 		// $new_transactions = array_merge($transactions, $statements);
 	}
