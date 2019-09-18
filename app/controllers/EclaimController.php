@@ -830,7 +830,7 @@ class EclaimController extends \BaseController {
 
 				$deducted_allocation = DB::table('e_wallet')
 				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
 				->where('e_wallet.UserID', $user_id)
 				->where('logs', 'deducted_by_hr')
 				->sum($table_wallet_history.'.credit');
@@ -1311,7 +1311,12 @@ class EclaimController extends \BaseController {
 		}
 
 		 if($customer_active_plan->account_type != "super_pro_plan") {
-		 	$balance = number_format($balance, 2);
+		 	if($spending_type == "medical") {
+		 		$balance = number_format($wallet->balance, 2);
+		 	} else {
+		 		$balance = number_format($wallet->wellness_balance, 2);
+		 	}
+		 	// $balance = number_format($balance, 2);
 		 } else {
 		 	$balance = 'UNLIMITED';
 		 }
