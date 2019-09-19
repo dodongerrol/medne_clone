@@ -2006,17 +2006,9 @@ class PlanHelper {
 				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
 				$wallet_history = DB::table('wallet_history')
 								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
-								
-								// ->where(function($query) use ($wallet_history_id, $wallet_id, $user_id){
-								// 	$query->where('wallet_history.wallet_id', $wallet_id)
-								// 	->where('e_wallet.UserID', $user_id)
-								// 	->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id);
-								// })
-								// ->orWhere(function($query) use ($start, $wallet_id, $user_id){
-									->where('wallet_history.wallet_id', $wallet_id)
-									->where('e_wallet.UserID', $user_id)
-									->where('wallet_history.created_at',  '>=', $start)
-								// })
+								->where('wallet_history.wallet_id', $wallet_id)
+								->where('e_wallet.UserID', $user_id)
+								->where('wallet_history.created_at',  '>=', $start)
 								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet_id)->get();
@@ -2049,8 +2041,8 @@ class PlanHelper {
 			->where('logs', 'pro_allocation')
 			->sum('credit');
 
-			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
-			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
+			$get_allocation_spent_temp = $in_network_temp_spent + $e_claim_spent;
+			$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
 			$medical_balance = 0;
 
 			if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {

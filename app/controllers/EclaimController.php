@@ -777,7 +777,7 @@ class EclaimController extends \BaseController {
 		$spending_end_date = PlanHelper::endDate($input['end']);
 		if($wallet_reset) {
 			$wallet_history_id = $wallet_reset->wallet_history_id;
-			$wallet_start_date = $wallet_reset;
+			$wallet_start_date = $wallet_reset->date_resetted;
 	        // get credits allocation
 			$allocation = DB::table('e_wallet')
 			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
@@ -860,7 +860,7 @@ class EclaimController extends \BaseController {
 						->where('id', $trans->transaction_id)
 						->first();
 
-						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
+						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0 || $logs_lite_plan && $trans->credit_cost == 0 && (int)$trans->lite_plan_use_credits == 0) {
 							$in_network_spent += floatval($logs_lite_plan->credit);
 							$consultation_fees = floatval($logs_lite_plan->credit);
 							$total_lite_plan_consultation += floatval($logs_lite_plan->credit);
@@ -886,10 +886,10 @@ class EclaimController extends \BaseController {
 						->where('id', $trans->transaction_id)
 						->first();
 
-						if($trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits === 0 || $trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
+						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0 || $logs_lite_plan && $trans->credit_cost == 0 && (int)$trans->lite_plan_use_credits == 0) {
 							$consultation_credits = true;
 							$service_credits = true;
-						} else if($trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits === 1 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
+						} else if($trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits == 1){
 							$consultation_credits = true;
 							$service_credits = true;
 						}
@@ -958,10 +958,10 @@ class EclaimController extends \BaseController {
 				}
 				$refund_text = 'NO';
 
-				if((int)$trans->refunded == 1 && (int)$trans->deleted == 1 || $trans->refunded == "1" && $trans->deleted == "1") {
+				if((int)$trans->refunded == 1 && (int)$trans->deleted == 1) {
 					$status_text = 'REFUNDED';
 					$refund_text = 'YES';
-				} else if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 1 || $trans->health_provider_done == "1" && $trans->deleted == "1") {
+				} else if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 1) {
 					$status_text = 'REMOVED';
 					$refund_text = 'YES';
 				} else {
