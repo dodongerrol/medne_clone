@@ -72,8 +72,6 @@ app.directive("mobileExerciseDirective", [
         }
 
         scope.validateDepDOB = function( list, data ){
-          console.log( list );
-          console.log( data );
           if( data.length <= 1 ){
             list.isBackspaceActive = false;
           }
