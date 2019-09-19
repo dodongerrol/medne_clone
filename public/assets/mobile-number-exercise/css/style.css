@@ -212,7 +212,7 @@ h3.tooltip-phone-email-details {
 
 .mobile-exercise-form-container p {
   font-size: 18px;
-  font-family: 'Helvetica';
+  font-family: 'Helvetica Light';
   margin: 0 0 30px;
 }
 
@@ -235,7 +235,7 @@ h3.tooltip-phone-email-details {
 .mobile-exercise-form-container label {
   color: #777;
   font-size: 18px;
-  font-family: 'Helvetica';
+  font-family: 'Helvetica Light';
   margin: 0 0 10px;
   display: block;
 }
@@ -250,7 +250,7 @@ h3.tooltip-phone-email-details {
 }
 
 .mobile-exercise-btn-footer >button {
-  font-family: 'Helvetica';
+  font-family: 'Helvetica Light';
   display: block;
   color: #fff;
   height: 60px;
@@ -302,7 +302,7 @@ h3.tooltip-phone-email-details {
 } 
 
 .mobile-exercise-dependent-container .dependent-name-container {
-  font-family: 'Helvetica';
+  font-family: 'Helvetica Light';
   font-size: 18px;
   margin: 0 0 20px;
 }
