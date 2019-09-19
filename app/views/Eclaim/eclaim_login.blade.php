@@ -29,6 +29,18 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/e-claim/css/pre-loader.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/sweetalert.css?_={{ $date->format('U') }}">
 
+	<style type="text/css">
+		/* For Firefox */
+		input.mobile-num-input {
+		    -moz-appearance:textfield;
+		}
+		/* Webkit browsers like Safari and Chrome */
+		input.mobile-num-input::-webkit-inner-spin-button,
+		input.mobile-num-input::-webkit-outer-spin-button {
+		    -webkit-appearance: none;
+		    margin: 0;
+		}
+	</style>
 </head>
 <body eclaim-login>
 	<!-- <div class="container">
@@ -102,7 +114,7 @@
 			</div>
 			<form class="med-form" ng-submit="login()">
 				<div class="form-group">
-					<input type="text" name="email" class="form-control med-input" placeholder="Mobile Number" ng-model="email" required/>
+					<input type="number" name="email" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" required/>
 				</div>
 				<div class="form-group">
 					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" required style="margin-bottom: 15px">

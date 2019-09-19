@@ -1,5 +1,5 @@
 var app = angular.module("app", ['ui.router',]);
-window.base_url = window.location.origin + "/app/";
+window.base_url = window.location.origin + "/";
 
 
 app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $httpProvider, $compileProvider){
@@ -17,6 +17,41 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
     $urlRouterProvider.otherwise('/');
 });
 
+app.directive('validNumber', function() {
+  return {
+    require: '?ngModel',
+    link: function(scope, element, attrs, ngModelCtrl) {
+      if(!ngModelCtrl) {
+        return; 
+      }
+
+      ngModelCtrl.$parsers.push(function(val) {
+        if (angular.isUndefined(val)) {
+            var val = '';
+        }
+        var clean = val.replace(/[^0-9\./]\s/g, '');
+        var decimalCheck = clean.split('.');
+
+        if(!angular.isUndefined(decimalCheck[1])) {
+            decimalCheck[1] = decimalCheck[1].slice(0,2);
+            clean =decimalCheck[0] + '.' + decimalCheck[1];
+        }
+
+        if (val !== clean) {
+          ngModelCtrl.$setViewValue(clean);
+          ngModelCtrl.$render();
+        }
+        return clean;
+      });
+
+      element.bind('keypress', function(event) {
+        if(event.keyCode === 32) {
+          event.preventDefault();
+        }
+      });
+    }
+  };
+});
 
 
 app.filter("cmdate", [
@@ -29,6 +64,7 @@ app.filter("cmdate", [
     };
   }
 ]);
+
 // app.factory('AuthToken', function($window){
 //   var authTokenFactory = {};
 //   authTokenFactory.getToken = function( ) {
@@ -110,38 +146,3 @@ app.filter("cmdate", [
 //     }
 //   };
 // });
-app.directive('validNumber', function() {
-  return {
-    require: '?ngModel',
-    link: function(scope, element, attrs, ngModelCtrl) {
-      if(!ngModelCtrl) {
-        return; 
-      }
-
-      ngModelCtrl.$parsers.push(function(val) {
-        if (angular.isUndefined(val)) {
-            var val = '';
-        }
-        var clean = val.replace(/[^0-9\.]/g, '');
-        var decimalCheck = clean.split('.');
-
-        if(!angular.isUndefined(decimalCheck[1])) {
-            decimalCheck[1] = decimalCheck[1].slice(0,2);
-            clean =decimalCheck[0] + '.' + decimalCheck[1];
-        }
-
-        if (val !== clean) {
-          ngModelCtrl.$setViewValue(clean);
-          ngModelCtrl.$render();
-        }
-        return clean;
-      });
-
-      element.bind('keypress', function(event) {
-        if(event.keyCode === 32) {
-          event.preventDefault();
-        }
-      });
-    }
-  };
-});

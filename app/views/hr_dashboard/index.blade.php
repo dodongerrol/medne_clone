@@ -26,7 +26,7 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/font-awesome.min.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/jquery.toast.min.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bootstrap-datepicker.min.css?_={{ $date->format('U') }}">
-	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/daterangepicker.css?_={{ $date->format('U') }}">
+	<!-- <link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/daterangepicker.css?_={{ $date->format('U') }}"> -->
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/sweetalert.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/intlTelInput.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/css/offline-theme-default.css?_={{ $date->format('U') }}">

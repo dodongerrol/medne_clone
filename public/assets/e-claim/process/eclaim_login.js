@@ -69,11 +69,12 @@ login.directive('eclaimLogin', [
         scope.getOs();
 
         scope.goToUpdateDetails = function(){
-          if( scope.deviceOs == 'iOS' ){
-            window.location.assign( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
-          }else{
-            window.open( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
-          }
+          // if( scope.deviceOs == 'iOS' ){
+          //   window.location.assign( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          // }else{
+          //   window.open( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          // }
+          window.location.href = serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase();
         }
 
         scope.changePassword = function( data ){

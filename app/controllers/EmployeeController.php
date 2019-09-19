@@ -105,6 +105,7 @@ class EmployeeController extends \BaseController {
         $member = DB::table('user')->where('UserID', $member_id)->first();
 
         $details = array(
+        	'name'			=> ucwords($member->Name),
         	'dob' => date('d/m/Y', strtotime($member->DOB)),
         	'mobile' => $member->PhoneNo,
         	'mobile_country_code' => $member->PhoneCode
@@ -122,6 +123,7 @@ class EmployeeController extends \BaseController {
 
        		$dependents[] = array(
        			'dependent_id' 	=> $dependent->user_id,
+       			'name'			=> ucwords($user->Name),
        			'dob'			=> date('d/m/Y', strtotime($user->DOB))
        		);
        	}

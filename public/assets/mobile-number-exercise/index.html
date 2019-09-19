@@ -24,62 +24,61 @@
 				<div class="mobile-exercise-form-container">
 
 					<div class="">
-						<p style="display: none;">If you are Mednefits member, please enter your NRIC/FIN and password and click Submit.</p>
-						<p >Please provide your information below to start using Mednefits</p>
-						<p style="display: none;" class="thank-you-text">Thank you, your information have been updated! You may now login using your new user ID.</p>
+						<p ng-if="step == 1">If you are Mednefits member, please enter your NRIC/FIN and password and click Submit.</p>
+						<p ng-if="step == 2">Please provide your information below to start using Mednefits</p>
+						<p ng-if="step == 3" class="thank-you-text">Thank you, your information have been updated! You may now login using your new user ID.</p>
 					</div>
 
 					<div>
-						<div class="nric-fin-password-container" style="display: none;">
-							<div class="mobile-exercise-input-wrapper">
-								<input type="text" placeholder="NRIC/FIN">
-							</div>
-							<div class="mobile-exercise-input-wrapper">
-								<input type="text" placeholder="Password">
-							</div>
+						<div ng-if="step == 1" class="nric-fin-password-container" >
+							<form ng-submit="submitNric( nric_data )">
+								<div class="mobile-exercise-input-wrapper">
+									<input type="text" placeholder="NRIC/FIN" ng-model="nric_data.nric">
+								</div>
+								<div class="mobile-exercise-input-wrapper">
+									<input type="password" placeholder="Password" ng-model="nric_data.password">
+								</div>
+								<input type="submit" style="position: absolute;left: -999999px">
+							</form>
 						</div>
 						
-						<div class="date-birth-mobile-container">
+						<div ng-if="step == 2" class="date-birth-mobile-container">
 							<div class="mobile-exercise-input-wrapper">
 								<label>Date of Birth</label>
-								<input type="text" placeholder="DD / MM / YYYY">
+								<input type="text" class="datepicker emp-dob" placeholder="DD / MM / YYYY" ng-model="member_details.dob" ng-change="validateEmpDOB( member_details.dob )" ng-class="{'error' : emp_dob_error}">
+								<span ng-if="emp_dob_error" class="err-msg" ng-bind="emp_dob_error_message"></span>
 							</div>
-							<div class="mobile-exercise-input-wrapper">
+							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error}">
 								<label>Mobile Number</label>
-								<div class="country-code-input-wrapper">
-									<div>
-										<input type="text">
-										<i class="fa fa-caret-down" aria-hidden="true"></i>
-									</div>
-									<input type="text" placeholder="">
-								</div>
+								<input valid-number id="area_code" type="text"  ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
+								<span ng-if="emp_mobile_error" class="err-msg" ng-bind="emp_mobile_error_message"></span>
 							</div>
 						</div>
 
-						<div class="mobile-exercise-dependent-wrapper">
+						<div ng-if="step == 2" class="mobile-exercise-dependent-wrapper">
 							<div>
 								<p>Please provide your dependents' information below to start using Mednefits.</p>
 							</div>
 							<div class="mobile-exercise-dependent-container">
-								<div>
+								<div ng-repeat="list in member_details.dependents">
 									<div class="dependent-name-container">
-										<span>Dependent <span>1</span></span>:
-										<span>Joy Ng</span>
+										<span>Dependent <span>{{ index + 1 }}</span></span>:
+										<span ng-bind="list.name">Joy Ng</span>
 									</div>
 									<div class="mobile-exercise-input-wrapper">
 										<label>Date of Birth</label>
-										<input type="text" placeholder="DD / MM / YYYY">
+										<input type="text" class="dep-datepicker"  placeholder="DD / MM / YYYY" ng-model="list.dob" ng-change="validateDepDOB( list, list.dob )" ng-class="{'error' : list.dob_error}">
+										<span ng-if="list.dob_error" class="err-msg" ng-bind="list.dob_error_message"></span>
 									</div>
 								</div>
 							</div>
 						</div>
 
 						<div class="mobile-exercise-btn-footer">
-							<button class="btn-confirm-disabled" style="display: none;">Confirm</button>
-							<button class="btn-confirm">Confirm</button>
-							<button class="btn-submit" style="display: none;">Submit</button>
-							<button class="btn-cancel" >Cancel</button>
-							<button class="btn-home" style="display: none;">Home</button>
+							<button class="btn-submit" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
+							<button class="btn-confirm" ng-click="updateDetails( member_details )" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
+							<button class="btn-cancel" ng-if="step != 3" ng-click="cancelBtn()">Cancel</button>
+							<button class="btn-home" ng-if="step == 3" ng-click="cancelBtn()">Home</button>
 						</div>
 					</div>
 

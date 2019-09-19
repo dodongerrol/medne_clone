@@ -1,13 +1,97 @@
+.iti__flag {background-image: url("../img/flags.png");}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .iti__flag {background-image: url("../img/flags@2x.png");}
+}
+
 body {
   min-height: 100vh;
   margin: 0;
-  font-family: 'Helvetica-Light';
+  font-family: 'Helvetica Light';
 }
 
 body >div:first-child {
   height: 100vh;
 }
 
+*{
+  outline: none;
+  box-sizing: border-box;
+}
+
+.error{
+  border: 1px solid red !important;
+}
+.error-mobile .iti--separate-dial-code input{
+  border: 1px solid red !important;
+}
+.error-mobile .iti--separate-dial-code .iti__selected-flag, 
+.error-mobile .iti--separate-dial-code .iti__flag-container:hover .iti__selected-flag{
+  border-right: 1px solid red;
+}
+
+.err-msg{
+  color: red;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Open Sans';
+}
+
+.iti--separate-dial-code{
+  width: 100%;
+}
+
+/* For Firefox */
+.iti--separate-dial-code input {
+    -moz-appearance:textfield;
+    padding-left: 120px !important;
+}
+/* Webkit browsers like Safari and Chrome */
+.iti--separate-dial-code input::-webkit-inner-spin-button,
+.iti--separate-dial-code input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.iti--separate-dial-code .iti__selected-flag,
+.iti--separate-dial-code .iti__flag-container:hover .iti__selected-flag{
+  padding: 16px;
+  background: #FFF;
+  border-right: 1px solid #ccc;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+
+}
+
+.datepicker tr th,
+.datepicker tr td{
+  color: #444;
+  font-family: 'Helvetica Light' !important;
+  font-size: 16px;
+  padding: 5px 10px;
+  font-weight: 700;
+}
 
 .mobile-exersicse-wrapper {
   background: #fff;
@@ -158,6 +242,7 @@ h3.tooltip-phone-email-details {
 
 .mobile-exercise-input-wrapper {
   margin: 0 0 20px;
+  position: relative;
 }
 
 .mobile-exercise-btn-footer {
