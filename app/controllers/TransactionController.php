@@ -899,7 +899,7 @@ class TransactionController extends BaseController {
 					if($result_transaction) {
 						try {
 							// check if its in lite plan
-							if($transaction->lite_plan_enabled == 1 && $transaction->lite_plan_use_credits == 1 || $transaction->lite_plan_enabled == "1" && $transaction->lite_plan_use_credits == "1") {
+							if($transaction->lite_plan_enabled == 1 || $transaction->lite_plan_use_credits == 1) {
 								// check if transaction exist in wallet logs
 								if($transaction->spending_type == 'medical') {
 									$table_wallet_history = 'wallet_history';
