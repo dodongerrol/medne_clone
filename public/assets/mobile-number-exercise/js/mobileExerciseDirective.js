@@ -225,8 +225,14 @@ app.directive("mobileExerciseDirective", [
               }
             }
           })
-          console.log( dep_err_crt );
-          console.log( scope.isConfirmActive );
+
+          if( scope.member_details.dependents.length == 0 ){
+            if( dep_err_crt == 0 ){
+              scope.isConfirmActive = true;
+            }else{
+              scope.isConfirmActive = false;
+            }
+          }
         }
 
         scope.submitNric = function( data ){
