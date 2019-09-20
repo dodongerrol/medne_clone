@@ -123,23 +123,22 @@ app.directive("mobileExerciseDirective", [
         }
 
         scope.validateForm = function( ){
+          var dep_err_crt = 0;
+
           if( !scope.member_details.dob ){
             scope.emp_dob_error = true;
             scope.emp_dob_error_message = 'Date of Birth is required.';
-            scope.isConfirmActive = false;
-            return false;
+            dep_err_crt += 1;
           }else{
             if( scope.member_details.dob.length != 10 ){
               scope.emp_dob_error = true;
               scope.emp_dob_error_message = 'Date of Birth should be in "DD/MM/YYYY" format.';
-              scope.isConfirmActive = false;
-              return false;
+              dep_err_crt += 1;
             }else{
               if( moment( scope.member_details.dob , 'DD/MM/YYYY' ).isValid() == false ){
                 scope.emp_dob_error = true;
                 scope.emp_dob_error_message = 'Date of Birth is Invalid and should be in "DD/MM/YYYY" format.';
-                scope.isConfirmActive = false;
-                return false;
+                dep_err_crt += 1;
               }else{
                 var a = moment( scope.member_details.dob , 'DD/MM/YYYY' );
                 var b = moment( );
@@ -147,12 +146,10 @@ app.directive("mobileExerciseDirective", [
                 if( a.diff( b, 'days' ) > 0 ){
                   scope.emp_dob_error = true;
                   scope.emp_dob_error_message = 'Date of Birth should be today or less';
-                  scope.isConfirmActive = false;
-                  return false;
+                  dep_err_crt += 1;
                 }else{
                   scope.emp_dob_error = false;
                   scope.emp_dob_error_message = '';
-                  scope.isConfirmActive = true;
                 }
               }
 
@@ -163,33 +160,29 @@ app.directive("mobileExerciseDirective", [
           if( !scope.member_details.mobile ){
             scope.emp_mobile_error = true;
             scope.emp_mobile_error_message = 'Employee Mobile Number is required.';
-            scope.isConfirmActive = false;
-            return false;
+            dep_err_crt += 1;
           }else{
             if( iti.getSelectedCountryData().iso2 == 'sg' && scope.member_details.mobile.length < 8 ){
               scope.emp_mobile_error = true;
               scope.emp_mobile_error_message = 'Mobile Number for your country code should be 8 digits.';
-              scope.isConfirmActive = false;
-              return false;
+              dep_err_crt += 1;
             }else if( iti.getSelectedCountryData().iso2 == 'my' && scope.member_details.mobile.length < 10 ){
               scope.emp_mobile_error = true;
               scope.emp_mobile_error_message = 'Mobile Number for your country code should be 10 digits.';
-              scope.isConfirmActive = false;
-              return false;
+              dep_err_crt += 1;
             }else if( iti.getSelectedCountryData().iso2 == 'ph' && scope.member_details.mobile.length < 9 ){
               scope.emp_mobile_error = true;
               scope.emp_mobile_error_message = 'Mobile Number for your country code should be 9 digits.';
-              scope.isConfirmActive = false;
-              return false;
+              dep_err_crt += 1;
             }else if( scope.member_details.mobile.length < 8 ){
               scope.emp_mobile_error = true;
               scope.emp_mobile_error_message = 'Mobile Number should be minimum of 8 digits.';
-              scope.isConfirmActive = false;
-              return false;
+              dep_err_crt += 1;
             }else{
               scope.emp_mobile_error = false;
               scope.emp_mobile_error_message = '';
-              scope.isConfirmActive = true;
+
+              scope.checkMobileTaken( scope.member_details.mobile );
             }
           }
 
@@ -197,40 +190,17 @@ app.directive("mobileExerciseDirective", [
             if( !value.dob ){
               value.dob_error = true;
               value.dob_error_message = 'Date of Birth is required.';
-              scope.isConfirmActive = false;
-              return false;
-            }else{
-              var a = moment( value.dob , 'DD/MM/YYYY' );
-              var b = moment( );
-              if( a.diff( b, 'days' ) > 0 ){
-                value.dob_error = true;
-                value.dob_error_message = 'Date of Birth should be today or less';
-                scope.isConfirmActive = false;
-                return false;
-              }else{
-                value.dob_error = false;
-                value.dob_error_message = '';
-                scope.isConfirmActive = true;
-              }
-            }
-
-            if( !value.dob ){
-              value.dob_error = true;
-              value.dob_error_message = 'Date of Birth is required.';
-              scope.isConfirmActive = false;
-              return false;
+              dep_err_crt += 1;
             }else{
               if( value.dob.length != 10 ){
                 value.dob_error = true;
                 value.dob_error_message = 'Date of Birth should be in "DD/MM/YYYY" format.';
-                scope.isConfirmActive = false;
-                return false;
+                dep_err_crt += 1;
               }else{
                 if( moment( value.dob , 'DD/MM/YYYY' ).isValid() == false ){
                   value.dob_error = true;
                   value.dob_error_message = 'Date of Birth is Invalid and should be in "DD/MM/YYYY" format.';
-                  scope.isConfirmActive = false;
-                  return false;
+                  dep_err_crt += 1;
                 }else{
                   var a = moment( value.dob , 'DD/MM/YYYY' );
                   var b = moment( );
@@ -238,17 +208,31 @@ app.directive("mobileExerciseDirective", [
                   if( a.diff( b, 'days' ) > 0 ){
                     value.dob_error = true;
                     value.dob_error_message = 'Date of Birth should be today or less';
-                    scope.isConfirmActive = false;
-                    return false;
+                    dep_err_crt += 1;
                   }else{
                     value.dob_error = false;
-                    value.emp_dob_error_message = '';
-                    scope.isConfirmActive = true;
+                    value.dob_error_message = '';
                   }
                 }
               }
             }
+
+            if( key == scope.member_details.dependents.length - 1 ){
+              if( dep_err_crt == 0 ){
+                scope.isConfirmActive = true;
+              }else{
+                scope.isConfirmActive = false;
+              }
+            }
           })
+
+          if( scope.member_details.dependents.length == 0 ){
+            if( dep_err_crt == 0 ){
+              scope.isConfirmActive = true;
+            }else{
+              scope.isConfirmActive = false;
+            }
+          }
         }
 
         scope.submitNric = function( data ){
@@ -314,9 +298,64 @@ app.directive("mobileExerciseDirective", [
           }
         }
 
+        scope.submitUpdateDetails = function( data ){
+          console.log( data );
+
+          var update_data = {
+            dob : moment( data.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+            mobile : data.mobile,
+            mobile_country_code : data.mobile_country_code,
+            name : data.name,
+            dependents : [],
+          }
+          angular.forEach( data.dependents,function(value,key){
+            console.log( value );
+            var dep = {
+              dependent_id: value.dependent_id,
+              dob: moment( value.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+              name: value.name
+            }
+            update_data.dependents.push( dep );
+
+            if( key == update_data.dependents.length - 1 ){
+              scope.updateDetails( update_data );
+            }
+          });
+
+          if( data.dependents.length == 0 ){
+            scope.updateDetails( update_data );
+          }
+        }
 
 
 
+
+        scope.checkMobileTaken = function( mobile ){
+          if( mobile.length >= 8 ){
+            var data = {
+              mobile : mobile
+            }
+            $http.post( 
+              base_url + "exercise/validate_mobile_number", 
+              data, 
+              {
+                headers: {
+                  'Authorization': scope.token,
+                }
+              })
+              .then(function(response){
+                console.log(response);
+                if( response.data.status ){
+
+                }else{
+                  scope.emp_mobile_error = true;
+                  scope.emp_mobile_error_message = response.data.message;
+                  scope.isConfirmActive = false;
+                }
+              });
+          }
+          
+        }
 
         scope.getMemberInfo = function( token ){
           $http.get( 
@@ -360,6 +399,7 @@ app.directive("mobileExerciseDirective", [
         }
 
         scope.updateDetails = function( data ){
+          console.log( data );
           scope.showLoading();
           $http.post( 
             base_url + "exercise/update_member_details", data,
