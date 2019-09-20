@@ -307,7 +307,7 @@ app.directive("mobileExerciseDirective", [
             }
             if( scope.deviceOs == 'iOS' || scope.deviceOs == 'Android' ){
               alert(' mobile platform. ');
-              window.location = 'peopleapp://';
+              window.location = 'mednefitsapp://';
             }
           }else{
             scope.step -= 1;
