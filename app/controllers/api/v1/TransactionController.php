@@ -124,14 +124,14 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					// check for lite plan
-					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-						if($consultation_fees > $user_credits) {
-							$returnObject->status = FALSE;
-	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
-	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-	            return Response::json($returnObject);
-						}
-					}
+					// if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+					// 	if($consultation_fees > $user_credits) {
+					// 		$returnObject->status = FALSE;
+	    //         $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
+	    //         $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+	    //         return Response::json($returnObject);
+					// 	}
+					// }
 
 
 					if($clinic->currency_type == "myr") {
@@ -174,10 +174,15 @@ class Api_V1_TransactionController extends \BaseController
 
 					if($cap_amount > 0) {
 						if($total_amount > $cap_amount) {
-							$credits = $cap_amount;
+							if($user_credits > $cap_amount) {
+								$credits = $cap_amount;
+							} else {
+								$credits = $user_credits;
+							}
 							$cash = $total_amount - $cap_amount;
 							$half_payment = true;
 							$payment_credits = $credits;
+							// return $credits;
 						} else {
 							$credits = $total_amount;
 							$payment_credits = $total_amount;
@@ -187,6 +192,7 @@ class Api_V1_TransactionController extends \BaseController
 						$payment_credits = $total_amount;
 					}
 
+
 					if($credits > $user_credits) {
 						$credits_temp = $user_credits;
 						$cash = $credits - $user_credits;
@@ -195,6 +201,7 @@ class Api_V1_TransactionController extends \BaseController
 					} else {
 
 					}
+					// return $cash;
 					// return $total_credits;
 					$transaction = new Transaction();
   				$wallet = new Wallet( );
@@ -213,13 +220,19 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
-						$total_credits_cost = $credits - $consultation_fees;
+						if($consultation_fees >= $credits) {
+							$total_credits_cost = (float)$credits;
+						} else {
+							$total_credits_cost = (float)$credits - (float)$consultation_fees;
+						}
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
 						$total_credits_cost = $credits;
 						$consultation_fees = 0;
 					}
+
+					return $total_credits_cost;
 
 					$date_of_transaction = null;
 
@@ -276,6 +289,8 @@ class Api_V1_TransactionController extends \BaseController
 					if($currency) {
 					 $data['currency_amount'] = $currency;
 					}
+
+					return $data;
 
 					try {
 						$result = $transaction->createTransaction($data);
