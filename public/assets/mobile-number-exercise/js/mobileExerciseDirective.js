@@ -292,18 +292,30 @@ app.directive("mobileExerciseDirective", [
 
 
         scope.checkMobileTaken = function( mobile ){
-          var data = {
-            mobile : mobile
+          if( mobile.length >= 8 ){
+            var data = {
+              mobile : mobile
+            }
+            $http.post( 
+              base_url + "exercise/validate_mobile_number", 
+              data, 
+              {
+                headers: {
+                  'Authorization': scope.token,
+                }
+              })
+              .then(function(response){
+                console.log(response);
+                if( response.data.status ){
+                  scope.validateForm();
+                }else{
+                  scope.emp_mobile_error = true;
+                  scope.emp_mobile_error_message = response.data.message;
+                  scope.isConfirmActive = false;
+                }
+              });
           }
-          $http.post( base_url + "exercise/validate_mobile_number", data)
-            .then(function(response){
-              console.log(response);
-              if( response.data.status ){
-                
-              }else{
-                
-              }
-            });
+          
         }
 
         scope.getMemberInfo = function( token ){
