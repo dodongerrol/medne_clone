@@ -8281,7 +8281,7 @@ public function generateMonthlyCompanyInvoice( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$container[] = array(
 					'MEMBER'						=> ucwords($member->Name),
-					'NRIC'							=> $member->NRIC,
+					'MOBILE NO'							=> $member->PhoneCode.$member->PhoneNo,
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
 					'EMPLOYEE'					=> $sub_account ? $sub_account : null,
 					'CLAIM DATE'				=> date('d F Y h:i A', strtotime($res->created_at)),

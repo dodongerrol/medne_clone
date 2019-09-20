@@ -10238,68 +10238,71 @@ class BenefitsDashboardController extends \BaseController {
 			$credits_back_wellness = 0;
 
 			$wallet = DB::table('e_wallet')->where('UserID', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
-
-		      // get all user wallet logs
-			$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
-
-			foreach ($wallet_history as $key => $history) {
-				if($history->logs == "added_by_hr") {
-					$get_allocation += $history->credit;
-				}
-
-				if($history->logs == "deducted_by_hr") {
-					$deducted_credits += $history->credit;
-				}
-
-				if($history->where_spend == "e_claim_transaction") {
-					$e_claim_spent += $history->credit;
-				}
-
-				if($history->where_spend == "in_network_transaction") {
-					$in_network_temp_spent += $history->credit;
-				}
-
-				if($history->where_spend == "credits_back_from_in_network") {
-					$credits_back += $history->credit;
-				}
-			}
-
-			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
-			$current_spending = $get_allocation_spent_temp + $e_claim_spent;
-			$allocation = $get_allocation - $deducted_credits;
+			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
+			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
 
 
-		      // wellness credits
-		      // get all user wallet logs
-			$wallet_wellness_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
+		 //      // get all user wallet logs
+			// $wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
 
-			foreach ($wallet_wellness_history as $key => $history) {
-				if($history->logs == "added_by_hr") {
-					$get_allocation_wellness += $history->credit;
-				}
+			// foreach ($wallet_history as $key => $history) {
+			// 	if($history->logs == "added_by_hr") {
+			// 		$get_allocation += $history->credit;
+			// 	}
 
-				if($history->logs == "deducted_by_hr") {
-					$deducted_credits_wellness += $history->credit;
-				}
+			// 	if($history->logs == "deducted_by_hr") {
+			// 		$deducted_credits += $history->credit;
+			// 	}
 
-				if($history->where_spend == "e_claim_transaction") {
-					$e_claim_spent_wellness += $history->credit;
-				}
+			// 	if($history->where_spend == "e_claim_transaction") {
+			// 		$e_claim_spent += $history->credit;
+			// 	}
 
-				if($history->where_spend == "in_network_transaction") {
-					$in_network_temp_spent_wellness += $history->credit;
-				}
+			// 	if($history->where_spend == "in_network_transaction") {
+			// 		$in_network_temp_spent += $history->credit;
+			// 	}
 
-				if($history->where_spend == "credits_back_from_in_network") {
-					$credits_back_wellness += $history->credit;
-				}
-			}
+			// 	if($history->where_spend == "credits_back_from_in_network") {
+			// 		$credits_back += $history->credit;
+			// 	}
+			// }
 
-			$get_allocation_spent_temp_wellness = $in_network_temp_spent_wellness - $credits_back_wellness;
-			$current_spending_wellness = $get_allocation_spent_temp_wellness + $e_claim_spent_wellness;
-			$allocation_wellness = $get_allocation_wellness - $deducted_credits_wellness;
+			// $get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
+			// $current_spending = $get_allocation_spent_temp + $e_claim_spent;
+			// $allocation = $get_allocation - $deducted_credits;
 
-			// get user plan details
+
+		 //      // wellness credits
+		 //      // get all user wallet logs
+			// $wallet_wellness_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
+
+			// foreach ($wallet_wellness_history as $key => $history) {
+			// 	if($history->logs == "added_by_hr") {
+			// 		$get_allocation_wellness += $history->credit;
+			// 	}
+
+			// 	if($history->logs == "deducted_by_hr") {
+			// 		$deducted_credits_wellness += $history->credit;
+			// 	}
+
+			// 	if($history->where_spend == "e_claim_transaction") {
+			// 		$e_claim_spent_wellness += $history->credit;
+			// 	}
+
+			// 	if($history->where_spend == "in_network_transaction") {
+			// 		$in_network_temp_spent_wellness += $history->credit;
+			// 	}
+
+			// 	if($history->where_spend == "credits_back_from_in_network") {
+			// 		$credits_back_wellness += $history->credit;
+			// 	}
+			// }
+
+			// $get_allocation_spent_temp_wellness = $in_network_temp_spent_wellness - $credits_back_wellness;
+			// $current_spending_wellness = $get_allocation_spent_temp_wellness + $e_claim_spent_wellness;
+			// $allocation_wellness = $get_allocation_wellness - $deducted_credits_wellness;
+
+			// // get user plan details
 			if($plan->account_type == "stand_alone_plan") {
 				$plan_type = "Stand Alone Plan";
 			} else if($plan->account_type == "insurance_bundle") {
@@ -10310,29 +10313,31 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_type = "";
 			}
 
-			$plan_user = DB::table('user_plan_type')->where('user_id', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
+			// $plan_user = DB::table('user_plan_type')->where('user_id', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
 
-			$start_date = date('d F Y', strtotime($plan_user->plan_start));
-			if($plan_user->fixed == 1 | $plan_user->fixed == "1") {
-				$temp_valid_date = date('d F Y', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
-				$end_date = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
-			} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-				$end_date = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
-			}
+			// $start_date = date('d F Y', strtotime($plan_user->plan_start));
+			// if($plan_user->fixed == 1 | $plan_user->fixed == "1") {
+			// 	$temp_valid_date = date('d F Y', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+			// 	$end_date = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
+			// } else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+			// 	$end_date = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+			// }
+
+			$plan_dates = PlanHelper::getEmployeePlanCoverageDate($users[$x]->UserID, $result->customer_buy_start_id);
 
 			$final_user[] = array(
 				'Name'		=> ucwords($users[$x]->Name),
-				'NRIC'		=> $users[$x]->NRIC,
+				'PhoneNo'		=> $users[$x]->PhoneCode.$users[$x]->PhoneNo,
 				'Email'		=> $users[$x]->Email,
 				'Plan_Type' => $plan_type." (Corporate)",
-				'Start_Date' => $start_date,
-				'End_Date'	=> $end_date,
-				'Medical_Allocation' => number_format($allocation, 2),
-				'Medical_Usage' => number_format($current_spending, 2),
-				'Credits' => number_format($allocation - $current_spending, 2),
-				'Wellness_Allocation' => number_format($allocation_wellness, 2),
-				'Wellness_Usage' => number_format($current_spending_wellness, 2),
-				'Credits_Wellness' => number_format($allocation_wellness - $current_spending_wellness, 2)
+				'Start_Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
+				'End_Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
+				'Medical_Allocation' => number_format($medical_credit_data['allocation'], 2),
+				'Medical_Usage' => number_format($medical_credit_data['get_allocation_spent'], 2),
+				'Credits' => number_format($medical_credit_data['balance'], 2),
+				'Wellness_Allocation' => number_format($wellness_credit_data['allocation'], 2),
+				'Wellness_Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
+				'Credits_Wellness' => number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2)
 			);
 		}
 

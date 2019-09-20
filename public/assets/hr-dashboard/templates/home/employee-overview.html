@@ -56,7 +56,7 @@
 					<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
 					<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
 
-					<button id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', NRIC: 'NRIC', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE' }" filename="'Employee Details'" separator="," hidden></button>
+					<button id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE' }" filename="'Employee Details'" separator="," hidden></button>
 					
 				</div>
 			</div>
