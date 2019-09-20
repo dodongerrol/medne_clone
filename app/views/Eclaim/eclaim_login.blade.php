@@ -102,14 +102,16 @@
 				<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
 				<h2 class="text-center text-below-image">for member</h2>
 			</div>
-			<div class="notification-container">
-				<div>
-					<img src="./assets/images/danger.png">
-				</div>
-				<div>
-					<div class="notification-text">Notification: User ID Change</div>
-					<p>NRIC number and email address will no longer be valid as your user ID. <br>
-					Please click <a class="here-text" ng-click="goToUpdateDetails()">here</a> to change your user ID to your mobile number.</p>
+			<div class="notification-wrapper">
+				<div class="notification-container">
+					<div>
+						<img src="./assets/images/danger.png">
+					</div>
+					<div>
+						<div class="notification-text">Notification: User ID Change</div>
+						<p>NRIC number and email address will no longer be valid as your user ID. <br>
+						Please click <a class="here-text" ng-click="goToUpdateDetails()">here</a> to change your user ID to your mobile number.</p>
+					</div>
 				</div>
 			</div>
 			<form class="med-form" ng-submit="login()">
