@@ -181,6 +181,8 @@ app.directive("mobileExerciseDirective", [
             }else{
               scope.emp_mobile_error = false;
               scope.emp_mobile_error_message = '';
+
+              scope.checkMobileTaken( scope.member_details.mobile );
             }
           }
 
@@ -223,6 +225,7 @@ app.directive("mobileExerciseDirective", [
               }
             }
           })
+          console.log( dep_err_crt );
           console.log( scope.isConfirmActive );
         }
 
@@ -307,7 +310,7 @@ app.directive("mobileExerciseDirective", [
               .then(function(response){
                 console.log(response);
                 if( response.data.status ){
-                  scope.validateForm();
+
                 }else{
                   scope.emp_mobile_error = true;
                   scope.emp_mobile_error_message = response.data.message;
