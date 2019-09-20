@@ -64,7 +64,7 @@ class EmployeeController extends \BaseController {
 						->first();
 
 		if(!$member) {
-			return array('status' => false, 'message' => 'Member does not exist.');
+			return array('status' => false, 'message' => 'NRIC/FIN or Password is incorrect.');
 		}
 
 		$temp = array(
