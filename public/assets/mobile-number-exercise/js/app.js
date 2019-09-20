@@ -29,7 +29,7 @@ app.directive('validNumber', function() {
         if (angular.isUndefined(val)) {
             var val = '';
         }
-        var clean = val.replace(/[^0-9\./]\s/g, '');
+        var clean = val.replace(/[^0-9\.]/g, '');
         var decimalCheck = clean.split('.');
 
         if(!angular.isUndefined(decimalCheck[1])) {

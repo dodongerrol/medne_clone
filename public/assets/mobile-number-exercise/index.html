@@ -50,7 +50,7 @@
 							</div>
 							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error}">
 								<label>Mobile Number</label>
-								<input valid-number id="area_code" pattern="[0-9]*" type="number"  ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
+								<input valid-number id="area_code" pattern="[0-9]*" type="text"  ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
 								<span ng-if="emp_mobile_error" class="err-msg" ng-bind="emp_mobile_error_message"></span>
 							</div>
 						</div>
