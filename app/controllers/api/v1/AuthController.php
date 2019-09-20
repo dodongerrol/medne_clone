@@ -3880,6 +3880,7 @@ public function getFamilCoverageAccounts( )
                $profile = array(
                   'user_id'   => $owner_profile->UserID,
                   'name'      => ucwords($owner_profile->Name),
+                  'dob'       => date('d/m/Y', strtotime($owner_profile->DOB)),
                   'nric'      => $owner_profile->NRIC,
                   'type'      => 'Owner'
               );
@@ -3894,6 +3895,7 @@ public function getFamilCoverageAccounts( )
                   $profile = array(
                      'user_id'   => $temp_profile->UserID,
                      'name'      => ucwords($temp_profile->Name),
+                     'dob'       => date('d/m/Y', strtotime($temp_profile->DOB)),
                      'nric'      => $temp_profile->NRIC,
                      'type'      => ucwords($value->relationship)
                  );
