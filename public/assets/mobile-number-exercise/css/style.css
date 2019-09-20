@@ -253,7 +253,8 @@ h3.tooltip-phone-email-details {
   margin: 40px 0 0;
 }
 
-.mobile-exercise-btn-footer >button {
+.mobile-exercise-btn-footer >button,
+.mobile-exercise-btn-footer .cancel-confirm-btn-container >button {
   font-family: 'Helvetica Light';
   display: block;
   color: #fff;
@@ -311,6 +312,31 @@ h3.tooltip-phone-email-details {
   margin: 0 0 20px;
 }
 
+
+.cancel-confirm-btn-container {
+  display: flex;
+}
+
+.cancel-confirm-btn-container >button.btn-cancel {
+  margin-right: 10px;
+}
+
+.cancel-confirm-btn-container >button.btn-submit,
+.cancel-confirm-btn-container >button.btn-confirm {
+  margin-left: 10px;
+}
+
+@media (min-width: 767px) {
+  .mobile-exercise-btn-footer .btn-responsive {
+    display: none;
+  }
+}
+
+@media (max-width: 766px) {
+  .cancel-confirm-btn-container {
+    display: none;
+  }
+}
 
 @media (max-width: 575px) {
   .mobile-exersicse-wrapper {

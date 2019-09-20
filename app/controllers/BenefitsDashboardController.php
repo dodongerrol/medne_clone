@@ -2723,7 +2723,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('corporate.corporate_id', $id);
 		})
 		->orWhere(function($query) use ($search, $id){
-			$query->where('user.NRIC', 'like', '%'.$search.'%')
+			$query->where('user.PhoneNo', 'like', '%'.$search.'%')
 			// ->where('corporate_members.removed_status', 0)
 			->where('corporate.corporate_id', $id);
 		})
