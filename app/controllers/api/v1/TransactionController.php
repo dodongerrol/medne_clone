@@ -264,6 +264,7 @@ class Api_V1_TransactionController extends \BaseController
 						$consultation_fees = 0;
 					}
 
+					$payment_credits = $total_credits_cost;
 					$date_of_transaction = null;
 
 					if(isset($input['check_out_time']) && $input['check_out_time'] != null) {
@@ -400,14 +401,14 @@ class Api_V1_TransactionController extends \BaseController
 									$deduct_history = \WalletHistory::create($credits_logs);
 									$wallet_history_id = $deduct_history->id;
 
-									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 										\WalletHistory::create($lite_plan_credits_log);
 									}
 								} else {
 									$deduct_history = \WellnessWalletHistory::create($credits_logs);
 									$wallet_history_id = $deduct_history->id;
 
-									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 										\WellnessWalletHistory::create($lite_plan_credits_log);
 									}
 								}
@@ -443,7 +444,7 @@ class Api_V1_TransactionController extends \BaseController
 										$transaction_results = array(
 											'clinic_name'       => ucwords($clinic->Name),
 											'bill_amount'				=> number_format(TransactionHelper::floatvalue($input['input_amount']), 2),
-											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($consultation_fees * 3, 2) : number_format($consultation_fees, 2),
+											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($data['consultation_fees'] * 3, 2) : number_format($data['consultation_fees'], 2),
 											'total_amount'     => number_format($total_amount, 2),
 											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
 											'paid_by_cash'              => $clinic->currency_type == "myr" ? number_format($cash * 3, 2) : number_format($cash, 2),
