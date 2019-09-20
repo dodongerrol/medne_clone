@@ -205,6 +205,13 @@ Route::filter('auth.v2', function($request, $response)
           return Response::json($returnObject, 200);
         }
 
+        if((int)$user->account_update_status == 0) {
+          $returnObject->status = FALSE;
+          $returnObject->expired = true;
+          $returnObject->message = 'You need to update you profile settings for new login method.';
+          return Response::json($returnObject, 200);
+        }
+
         $request = Request::instance();
         $ip = $request->getClientIp();
         $date = date('Y-m-d H:i:s');
@@ -354,6 +361,11 @@ Route::filter('auth.jwt_employee', function($request, $response)
                 return Response::json('Ooops! Your login session has expired. Please login again.', 403, $headers);
             }
         // }
+
+        $user = DB::table('user')->where('UserID', $value->UserID)->where('Active', 1)->first();
+        if((int)$user->account_update_status == 0) {
+          return Response::json('You need to update you profile settings for new login method.', 401, $headers);
+        }
 
         $request = Request::instance();
         $ip = $request->getClientIp();
