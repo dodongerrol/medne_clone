@@ -209,7 +209,7 @@ app.directive("mobileExerciseDirective", [
                     dep_err_crt += 1;
                   }else{
                     value.dob_error = false;
-                    value.emp_dob_error_message = '';
+                    value.dob_error_message = '';
                   }
                 }
               }
@@ -366,11 +366,16 @@ app.directive("mobileExerciseDirective", [
             mobile : data.mobile,
             mobile_country_code : data.mobile_country_code,
             name : data.name,
-            dependents : data.dependents
+            dependents : [],
           }
-          angular.forEach( update_data.dependents,function(value,key){
+          angular.forEach( data.dependents,function(value,key){
             console.log( value );
-            value.dob = moment( value.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
+            var dep = {
+              dependent_id: value.dependent_id,
+              dob: moment( value.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+              name: value.name
+            }
+            update_data.dependents.push( dep );
 
             if( key == update_data.dependents.length - 1 ){
               scope.showLoading();
