@@ -362,10 +362,10 @@ Route::filter('auth.jwt_employee', function($request, $response)
             }
         // }
 
-        $user = DB::table('user')->where('UserID', $value->UserID)->where('Active', 1)->first();
-        if((int)$user->account_update_status == 0) {
-          return Response::json('You need to update you profile settings for new login method.', 401, $headers);
-        }
+        // $user = DB::table('user')->where('UserID', $value->UserID)->where('Active', 1)->first();
+        // if((int)$user->account_update_status == 0) {
+        //   return Response::json('You need to update you profile settings for new login method.', 401, $headers);
+        // }
 
         $request = Request::instance();
         $ip = $request->getClientIp();
