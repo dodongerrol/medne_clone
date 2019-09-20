@@ -166,6 +166,19 @@ class EmployeeController extends \BaseController {
         }
 
         $member_id = $result->user_id;
+        $mobile_number = (int)$input['mobile'];
+        
+        $check = DB::table('user')
+        				->where('PhoneNo', (string)$mobile_number)
+        				->whereNotIn('UserID', [$member_id])
+        				->whereIn('access_type', [1, 0])
+        				->where('UserType', 5)
+        				->where('Active', 1)
+        				->first();
+
+        if($check) {
+        	return array('status' => false, 'message' => 'Mobile Number is already taken.');
+        }
 
         $member_data = array(
         	'DOB' => date('Y-m-d', strtotime($input['dob'])),
@@ -189,5 +202,45 @@ class EmployeeController extends \BaseController {
         }
 
         return array('status' => true, 'message' => 'Success');
+	}
+
+	public function checkMobileExistence( )
+	{
+		$input = Input::all();
+		$token = StringHelper::getToken();
+
+		if(!$token) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$secret = Config::get('config.secret_key');
+		$result = FALSE;
+        try {
+            $result = JWT::decode($token, $secret);
+        } catch(Exception $e) {
+            return FALSE;
+        }
+       
+        if(!$result) {
+        	return array('status' => false, 'message' => 'Token is invalid.');
+        }
+
+        $member_id = $result->user_id;
+
+        $mobile_number = (int)$input['mobile'];
+        
+        $check = DB::table('user')
+        				->where('PhoneNo', (string)$mobile_number)
+        				->whereNotIn('UserID', [$member_id])
+        				->whereIn('access_type', [1, 0])
+        				->where('UserType', 5)
+        				->where('Active', 1)
+        				->first();
+
+        if($check) {
+        	return array('status' => false, 'message' => 'Mobile Number is already taken.');
+        } else {
+        	return array('status' => true, 'message' => 'Mobile Number is vacant.');
+        }
 	}
 }
