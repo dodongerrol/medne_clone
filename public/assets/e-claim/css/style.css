@@ -47,7 +47,7 @@ body,html{
   background-color: #383838;
   color: #fff;
   padding: 20px 10px;
-  width: 390px;
+  width: 360px;
   margin: 0 auto;
 }
 
@@ -57,7 +57,11 @@ body,html{
 }
 
 .notification-container {
-  font-family: 'Helvetica Neue';
+  font-family: sans-serif !important;
+}
+
+.notification-container p {
+  font-family: sans-serif;
 }
 
 .notification-container .notification-text {
@@ -66,6 +70,7 @@ body,html{
 
 .notification-container .here-text {
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .login-wrapper #login-container >form {
@@ -1970,4 +1975,10 @@ body::-webkit-scrollbar-thumb
     color: #444;
     /*font-weight: 700;*/
     margin-bottom: 0;
+}
+
+@media (max-width: 575px) {
+  .notification-container {
+    width: 390px;
+  }
 }
