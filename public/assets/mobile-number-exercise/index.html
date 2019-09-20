@@ -50,7 +50,7 @@
 							</div>
 							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error}">
 								<label>Mobile Number</label>
-								<input valid-number id="area_code" inputmode="numeric" pattern="[0-9]*" type="tel"  ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
+								<input valid-number id="area_code" inputmode="numeric" pattern="[0-9]*" type="tel"  ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )" ng-blur="checkMobileTaken( member_details.mobile )">
 								<span ng-if="emp_mobile_error" class="err-msg" ng-bind="emp_mobile_error_message"></span>
 							</div>
 						</div>
@@ -62,7 +62,7 @@
 							<div class="mobile-exercise-dependent-container">
 								<div ng-repeat="list in member_details.dependents">
 									<div class="dependent-name-container">
-										<span>Dependent <span>{{ index + 1 }}</span></span>:
+										<span>Dependent <span>{{ $index + 1 }}</span></span>:
 										<span ng-bind="list.name">Joy Ng</span>
 									</div>
 									<div class="mobile-exercise-input-wrapper">
