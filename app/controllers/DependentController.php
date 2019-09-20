@@ -80,7 +80,7 @@ class DependentController extends \BaseController {
 						$fullname = true;
 					} else if($row == "date_of_birth" || $row == "date_of_birth_ddmmyyyy") {
 						$dob = true;
-					} elseif ($row == "mobile") {
+					} elseif ($row == "mobile" || $row == "mobile_number") {
 						$mobile = true;
 					} else if($row == "wellness_credits") {
 						$wellness_credits = true;
@@ -249,6 +249,7 @@ class DependentController extends \BaseController {
 				foreach ($temp_users as $key => $user) {
 					$credit = 0;
 					$user['email'] = isset($user['work_email']) ? trim($user['work_email']) : null;
+					$user['mobile'] = isset($user['mobile_number']) ? trim($user['mobile_number']) : trim($user['mobile']);
 					$user['job_title'] = 'Other';
 					$user['fullname'] = $user['full_name'];
 					// $user['nric'] = isset($user['nricfin']) ? trim($user['nricfin']) : null;
