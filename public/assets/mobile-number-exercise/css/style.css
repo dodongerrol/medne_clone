@@ -97,7 +97,7 @@ input{
   font-weight: 700;
 }
 
-.mobile-exersicse-wrapper {
+.mobile-exercise-wrapper {
   background: #fff;
   padding: 0 70px;
   height: 100%;
@@ -181,6 +181,10 @@ h3.tooltip-phone-email-details {
   font-size: 16px;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.mobile-exercise-wrapper a.tooltips div.tooltip-container {
+  width: 298px;
 }
 
 .mobile-exercise-body-container .login-logo {
@@ -326,6 +330,10 @@ h3.tooltip-phone-email-details {
   margin-left: 10px;
 }
 
+.mobile-exercise-btn-footer .btn-home.btn-responsive {
+  display: block;
+}
+
 @media (min-width: 767px) {
   .mobile-exercise-btn-footer .btn-responsive {
     display: none;
@@ -339,14 +347,23 @@ h3.tooltip-phone-email-details {
 }
 
 @media (max-width: 575px) {
-  .mobile-exersicse-wrapper {
+  .mobile-exercise-wrapper {
     padding: 0 20px;
   }
 
   .mobile-exercise-form-container {
     width: 100%;
   }
+
+  .mobile-exercise-wrapper a.tooltips div.tooltip-container {
+    width: auto;
+  }
+
+  .mobile-exercise-wrapper a:hover.tooltips div.tooltip-container {
+    margin-left: -195px;
+  }
 }
+
 
 
 

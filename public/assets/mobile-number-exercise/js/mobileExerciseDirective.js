@@ -306,8 +306,8 @@ app.directive("mobileExerciseDirective", [
               window.location = '/member-portal-login';
             }
             if( scope.deviceOs == 'iOS' || scope.deviceOs == 'Android' ){
-              alert(' mobile platform. ');
-              window.location = 'peopleapp://';
+              // alert( scope.deviceOs + "  " + 'mednefitsapp://' );
+              window.location = 'mednefitsapp://';
             }
           }else{
             scope.step -= 1;
