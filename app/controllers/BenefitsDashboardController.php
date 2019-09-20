@@ -1828,7 +1828,7 @@ class BenefitsDashboardController extends \BaseController {
 				$compose['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
 				$compose['company'] = $company->company_name;
 				$compose['plan_start'] = date('F d, Y', strtotime($start_date));
-				$compose['email'] = $data_enrollee->email;
+				$compose['email'] = null;
 				$compose['nric'] = $data_enrollee->nric;
 				$compose['password'] = $password;
 				$compose['phone'] = $data_enrollee->mobile;
@@ -1845,7 +1845,7 @@ class BenefitsDashboardController extends \BaseController {
 			$email_data['company']   = ucwords($company->company_name);
 			$email_data['emailName'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
 			$email_data['emailTo']   = $data_enrollee->email;
-			$email_data['email'] = $data_enrollee->email;
+			$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
 			// $email_data['email'] = 'allan.alzula.work@gmail.com';
 			$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 			$email_data['start_date'] = date('d F Y', strtotime($start_date));

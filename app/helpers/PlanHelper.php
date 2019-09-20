@@ -1617,7 +1617,7 @@ class PlanHelper {
 					$email_data['company']   = ucwords($company->company_name);
 					$email_data['emailName'] = $data_enrollee->first_name;
 					$email_data['emailTo']   = $data_enrollee->email;
-					$email_data['email'] = $data_enrollee->email;
+					$email_data['email'] = $data_enrollee->mobil ? $data_enrollee->mobil : $data_enrollee->email;
 		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
 					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 					$email_data['start_date'] = date('d F Y', strtotime($start_date));
@@ -1636,7 +1636,7 @@ class PlanHelper {
 							$compose['name'] = $data_enrollee->first_name;
 							$compose['company'] = $company->company_name;
 							$compose['plan_start'] = date('F d, Y', strtotime($start_date));
-							$compose['email'] = $data_enrollee->email;
+							$compose['email'] = null;
 							$compose['nric'] = $data_enrollee->mobile;
 							$compose['password'] = $password;
 							$compose['phone'] = $phone;
@@ -1656,7 +1656,7 @@ class PlanHelper {
 						$compose['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
 						$compose['company'] = $company->company_name;
 						$compose['plan_start'] = date('F d, Y', strtotime($start_date));
-						$compose['email'] = $data_enrollee->email;
+						$compose['email'] = null;
 						$compose['nric'] = $data_enrollee->mobile;
 						$compose['password'] = $password;
 						$compose['phone'] = $phone;
@@ -1669,7 +1669,7 @@ class PlanHelper {
 					$email_data['company']   = ucwords($company->company_name);
 					$email_data['emailName'] = $data_enrollee->first_name;
 					$email_data['emailTo']   = $data_enrollee->email;
-					$email_data['email'] = $data_enrollee->email;
+					$email_data['email'] = $data_enrollee->mobil ? $data_enrollee->mobil : $data_enrollee->email;
 		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
 					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 					$email_data['start_date'] = date('d F Y', strtotime($start_date));
