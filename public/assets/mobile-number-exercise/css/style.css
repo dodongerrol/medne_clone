@@ -19,6 +19,10 @@ body >div:first-child {
   box-sizing: border-box;
 }
 
+input{
+  font-family: 'Helvetica Light' !important;
+}
+
 .error{
   border: 1px solid red !important;
 }

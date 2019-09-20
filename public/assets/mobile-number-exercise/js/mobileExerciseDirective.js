@@ -122,10 +122,6 @@ app.directive("mobileExerciseDirective", [
           scope.validateForm();
         }
 
-        scope.validateDateFormat = function( data ){
-          console.log( data );
-        }
-
         scope.validateForm = function( ){
           if( !scope.member_details.dob ){
             scope.emp_dob_error = true;
@@ -311,6 +307,7 @@ app.directive("mobileExerciseDirective", [
             }
             if( scope.deviceOs == 'iOS' || scope.deviceOs == 'Android' ){
               alert(' mobile platform. ');
+              window.location = 'peopleapp://';
             }
           }else{
             scope.step -= 1;
