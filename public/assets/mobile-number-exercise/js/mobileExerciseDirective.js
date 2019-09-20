@@ -298,6 +298,36 @@ app.directive("mobileExerciseDirective", [
           }
         }
 
+        scope.submitUpdateDetails = function( data ){
+          console.log( data );
+
+          var update_data = {
+            dob : moment( data.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+            mobile : data.mobile,
+            mobile_country_code : data.mobile_country_code,
+            name : data.name,
+            dependents : [],
+          }
+          angular.forEach( data.dependents,function(value,key){
+            console.log( value );
+            var dep = {
+              dependent_id: value.dependent_id,
+              dob: moment( value.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+              name: value.name
+            }
+            update_data.dependents.push( dep );
+
+            if( key == update_data.dependents.length - 1 ){
+              scope.updateDetails( update_data );
+            }
+          });
+
+          if( data.dependents.length == 0 ){
+            scope.updateDetails( update_data );
+          }
+        }
+
+
 
 
         scope.checkMobileTaken = function( mobile ){
@@ -370,43 +400,23 @@ app.directive("mobileExerciseDirective", [
 
         scope.updateDetails = function( data ){
           console.log( data );
-          var update_data = {
-            dob : moment( data.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-            mobile : data.mobile,
-            mobile_country_code : data.mobile_country_code,
-            name : data.name,
-            dependents : [],
-          }
-          angular.forEach( data.dependents,function(value,key){
-            console.log( value );
-            var dep = {
-              dependent_id: value.dependent_id,
-              dob: moment( value.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-              name: value.name
-            }
-            update_data.dependents.push( dep );
-
-            if( key == update_data.dependents.length - 1 ){
-              scope.showLoading();
-              $http.post( 
-                base_url + "exercise/update_member_details", update_data,
-                {
-                  headers: {
-                    'Authorization': scope.token,
-                  }
-                })
-                .then(function(response){
-                  console.log(response);
-                  if( response.data.status ){
-                    scope.step = 3;
-                  }else{
-                    swal( 'Error!', response.data.message, 'error' );
-                  }
-                  scope.hideLoading();
-                });
-            }
-          });
-          
+          scope.showLoading();
+          $http.post( 
+            base_url + "exercise/update_member_details", data,
+            {
+              headers: {
+                'Authorization': scope.token,
+              }
+            })
+            .then(function(response){
+              console.log(response);
+              if( response.data.status ){
+                scope.step = 3;
+              }else{
+                swal( 'Error!', response.data.message, 'error' );
+              }
+              scope.hideLoading();
+            });
         }
 
         scope.showLoading = function( ){
