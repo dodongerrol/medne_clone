@@ -326,6 +326,10 @@ h3.tooltip-phone-email-details {
   margin-left: 10px;
 }
 
+.mobile-exercise-btn-footer .btn-home.btn-responsive {
+  display: block;
+}
+
 @media (min-width: 767px) {
   .mobile-exercise-btn-footer .btn-responsive {
     display: none;
