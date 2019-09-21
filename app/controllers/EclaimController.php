@@ -41,7 +41,7 @@ class EclaimController extends \BaseController {
     })
     ->orWhere(function($query) use ($email, $password){
     	$query->where('UserType', 5)
-			->where('PhoneNo', 'like', '%'.(int)$email.'%')
+			->where('PhoneNo', $email)
 		  ->where('password', md5($password))
 		  ->where('Active', 1);
     })
