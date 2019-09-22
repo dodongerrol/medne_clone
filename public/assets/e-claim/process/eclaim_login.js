@@ -75,7 +75,7 @@ login.directive('eclaimLogin', [
           //   window.open( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
           // }
           // window.location.href = serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase();
-          window.location.href = serverUrl.url + 'app/mobile_exercise';
+          window.location.href = serverUrl.url + 'app/mobile_exercise?platform=web';
         }
 
         scope.changePassword = function( data ){

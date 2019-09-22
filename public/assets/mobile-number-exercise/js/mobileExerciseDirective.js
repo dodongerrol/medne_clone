@@ -458,6 +458,7 @@ app.directive("mobileExerciseDirective", [
         scope.onLoad = function (){
           var params = new URLSearchParams(window.location.search);
           scope.devicePlatform = params.get('platform');
+          console.log( scope.devicePlatform );
         }
 
         scope.onLoad();
