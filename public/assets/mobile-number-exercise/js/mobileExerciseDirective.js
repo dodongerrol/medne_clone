@@ -18,7 +18,7 @@ app.directive("mobileExerciseDirective", [
         scope.emp_mobile_error_message = '';
         scope.isConfirmActive = true;
         scope.token = null;
-        scope.deviceOs = null;
+        scope.devicePlatform = null;
 
         var iti = null;
 
@@ -260,37 +260,11 @@ app.directive("mobileExerciseDirective", [
           return nric_pattern.test(theNric);
         };
 
-        scope.getOs = function(){
-          var userAgent = window.navigator.userAgent,
-              platform = window.navigator.platform,
-              macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
-              windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
-              iosPlatforms = ['iPhone', 'iPad', 'iPod'],
-              os = null;
-          if (macosPlatforms.indexOf(platform) !== -1) {
-            os = 'Mac OS';
-          } else if (iosPlatforms.indexOf(platform) !== -1) {
-            os = 'iOS';
-          } else if (windowsPlatforms.indexOf(platform) !== -1) {
-            os = 'Windows';
-          } else if (/Android/.test(userAgent)) {
-            os = 'Android';
-          } else if (!os && /Linux/.test(platform)) {
-            os = 'Linux';
-          }
-          // return os;
-          scope.deviceOs = os;
-        }
-
-        scope.getOs();
-
         scope.cancelBtn = function(){
           if( scope.step == 1 || scope.step == 3 ){
-            if( scope.deviceOs == 'Mac OS' || scope.deviceOs == 'Windows' ){
+            if( scope.devicePlatform == 'web' ){
               window.location = '/member-portal-login';
-            }
-            if( scope.deviceOs == 'iOS' || scope.deviceOs == 'Android' ){
-              // alert( scope.deviceOs + "  " + 'mednefitsapp://' );
+            }else{
               window.location = 'mednefitsapp://';
             }
           }else{
@@ -482,7 +456,8 @@ app.directive("mobileExerciseDirective", [
         }
         
         scope.onLoad = function (){
-          scope.getOs();
+          var params = new URLSearchParams(window.location.search);
+          scope.devicePlatform = params.get('platform');
         }
 
         scope.onLoad();
