@@ -67,6 +67,10 @@ class EmployeeController extends \BaseController {
 			return array('status' => false, 'message' => 'NRIC/FIN or Password is incorrect.');
 		}
 
+        if((int)$member->account_update_status == 1 || (int)$member->account_update_date == 1) {
+            return array('status' => true, 'updated' => true);
+        }
+
 		$temp = array(
 			'user_id' => $member->UserID
 		);
@@ -75,7 +79,7 @@ class EmployeeController extends \BaseController {
 		$secret = Config::get('config.secret_key');
 		$token = $jwt->encode($temp, $secret);
 
-		return array('status' => true, 'token' => $token);
+		return array('status' => true, 'token' => $token, 'updated' => false);
 	}
 
 	public function getEmployeeDetails( )
