@@ -254,7 +254,7 @@ app.directive('activityPage', [
 					data.sort(function (left, right) {
 						return moment.utc(right.date_of_transaction, 'DD MMMM YYYY, hh:mma').diff(moment.utc(left.date_of_transaction, 'DD MMMM YYYY, hh:mma'))
 					});
-
+					
 					angular.forEach( data ,function(value,key){
 						if( temp_date == null ){
 							temp_date = value.month;
@@ -277,7 +277,6 @@ app.directive('activityPage', [
 							}
 						}
 					});
-
 				}
 
 				scope.filterActivityByDateEclaim = function( data ){
