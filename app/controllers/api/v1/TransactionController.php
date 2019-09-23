@@ -260,7 +260,7 @@ class Api_V1_TransactionController extends \BaseController
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
-						// $total_credits_cost = $credits;
+						$total_credits_cost = $credits;
 						$consultation_fees = 0;
 					}
 

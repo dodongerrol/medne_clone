@@ -1668,7 +1668,8 @@ class BenefitsDashboardController extends \BaseController {
 				'NRIC'			=> $data_enrollee->nric,
 				'Job_Title'	=> $data_enrollee->job_title,
 				'DOB'			=> date('Y-m-d', strtotime($data_enrollee->dob)),
-				'Active'		=> 1
+				'Active'		=> 1,
+				'account_already_update' => 1
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
