@@ -53,7 +53,7 @@ class EclaimController extends \BaseController {
 							->where('UserType', 5)
 							->where('PhoneNo', $email)
 						  ->where('password', md5($password))
-						  ->where('Active', 1);
+						  ->where('Active', 1)
 							->first();
 
 		if($check) {
