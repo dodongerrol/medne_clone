@@ -162,7 +162,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 'UserType'      => 5,
                 'access_type'   => 2,
                 'source_type'   => 1,
-                'Job_Title'     => null
+                'Job_Title'     => null,
+                'account_update_status' => 1,
+                'account_update_date' => date('Y-m-d H:i:s'),
+                'account_already_update' => 1
             );
 
             $result = User::create($user_data);
