@@ -559,6 +559,7 @@ public static function Forgot_PasswordV2(){
                 ->whereIn('access_type', [1, 0]);
       })
       ->orWhere(function($query) use ($email) {
+                $email = (int)($email);
                 $query->where('PhoneNo', (int)$email)
                 ->where('UserType', 5)
                 ->where('Active', 1)

@@ -30,13 +30,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         	  $users = DB::table('user')
                      ->select('UserID')
                      ->where(function($query) use ($email, $password){
-                        return $query->where('Email', $email)
+                        $query->where('Email', $email)
                         ->where('Password', StringHelper::encode($password))
                         ->where('Active', 1)
                         ->where('UserType', 5);
                      })
                      ->orWhere(function($query) use ($email, $password){
-                     	return $query->where('PhoneNo', $email)
+                        $email = (int)($email);
+                     	$query->where('PhoneNo', (string)$email)
                         ->where('Password', StringHelper::encode($password))
                         ->where('Active', 1)
                         ->where('UserType', 5);
