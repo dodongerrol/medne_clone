@@ -798,17 +798,17 @@ class DependentController extends \BaseController {
 			return array('status' => false, 'message' => 'Replace ID is not a Dependent Account.');
 		}
 
-		if(empty($input['first_name']) || $input['first_name'] == null) {
-			return array('status' => false, 'message' => 'First Name is required.');
+		if(empty($input['fullname']) || $input['fullname'] == null) {
+			return array('status' => false, 'message' => 'Full Name is required.');
 		}
 
-		if(empty($input['last_name']) || $input['last_name'] == null) {
-			return array('status' => false, 'message' => 'Last Name is required.');
-		}
+		// if(empty($input['last_name']) || $input['last_name'] == null) {
+		// 	return array('status' => false, 'message' => 'Last Name is required.');
+		// }
 
-		if(empty($input['nric']) || $input['nric'] == null) {
-			return array('status' => false, 'message' => 'NRIC/FIN is required.');
-		}
+		// if(empty($input['nric']) || $input['nric'] == null) {
+		// 	return array('status' => false, 'message' => 'NRIC/FIN is required.');
+		// }
 
 
 		if(empty($input['dob']) || $input['dob'] == null) {

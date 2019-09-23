@@ -1424,6 +1424,9 @@ class PlanHelper {
 				'Zip_Code'      => $data_enrollee->postal_code,
 				'DOB'           => $dob,
 				'pending'		=> 0,
+				'account_update_status'		=> 1,
+				'account_update_date' => date('Y-m-d H:i:s'),
+				'account_already_update'	=> 1,
 				'communication_type'	=> $communication_type
 			);
 
@@ -2458,7 +2461,7 @@ class PlanHelper {
 				'UserType' => 5,
 				'access_type' => 2,
 				'Email' => 'mednefits',
-				'NRIC' => $data['nric'],
+				'NRIC' => null,
 				'DOB'   => $data['dob'],
 				'PhoneCode' => null,
 				'PhoneNo' => null,
@@ -2489,7 +2492,10 @@ class PlanHelper {
 				'created_at' => time(),
 				'updated_at' => time(),
 				'Active' => 1,
-				'Password' => 'mednefits'
+				'Password' => 'mednefits',
+				'account_update_status'		=> 1,
+				'account_update_date' => date('Y-m-d H:i:s'),
+				'account_already_update'	=> 1
 			);
 
 			$user_data_save = \User::create($user_data);
@@ -3386,9 +3392,9 @@ class PlanHelper {
 				->update(['deleted' => 1, 'deleted_at' => date('Y-m-d H:i:s')]);
                 // create new Dependent Account
 				$user = array(
-					'first_name'    => $input['first_name'],
-					'last_name'     => $input['last_name'],
-					'nric'          => $input['nric'],
+					'fullname'    => $input['fullname'],
+					'last_name'     => null,
+					'nric'          => null,
 					'dob'           => date('Y-m-d', strtotime($input['dob'])),
 				);
 

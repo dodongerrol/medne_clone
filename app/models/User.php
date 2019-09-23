@@ -101,7 +101,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->DOB = $data['DOB'];
                 $this->Lat = '';
                 $this->Lng = '';
-                $this->NRIC = $data['NRIC'];
+                $this->NRIC = null;
                 $this->Zip_Code = $data['Zip_Code'];
                 $this->FIN = '';
                 $this->Image = 'https://res.cloudinary.com/www-medicloud-sg/image/upload/v1427972951/ls7ipl3y7mmhlukbuz6r.png';
@@ -114,6 +114,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->source_type = 1;
                 $this->Job_Title = $data['Job_Title'];
                 $this->communication_type = !empty($data['communication_type']) ? $data['communication_type'] : "email";
+                $this->account_update_status = 1;
+                $this->account_update_date = date('Y-m-d H:i:s');
+                $this->account_already_update = 1;
                 if($this->save()){
                     $insertedId = $this->id;
                     $wallet = new Wallet( );
