@@ -122,19 +122,19 @@ function getTransactions( data ){
       if( data.data.transactions.length > 0 ){
       
 	      list = data.data.transactions;
-	      // console.log(list);
+	      console.log(list);
 
 	      for( var i = 0; i < list.length; i++  ){
-
+	      	console.log( list );
 	      	stockData.push({
 	      		'DATE' : (list[i].date_of_transaction).replace(',',''),
 	      		'TRANSACTION_ID' : list[i].transaction_id,
 	      		'NAME' : list[i].user_name,
 	      		'NRIC' : list[i].NRIC,
 	      		'SERVICES' : list[i].procedure_name,
-	      		'MEDNEFITS FEE' : list[i].mednefits_fee,
-	      		'MEDNEFITS CREDIT' : list[i].mednefits_credits,
-	      		'CASH' : list[i].cash,
+	      		'MEDNEFITS FEE' : (list[i].mednefits_fee).replace(',',''),
+	      		'MEDNEFITS CREDIT' : (list[i].mednefits_credits).replace(',',''),
+	      		'CASH' : (list[i].cash).replace(',',''),
 	      		'STATUS' : list[i].transaction_status,
 	      	});
 
@@ -142,63 +142,63 @@ function getTransactions( data ){
 		      	if( list[i].currency_type == "myr" ){
 		      		if(list[i].deleted == true) {
 		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
-							'<td>' + list[i].date_of_transaction + '</td>' +
-							'<td>' +
-								list[i].transaction_id +
-								'<br />' +
-								'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
-							'</td>'	+
-							'<td>' + list[i].user_name + '</td>' + 
-							'<td>' + list[i].NRIC + '</td>' +
-							'<td>' + list[i].procedure_name + '</td>' +
-							'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-							'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-							'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-						'</tr>');
+									'<td>' + list[i].date_of_transaction + '</td>' +
+									'<td>' +
+										list[i].transaction_id +
+										'<br />' +
+										'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
+									'</td>'	+
+									'<td>' + list[i].user_name + '</td>' + 
+									'<td>' + list[i].NRIC + '</td>' +
+									'<td>' + list[i].procedure_name + '</td>' +
+									'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+									'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+									'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+								'</tr>');
 		      		} else {
 		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
-							'<td>' + list[i].date_of_transaction + '</td>' +
-							'<td>' +
-								list[i].transaction_id +
-							'</td>'	+
-							'<td>' + list[i].user_name + '</td>' + 
-							'<td>' + list[i].NRIC + '</td>' +
-							'<td>' + list[i].procedure_name + '</td>' +
-							'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-							'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-							'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-						'</tr>');
+									'<td>' + list[i].date_of_transaction + '</td>' +
+									'<td>' +
+										list[i].transaction_id +
+									'</td>'	+
+									'<td>' + list[i].user_name + '</td>' + 
+									'<td>' + list[i].NRIC + '</td>' +
+									'<td>' + list[i].procedure_name + '</td>' +
+									'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+									'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+									'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+								'</tr>');
 		      		}
 		      		
 		      	}else{
 		      		if(list[i].deleted == true) {
 		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
-							'<td>' + list[i].date_of_transaction + '</td>' +
-							'<td>' +
-								list[i].transaction_id +
-								'<br />' +
-								'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
-							'</td>'	+
-							'<td>' + list[i].user_name + '</td>' + 
-							'<td>' + list[i].NRIC + '</td>' +
-							'<td>' + list[i].procedure_name + '</td>' +
-							'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
-							'<td>S$ ' + list[i].mednefits_credits + '</td>' +
-							'<td>S$ ' + list[i].cash + '</td>' +
-						'</tr>');
+									'<td>' + list[i].date_of_transaction + '</td>' +
+									'<td>' +
+										list[i].transaction_id +
+										'<br />' +
+										'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
+									'</td>'	+
+									'<td>' + list[i].user_name + '</td>' + 
+									'<td>' + list[i].NRIC + '</td>' +
+									'<td>' + list[i].procedure_name + '</td>' +
+									'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
+									'<td>S$ ' + list[i].mednefits_credits + '</td>' +
+									'<td>S$ ' + list[i].cash + '</td>' +
+								'</tr>');
 		      		} else {
 		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
-							'<td>' + list[i].date_of_transaction + '</td>' +
-							'<td>' +
-								list[i].transaction_id +
-							'</td>'	+
-							'<td>' + list[i].user_name + '</td>' + 
-							'<td>' + list[i].NRIC + '</td>' +
-							'<td>' + list[i].procedure_name + '</td>' +
-							'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
-							'<td>S$ ' + list[i].mednefits_credits + '</td>' +
-							'<td>S$ ' + list[i].cash + '</td>' +
-						'</tr>');
+									'<td>' + list[i].date_of_transaction + '</td>' +
+									'<td>' +
+										list[i].transaction_id +
+									'</td>'	+
+									'<td>' + list[i].user_name + '</td>' + 
+									'<td>' + list[i].NRIC + '</td>' +
+									'<td>' + list[i].procedure_name + '</td>' +
+									'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
+									'<td>S$ ' + list[i].mednefits_credits + '</td>' +
+									'<td>S$ ' + list[i].cash + '</td>' +
+								'</tr>');
 		      		}
 		      		
 		      	}
@@ -231,8 +231,6 @@ function getTransactions( data ){
 								'</tr>');
 		      	}
 	      	}
-
-
 	      	setHeight();
 	      }
       }else{
@@ -242,7 +240,7 @@ function getTransactions( data ){
 							'</td>' +
 						'</tr>');
       }
-
+      console.log( stockData );
   });
 }
 
@@ -308,7 +306,8 @@ function getCanvas(){
 }
 
 function searchTable(data) {
-	if( data.search.length > 2 ){
+	console.log( data );
+	if( data.search.length > 0 ){
 		$( '.trans-history-tbl tbody' ).html('<tr>' +
 						'<td colspan="7" class="text-center">' +
 							'<h5>Loading...</h5>' +
@@ -610,6 +609,17 @@ setTimeout(function() {
 
 	$( '.search-table' ).keyup(function(){
 		var text = $( ".search-table" ).val();
+		console.log( text );
+		if( text.length == 0 ){
+			var range_data = date_slider.getValue();
+			var activity_search = getFirstEndDate( range_data[0], range_data[1] );
+			console.log(activity_search);
+			getTransactions( activity_search );
+		}
+	});
+
+	$( '.btn-search-tbl' ).click(function(){
+		var text = $( ".search-table" ).val();
 		var range_data = date_slider.getValue();
 		var activity_search = null;
 		
@@ -623,7 +633,7 @@ setTimeout(function() {
 		}
 		
 		// console.log(activity_search);
-		if( text.length > 2 ){
+		if( text.length > 0 ){
 			activity_search.search = text;
 			searchTable( activity_search );
 		}else{

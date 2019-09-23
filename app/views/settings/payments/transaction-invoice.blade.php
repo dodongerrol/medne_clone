@@ -158,7 +158,7 @@
             </tbody>
         </table>
 
-        <div class="notes">
+       <!--  <div class="notes">
             <div class="col-md-12 text-left" style="width: 95%;">
                 <p style="margin-bottom: 10px"><b>Notes</b></p>
                 <p>Payment method: Bank Transfer/Cheque</p>
@@ -166,7 +166,7 @@
                 <p>Account Type: <span class="invoice_account_type">N/a</span></p>
                 <p>Payee's Account Number: <span class="invoice_account_number">132-66713-3</span></p>
             </div>
-        </div>
+        </div> -->
 
         <div class="copyright text-center">
             <h5 style="color: #999;"><b>&copy; 2018 Mednefits. All rights reserved</b></h5>

@@ -583,11 +583,16 @@ app.directive("claimDirective", [
                 .success(function(response) {
                   scope.hideLoading();
                   scope.users_arr = response.results;
+
+                  if( scope.users_arr.length == 0 ){
+                    swal('Error!', 'No Users found.', 'error');
+                  }
                 });
             }
           };
           scope.getAllUsers = function(search) {
-            if (search) {
+            console.log('search.length', search.length)
+            if (search && search.length > 7) {
               $http.get(base_url + "clinic/get/all/users?q=" + search)
                 .success(function(response) {
                   scope.users_nric_arr = response.items;

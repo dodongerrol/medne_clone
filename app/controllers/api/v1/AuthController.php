@@ -5119,6 +5119,14 @@ public function createEclaim( )
         $returnObject->message = 'Success.';
         $ids = StringHelper::getSubAccountsID($findUserID);
         $user_id = StringHelper::getUserId($findUserID);
+
+        if($input['spending_type'] == "medical") {
+          // recalculate employee balance
+          PlanHelper::reCalculateEmployeeBalance($user_id);
+         } else {
+          PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+         }
+
         $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
         if(!$check_user_balance) {
@@ -5126,9 +5134,6 @@ public function createEclaim( )
          $returnObject->message = 'User does not have a wallet data.';
          return Response::json($returnObject);
          }
-
-                        // recalculate employee balance
-         PlanHelper::reCalculateEmployeeBalance($user_id);
 
          if($input['spending_type'] == "medical") {
              $balance = $check_user_balance->balance;

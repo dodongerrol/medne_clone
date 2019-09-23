@@ -124,14 +124,14 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					// check for lite plan
-					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-						if($consultation_fees > $user_credits) {
-							$returnObject->status = FALSE;
-	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
-	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-	            return Response::json($returnObject);
-						}
-					}
+					// if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+					// 	if($consultation_fees > $user_credits) {
+					// 		$returnObject->status = FALSE;
+	    //         $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
+	    //         $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+	    //         return Response::json($returnObject);
+					// 	}
+					// }
 
 
 					if($clinic->currency_type == "myr") {
@@ -140,12 +140,12 @@ class Api_V1_TransactionController extends \BaseController
 					  $total_amount = $input_amount;
 					}
 
-					if($total_amount > $user_credits) {
-						$returnObject->status = FALSE;
-            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
-            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-            return Response::json($returnObject);
-					}
+					// if($total_amount > $user_credits) {
+					// 	$returnObject->status = FALSE;
+     //        $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
+     //        $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+     //        return Response::json($returnObject);
+					// }
 					// return $total_amount;
 					// get details for clinic co paid
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
@@ -171,28 +171,73 @@ class Api_V1_TransactionController extends \BaseController
 					$credits = 0;
 					$cash = 0;
 					$half_payment = false;
+					$user_credits = round($user_credits, 2);
+					$consultation_fees = round($consultation_fees, 2);
 
 					if($cap_amount > 0) {
-						if($total_amount > $cap_amount) {
-							$credits = $cap_amount;
-							$cash = $total_amount - $cap_amount;
-							$half_payment = true;
-							$payment_credits = $credits;
-						} else {
+						if($cap_amount > $user_credits) {
+							if($total_amount > $user_credits) {
+								$credits = $user_credits;
+								$cash = $total_amount - $user_credits;
+								$half_payment = true;
+							} else {
+								$credits = $total_amount;
+								$cash = 0;
+							}
+						} else if($cap_amount == $total_amount){
 							$credits = $total_amount;
-							$payment_credits = $total_amount;
+							$cash = 0;
+						} else {
+							if($total_amount > $cap_amount) {
+								$credits = $cap_amount;
+								$cash = $total_amount - $cap_amount;
+								$half_payment = true;
+							} else {
+								$credits = $total_amount;
+								$cash = 0;
+							}
 						}
 					} else {
-						$credits = $total_amount;
-						$payment_credits = $total_amount;
+						if($total_amount > $user_credits) {
+							$credits = $user_credits;
+							$cash = $total_amount - $user_credits;
+							$half_payment = true;
+						} else {
+							$credits = $total_amount;
+							$cash = 0;
+						}
 					}
 
-					if($credits > $user_credits) {
-						$credits_temp = $user_credits;
-						$cash = $credits - $user_credits;
-						$credits = $credits_temp;
-						$half_payment = true;
-					}
+
+					// if($cap_amount > 0) {
+					// 	if($total_amount > $cap_amount) {
+					// 		if($total_amount > $user_credits) {
+					// 			$credits = $user_credits;
+					// 			$cash = $total_amount - $user_credits;
+					// 		} else {
+					// 			$credits = $cap_amount;
+					// 			$cash = $total_amount - $cap_amount;
+					// 		}
+					// 		$half_payment = true;
+					// 		$payment_credits = $credits;
+					// 	} else {
+					// 		$credits = $total_amount;
+					// 		$payment_credits = $total_amount;
+					// 	}
+					// } else {
+					// 	$credits = $total_amount;
+					// 	$payment_credits = $total_amount;
+					// }
+
+					// $credits = round($credits, 2);
+					// if($credits > $user_credits) {
+					// 	$credits_temp = $user_credits;
+					// 	$cash = $credits - $user_credits;
+					// 	$credits = $credits_temp;
+					// 	$half_payment = true;
+					// } else {
+
+					// }
 					// return $total_credits;
 					$transaction = new Transaction();
   				$wallet = new Wallet( );
@@ -211,14 +256,15 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
-						$total_credits_cost = $credits - $consultation_fees;
+						$total_credits_cost = $credits;
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
-						$total_credits_cost = $credits;
+						// $total_credits_cost = $credits;
 						$consultation_fees = 0;
 					}
 
+					$payment_credits = $total_credits_cost;
 					$date_of_transaction = null;
 
 					if(isset($input['check_out_time']) && $input['check_out_time'] != null) {
@@ -275,6 +321,10 @@ class Api_V1_TransactionController extends \BaseController
 					 $data['currency_amount'] = $currency;
 					}
 
+					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
+						$data['consultation_fees'] = $consultation_fees - $user_credits;
+					}
+
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;
@@ -312,7 +362,7 @@ class Api_V1_TransactionController extends \BaseController
 								);
 
 								// insert for lite plan
-								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 									$lite_plan_credits_log = array(
 									 'wallet_id'     => $wallet_user->wallet_id,
 									 'credit'        => $consultation_fees,
@@ -333,7 +383,7 @@ class Api_V1_TransactionController extends \BaseController
 									'id'            => $transaction_id
 								);
 
-								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 									$lite_plan_credits_log = array(
 									'wallet_id'     => $wallet_user->wallet_id,
 									'credit'        => $consultation_fees,
@@ -351,14 +401,14 @@ class Api_V1_TransactionController extends \BaseController
 									$deduct_history = \WalletHistory::create($credits_logs);
 									$wallet_history_id = $deduct_history->id;
 
-									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 										\WalletHistory::create($lite_plan_credits_log);
 									}
 								} else {
 									$deduct_history = \WellnessWalletHistory::create($credits_logs);
 									$wallet_history_id = $deduct_history->id;
 
-									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+									if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 										\WellnessWalletHistory::create($lite_plan_credits_log);
 									}
 								}
@@ -394,7 +444,7 @@ class Api_V1_TransactionController extends \BaseController
 										$transaction_results = array(
 											'clinic_name'       => ucwords($clinic->Name),
 											'bill_amount'				=> number_format(TransactionHelper::floatvalue($input['input_amount']), 2),
-											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($consultation_fees * 3, 2) : number_format($consultation_fees, 2),
+											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($data['consultation_fees'] * 3, 2) : number_format($data['consultation_fees'], 2),
 											'total_amount'     => number_format($total_amount, 2),
 											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
 											'paid_by_cash'              => $clinic->currency_type == "myr" ? number_format($cash * 3, 2) : number_format($cash, 2),
@@ -490,16 +540,16 @@ class Api_V1_TransactionController extends \BaseController
 										$email['emailSubject'] = 'Error log. - Transaction ID: '.$transaction_id.' Wallet History ID: '.$wallet_history_id;
 
 										// delete transaction history log
-										$transaction->deleteFailedTransactionHistory($transaction_id);
-										// delete failed wallet history
-										if($spending_type == "medical") {
-											$history->deleteFailedWalletHistory($wallet_history_id);
-											 // credits back
-											$wallet->addCredits($user_id, $credits);
-										} else {
-											\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
-											$wallet->addWellnessCredits($user_id, $credits);
-										}
+										// $transaction->deleteFailedTransactionHistory($transaction_id);
+										// // delete failed wallet history
+										// if($spending_type == "medical") {
+										// 	$history->deleteFailedWalletHistory($wallet_history_id);
+										// 	 // credits back
+										// 	$wallet->addCredits($user_id, $credits);
+										// } else {
+										// 	\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
+										// 	$wallet->addWellnessCredits($user_id, $credits);
+										// }
 										$returnObject->status = FALSE;
 										$returnObject->message = 'Payment unsuccessfull. Please try again later';
 										EmailHelper::sendErrorLogs($email);

@@ -292,8 +292,16 @@ app.directive('webInputDirective', [
 				}
 
 				scope.checkNRIC = function(theNric){
-		      var nric_pattern = new RegExp('^[stfgSTFG]{1}[0-9]{7}[a-zA-z]{1}$');
-		      return nric_pattern.test(theNric);
+		      var nric_pattern = null;
+          if( theNric.length == 9 ){
+            nric_pattern = new RegExp("^[stfgSTFG]{1}[0-9]{7}[a-zA-z]{1}$");
+          }else if( theNric.length == 12 ){
+            // nric_pattern = new RegExp("^[0-9]{2}(?:0[1-9]|1[-2])(?:[0-1]|[1-2][0-9]|[3][0-1])[0-9]{6}$");
+            return true;
+          }else{
+            return false;
+          }
+          return nric_pattern.test(theNric);
 	      };
 
 		    scope.getTempEmployees = function( ){
