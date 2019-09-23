@@ -3870,6 +3870,7 @@ public function getFamilCoverageAccounts( )
                   'user_id'   => $user->UserID,
                   'name'      => ucwords($user->Name),
                   'nric'      => $user->NRIC,
+                  'dob'       => date('d/m/Y', strtotime($owner_profile->DOB)),
                   'type'      => 'Owner'
               );
            } else if($user->UserType == 5 && $user->access_type == 2 || $user->UserType == 5 && $user->access_type == 3) {
