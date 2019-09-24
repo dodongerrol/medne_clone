@@ -57,6 +57,11 @@ class EclaimController extends \BaseController {
 							->first();
 
 		if($check) {
+			if((int)$check->account_update_status == 0) {
+				return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
+			}
+
+
 			// Session::put('employee-session', $check->UserID);
 			$jwt = new JWT();
 			$secret = Config::get('config.secret_key');

@@ -363,8 +363,13 @@ app.directive("mobileExerciseDirective", [
             .then(function(response){
               console.log(response);
               if( response.data.status ){
-                scope.token = response.data.token;
-                scope.getMemberInfo( response.data.token );
+                if(response.data.updated == true) {
+                  scope.hideLoading();
+                  scope.step = 3;
+                } else {
+                  scope.token = response.data.token;
+                  scope.getMemberInfo( response.data.token );
+                }
               }else{
                 scope.hideLoading();
                 swal( 'Error!', response.data.message, 'error' );
