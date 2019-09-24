@@ -646,11 +646,30 @@
 												</button>
 
 												<div class="trans-receipts-wrapper">
+													<div class="click_box_wrapper" ng-repeat="img in list.files" style="display: inline-block;position: relative;">
+														<a href="javascript:void(0)" ng-click="showPreview(img, $event)" >
+															<div class="click_box">
+																<i class="fa fa-plus color-white font-25"></i>
+															</div>
+															
+																<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
+																<img ng-if="img.type == 'xls' || img.file_type == 'xls'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
+																<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+															
+														</a>
 
-													<div ng-repeat="img in list.files" style="display: inline-block;">
-														<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
-														<img ng-if="img.type == 'xls' || img.file_type == 'xls'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
-														<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+														<div class="preview-box">
+															<div class="img-container">
+																<a href="javascript:void(0)" class="hidePreview" ng-click="hidePreview()">
+																	<i class="fa fa-times" ></i>
+																</a>
+
+																<img img-fix-orientation="img.file" hidden>
+
+																<iframe id="src-view-data" src style="width:100%; height: 500px;border: none;" hidden>
+																</iframe>
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>
