@@ -553,6 +553,34 @@ app.directive('statementPage', [
 
 				}
 
+				scope.showPreview = function( img , ev){
+					$(ev.target).closest(".click_box_wrapper").find(".preview-box").fadeIn();
+
+					if( img.file_type == 'image' ){
+						$(".preview-box img").show();
+						$(".preview-box .img-container").css({'width': '500px'});
+						$(".preview-box iframe").hide();
+						$(".preview-box img").attr('img-fix-orientation', img.file);
+
+						$(".preview-box img").attr('src', img.file);
+					}else{
+						// scope.toggleLoading();
+						// hrSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
+						// .then(function(response){
+						// 	scope.toggleLoading();
+							// var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
+							$(".preview-box iframe").show();
+							$(".preview-box .img-container").css({'width': '80%'});
+							$(".preview-box img").hide();
+							$(".preview-box #src-view-data").attr('src', img.file);
+						// });
+					}
+				}
+
+				scope.hidePreview = function( img ){
+					$(".preview-box").fadeOut();
+				}
+
 				scope.showGlobalModal = function( message ){
 			    $( "#global_modal" ).modal('show');
 			    $( "#global_message" ).text(message);
