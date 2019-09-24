@@ -195,38 +195,65 @@ class Api_V1_TransactionController extends \BaseController
 					$user_credits = round($user_credits, 2);
 					$consultation_fees = round($consultation_fees, 2);
 
+					// if($cap_amount > 0) {
+					// 	if($cap_amount > $user_credits) {
+					// 		if($total_amount > $user_credits) {
+					// 			$credits = $user_credits;
+					// 			$cash = $total_amount - $user_credits;
+					// 			$half_payment = true;
+					// 		} else {
+					// 			$credits = $total_amount;
+					// 			$cash = 0;
+					// 		}
+					// 	} else if($cap_amount == $total_amount){
+					// 		$credits = $total_amount;
+					// 		$cash = 0;
+					// 	} else {
+					// 		if($total_amount > $cap_amount) {
+					// 			$credits = $cap_amount;
+					// 			$cash = $total_amount - $cap_amount;
+					// 			$half_payment = true;
+					// 		} else {
+					// 			$credits = $total_amount;
+					// 			$cash = 0;
+					// 		}
+					// 	}
+					// } else {
+					// 	if($total_amount > $user_credits) {
+					// 		$credits = $user_credits;
+					// 		$cash = $total_amount - $user_credits;
+					// 		$half_payment = true;
+					// 	} else {
+					// 		$credits = $total_amount;
+					// 		$cash = 0;
+					// 	}
+					// }
+
 					if($cap_amount > 0) {
-						if($cap_amount > $user_credits) {
-							if($total_amount > $user_credits) {
-								$credits = $user_credits;
-								$cash = $total_amount - $user_credits;
-								$half_payment = true;
-							} else {
-								$credits = $total_amount;
-								$cash = 0;
-							}
-						} else if($cap_amount == $total_amount){
-							$credits = $total_amount;
-							$cash = 0;
+						if($total_amount > $cap_amount) {
+							$credits = $cap_amount;
+							$cash = $total_amount - $cap_amount;
+							$half_payment = true;
+							$payment_credits = $credits;
 						} else {
-							if($total_amount > $cap_amount) {
-								$credits = $cap_amount;
-								$cash = $total_amount - $cap_amount;
-								$half_payment = true;
-							} else {
-								$credits = $total_amount;
-								$cash = 0;
-							}
+							$credits = $total_amount;
+							$payment_credits = $total_amount;
 						}
 					} else {
-						if($total_amount > $user_credits) {
-							$credits = $user_credits;
-							$cash = $total_amount - $user_credits;
+						$credits = $total_amount;
+						$payment_credits = $total_amount;
+					}
+
+					if($customer_active_plan->account_type != "super_pro_plan") {
+						if($credits > $user_credits) {
+							$credits_temp = $user_credits;
+							$cash = $credits - $user_credits;
+							$credits = $credits_temp;
 							$half_payment = true;
-						} else {
-							$credits = $total_amount;
-							$cash = 0;
 						}
+					} else {
+						$cash = 0;
+						$credits = $total_amount;
 					}
 
 					// return $total_credits;
@@ -251,7 +278,7 @@ class Api_V1_TransactionController extends \BaseController
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
-						// $total_credits_cost = $credits;
+						$total_credits_cost = $credits;
 						$consultation_fees = 0;
 					}
 
