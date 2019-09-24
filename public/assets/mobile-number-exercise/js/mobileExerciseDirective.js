@@ -9,7 +9,7 @@ app.directive("mobileExerciseDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("mobileExerciseDirective running!");
         
-        scope.step = 1;
+        scope.step = 2;
         scope.nric_data = {};
         scope.member_details = {};
         scope.emp_dob_error = false;
@@ -23,88 +23,53 @@ app.directive("mobileExerciseDirective", [
         var iti = null;
 
         var isBackspaceActive = false;
+        var empSlashCount = 0;
 
 
 
-        //=================== DO NOT DELETE. THIS IS BACKUP =====================//
+        $("body").on("keydown", ".dob-input", function(event) {
+          if (event.keyCode == 32) {
+            event.preventDefault();
+          }
+        });
 
-                // scope.validateEmpDOB = function( data ){
-                //   if( data.length <= 1 ){
-                //     isBackspaceActive = false;
-                //   }
-                //   if( data.length == 2 ){
-                //     if( data.charAt(1) == '/' ){
-                //       scope.member_details.dob = "0" + data;
-                //       isBackspaceActive = true;
-                //     }else{
-                //       if( !isBackspaceActive ){
-                //         scope.member_details.dob = data + "/";
-                //         isBackspaceActive = true;
-                //       }
-                //     }
-                //   }
-                //   if( data.length == 3 && data.indexOf('/') == -1 ){
-                //     scope.member_details.dob = data.substr(0, 2) + "/" + data.substr(2);
-                //     isBackspaceActive = true;
-                //   }
-                //   if( data.length == 3 ){
-                //     isBackspaceActive = true;
-                //   }
-                //   if( data.length == 4 ){
-                //     isBackspaceActive = false;
-                //     scope.member_details.dob = data.replace(/\/{2,}/g, "/");
-                //   }
-                //   if( data.length == 5 ){
-                //     if( data.charAt(4) == '/' ){
-                //       scope.member_details.dob = data.substr(0, 3) + "0" + data.substr(3);
-                //       isBackspaceActive = true;
-                //     }else{
-                //       if( !isBackspaceActive ){
-                //         scope.member_details.dob = data + "/";
-                //         isBackspaceActive = true;
-                //       }
-                //     }
-                //   }
-                //   if( data.length == 6 && data.match(/\//g).length == 1 ){
-                //     scope.member_details.dob = data.substr(0, 5) + "/" + data.substr(5);
-                //     isBackspaceActive = true;
-                //   }
-                //   if( data.length == 7 ){
-                //     scope.member_details.dob = data.replace(/\/{2,}/g, "/");
-                //   }
-                //   scope.validateForm();
-                // }
-        //=======================================================================//
-
-
-        scope.dobFormat = ['D','D','/','M','M','/','Y','Y','Y','Y'];
-        scope.empDobArr = "DD/MM/YYYY".split('');
 
         scope.populateDOB = function( dob ){
-          angular.forEach( dob, function(value, key){
-            if( value == '' ){
-              value = scope.dobFormat[key];
+          var splitDob = dob.split('');
+          var activeSlash = 0;
+          if( dob.length < 3 ){
+            empSlashCount = 0;
+          }
+          angular.forEach( splitDob ,function( value, key ){
+            if( key == 1 && splitDob[ key + 1 ] != '/' && empSlashCount == 0 ){
+              splitDob[ key + 1 ] = '/';
+              empSlashCount += 1;
+            }
+            if( ( key == 2 || key == 5 ) && value != '/' ){
+              splitDob[ key + 1 ] = splitDob[ key ];
+              splitDob[ key ] = '/';
+              empSlashCount += 1;
+            }
+            if( key == 4 && splitDob[ key + 1 ] != '/' && empSlashCount == 1 ){
+              splitDob[ key + 1 ] = '/';
+              empSlashCount += 1;
+            }
+
+            if( value == '/' ){
+              activeSlash += 1;
             }
           });
+
+          console.log( 'empSlash' , empSlashCount );
+          console.log( 'dob length' , dob.length );
+          return splitDob.join('');
         }
-        
+
         scope.validateEmpDOB = function( data ){
-          // if( data == '' ){
-          //   scope.member_details.dob = 'DD/MM/YYYY';
-          // }
-          // if( data  ){
+          scope.member_details.dob = scope.member_details.dob.replace( " ", "" );
+          scope.member_details.dob = scope.member_details.dob.replace(/\/{2,}/g, "/");
+          scope.member_details.dob = scope.populateDOB( scope.member_details.dob );
 
-          // }
-
-
-          console.log( data );
-          // console.log( moment( data, [ 'DD/MM/YYYY', 'D/M/YYYY', ] ) );
-          // console.log( moment( data, [ 'DD/MM/YYYY', 'D/M/YYYY', ] ).format('DD/MM/YYYY') );
-          console.log( moment( '02/02/1999' ).creationData().format );
-
-          // scope.empDobArr = scope.member_details.dob.split('');
-          // scope.populateDOB( scope.empDobArr );
-          // scope.member_details.dob = scope.empDobArr.join("");
           // scope.validateForm();
         }
 
@@ -383,12 +348,7 @@ app.directive("mobileExerciseDirective", [
                 if( scope.member_details.mobile_country_code != null ){
                   scope.member_details.mobile_country_code = "+" + ( scope.member_details.mobile_country_code ).split("+").join("");
                   scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
-                  scope.empDobArr = scope.member_details.dob.split('');
                 }
-                angular.forEach( scope.member_details.dependents , function(value, key){
-                  console.log( value );
-                  value.empDobArr = value.dob.split('');
-                });
                 scope.member_details.mobile_format = scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
                 scope.step = 2;
                 scope.initializeGeoCode();
