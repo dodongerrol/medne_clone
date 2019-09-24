@@ -24,51 +24,88 @@ app.directive("mobileExerciseDirective", [
 
         var isBackspaceActive = false;
 
+
+
+        //=================== DO NOT DELETE. THIS IS BACKUP =====================//
+
+                // scope.validateEmpDOB = function( data ){
+                //   if( data.length <= 1 ){
+                //     isBackspaceActive = false;
+                //   }
+                //   if( data.length == 2 ){
+                //     if( data.charAt(1) == '/' ){
+                //       scope.member_details.dob = "0" + data;
+                //       isBackspaceActive = true;
+                //     }else{
+                //       if( !isBackspaceActive ){
+                //         scope.member_details.dob = data + "/";
+                //         isBackspaceActive = true;
+                //       }
+                //     }
+                //   }
+                //   if( data.length == 3 && data.indexOf('/') == -1 ){
+                //     scope.member_details.dob = data.substr(0, 2) + "/" + data.substr(2);
+                //     isBackspaceActive = true;
+                //   }
+                //   if( data.length == 3 ){
+                //     isBackspaceActive = true;
+                //   }
+                //   if( data.length == 4 ){
+                //     isBackspaceActive = false;
+                //     scope.member_details.dob = data.replace(/\/{2,}/g, "/");
+                //   }
+                //   if( data.length == 5 ){
+                //     if( data.charAt(4) == '/' ){
+                //       scope.member_details.dob = data.substr(0, 3) + "0" + data.substr(3);
+                //       isBackspaceActive = true;
+                //     }else{
+                //       if( !isBackspaceActive ){
+                //         scope.member_details.dob = data + "/";
+                //         isBackspaceActive = true;
+                //       }
+                //     }
+                //   }
+                //   if( data.length == 6 && data.match(/\//g).length == 1 ){
+                //     scope.member_details.dob = data.substr(0, 5) + "/" + data.substr(5);
+                //     isBackspaceActive = true;
+                //   }
+                //   if( data.length == 7 ){
+                //     scope.member_details.dob = data.replace(/\/{2,}/g, "/");
+                //   }
+                //   scope.validateForm();
+                // }
+        //=======================================================================//
+
+
+        scope.dobFormat = ['D','D','/','M','M','/','Y','Y','Y','Y'];
+        scope.empDobArr = "DD/MM/YYYY".split('');
+
+        scope.populateDOB = function( dob ){
+          angular.forEach( dob, function(value, key){
+            if( value == '' ){
+              value = scope.dobFormat[key];
+            }
+          });
+        }
+        
         scope.validateEmpDOB = function( data ){
-          if( data.length <= 1 ){
-            isBackspaceActive = false;
-          }
-          if( data.length == 2 ){
-            if( data.charAt(1) == '/' ){
-              scope.member_details.dob = "0" + data;
-              isBackspaceActive = true;
-            }else{
-              if( !isBackspaceActive ){
-                scope.member_details.dob = data + "/";
-                isBackspaceActive = true;
-              }
-            }
-          }
-          if( data.length == 3 && data.indexOf('/') == -1 ){
-            scope.member_details.dob = data.substr(0, 2) + "/" + data.substr(2);
-            isBackspaceActive = true;
-          }
-          if( data.length == 3 ){
-            isBackspaceActive = true;
-          }
-          if( data.length == 4 ){
-            isBackspaceActive = false;
-            scope.member_details.dob = data.replace(/\/{2,}/g, "/");
-          }
-          if( data.length == 5 ){
-            if( data.charAt(4) == '/' ){
-              scope.member_details.dob = data.substr(0, 3) + "0" + data.substr(3);
-              isBackspaceActive = true;
-            }else{
-              if( !isBackspaceActive ){
-                scope.member_details.dob = data + "/";
-                isBackspaceActive = true;
-              }
-            }
-          }
-          if( data.length == 6 && data.match(/\//g).length == 1 ){
-            scope.member_details.dob = data.substr(0, 5) + "/" + data.substr(5);
-            isBackspaceActive = true;
-          }
-          if( data.length == 7 ){
-            scope.member_details.dob = data.replace(/\/{2,}/g, "/");
-          }
-          scope.validateForm();
+          // if( data == '' ){
+          //   scope.member_details.dob = 'DD/MM/YYYY';
+          // }
+          // if( data  ){
+
+          // }
+
+
+          console.log( data );
+          // console.log( moment( data, [ 'DD/MM/YYYY', 'D/M/YYYY', ] ) );
+          // console.log( moment( data, [ 'DD/MM/YYYY', 'D/M/YYYY', ] ).format('DD/MM/YYYY') );
+          console.log( moment( '02/02/1999' ).creationData().format );
+
+          // scope.empDobArr = scope.member_details.dob.split('');
+          // scope.populateDOB( scope.empDobArr );
+          // scope.member_details.dob = scope.empDobArr.join("");
+          // scope.validateForm();
         }
 
         scope.validateDepDOB = function( list, data ){
@@ -346,7 +383,12 @@ app.directive("mobileExerciseDirective", [
                 if( scope.member_details.mobile_country_code != null ){
                   scope.member_details.mobile_country_code = "+" + ( scope.member_details.mobile_country_code ).split("+").join("");
                   scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
+                  scope.empDobArr = scope.member_details.dob.split('');
                 }
+                angular.forEach( scope.member_details.dependents , function(value, key){
+                  console.log( value );
+                  value.empDobArr = value.dob.split('');
+                });
                 scope.member_details.mobile_format = scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
                 scope.step = 2;
                 scope.initializeGeoCode();
