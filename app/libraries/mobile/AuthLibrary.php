@@ -20,7 +20,8 @@ class AuthLibrary{
 
             if((int)$user->account_update_status == 0) {
                 $returnObject->status = FALSE;
-                $returnObject->message = 'Please update your user ID by clicking on the link above.';
+                $returnObject->error = 'update_credentials';
+                $returnObject->error_description = 'Please update your user ID by clicking on the link above.';
                 return $returnObject;
             }
 
