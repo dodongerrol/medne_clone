@@ -282,6 +282,7 @@ class Api_V1_TransactionController extends \BaseController
 						$consultation_fees = 0;
 					}
 
+					$payment_credits = $total_credits_cost;
 					$date_of_transaction = null;
 					$payment_credits = $total_credits_cost;
 
