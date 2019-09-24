@@ -309,8 +309,8 @@ class DependentController extends \BaseController {
 					try {
 						$enroll_result = $temp_enroll->insertTempEnrollment($temp_enrollment_data);
 						if($enroll_result) {
-							if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
-								foreach ($employee['dependents'] as $key => $dependent) {
+							if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
+								foreach ($user['dependents'] as $key => $dependent) {
 									$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
 									$dependent['plan_start'] = $plan_start->format('Y-m-d');
 									$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
@@ -341,7 +341,7 @@ class DependentController extends \BaseController {
 										'relationship'			=> trim($dependent['relationship']),
 										'error_logs'			=> serialize($error_dependent_logs)
 									);
-
+									// return $temp_enrollment_dependent;
 									// array($format, $temp_enrollment_dependent)
 									$temp_dependent_enroll->createEnrollment($temp_enrollment_dependent);
 								}
@@ -350,7 +350,7 @@ class DependentController extends \BaseController {
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('upload_excel_dependents', $parameter = array(), $secure = null);
-						$email['logs'] = 'Save Temp Enrollment Excel - '.$e->getMessage();
+						$email['logs'] = 'Save Temp Enrollment Excel - '.$e;
 						$email['emailSubject'] = 'Error log.';
 						EmailHelper::sendErrorLogs($email);
 						return array('status' => FALSE, 'message' => 'Failed to create enrollment employee. Please contact Mednefits team.');

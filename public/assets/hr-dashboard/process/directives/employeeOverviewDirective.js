@@ -1351,7 +1351,7 @@ app.directive("employeeOverviewDirective", [
                 nric: data.nric,
                 email: data.email,
                 phone_no: data.phone_no,
-                country_code: data.country_code,
+                country_code: data.country_code.replace('+', ''),
                 job_title: data.job_title,
                 postal_code: data.postal_code,
                 bank_account: data.bank_account,
@@ -1604,7 +1604,7 @@ app.directive("employeeOverviewDirective", [
             iti2.setCountry( "SG" );
             scope.replace_emp_data.country_code = '65';
             input2.addEventListener("countrychange", function() {
-              console.log( iti2.getSelectedCountryData() );
+              console.log( iti2.getSelectedCountryData()0 );
               scope.replace_emp_data.country_code = iti2.getSelectedCountryData().dialCode;
               scope.replace_emp_data.mobile_area_code = iti2.getSelectedCountryData().dialCode;
               scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;

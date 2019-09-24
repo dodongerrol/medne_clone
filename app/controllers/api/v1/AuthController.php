@@ -1924,6 +1924,7 @@ public function getNewClinicDetails($id)
         }
 
         $jsonArray['clinic_id'] = $clinic->ClinicID;
+        $jsonArray['user_id'] = $findUserID;
         $jsonArray['name'] = $clinic->CLName;
         $jsonArray['email'] = $email;
         $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLState.' '.$clinic->CLPostal;
