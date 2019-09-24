@@ -9,7 +9,7 @@ app.directive("mobileExerciseDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("mobileExerciseDirective running!");
         
-        scope.step = 2;
+        scope.step = 1;
         scope.nric_data = {};
         scope.member_details = {};
         scope.emp_dob_error = false;
@@ -23,100 +23,105 @@ app.directive("mobileExerciseDirective", [
         var iti = null;
 
         var isBackspaceActive = false;
-        var empSlashCount = 0;
-
-
 
         $("body").on("keydown", ".dob-input", function(event) {
           if (event.keyCode == 32) {
             event.preventDefault();
           }
         });
-
-
-        scope.populateDOB = function( dob ){
-          var splitDob = dob.split('');
-          var activeSlash = 0;
-          if( dob.length < 3 ){
-            empSlashCount = 0;
+        scope.validateEmpDOB = function( data ){
+          if( scope.member_details.dob == '' ){
+            return false;
           }
-          angular.forEach( splitDob ,function( value, key ){
-            if( key == 1 && splitDob[ key + 1 ] != '/' && empSlashCount == 0 ){
-              splitDob[ key + 1 ] = '/';
-              empSlashCount += 1;
+          scope.member_details.dob = scope.member_details.dob.replace( /([^0-9\/ ])/g, "" );
+          if( scope.member_details.dob.length == 2 ){
+            if( !isBackspaceActive ){
+              scope.member_details.dob = scope.member_details.dob + "/";
+              isBackspaceActive = true;
             }
-            if( ( key == 2 || key == 5 ) && value != '/' ){
-              splitDob[ key + 1 ] = splitDob[ key ];
-              splitDob[ key ] = '/';
-              empSlashCount += 1;
+          }
+          if( scope.member_details.dob.length < 3 ){
+            isBackspaceActive = false;
+          }
+          if( scope.member_details.dob.length == 3 && scope.member_details.dob.indexOf('/') == -1 ){
+            scope.member_details.dob = scope.member_details.dob.substr(0, 2) + "/" + scope.member_details.dob.substr(2);
+            isBackspaceActive = true;
+          }
+          if( scope.member_details.dob.length == 3 ){
+            isBackspaceActive = true;
+          }
+          if( scope.member_details.dob.length == 4 ){
+            isBackspaceActive = false;
+          }
+          if( scope.member_details.dob.length == 5 ){
+            if( !isBackspaceActive ){
+              scope.member_details.dob = scope.member_details.dob + "/";
+              isBackspaceActive = true;
             }
-            if( key == 4 && splitDob[ key + 1 ] != '/' && empSlashCount == 1 ){
-              splitDob[ key + 1 ] = '/';
-              empSlashCount += 1;
-            }
-
+          }
+          if( scope.member_details.dob.length == 6 && scope.member_details.dob.match(/\//g).length > 0 ){
+            scope.member_details.dob = scope.member_details.dob.substr(0, 5) + "/" + scope.member_details.dob.substr(5);
+            isBackspaceActive = true;
+          }
+          var slashCtr = 0;
+          angular.forEach( scope.member_details.dob, function(value, key){
             if( value == '/' ){
-              activeSlash += 1;
+              slashCtr += 1;
+            }
+            if( slashCtr > 2 ){
+              scope.member_details.dob = scope.member_details.dob.substr(0, key) + scope.member_details.dob.substr(key + 1);
+              slashCtr = 0;
             }
           });
-
-          console.log( 'empSlash' , empSlashCount );
-          console.log( 'dob length' , dob.length );
-          return splitDob.join('');
-        }
-
-        scope.validateEmpDOB = function( data ){
-          scope.member_details.dob = scope.member_details.dob.replace( " ", "" );
           scope.member_details.dob = scope.member_details.dob.replace(/\/{2,}/g, "/");
-          scope.member_details.dob = scope.populateDOB( scope.member_details.dob );
-
-          // scope.validateForm();
+          scope.validateForm();
         }
 
         scope.validateDepDOB = function( list, data ){
-          if( data.length <= 1 ){
-            list.isBackspaceActive = false;
+          if( list.dob == '' ){
+            return false;
           }
-          if( data.length == 2 ){
-            if( data.charAt(1) == '/' ){
-              list.dob = "0" + data;
+          list.dob = list.dob.replace( /([^0-9\/ ])/g, "" );
+          if( list.dob.length == 2 ){
+            if( !list.isBackspaceActive ){
+              list.dob = list.dob + "/";
               list.isBackspaceActive = true;
-            }else{
-              if( !list.isBackspaceActive ){
-                list.dob = data + "/";
-                list.isBackspaceActive = true;
-              }
             }
           }
-          if( data.length == 3 && data.indexOf('/') == -1 ){
-            list.dob = data.substr(0, 2) + "/" + data.substr(2);
-            list.isBackspaceActive = true;
-          }
-          if( data.length == 3 ){
-            list.isBackspaceActive = true;
-          }
-          if( data.length == 4 ){
+          if( list.dob.length < 3 ){
             list.isBackspaceActive = false;
-            list.dob = data.replace(/\/{2,}/g, "/");
           }
-          if( data.length == 5 ){
-            if( data.charAt(4) == '/' ){
-              list.dob = data.substr(0, 3) + "0" + data.substr(3);
+          if( list.dob.length == 3 && list.dob.indexOf('/') == -1 ){
+            list.dob = list.dob.substr(0, 2) + "/" + list.dob.substr(2);
+            list.isBackspaceActive = true;
+          }
+          if( list.dob.length == 3 ){
+            list.isBackspaceActive = true;
+          }
+          if( list.dob.length == 4 ){
+            list.isBackspaceActive = false;
+          }
+          if( list.dob.length == 5 ){
+            if( !list.isBackspaceActive ){
+              list.dob = list.dob + "/";
               list.isBackspaceActive = true;
-            }else{
-              if( !list.isBackspaceActive ){
-                list.dob = data + "/";
-                list.isBackspaceActive = true;
-              }
             }
           }
-          if( data.length == 6 && data.match(/\//g).length == 1 ){
-            list.dob = data.substr(0, 5) + "/" + data.substr(5);
+          if( list.dob.length == 6 && list.dob.match(/\//g).length > 0 ){
+            list.dob = list.dob.substr(0, 5) + "/" + list.dob.substr(5);
             list.isBackspaceActive = true;
           }
-          if( data.length == 7 ){
-            list.dob = data.replace(/\/{2,}/g, "/");
-          }
+          var slashCtr = 0;
+          angular.forEach( list.dob, function(value, key){
+            if( value == '/' ){
+              slashCtr += 1;
+            }
+            if( slashCtr > 2 ){
+              list.dob = list.dob.substr(0, key) + list.dob.substr(key + 1);
+              slashCtr = 0;
+            }
+          });
+          list.dob = list.dob.replace(/\/{2,}/g, "/");
           scope.validateForm();
         }
 
