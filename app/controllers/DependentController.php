@@ -308,8 +308,8 @@ class DependentController extends \BaseController {
 					try {
 						$enroll_result = $temp_enroll->insertTempEnrollment($temp_enrollment_data);
 						if($enroll_result) {
-							if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
-								foreach ($employee['dependents'] as $key => $dependent) {
+							if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
+								foreach ($user['dependents'] as $key => $dependent) {
 									$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
 									$dependent['plan_start'] = $plan_start->format('Y-m-d');
 									$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
