@@ -1604,7 +1604,7 @@ app.directive("employeeOverviewDirective", [
             iti2.setCountry( "SG" );
             scope.replace_emp_data.country_code = '65';
             input2.addEventListener("countrychange", function() {
-              console.log( iti2.getSelectedCountryData() );
+              console.log( iti2.getSelectedCountryData()0 );
               scope.replace_emp_data.country_code = iti2.getSelectedCountryData().dialCode;
               scope.replace_emp_data.mobile_area_code = iti2.getSelectedCountryData().dialCode;
               scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
