@@ -323,11 +323,14 @@ class DependentController extends \BaseController {
 
 									if(!$depedent_plan_id) {
 										$dependent_plan = DB::table('dependent_plans')
-										->where('customer_plan_id', $customer_active_plan->plan_id )
+										->where('customer_plan_id', $customer_active_plan->plan_id)
 										->orderBy('created_at', 'desc')
 										->first();
 										$depedent_plan_id = $dependent_plan->depedent_plan_id;
 									}
+
+									$dob = \DateTime::createFromFormat('d/m/Y', $dependent['date_of_birth']);
+									$dependent['dob'] = $dob->format('Y-m-d');
 
 									$temp_enrollment_dependent = array(
 										'employee_temp_id'		=> $enroll_result->id,
