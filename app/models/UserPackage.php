@@ -157,6 +157,10 @@ class UserPackage extends Eloquent
                             } else {
                                 $cap_per_visit = "S$ ".number_format($plan_tier->gp_cap_per_visit, 2);
                             }
+                        } else {
+                            if($wallet->cap_per_visit_medical > 0) {
+                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
+                            }
                         }
 
                         $data['cap_per_visit'] = $cap_per_visit;
@@ -262,6 +266,10 @@ class UserPackage extends Eloquent
                                 $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
                             } else {
                                 $cap_per_visit = "S$ ".number_format($plan_tier->gp_cap_per_visit, 2);
+                            }
+                        } else {
+                            if($wallet->cap_per_visit_medical > 0) {
+                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
                             }
                         }
 
