@@ -570,7 +570,7 @@ public static function Forgot_PasswordV2(){
         $updateArray['userid'] = $findUserID;
         // $updateArray['Password'] = md5($password);
         $updateArray['Recon'] = 0;
-        $updateArray['updated_at'] = time();
+        // $updateArray['updated_at'] = time();
         $userUpdated = self::UpdateUserProfile($updateArray);
         // if($userUpdated){
       // return "email";
