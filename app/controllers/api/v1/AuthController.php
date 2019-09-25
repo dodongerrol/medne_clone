@@ -95,9 +95,10 @@ class Api_V1_AuthController extends \BaseController {
             				$returnObject->error= "false";
             				$returnObject->data['access_token'] = $get_token->id;
             				$returnObject->data['token_type'] = 'Bearer';
-            				$returnObject->data['expires_in'] = 7200;
-            				$findRealAppointment = ClinicLibrary::FindRealAppointment($user->UserID);
-            				$activePromoCode = General_Library::ActivePromoCode();
+                    $returnObject->data['expires_in'] = 7200;
+            				$returnObject->data['user_id'] = $user->UserID;
+            				// $findRealAppointment = ClinicLibrary::FindRealAppointment($user->UserID);
+            				// $activePromoCode = General_Library::ActivePromoCode();
 
             				$status = StringHelper::checkEligibleFeature($user->UserID);
 
@@ -111,12 +112,12 @@ class Api_V1_AuthController extends \BaseController {
             					$returnObject->data['pin_setup'] = FALSE;
             				}
 
-            				if(!$findRealAppointment){
-            					$returnObject->data['promocode']['status'] = 1;
-            					$returnObject->data['promocode']['message'] = "We are very excited to have you onboard, select the clinic of your choice and start booking for your next appointment now!";
-            				}else{
+            				// if(!$findRealAppointment){
+            				// 	$returnObject->data['promocode']['status'] = 1;
+            				// 	$returnObject->data['promocode']['message'] = "We are very excited to have you onboard, select the clinic of your choice and start booking for your next appointment now!";
+            				// }else{
             					$returnObject->data['promocode'] = null;
-            				}
+            				// }
             			} else {
             				$returnObject->error= "true";
             				$returnObject->status = FALSE;
