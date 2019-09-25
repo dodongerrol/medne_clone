@@ -326,7 +326,7 @@ class DependentController extends \BaseController {
 										->where('customer_plan_id', $customer_active_plan->plan_id)
 										->orderBy('created_at', 'desc')
 										->first();
-										$depedent_plan_id = $dependent_plan->depedent_plan_id;
+										$depedent_plan_id = $dependent_plan->dependent_plan_id;
 									}
 
 									$dob = \DateTime::createFromFormat('d/m/Y', $dependent['date_of_birth']);
