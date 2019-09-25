@@ -90,7 +90,7 @@
 			<h2 class="text-center text-below-image">for member</h2>
 			<form class="med-form" ng-submit="login()">
 				<div class="form-group">
-					<input type="text" name="email" class="form-control med-input" placeholder="Email Address or Mobile Number" ng-model="email" required/>
+					<input type="text" name="email" class="form-control med-input" placeholder="Email or NRIC or Mobile Number" ng-model="email" required/>
 				</div>
 				<div class="form-group">
 					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" required style="margin-bottom: 15px">
