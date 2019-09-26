@@ -452,7 +452,7 @@ class PlanTierController extends \BaseController {
 					'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
 				);
 			}
-		} else {
+		} else if(!$dependent_plan_status && $total_dependents_entry > 0){
 			return array(
 					'status'	=> FALSE,
 					'message'	=> "Please purchase a dependent plan to be able to enroll the dependent accounts."
