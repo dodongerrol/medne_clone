@@ -11,7 +11,9 @@ app.directive("mobileExerciseDirective", [
         
         scope.step = 1;
         scope.nric_data = {};
-        scope.member_details = {};
+        scope.member_details = {
+          mobile_country_code : '65'
+        };
         scope.emp_dob_error = false;
         scope.emp_dob_error_message = '';
         scope.emp_mobile_error = false;
