@@ -2771,13 +2771,16 @@ class BenefitsDashboardController extends \BaseController {
 
 			foreach ($dependents as $key => $dependent) {
 				$user = DB::table('user')
-				->where('UserID', $dependent->employee_user_id)
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+				->where('user.UserID', $dependent->employee_user_id)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active')
 				->first();
 				if($user) {
 					array_push($users, $user);
 				}
 			}
-			// return $dependents;
+			// return $users;
 		}
 
 		foreach ($users as $key => $user) {
