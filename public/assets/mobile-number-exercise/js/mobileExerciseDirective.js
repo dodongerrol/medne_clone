@@ -12,7 +12,7 @@ app.directive("mobileExerciseDirective", [
         scope.step = 1;
         scope.nric_data = {};
         scope.member_details = {
-          mobile_country_code : '65'
+          mobile_country_code : '+65'
         };
         scope.emp_dob_error = false;
         scope.emp_dob_error_message = '';
@@ -355,6 +355,8 @@ app.directive("mobileExerciseDirective", [
                 if( scope.member_details.mobile_country_code != null ){
                   scope.member_details.mobile_country_code = "+" + ( scope.member_details.mobile_country_code ).split("+").join("");
                   scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
+                }else{
+                  scope.member_details.mobile_country_code = "+65";
                 }
                 scope.member_details.mobile_format = scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
                 scope.step = 2;
