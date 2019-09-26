@@ -223,8 +223,7 @@ class DependentController extends \BaseController {
 								'message'	=> "We realised the current headcount you wish to enroll is over the current vacant dependent seat/s."
 							);
 						}
-
-					} else {
+					} else if(!$dependent_plan_status && $total_dependents_entry > 0){
 						return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
 					}
 					
