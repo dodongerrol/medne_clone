@@ -217,6 +217,13 @@ class DependentController extends \BaseController {
 					if($dependent_plan_status) {
 						$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
 
+						if($total_dependents_entry > $total_dependents) {
+							return array(
+								'status'	=> FALSE,
+								'message'	=> "We realised the current headcount you wish to enroll is over the current vacant dependent seat/s."
+							);
+						}
+
 					} else {
 						return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
 					}
