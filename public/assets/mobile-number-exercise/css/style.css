@@ -316,6 +316,38 @@ h3.tooltip-phone-email-details {
   margin: 0 0 20px;
 }
 
+.sms-otp-wrapper p {
+  color: #848484;
+  font-weight: 700;
+}
+
+.mobile-num-container span {
+  font-weight: 700;
+  margin: 0 5px 0 0;
+}
+
+.mobile-num-container .not-mobile-text {
+  color: #0392cf;
+}
+
+.otp-input-wrapper {
+  display: flex;
+  text-align: center;
+  margin: 30px 0 0;
+}
+
+.otp-input-wrapper >div {
+  margin: 0 10px 0 0;
+}
+
+.otp-input-wrapper >div:last-child {
+  margin: 0;
+}
+
+.otp-input-wrapper >div input {
+  text-align: center;
+}
+
 
 .cancel-confirm-btn-container {
   display: flex;

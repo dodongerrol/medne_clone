@@ -23,13 +23,13 @@
 
 				<div class="mobile-exercise-form-container">
 
-					<div class="">
+					<div class="" style="display: none;">
 						<p ng-if="step == 1">If you are Mednefits member, please enter your NRIC/FIN and password, and click Submit.</p>
 						<p ng-if="step == 2">Please provide your information below to start using Mednefits</p>
 						<p ng-if="step == 3" class="thank-you-text">Thank you, your information have been updated! You may now login using your new user ID.</p>
 					</div>
 
-					<div>
+					<div style="display: none;">
 						<div ng-if="step == 1" class="nric-fin-password-container" >
 							<form ng-submit="submitNric( nric_data )">
 								<div class="mobile-exercise-input-wrapper">
@@ -87,6 +87,41 @@
 							<button class="btn-confirm btn-responsive" ng-click="submitUpdateDetails( member_details )" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
 							<button class="btn-home btn-responsive" ng-if="step == 3" ng-click="cancelBtn()">Home</button>
 							<button class="btn-cancel btn-responsive" ng-if="step != 3" ng-click="cancelBtn()">Cancel</button>
+						</div>
+					</div>
+
+					<div class="sms-otp-wrapper">
+						<div class="">
+							<h3>Enter SMS OTP</h3>
+							<p>We have sent you a 6 digit verification code (OPT) via SMS to your mobile number</p>
+							<div class="mobile-num-container">
+								<span>+65 96029128</span>
+								<span class="not-mobile-text">Not your mobile number?</span>
+							</div>
+						</div>
+						<div class="otp-input-wrapper">
+							<div>
+								<input type="number">
+							</div>
+							<div>
+								<input type="number">
+							</div>
+							<div>
+								<input type="number">
+							</div>
+							<div>
+								<input type="number">
+							</div>
+							<div>
+								<input type="number">
+							</div>
+							<div>
+								<input type="number">
+							</div>
+						</div>
+						<div class="mobile-exercise-btn-footer">
+							<button class="btn-submit">Submit</button>
+							<button class="btn-submit">Resend OTP</button>
 						</div>
 					</div>
 
