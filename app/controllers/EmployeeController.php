@@ -247,4 +247,46 @@ class EmployeeController extends \BaseController {
         	return array('status' => true, 'message' => 'Mobile Number is vacant.');
         }
 	}
+
+    public function sendSmsOtp( )
+    {
+        return "yeah";
+        $input = Input::all();
+        $token = StringHelper::getToken();
+        if(!$token) {
+            return array('status' => false, 'message' => 'Token is required.');
+        }
+
+        $secret = Config::get('config.secret_key');
+        $result = FALSE;
+        try {
+            $result = JWT::decode($token, $secret);
+        } catch(Exception $e) {
+            return FALSE;
+        }
+       
+        if(!$result) {
+            return array('status' => false, 'message' => 'Token is invalid.');
+        }
+
+        if(empty($input['mobile']) || $input['mobile'] == null) {
+            return array('status' => false, 'message' => 'Mobile Number is required.');
+        }
+
+        if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+            return array('status' => false, 'message' => 'Mobile Country Code is required.');
+        }
+
+        if(empty($input['opt_code']) || $input['opt_code'] == null) {
+            return array('status' => false, 'message' => ' OTP Code is required.');
+        }
+
+        $member_id = $result->user_id;
+        $mobile_number = (int)$input['mobile'];
+        $code = $input['mobile_country_code'];
+
+        $otp_code = StringHelper::OTPChallenge();
+
+        return $otp_code;
+    }
 }
