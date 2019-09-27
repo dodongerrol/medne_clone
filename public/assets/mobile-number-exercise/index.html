@@ -49,7 +49,7 @@
 								<span ng-if="emp_dob_error" class="err-msg" ng-bind="emp_dob_error_message"></span>
 							</div>
 							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error}">
-								<label>Mobile Number</label>
+								<label>Mobile Number (SMS OTP will be send to you for verification)</label>
 								<input valid-number id="area_code" pattern="[0-9]*" type="tel"  ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
 								<span ng-if="emp_mobile_error" class="err-msg" ng-bind="emp_mobile_error_message"></span>
 							</div>
