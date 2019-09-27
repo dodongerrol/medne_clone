@@ -83,7 +83,8 @@ Route::group(array('prefix' => 'exercise'), function()
 	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
 	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
 	Route::post('validate_mobile_number', 'EmployeeController@checkMobileExistence');
-	Route::post('send_sms_otp', 'EmployeeController@sendSmsOtp');
+	Route::post('send_sms_otp', 'EmployeeController@sendMemberSmsOtp');
+	Route::post('validate_otp_code', 'EmployeeController@validateOpt');
 });
 
 

@@ -145,6 +145,10 @@ class EmployeeController extends \BaseController {
 			return array('status' => false, 'message' => 'Token is required.');
 		}
 
+        if(empty($input['otp_code']) || $input['otp_code'] == null) {
+            return array('status' => false, 'message' => 'OTP Code is required.');
+        }
+
 		if(empty($input['dob']) || $input['dob'] == null) {
 			return array('status' => false, 'message' => 'DOB is required.');
 		}
@@ -172,6 +176,11 @@ class EmployeeController extends \BaseController {
         $member_id = $result->user_id;
         $mobile_number = (int)$input['mobile'];
         
+        $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
+        if(!$result) {
+            return array('status' => false, 'message' => 'Invalid OTP Code.');
+        }
+
         $check = DB::table('user')
         				->where('PhoneNo', (string)$mobile_number)
         				->whereNotIn('UserID', [$member_id])
@@ -190,6 +199,8 @@ class EmployeeController extends \BaseController {
         	'PhoneCode'	=> $input['mobile_country_code'],
         	'account_update_status'	=> 1,
         	'account_update_date'	=> date('Y-m-d H:i:s'),
+            'OTPCode'   => null,
+            'OTPStatus' => 0
         );
 
         DB::table('user')->where('UserID', $member_id)->update($member_data);
@@ -248,9 +259,8 @@ class EmployeeController extends \BaseController {
         }
 	}
 
-    public function sendSmsOtp( )
+    public function sendMemberSmsOtp( )
     {
-        return "yeah";
         $input = Input::all();
         $token = StringHelper::getToken();
         if(!$token) {
@@ -277,16 +287,48 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'Mobile Country Code is required.');
         }
 
-        if(empty($input['opt_code']) || $input['opt_code'] == null) {
-            return array('status' => false, 'message' => ' OTP Code is required.');
-        }
-
         $member_id = $result->user_id;
         $mobile_number = (int)$input['mobile'];
         $code = $input['mobile_country_code'];
+        $phone = $code.$mobile_number;
 
         $otp_code = StringHelper::OTPChallenge();
-
+        StringHelper::TestSendOTPSMS($phone, $otp_code);
+        DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
+        return array('status' => true, 'message' => 'OTP SMS sent');
         return $otp_code;
+    }
+
+    public function validateOpt( )
+    {
+        $input = Input::all();
+        $token = StringHelper::getToken();
+        if(!$token) {
+            return array('status' => false, 'message' => 'Token is required.');
+        }
+
+        $secret = Config::get('config.secret_key');
+        $result = FALSE;
+        try {
+            $result = JWT::decode($token, $secret);
+        } catch(Exception $e) {
+            return FALSE;
+        }
+       
+        if(!$result) {
+            return array('status' => false, 'message' => 'Token is invalid.');
+        }
+
+        if(empty($input['otp_code']) || $input['otp_code'] == null) {
+            return array('status' => false, 'message' => 'OTP Code is required.');
+        }
+
+        $member_id = $result->user_id;
+        $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
+        if(!$result) {
+            return array('status' => false, 'message' => 'Invalid OTP Code.');
+        }
+
+        return array('status' => true, 'message' => 'OTPCode is valid');
     }
 }
