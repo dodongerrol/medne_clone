@@ -217,7 +217,13 @@ class DependentController extends \BaseController {
 					if($dependent_plan_status) {
 						$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
 
-					} else {
+						if($total_dependents_entry > $total_dependents) {
+							return array(
+								'status'	=> FALSE,
+								'message'	=> "We realised the current headcount you wish to enroll is over the current vacant dependent seat/s."
+							);
+						}
+					} else if(!$dependent_plan_status && $total_dependents_entry > 0){
 						return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
 					}
 					
@@ -309,8 +315,8 @@ class DependentController extends \BaseController {
 					try {
 						$enroll_result = $temp_enroll->insertTempEnrollment($temp_enrollment_data);
 						if($enroll_result) {
-							if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
-								foreach ($employee['dependents'] as $key => $dependent) {
+							if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
+								foreach ($user['dependents'] as $key => $dependent) {
 									$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
 									$dependent['plan_start'] = $plan_start->format('Y-m-d');
 									$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
@@ -323,11 +329,14 @@ class DependentController extends \BaseController {
 
 									if(!$depedent_plan_id) {
 										$dependent_plan = DB::table('dependent_plans')
-										->where('customer_plan_id', $customer_active_plan->plan_id )
+										->where('customer_plan_id', $customer_active_plan->plan_id)
 										->orderBy('created_at', 'desc')
 										->first();
-										$depedent_plan_id = $dependent_plan->depedent_plan_id;
+										$depedent_plan_id = $dependent_plan->dependent_plan_id;
 									}
+
+									$dob = \DateTime::createFromFormat('d/m/Y', $dependent['date_of_birth']);
+									$dependent['dob'] = $dob->format('Y-m-d');
 
 									$temp_enrollment_dependent = array(
 										'employee_temp_id'		=> $enroll_result->id,
@@ -341,7 +350,7 @@ class DependentController extends \BaseController {
 										'relationship'			=> trim($dependent['relationship']),
 										'error_logs'			=> serialize($error_dependent_logs)
 									);
-
+									// return $temp_enrollment_dependent;
 									// array($format, $temp_enrollment_dependent)
 									$temp_dependent_enroll->createEnrollment($temp_enrollment_dependent);
 								}
@@ -350,7 +359,7 @@ class DependentController extends \BaseController {
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('upload_excel_dependents', $parameter = array(), $secure = null);
-						$email['logs'] = 'Save Temp Enrollment Excel - '.$e->getMessage();
+						$email['logs'] = 'Save Temp Enrollment Excel - '.$e;
 						$email['emailSubject'] = 'Error log.';
 						EmailHelper::sendErrorLogs($email);
 						return array('status' => FALSE, 'message' => 'Failed to create enrollment employee. Please contact Mednefits team.');

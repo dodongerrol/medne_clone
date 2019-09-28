@@ -18,6 +18,13 @@ class AuthLibrary{
                 return $returnObject;
             }
 
+            if((int)$user->account_update_status == 0) {
+                $returnObject->status = FALSE;
+                $returnObject->error = 'update_credentials';
+                $returnObject->error_description = 'Please update your user ID by clicking on the link above.';
+                return $returnObject;
+            }
+
             $token->data['user_id'] = $findUserID;
             $returnObject->error= "false";
             $returnObject = $token;

@@ -11,7 +11,9 @@ app.directive("mobileExerciseDirective", [
         
         scope.step = 1;
         scope.nric_data = {};
-        scope.member_details = {};
+        scope.member_details = {
+          mobile_country_code : '+65'
+        };
         scope.emp_dob_error = false;
         scope.emp_dob_error_message = '';
         scope.emp_mobile_error = false;
@@ -24,97 +26,104 @@ app.directive("mobileExerciseDirective", [
 
         var isBackspaceActive = false;
 
+        $("body").on("keydown", ".dob-input", function(event) {
+          if (event.keyCode == 32) {
+            event.preventDefault();
+          }
+        });
         scope.validateEmpDOB = function( data ){
-          if( data.length <= 1 ){
-            isBackspaceActive = false;
+          if( scope.member_details.dob == '' ){
+            return false;
           }
-          if( data.length == 2 ){
-            if( data.charAt(1) == '/' ){
-              scope.member_details.dob = "0" + data;
+          scope.member_details.dob = scope.member_details.dob.replace( /([^0-9\/ ])/g, "" );
+          if( scope.member_details.dob.length == 2 ){
+            if( !isBackspaceActive ){
+              scope.member_details.dob = scope.member_details.dob + "/";
               isBackspaceActive = true;
-            }else{
-              if( !isBackspaceActive ){
-                scope.member_details.dob = data + "/";
-                isBackspaceActive = true;
-              }
             }
           }
-          if( data.length == 3 && data.indexOf('/') == -1 ){
-            scope.member_details.dob = data.substr(0, 2) + "/" + data.substr(2);
-            isBackspaceActive = true;
-          }
-          if( data.length == 3 ){
-            isBackspaceActive = true;
-          }
-          if( data.length == 4 ){
+          if( scope.member_details.dob.length < 3 ){
             isBackspaceActive = false;
-            scope.member_details.dob = data.replace(/\/{2,}/g, "/");
           }
-          if( data.length == 5 ){
-            if( data.charAt(4) == '/' ){
-              scope.member_details.dob = data.substr(0, 3) + "0" + data.substr(3);
+          if( scope.member_details.dob.length == 3 && scope.member_details.dob.indexOf('/') == -1 ){
+            scope.member_details.dob = scope.member_details.dob.substr(0, 2) + "/" + scope.member_details.dob.substr(2);
+            isBackspaceActive = true;
+          }
+          if( scope.member_details.dob.length == 3 ){
+            isBackspaceActive = true;
+          }
+          if( scope.member_details.dob.length == 4 ){
+            isBackspaceActive = false;
+          }
+          if( scope.member_details.dob.length == 5 ){
+            if( !isBackspaceActive ){
+              scope.member_details.dob = scope.member_details.dob + "/";
               isBackspaceActive = true;
-            }else{
-              if( !isBackspaceActive ){
-                scope.member_details.dob = data + "/";
-                isBackspaceActive = true;
-              }
             }
           }
-          if( data.length == 6 && data.match(/\//g).length == 1 ){
-            scope.member_details.dob = data.substr(0, 5) + "/" + data.substr(5);
+          if( scope.member_details.dob.length == 6 && scope.member_details.dob.match(/\//g).length > 0 ){
+            scope.member_details.dob = scope.member_details.dob.substr(0, 5) + "/" + scope.member_details.dob.substr(5);
             isBackspaceActive = true;
           }
-          if( data.length == 7 ){
-            scope.member_details.dob = data.replace(/\/{2,}/g, "/");
-          }
+          var slashCtr = 0;
+          angular.forEach( scope.member_details.dob, function(value, key){
+            if( value == '/' ){
+              slashCtr += 1;
+            }
+            if( slashCtr > 2 ){
+              scope.member_details.dob = scope.member_details.dob.substr(0, key) + scope.member_details.dob.substr(key + 1);
+              slashCtr = 0;
+            }
+          });
+          scope.member_details.dob = scope.member_details.dob.replace(/\/{2,}/g, "/");
           scope.validateForm();
         }
 
         scope.validateDepDOB = function( list, data ){
-          if( data.length <= 1 ){
-            list.isBackspaceActive = false;
+          if( list.dob == '' ){
+            return false;
           }
-          if( data.length == 2 ){
-            if( data.charAt(1) == '/' ){
-              list.dob = "0" + data;
+          list.dob = list.dob.replace( /([^0-9\/ ])/g, "" );
+          if( list.dob.length == 2 ){
+            if( !list.isBackspaceActive ){
+              list.dob = list.dob + "/";
               list.isBackspaceActive = true;
-            }else{
-              if( !list.isBackspaceActive ){
-                list.dob = data + "/";
-                list.isBackspaceActive = true;
-              }
             }
           }
-          if( data.length == 3 && data.indexOf('/') == -1 ){
-            list.dob = data.substr(0, 2) + "/" + data.substr(2);
-            list.isBackspaceActive = true;
-          }
-          if( data.length == 3 ){
-            list.isBackspaceActive = true;
-          }
-          if( data.length == 4 ){
+          if( list.dob.length < 3 ){
             list.isBackspaceActive = false;
-            list.dob = data.replace(/\/{2,}/g, "/");
           }
-          if( data.length == 5 ){
-            if( data.charAt(4) == '/' ){
-              list.dob = data.substr(0, 3) + "0" + data.substr(3);
+          if( list.dob.length == 3 && list.dob.indexOf('/') == -1 ){
+            list.dob = list.dob.substr(0, 2) + "/" + list.dob.substr(2);
+            list.isBackspaceActive = true;
+          }
+          if( list.dob.length == 3 ){
+            list.isBackspaceActive = true;
+          }
+          if( list.dob.length == 4 ){
+            list.isBackspaceActive = false;
+          }
+          if( list.dob.length == 5 ){
+            if( !list.isBackspaceActive ){
+              list.dob = list.dob + "/";
               list.isBackspaceActive = true;
-            }else{
-              if( !list.isBackspaceActive ){
-                list.dob = data + "/";
-                list.isBackspaceActive = true;
-              }
             }
           }
-          if( data.length == 6 && data.match(/\//g).length == 1 ){
-            list.dob = data.substr(0, 5) + "/" + data.substr(5);
+          if( list.dob.length == 6 && list.dob.match(/\//g).length > 0 ){
+            list.dob = list.dob.substr(0, 5) + "/" + list.dob.substr(5);
             list.isBackspaceActive = true;
           }
-          if( data.length == 7 ){
-            list.dob = data.replace(/\/{2,}/g, "/");
-          }
+          var slashCtr = 0;
+          angular.forEach( list.dob, function(value, key){
+            if( value == '/' ){
+              slashCtr += 1;
+            }
+            if( slashCtr > 2 ){
+              list.dob = list.dob.substr(0, key) + list.dob.substr(key + 1);
+              slashCtr = 0;
+            }
+          });
+          list.dob = list.dob.replace(/\/{2,}/g, "/");
           scope.validateForm();
         }
 
@@ -346,6 +355,8 @@ app.directive("mobileExerciseDirective", [
                 if( scope.member_details.mobile_country_code != null ){
                   scope.member_details.mobile_country_code = "+" + ( scope.member_details.mobile_country_code ).split("+").join("");
                   scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
+                }else{
+                  scope.member_details.mobile_country_code = "+65";
                 }
                 scope.member_details.mobile_format = scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
                 scope.step = 2;
@@ -363,8 +374,13 @@ app.directive("mobileExerciseDirective", [
             .then(function(response){
               console.log(response);
               if( response.data.status ){
-                scope.token = response.data.token;
-                scope.getMemberInfo( response.data.token );
+                if(response.data.updated == true) {
+                  scope.hideLoading();
+                  scope.step = 3;
+                } else {
+                  scope.token = response.data.token;
+                  scope.getMemberInfo( response.data.token );
+                }
               }else{
                 scope.hideLoading();
                 swal( 'Error!', response.data.message, 'error' );

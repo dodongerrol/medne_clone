@@ -303,7 +303,7 @@
 														</div>
 													</td> -->
 													<td>
-														<input class="manual-form" type="text" placeholder="Search Mobile Number" ng-model="add_claim_data.mobile" ng-change="getAllUsers( add_claim_data.mobile )" ng-model-options='{ debounce: 500 }'>
+														<input style="width: 100%;" class="manual-form" type="text" placeholder="Search Mobile Number" ng-model="add_claim_data.mobile" ng-change="getAllUsers( add_claim_data.mobile )" ng-model-options='{ debounce: 500 }'>
 														<div ng-if="isSearchNRIC" class="nric-drop">
 															<div class="nric-list" ng-repeat="list in users_nric_arr" ng-click="selectNRIC( list )">
 																<div class="img-wrapper">
