@@ -21,6 +21,7 @@ app.directive("mobileExerciseDirective", [
         scope.isConfirmActive = true;
         scope.token = null;
         scope.devicePlatform = null;
+        scope.optCode = [];
 
         var iti = null;
 
@@ -270,7 +271,7 @@ app.directive("mobileExerciseDirective", [
         };
 
         scope.cancelBtn = function(){
-          if( scope.step == 1 || scope.step == 3 ){
+          if( scope.step == 1 || scope.step == 4 ){
             if( scope.devicePlatform == 'web' ){
               window.location = '/member-portal-login';
             }else{
@@ -282,6 +283,10 @@ app.directive("mobileExerciseDirective", [
         }
 
         scope.submitUpdateDetails = function( data ){
+          if( scope.optCode.length != 6 ){
+            swal('Error!', 'Please input your 6 digit verification code (OTP).', 'error');
+            return false;
+          }
           console.log( data );
 
           var update_data = {
@@ -290,6 +295,7 @@ app.directive("mobileExerciseDirective", [
             mobile_country_code : data.mobile_country_code,
             name : data.name,
             dependents : [],
+            otp_code : scope.optCode.join('')
           }
           angular.forEach( data.dependents,function(value,key){
             console.log( value );
@@ -308,10 +314,97 @@ app.directive("mobileExerciseDirective", [
           if( data.dependents.length == 0 ){
             scope.updateDetails( update_data );
           }
+
+          console.log( update_data );
         }
 
 
+        scope.setStep = function( num ){
+          if( num == 2 ){
+            scope.optCode = [];
+            scope.member_details.mobile_format = "+" + scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
+            scope.initializeGeoCode();
+          }
+          if( num == 3 ){
+            scope.sendOtpCode();
+            $timeout(function() {
+              $(".otp-input-wrapper input:eq(0)").focus();
+            }, 300);
+          }
+          scope.step = num;
+        }
 
+        scope.otpChanged = function(e){
+          var index = scope.optCode.join("").length;
+          $(".otp-input-wrapper input").blur();
+          $(".otp-input-wrapper input:eq(" + index + ")").focus();
+          // console.log( index );
+          // console.log( scope.optCode );
+        }
+        scope.otpFocus = function( num_index ){
+          var index = scope.optCode.join("").length;
+          if( num_index != index ){
+            $(".otp-input-wrapper input").blur();
+            $(".otp-input-wrapper input:eq(" + index + ")").focus();
+          }
+          
+        }
+
+        $('html').keydown(function(e){
+          if(e.keyCode == 9){
+            if( scope.step == 3 ){
+              e.preventDefault(); 
+              return false;
+            }
+          }
+          if(e.keyCode == 8){
+            if( scope.step == 3 && scope.optCode.join("").length > 0 ){
+              var index = scope.optCode.join("").length;
+              scope.optCode[ index - 1 ] = "";
+              var index = scope.optCode.join("").length;
+              $(".otp-input-wrapper input:eq(" + index + ")").focus();
+              // console.log( index );
+              // console.log( scope.optCode );
+            }
+          }
+        })
+
+
+
+
+
+        scope.sendOtpCode = function( ){
+          var data = {
+            mobile : scope.member_details.mobile,
+            mobile_country_code: "+" + scope.member_details.mobile_country_code
+          }
+          scope.showLoading();
+          $http.post( 
+            base_url + "exercise/send_sms_otp", 
+            data, 
+            {
+              headers: {
+                'Authorization': scope.token,
+              }
+            })
+            .then(function(response){
+              console.log(response);
+              if( response.data.status ){
+                scope.optCode = [];
+                $(".otp-input-wrapper input:eq(0)").focus();
+              }else{
+                swal( 'Error!', response.data.message, 'error' );
+              }
+              scope.hideLoading();
+            })
+            .catch(function(err){
+              console.log(err);
+              // swal( 'Error!', "Invalid Mobile Number. Can't send OTP code.", 'error' );
+              scope.hideLoading();
+            });
+
+
+        }
 
         scope.checkMobileTaken = function( mobile ){
           if( mobile.length >= 8 ){
@@ -337,7 +430,6 @@ app.directive("mobileExerciseDirective", [
                 }
               });
           }
-          
         }
 
         scope.getMemberInfo = function( token ){
@@ -376,7 +468,7 @@ app.directive("mobileExerciseDirective", [
               if( response.data.status ){
                 if(response.data.updated == true) {
                   scope.hideLoading();
-                  scope.step = 3;
+                  scope.step = 4;
                 } else {
                   scope.token = response.data.token;
                   scope.getMemberInfo( response.data.token );
@@ -401,7 +493,7 @@ app.directive("mobileExerciseDirective", [
             .then(function(response){
               console.log(response);
               if( response.data.status ){
-                scope.step = 3;
+                scope.step = 4;
               }else{
                 swal( 'Error!', response.data.message, 'error' );
               }
@@ -454,6 +546,7 @@ app.directive("mobileExerciseDirective", [
             };
             var input = document.querySelector("#area_code");
             iti = intlTelInput(input, settings);
+            console.log( scope.member_details );
             iti.setNumber( scope.member_details.mobile_format );
             $timeout(function() {
               scope.member_details.mobile = scope.member_details.mobile;
@@ -461,7 +554,7 @@ app.directive("mobileExerciseDirective", [
             },300)
             input.addEventListener("countrychange", function() {
               console.log( iti.getSelectedCountryData() );
-              scope.member_details.mobile_country_code = iti.getSelectedCountryData().dialCode;
+              scope.member_details.mobile_country_code = "+" + iti.getSelectedCountryData().dialCode;
               scope.member_details.mobile_country_code_country = iti.getSelectedCountryData().iso2;
             });
 
@@ -478,6 +571,14 @@ app.directive("mobileExerciseDirective", [
         }
 
         scope.onLoad();
+
+
+
+
+
+        // ================================================== //
+
+        
 
 
 

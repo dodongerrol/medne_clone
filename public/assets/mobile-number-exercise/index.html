@@ -23,13 +23,13 @@
 
 				<div class="mobile-exercise-form-container">
 
-					<div class="" style="display: none;">
+					<div ng-if="step < 3 || step == 4" >
 						<p ng-if="step == 1">If you are Mednefits member, please enter your NRIC/FIN and password, and click Submit.</p>
 						<p ng-if="step == 2">Please provide your information below to start using Mednefits</p>
-						<p ng-if="step == 3" class="thank-you-text">Thank you, your information have been updated! You may now login using your new user ID.</p>
+						<p ng-if="step == 4" class="thank-you-text">Thank you, your information have been updated! You may now login using your new user ID.</p>
 					</div>
 
-					<div style="display: none;">
+					<div ng-if="step < 3 || step == 4">
 						<div ng-if="step == 1" class="nric-fin-password-container" >
 							<form ng-submit="submitNric( nric_data )">
 								<div class="mobile-exercise-input-wrapper">
@@ -50,7 +50,7 @@
 							</div>
 							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error}">
 								<label>Mobile Number (SMS OTP will be send to you for verification)</label>
-								<input valid-number id="area_code" pattern="[0-9]*" type="tel"  ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
+								<input valid-number id="area_code" pattern="[0-9]*" type="tel" ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
 								<span ng-if="emp_mobile_error" class="err-msg" ng-bind="emp_mobile_error_message"></span>
 							</div>
 						</div>
@@ -76,52 +76,37 @@
 
 						<div class="mobile-exercise-btn-footer">
 							<div class="cancel-confirm-btn-container">
-								<button class="btn-cancel" ng-if="step != 3 && step !=2 " ng-click="cancelBtn()">Cancel</button>
+								<button class="btn-cancel" ng-if="step == 1" ng-click="cancelBtn()">Cancel</button>
 								<button class="btn-cancel" ng-if="step == 2" ng-click="cancelBtn()">Back</button>
 								<button class="btn-submit" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
-								<button class="btn-confirm" ng-click="updateDetails( member_details )" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
+								<button class="btn-confirm" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
 							</div>
 
 							
 							<button class="btn-submit btn-responsive" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
-							<button class="btn-confirm btn-responsive" ng-click="submitUpdateDetails( member_details )" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
-							<button class="btn-home btn-responsive" ng-if="step == 3" ng-click="cancelBtn()">Home</button>
-							<button class="btn-cancel btn-responsive" ng-if="step != 3" ng-click="cancelBtn()">Cancel</button>
+							<button class="btn-confirm btn-responsive" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
+							<button class="btn-home btn-responsive" ng-if="step == 4" ng-click="cancelBtn()">Home</button>
+							<button class="btn-cancel btn-responsive" ng-if="step < 3" ng-click="cancelBtn()">Cancel</button>
 						</div>
 					</div>
 
-					<div class="sms-otp-wrapper">
+					<div ng-if="step == 3" class="sms-otp-wrapper">
 						<div class="">
 							<h3>Enter SMS OTP</h3>
 							<p>We have sent you a 6 digit verification code (OPT) via SMS to your mobile number</p>
 							<div class="mobile-num-container">
-								<span>+65 96029128</span>
-								<span class="not-mobile-text">Not your mobile number?</span>
+								<span><span ng-bind="member_details.mobile_country_code">+65</span> <span ng-bind="member_details.mobile">96029128</span></span>
+								<span class="not-mobile-text" ng-click="setStep(2)">Not your mobile number?</span>
 							</div>
 						</div>
 						<div class="otp-input-wrapper">
-							<div>
-								<input type="number">
-							</div>
-							<div>
-								<input type="number">
-							</div>
-							<div>
-								<input type="number">
-							</div>
-							<div>
-								<input type="number">
-							</div>
-							<div>
-								<input type="number">
-							</div>
-							<div>
-								<input type="number">
+							<div ng-repeat="list in [1,2,3,4,5,6]">
+								<input pattern="[0-9]*" type="tel" maxlength="1" ng-model="optCode[$index]" ng-change="otpChanged()" ng-focus="otpFocus($index)" >
 							</div>
 						</div>
 						<div class="mobile-exercise-btn-footer">
-							<button class="btn-submit">Submit</button>
-							<button class="btn-submit">Resend OTP</button>
+							<button class="btn-submit" ng-click="submitUpdateDetails( member_details )">Submit</button>
+							<button class="btn-submit" ng-click="sendOtpCode()">Resend OTP</button>
 						</div>
 					</div>
 
