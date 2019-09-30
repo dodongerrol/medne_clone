@@ -316,6 +316,51 @@ h3.tooltip-phone-email-details {
   margin: 0 0 20px;
 }
 
+.sms-otp-wrapper p {
+  color: #848484;
+  font-weight: 700;
+}
+
+.mobile-num-container span {
+  font-weight: 700;
+  margin: 0 5px 0 0;
+}
+
+.mobile-num-container .not-mobile-text {
+  color: #0392cf;
+  cursor: pointer;
+}
+
+.otp-input-wrapper {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  margin: 30px -3px 0;
+}
+
+.otp-input-wrapper >div {
+  flex: 1;
+  margin: 3px;
+}
+
+.otp-input-wrapper >div input {
+  text-align: center;
+  font-weight: 700;
+  color: #000;
+  font-size: 20px;
+  padding: 0;
+  width: 100%;
+}
+
+.otp-input-wrapper input[type='number'] {
+  -moz-appearance:textfield;
+}
+
+.otp-input-wrapper input::-webkit-outer-spin-button,
+.otp-input-wrapper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
 
 .cancel-confirm-btn-container {
   display: flex;
@@ -341,6 +386,12 @@ h3.tooltip-phone-email-details {
 }
 
 @media (max-width: 766px) {
+  .otp-input-wrapper >div input:focus{
+    outline: none;
+    color: transparent;
+    text-shadow: 0 0 0 #2196f3;
+  }
+  
   .cancel-confirm-btn-container {
     display: none;
   }
