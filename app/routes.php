@@ -437,6 +437,7 @@ Route::get('app/get_existing_appointments/{id}', 'CalendarController@getExisting
 
 // statement of account
 Route::get('app/clinic/statement/{id}', 'InvoiceController@getClinicStatement');
+Route::get('app/clinic/print_statement/{id}', 'InvoiceController@downloadClinicStatementPDF');
 Route::post('app/clinic/statement_list', 'InvoiceController@getClinicStatementList');
 
 

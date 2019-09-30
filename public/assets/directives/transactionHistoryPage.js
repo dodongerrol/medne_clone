@@ -122,10 +122,10 @@ function getTransactions( data ){
       if( data.data.transactions.length > 0 ){
       
 	      list = data.data.transactions;
-	      console.log(list);
+	      // console.log(list);
 
 	      for( var i = 0; i < list.length; i++  ){
-	      	console.log( list );
+	      	// console.log( list );
 	      	stockData.push({
 	      		'DATE' : (list[i].date_of_transaction).replace(',',''),
 	      		'TRANSACTION_ID' : list[i].transaction_id,
@@ -240,7 +240,7 @@ function getTransactions( data ){
 							'</td>' +
 						'</tr>');
       }
-      console.log( stockData );
+      // console.log( stockData );
   });
 }
 
@@ -565,20 +565,24 @@ setTimeout(function() {
 		$( '#pdf-print-invoice tbody' ).html('');
 		for( var i = 0; i < list.length; i++  ){
 
-    	$( '#pdf-print-invoice tbody' ).append('<tr>' +
+			var append_html = '<tr>' +
 						'<td>' + list[i].date_of_transaction + '</td>' +
 						'<td>' +
 							list[i].transaction_id + 
-							'<br />' +
-							'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
-						'</td>' +
+							'<br />';
+							
+			append_html += ( list[i].transaction_status != 'null' && list[i].transaction_status != null ) ? '<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' : '';
+
+			append_html += '</td>' +
 						'<td>' + list[i].user_name + '</td>' +
 						'<td>' + list[i].NRIC + '</td>' +
 						'<td>' + list[i].procedure_name + '</td>' +
 						'<td>S$ ' + list[i].mednefits_fee + '</td>' +
 						'<td>S$ ' + list[i].mednefits_credits + '</td>' +
 						'<td>S$ ' + list[i].cash + '</td>' +
-					'</tr>');
+					'</tr>';
+
+    	$( '#pdf-print-invoice tbody' ).append( append_html );
 
     	setHeight();
 
