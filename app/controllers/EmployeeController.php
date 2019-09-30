@@ -178,7 +178,7 @@ class EmployeeController extends \BaseController {
         
         $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
         if(!$result) {
-            return array('status' => false, 'message' => 'Invalid OTP Code.');
+            return array('status' => false, 'message' => 'Incorrect code, please try again.');
         }
 
         $check = DB::table('user')

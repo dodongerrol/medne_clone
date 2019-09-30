@@ -23,6 +23,7 @@ app.directive("mobileExerciseDirective", [
         scope.devicePlatform = null;
         scope.optCode = [];
         scope.code_err = false;
+        scope.stopAutoFocus = false;
 
         var iti = null;
 
@@ -332,23 +333,34 @@ app.directive("mobileExerciseDirective", [
               $(".otp-input-wrapper input:eq(0)").focus();
             }, 300);
           }
+          if( num < 3 ){
+            scope.code_err = false;
+          }
           scope.step = num;
         }
 
         scope.otpChanged = function(e){
           var index = scope.optCode.join("").length;
-          $(".otp-input-wrapper input").blur();
-          $(".otp-input-wrapper input:eq(" + index + ")").focus();
+          // $(".otp-input-wrapper input").blur();
+          if( index == 6 ){
+            scope.stopAutoFocus = true;
+            $(".otp-input-wrapper input:eq(5)").focus();
+          }else{
+            scope.stopAutoFocus = false;
+            $(".otp-input-wrapper input:eq(" + index + ")").focus();
+          }
+          
           // console.log( index );
           // console.log( scope.optCode );
         }
         scope.otpFocus = function( num_index ){
-          var index = scope.optCode.join("").length;
-          if( num_index != index ){
-            $(".otp-input-wrapper input").blur();
-            $(".otp-input-wrapper input:eq(" + index + ")").focus();
+          if( scope.stopAutoFocus == false ){
+            var index = scope.optCode.join("").length;
+            if( num_index != index ){
+              // $(".otp-input-wrapper input").blur();
+              $(".otp-input-wrapper input:eq(" + index + ")").focus();
+            }
           }
-          
         }
 
         $('html').keydown(function(e){
@@ -375,6 +387,7 @@ app.directive("mobileExerciseDirective", [
 
 
         scope.sendOtpCode = function( ){
+          scope.code_err = false;
           var data = {
             mobile : scope.member_details.mobile,
             mobile_country_code: "+" + scope.member_details.mobile_country_code
@@ -403,8 +416,6 @@ app.directive("mobileExerciseDirective", [
               // swal( 'Error!', "Invalid Mobile Number. Can't send OTP code.", 'error' );
               scope.hideLoading();
             });
-
-
         }
 
         scope.checkMobileTaken = function( mobile ){
@@ -498,9 +509,13 @@ app.directive("mobileExerciseDirective", [
                 scope.step = 4;
                 scope.code_err = false;
               }else{
-                swal( 'Error!', response.data.message, 'error' );
-                scope.code_err = true;
-                scope.code_err_msg = response.data.message;
+                if( response.data.message != 'Incorrect code, please try again.' ){
+                  swal( 'Error!', response.data.message, 'error' );
+                }else{
+                  scope.code_err = true;
+                  scope.code_err_msg = response.data.message;
+                  // scope.code_err_msg = 'Incorrect code, please try again.';
+                }
               }
               scope.hideLoading();
             });

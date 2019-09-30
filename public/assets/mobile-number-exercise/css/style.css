@@ -11,7 +11,7 @@ body {
 }
 
 body >div:first-child {
-  height: 100vh;
+  min-height: 100vh;
 }
 
 *{
@@ -350,6 +350,14 @@ h3.tooltip-phone-email-details {
   font-size: 20px;
   padding: 0;
   width: 100%;
+  -webkit-tap-highlight-color: #000;
+}
+
+.otp-input-wrapper input:focus,
+.otp-input-wrapper input:active,
+.otp-input-wrapper input:visited{
+  -webkit-tap-highlight-color: #000;
+  color: #000;
 }
 
 .otp-input-wrapper input[type='number'] {
@@ -386,10 +394,13 @@ h3.tooltip-phone-email-details {
 }
 
 @media (max-width: 766px) {
-  .otp-input-wrapper >div input:focus{
+  .otp-input-wrapper >div input:focus,
+  .otp-input-wrapper >div input:active,
+  .otp-input-wrapper >div input:visited{
     outline: none;
     color: transparent;
-    text-shadow: 0 0 0 #2196f3;
+    text-shadow: 0 0 0 #000;
+    caret-color: transparent;
   }
   
   .cancel-confirm-btn-container {
@@ -399,7 +410,7 @@ h3.tooltip-phone-email-details {
 
 @media (max-width: 575px) {
   .mobile-exercise-wrapper {
-    padding: 0 20px;
+    padding: 0 20px 150px 20px;
   }
 
   .mobile-exercise-form-container {

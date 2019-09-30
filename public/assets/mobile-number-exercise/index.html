@@ -93,7 +93,7 @@
 					<div ng-if="step == 3" class="sms-otp-wrapper">
 						<div class="">
 							<h3>Enter SMS OTP</h3>
-							<p>We have sent you a 6 digit verification code (OPT) via SMS to your mobile number</p>
+							<p>We have sent you a 6 digit verification code (OTP) via SMS to your mobile number</p>
 							<div class="mobile-num-container">
 								<span><span ng-bind="member_details.mobile_country_code">+65</span> <span ng-bind="member_details.mobile">96029128</span></span>
 								<span class="not-mobile-text" ng-click="setStep(2)">Not your mobile number?</span>
@@ -101,7 +101,7 @@
 						</div>
 						<div class="otp-input-wrapper">
 							<div ng-repeat="list in [1,2,3,4,5,6]">
-								<input pattern="[0-9]*" type="tel" maxlength="1" ng-model="optCode[$index]" ng-change="otpChanged()" ng-focus="otpFocus($index)" >
+								<input valid-number pattern="[0-9]*" type="tel" maxlength="1" ng-model="optCode[$index]" ng-change="otpChanged()" ng-focus="otpFocus($index)" >
 							</div>
 						</div>
 						<span ng-if="code_err" class="err-msg" ng-bind="code_err_msg">Incorrect code, please try again.</span>
