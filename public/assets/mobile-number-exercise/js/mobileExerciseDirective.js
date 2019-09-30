@@ -375,16 +375,12 @@ app.directive("mobileExerciseDirective", [
               var index = scope.optCode.join("").length;
               scope.optCode[ index - 1 ] = "";
               var index = scope.optCode.join("").length;
-              $(".otp-input-wrapper input:eq(" + index + ")").focus();
+              // $(".otp-input-wrapper input:eq(" + index + ")").focus();
               // console.log( index );
               // console.log( scope.optCode );
             }
           }
         })
-        $('.otp-input-wrapper input').on('touchstart',function(e) {
-          console.log('sdfsdf');
-            e.preventDefault();
-        });
 
 
 
