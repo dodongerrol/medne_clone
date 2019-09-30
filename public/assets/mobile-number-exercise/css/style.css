@@ -390,6 +390,7 @@ h3.tooltip-phone-email-details {
     outline: none;
     color: transparent;
     text-shadow: 0 0 0 #2196f3;
+    caret-color: transparent;
   }
   
   .cancel-confirm-btn-container {
