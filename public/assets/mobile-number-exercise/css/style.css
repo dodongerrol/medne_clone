@@ -350,6 +350,14 @@ h3.tooltip-phone-email-details {
   font-size: 20px;
   padding: 0;
   width: 100%;
+  -webkit-tap-highlight-color: #000;
+}
+
+.otp-input-wrapper input:focus,
+.otp-input-wrapper input:active,
+.otp-input-wrapper input:visited{
+  -webkit-tap-highlight-color: #000;
+  color: #000;
 }
 
 .otp-input-wrapper input[type='number'] {
@@ -389,7 +397,7 @@ h3.tooltip-phone-email-details {
   .otp-input-wrapper >div input:focus{
     outline: none;
     color: transparent;
-    text-shadow: 0 0 0 #2196f3;
+    text-shadow: 0 0 0 #000;
     caret-color: transparent;
   }
   
