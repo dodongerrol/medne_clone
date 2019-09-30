@@ -511,7 +511,7 @@
 			
 				<div class="col-md-12">
 					<div class="total-transac-header">
-						<p class="color-black3 font-14 weight-700"><span ng-bind="activity.total_in_network_transactions">0</span> Total Transactions 
+						<p class="color-black3 font-14 weight-700"><span ng-bind="in_network_transactions.length">0</span> Total Transactions 
 							<span class="pull-right">Total Spent 
 								<span class="font-medium2" style="margin-left: 15px">S$<span ng-bind="activity.total_in_network_spent_format_number | number:2">0.00</span></span>
 							</span>
@@ -786,7 +786,7 @@
 			
 				<div class="col-md-12">
 					<div class="total-transac-header">
-						<p class="color-black3 font-14 weight-700"><span ng-bind="activity.e_claim_transactions.length">0</span> Total Transactions 
+						<p class="color-black3 font-14 weight-700"><span ng-bind="e_claim_transactions.length">0</span> Total Transactions 
 							<span class="pull-right">Total Spent 
 								<span class="font-medium2" style="margin-left: 15px">S$<span ng-bind="activity.e_claim_spending_format_number | number:2"></span></span>
 							</span>
