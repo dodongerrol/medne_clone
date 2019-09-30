@@ -9,7 +9,7 @@ app.directive("mobileExerciseDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("mobileExerciseDirective running!");
         
-        scope.step = 1;
+        scope.step = 3;
         scope.nric_data = {};
         scope.member_details = {
           mobile_country_code : '+65'

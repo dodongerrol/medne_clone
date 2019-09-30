@@ -101,7 +101,7 @@
 						</div>
 						<div class="otp-input-wrapper">
 							<div ng-repeat="list in [1,2,3,4,5,6]">
-								<input pattern="[0-9]*" type="tel" maxlength="1" ng-model="optCode[$index]" ng-change="otpChanged()" ng-focus="otpFocus($index)" >
+								<input valid-number pattern="[0-9]*" type="tel" maxlength="1" ng-model="optCode[$index]" ng-change="otpChanged()" ng-focus="otpFocus($index)" >
 							</div>
 						</div>
 						<span ng-if="code_err" class="err-msg" ng-bind="code_err_msg">Incorrect code, please try again.</span>
