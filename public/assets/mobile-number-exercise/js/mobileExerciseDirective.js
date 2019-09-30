@@ -358,7 +358,7 @@ app.directive("mobileExerciseDirective", [
             var index = scope.optCode.join("").length;
             if( num_index != index ){
               // $(".otp-input-wrapper input").blur();
-              $(".otp-input-wrapper input:eq(" + index + ")").focus();
+              // $(".otp-input-wrapper input:eq(" + index + ")").focus();
             }
           }
         }
@@ -375,7 +375,7 @@ app.directive("mobileExerciseDirective", [
               var index = scope.optCode.join("").length;
               scope.optCode[ index - 1 ] = "";
               var index = scope.optCode.join("").length;
-              // $(".otp-input-wrapper input:eq(" + index + ")").focus();
+              $(".otp-input-wrapper input:eq(" + index + ")").focus();
               // console.log( index );
               // console.log( scope.optCode );
             }
