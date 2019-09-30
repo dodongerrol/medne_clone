@@ -4279,12 +4279,12 @@ class BenefitsDashboardController extends \BaseController {
 		$active_plans = DB::table('customer_active_plan')
 		->where('customer_start_buy_id', $result->customer_buy_start_id)
 		->orderBy('created_at', 'desc')
-		->paginate(5);
+		->paginate(10);
+
 		$paginate['current_page'] = $active_plans->getCurrentPage();
 		$paginate['from'] = $active_plans->getFrom();
 		$paginate['last_page'] = $active_plans->getLastPage();
 		$paginate['per_page'] = $active_plans->getPerPage();
-		$paginate['to'] = $active_plans->getTo();
 		$added = 0;
 
 		$all_active_plans = DB::table('customer_active_plan')
@@ -4541,7 +4541,8 @@ class BenefitsDashboardController extends \BaseController {
 				array_push($transactions, $temp_invoice);
 			}
 		}
-		// return $added;
+		
+		$paginate['to'] = sizeof($transactions);
 		$paginate['total'] = $active_plans->getTotal() + $added;
 		$paginate['data'] = $transactions;
 		$paginate['added'] = $added;
