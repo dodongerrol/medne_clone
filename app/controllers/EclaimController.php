@@ -982,7 +982,14 @@ class EclaimController extends \BaseController {
 					$status_text = FALSE;
 				}
 
-				$total_amount = number_format($trans->procedure_cost, 2);
+				// $total_amount = number_format($trans->procedure_cost, 2);
+
+				if(strripos($trans->procedure_cost, '$') !== false) {
+					$temp_cost = explode('$', $trans->procedure_cost);
+					$total_amount = number_format($temp_cost[1]);
+				} else {
+					$total_amount = number_format($trans->procedure_cost, 2);
+				}
 
 				if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
 					if((int)$trans->lite_plan_enabled == 1) {
