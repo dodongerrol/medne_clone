@@ -942,7 +942,6 @@ class Calendar_Library
 					$arr = array('id'=>$val->UserAppoinmentID,'title'=>$title,'status'=>$status,'start'=>$stime,'end'=> $etime, 'backgroundColor'=>$backgroundColor, 'borderColor'=>$borderColor, 'type' => $type, 'user_id' => $val->UserID, 'image' => $image);
 					array_push($event_array, $arr);
 				}
-
 			}
 
 
@@ -967,12 +966,14 @@ class Calendar_Library
 
 	            $date = date('d-m-Y', strtotime($start_date.' +'.$j.' day'));
 
-				$events = new ExtraEvents();
-	            $events = $events->getEvents($doctorID,strtotime($date));
+				$data_events = new ExtraEvents();
+	            $events = $data_events->getEvents($doctorID, strtotime($date));
+	            $clinic_events = $data_events->findClinicBreaks(strtolower(date('D', strtotime($date))), $clinicdata->Ref_ID);
+	            // array_push($array, array('doctor_id' => $doctorID, 'day' => strtolower(date('D', strtotime($date)))));
+	            // array_push($array, $events);
 	            if ($events) {
 
 		            foreach ($events as $val) {
-	            		// array_push($array, $val);
 
 		            	$stime = date('Y-m-d\TH:i:s', $val->start_time);
 						$etime = date('Y-m-d\TH:i:s', $val->end_time);
@@ -1003,18 +1004,37 @@ class Calendar_Library
 		                    array_push($array, $arr);
 						}
 
-	                    
-
-
-
-
-
-	            // dd($array);
-
 		            }
 	            }
 
+	            if ($clinic_events) {
 
+		            foreach ($clinic_events as $val) {
+
+		            	$stime = date("H:i", strtotime($val->start_time));
+	            		$etime = date("H:i", strtotime($val->end_time));
+						$day = $val->day;
+
+			            if ($day=='mon') { $day = 1;}
+			            if ($day=='tue') { $day = 2;}
+			            if ($day=='wed') { $day = 3;}
+			            if ($day=='thu') { $day = 4;}
+			            if ($day=='fri') { $day = 5;}
+			            if ($day=='sat') { $day = 6;}
+			            if ($day=='sun') { $day = 0;}
+
+						if ($val->type){
+							$title = '';
+							$color = '#e5e5e5';
+	                        $backgroundColor = "";
+	                        $borderColor = "";
+	                        
+		                    $arr = array('id'=>$val->id,'title'=>'','start'=>$stime,'end'=> $etime, 'color'=>'#e5e5e5','dow'=> '['.$day.']', 'editable'=>false);
+	                        array_push($array, $arr);
+						}
+
+		            }
+	            }
 			}
 			// return $array;
 	        // ------------------------- load doctor breaks --------------------------------
@@ -1114,7 +1134,7 @@ class Calendar_Library
 	            }
 
 	        }
-	        		return $array;
+	        return $array;
 		}
 
 		return [];

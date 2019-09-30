@@ -13,13 +13,13 @@
 
 
 // test wallet balance for reset credits
-Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
+// Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
 // test date format
-Route::post('test_format_date', 'testcontroller@testFormatDate');
+// Route::post('test_format_date', 'testcontroller@testFormatDate');
 // test upload e-claim
-Route::post("test_upload_e_claim_queue",'testcontroller@testEclaimUploadQueue');
+// Route::post("test_upload_e_claim_queue",'testcontroller@testEclaimUploadQueue');
 // test send e-claim emial
-Route::post('test_send_e_claim', 'testcontroller@testEclaimSendEmail');
+// Route::post('test_send_e_claim', 'testcontroller@testEclaimSendEmail');
 // get currencies
 Route::get('get/currency_lists', 'testcontroller@getCurrencyLists');
 // Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
@@ -978,7 +978,7 @@ Route::group(array('prefix' => 'v2'), function()
 		    // get clinic details from qr code
 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
 		    // check user pin
-		    Route::post('clinic/send_payment', 'Api_V1_AuthController@payCredits');
+		    Route::post('clinic/send_payment', 'Api_V1_TransactionController@payCredits');
 		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
 		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
 		    // send notification to clinic when customer will pay directly to clinic

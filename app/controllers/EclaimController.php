@@ -39,6 +39,14 @@ class EclaimController extends \BaseController {
 		  ->where('password', md5($password))
 		  ->where('Active', 1);
     })
+    ->orWhere(function($query) use ($email, $password){
+    	$email = (int)$email;
+    	$email = (string)$email;
+    	$query->where('UserType', 5)
+			->where('PhoneNo', $email)
+		  ->where('password', md5($password))
+		  ->where('Active', 1);
+    })
 		->first();
 
 		if($check) {
@@ -330,6 +338,15 @@ class EclaimController extends \BaseController {
 			if($input['amount'] > $balance || $balance <= 0) {
 				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 			}
+		// recalculate employee balance
+		PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+        // check if e-claim can proceed
+		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
+		$balance = round($check_user_balance->wellness_balance, 2);
+		
+		if($input['amount'] > $balance || $balance <= 0) {
+			return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
+		}
 
 	         // check user pending e-claims amount
 			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
@@ -789,18 +806,20 @@ class EclaimController extends \BaseController {
 		if($customer_active_plan->account_type != "super_pro_plan") {
 			if($wallet_reset) {
 				$wallet_history_id = $wallet_reset->wallet_history_id;
-				$wallet_start_date = $wallet_reset;
+				$wallet_start_date = $wallet_reset->date_resetted;
 		        // get credits allocation
 				$allocation = DB::table('e_wallet')
 				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
 				->where('e_wallet.UserID', $user_id)
-				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				->where($table_wallet_history.".created_at", '>=', $wallet_start_date)
 				->where($table_wallet_history.'.logs', 'added_by_hr')
 				->sum($table_wallet_history.'.credit');
 
 				$deducted_allocation = DB::table('e_wallet')
 				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-				->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
+				->where($table_wallet_history.".created_at", '>=', $wallet_start_date)
 				->where('e_wallet.UserID', $user_id)
 				->where('logs', 'deducted_by_hr')
 				->sum($table_wallet_history.'.credit');
@@ -813,6 +832,7 @@ class EclaimController extends \BaseController {
 
 				$deducted_allocation = DB::table('e_wallet')
 				->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+				// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
 				->where('e_wallet.UserID', $user_id)
 				->where('logs', 'deducted_by_hr')
 				->sum($table_wallet_history.'.credit');
@@ -831,17 +851,17 @@ class EclaimController extends \BaseController {
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
 		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
+		->where('created_at', '<=', $spending_end_date)
 		->orderBy('created_at', 'desc')
 		->get();
         // get in-network transactions
 		$transactions = DB::table('transaction_history')
 		->whereIn('UserID', $ids)
 		->where('spending_type', $spending_type)
-		->where('date_of_transaction', '>=', $start)
-		->where('date_of_transaction', '<=', $end)
+		->where('created_at', '>=', $start)
+		->where('created_at', '<=', $spending_end_date)
 		->where('paid', 1)
-		->orderBy('date_of_transaction', 'desc')
+		->orderBy('created_at', 'desc')
 		->get();
 		foreach ($transactions as $key => $trans) {
 			if($trans) {
@@ -871,7 +891,7 @@ class EclaimController extends \BaseController {
 						->where('id', $trans->transaction_id)
 						->first();
 
-						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
+						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0 || $logs_lite_plan && $trans->credit_cost == 0 && (int)$trans->lite_plan_use_credits == 0) {
 							$in_network_spent += floatval($logs_lite_plan->credit);
 							$consultation_fees = floatval($logs_lite_plan->credit);
 							$total_lite_plan_consultation += floatval($logs_lite_plan->credit);
@@ -888,7 +908,6 @@ class EclaimController extends \BaseController {
 							$total_lite_plan_consultation += floatval($trans->consultation_fees);
 						}
 					}
-
 				} else {
 					$total_deleted_in_network_transactions++;
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -898,10 +917,10 @@ class EclaimController extends \BaseController {
 						->where('id', $trans->transaction_id)
 						->first();
 
-						if($trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits === 0 || $trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
+						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0 || $logs_lite_plan && $trans->credit_cost == 0 && (int)$trans->lite_plan_use_credits == 0) {
 							$consultation_credits = true;
 							$service_credits = true;
-						} else if($trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits === 1 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
+						} else if($trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits == 1){
 							$consultation_credits = true;
 							$service_credits = true;
 						}
@@ -970,10 +989,10 @@ class EclaimController extends \BaseController {
 				}
 				$refund_text = 'NO';
 
-				if((int)$trans->refunded == 1 && (int)$trans->deleted == 1 || $trans->refunded == "1" && $trans->deleted == "1") {
+				if((int)$trans->refunded == 1 && (int)$trans->deleted == 1) {
 					$status_text = 'REFUNDED';
 					$refund_text = 'YES';
-				} else if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 1 || $trans->health_provider_done == "1" && $trans->deleted == "1") {
+				} else if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 1) {
 					$status_text = 'REMOVED';
 					$refund_text = 'YES';
 				} else {
@@ -1294,7 +1313,12 @@ class EclaimController extends \BaseController {
 		}
 
 		 if($customer_active_plan->account_type != "super_pro_plan") {
-		 	$balance = number_format($balance, 2);
+		 	if($spending_type == "medical") {
+		 		$balance = number_format($wallet->balance, 2);
+		 	} else {
+		 		$balance = number_format($wallet->wellness_balance, 2);
+		 	}
+		 	// $balance = number_format($balance, 2);
 		 } else {
 		 	$balance = 'UNLIMITED';
 		 }
@@ -8360,7 +8384,7 @@ public function generateMonthlyCompanyInvoice( )
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
 					'EMPLOYEE'					=> $sub_account ? $sub_account : null,
 					'CLAIM DATE'				=> date('d F Y h:i A', strtotime($res->created_at)),
-					'VISITE DATE'				=> date('d F Y', strtotime($res->date)).', '.$res->time,
+					'VISITED DATE'				=> date('d F Y', strtotime($res->date)).', '.$res->time,
 					'TRANSACTION #'			=> 'MNF'.$id,
 					'CLAIM TYPE'				=> $res->service,
 					'PROVIDER'					=> $res->merchant,

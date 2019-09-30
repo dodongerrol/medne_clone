@@ -60,7 +60,9 @@ app.directive("employeeOverviewDirective", [
         scope.isDeleteDependent = false;
         scope.dependents_ctr = 0;
         scope.cap_per_visit = 0;
+        scope.isUpdateEmpInfoModalOpen = false;
 
+        var iti = null;
 
 
         scope.$on("refresh", function(evt, data){
@@ -232,51 +234,51 @@ app.directive("employeeOverviewDirective", [
 
                 $(`<tr class="family-tr family-tr-` +
                     emp.family_coverage.dependents[i].dependent.UserID + `" style="background:#eee;">
-										<td class="for-checkbox-container"></td>
-										<td>
-											<p><a>` + emp.family_coverage.dependents[i].dependent.Name + `</a></p>
-										</td>
-										<td>
-											<p>---</p>
-										</td>
-										<td>
-											<p>Start Date: <span>` + emp.family_coverage.dependents[i].plan.plan_start + `</span></p>
-											<p>End Date: <span>` + emp.family_coverage.dependents[i].plan.plan_end + `</span></p>
-										</td>
-										<td>
-											<p>Dependent</p>
-										</td>
-										<td>
-											<p class="text-center">
-												S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.dependents[i].spent + `</span>
-												<span>Usage</span>
-											</p>
-										</td>
-									</tr>`).insertAfter($(evt.target).closest("tr"));
+                    <td class="for-checkbox-container"></td>
+                    <td>
+                      <p><a>` + emp.family_coverage.dependents[i].dependent.Name + `</a></p>
+                    </td>
+                    <td>
+                      <p>---</p>
+                    </td>
+                    <td>
+                      <p>Start Date: <span>` + emp.family_coverage.dependents[i].plan.plan_start + `</span></p>
+                      <p>End Date: <span>` + emp.family_coverage.dependents[i].plan.plan_end + `</span></p>
+                    </td>
+                    <td>
+                      <p>Dependent</p>
+                    </td>
+                    <td>
+                      <p class="text-center">
+                        S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.dependents[i].spent + `</span>
+                        <span>Usage</span>
+                      </p>
+                    </td>
+                  </tr>`).insertAfter($(evt.target).closest("tr"));
               }
 
               $(`<tr class="family-tr family-tr-` + emp.user_id + `" style="background:#eee;">
-									<td class="for-checkbox-container"></td>
-									<td>
-										<p><a>` + emp.family_coverage.spouse.spouse.Name + `</a></p>
-									</td>
-									<td>
-										<p>---</p>
-									</td>
-									<td>
-										<p>Start Date: <span>` + emp.family_coverage.spouse.spouse.plan_start + `</span></p>
-										<p>End Date: <span>` + emp.family_coverage.spouse.spouse.plan_end + `</span></p>
-									</td>
-									<td>
-										<p>Spouse</p>
-									</td>
-									<td>
-										<p class="text-center">
-											S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.spouse.spent + `</span>
-											<span>Usage</span>
-										</p>
-									</td>
-								</tr>`).insertAfter($(evt.target).closest("tr"));
+                  <td class="for-checkbox-container"></td>
+                  <td>
+                    <p><a>` + emp.family_coverage.spouse.spouse.Name + `</a></p>
+                  </td>
+                  <td>
+                    <p>---</p>
+                  </td>
+                  <td>
+                    <p>Start Date: <span>` + emp.family_coverage.spouse.spouse.plan_start + `</span></p>
+                    <p>End Date: <span>` + emp.family_coverage.spouse.spouse.plan_end + `</span></p>
+                  </td>
+                  <td>
+                    <p>Spouse</p>
+                  </td>
+                  <td>
+                    <p class="text-center">
+                      S$<span style="width: 100px;text-align: right;margin-right: 10px;">` + emp.family_coverage.spouse.spent + `</span>
+                      <span>Usage</span>
+                    </p>
+                  </td>
+                </tr>`).insertAfter($(evt.target).closest("tr"));
 
               scope.family_temp = emp.user_id;
               scope.family_trap = true;
@@ -305,26 +307,26 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.checkDependentForm = function( data ){
-          if( !data.first_name ){
-            swal( 'Error!', 'First Name is required.', 'error' );
+          if( !data.fullname ){
+            swal( 'Error!', 'Full Name is required.', 'error' );
             return false;
           }
-          if( !data.last_name ){
-            swal( 'Error!', 'Last Name is required.', 'error' );
-            return false;
-          }
-          if( !data.nric ){
-            swal( 'Error!', 'NRIC is required.', 'error' );
-            return false;
-          }else{
-            if( scope.nric_status_dependents == true ){
-              var checkNRIC = scope.checkNRIC(data.nric);
-              if( checkNRIC != true ){
-                swal( 'Error!', 'Invalid NRIC.', 'error' );
-                return false;
-              }
-            } 
-          }
+          // if( !data.last_name ){
+          //   swal( 'Error!', 'Last Name is required.', 'error' );
+          //   return false;
+          // }
+          // if( !data.nric ){
+          //   swal( 'Error!', 'NRIC is required.', 'error' );
+          //   return false;
+          // }else{
+          //   if( scope.nric_status_dependents == true ){
+          //     var checkNRIC = scope.checkNRIC(data.nric);
+          //     if( checkNRIC != true ){
+          //       swal( 'Error!', 'Invalid NRIC.', 'error' );
+          //       return false;
+          //     }
+          //   } 
+          // }
           if( !data.dob ){
             swal( 'Error!', 'Date of Birth is required.', 'error' );
             return false;
@@ -342,27 +344,27 @@ app.directive("employeeOverviewDirective", [
           return true;
         }
 
-        scope.checkReplaceEmployeeForm = function( data ){
-          if( !data.first_name ){
-            swal( 'Error!', 'First Name is required.', 'error' );
+        scope.checkUpdateEmployeeForm = function( data ){
+          if( !data.name ){
+            swal( 'Error!', 'Full Name is required.', 'error' );
             return false;
           }
-          if( !data.last_name ){
-            swal( 'Error!', 'Last Name is required.', 'error' );
-            return false;
-          }
-          if( !data.nric ){
-            swal( 'Error!', 'NRIC is required.', 'error' );
-            return false;
-          }else{
-            if( scope.nric_status == true ){
-              var checkNRIC = scope.checkNRIC(data.nric);
-              if( checkNRIC != true ){
-                swal( 'Error!', 'Invalid NRIC.', 'error' );
-                return false;
-              }
-            } 
-          }
+          // if( !data.last_name ){
+          //   swal( 'Error!', 'Last Name is required.', 'error' );
+          //   return false;
+          // }
+          // if( !data.nric ){
+          //   swal( 'Error!', 'NRIC is required.', 'error' );
+          //   return false;
+          // }else{
+          //   if( scope.nric_status == true ){
+          //     var checkNRIC = scope.checkNRIC(data.nric);
+          //     if( checkNRIC != true ){
+          //       swal( 'Error!', 'Invalid NRIC.', 'error' );
+          //       return false;
+          //     }
+          //   } 
+          // }
           if( !data.dob ){
             swal( 'Error!', 'Date of Birth is required.', 'error' );
             return false;
@@ -376,9 +378,83 @@ app.directive("employeeOverviewDirective", [
               return false;
             }
           }
-          if( !data.mobile ){
-            swal( 'Error!', 'Phone is required.', 'error' );
+          if( !data.phone_no ){
+            swal( 'Error!', 'Mobile Number is required.', 'error' );
             return false;
+          }else{
+            // console.log( iti.getSelectedCountryData().iso2 );
+            if( iti.getSelectedCountryData().iso2 == 'sg' && data.phone_no.length < 8 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
+              return false;
+            }
+            if( iti.getSelectedCountryData().iso2 == 'my' && data.phone_no.length < 10 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 10 digits.', 'error' );
+              return false;
+            }
+            if( iti.getSelectedCountryData().iso2 == 'ph' && data.phone_no.length < 9 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 9 digits.', 'error' );
+              return false;
+            }
+          }
+          if( !data.postal_code ){
+            swal( 'Error!', 'Postal Code is required.', 'error' );
+            return false;
+          }
+
+          return true;
+        }
+
+        scope.checkReplaceEmployeeForm = function( data ){
+          if( !data.fullname ){
+            swal( 'Error!', 'Full Name is required.', 'error' );
+            return false;
+          }
+          // if( !data.last_name ){
+          //   swal( 'Error!', 'Last Name is required.', 'error' );
+          //   return false;
+          // }
+          // if( !data.nric ){
+          //   swal( 'Error!', 'NRIC is required.', 'error' );
+          //   return false;
+          // }else{
+          //   if( scope.nric_status == true ){
+          //     var checkNRIC = scope.checkNRIC(data.nric);
+          //     if( checkNRIC != true ){
+          //       swal( 'Error!', 'Invalid NRIC.', 'error' );
+          //       return false;
+          //     }
+          //   } 
+          // }
+          if( !data.dob ){
+            swal( 'Error!', 'Date of Birth is required.', 'error' );
+            return false;
+          }
+          if( !data.email ){
+            // swal( 'Error!', 'Email is required.', 'error' );
+            // return false;
+          }else{
+            if( scope.checkEmail(data.email) == false ){
+              swal( 'Error!', 'Email is invalid.', 'error' );
+              return false;
+            }
+          }
+          if( !data.mobile ){
+            swal( 'Error!', 'Mobile Number is required.', 'error' );
+            return false;
+          }else{
+            // console.log( iti.getSelectedCountryData().iso2 );
+            if( iti2.getSelectedCountryData().iso2 == 'sg' && data.mobile.length < 8 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
+              return false;
+            }
+            if( iti2.getSelectedCountryData().iso2 == 'my' && data.mobile.length < 10 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 10 digits.', 'error' );
+              return false;
+            }
+            if( iti2.getSelectedCountryData().iso2 == 'ph' && data.mobile.length < 9 ){
+              swal( 'Error!', 'Mobile Number for your country code should be 9 digits.', 'error' );
+              return false;
+            }
           }
           if( !data.postal_code ){
             swal( 'Error!', 'Postal Code is required.', 'error' );
@@ -539,14 +615,21 @@ app.directive("employeeOverviewDirective", [
         };
 
         scope.openUpdateEmployeeModal = function(){
-
+          scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
+          scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
+          // scope.selectedEmployee.country_code = scope.selectedEmployee.country_code;
+          $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob );
+          scope.inititalizeGeoCode();
+          console.log( scope.selectedEmployee );
         }
 
         scope.openUpdateDependentModal = function(data){
           // console.log( data );
           scope.selectedDependent = data;
+          scope.selectedDependent.dob = data.dob;
           $("#update-dependent-modal").modal('show');
+          $('.datepicker').datepicker('setDate', scope.selectedDependent.dob );
         }
 
         scope.toggleEmployee = function(emp, index){
@@ -714,6 +797,53 @@ app.directive("employeeOverviewDirective", [
           }, 1000);
         };
 
+        scope.isCalculateBtnActive = false;
+
+        scope.calculateHealthSpending = function(){
+          var dates = {
+            start : moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+            end : moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+          }
+          scope.isCalculateBtnActive = true;
+          scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY'), dates );
+        }
+
+        scope.initializeNewCustomDatePicker = function(){
+          setTimeout(function() {
+            $('.btn-custom-start').daterangepicker({
+              autoUpdateInput : true,
+              autoApply : true,
+              singleDatePicker: true,
+              startDate : moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
+            }, function(start, end, label) {
+              scope.health_spending_summary.date.pro_rated_start = moment( start ).format( 'DD/MM/YYYY' );
+              $("#rangePicker_start").text( scope.health_spending_summary.date.pro_rated_start );
+              $('.btn-custom-end').data('daterangepicker').setMinDate( start );
+
+              // if( scope.rangePicker_end && ( moment(scope.rangePicker_end,'DD/MM/YYYY') < moment(scope.rangePicker_start,'DD/MM/YYYY') ) ){
+              //   scope.rangePicker_end = moment( start ).format( 'DD/MM/YYYY' );
+              //   $("#rangePicker_end").text( scope.rangePicker_end );
+              // }
+            });
+
+            $('.btn-custom-end').daterangepicker({
+              autoUpdateInput : true,
+              autoApply : true,
+              singleDatePicker: true,
+              startDate : moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'MM/DD/YYYY' ),
+            }, function(start, end, label) {
+              scope.health_spending_summary.date.pro_rated_end = moment( end ).format( 'DD/MM/YYYY' );
+              $("#rangePicker_end").text( scope.health_spending_summary.date.pro_rated_end );
+            });
+
+            var start = moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'DD/MM/YYYY' );
+            var end = moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'DD/MM/YYYY' );
+            $("#rangePicker_start").text( start );
+            $("#rangePicker_end").text( end );
+            $('.btn-custom-end').data('daterangepicker').setMinDate( start );
+          }, 100);
+        }
+
         scope.removeBackBtn = function(){
           if( scope.isRemoveEmployeeShow == true ){
             $('.employee-information-wrapper').fadeIn();
@@ -733,17 +863,20 @@ app.directive("employeeOverviewDirective", [
             $('.hold-seat-wrapper').hide();
             scope.reset();
             scope.isRemoveEmployeeOptionsShow = true;
+            iti2.destroy();
           }else if( scope.isHealthSpendingAccountSummaryShow == true ){
             $('.account-summary-wrapper').hide();
             $('.prev-next-buttons-container').hide();
             $(".employee-information-wrapper").fadeIn();
             scope.reset();
+            scope.isCalculateBtnActive = false;
             scope.isEmployeeShow = true;
           }else if( scope.isHealthSpendingAccountShow == true ){
             $('.health-spending-account-wrapper').hide();
             $('.prev-next-buttons-container').hide();
             $(".employee-information-wrapper").fadeIn();
             scope.reset();
+            scope.isCalculateBtnActive = false;
             scope.isEmployeeShow = true;
           }
         }
@@ -763,6 +896,7 @@ app.directive("employeeOverviewDirective", [
                   $('.dependent-replacement-wrapper').fadeIn();
                 }else{
                   $('.employee-replacement-wrapper').fadeIn();
+                  scope.inititalizeGeoCode();
                 }
                 scope.isReplaceEmpShow = true;
                 scope.replace_emp_data.plan_start = moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).add(1,'days').format('DD/MM/YYYY');
@@ -776,6 +910,7 @@ app.directive("employeeOverviewDirective", [
                   scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                   $('.employee-standalone-pro-wrapper').hide();
                   $(".account-summary-wrapper").fadeIn();
+                  
                   scope.reset();
                   scope.isHealthSpendingAccountSummaryShow = true;
                   scope.getSession();
@@ -801,6 +936,7 @@ app.directive("employeeOverviewDirective", [
                     scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                     $('.employee-standalone-pro-wrapper').hide();
                     $(".account-summary-wrapper").fadeIn();
+                    
                     scope.reset();
                     scope.isHealthSpendingAccountSummaryShow = true;
                     scope.getSession();
@@ -831,6 +967,7 @@ app.directive("employeeOverviewDirective", [
                     scope.getSpendingAccountSummary( moment( scope.remove_employee_data.last_day_coverage,'DD/MM/YYYY' ).format('MM/DD/YYYY') );
                     $('.employee-replacement-wrapper').hide();
                     $(".account-summary-wrapper").fadeIn();
+                    
                     scope.reset();
                     scope.isHealthSpendingAccountSummaryShow = true;
                     scope.getSession();
@@ -846,24 +983,35 @@ app.directive("employeeOverviewDirective", [
               scope.getSpendingAccountSummary();
               $('.hold-seat-wrapper').hide();
               $(".account-summary-wrapper").fadeIn();
+
               scope.reset();
               scope.isHealthSpendingAccountSummaryShow = true;
               scope.getSession();
             }
           }else if( scope.isHealthSpendingAccountSummaryShow == true ){
-            $('.health-spending-account-wrapper').fadeIn();
-            $('.account-summary-wrapper').hide();
-            scope.reset();
-            scope.isHealthSpendingAccountShow = true;
+            if( scope.isCalculateBtnActive == false ){
+              swal( 'Error!', 'Please click the calcultate button first.', 'error' );
+              return false;
+            }else{
+              $('.health-spending-account-wrapper').fadeIn();
+              $('.account-summary-wrapper').hide();
+              scope.reset();
+              scope.isHealthSpendingAccountShow = true;
+            }
           }
         }
 
 
 
         //----- HTTP REQUESTS -----//
+
         scope.confirmWalletUpdateBtn = function(){
           if( scope.update_member_wallet_status ){
-            dependentsSettings.updateWalletMember( scope.selectedEmployee.user_id, scope.selected_customer_id, scope.health_spending_summary.medical.exceed, scope.health_spending_summary.wellness.exceed, moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD') )
+            var dates = {
+              start : moment( scope.health_spending_summary.date.pro_rated_start, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+              end : moment( scope.health_spending_summary.date.pro_rated_end, 'DD/MM/YYYY' ).format( 'YYYY-MM-DD' ),
+            }
+            dependentsSettings.updateWalletMember( scope.selectedEmployee.user_id, scope.selected_customer_id, scope.health_spending_summary.medical.exceed, scope.health_spending_summary.wellness.exceed, moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD'), dates )
               .then(function(response){
                 // console.log( response );
                 if( response.data.status ){
@@ -899,12 +1047,15 @@ app.directive("employeeOverviewDirective", [
           }
         }
 
-        scope.getSpendingAccountSummary = function( last_date_of_coverage ){
-          dependentsSettings.fetchEmpAccountSummary( scope.selectedEmployee.user_id, scope.selected_customer_id, moment(last_date_of_coverage, 'MM/DD/YYYY').format('YYYY-MM-DD'))
+        scope.getSpendingAccountSummary = function( last_date_of_coverage, dates ){
+          scope.showLoading();
+          dependentsSettings.fetchEmpAccountSummary( scope.selectedEmployee.user_id, scope.selected_customer_id, moment(last_date_of_coverage, 'MM/DD/YYYY').format('YYYY-MM-DD'), dates)
             .then(function(response){
               console.log( response );
               scope.health_spending_summary = response.data;
               scope.getTotalMembers();
+              scope.initializeNewCustomDatePicker();
+              scope.hideLoading();
               // if( scope.health_spending_summary.medical != false || scope.health_spending_summary.wellness != false ){
               //   if( scope.health_spending_summary.medical.exceed == true || scope.health_spending_summary.wellness.exceed == true ){
               //     $(".prev-next-buttons-container").fadeIn();
@@ -1101,6 +1252,7 @@ app.directive("employeeOverviewDirective", [
 
         scope.replaceEmployee = function( data ){
           scope.showLoading();
+          data.dob = moment( scope.remove_employee_data.dob ).format('YYYY-MM-DD');
           data.last_day_coverage = moment( scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
           data.replace_id = scope.selectedEmployee.user_id;
           data.plan_start = moment( data.plan_start, 'DD/MM/YYYY' ).format('YYYY-MM-DD');
@@ -1132,9 +1284,8 @@ app.directive("employeeOverviewDirective", [
 
         scope.saveActiveDependents = function( ){
           // console.log( scope.addDependents_arr );
-          if( !scope.dependent_data.first_name && !scope.dependent_data.last_name && !scope.dependent_data.nric && 
-                !scope.dependent_data.dob ){
-          }else{
+          console.log( scope.dependent_data );
+          if( ( scope.dependent_data.fullname && scope.dependent_data.dob ) || scope.addDependents_arr.length == 0 ){
             if( scope.checkDependentForm( scope.dependent_data ) == true ){
               if( !scope.addDependents_arr[ scope.dependents_ctr ] ){
                 scope.addActiveDependent_index+=1;
@@ -1174,6 +1325,11 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.saveEmployee = function( data ){
+          console.log( data );
+          if( scope.checkUpdateEmployeeForm( data ) == false ){
+            return false;
+          }
+          console.log( data );
           swal({
             title: "Confirm",
             text: "Are you sure you want to update this employee?",
@@ -1188,19 +1344,20 @@ app.directive("employeeOverviewDirective", [
           function(isConfirm){
             if(isConfirm){
               scope.showLoading();
-
+              console.log( data );
               var update_data = {
-                name: data.fname + " " + data.lname,
+                name: data.name,
                 dob: data.dob,
                 nric: data.nric,
                 email: data.email,
                 phone_no: data.phone_no,
+                country_code: data.country_code,
                 job_title: data.job_title,
                 postal_code: data.postal_code,
                 bank_account: data.bank_account,
-                user_id: data.user_id
+                user_id: data.user_id,
               };
-
+              console.log( update_data );
               dependentsSettings.updateEmployee( update_data )
                 .then(function(response){
                   scope.hideLoading();
@@ -1388,6 +1545,7 @@ app.directive("employeeOverviewDirective", [
           scope.isHealthSpendingAccountShow = false;
           scope.isReplaceEmpShow = false;
           scope.isReserveEmpShow = false;
+          scope.isCalculateBtnActive = false;
         }
 
         scope.getSession = function(){
@@ -1418,6 +1576,39 @@ app.directive("employeeOverviewDirective", [
             scope.empTabSelected = 0;
             scope.healthSpendingAccountTabIsShow = false;
           }
+        }
+
+        scope.inititalizeGeoCode = function(){
+          $timeout(function() {
+            var input = document.querySelector("#area_code");
+            var settings = {
+              separateDialCode : true,
+              initialCountry : "SG",
+              autoPlaceholder : "off",
+              utilsScript : "../assets/hr-dashboard/js/utils.js",
+            };
+            iti = intlTelInput(input, settings);
+            iti.setNumber( scope.selectedEmployee.mobile_no );
+            scope.selectedEmployee.phone_no = scope.selectedEmployee.phone_no;
+            $("#area_code").val( scope.selectedEmployee.phone_no );
+            input.addEventListener("countrychange", function() {
+              console.log( iti.getSelectedCountryData() );
+              scope.selectedEmployee.country_code = iti.getSelectedCountryData().dialCode;
+              scope.selectedEmployee.mobile_area_code = iti.getSelectedCountryData().dialCode;
+              scope.selectedEmployee.mobile_area_code_country = iti.getSelectedCountryData().iso2;
+            });
+
+            var input2 = document.querySelector("#area_code2");
+            iti2 = intlTelInput(input2, settings);
+            iti2.setCountry( "SG" );
+            scope.replace_emp_data.country_code = '65';
+            input2.addEventListener("countrychange", function() {
+              console.log( iti2.getSelectedCountryData() );
+              scope.replace_emp_data.country_code = iti2.getSelectedCountryData().dialCode;
+              scope.replace_emp_data.mobile_area_code = iti2.getSelectedCountryData().dialCode;
+              scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
+            });
+          }, 300);
         }
 
         scope.onLoad = function(){
@@ -1508,6 +1699,16 @@ app.directive("employeeOverviewDirective", [
             if( val == "" ){
               $('.future-datepicker').datepicker('setDate', moment().format('DD/MM/YYYY') );
             }
+          })
+
+          $('.modal').on('hidden.bs.modal', function () {
+            if( scope.isUpdateEmpInfoModalOpen == true ){
+              iti.destroy();
+            }
+            scope.isUpdateEmpInfoModalOpen = false;
+            // iti2.destroy();
+            console.log( iti );
+            console.log( iti2 );
           })
 
         // -------------- //

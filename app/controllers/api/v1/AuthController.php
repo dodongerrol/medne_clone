@@ -5157,13 +5157,28 @@ public function createEclaim( )
                   ->orderBy('created_at', 'desc')
                   ->first();
 
+        if($input['spending_type'] == "medical") {
+          // recalculate employee balance
+          PlanHelper::reCalculateEmployeeBalance($user_id);
+         } else {
+          PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+         }
+
+        $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+
         $customer_active_plan = DB::table('customer_active_plan')
                   ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                   ->first();
 
-        $input_amount = 0;
+         if($input['spending_type'] == "medical") {
+             $balance = $check_user_balance->balance;
+         } else {
+             $balance = $check_user_balance->wellness_balance;
+         }
 
-        if(Input::has('currency_type') && $input['currency_type'] != null) {
+         $input_amount = 0;
+
+         if(Input::has('currency_type') && $input['currency_type'] != null) {
           if(strtolower($input['currency_type']) == "myr") {
             // $input_amount = $input['currency_exchange_rate'] ? $input['amount'] / $input['currency_exchange_rate'] : $input['amount'] / 3;
             $input_amount = $input['amount'] / 3;

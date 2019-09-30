@@ -113,7 +113,13 @@ class CronController extends \BaseController {
 
     public function activateReplaceNewEmployee( )
     {
-        $date = date('Y-m-d', strtotime('-1 day'));
+        $input = Input::all();
+
+        if(!empty($input['date']) && $input['date'] != null) {
+            $date = date('Y-m-d', strtotime($input['date']));
+        } else {
+            $date = date('Y-m-d', strtotime('-1 day'));
+        }
         // return $date;
         $employees = 0;
         $dependent_accounts = 0;
@@ -198,7 +204,7 @@ class CronController extends \BaseController {
         $employee_pending = DB::table('customer_replace_employee')
                             ->where('start_date', '<=', $date)
                             ->get();
-        // return $employee_pending;
+       
         foreach ($employee_pending as $key => $pending) {
            $user = DB::table('user')->where('UserID', $pending->new_id)->first();
 

@@ -179,6 +179,25 @@
 	}
 
 	.ui-timepicker-disabled { display: none; }
+
+	#sms-modal,
+	#sms-modal *{
+		box-sizing: border-box !important; 
+	}
+	#sms-modal .modal-body{
+		background: none;
+	}
+	#sms-modal .modal-body .header{
+    padding: 10px;
+    margin: -15px -15px 15px -15px;
+    background: rgb(111, 201, 245);
+	}
+	#sms-modal .modal-body #sms-content{
+    padding: 0 20px;
+	}
+	#sms-modal .modal-footer{
+    margin: 0 35px !important;
+	}
 </style>
 
 
@@ -193,48 +212,48 @@
         <h4 class="modal-title font">Mednefits SMS Platform</h4>
       </div>
       <div class="modal-body">
-        <p class="font" id="error">Send SMS via Mednefits</p>
+      	<div class="header">
+       		<p class="font" id="error">Send SMS via Mednefits</p>
+        </div>
+        <div id="sms-content">
+	      	<form class="form-horizontal">
+		      	<div class="form-group">
+					    <label for="name" class="col-sm-2 c control-label ">Name</label>
+					    <div class="col-sm-10" >
+					      <input type="text" id="name" class="form-control tf" placeholder="Sender's Name">
+					    </div>
+						</div>
+				  	</br>
+
+						<div class="form-group">
+					    <label for="doctor" class="col-sm-2 c control-label ">Phone</label>
+
+					    <div id="code-dropdown" class="col-sm-2" >
+
+							<input type="button" class="tf form-control input-sm mobile-input-code input-style dropdown-toggle" id="phone_code" data-toggle="dropdown" value="+65">
+
+							<ul class="dropdown-menu" id="sms-mobile-codes" style="margin-left: 15px; width: 270px; max-height: 180px; overflow-y: auto; overflow-x: hidden;">
+							</ul>
+					    </div>
+
+					    <div class="col-sm-8" >
+					      <input type="text" id="phone" class="form-control tf" placeholder="Phone Number">
+					    </div>
+						</div>
+						</br>
+
+						<div class="form-group">
+						    <label for="message" class="col-sm-2 c control-label ">Message</label>
+						    <div class="col-sm-10" >
+						       <textarea id="message"  class="tf form-control" style="height:100px !important" placeholder="Message"></textarea>
+						    </div>
+						</div>
+
+	      	</form>
+	      	<span class="error font" style="margin-left: 78px; display:none"></span>
+	      </div>
       </div>
-      <div id="content">
-
-      <form class="form-horizontal">
-
-      	<div class="form-group">
-		    <label for="name" class="col-sm-1 c control-label ">Name</label>
-		    <div class="col-sm-8" >
-		      <input type="text" id="name" class="form-control tf" placeholder="Sender's Name">
-		    </div>
-		</div>
-		  </br>
-
-		<div class="form-group">
-		    <label for="doctor" class="col-sm-1 c control-label ">Phone</label>
-
-		    <div id="code-dropdown" class="col-sm-2" >
-
-				<input type="button" class="tf form-control input-sm mobile-input-code input-style dropdown-toggle" id="phone_code" data-toggle="dropdown" value="+65">
-
-				<ul class="dropdown-menu" id="sms-mobile-codes" style="margin-left: 15px; width: 270px; max-height: 180px; overflow-y: auto; overflow-x: hidden;">
-				</ul>
-		    </div>
-
-
-		    <div class="col-sm-5" >
-		      <input type="text" id="phone" class="form-control tf" placeholder="Phone Number" style="width:264px">
-		    </div>
-		</div>
-		</br>
-
-		<div class="form-group">
-		    <label for="message" class="col-sm-1 c control-label ">Message</label>
-		    <div class="col-sm-8" >
-		       <textarea id="message"  class="tf form-control" style="height:100px !important" placeholder="Message"></textarea>
-		    </div>
-		</div>
-
-      </form>
-      	<span class="error font" style="margin-left: 78px; display:none"></span>
-      </div>
+      
       <div class="modal-footer">
         <button type="button" class="btn btn-primary font bt" id="send_message" ">Send Message</button>
         <button type="button" class="btn btn-primary font bt" data-dismiss="modal">Cancel</button>

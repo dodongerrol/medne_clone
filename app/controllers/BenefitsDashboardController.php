@@ -2084,22 +2084,18 @@ class BenefitsDashboardController extends \BaseController {
 				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
 
-			$name = explode(" ", $user->Name);
+			// $name = explode(" ", $user->Name);
 
-			if(!empty($name[0]) && !empty($name[1])) {
-				$first_name = $name[0];
-				$last_name = $name[1];
-			} else {
-				$first_name = $user->Name;
-				$last_name = $user->Name;
-			}	
+			// if(!empty($name[0]) && !empty($name[1])) {
+			// 	$first_name = $name[0];
+			// 	$last_name = $name[1];
+			// } else {
+			// 	$first_name = $user->Name;
+			// 	$last_name = $user->Name;
+			// }	
 
-			if(strrpos($user->PhoneNo, '+') !== false) {
-				$phone_no = $user->PhoneNo;
-			} else {
-				$phone_no = $user->PhoneCode.$user->PhoneNo;
-			}
-
+			$phone_no = (int)$user->PhoneNo;
+			$country_code = $user->PhoneCode;
 			$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
 
 			if((int)$user->Active == 0) {
@@ -2116,7 +2112,6 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
-
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -2126,8 +2121,6 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_tier'				=> $plan_tier,
 				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
-				'first_name'			=> $first_name,
-				'last_name'				=> $last_name,
 				'email'					=> $user->Email,
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
@@ -2138,7 +2131,9 @@ class BenefitsDashboardController extends \BaseController {
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
 				'nric'					=> $user->NRIC,
+				'mobile_no'				=> $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
+				'country_code'			=> $country_code,
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
@@ -2776,13 +2771,16 @@ class BenefitsDashboardController extends \BaseController {
 
 			foreach ($dependents as $key => $dependent) {
 				$user = DB::table('user')
-				->where('UserID', $dependent->employee_user_id)
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+				->where('user.UserID', $dependent->employee_user_id)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active')
 				->first();
 				if($user) {
 					array_push($users, $user);
 				}
 			}
-			// return $dependents;
+			// return $users;
 		}
 
 		foreach ($users as $key => $user) {
@@ -2959,21 +2957,8 @@ class BenefitsDashboardController extends \BaseController {
 				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
 
-			$name = explode(" ", $user->Name);
-
-			if(!empty($name[0]) && !empty($name[1])) {
-				$first_name = $name[0];
-				$last_name = $name[1];
-			} else {
-				$first_name = $user->Name;
-				$last_name = $user->Name;
-			}	
-
-			if(strrpos($user->PhoneNo, '+') !== false) {
-				$phone_no = $user->PhoneNo;
-			} else {
-				$phone_no = $user->PhoneCode.$user->PhoneNo;
-			}
+			$phone_no = (int)$user->PhoneNo;
+			$country_code = $user->PhoneCode;
 
 			$cap_per_visit = $wallet->cap_per_visit_medical;
 
@@ -2998,8 +2983,6 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_tier'				=> $plan_tier,
 				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
 				'name'					=> $user->Name,
-				'first_name'			=> $first_name,
-				'last_name'				=> $last_name,
 				'email'					=> $user->Email,
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
@@ -3010,7 +2993,9 @@ class BenefitsDashboardController extends \BaseController {
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
 				'nric'					=> $user->NRIC,
+				'mobile_no'				=> $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
+				'country_code'			=> $country_code,
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
@@ -3074,6 +3059,7 @@ class BenefitsDashboardController extends \BaseController {
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
 			'PhoneNo'			=> $input['phone_no'],
+			'PhoneCode'			=> "+".$input['country_code'],
 			'DOB'				=> $input['dob'],
 			'Job_Title'			=> $input['job_title']
 		);
@@ -3560,8 +3546,7 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 		$user = new User();
-		// $result = self::checkSession();
-		// $id = $input['customer_id'];
+		
 		$id = PlanHelper::getCusomerIdToken();
 
 		if(empty($input['replace_id']) || $input['replace_id'] == null) {
@@ -3570,27 +3555,18 @@ class BenefitsDashboardController extends \BaseController {
 
 		$replace_id = $input['replace_id'];
 
-		if(empty($input['first_name']) || $input['first_name'] == null) {
-			return array('status' => false, 'message' => 'First Name is required.');
-		}
-		// return $input;
-		// check existing user email
-		$check = DB::table('user')
-		->where('Email', $input['email'])
-		->where('UserType', 5)
-		->where('Active', 1)
-		->count();
+		// if(!empty($input['email'])) {
+		// 	// check existing user email
+		// 	$check = DB::table('user')
+		// 	->where('Email', $input['email'])
+		// 	->where('UserType', 5)
+		// 	->where('Active', 1)
+		// 	->count();
 
-		if(empty($input['last_name']) || $input['last_name'] == null) {
-			return array('status' => false, 'message' => 'Last Name is required.');
-		}
+		// }
 
-		if(empty($input['nric']) || $input['nric'] == null) {
-			return array('status' => false, 'message' => 'NRIC/FIN is required.');
-		}
-
-		if(empty($input['email']) || $input['email'] == null) {
-			return array('status' => false, 'message' => 'Work Email is required.');
+		if(empty($input['fullname']) || $input['fullname'] == null) {
+			return array('status' => false, 'message' => 'Full Name is required.');
 		}
 
 		if(empty($input['dob']) || $input['dob'] == null) {
@@ -3659,18 +3635,18 @@ class BenefitsDashboardController extends \BaseController {
 
 
 		// check existing user email
-		$check = DB::table('user')
-		->where('Email', $input['email'])
-		->where('UserType', 5)
-		->where('Active', 1)
-		->count();
+		// $check = DB::table('user')
+		// ->where('Email', $input['email'])
+		// ->where('UserType', 5)
+		// ->where('Active', 1)
+		// ->count();
 
-		if($check > 0) {
-			return array(
-				'status'	=> FALSE,
-				'message'	=> 'Email Address already taken.'
-			);
-		}
+		// if($check > 0) {
+		// 	return array(
+		// 		'status'	=> FALSE,
+		// 		'message'	=> 'Email Address already taken.'
+		// 	);
+		// }
 
 		// check last day of coverage and plan start
 		$last_day_of_coverage = date('Y-m-d', strtotime($input['last_day_coverage']));
@@ -3760,7 +3736,7 @@ class BenefitsDashboardController extends \BaseController {
 				$pending = 0;
 			}
 
-			if($input['email']) {
+			if(!empty($input['email']) && $input['email'] != null) {
 				$communication_type = "email";
 			} else if($input['mobile']) {
 				$communication_type = "sms";
@@ -3769,12 +3745,12 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$data = array(
-				'Name'          => $input['first_name'].' '.$input['last_name'],
+				'Name'          => $input['fullname'],
 				'Password'  => md5($password),
-				'Email'         => $input['email'],
+				'Email'         => !empty($input['email']) ? $input['email'] : null,
 				'PhoneNo'       => $input['mobile'],
-				'PhoneCode' => "+65",
-				'NRIC'          => $input['nric'],
+				'PhoneCode' => "+".$input['country_code'],
+				'NRIC'          => null,
 				'Job_Title'  => 'Other',
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
@@ -3789,8 +3765,8 @@ class BenefitsDashboardController extends \BaseController {
 				$corporate_member = array(
 					'corporate_id'      => $corporate->corporate_id,
 					'user_id'           => $user_id,
-					'first_name'        => $input['first_name'],
-					'last_name'         => $input['last_name'],
+					'first_name'        => $input['fullname'],
+					'last_name'         => $input['fullname'],
 					'type'              => 'member',
 					'created_at'        => date('Y-m-d H:i:s'),
 					'updated_at'        => date('Y-m-d H:i:s'),
@@ -3940,7 +3916,7 @@ class BenefitsDashboardController extends \BaseController {
 						$compose['company'] = $company->company_name;
 						$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
 						$compose['email'] = $user->Email;
-						$compose['nric'] = $user->NRIC;
+						$compose['nric'] = $user->PhoneNo;
 						$compose['password'] = $password;
 						$compose['phone'] = $user->PhoneNo;
 
@@ -3950,10 +3926,10 @@ class BenefitsDashboardController extends \BaseController {
 					} else {
 						if($input['email']) {
 							$email_data['company']   = ucwords($company->company_name);
-							$email_data['emailName'] = $input['first_name'].' '.$input['last_name'];
-							$email_data['name'] = $input['first_name'].' '.$input['last_name'];
+							$email_data['emailName'] = $input['fullname'];
+							$email_data['name'] = $input['fullname'];
 							$email_data['emailTo']   = $input['email'];
-							$email_data['email']   = $input['email'];
+							$email_data['email']   = $input['mobile'];
 							$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 							$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 							$email_data['start_date'] = date('d F Y', strtotime($input['plan_start']));
@@ -3967,7 +3943,7 @@ class BenefitsDashboardController extends \BaseController {
 							$compose['company'] = $company->company_name;
 							$compose['plan_start'] = date('F d, Y', strtotime($input['plan_start']));
 							$compose['email'] = $user->Email;
-							$compose['nric'] = $user->NRIC;
+							$compose['nric'] = $user->PhoneNo;
 							$compose['password'] = $password;
 							$compose['phone'] = $user->PhoneNo;
 
@@ -3976,8 +3952,6 @@ class BenefitsDashboardController extends \BaseController {
 						}
 					}
 				}
-
-				
 			} else {
 				return array('status' => false, 'message' => 'Failed to replace employee.');
 			}
@@ -3997,13 +3971,15 @@ class BenefitsDashboardController extends \BaseController {
 				'status'				=> $status,
 				'replace_status'		=> 1,
 				'deactive_employee_status' => $deactive_employee_status,
-				'first_name'			=> $input['first_name'],
-				'last_name'				=> $input['last_name'],
-				'nric'					=> $input['nric'],
+				'first_name'			=> $input['fullname'],
+				'last_name'				=> null,
+				'nric'					=> null,
 				'dob'					=> date('Y-m-d', strtotime($input['dob'])),
 				'postal_code'			=> $input['postal_code'],
 				'medical'				=> $medical,
-				'wellness'				=> $wellness
+				'wellness'				=> $wellness,
+				'mobile'					=> $input['mobile'],
+				'country_code'					=> $input['country_code']
 			);
 
 			$result = $replace->createReplaceEmployee($replace_data);
@@ -9456,47 +9432,73 @@ class BenefitsDashboardController extends \BaseController {
 					$amount_due += $user->amount;
 				}
 
-				$employee = DB::table('user')->where('UserID', $user->user_id)->first();
-				$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
+				if((int)$user->has_no_user == 0) {
+					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
+					$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
 
-				$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 
-				$days = $diff->format('%a') + 1;
+					$days = $diff->format('%a') + 1;
 
 
-				$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
-				$remaining_days = $total_days - $days;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$remaining_days = $total_days - $days;
 
-				// return $remaining_days;
-				$cost_plan_and_days = (99/$total_days);
-				$temp_total = $cost_plan_and_days * $remaining_days;
+					// return $remaining_days;
+					$cost_plan_and_days = (99/$total_days);
+					$temp_total = $cost_plan_and_days * $remaining_days;
 
-				$temp_sub_total = $temp_total * 0.70;
+					$temp_sub_total = $temp_total * 0.70;
 
-				// check withdraw amount
-				if($user->amount != $temp_sub_total) {
-					// update amount
-					\PlanWithdraw::where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					// check withdraw amount
+					if($user->amount != $temp_sub_total) {
+						// update amount
+						\PlanWithdraw::where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					}
+
+					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
+
+					$total_refund += $withdraw_data->amount;
+
+					$temp = array(
+						'user_id'			=> $user->user_id,
+						'name'				=> ucwords($employee->Name),
+						'nric'				=> $employee->NRIC,
+						'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> number_format($temp_total, 2),
+						'after_amount' => number_format($withdraw_data->amount, 2),
+						'has_no_user'	=> false
+					);
+				} else {
+					$total_refund += $user->amount;
+					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($user->date_started))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$days = $diff->format('%a') + 1;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$remaining_days = $total_days - $days;
+
+					$temp = array(
+						'user_id'			=> null,
+						'name'				=> null,
+						'nric'				=> null,
+						'period_of_used' => date('d/m/Y', strtotime($user->date_started)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($user->unused)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> number_format($user->amount, 2),
+						'after_amount' => number_format($user->amount, 2),
+						'has_no_user'	=> true
+					);
 				}
 
-				$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
-
-				$total_refund += $withdraw_data->amount;
-
-				$temp = array(
-					'user_id'			=> $user->user_id,
-					'name'				=> ucwords($employee->Name),
-					'nric'				=> $employee->NRIC,
-					'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
-					'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
-					'days_used'			=> $days,
-					'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
-					'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
-					'remaining_days' => $remaining_days,
-					'total_days'		=> $total_days,
-					'before_amount'	=> number_format($temp_total, 2),
-					'after_amount' => number_format($withdraw_data->amount, 2)
-				);
 				array_push($users, $temp);
 			}
 
@@ -11998,20 +12000,20 @@ class BenefitsDashboardController extends \BaseController {
 						if((int)$active->new_head_count == 0) {
 							$amount = $invoice->individual_price * $invoice->employees;
 						} else {
-							$first_plan = DB::table('customer_active_plan')->where('plan_id', $active->plan_id)->first();
-							$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
+							// $first_plan = DB::table('customer_active_plan')->where('plan_id', $active->plan_id)->first();
+							// $plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
 
-							if($first_plan->duration || $first_plan->duration != "") {
-								$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
-							} else {
-								$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-							}
+							// if($first_plan->duration || $first_plan->duration != "") {
+							// 	$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
+							// } else {
+							// 	$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+							// }
 
 							if((int)$invoice->override_total_amount_status == 1) {
 								$calculated_prices = $invoice->override_total_amount;
 							} else {
-								$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $end_plan_date);
-
+								$plan_dates = PlanHelper::getCompanyPlanDatesByPlan($plan->customer_buy_start_id, $plan->customer_plan_id);
+								$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $plan_dates['plan_end']);
 							}
 							$amount = $invoice->employees * $calculated_prices;
 						}
@@ -12121,6 +12123,7 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		// return PlanHelper::reCalculateCompanyBalance();
 		$input = Input::all();
+		// return $input;
 		// $customer_id = $input['customer_id'];
 		$customer_id = PlanHelper::getCusomerIdToken();
 
@@ -12146,17 +12149,29 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 
+
 		// get employee plan duration
-		$start = new DateTime($coverage['plan_start']);
-		$end = new DateTime(date('Y-m-d', strtotime($coverage['plan_end'])));
-		$diff = $start->diff($end);
-		$plan_duration = $diff->days + 1;
-		// return $plan_duration;
+		if(!empty($input['pro_allocation_start_date']) && !empty($input['pro_allocation_end_date'])) {
+			$start = new DateTime($input['pro_allocation_start_date']);
+			$end = new DateTime(date('Y-m-d', strtotime($input['pro_allocation_end_date'])));
+			$diff = $start->diff($end);
+			$coverage_end = new DateTime($input['pro_allocation_end_date']);
+		} else {
+			$end = new DateTime(date('Y-m-d', strtotime($coverage['plan_end'])));
+			$start = new DateTime($coverage['plan_start']);
+			$diff = $start->diff($end);
+			$coverage_end = new DateTime($last_day_coverage);
+
+		}
+
+		$plan_employee_duration = new DateTime($coverage['plan_start']);
+		$plan_employee_duration = $plan_employee_duration->diff(new DateTime(date('Y-m-d', strtotime($coverage['plan_end']))));
+		$plan_duration = $plan_employee_duration->days + 1;
 		// get empployee plan coverage from last day of employee
-		$coverage_end = new DateTime($last_day_coverage);
 		$diff_coverage = $start->diff($coverage_end);
 		$coverage_diff = $diff_coverage->days + 1;
 		
+		// return array('coverage_diff' => $coverage_diff, 'plan_duration' => $plan_duration);
 		// return $coverage_diff;
 		// get total allocation of employee from plan start and plan end
 		$employee_credit_reset_medical = DB::table('credit_reset')
@@ -12218,32 +12233,38 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-		foreach ($medical_wallet_history as $key => $history) {
-			if($history->logs == "added_by_hr") {
-				$total_allocation_medical_temp += $history->credit;
-			}
+		$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
+		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
+		// foreach ($medical_wallet_history as $key => $history) {
+		// 	if($history->logs == "added_by_hr") {
+		// 		$total_allocation_medical_temp += $history->credit;
+		// 	}
 
-			if($history->logs == "deducted_by_hr" && (int)$history->from_pro_allocation == 0) {
-				$total_allocation_medical_deducted += $history->credit;
-			}
+		// 	if($history->logs == "deducted_by_hr" && (int)$history->from_pro_allocation == 0) {
+		// 		$total_allocation_medical_deducted += $history->credit;
+		// 	}
 
-			if($history->where_spend == "e_claim_transaction") {
-				$total_medical_e_claim_spent += $history->credit;
-			}
+		// 	if($history->where_spend == "e_claim_transaction") {
+		// 		$total_medical_e_claim_spent += $history->credit;
+		// 	}
 
-			if($history->where_spend == "in_network_transaction") {
-				$total_medical_in_network_spent += $history->credit;
-			}
+		// 	if($history->where_spend == "in_network_transaction") {
+		// 		$total_medical_in_network_spent += $history->credit;
+		// 	}
 
-			if($history->where_spend == "credits_back_from_in_network") {
-				$total_allocation_medical_credits_back += $history->credit;
-			}
-		}
+		// 	if($history->where_spend == "credits_back_from_in_network") {
+		// 		$total_allocation_medical_credits_back += $history->credit;
+		// 	}
+		// }
 
-		$total_allocation_medical_temp = $total_allocation_medical_temp - $total_allocation_medical_deducted;
-		$total_allocation_medical = $total_allocation_medical_temp;
-		$total_medical_spent_temp = $total_medical_in_network_spent + $total_medical_e_claim_spent;
-		$total_medical_spent = $total_medical_spent_temp - $total_allocation_medical_credits_back;
+		// $total_allocation_medical_temp = $total_allocation_medical_temp - $total_allocation_medical_deducted;
+		// $total_allocation_medical = $total_allocation_medical_temp;
+		// $total_medical_spent_temp = $total_medical_in_network_spent + $total_medical_e_claim_spent;
+		// $total_medical_spent = $total_medical_spent_temp - $total_allocation_medical_credits_back;
+
+		$total_allocation_medical = $medical_credit_data['allocation'];
+		$total_medical_spent = $medical_credit_data['get_allocation_spent'];
+
 		$has_medical_allocation = false;
 
 		$pro_temp = $coverage_diff / $plan_duration;
@@ -12323,31 +12344,8 @@ class BenefitsDashboardController extends \BaseController {
 		->where('status', 0)
 		->sum('amount');
 
-		foreach ($wellness_wallet_history as $key => $history) {
-			if($history->logs == "added_by_hr") {
-				$total_allocation_wellness_temp += $history->credit;
-			}
-
-			if($history->logs == "deducted_by_hr") {
-				$total_allocation_wellness_deducted += $history->credit;
-			}
-
-			if($history->where_spend == "e_claim_transaction") {
-				$total_wellness_e_claim_spent_wellness += $history->credit;
-			}
-
-			if($history->where_spend == "in_network_transaction") {
-				$total_wellness_in_network_spent += $history->credit;
-			}
-
-			if($history->where_spend == "credits_back_from_in_network") {
-				$total_allocation_wellness_credits_back += $history->credit;
-			}
-		}
-
-		$total_allocation_wellness = $total_allocation_wellness_temp - $total_allocation_wellness_deducted;
-		$total_wellness_spent_temp = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness;
-		$total_wellness_spent = $total_wellness_spent_temp - $total_allocation_wellness_credits_back;
+		$total_allocation_wellness = $wellness_credit_data['allocation'];
+		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];;
 
 		$exceed_wellness = false;
 		$total_current_usage_wellness = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness + $pending_e_claim_wellness;
@@ -12387,12 +12385,25 @@ class BenefitsDashboardController extends \BaseController {
 		// 	$wellness = false;
 		// }
 
-		$date = array(
-			'pro_rated_start' => date('d/m/Y', strtotime($coverage['plan_start'])),
-			'pro_rated_end' => date('d/m/Y', strtotime($last_day_coverage)),
-			'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
-			'usage_end'		=> $usage_date
-		);
+
+		if($pro_allocation_medical_date) {
+			$date = array(
+				'pro_rated_start' => $pro_allocation_medical_date->pro_allocation_start_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_start_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
+				'pro_rated_end' => $pro_allocation_medical_date->pro_allocation_end_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_end_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
+				'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
+				'usage_end'		=> $usage_date
+			);
+		} else {
+			$date = array(
+				'pro_rated_start' => !empty($input['pro_allocation_start_date']) ? date('d/m/Y', strtotime($input['pro_allocation_start_date'])) : date('d/m/Y', strtotime($coverage['plan_start'])),
+				'pro_rated_end' => !empty($input['pro_allocation_end_date']) ? date('d/m/Y', strtotime($input['pro_allocation_end_date'])) : date('d/m/Y', strtotime($last_day_coverage)),
+				'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
+				'usage_end'		=> $usage_date,
+				'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? $input['pro_allocation_start_date'] : null,
+				'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? $input['pro_allocation_end_date'] : null,
+			);
+			// return $date;
+		}
 
 		if($has_medical_allocation) {
 			// start calibration for medical
@@ -12425,6 +12436,8 @@ class BenefitsDashboardController extends \BaseController {
 						'logs'              => 'pro_allocation',
 						'running_balance'   => $total_pro_medical_allocation,
 						'spending_type'     => 'medical',
+						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
+						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
 						'updated_at'        => date('Y-m-d H:i:s')
 					);
@@ -12498,6 +12511,8 @@ class BenefitsDashboardController extends \BaseController {
 						'logs'              => 'pro_allocation',
 						'running_balance'   => $total_pro_wellness_allocation,
 						'spending_type'     => 'wellness',
+						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
+						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
 						'updated_at'        => date('Y-m-d H:i:s')
 					);
