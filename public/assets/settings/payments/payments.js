@@ -643,10 +643,10 @@ function viewStatement(payment_id, opt) {
       }
 
       // DUE DATE
-      if (data.due_date != null) {
-        $(".statement_start").text(moment(data.due_date.start_date).format("MMM DD, YYYY"));
-        $(".statement_end").text(moment(data.due_date.end_date).format("MMM DD, YYYY"));
-      }
+      // if (data.due_date != null) {
+        $(".statement_start").text(moment(data.invoice_record.start_date).format("MMM DD, YYYY"));
+        $(".statement_end").text(moment(data.invoice_record.end_date).format("MMM DD, YYYY"));
+      // }
 
       $(".statement_amount_due").text(data.total);
 

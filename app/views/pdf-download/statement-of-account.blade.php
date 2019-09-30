@@ -121,13 +121,13 @@
 
         <div class="col-md-12 text-center">
           <h1 style="font-size: 35px !important;color: #999 !important;font-family: 'Open Sans', sans-serif !important;margin-bottom: 0px;">STATEMENT OF ACCOUNT</h1>
-          <p style="margin-top: 5px;">(Generated on {{ $statement->created_at }})</p>
+          <p style="margin-top: 5px;">(Generated on {{ date('M d, Y', strtotime($statement->created_at)) }} )</p>
         </div>
 
         <div class="col-md-12">
           <div class="item">
             <div id="clinic-logo-container" style="text-align: left;">
-              <!-- <img src="{{ $clinic->image }}" style="max-width: 250px;max-height: 135px;"> -->
+              <img src="{{ $clinic->image }}" style="max-width: 250px;max-height: 135px;">
             </div>
           </div>
           <div class="item" style="text-align: right;">
@@ -149,7 +149,7 @@
           <p style="margin: 0;text-align: right;">Account Summary</p>
           <p><label>Invoiced: </label> <span style="float: right;display: inline-block;width: 115px;text-align: left;">${{ $total }}</span></p>
           <p><label>Payments: </label> <span style="float: right;display: inline-block;width: 115px;text-align: left;">(${{ $payment_record->amount_paid }})</span></p>
-          <p><label>Ending Balance {{ $statement->created_at }}: </label> <span style="float: right;display: inline-block;width: 115px;text-align: left;">${{$ending_balance}}</span></p>
+          <p><label>Ending Balance {{ date('M d, Y', strtotime($statement->created_at)) }}: </label> <span style="float: right;display: inline-block;width: 115px;text-align: left;">${{$ending_balance}}</span></p>
         </div>
       </div>
 
@@ -168,24 +168,24 @@
         </tr>
 
         <tr class="tbody">
-          <td style="text-align: left !important;"><b>Jan 01, 2019</b></td>
-          <td><b>Invoice #{{ $payment_record->invoice_number }} (due Jan 31, 2019)</b></td>
-          <td style="text-align: right !important;"><b>S$1230.00  </b></td>
-          <td style="text-align: right !important;"><b>S$1230.00</b></td>
+          <td style="text-align: left !important;"><b>{{ date('M d, Y', strtotime($invoice_record['start_date'])) }}</b></td>
+          <td><b>Invoice #{{ $payment_record->invoice_number }} (due {{ date('M d, Y', strtotime($invoice_due)) }})</b></td>
+          <td style="text-align: right !important;"><b>S${{ $total }}  </b></td>
+          <td style="text-align: right !important;"><b>S${{ $total }}</b></td>
         </tr>
 
         <tr class="tbody">
-          <td style="text-align: left !important;"><b>Jan 01, 2019</b></td>
+          <td style="text-align: left !important;"><b>{{ date('M d, Y', strtotime($invoice_record['end_date'])) }}</b></td>
           <td><b>Payment Invoice #{{ $payment_record->invoice_number }}</b></td>
-          <td style="text-align: right !important;"><b>(S$413.84.00)</b></td>
-          <td style="text-align: right !important;"><b>S$816.16</b></td>
+          <td style="text-align: right !important;"><b>(S${{ $payment_record['amount_paid'] }})</b></td>
+          <td style="text-align: right !important;"><b>S${{ $ending_balance }}</b></td>
         </tr>
 
         <tr class="tbody">
-          <td style="text-align: left !important;"><b>{{ $statement->created_at }}</b></td>
-          <td><b>Invoice #MNAL00004 (due Jan 31, 2019)</b></td>
+          <td style="text-align: left !important;"><b>{{ date('M d, Y', strtotime($statement->created_at)) }}</b></td>
+          <td><b>Invoice #{{ $payment_record['invoice_number'] }} (due {{ date('M d, Y', strtotime($invoice_due)) }})</b></td>
           <td style="text-align: right !important;"><b></b></td>
-          <td style="text-align: right !important;"><b>S$816.16</b></td>
+          <!-- <td style="text-align: right !important;"><b>S${{ $ending_balance }}</b></td> -->
         </tr>
 
       </table>
@@ -193,7 +193,7 @@
       <div class="col-md-12 total text-right" style="width: 94.5%;text-align: right;position: relative;height: 135px;">
         <div style="width: 250px;display: inline-block;position: absolute;right: 15px;top: 25px;">
           <p style="margin-bottom: 10px;">Amount due (SGD)</p>
-          <p style="margin-top: 10px;">$816.16</p>
+          <p style="margin-top: 10px;">S${{ $ending_balance }}</p>
         </div>
       </div>
 
