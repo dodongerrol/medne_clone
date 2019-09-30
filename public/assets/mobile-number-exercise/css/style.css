@@ -11,7 +11,7 @@ body {
 }
 
 body >div:first-child {
-  height: 100vh;
+  min-height: 100vh;
 }
 
 *{
@@ -399,7 +399,7 @@ h3.tooltip-phone-email-details {
 
 @media (max-width: 575px) {
   .mobile-exercise-wrapper {
-    padding: 0 20px;
+    padding: 0 20px 100px 20px;
   }
 
   .mobile-exercise-form-container {
