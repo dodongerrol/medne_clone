@@ -22,6 +22,7 @@ app.directive("mobileExerciseDirective", [
         scope.token = null;
         scope.devicePlatform = null;
         scope.optCode = [];
+        scope.code_err = false;
 
         var iti = null;
 
@@ -483,6 +484,7 @@ app.directive("mobileExerciseDirective", [
         scope.updateDetails = function( data ){
           console.log( data );
           scope.showLoading();
+          scope.code_err = false;
           $http.post( 
             base_url + "exercise/update_member_details", data,
             {
@@ -494,8 +496,11 @@ app.directive("mobileExerciseDirective", [
               console.log(response);
               if( response.data.status ){
                 scope.step = 4;
+                scope.code_err = false;
               }else{
                 swal( 'Error!', response.data.message, 'error' );
+                scope.code_err = true;
+                scope.code_err_msg = response.data.message;
               }
               scope.hideLoading();
             });

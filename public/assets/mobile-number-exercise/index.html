@@ -104,6 +104,7 @@
 								<input pattern="[0-9]*" type="tel" maxlength="1" ng-model="optCode[$index]" ng-change="otpChanged()" ng-focus="otpFocus($index)" >
 							</div>
 						</div>
+						<span ng-if="code_err" class="err-msg" ng-bind="code_err_msg">Incorrect code, please try again.</span>
 						<div class="mobile-exercise-btn-footer">
 							<button class="btn-submit" ng-click="submitUpdateDetails( member_details )">Submit</button>
 							<button class="btn-submit" ng-click="sendOtpCode()">Resend OTP</button>
