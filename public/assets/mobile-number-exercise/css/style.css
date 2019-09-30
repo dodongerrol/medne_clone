@@ -394,7 +394,9 @@ h3.tooltip-phone-email-details {
 }
 
 @media (max-width: 766px) {
-  .otp-input-wrapper >div input:focus{
+  .otp-input-wrapper >div input:focus,
+  .otp-input-wrapper >div input:active,
+  .otp-input-wrapper >div input:visited{
     outline: none;
     color: transparent;
     text-shadow: 0 0 0 #000;

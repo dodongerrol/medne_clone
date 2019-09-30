@@ -9,7 +9,7 @@ app.directive("mobileExerciseDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("mobileExerciseDirective running!");
         
-        scope.step = 3;
+        scope.step = 1;
         scope.nric_data = {};
         scope.member_details = {
           mobile_country_code : '+65'
@@ -358,7 +358,7 @@ app.directive("mobileExerciseDirective", [
             var index = scope.optCode.join("").length;
             if( num_index != index ){
               // $(".otp-input-wrapper input").blur();
-              // $(".otp-input-wrapper input:eq(" + index + ")").focus();
+              $(".otp-input-wrapper input:eq(" + index + ")").focus();
             }
           }
         }
