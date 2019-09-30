@@ -23,7 +23,7 @@ class EmailHelper{
     }
 
     public static function sendPaymentAttachment($dataArray) {
-        Mail::queue('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
+        Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $pdf = PDF::loadView($dataArray['pdf_file'], $dataArray);
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
