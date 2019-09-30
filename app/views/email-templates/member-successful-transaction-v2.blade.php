@@ -320,7 +320,7 @@
         <div class="item_service">
           <div class="item-clinic-img">
             <div class="clinic-type-img">
-              <img src="{{ $clinic_type_image }}" style="width: 50px;" />
+              <img src="{{ $clinic_type_image }}"/>
             </div>
             <div class="clinic-type-service">
               {{ $service }}
