@@ -42,7 +42,7 @@ class AuthLibrary{
             $returnObject = $token;
         } else{
             $returnObject->status = FALSE;
-            $returnObject->url = url().'/app/mobile_exercise?platform=mobile';
+            $returnObject->url = null;
             $returnObject->error = 'invalid_credentials';
             // $returnObject->error_description = 'The user credentials were incorrect.';
             $returnObject->error_description = 'Please click here to change your user ID to your mobile number.';
