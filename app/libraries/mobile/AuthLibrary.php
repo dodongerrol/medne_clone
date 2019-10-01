@@ -42,7 +42,7 @@ class AuthLibrary{
         } else{
             $returnObject->status = FALSE;
             $returnObject->error = 'invalid_credentials';
-            $returnObject->error_description = 'The user credentials were incorrect.';
+            $returnObject->error_description = 'The user credentials were incorrect or Please update your user ID by clicking on the link above.';
         }
         return $returnObject;
     }
