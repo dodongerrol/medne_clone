@@ -27,34 +27,34 @@ class EclaimController extends \BaseController {
     $email = (string)($email);
     $password = $input['password'];
     
-		$check = DB::table('user')
-		->where(function($query) use ($email, $password) {
-			$query->where('UserType', 5)
-			->where('Email', $email)
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-		})
-    ->orWhere(function($query) use ($email, $password){
-    	$query->where('UserType', 5)
-			->where('NRIC', 'like', '%'.$email.'%')
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-    })
-    ->orWhere(function($query) use ($email, $password){
-    	$email = (int)($email);
-    	$query->where('UserType', 5)
-			->where('PhoneNo', $email)
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-    })
-		->first();
-
 		// $check = DB::table('user')
-		// 					->where('UserType', 5)
-		// 					->where('PhoneNo', $email)
-		// 				  ->where('password', md5($password))
-		// 				  ->where('Active', 1)
-		// 					->first();
+		// ->where(function($query) use ($email, $password) {
+		// 	$query->where('UserType', 5)
+		// 	->where('Email', $email)
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+		// })
+  //   ->orWhere(function($query) use ($email, $password){
+  //   	$query->where('UserType', 5)
+		// 	->where('NRIC', 'like', '%'.$email.'%')
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+  //   })
+  //   ->orWhere(function($query) use ($email, $password){
+  //   	$email = (int)($email);
+  //   	$query->where('UserType', 5)
+		// 	->where('PhoneNo', $email)
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+  //   })
+		// ->first();
+
+		$check = DB::table('user')
+							->where('UserType', 5)
+							->where('PhoneNo', $email)
+						  ->where('password', md5($password))
+						  ->where('Active', 1)
+							->first();
 
 		if($check) {
 			if((int)$check->account_update_status == 0) {
@@ -90,7 +90,7 @@ class EclaimController extends \BaseController {
 			return array('status' => TRUE, 'message' => 'Success.', 'token' => $token);
 		}
 
-		return array('status' => FALSE, 'message' => 'Invalid Credentials.');
+		return array('status' => FALSE, 'message' => 'Invalid Credentials or Please update your user ID by clicking on the link above.');
 	}
 
 	public function getEmployeeLists( )
