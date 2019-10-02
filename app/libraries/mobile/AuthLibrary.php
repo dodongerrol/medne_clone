@@ -589,7 +589,7 @@ public static function Forgot_PasswordV2(){
                 $findUserID = $findUserEmail[0];
             } else {
                 $returnObject->status = false;
-                $returnObject->message = "Member does not exist";
+                $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                 return $returnObject;
             }
         } else {
@@ -607,7 +607,7 @@ public static function Forgot_PasswordV2(){
                     $findUserID = $findUserPhone[0];
                 } else {
                     $returnObject->status = false;
-                    $returnObject->message = "Member does not exist";
+                    $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                     return $returnObject;
                 }
             } else {
@@ -625,12 +625,12 @@ public static function Forgot_PasswordV2(){
                       $findUserID = $findUserBackUpPhone[0];
                     } else {
                       $returnObject->status = false;
-                      $returnObject->message = "Member does not exist";
+                      $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                       return $returnObject;
                     }
                 } else {
                     $returnObject->status = false;
-                    $returnObject->message = "Member does not exist";
+                    $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                     return $returnObject;
                 }
             }
