@@ -218,9 +218,12 @@
           <div class="col-md-12 notes" >
             <p class="font-medium2 font-20 color-blue-custom2 no-margin">Payment Information</p>
             <div class="white-space-10"></div>
-            <p class="font-medium2 color-black2 no-margin">Cheque Payment:</p>
+            <!-- <p class="font-medium2 color-black2 no-margin">Cheque Payment:</p>
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Medicloud Pte Ltd</p>
-            <p class="color-gray font-14 no-margin weight-700 line-height-1">7 Temasek Boulevard #18-02 Suntec Tower</p>
+            <p class="color-gray font-14 no-margin weight-700 line-height-1">7 Temasek Boulevard #18-02 Suntec Tower</p> -->
+            <p class="font-medium2 color-black2 no-margin">Corporate PayNow</p>
+            <p class="color-gray font-14 no-margin weight-700 line-height-1">UEN: 201415681W</p>
+
             <p class="color-gray font-14 no-margin weight-700 line-height-1">038987 Singapore</p>
             <div class="white-space-10"></div>
             <p class="font-medium2 color-black2 no-margin">Bank Transfer:</p>
