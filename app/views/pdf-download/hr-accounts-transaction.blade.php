@@ -252,10 +252,12 @@
       <div class="col-md-12 notes">
         <div class="item-col">
           <p style="margin-bottom: 10px;font-size: 13px;"><b>Notes</b></p>
-          <p style="font-size: 13px;"><b>Please make cheques payable to:</b></p>
+          <!-- <p style="font-size: 13px;"><b>Please make cheques payable to:</b></p>
           <p>Medicloud Pte Ltd</p>
           <p>7 Temasek Boulevard</p>
-          <p>#18-02 Suntec Tower One, S038987</p>
+          <p>#18-02 Suntec Tower One, S038987</p> -->
+          <p style="font-size: 13px;">Corporate PayNow</p>
+          <p>UEN: 201415681W</p>
 
           <p style="font-size: 13px;margin-top: 10px;"><b>Or Bank Transfer to:</b></p>
           <p>Bank: UOB Anson Road</p>
