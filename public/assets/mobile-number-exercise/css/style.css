@@ -387,6 +387,17 @@ h3.tooltip-phone-email-details {
   display: block;
 }
 
+.forgot-password {
+  color: #777777;
+  text-decoration: underline;
+  font-size: 15px;
+  font-weight: 300;
+  font-family: sans-serif;
+  letter-spacing: .14px;
+  line-height: 24px;
+  cursor: pointer;
+}
+
 @media (min-width: 767px) {
   .mobile-exercise-btn-footer .btn-responsive {
     display: none;
