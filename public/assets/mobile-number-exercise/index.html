@@ -74,6 +74,11 @@
 							</div>
 						</div>
 
+						<div class="forgot-password-wrapper">
+							<a class="forgot-password pull-right">Forgot password?</a>
+							<a style="display: none;" class="forgot-password pull-right">Login</a>
+						</div>
+
 						<div class="mobile-exercise-btn-footer">
 							<div class="cancel-confirm-btn-container">
 								<button class="btn-cancel" ng-if="step == 1" ng-click="cancelBtn()">Cancel</button>
@@ -110,6 +115,17 @@
 							<button class="btn-submit" ng-click="sendOtpCode()">Resend OTP</button>
 						</div>
 					</div>
+
+					<div style="display: none;" class="forgot-password-container">
+						<div class="mobile-exercise-input-wrapper">
+							<input type="text" placeholder="Mobile Number">
+						</div>
+						<div class="mobile-exercise-btn-footer">
+							<button class="btn-submit">Reset Password</button>
+						</div>
+					</div>
+
+					
 
 				</div>
 
