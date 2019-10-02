@@ -34,12 +34,12 @@ class EclaimController extends \BaseController {
 		//   ->where('password', md5($password))
 		//   ->where('Active', 1);
 		// })
-  //  //  ->orWhere(function($query) use ($email, $password){
-  //  //  	$query->where('UserType', 5)
-		// 	// ->where('NRIC', 'like', '%'.$email.'%')
-		//  //  ->where('password', md5($password))
-		//  //  ->where('Active', 1);
-  //  //  })
+  //   ->orWhere(function($query) use ($email, $password){
+  //   	$query->where('UserType', 5)
+		// 	->where('NRIC', 'like', '%'.$email.'%')
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+  //   })
   //   ->orWhere(function($query) use ($email, $password){
   //   	$email = (int)($email);
   //   	$query->where('UserType', 5)
@@ -84,12 +84,13 @@ class EclaimController extends \BaseController {
         'type'      => 'admin_employee_login_portal',
         'data'      => SystemLogLibrary::serializeData($input)
       );
+
       SystemLogLibrary::createAdminLog($admin_logs);
 
 			return array('status' => TRUE, 'message' => 'Success.', 'token' => $token);
 		}
 
-		return array('status' => FALSE, 'message' => 'Invalid Credentials.');
+		return array('status' => FALSE, 'message' => 'Invalid Credentials or Please update your user ID by clicking on the link above.');
 	}
 
 	public function getEmployeeLists( )
@@ -982,15 +983,22 @@ class EclaimController extends \BaseController {
 					$status_text = FALSE;
 				}
 
-				$total_amount = number_format($trans->procedure_cost, 2);
+				$total_amount = number_format((float)$trans->procedure_cost, 2);
+
+				// if(strripos($trans->procedure_cost, '$') !== false) {
+				// 	$temp_cost = explode('$', $trans->procedure_cost);
+				// 	$total_amount = number_format($temp_cost[1]);
+				// } else {
+				// 	$total_amount = number_format($trans->procedure_cost, 2);
+				// }
 
 				if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
 					if((int)$trans->lite_plan_enabled == 1) {
-						$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
+						$total_in_network_spent += (float)$trans->procedure_cost + $trans->consultation_fees;
 					} else {
-						$total_in_network_spent += $trans->procedure_cost;
+						$total_in_network_spent += (float)$trans->procedure_cost;
 					}
-					$total_cash += $trans->procedure_cost;
+					$total_cash += (float)$trans->procedure_cost;
 				} else if($trans->credit_cost > 0 && (int)$trans->deleted == 0) {
 					if((int)$trans->lite_plan_enabled == 1) {
 						$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
@@ -1014,15 +1022,15 @@ class EclaimController extends \BaseController {
               $total_amount = $trans->credit_cost + $trans->consultation_fees;
               $cash = $transation->cash_cost;
             } else {
-              $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+              $total_amount = (float)$trans->procedure_cost + $trans->consultation_fees;
               // $total_amount = $trans->procedure_cost;
-              $cash = $trans->procedure_cost;
+              $cash = (float)$trans->procedure_cost;
             }
           } else {
             if((int)$trans->half_credits == 1) {
               $cash = $trans->cash_cost;
             } else {
-              $cash = $trans->procedure_cost;
+              $cash = (float)$trans->procedure_cost;
             }
           }
 				} else {
@@ -1051,18 +1059,18 @@ class EclaimController extends \BaseController {
 	                $cash = 0;
 	                $payment_type = 'Mednefits Credits';
 	              } else {
-	                $cash = $trans->procedure_cost - $trans->consultation_fees;
+	                $cash = (float)$trans->procedure_cost - $trans->consultation_fees;
 	              }
 	            }
 	        } else {
-	            $total_amount = $trans->procedure_cost;
+	            $total_amount = (float)$trans->procedure_cost;
 	            if((int)$trans->half_credits == 1) {
 	              $cash = $trans->cash_cost;
 	            } else {
 	              if($trans->credit_cost > 0) {
 	                $cash = 0;
 	              } else {
-	                $cash = $trans->procedure_cost;
+	                $cash = (float)$trans->procedure_cost;
 	              }
 	            }
 	            $payment_type = 'Mednefits Credits';
@@ -1072,28 +1080,28 @@ class EclaimController extends \BaseController {
 				$bill_amount = 0;
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
-						$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+						$bill_amount = (float)$trans->procedure_cost - $trans->consultation_fees;
 					} else {
-						$bill_amount = 	$trans->procedure_cost;
+						$bill_amount = (float)$trans->procedure_cost;
 					}
 				} else {
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->health_provider_done == 1) {
 							if((int)$trans->lite_plan_use_credits == 1) {
-								$bill_amount = 	$trans->procedure_cost;
+								$bill_amount = 	(float)$trans->procedure_cost;
 							} else {
-								$bill_amount = 	$trans->procedure_cost;
+								$bill_amount = 	(float)$trans->procedure_cost;
 							}
 						} else {
 							if((int)$trans->lite_plan_use_credits == 1) {
-								$bill_amount = 	$trans->procedure_cost;
+								$bill_amount = 	(float)$trans->procedure_cost;
 							} else {
 								// $cost_temp = $trans->credit_cost + $trans->cash_cost;
 								$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
 							}
 						}
 					} else {
-						$bill_amount = 	$trans->procedure_cost;
+						$bill_amount = 	(float)$trans->procedure_cost;
 					}
 				}
 

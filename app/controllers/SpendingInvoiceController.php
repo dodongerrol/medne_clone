@@ -378,7 +378,6 @@ class SpendingInvoiceController extends \BaseController {
         $paginate['from'] = $credits_statements->getFrom();
         $paginate['last_page'] = $credits_statements->getLastPage();
         $paginate['per_page'] = $credits_statements->getPerPage();
-        $paginate['to'] = $credits_statements->getTo();
         $format = [];
         $minus = 0;
 
@@ -407,7 +406,8 @@ class SpendingInvoiceController extends \BaseController {
             }
         }
 
-         $paginate['total'] = $credits_statements->getTotal() - $minus;
+        $paginate['to'] = sizeof($format);
+        $paginate['total'] = $credits_statements->getTotal() - $minus;
         $paginate['data'] = $format;
 
         return $paginate;

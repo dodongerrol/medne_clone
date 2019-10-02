@@ -21,7 +21,8 @@ class AuthLibrary{
             if((int)$user->account_update_status == 0) {
                 $returnObject->status = FALSE;
                 $returnObject->error = 'update_credentials';
-                $returnObject->error_description = 'Please update your user ID by clicking on the link above.';
+                $returnObject->url = url().'/app/mobile_exercise?platform=mobile';
+                $returnObject->error_description = 'Please click here to change your user ID to your mobile number.';
                 return $returnObject;
             }
 
@@ -41,8 +42,10 @@ class AuthLibrary{
             $returnObject = $token;
         } else{
             $returnObject->status = FALSE;
+            $returnObject->url = null;
             $returnObject->error = 'invalid_credentials';
-            $returnObject->error_description = 'The user credentials were incorrect.';
+            // $returnObject->error_description = 'The user credentials were incorrect.';
+            $returnObject->error_description = 'Invalid Credentials';
         }
         return $returnObject;
     }
