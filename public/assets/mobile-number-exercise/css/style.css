@@ -398,6 +398,11 @@ h3.tooltip-phone-email-details {
   cursor: pointer;
 }
 
+.forgot-password-wrapper {
+  display: inline-block;
+  width: 100%;
+}
+
 @media (min-width: 767px) {
   .mobile-exercise-btn-footer .btn-responsive {
     display: none;
