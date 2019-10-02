@@ -562,20 +562,79 @@ public static function Forgot_PasswordV2(){
     $returnObject = new stdClass();
     if(!empty($email)){
       // $findUserID = self::FindUserIDByEmail($email);
-      $findUserID = DB::table('user')->where(function($query) use ($email) {
-                $query->where('Email', $email)
-                ->where('UserType', 5)
-                ->where('Active', 1)
-                ->whereIn('access_type', [1, 0]);
-      })
-      ->orWhere(function($query) use ($email) {
-                $email = (int)($email);
-                $query->where('PhoneNo', (int)$email)
-                ->where('UserType', 5)
-                ->where('Active', 1)
-                ->whereIn('access_type', [1, 0]);
-      })
-      ->first();
+      // $findUserID = DB::table('user')->where(function($query) use ($email) {
+      //           $query->where('Email', $email)
+      //           ->where('UserType', 5)
+      //           ->where('Active', 1)
+      //           ->whereIn('access_type', [1, 0]);
+      // })
+      // ->orWhere(function($query) use ($email) {
+      //           $email = (int)($email);
+      //           $query->where('PhoneNo', (int)$email)
+      //           ->where('UserType', 5)
+      //           ->where('Active', 1)
+      //           ->whereIn('access_type', [1, 0]);
+      // })
+      // ->first();
+        $findUserID = null;
+        $findUserEmail = DB::table('user')
+                    ->where('Email', $email)
+                    ->where('UserType', 5)
+                    ->where('Active', 1)
+                    ->whereIn('access_type', [1, 0])
+                    ->get();
+
+        if(sizeof($findUserEmail) > 0) {
+            if(sizeof($findUserEmail) == 1) {
+                $findUserID = $findUserEmail[0];
+            } else {
+                $returnObject->status = false;
+                $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                return $returnObject;
+            }
+        } else {
+            $email = $email;
+            // phone number
+            $findUserPhone = DB::table('user')
+                            ->where('PhoneNo', (string)$email)
+                            ->where('UserType', 5)
+                            ->where('Active', 1)
+                            ->whereIn('access_type', [1, 0])
+                            ->get();
+
+            if(sizeof($findUserPhone) > 0) {
+                if(sizeof($findUserPhone) == 1) {
+                    $findUserID = $findUserPhone[0];
+                } else {
+                    $returnObject->status = false;
+                    $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                    return $returnObject;
+                }
+            } else {
+              // return $findUserPhone;
+                // backup phone
+                $findUserBackUpPhone = DB::table('user')
+                            ->where('backup_mobile', (string)$email)
+                            ->where('UserType', 5)
+                            ->where('Active', 1)
+                            ->whereIn('access_type', [1, 0])
+                            ->get();
+
+                if(sizeof($findUserBackUpPhone) > 0) {
+                    if(sizeof($findUserBackUpPhone) == 1) {
+                      $findUserID = $findUserBackUpPhone[0];
+                    } else {
+                      $returnObject->status = false;
+                      $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                      return $returnObject;
+                    }
+                } else {
+                    $returnObject->status = false;
+                    $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                    return $returnObject;
+                }
+            }
+        }
 
       if($findUserID){
         $findUserID = $findUserID->UserID;
@@ -601,67 +660,53 @@ public static function Forgot_PasswordV2(){
 
           if($findNewUser){
               // check type of communication type
-              if($findNewUser->communication_type == "email") {
-                $config = StringHelper::Deployment( );
+            if($findNewUser->Email) {
+               $emailDdata['emailName'] = $findNewUser->Name;
+                        // $emailDdata['emailPage'] = 'email-templates.reset-password';
+                $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
+                $emailDdata['emailTo'] = $findNewUser->Email;
+                $emailDdata['emailSubject'] = 'Employee Password Reset';
+                $emailDdata['name'] = $findNewUser->Name;
+                $emailDdata['context'] = "Forgot your employee password?";
+                        // $emailDdata['password'] = $password;
+                        // $emailDdata['login_email'] = $findNewUser->Email;
+                $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink;
+                EmailHelper::sendEmail($emailDdata);          
+            }
 
-               // if($config == 1) {
-               //      $data = array(
-               //          'email'     => $findNewUser->Email,
-               //          'name'      => ucwords($findNewUser->Name),
-               //          'context'   => "Forgot your employee password?",
-               //          'activeLink'    => $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink
-               //      );
-               //      $url = "https://api.medicloud.sg/employees/reset_pass";
-               //              // $url = "http://localhost:3000/employees/reset_pass";
-               //      ApiHelper::resetPassword($data, $url);
-               //      $returnObject->status = TRUE;
-               //      $returnObject->type = "email";
-               //      $returnObject->message = "We’ve sent an email to you with a link to reset your password";
-               //      return $returnObject;
-               //  } else {
-                    $emailDdata['emailName'] = $findNewUser->Name;
-                            // $emailDdata['emailPage'] = 'email-templates.reset-password';
-                    $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
-                    $emailDdata['emailTo'] = $findNewUser->Email;
-                    $emailDdata['emailSubject'] = 'Employee Password Reset';
-                    $emailDdata['name'] = $findNewUser->Name;
-                    $emailDdata['context'] = "Forgot your employee password?";
-                            // $emailDdata['password'] = $password;
-                            // $emailDdata['login_email'] = $findNewUser->Email;
-                    $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink;
-                    EmailHelper::sendEmail($emailDdata);
-                    $returnObject->status = TRUE;
-                    $returnObject->type = "email";
-                    $returnObject->message = "We’ve sent an email to you with a link to reset your password";
-                    return $returnObject;
-                // }
-              } else {
-                  // check phone if valid then send else use email
-                  if($findNewUser->PhoneNo) {
-                      // check and format phone number
-                      $phone = SmsHelper::formatNumber($findNewUser);
+              // check phone if valid then send else use email
+              if($findNewUser->PhoneNo || $findNewUser->backup_mobile) {
+                if(!$findNewUser->PhoneNo) {
+                  $findNewUser->PhoneNo = $findNewUser->backup_mobile;
+                  $findNewUser->PhoneCode = $findNewUser->backup_mobile_area_code;
+                }
+                // check and format phone number
+                $phone = SmsHelper::formatNumber($findNewUser);
 
-                      if($phone) {
-                          $findNewUser->phone = $phone;
-                          $findNewUser->server = $server;
-                          $message = SmsHelper::formatForgotPasswordMessage($findNewUser);
-                          // send messge
-                          $compose = [];
-                          $compose['phone'] = $phone;
-                          $compose['message'] = $message;
+                if($phone) {
+                    $findNewUser->phone = $phone;
+                    $findNewUser->server = $server;
+                    $message = SmsHelper::formatForgotPasswordMessage($findNewUser);
+                    // send messge
+                    $compose = [];
+                    $compose['phone'] = $phone;
+                    $compose['message'] = $message;
 
-                          $result_sms = SmsHelper::sendSms($compose);
+                    $result_sms = SmsHelper::sendSms($compose);
 
-                          // if($result_sms['status'] == true) {
-                             $returnObject->status = TRUE;
-                             $returnObject->type = "sms";
-                             $returnObject->message = "We’ve sent a sms to you with a link to reset your password";
-                             return $returnObject;
-                         // }
-                      }
-                 }
-                  
-              }
+                    // if($result_sms['status'] == true) {
+                       // $returnObject->status = TRUE;
+                       // $returnObject->type = "sms";
+                       // $returnObject->message = "We’ve sent a sms to you with a link to reset your password";
+                       // return $returnObject;
+                   // }
+                }
+             }
+
+            $returnObject->status = TRUE;
+            $returnObject->type = "email";
+            $returnObject->message = "We’ve sent an email or sms to you with a link to reset your password";
+            return $returnObject;
           }
         }else{
             $returnObject->status = FALSE;
