@@ -160,10 +160,12 @@
     	<div class="notes">
     		<div class="col-md-12 text-left" style="width: 95%;">
     			<p style="margin-bottom: 10px"><b>Notes</b></p>
-    			<p style="margin-bottom: 0;font-size: 16px;color: #000;">Please make cheques payable to:</p>
+    			<!-- <p style="margin-bottom: 0;font-size: 16px;color: #000;">Please make cheques payable to:</p>
     			<p style="margin-bottom: 0;">Medicloud Pte Ltd</p>
     			<p style="margin-bottom: 0;">7 Temasek Boulevard</p>
-    			<p style="margin-bottom: 20px;">#18-02 Suntec Tower One, S038987</p>
+    			<p style="margin-bottom: 20px;">#18-02 Suntec Tower One, S038987</p> -->
+          <p style="margin-bottom: 0;font-size: 16px;color: #000;">Corporate PayNow</p>
+          <p style="margin-bottom: 0;">UEN: 201415681W</p>
 
 
           <p style="margin-bottom: 0;font-size: 16px;color: #000;">Or Bank Transfer to:</p>
