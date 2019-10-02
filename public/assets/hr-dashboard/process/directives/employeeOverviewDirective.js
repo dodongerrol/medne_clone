@@ -396,10 +396,10 @@ app.directive("employeeOverviewDirective", [
               return false;
             }
           }
-          if( !data.postal_code ){
-            swal( 'Error!', 'Postal Code is required.', 'error' );
-            return false;
-          }
+          // if( !data.postal_code ){
+          //   swal( 'Error!', 'Postal Code is required.', 'error' );
+          //   return false;
+          // }
 
           return true;
         }

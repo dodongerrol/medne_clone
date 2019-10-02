@@ -3055,11 +3055,11 @@ class BenefitsDashboardController extends \BaseController {
 		$update = array(
 			'Name'				=> $input['name'],
 			// 'NRIC'				=> $input['nric'],
-			'Zip_Code'			=> $input['postal_code'],
+			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
 			'PhoneNo'			=> $input['phone_no'],
-			'PhoneCode'			=> "+".$input['country_code'],
+			'PhoneCode'			=> $input['country_code'],
 			'DOB'				=> $input['dob'],
 			'Job_Title'			=> $input['job_title']
 		);
