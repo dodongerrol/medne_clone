@@ -143,9 +143,12 @@ login.directive('eclaimLogin', [
           scope.showLoading();
           eclaimSettings.resetPassword(data).then(function(response) {
             console.log(response);
-						swal('Error!', response.data.message, 'error');
+						
             if(response.data.status) {
-              window.location.reload();
+              swal('Success!', response.data.message, 'success');
+              scope.showLogin();
+            }else{
+              swal('Error!', response.data.message, 'error');
             }
             scope.hideLoading();
           })
