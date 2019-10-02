@@ -9,44 +9,44 @@ class TransactionHelper
 
 		if($clinic_type->head == 1 || $clinic_type->head == "1") {
 	        if($clinic_type->Name == "General Practitioner") {
-	         $type = "General Practitioner";
+	         $type = "GP";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/General_Practitioner_jsk7vy.png";
 	       } else if($clinic_type->Name == "Dental Care") {
-	         $type = "Dental Care";
+	         $type = "Dental";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Dental_Care_ztbtfb.png";
 	       } else if($clinic_type->Name == "Traditional Chinese Medicine") {
-	         $type = "Traditional Chinese Medicine";
+	         $type = "TCM";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Traditional_Chinese_Medicine_ww748w.png";
 	       } else if($clinic_type->Name == "Health Screening") {
-	         $type = "Health Screening";
+	         $type = "Screening";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Screening_eerwqg.png";
 	       } else if($clinic_type->Name == "Wellness") {
 	         $type = "Wellness";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Wellness_vw8zyq.png";
 	       } else if($clinic_type->Name == "Health Specialist") {
-	         $type = "Health Specialist";
+	         $type = "Specialist";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Specialist_bxakdq.png";
 	       }
 	    } else {
 	        $find_head = DB::table('clinic_types')
 	        ->where('ClinicTypeID', $clinic_type->sub_id)
 	        ->first();
-	        if($find_head->Name == "General Practitioner") {
+	        if($find_head->Name == "GP") {
 	         $type = "General Practitioner";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/General_Practitioner_jsk7vy.png";
-	       } else if($find_head->Name == "Dental Care") {
+	       } else if($find_head->Name == "Dental") {
 	         $type = "Dental Care";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Dental_Care_ztbtfb.png";
-	       } else if($find_head->Name == "Traditional Chinese Medicine") {
+	       } else if($find_head->Name == "TCM") {
 	         $type = "Traditional Chinese Medicine";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Traditional_Chinese_Medicine_ww748w.png";
-	       } else if($find_head->Name == "Health Screening") {
+	       } else if($find_head->Name == "Screening") {
 	         $type = "Health Screening";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Screening_eerwqg.png";
 	       } else if($find_head->Name == "Wellness") {
 	         $type = "Wellness";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Wellness_vw8zyq.png";
-	       } else if($find_head->Name == "Health Specialist") {
+	       } else if($find_head->Name == "Specialist") {
 	         $type = "Health Specialist";
 	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Specialist_bxakdq.png";
 	       }
