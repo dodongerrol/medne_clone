@@ -578,24 +578,24 @@ public static function Forgot_PasswordV2(){
 
           if($findNewUser){
               // check type of communication type
-              if($findNewUser->communication_type == "email") {
+              // if($findNewUser->communication_type == "email") {
                 $config = StringHelper::Deployment( );
 
-               if($config == 1) {
-                    $data = array(
-                        'email'     => $findNewUser->Email,
-                        'name'      => ucwords($findNewUser->Name),
-                        'context'   => "Forgot your employee password?",
-                        'activeLink'    => $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink
-                    );
-                    $url = "https://api.medicloud.sg/employees/reset_pass";
-                            // $url = "http://localhost:3000/employees/reset_pass";
-                    ApiHelper::resetPassword($data, $url);
-                    $returnObject->status = TRUE;
-                    $returnObject->type = "email";
-                    $returnObject->message = "We’ve sent an email to you with a link to reset your password";
-                    return $returnObject;
-                } else {
+               // if($config == 1) {
+               //      $data = array(
+               //          'email'     => $findNewUser->Email,
+               //          'name'      => ucwords($findNewUser->Name),
+               //          'context'   => "Forgot your employee password?",
+               //          'activeLink'    => $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink
+               //      );
+               //      $url = "https://api.medicloud.sg/employees/reset_pass";
+               //              // $url = "http://localhost:3000/employees/reset_pass";
+               //      ApiHelper::resetPassword($data, $url);
+               //      $returnObject->status = TRUE;
+               //      $returnObject->type = "email";
+               //      $returnObject->message = "We’ve sent an email to you with a link to reset your password";
+               //      return $returnObject;
+               //  } else {
                     $emailDdata['emailName'] = $findNewUser->Name;
                             // $emailDdata['emailPage'] = 'email-templates.reset-password';
                     $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
@@ -609,10 +609,10 @@ public static function Forgot_PasswordV2(){
                     EmailHelper::sendEmail($emailDdata);
                     $returnObject->status = TRUE;
                     $returnObject->type = "email";
-                    $returnObject->message = "We’ve sent an email to you with a link to reset your password";
-                    return $returnObject;
-                }
-              } else {
+                    $returnObject->message = "We’ve sent an email or sms to you with a link to reset your password";
+                    // return $returnObject;
+                // }
+              // } else {
                   // check phone if valid then send else use email
                   if($findNewUser->PhoneNo) {
                       // check and format phone number
@@ -630,15 +630,15 @@ public static function Forgot_PasswordV2(){
                           $result_sms = SmsHelper::sendSms($compose);
 
                           // if($result_sms['status'] == true) {
-                             $returnObject->status = TRUE;
-                             $returnObject->type = "sms";
-                             $returnObject->message = "We’ve sent a sms to you with a link to reset your password";
-                             return $returnObject;
+                             // $returnObject->status = TRUE;
+                             // $returnObject->type = "sms";
+                             // $returnObject->message = "We’ve sent a sms to you with a link to reset your password";
+                             // return $returnObject;
                          // }
                       }
                  }
-                  
-              }
+                 return $returnObject;
+              // }
           }
         // }
     }else{
