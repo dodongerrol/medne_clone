@@ -74,9 +74,8 @@
 							</div>
 						</div>
 
-						<div class="forgot-password-wrapper">
-							<a class="forgot-password pull-right">Forgot password?</a>
-							<a style="display: none;" class="forgot-password pull-right">Login</a>
+						<div ng-if="step == 1" class="forgot-password-wrapper" >
+							<a class="forgot-password pull-right" ng-click="toggleForgotPassword()">Forgot password?</a>
 						</div>
 
 						<div class="mobile-exercise-btn-footer">
@@ -116,12 +115,15 @@
 						</div>
 					</div>
 
-					<div style="display: none;" class="forgot-password-container">
+					<div ng-if="step == 0" class="forgot-password-container">
 						<div class="mobile-exercise-input-wrapper">
-							<input type="text" placeholder="Mobile Number">
+							<input type="text" placeholder="Mobile Number or Email Address" ng-model="reset_password_text">
 						</div>
 						<div class="mobile-exercise-btn-footer">
-							<button class="btn-submit">Reset Password</button>
+							<button class="btn-submit" ng-click="resetPassword( reset_password_text )">Reset Password</button>
+						</div>
+						<div class="forgot-password-wrapper">
+							<a class="forgot-password pull-right" ng-click="toggleForgotPassword()">Login</a>
 						</div>
 					</div>
 

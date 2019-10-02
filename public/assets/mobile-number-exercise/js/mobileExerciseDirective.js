@@ -24,6 +24,7 @@ app.directive("mobileExerciseDirective", [
         scope.optCode = [];
         scope.code_err = false;
         scope.stopAutoFocus = false;
+        scope.reset_password_text = '';
 
         var iti = null;
 
@@ -34,6 +35,13 @@ app.directive("mobileExerciseDirective", [
             event.preventDefault();
           }
         });
+        scope.toggleForgotPassword = function(){
+          if( scope.step != 0 ){
+            scope.step = 0;
+          }else{
+            scope.step = 1;
+          }
+        }
         scope.validateEmpDOB = function( data ){
           if( scope.member_details.dob == '' ){
             return false;
@@ -516,6 +524,30 @@ app.directive("mobileExerciseDirective", [
                   scope.code_err_msg = response.data.message;
                   // scope.code_err_msg = 'Incorrect code, please try again.';
                 }
+              }
+              scope.hideLoading();
+            });
+        }
+
+        scope.resetPassword = function( value ){
+          if( !value ){
+            swal( 'Error!', 'Mobile Number or Email Address is required.', 'error' );
+            return false;
+          }
+          console.log( value );
+          scope.showLoading();
+          var data = {
+            email: value
+          };
+          $http.post( 
+            base_url + "v2/auth/forgotpassword", data)
+            .then(function(response){
+              console.log(response);
+              if( response.data.status ){
+                swal( 'Success!', response.data.message, 'success' );
+                scope.step = 1;
+              }else{
+                swal( 'Error!', response.data.message, 'error' );
               }
               scope.hideLoading();
             });
