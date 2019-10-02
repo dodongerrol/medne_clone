@@ -109,14 +109,14 @@
 					</div>
 					<div>
 						<div class="notification-text">Notification: User ID Change</div>
-						<p>NRIC number and email address will no longer be valid as your user ID. <br>
+						<p>NRIC number will no longer be valid as your user ID. <br>
 						Please click <a class="here-text" ng-click="goToUpdateDetails()">here</a> to change your user ID to your mobile number.</p>
 					</div>
 				</div>
 			</div>
 			<form class="med-form" ng-submit="login()">
 				<div class="form-group">
-					<input type="number" name="email" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" required/>
+					<input type="number" name="email" class="form-control med-input mobile-num-input" placeholder="Mobile Number or Email Address" ng-model="email" required/>
 				</div>
 				<div class="form-group">
 					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" required style="margin-bottom: 15px">
@@ -141,7 +141,7 @@
 			</div>
 			<form class="med-form" ng-submit="resetPassword()">
 				<div class="form-group">
-					<input type="text" name="email" class="form-control med-input" placeholder="Mobile Number" ng-model="login_details.email" required/>
+					<input type="text" name="email" class="form-control med-input" placeholder="Mobile Number or Email Address" ng-model="login_details.email" required/>
 				</div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-info btn-block med-button" id="reset-password">Reset Password</button>
