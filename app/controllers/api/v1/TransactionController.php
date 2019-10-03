@@ -209,6 +209,8 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 
+
+
 					// if($cap_amount > 0) {
 					// 	if($total_amount > $cap_amount) {
 					// 		if($total_amount > $user_credits) {
@@ -257,11 +259,19 @@ class Api_V1_TransactionController extends \BaseController
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
 						$total_credits_cost = $credits;
+
+						if( $total_credits_cost > $consultation_fees ){
+							$total_credits_cost -= $consultation_fees;
+						}else if( $consultation_fees > $total_credits_cost ){
+							// $cash -= ( $consultation_fees - $total_credits_cost );
+							$consultation_fees = $total_credits_cost;
+							$total_credits_cost = 0;
+						}
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
-						// $total_credits_cost = $credits;
-						$consultation_fees = 0;
+						$total_credits_cost = $credits;
+						// $consultation_fees = 0;
 					}
 
 					$payment_credits = $total_credits_cost;
@@ -320,6 +330,8 @@ class Api_V1_TransactionController extends \BaseController
 					if($currency) {
 					 $data['currency_amount'] = $currency;
 					}
+
+					// return $data;
 
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
