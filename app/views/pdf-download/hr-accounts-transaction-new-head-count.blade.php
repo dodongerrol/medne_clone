@@ -122,10 +122,34 @@
 			  margin-right: 15px;
 			}
 
-			.notes p{
-				margin:0;
-				font-size: 12px;
-			}
+			.notes{
+        position: relative;
+      }
+
+      .notes p{
+        font-size: 12px;
+        margin: 0;
+      }
+
+      .notes .item-col{
+        width: 70%;
+        display: inline-block;
+        vertical-align: top;
+        height: 280px;
+      }
+      .notes .item-col2{
+        width: 27%;
+        text-align: right;
+        display: inline-block;
+        vertical-align: top;
+        padding-top: 70px;
+        height: 180px;
+      }
+
+      .notes .stamp{
+        width: 120px;
+        height: 120px;
+      }
 
 			.copyright{
 				padding-bottom: 20px;
@@ -216,7 +240,7 @@
 
     	</table>
 
-    	<div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative;height: 100px;">
+    	<div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative;height: 50px;">
     		<div style="width: 200px;display: inline-block;position: absolute;right: 10px;top: 15px;">
     			<p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> ${{ $total }}</p>
 
@@ -225,6 +249,35 @@
 					<p style="margin-top: 5px;"><label>Amount Due (SGD):</label> <b>${{ $amount_due }}</b></p>
     		</div>
     	</div>
+
+    	<div class="col-md-12 notes">
+        <div class="item-col">
+          <p style="margin-bottom: 10px;font-size: 13px;"><b>Notes</b></p>
+          <!-- <p style="font-size: 13px;"><b>Please make cheques payable to:</b></p>
+          <p>Medicloud Pte Ltd</p>
+          <p>7 Temasek Boulevard</p>
+          <p>#18-02 Suntec Tower One, S038987</p> -->
+          <p style="font-size: 13px;"><b>Corporate PayNow</b></p>
+          <p>UEN: 201415681W</p>
+
+          <p style="font-size: 13px;margin-top: 10px;"><b>Bank Transfer</b></p>
+          <p>Bank: UOB Anson Road</p>
+          <p>Bank No: 7375</p>
+          <p>Branch No: 057</p>
+          <p>Account Name: Medicloud Pte Ltd</p>
+          <p>Account No.: 3743069399</p>
+          <p>ACRA 201415681W</p>
+
+          <p style="margin: 10px 0 0 0;font-size: 11px;">Please contact us for any questions related to your invoice/contract at happiness@mednefits.com</p>
+          @if($notes && $notes != 'NULL')
+          <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $notes }}</p>
+          @endif
+        </div>
+
+        <div class="item-col2">
+          <img class="stamp" src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/Mednefits_Company_Stamp-01.png">
+        </div>
+      </div>
 
     	<div class="col-md-12 copyright text-center">
     		<h5 style="color: #999;"><b>&copy; 2019 Mednefits. All rights reserved</b></h5>

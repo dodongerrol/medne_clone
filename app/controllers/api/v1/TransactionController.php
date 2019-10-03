@@ -195,66 +195,66 @@ class Api_V1_TransactionController extends \BaseController
 					$user_credits = round($user_credits, 2);
 					$consultation_fees = round($consultation_fees, 2);
 
-					// if($cap_amount > 0) {
-					// 	if($cap_amount > $user_credits) {
-					// 		if($total_amount > $user_credits) {
-					// 			$credits = $user_credits;
-					// 			$cash = $total_amount - $user_credits;
-					// 			$half_payment = true;
-					// 		} else {
-					// 			$credits = $total_amount;
-					// 			$cash = 0;
-					// 		}
-					// 	} else if($cap_amount == $total_amount){
-					// 		$credits = $total_amount;
-					// 		$cash = 0;
-					// 	} else {
-					// 		if($total_amount > $cap_amount) {
-					// 			$credits = $cap_amount;
-					// 			$cash = $total_amount - $cap_amount;
-					// 			$half_payment = true;
-					// 		} else {
-					// 			$credits = $total_amount;
-					// 			$cash = 0;
-					// 		}
-					// 	}
-					// } else {
-					// 	if($total_amount > $user_credits) {
-					// 		$credits = $user_credits;
-					// 		$cash = $total_amount - $user_credits;
-					// 		$half_payment = true;
-					// 	} else {
-					// 		$credits = $total_amount;
-					// 		$cash = 0;
-					// 	}
-					// }
-
 					if($cap_amount > 0) {
-						if($total_amount > $cap_amount) {
-							$credits = $cap_amount;
-							$cash = $total_amount - $cap_amount;
+						if($cap_amount > $user_credits) {
+							if($total_amount > $user_credits) {
+								$credits = $user_credits;
+								$cash = $total_amount - $user_credits;
+								$half_payment = true;
+							} else {
+								$credits = $total_amount;
+								$cash = 0;
+							}
+						} else if($cap_amount == $total_amount){
+							$credits = $total_amount;
+							$cash = 0;
+						} else {
+							if($total_amount > $cap_amount) {
+								$credits = $cap_amount;
+								$cash = $total_amount - $cap_amount;
+								$half_payment = true;
+							} else {
+								$credits = $total_amount;
+								$cash = 0;
+							}
+						}
+					} else {
+						if($total_amount > $user_credits) {
+							$credits = $user_credits;
+							$cash = $total_amount - $user_credits;
 							$half_payment = true;
-							$payment_credits = $credits;
 						} else {
 							$credits = $total_amount;
-							$payment_credits = $total_amount;
+							$cash = 0;
 						}
-					} else {
-						$credits = $total_amount;
-						$payment_credits = $total_amount;
 					}
 
-					if($customer_active_plan->account_type != "super_pro_plan") {
-						if($credits > $user_credits) {
-							$credits_temp = $user_credits;
-							$cash = $credits - $user_credits;
-							$credits = $credits_temp;
-							$half_payment = true;
-						}
-					} else {
-						$cash = 0;
-						$credits = $total_amount;
-					}
+					// if($cap_amount > 0) {
+					// 	if($total_amount > $cap_amount) {
+					// 		$credits = $cap_amount;
+					// 		$cash = $total_amount - $cap_amount;
+					// 		$half_payment = true;
+					// 		$payment_credits = $credits;
+					// 	} else {
+					// 		$credits = $total_amount;
+					// 		$payment_credits = $total_amount;
+					// 	}
+					// } else {
+					// 	$credits = $total_amount;
+					// 	$payment_credits = $total_amount;
+					// }
+
+					// if($customer_active_plan->account_type != "super_pro_plan") {
+					// 	if($credits > $user_credits) {
+					// 		$credits_temp = $user_credits;
+					// 		$cash = $credits - $user_credits;
+					// 		$credits = $credits_temp;
+					// 		$half_payment = true;
+					// 	}
+					// } else {
+					// 	$cash = 0;
+					// 	$credits = $total_amount;
+					// }
 
 					// return $total_credits;
 					$transaction = new Transaction();
@@ -275,11 +275,19 @@ class Api_V1_TransactionController extends \BaseController
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
 						$total_credits_cost = $credits;
+
+						if( $total_credits_cost > $consultation_fees ){
+							$total_credits_cost -= $consultation_fees;
+						}else if( $consultation_fees > $total_credits_cost ){
+							// $cash -= ( $consultation_fees - $total_credits_cost );
+							$consultation_fees = $total_credits_cost;
+							$total_credits_cost = 0;
+						}
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
 						$total_credits_cost = $credits;
-						$consultation_fees = 0;
+						// $consultation_fees = 0;
 					}
 
 					$date_of_transaction = null;
@@ -338,6 +346,7 @@ class Api_V1_TransactionController extends \BaseController
 					if($currency) {
 					 $data['currency_amount'] = $currency;
 					}
+
 
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
