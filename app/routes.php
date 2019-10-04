@@ -577,7 +577,7 @@ Route::post('app/calendar/getClinicPinStatus','CalendarController@getClinicPinSt
 Route::post('app/calendar/loadAppointmentCount','CalendarController@loadAppointmentCount');
 
 // Mobile Exercise
-Route::get('app/mobile_exercise','HomeController@getMobileExercise');
+Route::get('app/update_user_id_web','HomeController@getMobileExercise');
 
 // ----------------------------------- Settings pages ----------------------------------- //
 

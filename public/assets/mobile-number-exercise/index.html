@@ -90,7 +90,7 @@
 							<button class="btn-submit btn-responsive" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
 							<button class="btn-confirm btn-responsive" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
 							<button class="btn-home btn-responsive" ng-if="step == 4" ng-click="cancelBtn()">Home</button>
-							<button class="btn-cancel btn-responsive" ng-if="step < 3" ng-click="cancelBtn()">Cancel</button>
+							<button class="btn-cancel btn-responsive" ng-if="step == 1" ng-click="cancelBtn()">Cancel</button>
 						</div>
 					</div>
 
