@@ -3032,13 +3032,25 @@ class BenefitsDashboardController extends \BaseController {
 		$hr_id = $result->hr_dashboard_id;
 		$input = Input::all();
 
+		$mobile = preg_replace('/\s+/', '', $input['phone_no']);
+		$mobile = (int)$mobile;
+		// check if mobile already existed or duplicate
+		$check_mobile = DB::table('user')
+							->where('PhoneNo', (string)$mobile)
+							->whereNotIn('UserID', [$input['user_id']])
+							->first();
+
+		if($check_mobile) {
+			return array('status' => false, 'message' => 'Mobile Number already taken.');
+		}
+		
 		$update = array(
 			'Name'				=> $input['name'],
 			// 'NRIC'				=> $input['nric'],
 			'Zip_Code'			=> $input['postal_code'],
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
-			'PhoneNo'			=> $input['phone_no'],
+			'PhoneNo'			=> $mobile,
 			'PhoneCode'			=> "+".$input['country_code'],
 			'DOB'				=> $input['dob'],
 			'Job_Title'			=> $input['job_title']
