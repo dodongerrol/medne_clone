@@ -70,12 +70,12 @@ login.directive('eclaimLogin', [
 
         scope.goToUpdateDetails = function(){
           // if( scope.deviceOs == 'iOS' ){
-          //   window.location.assign( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          //   window.location.assign( serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
           // }else{
-          //   window.open( serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          //   window.open( serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
           // }
-          // window.location.href = serverUrl.url + 'app/mobile_exercise?platform=web&os=' + ( scope.deviceOs ).toLowerCase();
-          window.location.href = serverUrl.url + 'app/mobile_exercise?platform=web';
+          // window.location.href = serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase();
+          window.location.href = serverUrl.url + 'app/update_user_id_web?platform=web';
         }
 
         scope.changePassword = function( data ){
