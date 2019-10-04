@@ -9639,50 +9639,9 @@ class BenefitsDashboardController extends \BaseController {
 			$procedure = ucwords($procedure_data->Name);
 		}
 
-		if($clinic_type->head == 1 || $clinic_type->head == "1") {
-			if($clinic_type->Name == "General Practitioner") {
-				$type = "General Practitioner";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-			} else if($clinic_type->Name == "Dental Care") {
-				$type = "Dental Care";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-			} else if($clinic_type->Name == "Traditional Chinese Medicine") {
-				$type = "Traditional Chinese Medicine";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-			} else if($clinic_type->Name == "Health Screening") {
-				$type = "Health Screening";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-			} else if($clinic_type->Name == "Wellness") {
-				$type = "Wellness";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-			} else if($clinic_type->Name == "Health Specialist") {
-				$type = "Health Specialist";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
-			}
-		} else {
-			$find_head = DB::table('clinic_types')
-			->where('ClinicTypeID', $clinic_type->sub_id)
-			->first();
-			if($find_head->Name == "General Practitioner") {
-				$type = "General Practitioner";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-			} else if($find_head->Name == "Dental Care") {
-				$type = "Dental Care";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-			} else if($find_head->Name == "Traditional Chinese Medicine") {
-				$type = "Traditional Chinese Medicine";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-			} else if($find_head->Name == "Health Screening") {
-				$type = "Health Screening";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-			} else if($find_head->Name == "Wellness") {
-				$type = "Wellness";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-			} else if($find_head->Name == "Health Specialist") {
-				$type = "Health Specialist";
-				$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
-			}
-		}
+		$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
+		$type = $clinic_type_properties['type'];
+		$image = $clinic_type_properties['image'];
 
 		$total_amount = floatval($transaction->credit_cost);
 		if($transaction->credit_cost > 0) {
@@ -9711,29 +9670,16 @@ class BenefitsDashboardController extends \BaseController {
 		$email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
 		$email['transaction_type'] = $transaction_type;
 		$email['lite_plan_status'] = $lite_plan_status;
-		$email['consultation'] = $transaction->co_paid_amount;
+		$email['consultation'] = $transaction->consultation_fees;
 		$email['total_amount'] = $total_amount;
 		$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
-
-	    // $email['emailSubject'] = 'Member - Successful Transaction';
-	    // $email['emailTo'] = $user->Email;
-	    // $email['emailTo'] = 'filbert@mednefits.com';
-	    // $email['emailName'] = ucwords($user->Name);
-	    // $email['url'] = 'http://staging.medicloud.sg';
 		$email['clinic_type_image'] = $image;
-
-	    // return View::make('pdf-download/member-successful-transac', $email);
-
 		$pdf = PDF::loadView('pdf-download/member-successful-transac', $email);
     	// $pdf->setPaper('A4', 'landscape');
 
 		// return $pdf->download($email['transaction_id'].' - '.time().'.pdf');
 		// return $pdf->render();
 		return $pdf->stream();
-    // EmailHelper::sendEmail($email);
-
-    // $email['emailTo'] = 'info@medicloud.sg';
-    // EmailHelper::sendEmail($email);
 	}
 
 	public function downloadStatementInNetwork()
