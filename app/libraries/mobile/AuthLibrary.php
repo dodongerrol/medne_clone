@@ -355,7 +355,7 @@ class AuthLibrary{
               $mobile = (int)$mobile;
               $check_mobile = DB::table('user')
                           ->where('PhoneNo', (string)$mobile)
-                          ->whereNotIn('UserID', [$input['user_id']])
+                          ->whereNotIn('UserID', [$userid])
                           ->first();
 
               if($check_mobile) {
