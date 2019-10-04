@@ -110,7 +110,7 @@ class EmployeeController extends \BaseController {
 
         $details = array(
         	'name'			=> ucwords($member->Name),
-        	'dob' => date('d/m/Y', strtotime($member->DOB)),
+        	'dob' => $member->DOB ? date('d/m/Y', strtotime($member->DOB)) : null,
         	'mobile' => $member->PhoneNo,
         	'mobile_country_code' => $member->PhoneCode
         );
@@ -128,7 +128,7 @@ class EmployeeController extends \BaseController {
        		$dependents[] = array(
        			'dependent_id' 	=> $dependent->user_id,
        			'name'			=> ucwords($user->Name),
-       			'dob'			=> date('d/m/Y', strtotime($user->DOB))
+       			'dob'			=> $user->DOB ? date('d/m/Y', strtotime($user->DOB)) : null
        		);
        	}
 

@@ -466,10 +466,22 @@ app.directive("mobileExerciseDirective", [
                 scope.member_details = response.data.data;
                 if( scope.member_details.mobile_country_code != null ){
                   scope.member_details.mobile_country_code = "+" + ( scope.member_details.mobile_country_code ).split("+").join("");
-                  scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
                 }else{
                   scope.member_details.mobile_country_code = "+65";
                 }
+                if( scope.member_details.dob != undefined && scope.member_details.dob != null ){
+                  scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
+                }else{
+                  scope.member_details.dob = "";
+                }
+                angular.forEach( scope.member_details.dependents, function(value,key){
+                  if( value.dob != undefined && value.dob != null ){
+                    value.dob = moment( value.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
+                  }else{
+                    value.dob = "";
+                  }
+                });
+
                 scope.member_details.mobile_format = scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
                 scope.step = 2;
                 scope.initializeGeoCode();
