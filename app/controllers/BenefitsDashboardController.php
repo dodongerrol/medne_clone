@@ -9638,9 +9638,9 @@ class BenefitsDashboardController extends \BaseController {
 		$procedure_temp = "";
 		$lite_plan_status = false;
 		$lite_plan = false;
-		$lite_plan = StringHelper::litePlanStatus($transaction->UserID);
+		// $lite_plan = StringHelper::litePlanStatus($transaction->UserID);
 
-		if($lite_plan && $transaction->lite_plan_enabled == 1) {
+		if((int)$transaction->lite_plan_enabled == 1) {
 			$lite_plan_status = true;
 		}
 
