@@ -9692,7 +9692,7 @@ class BenefitsDashboardController extends \BaseController {
 		$email['total_amount'] = $total_amount;
 		$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
 		$email['clinic_type_image'] = $image;
-		return View::make('pdf-download/member-successful-transac', $email);
+		// return View::make('pdf-download/member-successful-transac', $email);
 		$pdf = PDF::loadView('pdf-download/member-successful-transac', $email);
     	// $pdf->setPaper('A4', 'landscape');
 
