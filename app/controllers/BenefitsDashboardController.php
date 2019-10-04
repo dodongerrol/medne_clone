@@ -9649,7 +9649,7 @@ class BenefitsDashboardController extends \BaseController {
 			$amount = $transaction->credit_cost;
 
 			if($lite_plan_status) {
-				$total_amount = floatval($transaction->co_paid_amount) + floatval($transaction->credit_cost);
+				$total_amount = floatval($transaction->consultation_fees) + floatval($transaction->credit_cost);
 			}
 		} else {
 			$transaction_type = 'Cash';
@@ -9674,6 +9674,7 @@ class BenefitsDashboardController extends \BaseController {
 		$email['total_amount'] = $total_amount;
 		$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
 		$email['clinic_type_image'] = $image;
+		return View::make('pdf-download/member-successful-transac', $email);
 		$pdf = PDF::loadView('pdf-download/member-successful-transac', $email);
     	// $pdf->setPaper('A4', 'landscape');
 
