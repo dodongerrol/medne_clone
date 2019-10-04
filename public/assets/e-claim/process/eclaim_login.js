@@ -129,7 +129,7 @@ login.directive('eclaimLogin', [
 	              scope.invalid_credentials = true;
 	              swal({ 
                   html: true, 
-                  title: 'Your User ID or Password is Incorrect.', 
+                  title: '<span style="font-size: 22px;">Your User ID or Password is Incorrect.</span>', 
                   text: "<p style='text-align:left;margin:30px'><span>1. Make sure you have updated your User ID to your Mobile Number.</span><br><br>" +
                   "<span>2. If you still can't login, reset your password.</span></p>" 
                 });
