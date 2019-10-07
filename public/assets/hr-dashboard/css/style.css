@@ -7429,6 +7429,32 @@ ul.typeahead li a.dropdown-item
 	}
 }
 
+.edit-country-code-phone-wrapper {
+	display: flex;
+}
+
+.edit-country-code-phone-wrapper >div {
+	position: relative;
+	padding-top: 6px;
+	padding-right: 5px;
+	width: 20%;
+}
+
+.edit-country-code-phone-wrapper >div input {
+	position: relative;
+	padding-top: 3px;
+	width: 100%;
+}
+
+.edit-country-code-phone-wrapper .fa-caret-down {
+	position: absolute;
+	right: 5px;
+  top: 11px;
+}
+
+.remove-employee-wrapper .last-day-input-wrapper {
+	display: inline-block;
+}
 
 
 

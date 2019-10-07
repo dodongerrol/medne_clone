@@ -370,7 +370,7 @@
 							  // $payment_type = "Mednefits Credits";
 							  $transaction_type = "credits";
 							  $health_provider_status = FALSE;
-
+							  $procedure_cost = number_format($trans->credit_cost, 2);
 								if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 								  $payment_type = 'Mednefits Credits + Cash';
 								  $half_credits = true;

@@ -403,6 +403,13 @@ class PlanTierController extends \BaseController {
 			);
 		}
 
+		if(sizeof($input['employees']) > $total) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
+			);
+		}
+
 		if($plan_tier_id) {
 			$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
 
@@ -445,6 +452,11 @@ class PlanTierController extends \BaseController {
 					'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
 				);
 			}
+		} else if(!$dependent_plan_status && $total_dependents_entry > 0){
+			return array(
+					'status'	=> FALSE,
+					'message'	=> "Please purchase a dependent plan to be able to enroll the dependent accounts."
+				);
 		}
 
 		if($plan_tier_id) {

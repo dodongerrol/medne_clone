@@ -92,6 +92,7 @@ class UserPackage extends Eloquent
         // return array('result' => $corporate_member);
         $data['plan_add_on'] = "NIL";
         $data['dependent_user'] = $dependent_user;
+        $cap_per_visit = "Not Applicable";
         if($corporate_member) {
             $user_details = $user->getUserProfileMobile($user_id);
             $company = DB::table('corporate')
@@ -136,27 +137,33 @@ class UserPackage extends Eloquent
                         $data['fullname'] = ucwords($user_details->Name);
                         $data['member_id'] = $user_details->UserID;
                         $data['nric'] = $user_details->NRIC;
+                        $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
                         $data['plan_type'] = PlanHelper::getDependentPlanType($dependent_plan_history->dependent_plan_id);
                         $data['care_online'] = TRUE;
                         $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
+                        $data['mobile'] = null;
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')
                         ->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
                         ->where('plan_tier_users.user_id', $user_id)
                         ->first();
-                        $cap_per_visit = $wallet->cap_per_visit_medical;
+                        // $cap_per_visit = $wallet->cap_per_visit_medical;
 
                         if($plan_tier) {
                             if($wallet->cap_per_visit_medical > 0) {
-                                $cap_per_visit = $wallet->cap_per_visit_medical;
+                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
                             } else {
-                                $cap_per_visit = $plan_tier->gp_cap_per_visit;
+                                $cap_per_visit = "S$ ".number_format($plan_tier->gp_cap_per_visit, 2);
+                            }
+                        } else {
+                            if($wallet->cap_per_visit_medical > 0) {
+                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
                             }
                         }
 
-                        $data['cap_per_visit'] = "S$ ".number_format($cap_per_visit, 2);
+                        $data['cap_per_visit'] = $cap_per_visit;
                         
                         return $data;
                     } else {
@@ -244,24 +251,29 @@ class UserPackage extends Eloquent
                             $data['plan_type'] = PlanHelper::getEmployeePlanType($active_plan->customer_active_plan_id);
                         }
                         $data['care_online'] = TRUE;
-
+                        $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
+                        $data['mobile'] = (string)$user_details->PhoneCode." ".(string)$user_details->PhoneNo;
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')
                         ->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
                         ->where('plan_tier_users.user_id', $user_id)
                         ->first();
-                        $cap_per_visit = $wallet->cap_per_visit_medical;
+                        // $cap_per_visit = $wallet->cap_per_visit_medical;
 
                         if($plan_tier) {
                             if($wallet->cap_per_visit_medical > 0) {
-                                $cap_per_visit = $wallet->cap_per_visit_medical;
+                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
                             } else {
-                                $cap_per_visit = $plan_tier->gp_cap_per_visit;
+                                $cap_per_visit = "S$ ".number_format($plan_tier->gp_cap_per_visit, 2);
+                            }
+                        } else {
+                            if($wallet->cap_per_visit_medical > 0) {
+                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
                             }
                         }
 
-                        $data['cap_per_visit'] = "S$ ".number_format($cap_per_visit, 2);
+                        $data['cap_per_visit'] = $cap_per_visit;
                         return $data;
                     }
                 } else {
@@ -285,6 +297,8 @@ class UserPackage extends Eloquent
                     $data['nric'] = $user_details->NRIC;
                     $data['plan_type'] = $plan_type;
                     $data['care_online'] = FAlSE;
+                    $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
+                    $data['mobile'] = (string)$user_details->PhoneCode." ".(string)$user_details->PhoneNo;
                 }
             } else {
                 $data['no_company'] = true;
