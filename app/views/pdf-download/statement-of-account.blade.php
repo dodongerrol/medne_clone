@@ -107,8 +107,33 @@
         margin-right: 15px;
       }
 
+      .notes{
+        position: relative;
+      }
+
       .notes p{
-        margin:0;
+        font-size: 12px;
+        margin: 0 30px;
+      }
+
+      .notes .item-col{
+        width: 70%;
+        display: inline-block;
+        vertical-align: top;
+        height: 280px;
+      }
+      .notes .item-col2{
+        width: 27%;
+        text-align: right;
+        display: inline-block;
+        vertical-align: top;
+        padding-top: 70px;
+        height: 180px;
+      }
+
+      .notes .stamp{
+        width: 150px;
+        height: 150px;
       }
 
       .copyright{
@@ -186,6 +211,7 @@
           <td><b>Invoice #{{ $payment_record['invoice_number'] }} (due {{ date('M d, Y', strtotime($invoice_due)) }})</b></td>
           <td style="text-align: right !important;"><b></b></td>
           <!-- <td style="text-align: right !important;"><b>S${{ $ending_balance }}</b></td> -->
+          <td></td>
         </tr>
 
       </table>
@@ -194,6 +220,14 @@
         <div style="width: 250px;display: inline-block;position: absolute;right: 15px;top: 25px;">
           <p style="margin-bottom: 10px;">Amount due (SGD)</p>
           <p style="margin-top: 10px;">S${{ $ending_balance }}</p>
+        </div>
+      </div>
+
+      <div class="col-md-12 notes">
+        <div class="">
+          <p style="margin-bottom: 10px;font-size: 14px;"><b>Notes</b></p>
+          <p style="font-size: 14px;"><b>Payment Date :</b> asdsadas</p>
+          <p style="font-size: 14px;"><b>Transfer Reference Number :</b> asdasdas</p>
         </div>
       </div>
 
