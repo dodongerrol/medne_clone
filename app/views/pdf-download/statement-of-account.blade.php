@@ -226,8 +226,12 @@
       <div class="col-md-12 notes">
         <div class="">
           <p style="margin-bottom: 10px;font-size: 14px;"><b>Notes</b></p>
-          <p style="font-size: 14px;"><b>Payment Date :</b> asdsadas</p>
-          <p style="font-size: 14px;"><b>Transfer Reference Number :</b> asdasdas</p>
+          @if($payment_record['payment_date'])
+          <p style="font-size: 14px;"><b>Payment Date :</b> {{ date('M d, Y', strtotime($payment_record['payment_date'])) }}</p>
+          @endif
+          @if($payment_record['transfer_referrence_number'])
+          <p style="font-size: 14px;"><b>Transfer Reference Number :</b> {{ $payment_record['transfer_referrence_number'] }}</p>
+          @endif
         </div>
       </div>
 
