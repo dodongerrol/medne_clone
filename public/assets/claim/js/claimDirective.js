@@ -380,6 +380,7 @@ app.directive("claimDirective", [
           scope.searchByNric = function( data ) {
             var data = {
               nric: data,
+              mobile: data,
               start_date: scope.selected_start_date,
               end_date: scope.selected_end_date,
             }
@@ -591,6 +592,7 @@ app.directive("claimDirective", [
             }
           };
           scope.getAllUsers = function(search) {
+            scope.users_nric_arr = [];
             console.log('search.length', search.length)
             if (search && search.length > 7) {
               $http.get(base_url + "clinic/get/all/users?q=" + search)

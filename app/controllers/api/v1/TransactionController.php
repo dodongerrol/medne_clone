@@ -465,7 +465,8 @@ class Api_V1_TransactionController extends \BaseController
 											'services'          => $procedure,
 											'currency_symbol'   => $email_currency_symbol,
 											'dependent_user'    => $dependent_user,
-											'half_credits_payment' => $half_payment
+											'half_credits_payment' => $half_payment,
+											'user_id'						=> $customer_id
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
@@ -610,7 +611,14 @@ class Api_V1_TransactionController extends \BaseController
 							}
 
 						} else {
-
+							$returnObject->status = FALSE;
+							$returnObject->message = 'Cannot process payment credits. Please try again.';
+							// send email logs
+							$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
+							$email['logs'] = 'Mobile Payment Credits - '.$e;
+							$email['emailSubject'] = 'Error log.';
+							EmailHelper::sendErrorLogs($email);
+							return Response::json($returnObject);
 						}
 					} catch(Exception $e) {
 						$returnObject->status = FALSE;

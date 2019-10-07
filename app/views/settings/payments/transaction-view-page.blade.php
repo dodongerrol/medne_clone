@@ -73,7 +73,7 @@
 							<th>DATE</th>
 							<th>TRANSACTION ID</th>
 							<th>NAME</th>
-							<th>NRIC</th>
+							<!-- <th>NRIC</th> -->
 							<th>SERVICE/S</th>
 							<th>MEDNEFITS FEE</th>
 							<th>MEDNEFITS CREDIT</th>
@@ -140,7 +140,7 @@
 								<th>DATE</th>
 								<th>TRANSACTION ID</th>
 								<th>NAME</th>
-								<th>NRIC</th>
+								<!-- <th>NRIC</th> -->
 								<th>SERVICE/S</th>
 								<th>MEDNEFITS FEE</th>
 								<th>MEDNEFITS CREDIT</th>
