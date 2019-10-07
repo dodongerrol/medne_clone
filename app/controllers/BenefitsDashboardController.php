@@ -3046,6 +3046,18 @@ class BenefitsDashboardController extends \BaseController {
 		if($check_mobile) {
 			return array('status' => false, 'message' => 'Mobile Number already taken.');
 		}
+
+		// check email address
+		if(!empty($input['email'])) {
+			$check_email= DB::table('user')
+							->where('Email', $input['email'])
+							->whereNotIn('UserID', [$input['user_id']])
+							->first();
+
+			if($check_email) {
+				return array('status' => false, 'message' => 'Email Address already taken.');
+			}
+		}
 		
 		$update = array(
 			'Name'				=> $input['name'],

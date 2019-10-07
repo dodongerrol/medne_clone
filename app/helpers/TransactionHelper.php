@@ -5,54 +5,67 @@ class TransactionHelper
 	public static function getClinicImageType($clinic_type)
 	{
 		$type = "";
-      	$image = "";
+    $image = "";
+    $clinic_type_name = "";
 
-		if($clinic_type->head == 1 || $clinic_type->head == "1") {
-	        if($clinic_type->Name == "General Practitioner") {
-	         $type = "GP";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/General_Practitioner_jsk7vy.png";
-	       } else if($clinic_type->Name == "Dental Care") {
-	         $type = "Dental";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Dental_Care_ztbtfb.png";
-	       } else if($clinic_type->Name == "Traditional Chinese Medicine") {
-	         $type = "TCM";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Traditional_Chinese_Medicine_ww748w.png";
-	       } else if($clinic_type->Name == "Health Screening") {
-	         $type = "Screening";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Screening_eerwqg.png";
-	       } else if($clinic_type->Name == "Wellness") {
-	         $type = "Wellness";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Wellness_vw8zyq.png";
-	       } else if($clinic_type->Name == "Health Specialist") {
-	         $type = "Specialist";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Specialist_bxakdq.png";
-	       }
-	    } else {
-	        $find_head = DB::table('clinic_types')
-	        ->where('ClinicTypeID', $clinic_type->sub_id)
-	        ->first();
-	        if($find_head->Name == "GP") {
-	         $type = "General Practitioner";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/General_Practitioner_jsk7vy.png";
-	       } else if($find_head->Name == "Dental") {
-	         $type = "Dental Care";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Dental_Care_ztbtfb.png";
-	       } else if($find_head->Name == "TCM") {
-	         $type = "Traditional Chinese Medicine";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Traditional_Chinese_Medicine_ww748w.png";
-	       } else if($find_head->Name == "Screening") {
-	         $type = "Health Screening";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Screening_eerwqg.png";
-	       } else if($find_head->Name == "Wellness") {
-	         $type = "Wellness";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Wellness_vw8zyq.png";
-	       } else if($find_head->Name == "Specialist") {
-	         $type = "Health Specialist";
-	         $image = "https://res.cloudinary.com/mednefits-com/image/upload/v1569815551/clinic_category/Health_Specialist_bxakdq.png";
-	       }
-	    }
+    if((int)$clinic_type->head == 1 || $clinic_type->head == "1") {
+     if($clinic_type->Name == "GP") {
+       $type = "general_practitioner";
+       $clinic_type_name = "GP";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
+     } else if($clinic_type->Name == "Dental") {
+       $type = "dental_care";
+       $clinic_type_name = "Dental";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+     } else if($clinic_type->Name == "TCM") {
+       $type = "tcm";
+       $clinic_type_name = "TCM";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+     } else if($clinic_type->Name == "Screening") {
+       $type = "health_screening";
+       $clinic_type_name = "Screening";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
+     } else if($clinic_type->Name == "Wellness") {
+       $type = "wellness";
+       $clinic_type_name = "Wellness";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
+     } else if($clinic_type->Name == "Specialist") {
+       $type = "health_specialist";
+       $clinic_type_name = "Specialist";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
+     }
+    } else {
+     $find_head = DB::table('clinic_types')
+     ->where('ClinicTypeID', $clinic_type->sub_id)
+     ->first();
+     if($find_head->Name == "GP") {
+       $type = "general_practitioner";
+       $clinic_type_name = "GP";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
+     } else if($find_head->Name == "Dental") {
+       $type = "dental_care";
+       $clinic_type_name = "Dental";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+     } else if($find_head->Name == "TCM") {
+       $type = "tcm";
+       $clinic_type_name = "TCM";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+     } else if($find_head->Name == "Screening") {
+       $type = "health_screening";
+       $clinic_type_name = "Screening";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
+     } else if($find_head->Name == "Wellness") {
+       $type = "wellness";
+       $clinic_type_name = "Wellness";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
+     } else if($find_head->Name == "Specialist") {
+       $type = "health_specialist";
+       $clinic_type_name = "Specialist";
+       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
+     }
+    }
 
-	    return array('type' => $type, 'image' => $image);
+	    return array('type' => $type, 'image' => $image, 'clinic_type_name' => $clinic_type_name);
 	}
 
 	public static function getCoPayment($clinic, $date, $user_id)
