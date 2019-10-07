@@ -332,6 +332,7 @@ app.directive("mobileExerciseDirective", [
 
         scope.setStep = function( num ){
           if( num == 2 ){
+            scope.isConfirmSelected = false;
             scope.optCode = [];
             scope.member_details.mobile_format = "+" + scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
             scope.initializeGeoCode();
