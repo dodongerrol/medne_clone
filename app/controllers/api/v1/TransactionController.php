@@ -482,7 +482,8 @@ class Api_V1_TransactionController extends \BaseController
 											'services'          => $procedure,
 											'currency_symbol'   => $email_currency_symbol,
 											'dependent_user'    => $dependent_user,
-											'half_credits_payment' => $half_payment
+											'half_credits_payment' => $half_payment,
+											'user_id'						=> $customer_id
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
@@ -1050,7 +1051,8 @@ class Api_V1_TransactionController extends \BaseController
                $health_provider_status = FALSE;
                if((int)$trans->lite_plan_enabled == 1) {
                	if((int)$trans->half_credits == 1) {
-                  $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                  // $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                  $total_amount = $trans->credit_cost + $trans->cash_cost;
                	} else {
                		$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                	}
@@ -1280,9 +1282,10 @@ class Api_V1_TransactionController extends \BaseController
 								$payment_type = 'Mednefits Credits';
 							}
 							$service_credits = true;
-							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
+							if((int)$transaction->lite_plan_enabled == 1) {
 								if((int)$transaction->half_credits == 1) {
-									$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+									// $total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+									$total_amount = $transaction->credit_cost + $transaction->cash_cost;
 									$cash_cost = $transaction->cash_cost;
 								} else {
 									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
@@ -1344,7 +1347,7 @@ class Api_V1_TransactionController extends \BaseController
 						if((int)$transaction->lite_plan_enabled == 1) {
 							if($consultation_credits == true) {
 								// if((int)$transaction->half_credits == 1) {
-									$paid_by_credits += $consultation;
+									// $paid_by_credits += $consultation;
 								// }
 							}
 						}

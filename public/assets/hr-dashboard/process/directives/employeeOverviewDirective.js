@@ -1351,7 +1351,7 @@ app.directive("employeeOverviewDirective", [
                 nric: data.nric,
                 email: data.email,
                 phone_no: data.phone_no,
-                country_code: data.country_code,
+                country_code: data.country_code.replace('+', ''),
                 job_title: data.job_title,
                 postal_code: data.postal_code,
                 bank_account: data.bank_account,
@@ -1589,6 +1589,7 @@ app.directive("employeeOverviewDirective", [
             };
             iti = intlTelInput(input, settings);
             iti.setNumber( scope.selectedEmployee.mobile_no );
+            console.log( scope.selectedEmployee );
             scope.selectedEmployee.phone_no = scope.selectedEmployee.phone_no;
             $("#area_code").val( scope.selectedEmployee.phone_no );
             input.addEventListener("countrychange", function() {

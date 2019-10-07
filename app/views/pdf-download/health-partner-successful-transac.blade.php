@@ -280,14 +280,14 @@
               </p>
             </div>
 
-            <div class="item">
+            <!-- <div class="item">
               <div style="font-size: 15px;color: #999;">
                 NRIC
               </div>
               <p style="color: #333;font-size: 17px;font-weight: 700;">
                 {{ $nric }}
               </p>
-            </div>
+            </div> -->
 
             <div class="item">
               <div style="font-size: 15px;color: #999;">

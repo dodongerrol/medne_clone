@@ -76,6 +76,18 @@ Route::get('config/notification', 'HomeController@getNotificationConfig');
 // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
+// EMPLOYEE UPDATE EXERCISES
+Route::group(array('prefix' => 'exercise'), function()
+{
+	Route::post('validate_member', 'EmployeeController@validateMember');
+	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
+	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
+	Route::post('validate_mobile_number', 'EmployeeController@checkMobileExistence');
+	Route::post('send_sms_otp', 'EmployeeController@sendMemberSmsOtp');
+	Route::post('validate_otp_code', 'EmployeeController@validateOpt');
+});
+
+
 Route::get('app/e_claim', 'HomeController@oldeClaim');
 Route::get('member-portal-login', 'HomeController@eClaimLogin');
 Route::get('member-portal', 'HomeController@eClaimHome');
@@ -91,7 +103,7 @@ Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordVie
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 
 // authentications for eclaim
-Route::group(array('before' => 'auth.employee'), function( ){
+Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
 	// Route::post('app/create_e_claim', 'EclaimController@createEclaimMedical');
 	Route::get('app/get_e_claims', 'EclaimController@getEclaims');
@@ -565,7 +577,8 @@ Route::post('app/calendar/validatePin','CalendarController@validatePin');
 Route::post('app/calendar/getClinicPinStatus','CalendarController@getClinicPinStatus');
 Route::post('app/calendar/loadAppointmentCount','CalendarController@loadAppointmentCount');
 
-
+// Mobile Exercise
+Route::get('app/update_user_id_web','HomeController@getMobileExercise');
 
 // ----------------------------------- Settings pages ----------------------------------- //
 
