@@ -23,45 +23,74 @@ class EclaimController extends \BaseController {
 	public function loginEmployee( )
 	{
 		$input = Input::all();
-    $email = $input['email'];
+    $email = (int)$input['email'];
+    $email = (string)($email);
     $password = $input['password'];
+    
+		// $check = DB::table('user')
+		// ->where(function($query) use ($email, $password) {
+		// 	$query->where('UserType', 5)
+		// 	->where('Email', $email)
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+		// })
+  //   ->orWhere(function($query) use ($email, $password){
+  //   	$query->where('UserType', 5)
+		// 	->where('NRIC', 'like', '%'.$email.'%')
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+  //   })
+  //   ->orWhere(function($query) use ($email, $password){
+  //   	$email = (int)($email);
+  //   	$query->where('UserType', 5)
+		// 	->where('PhoneNo', $email)
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+  //   })
+		// ->first();
 
 		$check = DB::table('user')
-		->where(function($query) use ($email, $password) {
-			$query->where('UserType', 5)
-			->where('Email', $email)
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-		})
-    ->orWhere(function($query) use ($email, $password){
-    	$query->where('UserType', 5)
-			->where('NRIC', 'like', '%'.$email.'%')
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-    })
-    ->orWhere(function($query) use ($email, $password){
-    	$email = (int)$email;
-    	$email = (string)$email;
-    	$query->where('UserType', 5)
-			->where('PhoneNo', $email)
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-    })
-		->first();
+				->where('UserType', 5)
+				->where('PhoneNo', $email)
+				->where('password', md5($password))
+				->where('Active', 1)
+				->first();
 
 		if($check) {
-			Session::put('employee-session', $check->UserID);
+			if((int)$check->account_update_status == 0) {
+				return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
+			}
+
+
+			// Session::put('employee-session', $check->UserID);
+			$jwt = new JWT();
+			$secret = Config::get('config.secret_key');
+
+			if(isset($input['signed_in']) && $input['signed_in'] == true) {
+				$check->signed_in = TRUE;
+			} else {
+				$check->signed_in = FALSE;
+				$check->expire_in = strtotime('+15 days', time());
+			}
+
+			if(isset($input['admin_id']) && $input['admin_id'] != null) {
+				$check->admin_id = $input['admin_id'];
+			}
+			
+			$token = $jwt->encode($check, $secret);
 			$admin_logs = array(
         'admin_id'  => $check->UserID,
         'admin_type' => 'member',
         'type'      => 'admin_employee_login_portal',
         'data'      => SystemLogLibrary::serializeData($input)
       );
+
       SystemLogLibrary::createAdminLog($admin_logs);
-			return array('status' => TRUE, 'message' => 'Success.');
+
+			return array('status' => TRUE, 'message' => 'Success.', 'token' => $token);
 		}
 
-		return array('status' => FALSE, 'message' => 'Invalid Credentials.');
+		return array('status' => FALSE, 'message' => 'Invalid Credentials or Please update your user ID by clicking on the link above.');
 	}
 
 	public function getEmployeeLists( )
@@ -101,7 +130,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimMedical( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-		$admin_id = Session::get('admin-session-id');
+		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -277,7 +306,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimWellness( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-		$admin_id = Session::get('admin-session-id');
+		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -621,10 +650,12 @@ class EclaimController extends \BaseController {
 	public function getEclaims( )
 	{
 		$final_data = [];
+		$data = StringHelper::getEmployeeSession( );
+
 		$result = DB::table('e_claim')
 							// ->join('e_claim', 'e_claim.user_id', '=', 'user.UserID')
 							// ->join('e_claim_docs', 'e_claim_docs.e_claim_id', '=', 'e_claim.e_claim_id')
-		->where('e_claim.user_id', Session::get('employee-session'))
+		->where('e_claim.user_id', $data->UserID)
 		->get();
 
 		if($result) {
@@ -748,7 +779,8 @@ class EclaimController extends \BaseController {
 	public function getActivity( )
 	{
 		$input = Input::all();
-		$user_id = Session::get('employee-session');
+		$data = StringHelper::getEmployeeSession( );
+		$user_id = $data->UserID;
 		$start = date('Y-m-d', strtotime($input['start']));
 		$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 		$lite_plan_status = false;
@@ -999,15 +1031,22 @@ class EclaimController extends \BaseController {
 					$status_text = FALSE;
 				}
 
-				$total_amount = number_format($trans->procedure_cost, 2);
+				$total_amount = number_format((float)$trans->procedure_cost, 2);
+
+				// if(strripos($trans->procedure_cost, '$') !== false) {
+				// 	$temp_cost = explode('$', $trans->procedure_cost);
+				// 	$total_amount = number_format($temp_cost[1]);
+				// } else {
+				// 	$total_amount = number_format($trans->procedure_cost, 2);
+				// }
 
 				if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
 					if((int)$trans->lite_plan_enabled == 1) {
-						$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
+						$total_in_network_spent += (float)$trans->procedure_cost + $trans->consultation_fees;
 					} else {
-						$total_in_network_spent += $trans->procedure_cost;
+						$total_in_network_spent += (float)$trans->procedure_cost;
 					}
-					$total_cash += $trans->procedure_cost;
+					$total_cash += (float)$trans->procedure_cost;
 				} else if($trans->credit_cost > 0 && (int)$trans->deleted == 0) {
 					if((int)$trans->lite_plan_enabled == 1) {
 						$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
@@ -1031,15 +1070,15 @@ class EclaimController extends \BaseController {
               $total_amount = $trans->credit_cost + $trans->consultation_fees;
               $cash = $transation->cash_cost;
             } else {
-              $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+              $total_amount = (float)$trans->procedure_cost + $trans->consultation_fees;
               // $total_amount = $trans->procedure_cost;
-              $cash = $trans->procedure_cost;
+              $cash = (float)$trans->procedure_cost;
             }
           } else {
             if((int)$trans->half_credits == 1) {
               $cash = $trans->cash_cost;
             } else {
-              $cash = $trans->procedure_cost;
+              $cash = (float)$trans->procedure_cost;
             }
           }
 				} else {
@@ -1068,18 +1107,18 @@ class EclaimController extends \BaseController {
 	                $cash = 0;
 	                $payment_type = 'Mednefits Credits';
 	              } else {
-	                $cash = $trans->procedure_cost - $trans->consultation_fees;
+	                $cash = (float)$trans->procedure_cost - $trans->consultation_fees;
 	              }
 	            }
 	        } else {
-	            $total_amount = $trans->procedure_cost;
+	            $total_amount = (float)$trans->procedure_cost;
 	            if((int)$trans->half_credits == 1) {
 	              $cash = $trans->cash_cost;
 	            } else {
 	              if($trans->credit_cost > 0) {
 	                $cash = 0;
 	              } else {
-	                $cash = $trans->procedure_cost;
+	                $cash = (float)$trans->procedure_cost;
 	              }
 	            }
 	            $payment_type = 'Mednefits Credits';
@@ -1089,28 +1128,28 @@ class EclaimController extends \BaseController {
 				$bill_amount = 0;
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
-						$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+						$bill_amount = (float)$trans->procedure_cost - $trans->consultation_fees;
 					} else {
-						$bill_amount = 	$trans->procedure_cost;
+						$bill_amount = (float)$trans->procedure_cost;
 					}
 				} else {
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->health_provider_done == 1) {
 							if((int)$trans->lite_plan_use_credits == 1) {
-								$bill_amount = 	$trans->procedure_cost;
+								$bill_amount = 	(float)$trans->procedure_cost;
 							} else {
-								$bill_amount = 	$trans->procedure_cost;
+								$bill_amount = 	(float)$trans->procedure_cost;
 							}
 						} else {
 							if((int)$trans->lite_plan_use_credits == 1) {
-								$bill_amount = 	$trans->procedure_cost;
+								$bill_amount = 	(float)$trans->procedure_cost;
 							} else {
 								// $cost_temp = $trans->credit_cost + $trans->cash_cost;
 								$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
 							}
 						}
 					} else {
-						$bill_amount = 	$trans->procedure_cost;
+						$bill_amount = 	(float)$trans->procedure_cost;
 					}
 				}
 
@@ -1702,7 +1741,8 @@ class EclaimController extends \BaseController {
 
 	public function currentSpending( )
 	{
-		$user_id = Session::get('employee-session');
+		$user_id = $data = StringHelper::getEmployeeSession( );
+		$user_id = $data->UserID;
 		$check = DB::table('user')->where('UserID', $user_id)->count();
 
 		if($check == 0) {
@@ -6298,7 +6338,8 @@ public function updateEclaimStatus( )
 
 public function getEmployeeMembers( )
 {
-	$user_id = Session::get('employee-session');
+	$data = StringHelper::getEmployeeSession( );
+	$user_id = $data->UserID;
 	$check = DB::table('user')->where('UserID', $user_id)->count();
 
 	if($check == 0) {
@@ -7921,15 +7962,18 @@ public function generateMonthlyCompanyInvoice( )
 	{
 		$input = Input::all();
 
-		$check = DB::table('user')->where('UserType', 5)->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
-		if($check) {
-			Session::put('employee-session', $check->UserID);
+		// $check = DB::table('user')->where('UserType', 5)->where('UserID', $input['user_id'])->where('password', $input['password'])->where('Active', 1)->first();
+		// if($check) {
+			// Session::put('employee-session', $check->UserID);
+			$data['token'] = $input['token'];
 			if(isset($input['admin_id']) || $input['admin_id'] != null) {
 				Session::put('admin-session-id', $input['admin_id']);
 			}
-	    	return Redirect::to('member-portal/#/home');
+
+			return View::make('Eclaim.login_member_via_token', $data);
+	    	// return Redirect::to('member-portal/#/home');
 	            // return array('status' => TRUE, 'message' => 'Success.');
-		}
+		// }
 
 		return array('status' => FALSE, 'message' => 'Invalid Credentials.');
 	}
@@ -8380,7 +8424,7 @@ public function generateMonthlyCompanyInvoice( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$container[] = array(
 					'MEMBER'						=> ucwords($member->Name),
-					'NRIC'							=> $member->NRIC,
+					'MOBILE NO'							=> $member->PhoneCode.$member->PhoneNo,
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
 					'EMPLOYEE'					=> $sub_account ? $sub_account : null,
 					'CLAIM DATE'				=> date('d F Y h:i A', strtotime($res->created_at)),

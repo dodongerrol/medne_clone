@@ -1,8 +1,29 @@
 var service = angular.module('authService', ['ui.router'])
 
-service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope){
+service.factory('AuthToken', function($window){
+	var authTokenFactory = {};
+	authTokenFactory.getToken = function( ) {
+		return $window.localStorage.getItem('token_member');
+	}
+	authTokenFactory.setToken = function( token ) {
+		console.log( token );
+		if(token) {
+			return $window.localStorage.setItem('token_member', token);
+		} else {
+			$window.localStorage.removeItem('token_member');
+		}
+	}
+	return authTokenFactory;
+});
+
+service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope, AuthToken){
 	var interceptorFactory = {};
 	interceptorFactory.request = function( config ) {
+		var token = AuthToken.getToken( );
+
+		if(token) {
+			config.headers['Authorization'] = token;
+		}
 		// console.log(config);
 		return config;
 	};
@@ -15,9 +36,23 @@ service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope){
 		return $q.reject(response);
 	};
 	interceptorFactory.responseError = function( response ) {
-		console.log(response);
 		if(response.status == 403) {
 			window.location.href = window.location.origin + '/member-portal-login';
+			$('#global_modal').modal('show');
+			$('#global_message').text(response.data);
+			$('#login-status').show();
+		} else if(response.status == 401) {
+			$('#global_modal').modal('show');
+			$('#global_message').text(response.data);
+			$('#login-status').show();
+		} else if(response.status == 500 || response.status == 408) {
+			$('#global_modal').modal('show');
+			$('#global_message').text('Ooops! Something went wrong. Please check you internet connection or reload the page.');
+			$('#login-status').hide();
+		} else {
+			$('#global_modal').modal('show');
+			$('#global_message').text('Ooops! Something went wrong. Please check you internet connection or reload the page.');
+			$('#login-status').hide();
 		}
 		return $q.reject(response);
 	};

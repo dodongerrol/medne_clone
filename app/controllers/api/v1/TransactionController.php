@@ -482,7 +482,8 @@ class Api_V1_TransactionController extends \BaseController
 											'services'          => $procedure,
 											'currency_symbol'   => $email_currency_symbol,
 											'dependent_user'    => $dependent_user,
-											'half_credits_payment' => $half_payment
+											'half_credits_payment' => $half_payment,
+											'user_id'						=> $customer_id
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
