@@ -1,0 +1,136 @@
+
+		<div class="mobile-exercise-wrapper" mobile-exercise-directive>
+			<div class="login-need-help-container">
+				<a href="#" class="pull-right need-help-text tooltips">
+					<h3>Need help?</h3>
+					<div class="tooltip-container">
+						<h3 class="tooltip-title">We're here to help.</h3>
+						<h3 class="tooltip-phone-email-title">You may ring us</h3>
+						<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
+						<h3 class="tooltip-phone-email-details">Mon - Fri 9:30am to 6:30pm</h3>
+						<br>
+						<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
+						<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
+					</div>
+				</a>
+			</div>
+			
+			<div class="mobile-exercise-body-container">
+				<div>
+					<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+					<h2 class="text-center text-below-image">for member</h2>
+				</div>
+
+				<div class="mobile-exercise-form-container">
+
+					<div ng-if="step < 3 || step == 4" >
+						<p ng-if="step == 1">If you are Mednefits member, please enter your NRIC/FIN and password, and click Submit.</p>
+						<p ng-if="step == 2">Please provide your information below to start using Mednefits</p>
+						<p ng-if="step == 4" class="thank-you-text">Thank you, your information have been updated! You may now login using your mobile number as your new user ID.</p>
+					</div>
+
+					<div ng-if="step < 3 || step == 4">
+						<div ng-if="step == 1" class="nric-fin-password-container" >
+							<form ng-submit="submitNric( nric_data )">
+								<div class="mobile-exercise-input-wrapper">
+									<input type="text" placeholder="NRIC/FIN" ng-model="nric_data.nric">
+								</div>
+								<div class="mobile-exercise-input-wrapper">
+									<input type="password" placeholder="Password" ng-model="nric_data.password">
+								</div>
+								<input type="submit" style="position: absolute;left: -999999px">
+							</form>
+						</div>
+						
+						<div ng-if="step == 2" class="date-birth-mobile-container">
+							<div class="mobile-exercise-input-wrapper">
+								<label>Date of Birth</label>
+								<input type="text" class="datepicker emp-dob dob-input" placeholder="DD/MM/YYYY" ng-model="member_details.dob" ng-change="validateEmpDOB( member_details.dob )" ng-class="{'error' : emp_dob_error}" maxlength="10" autofocus>
+								<span ng-if="emp_dob_error" class="err-msg" ng-bind="emp_dob_error_message"></span>
+							</div>
+							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error}">
+								<label>Mobile Number (SMS OTP will be send to you for verification)</label>
+								<input valid-number id="area_code" pattern="[0-9]*" type="tel" ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
+								<span ng-if="emp_mobile_error" class="err-msg" ng-bind="emp_mobile_error_message"></span>
+							</div>
+						</div>
+
+						<div ng-if="step == 2 && member_details.dependents.length > 0" class="mobile-exercise-dependent-wrapper">
+							<div>
+								<p>Please provide your dependents' information below to start using Mednefits.</p>
+							</div>
+							<div class="mobile-exercise-dependent-container">
+								<div ng-repeat="list in member_details.dependents">
+									<div class="dependent-name-container">
+										<span>Dependent <span>{{ $index + 1 }}</span></span>:
+										<span ng-bind="list.name">Joy Ng</span>
+									</div>
+									<div class="mobile-exercise-input-wrapper">
+										<label>Date of Birth</label>
+										<input type="text" class="dep-datepicker dob-input"  placeholder="DD/MM/YYYY" ng-model="list.dob" ng-change="validateDepDOB( list, list.dob )" ng-class="{'error' : list.dob_error}" maxlength="10">
+										<span ng-if="list.dob_error" class="err-msg" ng-bind="list.dob_error_message"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div ng-if="step == 1" class="forgot-password-wrapper" >
+							<a class="forgot-password pull-right" ng-click="toggleForgotPassword()">Forgot password?</a>
+						</div>
+
+						<div class="mobile-exercise-btn-footer">
+							<div class="cancel-confirm-btn-container">
+								<button class="btn-cancel" ng-if="step == 1" ng-click="cancelBtn()">Cancel</button>
+								<button class="btn-cancel" ng-if="step == 2" ng-click="cancelBtn()">Back</button>
+								<button class="btn-submit" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
+								<button class="btn-confirm" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
+							</div>
+
+							
+							<button class="btn-submit btn-responsive" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
+							<button class="btn-confirm btn-responsive" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
+							<button class="btn-home btn-responsive" ng-if="step == 4" ng-click="cancelBtn()">Home</button>
+							<button class="btn-cancel btn-responsive" ng-if="step == 1" ng-click="cancelBtn()">Cancel</button>
+						</div>
+					</div>
+
+					<div ng-if="step == 3" class="sms-otp-wrapper">
+						<div class="">
+							<h3>Enter SMS OTP</h3>
+							<p>We have sent you a 6 digit verification code (OTP) via SMS to your mobile number</p>
+							<div class="mobile-num-container">
+								<span><span ng-bind="member_details.mobile_country_code">+65</span> <span ng-bind="member_details.mobile">96029128</span></span>
+								<span class="not-mobile-text" ng-click="setStep(2)">Not your mobile number?</span>
+							</div>
+						</div>
+						<div class="otp-input-wrapper">
+							<div ng-repeat="list in [1,2,3,4,5,6]">
+								<input valid-number pattern="[0-9]*" type="tel" maxlength="1" ng-model="optCode[$index]" ng-change="otpChanged()" ng-focus="otpFocus($index)" >
+							</div>
+						</div>
+						<span ng-if="code_err" class="err-msg" ng-bind="code_err_msg">Incorrect code, please try again.</span>
+						<div class="mobile-exercise-btn-footer">
+							<button class="btn-submit" ng-click="submitUpdateDetails( member_details )">Submit</button>
+							<button class="btn-submit" ng-click="sendOtpCode()">Resend OTP</button>
+						</div>
+					</div>
+
+					<div ng-if="step == 0" class="forgot-password-container">
+						<div class="mobile-exercise-input-wrapper">
+							<input type="text" placeholder="Mobile Number or Email Address" ng-model="reset_password_text">
+						</div>
+						<div class="mobile-exercise-btn-footer">
+							<button class="btn-submit" ng-click="resetPassword( reset_password_text )">Reset Password</button>
+						</div>
+						<div class="forgot-password-wrapper">
+							<a class="forgot-password pull-right" ng-click="toggleForgotPassword()">Login</a>
+						</div>
+					</div>
+
+					
+
+				</div>
+
+			</div>
+
+		</div>

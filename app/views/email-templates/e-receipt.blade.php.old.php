@@ -141,11 +141,11 @@
     </div>
         
 
-    <div id="booking-fields" style="  border-top:1px solid #d9d9d9; " >
+    <!-- <div id="booking-fields" style="  border-top:1px solid #d9d9d9; " >
        <div id="fields-title" style=" width: 230px; float:left; padding:5px 0px; background-color:#f8f6f6; "><b>NRIC:</b></div>
       <div id="fields-result" style=" float:left; padding:5px 0px; background-color:#f8f6f6; ">{{$nric}}</div>
       <div id="clear" style="clear:both;"></div>  
-    </div>
+    </div> -->
     
           
 

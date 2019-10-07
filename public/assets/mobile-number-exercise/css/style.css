@@ -1,0 +1,454 @@
+.iti__flag {background-image: url("../img/flags.png");}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .iti__flag {background-image: url("../img/flags@2x.png");}
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Helvetica Light';
+}
+
+body >div:first-child {
+  min-height: 100vh;
+}
+
+*{
+  outline: none;
+  box-sizing: border-box;
+}
+
+input{
+  font-family: 'Helvetica Light' !important;
+}
+
+.error{
+  border: 1px solid red !important;
+}
+.error-mobile .iti--separate-dial-code input{
+  border: 1px solid red !important;
+}
+.error-mobile .iti--separate-dial-code .iti__selected-flag, 
+.error-mobile .iti--separate-dial-code .iti__flag-container:hover .iti__selected-flag{
+  border-right: 1px solid red;
+}
+
+.err-msg{
+  color: red;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Open Sans';
+}
+
+.iti--separate-dial-code{
+  width: 100%;
+}
+
+/* For Firefox */
+.iti--separate-dial-code input {
+    -moz-appearance:textfield;
+    padding-left: 120px !important;
+}
+/* Webkit browsers like Safari and Chrome */
+.iti--separate-dial-code input::-webkit-inner-spin-button,
+.iti--separate-dial-code input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.iti--separate-dial-code .iti__selected-flag,
+.iti--separate-dial-code .iti__flag-container:hover .iti__selected-flag{
+  padding: 16px;
+  background: #FFF;
+  border-right: 1px solid #ccc;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 14px;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+
+}
+
+.datepicker tr th,
+.datepicker tr td{
+  color: #444;
+  font-family: 'Helvetica Light' !important;
+  font-size: 16px;
+  padding: 5px 10px;
+  font-weight: 700;
+}
+
+.mobile-exercise-wrapper {
+  background: #fff;
+  padding: 0 70px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.login-need-help-container a {
+  text-decoration: none;
+}
+
+.need-help-text h3 {
+  /* font-size: 16px; */
+  font-size: 14px;
+  font-family: "Open Sans";
+  color: #777777;
+  font-weight: 800;
+  margin-top: 15px;
+  /* margin-top: 22px; */
+}
+
+a.tooltips {
+    position: relative;
+    display: inline;
+}
+
+.need-help-text:hover, .need-help-text h3:hover {
+  text-decoration: none;
+  color: #909090;
+}
+
+a:hover.tooltips div.tooltip-container {
+  visibility: visible;
+  /* opacity: 0.8; */
+  top: 30px;
+  margin-top: 15px;
+  margin-left: -220px;
+  z-index: 999;
+}
+
+a.tooltips div.tooltip-container {
+  position: absolute;
+  width: 230px;
+  color: #FFFFFF;
+  background: #f1eded;
+  height: auto;
+  line-height: 30px;
+  padding: 35px 35px;
+  visibility: hidden;
+  margin-left: -600px;
+  z-index: 9999;
+}
+
+a.tooltips div.tooltip-container:after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 90%;
+  margin-left: -8px;
+  width: 0;
+  height: 0;
+  border-bottom: 8px solid #efefef;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+h3.tooltip-title {
+  color: #0392cf;
+  font-size: 22px;
+  margin-bottom: 50px;
+  margin-top: 0px;
+}
+
+h3.tooltip-phone-email-title {
+  color: #494949;
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+h3.tooltip-phone-email-details {
+  color: #8a8a8a;
+  font-size: 16px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.mobile-exercise-wrapper a.tooltips div.tooltip-container {
+  width: 298px;
+}
+
+.mobile-exercise-body-container .login-logo {
+  margin-top: 60px;
+  height: 50px;
+}
+
+.mobile-exercise-body-container .text-below-image {
+  color: #777777;
+  font-family: "Open Sans";
+  margin-top: 10px;
+  font-size: 23px;
+}
+
+.mobile-exercise-body-container >div:first-child {
+  display: inline-block;
+  width: 100%;
+}
+
+.mobile-exercise-body-container >div img {
+  display: block;
+  margin: 0 auto;
+}
+
+.mobile-exercise-body-container >div h2 {
+  text-align: center;
+}
+
+.mobile-exercise-form-container {
+  width: 390px;
+  margin: 0 auto;
+}
+
+.mobile-exercise-form-container p {
+  font-size: 18px;
+  font-family: 'Helvetica Light';
+  margin: 0 0 30px;
+}
+
+.mobile-exercise-form-container .thank-you-text{
+  text-align: center;
+  margin: 20px 0 50px;
+}
+
+.mobile-exercise-form-container input {
+  border: 1px solid #A0A0A0;
+  width: 100%;
+  border-radius: 4px;
+  color: #555;
+  padding: 0 20px;
+  height: 60px;
+  font-size: 18px;
+  box-sizing: border-box;
+}
+
+.mobile-exercise-form-container label {
+  color: #777;
+  font-size: 18px;
+  font-family: 'Helvetica Light';
+  margin: 0 0 10px;
+  display: block;
+}
+
+.mobile-exercise-input-wrapper {
+  margin: 0 0 20px;
+  position: relative;
+}
+
+.mobile-exercise-btn-footer {
+  margin: 40px 0 0;
+}
+
+.mobile-exercise-btn-footer >button,
+.mobile-exercise-btn-footer .cancel-confirm-btn-container >button {
+  font-family: 'Helvetica Light';
+  display: block;
+  color: #fff;
+  height: 60px;
+  font-size: 18px;
+  border-radius: 4px;
+  width: 100%;
+  margin: 0 0 20px;
+  border: 0;
+}
+
+.mobile-exercise-btn-footer .btn-confirm,
+.mobile-exercise-btn-footer .btn-submit,
+.mobile-exercise-btn-footer .btn-home {
+  background: #0392cf;
+}
+
+.mobile-exercise-btn-footer .btn-cancel {
+  background: #b0b0b0;
+}
+
+.mobile-exercise-btn-footer .btn-confirm-disabled {
+  background: #b3def1;
+}
+
+.country-code-input-wrapper {
+  display: flex;
+}
+
+.country-code-input-wrapper >div:first-child {
+  position: relative;
+  width: 30%;
+}
+
+.country-code-input-wrapper >div:first-child input {
+  border-radius: 4px 0 0 4px;
+  border-right: 0;
+} 
+
+.country-code-input-wrapper >div:first-child i {
+  border-radius: 4px 0 0 4px;
+  position: absolute;
+  right: 10px;
+  top: 20px;
+  color: #A0A0A0;
+}
+
+.country-code-input-wrapper >input {
+  border-radius: 0 4px 4px 0;
+} 
+
+.mobile-exercise-dependent-container .dependent-name-container {
+  font-family: 'Helvetica Light';
+  font-size: 18px;
+  margin: 0 0 20px;
+}
+
+.sms-otp-wrapper p {
+  color: #848484;
+  font-weight: 700;
+}
+
+.mobile-num-container span {
+  font-weight: 700;
+  margin: 0 5px 0 0;
+}
+
+.mobile-num-container .not-mobile-text {
+  color: #0392cf;
+  cursor: pointer;
+}
+
+.otp-input-wrapper {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+  margin: 30px -3px 0;
+}
+
+.otp-input-wrapper >div {
+  flex: 1;
+  margin: 3px;
+}
+
+.otp-input-wrapper >div input {
+  text-align: center;
+  font-weight: 700;
+  color: #000;
+  font-size: 20px;
+  padding: 0;
+  width: 100%;
+  -webkit-tap-highlight-color: #000;
+}
+
+.otp-input-wrapper input:focus,
+.otp-input-wrapper input:active,
+.otp-input-wrapper input:visited{
+  -webkit-tap-highlight-color: #000;
+  color: #000;
+}
+
+.otp-input-wrapper input[type='number'] {
+  -moz-appearance:textfield;
+}
+
+.otp-input-wrapper input::-webkit-outer-spin-button,
+.otp-input-wrapper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+
+.cancel-confirm-btn-container {
+  display: flex;
+}
+
+.cancel-confirm-btn-container >button.btn-cancel {
+  margin-right: 10px;
+}
+
+.cancel-confirm-btn-container >button.btn-submit,
+.cancel-confirm-btn-container >button.btn-confirm {
+  margin-left: 10px;
+}
+
+.mobile-exercise-btn-footer .btn-home.btn-responsive {
+  display: block;
+}
+
+.forgot-password {
+  color: #777777;
+  text-decoration: underline;
+  font-size: 15px;
+  font-weight: 300;
+  font-family: sans-serif;
+  letter-spacing: .14px;
+  line-height: 24px;
+  cursor: pointer;
+}
+
+.forgot-password-wrapper {
+  display: inline-block;
+  width: 100%;
+}
+
+@media (min-width: 767px) {
+  .mobile-exercise-btn-footer .btn-responsive {
+    display: none;
+  }
+}
+
+@media (max-width: 766px) {
+  .otp-input-wrapper >div input:focus,
+  .otp-input-wrapper >div input:active,
+  .otp-input-wrapper >div input:visited{
+    outline: none;
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+    caret-color: transparent;
+  }
+  
+  .cancel-confirm-btn-container {
+    display: none;
+  }
+}
+
+@media (max-width: 575px) {
+  .mobile-exercise-wrapper {
+    padding: 0 20px 150px 20px;
+  }
+
+  .mobile-exercise-form-container {
+    width: 100%;
+  }
+
+  .mobile-exercise-wrapper a.tooltips div.tooltip-container {
+    width: auto;
+  }
+
+  .mobile-exercise-wrapper a:hover.tooltips div.tooltip-container {
+    margin-left: -195px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

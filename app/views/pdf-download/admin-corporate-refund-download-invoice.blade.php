@@ -189,7 +189,7 @@
           <td style="text-align: left !important;padding-left: 30px;">
             <p><b>Cancellation - Allan Cheam Alzula</b></p>
             <p>Member: Allan Cheam Alzula</p>
-            <p>NRIC: S9156020H</p>
+            <!-- <p>NRIC: S9156020H</p> -->
             <p>Period of use: 01/01/2019 - 19/01/2019</p>
             <p>Refund: 70% of unused period (19/01/2019 - 31/12/2019)</p>
           </td>
@@ -202,7 +202,7 @@
           <td style="text-align: left !important;padding-left: 30px;">
             <p><b>Cancellation - User 2 User 2</b></p>
             <p>Member: Allan Cheam Alzula</p>
-            <p>NRIC: S9156020H</p>
+            <!-- <p>NRIC: S9156020H</p> -->
             <p>Period of use: 01/01/2019 - 19/01/2019</p>
             <p>Refund: 70% of unused period (19/01/2019 - 31/12/2019)</p>
           </td>
