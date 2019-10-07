@@ -875,7 +875,7 @@ class EclaimController extends \BaseController {
 						->where('id', $trans->transaction_id)
 						->first();
 
-						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0 || $logs_lite_plan && $trans->credit_cost == 0 && (int)$trans->lite_plan_use_credits == 0) {
+						if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
 							$in_network_spent += floatval($logs_lite_plan->credit);
 							$consultation_fees = floatval($logs_lite_plan->credit);
 							$total_lite_plan_consultation += floatval($logs_lite_plan->credit);
@@ -1049,7 +1049,8 @@ class EclaimController extends \BaseController {
 					// }
 					if((int)$trans->lite_plan_enabled == 1) {
 	            if((int)$trans->half_credits == 1) {
-	              $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	              // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	              $total_amount = $trans->credit_cost + $trans->cash_cost;
 	              $cash = $trans->cash_cost;
 	              $payment_type = 'Mednefits Credits + Cash';
 	            } else {
@@ -1109,64 +1110,12 @@ class EclaimController extends \BaseController {
                 // get clinic type
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$type = "";
-				$clinic_type_name = "";
+				
 				$image = "";
-				if((int)$clinic_type->head == 1 || $clinic_type->head == "1") {
-					if($clinic_type->Name == "General Practitioner") {
-						$type = "general_practitioner";
-						$clinic_type_name = "General Practitioner";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-					} else if($clinic_type->Name == "Dental Care") {
-						$type = "dental_care";
-						$clinic_type_name = "Dental Care";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-					} else if($clinic_type->Name == "Traditional Chinese Medicine") {
-						$type = "tcm";
-						$clinic_type_name = "Traditional Chinese Medicine";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-					} else if($clinic_type->Name == "Health Screening") {
-						$type = "health_screening";
-						$clinic_type_name = "Health Screening";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-					} else if($clinic_type->Name == "Wellness") {
-						$type = "wellness";
-						$clinic_type_name = "Wellness";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-					} else if($clinic_type->Name == "Health Specialist") {
-						$type = "health_specialist";
-						$clinic_type_name = "Health Specialist";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
-					}
-				} else {
-					$find_head = DB::table('clinic_types')
-					->where('ClinicTypeID', $clinic_type->sub_id)
-					->first();
-					if($find_head->Name == "General Practitioner") {
-						$type = "general_practitioner";
-						$clinic_type_name = "General Practitioner";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-					} else if($find_head->Name == "Dental Care") {
-						$type = "dental_care";
-						$clinic_type_name = "Dental Care";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-					} else if($find_head->Name == "Traditional Chinese Medicine") {
-						$type = "tcm";
-						$clinic_type_name = "Traditional Chinese Medicine";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-					} else if($find_head->Name == "Health Screening") {
-						$type = "health_screening";
-						$clinic_type_name = "Health Screening";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-					} else if($find_head->Name == "Wellness") {
-						$type = "wellness";
-						$clinic_type_name = "Wellness";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-					} else if($find_head->Name == "Health Specialist") {
-						$type = "health_specialist";
-						$clinic_type_name = "Health Specialist";
-						$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
-					}
-				}
+				$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
+				$type = $clinic_type_properties['type'];
+				$image = $clinic_type_properties['image'];
+				$clinic_type_name = $clinic_type_properties['clinic_type_name'];
 
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
@@ -1175,7 +1124,7 @@ class EclaimController extends \BaseController {
 					'clinic_image'      => $clinic->image,
 					'clinic_type'       => $type,
 					'amount'            => number_format($total_amount, 2),
-					'procedure_cost'    => number_format($bill_amount, 2),
+					'procedure_cost'    => number_format($trans->credit_cost, 2),
 					'procedure'         => $procedure,
 					'clinic_type_and_service' => $clinic_name,
 					'clinic_type_name'  => $clinic_type_name,
@@ -2862,15 +2811,26 @@ public function getActivityInNetworkTransactions( )
 	$paginate = [];
 
 	if(!empty($input['user_id']) && $input['user_id'] != null) {
-		$transactions = DB::table('corporate_members')
-		->join('transaction_history', 'transaction_history.UserID', '=', 'corporate_members.user_id')
-		->where('corporate_members.corporate_id', $account->corporate_id)
-		->where('corporate_members.user_id', $input['user_id'])
-		->where('transaction_history.spending_type', $spending_type)
-		->where('transaction_history.paid', 1)
-		->where('transaction_history.date_of_transaction', '>=', $start)
-		->where('transaction_history.date_of_transaction', '<=', $end)
-		->orderBy('transaction_history.date_of_transaction', 'desc')
+		$user_ids = StringHelper::getSubAccountsID($input['user_id']);
+		// return $ids;
+		// $transactions = DB::table('corporate_members')
+		// ->join('transaction_history', 'transaction_history.UserID', '=', 'corporate_members.user_id')
+		// ->where('corporate_members.corporate_id', $account->corporate_id)
+		// // ->where('corporate_members.user_id', $input['user_id'])
+		// ->whereIn('transaction_history.UserID', $ids)
+		// ->where('transaction_history.spending_type', $spending_type)
+		// ->where('transaction_history.paid', 1)
+		// ->where('transaction_history.date_of_transaction', '>=', $start)
+		// ->where('transaction_history.date_of_transaction', '<=', $end)
+		// ->orderBy('transaction_history.date_of_transaction', 'desc')
+		// ->paginate($input['per_page']);
+		$transactions = DB::table('transaction_history')
+		->where('spending_type', $spending_type)
+		->whereIn('UserID', $user_ids)
+		->where('paid', 1)
+		->where('date_of_transaction', '>=', $start)
+		->where('date_of_transaction', '<=', $end)
+		->orderBy('date_of_transaction', 'desc')
 		->paginate($input['per_page']);
 	} else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);
@@ -3129,7 +3089,7 @@ public function getActivityInNetworkTransactions( )
 				$half_credits = false;
 				$total_amount = number_format($trans->procedure_cost, 2);
 
-				if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
+				if((int)$trans->health_provider_done == 1) {
 					$payment_type = "Cash";
 					$transaction_type = "cash";
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -3159,7 +3119,8 @@ public function getActivityInNetworkTransactions( )
 					// $cash = number_format($trans->credit_cost, 2);
 					if((int)$trans->lite_plan_enabled == 1) {
               if((int)$trans->half_credits == 1) {
-                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+                // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+                $total_amount = $trans->credit_cost + $trans->cash_cost;
                 $cash = $trans->cash_cost;
               } else {
                 $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
@@ -3256,7 +3217,7 @@ public function getActivityInNetworkTransactions( )
 					'clinic_name'       => $clinic->Name,
 					'clinic_image'      => $clinic->image,
 					'amount'            => number_format($total_amount, 2),
-					'procedure_cost'    => number_format($bill_amount, 2),
+					'procedure_cost'    => number_format($trans->credit_cost, 2),
 					'clinic_type_and_service' => $clinic_name,
 					'procedure'         => $procedure,
 					'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
@@ -4726,7 +4687,7 @@ public function getHrActivity( )
 					$half_credits = false;
 					$total_amount = number_format($trans->procedure_cost, 2);
 
-					if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
+					if((int)$trans->health_provider_done == 1) {
 						$payment_type = "Cash";
 						$transaction_type = "cash";
 						if((int)$trans->lite_plan_enabled == 1) {
@@ -4756,7 +4717,8 @@ public function getHrActivity( )
 						// $cash = number_format($trans->credit_cost, 2);
 						if((int)$trans->lite_plan_enabled == 1) {
 	              if((int)$trans->half_credits == 1) {
-	                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                $total_amount = $trans->credit_cost + $trans->cash_cost;
 	                $cash = $trans->cash_cost;
 	              } else {
 	                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
@@ -4808,7 +4770,7 @@ public function getHrActivity( )
 						}
 					}
 
-					if( $trans->health_provider_done == 1 && $trans->deleted == 0 || $trans->health_provider_done == "1" && $trans->deleted == "0" ) {
+					if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
 						$total_search_cash += $trans->procedure_cost;
 						$total_in_network_spent_cash_transaction += $trans->procedure_cost;
 						$total_cash_transactions++;
@@ -4853,7 +4815,7 @@ public function getHrActivity( )
 						'clinic_name'       => $clinic->Name,
 						'clinic_image'      => $clinic->image,
 						'amount'            => number_format($total_amount, 2),
-						'procedure_cost'    => number_format($bill_amount, 2),
+						'procedure_cost'    => number_format($trans->credit_cost, 2),
 						'clinic_type_and_service' => $clinic_name,
 						'procedure'         => $procedure,
 						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
