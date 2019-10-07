@@ -69,6 +69,26 @@
 		  </div>
 		</div>
 	</div>
+
+	<div style="padding-top: 160px;border-radius: 0;" class="modal fade" id="global_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	    <div class="modal-dialog" role="document" style="width: 450px;">
+	      <div class="modal-content" style="">
+	      	<div class="modal-header" style="border-bottom: none;padding: 10px 15px;">
+		      </div>
+	        <div class="modal-body" style="padding: 0 30px 30px 30px;">
+	        	<p class="text-center">
+	        		<span class="warning-icon">
+	        			<i class="fa fa-exclamation"></i>
+	        		</span>
+	        	</p>
+	          <p id="global_message" class="text-center weight-700" style="color: #666;margin-top: 20px;">Message goes here.</p>
+	          <p class="text-center weight-700" id="login-status" hidden>
+	          	<a href="/member-portal-login" class="btn btn-primary" style="background: #1667AC!important">Login Again</a>
+	          </p>
+	        </div>
+	      </div>
+	    </div>
+	</div>
 </body>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/calendar/moment/moment.js?_={{ $date->format('U') }}"></script>
