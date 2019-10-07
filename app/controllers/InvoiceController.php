@@ -1290,7 +1290,7 @@ class InvoiceController extends \BaseController {
 
 		// return $transactions;
 
-		return View::make('pdf-download.statement-of-account', $transactions);
+		// return View::make('pdf-download.statement-of-account', $transactions);
 		$pdf = PDF::loadView('pdf-download.statement-of-account', $transactions);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
