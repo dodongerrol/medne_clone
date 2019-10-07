@@ -56,7 +56,7 @@
 					<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
 					<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
 
-					<button id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', NRIC: 'NRIC', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE' }" filename="'Employee Details'" separator="," hidden></button>
+					<button id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE' }" filename="'Employee Details'" separator="," hidden></button>
 					
 				</div>
 			</div>
@@ -103,7 +103,9 @@
 									<span ng-bind="emp.deletion_text"></span>
 								</div>
 							</td>
-							<td class="nric-fin-details" ng-bind="emp.mobile_no">12324324</td>
+							<td class="nric-fin-details" >
+								<span ng-bind="emp.mobile_no == 0 ? '-' : emp.mobile_no"></span>
+							</td>
 							<!-- <td class="nric-fin-details" ng-bind="emp.nric">S8575893G</td> -->
 							<td class="plan-start-container">
 								<span ng-bind="emp.plan_tier.plan_tier_name">Tier 1</span>

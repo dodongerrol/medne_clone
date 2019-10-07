@@ -37,6 +37,7 @@ app.directive('benefitsTiersDirective', [
 					wellness_credits : 0,
 					dependents : [],
 					mobile_area_code : '65',
+					mobile_area_code_country : 'sg'
 				};
 				scope.upload_file_dependent = null;
 				scope.customer_data = null;
@@ -339,6 +340,7 @@ app.directive('benefitsTiersDirective', [
 							dependents : [],
 							plan_start : scope.customer_data.plan.plan_start,
 							mobile_area_code : '65',
+							mobile_area_code_country : 'sg'
 						};
 					}
 				}
@@ -638,6 +640,7 @@ app.directive('benefitsTiersDirective', [
 						dependents : [],
 						plan_start : scope.customer_data.plan.plan_start,
 						mobile_area_code : '65',
+						mobile_area_code_country : 'sg'
 					};
 
 					if( scope.employee_arr[ scope.employee_ctr ] ){
@@ -648,7 +651,7 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.isEmpDataNotEmpty = function(){
-					if( scope.employee_data.first_name || scope.employee_data.last_name || scope.employee_data.nric || scope.employee_data.dob ||
+					if( scope.employee_data.fullname || scope.employee_data.dob ||
 							scope.employee_data.email || scope.employee_data.mobile || scope.employee_data.postal_code ){
 						return true;
 					}
@@ -656,6 +659,7 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.pushActiveEmployee = function( data ){
+					console.log( data );
 					if( scope.checkEmployeeForm() == true ){
 						data.job_title = 'Others';
 						data.postcode = '12345';
@@ -680,6 +684,7 @@ app.directive('benefitsTiersDirective', [
 							dependents : [],
 							plan_start : scope.customer_data.plan.plan_start,
 							mobile_area_code : '65',
+							mobile_area_code_country : 'sg'
 						};
 						iti.setCountry( "SG" );
 						scope.dependent_data = {};
@@ -712,6 +717,7 @@ app.directive('benefitsTiersDirective', [
 		     //      function(isConfirm){
 		     //      	if( isConfirm ){
 		     //      		scope.$apply(function(){
+
 		          			if( scope.isTiering ){
 											scope.employee_enroll_count-=1;
 										}else{
@@ -757,6 +763,7 @@ app.directive('benefitsTiersDirective', [
 										dependents : [],
 										plan_start : scope.customer_data.plan.plan_start,
 										mobile_area_code : '65',
+										mobile_area_code_country : 'sg'
 									};
 									iti.setCountry( "SG" );
 								}
@@ -779,6 +786,7 @@ app.directive('benefitsTiersDirective', [
 										dependents : [],
 										plan_start : scope.customer_data.plan.plan_start,
 										mobile_area_code : '65',
+										mobile_area_code_country : 'sg'
 									};
 									iti.setCountry( "SG" );
 								}
@@ -1066,6 +1074,7 @@ app.directive('benefitsTiersDirective', [
 												dependents : [],
 												plan_start : scope.customer_data.plan.plan_start,
 												mobile_area_code : '65',
+												mobile_area_code_country : 'sg'
 											};
 										}else{
 											swal( 'Error!', response.data.message, 'error' );
@@ -1329,6 +1338,7 @@ app.directive('benefitsTiersDirective', [
 												dependents : [],
 												plan_start : scope.customer_data.plan.plan_start,
 												mobile_area_code : '65',
+												mobile_area_code_country : 'sg'
 											};
 										}
 									}, 1000);	
