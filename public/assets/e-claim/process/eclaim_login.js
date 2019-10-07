@@ -108,14 +108,18 @@ login.directive('eclaimLogin', [
         };
 
         scope.login = function(){
+          
+          if( !scope.email || !scope.password ){
+            swal('Ooops!', 'Mobile Number and Password is required', 'error');
+            return false;
+          }
           scope.showLoading();
-
           var data = {
             email: scope.email,
             password: scope.password
           };
 
-          $http.post(serverUrl.url + '/app/e_claim/login', data)
+          $http.post(serverUrl.url + 'app/e_claim/login', data)
 	          .then(function(response) {
 	            scope.hideLoading();
 	            if (response.data.status == true) {
@@ -127,13 +131,16 @@ login.directive('eclaimLogin', [
                 window.localStorage.setItem('token_member', response.data.token);
 	            } else {
 	              scope.invalid_credentials = true;
-	              swal({ 
-                  html: true, 
-                  title: '<span style="font-size: 22px;">Your User ID or Password is Incorrect.</span>', 
-                  text: "<p style='text-align:left;margin:30px'><span>1. Make sure you have updated your User ID to your Mobile Number.</span><br><br>" +
-                  "<span>2. If you still can't login, reset your password.</span></p>" 
-                });
-                // swal('Ooops!', response.data.message, 'error');
+                // if(  ){
+                  // swal('Ooops!', response.data.message, 'error');
+                // }else{
+                  swal({ 
+                    html: true, 
+                    title: '<span style="font-size: 22px;">Your User ID or Password is Incorrect.</span>', 
+                    text: "<p style='text-align:left;margin:30px'><span>1. Make sure you have updated your User ID to your Mobile Number.</span><br><br>" +
+                    "<span>2. If you still can't login, reset your password.</span></p>" 
+                  });
+                // }
 	            }
 	          })
 	          .catch(function(error) {
