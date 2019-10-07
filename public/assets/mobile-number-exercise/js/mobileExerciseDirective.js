@@ -18,13 +18,14 @@ app.directive("mobileExerciseDirective", [
         scope.emp_dob_error_message = '';
         scope.emp_mobile_error = false;
         scope.emp_mobile_error_message = '';
-        scope.isConfirmActive = true;
+        scope.isConfirmActive = false;
         scope.token = null;
         scope.devicePlatform = null;
         scope.optCode = [];
         scope.code_err = false;
         scope.stopAutoFocus = false;
         scope.reset_password_text = '';
+        scope.isConfirmSelected = false;
 
         var iti = null;
 
@@ -331,20 +332,26 @@ app.directive("mobileExerciseDirective", [
 
         scope.setStep = function( num ){
           if( num == 2 ){
+            scope.isConfirmSelected = false;
             scope.optCode = [];
             scope.member_details.mobile_format = "+" + scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
             scope.initializeGeoCode();
-          }
-          if( num == 3 ){
-            scope.sendOtpCode();
-            $timeout(function() {
-              $(".otp-input-wrapper input:eq(0)").focus();
-            }, 300);
+            scope.step = num;
           }
           if( num < 3 ){
             scope.code_err = false;
           }
-          scope.step = num;
+          if( num == 3 ){
+            scope.validateForm();
+            scope.isConfirmSelected = true;
+            if( scope.isConfirmActive == true ){
+              scope.sendOtpCode();
+              $timeout(function() {
+                $(".otp-input-wrapper input:eq(0)").focus();
+              }, 300);
+              scope.step = num;
+            }
+          }
         }
 
         scope.otpChanged = function(e){
@@ -466,10 +473,22 @@ app.directive("mobileExerciseDirective", [
                 scope.member_details = response.data.data;
                 if( scope.member_details.mobile_country_code != null ){
                   scope.member_details.mobile_country_code = "+" + ( scope.member_details.mobile_country_code ).split("+").join("");
-                  scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
                 }else{
                   scope.member_details.mobile_country_code = "+65";
                 }
+                if( scope.member_details.dob != undefined && scope.member_details.dob != null ){
+                  scope.member_details.dob = moment( scope.member_details.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
+                }else{
+                  scope.member_details.dob = "";
+                }
+                angular.forEach( scope.member_details.dependents, function(value,key){
+                  if( value.dob != undefined && value.dob != null ){
+                    value.dob = moment( value.dob, 'DD/MM/YYYY' ).format('DD/MM/YYYY');
+                  }else{
+                    value.dob = "";
+                  }
+                });
+
                 scope.member_details.mobile_format = scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
                 scope.step = 2;
                 scope.initializeGeoCode();
@@ -611,7 +630,7 @@ app.directive("mobileExerciseDirective", [
             });
 
 
-            scope.validateForm();
+            // scope.validateForm();
 
           },200)
         }

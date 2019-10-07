@@ -45,13 +45,13 @@
 						<div ng-if="step == 2" class="date-birth-mobile-container">
 							<div class="mobile-exercise-input-wrapper">
 								<label>Date of Birth</label>
-								<input type="text" class="datepicker emp-dob dob-input" placeholder="DD/MM/YYYY" ng-model="member_details.dob" ng-change="validateEmpDOB( member_details.dob )" ng-class="{'error' : emp_dob_error}" maxlength="10" autofocus>
-								<span ng-if="emp_dob_error" class="err-msg" ng-bind="emp_dob_error_message"></span>
+								<input type="text" class="datepicker emp-dob dob-input" placeholder="DD/MM/YYYY" ng-model="member_details.dob" ng-change="validateEmpDOB( member_details.dob )" ng-class="{'error' : emp_dob_error && isConfirmSelected}" maxlength="10" autofocus>
+								<span ng-if="emp_dob_error && isConfirmSelected" class="err-msg" ng-bind="emp_dob_error_message"></span>
 							</div>
-							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error}">
+							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error && isConfirmSelected}">
 								<label>Mobile Number (SMS OTP will be send to you for verification)</label>
 								<input valid-number id="area_code" pattern="[0-9]*" type="tel" ng-model="member_details.mobile" ng-change="validateEmpMobile( member_details.mobile )">
-								<span ng-if="emp_mobile_error" class="err-msg" ng-bind="emp_mobile_error_message"></span>
+								<span ng-if="emp_mobile_error && isConfirmSelected" class="err-msg" ng-bind="emp_mobile_error_message"></span>
 							</div>
 						</div>
 
@@ -67,8 +67,8 @@
 									</div>
 									<div class="mobile-exercise-input-wrapper">
 										<label>Date of Birth</label>
-										<input type="text" class="dep-datepicker dob-input"  placeholder="DD/MM/YYYY" ng-model="list.dob" ng-change="validateDepDOB( list, list.dob )" ng-class="{'error' : list.dob_error}" maxlength="10">
-										<span ng-if="list.dob_error" class="err-msg" ng-bind="list.dob_error_message"></span>
+										<input type="text" class="dep-datepicker dob-input"  placeholder="DD/MM/YYYY" ng-model="list.dob" ng-change="validateDepDOB( list, list.dob )" ng-class="{'error' : list.dob_error && isConfirmSelected}" maxlength="10">
+										<span ng-if="list.dob_error && isConfirmSelected" class="err-msg" ng-bind="list.dob_error_message"></span>
 									</div>
 								</div>
 							</div>
@@ -83,12 +83,14 @@
 								<button class="btn-cancel" ng-if="step == 1" ng-click="cancelBtn()">Cancel</button>
 								<button class="btn-cancel" ng-if="step == 2" ng-click="cancelBtn()">Back</button>
 								<button class="btn-submit" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
-								<button class="btn-confirm" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
+								<button class="btn-confirm" ng-click="setStep(3)" ng-if="step == 2">Confirm</button>
+								<!-- <button class="btn-confirm" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button> -->
 							</div>
 
 							
 							<button class="btn-submit btn-responsive" ng-if="step == 1" ng-click="submitNric( nric_data )">Submit</button>
-							<button class="btn-confirm btn-responsive" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button>
+							<button class="btn-confirm btn-responsive" ng-click="setStep(3)" ng-if="step == 2">Confirm</button>
+							<!-- <button class="btn-confirm btn-responsive" ng-click="setStep(3)" ng-class="{'btn-confirm-disabled' : !isConfirmActive}" ng-disabled="!isConfirmActive" ng-if="step == 2">Confirm</button> -->
 							<button class="btn-home btn-responsive" ng-if="step == 4" ng-click="cancelBtn()">Home</button>
 							<button class="btn-cancel btn-responsive" ng-if="step == 1" ng-click="cancelBtn()">Cancel</button>
 						</div>
