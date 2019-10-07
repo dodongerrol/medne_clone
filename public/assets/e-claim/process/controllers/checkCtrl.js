@@ -10,12 +10,8 @@ checkCtrl.controller('checkController', function( $scope, $http, eclaimSettings,
 	}
 
 	vm.logout = function(){
-		eclaimSettings.logoutEmp()
-		.then(function(response){
-			console.log(response);
-			// $state.go('login');
-			window.location.href = window.location.origin + '/member-portal-login';
-		});
+		window.localStorage.clear();
+		window.location.href = window.location.origin + '/member-portal-login';
 	}
 
 	vm.updatePasswordModalShow = function(){

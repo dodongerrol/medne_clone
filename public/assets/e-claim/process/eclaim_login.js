@@ -16,7 +16,7 @@ login.factory("eclaimSettings", function($http, serverUrl) {
   var eclaimFactory = {};
 
   eclaimFactory.resetPassword = function(data) {
-    return $http.post(serverUrl.url + "/v2/auth/forgotpassword", data);
+    return $http.post(serverUrl.url + "v2/auth/forgotpassword", data);
   };
 
   return eclaimFactory;
@@ -39,6 +39,44 @@ login.directive('eclaimLogin', [
         scope.forgot_password_data = {};
         scope.new_password_error = false;
         scope.password_success = false;
+
+
+        scope.deviceOs = null;
+        scope.getOs = function(){
+          var userAgent = window.navigator.userAgent,
+              platform = window.navigator.platform,
+              macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+              windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+              iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+              os = null;
+
+          if (macosPlatforms.indexOf(platform) !== -1) {
+            os = 'Mac OS';
+          } else if (iosPlatforms.indexOf(platform) !== -1) {
+            os = 'iOS';
+          } else if (windowsPlatforms.indexOf(platform) !== -1) {
+            os = 'Windows';
+          } else if (/Android/.test(userAgent)) {
+            os = 'Android';
+          } else if (!os && /Linux/.test(platform)) {
+            os = 'Linux';
+          }
+
+          // return os;
+          scope.deviceOs = os;
+        }
+
+        scope.getOs();
+
+        scope.goToUpdateDetails = function(){
+          // if( scope.deviceOs == 'iOS' ){
+          //   window.location.assign( serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          // }else{
+          //   window.open( serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
+          // }
+          // window.location.href = serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase();
+          window.location.href = serverUrl.url + 'app/update_user_id_web?platform=web';
+        }
 
         scope.changePassword = function( data ){
           if( data.new_password == data.new_password2 ){
@@ -70,14 +108,18 @@ login.directive('eclaimLogin', [
         };
 
         scope.login = function(){
+          
+          if( !scope.email || !scope.password ){
+            swal('Ooops!', 'Mobile Number and Password is required', 'error');
+            return false;
+          }
           scope.showLoading();
-
           var data = {
             email: scope.email,
             password: scope.password
           };
 
-          $http.post(serverUrl.url + '/app/e_claim/login', data)
+          $http.post(serverUrl.url + 'app/e_claim/login', data)
 	          .then(function(response) {
 	            scope.hideLoading();
 	            if (response.data.status == true) {
@@ -86,9 +128,19 @@ login.directive('eclaimLogin', [
 	              scope.password = null;
 	              // $state.go("home");
 	              window.location.href = window.location.origin + '/member-portal#/home';
+                window.localStorage.setItem('token_member', response.data.token);
 	            } else {
 	              scope.invalid_credentials = true;
-	              swal('Ooops!', response.data.message, 'error');
+                // if(  ){
+                  // swal('Ooops!', response.data.message, 'error');
+                // }else{
+                  swal({ 
+                    html: true, 
+                    title: '<span style="font-size: 22px;">Your User ID or Password is Incorrect.</span>', 
+                    text: "<p style='text-align:left;margin:30px'><span>1. Make sure you have updated your User ID to your Mobile Number.</span><br><br>" +
+                    "<span>2. If you still can't login, reset your password.</span></p>" 
+                  });
+                // }
 	            }
 	          })
 	          .catch(function(error) {
@@ -104,9 +156,12 @@ login.directive('eclaimLogin', [
           scope.showLoading();
           eclaimSettings.resetPassword(data).then(function(response) {
             console.log(response);
-						alert(response.data.message);
+						
             if(response.data.status) {
-              window.location.reload();
+              swal('Success!', response.data.message, 'success');
+              scope.showLogin();
+            }else{
+              swal('Error!', response.data.message, 'error');
             }
             scope.hideLoading();
           })

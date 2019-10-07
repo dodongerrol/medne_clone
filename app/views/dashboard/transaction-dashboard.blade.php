@@ -132,7 +132,7 @@
 								<th>DATE</th>
 								<th>TRANSACTION ID</th>
 								<th>NAME</th>
-								<th>NRIC</th>
+								<!-- <th>NRIC</th> -->
 								<th>SERVICE/S</th>
 								<th>MEDNEFITS FEE</th>
 								<th>MEDNEFITS CREDIT</th>
@@ -149,7 +149,7 @@
 									<label class="label label-success label-custom" ng-if="trans.deleted"><span ng-bind="trans.transaction_status"></span></label>
 								</td>
 								<td ng-bind="trans.user_name"></td>
-								<td ng-bind="trans.NRIC"></td>
+								<!-- <td ng-bind="trans.NRIC"></td> -->
 								<td ng-bind="trans.procedure_name"></td>
 								<td style="text-align: center;">
 									<span>S$ <span ng-bind="trans.mednefits_fee"></span></span>

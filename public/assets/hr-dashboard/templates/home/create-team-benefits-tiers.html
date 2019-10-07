@@ -486,6 +486,10 @@
 						</div>
 						<form>
 							<div class="employee-input-wrapper">
+								<label for="fname">Full Name</label>
+  								<input disabled-specific-characters type="text" name="fname" ng-model="added_dependent_data.fullname">
+							</div>
+							<!-- <div class="employee-input-wrapper">
 								<label for="fname">First / Given Name</label>
   								<input disabled-specific-characters type="text" name="fname" ng-model="added_dependent_data.first_name">
 							</div>
@@ -496,7 +500,7 @@
 							<div class="employee-input-wrapper">
 								<label>NRIC/FIN</label>
 								<input type="text" name="nric-fin" ng-model="added_dependent_data.nric">
-							</div>
+							</div> -->
 							<div class="employee-input-wrapper">
 								<label for="fname">Date of Birth</label>
   								<input type="text" name="datebirth" class="datepicker" ng-model="added_dependent_data.dob" placeholder="DD/MM/YYYY">

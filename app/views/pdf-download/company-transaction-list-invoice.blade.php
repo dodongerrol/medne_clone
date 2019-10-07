@@ -174,7 +174,7 @@
 				<th>TRANSACTION #</th>
 				<th>EMPLOYEE</th>
 				<th>DEPENDENT</th>
-				<th>NRIC</th>
+				<!-- <th>NRIC</th> -->
   				<th>Date</th>
 				<th>CATEGORY</th>
 				<th>ITEM/SERVICE</th>
@@ -193,7 +193,8 @@
 			<td>{{ $trans['transaction_id'] }}</td>
 			<td>{{ $trans['employee'] }}</td>
 			<td>{{ $trans['dependent'] }}</td>
-			<td>{{ $trans['nric'] }}</td>
+			<td>{{ $trans['member'] }}</td>
+			<!-- <td>{{ $trans['nric'] }}</td> -->
           	<td>{{ $trans['date_of_transaction'] }}</td>
 			<td>{{ $trans['clinic_type_name'] }}</td>
 			<td>{{ $trans['clinic_type_and_service'] }}</td>
