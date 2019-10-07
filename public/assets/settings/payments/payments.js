@@ -642,6 +642,9 @@ function viewStatement(payment_id, opt) {
         $(".statement_amount_total").text(data.ending_balance);
       }
 
+      $(".payment_date").text( moment( data.payment_record.payment_date ).format('MMMM DD, YYYY') );
+      $(".transfer_number").text(data.payment_record.transfer_referrence_number);
+
       // DUE DATE
       // if (data.due_date != null) {
         $(".statement_start").text(moment(data.invoice_record.start_date).format("MMM DD, YYYY"));
