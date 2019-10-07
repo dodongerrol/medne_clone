@@ -1251,9 +1251,10 @@ class Api_V1_TransactionController extends \BaseController
 								$payment_type = 'Mednefits Credits';
 							}
 							$service_credits = true;
-							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
+							if((int)$transaction->lite_plan_enabled == 1) {
 								if((int)$transaction->half_credits == 1) {
-									$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+									// $total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+									$total_amount = $transaction->credit_cost + $transaction->cash_cost;
 									$cash_cost = $transaction->cash_cost;
 								} else {
 									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
@@ -1315,7 +1316,7 @@ class Api_V1_TransactionController extends \BaseController
 						if((int)$transaction->lite_plan_enabled == 1) {
 							if($consultation_credits == true) {
 								// if((int)$transaction->half_credits == 1) {
-									$paid_by_credits += $consultation;
+									// $paid_by_credits += $consultation;
 								// }
 							}
 						}
