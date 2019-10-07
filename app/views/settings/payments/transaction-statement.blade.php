@@ -163,7 +163,7 @@
 	    				<td style="text-align: left !important;padding-left: 30px; ">
 	    					<span class="statement_start">Feb 01,2017</span>
 	    				</td>
-	    				<td style="text-align: left;"><b>Invoice #<span class="statement_invoice_number">MNCP00002</span></b> (due <span class="statement_end">FEB 28, 2017</span>)</td>
+	    				<td style="text-align: left;">Invoice #<span class="statement_invoice_number">MNCP00002</span></b> (due <span class="statement_end">FEB 28, 2017</span>)</td>
 	    				<td style="text-align: right;">$<span class="statement_amount_due">0</span></td>
 	    				<td style="text-align: right;">$<span class="statement_amount_due">0</span></td>
 	    			</tr>
@@ -192,6 +192,12 @@
 	    			<h4>Amount due (SGD)</h4>
 	    			<h4><b>$<span class="statement_amount_total">0</span></b></h4>
 	    		</div>
+	    	</div>
+
+	    	<div class="notes" style="margin: 20px 0;">
+	    		<p><b>Notes</b></p>
+	    		<p><b><span>Payment Date :</span> <span class="payment_date"></span></b></p>
+	    		<p><b><span>Transfer Reference Number :</span> <span class="transfer_number"></span></b></p>
 	    	</div>
 	    	
 	    </div>
