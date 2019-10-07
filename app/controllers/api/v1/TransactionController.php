@@ -1051,7 +1051,8 @@ class Api_V1_TransactionController extends \BaseController
                $health_provider_status = FALSE;
                if((int)$trans->lite_plan_enabled == 1) {
                	if((int)$trans->half_credits == 1) {
-                  $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                  // $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                  $total_amount = $trans->credit_cost + $trans->cash_cost;
                	} else {
                		$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                	}
