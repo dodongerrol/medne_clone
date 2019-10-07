@@ -18,13 +18,14 @@ app.directive("mobileExerciseDirective", [
         scope.emp_dob_error_message = '';
         scope.emp_mobile_error = false;
         scope.emp_mobile_error_message = '';
-        scope.isConfirmActive = true;
+        scope.isConfirmActive = false;
         scope.token = null;
         scope.devicePlatform = null;
         scope.optCode = [];
         scope.code_err = false;
         scope.stopAutoFocus = false;
         scope.reset_password_text = '';
+        scope.isConfirmSelected = false;
 
         var iti = null;
 
@@ -334,17 +335,22 @@ app.directive("mobileExerciseDirective", [
             scope.optCode = [];
             scope.member_details.mobile_format = "+" + scope.member_details.mobile_country_code + "" + scope.member_details.mobile;
             scope.initializeGeoCode();
-          }
-          if( num == 3 ){
-            scope.sendOtpCode();
-            $timeout(function() {
-              $(".otp-input-wrapper input:eq(0)").focus();
-            }, 300);
+            scope.step = num;
           }
           if( num < 3 ){
             scope.code_err = false;
           }
-          scope.step = num;
+          if( num == 3 ){
+            scope.validateForm();
+            scope.isConfirmSelected = true;
+            if( scope.isConfirmActive == true ){
+              scope.sendOtpCode();
+              $timeout(function() {
+                $(".otp-input-wrapper input:eq(0)").focus();
+              }, 300);
+              scope.step = num;
+            }
+          }
         }
 
         scope.otpChanged = function(e){
@@ -623,7 +629,7 @@ app.directive("mobileExerciseDirective", [
             });
 
 
-            scope.validateForm();
+            // scope.validateForm();
 
           },200)
         }
