@@ -1757,7 +1757,7 @@ class TransactionController extends BaseController {
 				->join('user', 'user.UserID', '=', 'transaction_history.UserID')
 				->where(function($query) use ($clinic_id, $nric, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
-					->where('user.NRIC', 'like', '%'.$nric.'%')
+					->where('user.PhoneNo', 'like', '%'.(int)$nric.'%')
 					->where('transaction_history.paid', 1)
 					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.created_at', '>=', $start)
@@ -1765,7 +1765,7 @@ class TransactionController extends BaseController {
 				})
 				->orWhere(function($query) use ($clinic_id, $nric, $start, $end){
 					$query->where('transaction_history.ClinicID', $clinic_id)
-					->where('user.NRIC', 'like', '%'.$nric.'%')
+					->where('user.PhoneNo', 'like', '%'.(int)$nric.'%')
 					->where('transaction_history.paid', 1)
 					->where('transaction_history.procedure_cost', ">=", 0)
 					->where('transaction_history.claim_date', '>=', $start)
@@ -1801,7 +1801,7 @@ class TransactionController extends BaseController {
 			$transactions = DB::table('transaction_history')
 			->join('user', 'user.UserID', '=', 'transaction_history.UserID')
 			->where('transaction_history.ClinicID', $clinic_id)
-			->where('user.NRIC', 'like', '%'.$input['nric'].'%')
+			->where('user.PhoneNo', 'like', '%'.(int)$input['nric'].'%')
 			->where('transaction_history.paid', 0)
 			->where('transaction_history.procedure_cost', ">=", 0)
 				// ->where('transaction_history.date_of_transaction', '>=', $start)
@@ -2659,13 +2659,15 @@ class TransactionController extends BaseController {
 		->join('user', 'user.UserID', '=', 'transaction_history.UserID')
 		->where(function($query) use ($search, $clinic_id, $start, $end){
 			$query->where('user.Name', 'like', '%'.$search.'%')
+			->where('UserType', 5)
 			->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.deleted', 0)
 			->where('transaction_history.date_of_transaction', '>=', $start)
 			->where('transaction_history.date_of_transaction', '<=', $end);
 		})
 		->orWhere(function($query) use ($search, $clinic_id, $start, $end){
-			$query->where('user.NRIC', 'like', '%'.$search.'%')
+			$query->where('user.PhoneNo', 'like', '%'.(int)$search.'%')
+			->where('UserType', 5)
 			->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.deleted', 0)
 			->where('transaction_history.date_of_transaction', '>=', $start)
@@ -2831,10 +2833,10 @@ class TransactionController extends BaseController {
 					'mednefits_credits'			=> number_format($mednefits_credits, 2),
 					'cash'									=> $cash,
 					'procedure_ids'					=> $procedure_ids,
-					'deleted'								=> $trans->deleted == 1 || $trans->deleted == "1" ? TRUE : FALSE,
-					'refunded'							=> $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
-					'health_provider'				=> $trans->health_provider_done == 1 || $trans->health_provider_done == "1" || $trans->credit_cost  == 0 || $trans->credit_cost == NULL ? TRUE : FALSE,
-					'transaction_status'		=> $transaction_status,
+					'deleted'								=> (int)$trans->deleted == 1 ? TRUE : FALSE,
+					'refunded'							=> (int)$trans->refunded == 1 ? TRUE : FALSE,
+					'health_provider'				=> (int)$trans->health_provider_done == 1 || $trans->credit_cost  == 0 || $trans->credit_cost == NULL ? TRUE : FALSE,
+					'transaction_status'		=> (int)$trans->deleted == 1 ? $transaction_status : null,
 					'currency_type'				=> $trans->currency_type,
 					'currency_amount'			=> $trans->currency_amount
 				);

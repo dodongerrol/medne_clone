@@ -95,9 +95,10 @@ class Api_V1_AuthController extends \BaseController {
             				$returnObject->error= "false";
             				$returnObject->data['access_token'] = $get_token->id;
             				$returnObject->data['token_type'] = 'Bearer';
-            				$returnObject->data['expires_in'] = 7200;
-            				$findRealAppointment = ClinicLibrary::FindRealAppointment($user->UserID);
-            				$activePromoCode = General_Library::ActivePromoCode();
+                    $returnObject->data['expires_in'] = 7200;
+            				$returnObject->data['user_id'] = $user->UserID;
+            				// $findRealAppointment = ClinicLibrary::FindRealAppointment($user->UserID);
+            				// $activePromoCode = General_Library::ActivePromoCode();
 
             				$status = StringHelper::checkEligibleFeature($user->UserID);
 
@@ -111,12 +112,12 @@ class Api_V1_AuthController extends \BaseController {
             					$returnObject->data['pin_setup'] = FALSE;
             				}
 
-            				if(!$findRealAppointment){
-            					$returnObject->data['promocode']['status'] = 1;
-            					$returnObject->data['promocode']['message'] = "We are very excited to have you onboard, select the clinic of your choice and start booking for your next appointment now!";
-            				}else{
+            				// if(!$findRealAppointment){
+            				// 	$returnObject->data['promocode']['status'] = 1;
+            				// 	$returnObject->data['promocode']['message'] = "We are very excited to have you onboard, select the clinic of your choice and start booking for your next appointment now!";
+            				// }else{
             					$returnObject->data['promocode'] = null;
-            				}
+            				// }
             			} else {
             				$returnObject->error= "true";
             				$returnObject->status = FALSE;
@@ -1947,6 +1948,7 @@ public function getNewClinicDetails($id)
         }
 
         $jsonArray['clinic_id'] = $clinic->ClinicID;
+        $jsonArray['user_id'] = $findUserID;
         $jsonArray['name'] = $clinic->CLName;
         $jsonArray['email'] = $email;
         $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLState.' '.$clinic->CLPostal;
@@ -1964,6 +1966,8 @@ public function getNewClinicDetails($id)
         if($customer_active_plan->account_type != "super_pro_plan") {
           $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
         }
+        $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
+        $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
 
         // check if employee has plan tier cap
         $customer_id = PlanHelper::getCustomerId($owner_id);
@@ -3900,6 +3904,7 @@ public function getFamilCoverageAccounts( )
                   'user_id'   => $user->UserID,
                   'name'      => ucwords($user->Name),
                   'nric'      => $user->NRIC,
+                  'dob'       => date('d/m/Y', strtotime($user->DOB)),
                   'type'      => 'Owner'
               );
            } else if($user->UserType == 5 && $user->access_type == 2 || $user->UserType == 5 && $user->access_type == 3) {
@@ -3910,6 +3915,7 @@ public function getFamilCoverageAccounts( )
                $profile = array(
                   'user_id'   => $owner_profile->UserID,
                   'name'      => ucwords($owner_profile->Name),
+                  'dob'       => date('d/m/Y', strtotime($owner_profile->DOB)),
                   'nric'      => $owner_profile->NRIC,
                   'type'      => 'Owner'
               );
@@ -3924,6 +3930,7 @@ public function getFamilCoverageAccounts( )
                   $profile = array(
                      'user_id'   => $temp_profile->UserID,
                      'name'      => ucwords($temp_profile->Name),
+                     'dob'       => date('d/m/Y', strtotime($temp_profile->DOB)),
                      'nric'      => $temp_profile->NRIC,
                      'type'      => ucwords($value->relationship)
                  );
