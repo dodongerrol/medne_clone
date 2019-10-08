@@ -202,8 +202,6 @@ app.directive("mobileExerciseDirective", [
             }else{
               scope.emp_mobile_error = false;
               scope.emp_mobile_error_message = '';
-
-              scope.checkMobileTaken( scope.member_details.mobile );
             }
           }
 
@@ -244,6 +242,7 @@ app.directive("mobileExerciseDirective", [
               }else{
                 scope.isConfirmActive = false;
               }
+              scope.checkMobileTaken( scope.member_details.mobile );
             }
           })
 
@@ -253,7 +252,9 @@ app.directive("mobileExerciseDirective", [
             }else{
               scope.isConfirmActive = false;
             }
+            scope.checkMobileTaken( scope.member_details.mobile );
           }
+          console.log( scope.isConfirmActive );
         }
 
         scope.submitNric = function( data ){
@@ -343,14 +344,19 @@ app.directive("mobileExerciseDirective", [
           }
           if( num == 3 ){
             scope.validateForm();
+            scope.checkMobileTaken( scope.member_details.mobile );
             scope.isConfirmSelected = true;
-            if( scope.isConfirmActive == true ){
-              scope.sendOtpCode();
-              $timeout(function() {
-                $(".otp-input-wrapper input:eq(0)").focus();
-              }, 300);
-              scope.step = num;
-            }
+            scope.showLoading();
+            $timeout(function() {
+              if( scope.isConfirmActive == true ){
+                scope.sendOtpCode();
+                $timeout(function() {
+                  $(".otp-input-wrapper input:eq(0)").focus();
+                }, 300);
+                scope.step = num;
+              }
+              scope.hideLoading();
+            }, 1000);
           }
         }
 
