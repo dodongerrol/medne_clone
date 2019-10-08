@@ -116,7 +116,8 @@
 			</div>
 			<form class="med-form" ng-submit="login()">
 				<div class="form-group">
-					<input valid-number pattern="[0-9]*" type="tel" name="text" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" />
+					<!-- valid-number pattern="[0-9]*" type="tel" -->
+					<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" />
 				</div>
 				<div class="form-group">
 					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password"  style="margin-bottom: 15px">
