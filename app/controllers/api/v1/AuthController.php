@@ -1327,7 +1327,7 @@ return Response::json($returnObject);
             //   $currency_symbol = "";
             // } else {
       // $balance = StringHelper::thousandsCurrencyFormat($balance);
-              $balance = number_format($balance, 2);
+              // $balance = number_format($balance, 2);
               $currency_symbol = "S$";
             // }
 
