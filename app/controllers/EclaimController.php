@@ -23,8 +23,8 @@ class EclaimController extends \BaseController {
 	public function loginEmployee( )
 	{
 		$input = Input::all();
-    $email = (int)$input['email'];
-    $email = (string)($email);
+    $email = $input['email'];
+    // $email = (string)($email);
     $password = $input['password'];
     
 		$check = DB::table('user')
@@ -43,7 +43,7 @@ class EclaimController extends \BaseController {
     ->orWhere(function($query) use ($email, $password){
     	$email = (int)($email);
     	$query->where('UserType', 5)
-			->where('PhoneNo', $email)
+			->where('PhoneNo', (string)$email)
 		  ->where('password', md5($password))
 		  ->where('Active', 1);
     })
