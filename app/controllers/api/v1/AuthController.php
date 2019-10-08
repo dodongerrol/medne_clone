@@ -1322,14 +1322,14 @@ return Response::json($returnObject);
             PlanHelper::reCalculateEmployeeBalance($user_id);
             $user = DB::table('user')->where('UserID', $user_id)->first();
 
-            if($customer_active_plan->account_type == "super_pro_plan") {
-              $balance = "*****";
-              $currency_symbol = "";
-            } else {
+            // if($customer_active_plan->account_type == "super_pro_plan") {
+            //   $balance = "*****";
+            //   $currency_symbol = "";
+            // } else {
       // $balance = StringHelper::thousandsCurrencyFormat($balance);
               $balance = number_format($balance, 2);
               $currency_symbol = "S$";
-            }
+            // }
 
             $wallet_data = array(
               'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
