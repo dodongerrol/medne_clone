@@ -864,6 +864,8 @@ Route::group(array('prefix' => 'v2'), function()
 	Route::group(array('after' => 'auth.headers'),function(){
 		// Route::post('auth/signup', 'Api_V1_AuthController@Signup');
 	  	Route::post('auth/login','Api_V1_AuthController@Login');
+	  	// new login method 
+	  	Route::post('auth/new_login','Api_V1_AuthController@newLogin');
 	    //Route::post('auth/login','Api_V1_AuthController@login');
 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
