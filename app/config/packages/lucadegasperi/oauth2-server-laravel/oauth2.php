@@ -83,7 +83,16 @@ return [
               return $user->authLogin($username, $password);               
 	        },
 	        'access_token_ttl' => 7200
-	    ]
+	    ],
+        'login_password' => [
+            'class' => '\League\OAuth2\Server\Grant\PasswordGrant',
+            'callback' => function($username, $password) {
+                // return an user ID if valid, otherwise return false
+              $user = new User();
+              return $user->newAuthLogin($username, $password);               
+            },
+            'access_token_ttl' => 7200
+        ]
 	],
 
     /*
