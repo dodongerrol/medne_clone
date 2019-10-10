@@ -133,7 +133,8 @@
 						    <div class="input-group date" style="width: 80%">
 								  <input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="Price" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.claim_amount">
 								  <span class="input-group-addon" id="sizing-addon2" style="color: #0086D3;font-weight: 700;">
-								  	S$
+								  	<span ng-if="true">S$</span>
+								  	<span ng-if="false">RM</span>
 								  </span>
 								</div>
 							</div>
@@ -261,7 +262,10 @@
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
 					    <p class="color-blue-custom">
 					    	<label class="color-black3">Claim Amount<span></span></label> 
-					    	<span>S$ <span ng-bind="eclaim.claim_amount | number"></span></span>
+					    	<span>
+					    		<span ng-if="true">S$</span> 
+					    		<span ng-if="false">RM</span>
+					    		<span ng-bind="eclaim.claim_amount | number"></span></span>
 					    </p>
 					  </div>
 					  <div class="form-group col-xs-12 col-sm-12 col-md-12">
