@@ -396,10 +396,10 @@ app.directive("employeeOverviewDirective", [
               return false;
             }
           }
-          if( !data.postal_code ){
-            swal( 'Error!', 'Postal Code is required.', 'error' );
-            return false;
-          }
+          // if( !data.postal_code ){
+          //   swal( 'Error!', 'Postal Code is required.', 'error' );
+          //   return false;
+          // }
 
           return true;
         }
@@ -456,10 +456,10 @@ app.directive("employeeOverviewDirective", [
               return false;
             }
           }
-          if( !data.postal_code ){
-            swal( 'Error!', 'Postal Code is required.', 'error' );
-            return false;
-          }
+          // if( !data.postal_code ){
+          //   swal( 'Error!', 'Postal Code is required.', 'error' );
+          //   return false;
+          // }
           if( !data.plan_start ){
             swal( 'Error!', 'Start Date is required.', 'error' );
             return false;
@@ -1325,7 +1325,6 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.saveEmployee = function( data ){
-          console.log( data );
           if( scope.checkUpdateEmployeeForm( data ) == false ){
             return false;
           }
