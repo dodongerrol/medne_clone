@@ -257,11 +257,19 @@ class Api_V1_TransactionController extends \BaseController
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
 						$total_credits_cost = $credits;
+
+						if( $total_credits_cost > $consultation_fees ){
+							$total_credits_cost -= $consultation_fees;
+						}else if( $consultation_fees > $total_credits_cost ){
+							// $cash -= ( $consultation_fees - $total_credits_cost );
+							$consultation_fees = $total_credits_cost;
+							$total_credits_cost = 0;
+						}
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
 						$total_credits_cost = $credits;
-						$consultation_fees = 0;
+						// $consultation_fees = 0;
 					}
 
 					$payment_credits = $total_credits_cost;
