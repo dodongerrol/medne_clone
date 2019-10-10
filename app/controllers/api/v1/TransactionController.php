@@ -1344,11 +1344,21 @@ class Api_V1_TransactionController extends \BaseController
 						}
 
 						$paid_by_credits = $transaction->credit_cost;
-						if((int)$transaction->lite_plan_enabled == 1) {
+						// if((int)$transaction->lite_plan_enabled == 1) {
+						// 	if($consultation_credits == true) {
+						// 		// if((int)$transaction->half_credits == 1) {
+						// 		// 	$paid_by_credits += $consultation;
+						// 		// }
+						// 	}
+						// }
+
+						if($transaction->cap_per_visit == $transaction->credit_cost + $consultation && (int)$transaction->half_credits == 1 && $consultation_credits == true) {
+							$paid_by_credits = $transaction->credit_cost + $consultation;
+						} else {
 							if($consultation_credits == true) {
-								// if((int)$transaction->half_credits == 1) {
-									// $paid_by_credits += $consultation;
-								// }
+								if((int)$transaction->half_credits == 0) {
+									$paid_by_credits += $consultation;
+								}
 							}
 						}
 
