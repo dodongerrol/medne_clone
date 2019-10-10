@@ -3069,6 +3069,7 @@ class BenefitsDashboardController extends \BaseController {
 		if(!empty($input['email'])) {
 			$check_email= DB::table('user')
 							->where('Email', $input['email'])
+							->where('UserType', 5)
 							->whereNotIn('UserID', [$input['user_id']])
 							->first();
 
