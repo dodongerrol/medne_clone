@@ -53,7 +53,7 @@ class AuthLibrary{
   public static function newLogin(){
     $returnObject = new stdClass();
     $input = Input::all();
-    $token = StringHelper::customLoginToken($input);
+    $token = StringHelper::newCustomLoginToken($input);
     if($token->status){
       $findUserID = self::FindUserFromToken($token->data['access_token']);
       $activePromoCode = General_Library::ActivePromoCode();

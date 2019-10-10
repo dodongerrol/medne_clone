@@ -1071,6 +1071,103 @@ public static function get_random_password($length)
         }
     }
 
+    public static function newCustomLoginToken($data)
+    {   
+
+        $returnObject = new stdClass();
+
+        if(empty($data['grant_type'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"grant_type\" parameter.";
+            return $returnObject;
+        } else if(empty($data['client_secret'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"client_secret\" parameter.";
+            return $returnObject;
+        } else if(empty($data['username'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"username\" parameter.";
+            return $returnObject;
+        } else if(empty($data['password'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"password\" parameter.";
+            return $returnObject;
+        } else if(empty($data['client_id'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"client_id\" parameter.";
+            return $returnObject;
+        } else {
+            // check creds
+            $user = new User();
+            $result = $user->newAuthLogin($data['username'], $data['password']);
+
+            if($result) {
+                $session_data = array(
+                    'client_id'             => $data['client_id'],
+                    'owner_type'            => 'user',
+                    'owner_id'              => $result,
+                    'client_redirect_uri'   => NULL
+                );
+
+                $session_class = new OauthSessions( );
+                $session = $session_class->createSession($session_data);
+
+                if($session) {
+                    $token_data = array(
+                        'id'        => self::getAlgorithm()->generate(40),
+                        'session_id'  => $session->id,
+                        'expire_time' => time() + 72000
+                    );
+
+                    $token_class = new OauthAccessTokens( );
+                    $token = $token_class->createToken($token_data);
+                    $get_token = DB::table('oauth_access_tokens')->where('session_id', $token->session_id)->orderBy('created_at', 'desc')->first();
+
+                    if($get_token) {
+                        $returnObject->error = "false";
+                        $returnObject->status = TRUE;
+                        $returnObject->data['access_token'] = $get_token->id;
+                        $returnObject->data['token_type'] = 'Bearer';
+                        $returnObject->data['expires_in'] = 7200;
+                        $returnObject->data['pin_setup'] = FALSE;
+                        $returnObject->fields = TRUE;
+                        return $returnObject;
+                        // return array('status' => TRUE, 'access_token' => $get_token->id);
+                    } else {
+                        $returnObject->status = FALSE;
+                        $returnObject->error = 'invalid_credentials';
+                        $returnObject->error_description = 'The user credentials were incorrect.';
+                        $returnObject->fields = TRUE;
+                        return $returnObject;
+                    }
+                } else {
+                    $returnObject->status = FALSE;
+                    $returnObject->error = 'invalid_credentials';
+                    $returnObject->error_description = 'The user credentials were incorrect.';
+                    $returnObject->fields = TRUE;
+                    return $returnObject;
+
+                }
+            } else {
+                $returnObject->status = FALSE;
+                $returnObject->error = 'invalid_credentials';
+                $returnObject->error_description = 'The user credentials were incorrect.';
+                $returnObject->fields = TRUE;
+                return $returnObject;
+            }
+        }
+    }
+
     public static function getAlgorithm()
     {
         if (is_null(self::$algorithm)) {
