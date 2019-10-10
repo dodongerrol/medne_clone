@@ -205,12 +205,12 @@ Route::filter('auth.v2', function($request, $response)
           return Response::json($returnObject, 200);
         }
 
-        // if((int)$user->account_update_status == 0) {
-        //   $returnObject->status = FALSE;
-        //   $returnObject->expired = true;
-        //   $returnObject->message = 'You need to update you profile settings for new login method.';
-        //   return Response::json($returnObject, 200);
-        // }
+        if((int)$user->account_update_status == 0) {
+          $returnObject->status = FALSE;
+          $returnObject->expired = true;
+          $returnObject->message = 'You need to update you profile settings for new login method.';
+          return Response::json($returnObject, 200);
+        }
 
         $request = Request::instance();
         $ip = $request->getClientIp();
