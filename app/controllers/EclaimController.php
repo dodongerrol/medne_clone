@@ -8139,6 +8139,7 @@ public function generateMonthlyCompanyInvoice( )
 	public function downloadEclaimCsv( )
 	{
 		$input = Input::all();
+		return $input;
 		if(empty($input['token']) || $input['token'] == null) {
 			return array('status' => false, 'message' => 'Token is required.');
 		}
@@ -8161,7 +8162,7 @@ public function generateMonthlyCompanyInvoice( )
 
 		$start = date('Y-m-d', strtotime($input['start']));
 		$end = PlanHelper::endDate($input['end']);
-		$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+		$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'both';
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 		$container = array();
 
@@ -8179,40 +8180,84 @@ public function generateMonthlyCompanyInvoice( )
 		foreach ($corporate_members as $key => $member) {
 			$ids = StringHelper::getSubAccountsID($member->user_id);
 			if(!empty($input['status']) && (int)$input['status'] == 2) {
-				$e_claim_result = DB::table('e_claim')
-												->whereIn('user_id', $ids)
-												->where('spending_type', $spending_type)
-												->where('status', 0)
-												->where('created_at', '>=', $start)
-												->where('created_at', '<=', $end)
-												->orderBy('created_at', 'desc')
-												->get();
+				if($spending_type == "both") {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->whereIn('spending_type', ['medical', 'wellness'])
+													->where('status', 0)
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+				} else {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->where('spending_type', $spending_type)
+													->where('status', 0)
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+
+				}
 			} else if(!empty($input['status']) && (int)$input['status'] == 3) {
-				$e_claim_result = DB::table('e_claim')
-												->whereIn('user_id', $ids)
-												->where('spending_type', $spending_type)
-												->where('status', 1)
-												->where('created_at', '>=', $start)
-												->where('created_at', '<=', $end)
-												->orderBy('created_at', 'desc')
-												->get();
+				if($spending_type == "both") {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->whereIn('spending_type', ['medical', 'wellness'])
+													->where('status', 1)
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+				} else {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->where('spending_type', $spending_type)
+													->where('status', 1)
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+				}
 			} else if(!empty($input['status']) && (int)$input['status'] == 4) {
-				$e_claim_result = DB::table('e_claim')
-												->whereIn('user_id', $ids)
-												->where('spending_type', $spending_type)
-												->where('status', 2)
-												->where('created_at', '>=', $start)
-												->where('created_at', '<=', $end)
-												->orderBy('created_at', 'desc')
-												->get();
+				if($spending_type == "both") {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->whereIn('spending_type', ['medical', 'wellness'])
+													->where('status', 2)
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+				} else {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->where('spending_type', $spending_type)
+													->where('status', 2)
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+				}
 			} else {
-				$e_claim_result = DB::table('e_claim')
-												->whereIn('user_id', $ids)
-												->where('spending_type', $spending_type)
-												->where('created_at', '>=', $start)
-												->where('created_at', '<=', $end)
-												->orderBy('created_at', 'desc')
-												->get();
+				if($spending_type == "both") {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->whereIn('spending_type', ['medical', 'wellness'])
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+				} else {
+					$e_claim_result = DB::table('e_claim')
+													->whereIn('user_id', $ids)
+													->where('spending_type', $spending_type)
+													->where('created_at', '>=', $start)
+													->where('created_at', '<=', $end)
+													->orderBy('created_at', 'desc')
+													->get();
+				}
 			}
 
 			foreach($e_claim_result as $key => $res) {
@@ -8291,7 +8336,7 @@ public function generateMonthlyCompanyInvoice( )
         return strtotime($b['CLAIM DATE']) - strtotime($a['CLAIM DATE']);
     });
 
-		// return $container;
+		return $container;
 		return \Excel::create('E-Claim Transactions - '.$start.' - '.$input['end'], function($excel) use($container) {
       $excel->sheet('E-Claim', function($sheet) use($container) {
           $sheet->fromArray( $container );
