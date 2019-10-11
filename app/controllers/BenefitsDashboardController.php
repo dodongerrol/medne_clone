@@ -3048,6 +3048,7 @@ class BenefitsDashboardController extends \BaseController {
 		if(!empty($input['email'])) {
 			$check_email= DB::table('user')
 							->where('Email', $input['email'])
+							->where('UserType', 5)
 							->whereNotIn('UserID', [$input['user_id']])
 							->first();
 
@@ -3059,7 +3060,7 @@ class BenefitsDashboardController extends \BaseController {
 		$update = array(
 			'Name'				=> $input['name'],
 			// 'NRIC'				=> $input['nric'],
-			'Zip_Code'			=> $input['postal_code'],
+			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
 			'PhoneNo'			=> $mobile,
@@ -4379,6 +4380,7 @@ class BenefitsDashboardController extends \BaseController {
 				$data['amount_due']     = number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				if((int)$get_invoice->override_total_amount_status == 1) {
 					$calculated_prices = $get_invoice->override_total_amount;
+					$data['calculated_prices'] = $calculated_prices;
 				} else {
 					$data['calculated_prices'] = $get_invoice->individual_price;
 				}
