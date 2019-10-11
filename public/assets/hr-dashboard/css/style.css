@@ -7378,6 +7378,16 @@ ul.typeahead li a.dropdown-item
 	height: 16px;
 }
 
+.emp-username-type-container {
+	margin: 0 5px 0 0;
+}
+
+.emp-username-type-container input {
+	position: inherit !important;
+	left: 0 !important;
+	opacity: inherit !important;
+}
+
 @media only screen and (max-width : 900px) {
 	.intro-login-container .platforms-box {
     width: 565px;	

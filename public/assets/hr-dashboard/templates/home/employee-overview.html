@@ -349,34 +349,15 @@
 							<div>
 								<strong class="font-helvetica-medium">Last Name</strong>
 								<span ng-bind="selectedEmployee.lname">Lee</span>
-							</div>
+							</div> -->
 							<div>
 								<strong class="font-helvetica-medium">NRIC/FIN</strong>
 								<span ng-bind="selectedEmployee.nric">S8575893G</span>
-							</div> -->
-							<div>
-								<strong class="font-helvetica-medium">Member ID</strong>
-								<span ng-bind="selectedEmployee.member_id">657834</span>
 							</div>
 							<div>
 								<strong class="font-helvetica-medium">Date of Birth</strong>
 								<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
 							</div>
-							<div>
-								<strong class="font-helvetica-medium">Country Code</strong>
-								<span ng-bind="selectedEmployee.country_code">+63</span>
-							</div>
-							<div>
-								<strong class="font-helvetica-medium">Mobile Number</strong>
-								<span ng-bind="selectedEmployee.phone_no">87589582</span>
-							</div>
-						</div>
-						<div class="col-2-employee-information-details">
-							<div>
-								<strong class="font-helvetica-medium">Work Email</strong>
-								<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
-							</div>
-							
 							<div>
 								<strong class="font-helvetica-medium">Postal Code</strong>
 								<span ng-bind="selectedEmployee.postal_code">645362</span>
@@ -386,8 +367,49 @@
 								<span ng-bind="selectedEmployee.job_title">Accountant</span>
 							</div>
 							<div>
+								<strong class="font-helvetica-medium">Country Code</strong>
+								<span ng-bind="selectedEmployee.country_code">+63</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Mobile Number</strong>
+								<span ng-bind="selectedEmployee.phone_no">87589582</span>
+							</div>			
+						</div>
+						<div class="col-2-employee-information-details">
+							<div>
+								<strong class="font-helvetica-medium">Member ID</strong>
+								<span ng-bind="selectedEmployee.member_id">657834</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Work Email</strong>
+								<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
+							</div>
+							<div>
 								<strong class="font-helvetica-medium">Bank Account Number</strong>
 								<span ng-bind="selectedEmployee.bank_account">0173489384</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Bank Code</strong>
+								<span></span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Bank BRH</strong>
+								<span></span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">For Communication</strong>
+								<span>
+									<label class="emp-username-type-container">
+										<input type="radio" name="emp-username-type"> Email
+									</label>
+									<label class="emp-username-type-container">
+										<input type="radio" name="emp-username-type"> SMS
+									</label>
+								</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Mobile Number (Back-up)</strong>
+								<span></span>
 							</div>
 						</div>
 					</div>
