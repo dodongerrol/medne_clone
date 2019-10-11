@@ -4380,6 +4380,7 @@ class BenefitsDashboardController extends \BaseController {
 				$data['amount_due']     = number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				if((int)$get_invoice->override_total_amount_status == 1) {
 					$calculated_prices = $get_invoice->override_total_amount;
+					$data['calculated_prices'] = $calculated_prices;
 				} else {
 					$data['calculated_prices'] = $get_invoice->individual_price;
 				}
