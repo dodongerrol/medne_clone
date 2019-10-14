@@ -12,6 +12,7 @@ app.directive("companyContactsDirective", [
 
         scope.company_contacts = {};
         scope.transactions = {};
+        scope.transactions.current_total = 0;
         scope.refunds = {};
         scope.billings = {};
         scope.benefits_spending = {};
@@ -223,9 +224,15 @@ app.directive("companyContactsDirective", [
 
         scope.getTransac = function(page){
           scope.toggleLoading();
+          var curr_total = scope.transactions.current_total != 0 ? scope.transactions.current_total : 0;
           hrSettings.getTransactions( page ).then(function(response) {
             console.log(response);
+            console.log('scope.transactions.current_total', scope.transactions.current_total)
+            console.log('parseInt(response.data.to)', parseInt(response.data.to))
             scope.transactions = response.data;
+            scope.transactions.current_total = curr_total + parseInt(response.data.to);
+            console.log('scope.transactions', scope.transactions)
+            console.log('scope.transactions.current_total', scope.transactions.current_total)
             setTimeout(function() {
               $(".info-container").fadeIn();
               $(".loader-container").hide();

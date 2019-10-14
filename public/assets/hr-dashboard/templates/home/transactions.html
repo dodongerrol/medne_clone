@@ -94,7 +94,7 @@
 				</div>
 				<div ng-if="transactions.current_page == transactions.from" class="arrows"></div>
 				<div class="page-status">
-					<span ng-bind="transactions.to">1</span> of <span ng-bind="transactions.total">1</span>
+					<span ng-bind="transactions.current_total">1</span> of <span ng-bind="transactions.total">1</span>
 				</div>				
 				<div ng-if="transactions.total == transactions.to" class="arrows"></div>
 				<div ng-if="transactions.total != transactions.to" class="arrows" ng-click="nextPrevPlanTransac(true)">
