@@ -1354,6 +1354,8 @@ app.directive("employeeOverviewDirective", [
                 job_title: data.job_title,
                 postal_code: data.postal_code,
                 bank_account: data.bank_account,
+                bank_code: data.bank_code,
+                bank_branch: data.bank_branch,
                 user_id: data.user_id,
               };
               console.log( update_data );
