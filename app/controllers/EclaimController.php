@@ -3086,7 +3086,8 @@ public function getActivityInNetworkTransactions( )
 				}
 
 				$half_credits = false;
-				$total_amount = number_format($trans->procedure_cost, 2);
+				$total_amount = $trans->procedure_cost;
+				$procedure_cost = $trans->credit_cost;
 
 				if((int)$trans->health_provider_done == 1) {
 					$payment_type = "Cash";
@@ -3118,8 +3119,10 @@ public function getActivityInNetworkTransactions( )
 					// $cash = number_format($trans->credit_cost, 2);
 					if((int)$trans->lite_plan_enabled == 1) {
               if((int)$trans->half_credits == 1) {
-                // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-                $total_amount = $trans->credit_cost + $trans->cash_cost;
+                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+                $procedure_cost = $trans->credit_cost + $trans->consultation_fees;
+                $transaction_type = "credit_cash";
+                // $total_amount = $trans->credit_cost + $trans->cash_cost;
                 $cash = $trans->cash_cost;
               } else {
                 $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
@@ -3171,9 +3174,10 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
-				if( $trans->health_provider_done == 1 && $trans->deleted == 0 || $trans->health_provider_done == "1" && $trans->deleted == "0" ) {
+				if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
 					$total_search_cash += $trans->procedure_cost;
 					$total_in_network_spent_cash_transaction += $trans->procedure_cost;
+					$procedure_cost = $trans->procedure_cost;
 					$total_cash_transactions++;
 					if((int)$trans->lite_plan_enabled == 1) {
 						$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
@@ -3193,10 +3197,10 @@ public function getActivityInNetworkTransactions( )
 
 				$refund_text = 'NO';
 
-				if($trans->refunded == 1 && $trans->deleted == 1 || $trans->refunded == "1" && $trans->deleted == "1") {
+				if((int)$trans->refunded == 1 && (int)$trans->deleted == 1) {
 					$status_text = 'REFUNDED';
 					$refund_text = 'YES';
-				} else if($trans->health_provider_done == 1 && $trans->deleted == 1 || $trans->health_provider_done == "1" && $trans->deleted == "1") {
+				} else if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 1) {
 					$status_text = 'REMOVED';
 					$refund_text = 'YES';
 				} else {
@@ -3216,7 +3220,7 @@ public function getActivityInNetworkTransactions( )
 					'clinic_name'       => $clinic->Name,
 					'clinic_image'      => $clinic->image,
 					'amount'            => number_format($total_amount, 2),
-					'procedure_cost'    => number_format($trans->credit_cost, 2),
+					'procedure_cost'    => number_format($bill_amount, 2),
 					'clinic_type_and_service' => $clinic_name,
 					'procedure'         => $procedure,
 					'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
