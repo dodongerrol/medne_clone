@@ -1142,13 +1142,13 @@ class PlanHelper {
 			}
 		}
 
-		if(is_null($user['postal_code'])) {
-			$postal_code_error = true;
-			$postal_code_message = '*Job is empty';
-		} else {
+		// if(is_null($user['postal_code'])) {
+		// 	$postal_code_error = true;
+		// 	$postal_code_message = '*Job is empty';
+		// } else {
 			$postal_code_error = false;
 			$postal_code_message = '';
-		}
+		// }
 
 		$nric_error = false;
 		$nric_message = '';

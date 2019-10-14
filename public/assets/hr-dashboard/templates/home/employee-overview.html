@@ -369,34 +369,15 @@
 							<div>
 								<strong class="font-helvetica-medium">Last Name</strong>
 								<span ng-bind="selectedEmployee.lname">Lee</span>
-							</div>
+							</div> -->
 							<div>
 								<strong class="font-helvetica-medium">NRIC/FIN</strong>
 								<span ng-bind="selectedEmployee.nric">S8575893G</span>
-							</div> -->
-							<div>
-								<strong class="font-helvetica-medium">Member ID</strong>
-								<span ng-bind="selectedEmployee.member_id">657834</span>
 							</div>
 							<div>
 								<strong class="font-helvetica-medium">Date of Birth</strong>
 								<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
 							</div>
-							<div>
-								<strong class="font-helvetica-medium">Country Code</strong>
-								<span ng-bind="selectedEmployee.country_code">+63</span>
-							</div>
-							<div>
-								<strong class="font-helvetica-medium">Mobile Number</strong>
-								<span ng-bind="selectedEmployee.phone_no">87589582</span>
-							</div>
-						</div>
-						<div class="col-2-employee-information-details">
-							<div>
-								<strong class="font-helvetica-medium">Work Email</strong>
-								<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
-							</div>
-							
 							<div>
 								<strong class="font-helvetica-medium">Postal Code</strong>
 								<span ng-bind="selectedEmployee.postal_code">645362</span>
@@ -406,8 +387,34 @@
 								<span ng-bind="selectedEmployee.job_title">Accountant</span>
 							</div>
 							<div>
+								<strong class="font-helvetica-medium">Country Code</strong>
+								<span ng-bind="selectedEmployee.country_code">+63</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Mobile Number</strong>
+								<span ng-bind="selectedEmployee.phone_no">87589582</span>
+							</div>			
+						</div>
+						<div class="col-2-employee-information-details">
+							<div>
+								<strong class="font-helvetica-medium">Member ID</strong>
+								<span ng-bind="selectedEmployee.member_id">657834</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Work Email</strong>
+								<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
+							</div>
+							<div>
 								<strong class="font-helvetica-medium">Bank Account Number</strong>
 								<span ng-bind="selectedEmployee.bank_account">0173489384</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Bank Code</strong>
+								<span ng-bind="selectedEmployee.bank_code">0173489384</span>
+							</div>
+							<div>
+								<strong class="font-helvetica-medium">Bank BRH</strong>
+								<span ng-bind="selectedEmployee.bank_branch">0173489384</span>
 							</div>
 						</div>
 					</div>
@@ -978,38 +985,20 @@
                 </div> -->
                 <div class="col-lg-6">
                   <div class="form-group">
-                    <label class="edit-employee-modal-label">Work Email</label>
-                    <input type="email" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.email">
-                  </div>
-                </div>
-                <!-- <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Last Name</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.lname">
-                  </div>
-                </div> -->
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Mobile Number</label>
-                  	<input valid-number id="area_code" type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.phone_no">
-                  </div>
-                </div>
-               <!--  <div class="col-lg-6">
-                  <div class="form-group">
                     <label class="edit-employee-modal-label">NRIC</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.nric" readonly>
                   </div>
-                </div> -->
+                </div>
+                 <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Date of Birth</label>
+                    <input type="text" class="form-control edit-employee-modal-input datepicker" ng-model="selectedEmployee.dob">
+                  </div>
+                </div>
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Postal Code</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.postal_code">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Member ID</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.member_id" readonly>
                   </div>
                 </div>
                 <div class="col-lg-6">
@@ -1023,14 +1012,54 @@
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group">
-                    <label class="edit-employee-modal-label">Date of Birth</label>
-                    <input type="text" class="form-control edit-employee-modal-input datepicker" ng-model="selectedEmployee.dob">
+                    <label class="edit-employee-modal-label">Country Code</label>
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.country_code">
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group">
+                    <label class="edit-employee-modal-label">Mobile Number</label>
+                  	<input valid-number id="area_code" type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.phone_no">
+                  </div>
+                </div>
+                <!-- <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Last Name</label>
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.lname">
+                  </div>
+                </div> -->
+                
+                
+               
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Member ID</label>
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.member_id" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Work Email</label>
+                    <input type="email" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.email">
+                  </div>
+                </div>
+               
+                <div class="col-lg-6">
+                  <div class="form-group">
                     <label class="edit-employee-modal-label">Bank Account Number</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.bank_account">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Bank Code</label>
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.bank_code">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="edit-employee-modal-label">Bank BRH</label>
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.bank_branch">
                   </div>
                 </div>
                 
