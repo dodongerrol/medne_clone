@@ -70,6 +70,7 @@ app.directive('statementPage', [
 						data.user_id = scope.search.user_id;
 					}
 					scope.toggleLoading();
+					console.log( data );
 					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 			    if( data.user_id ){
 			      api_url += ("&user_id=" + data.user_id);
