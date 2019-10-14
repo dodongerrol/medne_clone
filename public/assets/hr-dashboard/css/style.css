@@ -3370,7 +3370,8 @@ span.number-with-circle {
   width: 50px;
   font-size: 12px;
   text-align: center;
-  border-radius: 8px;
+  padding: 2px;
+  border-radius: 4px;
 }
 
 .hidden-details-container .details-row .details-left .consultation-indicator.blue{
