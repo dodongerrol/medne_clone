@@ -651,7 +651,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.isEmpDataNotEmpty = function(){
 					if( scope.employee_data.fullname || scope.employee_data.dob ||
-							scope.employee_data.email || scope.employee_data.mobile || scope.employee_data.postal_code ){
+							scope.employee_data.email || scope.employee_data.mobile ){
 						return true;
 					}
 					return false;
@@ -922,10 +922,10 @@ app.directive('benefitsTiersDirective', [
 							return false;
 						}
 					}
-					if( !scope.employee_data.postal_code ){
-						swal( 'Error!', 'Postal Code is required.', 'error' );
-						return false;
-					}
+					// if( !scope.employee_data.postal_code ){
+					// 	swal( 'Error!', 'Postal Code is required.', 'error' );
+					// 	return false;
+					// }
 					if( !scope.employee_data.plan_start ){
 						swal( 'Error!', 'Start Date is required.', 'error' );
 						return false;
@@ -1014,7 +1014,7 @@ app.directive('benefitsTiersDirective', [
 				scope.enrollEmployees = function(){
 					var emp_arr = [];
 					if( !scope.employee_data.fullname  && !scope.employee_data.dob 
-							&& !scope.employee_data.mobile && !scope.employee_data.email && !scope.employee_data.postal_code ){
+							&& !scope.employee_data.mobile && !scope.employee_data.email ){
 
 					}else{
 						if( scope.checkEmployeeForm() == true ){
@@ -1028,7 +1028,7 @@ app.directive('benefitsTiersDirective', [
 						}
 					}
 					angular.forEach( scope.employee_arr,function(value,key){
-						if( value.fullname  && value.dob && value.postal_code && value.plan_start ){
+						if( value.fullname  && value.dob && value.plan_start ){
 							emp_arr.push( value );
 						}
 

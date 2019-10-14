@@ -63,18 +63,19 @@ app.directive('statementPage', [
 						token : window.localStorage.getItem('token'),
 						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
-						spending_type : scope.activitySpendingTypeSelected,
+						spending_type : scope.spendingTypeFilter == undefined ? "both" : scope.spendingTypeFilter,
 						status : 3,
 					}
 					if( scope.search.user_id ){
 						data.user_id = scope.search.user_id;
 					}
 					scope.toggleLoading();
+					console.log( data );
 					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 			    if( data.user_id ){
 			      api_url += ("&user_id=" + data.user_id);
 			    }
-			    // console.log( api_url );
+			    console.log( api_url );
 			    window.open( api_url );
 			    scope.toggleLoading();
 				}
