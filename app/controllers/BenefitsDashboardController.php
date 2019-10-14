@@ -3064,6 +3064,8 @@ class BenefitsDashboardController extends \BaseController {
 			// 'NRIC'				=> $input['nric'],
 			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
+			'bank_brh'			=> $input['bank_branch'],
+			'bank_code'			=> $input['bank_code'],
 			'Email'				=> $input['email'],
 			'PhoneNo'			=> $mobile,
 			'PhoneCode'			=> "+".$input['country_code'],

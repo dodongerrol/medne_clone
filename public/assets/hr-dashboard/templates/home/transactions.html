@@ -96,8 +96,8 @@
 				<div class="page-status">
 					<span ng-bind="transactions.current_total">1</span> of <span ng-bind="transactions.total">1</span>
 				</div>				
-				<div ng-if="transactions.total == transactions.to" class="arrows"></div>
-				<div ng-if="transactions.total != transactions.to" class="arrows" ng-click="nextPrevPlanTransac(true)">
+				<div ng-if="transactions.total == transactions.current_total" class="arrows"></div>
+				<div ng-if="transactions.total != transactions.current_total" class="arrows" ng-click="nextPrevPlanTransac(true)">
 					<i class="fa fa-caret-right"></i>
 				</div>
 			</div>
@@ -138,10 +138,14 @@
 				</div>
 				<div ng-if="benefits_spending.current_page == benefits_spending.from" class="arrows"></div>
 				<div class="page-status">
-					<span ng-bind="benefits_spending.to">1</span> of <span ng-bind="benefits_spending.total">1</span>
+					<span ng-bind="benefits_spending.current_total">1</span> of <span ng-bind="benefits_spending.total">1</span>
 				</div>				
-				<div ng-if="benefits_spending.total == benefits_spending.to" class="arrows"></div>
-				<div ng-if="benefits_spending.total != benefits_spending.to" class="arrows" ng-click="nextPrevBenefitsSpendingTransac(true)">
+				<!-- <div ng-if="benefits_spending.total == benefits_spending.to" class="arrows"></div>
+				<div ng-if="benefits_spending.total != benefits_spending.to" class="arrows" ng-click="getBenefitsSpendingTransac(true)">
+					<i class="fa fa-caret-right"></i>
+				</div> -->
+				<div ng-if="benefits_spending.total == benefits_spending.current_total" class="arrows"></div>
+				<div ng-if="benefits_spending.total != benefits_spending.current_total" class="arrows" ng-click="nextPrevBenefitsSpendingTransac(true)">
 					<i class="fa fa-caret-right"></i>
 				</div>
 			</div>
