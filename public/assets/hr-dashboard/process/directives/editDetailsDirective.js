@@ -205,10 +205,10 @@
 			    		swal('Error!', 'Billing Address is required.', 'error');
 			    		return false;
 			    	}
-			    	if( !scope.billing_address.billing_contact.postal ){
-			    		swal('Error!', 'Postal Code is required.', 'error');
-			    		return false;
-			    	}
+			    	// if( !scope.billing_address.billing_contact.postal ){
+			    	// 	swal('Error!', 'Postal Code is required.', 'error');
+			    	// 	return false;
+			    	// }
 
 			    	swal({
 						  title: "Confirm",
@@ -381,10 +381,10 @@
 			    		swal('Error!', 'Address is required.', 'error');
 			    		return false;
 			    	}
-			    	if( !scope.business_info.postal_code ){
-			    		swal('Error!', 'Postal Code is required.', 'error');
-			    		return false;
-			    	}
+			    	// if( !scope.business_info.postal_code ){
+			    	// 	swal('Error!', 'Postal Code is required.', 'error');
+			    	// 	return false;
+			    	// }
 
 			    	swal({
 						  title: "Confirm",

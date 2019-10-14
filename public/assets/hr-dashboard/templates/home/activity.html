@@ -566,6 +566,10 @@
 										<p ng-if="trans.transaction_type == 'credits'" style="background: #219AD7;color: white;padding: 5px;border-radius: 4px;display: block;font-size: 12px;width: 50px;text-align: center;margin-top: 4px;">
 											Credits
 										</p>
+										<p ng-if="trans.transaction_type == 'credit_cash'">
+											<span style="background: #219AD7;color: white;padding: 5px;border-radius: 4px 0 0 4px;display: inline-block;font-size: 12px;width: 55px;text-align: center;margin-top: 4px;">Credits</span> 
+											<span style="background: #1DB100;color: white;padding: 5px;border-radius: 0 4px 4px 0;display: inline-block;font-size: 12px;width: 55px;text-align: center;margin-top: 4px;margin-left: -4px;">Cash</span>
+										</p>
 										<!-- <span class="activity-spouse">Spouse of Calvin Lee</span> -->
 									</div>
 								</div>
@@ -688,6 +692,10 @@
 						<div ng-class="selected_list.service_credits && selected_list.transaction_type == 'credits' ? 'blue' : 'green'" class="procedure-indicator" ng-if="selected_list.lite_plan">
 							<span ng-if="!selected_list.service_credits && selected_list.transaction_type == 'cash' || selected_list.service_credits && selected_list.transaction_type == 'cash'">Cash</span>
 							<span ng-if="selected_list.service_credits && selected_list.transaction_type == 'credits'">Credits</span>
+						</div>
+						<div ng-if="selected_list.service_credits && selected_list.transaction_type == 'credit_cash'" class="procedure-indicator">
+							<span style="background: #219AD7;color: white;padding: 2px 5px;border-radius: 4px 0 0 4px;display: inline-block;font-size: 12px;text-align: center;margin-top: 4px;">Credits</span> 
+							<span style="background: #1DB100;color: white;padding: 2px 5px;border-radius: 0 4px 4px 0;display: inline-block;font-size: 12px;text-align: center;margin-top: 4px;margin-left: -4px;">Cash</span>
 						</div>
 						<div ng-if="selected_list.lite_plan" style="border-bottom: 1px solid #999;width: 50px;margin: 0 20px 5px auto;"></div>
 						<div class="consultation-indicator blue" ng-if="selected_list.lite_plan ">
