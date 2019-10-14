@@ -3351,7 +3351,7 @@ span.number-with-circle {
 .hidden-details-container .details-row .details-left .procedure-indicator{
   color: #fff;
   margin: 0 20px 6px auto;
-  width: 50px;
+  width: 90px;
   font-size: 12px;
   text-align: center;
   border-radius: 8px;
@@ -3370,7 +3370,8 @@ span.number-with-circle {
   width: 50px;
   font-size: 12px;
   text-align: center;
-  border-radius: 8px;
+  padding: 2px;
+  border-radius: 4px;
 }
 
 .hidden-details-container .details-row .details-left .consultation-indicator.blue{
@@ -7377,6 +7378,16 @@ ul.typeahead li a.dropdown-item
 
 .right-add-tier-btn button img {
 	height: 16px;
+}
+
+.emp-username-type-container {
+	margin: 0 5px 0 0;
+}
+
+.emp-username-type-container input {
+	position: inherit !important;
+	left: 0 !important;
+	opacity: inherit !important;
 }
 
 @media only screen and (max-width : 900px) {

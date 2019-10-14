@@ -1897,7 +1897,7 @@ class BenefitsDashboardController extends \BaseController {
 		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 		->where('corporate.corporate_id', $account_link->corporate_id)
 		// ->where('corporate_members.removed_status', 0)
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh')
 		->orderBy('corporate_members.removed_status', 'asc')
 		->orderBy('user.UserID', 'asc')
 		->paginate($per_page);
@@ -2138,7 +2138,9 @@ class BenefitsDashboardController extends \BaseController {
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
-				'bank_account'			=> $user->bank_account,
+				'bank_account'	=> $user->bank_account,
+				'bank_code'				=> $user->bank_code,
+				'bank_branch'			=> $user->bank_brh,
 				'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
@@ -3083,6 +3085,8 @@ class BenefitsDashboardController extends \BaseController {
 			// 'NRIC'				=> $input['nric'],
 			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
+			'bank_brh'			=> $input['bank_branch'],
+			'bank_code'			=> $input['bank_code'],
 			'Email'				=> $input['email'],
 			'PhoneNo'			=> $mobile,
 			'PhoneCode'			=> "+".$input['country_code'],
