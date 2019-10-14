@@ -8139,7 +8139,6 @@ public function generateMonthlyCompanyInvoice( )
 	public function downloadEclaimCsv( )
 	{
 		$input = Input::all();
-		return $input;
 		if(empty($input['token']) || $input['token'] == null) {
 			return array('status' => false, 'message' => 'Token is required.');
 		}
@@ -8336,7 +8335,7 @@ public function generateMonthlyCompanyInvoice( )
         return strtotime($b['CLAIM DATE']) - strtotime($a['CLAIM DATE']);
     });
 
-		return $container;
+		// return $container;
 		return \Excel::create('E-Claim Transactions - '.$start.' - '.$input['end'], function($excel) use($container) {
       $excel->sheet('E-Claim', function($sheet) use($container) {
           $sheet->fromArray( $container );
