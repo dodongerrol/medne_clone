@@ -3061,6 +3061,7 @@ class BenefitsDashboardController extends \BaseController {
 		$check_mobile = DB::table('user')
 							->where('PhoneNo', (string)$mobile)
 							->whereNotIn('UserID', [$input['user_id']])
+							->where('Active', 1)
 							->first();
 
 		if($check_mobile) {
@@ -3073,6 +3074,7 @@ class BenefitsDashboardController extends \BaseController {
 							->where('Email', $input['email'])
 							->where('UserType', 5)
 							->whereNotIn('UserID', [$input['user_id']])
+							->where('Active', 1)
 							->first();
 
 			if($check_email) {

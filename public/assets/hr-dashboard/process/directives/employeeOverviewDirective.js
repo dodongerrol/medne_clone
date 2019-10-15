@@ -1591,6 +1591,9 @@ app.directive("employeeOverviewDirective", [
             iti = intlTelInput(input, settings);
             iti.setNumber( scope.selectedEmployee.mobile_no );
             console.log( scope.selectedEmployee );
+            if( scope.selectedEmployee.country_code == null ){
+              scope.selectedEmployee.country_code = '65';
+            }
             scope.selectedEmployee.phone_no = scope.selectedEmployee.phone_no;
             $("#area_code").val( scope.selectedEmployee.phone_no );
             input.addEventListener("countrychange", function() {
