@@ -80,7 +80,7 @@
                 </div>
                 <b>
                     <h1 style="font-size: 35px !important;color: #000 !important;font-family: 'Open Sans', sans-serif !important;">INVOICE</h1>
-                    <p style="color: #999;font-weight: 700;margin-bottom: 20px;">Mednefits Wallet ( <span class="invoice_day_start">0</span> <span class="invoice_month">Jan</span> - <span class="invoice_day_end">0</span> <span class="invoice_month">Jan</span> <span class="invoice_year">2017</span>)</p>
+                    <p style="color: #999;font-weight: 700;margin-bottom: 20px;">Mednefits Wallet ( <span class="medni_wallet_period"></span> )</p>
                     <p><label style="color: #555;margin-right: 10px;">Clinic Name:</label> <span class="clinic_name"></span></p>
                     <p><label style="color: #555;margin-right: 10px;">Billing/Payable Name(Bank):</label> <span class="billing_name"></span></p>
                     <p><label style="color: #555;margin-right: 10px;">Clinic Address:</label> <span class="clinic_address" ></span></p>
