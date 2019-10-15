@@ -23,7 +23,7 @@ class EclaimController extends \BaseController {
 	public function loginEmployee( )
 	{
 		$input = Input::all();
-    // $email = $input['email'];
+    $email = $input['email'];
     $email = (string)($email);
     $password = $input['password'];
     
