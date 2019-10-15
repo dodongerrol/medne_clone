@@ -1347,7 +1347,7 @@ app.directive("employeeOverviewDirective", [
               var update_data = {
                 name: data.name,
                 dob: data.dob,
-                nric: data.nric,
+                nric: data.nric == '' || data.nric == null ? '' : data.nric,
                 email: data.email,
                 phone_no: data.phone_no,
                 country_code: data.country_code.replace('+', ''),
