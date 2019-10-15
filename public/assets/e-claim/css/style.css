@@ -1977,6 +1977,21 @@ body::-webkit-scrollbar-thumb
     margin-bottom: 0;
 }
 
+.claim-amount-input-wrapper .dropdown-menu {
+  right: 0;
+  left: inherit;
+  min-width: 30px;
+  width: 54px;
+}
+
+.claim-amount-input-wrapper .dropdown-menu li {
+  text-align: center;
+}
+
+.claim-amount-input-wrapper .dropdown-menu li a {
+  padding: 3px 10px;
+}
+
 @media (max-width: 575px) {
   .notification-container {
     width: 390px;
