@@ -2731,7 +2731,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('corporate.corporate_id', $id);
 		})
 		->groupBy('user.UserID')
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh')
 		->get();
 
 		if(sizeof($users) == 0) {
@@ -2984,7 +2984,9 @@ class BenefitsDashboardController extends \BaseController {
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
-				'bank_account'			=> $user->bank_account,
+				'bank_account'	=> $user->bank_account,
+				'bank_code'				=> $user->bank_code,
+				'bank_branch'			=> $user->bank_brh,
 				'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
