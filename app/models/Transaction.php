@@ -1025,12 +1025,6 @@ class Transaction extends Eloquent {
 
     public function checkTransaction($clinic_id, $data)
     {
-        // $start_date = strtotime($data['start_date']);
-        // $end_date = strtotime($data['end_date']);
-        // return Transaction::where('ClinicID', '=', $clinic_id)
-        //             ->whereBetween('date_of_transaction', [$start_date, $end_date])
-        //             ->where('paid', '=', 1)
-        //             ->count();
         $start_date = strtotime(date('Y-m-01', strtotime($data['start_date'])));
         $end_date = SpendingInvoiceLibrary::getEndDate($data['start_date']);
         // return $end_date;
@@ -1043,10 +1037,10 @@ class Transaction extends Eloquent {
                 ->count();
         if($data == 0) {
             return DB::table('transaction_history')
-                ->where('date_of_transaction', '>=', date('Y-m-d', $start_date))
+                ->where('date_of_transaction', '>=', $start_date)
                 ->where('date_of_transaction', '<=', $end_date)
-                ->where('paid', '=', 1)
-                ->where('ClinicID', '=', $clinic_id)
+                ->where('paid', 1)
+                ->where('ClinicID', $clinic_id)
                 ->count();
         } else {
             return $data;
