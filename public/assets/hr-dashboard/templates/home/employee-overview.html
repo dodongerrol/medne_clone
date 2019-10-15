@@ -371,10 +371,6 @@
 								<span ng-bind="selectedEmployee.lname">Lee</span>
 							</div> -->
 							<div>
-								<strong class="font-helvetica-medium">NRIC/FIN</strong>
-								<span ng-bind="selectedEmployee.nric">S8575893G</span>
-							</div>
-							<div>
 								<strong class="font-helvetica-medium">Date of Birth</strong>
 								<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
 							</div>
@@ -983,12 +979,12 @@
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.fname">
                   </div>
                 </div> -->
-                <div class="col-lg-6">
+               <!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">NRIC</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.nric" readonly>
+                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.nric" >
                   </div>
-                </div>
+                </div> -->
                  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Date of Birth</label>
