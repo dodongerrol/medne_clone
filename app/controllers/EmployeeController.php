@@ -60,6 +60,7 @@ class EmployeeController extends \BaseController {
 						->where('NRIC', 'like', '%'.$input['nric'].'%')
 						->where('Password', md5($input['password']))
 						->where('UserType', 5)
+                        ->where('Active', 1)
 						->whereIn('access_type', [1, 0])
 						->first();
 
