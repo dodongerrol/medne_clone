@@ -24,37 +24,37 @@ class EclaimController extends \BaseController {
 	{
 		$input = Input::all();
     $email = $input['email'];
-    // $email = (string)($email);
+    $email = (string)($email);
     $password = $input['password'];
     
-		$check = DB::table('user')
-		->where(function($query) use ($email, $password) {
-			$query->where('UserType', 5)
-			->where('Email', $email)
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-		})
-    ->orWhere(function($query) use ($email, $password){
-    	$query->where('UserType', 5)
-			->where('NRIC', 'like', '%'.$email.'%')
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-    })
-    ->orWhere(function($query) use ($email, $password){
-    	$email = (int)($email);
-    	$query->where('UserType', 5)
-			->where('PhoneNo', (string)$email)
-		  ->where('password', md5($password))
-		  ->where('Active', 1);
-    })
-		->first();
-
 		// $check = DB::table('user')
-		// 		->where('UserType', 5)
-		// 		->where('PhoneNo', $email)
-		// 		->where('password', md5($password))
-		// 		->where('Active', 1)
-		// 		->first();
+		// ->where(function($query) use ($email, $password) {
+		// 	$query->where('UserType', 5)
+		// 	->where('Email', $email)
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+		// })
+  //   ->orWhere(function($query) use ($email, $password){
+  //   	$query->where('UserType', 5)
+		// 	->where('NRIC', 'like', '%'.$email.'%')
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+  //   })
+  //   ->orWhere(function($query) use ($email, $password){
+  //   	$email = (int)($email);
+  //   	$query->where('UserType', 5)
+		// 	->where('PhoneNo', (string)$email)
+		//   ->where('password', md5($password))
+		//   ->where('Active', 1);
+  //   })
+		// ->first();
+
+		$check = DB::table('user')
+				->where('UserType', 5)
+				->where('PhoneNo', $email)
+				->where('password', md5($password))
+				->where('Active', 1)
+				->first();
 
 		if($check) {
 			if((int)$check->account_update_status == 0) {
