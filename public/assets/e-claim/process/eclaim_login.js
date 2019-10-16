@@ -75,7 +75,8 @@ login.directive('eclaimLogin', [
           //   window.open( serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase() );
           // }
           // window.location.href = serverUrl.url + 'app/update_user_id_web?platform=web&os=' + ( scope.deviceOs ).toLowerCase();
-          window.location.href = serverUrl.url + 'app/update_user_id_web?platform=web';
+          window.location.href = serverUrl.url + 'app/update_user_id_web';
+          localStorage.setItem('isFromWeb', true);
         }
 
         scope.changePassword = function( data ){
@@ -192,6 +193,7 @@ login.directive('eclaimLogin', [
         scope.onLoad = function(){
           scope.hideIntroLoader();
           scope.hideLoading();
+          // localStorage.setItem('isFromWeb', false);
           // console.log( window.location );
         };
 

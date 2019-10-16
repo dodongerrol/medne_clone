@@ -284,11 +284,13 @@ app.directive("mobileExerciseDirective", [
 
         scope.cancelBtn = function(){
           if( scope.step == 1 || scope.step == 4 ){
+            console.log( scope.devicePlatform );
             if( scope.devicePlatform == 'web' ){
               window.location = '/member-portal-login';
             }else{
               window.location = 'mednefitsapp://';
             }
+            // localStorage.setItem('isFromWeb', false);
           }else{
             scope.step -= 1;
           }
@@ -642,8 +644,9 @@ app.directive("mobileExerciseDirective", [
         }
         
         scope.onLoad = function (){
-          var params = new URLSearchParams(window.location.search);
-          scope.devicePlatform = params.get('platform');
+          // var params = new URLSearchParams(window.location.search);
+          // scope.devicePlatform = params.get('platform');
+          scope.devicePlatform = localStorage.getItem('isFromWeb') == true || localStorage.getItem('isFromWeb') == 'true' ? 'web' : null;
           console.log( scope.devicePlatform );
         }
 
