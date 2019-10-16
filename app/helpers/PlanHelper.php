@@ -1641,7 +1641,7 @@ class PlanHelper {
 				} else {
 					if($data_enrollee->mobile) {
 						$user = DB::table('user')->where('UserID', $user_id)->first();
-						$phone = SmsHelper::formatNumber($user);
+						$phone = SmsHelper::newformatNumber($user);
 
 						if($phone) {
 							$compose = [];
@@ -1661,7 +1661,7 @@ class PlanHelper {
 			} else if($communication_type == "sms"){
 				if($data_enrollee->mobile) {
 					$user = DB::table('user')->where('UserID', $user_id)->first();
-					$phone = SmsHelper::formatNumber($user);
+					$phone = SmsHelper::newformatNumber($user);
 
 					if($phone) {
 						$compose = [];
@@ -4602,7 +4602,7 @@ class PlanHelper {
 						return array('status' => true, 'message' => 'Employee Account Resetted and sent using email.');
 					} else {
 						if($user->PhoneNo) {
-							$phone = SmsHelper::formatNumber($user);
+							$phone = SmsHelper::newformatNumber($user);
 
 		                    if($phone) {
 		                    	$compose = [];
@@ -4643,7 +4643,7 @@ class PlanHelper {
 					}
 				} else {
 					if($user->PhoneNo) {
-						$phone = SmsHelper::formatNumber($user);
+						$phone = SmsHelper::newformatNumber($user);
 
 	                    if($phone) {
 	                    	$compose = [];
