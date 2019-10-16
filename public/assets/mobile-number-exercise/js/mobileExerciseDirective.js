@@ -290,7 +290,7 @@ app.directive("mobileExerciseDirective", [
             }else{
               window.location = 'mednefitsapp://';
             }
-            // localStorage.setItem('isFromWeb', false);
+            localStorage.setItem('isFromWeb', false);
           }else{
             scope.step -= 1;
           }
