@@ -644,6 +644,7 @@ app.directive("mobileExerciseDirective", [
         scope.onLoad = function (){
           var params = new URLSearchParams(window.location.search);
           scope.devicePlatform = params.get('platform');
+          // scope.devicePlatform = localStorage.getItem('isFromWeb') == true || localStorage.getItem('isFromWeb') == 'true' ? 'web' : null;
           console.log( scope.devicePlatform );
         }
 
