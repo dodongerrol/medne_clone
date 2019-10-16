@@ -75,6 +75,22 @@ class SmsHelper
 		}
 	}
 
+	public static function newformatNumber($data)
+	{
+		if($data->PhoneCode) {
+			if(strripos($data->PhoneNo, '+') !== false) {
+				$phone = $data->PhoneNo;
+			} else {
+				$phone = $data->PhoneCode.$data->PhoneNo;
+			}
+		} else {
+			$phone = $data->PhoneNo;
+		}
+				
+		return $phone;
+
+	}
+
 	public static function formatForgotPasswordMessage($data)
 	{
 		return "Reset Password SMS: Reset your Mednefits account password here: ".$data->server."/app/resetmemberpassword?token=".$data->ResetLink;
