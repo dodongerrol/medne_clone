@@ -673,7 +673,12 @@ return Response::json($returnObject);
         		$returnArray->data['profile']['age'] = $findUserProfile->Age;
         		$returnArray->data['profile']['weight'] = $findUserProfile->Weight;
             $returnArray->data['profile']['height'] = $findUserProfile->Height;
-        		$returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
+            if((int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 0 || (int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 1) {
+                $returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
+            } else {
+              $returnArray->data['profile']['to_update_auto_logout'] = false;
+            }
+        		
         		if(!empty($findUserProfile->Weight) && !empty($findUserProfile->Height)){
         			$bmi = $findUserProfile->Weight / (($findUserProfile->Height / 100) * ($findUserProfile->Height / 100));
         		}else {$bmi = 0; }
