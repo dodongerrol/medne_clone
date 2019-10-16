@@ -284,10 +284,10 @@ app.directive("mobileExerciseDirective", [
 
         scope.cancelBtn = function(){
           if( scope.step == 1 || scope.step == 4 ){
-            if( scope.devicePlatform == 'web' ){
-              window.location = '/member-portal-login';
-            }else{
+            if( scope.devicePlatform == 'mobile' ){
               window.location = 'mednefitsapp://';
+            }else{
+              window.location = '/member-portal-login';
             }
           }else{
             scope.step -= 1;
