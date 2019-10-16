@@ -84,8 +84,8 @@
 												<div class="col-md-2" style="padding-top: 16px; width: 15%;">
 									        		<span>{{ $value->Duration}} mins</span>
 									      		</div>
-									      		<div class="col-md-2" style="padding-top: 16px; width: 8%;">
-									        		<span>{{ $value->Price}}</span>
+									      		<div class="col-md-2" style="padding-top: 16px; width: 30%;">
+									        		<span> <span class="sg">S$</span><span class="rm">RM</span> {{ $value->Price}}</span>
 									      		</div>
 											</div>
 										</div>
@@ -118,8 +118,8 @@
 										<div class="col-md-2" style="padding-top: 16px; width: 15%;">
 							        		<span>{{ $value->Duration}} mins</span>
 							      		</div>
-							      		<div class="col-md-2" style="padding-top: 16px; width: 8%;">
-							        		<span>{{ $value->Price}}</span>
+							      		<div class="col-md-2" style="padding-top: 16px; width: 30%;">
+							        		<span><span class="sg">S$</span><span class="rm">RM</span> {{ $value->Price}}</span>
 							      		</div>
 									</div>
 								</div>
@@ -137,6 +137,10 @@
 
 
 <script type="text/javascript">
+
+	// Currency condition
+	$('.sg').show();
+    $('.rm').hide();
 	
 	// --------- Set Navigation bar height ------------------
 

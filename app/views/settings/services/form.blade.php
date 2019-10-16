@@ -33,7 +33,7 @@
         </div>
   			<br><br>
   			<div class="row">
-  				<div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost</div>
+  				<div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost <span class="sg">S$</span><span class="rm">RM</span></div>
   				<div class="col-md-6"> <input class="txt_bg" id="service-cost" type="text" name="" value="{{$services->Price}}"  placeholder="0" style="width: 260px;"></div>
   			</div>
   			<br>
@@ -157,7 +157,7 @@
         </div>
         <br><br>
         <div class="row">
-          <div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost</div>
+          <div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost <span class="sg">S$</span><span class="rm">RM</span></div>
           <div class="col-md-6"> <input class="txt_bg" id="service-cost" type="text" name="" value=""  placeholder="0" style="width: 260px;"></div>
         </div>
         <br>
@@ -212,6 +212,10 @@
   	
   	jQuery(document).ready(function($) {
 
+      
+      $('.sg').show();
+      $('.rm').hide();
+
   		$(document).on('click', '#delete-service', function(event) {
 			var id = $('#h-service_id').val();
 			
@@ -240,7 +244,8 @@
         
           }
 
-		    });
+        });
+
 
       event.stopImmediatePropagation();
       return false;

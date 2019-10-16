@@ -112,7 +112,7 @@
 								<p class="no-margin">Transactions</p>
 							</div>
 							<div class="value-box wallet-tooltip" style="position: relative;">
-								<h4 class="font-30 weight-700 color-gray">S$ <span ng-bind="trans_data.mednefits_wallet">2536</span></h4>
+								<h4 class="font-30 weight-700 color-gray"> <span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans_data.mednefits_wallet">2536</span></h4>
 								<p class="no-margin">Mednefits Wallet</p>
 
 								<p class="tooltip-wallet">Combine amount from Mednefits Fee and Mednefits Credit.</p>
@@ -152,19 +152,14 @@
 								<!-- <td ng-bind="trans.NRIC"></td> -->
 								<td ng-bind="trans.procedure_name"></td>
 								<td style="text-align: center;">
-									<span>S$ <span ng-bind="trans.mednefits_fee"></span></span>
-									<br>
-									<span ng-if="trans.currency_type == 'myr'">(RM<span ng-bind="trans.mednefits_fee * trans.currency_amount | number: 2"></span>)</span>
+									<span>
+										<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans.mednefits_fee"></span>
+									</span>
 								</td>
 								<td style="text-align: center;">
-									S$ <span ng-bind="trans.mednefits_credits"></span>
-									<br>
-									<span ng-if="trans.currency_type == 'myr'">(RM<span ng-bind="trans.mednefits_credits * trans.currency_amount"></span>)</span>
-								</td>
+									<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans.mednefits_credits"></span>
 								<td style="text-align: center;">
-									S$ <span ng-bind="trans.cash">0</span>
-									<br>
-									<span ng-if="trans.currency_type == 'myr'">(RM<span ng-bind="trans.cash * trans.currency_amount | number: 2"></span>)</span>
+									<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans.cash">0</span>
 								</td>
 							</tr>
 

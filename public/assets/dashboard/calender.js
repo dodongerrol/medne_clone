@@ -2500,7 +2500,7 @@ function showDetailsDialog(calEvent) {
 
           $('#appointment-doctor-detail').html(data.doctor);
           $('#appointment-service-detail').html(data.procedure);
-          $('#appointment-cost-detail').html(data.cost);
+          $('#appointment-cost-detail').html('S$ ' + data.cost);
           $('#appointment-customer-detail').html(data.customer);
           $('#appointment-nric-detail').html(data.nric);
           $('#appointment-email-detail').html(data.email);

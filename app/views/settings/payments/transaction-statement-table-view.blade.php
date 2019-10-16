@@ -22,8 +22,8 @@
       @endif
       <td> {{ $value['payment']->invoice_number }} </td>
       <td> {{ $value['clinic']->Name }} </td>
-      <td> ${{ $value['total']}} </td>
-      <td> ${{ $value['amount_due']}} </td>
+      <td> <span class="sg">S$</span><span class="rm">RM</span> {{ $value['total']}} </td>
+      <td> <span class="sg">S$</span><span class="rm">RM</span> {{ $value['amount_due']}} </td>
       <td>
           @if((int)$value['payment']->status == 1)
             <a class="view-statement-button" href="javascript:void(0)">View </a>
@@ -41,5 +41,15 @@
           @endif
       </td>
 </tr>
+
+<script type="text/javascript">
+
+	// Currency condition
+	setTimeout(() => {
+		$('.sg').show();
+    	$('.rm').hide();	
+	}, 1000);
+
+</script>
 
 @endforeach

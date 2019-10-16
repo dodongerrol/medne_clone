@@ -27,7 +27,7 @@
           <span style="color: #999999;">{{ $value->Duration}} mins</span>
         </div>
         <div class="col-xs-2 col-sm-2 col-md-2 service-details-info" style="padding: 20px 0;">
-          <span style="color: #999999;">{{ $value->Price}}</span>
+           <span style="color: #999999;"><span class="sg">S$</span> <span class="rm">RM</span> {{ $value->Price}}</span>
         </div>
       </span>
       <div class="col-xs-3 col-sm-3 col-md-3" style="padding: 20px 0;padding-right: 15px;text-align: right;">
@@ -115,6 +115,9 @@
 
   <script type="text/javascript">
 
+// Currency condition
+      $('.sg').show();
+      $('.rm').hide();
 
     // --------- Set Navigation bar height ------------------
 
