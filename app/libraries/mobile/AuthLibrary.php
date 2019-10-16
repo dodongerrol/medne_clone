@@ -742,7 +742,7 @@ class AuthLibrary{
                 $findNewUser->PhoneCode = $findNewUser->backup_mobile_area_code;
               }
                 // check and format phone number
-              $phone = SmsHelper::formatNumber($findNewUser);
+              $phone = SmsHelper::newformatNumber($findNewUser);
 
               if($phone) {
                 $findNewUser->phone = $phone;
