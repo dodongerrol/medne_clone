@@ -2751,7 +2751,8 @@ public function getActivityOutNetworkTransactions( )
 				'receipt_status'    => $e_claim_receipt_status,
 				'files'             => $doc_files,
 				'spending_type'     => ucwords($res->spending_type),
-				'dependent_relationship'    => $dependent_relationship
+				'dependent_relationship'    => $dependent_relationship,
+				'currency_type'     => $res->default_currency
 			);
 
 			array_push($e_claim, $temp);
@@ -2812,18 +2813,6 @@ public function getActivityInNetworkTransactions( )
 
 	if(!empty($input['user_id']) && $input['user_id'] != null) {
 		$user_ids = StringHelper::getSubAccountsID($input['user_id']);
-		// return $ids;
-		// $transactions = DB::table('corporate_members')
-		// ->join('transaction_history', 'transaction_history.UserID', '=', 'corporate_members.user_id')
-		// ->where('corporate_members.corporate_id', $account->corporate_id)
-		// // ->where('corporate_members.user_id', $input['user_id'])
-		// ->whereIn('transaction_history.UserID', $ids)
-		// ->where('transaction_history.spending_type', $spending_type)
-		// ->where('transaction_history.paid', 1)
-		// ->where('transaction_history.date_of_transaction', '>=', $start)
-		// ->where('transaction_history.date_of_transaction', '<=', $end)
-		// ->orderBy('transaction_history.date_of_transaction', 'desc')
-		// ->paginate($input['per_page']);
 		$transactions = DB::table('transaction_history')
 		->where('spending_type', $spending_type)
 		->whereIn('UserID', $user_ids)
@@ -3252,11 +3241,12 @@ public function getActivityInNetworkTransactions( )
 					'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null,
 					'dependent_relationship'    => $dependent_relationship,
 					'cap_transaction'   => $half_credits,
-				    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
-				    'paid_by_cash'      => number_format($trans->cash_cost, 2),
-				    'paid_by_credits'   => number_format($paid_by_credits, 2),
-				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$",
-					'files'				=> $doc_files
+			    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
+			    'paid_by_cash'      => number_format($trans->cash_cost, 2),
+			    'paid_by_credits'   => number_format($paid_by_credits, 2),
+				  "currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
+				  "currency_type" 		=> $trans->default_currency,
+					'files'							=> $doc_files
 				);
 
 				array_push($transaction_details, $format);
@@ -4850,11 +4840,12 @@ public function getHrActivity( )
 						'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null,
 						'dependent_relationship'    => $dependent_relationship,
 						'cap_transaction'   => $half_credits,
-					    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
-					    'paid_by_cash'      => number_format($trans->cash_cost, 2),
-					    'paid_by_credits'   => number_format($paid_by_credits, 2),
-					    "currency_symbol" 	=> $trans->currency_type == "myr" ? "RM" : "S$",
-						'files'				=> $doc_files
+				    'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
+				    'paid_by_cash'      => number_format($trans->cash_cost, 2),
+				    'paid_by_credits'   => number_format($paid_by_credits, 2),
+				    "currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
+				    "currency_type" 		=> $trans->default_currency == "myr" ? "MYR" : "SGD",
+						'files'							=> $doc_files
 					);
 
 					array_push($transaction_details, $format);
@@ -5888,7 +5879,8 @@ public function hrEclaimActivity( )
 				'bank_name'					=> $bank_name,
 				'bank_code'					=> $bank_code,
 				'bank_brh'					=> $bank_brh,
-				'nric'							=> $member->NRIC
+				'nric'							=> $member->NRIC,
+				'currency_type'			=> $res->default_currency
 			);
 
 			array_push($e_claim, $temp);

@@ -5,9 +5,10 @@ class PlanTierController extends \BaseController {
 	public function getPlanTiers( )
 	{
 		$customer_id = PlanHelper::getCusomerIdToken();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$plan_tiers = DB::table('plan_tiers')->where('customer_id', $customer_id)->where('active', 1)->get();
 
-		return array('status' => true, 'data' => $plan_tiers);
+		return array('status' => true, 'data' => $plan_tiers, 'currency_type' => $customer->currency_type);
 	}
 	public function createPlanTier( )
 	{

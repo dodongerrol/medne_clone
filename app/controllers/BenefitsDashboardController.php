@@ -2111,7 +2111,8 @@ class BenefitsDashboardController extends \BaseController {
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
-					'wellness'	=> $wellness
+					'wellness'	=> $wellness,
+					'currency_type' => $wallet->currency_type
 				),
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
@@ -2212,6 +2213,7 @@ class BenefitsDashboardController extends \BaseController {
 		$get_allocation_spent_wellness = 0;
 		$total_medical_balance = 0;
 		$total_wellness_balance = 0;
+		$currency_type = "sgd";
 
 		// $check_accessibility = self::hrStatus( );
 		$check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
@@ -2322,11 +2324,10 @@ class BenefitsDashboardController extends \BaseController {
 			
 
 			$total_medical_allocated = $allocated - $deleted_employee_allocation;
-
 			$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness;
-
 			$credits = $total_medical_allocation - $total_medical_allocated;
 			$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
+			$currency_type = $company_credits->currency_type;
 
 			if($company_credits->balance != $credits) {
 				// update medical credits
@@ -2352,7 +2353,8 @@ class BenefitsDashboardController extends \BaseController {
 			'total_wellness_employee_spent'		=> number_format($get_allocation_spent_wellness, 2),
 			'total_wellness_employee_balance' => number_format($total_wellness_balance, 2),
 			'total_wellness_employee_balance_number' => $total_wellness_balance,
-			'company_id' => $result->customer_buy_start_id
+			'company_id' => $result->customer_buy_start_id,
+			'currency_type' => $currency_type
 		);
 	}
 
@@ -2962,7 +2964,8 @@ class BenefitsDashboardController extends \BaseController {
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
-					'wellness'	=> $wellness
+					'wellness'	=> $wellness,
+					'currency_type' => $wallet->currency_type
 				),
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
@@ -4447,7 +4450,8 @@ class BenefitsDashboardController extends \BaseController {
 				'head_count'		=> $head_count,
 				'invoice_id' => $get_invoice->corporate_invoice_id,
 				'type_invoice'		=> 'employee',
-				'calculated_prices'		=> $data['calculated_prices']
+				'calculated_prices'		=> $data['calculated_prices'],
+				'currency_type'	=> $get_invoice->currency_type
 			);
 			array_push($transactions, $temp_invoice);
 
@@ -4573,7 +4577,8 @@ class BenefitsDashboardController extends \BaseController {
 					'link'					=> url('benefits/invoice?invoice_id='.$invoice->dependent_invoice_id, $parameters = array(), $secure = null),
 					'receipt_link'			=> null,
 					'invoice_id' => $invoice->dependent_plan_id,
-					'type_invoice'		=> 'dependent'
+					'type_invoice'		=> 'dependent',
+					'currency_type'	=> $invoice->currency_type
 				);
 				array_push($transactions, $temp_invoice);
 			}
@@ -6947,17 +6952,6 @@ class BenefitsDashboardController extends \BaseController {
 		$new_data = [];
 
 		foreach ($customer_plans as $key => $cplan) {
-			// $active_plans = DB::table('customer_active_plan')
-			// 							->where(function($query) use ($cplan){
-			// 								$query->where('account_type', 'insurance_bundle')
-			// 								->where('plan_id', $cplan->customer_plan_id)
-			// 								->where('new_head_count', 1);
-			// 							})
-			// 							->orWhere(function($query) use ($cplan){
-			// 								$query->where('account_type', 'stand_alone_plan')
-			// 								->where('plan_id', $cplan->customer_plan_id);
-			// 							})
-			// 							->get();
 			$active_plans = DB::table('customer_active_plan')->where('plan_id', $cplan->customer_plan_id)->get();
 			foreach ($active_plans as $key => $plan) {
 				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan") {
@@ -6984,7 +6978,8 @@ class BenefitsDashboardController extends \BaseController {
 								'total_amount'	=> number_format($amount, 2),
 								'total_employees' => $refunds,
 								'date_withdraw'	 => $withdraw->date_refund,
-								'refund_data'		=> $withdraw
+								'refund_data'		=> $withdraw,
+								'currency_type' => $withdraw->currency_type
 							);
 
 							array_push($new_data, $temp);
@@ -10655,7 +10650,7 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$total_wellness_allocation = $temp_total_wellness_allocation - $temp_total_wellness_deduction;
-		return array('status' => TRUE, 'total_allocation' => $total_medical_allocation, 'total_wellness_allocation' => $total_wellness_allocation);
+		return array('status' => TRUE, 'total_allocation' => $total_medical_allocation, 'total_wellness_allocation' => $total_wellness_allocation, 'currency_type' => $company_credits->currency_type);
 	}
 
 	public function updateEmployeeCredits( )
@@ -11978,7 +11973,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$total_due = 0;
 		$plans = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->get();
-
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		foreach ($plans as $key => $plan) {
 			$pending_active_plans = DB::table('customer_active_plan')
 			->where('plan_id', $plan->customer_plan_id)
@@ -12028,14 +12023,14 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-		return array('status' => true, 'total_due' => number_format($total_due, 2));
+		return array('status' => true, 'total_due' => number_format($total_due, 2), 'currency_type' => $customer->currency_type);
 	}
 
 	public function getSpendingPendingAmountDue( )
 	{
 		$input = Input::all();
 		$customer_id = PlanHelper::getCusomerIdToken();
-
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$total_due = 0;
 		$data_due = null;
 		$paid = false;
@@ -12056,9 +12051,9 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		if($data_due) {
-			return array('status' => true, 'spending_total_due' => number_format($total_due, 2), 'due_date' => date('d F Y', strtotime($data_due->statement_due)));
+			return array('status' => true, 'spending_total_due' => number_format($total_due, 2), 'due_date' => date('d F Y', strtotime($data_due->statement_due)), 'currency_type' => $customer->currency_type);
 		} else {
-			return array('status' => true, 'spending_total_due' => number_format($total_due, 2));
+			return array('status' => true, 'spending_total_due' => number_format($total_due, 2), 'currency_type' => $customer->currency_type);
 		}
 
 	}
