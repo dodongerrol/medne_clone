@@ -391,6 +391,7 @@ app.directive('statementPage', [
 
 					scope.monthStart = moment(firstDay).startOf('month').format('D MMMM');
 					scope.monthEnd = moment(lastDay).endOf('month').format('D MMMM');
+					scope.year = yearToday;
 					// console.log(scope.monthStart);
 					// console.log(scope.monthEnd);
 
@@ -509,6 +510,7 @@ app.directive('statementPage', [
 					}
 
 					var range_data = date_slider.getValue();
+
 
 		    	var activity_search = scope.getFirstEndDate( range_data, range_data );
 		    	// var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
