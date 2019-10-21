@@ -523,10 +523,11 @@ function getClinicInvoiceList(date) {
       $("#error-log").hide();
       $("#invoice-items-table").html("");
       if (data) {
-        $(".invoice_day_start").text( data.start_date );
-        $(".invoice_day_end").text( data.end_date );
-        $(".invoice_month").text( moment( data.start_date ).format("MMM") );
-        $(".invoice_year").text( moment( data.start_date ).format("YYYY") );
+        // $(".invoice_day_start").text( data.start_date );
+        // $(".invoice_day_end").text( data.end_date );
+        // $(".invoice_month").text( moment( data.start_date ).format("MMM") );
+        // $(".invoice_year").text( moment( data.start_date ).format("YYYY") );
+        $(".medni_wallet_period").text( data.period );
 
         for( var i = 0; i < data.transaction_lists.length; i++ ){
           $("#invoice-items-table").append('<tr>' +

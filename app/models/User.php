@@ -36,7 +36,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                         ->where('UserType', 5);
                      })
                      ->orWhere(function($query) use ($email, $password){
-                        $query->where('NRIC', 'like', '%'.$email.'%')
+                        $email = strtoupper($email);
+                        $query->where('NRIC', $email)
                         ->where('Password', StringHelper::encode($password))
                         ->where('Active', 1)
                         ->where('UserType', 5);
@@ -49,14 +50,23 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                         ->where('UserType', 5);
                      })
                      ->first();
-            // $email = (int)($email);
-            // $users = DB::table('user')
-            //          ->select('UserID')
-            //         ->where('PhoneNo', (string)$email)
-            //         ->where('Password', StringHelper::encode($password))
-            //         ->where('Active', 1)
-            //         ->where('UserType', 5)
-            //          ->first();
+
+            if($users){
+                return $users->UserID;
+            }else{
+                return false;
+            }
+        }
+
+        public function newAuthLogin ($email, $password){
+            $email = (int)($email);
+            $users = DB::table('user')
+                     ->select('UserID')
+                    ->where('PhoneNo', (string)$email)
+                    ->where('Password', StringHelper::encode($password))
+                    ->where('Active', 1)
+                    ->where('UserType', 5)
+                     ->first();
 
             if($users){
                 return $users->UserID;

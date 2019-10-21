@@ -26,6 +26,7 @@ app.directive("mobileExerciseDirective", [
         scope.stopAutoFocus = false;
         scope.reset_password_text = '';
         scope.isConfirmSelected = false;
+        scope.deviceOs = null;
 
         var iti = null;
 
@@ -202,8 +203,6 @@ app.directive("mobileExerciseDirective", [
             }else{
               scope.emp_mobile_error = false;
               scope.emp_mobile_error_message = '';
-
-              scope.checkMobileTaken( scope.member_details.mobile );
             }
           }
 
@@ -244,6 +243,7 @@ app.directive("mobileExerciseDirective", [
               }else{
                 scope.isConfirmActive = false;
               }
+              scope.checkMobileTaken( scope.member_details.mobile );
             }
           })
 
@@ -253,7 +253,9 @@ app.directive("mobileExerciseDirective", [
             }else{
               scope.isConfirmActive = false;
             }
+            scope.checkMobileTaken( scope.member_details.mobile );
           }
+          console.log( scope.isConfirmActive );
         }
 
         scope.submitNric = function( data ){
@@ -343,14 +345,19 @@ app.directive("mobileExerciseDirective", [
           }
           if( num == 3 ){
             scope.validateForm();
+            scope.checkMobileTaken( scope.member_details.mobile );
             scope.isConfirmSelected = true;
-            if( scope.isConfirmActive == true ){
-              scope.sendOtpCode();
-              $timeout(function() {
-                $(".otp-input-wrapper input:eq(0)").focus();
-              }, 300);
-              scope.step = num;
-            }
+            scope.showLoading();
+            $timeout(function() {
+              if( scope.isConfirmActive == true ){
+                scope.sendOtpCode();
+                $timeout(function() {
+                  $(".otp-input-wrapper input:eq(0)").focus();
+                }, 300);
+                scope.step = num;
+              }
+              scope.hideLoading();
+            }, 1000);
           }
         }
 
@@ -634,10 +641,41 @@ app.directive("mobileExerciseDirective", [
 
           },200)
         }
+
+        scope.getOs = function(){
+          var userAgent = window.navigator.userAgent,
+              platform = window.navigator.platform,
+              macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+              windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+              iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+              os = null;
+
+          if (macosPlatforms.indexOf(platform) !== -1) {
+            os = 'Mac OS';
+          } else if (iosPlatforms.indexOf(platform) !== -1) {
+            os = 'iOS';
+          } else if (windowsPlatforms.indexOf(platform) !== -1) {
+            os = 'Windows';
+          } else if (/Android/.test(userAgent)) {
+            os = 'Android';
+          } else if (!os && /Linux/.test(platform)) {
+            os = 'Linux';
+          }
+
+          scope.deviceOs = os;
+          return os;
+        }
         
         scope.onLoad = function (){
-          var params = new URLSearchParams(window.location.search);
-          scope.devicePlatform = params.get('platform');
+          var fetchOs = scope.getOs();
+          if( fetchOs == 'Mac OS' || fetchOs == 'Windows' ){
+            scope.devicePlatform = 'web';
+          }else{
+            scope.devicePlatform = 'mobile';
+          }
+          // var params = new URLSearchParams(window.location.search);
+          // scope.devicePlatform = params.get('platform');
+          // scope.devicePlatform = localStorage.getItem('isFromWeb') == true || localStorage.getItem('isFromWeb') == 'true' ? 'web' : null;
           console.log( scope.devicePlatform );
         }
 

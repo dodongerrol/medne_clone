@@ -38,6 +38,12 @@ class Api_V1_AuthController extends \BaseController {
 		return Response::json($findLogin);
 	}
 
+  public function newLogin(){
+            // return Input::all();
+    $findLogin = AuthLibrary::newLogin();
+    return Response::json($findLogin);
+  }
+
         //Login by mobile app
 	/*
         public function login_old(){
@@ -666,7 +672,13 @@ return Response::json($returnObject);
         		$returnArray->data['profile']['dob'] = $findUserProfile->DOB;
         		$returnArray->data['profile']['age'] = $findUserProfile->Age;
         		$returnArray->data['profile']['weight'] = $findUserProfile->Weight;
-        		$returnArray->data['profile']['height'] = $findUserProfile->Height;
+            $returnArray->data['profile']['height'] = $findUserProfile->Height;
+            if((int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 0 || (int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 1) {
+                $returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
+            } else {
+              $returnArray->data['profile']['to_update_auto_logout'] = false;
+            }
+        		
         		if(!empty($findUserProfile->Weight) && !empty($findUserProfile->Height)){
         			$bmi = $findUserProfile->Weight / (($findUserProfile->Height / 100) * ($findUserProfile->Height / 100));
         		}else {$bmi = 0; }

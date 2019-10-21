@@ -12,9 +12,13 @@ app.directive("companyContactsDirective", [
 
         scope.company_contacts = {};
         scope.transactions = {};
+        scope.transactions.current_total = 0;
+        scope.transactions.temp_total = 0;
         scope.refunds = {};
         scope.billings = {};
         scope.benefits_spending = {};
+        scope.benefits_spending.current_total = 0;
+        scope.benefits_spending.temp_total = 0;
         scope.spending_deposits = {};
         scope.options = {};
         scope.download_token = {};
@@ -223,9 +227,31 @@ app.directive("companyContactsDirective", [
 
         scope.getTransac = function(page){
           scope.toggleLoading();
+          var curr_total = scope.transactions.current_total != 0 ? scope.transactions.current_total : 0;
           hrSettings.getTransactions( page ).then(function(response) {
             console.log(response);
             scope.transactions = response.data;
+            scope.transactions.current_total = curr_total + parseInt(response.data.to);
+            scope.transactions.temp_total = parseInt(response.data.to);
+            console.log('scope.transactions.current_total', scope.transactions.current_total)
+            setTimeout(function() {
+              $(".info-container").fadeIn();
+              $(".loader-container").hide();
+            }, 200);
+            scope.toggleOff();
+          });
+        };
+
+        scope.getTransacPrev = function(page){
+          scope.toggleLoading();
+          var curr_total = scope.transactions.current_total != 0 ? scope.transactions.current_total : 0;
+          var temp_total = scope.transactions.temp_total != 0 ? scope.transactions.temp_total : 0;
+          hrSettings.getTransactions( page ).then(function(response) {
+            console.log(response);
+            scope.transactions = response.data;
+            scope.transactions.current_total = curr_total - temp_total ;
+            scope.transactions.temp_total = parseInt(response.data.to);
+            console.log('scope.transactions.current_total', scope.transactions.current_total)
             setTimeout(function() {
               $(".info-container").fadeIn();
               $(".loader-container").hide();
@@ -236,8 +262,29 @@ app.directive("companyContactsDirective", [
 
         scope.getBenefitsSpendingTransac = function(page){
           scope.toggleLoading();
+          var curr_total = scope.benefits_spending.current_total != 0 ? scope.benefits_spending.current_total : 0;
           hrSettings.getBenefitsSpendingTransac(page).then(function(response) {
             scope.benefits_spending = response.data;
+            scope.benefits_spending.current_total = curr_total + parseInt(response.data.to);
+            scope.benefits_spending.temp_total = parseInt(response.data.to);
+            scope.toggleOff();
+          });
+        };
+
+        scope.getBenefitsSpendingTransacPrev = function(page){
+          scope.toggleLoading();
+          var curr_total = scope.benefits_spending.current_total != 0 ? scope.benefits_spending.current_total : 0;
+          var temp_total = scope.benefits_spending.temp_total != 0 ? scope.benefits_spending.temp_total : 0;
+          hrSettings.getBenefitsSpendingTransac( page ).then(function(response) {
+            console.log(response);
+            scope.benefits_spending = response.data;
+            scope.benefits_spending.current_total = curr_total - temp_total ;
+            scope.benefits_spending.temp_total = parseInt(response.data.to);
+            console.log('scope.transactions.current_total', scope.benefits_spending.current_total)
+            setTimeout(function() {
+              $(".info-container").fadeIn();
+              $(".loader-container").hide();
+            }, 200);
             scope.toggleOff();
           });
         };
@@ -353,19 +400,23 @@ app.directive("companyContactsDirective", [
         scope.nextPrevPlanTransac = function(opt){
           if( opt == true ){
             scope.plan_transactions_page++;
+            scope.getTransac(scope.plan_transactions_page, opt);
           }else{
             scope.plan_transactions_page--;
+            scope.getTransacPrev( scope.plan_transactions_page );
           }
-          scope.getTransac(scope.plan_transactions_page);
+          
         }
 
         scope.nextPrevBenefitsSpendingTransac = function(opt){
           if( opt == true ){
             scope.benefits_spending_page++;
+            scope.getBenefitsSpendingTransac(scope.benefits_spending_page, opt);
           }else{
             scope.benefits_spending_page--;
+            scope.getBenefitsSpendingTransacPrev(scope.benefits_spending_page, opt);
           }
-          scope.getBenefitsSpendingTransac(scope.benefits_spending_page);
+          
         }
 
         scope.nextPrevSpendingDeposits = function(opt){

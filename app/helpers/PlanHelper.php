@@ -1142,13 +1142,13 @@ class PlanHelper {
 			}
 		}
 
-		if(is_null($user['postal_code'])) {
-			$postal_code_error = true;
-			$postal_code_message = '*Job is empty';
-		} else {
+		// if(is_null($user['postal_code'])) {
+		// 	$postal_code_error = true;
+		// 	$postal_code_message = '*Job is empty';
+		// } else {
 			$postal_code_error = false;
 			$postal_code_message = '';
-		}
+		// }
 
 		$nric_error = false;
 		$nric_message = '';
@@ -1632,7 +1632,7 @@ class PlanHelper {
 				} else {
 					if($data_enrollee->mobile) {
 						$user = DB::table('user')->where('UserID', $user_id)->first();
-						$phone = SmsHelper::formatNumber($user);
+						$phone = SmsHelper::newformatNumber($user);
 
 						if($phone) {
 							$compose = [];
@@ -1643,7 +1643,7 @@ class PlanHelper {
 							$compose['nric'] = $data_enrollee->mobile;
 							$compose['password'] = $password;
 							$compose['phone'] = $phone;
-
+							$compose['sms_type'] = "LA";
 							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 							$result_sms = SmsHelper::sendSms($compose);
 						}
@@ -1652,7 +1652,7 @@ class PlanHelper {
 			} else if($communication_type == "sms"){
 				if($data_enrollee->mobile) {
 					$user = DB::table('user')->where('UserID', $user_id)->first();
-					$phone = SmsHelper::formatNumber($user);
+					$phone = SmsHelper::newformatNumber($user);
 
 					if($phone) {
 						$compose = [];
@@ -4550,7 +4550,7 @@ class PlanHelper {
 						return array('status' => true, 'message' => 'Employee Account Resetted and sent using email.');
 					} else {
 						if($user->PhoneNo) {
-							$phone = SmsHelper::formatNumber($user);
+							$phone = SmsHelper::newformatNumber($user);
 
 		                    if($phone) {
 		                    	$compose = [];
@@ -4561,6 +4561,7 @@ class PlanHelper {
 								$compose['nric'] = $user->PhoneNo;
 								$compose['password'] = $password;
 								$compose['phone'] = $phone;
+								$compose['sms_type'] = "LA";
 
 								$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 								$result_sms = SmsHelper::sendSms($compose);
@@ -4591,7 +4592,7 @@ class PlanHelper {
 					}
 				} else {
 					if($user->PhoneNo) {
-						$phone = SmsHelper::formatNumber($user);
+						$phone = SmsHelper::newformatNumber($user);
 
 	                    if($phone) {
 	                    	$compose = [];

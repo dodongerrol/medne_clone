@@ -1894,7 +1894,7 @@ class BenefitsDashboardController extends \BaseController {
 		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 		->where('corporate.corporate_id', $account_link->corporate_id)
 		// ->where('corporate_members.removed_status', 0)
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh')
 		->orderBy('corporate_members.removed_status', 'asc')
 		->orderBy('user.UserID', 'asc')
 		->paginate($per_page);
@@ -2133,7 +2133,9 @@ class BenefitsDashboardController extends \BaseController {
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
-				'bank_account'			=> $user->bank_account,
+				'bank_account'	=> $user->bank_account,
+				'bank_code'				=> $user->bank_code,
+				'bank_branch'			=> $user->bank_brh,
 				'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
@@ -2729,7 +2731,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('corporate.corporate_id', $id);
 		})
 		->groupBy('user.UserID')
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh')
 		->get();
 
 		if(sizeof($users) == 0) {
@@ -2982,7 +2984,9 @@ class BenefitsDashboardController extends \BaseController {
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
-				'bank_account'			=> $user->bank_account,
+				'bank_account'	=> $user->bank_account,
+				'bank_code'				=> $user->bank_code,
+				'bank_branch'			=> $user->bank_brh,
 				'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
@@ -3041,6 +3045,7 @@ class BenefitsDashboardController extends \BaseController {
 		$check_mobile = DB::table('user')
 							->where('PhoneNo', (string)$mobile)
 							->whereNotIn('UserID', [$input['user_id']])
+							->where('Active', 1)
 							->first();
 
 		if($check_mobile) {
@@ -3051,7 +3056,9 @@ class BenefitsDashboardController extends \BaseController {
 		if(!empty($input['email'])) {
 			$check_email= DB::table('user')
 							->where('Email', $input['email'])
+							->where('UserType', 5)
 							->whereNotIn('UserID', [$input['user_id']])
+							->where('Active', 1)
 							->first();
 
 			if($check_email) {
@@ -3064,6 +3071,8 @@ class BenefitsDashboardController extends \BaseController {
 			// 'NRIC'				=> $input['nric'],
 			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
+			'bank_brh'			=> $input['bank_branch'],
+			'bank_code'			=> $input['bank_code'],
 			'Email'				=> $input['email'],
 			'PhoneNo'			=> $mobile,
 			'PhoneCode'			=> "+".$input['country_code'],
@@ -4382,6 +4391,7 @@ class BenefitsDashboardController extends \BaseController {
 				$data['amount_due']     = number_format($get_invoice->employees * $get_invoice->individual_price, 2);
 				if((int)$get_invoice->override_total_amount_status == 1) {
 					$calculated_prices = $get_invoice->override_total_amount;
+					$data['calculated_prices'] = $calculated_prices;
 				} else {
 					$data['calculated_prices'] = $get_invoice->individual_price;
 				}

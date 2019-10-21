@@ -18,9 +18,56 @@ class AuthLibrary{
         return $returnObject;
       }
 
+      // if((int)$user->account_update_status == 0) {
+      //   $returnObject->status = FALSE;
+      //   $returnObject->error = 'update_credentials';
+      //   $returnObject->url = url().'/app/update_user_id_web?platform=mobile';
+      //   $returnObject->error_description = 'Please click here to change your user ID to your mobile number.';
+      //   return $returnObject;
+      // }
+
+      $token->data['user_id'] = $findUserID;
+      $returnObject->error= "false";
+      $returnObject = $token;
+      $returnObject->data['promocode'] = null;
+      $admin_logs = array(
+        'admin_id'  => $findUserID,
+        'admin_type' => 'member',
+        'type'      => 'admin_member_login_mobile',
+        'data'      => SystemLogLibrary::serializeData($token)
+      );
+      SystemLogLibrary::createAdminLog($admin_logs);
+
+    } else if($token->fields == FALSE) {
+      $returnObject = $token;
+    } else{
+      $returnObject->status = FALSE;
+      $returnObject->url = null;
+      $returnObject->error = 'invalid_credentials';
+            // $returnObject->error_description = 'The user credentials were incorrect.';
+      $returnObject->error_description = 'Invalid Credentials';
+    }
+    return $returnObject;
+  }
+
+  public static function newLogin(){
+    $returnObject = new stdClass();
+    $input = Input::all();
+    $token = StringHelper::newCustomLoginToken($input);
+    if($token->status){
+      $findUserID = self::FindUserFromToken($token->data['access_token']);
+      $activePromoCode = General_Library::ActivePromoCode();
+      $user = DB::table('user')->where('UserID', $findUserID)->where('Active', 1)->first();
+
+      if(!$user) {
+        $returnObject->status = FALSE;
+        $returnObject->message = StringHelper::errorMessage("Login");
+        return $returnObject;
+      }
+
       if((int)$user->account_update_status == 0) {
         $returnObject->status = FALSE;
-        $returnObject->error = 'update_credentials';
+        $returnObject->error = 'invalid_credentials';
         $returnObject->url = url().'/app/update_user_id_web?platform=mobile';
         $returnObject->error_description = 'Please click here to change your user ID to your mobile number.';
         return $returnObject;
@@ -695,7 +742,7 @@ class AuthLibrary{
                 $findNewUser->PhoneCode = $findNewUser->backup_mobile_area_code;
               }
                 // check and format phone number
-              $phone = SmsHelper::formatNumber($findNewUser);
+              $phone = SmsHelper::newformatNumber($findNewUser);
 
               if($phone) {
                 $findNewUser->phone = $phone;
@@ -705,9 +752,10 @@ class AuthLibrary{
                 $compose = [];
                 $compose['phone'] = $phone;
                 $compose['message'] = $message;
+                $compose['sms_type'] = "LA";
 
                 $result_sms = SmsHelper::sendSms($compose);
-
+                return $result_sms;
                     // if($result_sms['status'] == true) {
                        // $returnObject->status = TRUE;
                        // $returnObject->type = "sms";

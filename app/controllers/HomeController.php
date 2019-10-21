@@ -1288,9 +1288,16 @@ public function searchUser( )
   ->where('PhoneNo', 'LIKE', '%'.(int)$input['q'].'%')
   ->where('UserType', 5)
   ->orderBy('UserID', 'desc')
-  ->select('UserID as id', 'Name as name', 'PhoneNo as mobile', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type', 'Active as status')
+  ->select('UserID as id', 'Name as name', 'PhoneNo as mobile', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type', 'Active as status', 'DOB as dob')
   ->orderBy('UserID')
   ->get();
+  
+  foreach ($results as $key => $result) {
+    if($result->dob) {
+      $result->dob = date('d/m/Y', strtotime($result->dob));
+    }
+  }
+
   $data['number_of_results'] = sizeOf($results);
   $data['results'] = $results;
 
