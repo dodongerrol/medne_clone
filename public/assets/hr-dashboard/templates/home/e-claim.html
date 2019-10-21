@@ -256,7 +256,7 @@
 							<button class="btn btn-csv" ng-click="downloadCSV()">Download CSV <i class="fa fa-download"></i></button>
 
 
-							<button class="btn btn-receipts" ng-click="downloadAllReceipts(  )">
+							<button class="btn btn-receipts" ng-disabled="receipts_arr.length == 0" ng-click="downloadAllReceipts(  )">
 								Download receipts <span ng-if="search.user_id">for <span ng-bind="selected_search_user.Name">Allan</span></span> <i class="fa fa-download"></i>
 							</button>
 						</div>
