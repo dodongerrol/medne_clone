@@ -183,7 +183,7 @@
 					<th>DATE</th>
 					<th>TRANSACTION ID</th>
 					<th>NAME</th>
-					<th>NRIC</th>
+					<!-- <th>NRIC</th> -->
 					<th>SERVICE/S</th>
 					<th>MEDNEFITS FEE</th>
 					<th>MEDNEFITS CREDIT</th>
@@ -202,7 +202,7 @@
 						<label class="label label-success label-custom">{{ $trans['transaction_status'] }}</label>
 						@endif
 					</td>
-					<td>{{ $trans['NRIC'] }}</td>
+					<!-- <td>{{ $trans['NRIC'] }}</td> -->
 					<td>{{ $trans['procedure_name'] }}</td>
 					<td>S$ {{ $trans['mednefits_fee'] }}</td>
 					<td>S$ {{ $trans['mednefits_credits'] }}</td>

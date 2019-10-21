@@ -396,10 +396,10 @@ app.directive("employeeOverviewDirective", [
               return false;
             }
           }
-          if( !data.postal_code ){
-            swal( 'Error!', 'Postal Code is required.', 'error' );
-            return false;
-          }
+          // if( !data.postal_code ){
+          //   swal( 'Error!', 'Postal Code is required.', 'error' );
+          //   return false;
+          // }
 
           return true;
         }
@@ -456,10 +456,10 @@ app.directive("employeeOverviewDirective", [
               return false;
             }
           }
-          if( !data.postal_code ){
-            swal( 'Error!', 'Postal Code is required.', 'error' );
-            return false;
-          }
+          // if( !data.postal_code ){
+          //   swal( 'Error!', 'Postal Code is required.', 'error' );
+          //   return false;
+          // }
           if( !data.plan_start ){
             swal( 'Error!', 'Start Date is required.', 'error' );
             return false;
@@ -1325,7 +1325,6 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.saveEmployee = function( data ){
-          console.log( data );
           if( scope.checkUpdateEmployeeForm( data ) == false ){
             return false;
           }
@@ -1348,13 +1347,15 @@ app.directive("employeeOverviewDirective", [
               var update_data = {
                 name: data.name,
                 dob: data.dob,
-                nric: data.nric,
+                nric: data.nric == '' || data.nric == null ? '' : data.nric,
                 email: data.email,
                 phone_no: data.phone_no,
-                country_code: data.country_code,
+                country_code: data.country_code.replace('+', ''),
                 job_title: data.job_title,
                 postal_code: data.postal_code,
                 bank_account: data.bank_account,
+                bank_code: data.bank_code,
+                bank_branch: data.bank_branch,
                 user_id: data.user_id,
               };
               console.log( update_data );
@@ -1589,6 +1590,10 @@ app.directive("employeeOverviewDirective", [
             };
             iti = intlTelInput(input, settings);
             iti.setNumber( scope.selectedEmployee.mobile_no );
+            console.log( scope.selectedEmployee );
+            if( scope.selectedEmployee.country_code == null ){
+              scope.selectedEmployee.country_code = '65';
+            }
             scope.selectedEmployee.phone_no = scope.selectedEmployee.phone_no;
             $("#area_code").val( scope.selectedEmployee.phone_no );
             input.addEventListener("countrychange", function() {

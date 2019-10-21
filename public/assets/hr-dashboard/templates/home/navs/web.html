@@ -94,7 +94,7 @@
 	console.log( localStorage.getItem('method') );
 
 	$('#logout-btn').click(function( ){
-		window.localStorage.removeItem('token');
+		window.localStorage.clear();
 		window.location.href = window.location.origin + '/company-benefits-dashboard-login';
 	});
 

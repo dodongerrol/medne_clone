@@ -27,41 +27,48 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
         //User login by Mobile app
         public function authLogin ($email, $password){
-
-            // $users = DB::table('user')
-            //          ->select('UserID')
-            //          ->where('Email', '=', $email)
-            //          ->where('Password', '=', StringHelper::encode($password))
-            //          ->where('Active', '=', 1)
-            //          ->where('UserType', '=', 5)
-            //          // ->orWhere('UserType', '=', 1)
-            //          ->first();
         	  $users = DB::table('user')
                      ->select('UserID')
                      ->where(function($query) use ($email, $password){
-                        $query->where('Email', '=', $email)
-                        ->where('Password', '=', StringHelper::encode($password))
-                        ->where('Active', '=', 1)
-                        ->where('UserType', '=', 5);
+                        $query->where('Email', $email)
+                        ->where('Password', StringHelper::encode($password))
+                        ->where('Active', 1)
+                        ->where('UserType', 5);
                      })
                      ->orWhere(function($query) use ($email, $password){
-                     	  $query->where('NRIC', 'like', '%'.$email.'%')
-                        ->where('Password', '=', StringHelper::encode($password))
-                        ->where('Active', '=', 1)
-                        ->where('UserType', '=', 5);
+                        $email = strtoupper($email);
+                        $query->where('NRIC', $email)
+                        ->where('Password', StringHelper::encode($password))
+                        ->where('Active', 1)
+                        ->where('UserType', 5);
                      })
                      ->orWhere(function($query) use ($email, $password){
-                        $email = (int)$email;
-                        $email = (string)$email;
-                        $query->where('PhoneNo', $email)
-                        ->where('Password', '=', StringHelper::encode($password))
-                        ->where('Active', '=', 1)
-                        ->where('UserType', '=', 5);
+                        $email = (int)($email);
+                     	$query->where('PhoneNo', (string)$email)
+                        ->where('Password', StringHelper::encode($password))
+                        ->where('Active', 1)
+                        ->where('UserType', 5);
                      })
                      ->first();
 
             if($users){
-                //print_r($users);
+                return $users->UserID;
+            }else{
+                return false;
+            }
+        }
+
+        public function newAuthLogin ($email, $password){
+            $email = (int)($email);
+            $users = DB::table('user')
+                     ->select('UserID')
+                    ->where('PhoneNo', (string)$email)
+                    ->where('Password', StringHelper::encode($password))
+                    ->where('Active', 1)
+                    ->where('UserType', 5)
+                     ->first();
+
+            if($users){
                 return $users->UserID;
             }else{
                 return false;
@@ -118,7 +125,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->DOB = $data['DOB'];
                 $this->Lat = '';
                 $this->Lng = '';
-                $this->NRIC = $data['NRIC'];
+                $this->NRIC = null;
                 $this->Zip_Code = $data['Zip_Code'];
                 $this->FIN = '';
                 $this->Image = 'https://res.cloudinary.com/www-medicloud-sg/image/upload/v1427972951/ls7ipl3y7mmhlukbuz6r.png';
@@ -131,6 +138,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->source_type = 1;
                 $this->Job_Title = $data['Job_Title'];
                 $this->communication_type = !empty($data['communication_type']) ? $data['communication_type'] : "email";
+                $this->account_update_status = 1;
+                $this->account_update_date = date('Y-m-d H:i:s');
+                $this->account_already_update = 1;
                 if($this->save()){
                     $insertedId = $this->id;
                     $wallet = new Wallet( );
@@ -168,7 +178,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 'UserType'      => 5,
                 'access_type'   => 2,
                 'source_type'   => 1,
-                'Job_Title'     => null
+                'Job_Title'     => null,
+                'account_update_status' => 1,
+                'account_update_date' => date('Y-m-d H:i:s'),
+                'account_already_update' => 1
             );
 
             $result = User::create($user_data);
@@ -294,7 +307,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                         ->where('UserType', 5);
                     })
                     ->orWhere(function($query) use ($email){
-                        $query->where('NRIC', $email)
+                        $query->where('PhoneNo', $email)
                         ->where('Active', 1)
                         ->where('UserType', 5);
                     })

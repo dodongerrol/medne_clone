@@ -316,7 +316,8 @@
 
 
     .login-wrapper {
-        padding: 20px;
+        /*padding: 20px;*/
+        padding: 0 10px;
     }
 
     .spent-prog{
@@ -542,6 +543,11 @@
 
     .col-xxs-12{
         width: 100%;
+    }
+
+    .notification-container {
+      width: 100%;
+      margin: 0;
     }
 }
 
