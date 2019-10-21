@@ -1643,7 +1643,7 @@ class PlanHelper {
 							$compose['nric'] = $data_enrollee->mobile;
 							$compose['password'] = $password;
 							$compose['phone'] = $phone;
-
+							$compose['sms_type'] = "LA";
 							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 							$result_sms = SmsHelper::sendSms($compose);
 						}
@@ -4561,6 +4561,7 @@ class PlanHelper {
 								$compose['nric'] = $user->PhoneNo;
 								$compose['password'] = $password;
 								$compose['phone'] = $phone;
+								$compose['sms_type'] = "LA";
 
 								$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 								$result_sms = SmsHelper::sendSms($compose);
