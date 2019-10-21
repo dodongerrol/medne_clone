@@ -11,5 +11,6 @@ return array(
     'booking_email' => 'info@medicloud.sg',
     'secret_key' => 'w2c5M]=JSE/tpj#4;X',
     'environment' => 'local',
-    'enable_auto_logout' => false
+    'enable_auto_logout' => false,
+    'sms_provider' => 'twilio'
 );
