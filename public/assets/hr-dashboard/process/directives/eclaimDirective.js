@@ -130,6 +130,9 @@
 				var zip = new JSZip();
 
 				scope.downloadAllReceipts = function(  ){
+					if( scope.receipts_arr.length == 0 ){
+						return false;
+					}
 					if( scope.download_receipts_ctr == 0 ){
 						scope.toggleLoading();
 						$('.download-receipt-message').show();
@@ -263,7 +266,7 @@
 						scope.receipts_arr = scope.receipts_rejected;
 						scope.csv_dl = scope.csv_e_claim_transactions_rejected;
 					}
-					// console.log( scope.receipts_arr );
+					console.log( scope.receipts_arr );
 					scope.hideLoading();
 				}
 
