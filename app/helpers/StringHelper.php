@@ -451,9 +451,9 @@ class StringHelper{
         }
 
         public static function TestSendOTPSMS($phone, $message){
-            $config = \SmsHelper::commzGateConfigs();
-            // $config = self::twilioConfigs();
-            // $client = new Client($config['sid'], $config['token']);
+            // $config = \SmsHelper::commzGateConfigs();
+            $config = self::twilioConfigs();
+            $client = new Client($config['sid'], $config['token']);
             $new_message = $message.' is your Mednefits verification code.';
             // $return = $client->messages->create(
             //     // the number you'd like to send the message to
