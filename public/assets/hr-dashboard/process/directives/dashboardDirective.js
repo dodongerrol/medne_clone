@@ -177,7 +177,7 @@ app.directive('dashboardDirective', [
 			 		hrSettings.companyPlanTotalDue( )
 			 		.then(function(response){
 			 			if(response.data.status) {
-			 				scope.total_plan_due = response.data.total_due;
+							 scope.total_plan_due = response.data;
 			 			}
 			 		});
 			 	}
