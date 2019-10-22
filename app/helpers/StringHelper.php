@@ -451,73 +451,73 @@ class StringHelper{
         }
 
         public static function TestSendOTPSMS($phone, $message){
-            $config = \SmsHelper::commzGateConfigs();
-            // $config = self::twilioConfigs();
-            // $client = new Client($config['sid'], $config['token']);
+            // $config = \SmsHelper::commzGateConfigs();
+            $config = self::twilioConfigs();
+            $client = new Client($config['sid'], $config['token']);
             $new_message = $message.' is your Mednefits verification code.';
-            // // $return = $client->messages->create(
-            // //     // the number you'd like to send the message to
-            // //     $phone,
-            // //     array(
-            // //         // A Twilio phone number you purchased at twilio.com/console
-            // //         'from' => $config['from'],
-            // //         // the body of the text message you'd like to send
-            // //         'body' => $new_message
-            // //     )
-            // // );
-            // // if($return) {
-            // //     return "TRUE";
-            // // } else {
-            // //     return self::sendSmsUnsupported($phone, $new_message);
-            // // }
-            // // return var_dump($return);
-            // // if($return->accountSid) {
-            // //     return 'TRUE';
-            // // } else {
-            // //     return self::sendSmsUnsupported($phone, $new_message);
-            // // }
-            // // $twilio = new \Aloha\Twilio\Twilio($config['sid'], $config['token'], $config['from']);
-            // // try {
-            // //     $twilio->message($phone, $new_message);
-            // //     return "TRUE";
-            // // } catch ( \Services_Twilio_RestException $e ) {
-            // //     // return 'FALSE';
-            // //     return self::sendSmsUnsupported($phone, $new_message);
-            // // }
-            // if(strrpos($phone, '+65') !== false) {
-            //     $from = $config['from'];
-            //     // return TRUE;
-            // } else {
-            //     $from = '+18653200485';
-            //     // return FALSE;
-            // }
-
-            // return $client->messages->create(
+            // $return = $client->messages->create(
+            //     // the number you'd like to send the message to
             //     $phone,
             //     array(
-            //         'from' => $from,
-            //         'body' => $new_message,
+            //         // A Twilio phone number you purchased at twilio.com/console
+            //         'from' => $config['from'],
+            //         // the body of the text message you'd like to send
+            //         'body' => $new_message
             //     )
             // );
-            $mobile = preg_replace('/\s+/', '', $phone);
-            $data_message = array(
-                'ID'        => $config['id'],
-                'Password'  => $config['password'],
-                'Mobile'    => $mobile,
-                'Message'   => $new_message,
-                'Type'      => 'A',
-                'Sender'    => $config['from']
-            );
+            // if($return) {
+            //     return "TRUE";
+            // } else {
+            //     return self::sendSmsUnsupported($phone, $new_message);
+            // }
+            // return var_dump($return);
+            // if($return->accountSid) {
+            //     return 'TRUE';
+            // } else {
+            //     return self::sendSmsUnsupported($phone, $new_message);
+            // }
+            // $twilio = new \Aloha\Twilio\Twilio($config['sid'], $config['token'], $config['from']);
+            // try {
+            //     $twilio->message($phone, $new_message);
+            //     return "TRUE";
+            // } catch ( \Services_Twilio_RestException $e ) {
+            //     // return 'FALSE';
+            //     return self::sendSmsUnsupported($phone, $new_message);
+            // }
+            if(strrpos($phone, '+65') !== false) {
+                $from = $config['from'];
+                // return TRUE;
+            } else {
+                $from = '+18653200485';
+                // return FALSE;
+            }
 
-            $fields_string = http_build_query($data_message);
-            $url = "https://www.commzgate.net/gateway/SendMsg?".$fields_string;
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            $resp = curl_exec($curl);
-            curl_close($curl);
-            return $resp;
+            return $client->messages->create(
+                $phone,
+                array(
+                    'from' => $from,
+                    'body' => $new_message,
+                )
+            );
+            // $mobile = preg_replace('/\s+/', '', $phone);
+            // $data_message = array(
+            //     'ID'        => $config['id'],
+            //     'Password'  => $config['password'],
+            //     'Mobile'    => $mobile,
+            //     'Message'   => $new_message,
+            //     'Type'      => 'A',
+            //     'Sender'    => $config['from']
+            // );
+
+            // $fields_string = http_build_query($data_message);
+            // $url = "https://www.commzgate.net/gateway/SendMsg?".$fields_string;
+            // $curl = curl_init();
+            // curl_setopt($curl, CURLOPT_URL, $url);
+            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            // $resp = curl_exec($curl);
+            // curl_close($curl);
+            // return $resp;
         }
 
 
