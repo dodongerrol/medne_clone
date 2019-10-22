@@ -82,7 +82,10 @@ app.directive('benefitsTiersDirective', [
 				scope.isAllPreviewEmpChecked = false;
 				scope.showDependentsAdded = false;
 				scope.isEditDetailModalOpen = false;
+				scope.showCurrencyType = localStorage.getItem("currency_type");
 				
+				console.log(scope.showCurrencyType);
+
 				var iti = null;
 				var iti2 = null;
 
@@ -1560,6 +1563,10 @@ app.directive('benefitsTiersDirective', [
 						scope.hideLoading();
 					},500);
 				}
+
+				// localStorage.getItem("currency_type");
+    //   	console.log(localStorage.getItem("currency_type"));
+        
 
 				scope.onLoad();
 
