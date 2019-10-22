@@ -24,7 +24,7 @@ class EclaimController extends \BaseController {
 	{
 		$input = Input::all();
     $email = $input['email'];
-    $email = (string)($email);
+    $email = (int)($email);
     $password = $input['password'];
     
 		// $check = DB::table('user')
@@ -51,7 +51,7 @@ class EclaimController extends \BaseController {
 
 		$check = DB::table('user')
 				->where('UserType', 5)
-				->where('PhoneNo', $email)
+				->where('PhoneNo', (int)$email)
 				->where('password', md5($password))
 				->where('Active', 1)
 				->first();

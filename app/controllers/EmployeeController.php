@@ -196,7 +196,7 @@ class EmployeeController extends \BaseController {
 
         $member_data = array(
         	'DOB' => date('Y-m-d', strtotime($input['dob'])),
-        	'PhoneNo'	=> $input['mobile'],
+        	'PhoneNo'	=> $mobile_number,
         	'PhoneCode'	=> $input['mobile_country_code'],
         	'account_update_status'	=> 1,
         	'account_update_date'	=> date('Y-m-d H:i:s'),
