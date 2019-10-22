@@ -7468,4 +7468,8 @@ ul.typeahead li a.dropdown-item
 }
 
 
+.currenct-type {
+	text-transform: uppercase;
+}
+
 

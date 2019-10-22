@@ -53,8 +53,7 @@
 				<div class="col-md-8 no-padding">
 					<p class="font-14 color-black2 weight-700">
 						<span style="display: inline-block;width: 32%;">Total: 
-							<span ng-if="true">S$</span> 
-							<span ng-if="false">RM</span>
+							<span ng-bind="company_properties.currency_type" class="currenct-type">SGD</span> 
 							<span ng-bind="company_properties.total_medical_company_allocation">00.00</span>
 						</span> 
 						<span style="display: inline-block;width: 32%;">Allocated: 
