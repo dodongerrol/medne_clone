@@ -132,15 +132,15 @@
 					    <div class="input-wrapper claim-amount-input-wrapper">
 						    <div class="input-group date" style="width: 100%">
 								  <input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="Price" aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.claim_amount">
-								  <span class="input-group-addon" id="sizing-addon2" style="color: #0086D3;font-weight: 700;">
-								  	<span ng-if="true">S$</span>
+								  <span ng-click="showCurrencyDropdown()" class="input-group-addon" id="sizing-addon2" style="color: #0086D3;font-weight: 700;">
+								  	<span ng-bind="eclaim.selectedCurrencyType" class="currency-type"></span>
 								  </span>
-								  <ul class="dropdown-menu" style="display: none;">
+								  <ul class="dropdown-menu" ng-if="selectCurrencyTypeDropdown" style="display: block;">
 								  	<li>
-								  		<a>S$</a>
+								  		<a ng-click="selectCurrencyType('SGD')">SGD</a>
 								  	</li>
 								  	<li>
-									  	<a>RM</a>
+									  	<a ng-click="selectCurrencyType('MYR')">MYR</a>
 									  </li>
 								  </ul>
 								</div>
@@ -270,8 +270,7 @@
 					    <p class="color-blue-custom">
 					    	<label class="color-black3">Claim Amount<span></span></label> 
 					    	<span>
-					    		<span ng-if="true">S$</span> 
-					    		<span ng-if="false">RM</span>
+					    		<span ng-bind="eclaim.selectedCurrencyType">Sgd</span> 
 					    		<span ng-bind="eclaim.claim_amount | number"></span></span>
 					    </p>
 					  </div>

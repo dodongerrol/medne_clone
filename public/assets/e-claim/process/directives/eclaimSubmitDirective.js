@@ -14,6 +14,8 @@ app.directive('eclaimSubmitDirective', [
 				scope.step_active = 1;
 				scope.eclaim = {};
 				scope.eclaim.selectedDayTime = 'AM';
+				scope.eclaim.selectedCurrencyType = 'SGD';
+				scope.selectCurrencyTypeDropdown = false;
 				scope.receipts = [];
 				scope.uploading_files = [];
 				scope.submitting = false;
@@ -163,6 +165,29 @@ app.directive('eclaimSubmitDirective', [
 					if( !check ){
 						scope.eclaim.selectedDayTime = temp;
 					}
+				}
+
+				scope.showCurrencyDropdown = function() {
+					console.log(scope.selectCurrencyTypeDropdown);
+
+					// if (scope.selectCurrencyTypeDropdown == false) {
+					// 	scope.selectCurrencyTypeDropdown = true;
+					// }
+					scope.selectCurrencyTypeDropdown = scope.selectCurrencyTypeDropdown == false ? true : false;
+
+					scope.currencyContainer = {
+						"display" : "block"
+					}
+				}
+
+				scope.selectCurrencyType = function ( currencyTime ) {
+					console.log('currency type');
+					var temp = currencyTime;
+
+					scope.eclaim.selectedCurrencyType = currencyTime;
+
+					console.log(temp);
+
 				}
 
 				scope.selectMember = function( member ) {

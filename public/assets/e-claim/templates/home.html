@@ -128,8 +128,7 @@
 							<div class="white-space-5"></div>
 							<p class="font-medium2 weight-700">Balance</p>
 							<p class="font-30 weight-700 no-margin" style="color:#00B2E1">
-								<span ng-if="true" class="font-16" style="top: -10px;position: relative;">S$</span>
-								<span ng-if="false" class="font-14" style="top: -10px;position: relative;">RM</span>
+								<span ng-bind="current_spending.currency_type" class="currency-type-balance" style="top: -10px;position: relative;"></span>
 								<span ng-bind="current_spending.balance">00.00</span></p>
 						</div>
 
@@ -138,8 +137,7 @@
 								<div id="statusPieGraph" class="no-modebar">
 									<div class="pie-graph-text">
 										<p class="font-18 weight-700 no-margin">
-											<span ng-if="true">S$</span> 
-											<span ng-if="false">RM</span>
+											<span ng-bind="current_spending.currency_type" class="currency-type"></span>
 											<span ng-bind="current_spending.current_spending" ></span></p>
 										<p class="color-black3 weight-700 font-14">Total Spent</p>
 									</div>
@@ -154,8 +152,7 @@
 									<p class="color-white weight-700">In-Network Account</p>
 									<p class="color-white weight-700 font-11 no-margin">Spent</p>
 									<p class="color-white weight-700 font-medium font-16">
-										<span ng-if="true">S$</span> 
-										<span ng-if="false">RM</span> 
+										<span ng-bind="current_spending.currency_type" class="currency-type"></span> 
 										<span ng-bind="current_spending.in_network_spent"></span></p>		
 								</div>
 
@@ -163,8 +160,7 @@
 									<p class="color-white weight-700">Out-of-Network Account</p>
 									<p class="color-white weight-700 font-11 no-margin">Spent</p>
 									<p class="color-white weight-700 font-medium font-16">
-										<span ng-if="true">S$</span> 
-										<span ng-if="false">RM</span> 
+										<span ng-bind="current_spending.currency_type" class="currency-type"></span> 
 										<span ng-bind="current_spending.e_claim_spent"></span></p>		
 								</div>
 							</div>
@@ -207,8 +203,7 @@
 											<div class="transaction-price">
 												<div class="white-space-10"></div>
 												<p class="weight-700 color-blue-custom2">
-													<span ng-if="true">S$</span> 
-													<span ng-if="false">RM</span> 
+													<span ng-bind="current_spending.currency_type" class="currency-type"></span> 
 													<span ng-bind="list.amount"></span></p>
 												<div ng-if="list.cash_status" class="cash-badge">Cash</div>
 											</div>
@@ -230,8 +225,7 @@
 											<div class="transaction-price">
 												<div class="white-space-10"></div>
 												<p class="weight-700 color-blue-custom2">
-													<span ng-if="true">S$</span>  
-													<span ng-if="false">RM</span> 
+													<span ng-bind="current_spending.currency_type" class="currency-type"></span> 
 													<span ng-bind="list.amount"></span></p>
 												<label class="transaction-status-label" ng-bind="list.status_text"></label>
 											</div>
@@ -280,8 +274,7 @@
 								<div class="transaction-price">
 									<div class="white-space-10"></div>
 									<p class="weight-700 color-blue-custom2">
-										<span ng-if="true">S$</span>
-										<span ng-if="false">RM</span>  
+										<span ng-bind="current_spending.currency_type" class="currency-type"></span>  
 										<span ng-bind="list.amount | number"></span></p>
 									<div ng-if="list.cash_status" class="cash-badge">Cash</div>
 								</div>
@@ -303,8 +296,7 @@
 								<div class="transaction-price">
 									<div class="white-space-10"></div>
 									<p class="weight-700 color-blue-custom2">
-										<span ng-if="true">S$</span> 
-										<span ng-if="false">RM</span> 
+										<span ng-bind="current_spending.currency_type" class="currency-type"></span> 
 										<span ng-bind="list.amount | number"></span></p>
 									<label class="transaction-status-label" ng-bind="list.status_text"></label>
 								</div>
@@ -346,8 +338,7 @@
 								<div class="transaction-price">
 									<div class="white-space-10"></div>
 									<p class="weight-700 color-blue-custom2">
-										<span ng-if="true">S$</span>
-										<span ng-if="false">RM</span>  
+										<span ng-bind="current_spending.currency_type" class="currency-type"></span>  
 										<span ng-bind="list.amount | number"></span></p>
 									<div ng-if="list.cash_status" class="cash-badge">Cash</div>
 								</div>
@@ -384,8 +375,7 @@
 								<div class="transaction-price">
 									<div class="white-space-10"></div>
 									<p class="weight-700 color-blue-custom2">
-										<span ng-if="true">S$</span> 
-										<span ng-if="false">RM</span> 
+										<span ng-bind="current_spending.currency_type" class="currency-type"></span> 
 										<span ng-bind="list.amount | number"></span></p>
 									<label class="transaction-status-label" ng-bind="list.status_text"></label>
 								</div>
