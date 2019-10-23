@@ -52,6 +52,7 @@
 				scope.receipts_approved = [];
 				scope.receipts_rejected = [];
 				scope.receipts_arr = [];
+				scope.eclaimCurrencyType = localStorage.getItem("currency_type");
 
 				var monthToday = moment().format('MM');
 				var monthToday2 = moment().format('MM');

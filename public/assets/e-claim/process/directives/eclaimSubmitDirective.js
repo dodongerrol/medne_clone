@@ -170,14 +170,8 @@ app.directive('eclaimSubmitDirective', [
 				scope.showCurrencyDropdown = function() {
 					console.log(scope.selectCurrencyTypeDropdown);
 
-					// if (scope.selectCurrencyTypeDropdown == false) {
-					// 	scope.selectCurrencyTypeDropdown = true;
-					// }
 					scope.selectCurrencyTypeDropdown = scope.selectCurrencyTypeDropdown == false ? true : false;
 
-					scope.currencyContainer = {
-						"display" : "block"
-					}
 				}
 
 				scope.selectCurrencyType = function ( currencyTime ) {

@@ -132,6 +132,7 @@ app.directive('dashboardDirective', [
 		      			scope.credits = response.data;
 		      			$('.credit-load').hide();
 		    				$('.credit-box').fadeIn();
+		    				localStorage.setItem("currency_type",scope.credits.currency_type);
 							});
 		        	
 		        	// hrSettings.getDashCredits()
