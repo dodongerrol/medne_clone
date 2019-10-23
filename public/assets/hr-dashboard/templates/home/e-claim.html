@@ -140,8 +140,7 @@
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box eclaim-border-right">
 								<h5 class="font-medium2 color-blue-custom2 weight-700 font-23 no-margin-top">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span>
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span> 
 									<span ng-bind="activity.total_e_claim_submitted_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">TOTAL CLAIM SUBMITTED</p>
 							</div>
@@ -150,8 +149,7 @@
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box eclaim-border-right">
 								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span> 
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span> 
 									<span ng-bind="activity.total_e_claim_pending_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">PENDING</p>
 							</div>
@@ -160,8 +158,7 @@
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box eclaim-border-right">
 								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span> 
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span> 
 									<span ng-bind="activity.total_e_claim_approved_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">APPROVED</p>
 							</div>
@@ -170,8 +167,7 @@
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box">
 								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span>
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span>
 									<span ng-bind="activity.total_e_claim_rejected_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">REJECTED</p>
 							</div>
@@ -228,23 +224,19 @@
 
 							<span class="pull-right">Total Claim 
 								<span ng-if="filter_num == 1" class="font-medium2" style="margin-left: 15px">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span> 
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span> 
 									<span ng-bind="activity.total_e_claim_submitted_formatted | number: 2">3,255</span>
 								</span>
 								<span ng-if="filter_num == 2" class="font-medium2" style="margin-left: 15px">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span>
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span>
 									<span ng-bind="activity.total_e_claim_pending_formatted | number: 2">3,255</span>
 								</span>
 								<span ng-if="filter_num == 3" class="font-medium2" style="margin-left: 15px">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span>
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span>
 									<span ng-bind="activity.total_e_claim_approved_formatted | number: 2">3,255</span>
 								</span>
 								<span ng-if="filter_num == 4" class="font-medium2" style="margin-left: 15px">
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span> 
+									<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span> 
 									<span ng-bind="activity.total_e_claim_rejected_formatted | number: 2">3,255</span>
 								</span>
 							</span>
@@ -351,8 +343,7 @@
 									<!-- <span>Vision Hut</span> -->
 								</td>
 								<td>	
-									<span ng-if="true">S$</span> 
-									<span ng-if="false">RM</span>  
+									<span ng-bind="list.currency_type" class="currency-type">S$</span>  
 									<span ng-bind="list.amount"></span>
 								</td>
 								<td>
@@ -407,8 +398,7 @@
 											<!-- <p><label>TOTAL AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p> -->
 											<!-- <p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
 											<p><label>CLAIM AMOUNT</label> <span class="color-gray2" >
-												<span ng-if="true">S$</span> 
-												<span ng-if="false">RM</span> 
+												<span ng-bind="list.currency_type" class="currency-type">S$</span> 
 												<span ng-bind="list.amount">22</span></span></p>
 											<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
 											<p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">In-Network</span></p>
@@ -518,8 +508,7 @@
           		<p><label>Service:</label> <span ng-bind="selected_transaction.service">Lorem Ipsum</span></p>
           		<p><label>Date:</label> <span ng-bind="selected_transaction.claim_date">23 February 2019</span></p>
           		<p><label>Amount:</label> 
-          			<span ng-if="true">S$</span> 
-          			<span ng-if="false">RM</span>  
+          			<span ng-bind="eclaimCurrencyType" class="currency-type">S$</span>  
           			<span ng-bind="selected_transaction.amount">0.00</span></p>
           	</div>
           </div>
@@ -534,8 +523,7 @@
 	          		<p><label>Service:</label> <span ng-bind="list.procedure">Lorem Ipsum</span></p>
 	          		<p><label>Date:</label> <span ng-bind="list.date_of_transaction">23 February 2019</span></p>
 	          		<p><label>Amount:</label> 
-	          			<span ng-if="true">S$</span> 
-	          			<span ng-if="false">RM</span>
+	          			<span ng-bind="list.currency_type" class="currency-type">S$</span>
 	          			<span ng-bind="list.amount">0.00</span></p>
 	          		<p><label>Payment Type:</label> <span><b ng-bind="list.payment_type">Cash</b></span></p>
 	          	</div>
