@@ -20,10 +20,11 @@ checkCtrl.controller('checkController', function( $scope, $http, eclaimSettings,
 
 	vm.updatePassword = function( data ){
 		if( !data.curr_password || !data.new_password || !data.retype_password){
-			alert( "Please input all fields." );
+			swal("Error!", "Please input all fields.", 'error' );
+			return false;
 		}
 		if( data.new_password != data.retype_password ){
-			alert( "Passwords did not match." );
+			swal("Error!", "Passwords did not match.", 'error' );
 			return false;
 		}
 
@@ -35,10 +36,10 @@ checkCtrl.controller('checkController', function( $scope, $http, eclaimSettings,
 		eclaimSettings.updatePassword( pass )
 		.then(function(response){
 			if( response.data.result.status == true ){
-				alert( response.data.result.web_message );
+				swal("Success!", response.data.result.web_message, 'success' );
 				$("#update-pass-modal").modal('hide');
 			}else{
-				alert( response.data.result.web_message );
+				swal("Error!", response.data.result.web_message, 'error' );
 			}
 		});		
 	}
