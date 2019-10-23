@@ -231,6 +231,18 @@ app.directive("companyContactsDirective", [
           hrSettings.getTransactions( page ).then(function(response) {
             console.log(response);
             scope.transactions = response.data;
+            angular.forEach(scope.transactions.data, function(value, key) {
+              if(scope.transactions.data[ key ].amount.includes('S$')) {
+                value.new_amount = scope.transactions.data[ key ].amount.replace('S$','');
+              } else if (scope.transactions.data[ key ].amount.includes('RM')) {
+                value.new_amount = scope.transactions.data[ key ].amount.replace('RM','');
+              } else if (scope.transactions.data[ key ].amount.includes('SGD')) {
+                value.new_amount = scope.transactions.data[ key ].amount.replace('SGD','');
+              } else if (scope.transactions.data[ key ].amount.includes('MYR')) {
+                value.new_amount = scope.transactions.data[ key ].amount.replace('MYR','');
+              }
+            });
+
             scope.transactions.current_total = curr_total + parseInt(response.data.to);
             scope.transactions.temp_total = parseInt(response.data.to);
             console.log('scope.transactions.current_total', scope.transactions.current_total)
@@ -265,9 +277,24 @@ app.directive("companyContactsDirective", [
           var curr_total = scope.benefits_spending.current_total != 0 ? scope.benefits_spending.current_total : 0;
           hrSettings.getBenefitsSpendingTransac(page).then(function(response) {
             scope.benefits_spending = response.data;
+            angular.forEach(scope.benefits_spending.data, function(value, key) {
+              if(scope.benefits_spending.data[ key ].amount.includes('S$')) {
+                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('S$','');
+              } else if (scope.benefits_spending.data[ key ].amount.includes('RM')) {
+                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('RM','');
+              } else if (scope.benefits_spending.data[ key ].amount.includes('SGD')) {
+                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('SGD','');
+              } else if (scope.benefits_spending.data[ key ].amount.includes('MYR')) {
+                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('MYR','');
+              }
+            });
+
             scope.benefits_spending.current_total = curr_total + parseInt(response.data.to);
             scope.benefits_spending.temp_total = parseInt(response.data.to);
+
+            console.log('benefits spending', scope.benefits_spending.data);
             scope.toggleOff();
+
           });
         };
 
@@ -383,6 +410,17 @@ app.directive("companyContactsDirective", [
           hrSettings.getSpendingDeposits( page )
           .then(function(response) {
             scope.spending_deposits = response.data;
+            angular.forEach(scope.spending_deposits.data, function(value, key) {
+              if(scope.spending_deposits.data[ key ].amount.includes('S$')) {
+                value.new_amount = scope.spending_deposits.data[ key ].amount.replace('S$','');
+              } else if (scope.spending_deposits.data[ key ].amount.includes('RM')) {
+                value.new_amount = scope.spending_deposits.data[ key ].amount.replace('RM','');
+              } else if (scope.spending_deposits.data[ key ].amount.includes('SGD')) {
+                value.new_amount = scope.spending_deposits.data[ key ].amount.replace('SGD','');
+              } else if (scope.spending_deposits.data[ key ].amount.includes('MYR')) {
+                value.new_amount = scope.spending_deposits.data[ key ].amount.replace('MYR','');
+              }
+            });
             scope.toggleOff();
           });
         }
