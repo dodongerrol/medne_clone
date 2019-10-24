@@ -13,6 +13,10 @@ jQuery(document).ready(function($) {
 
 var invoice_selected_date;
 
+var currencyType = localStorage.getItem("currency_type");
+
+
+
 function loadTransactionPreview() {
   $(".payments-settings").css({ color: "color: rgb(119, 118, 118);" });
   $("#transaction-history").css({ color: "color: rgb(0, 0, 0);" });
@@ -484,6 +488,7 @@ $("body").on("click", "#invoice-date-go-btn", function() {
     getClinicInvoiceList(date);
   }
 });
+ 
 
 function getClinicInvoiceList(date) {
   $(".statement-wrapper").hide();
@@ -511,6 +516,10 @@ function getClinicInvoiceList(date) {
     data: data
   }).done(function(data) {
     console.log(data);
+
+    $('.currencyType').text(currencyType);
+    console.log($('.currencyType').text(currencyType));
+
     
     if (data.status == 400) {
       $("#pdf-print").hide();
@@ -532,15 +541,15 @@ function getClinicInvoiceList(date) {
         for( var i = 0; i < data.transaction_lists.length; i++ ){
           $("#invoice-items-table").append('<tr>' +
             '<td style="text-align: left !important;">' + data.transaction_lists[i].transaction_id + ' ' +  data.transaction_lists[i].customer +'</td>' +
-            '<td><b><span style="display: inline-block">S$</span> <span style="display: none">RM</span> ' + data.transaction_lists[i].mednefits_fee + '</b></td>' +
-            '<td><b><span style="display: inline-block">S$</span> <span style="display: none">RM</span> ' + data.transaction_lists[i].mednefits_credits + '</b></td>' +
-            '<td><b><span style="display: inline-block">S$</span> <span style="display: none">RM</span> ' + data.transaction_lists[i].total + '</b></td>' +
+            '<td><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> '+ data.transaction_lists[i].mednefits_fee + '</b></td>' +
+            '<td><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> ' + data.transaction_lists[i].mednefits_credits + '</b></td>' +
+            '<td><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> ' + data.transaction_lists[i].total + '</b></td>' +
           '</tr>');
         }
 
         $("#invoice-items-table").append('<tr>' +
             '<td colspan="3" style="text-align:right;border: none !important;"><b>Total Amount Due <span style="display: inline-block">(SGD)</span><span style="display: none">(RM)</span>:</b></td>' +
-            '<td style="border: none !important;"><b><span style="display: inline-block">S$</span> <span style="display: none">RM</span> ' + data.total + '</b></td>' +
+            '<td style="border: none !important;"><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> ' + data.total + '</b></td>' +
           '</tr>');
 
         if (data.clinic) {

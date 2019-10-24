@@ -107,12 +107,10 @@
                     <p><label>Period Date: </label> <span class="period_date">1 Dec - 31 Dec 2018</span></p>
                     <p>
                         <label>Amount Due 
-                          <span style="display: none">(SGD)</span> 
-                          <span style="display: inline-block;">(RM)</span>: 
+                          (<span class="currencyType" style="text-transform: uppercase;"></span>): 
                         </label> 
                         <b>
-                          <span style="display: none">$</span> 
-                          <span style="display: inline-block;">RM</span>
+                          <span class="currencyType" style="text-transform: uppercase;"></span>
                           <span class="invoice_amount_due"></span></b></p>
                 </div>
             </div>

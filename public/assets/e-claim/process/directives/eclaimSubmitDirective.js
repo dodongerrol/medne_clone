@@ -312,7 +312,8 @@ app.directive('eclaimSubmitDirective', [
 						amount: scope.eclaim.claim_amount,
 						date: moment(scope.eclaim.visit_date).format('YYYY-MM-DD'),
 						time: scope.eclaim.visit_time + '' + scope.eclaim.selectedDayTime,
-						receipts: scope.receipts
+						receipts: scope.receipts,
+						currency_type: scope.eclaim.selectedCurrencyType,
 					}
 
 					console.log(data);

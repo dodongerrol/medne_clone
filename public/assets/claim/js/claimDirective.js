@@ -611,6 +611,7 @@ app.directive("claimDirective", [
                 console.log( response );
                 // scope.hideLoading();
                 scope.backdate_list = response;
+                localStorage.setItem("currency_type",scope.backdate_list.data.data.currency_type);
               });
           };
         // ================ //

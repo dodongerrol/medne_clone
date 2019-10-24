@@ -34,7 +34,7 @@
         <p style="color: #999999;">Scan & Pay Page</p>
         <label class="switch" id="switch_trigger_{{ $value->ProcedureID }}">
           <input type="checkbox" {{ $value->scan_pay_show == 1 ? "checked" : "" }}>
-          <span class="slider">
+          <span class="slider-services">
             <span class="off">Hide</span>
             <span class="on">Show</span>
           </span>
@@ -65,7 +65,7 @@
 
   .switch input {display:none;}
 
-  .slider {
+  .slider-services {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -80,13 +80,13 @@
     color: #FFF;
   }
 
-  .slider span{
+  .slider-services span{
     display: inline-block;
     width: 60px;
     text-align: center;
   }
 
-  .slider:before {
+  .slider-services:before {
     position: absolute;
     content: "";
     height: 34px;
@@ -99,13 +99,13 @@
     transition: .4s;
   }
 
-  input:checked + .slider {
+  input:checked + .slider-services {
     background-color: #D3D3D3;
     color: #333;
     left: -60px;
   }
 
-  input:focus + .slider {
+  input:focus + .slider-services {
     box-shadow: 0 0 1px #D3D3D3;
     color: #333;
     left: -60px;
