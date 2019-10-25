@@ -22,6 +22,15 @@ app.directive('creditAllocationDirective', [
 					scope.onLoad();
 	    	});
 
+	    	scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+					}
+				}
+
 				scope.setSpendType = function(list,opt){
 					list.creditAllocSpendingType = opt;
 					list.creditAllocSpendingTypeText = opt == 0 ? 'medical' : 'wellness';
@@ -327,6 +336,7 @@ app.directive('creditAllocationDirective', [
         scope.onLoad = function( ) {
         	scope.checkSession( );
         	scope.getEmployeeList( );
+        	scope.companyAccountType ( );
         }
 
         scope.checkCompanyBalance = function(){
@@ -354,9 +364,6 @@ app.directive('creditAllocationDirective', [
 				scope.userCompanyCreditsAllocated();
 	        scope.onLoad();
 				}
-
-
-
 
 		}
 	}

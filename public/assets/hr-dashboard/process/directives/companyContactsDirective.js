@@ -33,6 +33,15 @@ app.directive("companyContactsDirective", [
           scope.onLoad();
         });
 
+        scope.companyAccountType = function () {
+          scope.account_type = localStorage.getItem('company_account_type');
+          console.log(scope.account_type);
+
+          if(scope.account_type === 'enterprise_plan') {
+            $('.statement-hide').hide();
+          }
+        }
+
         scope.downDepedentInvoice = function(id) {
           window.open(serverUrl.url + '/hr/download_dependent_invoice?dependent_plan_id=' + id + '&token=' + window.localStorage.getItem('token'));
         }
@@ -453,6 +462,7 @@ app.directive("companyContactsDirective", [
         }
 
         scope.onLoad = function(){
+          scope.companyAccountType();
           scope.getDownloadToken();
           hrSettings.getSession( )
             .then(function(response){

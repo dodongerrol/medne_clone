@@ -81,6 +81,15 @@ app.directive("employeeOverviewDirective", [
           return 0;
         }
 
+        scope.companyAccountType = function () {
+          scope.account_type = localStorage.getItem('company_account_type');
+          console.log(scope.account_type);
+
+          if(scope.account_type === 'enterprise_plan') {
+            $('.statement-hide').hide();
+          }
+        }
+
 
         scope.manageCap = function(){
           $("#manage-cap-modal").modal('show');
@@ -1626,6 +1635,7 @@ app.directive("employeeOverviewDirective", [
           scope.getJobs();
           scope.showLoading();
           scope.getSession();
+          scope.companyAccountType( );
         };
         
         scope.onLoad();
