@@ -191,6 +191,17 @@ class BenefitsDashboardController extends \BaseController {
 		return array('status' => TRUE, 'data' => ucwords($company->company_name));
 	}
 
+	public function getCompanyPlanAccountType( ) 
+	{
+		$result = self::checkSession();
+		$plan = DB::table("customer_plan")
+									->where("customer_buy_start_id", $result->customer_buy_start_id)
+									->orderBy('created_at', 'desc')
+									->first();
+
+		return array('status' => TRUE, 'account_type' => $plan->account_type);
+	}
+
 	public function checkPlan( )
 	{
 
