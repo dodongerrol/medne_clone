@@ -8,6 +8,7 @@ app.directive('dashboardDirective', [
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log("dashboardDirective Runnning !");
+				scope.accountType = true;
 				scope.options = {};
 				scope.progress = {};
 				scope.spendingAccountType = 0;
@@ -101,6 +102,12 @@ app.directive('dashboardDirective', [
 							console.log(response);
 							scope.progress = response.data.data;
 							// scope.initializeChart();
+							scope.account_type = response.data.data.account_type;
+							 
+							if (scope.account_type === 'enterprise') {
+								console.log('enterprise ni');
+								scope.accountType = false;
+							}
 						});
 		        }
 
