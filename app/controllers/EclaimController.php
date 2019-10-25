@@ -785,8 +785,17 @@ class EclaimController extends \BaseController {
 			$history_column_id = "wellness_wallet_history_id";
 		}
 
-		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
+		$user_plan_history = DB::table('user_plan_history')
+		->where('user_id', $user_id)
+		->orderBy('created_at', 'desc')
+		->where('type', 'started')
+		->first();
 
+		$active_plan = DB::table('customer_active_plan')
+							->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+							->first();
+
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 		$wallet_reset = PlanHelper::getResetWallet($user_id, $spending_type, $start, $input['end'], 'employee');
 
 		$spending_end_date = PlanHelper::endDate($input['end']);
@@ -1161,7 +1170,6 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
@@ -1239,7 +1247,6 @@ class EclaimController extends \BaseController {
 			->where('logs', 'pro_allocation')
 			->sum('credit');
 
-
 		if($pro_allocation > 0) {
 			$final_allocation = $pro_allocation;
 			$balance = $pro_allocation - $total_spent;
@@ -1251,15 +1258,24 @@ class EclaimController extends \BaseController {
 			$balance = $final_allocation - $total_spent;
 		}
 
+		if($active_plan->account_type == "enterprise_plan") {
+			$final_allocation = "N.A.";
+			$balance = "N.A.";
+		} else {
+			$final_allocation = number_format($final_allocation, 2);
+			$balance = number_format($balance, 2);
+		}
+
+
 		return array(
 			'status' 				   => TRUE,
 			'e_claim' 				   => $e_claim,
 			'in_network_transactions'  => $transaction_details,
 			'in_network_spent'	       => number_format($in_network_spent, 2),
 			'e_claim_spent'			   => number_format($e_claim_spent, 2),
-			'total_allocation'		   => number_format($final_allocation, 2),
+			'total_allocation'		   => $final_allocation,
 			'total_spent'			   => number_format($total_spent, 2),
-			'balance'				   => $balance >= 0 ? number_format($balance, 2) : "0.00",
+			'balance'				   => $balance,
 			'total_in_network_transactions' => $total_in_network_transactions,
 			'total_deleted_in_network_transactions' => $total_deleted_in_network_transactions,
 			'total_in_network_spent'    => number_format($total_in_network_spent, 2),
@@ -1269,7 +1285,8 @@ class EclaimController extends \BaseController {
 			'total_consultation'    => $total_lite_plan_consultation,
 			'total_employee_lite_plan_spent'    => number_format($total_employee_lite_plan_spent, 2),
 			'lite_plan'             => $lite_plan_status,
-			'wallet_status'        => $wallet_status
+			'wallet_status'        => $wallet_status,
+			'account_type'				=> $active_plan->account_type
 		);
 	}
 
@@ -1642,8 +1659,6 @@ class EclaimController extends \BaseController {
 
 		$spending_type = !empty($input['spending_type']) ? $input['spending_type'] : 'medical';
 		
-
-
 		$e_claim = [];
 		$transaction_details = [];
 		$in_network_spent = 0;
@@ -1651,7 +1666,7 @@ class EclaimController extends \BaseController {
 
 		$lite_plan_status = false;
 		$lite_plan_status = StringHelper::litePlanStatus($user_id);
-        // get user wallet_id
+    // get user wallet_id
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 
 		if($spending_type == 'medical') {
@@ -1667,50 +1682,23 @@ class EclaimController extends \BaseController {
 		$e_claim_spent = $credit_data['e_claim_spent'];
 		$in_network_spent = $credit_data['in_network_spent'];
 		$balance = $credit_data['balance'];
-		// $wallet_reset = DB::table('credit_reset')
-		// ->where('id', $user_id)
-		// ->where('user_type', 'employee')
-		// ->where('spending_type', $spending_type)
-		// ->orderBy('created_at', 'desc')
-		// ->first();
 
-		// if($wallet_reset) {
-		// 	// get in-network transactions
-		// 	$transactions = DB::table('transaction_history')
-		// 	->whereIn('UserID', $ids)
-		// 	->where('spending_type', $spending_type)
-		// 	->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-		// 	->orderBy('created_at', 'desc')
-		// 	->take(3)
-		// 	->get();
+		// get in-network transactions
+		$transactions = DB::table('transaction_history')
+		->whereIn('UserID', $ids)
+		->where('spending_type', $spending_type)
+		->where('paid', 1)
+		->orderBy('created_at', 'desc')
+		->take(3)
+		->get();
 
-		// // 	// get e_claim last 3 transactions
-		// 	$e_claim_result = DB::table('e_claim')
-		// 	->where('spending_type', $spending_type)
-		// 	->whereIn('user_id', $ids)
-		// 	->where('created_at', '>=', date('Y-m-d', strtotime($wallet_reset->date_resetted)))
-		// 	->orderBy('created_at', 'desc')
-		// 	->take(3)
-		// 	->get();
-
-		// } else {
-			// get in-network transactions
-			$transactions = DB::table('transaction_history')
-			->whereIn('UserID', $ids)
-			->where('spending_type', $spending_type)
-			->where('paid', 1)
-			->orderBy('created_at', 'desc')
-			->take(3)
-			->get();
-
-			// get e_claim last 3 transactions
-			$e_claim_result = DB::table('e_claim')
-			->where('spending_type', $spending_type)
-			->whereIn('user_id', $ids)
-			->orderBy('created_at', 'desc')
-			->take(3)
-			->get();
-		// }
+		// get e_claim last 3 transactions
+		$e_claim_result = DB::table('e_claim')
+		->where('spending_type', $spending_type)
+		->whereIn('user_id', $ids)
+		->orderBy('created_at', 'desc')
+		->take(3)
+		->get();
 
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
@@ -1915,8 +1903,23 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-        // recalculate employee
+    // recalculate employee
 		PlanHelper::reCalculateEmployeeBalance($user_id);
+		$user_plan_history = DB::table('user_plan_history')
+		->where('user_id', $user_id)
+		->orderBy('created_at', 'desc')
+		->where('type', 'started')
+		->first();
+
+		$active_plan = DB::table('customer_active_plan')
+							->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+							->first();
+
+		if($active_plan->account_type == "enterprise_plan") {
+			$balance = "N.A.";
+		} else {
+			$balance = number_format($balance, 2);
+		}
 
 		return array(
 			'current_spending' 	=> number_format($current_spending, 2),
@@ -1928,8 +1931,9 @@ class EclaimController extends \BaseController {
 			'current_spending_format_number' => $current_spending,
 			'e_claim'						=> $e_claim,
 			'in_network_transactions' => $transaction_details,
-			'balance'           => $balance >= 0 ? number_format($balance, 2) : "0.00",
-			'spending_type'	=> $spending_type
+			'balance'           => $balance,
+			'spending_type'	=> $spending_type,
+			'account_type'		=> $active_plan->account_type
 		);
 	}
 
