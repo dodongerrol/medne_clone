@@ -205,7 +205,6 @@ app.directive('creditAllocationDirective', [
 							scope.employees_pagi = response.data;
 							scope.emp_last_page = response.data.last_page;
 
-
 							angular.forEach( scope.employees, function( value, key ){ 
 
 								scope.employees[key].creditAllocSpendingTypeText = 'medical';

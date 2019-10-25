@@ -61,7 +61,6 @@ app.directive("employeeOverviewDirective", [
         scope.dependents_ctr = 0;
         scope.cap_per_visit = 0;
         scope.isUpdateEmpInfoModalOpen = false;
-        scope.accountType = true;
 
         var iti = null;
 
@@ -81,6 +80,7 @@ app.directive("employeeOverviewDirective", [
           }    
           return 0;
         }
+
 
         scope.manageCap = function(){
           $("#manage-cap-modal").modal('show');
@@ -1516,16 +1516,9 @@ app.directive("employeeOverviewDirective", [
         scope.checkDependentsStatus = function(){
           hrSettings.getMethodType()
            .then(function(response){
-              console.log(response);
+              // console.log(response);
               scope.dependents_status = response.data.data;
-
-              scope.account_type = response.data.data.plan.account_type;
-               
-              if (scope.account_type === 'enterprise') {
-                console.log('enterprise ni');
-                scope.accountType = false;
-              }
-          });
+            });
         }
 
         scope.getJobs = function() {
@@ -1633,8 +1626,6 @@ app.directive("employeeOverviewDirective", [
           scope.getJobs();
           scope.showLoading();
           scope.getSession();
-
-
         };
         
         scope.onLoad();
