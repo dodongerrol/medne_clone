@@ -2009,6 +2009,7 @@ if($clinic->currency_type == "myr") {
 
 if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
   $currency = "";
+  $cap_currency_symbol = "";
 }
 
 $jsonArray['current_balance'] = $currency.' '.$balance;
