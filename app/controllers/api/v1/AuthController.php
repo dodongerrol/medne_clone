@@ -2007,6 +2007,10 @@ if($clinic->currency_type == "myr") {
  $balance = number_format($balance, 2);
 }
 
+if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+  $currency = "";
+}
+
 $jsonArray['current_balance'] = $currency.' '.$balance;
 $jsonArray['balance'] = $current_balance;
 $jsonArray['current_balance_in_sgd'] = $current_balance;
