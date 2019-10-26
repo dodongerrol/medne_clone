@@ -22,6 +22,15 @@ app.directive('dashboardDirective', [
 				scope.isEvening = scope.time_now.isAfter( moment('6:01 PM', 'HH:mm A') ) && scope.time_now.isBefore( moment('4:59 AM', 'HH:mm A').add('days',1) );
 				
 
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+					}
+				}
+
 				scope.goToEnroll = function(){
 					localStorage.setItem('fromEmpOverview', false);
 					$state.go('enrollment-options');
@@ -228,6 +237,7 @@ app.directive('dashboardDirective', [
 		        scope.getCompanyIntroMessage( );
 		        scope.companyPlanTotalDue( );
 		        scope.companySpendingTotalDue( );
+		        scope.companyAccountType( );
 			}
 		}
 	}

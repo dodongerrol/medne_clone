@@ -54,6 +54,15 @@
 
 			    });
 
+					scope.companyAccountType = function () {
+						scope.account_type = localStorage.getItem('company_account_type');
+						console.log(scope.account_type);
+
+						if(scope.account_type === 'enterprise_plan') {
+							$('.statement-hide').hide();
+						}
+					}
+
 					scope.updatePasswordSubmit = function( pass ) {
 						console.log( pass );
 						if( pass.new_password == pass.re_password ){
@@ -509,6 +518,7 @@
 				  }
 
 	        scope.onLoad = function( ) {
+	        	scope.companyAccountType();
 	        	scope.getJobs();
 	        };
 

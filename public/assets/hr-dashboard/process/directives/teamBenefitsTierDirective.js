@@ -17,6 +17,15 @@ app.directive('teamBenefitsTierDirective', [
 				};
 				scope.tier_arr = [];
 
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+					}
+				}
+
 				scope.toggleEditTier = function( data, index ){
 					if( scope.editTierIsShow == false ){
 						scope.editTierIsShow = true;
@@ -159,6 +168,7 @@ app.directive('teamBenefitsTierDirective', [
 				}
 
         scope.onLoad = function( ){
+        	scope.companyAccountType();
         	scope.getTiers();
         }
 

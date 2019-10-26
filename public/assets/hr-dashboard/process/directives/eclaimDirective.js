@@ -63,6 +63,15 @@
 
 				var date_slider = null;
 
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+					}
+				}
+
 				scope.checkTransStatus = function( data ){
 					console.log( data );
 					scope.selected_transaction = data;
@@ -907,6 +916,8 @@
         }
 
 				scope.onLoad = function( ){
+					scope.companyAccountType( );
+
 					hrSettings.getSession( )
 						.then(function(response){
 							scope.options.accessibility = response.data.accessibility;

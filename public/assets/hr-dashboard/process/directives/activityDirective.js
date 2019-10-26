@@ -66,6 +66,15 @@ app.directive('activityPage', [
 				scope.pagesToDisplay = 5;
 
 
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+					}
+				}
+
 				scope.downloadCSV = function(){
 					var data = {
 						token : window.localStorage.getItem('token'),
@@ -1027,6 +1036,7 @@ app.directive('activityPage', [
 				}
 
 				scope.onLoad = function( ){
+					scope.companyAccountType( );
 					scope.checkSession( );
 					scope.getEmployeeLists( );
 					// scope.initializeRangeSlider( );
