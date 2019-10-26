@@ -1112,7 +1112,7 @@ return Response::json($returnObject);
                   array_push($e_claim, $temp);
                 }
 
-                  // get in-network transactions
+                // get in-network transactions
                 $transactions = DB::table('transaction_history')
                 ->whereIn('UserID', $ids)
                 ->where('spending_type', $spending_type)
@@ -1313,30 +1313,31 @@ return Response::json($returnObject);
             $in_network_spent = $credit_data['in_network_spent'];
             $balance = $credit_data['balance'];
 
-    // $user_spending = TransactionHelper::getInNetworkSpent($user_id, $spending_type);
-    // $current_spending = $credit_data['get_allocation_spent'];
-    // $e_claim_spent = $user_spending['e_claim_spent'];
-    // $in_network_spent = $user_spending['in_network_spent'];
-    // $balance = $credit_data['balance'];
-
-    // $in_network_spent = $in_network_temp_spent - $credits_back;
-    // $current_spending = $in_network_spent + $e_claim_spent;
-    // $allocation = $temp_allocation - $deducted_allocation;
             PlanHelper::reCalculateEmployeeBalance($user_id);
             $user = DB::table('user')->where('UserID', $user_id)->first();
 
+            $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+            $customer_active_plan = DB::table('customer_active_plan')
+                                      ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                                      ->first();
+            if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+              $currency_symbol = "";
+              $balance = "N.A.";
+            } else {
+              $currency_symbol = "S$";
+              $balance = number_format($balance, 2);
+            }
 
 
             $wallet_data = array(
               'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
               'spending_type'             => $spending_type,
-      // 'wallet_id'                 => $wallet->wallet_id,
-              'balance'                   => $balance >= 0 ? number_format($balance, 2) : "0.00",
+              'balance'                   => $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
               'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
               'e_claim_transactions'      => $e_claim,
               'in_network_transactions'   => $transaction_details,
-              'currency_symbol'           => "S$"
+              'currency_symbol'           => $currency_symbol
             );
 
             $returnObject->status = true;
@@ -1905,6 +1906,11 @@ public function getNewClinicDetails($id)
 
            // return $plan_coverage;
    $user = DB::table('user')->where('UserID', $findUserID)->first();
+   $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
+   $customer_active_plan = DB::table('customer_active_plan')
+                              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                              ->first();
+
    $procedures = DB::table('clinic_procedure')
    ->where('ClinicID', $id)
    ->where('scan_pay_show', 1)
@@ -1984,14 +1990,21 @@ if($plan_tier) {
   }
 }
 
+if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+  $balance = 1000;
+  $current_balance = 1000;
+} else {
+  $balance = $current_balance;
+}
+
 if($clinic->currency_type == "myr") {
  $currency = "RM";
  $cap_currency_symbol = "RM";
- $balance = number_format($current_balance * 3, 2);
+ $balance = number_format($balance * 3, 2);
  $cap_amount = $cap_amount * 3;
 } else {
  $currency = "S$";
- $balance = number_format($current_balance, 2);
+ $balance = number_format($balance, 2);
 }
 
 $jsonArray['current_balance'] = $currency.' '.$balance;
