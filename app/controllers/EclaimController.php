@@ -173,27 +173,35 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-        // recalculate employee balance
-		PlanHelper::reCalculateEmployeeBalance($user_id);
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')
+                              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                              ->first();
+    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+	    // recalculate employee balance
+			PlanHelper::reCalculateEmployeeBalance($user_id);
 
-        // check if e-claim can proceed
-		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
-        // return $check_user_balance->balance;
-        $balance = round($check_user_balance->balance, 2);
+	    // check if e-claim can proceed
+			$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+      // return $check_user_balance->balance;
+      $balance = round($check_user_balance->balance, 2);
 
-		if($input['amount'] > $balance || $balance <= 0) {
-			return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
-		}
+			if($input['amount'] > $balance || $balance <= 0) {
+				return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
+			}
 
-        // check user pending e-claims amount
-		$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
-		$total_claim_amount = $check_user_balance->balance - $claim_amounts;
-		$amount = trim($input['amount']);
-		$total_claim_amount = trim($total_claim_amount);
+	        // check user pending e-claims amount
+			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
+			$total_claim_amount = $check_user_balance->balance - $claim_amounts;
+			$amount = trim($input['amount']);
+			$total_claim_amount = trim($total_claim_amount);
 
-		if($amount > $total_claim_amount) {
-			return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
-		}
+			if($amount > $total_claim_amount) {
+				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
+			}
+    } else {
+    	$amount = trim($input['amount']);
+    }
 		
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
@@ -335,26 +343,32 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-		// recalculate employee balance
-		PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-        // check if e-claim can proceed
-		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
-		$balance = round($check_user_balance->wellness_balance, 2);
-		
-		if($input['amount'] > $balance || $balance <= 0) {
-			return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
-		}
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')
+                              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                              ->first();
 
-         // check user pending e-claims amount
-		$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
+    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+			// recalculate employee balance
+			PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+	        // check if e-claim can proceed
+			$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
+			$balance = round($check_user_balance->wellness_balance, 2);
+			
+			if($input['amount'] > $balance || $balance <= 0) {
+				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
+			}
 
-		$total_claim_amount = $check_user_balance->wellness_balance - $claim_amounts;
-        // return $total_claim_amount;
-		if(floatval($input['amount']) > floatval($total_claim_amount)) {
-			return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
-		}
+	    // check user pending e-claims amount
+			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
 
-        // return $total_claim_amount;
+			$total_claim_amount = $check_user_balance->wellness_balance - $claim_amounts;
+	    // return $total_claim_amount;
+			if(floatval($input['amount']) > floatval($total_claim_amount)) {
+				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
+			}
+    }
+
 
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
@@ -5946,49 +5960,64 @@ public function updateEclaimStatus( )
 		return array('status' => true, 'message' => 'E-Claim updated.', 'updated_already' => true);
 	}
 
-	if($input['status'] == 1 || $input['status'] == "1") {
+	if((int)$input['status'] == 1) {
 		// check e-claim if already approve
 		$employee = StringHelper::getUserId($e_claim_details->user_id);
-            // check user balance
-		// recalculate balance
-		PlanHelper::reCalculateEmployeeBalance($employee);
 
-		$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-		$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
-		// return $date;
-		$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $employee)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')
+                              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                              ->first();
 
-		if($check->spending_type == "medical") {
-			$balance_medical = round($balance['balance'], 2);
-			if($e_claim_details->amount > $balance_medical) {
-				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
+    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+	    // check user balance
+			// recalculate balance
+			PlanHelper::reCalculateEmployeeBalance($employee);
+
+			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
+			$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
+			// return $date;
+			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
+
+			if($check->spending_type == "medical") {
+				$balance_medical = round($balance['balance'], 2);
+				if($e_claim_details->amount > $balance_medical) {
+					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
+				}
+			} else {
+				$balance_wellness = round($balance['balance'], 2);
+				if($e_claim_details->amount > $balance_wellness) {
+					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
+				}
 			}
-		} else {
-			$balance_wellness = round($balance['balance'], 2);
-			if($e_claim_details->amount > $balance_wellness) {
-				return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
-			}
-		}
+    } else {
+    	$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
+    }
 
         // deduct credit and save logs
 		$wallet_class = new Wallet();
 
-            // check what type of spending wallet the e-claim is
+    // check what type of spending wallet the e-claim is
 		if($check->spending_type == "medical") {
-                // create wallet logs
+      // create wallet logs
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
 				'wallet_id'     => $wallet->wallet_id,
 				'credit'        => $e_claim_details->amount,
 				'logs'          => 'deducted_from_e_claim',
-				'running_balance' => $balance['balance'] - $e_claim_details->amount,
 				'where_spend'   => 'e_claim_transaction',
 				'id'            => $e_claim_id
 			);
 
-			if($balance['back_date'] == true) {
-				$wallet_logs['back_date_deduction'] = 1;
-				$wallet_logs['created_at'] = $e_claim_details->created_at;
+			if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+				if($balance['back_date'] == true) {
+					$wallet_logs['back_date_deduction'] = 1;
+					$wallet_logs['created_at'] = $e_claim_details->created_at;
+				}
+				$wallet_logs['running_balance'] = $balance['balance'] - $e_claim_details->amount;
+			} else {
+				$wallet_logs['unlimited'] = 1;
+				$wallet_logs['running_balance'] = 0;
 			}
 
 			$history = new WalletHistory( );
@@ -5997,18 +6026,20 @@ public function updateEclaimStatus( )
 				$deduct_history = $history->createWalletHistory($wallet_logs);
 				$wallet_history_id = $deduct_history->id;
 				try {
-					if($balance['back_date'] == false) {
-						$deduct_result = $wallet_class->deductCredits($employee, $e_claim_details->amount);
-					} else {
-						$deduct_result =true;
-					}
 					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
+					if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+						if($balance['back_date'] == false) {
+							$deduct_result = $wallet_class->deductCredits($employee, $e_claim_details->amount);
+						} else {
+							$deduct_result =true;
+						}
 
-					if($deduct_result) {
-						$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
+						if($deduct_result) {
+							$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
+						}
 					}
 
-                        // send notification to browser
+          // send notification to browser
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 					EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 					if($admin_id) {
@@ -6018,12 +6049,12 @@ public function updateEclaimStatus( )
 							'rejected_reason' => $rejected_reason
 						);
 						$admin_logs = array(
-		                    'admin_id'  => $admin_id,
-		                    'admin_type' => 'mednefits',
-		                    'type'      => 'admin_hr_approved_e_claim',
-		                    'data'      => SystemLogLibrary::serializeData($data)
-		                );
-		                SystemLogLibrary::createAdminLog($admin_logs);
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_approved_e_claim',
+                'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
 					} else {
 						$data = array(
 							'e_claim_id' => $e_claim_id,
@@ -6031,17 +6062,17 @@ public function updateEclaimStatus( )
 							'rejected_reason' => $rejected_reason
 						);
 						$admin_logs = array(
-		                    'admin_id'  => $hr_id,
-		                    'admin_type' => 'hr',
-		                    'type'      => 'admin_hr_approved_e_claim',
-		                    'data'      => SystemLogLibrary::serializeData($data)
-		                );
-		                SystemLogLibrary::createAdminLog($admin_logs);
+              'admin_id'  => $hr_id,
+              'admin_type' => 'hr',
+              'type'      => 'admin_hr_approved_e_claim',
+              'data'      => SystemLogLibrary::serializeData($data)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
 					}
 				} catch(Exception $e) {
 					$email = [];
 					$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
-					$email['logs'] = 'E-Claim Update Status Medical -'.$e->getMessage();
+					$email['logs'] = 'E-Claim Update Status Medical -'.$e;
 					$email['emailSubject'] = 'Error log. Wallet History ID: '.$wallet_history_id;
 
 					$history->deleteFailedWalletHistory($wallet_history_id);
@@ -6051,7 +6082,7 @@ public function updateEclaimStatus( )
 			} catch(Exception $e) {
 				$email = [];
 				$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
-				$email['logs'] = 'E-Claim Update Status Medical - '.$e->getMessage();
+				$email['logs'] = 'E-Claim Update Status Medical - '.$e;
 				$email['emailSubject'] = 'Error log.';
 				EmailHelper::sendErrorLogs($email);
 				return array('status' => FALSE, 'message' => 'E-Claim failed to update.');
@@ -6062,31 +6093,39 @@ public function updateEclaimStatus( )
 				'wallet_id'     => $wallet->wallet_id,
 				'credit'        => $e_claim_details->amount,
 				'logs'          => 'deducted_from_e_claim',
-				'running_balance' => $balance['balance'] - $e_claim_details->amount,
 				'where_spend'   => 'e_claim_transaction',
 				'id'            => $e_claim_id,
 				'created_at'	=> $e_claim_details->created_at
 			);
 
-			if($balance['back_date'] == true) {
-				$wallet_logs['back_date_deduction'] = 1;
-				$wallet_logs['created_at'] = $e_claim_details->created_at;
+			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+				$wallet_logs['unlimited'] = 1;
+				$wallet_logs['running_balance'] = 0;
+			} else {
+				$wallet_logs['running_balance'] = $balance['balance'] - $e_claim_details->amount;
+				if($balance['back_date'] == true) {
+					$wallet_logs['back_date_deduction'] = 1;
+					$wallet_logs['created_at'] = $e_claim_details->created_at;
+				}
 			}
 
 			try {
 				$deduct_history = WellnessWalletHistory::create($wallet_logs);
 				$wallet_history_id = $deduct_history->id;
 				try {
-					if($balance['back_date'] == false) {
-						$deduct_result = $wallet_class->deductWellnessCredits($employee, $e_claim_details->amount);
+					if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+						if($balance['back_date'] == false) {
+							$deduct_result = $wallet_class->deductWellnessCredits($employee, $e_claim_details->amount);
+						} else {
+							$deduct_result = true;
+						}
 					} else {
 						$deduct_result = true;
 					}
 					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
-
 					if($deduct_result) {
 						$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
-                            // send notification to browser
+            // send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 						EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 						if($admin_id) {
@@ -6096,12 +6135,12 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-			                    'admin_id'  => $admin_id,
-			                    'admin_type' => 'mednefits',
-			                    'type'      => 'admin_hr_approved_e_claim',
-			                    'data'      => SystemLogLibrary::serializeData($data)
-			                );
-			                SystemLogLibrary::createAdminLog($admin_logs);
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_approved_e_claim',
+                'data'      => SystemLogLibrary::serializeData($data)
+              );
+              SystemLogLibrary::createAdminLog($admin_logs);
 						} else {
 							$data = array(
 								'e_claim_id' => $e_claim_id,
@@ -6109,18 +6148,18 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-			                    'admin_id'  => $hr_id,
-			                    'admin_type' => 'hr',
-			                    'type'      => 'admin_hr_approved_e_claim',
-			                    'data'      => SystemLogLibrary::serializeData($data)
-			                );
-			                SystemLogLibrary::createAdminLog($admin_logs);
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_approved_e_claim',
+                'data'      => SystemLogLibrary::serializeData($data)
+              );
+              SystemLogLibrary::createAdminLog($admin_logs);
 						}
 					}
 				} catch(Exception $e) {
 					$email = [];
 					$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
-					$email['logs'] = 'E-Claim Update Status Wellness -'.$e->getMessage();
+					$email['logs'] = 'E-Claim Update Status Wellness -'.$e;
 					$email['emailSubject'] = 'Error log. Wallet History ID: '.$wallet_history_id;
 
 					$history->deleteFailedWalletHistory($wallet_history_id);
@@ -6130,13 +6169,12 @@ public function updateEclaimStatus( )
 			} catch(Exception $e) {
 				$email = [];
 				$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
-				$email['logs'] = 'E-Claim Update Status Wellness - '.$e->getMessage();
+				$email['logs'] = 'E-Claim Update Status Wellness - '.$e;
 				$email['emailSubject'] = 'Error log.';
 				EmailHelper::sendErrorLogs($email);
 				return array('status' => FALSE, 'message' => 'E-Claim failed to update.');
 			}
 		}
-
 	} else {
 		try {
 			$employee = StringHelper::getUserId($e_claim_details->user_id);
@@ -6152,12 +6190,12 @@ public function updateEclaimStatus( )
 					'rejected_reason' => $rejected_reason
 				);
 				$admin_logs = array(
-	                'admin_id'  => $admin_id,
-	                'admin_type' => 'mednefits',
-	                'type'      => 'admin_hr_rejected_e_claim',
-	                'data'      => SystemLogLibrary::serializeData($data)
-	            );
-	            SystemLogLibrary::createAdminLog($admin_logs);
+          'admin_id'  => $admin_id,
+          'admin_type' => 'mednefits',
+          'type'      => 'admin_hr_rejected_e_claim',
+          'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
 				$data = array(
 					'e_claim_id' => $e_claim_id,
@@ -6165,17 +6203,17 @@ public function updateEclaimStatus( )
 					'rejected_reason' => $rejected_reason
 				);
 				$admin_logs = array(
-                    'admin_id'  => $hr_id,
-                    'admin_type' => 'hr',
-                    'type'      => 'admin_hr_rejected_e_claim',
-                    'data'      => SystemLogLibrary::serializeData($data)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
+          'admin_id'  => $hr_id,
+          'admin_type' => 'hr',
+          'type'      => 'admin_hr_rejected_e_claim',
+          'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
 			}
 		} catch(Exception $e) {
 			$email = [];
 			$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
-			$email['logs'] = 'E-Claim Update Status - '.$e->getMessage();
+			$email['logs'] = 'E-Claim Update Status - '.$e;
 			$email['emailSubject'] = 'Error log.';
 			EmailHelper::sendErrorLogs($email);
 			return array('status' => FALSE, 'message' => 'E-Claim failed to update.');
