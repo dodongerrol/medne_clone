@@ -175,7 +175,7 @@
 							<button ng-if="net_active == 'outNetWorkTable'" ng-disabled="isStatusShow == false" class="btn btn-pdf" ng-click="downloadFullOUTPDF(overview.statement)">PDF</button>
 
 							<!-- <button ng-if="net_active == 'inNetWorkTable'" class="btn btn-csv" ng-json-export-excel data="dl_in_network" report-fields="{member: 'MEMBER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', clinic_name: 'PROVIDER', amount: 'TOTAL AMOUNT', receipt_files: 'MEDICATION', receipt_status: 'TREATMENT'}" filename="'In-Network-Transactions'" separator=",">CSV</button> -->
-							<button ng-if="net_active == 'inNetWorkTable'" class="btn btn-csv" ng-click="downloadFullINPDF(overview.statement, 'csv')">CSV</button>
+							<button ng-if="net_active == 'inNetWorkTable'" ng-disabled="full.in_network_transactions.length == 0" class="btn btn-csv" ng-click="downloadFullINPDF(overview.statement, 'csv')">CSV</button>
 
 							<!-- <button ng-if="net_active == 'outNetWorkTable'" class="btn btn-csv" ng-json-export-excel data="dl_eclaim" report-fields="{
 								member: 'MEMBER',
@@ -199,7 +199,7 @@
 								bank_brh: 'BRANCH CODE'
 							}" filename="'E-Claim-Transactions'" separator=",">CSV</button> -->
 
-							<button ng-if="net_active == 'outNetWorkTable'" class="btn btn-csv" ng-click="downloadCSV()">CSV</button>
+							<button ng-if="net_active == 'outNetWorkTable'" ng-disabled="full.e_claim_transactions.length == 0" class="btn btn-csv" ng-click="downloadCSV()">CSV</button>
 						</div>
 					</div>
 
