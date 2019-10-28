@@ -93,11 +93,11 @@ class Api_V1_TransactionController extends \BaseController
                                     ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                                     ->first();
 
-          if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-            $spending_type = $clinic_type->spending_type;
-            $user_credits = 100000000000;
-            $wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
-          } else {
+          // if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+          //   $spending_type = $clinic_type->spending_type;
+          //   $user_credits = 100000000000;
+          //   $wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
+          // } else {
 						// recalculate employee balance
 	         	PlanHelper::reCalculateEmployeeBalance($user_id);
 						// check user credits and amount key in
@@ -118,7 +118,7 @@ class Api_V1_TransactionController extends \BaseController
 	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
 	            return Response::json($returnObject);
 						}
-          }
+          // }
 
 
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
@@ -351,10 +351,10 @@ class Api_V1_TransactionController extends \BaseController
 									'id'            => $transaction_id
 								);
 
-								if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-									$credits_logs['running_balance'] = 0;
-									$credits_logs['unlimited'] = 1;
-								}
+								// if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+								// 	$credits_logs['running_balance'] = 0;
+								// 	$credits_logs['unlimited'] = 1;
+								// }
 
 								// insert for lite plan
 								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
@@ -378,10 +378,10 @@ class Api_V1_TransactionController extends \BaseController
 									'id'            => $transaction_id
 								);
 
-								if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-									$credits_logs['running_balance'] = 0;
-									$credits_logs['unlimited'] = 1;
-								}
+								// if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+								// 	$credits_logs['running_balance'] = 0;
+								// 	$credits_logs['unlimited'] = 1;
+								// }
 
 								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 									$lite_plan_credits_log = array(

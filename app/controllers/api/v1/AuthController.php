@@ -5150,7 +5150,7 @@ public function createEclaim( )
                                 ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                                 ->first();
 
-    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+    // if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
       if($input['spending_type'] == "medical") {
         // recalculate employee balance
         PlanHelper::reCalculateEmployeeBalance($user_id);
@@ -5195,9 +5195,9 @@ public function createEclaim( )
        $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
        return Response::json($returnObject);
       }
-    } else {
-      $amount = trim($input_amount);
-    }
+    // } else {
+    //   $amount = trim($input_amount);
+    // }
 
   $time = date('h:i A', strtotime($input['time']));
   $claim = new Eclaim();

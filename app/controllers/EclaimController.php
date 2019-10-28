@@ -177,7 +177,7 @@ class EclaimController extends \BaseController {
     $customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
-    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+    // if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 	    // recalculate employee balance
 			PlanHelper::reCalculateEmployeeBalance($user_id);
 
@@ -199,9 +199,9 @@ class EclaimController extends \BaseController {
 			if($amount > $total_claim_amount) {
 				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
 			}
-    } else {
-    	$amount = trim($input['amount']);
-    }
+    // } else {
+    // 	$amount = trim($input['amount']);
+    // }
 		
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
@@ -348,7 +348,7 @@ class EclaimController extends \BaseController {
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
 
-    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+    // if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			// recalculate employee balance
 			PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
 	        // check if e-claim can proceed
@@ -367,7 +367,7 @@ class EclaimController extends \BaseController {
 			if(floatval($input['amount']) > floatval($total_claim_amount)) {
 				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
 			}
-    }
+    // }
 
 
 		$time = date('h:i A', strtotime($input['time']));
@@ -6009,16 +6009,16 @@ public function updateEclaimStatus( )
 				'id'            => $e_claim_id
 			);
 
-			if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+			// if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 				if($balance['back_date'] == true) {
 					$wallet_logs['back_date_deduction'] = 1;
 					$wallet_logs['created_at'] = $e_claim_details->created_at;
 				}
 				$wallet_logs['running_balance'] = $balance['balance'] - $e_claim_details->amount;
-			} else {
-				$wallet_logs['unlimited'] = 1;
-				$wallet_logs['running_balance'] = 0;
-			}
+			// } else {
+			// 	$wallet_logs['unlimited'] = 1;
+			// 	$wallet_logs['running_balance'] = 0;
+			// }
 
 			$history = new WalletHistory( );
 
@@ -6098,30 +6098,30 @@ public function updateEclaimStatus( )
 				'created_at'	=> $e_claim_details->created_at
 			);
 
-			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+			// if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
 				$wallet_logs['unlimited'] = 1;
 				$wallet_logs['running_balance'] = 0;
-			} else {
-				$wallet_logs['running_balance'] = $balance['balance'] - $e_claim_details->amount;
-				if($balance['back_date'] == true) {
-					$wallet_logs['back_date_deduction'] = 1;
-					$wallet_logs['created_at'] = $e_claim_details->created_at;
-				}
-			}
+			// } else {
+			// 	$wallet_logs['running_balance'] = $balance['balance'] - $e_claim_details->amount;
+			// 	if($balance['back_date'] == true) {
+			// 		$wallet_logs['back_date_deduction'] = 1;
+			// 		$wallet_logs['created_at'] = $e_claim_details->created_at;
+			// 	}
+			// }
 
 			try {
 				$deduct_history = WellnessWalletHistory::create($wallet_logs);
 				$wallet_history_id = $deduct_history->id;
 				try {
-					if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+					// if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 						if($balance['back_date'] == false) {
 							$deduct_result = $wallet_class->deductWellnessCredits($employee, $e_claim_details->amount);
 						} else {
 							$deduct_result = true;
 						}
-					} else {
-						$deduct_result = true;
-					}
+					// } else {
+					// 	$deduct_result = true;
+					// }
 					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 					if($deduct_result) {
 						$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
