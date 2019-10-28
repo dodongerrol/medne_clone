@@ -95,7 +95,7 @@ class Api_V1_TransactionController extends \BaseController
 
           if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
             $spending_type = $clinic_type->spending_type;
-            $user_credits = 1000;
+            $user_credits = 100000000000;
             $wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
           } else {
 						// recalculate employee balance
