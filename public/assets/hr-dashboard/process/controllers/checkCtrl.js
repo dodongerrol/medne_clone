@@ -47,7 +47,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 
 			vm.account_type = response.account_type;
 			
-			localStorage.getItem('company_account_type', vm.account_type);
+			localStorage.setItem('company_account_type', vm.account_type);
 		});
 	};
 
@@ -58,9 +58,9 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 		}, 1000);
 	}
 
+	vm.accountType();
 	setTimeout(function() {
 		vm.onLoad();
-		vm.accountType();
 	}, 500);
 });
 

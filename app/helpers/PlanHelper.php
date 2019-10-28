@@ -2744,7 +2744,7 @@ class PlanHelper {
 					->first();
 				}
 
-				if($active_plan_type->account_type == "stand_alone_plan" || $active_plan_type->account_type == "lite_plan") {
+				if($active_plan_type->account_type == "stand_alone_plan" || $active_plan_type->account_type == "lite_plan" || $active_plan_type->account_type == "enterprise_plan") {
 					$refund = true;
 				}
 			} else {
@@ -2756,7 +2756,7 @@ class PlanHelper {
 				->where('dependent_plan_id', $dependepent_plan_history->dependent_plan_id)
 				->first();
 
-				if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan") {
+				if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan" || $dependent_plan->account_type == "enterprise_plan") {
 					$refund = true;
 				}
 			}
@@ -4361,6 +4361,8 @@ class PlanHelper {
 				return "Trial Plan";
 			} else if($account_type == "lite_plan") {
 				return "Lite Plan";
+			} else if($account_type == "enterprise_plan") {
+				return "Enterprise Plan";
 			}
 		}
 

@@ -1972,6 +1972,8 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
 				$plan_name = "Lite Plan";
+			} else if($active_plan->account_type == 'enterprise_plan') {
+				$plan_name = "Enterprise Plan";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
