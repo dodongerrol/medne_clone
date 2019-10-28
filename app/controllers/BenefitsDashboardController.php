@@ -12088,44 +12088,13 @@ class BenefitsDashboardController extends \BaseController {
 		$customer_id = PlanHelper::getCusomerIdToken();
 		$total_active_members = 0;
 		$total_active_dependents = 0;
-		// $total_enrolled_dependents = 0;
-		// $plan_status = DB::table('customer_plan_status')
-		// ->where('customer_id', $customer_id)
-		// ->orderBy('created_at', 'desc')
-		// ->first();
-
-		// $check_dependents = DB::table('dependent_plans')->where('customer_plan_id', $plan_status->customer_plan_id)->first();
-
-		// if($check_dependents) {
-		// 	// $dependents = DB::table('dependent_plan_status')
-		// 	// ->where('customer_plan_id', $plan_status->customer_plan_id)
-		// 	// ->orderBy('created_at', 'desc')
-		// 	// ->first();
-		// 	// return $plan_status->customer_plan_id;
-		// 	$dependent_ids = [];
-		// 	$dependents = DB::table('dependent_plans')
-		// 						->where('customer_plan_id', $plan_status->customer_plan_id)
-		// 						->get();
-		// 	foreach ($dependents as $key => $dependent) {
-		// 		$dependent_ids[] = $dependent->dependent_plan_id;
-		// 	}
-		// 	// return $dependent_ids;
-		// 	// $total_enrolled_dependents = $dependents->total_enrolled_dependents;
-		// 	$total_enrolled_dependents = DB::table('employee_family_coverage_sub_accounts')
-		// 									->join('dependent_plan_history', 'dependent_plan_history.user_id', '=', 'employee_family_coverage_sub_accounts.user_id')
-		// 									->whereIn('dependent_plan_history.dependent_plan_id', $dependent_ids)
-		// 									->where('employee_family_coverage_sub_accounts.deleted', 0)
-		// 									->count();
-		// 	// return $total_enrolled_dependents;
-		// }
-
-		// // return $plan_status->enrolled_employees;
 
 		// $total_members = $plan_status->enrolled_employees + $total_enrolled_dependents;
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')
-								->where('corporate_id', $account_link->corporate_id)
-								->where('removed_status', 0)
+								->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+								->where('corporate_members.corporate_id', $account_link->corporate_id)
+								->where('user.Active', 1)
 								->get();
 								
 		$total_active_members = sizeof($corporate_members);

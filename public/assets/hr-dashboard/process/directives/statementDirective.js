@@ -424,6 +424,7 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_start = moment( start ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_start").text( scope.rangePicker_start );
+							scope.monthStart = moment( start ).format('D MMMM');
 
 							$('.btn-custom-end').data('daterangepicker').setMinDate( start );
 
@@ -453,6 +454,8 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_end = moment( end ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_end").text( scope.rangePicker_end );
+							scope.monthEnd = moment( end ).format('D MMMM');
+							scope.year = moment( end ).format( 'YYYY' );
 
 							var activity_search = {
 						  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
