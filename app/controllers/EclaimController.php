@@ -6027,7 +6027,7 @@ public function updateEclaimStatus( )
 				$wallet_history_id = $deduct_history->id;
 				try {
 					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
-					if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+					// if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 						if($balance['back_date'] == false) {
 							$deduct_result = $wallet_class->deductCredits($employee, $e_claim_details->amount);
 						} else {
@@ -6037,7 +6037,7 @@ public function updateEclaimStatus( )
 						if($deduct_result) {
 							$result = $e_claim->updateEclaimStatus($e_claim_id, $input['status'], $rejected_reason);
 						}
-					}
+					// }
 
           // send notification to browser
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
