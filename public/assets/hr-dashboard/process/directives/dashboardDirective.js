@@ -20,7 +20,7 @@ app.directive('dashboardDirective', [
 				scope.isMorning = scope.time_now.isAfter( moment('5:00 AM', 'HH:mm A') ) && scope.time_now.isBefore( moment('11:59 AM', 'HH:mm A') );
 				scope.isAfternoon = scope.time_now.isAfter( moment('12:00 PM', 'HH:mm A') ) && scope.time_now.isBefore( moment('6:00 PM', 'HH:mm A') );
 				scope.isEvening = scope.time_now.isAfter( moment('6:01 PM', 'HH:mm A') ) && scope.time_now.isBefore( moment('4:59 AM', 'HH:mm A').add('days',1) );
-				
+				scope.statementHide = true;
 
 				scope.companyAccountType = function () {
 					scope.account_type = localStorage.getItem('company_account_type');
@@ -28,6 +28,7 @@ app.directive('dashboardDirective', [
 
 					if(scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
+						scope.statementHide = false;
 					}
 				}
 
