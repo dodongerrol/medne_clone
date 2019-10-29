@@ -61,6 +61,7 @@ app.directive("employeeOverviewDirective", [
         scope.dependents_ctr = 0;
         scope.cap_per_visit = 0;
         scope.isUpdateEmpInfoModalOpen = false;
+        scope.statementHide = true;
 
         var iti = null;
 
@@ -87,6 +88,7 @@ app.directive("employeeOverviewDirective", [
 
           if(scope.account_type === 'enterprise_plan') {
             $('.statement-hide').hide();
+            scope.statementHide = false;
           }
         }
 

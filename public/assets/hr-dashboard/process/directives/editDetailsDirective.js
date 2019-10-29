@@ -11,6 +11,7 @@
 
 				scope.selected_employee = [];
 				scope.job_list = {};
+				scope.statementHide = true;
 
 				scope.$on( 'editDetailsInitialized', function( evt, data )  {
 			      if( data.modal == 'edit-employee-details' ){
@@ -60,6 +61,7 @@
 
 						if(scope.account_type === 'enterprise_plan') {
 							$('.statement-hide').hide();
+							scope.statementHide = false;
 						}
 					}
 
