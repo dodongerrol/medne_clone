@@ -5836,7 +5836,9 @@ class BenefitsDashboardController extends \BaseController {
 				$account_type = "Trial Plan";
 			} else if($dependent->account_type == "lite_plan") {
 				$account_type = "Lite Plan";
-			} 
+			} else if($dependent->account_type == "enterprise_plan") {
+				$account_type = "Enterprise Plan";
+			}
 
 			if((int)$dependent->payment_status == 0) {
 				$dependent_amount_due += $invoice_dependent->individual_price * $invoice_dependent->total_dependents;
