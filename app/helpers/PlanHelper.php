@@ -94,6 +94,8 @@ class PlanHelper {
 			$plan_name = "Mednefits Care: Pro Plan";
 		} else if($dependent_plan->account_type == "lite_plan") {
 			$plan_name = "Mednefits Care: Lite Plan";
+		} else if($dependent_plan->account_type == "enterprise_plan") {
+			$plan_name = "Mednefits Care: Enterprise Plan";
 		}
 
 		return $plan_name;
@@ -128,6 +130,8 @@ class PlanHelper {
 			$plan_name = "Mednefits Care: Pro Plan";
 		} else if($active->account_type == "lite_plan") {
 			$plan_name = "Mednefits Care: Lite Plan";
+		} else if($active->account_type == "enterprise_plan") {
+			$plan_name = "Mednefits Care: Enterprise Plan";
 		}
 
 		return $plan_name;
@@ -162,6 +166,8 @@ class PlanHelper {
 			$plan_name = "Mednefits Care: Pro Plan";
 		} else if($active_plan_data->account_type == "lite_plan") {
 			$plan_name = "Mednefits Care: Lite Plan";
+		} else if($active_plan_data->account_type == "enterprise_plan") {
+			$plan_name = "Mednefits Care: Enterprise Plan";
 		}
 
 		return $plan_name;
