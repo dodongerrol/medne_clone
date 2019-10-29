@@ -81,21 +81,21 @@ class PlanHelper {
 		if($dependent_plan->account_type == "insurance_bundle") {
 			if($dependent_plan->secondary_account_type == null) {
 				if($dependent_plan->secondary_account_type == "pro_plan_bundle"){
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else {
-					$plan_name = "Mednefits Care: Bundle Lite";
+					$plan_name = "Bundle Lite";
 				}
 			} else if($dependent_plan->secondary_account_type == "pro_plan_bundle"){
-				$plan_name = "Mednefits Care: Bundle Pro";
+				$plan_name = "Bundle Pro";
 			} else {
-				$plan_name = "Mednefits Care: Bundle Lite";
+				$plan_name = "Bundle Lite";
 			}
 		} else if($dependent_plan->account_type == "stand_alone_plan") {
-			$plan_name = "Mednefits Care: Pro Plan";
+			$plan_name = "Pro Plan";
 		} else if($dependent_plan->account_type == "lite_plan") {
-			$plan_name = "Mednefits Care: Lite Plan";
+			$plan_name = "Lite Plan";
 		} else if($dependent_plan->account_type == "enterprise_plan") {
-			$plan_name = "Mednefits Care: Enterprise Plan";
+			$plan_name = "Enterprise Plan";
 		}
 
 		return $plan_name;
@@ -115,23 +115,23 @@ class PlanHelper {
 			if($active->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
 				if($plan->secondary_account_type == null) {
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else if($plan->secondary_account_type == "pro_plan_bundle"){
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else {
-					$plan_name = "Mednefits Care: Bundle Lite";
+					$plan_name = "Bundle Lite";
 				}
 			} else if($active->secondary_account_type == "pro_plan_bundle"){
-				$plan_name = "Mednefits Care: Bundle Pro";
+				$plan_name = "Bundle Pro";
 			} else {
-				$plan_name = "Mednefits Care: Bundle Lite";
+				$plan_name = "Bundle Lite";
 			}
 		} else if($active->account_type == "stand_alone_plan") {
-			$plan_name = "Mednefits Care: Pro Plan";
+			$plan_name = "Pro Plan";
 		} else if($active->account_type == "lite_plan") {
-			$plan_name = "Mednefits Care: Lite Plan";
+			$plan_name = "Lite Plan";
 		} else if($active->account_type == "enterprise_plan") {
-			$plan_name = "Mednefits Care: Enterprise Plan";
+			$plan_name = "Enterprise Plan";
 		}
 
 		return $plan_name;
@@ -151,23 +151,23 @@ class PlanHelper {
 			if($active_plan_data->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
 				if($plan->secondary_account_type == null) {
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else if($plan->secondary_account_type == "pro_plan_bundle"){
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else {
-					$plan_name = "Mednefits Care: Bundle Lite";
+					$plan_name = "Bundle Lite";
 				}
 			} else if($active_plan_data->secondary_account_type == "pro_plan_bundle"){
-				$plan_name = "Mednefits Care: Bundle Pro";
+				$plan_name = "Bundle Pro";
 			} else {
-				$plan_name = "Mednefits Care: Bundle Lite";
+				$plan_name = "Bundle Lite";
 			}
 		} else if($active_plan_data->account_type == "stand_alone_plan") {
-			$plan_name = "Mednefits Care: Pro Plan";
+			$plan_name = "Pro Plan";
 		} else if($active_plan_data->account_type == "lite_plan") {
-			$plan_name = "Mednefits Care: Lite Plan";
+			$plan_name = "Lite Plan";
 		} else if($active_plan_data->account_type == "enterprise_plan") {
-			$plan_name = "Mednefits Care: Enterprise Plan";
+			$plan_name = "Enterprise Plan";
 		}
 
 		return $plan_name;
