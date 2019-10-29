@@ -52,6 +52,7 @@
 				scope.receipts_approved = [];
 				scope.receipts_rejected = [];
 				scope.receipts_arr = [];
+				scope.statementHide = true;
 
 				var monthToday = moment().format('MM');
 				var monthToday2 = moment().format('MM');
@@ -69,6 +70,7 @@
 
 					if(scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
+						scope.statementHide = false;
 					}
 				}
 

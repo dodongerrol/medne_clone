@@ -51,6 +51,8 @@ app.directive('activityPage', [
 					to: 0
 				}
 
+				scope.statementHide = true;
+
 				var monthToday = moment().format('MM');
 				var monthToday2 = moment().format('MM');
 
@@ -72,6 +74,7 @@ app.directive('activityPage', [
 
 					if(scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
+						scope.statementHide = false;
 					}
 				}
 
