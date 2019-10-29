@@ -830,7 +830,7 @@ class PlanHelper {
 		$package_bundle = DB::table('package_bundle')
 		->join('care_package', 'care_package.care_package_id', '=', 'package_bundle.care_package_id')
 		->where('package_bundle.package_group_id', $package_group->package_group_id)
-		->orderBy('care_package.position', 'desc')
+		->orderBy('care_package.position', 'asc')
 		->get();
 		return $package_bundle;
 	}
