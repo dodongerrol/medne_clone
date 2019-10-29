@@ -29,6 +29,7 @@ app.directive('dashboardDirective', [
 					if(scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
 						scope.statementHide = false;
+						setTimeout();
 					}
 				}
 
