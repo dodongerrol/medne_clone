@@ -2331,6 +2331,22 @@ class PlanHelper {
 			// return $users_allocation;
 		}
 
+		public static function getUnlimitedCorporateUserByAllocated($corporate_id, $customer_id) 
+		{
+			$users_medical = [];
+			$users_wellness = [];
+
+			$users_medical_temp = DB::table('corporate_members')
+								->where('corporate_id', $corporate_id)
+								->get();
+
+			foreach ($users_medical_temp as $key => $medical) {
+				$users_medical[] = $medical->user_id;
+			}
+
+			return $users_medical;
+		}
+
 		public static function getResetWallet($user_id, $spending_type, $start, $end, $type)
 		{
 			$wallet_reset = DB::table('credit_reset')

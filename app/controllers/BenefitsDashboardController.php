@@ -2228,12 +2228,12 @@ class BenefitsDashboardController extends \BaseController {
 		$total_allocation_wellness = 0;
 
 		// $check_accessibility = self::hrStatus( );
-		$check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
-		if($check_accessibility == true) {
-			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+		$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+		// $check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
+		// if($check_accessibility == true) {
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
-			if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+			if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
 
 	    	// check if customer has a credit reset in medical
 				$customer_credit_reset_medical = DB::table('credit_reset')
@@ -2314,7 +2314,13 @@ class BenefitsDashboardController extends \BaseController {
 				}
 				$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
 			}
-			$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+
+			if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+				$user_allocated = PlanHelper::getUnlimitedCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+			} else {
+				$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+			}
+
 	        // return $user_allocated;
 			$get_allocation_spent = 0;
 			$get_allocation_spent_wellness = 0;
@@ -2363,7 +2369,7 @@ class BenefitsDashboardController extends \BaseController {
 				// update wellness credits
 				\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
 			}
-		}
+		// }
 		
 		return array(
 			'total_medical_company_allocation' => number_format($total_medical_allocation, 2),
