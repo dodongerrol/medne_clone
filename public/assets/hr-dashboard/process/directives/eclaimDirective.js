@@ -323,8 +323,11 @@
 					var data = {
 						e_claim_id: list.transaction_id,
 						status: num,
-						rejected_reason : list.reason
+						rejected_reason : list.reason,
+						e_claim_amount : list.amount,
 					}
+
+					console.log(data);
 
 					hrActivity.updateEclaimStatus( data )
 					.then(function(response){
