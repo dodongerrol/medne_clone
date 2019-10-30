@@ -5197,6 +5197,8 @@ public function createEclaim( )
     } else {
       $amount = trim($input_amount);
     }
+  // get customer id
+  $customer_id = PlanHelper::getCustomerId($user_id);
 
   $time = date('h:i A', strtotime($input['time']));
   $claim = new Eclaim();
@@ -5213,6 +5215,21 @@ public function createEclaim( )
   if(Input::has('currency_type') && $input['currency_type'] != null) {
     $data['currency_type'] = strtolower($input['currency_type']);
     $data['currency_value'] = $input['currency_exchange_rate'];
+  }
+
+  if($customer_id) {
+    // get claim type service cap
+    $claim_type_service = DB::table('health_types')->where('name', $input['service'])->where('type', $input['spending_type'])->where('active', 1)->first();
+    if($claim_type_service) {
+      $get_company_e_claim_service = DB::table('company_e_claim_service_types')
+                                        ->where('health_type_id', $claim_type_service->health_type_id)
+                                        ->where('customer_id', $customer_id)
+                                        ->where('active', 1)
+                                        ->first();
+      if($get_company_e_claim_service) {
+        $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+      }
+    } 
   }
 
   try {

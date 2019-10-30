@@ -202,7 +202,9 @@ class EclaimController extends \BaseController {
     } else {
     	$amount = trim($input['amount']);
     }
-		
+
+    // get customer id
+    $customer_id = PlanHelper::getCustomerId($user_id);
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
 		$data = array(
@@ -216,6 +218,21 @@ class EclaimController extends \BaseController {
 			'spending_type' => 'medical'
 		);
 
+		if($customer_id) {
+    	// get claim type service cap
+    	$claim_type_service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('active', 1)->first();
+    	if($claim_type_service) {
+    		$get_company_e_claim_service = DB::table('company_e_claim_service_types')
+    																			->where('health_type_id', $claim_type_service->health_type_id)
+    																			->where('customer_id', $customer_id)
+    																			->where('active', 1)
+    																			->first();
+    		if($get_company_e_claim_service) {
+    			$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+    		}
+    	}	
+    }
+    
 		try {
 			$result = $claim->createEclaim($data);
 			$id = $result->id;
@@ -369,6 +386,8 @@ class EclaimController extends \BaseController {
 			}
     }
 
+    // get customer id
+    $customer_id = PlanHelper::getCustomerId($user_id);
 
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
@@ -381,6 +400,21 @@ class EclaimController extends \BaseController {
 			'time'      => $time,
 			'spending_type' => 'wellness'
 		);
+
+		if($customer_id) {
+    	// get claim type service cap
+    	$claim_type_service = DB::table('health_types')->where('name', $input['service'])->where('type', 'wellness')->where('active', 1)->first();
+    	if($claim_type_service) {
+    		$get_company_e_claim_service = DB::table('company_e_claim_service_types')
+    																			->where('health_type_id', $claim_type_service->health_type_id)
+    																			->where('customer_id', $customer_id)
+    																			->where('active', 1)
+    																			->first();
+    		if($get_company_e_claim_service) {
+    			$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+    		}
+    	}	
+    }
 
 		try {
 			$result = $claim->createEclaim($data);
@@ -5673,6 +5707,8 @@ public function searchEmployeeEclaimActivity( )
 			'service'           => $res->service,
 			'merchant'          => $res->merchant,
 			'amount'            => number_format($res->amount, 2),
+			'claim_amount'      => (int)$res->status == 0 ? 0 : number_format($res->claim_amount, 2),
+			'cap_amount'				=> $res->cap_amount,
 			'member'            => ucwords($member->Name),
 			'type'              => 'E-Claim',
 			'transaction_id'    => 'MNF'.$id,
@@ -5885,6 +5921,8 @@ public function hrEclaimActivity( )
 				'service'           => $res->service,
 				'merchant'          => $res->merchant,
 				'amount'            => number_format($res->amount, 2),
+				'claim_amount'      => (int)$res->status == 0 ? 0 : number_format($res->claim_amount, 2),
+				'cap_amount'				=> $res->cap_amount,
 				'member'            => ucwords($member->Name),
 				'type'              => 'E-Claim',
 				'transaction_id'    => 'MNF'.$id,
@@ -6037,7 +6075,16 @@ public function updateEclaimStatus( )
 					}
 
 					if($deduct_result) {
-						$result = $e_claim->updateEclaimStatus($e_claim_id, 1, $rejected_reason);
+						// $result = $e_claim->updateEclaimStatus($e_claim_id, 1, $rejected_reason);
+						$update_data = array(
+							'status'						=> 1,
+							'approved_date'			=> date('Y-m-d H:i:s'),
+							'rejected_reason'		=> $rejected_reason,
+							'updated_at'				=> date('Y-m-d H:i:s'),
+							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : 0
+						);
+
+						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
 					}
           // send notification to browser
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
@@ -6124,7 +6171,16 @@ public function updateEclaimStatus( )
 					}
 					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 					if($deduct_result) {
-						$result = $e_claim->updateEclaimStatus($e_claim_id, 1, $rejected_reason);
+						// $result = $e_claim->updateEclaimStatus($e_claim_id, 1, $rejected_reason);
+						$update_data = array(
+							'status'						=> 1,
+							'approved_date'			=> date('Y-m-d H:i:s'),
+							'rejected_reason'		=> $rejected_reason,
+							'updated_at'				=> date('Y-m-d H:i:s'),
+							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : 0
+						);
+
+						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
             // send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 						EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
@@ -6179,8 +6235,16 @@ public function updateEclaimStatus( )
 		try {
 			$employee = StringHelper::getUserId($e_claim_details->user_id);
 			$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
-			$result = $e_claim->updateEclaimStatus($e_claim_id, 2, $rejected_reason);
-                // send notification to browser
+			// $result = $e_claim->updateEclaimStatus($e_claim_id, 2, $rejected_reason);
+			$update_data = array(
+				'status'						=> 1,
+				'rejected_reason'		=> $rejected_reason,
+				'updated_at'				=> date('Y-m-d H:i:s'),
+				'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : 0
+			);
+
+			$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
+      // send notification to browser
 			Notification::sendNotificationEmployee('Claim Rejected - Mednefits', 'Your E-claim submission has been rejected with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/rejected.png");
 			EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 			if($admin_id) {
@@ -8364,6 +8428,7 @@ public function generateMonthlyCompanyInvoice( )
 					'CLAIM TYPE'				=> $res->service,
 					'PROVIDER'					=> $res->merchant,
 					'SPENDING ACCOUNT'	=> ucwords($res->spending_type),
+					'CLAIM AMOUNT'			=> number_format($res->claim_amount, 2),
 					'TOTAL AMOUNT'			=> number_format($res->amount, 2),
 					'TYPE'							=> 'E-Claim',
 					'STATUS'						=> $status_text,
