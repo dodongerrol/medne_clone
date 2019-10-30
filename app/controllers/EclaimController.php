@@ -8428,6 +8428,7 @@ public function generateMonthlyCompanyInvoice( )
 					'CLAIM TYPE'				=> $res->service,
 					'PROVIDER'					=> $res->merchant,
 					'SPENDING ACCOUNT'	=> ucwords($res->spending_type),
+					'CLAIM AMOUNT'			=> number_format($res->claim_amount, 2),
 					'TOTAL AMOUNT'			=> number_format($res->amount, 2),
 					'TYPE'							=> 'E-Claim',
 					'STATUS'						=> $status_text,
