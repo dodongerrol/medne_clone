@@ -29,6 +29,18 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/e-claim/css/pre-loader.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/sweetalert.css?_={{ $date->format('U') }}">
 
+	<style type="text/css">
+		/* For Firefox */
+		input.mobile-num-input {
+		    -moz-appearance:textfield;
+		}
+		/* Webkit browsers like Safari and Chrome */
+		input.mobile-num-input::-webkit-inner-spin-button,
+		input.mobile-num-input::-webkit-outer-spin-button {
+		    -webkit-appearance: none;
+		    margin: 0;
+		}
+	</style>
 </head>
 <body eclaim-login>
 	<!-- <div class="container">
@@ -86,14 +98,29 @@
 			</a>
 		</div>
 		<div class="col-sm-12 col-md-12 col-lg-12" id="login-container">
-			<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
-			<h2 class="text-center text-below-image">for member</h2>
+			<div class="login-container-header">
+				<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+				<h2 class="text-center text-below-image">for member</h2>
+			</div>
+			<div class="notification-wrapper">
+				<div class="notification-container">
+					<div>
+						<img src="./assets/images/danger.png">
+					</div>
+					<div>
+						<div class="notification-text">Notification: User ID Change</div>
+						<p>NRIC/FIN and email address will no longer be valid as your user ID. <br>
+						Please click <a class="here-text" ng-click="goToUpdateDetails()">here</a> to change your user ID to your mobile number.</p>
+					</div>
+				</div>
+			</div>
 			<form class="med-form" ng-submit="login()">
 				<div class="form-group">
-					<input type="text" name="email" class="form-control med-input" placeholder="Email Address or Mobile Number" ng-model="email" required/>
+					<!-- valid-number pattern="[0-9]*" type="tel" -->
+					<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" />
 				</div>
 				<div class="form-group">
-					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" required style="margin-bottom: 15px">
+					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password"  style="margin-bottom: 15px">
 				</div>
 				<div class="checkbox">
 			    <label>
@@ -109,11 +136,13 @@
 		</div>
 
 		<div class="col-sm-12 col-md-12 col-lg-12" id="forgot-password" hidden>
-			<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
-			<h2 class="text-center text-below-image">for member</h2>
+			<div class="login-container-header">
+				<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+				<h2 class="text-center text-below-image">for member</h2>
+			</div>
 			<form class="med-form" ng-submit="resetPassword()">
 				<div class="form-group">
-					<input type="text" name="email" class="form-control med-input" placeholder="Email Address or Mobile Number" ng-model="login_details.email" required/>
+					<input type="text" name="email" class="form-control med-input" placeholder="Mobile Number or Email Address" ng-model="login_details.email" required/>
 				</div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-info btn-block med-button" id="reset-password">Reset Password</button>

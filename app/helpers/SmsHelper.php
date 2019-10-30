@@ -13,29 +13,75 @@ class SmsHelper
 		return $config;
 	}
 
+	public static function commzGateConfigs( )
+	{
+		$config = array();
+		$config['id'] = "111010002";
+		$config['password'] = "mednefits2019";
+		$config['from'] = 'Mednefits';
+		return $config;
+	}
+
+	public static function sendCommzSms($data)
+	{
+		$config = self::commzGateConfigs();
+
+		$mobile = preg_replace('/\s+/', '', $data['phone']);
+		$data_message = array(
+			'ID'			=> $config['id'],
+			'Password' => $config['password'],
+			'Mobile'	=> $mobile,
+			'Message'	=> $data['message'],
+			'Type'		=> isset($data['sms_type']) || !empty($data['sms_type']) ? $data['sms_type'] : 'A',
+			'Sender'	=> $config['from']
+		);
+		
+		$fields_string = http_build_query($data_message);
+		$url = "https://www.commzgate.net/gateway/SendMsg?".$fields_string;
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$resp = curl_exec($curl);
+		curl_close($curl);
+		return $resp;
+	}
+
 	public static function sendSms($data)
 	{
-		$config = self::twilioConfigs();
-		$client = new Client($config['sid'], $config['token']);
 
-		if(strrpos($data['phone'], '+65') !== false) {
-			$from = $config['from'];
+		$sms_provider = Config::get('config.sms_provider');
+
+		if($sms_provider == "twilio") {
+			$config = self::twilioConfigs();
+			$client = new Client($config['sid'], $config['token']);
+
+			if(strrpos($data['phone'], '+65') !== false) {
+				$from = $config['from'];
+			} else {
+				$from = '+18653200485';
+			}
+
+			try {
+				$result = $client->messages->create(
+					$data['phone'],
+					array(
+						'from' => $from,
+						'body' => $data['message'],
+					)
+				);
+
+				return array('status' => true, 'result' => $result);
+			} catch(Exception $e) {
+				return array('status' => false, 'error' => $e->getMessage());
+			}
 		} else {
-			$from = '+18653200485';
-		}
-
-		try {
-			$result = $client->messages->create(
-				$data['phone'],
-				array(
-					'from' => $from,
-					'body' => $data['message'],
-				)
-			);
-
-			return array('status' => true, 'result' => $result);
-		} catch(Exception $e) {
-			return array('status' => false, 'error' => $e->getMessage());
+			try {
+				$result = self::sendCommzSms($data);
+				return array('status' => true, 'result' => $result);
+			} catch(Exception $e) {
+				return array('status' => false, 'error' => $e->getMessage());
+			}
 		}
 	}
 
@@ -73,6 +119,22 @@ class SmsHelper
 		} else {
 			return false;
 		}
+	}
+
+	public static function newformatNumber($data)
+	{
+		if($data->PhoneCode) {
+			if(strripos($data->PhoneNo, '+') !== false) {
+				$phone = $data->PhoneNo;
+			} else {
+				$phone = $data->PhoneCode.$data->PhoneNo;
+			}
+		} else {
+			$phone = $data->PhoneNo;
+		}
+				
+		return $phone;
+
 	}
 
 	public static function formatForgotPasswordMessage($data)

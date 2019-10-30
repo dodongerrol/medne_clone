@@ -139,28 +139,28 @@
 					<div class="col-md-11 no-padding costs-wrapper">
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box eclaim-border-right">
-								<h5 class="font-medium2 color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_submitted_formatted | number:2">0.00</span></h5>
+								<h5 class="font-medium2 color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_submitted_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">TOTAL CLAIM SUBMITTED</p>
 							</div>
 						</div>
 
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box eclaim-border-right">
-								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_pending_formatted | number:2">0.00</span></h5>
+								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_pending_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">PENDING</p>
 							</div>
 						</div>
 
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box eclaim-border-right">
-								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_approved_formatted | number:2">0.00</span></h5>
+								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_approved_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">APPROVED</p>
 							</div>
 						</div>
 
 						<div class="col-md-3 no-padding">
 							<div class="benefit-box">
-								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_rejected_formatted | number:2">0.00</span></h5>
+								<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.total_e_claim_rejected_formatted | number: 2">0.00</span></h5>
 								<p class="color-gray2 font-12 weight-700 no-margin">REJECTED</p>
 							</div>
 						</div>
@@ -216,16 +216,16 @@
 
 							<span class="pull-right">Total Claim 
 								<span ng-if="filter_num == 1" class="font-medium2" style="margin-left: 15px">
-									S$<span ng-bind="activity.total_e_claim_submitted_formatted">3,255</span>
+									S$<span ng-bind="activity.total_e_claim_submitted_formatted | number: 2">3,255</span>
 								</span>
 								<span ng-if="filter_num == 2" class="font-medium2" style="margin-left: 15px">
-									S$<span ng-bind="activity.total_e_claim_pending_formatted">3,255</span>
+									S$<span ng-bind="activity.total_e_claim_pending_formatted | number: 2">3,255</span>
 								</span>
 								<span ng-if="filter_num == 3" class="font-medium2" style="margin-left: 15px">
-									S$<span ng-bind="activity.total_e_claim_approved_formatted">3,255</span>
+									S$<span ng-bind="activity.total_e_claim_approved_formatted | number: 2">3,255</span>
 								</span>
 								<span ng-if="filter_num == 4" class="font-medium2" style="margin-left: 15px">
-									S$<span ng-bind="activity.total_e_claim_rejected_formatted">3,255</span>
+									S$<span ng-bind="activity.total_e_claim_rejected_formatted | number: 2">3,255</span>
 								</span>
 							</span>
 						</p>
@@ -256,7 +256,7 @@
 							<button class="btn btn-csv" ng-click="downloadCSV()">Download CSV <i class="fa fa-download"></i></button>
 
 
-							<button class="btn btn-receipts" ng-click="downloadAllReceipts(  )">
+							<button class="btn btn-receipts" ng-disabled="receipts_arr.length == 0" ng-click="downloadAllReceipts(  )">
 								Download receipts <span ng-if="search.user_id">for <span ng-bind="selected_search_user.Name">Allan</span></span> <i class="fa fa-download"></i>
 							</button>
 						</div>

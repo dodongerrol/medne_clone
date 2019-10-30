@@ -63,18 +63,19 @@ app.directive('statementPage', [
 						token : window.localStorage.getItem('token'),
 						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
-						spending_type : scope.activitySpendingTypeSelected,
+						spending_type : scope.spendingTypeFilter == undefined ? "both" : scope.spendingTypeFilter,
 						status : 3,
 					}
 					if( scope.search.user_id ){
 						data.user_id = scope.search.user_id;
 					}
 					scope.toggleLoading();
+					console.log( data );
 					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 			    if( data.user_id ){
 			      api_url += ("&user_id=" + data.user_id);
 			    }
-			    // console.log( api_url );
+			    console.log( api_url );
 			    window.open( api_url );
 			    scope.toggleLoading();
 				}
@@ -390,6 +391,7 @@ app.directive('statementPage', [
 
 					scope.monthStart = moment(firstDay).startOf('month').format('D MMMM');
 					scope.monthEnd = moment(lastDay).endOf('month').format('D MMMM');
+					scope.year = yearToday;
 					// console.log(scope.monthStart);
 					// console.log(scope.monthEnd);
 
@@ -447,6 +449,7 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_start = moment( start ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_start").text( scope.rangePicker_start );
+							scope.monthStart = moment( start ).format('D MMMM');
 
 							$('.btn-custom-end').data('daterangepicker').setMinDate( start );
 
@@ -476,6 +479,8 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_end = moment( end ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_end").text( scope.rangePicker_end );
+							scope.monthEnd = moment( end ).format('D MMMM');
+							scope.year = moment( end ).format( 'YYYY' );
 
 							var activity_search = {
 						  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -508,6 +513,7 @@ app.directive('statementPage', [
 					}
 
 					var range_data = date_slider.getValue();
+
 
 		    	var activity_search = scope.getFirstEndDate( range_data, range_data );
 		    	// var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
@@ -551,6 +557,34 @@ app.directive('statementPage', [
 					    }, 800);
 					});
 
+				}
+
+				scope.showPreview = function( img , ev){
+					$(ev.target).closest(".click_box_wrapper").find(".preview-box").fadeIn();
+
+					if( img.file_type == 'image' ){
+						$(".preview-box img").show();
+						$(".preview-box .img-container").css({'width': '500px'});
+						$(".preview-box iframe").hide();
+						$(".preview-box img").attr('img-fix-orientation', img.file);
+
+						$(".preview-box img").attr('src', img.file);
+					}else{
+						// scope.toggleLoading();
+						// hrSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
+						// .then(function(response){
+						// 	scope.toggleLoading();
+							// var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
+							$(".preview-box iframe").show();
+							$(".preview-box .img-container").css({'width': '80%'});
+							$(".preview-box img").hide();
+							$(".preview-box #src-view-data").attr('src', img.file);
+						// });
+					}
+				}
+
+				scope.hidePreview = function( img ){
+					$(".preview-box").fadeOut();
 				}
 
 				scope.showGlobalModal = function( message ){

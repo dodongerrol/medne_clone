@@ -183,7 +183,7 @@
           	@if($user['has_no_user'] == false)
           	<p><b>Cancellation - {{ $user['name'] }}</b></p>
           	<p>Member: {{ $user['name'] }}</p>
-          	<p>NRIC: {{ $user['nric'] }}</p>
+          	<!-- <p>NRIC: {{ $user['nric'] }}</p> -->
           	@endif
           	<p>Period of use: {{ $user['period_of_used'] }}</p>
           	<p>Refund: 70% of unused period {{ $user['period_of_unused'] }}</p>

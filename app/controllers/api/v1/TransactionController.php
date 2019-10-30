@@ -209,6 +209,8 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 
+
+
 					// if($cap_amount > 0) {
 					// 	if($total_amount > $cap_amount) {
 					// 		if($total_amount > $user_credits) {
@@ -257,11 +259,19 @@ class Api_V1_TransactionController extends \BaseController
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
 						$total_credits_cost = $credits;
+
+						if( $total_credits_cost > $consultation_fees ){
+							$total_credits_cost -= $consultation_fees;
+						}else if( $consultation_fees > $total_credits_cost ){
+							// $cash -= ( $consultation_fees - $total_credits_cost );
+							$consultation_fees = $total_credits_cost;
+							$total_credits_cost = 0;
+						}
 					} else {
 						$lite_plan_enabled = 0;
 						$total_procedure_cost = $total_amount - $consultation_fees;
-						// $total_credits_cost = $credits;
-						$consultation_fees = 0;
+						$total_credits_cost = $credits;
+						// $consultation_fees = 0;
 					}
 
 					$payment_credits = $total_credits_cost;
@@ -320,6 +330,8 @@ class Api_V1_TransactionController extends \BaseController
 					if($currency) {
 					 $data['currency_amount'] = $currency;
 					}
+
+					// return $data;
 
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
@@ -453,7 +465,8 @@ class Api_V1_TransactionController extends \BaseController
 											'services'          => $procedure,
 											'currency_symbol'   => $email_currency_symbol,
 											'dependent_user'    => $dependent_user,
-											'half_credits_payment' => $half_payment
+											'half_credits_payment' => $half_payment,
+											'user_id'						=> $customer_id
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
@@ -598,7 +611,14 @@ class Api_V1_TransactionController extends \BaseController
 							}
 
 						} else {
-
+							$returnObject->status = FALSE;
+							$returnObject->message = 'Cannot process payment credits. Please try again.';
+							// send email logs
+							$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
+							$email['logs'] = 'Mobile Payment Credits - '.$e;
+							$email['emailSubject'] = 'Error log.';
+							EmailHelper::sendErrorLogs($email);
+							return Response::json($returnObject);
 						}
 					} catch(Exception $e) {
 						$returnObject->status = FALSE;
@@ -1014,6 +1034,7 @@ class Api_V1_TransactionController extends \BaseController
                if((int)$trans->lite_plan_enabled == 1) {
                	if((int)$trans->half_credits == 1) {
                   $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                  // $total_amount = $trans->credit_cost + $trans->cash_cost;
                	} else {
                		$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                	}
@@ -1243,9 +1264,10 @@ class Api_V1_TransactionController extends \BaseController
 								$payment_type = 'Mednefits Credits';
 							}
 							$service_credits = true;
-							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
+							if((int)$transaction->lite_plan_enabled == 1) {
 								if((int)$transaction->half_credits == 1) {
 									$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+									// $total_amount = $transaction->credit_cost + $transaction->cash_cost;
 									$cash_cost = $transaction->cash_cost;
 								} else {
 									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
@@ -1304,11 +1326,21 @@ class Api_V1_TransactionController extends \BaseController
 						}
 
 						$paid_by_credits = $transaction->credit_cost;
-						if((int)$transaction->lite_plan_enabled == 1) {
+						// if((int)$transaction->lite_plan_enabled == 1) {
+						// 	if($consultation_credits == true) {
+						// 		// if((int)$transaction->half_credits == 1) {
+						// 		// 	$paid_by_credits += $consultation;
+						// 		// }
+						// 	}
+						// }
+
+						if($transaction->cap_per_visit == $transaction->credit_cost + $consultation && (int)$transaction->half_credits == 1 && $consultation_credits == true) {
+							$paid_by_credits = $transaction->credit_cost + $consultation;
+						} else {
 							if($consultation_credits == true) {
-								// if((int)$transaction->half_credits == 1) {
+								if((int)$transaction->half_credits == 0) {
 									$paid_by_credits += $consultation;
-								// }
+								}
 							}
 						}
 

@@ -122,15 +122,15 @@ function getTransactions( data ){
       if( data.data.transactions.length > 0 ){
       
 	      list = data.data.transactions;
-	      console.log(list);
+	      // console.log(list);
 
 	      for( var i = 0; i < list.length; i++  ){
-	      	console.log( list );
+	      	// console.log( list );
 	      	stockData.push({
 	      		'DATE' : (list[i].date_of_transaction).replace(',',''),
 	      		'TRANSACTION_ID' : list[i].transaction_id,
 	      		'NAME' : list[i].user_name,
-	      		'NRIC' : list[i].NRIC,
+	      		// 'NRIC' : list[i].NRIC,
 	      		'SERVICES' : list[i].procedure_name,
 	      		'MEDNEFITS FEE' : (list[i].mednefits_fee).replace(',',''),
 	      		'MEDNEFITS CREDIT' : (list[i].mednefits_credits).replace(',',''),
@@ -149,7 +149,7 @@ function getTransactions( data ){
 										'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
 									'</td>'	+
 									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
+									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
 									'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
 									'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
@@ -162,14 +162,13 @@ function getTransactions( data ){
 										list[i].transaction_id +
 									'</td>'	+
 									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
+									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
 									'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
 									'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
 									'<td style="text-align: center">S$ ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
 								'</tr>');
 		      		}
-		      		
 		      	}else{
 		      		if(list[i].deleted == true) {
 		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
@@ -180,7 +179,7 @@ function getTransactions( data ){
 										'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
 									'</td>'	+
 									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
+									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
 									'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
 									'<td>S$ ' + list[i].mednefits_credits + '</td>' +
@@ -193,7 +192,7 @@ function getTransactions( data ){
 										list[i].transaction_id +
 									'</td>'	+
 									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
+									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
 									'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
 									'<td>S$ ' + list[i].mednefits_credits + '</td>' +
@@ -210,7 +209,7 @@ function getTransactions( data ){
 										list[i].transaction_id +
 									'</td>'	+
 									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
+									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
 									'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
 									'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
@@ -223,7 +222,7 @@ function getTransactions( data ){
 										list[i].transaction_id +
 									'</td>'	+
 									'<td>' + list[i].user_name + '</td>' + 
-									'<td>' + list[i].NRIC + '</td>' +
+									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
 									'<td>S$ ' + list[i].mednefits_fee + '</td>' + 
 									'<td>S$ ' + list[i].mednefits_credits + '</td>' +
@@ -240,7 +239,7 @@ function getTransactions( data ){
 							'</td>' +
 						'</tr>');
       }
-      console.log( stockData );
+      // console.log( stockData );
   });
 }
 
@@ -339,7 +338,7 @@ function searchTable(data) {
 								'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
 							'</td>'	+
 							'<td>' + list[i].user_name + '</td>' + 
-							'<td>' + list[i].NRIC + '</td>' +
+							// '<td>' + list[i].NRIC + '</td>' +
 							'<td>' + list[i].procedure_name + '</td>' +
 							'<td style="text-align: center">S$ ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
 							'<td style="text-align: center">S$ ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
@@ -354,7 +353,7 @@ function searchTable(data) {
 								'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
 							'</td>'	+
 							'<td>' + list[i].user_name + '</td>' +
-							'<td>' + list[i].NRIC + '</td>' +
+							// '<td>' + list[i].NRIC + '</td>' +
 							'<td>' + list[i].procedure_name + '</td>' +
 							'<td>S$ ' + list[i].mednefits_fee + '</td>' +
 							'<td>S$ ' + list[i].mednefits_credits + '</td>' +
@@ -565,20 +564,24 @@ setTimeout(function() {
 		$( '#pdf-print-invoice tbody' ).html('');
 		for( var i = 0; i < list.length; i++  ){
 
-    	$( '#pdf-print-invoice tbody' ).append('<tr>' +
+			var append_html = '<tr>' +
 						'<td>' + list[i].date_of_transaction + '</td>' +
 						'<td>' +
 							list[i].transaction_id + 
-							'<br />' +
-							'<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' +
-						'</td>' +
+							'<br />';
+							
+			append_html += ( list[i].transaction_status != 'null' && list[i].transaction_status != null ) ? '<label class="label label-success label-custom" >' + list[i].transaction_status + '</label>' : '';
+
+			append_html += '</td>' +
 						'<td>' + list[i].user_name + '</td>' +
-						'<td>' + list[i].NRIC + '</td>' +
+						// '<td>' + list[i].NRIC + '</td>' +
 						'<td>' + list[i].procedure_name + '</td>' +
 						'<td>S$ ' + list[i].mednefits_fee + '</td>' +
 						'<td>S$ ' + list[i].mednefits_credits + '</td>' +
 						'<td>S$ ' + list[i].cash + '</td>' +
-					'</tr>');
+					'</tr>';
+
+    	$( '#pdf-print-invoice tbody' ).append( append_html );
 
     	setHeight();
 
@@ -593,7 +596,8 @@ setTimeout(function() {
     				// console.log( window.base_url+"clinic/download_transaction_lists?start="+moment(rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&end="+moment(rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD') );
     			}else{
     				// window.location.href= window.base_url+"clinic/download_transaction_lists?start="+moment(rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&end="+moment(rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&nric=" + text;
-    				window.open(window.base_url+"clinic/download_transaction_lists?start="+moment(rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&end="+moment(rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&nric=" + text, '_blank');
+    				// window.open(window.base_url+"clinic/download_transaction_lists?start="+moment(rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&end="+moment(rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&nric=" + text, '_blank');
+    				window.open(window.base_url+"clinic/download_transaction_lists?start="+moment(rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&end="+moment(rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD')+ text, '_blank');
     				// console.log( window.base_url+"clinic/download_transaction_lists?start="+moment(rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&end="+moment(rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD')+"&nric=" + text);
     			}
     		}, 500);

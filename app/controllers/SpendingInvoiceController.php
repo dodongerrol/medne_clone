@@ -371,6 +371,10 @@ class SpendingInvoiceController extends \BaseController {
         $result = self::checkSession();
         $customer_id = $result->customer_buy_start_id;
         $paginate = [];
+        $credits_statements_data = DB::table('company_credits_statement')
+                                ->where('statement_customer_id', $customer_id)
+                                ->get();
+
         $credits_statements = DB::table('company_credits_statement')
                                 ->where('statement_customer_id', $customer_id)
                                 ->paginate(10);
@@ -378,31 +382,35 @@ class SpendingInvoiceController extends \BaseController {
         $paginate['from'] = $credits_statements->getFrom();
         $paginate['last_page'] = $credits_statements->getLastPage();
         $paginate['per_page'] = $credits_statements->getPerPage();
-        $paginate['to'] = $credits_statements->getTo();
-        $paginate['total'] = $credits_statements->getTotal();
         $format = [];
+        $minus = 0;
+
+        foreach ($credits_statements_data as $key => $data) {
+            if(date('Y-m-d') <= date('Y-m-d', strtotime($data->statement_date))) {
+                $minus++;
+            }
+        }
 
         foreach ($credits_statements as $key => $data) {
             if(date('Y-m-d') >= date('Y-m-d', strtotime($data->statement_date))) {
                 $statement = SpendingInvoiceLibrary::getInvoiceSpending($data->statement_id, true);
                 $statement['total_due'] = $statement['statement_amount_due'];
-
-                if($statement['total_in_network_amount'] > 0 || $statement['total_consultation'] > 0) {
             
-                    $temp = array(
-                        'transaction'       => 'Invoice - '.$data->statement_number,
-                        'date_issue'        => date('d/m/Y', strtotime($data->statement_date)),
-                        'type'              => 'Invoice',
-                        'amount'            => 'S$'.$statement['statement_total_amount'],
-                        'status'            => (int)$data->statement_status,
-                        'statement_id'      => $data->statement_id
-                    );
+                $temp = array(
+                    'transaction'       => 'Invoice - '.$data->statement_number,
+                    'date_issue'        => date('d/m/Y', strtotime($data->statement_date)),
+                    'type'              => 'Invoice',
+                    'amount'            => 'S$'.$statement['statement_total_amount'],
+                    'status'            => (int)$data->statement_status,
+                    'statement_id'      => $data->statement_id
+                );
 
-                    array_push($format, $temp);
-                }
+                array_push($format, $temp);
             }
         }
 
+        $paginate['to'] = sizeof($format);
+        $paginate['total'] = $credits_statements->getTotal() - $minus;
         $paginate['data'] = $format;
 
         return $paginate;

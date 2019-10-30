@@ -175,7 +175,7 @@
 							<button ng-if="net_active == 'outNetWorkTable'" ng-disabled="isStatusShow == false" class="btn btn-pdf" ng-click="downloadFullOUTPDF(overview.statement)">PDF</button>
 
 							<!-- <button ng-if="net_active == 'inNetWorkTable'" class="btn btn-csv" ng-json-export-excel data="dl_in_network" report-fields="{member: 'MEMBER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', clinic_name: 'PROVIDER', amount: 'TOTAL AMOUNT', receipt_files: 'MEDICATION', receipt_status: 'TREATMENT'}" filename="'In-Network-Transactions'" separator=",">CSV</button> -->
-							<button ng-if="net_active == 'inNetWorkTable'" class="btn btn-csv" ng-click="downloadFullINPDF(overview.statement, 'csv')">CSV</button>
+							<button ng-if="net_active == 'inNetWorkTable'" ng-disabled="full.in_network_transactions.length == 0 || hideIfNoTransaction" class="btn btn-csv" ng-click="downloadFullINPDF(overview.statement, 'csv')">CSV</button>
 
 							<!-- <button ng-if="net_active == 'outNetWorkTable'" class="btn btn-csv" ng-json-export-excel data="dl_eclaim" report-fields="{
 								member: 'MEMBER',
@@ -199,7 +199,7 @@
 								bank_brh: 'BRANCH CODE'
 							}" filename="'E-Claim-Transactions'" separator=",">CSV</button> -->
 
-							<button ng-if="net_active == 'outNetWorkTable'" class="btn btn-csv" ng-click="downloadCSV()">CSV</button>
+							<button ng-if="net_active == 'outNetWorkTable'" ng-disabled="full.e_claim_transactions.length == 0 || hideIfNoTransaction" class="btn btn-csv" ng-click="downloadCSV()">CSV</button>
 						</div>
 					</div>
 
@@ -316,10 +316,12 @@
 									<p class="font-medium2 font-20 color-blue-custom2 no-margin">Payment Information</p>
 
 									<div class="white-space-10"></div>
-									<p class="font-medium2 color-black2 no-margin">Cheque Payment:</p>
+									<!-- <p class="font-medium2 color-black2 no-margin">Cheque Payment:</p>
 									<p class="color-gray font-14 no-margin weight-700 line-height-1">Medicloud Pte Ltd</p>
 									<p class="color-gray font-14 no-margin weight-700 line-height-1">7 Temasek Boulevard #18-02 Suntec Tower</p>
-									<p class="color-gray font-14 no-margin weight-700 line-height-1">038987 Singapore</p>
+									<p class="color-gray font-14 no-margin weight-700 line-height-1">038987 Singapore</p> -->
+									<p class="font-medium2 color-black2 no-margin"><b>Corporate PayNow</b></p>
+          							<p class="color-gray font-14 no-margin weight-700 line-height-1">UEN: 201415681W</p>
 
 									<div class="white-space-10"></div>
 									<p class="font-medium2 color-black2 no-margin">Bank Transfer:</p>
@@ -520,13 +522,31 @@
 												</button>
 
 												<div class="trans-receipts-wrapper">
+													<div class="click_box_wrapper" ng-repeat="img in list.receipt_files" style="display: inline-block;position: relative;">
+														<a href="javascript:void(0)" ng-click="showPreview(img, $event)" >
+															<div class="click_box">
+																<i class="fa fa-plus color-white font-25"></i>
+															</div>
+																<img ng-if="img.type == 'excel'" ng-src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
+																<img ng-if="img.type == 'pdf'" ng-src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+																<img ng-if="img.type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
+														</a>
 
-													<div ng-repeat="img in list.receipt_files" style="display: inline-block;">
-														<img ng-if="img.type == 'excel'" ng-src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
-														<img ng-if="img.type == 'pdf'" ng-src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
-														<img ng-if="img.type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
+														<div class="preview-box">
+															<div class="img-container">
+																<a href="javascript:void(0)" class="hidePreview" ng-click="hidePreview()">
+																	<i class="fa fa-times" ></i>
+																</a>
+
+																<img img-fix-orientation="img.file" hidden>
+
+																<iframe id="src-view-data" src style="width:100%; height: 500px;border: none;" hidden>
+																</iframe>
+															</div>
+														</div>
 													</div>
 												</div>
+
 											</div>
 										</td>
 									</tr>
@@ -646,11 +666,30 @@
 												</button>
 
 												<div class="trans-receipts-wrapper">
+													<div class="click_box_wrapper" ng-repeat="img in list.files" style="display: inline-block;position: relative;">
+														<a href="javascript:void(0)" ng-click="showPreview(img, $event)" >
+															<div class="click_box">
+																<i class="fa fa-plus color-white font-25"></i>
+															</div>
+															
+																<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
+																<img ng-if="img.type == 'xls' || img.file_type == 'xls'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
+																<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+															
+														</a>
 
-													<div ng-repeat="img in list.files" style="display: inline-block;">
-														<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
-														<img ng-if="img.type == 'xls' || img.file_type == 'xls'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
-														<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+														<div class="preview-box">
+															<div class="img-container">
+																<a href="javascript:void(0)" class="hidePreview" ng-click="hidePreview()">
+																	<i class="fa fa-times" ></i>
+																</a>
+
+																<img img-fix-orientation="img.file" hidden>
+
+																<iframe id="src-view-data" src style="width:100%; height: 500px;border: none;" hidden>
+																</iframe>
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>

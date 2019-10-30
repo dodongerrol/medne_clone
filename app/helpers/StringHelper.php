@@ -187,6 +187,35 @@ class StringHelper{
             }
         }
 
+        public static function getJwtEmployeeSession()
+        {   
+            $secret = Config::get('config.secret_key');
+            $token = StringHelper::getToken();
+            $result = FALSE;
+            try {
+                $result = JWT::decode($token, $secret);
+            } catch(Exception $e) {
+                return FALSE;
+            }
+
+            if($result && isset($result->UserID)) {
+                $employee = DB::table('user')->where('UserID', $result->UserID)->first();
+                if($employee) {
+                    $employee->signed_in = $result->signed_in;
+                    if(isset($result->expire_in)) {
+                        $employee->expire_in = $result->expire_in;
+                    } else {
+                        $employee->expire_in = null;
+                    }
+                    return $employee;
+                } else {
+                    return FALSE;
+                }
+            } else {
+                return FALSE;
+            }
+        }
+
         public static function getToken( )
         {
             $getRequestHeader = getallheaders();
@@ -223,10 +252,22 @@ class StringHelper{
 
         public static function getEmployeeSession( )
         {
-            $value = Session::get('employee-session');
-            $result = DB::table('user')->where('UserID', $value)->first();
-            if($result) {
-                return $result;
+
+            $secret = Config::get('config.secret_key');
+            $token = StringHelper::getToken();
+            $result = FALSE;
+            try {
+                $result = JWT::decode($token, $secret);
+            } catch(Exception $e) {
+                return FALSE;
+            }
+
+            $member = DB::table('user')->where('UserID', $result->UserID)->first();
+            if($member) {
+                if(isset($result->admin_id)) {
+                    $member->admin_id = $result->admin_id;
+                }
+                return $member;
             } else {
                 return FALSE;
             }
@@ -410,9 +451,10 @@ class StringHelper{
         }
 
         public static function TestSendOTPSMS($phone, $message){
+            // $config = \SmsHelper::commzGateConfigs();
             $config = self::twilioConfigs();
             $client = new Client($config['sid'], $config['token']);
-            $new_message = 'Your One Time Passcode for Mednefits - '.$message;
+            $new_message = $message.' is your Mednefits verification code.';
             // $return = $client->messages->create(
             //     // the number you'd like to send the message to
             //     $phone,
@@ -454,9 +496,28 @@ class StringHelper{
                 $phone,
                 array(
                     'from' => $from,
-                    'body' => $message,
+                    'body' => $new_message,
                 )
             );
+            // $mobile = preg_replace('/\s+/', '', $phone);
+            // $data_message = array(
+            //     'ID'        => $config['id'],
+            //     'Password'  => $config['password'],
+            //     'Mobile'    => $mobile,
+            //     'Message'   => $new_message,
+            //     'Type'      => 'A',
+            //     'Sender'    => $config['from']
+            // );
+
+            // $fields_string = http_build_query($data_message);
+            // $url = "https://www.commzgate.net/gateway/SendMsg?".$fields_string;
+            // $curl = curl_init();
+            // curl_setopt($curl, CURLOPT_URL, $url);
+            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            // $resp = curl_exec($curl);
+            // curl_close($curl);
+            // return $resp;
         }
 
 
@@ -701,6 +762,8 @@ public static function get_random_password($length)
         {
             $owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $id)->first();
             $user_id = $owner->owner_id;
+        } else {
+            $user_id = $id;
         }
 
         return $user_id;
@@ -970,6 +1033,103 @@ public static function get_random_password($length)
             // check creds
             $user = new User();
             $result = $user->authLogin($data['username'], $data['password']);
+
+            if($result) {
+                $session_data = array(
+                    'client_id'             => $data['client_id'],
+                    'owner_type'            => 'user',
+                    'owner_id'              => $result,
+                    'client_redirect_uri'   => NULL
+                );
+
+                $session_class = new OauthSessions( );
+                $session = $session_class->createSession($session_data);
+
+                if($session) {
+                    $token_data = array(
+                        'id'        => self::getAlgorithm()->generate(40),
+                        'session_id'  => $session->id,
+                        'expire_time' => time() + 72000
+                    );
+
+                    $token_class = new OauthAccessTokens( );
+                    $token = $token_class->createToken($token_data);
+                    $get_token = DB::table('oauth_access_tokens')->where('session_id', $token->session_id)->orderBy('created_at', 'desc')->first();
+
+                    if($get_token) {
+                        $returnObject->error = "false";
+                        $returnObject->status = TRUE;
+                        $returnObject->data['access_token'] = $get_token->id;
+                        $returnObject->data['token_type'] = 'Bearer';
+                        $returnObject->data['expires_in'] = 7200;
+                        $returnObject->data['pin_setup'] = FALSE;
+                        $returnObject->fields = TRUE;
+                        return $returnObject;
+                        // return array('status' => TRUE, 'access_token' => $get_token->id);
+                    } else {
+                        $returnObject->status = FALSE;
+                        $returnObject->error = 'invalid_credentials';
+                        $returnObject->error_description = 'The user credentials were incorrect.';
+                        $returnObject->fields = TRUE;
+                        return $returnObject;
+                    }
+                } else {
+                    $returnObject->status = FALSE;
+                    $returnObject->error = 'invalid_credentials';
+                    $returnObject->error_description = 'The user credentials were incorrect.';
+                    $returnObject->fields = TRUE;
+                    return $returnObject;
+
+                }
+            } else {
+                $returnObject->status = FALSE;
+                $returnObject->error = 'invalid_credentials';
+                $returnObject->error_description = 'The user credentials were incorrect.';
+                $returnObject->fields = TRUE;
+                return $returnObject;
+            }
+        }
+    }
+
+    public static function newCustomLoginToken($data)
+    {   
+
+        $returnObject = new stdClass();
+
+        if(empty($data['grant_type'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"grant_type\" parameter.";
+            return $returnObject;
+        } else if(empty($data['client_secret'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"client_secret\" parameter.";
+            return $returnObject;
+        } else if(empty($data['username'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"username\" parameter.";
+            return $returnObject;
+        } else if(empty($data['password'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"password\" parameter.";
+            return $returnObject;
+        } else if(empty($data['client_id'])) {
+            $returnObject->status = FALSE;
+            $returnObject->fields = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed. Check the \"client_id\" parameter.";
+            return $returnObject;
+        } else {
+            // check creds
+            $user = new User();
+            $result = $user->newAuthLogin($data['username'], $data['password']);
 
             if($result) {
                 $session_data = array(

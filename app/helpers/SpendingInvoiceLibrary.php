@@ -370,7 +370,7 @@
 							  // $payment_type = "Mednefits Credits";
 							  $transaction_type = "credits";
 							  $health_provider_status = FALSE;
-
+							  $procedure_cost = number_format($trans->credit_cost, 2);
 								if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 								  $payment_type = 'Mednefits Credits + Cash';
 								  $half_credits = true;
@@ -594,11 +594,12 @@
 										$doc_files = [];
 										foreach ($docs as $key => $doc) {
 											if($doc->file_type == "pdf" || $doc->file_type == "xls") {
-												if(StringHelper::Deployment()==1){
-													$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
-												} else {
-													$fil = url('').'/receipts/'.$doc->doc_file;
-												}
+												// if(StringHelper::Deployment()==1){
+												// 	$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+												// } else {
+												// 	$fil = url('').'/receipts/'.$doc->doc_file;
+												// }
+												$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
 												$image_link = null;
 											} else if($doc->file_type == "image") {
 												$fil = $doc->doc_file;
