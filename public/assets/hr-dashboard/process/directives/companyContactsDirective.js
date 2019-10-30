@@ -29,6 +29,7 @@ app.directive("companyContactsDirective", [
         scope.benefits_spending_page = 1;
         scope.spending_deposit_page = 1;
         scope.statementHide = true;
+        scope.empStatementShow = false;
 
         scope.$on("informationRefresh", function(evt, data){
           scope.onLoad();
@@ -38,9 +39,10 @@ app.directive("companyContactsDirective", [
           scope.account_type = localStorage.getItem('company_account_type');
           console.log(scope.account_type);
 
-          if(scope.account_type === 'enterprise_plan') {
+          if(scope.account_type === 'stand_alone_plan') {
             $('.statement-hide').hide();
             scope.statementHide = false;
+            scope.empStatementShow = true;
           }
         }
 

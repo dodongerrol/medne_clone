@@ -53,6 +53,7 @@
 				scope.receipts_rejected = [];
 				scope.receipts_arr = [];
 				scope.statementHide = true;
+				scope.empStatementShow = false;
 
 				var monthToday = moment().format('MM');
 				var monthToday2 = moment().format('MM');
@@ -71,6 +72,7 @@
 					if(scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
 						scope.statementHide = false;
+						scope.empStatementShow = true;
 					}
 				}
 
@@ -518,13 +520,14 @@
 						scope.toggleLoading();
 						scope.activity = {};
 						scope.activity = response.data.data;
-						
+
 						scope.fetching_data = {
 							from : response.data.from,
 							to: response.data.total
 						}
 						console.log( scope.current_page );
 						console.log( response.data.last_page );
+
 						if( response.data.last_page > 0 && scope.current_page != response.data.last_page ){
 							scope.fetchNextPage(data);
 						}else{

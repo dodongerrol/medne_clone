@@ -11,6 +11,7 @@ app.directive('docsData', [
 				scope.customer = "";
 				scope.options = {};
 				scope.statementHide = true;
+				scope.empStatementShow = false;
 
 				scope.companyAccountType = function () {
 					scope.account_type = localStorage.getItem('company_account_type');
@@ -19,6 +20,7 @@ app.directive('docsData', [
 					if(scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
 						scope.statementHide = false;
+						scope.empStatementShow = true;
 					}
 				}
 

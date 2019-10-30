@@ -17,6 +17,7 @@ app.directive('teamBenefitsTierDirective', [
 				};
 				scope.tier_arr = [];
 				scope.statementHide = true;
+				scope.empStatementShow = false;
 
 				scope.companyAccountType = function () {
 					scope.account_type = localStorage.getItem('company_account_type');
@@ -25,6 +26,7 @@ app.directive('teamBenefitsTierDirective', [
 					if(scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
 						scope.statementHide = false;
+						scope.empStatementShow = true;
 					}
 				}
 
