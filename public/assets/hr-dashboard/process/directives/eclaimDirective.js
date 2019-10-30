@@ -326,7 +326,7 @@
 						e_claim_id: list.transaction_id,
 						status: num,
 						rejected_reason : list.reason,
-						e_claim_amount : list.amount,
+						e_claim_amount : list.claim_amount,
 					}
 
 					console.log(data);
@@ -449,6 +449,9 @@
 							if( scope.activity.e_claim_transactions.length > 0 ){
 								$('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
+									if( !value.claim_amount || Number(value.claim_amount) == 0 ){
+										value.claim_amount = value.amount;
+									}
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
 										if( value2.file_type == 'pdf' ){
@@ -520,6 +523,10 @@
 						scope.toggleLoading();
 						scope.activity = {};
 						scope.activity = response.data.data;
+						console.log(scope.activity);
+
+						// scope.isClaimAmountBlank = response.data.data.e_claim_transactions.claim_amount;
+						// console.log(scope.isClaimAmountBlank);s
 
 						scope.fetching_data = {
 							from : response.data.from,
@@ -542,6 +549,9 @@
 							if( scope.activity.e_claim_transactions.length > 0 ){
 								$('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
+									if( !value.claim_amount || Number(value.claim_amount) == 0 ){
+										value.claim_amount = value.amount;
+									}
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
 										if( value2.file_type == 'pdf' ){

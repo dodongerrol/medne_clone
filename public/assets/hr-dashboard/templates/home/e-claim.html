@@ -336,10 +336,10 @@
 									<!-- <span>Vision Hut</span> -->
 								</td>
 								<td>
-									S$ <span ng-bind="list.amount"> 5.00</span>
+									S$ <span ng-bind="list.amount"></span>
 								</td>
 								<td>	
-									S$ <span ng-bind="list.amount"></span>
+									S$ <span ng-bind="list.claim_amount"></span>
 								</td>
 								<td>
 									<span ng-bind="list.member">Filbert Tan</span>
@@ -393,7 +393,7 @@
 											<!-- <p><label>TOTAL AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p> -->
 											<!-- <p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
 											<p><label>RECEIPT AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p>
-											<p><label>CLAIM AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p>
+											<p><label>CLAIM AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.claim_amount">22</span></span></p>
 											<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
 											<p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">In-Network</span></p>
 											<div class="white-space-20"></div>
@@ -432,7 +432,7 @@
 												</span>
 												<span style="width: 120px;">
 													<label>Claim Amount</label>
-													<input type="text" ng-model="list.amount" class="form-control" style="border-radius: 0;border-width: 0 0 1px 0;" />
+													<input type="text" ng-model="list.claim_amount" class="form-control" style="border-radius: 0;border-width: 0 0 1px 0;" />
 												</span>
 											</div>
 											<div style="width: 100%;text-align: center;">
