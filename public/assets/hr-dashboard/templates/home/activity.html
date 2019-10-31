@@ -5,7 +5,7 @@
 				<h4 ui-sref="benefits-dashboard">Overview</h4>
 				<div class="arrow-up" style="visibility: hidden;"></div>
 			</div>
-			<div class="welcome-container">
+			<div class="welcome-container" ng-if="statementHide">
 				<div class="dropdown" ng-if="options.accessibility == 1">
 				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 				    Employee
@@ -18,6 +18,10 @@
 				<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
 				<div class="arrow-up-2" style="visibility: hidden;"></div>
 			</div>
+			<div class="welcome-container" ng-if="empStatementShow">
+				<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
+				<div id="arrow-up-statement"></div>
+			</div>
 			<div class="welcome-container">
 				<h4 ui-sref="activity">Activity</h4>
 				<div class="arrow-up-3" style="visibility: visible;"></div>
@@ -26,7 +30,7 @@
 				<h4 ui-sref="e-claim">Claim</h4>
 				<div class="arrow-up-4" style="visibility: hidden;"></div>
 			</div>
-			<div class="welcome-container">
+			<div class="welcome-container statement-hide">
 				<h4 ui-sref="statement">Statement</h4>
 				<div class="arrow-up-5" style="visibility: hidden;"></div>
 			</div>

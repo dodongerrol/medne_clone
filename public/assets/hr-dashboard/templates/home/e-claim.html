@@ -5,7 +5,7 @@
 			<h4 ui-sref="benefits-dashboard">Overview</h4>
 			<div class="arrow-up" style="visibility: hidden;"></div>
 		</div>
-		<div class="welcome-container">
+		<div class="welcome-container" ng-if="statementHide">
 			<div class="dropdown">
 			  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			    Employee
@@ -17,6 +17,10 @@
 			</div>
 			<div class="arrow-up-2" style="visibility: hidden;"></div>
 		</div>
+		<div class="welcome-container" ng-if="empStatementShow">
+			<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
+			<div id="arrow-up-statement"></div>
+		</div>
 		<div class="welcome-container">
 			<h4 ui-sref="activity">Activity</h4>
 			<div class="arrow-up-3" style="visibility: hidden;"></div>
@@ -25,7 +29,7 @@
 			<h4 ui-sref="e-claim">Claim</h4>
 			<div class="arrow-up-4" style="visibility: visible;"></div>
 		</div>
-		<div class="welcome-container">
+		<div class="welcome-container statement-hide">
 			<h4 ui-sref="statement">Statement</h4>
 			<div class="arrow-up-5" style="visibility: hidden;"></div>
 		</div>
@@ -297,12 +301,13 @@
 								<th style="width: 10%;" ></th>
 								<th style="width: 18%;">CLAIM DATE</th>
 								<th style="width: 13%;">APPROVED/ REJECTED DATE</th>
-								<th style="width: 18%;" class="claim-type-header">CLAIM TYPE</th>
+								<th style="width: 17%;" class="claim-type-header">CLAIM TYPE</th>
 								<!-- <th style="width: 18%;">ITEM/SERVICE</th> -->
 								<!-- <th style="width: 22%;">PROVIDER</th> -->
-								<th style="width: 15%;">PROVIDER</th>
+								<th style="width: 12%;">PROVIDER</th>
 								<!-- <th style="width: 16%;">TOTAL AMOUNT</th> -->
-								<th style="width: 16%;">CLAIM AMOUNT</th>
+								<th style="width: 16%">RECEIPT AMOUNT</th>
+								<th style="width: 18%;">CLAIM AMOUNT</th>
 								<th style="min-width: 145px;">MEMBER</th>
 								<th style=""></th>
 							</tr>
@@ -330,8 +335,15 @@
 									<span ng-bind="list.merchant">Spectacle Hut</span>
 									<!-- <span>Vision Hut</span> -->
 								</td>
-								<td>	
-									S$ <span ng-bind="list.amount"></span>
+								<td>
+									<span>
+										S$ <span ng-bind="list.amount"></span>
+									</span>
+								</td>
+								<td>
+									<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">	
+										S$ <span ng-bind="list.claim_amount"></span>
+									</span>
 								</td>
 								<td>
 									<span ng-bind="list.member">Filbert Tan</span>
@@ -384,7 +396,12 @@
 											<!-- <p><label>SPENDING ACCOUNT</label> <span class="color-gray2" ng-bind="list.spending_type">General Practitioner Visit</span></p> -->
 											<!-- <p><label>TOTAL AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p> -->
 											<!-- <p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
-											<p><label>CLAIM AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p>
+											<p><label>RECEIPT AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p>
+											<p><label>CLAIM AMOUNT</label> 
+												<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">
+													<span class="color-gray2" >S$ <span ng-bind="list.claim_amount">22</span></span>
+												</span>
+											</p>
 											<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
 											<p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">In-Network</span></p>
 											<div class="white-space-20"></div>
@@ -415,9 +432,17 @@
 											</div>
 										</div>
 
-										<div ng-if="list.showRemarksInput" class="form-group reason-wrapper" style="text-align: left;display:block;width: 240px;margin: 0 auto;">
-											<label>Remarks</label>
-											<input type="text" ng-model="list.reason" class="form-control" style="border-radius: 0;border-width: 0 0 1px 0;" />
+										<div ng-if="list.showRemarksInput" class="form-group reason-wrapper" style="text-align: left;display:block;width: 340px;margin: 0 auto;">
+											<div class="remarks-claim-amount-container">
+												<span style="margin: 0 20px 0 0;">
+													<label>Remarks</label>
+													<input type="text" ng-model="list.reason" class="form-control" style="border-radius: 0;border-width: 0 0 1px 0;" />
+												</span>
+												<span style="width: 120px;">
+													<label>Claim Amount</label>
+													<input type="text" ng-model="list.approve_claim_amount" class="form-control" style="border-radius: 0;border-width: 0 0 1px 0;" />
+												</span>
+											</div>
 											<div style="width: 100%;text-align: center;">
 												<button class="btn font-medium" ng-click="hideReasonInput(list)">Cancel</button>
 												<button class="btn btn-reject font-medium" style="background: #0086D3" ng-click="updateStatusToApprove(list,1)">Proceed</button>

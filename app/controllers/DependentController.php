@@ -1426,6 +1426,10 @@ class DependentController extends \BaseController {
 			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
 			$data['account_type'] = "Lite Plan";
 			$data['complimentary'] = FALSE;
+		} else if($dependent_plan->account_type == "enterprise_plan") {
+			$data['plan_type'] = "Enterprise Mednefits Care (Corporate)";
+			$data['account_type'] = "Enterprise Plan";
+			$data['complimentary'] = FALSE;
 		}
 
 		// return array('rest' => $invoice);
