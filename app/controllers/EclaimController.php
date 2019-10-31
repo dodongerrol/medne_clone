@@ -1352,6 +1352,7 @@ class EclaimController extends \BaseController {
   																			->where('company_e_claim_service_types.customer_id', $customer_id)
   																			->where('health_types.type', $input['type'])
   																			->where('company_e_claim_service_types.active', 1)
+  																			->where('health_types.active', 1)
   																			->select('health_types.name', 'health_types.health_type_id', 'health_types.created_at', 'health_types.updated_at', 'company_e_claim_service_types.active')
   																			->get();
   		if(sizeof($get_company_e_claim_services) > 0) {
@@ -6101,7 +6102,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : 0
+							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
@@ -6197,7 +6198,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : 0
+							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
@@ -6257,7 +6258,7 @@ public function updateEclaimStatus( )
 			$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 			// $result = $e_claim->updateEclaimStatus($e_claim_id, 2, $rejected_reason);
 			$update_data = array(
-				'status'						=> 1,
+				'status'						=> 2,
 				'rejected_reason'		=> $rejected_reason,
 				'updated_at'				=> date('Y-m-d H:i:s'),
 				'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : 0

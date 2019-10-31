@@ -293,7 +293,7 @@
 						list.showReasonInput = false;
 						list.showRemarksInput = true;
 						if( !list.claim_amount || list.claim_amount == 0 ){
-							list.approve_claim_amount = list.amount;
+							list.approve_claim_amount = list.cap_amount;
 						}else{
 							list.approve_claim_amount = list.claim_amount;
 						}
@@ -346,6 +346,8 @@
 							list.showRemarksInput = false;
 							if( list.status == 1 ){
 								list.status_text = 'Approved';
+
+								list.claim_amount = list.claim_amount == 0 && list.cap_amount == 0 ? list.amount : list.approve_claim_amount;
 							}
 							
 							if( response.data.status == true ){
