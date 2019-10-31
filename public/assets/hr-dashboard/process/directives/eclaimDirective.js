@@ -346,6 +346,7 @@
 							list.showRemarksInput = false;
 							if( list.status == 1 ){
 								list.status_text = 'Approved';
+								list.claim_amount = list.approve_claim_amount;
 							}
 							
 							if( response.data.status == true ){
