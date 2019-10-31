@@ -14,6 +14,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 				scope.tier_arr = [];
+				scope.tier_arr_currency_type;
 				scope.dependent_arr = [];
 				scope.employee_arr = [];
 				scope.temp_employees = [];
@@ -1094,6 +1095,7 @@ app.directive('benefitsTiersDirective', [
 							// console.log( response );
 							if( response.data.status ){
 								scope.tier_arr = response.data.data;
+								console.log('currency', scope.tier_arr);
 								scope.selected_edit_tier_index = scope.tier_arr.length + 1;
 								angular.forEach( scope.tier_arr, function(value,key){
 									value.dependents = [];

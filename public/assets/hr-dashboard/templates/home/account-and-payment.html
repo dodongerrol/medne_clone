@@ -163,7 +163,7 @@
 					<p><label>Total Seats:</label> <span ng-bind="list.employees">1</span></p>
 					<p><label>Occupied Seats:</label> <span ng-bind="list.occupied">1</span></p>
 					<p><label>Vacant Seats:</label> <span ng-bind="list.vacant">1</span></p>
-					<p><label>Plan Amount:</label><span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.plan_amount">99.00</span></p>
+					<p><label>Plan Amount:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.plan_amount">99.00</span></p>
 					<p><label>Payment Status:</label> <span ng-if="list.paid == 'true'">PAID</span><span ng-if="list.paid == 'false'">PENDING</span></p>
 				</div>
 
@@ -188,7 +188,7 @@
 							<p><label>Total Seats:</label> <span ng-bind="dep.total_dependents">1</span></p>
 							<p><label>Occupied Seats:</label> <span ng-bind="dep.occupied">1</span></p>
 							<p><label>Vacant Seats:</label> <span ng-bind="dep.vacant">1</span></p>
-							<p><label>Plan Amount:</label><span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="dep.amount">99.00</span></p>
+							<p><label>Plan Amount:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="dep.amount">99.00</span></p>
 							<p><label>Payment Status:</label> <span ng-if="dep.payment_status == 1">PAID</span><span ng-if="dep.payment_status == 0">PENDING</span></p>
 		        </div>
 					</div>
@@ -209,7 +209,7 @@
 					<p ng-if="list.plan_extension"><label>Date:</label> <span ng-bind="list.plan_extension.plan_start">28-06-2017</span></p>
 					<p ng-if="list.plan_extension"><label>Plan Duration:</label> <span ng-bind="list.plan_extension.duration">365 Days</span></p>
 					<p ng-if="list.plan_extension"><label>Employees:</label> <span ng-bind="list.plan_extension.employees">1</span></p>
-					<p ng-if="list.plan_extension"><label>Plan Amount:</label><span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.plan_extension.amount">99.00</span></p>
+					<p ng-if="list.plan_extension"><label>Plan Amount:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.plan_extension.amount">99.00</span></p>
 					<p ng-if="list.plan_extension"><label>Payment Status:</label> <span ng-if="list.plan_extension.paid == 1">PAID</span><span ng-if="list.plan_extension.paid == 0">PENDING</span></p>
 				</p>
 				<!-- <p ng-if="list.dependents > 0"><label>Dependents Plans: <span ng-bind="list.dependents"></span></label></p> -->
@@ -220,15 +220,15 @@
 					<p><label class="medical-spending-title">Medical Spending Account:</label></p>
 					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p> -->
 					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_medical">0.00</span></p> -->
-					<p><label>Total:</label><span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p>
+					<p><label>Total:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p>
 					<p><label>Unallocated:</label><span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.total_deposit_medical">0.00</span></p>
 				</div>
 				<div class="wellness-spending-container">
 					<p><label class="wellness-spending-title">Wellness Spending Account:</label></p>
 					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p> -->
 					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_wellness">0.00</span></p> -->
-					<p><label>Total:</label><span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p>
-					<p><label>Unallocated:</label><span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.total_deposit_medical">0.00</span></p>
+					<p><label>Total:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p>
+					<p><label>Unallocated:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_deposit_medical">0.00</span></p>
 				</div>
 				<br>
 				<div class="col-md-12 no-padding text-center">
@@ -276,14 +276,14 @@
             		<p>Invoice: <span ng-bind="selected_active_plan_details.invoice.invoice_number">0MCCC0037</span></p>
             		<p>Plan Duration: <span ng-bind="selected_active_plan_details.active_plan.duration">4 Months</span></p>
             		<p>Employees: <span ng-bind="selected_active_plan_details.active_plan.employees">10</span></p>
-            		<p>Plan Amount:<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="selected_active_plan_details.active_plan.plan_amount">398.71</span></p>
+            		<p>Plan Amount:<span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="selected_active_plan_details.active_plan.plan_amount">398.71</span></p>
             		<p>Payment Status: 
             			<span ng-if="selected_active_plan_details.active_plan.paid == 'true'">PAID</span>
             			<span ng-if="selected_active_plan_details.active_plan.paid == 'false'">PENDING</span>
             		</p>
             		<p>Plan Duration: <span ng-bind="selected_active_plan_details.active_plan.duration">4 Months</span></p>
             		<p>Employees: <span ng-bind="selected_active_plan_details.active_plan.employees">10</span></p>
-            		<p>Plan Amount:<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="selected_active_plan_details.active_plan.plan_amount">398.71</span></p>
+            		<p>Plan Amount:<span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="selected_active_plan_details.active_plan.plan_amount">398.71</span></p>
             		<p>Payment Status: 
             			<span ng-if="selected_active_plan_details.active_plan.paid == 'true'">PAID</span>
             			<span ng-if="selected_active_plan_details.active_plan.paid == 'false'">PENDING</span>
@@ -314,7 +314,7 @@
 	        		<p>Total Seats: <span ng-bind="list.total_dependents">10</span></p>
 	        		<p>Occupied Seats: <span ng-bind="list.occupied">10</span></p>
 	        		<p>Vacant Seats: <span ng-bind="list.vacant">10</span></p>
-	        		<p>Plan Amount: <span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.total_amount">398.71</span></p>
+	        		<p>Plan Amount: <span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_amount">398.71</span></p>
 	        		<p>Payment Status: 
 	        			<span ng-if="list.payment_status == true">PAID</span>
 	        			<span ng-if="list.payment_status == false">PENDING</span>
@@ -338,7 +338,7 @@
         		<p>Invoice: <span ng-bind="selected_active_plan_details.extension.invoice.invoice_number">0MCCC0037</span></p>
         		<p>Plan Duration: <span ng-bind="selected_active_plan_details.extension.duration">4 Months</span></p>
         		<p>Employees: <span ng-bind="selected_active_plan_details.extension.employees">10</span></p>
-        		<p>Plan Amount: <span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="selected_active_plan_details.extension.plan_amount">398.71</span></p>
+        		<p>Plan Amount: <span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="selected_active_plan_details.extension.plan_amount">398.71</span></p>
         		<p>Payment Status: 
         			<span ng-if="selected_active_plan_details.extension.paid == 1">PAID</span>
         			<span ng-if="selected_active_plan_details.extension.paid == 0">PENDING</span>
@@ -350,9 +350,9 @@
             <div ng-if="selected_active_plan_details.deposits.length > 0" ng-repeat="list in selected_active_plan_details.deposits" class="col-md-12 body">
             	<div class="col-md-6 no-padding">
             		<p>Invoice: <span <span ng-bind="list.deposit_number">DEP000085</span></p>
-            		<p>Total Credits: <span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.total_credits">12,500.00</span></p>
+            		<p>Total Credits: <span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_credits">12,500.00</span></p>
             		<p>(<span ng-bind="list.total_all_credits_text"></span>)</p>
-            		<p>Deposit: <span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="list.total_deposit">1,250.00</span></p>
+            		<p>Deposit: <span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_deposit">1,250.00</span></p>
             		<p>Payment Status: <span ng-if="list.payment_status == 0">PENDING</span> <span ng-if="list.payment_status == 1">PENDING</span></span></p>
             	</div>
             	<div class="col-md-6 text-center no-padding">
