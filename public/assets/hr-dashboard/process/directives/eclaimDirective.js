@@ -331,7 +331,7 @@
 						e_claim_id: list.transaction_id,
 						status: num,
 						rejected_reason : list.reason,
-						e_claim_amount : list.approve_claim_amount,
+						claim_amount : list.approve_claim_amount,
 					}
 
 					console.log(data);
