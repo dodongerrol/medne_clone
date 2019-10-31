@@ -20,6 +20,7 @@ app.directive('enrollmentOptionsDirective', [
 						$state.go( 'benefits-dashboard' );
 					}
 				}
+				
 
 				scope.toggleEnrollmentOptions = function( opt ){
 					localStorage.setItem('enrollmentOptionTiering', opt);
