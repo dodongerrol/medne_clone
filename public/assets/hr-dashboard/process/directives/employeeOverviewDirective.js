@@ -63,6 +63,7 @@ app.directive("employeeOverviewDirective", [
         scope.isUpdateEmpInfoModalOpen = false;
         scope.statementHide = true;
         scope.empStatementShow = false;
+        scope.arrowStatement = false;
 
         var iti = null;
 
@@ -89,9 +90,9 @@ app.directive("employeeOverviewDirective", [
 
           if(scope.account_type === 'enterprise_plan') {
             $('.statement-hide').hide();
-            document.getElementById('.arrow-up-statment').style.display = 'none';
             scope.statementHide = false;
             scope.empStatementShow = true;
+            scope.arrowStatement = true;
           }
         }
 

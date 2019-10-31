@@ -225,8 +225,6 @@ button{
 }
 
 .arrow-up-statement {
-  /*visibility: initial;*/
-  display: none;
   width: 100%;
   background-color: #ECF0F1;
   margin-top: 4px;

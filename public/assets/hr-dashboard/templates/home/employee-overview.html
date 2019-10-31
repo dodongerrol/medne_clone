@@ -20,7 +20,7 @@
 			</div>
 			<div class="welcome-container" ng-if="empStatementShow">
 				<h4 ui-sref="employee-overview" ui-sref="employee-overview" ng-if="options.accessibility == 1">Employee</h4>
-				<div class="arrow-up-statement"></div>
+				<div class="arrow-up-statement" ng-if="arrowStatement"></div>
 			</div>
 			<div class="welcome-container">
 				<h4 ui-sref="activity">Activity</h4>
