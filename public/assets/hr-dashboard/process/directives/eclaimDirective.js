@@ -525,9 +525,6 @@
 						scope.activity = response.data.data;
 						console.log(scope.activity);
 
-						// scope.isClaimAmountBlank = response.data.data.e_claim_transactions.claim_amount;
-						// console.log(scope.isClaimAmountBlank);s
-
 						scope.fetching_data = {
 							from : response.data.from,
 							to: response.data.total
