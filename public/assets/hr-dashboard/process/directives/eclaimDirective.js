@@ -52,6 +52,8 @@
 				scope.receipts_approved = [];
 				scope.receipts_rejected = [];
 				scope.receipts_arr = [];
+				scope.statementHide = true;
+				scope.empStatementShow = false;
 
 				var monthToday = moment().format('MM');
 				var monthToday2 = moment().format('MM');
@@ -62,6 +64,17 @@
 				var slide_trap = null;
 
 				var date_slider = null;
+
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+						scope.statementHide = false;
+						scope.empStatementShow = true;
+					}
+				}
 
 				scope.checkTransStatus = function( data ){
 					console.log( data );
@@ -272,6 +285,11 @@
 					if( num == 1 ){
 						list.showReasonInput = false;
 						list.showRemarksInput = true;
+						if( !list.claim_amount || list.claim_amount == 0 ){
+							list.approve_claim_amount = list.cap_amount;
+						}else{
+							list.approve_claim_amount = list.claim_amount;
+						}
 					}
 					if( num == 2 ){
 						list.showReasonInput = true;
@@ -305,8 +323,11 @@
 					var data = {
 						e_claim_id: list.transaction_id,
 						status: num,
-						rejected_reason : list.reason
+						rejected_reason : list.reason,
+						claim_amount : list.approve_claim_amount,
 					}
+
+					console.log(data);
 
 					hrActivity.updateEclaimStatus( data )
 					.then(function(response){
@@ -318,6 +339,8 @@
 							list.showRemarksInput = false;
 							if( list.status == 1 ){
 								list.status_text = 'Approved';
+								list.remarks = list.reason;
+								list.claim_amount = list.claim_amount == 0 && list.cap_amount == 0 ? list.amount : list.approve_claim_amount;
 							}
 							
 							if( response.data.status == true ){
@@ -426,6 +449,9 @@
 							if( scope.activity.e_claim_transactions.length > 0 ){
 								$('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
+									// if( !value.claim_amount || Number(value.claim_amount) == 0 ){
+									// 	value.claim_amount = value.amount;
+									// }
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
 										if( value2.file_type == 'pdf' ){
@@ -497,13 +523,15 @@
 						scope.toggleLoading();
 						scope.activity = {};
 						scope.activity = response.data.data;
-						
+						console.log(scope.activity);
+
 						scope.fetching_data = {
 							from : response.data.from,
 							to: response.data.total
 						}
 						console.log( scope.current_page );
 						console.log( response.data.last_page );
+
 						if( response.data.last_page > 0 && scope.current_page != response.data.last_page ){
 							scope.fetchNextPage(data);
 						}else{
@@ -518,6 +546,9 @@
 							if( scope.activity.e_claim_transactions.length > 0 ){
 								$('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
+									// if( !value.claim_amount || Number(value.claim_amount) == 0 ){
+									// 	value.claim_amount = value.amount;
+									// }
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
 										if( value2.file_type == 'pdf' ){
@@ -900,6 +931,8 @@
         }
 
 				scope.onLoad = function( ){
+					scope.companyAccountType( );
+
 					hrSettings.getSession( )
 						.then(function(response){
 							scope.options.accessibility = response.data.accessibility;

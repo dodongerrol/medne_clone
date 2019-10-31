@@ -51,6 +51,9 @@ app.directive('activityPage', [
 					to: 0
 				}
 
+				scope.statementHide = true;
+				scope.empStatementShow = false;
+
 				var monthToday = moment().format('MM');
 				var monthToday2 = moment().format('MM');
 
@@ -65,6 +68,17 @@ app.directive('activityPage', [
 
 				scope.pagesToDisplay = 5;
 
+
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+						scope.statementHide = false;
+						scope.empStatementShow = true;
+					}
+				}
 
 				scope.downloadCSV = function(){
 					var data = {
@@ -996,6 +1010,7 @@ app.directive('activityPage', [
 				}
 
 				scope.onLoad = function( ){
+					scope.companyAccountType( );
 					scope.checkSession( );
 					scope.getEmployeeLists( );
 					// scope.initializeRangeSlider( );
