@@ -4809,6 +4809,10 @@ public function getEclaimTransactions( )
                 // $currency_symbol = "S$";
     }
 
+    if((int)$res->status == 1) {
+      $res->amount = $res->claim_amount > 0 ? $res->claim_amount : $res->amount;
+    }
+
     $temp = array(
       'status'            => $res->status,
       'claim_date'        => date('d F Y', strtotime($res->created_at)),
@@ -4877,6 +4881,7 @@ public function getEclaimDetails($id)
       $status_text = 'Pending';
     } else if($transaction->status == 1) {
       $status_text = 'Approved';
+      $transaction->amount = $transaction->claim_amount > 0 ? $transaction->claim_amount : $transaction->amount;
     } else if($transaction->status == 2) {
       $status_text = 'Rejected';
       $rejected_status = true;
