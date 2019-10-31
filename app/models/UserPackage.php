@@ -143,6 +143,10 @@ class UserPackage extends Eloquent
                         $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
                         $data['mobile'] = null;
+
+                        if($data['plan_type'] == "Enterprise Plan") {
+                            $data['plan_add_on'] = "N.A.";
+                        }
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')
@@ -253,6 +257,9 @@ class UserPackage extends Eloquent
                         $data['care_online'] = TRUE;
                         $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
                         $data['mobile'] = (string)$user_details->PhoneCode." ".(string)$user_details->PhoneNo;
+                        if($data['plan_type'] == "Enterprise Plan") {
+                            $data['plan_add_on'] = "N.A.";
+                        }
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')
