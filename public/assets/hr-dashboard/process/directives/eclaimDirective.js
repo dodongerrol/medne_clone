@@ -292,6 +292,11 @@
 					if( num == 1 ){
 						list.showReasonInput = false;
 						list.showRemarksInput = true;
+						if( !list.claim_amount || list.claim_amount == 0 ){
+							list.approve_claim_amount = list.amount;
+						}else{
+							list.approve_claim_amount = list.claim_amount;
+						}
 					}
 					if( num == 2 ){
 						list.showReasonInput = true;
@@ -326,7 +331,7 @@
 						e_claim_id: list.transaction_id,
 						status: num,
 						rejected_reason : list.reason,
-						e_claim_amount : list.claim_amount,
+						e_claim_amount : list.approve_claim_amount,
 					}
 
 					console.log(data);
@@ -449,9 +454,9 @@
 							if( scope.activity.e_claim_transactions.length > 0 ){
 								$('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
-									if( !value.claim_amount || Number(value.claim_amount) == 0 ){
-										value.claim_amount = value.amount;
-									}
+									// if( !value.claim_amount || Number(value.claim_amount) == 0 ){
+									// 	value.claim_amount = value.amount;
+									// }
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
 										if( value2.file_type == 'pdf' ){
@@ -546,9 +551,9 @@
 							if( scope.activity.e_claim_transactions.length > 0 ){
 								$('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
-									if( !value.claim_amount || Number(value.claim_amount) == 0 ){
-										value.claim_amount = value.amount;
-									}
+									// if( !value.claim_amount || Number(value.claim_amount) == 0 ){
+									// 	value.claim_amount = value.amount;
+									// }
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
 										if( value2.file_type == 'pdf' ){
