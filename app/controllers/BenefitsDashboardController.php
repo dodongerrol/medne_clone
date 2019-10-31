@@ -194,6 +194,17 @@ class BenefitsDashboardController extends \BaseController {
 		return array('status' => TRUE, 'data' => ucwords($company->company_name));
 	}
 
+	public function getCompanyPlanAccountType( ) 
+	{
+		$result = self::checkSession();
+		$plan = DB::table("customer_plan")
+									->where("customer_buy_start_id", $result->customer_buy_start_id)
+									->orderBy('created_at', 'desc')
+									->first();
+
+		return array('status' => TRUE, 'account_type' => $plan->account_type);
+	}
+
 	public function checkPlan( )
 	{
 
@@ -1964,8 +1975,8 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
 				$plan_name = "Lite Plan";
-			} else if($active_plan->account_type == 'super_pro_plan') {
-				$plan_name = "Super Pro Plan";
+			} else if($active_plan->account_type == 'enterprise_plan') {
+				$plan_name = "Enterprise Plan";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -2217,6 +2228,7 @@ class BenefitsDashboardController extends \BaseController {
 		$get_allocation_spent_wellness = 0;
 		$total_medical_balance = 0;
 		$total_wellness_balance = 0;
+		$total_allocation_wellness = 0;
 
 		$check_accessibility = self::hrStatus( );
 		$plan = DB::table('customer_plan')
@@ -2228,15 +2240,16 @@ class BenefitsDashboardController extends \BaseController {
 			$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
-	    	// check if customer has a credit reset in medical
-			$customer_credit_reset_medical = DB::table('credit_reset')
-			->where('id', $customer_id)
-			->where('spending_type', 'medical')
-			->where('user_type', 'company')
-			->orderBy('created_at', 'desc')
-			->first();
+			if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
 
-			if($plan->account_type != "super_pro_plan") {
+	    	// check if customer has a credit reset in medical
+				$customer_credit_reset_medical = DB::table('credit_reset')
+				->where('id', $customer_id)
+				->where('spending_type', 'medical')
+				->where('user_type', 'company')
+				->orderBy('created_at', 'desc')
+				->first();
+
 				if($customer_credit_reset_medical) {
 					$date = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
 					$temp_total_allocation = DB::table('customer_credit_logs')
@@ -2266,9 +2279,8 @@ class BenefitsDashboardController extends \BaseController {
 
 				}
 				$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
-			}
 
-			if($plan->account_type != "super_pro_plan") {
+
 			    // check if customer has a credit reset in medical
 				$customer_credit_reset_wellness = DB::table('credit_reset')
 				->where('id', $customer_id)
@@ -2309,10 +2321,11 @@ class BenefitsDashboardController extends \BaseController {
 				}
 				$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
 			}
-			if($plan->account_type != "super_pro_plan") {
-				$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+
+			if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+				$user_allocated = PlanHelper::getUnlimitedCorporateUserByAllocated($account_link->corporate_id, $customer_id);
 			} else {
-				$user_allocated = PlanHelper::getCorporateUserByAllocatedSuperProPlan($account_link->corporate_id, $customer_id);
+				$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
 			}
 	        // return $user_allocated;
 			$get_allocation_spent = 0;
@@ -2338,35 +2351,43 @@ class BenefitsDashboardController extends \BaseController {
 			
 
 			$total_medical_allocated = $allocated - $deleted_employee_allocation;
-
 			$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness;
-
 			$credits = $total_medical_allocation - $total_medical_allocated;
 			$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
 
-			if($plan->account_type != "super_pro_plan") {
-				if($company_credits->balance != $credits) {
-					// update medical credits
-					\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
-				}
+			if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+				$total_medical_allocation = 0;
+				$credits = 0;
+				$total_medical_allocated = 0;
+				$total_medical_balance = 0;
+				$total_allocation_wellness = 0;
+				$credits_wellness = 0;
+				$total_wellnesss_allocated = 0;
+				$total_wellness_balance = 0;
+			}
+
+			if($company_credits->balance != $credits) {
+				// update medical credits
+				\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
+			}
 
 				if($company_credits->wellness_credits != $credits_wellness) {
 					// update wellness credits
 					\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
 				}
 			}
-		}
+		// }
 		
 		return array(
-			'total_medical_company_allocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' :number_format($total_medical_allocation, 2),
-			'total_medical_company_unallocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($credits, 2),
-			'total_medical_employee_allocated' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_medical_allocated, 2),
-			'total_medical_employee_spent'		=> $get_allocation_spent < 0 ? "0.00" : number_format($get_allocation_spent, 2),
-			'total_medical_employee_balance' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_medical_balance, 2),
-			'total_medical_employee_balance_number' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : $total_medical_balance,
-			'total_medical_wellness_allocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_allocation_wellness, 2),
-			'total_medical_wellness_unallocation' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($credits_wellness, 2),
-			'total_wellness_employee_allocated' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_wellnesss_allocated, 2),
+			'total_medical_company_allocation' => number_format($total_medical_allocation, 2),
+			'total_medical_company_unallocation' => number_format($credits, 2),
+			'total_medical_employee_allocated' => number_format($total_medical_allocated, 2),
+			'total_medical_employee_spent'		=> number_format($get_allocation_spent, 2),
+			'total_medical_employee_balance' => number_format($total_medical_balance, 2),
+			'total_medical_employee_balance_number' => $total_medical_balance,
+			'total_medical_wellness_allocation' => number_format($total_allocation_wellness, 2),
+			'total_medical_wellness_unallocation' => number_format($credits_wellness, 2),
+			'total_wellness_employee_allocated' => number_format($total_wellnesss_allocated, 2),
 			'total_wellness_employee_spent'		=> number_format($get_allocation_spent_wellness, 2),
 			'total_wellness_employee_balance' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : number_format($total_wellness_balance, 2),
 			'total_wellness_employee_balance_number' => $plan->account_type == "super_pro_plan" ? 'UNLIMITED' : $total_wellness_balance,
@@ -5309,10 +5330,9 @@ class BenefitsDashboardController extends \BaseController {
 		$first_plan = DB::table('customer_active_plan')->where('plan_id', $active_plan->plan_id)->first();
 		$first_plan_invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $first_plan->customer_active_plan_id)->first();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $active_plan->plan_id)->first();
-	// get invoice data
+		// get invoice data
 		$invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
 
-	// $count_deleted_employees = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->count();
 		$data['number_employess'] = $invoice->employees;
 		$data['invoice_number'] = $invoice->invoice_number;
 		$data['invoice_date'] = date('F d, Y', strtotime($invoice->invoice_date));
@@ -5320,11 +5340,6 @@ class BenefitsDashboardController extends \BaseController {
 		$data['employees'] = $invoice->employees;
 		$data['start_date'] = date('F d, Y', strtotime($active_plan->plan_start));
 
-	// if($first_plan->duration || $first_plan->duration != "") {
-	// 	$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
-	// } else {
-	// 	$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-	// }
 		$calculated_prices_end_date = null;
 		if((int)$active_plan->new_head_count == 0) {
 			if($active_plan->duration || $active_plan->duration != "") {
@@ -5369,6 +5384,10 @@ class BenefitsDashboardController extends \BaseController {
 		} else if($active_plan->account_type == 'lite_plan') {
 			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
 			$data['account_type'] = "Lite Plan";
+			$data['complimentary'] = FALSE;
+		} else if($get_active_plan->account_type == "enterprise_plan") {
+			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
+			$data['account_type'] = "Enterprise Plan";
 			$data['complimentary'] = FALSE;
 		}
 
@@ -5499,6 +5518,10 @@ class BenefitsDashboardController extends \BaseController {
 			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
 			$data['account_type'] = "Lite Plan";
 			$data['complimentary'] = FALSE;
+		} else if($get_active_plan->account_type == "enterprise_plan") {
+			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
+			$data['account_type'] = "Enterprise Plan";
+			$data['complimentary'] = FALSE;
 		}
 
 		$data['invoice_number'] = $invoice->invoice_number;
@@ -5542,6 +5565,10 @@ class BenefitsDashboardController extends \BaseController {
 					} else if($extension->account_type == "lite_plan") {
 						$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
 						$data['account_type'] = "Lite Plan";
+						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "enterprise_plan") {
+						$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Enterprise Plan";
 						$data['complimentary'] = FALSE;
 					}
 
@@ -5706,6 +5733,10 @@ class BenefitsDashboardController extends \BaseController {
 						$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
 						$data['account_type'] = "Lite Plan";
 						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "enterprise_plan") {
+						$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Enterprise Plan";
+						$data['complimentary'] = FALSE;
 					}
 
 					$invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
@@ -5818,6 +5849,8 @@ class BenefitsDashboardController extends \BaseController {
 				$account_type = "Trial Plan";
 			} else if($dependent->account_type == "lite_plan") {
 				$account_type = "Lite Plan";
+			} else if($dependent->account_type == "enterprise_plan") {
+				$account_type = "Enterprise Plan";
 			}
 
 			if((int)$dependent->payment_status == 0) {

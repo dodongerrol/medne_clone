@@ -61,6 +61,9 @@ app.directive("employeeOverviewDirective", [
         scope.dependents_ctr = 0;
         scope.cap_per_visit = 0;
         scope.isUpdateEmpInfoModalOpen = false;
+        scope.statementHide = true;
+        scope.empStatementShow = false;
+        scope.arrowStatement = false;
 
         var iti = null;
 
@@ -79,6 +82,18 @@ app.directive("employeeOverviewDirective", [
             return scope.page_active - Math.floor(scope.pagesToDisplay / 2);
           }    
           return 0;
+        }
+
+        scope.companyAccountType = function () {
+          scope.account_type = localStorage.getItem('company_account_type');
+          console.log(scope.account_type);
+
+          if(scope.account_type === 'enterprise_plan') {
+            $('.statement-hide').hide();
+            scope.statementHide = false;
+            scope.empStatementShow = true;
+            scope.arrowStatement = true;
+          }
         }
 
 
@@ -1626,6 +1641,7 @@ app.directive("employeeOverviewDirective", [
           scope.getJobs();
           scope.showLoading();
           scope.getSession();
+          scope.companyAccountType( );
         };
         
         scope.onLoad();
