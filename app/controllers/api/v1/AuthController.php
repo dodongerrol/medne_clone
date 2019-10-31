@@ -4989,13 +4989,14 @@ public function getHealthLists( )
                                         ->select('health_types.name', 'health_types.health_type_id', 'health_types.created_at', 'health_types.updated_at', 'company_e_claim_service_types.active')
                                         ->get();
       if(sizeof($get_company_e_claim_services) > 0) {
-        return $get_company_e_claim_services;
+        $spending_types = $get_company_e_claim_services;
       } else { 
-        return DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
+        $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
       }
+    } else {
+      $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
     }
-
-   $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
+    
    $returnObject->data = $spending_types;
    return Response::json($returnObject);
  } else {
