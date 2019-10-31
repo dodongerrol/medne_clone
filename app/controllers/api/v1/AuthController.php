@@ -4986,6 +4986,7 @@ public function getHealthLists( )
                                         ->where('company_e_claim_service_types.customer_id', $customer_id)
                                         ->where('health_types.type', $input['spending_type'])
                                         ->where('company_e_claim_service_types.active', 1)
+                                        ->where('health_types.active', 1)
                                         ->select('health_types.name', 'health_types.health_type_id', 'health_types.created_at', 'health_types.updated_at', 'company_e_claim_service_types.active')
                                         ->get();
       if(sizeof($get_company_e_claim_services) > 0) {
