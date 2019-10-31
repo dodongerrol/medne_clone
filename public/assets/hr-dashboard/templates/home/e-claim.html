@@ -336,10 +336,14 @@
 									<!-- <span>Vision Hut</span> -->
 								</td>
 								<td>
-									S$ <span ng-bind="list.amount"></span>
+									<span>
+										S$ <span ng-bind="list.amount"></span>
+									</span>
 								</td>
-								<td>	
-									S$ <span ng-bind="list.claim_amount"></span>
+								<td>
+									<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">	
+										S$ <span ng-bind="list.claim_amount"></span>
+									</span>
 								</td>
 								<td>
 									<span ng-bind="list.member">Filbert Tan</span>
@@ -393,7 +397,11 @@
 											<!-- <p><label>TOTAL AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p> -->
 											<!-- <p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
 											<p><label>RECEIPT AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p>
-											<p><label>CLAIM AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.claim_amount">22</span></span></p>
+											<p><label>CLAIM AMOUNT</label> 
+												<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">
+													<span class="color-gray2" >S$ <span ng-bind="list.claim_amount">22</span></span>
+												</span>
+											</p>
 											<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
 											<p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">In-Network</span></p>
 											<div class="white-space-20"></div>
