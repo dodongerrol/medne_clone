@@ -4982,12 +4982,9 @@ public function getHealthLists( )
     if($customer_id) {
       // get claim type service cap
       $get_company_e_claim_services = DB::table('company_e_claim_service_types')
-                                        ->join('health_types', 'health_types.health_type_id', '=', 'company_e_claim_service_types.health_type_id')
-                                        ->where('company_e_claim_service_types.customer_id', $customer_id)
-                                        ->where('health_types.type', $input['spending_type'])
-                                        ->where('company_e_claim_service_types.active', 1)
-                                        ->where('health_types.active', 1)
-                                        ->select('health_types.name', 'health_types.health_type_id', 'health_types.created_at', 'health_types.updated_at', 'company_e_claim_service_types.active')
+                                        ->where('customer_id', $customer_id)
+                                        ->where('type', $input['spending_type'])
+                                        ->where('active', 1)
                                         ->get();
       if(sizeof($get_company_e_claim_services) > 0) {
         $spending_types = $get_company_e_claim_services;
@@ -5239,17 +5236,15 @@ public function createEclaim( )
 
   if($customer_id) {
     // get claim type service cap
-    $claim_type_service = DB::table('health_types')->where('name', $input['service'])->where('type', $input['spending_type'])->where('active', 1)->first();
-    if($claim_type_service) {
-      $get_company_e_claim_service = DB::table('company_e_claim_service_types')
-                                        ->where('health_type_id', $claim_type_service->health_type_id)
-                                        ->where('customer_id', $customer_id)
-                                        ->where('active', 1)
-                                        ->first();
-      if($get_company_e_claim_service) {
-        $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
-      }
-    } 
+    $get_company_e_claim_service = DB::table('company_e_claim_service_types')
+                                      ->where('name', $input['service'])
+                                      ->where('type', $input['spending_type'])
+                                      ->where('customer_id', $customer_id)
+                                      ->where('active', 1)
+                                      ->first();
+    if($get_company_e_claim_service) {
+      $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+    }
   }
 
   try {

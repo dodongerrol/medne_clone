@@ -220,17 +220,15 @@ class EclaimController extends \BaseController {
 
 		if($customer_id) {
     	// get claim type service cap
-    	$claim_type_service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('active', 1)->first();
-    	if($claim_type_service) {
-    		$get_company_e_claim_service = DB::table('company_e_claim_service_types')
-    																			->where('health_type_id', $claim_type_service->health_type_id)
-    																			->where('customer_id', $customer_id)
-    																			->where('active', 1)
-    																			->first();
-    		if($get_company_e_claim_service) {
-    			$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
-    		}
-    	}	
+  		$get_company_e_claim_service = DB::table('company_e_claim_service_types')
+  																			->where('name', $input['service'])
+  																			->where('type', 'medical')
+  																			->where('customer_id', $customer_id)
+  																			->where('active', 1)
+  																			->first();
+  		if($get_company_e_claim_service) {
+  			$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+  		}
     }
     
 		try {
@@ -403,17 +401,15 @@ class EclaimController extends \BaseController {
 
 		if($customer_id) {
     	// get claim type service cap
-    	$claim_type_service = DB::table('health_types')->where('name', $input['service'])->where('type', 'wellness')->where('active', 1)->first();
-    	if($claim_type_service) {
-    		$get_company_e_claim_service = DB::table('company_e_claim_service_types')
-    																			->where('health_type_id', $claim_type_service->health_type_id)
-    																			->where('customer_id', $customer_id)
-    																			->where('active', 1)
-    																			->first();
-    		if($get_company_e_claim_service) {
-    			$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
-    		}
-    	}	
+  		$get_company_e_claim_service = DB::table('company_e_claim_service_types')
+  																			->where('name', $input['service'])
+  																			->where('type', 'wellness')
+  																			->where('customer_id', $customer_id)
+  																			->where('active', 1)
+  																			->first();
+  		if($get_company_e_claim_service) {
+  			$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+  		}
     }
 
 		try {
@@ -1348,12 +1344,9 @@ class EclaimController extends \BaseController {
 		if($customer_id) {
     	// get claim type service cap
   		$get_company_e_claim_services = DB::table('company_e_claim_service_types')
-  																			->join('health_types', 'health_types.health_type_id', '=', 'company_e_claim_service_types.health_type_id')
-  																			->where('company_e_claim_service_types.customer_id', $customer_id)
-  																			->where('health_types.type', $input['type'])
-  																			->where('company_e_claim_service_types.active', 1)
-  																			->where('health_types.active', 1)
-  																			->select('health_types.name', 'health_types.health_type_id', 'health_types.created_at', 'health_types.updated_at', 'company_e_claim_service_types.active')
+  																			->where('customer_id', $customer_id)
+  																			->where('type', $input['type'])
+  																			->where('active', 1)
   																			->get();
   		if(sizeof($get_company_e_claim_services) > 0) {
   			return $get_company_e_claim_services;
@@ -5943,7 +5936,7 @@ public function hrEclaimActivity( )
 				'merchant'          => $res->merchant,
 				'amount'            => number_format($res->amount, 2),
 				'claim_amount'      => (int)$res->status == 0 ? 0 : number_format($res->claim_amount, 2),
-				'cap_amount'				=> $res->cap_amount,
+				'cap_amount'				=> $res->amount < $res->cap_amount ? 0 : $res->cap_amount,
 				'member'            => ucwords($member->Name),
 				'type'              => 'E-Claim',
 				'transaction_id'    => 'MNF'.$id,
