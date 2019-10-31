@@ -388,8 +388,11 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 	// get pre signed e-claim doc
 	Route::get('hr/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
+	
+	// get account type
+	Route::get('hr/get_company_account_type', 'BenefitsDashboardController@getCompanyPlanAccountType');
 });
-	Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
+Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
 
 // intro login for clinic
 Route::get('provider-portal-login', 'HomeController@clinicLogin');

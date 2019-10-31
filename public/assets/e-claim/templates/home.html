@@ -127,8 +127,12 @@
 							<div class="white-space-30"></div>
 							<div class="white-space-5"></div>
 							<p class="font-medium2 weight-700">Balance</p>
-							<p class="font-30 weight-700 no-margin" style="color:#00B2E1" ng-if="current_spending.balance != 'UNLIMITED'"><span class="font-16" style="top: -10px;position: relative;">S$</span><span ng-bind="current_spending.balance">00.00</span></p>
-							<p class="font-30 weight-700 no-margin" style="color:#00B2E1" ng-if="current_spending.balance == 'UNLIMITED'"><span class="font-16" style="top: -10px;position: relative;"></span><span ng-bind="current_spending.balance"></span></p>
+							<p class="font-30 weight-700 no-margin" style="color:#00B2E1" ng-if="current_spending.account_type != 'enterprise_plan'">
+								<span class="font-16" style="top: -10px;position: relative;">S$</span><span ng-bind="current_spending.balance">00.00</span>
+							</p>
+							<p class="font-30 weight-700 no-margin" style="color:#00B2E1" ng-if="current_spending.account_type == 'enterprise_plan'">
+								<span class="font-16" style="top: -10px;position: relative;" ng-if="current_spending.account_type == 'enterprise_plan'"></span><span ng-bind="current_spending.balance">00.00</span>
+							</p>
 						</div>
 
 						<div class="col-xs-12 col-sm-12 col-md-4 no-padding" style="position: relative;">
