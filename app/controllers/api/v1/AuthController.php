@@ -4982,8 +4982,7 @@ public function getHealthLists( )
     if($customer_id) {
       // get claim type service cap
       $get_company_e_claim_services = DB::table('company_e_claim_service_types')
-                                        ->join('health_types', 'health_types.health_type_id', 'company_e_claim_service_types.health_type_id')
-                                        ->where('company_e_claim_service_types.health_type_id', $claim_type_service->health_type_id)
+                                        ->join('health_types', 'health_types.health_type_id', '=', 'company_e_claim_service_types.health_type_id')
                                         ->where('company_e_claim_service_types.customer_id', $customer_id)
                                         ->where('health_types.type', $input['spending_type'])
                                         ->where('company_e_claim_service_types.active', 1)
@@ -4992,11 +4991,11 @@ public function getHealthLists( )
       if(sizeof($get_company_e_claim_services) > 0) {
         return $get_company_e_claim_services;
       } else { 
-        return DB::table('health_types')->where('type', $input['spending_type'])->get();
+        return DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
       }
     }
 
-   $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->get();
+   $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
    $returnObject->data = $spending_types;
    return Response::json($returnObject);
  } else {
