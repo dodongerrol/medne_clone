@@ -16,6 +16,19 @@ app.directive('teamBenefitsTierDirective', [
 					gp_cap_status : false,
 				};
 				scope.tier_arr = [];
+				scope.statementHide = true;
+				scope.empStatementShow = false;
+
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+						scope.statementHide = false;
+						scope.empStatementShow = true;
+					}
+				}
 
 				scope.toggleEditTier = function( data, index ){
 					if( scope.editTierIsShow == false ){
@@ -159,6 +172,7 @@ app.directive('teamBenefitsTierDirective', [
 				}
 
         scope.onLoad = function( ){
+        	scope.companyAccountType();
         	scope.getTiers();
         }
 

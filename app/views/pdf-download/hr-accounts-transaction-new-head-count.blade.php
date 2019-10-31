@@ -272,6 +272,8 @@
           @if($notes && $notes != 'NULL')
           <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $notes }}</p>
           @endif
+
+          <p>Please send all payment advice to finance@mednefits.com</p>
         </div>
 
         <div class="item-col2">

@@ -224,7 +224,13 @@ button{
 	background-color: #fff;
 }
 
-
+.arrow-up-statement {
+  width: 100%;
+  background-color: #ECF0F1;
+  margin-top: 4px;
+  height: 4px;
+  position: relative;
+}
 
 .arrow-up {
   width: 100%;
@@ -3531,7 +3537,8 @@ ul.typeahead li a.dropdown-item
 
 .transaction-table-container{
     background: #fff;
-    padding: 20px 58px;
+    /*padding: 20px 58px;*/
+    padding: 20px 30px;
     min-height: 500px;
 }
 
@@ -7123,7 +7130,8 @@ ul.typeahead li a.dropdown-item
 /* E CLAIM PAGE */
 	.claim-type-header,
 	.claim-type-details {
-		padding-left: 40px !important;
+		/*padding-left: 40px !important;*/
+		padding-left: 10px !important;
 	}
 
 
@@ -7142,6 +7150,11 @@ ul.typeahead li a.dropdown-item
 
 	.dependent-relationship-label {
 		vertical-align: top;
+	}
+
+	.remarks-claim-amount-container {
+		display: flex;
+		justify-content: center;
 	}
 
 /* STATEMENT PAGE */

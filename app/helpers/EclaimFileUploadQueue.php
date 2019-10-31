@@ -5,6 +5,11 @@ class EclaimFileUploadQueue
 	
 	public function fire($job, $data)
 	{
+		\Cloudinary::config(array(
+			"cloud_name" => "mednefits-com",
+			"api_key" => "881921989926795",
+			"api_secret" => "zNoFc7EHPMtafUEt0r8gxkv4V5U"
+		));
 		$image = \Cloudinary\Uploader::upload($data['file']);
 		$e_claim_docs = new EclaimDocs( );
 

@@ -217,7 +217,7 @@ app.directive('activityDirective', [
 					eclaimSettings.employeeSearchActivity( data )
 						.then(function(response){
 							scope.activity_results = response.data;
-							// console.log(scope.activity_results);
+							console.log(scope.activity_results);
 							if( parseInt(scope.activity_results.total_allocation) > 0 ){
 								if( scope.activity_results.total_allocation.indexOf(",") >= 0 ){
 									scope.activity_results.total_allocation = scope.activity_results.total_allocation.replace(",", "");
