@@ -33,7 +33,7 @@
         </div>
   			<br><br>
   			<div class="row">
-  				<div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost <span class="sg">S$</span><span class="rm">RM</span></div>
+  				<div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost </div>
   				<div class="col-md-6"> <input class="txt_bg" id="service-cost" type="text" name="" value="{{$services->Price}}"  placeholder="0" style="width: 260px;"></div>
   			</div>
   			<br>
@@ -157,7 +157,7 @@
         </div>
         <br><br>
         <div class="row">
-          <div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost <span class="sg">S$</span><span class="rm">RM</span></div>
+          <div class="col-md-4 text-right" style="padding-top: 6px;">Service Cost </div>
           <div class="col-md-6"> <input class="txt_bg" id="service-cost" type="text" name="" value=""  placeholder="0" style="width: 260px;"></div>
         </div>
         <br>
@@ -211,10 +211,6 @@
   <script type="text/javascript">
   	
   	jQuery(document).ready(function($) {
-
-      
-      $('.sg').show();
-      $('.rm').hide();
 
   		$(document).on('click', '#delete-service', function(event) {
 			var id = $('#h-service_id').val();
@@ -271,5 +267,16 @@
     }
 
 
+    var currency;
+    var str = $('#service-cost').val();
+
+		if (str.includes('S$')) {
+			currency = $('#service-cost').val().replace('S$', 'SGD ');
+			$('#service-cost').val(currency);
+		} else if (str.includes('RM')) {
+			currency = $('#service-cost').val().replace('RM', 'MYR ');
+			$('#service-cost').val(currency);
+    }
+    
   	});
   </script>

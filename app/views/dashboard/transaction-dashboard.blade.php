@@ -39,6 +39,10 @@
     border-radius: 0;
     margin-top: 5px;
 	}
+
+	.currency-type {
+		text-transform: uppercase;
+	}
 </style>
 
 
@@ -112,7 +116,7 @@
 								<p class="no-margin">Transactions</p>
 							</div>
 							<div class="value-box wallet-tooltip" style="position: relative;">
-								<h4 class="font-30 weight-700 color-gray"> <span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans_data.mednefits_wallet">2536</span></h4>
+								<h4 class="font-30 weight-700 color-gray"> <span class="currency-type" ng-bind="trans_data.transactions[0].currency_type">SGD/MYR</span> <span ng-bind="trans_data.mednefits_wallet">2536</span></h4>
 								<p class="no-margin">Mednefits Wallet</p>
 
 								<p class="tooltip-wallet">Combine amount from Mednefits Fee and Mednefits Credit.</p>
@@ -153,13 +157,13 @@
 								<td ng-bind="trans.procedure_name"></td>
 								<td style="text-align: center;">
 									<span>
-										<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans.mednefits_fee"></span>
+									<span class="currency-type" ng-bind="trans.currency_type">SGD/MYR</span> <span ng-bind="trans.mednefits_fee"></span>
 									</span>
 								</td>
 								<td style="text-align: center;">
-									<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans.mednefits_credits"></span>
+									<span class="currency-type" ng-bind="trans.currency_type">SGD/MYR</span> <span ng-bind="trans.mednefits_credits"></span>
 								<td style="text-align: center;">
-									<span ng-if="true">S$</span><span ng-if="false">RM</span> <span ng-bind="trans.cash">0</span>
+									<span class="currency-type" ng-bind="trans.currency_type">SGD/MYR</span> <span ng-bind="trans.cash">0</span>
 								</td>
 							</tr>
 
