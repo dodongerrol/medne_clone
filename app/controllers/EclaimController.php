@@ -8796,7 +8796,7 @@ public function generateMonthlyCompanyInvoice( )
 									'ITEM/SERVICE'		=> $clinic_name,
 									'MEDICINE & TREATMENT' => number_format($procedure_cost, 2),
 									'CONSULTATION'		=> (int)$trans->lite_plan_enabled == 1 ?number_format($trans->consultation_fees, 2) : "0.00",
-									'TOTAL AMOUNT'		=> $procedure_cost,
+									'TOTAL AMOUNT'		=> number_format($total_amount, 2),
 									'TYPE'						=> 'In-Network',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
@@ -8809,7 +8809,7 @@ public function generateMonthlyCompanyInvoice( )
 									'ITEM/SERVICE'		=> $clinic_name,
 									'MEDICINE & TREATMENT' => "",
 									'CONSULTATION'		=> "",
-									'TOTAL AMOUNT'		=> number_format($procedure_cost, 2),
+									'TOTAL AMOUNT'		=> number_format($total_amount, 2),
 									'TYPE'						=> 'In-Network',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
