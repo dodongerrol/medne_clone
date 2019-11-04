@@ -8776,10 +8776,10 @@ public function generateMonthlyCompanyInvoice( )
 									'DATE'						=> date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 									'TRANSACTION ID'	=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 									'ITEM/SERVICE'		=> $clinic_name,
-									'MEDICINE & TREATMENT' => $procedure_cost,
+									'MEDICINE & TREATMENT' => number_format($procedure_cost, 2),
 									'CONSULTATION'		=> (int)$trans->lite_plan_enabled == 1 ?number_format($trans->consultation_fees, 2) : "0.00",
 									'TOTAL AMOUNT'		=> $procedure_cost,
-									'TYPE'						=> $type,
+									'TYPE'						=> 'In-Network',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
 							} else {
@@ -8789,8 +8789,10 @@ public function generateMonthlyCompanyInvoice( )
 									'DATE'						=> date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 									'TRANSACTION ID'	=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 									'ITEM/SERVICE'		=> $clinic_name,
-									'TOTAL AMOUNT'		=> $procedure_cost,
-									'TYPE'						=> $type,
+									'MEDICINE & TREATMENT' => "",
+									'CONSULTATION'		=> "",
+									'TOTAL AMOUNT'		=> number_format($procedure_cost, 2),
+									'TYPE'						=> 'In-Network',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
 							}
