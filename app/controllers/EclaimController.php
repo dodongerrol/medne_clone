@@ -8527,7 +8527,6 @@ public function generateMonthlyCompanyInvoice( )
 									}
 								}
 							} else {
-								$total_deleted_in_network_transactions++;
 								if($trans->lite_plan_enabled == 1) {
 									$logs_lite_plan = DB::table($table_wallet_history)
 									->where('logs', 'deducted_from_mobile_payment')
