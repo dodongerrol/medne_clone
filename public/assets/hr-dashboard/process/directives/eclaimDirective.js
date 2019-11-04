@@ -349,6 +349,7 @@
 								list.remarks = list.reason;
 								list.approved_status = true;
 								list.approved_date = moment().format( 'DD MMMM YYYY hh:mm A' );
+								list.rejected_date = null;
 								list.claim_amount = list.claim_amount == 0 && list.cap_amount == 0 ? list.amount : list.approve_claim_amount;
 							}
 							
@@ -385,6 +386,9 @@
 									list.status_text = 'Rejected';
 									list.rejected_reason = list.reason;
 									list.rejected_date = moment().format("DD MMMM YYYY hh:mm A");
+
+									list.approved_status = false;
+									list.approved_date = null;
 								}
 								
 								if( response.data.status == true ){
