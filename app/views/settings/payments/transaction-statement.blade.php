@@ -15,7 +15,11 @@
         border: 1px solid #ccc;
         background: #FFF;
         z-index: 10;
-    }
+	}
+	
+	.currency_type{
+		text-transform: uppercase;
+	}
 </style>
 
 <br>
@@ -135,9 +139,9 @@
 		    		<div class="right-wrapper">
 		    			<h5><b>Account Summary</b></h5>
 		    			<br>
-		    			<p>Invoiced: <label> <span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_due">0</span>  </label></p>
-		    			<p>Payments: <label> (<span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_paid">0</span>)  </label></p>
-		    			<p>Ending Balance <span class="statement_created_at">N/a</span>: <label> <span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_total">0</span></label></p>
+		    			<p>Invoiced: <label> <span class="currency_type"></span> <span class="statement_amount_due">0</span>  </label></p>
+		    			<p>Payments: <label> (<span class="currency_type"></span> <span class="statement_amount_paid">0</span>)  </label></p>
+		    			<p>Ending Balance <span class="statement_created_at">N/a</span>: <label> <span class="currency_type"></span> <span class="statement_amount_total">0</span></label></p>
 		    		</div>
 		    	</div>
 	    	</div>
@@ -164,16 +168,16 @@
 	    					<span class="statement_start">Feb 01,2017</span>
 	    				</td>
 	    				<td style="text-align: left;">Invoice #<span class="statement_invoice_number">MNCP00002</span></b> (due <span class="statement_end">FEB 28, 2017</span>)</td>
-	    				<td style="text-align: right;"><span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_due">0</span></td>
-	    				<td style="text-align: right;"><span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_due">0</span></td>
+	    				<td style="text-align: right;"><span class="currency_type"></span> <span class="statement_amount_due">0</span></td>
+	    				<td style="text-align: right;"><span class="currency_type"></span> <span class="statement_amount_due">0</span></td>
 	    			</tr>
 	    			<tr>
 	    				<td style="text-align: left !important;padding-left: 30px; ">
 	    					<span class="statement_end">Feb 28,2017</span>
 	    				</td>
 	    				<td style="text-align: left;">Payment <b>Invoice #<span class="statement_invoice_number">MNCP00002</span></b></td>
-	    				<td style="text-align: right;">(<span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_paid">0</span>)</td>
-	    				<td style="text-align: right;"><span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_total">0</span></td>
+	    				<td style="text-align: right;">(<span class="currency_type"></span> <span class="statement_amount_paid">0</span>)</td>
+	    				<td style="text-align: right;"><span class="currency_type"></span> <span class="statement_amount_total">0</span></td>
 	    			</tr>
 	    			<tr>
 	    				<td style="text-align: left !important;padding-left: 30px; ">
@@ -181,7 +185,7 @@
 	    				</td>
 	    				<td style="text-align: left;">Ending Balance</td>
 	    				<td style="text-align: right;"></td>
-	    				<td style="text-align: right;"><span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_total">0</span></td>
+	    				<td style="text-align: right;"><span class="currency_type"></span> <span class="statement_amount_total">0</span></td>
 	    			</tr>
 
 	    		</tbody>
@@ -190,7 +194,7 @@
 	    	<div class="total">
 	    		<div class="col-md-12 text-right">
 	    			<h4>Amount due (SGD)</h4>
-	    			<h4><b><span class="sg">S$</span><span class="rm">RM</span> <span class="statement_amount_total">0</span></b></h4>
+	    			<h4><b><span class="currency_type"></span> <span class="statement_amount_total">0</span></b></h4>
 	    		</div>
 	    	</div>
 
@@ -210,9 +214,9 @@
 
 	// Currency condition
 	setTimeout(() => {
-		$('.sg').show();
-    	$('.rm').hide();	
-	}, 3000);
+    var currency = localStorage.getItem('currency_type');
+		$('.currency_type').text(currency);
+	}, 1000);
 	
 	
 	$( "#back-button" ).click(function(){

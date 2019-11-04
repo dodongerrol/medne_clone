@@ -13,7 +13,7 @@
   <br><br><br>
 
   <div class="service-list" id="list-service">
-<?php if($services){ foreach ($services as $value) { ?>
+<?php if($services){ foreach ($services as $key => $value) { ?>
     <div class="col-md-12 service-details" id="{{$value->ProcedureID}}">
       <span class="service-edit">
         <div class="col-xs-5 col-sm-5 col-md-5 service-details-info" style="padding: 20px 0px 20px 20px;">
@@ -27,7 +27,7 @@
           <span style="color: #999999;">{{ $value->Duration}} mins</span>
         </div>
         <div class="col-xs-2 col-sm-2 col-md-2 service-details-info" style="padding: 20px 0;">
-           <span style="color: #999999;"><span class="sg">S$</span> <span class="rm">RM</span> {{ $value->Price}}</span>
+           <span style="color: #999999;" class="cost_val index<?php echo $key?>">{{ $value->Price}}</span>
         </div>
       </span>
       <div class="col-xs-3 col-sm-3 col-md-3" style="padding: 20px 0;padding-right: 15px;text-align: right;">
@@ -115,9 +115,26 @@
 
   <script type="text/javascript">
 
-// Currency condition
-      $('.sg').show();
-      $('.rm').hide();
+// // Currency condition
+//       $('.sg').show();
+//       $('.rm').hide();
+
+  var currency;
+	var arrLength = $('.cost_val').size();
+	// console.log(currency,arrLength);
+	
+	for ( var i = 0; i <= arrLength - 1; i++ ) {
+		var str = $('.index' + i).text();
+		if (str.includes('S$')) {
+			currency = $('.index' + i).text().replace('S$', 'SGD ');
+			$('.index' + i ).text(currency);
+		} else if (str.includes('RM')) {
+			currency = $('.index' + i).text().replace('RM', 'MYR ');
+			$('.index' + i ).text(currency);
+		}
+		
+		console.log(currency,arrLength);
+	}
 
     // --------- Set Navigation bar height ------------------
 

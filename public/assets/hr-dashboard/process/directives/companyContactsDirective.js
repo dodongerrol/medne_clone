@@ -9,7 +9,7 @@ app.directive("companyContactsDirective", [
       scope: true,
       link: function link(scope, element, attributeSet) {
         console.log("companyContactsDirective Runnning !");
-
+        scope.local_currency_type = localStorage.getItem('currency_type');
         scope.company_contacts = {};
         scope.transactions = {};
         scope.transactions.current_total = 0;
