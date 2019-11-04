@@ -88,29 +88,40 @@ class Api_V1_TransactionController extends \BaseController
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 					$consultation_fees = 0;
 
-					// recalculate employee balance
-         	PlanHelper::reCalculateEmployeeBalance($user_id);
-					// check user credits and amount key in
-					$spending_type = "medical";
-					$wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
+					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+          $customer_active_plan = DB::table('customer_active_plan')
+                                    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                                    ->first();
 
-					if($clinic_type->spending_type == "medical") {
-						$user_credits = TransactionHelper::floatvalue($wallet_user->balance);
+          if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+            $spending_type = $clinic_type->spending_type;
+            $user_credits = 100000000000;
+            $wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
+          } else {
+						// recalculate employee balance
+	         	PlanHelper::reCalculateEmployeeBalance($user_id);
+						// check user credits and amount key in
 						$spending_type = "medical";
-					} else {
-						$user_credits = TransactionHelper::floatvalue($wallet_user->wellness_balance);
-						$spending_type = "wellness";
-					}
+						$wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
-					if($user_credits == 0) {
-						$returnObject->status = FALSE;
-            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
-            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-            return Response::json($returnObject);
-					}
+						if($clinic_type->spending_type == "medical") {
+							$user_credits = TransactionHelper::floatvalue($wallet_user->balance);
+							$spending_type = "medical";
+						} else {
+							$user_credits = TransactionHelper::floatvalue($wallet_user->wellness_balance);
+							$spending_type = "wellness";
+						}
+
+						if($user_credits == 0) {
+							$returnObject->status = FALSE;
+	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
+	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+	            return Response::json($returnObject);
+						}
+          }
+
 
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
-
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
 						$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
 					} else {
@@ -208,39 +219,6 @@ class Api_V1_TransactionController extends \BaseController
 						}
 					}
 
-
-
-
-					// if($cap_amount > 0) {
-					// 	if($total_amount > $cap_amount) {
-					// 		if($total_amount > $user_credits) {
-					// 			$credits = $user_credits;
-					// 			$cash = $total_amount - $user_credits;
-					// 		} else {
-					// 			$credits = $cap_amount;
-					// 			$cash = $total_amount - $cap_amount;
-					// 		}
-					// 		$half_payment = true;
-					// 		$payment_credits = $credits;
-					// 	} else {
-					// 		$credits = $total_amount;
-					// 		$payment_credits = $total_amount;
-					// 	}
-					// } else {
-					// 	$credits = $total_amount;
-					// 	$payment_credits = $total_amount;
-					// }
-
-					// $credits = round($credits, 2);
-					// if($credits > $user_credits) {
-					// 	$credits_temp = $user_credits;
-					// 	$cash = $credits - $user_credits;
-					// 	$credits = $credits_temp;
-					// 	$half_payment = true;
-					// } else {
-
-					// }
-					// return $total_credits;
 					$transaction = new Transaction();
   				$wallet = new Wallet( );
 
@@ -373,6 +351,11 @@ class Api_V1_TransactionController extends \BaseController
 									'id'            => $transaction_id
 								);
 
+								if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+									$credits_logs['running_balance'] = 0;
+									$credits_logs['unlimited'] = 1;
+								}
+
 								// insert for lite plan
 								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 									$lite_plan_credits_log = array(
@@ -394,6 +377,11 @@ class Api_V1_TransactionController extends \BaseController
 									'where_spend'   => 'in_network_transaction',
 									'id'            => $transaction_id
 								);
+
+								if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+									$credits_logs['running_balance'] = 0;
+									$credits_logs['unlimited'] = 1;
+								}
 
 								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
 									$lite_plan_credits_log = array(
@@ -518,19 +506,19 @@ class Api_V1_TransactionController extends \BaseController
 
 										try {
 											EmailHelper::sendPaymentAttachment($email);
-											  // send to clinic
-											$clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
+											// send to clinic
+											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
 
-											if($clinic_email) {
-											 $email['emailSubject'] = 'Health Partner - Successful Transaction By Mednefits Credits';
-											 $email['nric'] = $user->NRIC;
-											 $email['emailTo'] = $clinic_email->Email;
-											 // $email['emailTo'] = 'allan.alzula.work@gmail.com';
-											 $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
-											 $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
-											 $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
-											 EmailHelper::sendPaymentAttachment($email);
-											}
+											// if($clinic_email) {
+											//  $email['emailSubject'] = 'Health Partner - Successful Transaction By Mednefits Credits';
+											//  $email['nric'] = $user->NRIC;
+											//  $email['emailTo'] = $clinic_email->Email;
+											//  // $email['emailTo'] = 'allan.alzula.work@gmail.com';
+											//  $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
+											//  $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
+											//  $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
+											//  EmailHelper::sendPaymentAttachment($email);
+											// }
 											$returnObject->status = TRUE;
 											$returnObject->message = 'Payment Successfull';
 											$returnObject->data = $transaction_results;

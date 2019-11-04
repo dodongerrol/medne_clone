@@ -594,95 +594,96 @@ class CronController extends \BaseController {
         // return $withdraw;
 
         foreach ($withdraw as $key => $user) {
-            $active_plan = DB::table('user_plan_history')->where('user_id', $user->user_id)->orderBy('date', 'desc')->first();
+            if((int)$user->has_no_user == 0) {
+                $active_plan = DB::table('user_plan_history')->where('user_id', $user->user_id)->orderBy('date', 'desc')->first();
 
+                // $check_history = DB::table('user_plan_history')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->where('type', 'deleted_expired')->first();
 
-            // $check_history = DB::table('user_plan_history')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->where('type', 'deleted_expired')->first();
+                // if(!$check_history) {
+                    $user_plan_history_data = array(
+                        'user_id'       => $user->user_id,
+                        'type'          => "deleted_expired",
+                        'date'          => $user->date_withdraw,
+                        'customer_active_plan_id' => $active_plan->customer_active_plan_id
+                    );
 
-            // if(!$check_history) {
-                $user_plan_history_data = array(
-                    'user_id'       => $user->user_id,
-                    'type'          => "deleted_expired",
-                    'date'          => $user->date_withdraw,
-                    'customer_active_plan_id' => $active_plan->customer_active_plan_id
-                );
+                    $user_plan_history->createUserPlanHistory($user_plan_history_data);
+                // }
 
-                $user_plan_history->createUserPlanHistory($user_plan_history_data);
-            // }
+                $user_dat = DB::table('user')->where('UserID', $user->user_id)->first();
+                // set company members removed to 1
+                DB::table('corporate_members')->where('user_id', $user_dat->UserID)->update(['removed_status' => 1]);
+                if($user_dat->Active == 1) {
+                    $user_data = array(
+                        'Active'    => 0
+                    );
+                    // update user and set to inactive
+                    DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
+                }
+                $refund_status = false;
+                $keep_seat = false;
 
-            $user_dat = DB::table('user')->where('UserID', $user->user_id)->first();
-            // set company members removed to 1
-            DB::table('corporate_members')->where('user_id', $user_dat->UserID)->update(['removed_status' => 1]);
-            if($user_dat->Active == 1) {
-                $user_data = array(
-                    'Active'    => 0
-                );
-                // update user and set to inactive
-                DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
-            }
-            $refund_status = false;
-            $keep_seat = false;
+                if((int)$user->refund_status == 0) {
+                    $refund_status = true;
+                }
 
-            if((int)$user->refund_status == 0) {
-                $refund_status = true;
-            }
+                \PlanWithdraw::where('user_id', $user->user_id)->update(['refund_status' => 1]);
+                // update customer plan draw to 1
+                if((int)$user->keep_seat == 0) {
+                    PlanHelper::updateNewCustomerPlanStatusDeleteUser($user->user_id, $refund_status);
+                } else if((int)$user->vacate_seat == 1) {
+                    PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($user->user_id);
+                    $keep_seat = true;
+                }
+                PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw, $refund_status, $keep_seat);
+                $employee++;
 
-            \PlanWithdraw::where('user_id', $user->user_id)->update(['refund_status' => 1]);
-            // update customer plan draw to 1
-            if((int)$user->keep_seat == 0) {
-                PlanHelper::updateNewCustomerPlanStatusDeleteUser($user->user_id, $refund_status);
-            } else if((int)$user->vacate_seat == 1) {
-                PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($user->user_id);
-                $keep_seat = true;
-            }
-            PlanHelper::removeDependentAccounts($user->user_id, $user->date_withdraw, $refund_status, $keep_seat);
-            $employee++;
+                try {
+                    $admin_logs = array(
+                        'admin_id'  => null,
+                        'type'      => 'removed_employee_schedule_system_generate',
+                        'data'      => SystemLogLibrary::serializeData($user)
+                    );
+                    SystemLogLibrary::createAdminLog($admin_logs);
+                } catch(Exception $e) {
 
-            try {
-                $admin_logs = array(
-                    'admin_id'  => null,
-                    'type'      => 'removed_employee_schedule_system_generate',
-                    'data'      => SystemLogLibrary::serializeData($user)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
-            } catch(Exception $e) {
-
+                }
             }
         }
 
         // remove refunded = 2
         $removes = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
-        // return $removes;
         foreach ($removes as $key => $removed_employee) {
-            $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
-            // set company members removed to 1
-            if($user_dat->Active == 1) {
-                $active_plan = DB::table('user_plan_history')->where('user_id', $removed_employee->user_id)->orderBy('date', 'desc')->first();
-                $user_plan_history_data = array(
-                    'user_id'       => $removed_employee->user_id,
-                    'type'          => "deleted_expired",
-                    'date'          => $removed_employee->date_withdraw,
-                    'customer_active_plan_id' => $active_plan->customer_active_plan_id
-                );
+            if((int)$removed_employee->has_no_user == 0) {
+                $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
+                // set company members removed to 1
+                if($user_dat->Active == 1) {
+                    $active_plan = DB::table('user_plan_history')->where('user_id', $removed_employee->user_id)->orderBy('date', 'desc')->first();
+                    $user_plan_history_data = array(
+                        'user_id'       => $removed_employee->user_id,
+                        'type'          => "deleted_expired",
+                        'date'          => $removed_employee->date_withdraw,
+                        'customer_active_plan_id' => $active_plan->customer_active_plan_id
+                    );
 
-                $user_plan_history->createUserPlanHistory($user_plan_history_data);
-                DB::table('corporate_members')->where('user_id', $user_dat->UserID)->update(['removed_status' => 1]);
-                $user_data = array(
-                    'Active'    => 0
-                );
-                // update user and set to inactive
-                DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
-                if((int)$removed_employee->vacate_seat == 1) {
-                    PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($removed_employee->user_id);
+                    $user_plan_history->createUserPlanHistory($user_plan_history_data);
+                    DB::table('corporate_members')->where('user_id', $user_dat->UserID)->update(['removed_status' => 1]);
+                    $user_data = array(
+                        'Active'    => 0
+                    );
+                    // update user and set to inactive
+                    DB::table('user')->where('UserID', $user_dat->UserID)->update($user_data);
+                    if((int)$removed_employee->vacate_seat == 1) {
+                        PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($removed_employee->user_id);
+                    }
+                }
+
+                try {
+                    PlanHelper::removeDependentAccounts($removed_employee->user_id, $removed_employee->date_withdraw, true, true);
+                } catch(Exception $e) {
+                    // return $e->getMessage();
                 }
             }
-
-            try {
-                PlanHelper::removeDependentAccounts($removed_employee->user_id, $removed_employee->date_withdraw, true, true);
-            } catch(Exception $e) {
-                // return $e->getMessage();
-            }
-            // update customer plan draw to 1
         }
 
         // remove dependent status = 0
@@ -692,59 +693,7 @@ class CronController extends \BaseController {
                                 ->get();
         $dependent_plan_withdraw_class = new DependentPlanWithdraw();
         foreach ($dependent_withdraws as $key => $dependent) {
-            // $dependent_plan = DB::table('dependent_plan_history')
-            //                  ->where('user_id', $dependent->user_id)
-            //                  ->orderBy('plan_start', 'desc')
-            //                  ->first();
-            $user_data = array(
-                'Active'    => 0
-            );
-            // update user and set to inactive
-            DB::table('user')->where('UserID', $dependent->user_id)->update($user_data);
-            // set company members removed to 1
-            DB::table('employee_family_coverage_sub_accounts')
-            ->where('user_id', $dependent->user_id)
-            ->update(['deleted' => 1, 'deleted_at' => date('Y-m-d H:i:s')]);
-            PlanHelper::updateCustomerDependentPlanStatusDeleteUser($dependent->user_id);
-            // check if dependent has plan tier
-            $plan_tier_user = DB::table('plan_tier_users')
-                                ->where('user_id', $dependent->user_id)
-                                ->first();
-            if($plan_tier_user) {
-                // update status
-                DB::table('plan_tier_users')
-                                ->where('user_id', $dependent->user_id)
-                                ->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
-                // update plan tier dependent count
-                $tier = new PlanTier();
-                $tier->decrementDependentEnrolledHeadCount($plan_tier_user->plan_tier_id);
-            }
-            $dependent_plan_withdraw_class->updateDependentPlanWithdraw($dependent->dependent_plan_withdraw_id, array('status' => 1));
-            $dependents++;
-
-            try {
-                $admin_logs = array(
-                    'admin_id'  => null,
-                    'type'      => 'removed_dependent_schedule_system_generate',
-                    'data'      => SystemLogLibrary::serializeData($dependent)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
-            } catch(Exception $e) {
-
-            }
-        }
-
-
-        // remove dependent status = 2
-        $dependent_no_refund_withdraws = DB::table('dependent_plan_withdraw')
-                                ->where('date_withdraw', '<=', $date)
-                                ->where('status', 2)
-                                ->get();
-
-        foreach ($dependent_no_refund_withdraws as $key => $dependent) {
-            $user = DB::table('user')->where('UserID', $dependent->user_id)->first();
-
-            if($user && (int)$user->Active == 1) {
+            if((int)$dependent->has_no_user == 0) {
                 $user_data = array(
                     'Active'    => 0
                 );
@@ -768,15 +717,68 @@ class CronController extends \BaseController {
                     $tier = new PlanTier();
                     $tier->decrementDependentEnrolledHeadCount($plan_tier_user->plan_tier_id);
                 }
+                $dependent_plan_withdraw_class->updateDependentPlanWithdraw($dependent->dependent_plan_withdraw_id, array('status' => 1));
+                $dependents++;
 
-                if((int)$dependent->vacate_seat == 1) {
-                    PlanHelper::updateCustomerDependentPlanStatusDeleteUserVacantSeat($dependent->user_id);
-                } else {
+                try {
+                    $admin_logs = array(
+                        'admin_id'  => null,
+                        'type'      => 'removed_dependent_schedule_system_generate',
+                        'data'      => SystemLogLibrary::serializeData($dependent)
+                    );
+                    SystemLogLibrary::createAdminLog($admin_logs);
+                } catch(Exception $e) {
+
+                }
+            }
+        }
+
+
+        // remove dependent status = 2
+        $dependent_no_refund_withdraws = DB::table('dependent_plan_withdraw')
+                                ->where('date_withdraw', '<=', $date)
+                                ->where('status', 2)
+                                ->get();
+
+        foreach ($dependent_no_refund_withdraws as $key => $dependent) {
+            if((int)$dependent->has_no_user == 0) {
+                $user = DB::table('user')->where('UserID', $dependent->user_id)->first();
+
+                if($user && (int)$user->Active == 1) {
+                    $user_data = array(
+                        'Active'    => 0
+                    );
+                    // update user and set to inactive
+                    DB::table('user')->where('UserID', $dependent->user_id)->update($user_data);
+                    // set company members removed to 1
+                    DB::table('employee_family_coverage_sub_accounts')
+                    ->where('user_id', $dependent->user_id)
+                    ->update(['deleted' => 1, 'deleted_at' => date('Y-m-d H:i:s')]);
                     PlanHelper::updateCustomerDependentPlanStatusDeleteUser($dependent->user_id);
+                    // check if dependent has plan tier
+                    $plan_tier_user = DB::table('plan_tier_users')
+                                        ->where('user_id', $dependent->user_id)
+                                        ->first();
+                    if($plan_tier_user) {
+                        // update status
+                        DB::table('plan_tier_users')
+                                        ->where('user_id', $dependent->user_id)
+                                        ->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                        // update plan tier dependent count
+                        $tier = new PlanTier();
+                        $tier->decrementDependentEnrolledHeadCount($plan_tier_user->plan_tier_id);
+                    }
+
+                    if((int)$dependent->vacate_seat == 1) {
+                        PlanHelper::updateCustomerDependentPlanStatusDeleteUserVacantSeat($dependent->user_id);
+                    } else {
+                        PlanHelper::updateCustomerDependentPlanStatusDeleteUser($dependent->user_id);
+                    }
+
+                    // $dependent_plan_withdraw_class->updateDependentPlanWithdraw($dependent->dependent_plan_withdraw_id, array('status' => 1));
+                    $dependents++;
                 }
 
-                // $dependent_plan_withdraw_class->updateDependentPlanWithdraw($dependent->dependent_plan_withdraw_id, array('status' => 1));
-                $dependents++;
             }
         }
 

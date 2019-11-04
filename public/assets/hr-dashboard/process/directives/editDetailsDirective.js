@@ -11,6 +11,8 @@
 
 				scope.selected_employee = [];
 				scope.job_list = {};
+				scope.statementHide = true;
+				scope.empStatementShow = false;
 
 				scope.$on( 'editDetailsInitialized', function( evt, data )  {
 			      if( data.modal == 'edit-employee-details' ){
@@ -53,6 +55,17 @@
 			      }
 
 			    });
+
+					scope.companyAccountType = function () {
+						scope.account_type = localStorage.getItem('company_account_type');
+						console.log(scope.account_type);
+
+						if(scope.account_type === 'stand_alone_plan') {
+							$('.statement-hide').hide();
+							scope.statementHide = false;
+							scope.empStatementShow = true;
+						}
+					}
 
 					scope.updatePasswordSubmit = function( pass ) {
 						console.log( pass );
@@ -509,6 +522,7 @@
 				  }
 
 	        scope.onLoad = function( ) {
+	        	scope.companyAccountType();
 	        	scope.getJobs();
 	        };
 

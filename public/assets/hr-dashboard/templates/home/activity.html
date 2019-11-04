@@ -5,7 +5,7 @@
 				<h4 ui-sref="benefits-dashboard">Overview</h4>
 				<div class="arrow-up" style="visibility: hidden;"></div>
 			</div>
-			<div class="welcome-container">
+			<div class="welcome-container" ng-if="statementHide">
 				<div class="dropdown" ng-if="options.accessibility == 1">
 				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 				    Employee
@@ -18,6 +18,10 @@
 				<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
 				<div class="arrow-up-2" style="visibility: hidden;"></div>
 			</div>
+			<div class="welcome-container" ng-if="empStatementShow">
+				<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
+				<div id="arrow-up-statement"></div>
+			</div>
 			<div class="welcome-container">
 				<h4 ui-sref="activity">Activity</h4>
 				<div class="arrow-up-3" style="visibility: visible;"></div>
@@ -26,7 +30,7 @@
 				<h4 ui-sref="e-claim">Claim</h4>
 				<div class="arrow-up-4" style="visibility: hidden;"></div>
 			</div>
-			<div class="welcome-container">
+			<div class="welcome-container statement-hide">
 				<h4 ui-sref="statement">Statement</h4>
 				<div class="arrow-up-5" style="visibility: hidden;"></div>
 			</div>
@@ -476,18 +480,25 @@
 					</div>
 
 					<div class="col-md-3 no-padding text-right disable-cursor-off">
-						<div class="white-space-20"></div>
 						<div class="white-space-10"></div>
 
-						<p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
-						<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == false" class="color-blue-custom2 font-12 weight-700 pointer-cursor" ng-click="downloadInNetwork()">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
+						<p class="inNetwork-dl"  ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+						<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
 
 						<p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
 
-						<!-- <p ng-if="outNetWorkTable == true" ng-json-export-excel data="e_claim_transactions" 
-						report-fields="{member: 'EMPLOYEE', nric: 'NRIC', approved_date: 'APPROVED DATE', claim_date: 'CLAIM DATE', visit_date: 'VISIT DATE', transaction_id: 'TRANSACTION #',service: 'ITEM/SERVICE',merchant: 'MERCHANT',amount: 'TOTAL AMOUNT',type: 'TYPE', bank_account_number: 'BANK ACCOUNT NUMBER', bank_code: 'BANK CODE', bank_brh: 'BRANCH CODE'}" filename="'E-Claim-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
 
-						<p ng-if="outNetWorkTable == true" ng-click="downloadCSV()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+						<p ng-if="outNetWorkTable == true" ng-click="downloadCSV()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
+						<div class="right-download-block">
+							<p ng-click="toggleDownloadDrop()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+							<div ng-if="isDownloadDropShow" class="download-drop-container">
+								<div class="item" ng-click="selectDownloadOpt(0)">In-Network</div>
+								<div class="item" ng-click="selectDownloadOpt(1)">Out-of-Network</div>
+								<div class="item" ng-click="selectDownloadOpt(2)">Both</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

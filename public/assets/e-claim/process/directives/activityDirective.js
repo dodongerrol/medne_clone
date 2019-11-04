@@ -218,7 +218,7 @@ app.directive('activityDirective', [
 						.then(function(response){
 							console.log(response.data)
 							scope.activity_results = response.data;
-							// console.log(scope.activity_results);
+							console.log(scope.activity_results);
 							if( parseInt(scope.activity_results.total_allocation) > 0 ){
 								if( scope.activity_results.total_allocation.indexOf(",") >= 0 ){
 									scope.activity_results.total_allocation = scope.activity_results.total_allocation.replace(",", "");

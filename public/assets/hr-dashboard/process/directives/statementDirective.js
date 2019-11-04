@@ -24,8 +24,8 @@ app.directive('statementPage', [
 				scope.monthEnd = moment().endOf('month').format('D MMMM');
 				scope.year = moment().format('YYYY');
 				scope.download_token = {};
-				scope.rangePicker_start = moment().startOf('year').format( 'DD/MM/YYYY' );
-				scope.rangePicker_end = moment().format( 'DD/MM/YYYY' );
+				scope.rangePicker_start = moment().startOf('month').format( 'DD/MM/YYYY' );
+				scope.rangePicker_end = moment().endOf('month').format( 'DD/MM/YYYY' );
 
 				scope.showCustomPicker = false;
 				scope.year_active = 1;
@@ -392,6 +392,9 @@ app.directive('statementPage', [
 					scope.monthStart = moment(firstDay).startOf('month').format('D MMMM');
 					scope.monthEnd = moment(lastDay).endOf('month').format('D MMMM');
 					scope.year = yearToday;
+
+					scope.rangePicker_start = moment( firstDay ).startOf('month').format( 'DD/MM/YYYY' );
+					scope.rangePicker_end = moment( lastDay ).endOf('month').format( 'DD/MM/YYYY' );
 					// console.log(scope.monthStart);
 					// console.log(scope.monthEnd);
 
@@ -449,6 +452,7 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_start = moment( start ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_start").text( scope.rangePicker_start );
+							scope.monthStart = moment( start ).format('D MMMM');
 
 							$('.btn-custom-end').data('daterangepicker').setMinDate( start );
 
@@ -478,6 +482,8 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_end = moment( end ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_end").text( scope.rangePicker_end );
+							scope.monthEnd = moment( end ).format('D MMMM');
+							scope.year = moment( end ).format( 'YYYY' );
 
 							var activity_search = {
 						  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
