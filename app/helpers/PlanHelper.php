@@ -3786,9 +3786,9 @@ class PlanHelper {
 					'user_id'                   => $id,
 					'dependent_plan_id'   => $dependent_plan->dependent_plan_id,
 					'date_withdraw'             => $expiry_date,
-					'status'                    => $refund_status ? 1 : 2,
+					'status'                    => 2,
 					'amount'                    => $amount,
-					'vacate_seat'				=> $vacate_seat == true ? 1 : 0
+					'vacate_seat'				=> 1
 				);
 
 				$withdraw->createPlanWithdraw($data);
@@ -3802,11 +3802,11 @@ class PlanHelper {
                 // set company members removed to 1
 				DB::table('employee_family_coverage_sub_accounts')
 				->where('user_id', $id)->update(['deleted' => 1, 'deleted_at' => date('Y-m-d H:i:s')]);
-				if($vacate_seat) {
+				// if($vacate_seat) {
 					self::updateCustomerDependentPlanStatusDeleteUserVacantSeat($id);
-				} else {
-					self::updateCustomerDependentPlanStatusDeleteUser($id);
-				}
+				// } else {
+				// 	self::updateCustomerDependentPlanStatusDeleteUser($id);
+				// }
                 // check if dependent has plan tier
 				$plan_tier_user = DB::table('plan_tier_users')
 				->where('user_id', $id)
@@ -3894,8 +3894,8 @@ class PlanHelper {
 					'dependent_plan_id'   => $dependent_plan->dependent_plan_id,
 					'date_withdraw'             => $expiry_date,
 					'amount'                    => $amount,
-					'status'					=> $refund_status == true ? 0 : 2,
-					'vacate_seat'				=> $vacate_seat == true ? 1 : 0
+					'status'					=> 2,
+					'vacate_seat'				=> 1
 				);
 
 				$withdraw->createPlanWithdraw($data);

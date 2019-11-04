@@ -3436,8 +3436,8 @@ class BenefitsDashboardController extends \BaseController {
 			'customer_active_plan_id'	=> $active_plan->customer_active_plan_id,
 			'date_withdraw'				=> $expiry_date,
 			'amount'					=> $amount,
-			'refund_status'				=> $refund_status == true ? 0 : 2,
-			'vacate_seat'				=> $vacate_seat == true ? 1 : 0
+			'refund_status'				=> 2,
+			'vacate_seat'				=> 1
 		);
 		// save history
 		// if($history) {
@@ -3565,7 +3565,8 @@ class BenefitsDashboardController extends \BaseController {
 				'customer_active_plan_id'	=> $active_plan->customer_active_plan_id,
 				'date_withdraw'				=> $expiry_date,
 				'amount'					=> $amount,
-				'refund_status'				=> $refund_status == true ? 0 : 2
+				// 'refund_status'				=> $refund_status == true ? 0 : 2
+				'refund_status'				=> 2
 			);
 
 			$withdraw->createPlanWithdraw($data);
@@ -3579,11 +3580,11 @@ class BenefitsDashboardController extends \BaseController {
 			// set company members removed to 1
 			DB::table('corporate_members')->where('user_id', $id)->update(['removed_status' => 1]);
 			PlanHelper::revemoDependentAccounts($id, date('Y-m-d', strtotime($expiry_date)));
-			if($refund_status == false) {
+			// if($refund_status == false) {
 				PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($id);
-			} else {
-				self::updateCustomerPlanStatusDeleteUser($id);
-			}
+			// } else {
+			// 	self::updateCustomerPlanStatusDeleteUser($id);
+			// }
 			return TRUE;
 		} catch(Exception $e) {
 			$email = [];
