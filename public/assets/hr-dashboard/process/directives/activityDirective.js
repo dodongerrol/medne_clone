@@ -98,7 +98,7 @@ app.directive('activityPage', [
 						data.user_id = scope.search.user_id;
 					}
 					scope.toggleLoading();
-					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
+					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?type=both&token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 			    if( data.user_id ){
 			      api_url += ("&user_id=" + data.user_id);
 			    }
