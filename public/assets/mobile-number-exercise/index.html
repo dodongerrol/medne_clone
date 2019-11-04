@@ -45,7 +45,8 @@
 						<div ng-if="step == 2" class="date-birth-mobile-container">
 							<div class="mobile-exercise-input-wrapper">
 								<label>Date of Birth</label>
-								<input type="text" class="datepicker emp-dob dob-input" placeholder="DD/MM/YYYY" ng-model="member_details.dob" ng-change="validateEmpDOB( member_details.dob )" ng-class="{'error' : emp_dob_error && isConfirmSelected}" maxlength="10" autofocus>
+								<input type="date" ng-model="member_details.dob" data-date-format="DD/MM/YYYY" autofocus>
+								<!-- <input type="text" class="datepicker emp-dob dob-input" placeholder="DD/MM/YYYY" ng-model="member_details.dob" ng-change="validateEmpDOB( member_details.dob )" ng-class="{'error' : emp_dob_error && isConfirmSelected}" maxlength="10" autofocus> -->
 								<span ng-if="emp_dob_error && isConfirmSelected" class="err-msg" ng-bind="emp_dob_error_message"></span>
 							</div>
 							<div class="mobile-exercise-input-wrapper" ng-class="{'error-mobile' : emp_mobile_error && isConfirmSelected}">

@@ -506,19 +506,19 @@ class Api_V1_TransactionController extends \BaseController
 
 										try {
 											EmailHelper::sendPaymentAttachment($email);
-											  // send to clinic
-											$clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
+											// send to clinic
+											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
 
-											if($clinic_email) {
-											 $email['emailSubject'] = 'Health Partner - Successful Transaction By Mednefits Credits';
-											 $email['nric'] = $user->NRIC;
-											 $email['emailTo'] = $clinic_email->Email;
-											 // $email['emailTo'] = 'allan.alzula.work@gmail.com';
-											 $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
-											 $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
-											 $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
-											 EmailHelper::sendPaymentAttachment($email);
-											}
+											// if($clinic_email) {
+											//  $email['emailSubject'] = 'Health Partner - Successful Transaction By Mednefits Credits';
+											//  $email['nric'] = $user->NRIC;
+											//  $email['emailTo'] = $clinic_email->Email;
+											//  // $email['emailTo'] = 'allan.alzula.work@gmail.com';
+											//  $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
+											//  $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
+											//  $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
+											//  EmailHelper::sendPaymentAttachment($email);
+											// }
 											$returnObject->status = TRUE;
 											$returnObject->message = 'Payment Successfull';
 											$returnObject->data = $transaction_results;
