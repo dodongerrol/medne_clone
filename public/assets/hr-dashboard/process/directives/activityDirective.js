@@ -65,6 +65,23 @@ app.directive('activityPage', [
 
 				scope.pagesToDisplay = 5;
 
+				scope.isDownloadDropShow = false;
+				scope.toggleDownloadDrop = function(){
+					scope.isDownloadDropShow = scope.isDownloadDropShow ? false : true;
+				}
+
+				scope.selectDownloadOpt = function( opt ){
+					if( opt == 0 ){
+
+					}
+					if( opt == 1 ){
+						scope.downloadCSV();
+					}
+					if( opt == 2 ){
+						
+					}
+					scope.isDownloadDropShow = false;
+				}
 
 				scope.downloadCSV = function(){
 					var data = {
@@ -1063,6 +1080,10 @@ app.directive('activityPage', [
 				$("body").click(function(e){
 			    if ( $(e.target).parents(".per-page-container").length === 0) {
 			      $(".per-page-drop").hide();
+			    }
+			    if ( $(e.target).parents(".right-download-block").length === 0) {
+			      scope.isDownloadDropShow = false;
+			      scope.$apply();
 			    }
 				});
 
