@@ -76,12 +76,12 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$admin_logs = array(
-	            'admin_id'  => $result->hr_dashboard_id,
-	            'admin_type' => 'hr',
-	            'type'      => 'admin_hr_login_portal',
-	            'data'      => SystemLogLibrary::serializeData($input)
-	        );
-	        SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $result->hr_dashboard_id,
+				'admin_type' => 'hr',
+				'type'      => 'admin_hr_login_portal',
+				'data'      => SystemLogLibrary::serializeData($input)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 
 			return array(
 				'status'	=> TRUE,
@@ -195,9 +195,9 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$result = self::checkSession();
 		$plan = DB::table("customer_plan")
-									->where("customer_buy_start_id", $result->customer_buy_start_id)
-									->orderBy('created_at', 'desc')
-									->first();
+		->where("customer_buy_start_id", $result->customer_buy_start_id)
+		->orderBy('created_at', 'desc')
+		->first();
 
 		return array('status' => TRUE, 'account_type' => $plan->account_type);
 	}
@@ -209,10 +209,10 @@ class BenefitsDashboardController extends \BaseController {
 		$plans = [];
 
 		$plan = DB::table('customer_plan')
-					->where('customer_buy_start_id', $result->customer_buy_start_id)
-					->orderBy('created_at', 'desc')
-					->first();
-					
+		->where('customer_buy_start_id', $result->customer_buy_start_id)
+		->orderBy('created_at', 'desc')
+		->first();
+
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$account = DB::table('customer_buy_start')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 
@@ -423,8 +423,8 @@ class BenefitsDashboardController extends \BaseController {
 
 						$check_user = DB::table('user')->where('Email', $user->work_email)->where('Active', 1)->where('UserType', 5)->count();
 						$check_temp_user = DB::table('customer_temp_enrollment')
-											->where('email', $user->work_email)->where('enrolled_status', 'false')
-											->count();
+						->where('email', $user->work_email)->where('enrolled_status', 'false')
+						->count();
 
 						if(filter_var($user->work_email, FILTER_VALIDATE_EMAIL)) {
 							$email_error = false;
@@ -2233,145 +2233,145 @@ class BenefitsDashboardController extends \BaseController {
 		$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 		// $check_accessibility = PlanHelper::checkCompanyAllocated($customer_id);
 		// if($check_accessibility == true) {
-			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
-			if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
+		if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
 
 	    	// check if customer has a credit reset in medical
-				$customer_credit_reset_medical = DB::table('credit_reset')
-				->where('id', $customer_id)
-				->where('spending_type', 'medical')
-				->where('user_type', 'company')
-				->orderBy('created_at', 'desc')
-				->first();
+			$customer_credit_reset_medical = DB::table('credit_reset')
+			->where('id', $customer_id)
+			->where('spending_type', 'medical')
+			->where('user_type', 'company')
+			->orderBy('created_at', 'desc')
+			->first();
 
-				if($customer_credit_reset_medical) {
-					$date = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
-					$temp_total_allocation = DB::table('customer_credit_logs')
-					->where('customer_credits_id', $company_credits->customer_credits_id)
-					->where('logs', 'admin_added_credits')
+			if($customer_credit_reset_medical) {
+				$date = date('Y-m-d', strtotime($customer_credit_reset_medical->date_resetted));
+				$temp_total_allocation = DB::table('customer_credit_logs')
+				->where('customer_credits_id', $company_credits->customer_credits_id)
+				->where('logs', 'admin_added_credits')
 					// ->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
-					->where('created_at', '>=', $date)
-					->sum('credit');
+				->where('created_at', '>=', $date)
+				->sum('credit');
 
-					$temp_total_deduction = DB::table('customer_credit_logs')
-					->where('customer_credits_id', $company_credits->customer_credits_id)
-					->where('logs', 'admin_deducted_credits')
-					->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
-					->sum('credit');
-				} else {
-					$temp_total_allocation = DB::table('customer_credits')
-					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-					->where('customer_credits.customer_id', $customer_id)
-					->where('customer_credit_logs.logs', 'admin_added_credits')
-					->sum('customer_credit_logs.credit');
+				$temp_total_deduction = DB::table('customer_credit_logs')
+				->where('customer_credits_id', $company_credits->customer_credits_id)
+				->where('logs', 'admin_deducted_credits')
+				->where('customer_credit_logs_id', '>=', $customer_credit_reset_medical->wallet_history_id)
+				->sum('credit');
+			} else {
+				$temp_total_allocation = DB::table('customer_credits')
+				->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+				->where('customer_credits.customer_id', $customer_id)
+				->where('customer_credit_logs.logs', 'admin_added_credits')
+				->sum('customer_credit_logs.credit');
 
-					$temp_total_deduction = DB::table('customer_credits')
-					->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-					->where('customer_credits.customer_id', $customer_id)
-					->where('customer_credit_logs.logs', 'admin_deducted_credits')
-					->sum('customer_credit_logs.credit');
+				$temp_total_deduction = DB::table('customer_credits')
+				->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+				->where('customer_credits.customer_id', $customer_id)
+				->where('customer_credit_logs.logs', 'admin_deducted_credits')
+				->sum('customer_credit_logs.credit');
 
-				}
-				$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
+			}
+			$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
 
 
 			    // check if customer has a credit reset in medical
-				$customer_credit_reset_wellness = DB::table('credit_reset')
-				->where('id', $customer_id)
-				->where('spending_type', 'wellness')
-				->where('user_type', 'company')
-				->orderBy('created_at', 'desc')
-				->first();
+			$customer_credit_reset_wellness = DB::table('credit_reset')
+			->where('id', $customer_id)
+			->where('spending_type', 'wellness')
+			->where('user_type', 'company')
+			->orderBy('created_at', 'desc')
+			->first();
 
-				if($customer_credit_reset_wellness) {
-					$date = date('Y-m-d', strtotime($customer_credit_reset_wellness->date_resetted));
-					$temp_total_allocation_wellness = DB::table('customer_credits')
-					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-					->where('customer_credits.customer_id', $customer_id)
-					->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
+			if($customer_credit_reset_wellness) {
+				$date = date('Y-m-d', strtotime($customer_credit_reset_wellness->date_resetted));
+				$temp_total_allocation_wellness = DB::table('customer_credits')
+				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+				->where('customer_credits.customer_id', $customer_id)
+				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
 					// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
-					->where('customer_wellness_credits_logs.created_at', '>=', $date)
-					->sum('customer_wellness_credits_logs.credit');
+				->where('customer_wellness_credits_logs.created_at', '>=', $date)
+				->sum('customer_wellness_credits_logs.credit');
 
-					$temp_total_deduction_wellness = DB::table('customer_credits')
-					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-					->where('customer_credits.customer_id', $customer_id)
-					->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
+				$temp_total_deduction_wellness = DB::table('customer_credits')
+				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+				->where('customer_credits.customer_id', $customer_id)
+				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
 					// ->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $customer_credit_reset_wellness->wallet_history_id)
-					->where('customer_wellness_credits_logs.created_at', '>=', $date)
-					->sum('customer_wellness_credits_logs.credit');
-				} else {
-					$temp_total_allocation_wellness = DB::table('customer_credits')
-					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-					->where('customer_credits.customer_id', $customer_id)
-					->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
-					->sum('customer_wellness_credits_logs.credit');
-
-					$temp_total_deduction_wellness = DB::table('customer_credits')
-					->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-					->where('customer_credits.customer_id', $customer_id)
-					->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
-					->sum('customer_wellness_credits_logs.credit');
-				}
-				$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
-			}
-
-			if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
-				$user_allocated = PlanHelper::getUnlimitedCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+				->where('customer_wellness_credits_logs.created_at', '>=', $date)
+				->sum('customer_wellness_credits_logs.credit');
 			} else {
-				$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+				$temp_total_allocation_wellness = DB::table('customer_credits')
+				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+				->where('customer_credits.customer_id', $customer_id)
+				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
+				->sum('customer_wellness_credits_logs.credit');
+
+				$temp_total_deduction_wellness = DB::table('customer_credits')
+				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
+				->where('customer_credits.customer_id', $customer_id)
+				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
+				->sum('customer_wellness_credits_logs.credit');
 			}
+			$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
+		}
+
+		if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+			$user_allocated = PlanHelper::getUnlimitedCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+		} else {
+			$user_allocated = PlanHelper::getCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+		}
 
 	        // return $user_allocated;
-			$get_allocation_spent = 0;
-			$get_allocation_spent_wellness = 0;
+		$get_allocation_spent = 0;
+		$get_allocation_spent_wellness = 0;
 
-			foreach ($user_allocated as $key => $user) {
-				$wallet = DB::table('e_wallet')->where('UserID', $user)->first();
-				$medical_wallet = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user);
-				$wellness_wallet = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user);
+		foreach ($user_allocated as $key => $user) {
+			$wallet = DB::table('e_wallet')->where('UserID', $user)->first();
+			$medical_wallet = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user);
+			$wellness_wallet = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user);
 
-				$get_allocation_spent += $medical_wallet['get_allocation_spent'];
-				$allocated += $medical_wallet['allocation'];
-				$total_deduction_credits += $medical_wallet['total_deduction_credits'];
-				$deleted_employee_allocation += $medical_wallet['deleted_employee_allocation'];
-				$total_medical_balance += $medical_wallet['medical_balance'];
+			$get_allocation_spent += $medical_wallet['get_allocation_spent'];
+			$allocated += $medical_wallet['allocation'];
+			$total_deduction_credits += $medical_wallet['total_deduction_credits'];
+			$deleted_employee_allocation += $medical_wallet['deleted_employee_allocation'];
+			$total_medical_balance += $medical_wallet['medical_balance'];
 
-				$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
-				$allocated_wellness += $wellness_wallet['allocation'];
-				$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
-				$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
-				$total_wellness_balance += $wellness_wallet['wellness_balance'];
-			}
-			
+			$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
+			$allocated_wellness += $wellness_wallet['allocation'];
+			$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
+			$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
+			$total_wellness_balance += $wellness_wallet['wellness_balance'];
+		}
 
-			$total_medical_allocated = $allocated - $deleted_employee_allocation;
-			$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness;
-			$credits = $total_medical_allocation - $total_medical_allocated;
-			$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
-			$currency_type = $company_credits->currency_type;
 
-			if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
-				$total_medical_allocation = 0;
-				$credits = 0;
-				$total_medical_allocated = 0;
-				$total_medical_balance = 0;
-				$total_allocation_wellness = 0;
-				$credits_wellness = 0;
-				$total_wellnesss_allocated = 0;
-				$total_wellness_balance = 0;
-			}
+		$total_medical_allocated = $allocated - $deleted_employee_allocation;
+		$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness;
+		$credits = $total_medical_allocation - $total_medical_allocated;
+		$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
+		$currency_type = $company_credits->currency_type;
 
-			if($company_credits->balance != $credits) {
+		if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+			$total_medical_allocation = 0;
+			$credits = 0;
+			$total_medical_allocated = 0;
+			$total_medical_balance = 0;
+			$total_allocation_wellness = 0;
+			$credits_wellness = 0;
+			$total_wellnesss_allocated = 0;
+			$total_wellness_balance = 0;
+		}
+
+		if($company_credits->balance != $credits) {
 				// update medical credits
-				\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
-			}
+			\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
+		}
 
-			if($company_credits->wellness_credits != $credits_wellness) {
+		if($company_credits->wellness_credits != $credits_wellness) {
 				// update wellness credits
-				\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
-			}
+			\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
+		}
 		// }
 		
 		return array(
@@ -2562,12 +2562,12 @@ class BenefitsDashboardController extends \BaseController {
 
 				if($employee_credit_reset_medical) {
 					$start = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
-	    			$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
+					$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
 					$wallet_history = DB::table('wallet_history')
-									->where('wallet_id', $wallet->wallet_id)
-									->where('wallet_history_id',  '>=', $wallet_history_id)
-									->where('created_at', '>=', $start)
-									->get();
+					->where('wallet_id', $wallet->wallet_id)
+					->where('wallet_history_id',  '>=', $wallet_history_id)
+					->where('created_at', '>=', $start)
+					->get();
 				} else {
 					$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
 				}
@@ -2633,16 +2633,16 @@ class BenefitsDashboardController extends \BaseController {
 				->first();
 				if($employee_credit_reset_wellness) {
 					$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
-	    			$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
+					$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
 					// $wallet_wellness_history = DB::table('wellness_wallet_history')
 					// 							->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
 					// 							->where('e_wallet.UserID', $user->UserID)
 					// 							->where('wellness_wallet_history.wellness_wallet_history_id',  '>=', $wallet_history_id)
 					// 							->get();
 					$wallet_wellness_history = DB::table('wellness_wallet_history')
-												->where('wallet_id', $wallet->wallet_id)
-												->where('wellness_wallet_history_id',  '>=', $wallet_history_id)
-												->get();
+					->where('wallet_id', $wallet->wallet_id)
+					->where('wellness_wallet_history_id',  '>=', $wallet_history_id)
+					->get();
 				} else {
 					$wallet_wellness_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet->wallet_id)->get();
 				}
@@ -3042,20 +3042,20 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($admin_id) {
 			$admin_logs = array(
-                'admin_id'  => $admin_id,
-                'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_search_employee',
-                'data'      => SystemLogLibrary::serializeData($input)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $admin_id,
+				'admin_type' => 'mednefits',
+				'type'      => 'admin_hr_search_employee',
+				'data'      => SystemLogLibrary::serializeData($input)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		} else {
 			$admin_logs = array(
-                'admin_id'  => $hr_id,
-                'admin_type' => 'hr',
-                'type'      => 'admin_hr_search_employee',
-                'data'      => SystemLogLibrary::serializeData($input)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $hr_id,
+				'admin_type' => 'hr',
+				'type'      => 'admin_hr_search_employee',
+				'data'      => SystemLogLibrary::serializeData($input)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		}
 
 		return $paginate;
@@ -3080,10 +3080,10 @@ class BenefitsDashboardController extends \BaseController {
 		$mobile = (int)$mobile;
 		// check if mobile already existed or duplicate
 		$check_mobile = DB::table('user')
-							->where('PhoneNo', (string)$mobile)
-							->whereNotIn('UserID', [$input['user_id']])
-							->where('Active', 1)
-							->first();
+		->where('PhoneNo', (string)$mobile)
+		->whereNotIn('UserID', [$input['user_id']])
+		->where('Active', 1)
+		->first();
 
 		if($check_mobile) {
 			return array('status' => false, 'message' => 'Mobile Number already taken.');
@@ -3092,11 +3092,11 @@ class BenefitsDashboardController extends \BaseController {
 		// check email address
 		if(!empty($input['email'])) {
 			$check_email= DB::table('user')
-							->where('Email', $input['email'])
-							->where('UserType', 5)
-							->whereNotIn('UserID', [$input['user_id']])
-							->where('Active', 1)
-							->first();
+			->where('Email', $input['email'])
+			->where('UserType', 5)
+			->whereNotIn('UserID', [$input['user_id']])
+			->where('Active', 1)
+			->first();
 
 			if($check_email) {
 				return array('status' => false, 'message' => 'Email Address already taken.');
@@ -3122,21 +3122,21 @@ class BenefitsDashboardController extends \BaseController {
 			if($admin_id) {
 				$update['user_id'] = $input['user_id'];
 				$admin_logs = array(
-                    'admin_id'  => $admin_id,
-                    'admin_type' => 'mednefits',
-                    'type'      => 'admin_hr_updated_employee_details',
-                    'data'      => SystemLogLibrary::serializeData($update)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_updated_employee_details',
+					'data'      => SystemLogLibrary::serializeData($update)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
 				$update['user_id'] = $input['user_id'];
 				$admin_logs = array(
-                    'admin_id'  => $hr_id,
-                    'admin_type' => 'hr',
-                    'type'      => 'admin_hr_updated_employee_details',
-                    'data'      => SystemLogLibrary::serializeData($update)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_updated_employee_details',
+					'data'      => SystemLogLibrary::serializeData($update)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 			return array(
 				'status'	=> TRUE,
@@ -3199,20 +3199,20 @@ class BenefitsDashboardController extends \BaseController {
 
 			if($admin_id) {
 				$admin_logs = array(
-	                'admin_id'  => $admin_id,
-	                'admin_type' => 'mednefits',
-	                'type'      => 'admin_hr_removed_employee',
-	                'data'      => SystemLogLibrary::serializeData($user)
-	            );
-	            SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_removed_employee',
+					'data'      => SystemLogLibrary::serializeData($user)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
 				$admin_logs = array(
-	                'admin_id'  => $hr_id,
-	                'admin_type' => 'hr',
-	                'type'      => 'admin_hr_removed_employee',
-	                'data'      => SystemLogLibrary::serializeData($user)
-	            );
-	            SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_removed_employee',
+					'data'      => SystemLogLibrary::serializeData($user)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 		}
 
@@ -3301,20 +3301,20 @@ class BenefitsDashboardController extends \BaseController {
 
 		if($admin_id) {
 			$admin_logs = array(
-                'admin_id'  => $admin_id,
-                'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_removed_dependent',
-                'data'      => SystemLogLibrary::serializeData($user)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $admin_id,
+				'admin_type' => 'mednefits',
+				'type'      => 'admin_hr_removed_dependent',
+				'data'      => SystemLogLibrary::serializeData($user)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		} else {
 			$admin_logs = array(
-                'admin_id'  => $hr_id,
-                'admin_type' => 'hr',
-                'type'      => 'admin_hr_removed_dependent',
-                'data'      => SystemLogLibrary::serializeData($user)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $hr_id,
+				'admin_type' => 'hr',
+				'type'      => 'admin_hr_removed_dependent',
+				'data'      => SystemLogLibrary::serializeData($user)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		}
 
 		return array('status' => TRUE, 'message' => 'Withdraw Dependent Successful.');
@@ -3333,7 +3333,7 @@ class BenefitsDashboardController extends \BaseController {
 			$extension = DB::table('plan_extensions')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
 
 			if($extension && (int)$extension->enable == 1) {
-			  $active_plan = $extension;
+				$active_plan = $extension;
 			}
 		}
 
@@ -3368,29 +3368,29 @@ class BenefitsDashboardController extends \BaseController {
 		if($plan_active->account_type == "trial_plan") {
 			// check if there is a plan extension
 			$extension = DB::table('plan_extensions')
-							->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
-							->first();
+			->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
+			->first();
 
-	        if($extension && (int)$extension->enable == 1) {
+			if($extension && (int)$extension->enable == 1) {
 	          	// check plan start if satisfies for the employee plan
-	        	$expiry_date = date('Y-m-d', strtotime($expiry_date));
-	        	$extension_plan_start = date('Y-m-d', strtotime($extension->plan_start));
+				$expiry_date = date('Y-m-d', strtotime($expiry_date));
+				$extension_plan_start = date('Y-m-d', strtotime($extension->plan_start));
 
-	        	if($expiry_date >= $extension_plan_start) {
-	        		$calculate = true;
-	        		$plan_start = $extension_plan_start;
-	        		$invoice = DB::table('corporate_invoice')
+				if($expiry_date >= $extension_plan_start) {
+					$calculate = true;
+					$plan_start = $extension_plan_start;
+					$invoice = DB::table('corporate_invoice')
 					->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
 					->where('plan_extention_enable', 1)
 					->first();
-	        	} else {
-	        		$calculate = false;
-	        		$plan_start = $plan->plan_start;
-	        	}
-	        } else {
+				} else {
+					$calculate = false;
+					$plan_start = $plan->plan_start;
+				}
+			} else {
 				$calculate = false;
 				$plan_start = $plan->plan_start;
-	        }
+			}
 		} else {
 			$invoice = DB::table('corporate_invoice')
 			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
@@ -3483,28 +3483,28 @@ class BenefitsDashboardController extends \BaseController {
 		if($plan_active->account_type == "trial_plan") {
 			// check if there is a plan extension
 			$extension = DB::table('plan_extensions')
-							->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
-							->first();
-	        if($extension && (int)$extension->enable == 1) {
+			->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
+			->first();
+			if($extension && (int)$extension->enable == 1) {
 	          	// check plan start if satisfies for the employee plan
-	        	$expiry_date = date('Y-m-d', strtotime($expiry_date));
-	        	$extension_plan_start = date('Y-m-d', strtotime($extension->plan_start));
+				$expiry_date = date('Y-m-d', strtotime($expiry_date));
+				$extension_plan_start = date('Y-m-d', strtotime($extension->plan_start));
 
-	        	if($expiry_date >= $extension_plan_start) {
-	        		$calculate = true;
-	        		$invoice = DB::table('corporate_invoice')
+				if($expiry_date >= $extension_plan_start) {
+					$calculate = true;
+					$invoice = DB::table('corporate_invoice')
 					->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
 					->where('plan_extention_enable', 1)
 					->first();
 					$plan_start = $extension_plan_start;
-	        	} else {
-	        		$calculate = false;
-	        		$plan_start = $plan->plan_start;
-	        	}
-	        } else {
+				} else {
+					$calculate = false;
+					$plan_start = $plan->plan_start;
+				}
+			} else {
 				$calculate = false;
 				$plan_start = $plan->plan_start;
-	        }
+			}
 		} else {
 			$invoice = DB::table('corporate_invoice')
 			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
@@ -3579,7 +3579,7 @@ class BenefitsDashboardController extends \BaseController {
 			DB::table('corporate_members')->where('user_id', $id)->update(['removed_status' => 1]);
 			PlanHelper::revemoDependentAccounts($id, date('Y-m-d', strtotime($expiry_date)));
 			// if($refund_status == false) {
-				PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($id);
+			PlanHelper::updateCustomerPlanStatusDeleteUserVacantSeat($id);
 			// } else {
 			// 	self::updateCustomerPlanStatusDeleteUser($id);
 			// }
@@ -3670,11 +3670,11 @@ class BenefitsDashboardController extends \BaseController {
 		$wellness = 0;
 
 		// if(!empty($input['medical'])) {
-			$medical = $input['medical_credits'];
+		$medical = $input['medical_credits'];
 		// }
 
 		// if(!empty($input['wellness'])) {
-			$wellness = $input['wellness_credits'];
+		$wellness = $input['wellness_credits'];
 		// }
 
 		// check if employee exit
@@ -3739,9 +3739,9 @@ class BenefitsDashboardController extends \BaseController {
 			$replace = new CustomerReplaceEmployee( );
 			// $user = DB::table('user')->where('UserID', $replace_id)->first();
 			$user_plan_history = DB::table('user_plan_history')->where('user_id', $replace_id)
-								->where('type', 'started')
-								->orderBy('created_at', 'desc')
-								->first();
+			->where('type', 'started')
+			->orderBy('created_at', 'desc')
+			->first();
 
 			if(!$user_plan_history) {
 				$active_plan = DB::table('customer_active_plan')
@@ -4116,7 +4116,7 @@ class BenefitsDashboardController extends \BaseController {
 		// 	for( $i = 1; $i < count( $name ) - 1; $i++ ){
 		// 		$first_name .= ' ' . $name[$i];
 		// 	}
-			
+
 		// 	$last_name =  $name[ sizeof($name) - 1 ];
 		// } else {
 		// 	$first_name = $billing_contact->billing_name;
@@ -4203,20 +4203,20 @@ class BenefitsDashboardController extends \BaseController {
 		if($result) {
 			if($admin_id) {
 				$admin_logs = array(
-	                'admin_id'  => $admin_id,
-	                'admin_type' => 'mednefits',
-	                'type'      => 'admin_hr_updated_company_business_information',
-	                'data'      => SystemLogLibrary::serializeData($input)
-	            );
-	            SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_updated_company_business_information',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
 				$admin_logs = array(
-	                'admin_id'  => $hr_id,
-	                'admin_type' => 'hr',
-	                'type'      => 'admin_hr_updated_company_business_information',
-	                'data'      => SystemLogLibrary::serializeData($input)
-	            );
-	            SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_updated_company_business_information',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 			return array(
 				'status'	=> TRUE,
@@ -4263,20 +4263,20 @@ class BenefitsDashboardController extends \BaseController {
 			$data['customer_business_contact_id'] = $input['customer_business_contact_id'];
 			if($admin_id) {
 				$admin_logs = array(
-                    'admin_id'  => $admin_id,
-                    'admin_type' => 'mednefits',
-                    'type'      => 'admin_hr_updated_company_business_contact',
-                    'data'      => SystemLogLibrary::serializeData($data)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_updated_company_business_contact',
+					'data'      => SystemLogLibrary::serializeData($data)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
 				$admin_logs = array(
-                    'admin_id'  => $hr_id,
-                    'admin_type' => 'hr',
-                    'type'      => 'admin_hr_updated_company_business_contact',
-                    'data'      => SystemLogLibrary::serializeData($data)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_updated_company_business_contact',
+					'data'      => SystemLogLibrary::serializeData($data)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 
 			return array(
@@ -4308,26 +4308,26 @@ class BenefitsDashboardController extends \BaseController {
 		);
 
 		$result = DB::table('customer_billing_contact')
-					->where('customer_billing_contact_id', $input['customer_billing_contact_id'])
-					->update($details);
+		->where('customer_billing_contact_id', $input['customer_billing_contact_id'])
+		->update($details);
 
 		if($result) {
 			if($admin_id) {
 				$admin_logs = array(
-                    'admin_id'  => $admin_id,
-                    'admin_type' => 'mednefits',
-                    'type'      => 'admin_hr_updated_company_billing_contact',
-                    'data'      => SystemLogLibrary::serializeData($input)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_updated_company_billing_contact',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
 				$admin_logs = array(
-                    'admin_id'  => $hr_id,
-                    'admin_type' => 'hr',
-                    'type'      => 'admin_hr_updated_company_billing_contact',
-                    'data'      => SystemLogLibrary::serializeData($input)
-                );
-                SystemLogLibrary::createAdminLog($admin_logs);
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_updated_company_billing_contact',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 			return array(
 				'status'	=> TRUE,
@@ -4388,9 +4388,9 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$added += DB::table('dependent_plans')
-							->where('customer_active_plan_id', $plan->customer_active_plan_id)
-							->where('tagged', 0)
-							->count();
+			->where('customer_active_plan_id', $plan->customer_active_plan_id)
+			->where('tagged', 0)
+			->count();
 		}
 
 		foreach ($active_plans as $key => $plan) {
@@ -4436,9 +4436,9 @@ class BenefitsDashboardController extends \BaseController {
 
 				// get dependent tag
 				$dependent_tags = DB::table('dependent_plans')
-								->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
-								->where('tagged', 1)
-								->get();
+				->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+				->where('tagged', 1)
+				->get();
 				$dependent_amount = 0;
 				$dependent_amount_due = 0;
 
@@ -4538,9 +4538,9 @@ class BenefitsDashboardController extends \BaseController {
 
 			// get dependent not tag
 			$dependents = DB::table('dependent_plans')
-							->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
-							->where('tagged', 0)
-							->get();
+			->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+			->where('tagged', 0)
+			->get();
 
 			foreach ($dependents as $key => $dependent_plan) {
 				$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
@@ -5394,9 +5394,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		$data['notes'] = null;
 		$payment = DB::table('customer_cheque_logs')
-						->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
-						->orderBy('created_at', 'desc')
-						->first();
+		->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+		->orderBy('created_at', 'desc')
+		->first();
 		$data['paid'] = false;
 		if($active_plan->paid == "true") {
 			$data['paid'] = true;
@@ -5409,10 +5409,10 @@ class BenefitsDashboardController extends \BaseController {
 
 		// if($plan->account_type == "stand_alone_plan" || $plan->account_type === "stand_alone_plan") {
 			// $calculated_prices = self::calculateInvoicePlanPrice($invoice->individual_price, $active_plan->plan_start, $calculated_prices_end_date);
-			$data['price']          = number_format($calculated_prices, 2);
-			$data['amount']					= number_format($invoice->employees * $calculated_prices, 2);
-			$data['total']					= number_format($invoice->employees * $calculated_prices, 2);
-			$amount_due     = $invoice->employees * $calculated_prices;
+		$data['price']          = number_format($calculated_prices, 2);
+		$data['amount']					= number_format($invoice->employees * $calculated_prices, 2);
+		$data['total']					= number_format($invoice->employees * $calculated_prices, 2);
+		$amount_due     = $invoice->employees * $calculated_prices;
 		// } else {
 		// 	$data['price']          = number_format($invoice->individual_price, 2);
 		// 	$data['amount']					= number_format($invoice->employees * $invoice->individual_price, 2);
@@ -6488,56 +6488,56 @@ class BenefitsDashboardController extends \BaseController {
 				// 		$data['amount_due']     = number_format($amount_due, 2);
 				// 	}
 				// } else {
-					if($get_active_plan->duration || $get_active_plan->duration != "") {
-						$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($plan->plan_start)));
-						$data['duration'] = $get_active_plan->duration;
-					} else {
-						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-						$data['duration'] = '12 months';
-					}
-					$data['price']          = number_format($invoice->individual_price, 2);
-					$data['amount']					= number_format($data['number_employess'] * $invoice->individual_price, 2);
-					$amount_due = $data['number_employess'] * $invoice->individual_price;
-					$data['total']					= number_format($data['number_employess'] * $invoice->individual_price, 2);
+				if($get_active_plan->duration || $get_active_plan->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($plan->plan_start)));
+					$data['duration'] = $get_active_plan->duration;
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+					$data['duration'] = '12 months';
+				}
+				$data['price']          = number_format($invoice->individual_price, 2);
+				$data['amount']					= number_format($data['number_employess'] * $invoice->individual_price, 2);
+				$amount_due = $data['number_employess'] * $invoice->individual_price;
+				$data['total']					= number_format($data['number_employess'] * $invoice->individual_price, 2);
 
-					$payment = DB::table('customer_cheque_logs')->where('invoice_id', $id)->first();
+				$payment = DB::table('customer_cheque_logs')->where('invoice_id', $id)->first();
 
-					if($get_active_plan->paid == "true") {
-						$data['paid'] = true;
-						if($payment) {
-							if(empty($payment->date_received) || $payment->date_received == null) {
-								$data['payment_date'] = date('F d, Y', strtotime($get_active_plan->paid_date));
-							} else {
-								$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
-							}
-							$data['notes']		  = $payment->remarks;
-						}
-					} else {
-						$data['paid'] = false;
-					}
-
-					if($get_active_plan->paid == "true") {
-						if($payment) {
-							$temp_amount_due = $amount_due - $payment->paid_amount;
-							if($temp_amount_due <= 0) {
-								$data['amount_due']     = "0.00";
-							} else {
-								$data['amount_due'] = number_format($temp_amount_due, 2);
-							}
+				if($get_active_plan->paid == "true") {
+					$data['paid'] = true;
+					if($payment) {
+						if(empty($payment->date_received) || $payment->date_received == null) {
+							$data['payment_date'] = date('F d, Y', strtotime($get_active_plan->paid_date));
 						} else {
-							$data['amount_due']     = number_format($amount_due, 2);
+							$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+						}
+						$data['notes']		  = $payment->remarks;
+					}
+				} else {
+					$data['paid'] = false;
+				}
+
+				if($get_active_plan->paid == "true") {
+					if($payment) {
+						$temp_amount_due = $amount_due - $payment->paid_amount;
+						if($temp_amount_due <= 0) {
+							$data['amount_due']     = "0.00";
+						} else {
+							$data['amount_due'] = number_format($temp_amount_due, 2);
 						}
 					} else {
 						$data['amount_due']     = number_format($amount_due, 2);
 					}
+				} else {
+					$data['amount_due']     = number_format($amount_due, 2);
+				}
 
-					if($get_active_plan->duration || $get_active_plan->duration != "") {
-						$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($plan->plan_start)));
-						$data['duration'] = $get_active_plan->duration;
-					} else {
-						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-						$data['duration'] = '12 months';
-					}
+				if($get_active_plan->duration || $get_active_plan->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($plan->plan_start)));
+					$data['duration'] = $get_active_plan->duration;
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+					$data['duration'] = '12 months';
+				}
 				// }
 			}
 		} else {
@@ -7156,34 +7156,34 @@ class BenefitsDashboardController extends \BaseController {
 		);
 
 		DB::table('customer_billing_contact')
-			->where('customer_buy_start_id', $result->customer_buy_start_id)
-			->update($details);
+		->where('customer_buy_start_id', $result->customer_buy_start_id)
+		->update($details);
 
 		DB::table('customer_business_information')
-			->where('customer_buy_start_id', $result->customer_buy_start_id)
-			->update(['company_name' => $input['company_name'], 'updated_at' => date('Y-m-d H:i:s')]);
+		->where('customer_buy_start_id', $result->customer_buy_start_id)
+		->update(['company_name' => $input['company_name'], 'updated_at' => date('Y-m-d H:i:s')]);
 
 		$account_link = DB::table('customer_link_customer_buy')
-							->where('customer_buy_start_id', $result->customer_buy_start_id)
-							->first();
+		->where('customer_buy_start_id', $result->customer_buy_start_id)
+		->first();
 		DB::table('corporate')->where('corporate_id', $account_link->corporate_id)->update(['company_name' => $input['company_name'], 'updated_at' => date('Y-m-d H:i:s')]);
 
 		if($admin_id) {
 			$admin_logs = array(
-                'admin_id'  => $admin_id,
-                'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_updated_company_billing_address',
-                'data'      => SystemLogLibrary::serializeData($input)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $admin_id,
+				'admin_type' => 'mednefits',
+				'type'      => 'admin_hr_updated_company_billing_address',
+				'data'      => SystemLogLibrary::serializeData($input)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		} else {
 			$admin_logs = array(
-                'admin_id'  => $hr_id,
-                'admin_type' => 'hr',
-                'type'      => 'admin_hr_updated_company_billing_address',
-                'data'      => SystemLogLibrary::serializeData($input)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $hr_id,
+				'admin_type' => 'hr',
+				'type'      => 'admin_hr_updated_company_billing_address',
+				'data'      => SystemLogLibrary::serializeData($input)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		}
 
 		return array(
@@ -8068,16 +8068,16 @@ class BenefitsDashboardController extends \BaseController {
 
 		// get dependent status
 		$dependent_plan_status = DB::table('dependent_plan_status')
-									->where('customer_plan_id', $plan->customer_plan_id)
-									->orderBy('created_at', 'desc')
-									->first();
+		->where('customer_plan_id', $plan->customer_plan_id)
+		->orderBy('created_at', 'desc')
+		->first();
 		if($dependent_plan_status) {
 			$vacant = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
 			array_push($task, array(
-			'status'	=> TRUE,
-			'type'		=> 'pending_enrollment_dependent',
-			'total_employees'		=> $vacant
-		));
+				'status'	=> TRUE,
+				'type'		=> 'pending_enrollment_dependent',
+				'total_employees'		=> $vacant
+			));
 		}
 
 		// get employee list pending activation
@@ -8095,8 +8095,8 @@ class BenefitsDashboardController extends \BaseController {
 
 			// get dependents
 			$dependents = DB::table('dependent_plans')
-							->where('customer_active_plan_id', $plan_data->customer_active_plan_id)
-							->sum('total_dependents');
+			->where('customer_active_plan_id', $plan_data->customer_active_plan_id)
+			->sum('total_dependents');
 
 			array_push($task, array(
 				'total_employees'	=>	$plan_data->employees,
@@ -8440,39 +8440,39 @@ class BenefitsDashboardController extends \BaseController {
 			// 	// $url = "http://localhost:3000/hr/reset_pass";
 			// 	return ApiHelper::resetPassword($data, $url);
 			// } else {
-				$emailDdata['emailName']= ucwords($contact->first_name);
+			$emailDdata['emailName']= ucwords($contact->first_name);
 	      		// $emailDdata['emailPage']= 'email-templates.hr-password-reset';
-				$emailDdata['emailPage']= 'email-templates.latest-templates.global-reset-password-template';
-				$emailDdata['email']= $input['email'];
+			$emailDdata['emailPage']= 'email-templates.latest-templates.global-reset-password-template';
+			$emailDdata['email']= $input['email'];
 	      		// $emailDdata['password']= $password;
-				$emailDdata['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
-				$emailDdata['context'] = "Forgot your company password?";
-				$emailDdata['emailSubject'] = 'HR/Benefits Password Reset';
-				$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;
+			$emailDdata['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+			$emailDdata['context'] = "Forgot your company password?";
+			$emailDdata['emailSubject'] = 'HR/Benefits Password Reset';
+			$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;
 				// EmailHelper::sendEmail($emailDdata);
 
-				if($contact) {
-					if((int)$contact->send_email_communication == 1 && $contact->work_email) {
-						$emailDdata['emailTo']= $contact->work_email;
+			if($contact) {
+				if((int)$contact->send_email_communication == 1 && $contact->work_email) {
+					$emailDdata['emailTo']= $contact->work_email;
+					EmailHelper::sendEmail($emailDdata);
+				}
+			}
+
+			if($billing_contact) {
+				if((int)$billing_contact->send_email_communication == 1 && $billing_contact->billing_email) {
+					$emailDdata['emailTo']= $billing_contact->billing_email;
+					EmailHelper::sendEmail($emailDdata);
+				}
+			}
+
+			if(sizeof($contacts) > 0) {
+				foreach ($contacts as $key => $cont) {
+					if((int)$cont->send_email_communication == 1 && $cont->email) {
+						$emailDdata['emailTo']= $cont->email;
 						EmailHelper::sendEmail($emailDdata);
 					}
 				}
-
-				if($billing_contact) {
-					if((int)$billing_contact->send_email_communication == 1 && $billing_contact->billing_email) {
-						$emailDdata['emailTo']= $billing_contact->billing_email;
-						EmailHelper::sendEmail($emailDdata);
-					}
-				}
-
-				if(sizeof($contacts) > 0) {
-					foreach ($contacts as $key => $cont) {
-						if((int)$cont->send_email_communication == 1 && $cont->email) {
-							$emailDdata['emailTo']= $cont->email;
-							EmailHelper::sendEmail($emailDdata);
-						}
-					}
-				}
+			}
 
 			// }
 		}
@@ -8573,7 +8573,7 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$company_credits = DB::table('customer_credits')->where('customer_id', $result->customer_buy_start_id)->first();
-
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 		$wallet = new Wallet( );
 		$wallet_id = $wallet->getWalletId($input['user_id']);
 		$employee_credits_left = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
@@ -8614,7 +8614,8 @@ class BenefitsDashboardController extends \BaseController {
 								'logs'								=> 'added_employee_credits',
 								'user_id'							=> $input['user_id'],
 								'running_balance'			=> $customer_credits_left->balance,
-								'customer_active_plan_id' => $customer_active_plan_id
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'	=> $customer->currency_type
 							);
 
 							$customer_credit_logs = new CustomerCreditLogs( );
@@ -8625,7 +8626,8 @@ class BenefitsDashboardController extends \BaseController {
 								'credit'		=> $input['credits'],
 								'logs'			=> 'added_by_hr',
 								'running_balance' => $employee_credits_left->balance,
-								'customer_active_plan_id' => $customer_active_plan_id
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'	=> $customer->currency_type
 							);
 
 							$employee_logs = new WalletHistory();
@@ -8633,20 +8635,20 @@ class BenefitsDashboardController extends \BaseController {
 
 							if($admin_id) {
 								$admin_logs = array(
-				                    'admin_id'  => $admin_id,
-				                    'admin_type' => 'mednefits',
-				                    'type'      => 'admin_hr_employee_allocate_credits',
-				                    'data'      => SystemLogLibrary::serializeData($input)
-				                );
-				                SystemLogLibrary::createAdminLog($admin_logs);
+									'admin_id'  => $admin_id,
+									'admin_type' => 'mednefits',
+									'type'      => 'admin_hr_employee_allocate_credits',
+									'data'      => SystemLogLibrary::serializeData($input)
+								);
+								SystemLogLibrary::createAdminLog($admin_logs);
 							} else {
 								$admin_logs = array(
-				                    'admin_id'  => $hr_id,
-				                    'admin_type' => 'hr',
-				                    'type'      => 'admin_hr_employee_allocate_credits',
-				                    'data'      => SystemLogLibrary::serializeData($input)
-				                );
-				                SystemLogLibrary::createAdminLog($admin_logs);
+									'admin_id'  => $hr_id,
+									'admin_type' => 'hr',
+									'type'      => 'admin_hr_employee_allocate_credits',
+									'data'      => SystemLogLibrary::serializeData($input)
+								);
+								SystemLogLibrary::createAdminLog($admin_logs);
 							}
 
 							return array(
@@ -8674,7 +8676,8 @@ class BenefitsDashboardController extends \BaseController {
 					'credit'		=> $input['credits'],
 					'logs'			=> 'deducted_by_hr',
 					'running_balance' => $employee_credits_left->balance - $input['credits'],
-					'customer_active_plan_id' => $user_plan_history->customer_active_plan_id
+					'customer_active_plan_id' => $user_plan_history->customer_active_plan_id,
+					'currency_type'	=> $customer->currency_type
 				);
 
 				try {
@@ -8685,20 +8688,20 @@ class BenefitsDashboardController extends \BaseController {
 						$wallet_result = $wallet->deductCredits($input['user_id'], $input['credits']);
 						if($admin_id) {
 							$admin_logs = array(
-			                    'admin_id'  => $admin_id,
-			                    'admin_type' => 'mednefits',
-			                    'type'      => 'admin_hr_employee_allocate_credits',
-			                    'data'      => SystemLogLibrary::serializeData($input)
-			                );
-			                SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $admin_id,
+								'admin_type' => 'mednefits',
+								'type'      => 'admin_hr_employee_allocate_credits',
+								'data'      => SystemLogLibrary::serializeData($input)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						} else {
 							$admin_logs = array(
-			                    'admin_id'  => $hr_id,
-			                    'admin_type' => 'hr',
-			                    'type'      => 'admin_hr_employee_allocate_credits',
-			                    'data'      => SystemLogLibrary::serializeData($input)
-			                );
-			                SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $hr_id,
+								'admin_type' => 'hr',
+								'type'      => 'admin_hr_employee_allocate_credits',
+								'data'      => SystemLogLibrary::serializeData($input)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						}
 						return array(
 							'status'	=> TRUE,
@@ -8757,7 +8760,8 @@ class BenefitsDashboardController extends \BaseController {
 								'logs'					=> 'added_employee_credits',
 								'user_id'				=> $input['user_id'],
 								'running_balance'		=> $customer_credits_left->wellness_credits,
-								'customer_active_plan_id' => $customer_active_plan_id
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'	=> $customer->currency_type
 							);
 
 							$customer_credit_logs = new CustomerWellnessCreditLogs( );
@@ -8768,26 +8772,27 @@ class BenefitsDashboardController extends \BaseController {
 								'credit'		=> $input['credits'],
 								'logs'			=> 'added_by_hr',
 								'running_balance' => $employee_credits_left->wellness_balance,
-								'customer_active_plan_id' => $customer_active_plan_id
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'	=> $customer->currency_type
 							);
 
 							\WellnessWalletHistory::create($employee_credits_logs);
 							if($admin_id) {
 								$admin_logs = array(
-				                    'admin_id'  => $admin_id,
-				                    'admin_type' => 'mednefits',
-				                    'type'      => 'admin_hr_employee_allocate_credits',
-				                    'data'      => SystemLogLibrary::serializeData($input)
-				                );
-				                SystemLogLibrary::createAdminLog($admin_logs);
+									'admin_id'  => $admin_id,
+									'admin_type' => 'mednefits',
+									'type'      => 'admin_hr_employee_allocate_credits',
+									'data'      => SystemLogLibrary::serializeData($input)
+								);
+								SystemLogLibrary::createAdminLog($admin_logs);
 							} else {
 								$admin_logs = array(
-				                    'admin_id'  => $hr_id,
-				                    'admin_type' => 'hr',
-				                    'type'      => 'admin_hr_employee_allocate_credits',
-				                    'data'      => SystemLogLibrary::serializeData($input)
-				                );
-				                SystemLogLibrary::createAdminLog($admin_logs);
+									'admin_id'  => $hr_id,
+									'admin_type' => 'hr',
+									'type'      => 'admin_hr_employee_allocate_credits',
+									'data'      => SystemLogLibrary::serializeData($input)
+								);
+								SystemLogLibrary::createAdminLog($admin_logs);
 							}
 							return array(
 								'status'	=> TRUE,
@@ -8812,7 +8817,8 @@ class BenefitsDashboardController extends \BaseController {
 					'credit'		=> $input['credits'],
 					'logs'			=> 'deducted_by_hr',
 					'running_balance' => $employee_credits_left->wellness_balance - $input['credits'],
-					'customer_active_plan_id' => $user_plan_history->customer_active_plan_id
+					'customer_active_plan_id' => $user_plan_history->customer_active_plan_id,
+					'currency_type'	=> $customer->currency_type
 				);
 
 				try {
@@ -8823,20 +8829,20 @@ class BenefitsDashboardController extends \BaseController {
 						$wallet_result = $wallet->addWellnessCredits($input['user_id'], $input['credits']);
 						if($admin_id) {
 							$admin_logs = array(
-			                    'admin_id'  => $admin_id,
-			                    'admin_type' => 'mednefits',
-			                    'type'      => 'admin_hr_employee_allocate_credits',
-			                    'data'      => SystemLogLibrary::serializeData($input)
-			                );
-			                SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $admin_id,
+								'admin_type' => 'mednefits',
+								'type'      => 'admin_hr_employee_allocate_credits',
+								'data'      => SystemLogLibrary::serializeData($input)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						} else {
 							$admin_logs = array(
-			                    'admin_id'  => $hr_id,
-			                    'admin_type' => 'hr',
-			                    'type'      => 'admin_hr_employee_allocate_credits',
-			                    'data'      => SystemLogLibrary::serializeData($input)
-			                );
-			                SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $hr_id,
+								'admin_type' => 'hr',
+								'type'      => 'admin_hr_employee_allocate_credits',
+								'data'      => SystemLogLibrary::serializeData($input)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						}
 						return array(
 							'status'	=> TRUE,
@@ -8932,20 +8938,20 @@ class BenefitsDashboardController extends \BaseController {
 					$wallet_result = $wallet->deductCredits($input['user_id'], $input['credits']);
 					if($admin_id) {
 						$admin_logs = array(
-		                    'admin_id'  => $admin_id,
-		                    'admin_type' => 'mednefits',
-		                    'type'      => 'admin_hr_employee_deducted_credits',
-		                    'data'      => SystemLogLibrary::serializeData($input)
-		                );
-		                SystemLogLibrary::createAdminLog($admin_logs);
+							'admin_id'  => $admin_id,
+							'admin_type' => 'mednefits',
+							'type'      => 'admin_hr_employee_deducted_credits',
+							'data'      => SystemLogLibrary::serializeData($input)
+						);
+						SystemLogLibrary::createAdminLog($admin_logs);
 					} else {
 						$admin_logs = array(
-		                    'admin_id'  => $hr_id,
-		                    'admin_type' => 'hr',
-		                    'type'      => 'admin_hr_employee_deducted_credits',
-		                    'data'      => SystemLogLibrary::serializeData($input)
-		                );
-		                SystemLogLibrary::createAdminLog($admin_logs);
+							'admin_id'  => $hr_id,
+							'admin_type' => 'hr',
+							'type'      => 'admin_hr_employee_deducted_credits',
+							'data'      => SystemLogLibrary::serializeData($input)
+						);
+						SystemLogLibrary::createAdminLog($admin_logs);
 					}
 					return array(
 						'status'	=> TRUE,
@@ -8995,20 +9001,20 @@ class BenefitsDashboardController extends \BaseController {
 					$wallet_result = $wallet->addWellnessCredits($input['user_id'], $input['credits']);
 					if($admin_id) {
 						$admin_logs = array(
-		                    'admin_id'  => $admin_id,
-		                    'admin_type' => 'mednefits',
-		                    'type'      => 'admin_hr_employee_deducted_credits',
-		                    'data'      => SystemLogLibrary::serializeData($input)
-		                );
-		                SystemLogLibrary::createAdminLog($admin_logs);
+							'admin_id'  => $admin_id,
+							'admin_type' => 'mednefits',
+							'type'      => 'admin_hr_employee_deducted_credits',
+							'data'      => SystemLogLibrary::serializeData($input)
+						);
+						SystemLogLibrary::createAdminLog($admin_logs);
 					} else {
 						$admin_logs = array(
-		                    'admin_id'  => $hr_id,
-		                    'admin_type' => 'hr',
-		                    'type'      => 'admin_hr_employee_deducted_credits',
-		                    'data'      => SystemLogLibrary::serializeData($input)
-		                );
-		                SystemLogLibrary::createAdminLog($admin_logs);
+							'admin_id'  => $hr_id,
+							'admin_type' => 'hr',
+							'type'      => 'admin_hr_employee_deducted_credits',
+							'data'      => SystemLogLibrary::serializeData($input)
+						);
+						SystemLogLibrary::createAdminLog($admin_logs);
 					}
 					return array(
 						'status'	=> TRUE,
@@ -9469,20 +9475,20 @@ class BenefitsDashboardController extends \BaseController {
 		if($admin_id) {
 			$input['hr_dashboard_id'] = $session->hr_dashboard_id;
 			$admin_logs = array(
-                'admin_id'  => $admin_id,
-                'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_updated_account_password',
-                'data'      => SystemLogLibrary::serializeData($input)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $admin_id,
+				'admin_type' => 'mednefits',
+				'type'      => 'admin_hr_updated_account_password',
+				'data'      => SystemLogLibrary::serializeData($input)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		} else {
 			$admin_logs = array(
-                'admin_id'  => $hr_id,
-                'admin_type' => 'hr',
-                'type'      => 'admin_hr_updated_account_password',
-                'data'      => SystemLogLibrary::serializeData($input)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
+				'admin_id'  => $hr_id,
+				'admin_type' => 'hr',
+				'type'      => 'admin_hr_updated_account_password',
+				'data'      => SystemLogLibrary::serializeData($input)
+			);
+			SystemLogLibrary::createAdminLog($admin_logs);
 		}
 
 		return array('status' => TRUE, 'message' => 'Successfully Update HR Account Password.');
@@ -10565,15 +10571,15 @@ class BenefitsDashboardController extends \BaseController {
 						'status'	=> $expired
 					);
 					try {
-			            $admin_logs = array(
-			                'admin_id'  => null,
-			                'type'      => 'company_expire_notification_system_generate',
-			                'data'      => SystemLogLibrary::serializeData($temp)
-			            );
-			            SystemLogLibrary::createAdminLog($admin_logs);
-			        } catch(Exception $e) {
+						$admin_logs = array(
+							'admin_id'  => null,
+							'type'      => 'company_expire_notification_system_generate',
+							'data'      => SystemLogLibrary::serializeData($temp)
+						);
+						SystemLogLibrary::createAdminLog($admin_logs);
+					} catch(Exception $e) {
 
-			        }
+					}
 				}
 
 				// $temp = array(
@@ -10767,8 +10773,8 @@ class BenefitsDashboardController extends \BaseController {
 		$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan['customer_plan_id'])->first();
 		// for dependent
 		$dependent_status = DB::table('dependent_plan_status')
-								->where('customer_plan_id', $plan['customer_plan_id'])
-								->first();
+		->where('customer_plan_id', $plan['customer_plan_id'])
+		->first();
 
 		if($dependent_status) {
 			$total_dependents = $dependent_status->total_dependents;
@@ -11062,15 +11068,15 @@ class BenefitsDashboardController extends \BaseController {
 
 			// check dependent plan
 			$dependent_plans = DB::table('dependent_plans')
-			                    ->where('customer_plan_id', $active->plan_id)
-			                    ->where('customer_active_plan_id', $active->customer_active_plan_id)
-			                    ->get();
+			->where('customer_plan_id', $active->plan_id)
+			->where('customer_active_plan_id', $active->customer_active_plan_id)
+			->get();
 
 			foreach ($dependent_plans as $key => $dependent) {
 				$occupied = DB::table('dependent_plan_history')
-								->where('dependent_plan_id', $dependent->dependent_plan_id)
-								->where('type', 'started')
-								->count();
+				->where('dependent_plan_id', $dependent->dependent_plan_id)
+				->where('type', 'started')
+				->count();
 				$dependent->occupied = $occupied;
 				$dependent->vacant = $dependent->total_dependents - $occupied;
 
@@ -11078,8 +11084,8 @@ class BenefitsDashboardController extends \BaseController {
 					$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent->customer_plan_id)->first();
 					$duration = $dependent->duration;
 					$invoice_dependent = DB::table('dependent_invoice')
-										->where('dependent_plan_id', $dependent->dependent_plan_id)
-										->first();
+					->where('dependent_plan_id', $dependent->dependent_plan_id)
+					->first();
 					// $end_plan_date = date('Y-m-d', strtotime('+'.$duration, strtotime($plan->plan_start)));
 					// $end_plan_date = date('Y-m-d', strtotime('-2 day', strtotime($end_plan_date)));
 					// $calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $dependent->plan_start, $end_plan_date);
@@ -11178,7 +11184,7 @@ class BenefitsDashboardController extends \BaseController {
 			} else {
 				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $check->plan_start, $calculated_prices_end_date);
 			}
-				
+
 		}
 
 		$check->plan_amount = number_format($calculated_prices * $invoice->employees, 2);
@@ -11256,9 +11262,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		foreach ($dependents as $key => $dependent) {
 			$occupied = DB::table('dependent_plan_history')
-							->where('dependent_plan_id', $dependent->dependent_plan_id)
-							->where('type', 'started')
-							->count();
+			->where('dependent_plan_id', $dependent->dependent_plan_id)
+			->where('type', 'started')
+			->count();
 
 			$dependent->occupied = $occupied;
 			$dependent->vacant = $dependent->total_dependents - $occupied;
@@ -11289,8 +11295,8 @@ class BenefitsDashboardController extends \BaseController {
 				// $dependent->calculated_prices = $calculated_prices;
 				// $dependent->total_amount = number_format($calculated_prices * $dependent->total_dependents, 2);
 				$invoice_dependent = DB::table('dependent_invoice')
-										->where('dependent_plan_id', $dependent->dependent_plan_id)
-										->first();
+				->where('dependent_plan_id', $dependent->dependent_plan_id)
+				->first();
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($plan->customer_buy_start_id);
 				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
 				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice_dependent->individual_price, $dependent->plan_start, $calculated_prices_end_date);
@@ -12037,8 +12043,8 @@ class BenefitsDashboardController extends \BaseController {
 					// $payment = DB::table('customer_cheque_logs')->where('')
 					if((int)$invoice->plan_extention_enable == 1) {
 						$plan_extention = DB::table('plan_extensions')
-											->where('customer_active_plan_id', $invoice->customer_active_plan_id)
-											->first();
+						->where('customer_active_plan_id', $invoice->customer_active_plan_id)
+						->first();
 						if($plan_extention) {
 							$amount = $invoice->individual_price * $invoice->employees;
 						}
@@ -12116,17 +12122,17 @@ class BenefitsDashboardController extends \BaseController {
 		// $total_members = $plan_status->enrolled_employees + $total_enrolled_dependents;
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')
-								->join('user', 'user.UserID', '=', 'corporate_members.user_id')
-								->where('corporate_members.corporate_id', $account_link->corporate_id)
-								->where('user.Active', 1)
-								->get();
-								
+		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+		->where('corporate_members.corporate_id', $account_link->corporate_id)
+		->where('user.Active', 1)
+		->get();
+
 		$total_active_members = sizeof($corporate_members);
 		foreach ($corporate_members as $key => $member) {
 			$total_active_dependents += DB::table('employee_family_coverage_sub_accounts')
-							->where('owner_id', $member->user_id)
-							->where('deleted', 0)
-							->count();
+			->where('owner_id', $member->user_id)
+			->where('deleted', 0)
+			->count();
 		}
 
 		$total_members = $total_active_members + $total_active_dependents;
@@ -12230,19 +12236,19 @@ class BenefitsDashboardController extends \BaseController {
 		$usage_date = date('d/m/Y');
 		// get pro allocation medical
 		$pro_allocation_medical_date = DB::table('wallet_history')
-									->where('wallet_id', $wallet->wallet_id)
-									->where('logs', 'pro_allocation')
-									->orderBy('created_at', 'desc')
-									->first();
+		->where('wallet_id', $wallet->wallet_id)
+		->where('logs', 'pro_allocation')
+		->orderBy('created_at', 'desc')
+		->first();
 
 		if($pro_allocation_medical_date) {
 			$usage_date = date('d/m/Y', strtotime($pro_allocation_medical_date->created_at));
 		} else {
 			$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
-										->where('wallet_id', $wallet->wallet_id)
-										->where('logs', 'pro_allocation')
-										->orderBy('created_at', 'desc')
-										->first();
+			->where('wallet_id', $wallet->wallet_id)
+			->where('logs', 'pro_allocation')
+			->orderBy('created_at', 'desc')
+			->first();
 			if($pro_allocation_wellness_date) {
 				$usage_date = date('d/m/Y', strtotime($pro_allocation_wellness_date->created_at));
 			}
@@ -12299,27 +12305,27 @@ class BenefitsDashboardController extends \BaseController {
 		$exceed = false;
 
 		// if($has_medical_allocation) {
-			if($total_current_usage > $total_pro_medical_allocation) {
-				$exceed = true;
-			}
+		if($total_current_usage > $total_pro_medical_allocation) {
+			$exceed = true;
+		}
 
-			$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
+		$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
 
-			if($medical_balance < 0) {
-				$medical_balance = 0;
-			}
+		if($medical_balance < 0) {
+			$medical_balance = 0;
+		}
 
-			$medical = array(
-				'status' => true,
-				'initial_allocation' 	=> number_format($total_allocation_medical, 2),
-				'pro_allocation'		=> number_format($total_pro_medical_allocation, 2),
-				'current_usage'			=> number_format($total_current_usage, 2),
-				'pending_e_claim'		=> number_format($pending_e_claim_medical, 2),
-				'spent'					=> number_format($total_medical_spent, 2),
-				'exceed'				=> $exceed,
-				'exceeded_by'			=> number_format($total_medical_spent - $total_pro_medical_allocation, 2),
-				'balance'				=> number_format($medical_balance, 2)
-			);
+		$medical = array(
+			'status' => true,
+			'initial_allocation' 	=> number_format($total_allocation_medical, 2),
+			'pro_allocation'		=> number_format($total_pro_medical_allocation, 2),
+			'current_usage'			=> number_format($total_current_usage, 2),
+			'pending_e_claim'		=> number_format($pending_e_claim_medical, 2),
+			'spent'					=> number_format($total_medical_spent, 2),
+			'exceed'				=> $exceed,
+			'exceeded_by'			=> number_format($total_medical_spent - $total_pro_medical_allocation, 2),
+			'balance'				=> number_format($medical_balance, 2)
+		);
 		// }
 
 		$employee_credit_reset_wellness = DB::table('credit_reset')
@@ -12381,21 +12387,21 @@ class BenefitsDashboardController extends \BaseController {
 		// }
 
 		// if($has_wellness_allocation) {
-			$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
-			if($wellness_balance < 0) {
-				$wellness_balance = 0;
-			}
-			$wellness = array(
-				'status' => true,
-				'initial_allocation' 	=> number_format($total_allocation_wellness, 2),
-				'pro_allocation'		=> number_format($total_pro_wellness_allocation, 2),
-				'current_usage'			=> number_format($total_current_usage_wellness, 2),
-				'spent'					=> number_format($total_wellness_spent, 2),
-				'pending_e_claim'		=> number_format($pending_e_claim_wellness, 2),
-				'exceed'				=> $exceed_wellness,
-				'exceeded_by'			=> number_format($total_wellness_spent - $total_pro_wellness_allocation, 2),
-				'balance'				=> number_format($wellness_balance, 2)
-			);
+		$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
+		if($wellness_balance < 0) {
+			$wellness_balance = 0;
+		}
+		$wellness = array(
+			'status' => true,
+			'initial_allocation' 	=> number_format($total_allocation_wellness, 2),
+			'pro_allocation'		=> number_format($total_pro_wellness_allocation, 2),
+			'current_usage'			=> number_format($total_current_usage_wellness, 2),
+			'spent'					=> number_format($total_wellness_spent, 2),
+			'pending_e_claim'		=> number_format($pending_e_claim_wellness, 2),
+			'exceed'				=> $exceed_wellness,
+			'exceeded_by'			=> number_format($total_wellness_spent - $total_pro_wellness_allocation, 2),
+			'balance'				=> number_format($wellness_balance, 2)
+		);
 		// } else {
 		// 	$wellness = false;
 		// }
@@ -12432,7 +12438,7 @@ class BenefitsDashboardController extends \BaseController {
 				} else if($input['calibrate_medical'] == true && $exceed == true && $total_allocation_medical > 0) {
 					$new_allocation = $total_pro_medical_allocation;
 					$to_return_to_company = $total_allocation_medical - $total_medical_spent;
-          			
+
 				}
 
 				if($input['calibrate_medical'] == true && $total_allocation_medical > 0) {
@@ -13438,78 +13444,78 @@ class BenefitsDashboardController extends \BaseController {
 	}
 
 	public function getEmployeePlanInformation( )
-    {
-    	$input = Input::all();
+	{
+		$input = Input::all();
 
-        if(empty($input['employee_id']) || $input['employee_id'] == null) {
-            return array('status' => false, 'message' => 'Employee ID is required.');
-        }
+		if(empty($input['employee_id']) || $input['employee_id'] == null) {
+			return array('status' => false, 'message' => 'Employee ID is required.');
+		}
 
-        $plan_name = [];
+		$plan_name = [];
 
         // get user employee plan
-        $plan_user_history = DB::table('user_plan_history')
-                ->where('user_id', $input['employee_id'])
-                ->where('type', 'started')
-                ->orderBy('created_at', 'desc')
-                ->first();
-        $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)->first();
-        $plan_name[] = array('plan_type' => PlanHelper::getPlanNameType($active_plan->account_type), 'user_type' => 'Employee'); 
+		$plan_user_history = DB::table('user_plan_history')
+		->where('user_id', $input['employee_id'])
+		->where('type', 'started')
+		->orderBy('created_at', 'desc')
+		->first();
+		$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)->first();
+		$plan_name[] = array('plan_type' => PlanHelper::getPlanNameType($active_plan->account_type), 'user_type' => 'Employee'); 
 
 
         // get dependents
-        $dependents = DB::table('employee_family_coverage_sub_accounts')
-                            ->where('owner_id', $input['employee_id'])
-                            ->where('deleted', 0)
-                            ->get();
+		$dependents = DB::table('employee_family_coverage_sub_accounts')
+		->where('owner_id', $input['employee_id'])
+		->where('deleted', 0)
+		->get();
 
-        $dependent_plan_data = [];
-        foreach ($dependents as $key => $dependent) {
-            $dependent_history = DB::table('dependent_plan_history')
-                                    ->where('user_id', $dependent->user_id)
-                                    ->orderBy('created_at', 'desc')
-                                    ->first();
-            if($dependent_history) {
-                $dependent_plan = DB::table('dependent_plans')
-                                    ->where('dependent_plan_id', $dependent_history->dependent_plan_id)
-                                    ->first();
-                if($dependent_plan) {
-                    $dependent_plan_data[] = PlanHelper::getPlanNameType($dependent_plan->account_type);
-                }
-            }
-        }
+		$dependent_plan_data = [];
+		foreach ($dependents as $key => $dependent) {
+			$dependent_history = DB::table('dependent_plan_history')
+			->where('user_id', $dependent->user_id)
+			->orderBy('created_at', 'desc')
+			->first();
+			if($dependent_history) {
+				$dependent_plan = DB::table('dependent_plans')
+				->where('dependent_plan_id', $dependent_history->dependent_plan_id)
+				->first();
+				if($dependent_plan) {
+					$dependent_plan_data[] = PlanHelper::getPlanNameType($dependent_plan->account_type);
+				}
+			}
+		}
 
-        if(sizeof($dependent_plan_data) > 0) {	
-        	$dependents_data_final = array_unique($dependent_plan_data);
+		if(sizeof($dependent_plan_data) > 0) {	
+			$dependents_data_final = array_unique($dependent_plan_data);
 
-        	foreach ($dependents_data_final as $key => $final_dep) {
-        		array_push($plan_name, array('user_type' => 'Dependents', 'plan_type' => $final_dep));
-        	}
-        }
+			foreach ($dependents_data_final as $key => $final_dep) {
+				array_push($plan_name, array('user_type' => 'Dependents', 'plan_type' => $final_dep));
+			}
+		}
 
 
         // $final = array_unique($plan_name);
 
-        return $plan_name;
-    }
+		return $plan_name;
+	}
 
-    public function employeeResetAccount( )
-    {
-    	$input = Input::all();
+	public function employeeResetAccount( )
+	{
+		$input = Input::all();
 
-        if(empty($input['employee_id']) || $input['employee_id'] == null) {
-            return array('status' => false, 'message' => 'Employee ID is required.');
-        }
+		if(empty($input['employee_id']) || $input['employee_id'] == null) {
+			return array('status' => false, 'message' => 'Employee ID is required.');
+		}
 
-        return PlanHelper::resetEmployeeAccount($input['employee_id']);
-    }
+		return PlanHelper::resetEmployeeAccount($input['employee_id']);
+	}
 
-    public function downloadInNetwork( )
-    {
-    	$input = Input::all();
-    	$session = self::checkToken($input['token']);
-    	$transaction_details = [];
-    	$start = date('Y-m-d', strtotime($input['start']));
+	public function downloadInNetwork( )
+	{
+		$input = Input::all();
+		$session = self::checkToken($input['token']);
+		$transaction_details = [];
+		$start = date('Y-m-d', strtotime($input['start']));
 		$end = SpendingInvoiceLibrary::getEndDate($input['end']);
 		$in_network_spent = 0;
 		$e_claim_spent = 0;
@@ -13561,13 +13567,13 @@ class BenefitsDashboardController extends \BaseController {
 		foreach ($corporate_members as $key => $member) {
 			$ids = StringHelper::getSubAccountsID($member->user_id);
 			$transactions = DB::table('transaction_history')
-				->whereIn('UserID', $ids)
-				->where('spending_type', $spending_type)
-				->where('paid', 1)
-				->where('date_of_transaction', '>=', $start)
-				->where('date_of_transaction', '<=', $end)
-				->orderBy('date_of_transaction', 'desc')
-				->get();
+			->whereIn('UserID', $ids)
+			->where('spending_type', $spending_type)
+			->where('paid', 1)
+			->where('date_of_transaction', '>=', $start)
+			->where('date_of_transaction', '<=', $end)
+			->orderBy('date_of_transaction', 'desc')
+			->get();
 
 			foreach ($transactions as $key => $trans) {
 				if($trans) {
@@ -13625,7 +13631,7 @@ class BenefitsDashboardController extends \BaseController {
 						}
 
 
-	                    $transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+						$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 						$container[] = array(
 							'TRANSACTION ID'	=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
@@ -13648,5 +13654,5 @@ class BenefitsDashboardController extends \BaseController {
 			});
 
 		})->export('csv');
-    }
+	}
 }
