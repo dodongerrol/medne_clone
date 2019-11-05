@@ -5333,7 +5333,7 @@ class BenefitsDashboardController extends \BaseController {
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $active_plan->plan_id)->first();
 		// get invoice data
 		$invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
-
+		$data['currency_type'] = strtoupper($invoice->currency_type);
 		$data['number_employess'] = $invoice->employees;
 		$data['invoice_number'] = $invoice->invoice_number;
 		$data['invoice_date'] = date('F d, Y', strtotime($invoice->invoice_date));
@@ -5485,7 +5485,7 @@ class BenefitsDashboardController extends \BaseController {
 		$data['phone']     = $contact->phone;
 		$data['company'] = ucwords($business_info->company_name);
 		$data['postal'] = $business_info->postal_code;
-
+		$data['currency_type'] = strtoupper($invoice->currency_type);
 		if($contact->billing_status == "true" || $contact->billing_status == true) {
 			$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
 			$data['address'] = $business_info->company_address;
