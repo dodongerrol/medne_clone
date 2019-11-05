@@ -81,19 +81,21 @@ class PlanHelper {
 		if($dependent_plan->account_type == "insurance_bundle") {
 			if($dependent_plan->secondary_account_type == null) {
 				if($dependent_plan->secondary_account_type == "pro_plan_bundle"){
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else {
-					$plan_name = "Mednefits Care: Bundle Lite";
+					$plan_name = "Bundle Lite";
 				}
 			} else if($dependent_plan->secondary_account_type == "pro_plan_bundle"){
-				$plan_name = "Mednefits Care: Bundle Pro";
+				$plan_name = "Bundle Pro";
 			} else {
-				$plan_name = "Mednefits Care: Bundle Lite";
+				$plan_name = "Bundle Lite";
 			}
 		} else if($dependent_plan->account_type == "stand_alone_plan") {
-			$plan_name = "Mednefits Care: Pro Plan";
+			$plan_name = "Pro Plan";
 		} else if($dependent_plan->account_type == "lite_plan") {
-			$plan_name = "Mednefits Care: Lite Plan";
+			$plan_name = "Lite Plan";
+		} else if($dependent_plan->account_type == "enterprise_plan") {
+			$plan_name = "Enterprise Plan";
 		}
 
 		return $plan_name;
@@ -113,21 +115,23 @@ class PlanHelper {
 			if($active->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
 				if($plan->secondary_account_type == null) {
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else if($plan->secondary_account_type == "pro_plan_bundle"){
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else {
-					$plan_name = "Mednefits Care: Bundle Lite";
+					$plan_name = "Bundle Lite";
 				}
 			} else if($active->secondary_account_type == "pro_plan_bundle"){
-				$plan_name = "Mednefits Care: Bundle Pro";
+				$plan_name = "Bundle Pro";
 			} else {
-				$plan_name = "Mednefits Care: Bundle Lite";
+				$plan_name = "Bundle Lite";
 			}
 		} else if($active->account_type == "stand_alone_plan") {
-			$plan_name = "Mednefits Care: Pro Plan";
+			$plan_name = "Pro Plan";
 		} else if($active->account_type == "lite_plan") {
-			$plan_name = "Mednefits Care: Lite Plan";
+			$plan_name = "Lite Plan";
+		} else if($active->account_type == "enterprise_plan") {
+			$plan_name = "Enterprise Plan";
 		}
 
 		return $plan_name;
@@ -147,21 +151,23 @@ class PlanHelper {
 			if($active_plan_data->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active->plan_id)->first();
 				if($plan->secondary_account_type == null) {
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else if($plan->secondary_account_type == "pro_plan_bundle"){
-					$plan_name = "Mednefits Care: Bundle Pro";
+					$plan_name = "Bundle Pro";
 				} else {
-					$plan_name = "Mednefits Care: Bundle Lite";
+					$plan_name = "Bundle Lite";
 				}
 			} else if($active_plan_data->secondary_account_type == "pro_plan_bundle"){
-				$plan_name = "Mednefits Care: Bundle Pro";
+				$plan_name = "Bundle Pro";
 			} else {
-				$plan_name = "Mednefits Care: Bundle Lite";
+				$plan_name = "Bundle Lite";
 			}
 		} else if($active_plan_data->account_type == "stand_alone_plan") {
-			$plan_name = "Mednefits Care: Pro Plan";
+			$plan_name = "Pro Plan";
 		} else if($active_plan_data->account_type == "lite_plan") {
-			$plan_name = "Mednefits Care: Lite Plan";
+			$plan_name = "Lite Plan";
+		} else if($active_plan_data->account_type == "enterprise_plan") {
+			$plan_name = "Enterprise Plan";
 		}
 
 		return $plan_name;
@@ -824,7 +830,7 @@ class PlanHelper {
 		$package_bundle = DB::table('package_bundle')
 		->join('care_package', 'care_package.care_package_id', '=', 'package_bundle.care_package_id')
 		->where('package_bundle.package_group_id', $package_group->package_group_id)
-		->orderBy('care_package.position', 'desc')
+		->orderBy('care_package.position', 'asc')
 		->get();
 		return $package_bundle;
 	}
@@ -2325,6 +2331,22 @@ class PlanHelper {
 			// return $users_allocation;
 		}
 
+		public static function getUnlimitedCorporateUserByAllocated($corporate_id, $customer_id) 
+		{
+			$users_medical = [];
+			$users_wellness = [];
+
+			$users_medical_temp = DB::table('corporate_members')
+								->where('corporate_id', $corporate_id)
+								->get();
+
+			foreach ($users_medical_temp as $key => $medical) {
+				$users_medical[] = $medical->user_id;
+			}
+
+			return $users_medical;
+		}
+
 		public static function getResetWallet($user_id, $spending_type, $start, $end, $type)
 		{
 			$wallet_reset = DB::table('credit_reset')
@@ -2744,7 +2766,7 @@ class PlanHelper {
 					->first();
 				}
 
-				if($active_plan_type->account_type == "stand_alone_plan" || $active_plan_type->account_type == "lite_plan") {
+				if($active_plan_type->account_type == "stand_alone_plan" || $active_plan_type->account_type == "lite_plan" || $active_plan_type->account_type == "enterprise_plan") {
 					$refund = true;
 				}
 			} else {
@@ -2756,7 +2778,7 @@ class PlanHelper {
 				->where('dependent_plan_id', $dependepent_plan_history->dependent_plan_id)
 				->first();
 
-				if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan") {
+				if($dependent_plan->account_type == "stand_alone_plan" || $dependent_plan->account_type == "lite_plan" || $dependent_plan->account_type == "enterprise_plan") {
 					$refund = true;
 				}
 			}
@@ -3721,9 +3743,9 @@ class PlanHelper {
 					'user_id'                   => $id,
 					'dependent_plan_id'   => $dependent_plan->dependent_plan_id,
 					'date_withdraw'             => $expiry_date,
-					'status'                    => $refund_status ? 1 : 2,
+					'status'                    => 2,
 					'amount'                    => $amount,
-					'vacate_seat'				=> $vacate_seat == true ? 1 : 0
+					'vacate_seat'				=> 1
 				);
 
 				$withdraw->createPlanWithdraw($data);
@@ -3737,11 +3759,11 @@ class PlanHelper {
                 // set company members removed to 1
 				DB::table('employee_family_coverage_sub_accounts')
 				->where('user_id', $id)->update(['deleted' => 1, 'deleted_at' => date('Y-m-d H:i:s')]);
-				if($vacate_seat) {
+				// if($vacate_seat) {
 					self::updateCustomerDependentPlanStatusDeleteUserVacantSeat($id);
-				} else {
-					self::updateCustomerDependentPlanStatusDeleteUser($id);
-				}
+				// } else {
+				// 	self::updateCustomerDependentPlanStatusDeleteUser($id);
+				// }
                 // check if dependent has plan tier
 				$plan_tier_user = DB::table('plan_tier_users')
 				->where('user_id', $id)
@@ -3829,8 +3851,8 @@ class PlanHelper {
 					'dependent_plan_id'   => $dependent_plan->dependent_plan_id,
 					'date_withdraw'             => $expiry_date,
 					'amount'                    => $amount,
-					'status'					=> $refund_status == true ? 0 : 2,
-					'vacate_seat'				=> $vacate_seat == true ? 1 : 0
+					'status'					=> 2,
+					'vacate_seat'				=> 1
 				);
 
 				$withdraw->createPlanWithdraw($data);
@@ -4361,6 +4383,8 @@ class PlanHelper {
 				return "Trial Plan";
 			} else if($account_type == "lite_plan") {
 				return "Lite Plan";
+			} else if($account_type == "enterprise_plan") {
+				return "Enterprise Plan";
 			}
 		}
 

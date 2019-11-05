@@ -51,6 +51,9 @@ app.directive('activityPage', [
 					to: 0
 				}
 
+				scope.statementHide = true;
+				scope.empStatementShow = false;
+
 				var monthToday = moment().format('MM');
 				var monthToday2 = moment().format('MM');
 
@@ -65,6 +68,55 @@ app.directive('activityPage', [
 
 				scope.pagesToDisplay = 5;
 
+				scope.isDownloadDropShow = false;
+				scope.toggleDownloadDrop = function(){
+					scope.isDownloadDropShow = scope.isDownloadDropShow ? false : true;
+				}
+
+				scope.selectDownloadOpt = function( opt ){
+					if( opt == 0 ){
+						$(".inNetwork-dl").click();
+					}
+					if( opt == 1 ){
+						scope.downloadCSV();
+					}
+					if( opt == 2 ){
+						scope.downloadCSVBoth();
+					}
+					scope.isDownloadDropShow = false;
+				}
+
+				scope.downloadCSVBoth = function(){
+					var data = {
+						token : window.localStorage.getItem('token'),
+						start : moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						end : moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
+						spending_type : scope.activitySpendingTypeSelected,
+						status : 3,
+					}
+					if( scope.search.user_id ){
+						data.user_id = scope.search.user_id;
+					}
+					scope.toggleLoading();
+					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?type=both&token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
+			    if( data.user_id ){
+			      api_url += ("&user_id=" + data.user_id);
+			    }
+			    // console.log( api_url );
+			    window.open( api_url );
+			    scope.toggleLoading();
+				}
+
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+						scope.statementHide = false;
+						scope.empStatementShow = true;
+					}
+				}
 
 				scope.downloadCSV = function(){
 					var data = {
@@ -276,6 +328,10 @@ app.directive('activityPage', [
 								ctr++;
 							}
 						}
+
+						if( data.length - 1 == key ){
+							scope.getOutNetworkPagination( );
+						}
 					});
 				}
 
@@ -309,6 +365,10 @@ app.directive('activityPage', [
 
 								ctr++;
 							}
+						}
+
+						if( data.length-1 == key ){
+							scope.hideLoading();
 						}
 					});
 				}
@@ -532,7 +592,6 @@ app.directive('activityPage', [
 
 				scope.searchActivityPagination = function( ){
 					scope.getInNetworkPagination( );
-					scope.getOutNetworkPagination( );
 				}
 
 				scope.getInNetworkPagination = function( ){
@@ -636,7 +695,7 @@ app.directive('activityPage', [
 
 				scope.searchEmployeeActivity = function(user_id) {
 					
-					scope.toggleLoading();
+					scope.showLoading();
 					temp_list = null;
 					$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
 					$( ".trans-pagination-shadow" ).css({'margin-right':'0'});
@@ -653,7 +712,7 @@ app.directive('activityPage', [
 					scope.search.close = true;
 					hrActivity.searchEmployeeActivity(activity_search)
 					.then(function(response){
-						scope.toggleLoading();
+						scope.hideLoading();
 						if(response.status == 200) {
 							scope.activity_title = response.data.employee + ' Benefits Cost';
 							scope.activity = {};
@@ -933,6 +992,7 @@ app.directive('activityPage', [
 				  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
 				  };
+				  scope.showLoading();
 					if(scope.search.user_id) {
 		    		scope.searchEmployeeActivity(scope.search.user_id);
 		    	} else {
@@ -1026,6 +1086,7 @@ app.directive('activityPage', [
 				}
 
 				scope.onLoad = function( ){
+					scope.companyAccountType( );
 					scope.checkSession( );
 					scope.getEmployeeLists( );
 					// scope.initializeRangeSlider( );
@@ -1062,6 +1123,10 @@ app.directive('activityPage', [
 				$("body").click(function(e){
 			    if ( $(e.target).parents(".per-page-container").length === 0) {
 			      $(".per-page-drop").hide();
+			    }
+			    if ( $(e.target).parents(".right-download-block").length === 0) {
+			      scope.isDownloadDropShow = false;
+			      scope.$apply();
 			    }
 				});
 

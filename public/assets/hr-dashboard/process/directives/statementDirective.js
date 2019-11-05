@@ -24,8 +24,8 @@ app.directive('statementPage', [
 				scope.monthEnd = moment().endOf('month').format('D MMMM');
 				scope.year = moment().format('YYYY');
 				scope.download_token = {};
-				scope.rangePicker_start = moment().startOf('year').format( 'DD/MM/YYYY' );
-				scope.rangePicker_end = moment().format( 'DD/MM/YYYY' );
+				scope.rangePicker_start = moment().startOf('month').format( 'DD/MM/YYYY' );
+				scope.rangePicker_end = moment().endOf('month').format( 'DD/MM/YYYY' );
 
 				scope.showCustomPicker = false;
 				scope.year_active = 1;
@@ -392,6 +392,9 @@ app.directive('statementPage', [
 					scope.monthStart = moment(firstDay).startOf('month').format('D MMMM');
 					scope.monthEnd = moment(lastDay).endOf('month').format('D MMMM');
 					scope.year = yearToday;
+
+					scope.rangePicker_start = moment( firstDay ).startOf('month').format( 'DD/MM/YYYY' );
+					scope.rangePicker_end = moment( lastDay ).endOf('month').format( 'DD/MM/YYYY' );
 					// console.log(scope.monthStart);
 					// console.log(scope.monthEnd);
 
