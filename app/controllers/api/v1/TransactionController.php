@@ -123,8 +123,10 @@ class Api_V1_TransactionController extends \BaseController
           $user_curreny_type = $wallet_user->currency_type;
           if($currency_data) {
           	$currency = $currency_data->currency_value;
+          	$currency_data_type = $currency_data->currency_value;
           } else {
           	$currency = 3.00;
+          	$currency_data_type = "sgd";
           }
 
 
@@ -300,7 +302,7 @@ class Api_V1_TransactionController extends \BaseController
 				   'cap_per_visit'        => $cap_amount,
            'created_at'						 => $date_of_transaction,
            'updated_at'						 => $date_of_transaction,
-           'default_currency'			=> $currency_data->currency_type
+           'default_currency'			=> $currency_data_type
 					);
 
 					if($clinic_peak_status) {
