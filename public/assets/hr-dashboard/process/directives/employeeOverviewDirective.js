@@ -632,14 +632,11 @@ app.directive("employeeOverviewDirective", [
         scope.openUpdateEmployeeModal = function(){
           scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
-          scope.selectedEmployee.dob = new Date(moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY'));
+          scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
           // scope.selectedEmployee.country_code = scope.selectedEmployee.country_code;
           $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob );
           scope.inititalizeGeoCode();
           console.log( scope.selectedEmployee );
-
-          scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
-          console.log(scope.selectedEmployee.dob);
         }
 
         scope.openUpdateDependentModal = function(data){
@@ -672,8 +669,6 @@ app.directive("employeeOverviewDirective", [
             $('body').css('overflow','auto');
             $(".hrdb-body-container").hide();
             $(".employee-information-wrapper").fadeIn();
-            scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
-            console.log(scope.selectedEmployee.dob);
           }else{
             scope.selectedEmployee_index = null;
             scope.isEmployeeShow = false;
@@ -1345,9 +1340,6 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.saveEmployee = function( data ){
-          console.log(data);
-          data.dob = moment( data.dob ).format('DD/MM/YYYY');
-
           if( scope.checkUpdateEmployeeForm( data ) == false ){
             return false;
           }
@@ -1382,7 +1374,6 @@ app.directive("employeeOverviewDirective", [
                 user_id: data.user_id,
               };
               console.log( update_data );
-              data.dob = moment( data.dob ).format('DD/MM/YYYY');
               dependentsSettings.updateEmployee( update_data )
                 .then(function(response){
                   scope.hideLoading();
@@ -1577,9 +1568,6 @@ app.directive("employeeOverviewDirective", [
           hrSettings.getSession()
             .then(function(response) {
               // console.log( response );
-              // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob).format('DD/MM/YYYY');
-              console.log(scope.selectedEmployee.dob);
-              console.log(scope.selectedEmployee);
               scope.selected_customer_id = response.data.customer_buy_start_id;
               scope.options.accessibility = response.data.accessibility;
               if( scope.isSearchEmp ){
@@ -1677,17 +1665,14 @@ app.directive("employeeOverviewDirective", [
           // dt.setFullYear(new Date().getFullYear()-18);
           $('.datepicker').datepicker({
             format: 'dd/mm/yyyy',
-            endDate : dt,
+            endDate : dt
           });
-         
-          $('.datepicker').datepicker().on('hide',function(evt){
-            format: 'dd/mm/yyyy';
 
+          $('.datepicker').datepicker().on('hide',function(evt){
             var val = $(this).val();
             if( val != "" ){
               $(this).datepicker('setDate', val);
             }
-            console.log(val);
           })
 
           $('.start-date-datepicker-dependent').datepicker({
