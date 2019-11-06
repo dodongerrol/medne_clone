@@ -1082,12 +1082,12 @@ return Response::json($returnObject);
                     $status_text = 'Pending';
                   }
 
-                  // if($res->currency_type == "myr") {
-                  //   $currency_symbol = "RM";
-                  //   $res->amount = $res->amount * 3;
-                  // } else {
-                  $currency_symbol = "S$";
-                  // }
+                  if($res->default_currency == "myr") {
+                    $currency_symbol = "MYR";
+                    $res->amount = $res->amount * $res->currency_value;
+                  } else {
+                    $currency_symbol = "SGD";
+                  }
 
                   $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
@@ -1204,13 +1204,13 @@ return Response::json($returnObject);
                   $type = "credits";
                 }
 
-                // if($trans->currency_type == "sgd") {
-                $currency_symbol = "S$";
-                $converted_amount = $total_amount;
-                // } else if($trans->currency_type == "myr") {
-                //   $currency_symbol = "RM";
-                //   $converted_amount = $total_amount * 3;
-                // }
+                if($trans->currency_type == "sgd" && $trans->default_currency == "sgd") {
+                  $currency_symbol = "SGD";
+                  $converted_amount = $total_amount;
+                } else if($trans->currency_type == "myr" && $trans->default_currency == "myr") {
+                  $currency_symbol = "MYR";
+                  $converted_amount = $total_amount * $trans->currency_amount;
+                }
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
@@ -1227,7 +1227,7 @@ return Response::json($returnObject);
                   'cash_status'       => $health_provider_status,
                   'credit_status'     => $credit_status,
                   'user_id'           => $trans->UserID,
-                  'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
+                  'refunded'          => (int)$trans->refunded == 1? TRUE : FALSE,
                   'currency_symbol'   => $currency_symbol
                 );
 
@@ -1902,7 +1902,7 @@ if($customer_id) {
  ->first();
 }
 
-$cap_currency_symbol = "S$";
+$cap_currency_symbol = "SGD";
 $cap_amount = 0;
 $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
 if($plan_tier) {
@@ -1925,12 +1925,12 @@ if($customer_active_plan && $customer_active_plan->account_type == "enterprise_p
 }
 
 if($clinic->currency_type == "myr") {
- $currency = "RM";
- $cap_currency_symbol = "RM";
+ $currency = "MYR";
+ $cap_currency_symbol = "MYR";
  $balance = number_format($balance * 3, 2);
  $cap_amount = $cap_amount * 3;
 } else {
- $currency = "S$";
+ $currency = "SGD";
  $balance = number_format($balance, 2);
 }
 
