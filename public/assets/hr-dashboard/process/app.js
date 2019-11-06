@@ -19,7 +19,7 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     window.ga('create', 'UA-78188906-2', 'auto');
     window.ga('set', 'page', toState.url);
     window.ga('send', 'pageview');
-    console.log( toState.url );
+    console.log( toState );
     if( toState.url != '/e-claim' ){
       $('.download-receipt-message').hide();
     }
@@ -31,6 +31,13 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     }else{
       $('body').removeClass('bg-color-home');
     }
+
+    window.Appcues.page( );
+    window.Appcues.identify(
+      "57952", // unique, required
+      {}
+    );
+    window.Appcues.track(toState.name + " page.");
   });
 
 }]);

@@ -37,6 +37,10 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/fonts.css?_={{ $date->format('U') }}">
 	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async="async"></script>
 
+
+
+	<script src="//fast.appcues.com/57952.js"></script>
+
 </head>
 <body>
 	<div id="main-section-container">
