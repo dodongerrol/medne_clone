@@ -50,7 +50,6 @@ class Api_V1_TransactionController extends \BaseController
 
 					$lite_plan_status = false;
 					$clinic_peak_status = false;
-					$currency = 3.00;
 					$service_id = $input['services'][0];
 					// check user type
 					$type = StringHelper::checkUserType($findUserID);
@@ -118,6 +117,14 @@ class Api_V1_TransactionController extends \BaseController
 	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
 	            return Response::json($returnObject);
 						}
+          }
+
+          $currency_data = DB::table('currency_options')->where('currency_type', $wallet_user->currency_type)->first();
+          $user_curreny_type = $wallet_user->currency_type;
+          if($currency_data) {
+          	$currency = $currency_data->currency_value;
+          } else {
+          	$currency = 3.00;
           }
 
 
@@ -292,7 +299,8 @@ class Api_V1_TransactionController extends \BaseController
 				   'consultation_fees'      => $consultation_fees,
 				   'cap_per_visit'        => $cap_amount,
            'created_at'						 => $date_of_transaction,
-           'updated_at'						 => $date_of_transaction
+           'updated_at'						 => $date_of_transaction,
+           'default_currency'			=> $currency_data->currency_type
 					);
 
 					if($clinic_peak_status) {
@@ -308,8 +316,6 @@ class Api_V1_TransactionController extends \BaseController
 					if($currency) {
 					 $data['currency_amount'] = $currency;
 					}
-
-					// return $data;
 
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
@@ -342,14 +348,30 @@ class Api_V1_TransactionController extends \BaseController
 							$history = new WalletHistory( );
 
 							if($spending_type == "medical") {
-								$credits_logs = array(
-									'wallet_id'     => $wallet_user->wallet_id,
-									'credit'        => $total_credits_cost,
-									'logs'          => 'deducted_from_mobile_payment',
-									'running_balance' => $wallet_user->balance - $total_credits_cost,
-									'where_spend'   => 'in_network_transaction',
-									'id'            => $transaction_id
-								);
+								if($user_curreny_type == "myr") {
+									$total_credits_cost = $total_credits_cost * $currency;
+									$credits_logs = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $total_credits_cost * $currency,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->balance - $total_credits_cost,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'currency_type' => $user_curreny_type,
+										'currency_value'	=> $currency
+									);
+								} else {
+									$credits_logs = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $total_credits_cost,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->balance - $total_credits_cost,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'currency_type' => $user_curreny_type,
+										'currency_value'	=> $currency
+									);
+								}
 
 								if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
 									$credits_logs['running_balance'] = 0;
@@ -358,25 +380,60 @@ class Api_V1_TransactionController extends \BaseController
 
 								// insert for lite plan
 								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
-									$lite_plan_credits_log = array(
-									 'wallet_id'     => $wallet_user->wallet_id,
-									 'credit'        => $consultation_fees,
-									 'logs'          => 'deducted_from_mobile_payment',
-									 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
-									 'where_spend'   => 'in_network_transaction',
-									 'id'            => $transaction_id,
-									 'lite_plan_enabled' => 1,
-									);
+									if($user_curreny_type == "myr") {
+										$total_credits_cost = $total_credits_cost * $currency;
+										$consultation_fees = $consultation_fees * $currency;
+										$lite_plan_credits_log = array(
+										 'wallet_id'     => $wallet_user->wallet_id,
+										 'credit'        => $consultation_fees * $currency,
+										 'logs'          => 'deducted_from_mobile_payment',
+										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+										 'where_spend'   => 'in_network_transaction',
+										 'id'            => $transaction_id,
+										 'lite_plan_enabled' => 1,
+										 'currency_type' => $user_curreny_type,
+											'currency_value'	=> $currency
+										);
+									} else {
+										$lite_plan_credits_log = array(
+										 'wallet_id'     => $wallet_user->wallet_id,
+										 'credit'        => $consultation_fees,
+										 'logs'          => 'deducted_from_mobile_payment',
+										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+										 'where_spend'   => 'in_network_transaction',
+										 'id'            => $transaction_id,
+										 'lite_plan_enabled' => 1,
+										 'currency_type' => $user_curreny_type,
+											'currency_value'	=> $currency
+										);
+									}
 								}
 							} else {
-								$credits_logs = array(
-									'wallet_id'     => $wallet_user->wallet_id,
-									'credit'        => $total_credits_cost,
-									'logs'          => 'deducted_from_mobile_payment',
-									'running_balance' => $wallet_user->wellness_balance - $total_credits_cost - $consultation_fees,
-									'where_spend'   => 'in_network_transaction',
-									'id'            => $transaction_id
-								);
+								if($user_curreny_type == "myr") {
+									$total_credits_cost = $total_credits_cost * $currency;
+									$consultation_fees = $consultation_fees * $currency;
+									$credits_logs = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $total_credits_cost,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->wellness_balance - $total_credits_cost - $consultation_fees,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'currency_type' => $user_curreny_type,
+										'currency_value'	=> $currency
+									);
+								} else {
+									$credits_logs = array(
+										'wallet_id'     => $wallet_user->wallet_id,
+										'credit'        => $total_credits_cost,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $wallet_user->wellness_balance - $total_credits_cost - $consultation_fees,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'currency_type' => $user_curreny_type,
+										'currency_value'	=> $currency
+									);
+								}
 
 								if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
 									$credits_logs['running_balance'] = 0;
@@ -384,15 +441,33 @@ class Api_V1_TransactionController extends \BaseController
 								}
 
 								if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits > $consultation_fees) {
-									$lite_plan_credits_log = array(
-									'wallet_id'     => $wallet_user->wallet_id,
-									'credit'        => $consultation_fees,
-									'logs'          => 'deducted_from_mobile_payment',
-									'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
-									'where_spend'   => 'in_network_transaction',
-									'id'            => $transaction_id,
-									'lite_plan_enabled' => 1,
-									);
+									if($user_curreny_type == "myr") {
+										$total_credits_cost = $total_credits_cost * $currency;
+										$consultation_fees = $consultation_fees * $currency;
+										$lite_plan_credits_log = array(
+											'wallet_id'     => $wallet_user->wallet_id,
+											'credit'        => $consultation_fees,
+											'logs'          => 'deducted_from_mobile_payment',
+											'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+											'where_spend'   => 'in_network_transaction',
+											'id'            => $transaction_id,
+											'lite_plan_enabled' => 1,
+											'currency_type' => $user_curreny_type,
+											'currency_value'	=> $currency
+										);
+									} else {
+										$lite_plan_credits_log = array(
+											'wallet_id'     => $wallet_user->wallet_id,
+											'credit'        => $consultation_fees,
+											'logs'          => 'deducted_from_mobile_payment',
+											'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+											'where_spend'   => 'in_network_transaction',
+											'id'            => $transaction_id,
+											'lite_plan_enabled' => 1,
+											'currency_type' => $user_curreny_type,
+											'currency_value'	=> $currency
+										);
+									}
 								}
 							}
 
@@ -416,16 +491,28 @@ class Api_V1_TransactionController extends \BaseController
 								if($deduct_history) {
 									try {
 										if($spending_type == "medical") {
-											$wallet->deductCredits($user_id, $payment_credits);
-
-											if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-												$wallet->deductCredits($user_id, $consultation_fees);
+											if($user_curreny_type == "myr") {
+												$wallet->deductCredits($user_id, $payment_credits * $currency);
+												if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+													$wallet->deductCredits($user_id, $consultation_fees * $currency);
+												}
+											} else {
+												$wallet->deductCredits($user_id, $payment_credits);
+												if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+													$wallet->deductCredits($user_id, $consultation_fees);
+												}
 											}
 										} else {
-											$wallet->deductWellnessCredits($user_id, $payment_credits);
-
-											if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-												$wallet->deductWellnessCredits($user_id, $consultation_fees);
+											if($user_curreny_type == "myr") {
+												$wallet->deductWellnessCredits($user_id, $payment_credits * $currency);
+												if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+													$wallet->deductWellnessCredits($user_id, $consultation_fees * $currency);
+												}
+											} else {
+												$wallet->deductWellnessCredits($user_id, $payment_credits);
+												if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+													$wallet->deductWellnessCredits($user_id, $consultation_fees);
+												}
 											}
 										}
 
@@ -433,21 +520,21 @@ class Api_V1_TransactionController extends \BaseController
 										$SGD = null;
 
 										if($clinic->currency_type == "myr") {
-											$currency_symbol = "RM ";
-											$email_currency_symbol = "RM";
-											$total_amount = $total_amount * 3;
+											$currency_symbol = "MYR ";
+											$email_currency_symbol = "MYR";
+											$total_amount = $total_amount * $currency;
 										} else {
-											$email_currency_symbol = "S$";
-											$currency_symbol = '$SGD ';
+											$email_currency_symbol = "SGD";
+											$currency_symbol = 'SGD ';
 										}
 
 										$transaction_results = array(
 											'clinic_name'       => ucwords($clinic->Name),
 											'bill_amount'				=> number_format(TransactionHelper::floatvalue($input['input_amount']), 2),
-											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($data['consultation_fees'] * 3, 2) : number_format($data['consultation_fees'], 2),
+											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($data['consultation_fees'] * $currency, 2) : number_format($data['consultation_fees'], 2),
 											'total_amount'     => number_format($total_amount, 2),
-											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * 3, 2) : number_format($credits, 2),
-											'paid_by_cash'              => $clinic->currency_type == "myr" ? number_format($cash * 3, 2) : number_format($cash, 2),
+											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * $currency, 2) : number_format($credits, 2),
+											'paid_by_cash'              => $clinic->currency_type == "myr" ? number_format($cash * $currency, 2) : number_format($cash, 2),
 											'transaction_time'  => date('m-d-Y h:i a', strtotime($date_of_transaction)),
 											'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)).$trans_id,
 											'services'          => $procedure,
@@ -478,7 +565,7 @@ class Api_V1_TransactionController extends \BaseController
 
 										// send email
 										$email['member'] = ucwords($user->Name);
-										$email['credits'] = $clinic->currency_type == "myr" ? number_format($total_credits_cost * 3, 2) : number_format($total_credits_cost, 2);
+										$email['credits'] = $clinic->currency_type == "myr" ? number_format($total_credits_cost * $currency, 2) : number_format($total_credits_cost, 2);
 										$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
 										$email['trans_id'] = $transaction_id;
 										$email['transaction_date'] = date('d F Y, h:ia', strtotime($date_of_transaction));
@@ -500,12 +587,12 @@ class Api_V1_TransactionController extends \BaseController
 										$email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
 										$email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE;
 										$email['total_amount'] = number_format($total_amount, 2);
-										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * 3, 2) : number_format($consultation_fees, 2);
+										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * $currency, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
 										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
 
 										try {
-											EmailHelper::sendPaymentAttachment($email);
+											// EmailHelper::sendPaymentAttachment($email);
 											// send to clinic
 											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
 
@@ -1010,7 +1097,6 @@ class Api_V1_TransactionController extends \BaseController
              if((int)$trans->health_provider_done == 1) {
                  $receipt_status = TRUE;
                  $health_provider_status = TRUE;
-                 // $receipt_status = TRUE;
                  if((int)$trans->lite_plan_enabled == 1) {
                     $total_amount = $cost + $trans->consultation_fees;
                 } else {
@@ -1035,29 +1121,15 @@ class Api_V1_TransactionController extends \BaseController
           $currency_symbol = null;
           $converted_amount = null;
 
-          // if($trans->currency_type == "sgd") {
-            $currency_symbol = "S$";
+          if($trans->default_currency == "sgd") {
+            $currency_symbol = "SGD";
             $converted_amount = $total_amount;
-          // } else if($trans->currency_type == "myr") {
-          //   $currency_symbol = "RM";
-          //   $converted_amount = $total_amount * $trans->currency_amount;
-          // }
+          } else if($trans->default_currency == "myr") {
+            $currency_symbol = "MYR";
+            $converted_amount = $total_amount * $trans->currency_amount;
+            $total_amount = $converted_amount;
+          }
 
-        //   $format = array(
-        //    'clinic_name'       => $clinic->Name,
-        //    'amount'            => $trans->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2),
-        //    'converted_amount'  => number_format($converted_amount, 2),
-        //    'currency_symbol'   => $currency_symbol,
-        //    'clinic_type_and_service' => $clinic_name,
-        //    'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
-        //    'customer'          => ucwords($customer->Name),
-        //    'transaction_id'    => (string)$transaction_id,
-        //    'receipt_status'    => $receipt_status,
-        //    'health_provider_status' => $health_provider_status,
-        //    'user_id'           => (string)$trans->UserID,
-        //    'type'              => $type,
-        //    'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
-	       // );
 					$format = array(
 						'clinic_name'       => $clinic->Name,
 						'amount'            => number_format($total_amount, 2),
@@ -1071,7 +1143,7 @@ class Api_V1_TransactionController extends \BaseController
 						'health_provider_status' => $health_provider_status,
 						'user_id'           => (string)$trans->UserID,
 						'type'              => $type,
-						'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE
+						'refunded'          => (int)$trans->refunded == 1 ? TRUE : FALSE
 					);
 
 	        array_push($transaction_details, $format);
@@ -1341,18 +1413,6 @@ class Api_V1_TransactionController extends \BaseController
 						}
 
 						$consultation_fee = 0;
-
-						if($transaction->currency_type == "sgd") {
-							if((int)$transaction->lite_plan_enabled == 1) {
-								$consultation_fee = number_format($consultation, 2);
-							}
-						} else if($transaction->currency_type == "myr") {
-							if((int)$transaction->lite_plan_enabled == 1) {
-								// $consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
-								$consultation_fee = number_format($consultation, 2);
-							}
-						}
-
 						$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
 
 						if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == false) {
@@ -1365,36 +1425,30 @@ class Api_V1_TransactionController extends \BaseController
 							$half_credits = true;
 						}
 
-						// $transaction_details = array(
-						// 	'clinic_name'       => $clinic->Name,
-						// 	'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
-						// 	'clinic_type'       => $type,
-						// 	'clinic_type_image' => $image,
-						// 	'total_amount'       => $transaction->currency_type == "myr" ? number_format($total_amount * 3, 2) : number_format($total_amount, 2),
-						// 	"currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$",
-						// 	'transaction_id'    => (string)$id,
-						// 	'date_of_transaction' => date('d-m-Y, h:ia', strtotime($transaction->date_of_transaction)),
-						// 	'customer'            => ucwords($customer->Name),
-						// 	'payment_type'		=> $payment_type,
-						// 	'bill_amount'				=> $transaction->currency_type == "myr" ? number_format($bill_amount * 3, 2) : number_format($bill_amount, 2),
-						// 	'consultation_fee'	=> $consultation_fee,
-						// 	'paid_by_cash'      => $transaction->currency_type == "myr" ? number_format($cash_cost * $transaction->currency_amount, 2) : number_format($cash_cost, 2),
-						// 	'paid_by_credits'      => $transaction->currency_type == "myr" ? number_format($paid_by_credits * $transaction->currency_amount, 2) : number_format($paid_by_credits, 2),
-						// 	'files'             => $doc_files,
-						// 	'lite_plan'         => $lite_plan_status,
-						// 	'lite_plan_enabled' => $transaction->lite_plan_enabled,
-						// 	'cap_transaction'   => $half_credits,
-    		// 			'cap_per_visit'     => $transaction->currency_type == "myr" ? number_format($transaction->cap_per_visit * $transaction->currency_amount, 2) : number_format($transaction->cap_per_visit, 2),
-						// 	'services' => $service
-						// );
+						if($transaction->default_currency == "sgd") {
+	            $currency_symbol = "SGD";
+	            $total_amount = $total_amount;
+	            if((int)$transaction->lite_plan_enabled == 1) {
+								$consultation_fee = number_format($consultation, 2);
+							}
+	          } else if($transaction->default_currency == "myr") {
+	            $currency_symbol = "MYR";
+	            $total_amount = $total_amount * $transaction->currency_amount;
+	            $bill_amount = $bill_amount * $transaction->currency_amount;
+	            $cash_cost = $cash_cost * $transaction->currency_amount;
+	            $paid_by_credits = $paid_by_credits * $transaction->currency_amount;
+	            if((int)$transaction->lite_plan_enabled == 1) {
+								$consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
+							}
+	          }
+
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,
 							'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
 							'clinic_type'       => $type,
 							'clinic_type_image' => $image,
 							'total_amount'       => number_format($total_amount, 2),
-							// "currency_symbol" => $transaction->currency_type == "myr" ? "RM" : "S$",
-							"currency_symbol" => "S$",
+							"currency_symbol" => $currency_symbol,
 							'transaction_id'    => (string)$id,
 							'date_of_transaction' => date('d-m-Y, h:ia', strtotime($transaction->date_of_transaction)),
 							'customer'            => ucwords($customer->Name),
@@ -1408,7 +1462,10 @@ class Api_V1_TransactionController extends \BaseController
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
 							'cap_transaction'   => $half_credits,
     					'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
-							'services' => $service
+							'services' => $service,
+							'convert_option'		=> $transaction->default_currency == $transaction->currency_type && $transaction->default_currency == "myr" ? true : false,
+							'currency_amount'		=> $transaction->currency_amount,
+							'currency_symbols'	=> ["SGD", "MYR"]
 						);
 
 						$returnObject->data = $transaction_details;

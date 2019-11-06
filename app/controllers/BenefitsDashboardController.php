@@ -11875,7 +11875,7 @@ class BenefitsDashboardController extends \BaseController {
 		$data['invoice_date'] = date('F d, Y', strtotime($deposit->invoice_date));
 		$data['invoice_due'] = date('F d, Y', strtotime($deposit->invoice_due));
 		$data['active_plan_id'] = $deposit->customer_active_plan_id;
-
+		$data['currency_type'] = strtoupper($deposit->currency_type);
 		$active_plan = DB::table("customer_active_plan")->where("customer_active_plan_id", $deposit->customer_active_plan_id)->first();
 
 		if($active_plan->account_type == "insurance_bundle") {
@@ -11895,9 +11895,7 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-
-        // return View::make('pdf-download.spending-deposit-invoice', $data);
-
+    // return View::make('pdf-download.spending-deposit-invoice', $data);
 		$pdf = PDF::loadView('pdf-download.spending-deposit-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');

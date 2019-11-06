@@ -1179,77 +1179,6 @@ return Response::json($returnObject);
 
                  $total_amount = $cost;
 
-                // $total_amount = $trans->procedure_cost;
-
-                // if((int)$trans->health_provider_done == 1) {
-                //       $receipt_status = TRUE;
-                //       $health_provider_status = TRUE;
-                //       $credit_status = FALSE;
-                //       if((int)$trans->lite_plan_enabled == 1) {
-                //           $total_amount = $cost + $trans->consultation_fees;
-                //       } else {
-                //           $total_amount = $cost;
-                //       }
-                // } else {
-                //   $health_provider_status = FALSE;
-                //   $credit_status = TRUE;
-
-                //   if((int)$trans->lite_plan_enabled == 1) {
-                //       $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-                //   } else {
-                //       $total_amount = $cost;
-                //   }
-                // }
-
-                // if((int)$trans->health_provider_done == 1) {
-                //   $receipt_status = TRUE;
-                //   $health_provider_status = TRUE;
-                //   $credit_status = FALSE;
-                //   if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-                //     if((int)$trans->half_credits == 1) {
-                //       $total_amount = $trans->credit_cost + $trans->consultation_fees;
-                //       $cash_cost = $transation->cash_cost;
-                //     } else {
-                //       $total_amount = $trans->procedure_cost;
-                //       $cash_cost = $trans->procedure_cost;
-                //     }
-                //   } else {
-                //     if((int)$trans->half_credits == 1) {
-                //       $cash_cost = $trans->cash_cost;
-                //     } else {
-                //       $cash_cost = $trans->procedure_cost;
-                //     }
-                //   }
-                // } else {
-                //   $health_provider_status = FALSE;
-                //   $credit_status = TRUE;
-                //   if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-                //     if((int)$trans->half_credits == 1) {
-                //       $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-                //       $cash_cost = $trans->cash_cost;
-                //     } else {
-                //       // $total_amount = $trans->credit_cost + $trans->consultation_fees;
-                //       $total_amount = $trans->procedure_cost;
-                //       if($trans->credit_cost > 0) {
-                //         $cash_cost = 0;
-                //       } else {
-                //         $cash_cost = $trans->procedure_cost - $trans->consultation_fees;
-                //       }
-                //     }
-                //   } else {
-                //     $total_amount = $trans->procedure_cost;
-                //     if((int)$trans->half_credits == 1) {
-                //       $cash_cost = $trans->cash_cost;
-                //     } else {
-                //       if($trans->credit_cost > 0) {
-                //         $cash_cost = 0;
-                //       } else {
-                //         $cash_cost = $trans->procedure_cost;
-                //       }
-                //     }
-                //   }
-                // }
-
                  if((int)$trans->health_provider_done == 1) {
                   $health_provider_status = TRUE;
                   $credit_status = FALSE;
@@ -1295,7 +1224,6 @@ return Response::json($returnObject);
                   'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
                   'customer'          => ucwords($customer->Name),
                   'transaction_id'    => $transaction_id,
-                // 'receipt_status'    => $receipt_status,
                   'cash_status'       => $health_provider_status,
                   'credit_status'     => $credit_status,
                   'user_id'           => $trans->UserID,
@@ -1324,10 +1252,9 @@ return Response::json($returnObject);
               $currency_symbol = "";
               $balance = "N.A.";
             } else {
-              $currency_symbol = "S$";
+              $currency_symbol = strtoupper($wallet->currency_type);
               $balance = number_format($balance, 2);
             }
-
 
             $wallet_data = array(
               'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
