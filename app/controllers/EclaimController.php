@@ -5150,7 +5150,7 @@ public function searchEmployeeActivity( )
 	$total_cash = 0;
 	$total_search_credits = 0;
 	$total_in_network_spent = 0;
-
+	$total_credits_transactions = 0;
 
         // check user
 	$check_user = DB::table('user')->where('UserID', $input['user_id'])->count();

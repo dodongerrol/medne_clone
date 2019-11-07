@@ -654,18 +654,17 @@ return Response::json($returnObject);
         	$findUserMedication = $this->GetUserMedications($profileid);
         	$findUserCondition = $this->GetUserConditions($profileid);
         	$findMedicalHistory = $this->GetUserMedicalHistory($profileid);
+          $user_id = StringHelper::getUserId($profileid);
                 // return $findUserProfile);
         	if($findUserProfile){
                     //$userPolicy = $userinsurancepolicy->getUserInsurancePolicy($findUserProfile->UserID);
         		$userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
-
         		$returnArray->status = TRUE;
         		$returnArray->login_status = TRUE;
-                    //$returnArray->data['profile'] = $findUserProfile;
+            $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
         		$returnArray->data['profile']['user_id'] = $findUserProfile->UserID;
         		$returnArray->data['profile']['email'] = $findUserProfile->Email;
         		$returnArray->data['profile']['full_name'] = $findUserProfile->Name;
-                    //$returnArray->data['profile']['image'] = URL::to('/assets/upload/user/'.$findUserProfile->Image);
         		$returnArray->data['profile']['nric'] = $findUserProfile->NRIC;
         		$returnArray->data['profile']['fin'] = $findUserProfile->FIN;
         		$returnArray->data['profile']['mobile_phone'] = $findUserProfile->PhoneNo;
@@ -673,6 +672,7 @@ return Response::json($returnObject);
         		$returnArray->data['profile']['age'] = $findUserProfile->Age;
         		$returnArray->data['profile']['weight'] = $findUserProfile->Weight;
             $returnArray->data['profile']['height'] = $findUserProfile->Height;
+            $returnArray->data['profile']['currency_type'] = $wallet->currency_type;
             if((int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 0 || (int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 1) {
                 $returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
             } else {
