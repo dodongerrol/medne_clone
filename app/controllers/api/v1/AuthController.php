@@ -1204,7 +1204,7 @@ return Response::json($returnObject);
                   $type = "credits";
                 }
 
-                if($trans->currency_type == "sgd" && $trans->default_currency == "sgd") {
+                if($trans->currency_type == "sgd") {
                   $currency_symbol = "SGD";
                   $converted_amount = $total_amount;
                 } else if($trans->currency_type == "myr" && $trans->default_currency == "myr") {
