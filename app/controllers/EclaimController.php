@@ -916,7 +916,11 @@ class EclaimController extends \BaseController {
             // if($trans->procedure_cost >= 0) {
 
 				if((int)$trans->deleted == 0) {
-					$in_network_spent += floatval($trans->credit_cost);
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						$in_network_spent += floatval($trans->credit_cost) * $trans->currency_amount;
+					} else {
+						$in_network_spent += floatval($trans->credit_cost);
+					}
 					$total_in_network_transactions++;
 
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -939,8 +943,13 @@ class EclaimController extends \BaseController {
 							$consultation_credits = true;
 							$service_credits = true;
 						} else {
-							$consultation_fees = floatval($trans->consultation_fees);
-							$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+								$consultation_fees = floatval($trans->consultation_fees) * $trans->currency_amount;
+								$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+							} else {
+								$consultation_fees = floatval($trans->consultation_fees);
+								$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							}
 						}
 					}
 				} else {
@@ -1157,14 +1166,21 @@ class EclaimController extends \BaseController {
                 // get clinic type
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$type = "";
-				
 				$image = "";
 				$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
 				$type = $clinic_type_properties['type'];
 				$image = $clinic_type_properties['image'];
 				$clinic_type_name = $clinic_type_properties['clinic_type_name'];
-
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+
+				if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					$total_amount = $total_amount * $trans->currency_amount;
+					$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+					$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
+					$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
+					$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+					$consultation_fees = $consultation_fees * $trans->currency_amount;
+				}
 
 				$format = array(
 					'clinic_name'       => $clinic->Name,

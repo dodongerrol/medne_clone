@@ -123,7 +123,7 @@ class Api_V1_TransactionController extends \BaseController
           $user_curreny_type = $wallet_user->currency_type;
           if($currency_data) {
           	$currency = $currency_data->currency_value;
-          	$currency_data_type = $currency_data->currency_value;
+          	$currency_data_type = $currency_data->currency_type;
           } else {
           	$currency = 3.00;
           	$currency_data_type = "sgd";
@@ -322,7 +322,7 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
-
+					// return $data;
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;
@@ -594,7 +594,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
 
 										try {
-											// EmailHelper::sendPaymentAttachment($email);
+											EmailHelper::sendPaymentAttachment($email);
 											// send to clinic
 											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
 
