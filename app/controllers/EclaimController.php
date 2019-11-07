@@ -200,6 +200,7 @@ class EclaimController extends \BaseController {
 			}
     } else {
     	$amount = trim($input['amount']);
+    	$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     }
 
     // get customer id
@@ -214,7 +215,9 @@ class EclaimController extends \BaseController {
 			'date'		=> date('Y-m-d', strtotime($input['date'])),
 			'approved_date' => null,
 			'time'		=> $time,
-			'spending_type' => 'medical'
+			'spending_type' => 'medical',
+			'currency_type'	=> isset($input['currency_type']) ? $input['currency_type'] : "sgd",
+			'default_currency'	=> $check_user_balance->currency_type,
 		);
 
 		if($customer_id) {
