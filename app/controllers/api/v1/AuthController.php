@@ -5080,17 +5080,22 @@ public function createEclaim( )
     $returnObject->message = 'Success.';
     $ids = StringHelper::getSubAccountsID($findUserID);
     $user_id = StringHelper::getUserId($findUserID);
-
+    $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     $input_amount = 0;
 
-    if(Input::has('currency_type') && $input['currency_type'] != null) {
-      if(strtolower($input['currency_type']) == "myr") {
-        $input_amount = $input['amount'] / 3;
+
+    if($check_user_balance->currency_type == $input['currency_type'] && $check_user_balance->currency_type == "myr") {
+      $input_amount = trim($input['amount']);
+    } else {
+      if(Input::has('currency_type') && $input['currency_type'] != null) {
+        if(strtolower($input['currency_type']) == "myr") {
+          $input_amount = $input['amount'] / 3;
+        } else {
+          $input_amount = trim($input['amount']);
+        }
       } else {
         $input_amount = trim($input['amount']);
       }
-    } else {
-      $input_amount = trim($input['amount']);
     }
 
     $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
@@ -5118,7 +5123,6 @@ public function createEclaim( )
      } else {
        $balance = $check_user_balance->wellness_balance;
      }
-
 
       $amount = trim($input_amount);
       $balance = round($balance, 2);
@@ -5158,7 +5162,8 @@ public function createEclaim( )
    'amount'    => $amount,
    'date'      => date('Y-m-d', strtotime($input['date'])),
    'time'      => $time,
-   'spending_type' => $input['spending_type']
+   'spending_type' => $input['spending_type'],
+   'default_currency' => $check_user_balance->currency_type
   );
 
   if(Input::has('currency_type') && $input['currency_type'] != null) {

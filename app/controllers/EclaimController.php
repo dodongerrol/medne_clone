@@ -2906,7 +2906,11 @@ public function getActivityInNetworkTransactions( )
 
 			if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
 				if($trans->deleted == 0 || $trans->deleted == "0") {
-					$in_network_spent += $trans->credit_cost;
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						$in_network_spent += $trans->credit_cost * $trans->currency_amount;
+					} else {
+						$in_network_spent += $trans->credit_cost;
+					}
 					$total_in_network_transactions++;
 
 					if($trans->lite_plan_enabled == 1) {
@@ -2922,16 +2926,28 @@ public function getActivityInNetworkTransactions( )
 							$in_network_spent += floatval($logs_lite_plan->credit);
 							$consultation_credits = true;
 							$service_credits = true;
-							$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+								$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+							} else {
+								$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							}
 							$consultation = floatval($logs_lite_plan->credit);
 						} else if($logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 1 || $logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
 							$in_network_spent += floatval($logs_lite_plan->credit);
 							$consultation_credits = true;
 							$service_credits = true;
-							$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+								$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+							} else {
+								$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							}
 							$consultation = floatval($logs_lite_plan->credit);
 						} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
-							$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+								$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+							} else {
+								$total_lite_plan_consultation += floatval($trans->consultation_fees);
+							}
 							$consultation = floatval($trans->consultation_fees);
 						}
 					}
@@ -3253,6 +3269,16 @@ public function getActivityInNetworkTransactions( )
 				}
 
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+				if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					$total_amount = $total_amount * $trans->currency_amount;
+					$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+					$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
+					$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
+					$consultation_credits = $consultation_credits * $trans->currency_amount;
+					$paid_by_credits = $paid_by_credits * $trans->currency_amount;
+					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
+				}
+
 
 				$format = array(
 					'clinic_name'       => $clinic->Name,
@@ -3294,7 +3320,7 @@ public function getActivityInNetworkTransactions( )
 					'paid_by_cash'      => number_format($trans->cash_cost, 2),
 					'paid_by_credits'   => number_format($paid_by_credits, 2),
 					"currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
-					"currency_type" 		=> $trans->default_currency,
+					"currency_type" 		=> $trans->default_currency == "myr" ? "MYR" : "SGD",
 					'files'							=> $doc_files
 				);
 
@@ -4508,8 +4534,12 @@ public function getHrActivity( )
 			if($trans) {
 
 				if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
-					if($trans->deleted == 0 || $trans->deleted == "0") {
-						$in_network_spent += $trans->credit_cost;
+					if((int)$trans->deleted == 0) {
+						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
+						} else {
+							$in_network_spent += $trans->credit_cost;
+						}
 						$total_in_network_transactions++;
 
 						if($trans->lite_plan_enabled == 1) {
@@ -4531,11 +4561,21 @@ public function getHrActivity( )
 								$in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
-								$total_lite_plan_consultation += floatval($trans->consultation_fees);
-								$consultation = floatval($logs_lite_plan->credit);
+								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+									$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+									$consultation = floatval($logs_lite_plan->credit) * $trans->currency_amount;;
+								} else {
+									$total_lite_plan_consultation += floatval($trans->consultation_fees);
+									$consultation = floatval($logs_lite_plan->credit);
+								}
 							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
-								$total_lite_plan_consultation += floatval($trans->consultation_fees);
-								$consultation = floatval($trans->consultation_fees);
+								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+									$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+									$consultation = floatval($trans->consultation_fees) * $trans->currency_amount;;
+								} else {
+									$total_lite_plan_consultation += floatval($trans->consultation_fees);
+									$consultation = floatval($trans->consultation_fees);
+								}
 							}
 						}
 					} else {
@@ -4816,16 +4856,32 @@ public function getHrActivity( )
 						$total_search_cash += $trans->procedure_cost;
 						$total_in_network_spent_cash_transaction += $trans->procedure_cost;
 						$total_cash_transactions++;
-						if((int)$trans->lite_plan_enabled == 1) {
-							$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
+						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+							if((int)$trans->lite_plan_enabled == 1) {
+								$total_in_network_spent += ($trans->procedure_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+							} else {
+								$total_in_network_spent += $trans->procedure_cost * $trans->currency_amount;
+							}
 						} else {
-							$total_in_network_spent += $trans->procedure_cost;
+							if((int)$trans->lite_plan_enabled == 1) {
+								$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
+							} else {
+								$total_in_network_spent += $trans->procedure_cost;
+							}
 						}
 					} else if($trans->credit_cost > 0 && $trans->deleted == 0 || $trans->credit_cost > "0" && $trans->deleted == "0") {
-						if((int)$trans->lite_plan_enabled == 1) {
-							$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
+						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+							if((int)$trans->lite_plan_enabled == 1) {
+								$total_in_network_spent += ($trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+							} else {
+								$total_in_network_spent += $trans->credit_cost * $trans->currency_amount;
+							}
 						} else {
-							$total_in_network_spent += $trans->credit_cost;
+							if((int)$trans->lite_plan_enabled == 1) {
+								$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
+							} else {
+								$total_in_network_spent += $trans->credit_cost;
+							}
 						}
 						$total_search_credits += $trans->credit_cost;
 						$total_in_network_spent_credits_transaction = $trans->credit_cost;
@@ -4849,6 +4905,16 @@ public function getHrActivity( )
 						if($consultation_credits == true) {
 							$paid_by_credits += $consultation;
 						}
+					}
+
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						$total_amount = $total_amount * $trans->currency_amount;
+						$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+						$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
+						$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
+						$consultation_credits = $consultation_credits * $trans->currency_amount;
+						$paid_by_credits = $paid_by_credits * $trans->currency_amount;
+						$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					}
 
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
@@ -4876,7 +4942,7 @@ public function getHrActivity( )
 						'owner_id'          => $owner_id,
 						'sub_account_user_type' => $sub_account_type,
 						'co_paid'           => $trans->consultation_fees,
-						'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
+						'refunded'          => (int)$trans->refunded == 1 ? TRUE : FALSE,
 						'refund_text'       => $refund_text,
 						'cash'              => $cash,
 						'status_text'       => $status_text,
@@ -4907,11 +4973,20 @@ public function getHrActivity( )
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
-				$e_claim_pending += $res->amount;
+				if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
+					$e_claim_pending += $res->amount * $res->currency_value;
+				} else {
+					$e_claim_pending += $res->amount;
+				}
 			} else if($res->status == 1) {
 				$status_text = 'Approved';
-				$e_claim_spent += $res->amount;
-				$total_e_claim_spent += $res->amount;
+				if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
+					$e_claim_spent += $res->amount * $res->currency_value;
+					$total_e_claim_spent += $res->amount * $res->currency_value;
+				} else {
+					$e_claim_spent += $res->amount;
+					$total_e_claim_spent += $res->amount;
+				}
 			} else if($res->status == 2) {
 				$status_text = 'Rejected';
 			} else {
@@ -4971,6 +5046,9 @@ public function getHrActivity( )
 					$doc_files = FALSE;
 				}
 
+				if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
+					$res->amount = $res->amount * $res->currency_value;
+				}
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'status'            => $res->status,
@@ -4999,7 +5077,8 @@ public function getHrActivity( )
 					'bank_name'					=> $bank_name,
 					'bank_code'					=> $bank_code,
 					'bank_brh'					=> $bank_brh,
-					'nric'							=> $member->NRIC
+					'nric'							=> $member->NRIC,
+					'currency_type'			=> $res->default_currency == $res->currency_type && $res->default_currency == "myr" ? "MYR" : "SGD"
 				);
 
 				array_push($e_claim, $temp);

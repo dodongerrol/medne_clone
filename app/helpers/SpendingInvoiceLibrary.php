@@ -103,7 +103,7 @@ class SpendingInvoiceLibrary
 
 		$business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
 		$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
-
+		$currency_data = DB::table('currency_options')->where('currency_type', $customer->currency_type)->first();
 		$total_e_claim_amount = 0;
 		$total_in_network_amount = 0;
 		$transactions = [];
@@ -174,14 +174,17 @@ class SpendingInvoiceLibrary
 		}
 
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
-
 		$statement = DB::table('company_credits_statement')->count();
-
 		$number = str_pad($statement + 1, 8, "0", STR_PAD_LEFT);
 
 		$spending_invoice_day = $customer->spending_default_invoice_day;
 		$day = date('t', strtotime('+1 month', strtotime($start)));
-	        // return $day;
+	  
+	  if($currency_data) {
+	  	$currency = $currency_data->currency_value;
+	  } else {
+	  	$currency = 3.00;
+	  }
 		if((int)$spending_invoice_day == 31) {
 			if((int)$spending_invoice_day > (int)$day) {
 				$statement_date = date('Y-m-'.$day, strtotime('+1 month', strtotime($start)));
@@ -204,14 +207,16 @@ class SpendingInvoiceLibrary
 			'statement_contact_number'  => $billing_contact->phone,
 			'statement_contact_email'   => $billing_contact->billing_email,
 			'statement_in_network_amount'   => $total_in_network_amount,
-			'statement_e_claim_amount'       => $total_e_claim_amount
+			'statement_e_claim_amount'       => $total_e_claim_amount,
+			'currency_type'							=> $customer->currency_type,
+			'currency_value'						=> $currency
 		);
 
 		if($lite_plan) {
 			$statement_data['lite_plan'] = 1;
 		}
 
-	        // create statement
+	   // create statement
 		$statement_class = new CompanyCreditsStatement( );
 		$statement_result = $statement_class->createCompanyCreditsStatement($statement_data);
 		$statement_id = $statement_result->id;
@@ -253,7 +258,11 @@ class SpendingInvoiceLibrary
 				$service_credits = false;
 
 				if((int)$trans['deleted'] == 0) {
-					$in_network_transactions += $trans['credit_cost'];
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						$in_network_transactions += $trans['credit_cost'] * $trans->currency_amount;
+					} else {
+						$in_network_transactions += $trans['credit_cost'];
+					}
 
 					if($trans['spending_type'] == 'medical') {
 						$table_wallet_history = 'wallet_history';
@@ -281,8 +290,13 @@ class SpendingInvoiceLibrary
 							$consultation_credits = true;
 							$service_credits = true;
 						} else if(floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 0){
-							$total_consultation += floatval($trans['consultation_fees']);
-							$consultation = number_format($trans['consultation_fees'], 2);
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+								$total_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
+								$consultation = number_format($trans['consultation_fees'] * $trans->currency_amount, 2);
+							} else {
+								$total_consultation += floatval($trans['consultation_fees']);
+								$consultation = number_format($trans['consultation_fees'], 2);
+							}
 						}
 					}
 
@@ -290,10 +304,10 @@ class SpendingInvoiceLibrary
 					if($fields == true) {
 						if($trans['credit_cost'] > 0) {
 							$mednefits_credits = number_format((float)$trans['credit_cost'], 2);
-							$cash = number_format(0, 2);
+							$cash = 0;
 						} else {
-							$mednefits_credits = number_format(0, 2);
-							$cash = number_format((float)$trans['procedure_cost']);
+							$mednefits_credits = 0;
+							$cash = (float)$trans['procedure_cost'];
 						}
 
 						$receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans['transaction_id'])->get();
@@ -351,9 +365,9 @@ class SpendingInvoiceLibrary
 						}
 
 						$half_credits = false;
-						$total_amount = number_format($trans['credit_cost'], 2);
-						$procedure_cost = number_format($trans['procedure_cost'], 2);
-						$treatment = number_format($trans->credit_cost, 2);
+						$total_amount = $trans['credit_cost'];
+						$procedure_cost =$trans['procedure_cost'];
+						$treatment = $trans->credit_cost;
 							// $consultation = 0;
 						if((int)$trans['health_provider_done'] == 1) {
 							$receipt_status = TRUE;
@@ -361,7 +375,7 @@ class SpendingInvoiceLibrary
 							$payment_type = "Cash";
 							$transaction_type = "cash";
 							if((int)$trans['lite_plan_enabled'] == 1) {
-								$total_amount = number_format($trans['consultation_fees'], 2);
+								$total_amount = $trans['consultation_fees'];
 								$procedure_cost = "0.00";
 								$treatment = 0;
                       				// $consultation = number_format($trans['co_paid_amount'], 2);
@@ -370,7 +384,7 @@ class SpendingInvoiceLibrary
 							  // $payment_type = "Mednefits Credits";
 							$transaction_type = "credits";
 							$health_provider_status = FALSE;
-							$procedure_cost = number_format($trans->credit_cost, 2);
+							$procedure_cost = $trans->credit_cost;
 							if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 								$payment_type = 'Mednefits Credits + Cash';
 								$half_credits = true;
@@ -379,9 +393,8 @@ class SpendingInvoiceLibrary
 							}
 
 							if((int)$trans['lite_plan_enabled'] == 1) {
-								$total_amount = number_format($trans['credit_cost'] + $trans['consultation_fees'], 2);
-								$treatment = number_format($trans->credit_cost, 2);
-                       				// $consultation = number_format($trans->co_paid_amount, 2);
+								$total_amount = $trans['credit_cost'] + $trans['consultation_fees'];
+								$treatment = $trans->credit_cost;
 							}
 						}
 
@@ -410,13 +423,24 @@ class SpendingInvoiceLibrary
 							$dependent_relationship = FALSE;
 						}
 
+						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+							$procedure_cost = $procedure_cost * $trans->currency_amount;
+							$consultation_credits = $consultation_credits * $trans->currency_amount;
+							$consultation = $consultation * $trans->currency_amount;
+							$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
+							$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
+							$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+							$total_amount = $total_amount * $trans->currency_amount;
+							$cash = $cash * $trans->currency_amount;
+							$mednefits_credits = $mednefits_credits * $trans->currency_amount;
+						}
 
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
 						$format = array(
 							'clinic_name'       => $clinic->Name,
 							'clinic_image'      => $clinic->image,
-							'total_amount'      => $total_amount,
-							'procedure_cost'	=> $procedure_cost,
+							'total_amount'      => number_format($total_amount, 2),
+							'procedure_cost'	=> number_format($procedure_cost, 2),
 							'clinic_type_and_service' => $clinic_name,
 							'service'			=> $procedure,
 							'date_of_transaction' => date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
@@ -439,9 +463,9 @@ class SpendingInvoiceLibrary
 							'co_paid'           => $trans['co_paid_amount'],
 							'payment_type'      => $payment_type,
 							'nric'							=> $customer->NRIC,
-							'mednefits_credits'			=> $mednefits_credits,
-							'cash'									=> $cash,
-							'consultation_credits' => $consultation_credits,
+							'mednefits_credits'			=> number_format($mednefits_credits, 2),
+							'cash'									=> number_format($cash, 2),
+							'consultation_credits' => number_format($consultation_credits, 2),
 							'consultation'		=> number_format($consultation, 2),
 							'service_credits'   => $service_credits,
 							'transaction_type'  => $transaction_type,
@@ -459,10 +483,8 @@ class SpendingInvoiceLibrary
 						);
 
 						array_push($transaction_details, $format);
-
 					}
 				}
-
 			}
 		}
 
