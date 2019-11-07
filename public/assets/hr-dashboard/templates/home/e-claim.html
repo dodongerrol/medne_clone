@@ -349,12 +349,14 @@
 								</td>
 								<td>
 									<span>
-										S$ <span ng-bind="list.amount"></span>
+										<span ng-bind="eclaimCurrencyType" class="currency-type"></span> 
+										<span ng-bind="list.amount"></span>
 									</span>
 								</td>
 								<td>
 									<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">	
-										S$ <span ng-bind="list.claim_amount"></span>
+										<span ng-bind="eclaimCurrencyType" class="currency-type"></span> 
+										<span ng-bind="list.claim_amount"></span>
 									</span>
 								</td>
 								<td>
@@ -408,10 +410,14 @@
 											<!-- <p><label>SPENDING ACCOUNT</label> <span class="color-gray2" ng-bind="list.spending_type">General Practitioner Visit</span></p> -->
 											<!-- <p><label>TOTAL AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p> -->
 											<!-- <p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
-											<p><label>RECEIPT AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p>
+											<p><label>RECEIPT AMOUNT</label> <span class="color-gray2" >
+												<span ng-bind="eclaimCurrencyType" class="currency-type"></span>  
+												<span ng-bind="list.amount">22</span></span></p>
 											<p><label>CLAIM AMOUNT</label> 
 												<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">
-													<span class="color-gray2" >S$ <span ng-bind="list.claim_amount">22</span></span>
+													<span class="color-gray2" >
+														<span ng-bind="eclaimCurrencyType" class="currency-type"></span>  
+														<span ng-bind="list.claim_amount">22</span></span>
 												</span>
 											</p>
 											<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
