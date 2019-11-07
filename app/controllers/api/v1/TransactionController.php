@@ -354,7 +354,7 @@ class Api_V1_TransactionController extends \BaseController
 									$total_credits_cost = $total_credits_cost * $currency;
 									$credits_logs = array(
 										'wallet_id'     => $wallet_user->wallet_id,
-										'credit'        => $total_credits_cost * $currency,
+										'credit'        => $total_credits_cost,
 										'logs'          => 'deducted_from_mobile_payment',
 										'running_balance' => $wallet_user->balance - $total_credits_cost,
 										'where_spend'   => 'in_network_transaction',
@@ -387,7 +387,7 @@ class Api_V1_TransactionController extends \BaseController
 										$consultation_fees = $consultation_fees * $currency;
 										$lite_plan_credits_log = array(
 										 'wallet_id'     => $wallet_user->wallet_id,
-										 'credit'        => $consultation_fees * $currency,
+										 'credit'        => $consultation_fees,
 										 'logs'          => 'deducted_from_mobile_payment',
 										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
 										 'where_spend'   => 'in_network_transaction',

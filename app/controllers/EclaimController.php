@@ -1770,7 +1770,7 @@ class EclaimController extends \BaseController {
 			}
 
 
-        	// get docs
+      // get docs
 			$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
 
 			if(sizeof($docs) > 0) {
@@ -1780,6 +1780,10 @@ class EclaimController extends \BaseController {
 			}
 
 			$member = DB::table('user')->where('UserID', $res->user_id)->first();
+
+			// if($res->currency_type == $res->default_currency && $res->default_currency == "myr") {
+			// 	$res->amount = $res->amount * $res->currency_value;
+			// }
 
 			$temp = array(
 				'status'			=> $res->status,
@@ -1926,6 +1930,10 @@ class EclaimController extends \BaseController {
 							}
 						}
 					}
+				}
+
+				if($trans->currency_type == $trans->default_currency && $trans->default_currency == "myr") {
+					$total_amount = $total_amount * $trans->currency_amount;
 				}
 
 				$format = array(
