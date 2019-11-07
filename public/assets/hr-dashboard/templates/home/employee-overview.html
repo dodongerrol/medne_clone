@@ -558,16 +558,18 @@
 			<p class="text-center weight-700" ng-bind="selectedEmployee.name">Calvin Lee</p>
 			<h1 class="text-center weight-700 font-helvetica-medium">Add a dependent</h1>
 			<p class="text-center weight-700" style="margin-bottom: 50px;">
-			<span ng-if="selectedEmployee.plan_tier">
-				<span><span ng-bind="selectedEmployee.plan_tier.plan_tier_name">1</span> :</span> 
-				DEPENDENT 
-				<span ng-bind="addActiveDependent_index">1</span> OF <span ng-bind="selectedEmployee.plan_tier.dependent_head_count">1</span>
-			</span>
-			<span ng-if="!selectedEmployee.plan_tier"> 
-				<span></span>
-				DEPENDENT 
-				<span ng-bind="addActiveDependent_index">1</span> OF <span ng-bind="dependents.total_number_of_seats">1</span></p>
-			</span>
+				<span ng-if="selectedEmployee.plan_tier">
+					<span><span ng-bind="selectedEmployee.plan_tier.plan_tier_name">1</span> :</span> 
+					DEPENDENT 
+					<span ng-bind="addActiveDependent_index">1</span> OF <span ng-bind="selectedEmployee.plan_tier.dependent_head_count">1</span>
+				</span>
+				<span ng-if="!selectedEmployee.plan_tier"> 
+					<span></span>
+					DEPENDENT 
+					<span ng-bind="addActiveDependent_index">1</span> OF 
+					<span ng-bind="dependents.total_number_of_seats">1</span>
+				</span>
+			</p>
 			<form>
 				<div class="employee-input-wrapper">
 					<label for="fname">Full Name</label>

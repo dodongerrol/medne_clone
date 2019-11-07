@@ -225,6 +225,7 @@
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Bank: UOB</p>
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Account Name: Medicloud Pte Ltd</p>
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Account Number: 3743069399</p>
+            <p style="margin-bottom: 0;font-size: 14px; color: red;">Please send all payment advice to finance@mednefits.com</p>
             @if($payment_remarks)
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Note: {{ $payment_remarks }}</p>
             @endif

@@ -1117,7 +1117,8 @@ app.directive("employeeOverviewDirective", [
                   scope.hideLoading();
                   // console.log(response);
                   if( response.data.status ){
-                    swal( 'Success!', response.data.message, 'success' );
+                    swal( 'Success!',
+                    response.data.message, 'success' );
                     $('.employee-standalone-pro-wrapper').hide();
                     $('.prev-next-buttons-container').hide();
                     $('.employee-information-wrapper').fadeIn();

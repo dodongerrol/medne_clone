@@ -306,7 +306,7 @@ app.directive('activityPage', [
 					data.sort(function (left, right) {
 						return moment.utc(right.date_of_transaction, 'DD MMMM YYYY, hh:mma').diff(moment.utc(left.date_of_transaction, 'DD MMMM YYYY, hh:mma'))
 					});
-
+					
 					angular.forEach( data ,function(value,key){
 						if( temp_date == null ){
 							temp_date = value.month;
@@ -328,8 +328,11 @@ app.directive('activityPage', [
 								ctr++;
 							}
 						}
-					});
 
+						if( data.length - 1 == key ){
+							scope.getOutNetworkPagination( );
+						}
+					});
 				}
 
 				scope.filterActivityByDateEclaim = function( data ){
@@ -362,6 +365,10 @@ app.directive('activityPage', [
 
 								ctr++;
 							}
+						}
+
+						if( data.length-1 == key ){
+							scope.hideLoading();
 						}
 					});
 				}
@@ -585,7 +592,6 @@ app.directive('activityPage', [
 
 				scope.searchActivityPagination = function( ){
 					scope.getInNetworkPagination( );
-					scope.getOutNetworkPagination( );
 				}
 
 				scope.getInNetworkPagination = function( ){
@@ -689,7 +695,7 @@ app.directive('activityPage', [
 
 				scope.searchEmployeeActivity = function(user_id) {
 					
-					scope.toggleLoading();
+					scope.showLoading();
 					temp_list = null;
 					$( ".main-transac-container" ).animate({'left':'0'}, 'slow');
 					$( ".trans-pagination-shadow" ).css({'margin-right':'0'});
@@ -706,7 +712,7 @@ app.directive('activityPage', [
 					scope.search.close = true;
 					hrActivity.searchEmployeeActivity(activity_search)
 					.then(function(response){
-						scope.toggleLoading();
+						scope.hideLoading();
 						if(response.status == 200) {
 							scope.activity_title = response.data.employee + ' Benefits Cost';
 							scope.activity = {};
@@ -986,6 +992,7 @@ app.directive('activityPage', [
 				  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
 				  };
+				  scope.showLoading();
 					if(scope.search.user_id) {
 		    		scope.searchEmployeeActivity(scope.search.user_id);
 		    	} else {
