@@ -4386,6 +4386,14 @@ ul.typeahead li a.dropdown-item
 	pointer-events: none;
 }
 
+.apply-loading{
+	display: none;
+}
+
+.disable-cursor-on .apply-loading{
+  display: inline-block;
+}
+
 .in-progress-statement{
   width: 100%;
   position: relative;
