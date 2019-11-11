@@ -169,8 +169,10 @@ app.directive('eclaimSubmitDirective', [
 
 				scope.showCurrencyDropdown = function() {
 					console.log(scope.selectCurrencyTypeDropdown);
-
-					scope.selectCurrencyTypeDropdown = scope.selectCurrencyTypeDropdown == false ? true : false;
+					if ( scope.currency_myr === 'sgd' ) {
+						scope.selectCurrencyTypeDropdown = scope.selectCurrencyTypeDropdown == false ? true : false;
+					}
+					
 
 				}
 
@@ -418,6 +420,12 @@ app.directive('eclaimSubmitDirective', [
 								scope.total_balance = (response.data.total_allocation.indexOf(",") >= 0) ? response.data.total_allocation.replace(",", "") : response.data.total_allocation;
 								// scope.total_balance = parseInt(scope.total_balance);
 								// console.log(scope.total_balance);
+								scope.currency_myr = response.data.currency_type;
+								console.log(scope.currency_myr);
+
+								if (scope.currency_myr === 'myr') {
+									scope.eclaim.selectedCurrencyType = scope.currency_myr;
+								}
 							}
 
 							scope.hideIntroLoader();
