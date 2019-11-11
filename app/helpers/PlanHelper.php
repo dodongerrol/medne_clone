@@ -1391,6 +1391,7 @@ class PlanHelper {
 
 			$user = new User();
 
+			$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
             // try {
 			$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 			if(!$customer_active_plan_id) {
@@ -1433,7 +1434,8 @@ class PlanHelper {
 				'account_update_status'		=> 1,
 				'account_update_date' => date('Y-m-d H:i:s'),
 				'account_already_update'	=> 1,
-				'communication_type'	=> $communication_type
+				'communication_type'	=> $communication_type,
+				'currency_type'		=> $customer_data->currency_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -1518,7 +1520,8 @@ class PlanHelper {
 						'credit'            => $data_enrollee->credits,
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $data_enrollee->credits,
-						'customer_active_plan_id' => $customer_active_plan_id
+						'customer_active_plan_id' => $customer_active_plan_id,
+						'currency_type'		=> $customer_data->currency_type
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1534,7 +1537,8 @@ class PlanHelper {
 							'logs'                  => 'added_employee_credits',
 							'user_id'               => $user_id,
 							'running_balance'       => $customer->balance - $data_enrollee->credits,
-							'customer_active_plan_id' => $customer_active_plan_id
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'		=> $customer_data->currency_type
 						);
 
 						$customer_credit_logs = new CustomerCreditLogs( );
@@ -1563,7 +1567,8 @@ class PlanHelper {
 						'credit'        => $data_enrollee->wellness_credits,
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $data_enrollee->wellness_credits,
-						'customer_active_plan_id' => $customer_active_plan_id
+						'customer_active_plan_id' => $customer_active_plan_id,
+						'currency_type'		=> $customer_data->currency_type
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1577,7 +1582,8 @@ class PlanHelper {
 							'logs'                  => 'added_employee_credits',
 							'user_id'               => $user_id,
 							'running_balance'       => $customer->wellness_credits - $data_enrollee->wellness_credits,
-							'customer_active_plan_id' => $customer_active_plan_id
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'		=> $customer_data->currency_type
 						);
 						$customer_credits_logs = new CustomerWellnessCreditLogs();
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
@@ -3108,7 +3114,8 @@ class PlanHelper {
 			$date_today = date('Y-m-d');
 	    	// $last_day_of_coverage = date('Y-m-d', strtotime($input['last_day_coverage']));
 			$plan_start = date('Y-m-d', strtotime($input['plan_start']));
-			
+			$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+
 			$user_plan_history = DB::table('user_plan_history')
 			->where('user_id', $replace_id)
 			->where('type', 'started')
@@ -3148,7 +3155,8 @@ class PlanHelper {
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
 				'pending'		=> $pending,
-				'Active'        => 1
+				'Active'        => 1,
+				'currency_type'	=> $customer_data->currency_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
