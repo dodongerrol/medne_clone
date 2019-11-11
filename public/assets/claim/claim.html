@@ -393,8 +393,9 @@
 													</td>
 													<td>
 														<input valid-number class="manual-form" type="text" placeholder="{{ placeholder }}" ng-model="add_claim_data.amount"> 
-														<span ng-if="clinic.currency_type == 'sgd'" class="SgDollar myColor-secondary">S$</span>
-														<span ng-if="clinic.currency_type == 'myr'" class="SgDollar myColor-secondary">RM</span>
+														<!-- <span ng-if="clinic.currency_type == 'sgd'" class="SgDollar myColor-secondary">S$</span>
+														<span ng-if="clinic.currency_type == 'myr'" class="SgDollar myColor-secondary">RM</span> -->
+														<span ng-bind="currencyType" class="currency-type SgDollar myColor-secondary"></span>
 													</td>
 													<td>
 														<button ng-disabled="!add_claim_data.mobile || add_claim_data.selected_service_ids.length == 0 || !add_claim_data.visit_time" class="btn btn-lg" ng-click="checkClaim()">Submit</button>
