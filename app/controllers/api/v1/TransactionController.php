@@ -1472,7 +1472,7 @@ class Api_V1_TransactionController extends \BaseController
 							'cap_transaction'   => $half_credits,
     					'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
 							'services' => $service,
-							'convert_option'		=> $transaction->default_currency == $transaction->currency_type && $transaction->default_currency == "myr" ? true : false,
+							'convert_option'		=> $transaction->default_currency != $transaction->currency_type ? true : false,
 							'currency_amount'		=> $transaction->currency_amount,
 							'currency_symbols'	=> ["SGD", "MYR"]
 						);
