@@ -32,12 +32,13 @@ function ($rootScope, $state, $stateParams, $templateCache) {
       $('body').removeClass('bg-color-home');
     }
 
-    window.Appcues.page( );
-    window.Appcues.identify(
+    Appcues.page( );
+    Appcues.track();
+    Appcues.identify(
       "57952", // unique, required
       {}
     );
-    window.Appcues.track(toState.name + " page.");
+    
   });
 
 }]);
