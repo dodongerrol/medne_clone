@@ -8659,11 +8659,7 @@ class BenefitsDashboardController extends \BaseController {
 
 							return array(
 								'status'	=> TRUE,
-<<<<<<< HEAD
-								'message'	=> 'Employee successfully assigned medical credits ' . strtoupper($customer->currency_type) . ' ' .number_format($input['credits'], 2).'.'
-=======
 								'message'	=> 'Employee successfully assigned medical credits '.strtoupper($customer->currency_type)." ".number_format($input['credits'], 2).'.'
->>>>>>> 1e5c86b26ebfd2b6d4ff07f0f61e7c13b6daaccc
 							);
 						}
 					}
