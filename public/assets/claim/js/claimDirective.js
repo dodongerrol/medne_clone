@@ -39,8 +39,6 @@ app.directive("claimDirective", [
         scope.isLoading = false;
         scope.currencyType = localStorage.getItem("currency_type");
 
-        console.log(scope.currencyType);
-
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
         }
@@ -340,6 +338,7 @@ app.directive("claimDirective", [
               user_id: scope.add_claim_data.selected_nric_data.id,
               date_transaction : moment( scope.add_claim_data.visit_date ).format('YYYY-MM-DD'),
               amount : scope.add_claim_data.amount,
+              currency_type: scope.currencyType,
             }
             console.log( data );
             $http.post(base_url + "check_duplicate_transaction", data)

@@ -176,13 +176,16 @@
 										<!-- <td ng-bind="list.NRIC">G8472947H</td> -->
 										<td ng-bind="list.procedure_name">Medicine & Treatment</td>
 										<td>
-											<span class="currency-type" ng-bind="list.currency_type">SGD/MYR</span> <span ng-bind="list.mednefits_fee"></span>
+											<span class="currency-type" ng-bind="currencyType">SGD/MYR</span> 
+											<span ng-bind="list.mednefits_fee"></span>
 			    					</td>
 										<td>
-											<span class="currency-type" ng-bind="list.currency_type">SGD/MYR</span> <span ng-bind="list.mednefits_credits"></span>
+											<span class="currency-type" ng-bind="currencyType">SGD/MYR</span> 
+											<span ng-bind="list.mednefits_credits"></span>
 										</td>
 										<td>
-												<span class="currency-type" ng-bind="list.currency_type">SGD/MYR</span> <span ng-bind="list.cash"></span>
+												<span class="currency-type" ng-bind="currencyType">SGD/MYR</span> 
+												<span ng-bind="list.cash"></span>
 										</td>
 										<td>
 											<button ng-if="list.deleted_option == 'remove' && !list.deleted" class="option-button mybg-red" ng-click="cancelBackDateTransaction(list)">Cancel</button>
@@ -438,7 +441,9 @@
 			        			</span>
 			        		</p>
 			        		<p><label>Date:</label> <span ng-bind="your_transaction.date">Jun 14,2016</span></p>
-			        		<p><label>Amount:</label> <span ng-if="clinic.currency_type == 'sgd'">S$</span><span ng-if="clinic.currency_type == 'myr'">RM</span><span ng-bind="temp_list[0].amount | number: 2">50.00</span></p>
+			        		<p><label>Amount:</label> 
+			        			<span ng-bind="currencyType" class="currency-type"></span>
+			        			<span ng-bind="temp_list[0].amount | number: 2">50.00</span></p>
 			        		<p><label>Type:</label> <span ng-bind="your_transaction.type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
 			        	</div>
 
@@ -449,7 +454,9 @@
 				        		<p><label>Name:</label> <span ng-bind="list.user_name">Allan Alzula</span></p>
 				        		<p><label>Service:</label> <span ng-bind="list.service">Dental</span></p>
 				        		<p><label>Date:</label> <span ng-bind="list.date_of_transaction">Jun 14,2016</span></p>
-				        		<p><label>Amount:</label> <span ng-bind="list.currency_symbol"></span><span ng-bind="list.procedure_cost">50.00</span></p>
+				        		<p><label>Amount:</label> 
+				        			<span ng-bind="currencyType" class="currency-type"></span>
+				        			<span ng-bind="list.procedure_cost">50.00</span></p>
 				        		<p><label>Type:</label> <span ng-bind="list.transaction_type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
 			        		</div>
 			        	</div>
