@@ -82,10 +82,12 @@ class PlanTierController extends \BaseController {
 		// get plan tier head count
 		$plan_tier_member_head_count = DB::table('plan_tiers')
 										->where('customer_id', $customer_id)
+										->where('active', 1)
 										->sum('member_head_count');
 
 		$plan_tier_member_enrolled_count = DB::table('plan_tiers')
 											->where('customer_id', $customer_id)
+											->where('active', 1)
 											->sum('member_enrolled_count');
 
 		$total_left_plan_tier_members = $plan_tier_member_head_count - $plan_tier_member_enrolled_count;
