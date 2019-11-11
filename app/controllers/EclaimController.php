@@ -216,8 +216,8 @@ class EclaimController extends \BaseController {
 			'approved_date' => null,
 			'time'		=> $time,
 			'spending_type' => 'medical',
-			'currency_type'	=> isset($input['currency_type']) ? $input['currency_type'] : "sgd",
-			'default_currency'	=> $check_user_balance->currency_type,
+			'currency_type'	=> isset($input['currency_type']) ? strtolower($input['currency_type']) : "sgd",
+			'default_currency'	=> $check_user_balance->currency_type
 		);
 
 		if($customer_id) {
@@ -384,6 +384,8 @@ class EclaimController extends \BaseController {
 			if(floatval($input['amount']) > floatval($total_claim_amount)) {
 				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
 			}
+    } else {
+    	$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
     }
 
     // get customer id
@@ -398,7 +400,9 @@ class EclaimController extends \BaseController {
 			'amount'    => $input['amount'],
 			'date'      => date('Y-m-d', strtotime($input['date'])),
 			'time'      => $time,
-			'spending_type' => 'wellness'
+			'spending_type' => 'wellness',
+			'currency_type'	=> isset($input['currency_type']) ? strtolower($input['currency_type']) : "sgd",
+			'default_currency'	=> $check_user_balance->currency_type
 		);
 
 		if($customer_id) {
