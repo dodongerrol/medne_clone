@@ -116,7 +116,7 @@
 								<p class="no-margin">Transactions</p>
 							</div>
 							<div class="value-box wallet-tooltip" style="position: relative;">
-								<h4 class="font-30 weight-700 color-gray"> <span class="currency-type" ng-bind="trans_data.transactions[0].currency_type">SGD/MYR</span> <span ng-bind="trans_data.mednefits_wallet">2536</span></h4>
+								<h4 class="font-30 weight-700 color-gray"> <span class="currency-type" ng-bind="trans_data.currency_type">SGD/MYR</span> <span ng-bind="trans_data.mednefits_wallet">2536</span></h4>
 								<p class="no-margin">Mednefits Wallet</p>
 
 								<p class="tooltip-wallet">Combine amount from Mednefits Fee and Mednefits Credit.</p>

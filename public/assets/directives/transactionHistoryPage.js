@@ -122,7 +122,7 @@ function getTransactions( data ){
 
   		$('.total-trans-num').text(data.data.total_transactions);
   		$('.medni-wallet-num').text(data.data.mednefits_wallet);
-  		$('.currencyType').text(currencyType);
+  		$('.currencyType').text(data.data.currency_type);
 
       if( data.data.transactions.length > 0 ){
       
@@ -156,9 +156,9 @@ function getTransactions( data ){
 									'<td>' + list[i].user_name + '</td>' + 
 									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
-									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_fee + '</td>' + 
+									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_credits + '</td>' + 
+									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].cash + '</td>' + 
 								'</tr>');
 		      		} else {
 		      			$( '.trans-history-tbl tbody' ).append('<tr>' +
@@ -169,9 +169,9 @@ function getTransactions( data ){
 									'<td>' + list[i].user_name + '</td>' + 
 									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
-									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_fee + '/td>' + 
+									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_credits + '</td>' + 
+									'<td style="text-align: center"><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].cash + '</td>' + 
 								'</tr>');
 		      		}
 		      	}else{
@@ -216,9 +216,9 @@ function getTransactions( data ){
 									'<td>' + list[i].user_name + '</td>' + 
 									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
-									'<td style="text-align: center">S$' + list[i].mednefits_fee + '<br><span>(RM' + (list[i].mednefits_fee * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center">S$' + list[i].mednefits_credits + '<br><span>(RM' + (list[i].mednefits_credits * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
-									'<td style="text-align: center">S$' + list[i].cash + '<br><span>(RM' + (list[i].cash * list[i].currency_amount).toFixed(2) + ')</span></td>' + 
+									'<td style="text-align: center">S$' + list[i].mednefits_fee + '</td>' + 
+									'<td style="text-align: center">S$' + list[i].mednefits_credits + '</td>' + 
+									'<td style="text-align: center">S$' + list[i].cash + '</td>' + 
 								'</tr>');
 		      	}else{
 		      		$( '.trans-history-tbl tbody' ).append('<tr>' +

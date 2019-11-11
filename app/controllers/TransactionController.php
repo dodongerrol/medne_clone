@@ -683,36 +683,59 @@ class TransactionController extends BaseController {
 
 					$history_class = new WalletHistory( );
 
-					$wallet_history = array(
-						'wallet_id'			=> $wallet->wallet_id,
-						'credit'			=> $transaction->credit_cost,
-						'running_balance'	=> $wallet->balance + $transaction->credit_cost,
-						'logs'				=> "credits_back_from_in_network",
-						'where_spend'		=> "credits_back_from_in_network",
-						"id"				=> $transaction->transaction_id
-					);
-
-					$history_class = new WalletHistory( );
-
-					$wallet_history = array(
-						'wallet_id'			=> $wallet->wallet_id,
-						'credit'			=> $transaction->credit_cost,
-						'running_balance'	=> $wallet->balance + $transaction->credit_cost,
-						'logs'				=> "credits_back_from_in_network",
-						'where_spend'		=> "credits_back_from_in_network",
-						"id"				=> $transaction->transaction_id
-					);
-
-					if($transaction->lite_plan_enabled == 1) {
-						$wallet_history_lite_plan = array(
+					if($transaction->currency_type == $transaction->default_currency && $transaction->default_currency == "myr") {
+						$transaction->credit_cost = $transaction->credit_cost * $transaction->currency_amount;
+						$wallet_history = array(
 							'wallet_id'			=> $wallet->wallet_id,
-							'credit'			=> $transaction->consultation_fees,
-							'running_balance'	=> $wallet->balance + $transaction->credit_cost + $transaction->consultation_fees,
+							'credit'			=> $transaction->credit_cost,
+							'running_balance'	=> $wallet->balance + $transaction->credit_cost,
 							'logs'				=> "credits_back_from_in_network",
 							'where_spend'		=> "credits_back_from_in_network",
 							"id"				=> $transaction->transaction_id,
-							'lite_plan_enabled' => 1,
+							"currency_type" => $transaction->currency_type,
+							"currency_value" => $transaction->currency_amount
 						);
+					} else {
+						$wallet_history = array(
+							'wallet_id'			=> $wallet->wallet_id,
+							'credit'			=> $transaction->credit_cost,
+							'running_balance'	=> $wallet->balance + $transaction->credit_cost,
+							'logs'				=> "credits_back_from_in_network",
+							'where_spend'		=> "credits_back_from_in_network",
+							"id"				=> $transaction->transaction_id,
+							"currency_type" => $transaction->currency_type,
+							"currency_value" => $transaction->currency_amount
+						);
+					}
+
+					if($transaction->lite_plan_enabled == 1) {
+						if($transaction->currency_type == $transaction->default_currency && $transaction->default_currency == "myr") {
+							$transaction->credit_cost = $transaction->credit_cost * $transaction->currency_amount;
+							$transaction->consultation_fees = $transaction->consultation_fees * $transaction->currency_amount;
+							$wallet_history_lite_plan = array(
+								'wallet_id'			=> $wallet->wallet_id,
+								'credit'			=> $transaction->consultation_fees,
+								'running_balance'	=> $wallet->balance + $transaction->credit_cost + $transaction->consultation_fees,
+								'logs'				=> "credits_back_from_in_network",
+								'where_spend'		=> "credits_back_from_in_network",
+								"id"				=> $transaction->transaction_id,
+								'lite_plan_enabled' => 1,
+								"currency_type" => $transaction->currency_type,
+								"currency_value" => $transaction->currency_amount
+							);
+						} else {
+							$wallet_history_lite_plan = array(
+								'wallet_id'			=> $wallet->wallet_id,
+								'credit'			=> $transaction->consultation_fees,
+								'running_balance'	=> $wallet->balance + $transaction->credit_cost + $transaction->consultation_fees,
+								'logs'				=> "credits_back_from_in_network",
+								'where_spend'		=> "credits_back_from_in_network",
+								"id"				=> $transaction->transaction_id,
+								'lite_plan_enabled' => 1,
+								"currency_type" => $transaction->currency_type,
+								"currency_value" => $transaction->currency_amount
+							);
+						}
 					}
 
 
@@ -732,14 +755,32 @@ class TransactionController extends BaseController {
 						try {
 
 							if($spending_type == "medical") {
-								$result = $wallet_class->addCredits($user_id, $transaction->credit_cost);
-								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-									$wallet_class->addCredits($user_id, $transaction->consultation_fees);
+								if($transaction->currency_type == $transaction->default_currency && $transaction->default_currency == "myr") {
+									$transaction->credit_cost = $transaction->credit_cost * $transaction->currency_amount;
+									$transaction->consultation_fees = $transaction->consultation_fees * $transaction->currency_amount;
+									$result = $wallet_class->addCredits($user_id, $transaction->credit_cost);
+									if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
+										$wallet_class->addCredits($user_id, $transaction->consultation_fees);
+									}
+								} else {
+									$result = $wallet_class->addCredits($user_id, $transaction->credit_cost);
+									if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
+										$wallet_class->addCredits($user_id, $transaction->consultation_fees);
+									}
 								}
 							} else {
-								$result = $wallet_class->addWellnessCredits($user_id, $transaction->credit_cost);
-								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-									$wallet_class->addWellnessCredits($user_id, $transaction->consultation_fees);
+								if($transaction->currency_type == $transaction->default_currency && $transaction->default_currency == "myr") {
+									$transaction->credit_cost = $transaction->credit_cost * $transaction->currency_amount;
+									$transaction->consultation_fees = $transaction->consultation_fees * $transaction->currency_amount;
+									$result = $wallet_class->addWellnessCredits($user_id, $transaction->credit_cost);
+									if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
+										$wallet_class->addWellnessCredits($user_id, $transaction->consultation_fees);
+									}
+								} else {
+									$result = $wallet_class->addWellnessCredits($user_id, $transaction->credit_cost);
+									if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
+										$wallet_class->addWellnessCredits($user_id, $transaction->consultation_fees);
+									}
 								}
 							}
 
@@ -786,80 +827,49 @@ class TransactionController extends BaseController {
 
 							$type = "";
 							$image = "";
-							if($clinic_type->head == 1 || $clinic_type->head == "1") {
-								if($clinic_type->Name == "General Practitioner") {
-									$type = "General Practitioner";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-								} else if($clinic_type->Name == "Dental Care") {
-									$type = "Dental Care";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-								} else if($clinic_type->Name == "Traditional Chinese Medicine") {
-									$type = "Traditional Chinese Medicine";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-								} else if($clinic_type->Name == "Health Screening") {
-									$type = "Health Screening";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-								} else if($clinic_type->Name == "Wellness") {
-									$type = "Wellness";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-								} else if($clinic_type->Name == "Health Specialist") {
-									$type = "Health Specialist";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
+							$clinic_type_data = ClinicHelper::getClinicTypeImage($clinic_type);
+							$type = $clinic_type_data['type'];
+							$image = $clinic_type_data['image'];
+
+							if($transaction->currency_type == $transaction->default_currency && $transaction->default_currency == "myr") {
+								$total_credits = $transaction->credit_cost * $transaction->currency_amount;
+								$transaction->consultation_fees = $transaction->consultation_fees * $transaction->currency_amount;
+								$transaction->credit_cost = $transaction->credit_cost * $transaction->currency_amount;
+
+								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
+									$total_credits = $transaction->credit_cost + $transaction->consultation_fees;
 								}
 							} else {
-								$find_head = DB::table('clinic_types')
-								->where('ClinicTypeID', $clinic_type->sub_id)
-								->first();
-								if($find_head->Name == "General Practitioner") {
-									$type = "General Practitioner";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-								} else if($find_head->Name == "Dental Care") {
-									$type = "Dental Care";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-								} else if($find_head->Name == "Traditional Chinese Medicine") {
-									$type = "Traditional Chinese Medicine";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-								} else if($find_head->Name == "Health Screening") {
-									$type = "Health Screening";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-								} else if($find_head->Name == "Wellness") {
-									$type = "Wellness";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-								} else if($find_head->Name == "Health Specialist") {
-									$type = "Health Specialist";
-									$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
+								$total_credits = $transaction->credit_cost;
+								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
+									$total_credits = $transaction->credit_cost + $transaction->consultation_fees;
 								}
 							}
 
-							$total_credits = $transaction->credit_cost;
-
-							if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-								$total_credits = $transaction->credit_cost + $transaction->consultation_fees;
+							if($user->Email) {
+								$email['member'] = ucwords($user->Name);
+								$email['credits'] = number_format($transaction->credit_cost, 2);
+								$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$transaction_id;
+								$email['transaction_date'] = date('d F Y, h:ia', strtotime($transaction->date_of_transaction));
+								$email['health_provider_name'] = ucwords($clinic->Name);
+								$email['health_provider_address'] = $clinic->Address;
+								$email['health_provider_city'] = $clinic->City;
+								$email['health_provider_country'] = $clinic->Country;
+								$email['health_provider_phone'] = $clinic->Phone;
+								$email['service'] = ucwords($clinic_type->Name).' - '.$service;
+								$email['emailSubject'] = 'Member - Refunded Transaction';
+								$email['emailTo'] = $user->Email;
+								// $email['emailTo'] = 'allan.alzula.work@gmail.com';
+								$email['emailName'] = ucwords($user->Name);
+								$email['clinic_type_image'] = $image;
+								$email['emailPage'] = 'email-templates.member-refunded-transaction';
+								$email['lite_plan_status'] = $lite_plan_status;
+								$email['consultation'] = number_format($transaction->consultation_fees, 2);
+								$email['total_credits'] = number_format($total_credits, 2);
+								$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
+								$email['currency_type'] = strtoupper($transaction->currency_type);
+								EmailHelper::sendEmailRefundWithAttachment($email);
 							}
-
-							$email['member'] = ucwords($user->Name);
-							$email['credits'] = number_format($transaction->credit_cost, 2);
-							$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$transaction_id;
-							$email['transaction_date'] = date('d F Y, h:ia', strtotime($transaction->date_of_transaction));
-							$email['health_provider_name'] = ucwords($clinic->Name);
-							$email['health_provider_address'] = $clinic->Address;
-							$email['health_provider_city'] = $clinic->City;
-							$email['health_provider_country'] = $clinic->Country;
-							$email['health_provider_phone'] = $clinic->Phone;
-							$email['service'] = ucwords($clinic_type->Name).' - '.$service;
-							$email['emailSubject'] = 'Member - Refunded Transaction';
-							$email['emailTo'] = $user->Email;
-							$email['emailName'] = ucwords($user->Name);
-							$email['clinic_type_image'] = $image;
-							$email['emailPage'] = 'email-templates.member-refunded-transaction';
-							$email['lite_plan_status'] = $lite_plan_status;
-							$email['consultation'] = number_format($transaction->consultation_fees, 2);
-							$email['total_credits'] = number_format($total_credits, 2);
-							$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
-							EmailHelper::sendEmailRefundWithAttachment($email);
-
-							// $email['emailTo'] = 'info@medicloud.sg';
-							// EmailHelper::sendEmailRefundWithAttachment($email);
 						} catch(Exception $e) {
 							$email['end_point'] = url('clinic/remove/transaction', $parameter = array(), $secure = null);
 							$email['logs'] = 'Refund Transaction from Clinic - '.$e->getMessage();
@@ -1541,7 +1551,7 @@ class TransactionController extends BaseController {
 			->where('transaction_history.created_at', '<=', $end);
 		})
 		->orderBy('transaction_history.created_at', 'desc')
-		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.credit_divisor', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.consultation_fees', 'transaction_history.half_credits', 'transaction_history.cash_cost')
+		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.credit_divisor', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.consultation_fees', 'transaction_history.half_credits', 'transaction_history.cash_cost', 'transaction_history.default_currency')
 		->get();
 		foreach ($transactions as $key => $trans) {
 
@@ -1697,6 +1707,16 @@ class TransactionController extends BaseController {
 				$registration_date = date('d F Y, h:i a', strtotime($trans->date_of_transaction));
 			}
 
+			if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+				$cost = $cost * $trans->currency_amount;
+				$fee = $fee * $trans->currency_amount;
+				$mednefits_credits = $mednefits_credits * $trans->currency_amount;
+				$cash = $cash * $trans->currency_amount;
+				$trans->currency_type = "myr";
+			} else {
+				$trans->currency_type = "sgd";
+			}
+
 			$temp = array(
 				'ClinicID'							=> $trans->ClinicID,
 				'NRIC'									=> $trans->NRIC,
@@ -1714,7 +1734,7 @@ class TransactionController extends BaseController {
 				'discount'							=> $trans->clinic_discount,
 				'multiple_service_selection' => $trans->multiple_service_selection,
 				'mednefits_credits'			=> number_format($mednefits_credits, 2),
-				'cash'									=> $cash,
+				'cash'									=> number_format($cash, 2),
 				'text' 									=> $text,
 				'deleted'								=> (int)$trans->deleted == 1 ? TRUE : FALSE,
 				'refunded'							=> (int)$trans->refunded == 1 ? TRUE : FALSE,
@@ -1772,7 +1792,7 @@ class TransactionController extends BaseController {
 					->where('transaction_history.claim_date', '<=', $end);
 				})
 				->orderBy('transaction_history.created_at', 'desc')
-				->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at','transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_enabled', 'transaction_history.lite_plan_use_credits', 'transaction_history.spending_type', 'transaction_history.cash_cost', 'transaction_history.half_credits', 'transaction_history.cap_per_visit')
+				->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.claim_date', 'transaction_history.created_at','transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_enabled', 'transaction_history.lite_plan_use_credits', 'transaction_history.spending_type', 'transaction_history.cash_cost', 'transaction_history.half_credits', 'transaction_history.cap_per_visit', 'transaction_history.default_currency')
 				->get();
 			} else {
 				$transactions = DB::table('transaction_history')
@@ -1921,6 +1941,7 @@ class TransactionController extends BaseController {
 			if($trans->credit_cost > 0) {
 				$mednefits_credits += $trans->credit_cost;
 				$cash = 0.00;
+				$cost = floatval($trans->procedure_cost);
 			} else {
 				$mednefits_credits += 0;
 				if(strripos($trans->procedure_cost, '$') !== false) {
@@ -1948,6 +1969,13 @@ class TransactionController extends BaseController {
 				$option = "refunded";
 			} else {
 				$option = "removed";
+			}
+
+			if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+				$cost = $cost * $trans->currency_amount;
+				$fee = $fee * $trans->currency_amount;
+				$mednefits_credits = $mednefits_credits * $trans->currency_amount;
+				$cash = $cash * $trans->currency_amount;
 			}
 
 			$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
@@ -2214,7 +2242,7 @@ class TransactionController extends BaseController {
 				->where('transaction_history.date_of_transaction', '>=', $start)
 				->where('transaction_history.date_of_transaction', '<=', $end);
 			})
-			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type')
+			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.default_currency')
 			->orderBy('transaction_history.created_at', 'desc')
 			->get();
 		} else {
@@ -2226,7 +2254,7 @@ class TransactionController extends BaseController {
 			->where('transaction_history.paid', 1)
 			->where('transaction_history.date_of_transaction', '>=', $start)
 			->where('transaction_history.date_of_transaction', '<=', $end)
-			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.gst_percent_value', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type')
+			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.gst_percent_value', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.currency_type', 'transaction_history.currency_amount', 'transaction_history.default_currency')
 			->orderBy('transaction_history.created_at', 'desc')
 			->get();
 		}
@@ -2251,20 +2279,6 @@ class TransactionController extends BaseController {
 					$table_wallet_history = 'wellness_wallet_history';
 				}
 
-				// if((int)$trans->lite_plan_enabled == 1) {
-				// 	$logs_lite_plan = DB::table($table_wallet_history)
-				// 	->where('logs', 'deducted_from_mobile_payment')
-				// 	->where('lite_plan_enabled', 1)
-				// 	->where('id', $trans->transaction_id)
-				// 	->first();
-
-				// 	if($logs_lite_plan && floatval($trans->credit_cost) > 0 && (int)$trans->lite_plan_use_credits == 0) {
-				// 		$mednefits_credits += floatval($trans->co_paid_amount);
-				// 	} else if($logs_lite_plan && floatval($trans->procedure_cost) >= 0 && (int)$trans->lite_plan_use_credits == 1){
-				// 		$mednefits_credits += floatval($trans->co_paid_amount);
-				// 	}
-				// }
-
 				if($trans->co_paid_status == 0) {
 					if(strrpos($trans->clinic_discount, '%')) {
 						$percentage = chop($trans->clinic_discount, '%');
@@ -2282,7 +2296,7 @@ class TransactionController extends BaseController {
 						$mednefits_pecent = $trans->medi_percent / 100;
 						$fee = $temp_fee * $mednefits_pecent;
 					} else {
-						$fee = number_format((float)$trans->co_paid_amount, 2);
+						$fee = (float)$trans->co_paid_amount;
 					}
 				} else {
 					if(strrpos($trans->clinic_discount, '%')) {
@@ -2302,7 +2316,7 @@ class TransactionController extends BaseController {
 						$temp_mednefits_fee = $temp_fee * $mednefits_pecent;
 						$fee = $temp_mednefits_fee * $trans->gst_percent_value;
 					} else {
-						$fee = number_format((float)$trans->co_paid_amount, 2);
+						$fee = (float)$trans->co_paid_amount;
 					}
 				}
 
@@ -2342,7 +2356,7 @@ class TransactionController extends BaseController {
 					$cash = 0.00;
 				} else {
 					$mednefits_credits += 0;
-					$cash = number_format((float)$trans->procedure_cost);
+					$cash = (float)$trans->procedure_cost;
 				}
 
 // 
@@ -2359,6 +2373,16 @@ class TransactionController extends BaseController {
 					$transaction_status = 'REFUNDED';
 				} else {
 					$transaction_status = 'REMOVED';
+				}
+
+				if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					$trans->procedure_cost = $trans->procedure_cost * $trans->currency_amount;
+					$fee = $fee * $trans->currency_amount;
+					$mednefits_credits = $mednefits_credits * $trans->currency_amount;
+					$cash = $cash * $trans->currency_amount;
+					$trans->currency_type = "MYR";
+				} else {
+					$trans->currency_type = "SGD";
 				}
 
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
@@ -2383,7 +2407,9 @@ class TransactionController extends BaseController {
 					'deleted'								=> $trans->deleted == 1 || $trans->deleted == "1" ? TRUE : FALSE,
 					'refunded'							=> $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
 					'health_provider'				=> $trans->health_provider_done == 1 || $trans->health_provider_done == "1" || $trans->credit_cost  == 0 || $trans->credit_cost == NULL ? TRUE : FALSE,
-					'transaction_status'		=> $transaction_status
+					'transaction_status'		=> $transaction_status,
+					'currency_type'					=> strtoupper($trans->currency_type),
+					'currency_amount'					=> $trans->currency_amount,
 				);
 				array_push($format, $temp);
 			}
@@ -2395,12 +2421,12 @@ class TransactionController extends BaseController {
 			'total_transactions'	=> $transaction_size,
 			'mednefits_wallet'		=> number_format($mednefits_total_fee, 2),
 			'clinic_details'			=> $details,
-			'period'							=> $period
+			'period'							=> $period,
+			"currency_type"				=> "SGD"
 		);
 
-    // return View::make('pdf-download/transaction-history', $data);
-
-		$pdf = PDF::loadView('pdf-download/transaction-history', $data);
+    // return View::make('pdf-download.transaction-history', $data);
+		$pdf = PDF::loadView('pdf-download.transaction-history', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'landscape');
 
@@ -2454,7 +2480,7 @@ class TransactionController extends BaseController {
 			->where('transaction_history.created_at', '>=', $start)
 			->where('transaction_history.created_at', '<=', $end);
 		})
-		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.currency_amount', 'transaction_history.currency_type', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.cash_cost', 'transaction_history.half_credits', 'transaction_history.cap_per_visit')
+		->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost', 'transaction_history.credit_divisor', 'transaction_history.paid', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.health_provider_done', 'transaction_history.gst_percent_value', 'transaction_history.currency_amount', 'transaction_history.currency_type', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.lite_plan_use_credits', 'transaction_history.lite_plan_enabled', 'transaction_history.spending_type', 'transaction_history.cash_cost', 'transaction_history.half_credits', 'transaction_history.cap_per_visit', 'transaction_history.default_currency')
 		->orderBy('transaction_history.created_at', 'desc')
 		->get();
 
@@ -2510,9 +2536,9 @@ class TransactionController extends BaseController {
 						$fee = $temp_fee * $mednefits_pecent;
 					} else {
 						if((int)$trans->peak_hour_status == 1) {
-							$fee = number_format($trans->peak_hour_amount, 2);
+							$fee = $trans->peak_hour_amount;
 						} else {
-							$fee = number_format((float)$trans->co_paid_amount, 2);
+							$fee = (float)$trans->co_paid_amount;
 						}
 					}
 				} else {
@@ -2534,9 +2560,9 @@ class TransactionController extends BaseController {
 						$fee = $temp_mednefits_fee * $trans->gst_percent_value;
 					} else {
 						if((int)$trans->peak_hour_status == 1) {
-							$fee = number_format($trans->peak_hour_amount, 2);
+							$fee = $trans->peak_hour_amount;
 						} else {
-							$fee = number_format((float)$trans->co_paid_amount, 2);
+							$fee = (float)$trans->co_paid_amount;
 						}
 					}
 				}
@@ -2599,6 +2625,16 @@ class TransactionController extends BaseController {
 					$transaction_status = 'REMOVED';
 				}
 
+				if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					$trans->procedure_cost = $trans->procedure_cost * $trans->currency_amount;
+					$fee = $fee * $trans->currency_amount;
+					$mednefits_credits = $mednefits_credits * $trans->currency_amount;
+					$cash = $cash * $trans->currency_amount;
+					$trans->currency_type = "myr";
+				} else {
+					$trans->currency_type = "sgd";
+				}
+
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'ClinicID'							=> $trans->ClinicID,
@@ -2616,7 +2652,7 @@ class TransactionController extends BaseController {
 					'multiple_procedures' 	=> $trans->multiple_service_selection,
 					'health_provider'				=> $trans->health_provider_done,
 					'mednefits_credits'			=> number_format($mednefits_credits, 2),
-					'cash'									=> $cash,
+					'cash'									=> number_format($cash, 2),
 					'procedure_ids'					=> $procedure_ids,
 					'deleted'								=> (int)$trans->deleted == 1 ? TRUE : FALSE,
 					'refunded'							=> (int)$trans->refunded == 1 ? TRUE : FALSE,
@@ -2631,6 +2667,7 @@ class TransactionController extends BaseController {
 
 
 		$data = array(
+			'currency_type'				=> "SGD",
 			'transactions' 				=> $format,
 			'total_transactions'	=> $transaction_size,
 			'mednefits_wallet'		=> number_format($mednefits_total_fee, 2),

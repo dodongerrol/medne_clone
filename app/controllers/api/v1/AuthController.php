@@ -654,18 +654,17 @@ return Response::json($returnObject);
         	$findUserMedication = $this->GetUserMedications($profileid);
         	$findUserCondition = $this->GetUserConditions($profileid);
         	$findMedicalHistory = $this->GetUserMedicalHistory($profileid);
+          $user_id = StringHelper::getUserId($profileid);
                 // return $findUserProfile);
         	if($findUserProfile){
                     //$userPolicy = $userinsurancepolicy->getUserInsurancePolicy($findUserProfile->UserID);
         		$userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
-
         		$returnArray->status = TRUE;
         		$returnArray->login_status = TRUE;
-                    //$returnArray->data['profile'] = $findUserProfile;
+            $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
         		$returnArray->data['profile']['user_id'] = $findUserProfile->UserID;
         		$returnArray->data['profile']['email'] = $findUserProfile->Email;
         		$returnArray->data['profile']['full_name'] = $findUserProfile->Name;
-                    //$returnArray->data['profile']['image'] = URL::to('/assets/upload/user/'.$findUserProfile->Image);
         		$returnArray->data['profile']['nric'] = $findUserProfile->NRIC;
         		$returnArray->data['profile']['fin'] = $findUserProfile->FIN;
         		$returnArray->data['profile']['mobile_phone'] = $findUserProfile->PhoneNo;
@@ -673,6 +672,7 @@ return Response::json($returnObject);
         		$returnArray->data['profile']['age'] = $findUserProfile->Age;
         		$returnArray->data['profile']['weight'] = $findUserProfile->Weight;
             $returnArray->data['profile']['height'] = $findUserProfile->Height;
+            $returnArray->data['profile']['currency_type'] = $wallet->currency_type;
             if((int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 0 || (int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 1) {
                 $returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
             } else {
@@ -1204,10 +1204,10 @@ return Response::json($returnObject);
                   $type = "credits";
                 }
 
-                if($trans->currency_type == "sgd" && $trans->default_currency == "sgd") {
+                if($trans->currency_type == "sgd") {
                   $currency_symbol = "SGD";
                   $converted_amount = $total_amount;
-                } else if($trans->currency_type == "myr" && $trans->default_currency == "myr") {
+                } else if($trans->currency_type == "myr") {
                   $currency_symbol = "MYR";
                   $converted_amount = $total_amount * $trans->currency_amount;
                 }
@@ -4694,11 +4694,10 @@ public function getEclaimTransactions( )
     $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
     $currency_symbol = "S$";
-    if($res->currency_type == "myr") {
-                // $currency_symbol = "RM";
-                // $res->amount = round($res->amount * 3, 2);
+    if($res->currency_type == "myr" && $res->default_currency == "myr") {
+      $currency_symbol = "MYR";
     } else {
-                // $currency_symbol = "S$";
+      $currency_symbol = "SGD";
     }
 
     if((int)$res->status == 1) {
@@ -4781,8 +4780,13 @@ public function getEclaimDetails($id)
       $status_text = 'Pending';
     }
 
+    if($res->currency_type == "myr" && $res->default_currency == "myr") {
+      $currency_symbol = "MYR";
+    } else {
+      $currency_symbol = "SGD";
+    }
 
-                        // get docs
+    // get docs
     $docs = DB::table('e_claim_docs')->where('e_claim_id', $transaction->e_claim_id)->get();
 
     if(sizeof($docs) > 0) {
@@ -4834,12 +4838,6 @@ if($transaction->status == 1) {
   $date = date('d F Y', strtotime($transaction->date)).', '.$transaction->time;
 }
 
-          // if($transaction->currency_type == "myr") {
-          //   $currency_symbol = "RM";
-          //   $transaction->amount = round($transaction->amount * 3, 2);
-          // } else {
-$currency_symbol = "S$";
-          // }
 
 $id = str_pad($transaction->e_claim_id, 6, "0", STR_PAD_LEFT);
 $temp = array(

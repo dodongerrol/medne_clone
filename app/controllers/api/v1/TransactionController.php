@@ -123,7 +123,7 @@ class Api_V1_TransactionController extends \BaseController
           $user_curreny_type = $wallet_user->currency_type;
           if($currency_data) {
           	$currency = $currency_data->currency_value;
-          	$currency_data_type = $currency_data->currency_value;
+          	$currency_data_type = $currency_data->currency_type;
           } else {
           	$currency = 3.00;
           	$currency_data_type = "sgd";
@@ -322,7 +322,7 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
-
+					// return $data;
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;
@@ -354,7 +354,7 @@ class Api_V1_TransactionController extends \BaseController
 									$total_credits_cost = $total_credits_cost * $currency;
 									$credits_logs = array(
 										'wallet_id'     => $wallet_user->wallet_id,
-										'credit'        => $total_credits_cost * $currency,
+										'credit'        => $total_credits_cost,
 										'logs'          => 'deducted_from_mobile_payment',
 										'running_balance' => $wallet_user->balance - $total_credits_cost,
 										'where_spend'   => 'in_network_transaction',
@@ -387,7 +387,7 @@ class Api_V1_TransactionController extends \BaseController
 										$consultation_fees = $consultation_fees * $currency;
 										$lite_plan_credits_log = array(
 										 'wallet_id'     => $wallet_user->wallet_id,
-										 'credit'        => $consultation_fees * $currency,
+										 'credit'        => $consultation_fees,
 										 'logs'          => 'deducted_from_mobile_payment',
 										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
 										 'where_spend'   => 'in_network_transaction',
@@ -594,7 +594,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
 
 										try {
-											// EmailHelper::sendPaymentAttachment($email);
+											EmailHelper::sendPaymentAttachment($email);
 											// send to clinic
 											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
 
