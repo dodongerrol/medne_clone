@@ -286,7 +286,7 @@ class SpendingInvoiceLibrary
 							$service_credits = true;
 						} else if($logs_lite_plan && floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 1){
 							$total_consultation += floatval($logs_lite_plan->credit);
-							$consultation = number_format($logs_lite_plan->credit, 2);
+							$consultation = $logs_lite_plan->credit;
 							$consultation_credits = true;
 							$service_credits = true;
 						} else if(floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 0){
@@ -303,7 +303,7 @@ class SpendingInvoiceLibrary
 
 					if($fields == true) {
 						if($trans['credit_cost'] > 0) {
-							$mednefits_credits = number_format((float)$trans['credit_cost'], 2);
+							$mednefits_credits = (float)$trans['credit_cost'];
 							$cash = 0;
 						} else {
 							$mednefits_credits = 0;
