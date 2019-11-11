@@ -37,6 +37,9 @@ app.directive("claimDirective", [
         scope.e_card_data = {};
         scope.registration_arr = [];
         scope.isLoading = false;
+        scope.currencyType = localStorage.getItem("currency_type");
+
+        console.log(scope.currencyType);
 
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
@@ -683,6 +686,7 @@ app.directive("claimDirective", [
           scope.getServices();
           scope.initializeDatePickers();
           scope.getClinicCheckIns();
+          console.log(scope.currencyType);
         }
 
         scope.onLoad();
