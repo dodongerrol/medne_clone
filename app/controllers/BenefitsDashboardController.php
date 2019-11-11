@@ -3706,6 +3706,7 @@ class BenefitsDashboardController extends \BaseController {
 		$last_day_of_coverage = date('Y-m-d', strtotime($input['last_day_coverage']));
 		$plan_start = date('Y-m-d', strtotime($input['plan_start']));
 
+		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
 		// check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $id)->first();
 
@@ -3866,7 +3867,8 @@ class BenefitsDashboardController extends \BaseController {
 					'wallet_id'             => $wallet->wallet_id,
 					'credit'                    => 0,
 					'running_balance' => 0,
-					'logs'                      => 'wallet_created'
+					'logs'                      => 'wallet_created',
+					'currency_type'		=> $customer_data->currency_type
 				);
 				\WalletHistory::create($data_create_history);
 				if($medical > 0) {
@@ -3893,7 +3895,8 @@ class BenefitsDashboardController extends \BaseController {
 							'credit'            => $medical,
 							'logs'              => 'added_by_hr',
 							'running_balance'   => $medical,
-							'customer_active_plan_id' => $customer_active_plan_id
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'	=> $customer_data->currency_type
 						);
 
 						$employee_logs->createWalletHistory($wallet_history);
@@ -3908,7 +3911,8 @@ class BenefitsDashboardController extends \BaseController {
 								'logs'                  => 'added_employee_credits',
 								'user_id'               => $user_id,
 								'running_balance'       => $customer->balance - $medical,
-								'customer_active_plan_id' => $customer_active_plan_id
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'					=> $customer_data->currency_type
 							);
 
 							$customer_credit_logs = new CustomerCreditLogs( );
@@ -3937,7 +3941,8 @@ class BenefitsDashboardController extends \BaseController {
 							'credit'        => $wellness,
 							'logs'          => 'added_by_hr',
 							'running_balance'   => $wellness,
-							'customer_active_plan_id' => $customer_active_plan_id
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'					=> $customer_data->currency_type
 						);
 
 						\WellnessWalletHistory::create($wallet_history);
@@ -3951,7 +3956,8 @@ class BenefitsDashboardController extends \BaseController {
 								'logs'                  => 'added_employee_credits',
 								'user_id'               => $user_id,
 								'running_balance'       => $customer->wellness_credits - $wellness,
-								'customer_active_plan_id' => $customer_active_plan_id
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'					=> $customer_data->currency_type
 							);
 							$customer_credits_logs = new CustomerWellnessCreditLogs();
 							$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
@@ -8653,7 +8659,7 @@ class BenefitsDashboardController extends \BaseController {
 
 							return array(
 								'status'	=> TRUE,
-								'message'	=> 'Employee successfully assigned medical credits $'.number_format($input['credits'], 2).'.'
+								'message'	=> 'Employee successfully assigned medical credits '.strtoupper($customer->currency_type)." ".number_format($input['credits'], 2).'.'
 							);
 						}
 					}
@@ -8705,7 +8711,7 @@ class BenefitsDashboardController extends \BaseController {
 						}
 						return array(
 							'status'	=> TRUE,
-							'message'	=> 'Employee successfully deducted medical credits $'.number_format($input['credits'], 2).'.'
+							'message'	=> 'Employee successfully deducted medical credits '.strtoupper($customer->currency_type)." ".number_format($input['credits'], 2).'.'
 						);
 					} catch(Exception $e) {
 						$email = [];
