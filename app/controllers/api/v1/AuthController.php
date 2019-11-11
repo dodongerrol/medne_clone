@@ -1833,6 +1833,16 @@ public function getNewClinicDetails($id)
 
            // return $plan_coverage;
    $user = DB::table('user')->where('UserID', $findUserID)->first();
+   $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+
+   if($wallet->currency_type != $clinic->currency_type && $wallet->currency_type == "myr") {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Member is prohibited to access this clinic from Singpapore';
+     $returnObject->employee_status = false;
+     return Response::json($returnObject);
+   }
+
+
    $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
    $customer_active_plan = DB::table('customer_active_plan')
    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
@@ -1904,7 +1914,14 @@ if($customer_id) {
 
 $cap_currency_symbol = "SGD";
 $cap_amount = 0;
-$wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+  
+$currency_data = DB::table('currency_options')->where('currency_type', $wallet->currency_type)->first();
+if($currency_data) {
+  $currency_value = $currency_data->currency_value;
+} else {
+  $currency_value = 3.00;
+}
+
 if($plan_tier) {
   if($wallet->cap_per_visit_medical > 0) {
     $cap_amount = $wallet->cap_per_visit_medical;
@@ -1927,8 +1944,8 @@ if($customer_active_plan && $customer_active_plan->account_type == "enterprise_p
 if($clinic->currency_type == "myr" && $wallet->currency_type == "sgd") {
  $currency = "MYR";
  $cap_currency_symbol = "MYR";
- $balance = number_format($balance * 3, 2);
- $cap_amount = $cap_amount * 3;
+ $balance = number_format($balance * $currency_value, 2);
+ $cap_amount = $cap_amount * $currency_value;
 } else if($clinic->currency_type == "sgd" && $wallet->currency_type == "sgd"){
  $currency = "SGD";
  $balance = number_format($balance, 2);
@@ -1963,7 +1980,7 @@ $check_in_data = array(
   'check_in_type'   => 'in_network_transaction',
   'cap_per_visit'   => $cap_amount,
   'currency_symbol' => $clinic->currency_type == "myr" ? "myr" : "sgd",
-  'currency_value'  => $clinic->currency_type == "myr" ? 3.00 : 0.00,
+  'currency_value'  => $clinic->currency_type == "myr" ? $currency_value : 0.00,
 );
 
 $check_in_class = new EmployeeClinicCheckIn( );
@@ -1976,14 +1993,14 @@ $returnObject->data = $jsonArray;
 $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
 
         // get transaction consultation
-$returnObject->data['consultation_fee_symbol'] = "S$";
+$returnObject->data['consultation_fee_symbol'] = "SGD";
 $consultation_status = StringHelper::newLitePlanStatus($findUserID);
 $returnObject->data['consultation_status'] = $consultation_status;
 if($consultation_status == true && (int)$clinic_type->lite_plan_enabled == 1) {
   $clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $owner_id);
   $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
-  $returnObject->data['consultation_fees'] = $clinic->currency_type == "myr" ? $consultation_fees * 3.00 : $consultation_fees;
-  $returnObject->data['consultation_fee_symbol'] = $clinic->currency_type == "myr" ? "RM" : "S$";
+  $returnObject->data['consultation_fees'] = $clinic->currency_type == "myr" ? $consultation_fees * $currency_value : $consultation_fees;
+  $returnObject->data['consultation_fee_symbol'] = $clinic->currency_type == "myr" ? "MYR" : "SGD";
 } else {
   $returnObject->data['consultation_fee_symbol'] = null;
   $returnObject->data['consultation_fees'] = 0;

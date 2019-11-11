@@ -327,6 +327,8 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
+
+					// return $data;
 					
 					try {
 						$result = $transaction->createTransaction($data);
@@ -599,7 +601,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
 
 										try {
-											EmailHelper::sendPaymentAttachment($email);
+											// EmailHelper::sendPaymentAttachment($email);
 											// send to clinic
 											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
 
@@ -1470,7 +1472,7 @@ class Api_V1_TransactionController extends \BaseController
 							'cap_transaction'   => $half_credits,
     					'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
 							'services' => $service,
-							'convert_option'		=> $transaction->default_currency == $transaction->currency_type && $transaction->default_currency == "myr" ? true : false,
+							'convert_option'		=> $transaction->default_currency != $transaction->currency_type ? true : false,
 							'currency_amount'		=> $transaction->currency_amount,
 							'currency_symbols'	=> ["SGD", "MYR"]
 						);
