@@ -188,6 +188,11 @@ class Api_V1_TransactionController extends \BaseController
 					  }
 					}
 
+					if($wallet_user->currency_type == "myr") {
+						$cap_amount = $cap_amount / $currency;
+						$user_credits = $user_credits / $currency;
+					}
+
 					$credits = 0;
 					$cash = 0;
 					$half_payment = false;
@@ -322,7 +327,7 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
-					// return $data;
+					
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;

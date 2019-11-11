@@ -237,21 +237,21 @@ class TransactionController extends BaseController {
 		$clinic_id = $getSessionData->Ref_ID;
 		$clinic_data = DB::table('clinic')->where('ClinicID', $clinic_id)->first();
 
-	    if($getSessionData != FALSE){
-	    	$user_id = $input['id'];
-	    	$owner_id = StringHelper::getUserId($user_id);
-	    	$transaction = new Transaction();
-	    	$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
-	    	$lite_plan_status = false;
-	    	$clinic_peak_status = false;
-	    	$consultation_fees = 0;
-            $lite_plan_status = StringHelper::newLitePlanStatus($input['id']);
-	    	
-            if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-                $lite_plan_enabled = 1;
-            } else {
-                $lite_plan_enabled = 0;
-            }
+		if($getSessionData != FALSE){
+			$user_id = $input['id'];
+			$owner_id = StringHelper::getUserId($user_id);
+			$transaction = new Transaction();
+			$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
+			$lite_plan_status = false;
+			$clinic_peak_status = false;
+			$consultation_fees = 0;
+			$lite_plan_status = StringHelper::newLitePlanStatus($input['id']);
+
+			if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
+				$lite_plan_enabled = 1;
+			} else {
+				$lite_plan_enabled = 0;
+			}
 
 			if($input['back_date'] == 1 || $input['back_date'] == "1") {
 				// check if is a valid date
@@ -278,6 +278,15 @@ class TransactionController extends BaseController {
 				} else if(sizeof($input['procedure_ids']) > 1) {
 					$multiple = 1;
 				}
+
+				$wallet_data = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+				$currency_data = DB::table('currency_options')->where('currency_type', $wallet_data->currency_type)->first();
+
+				if($currency_data) {
+        	$currency = $currency_data->currency_value;
+        } else {
+        	$currency = 3.00;
+        }
 
 				$peak_amount = 0;
 				$clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $input['transaction_date'], $owner_id);
@@ -311,10 +320,16 @@ class TransactionController extends BaseController {
 					'health_provider_done' => 1,
 					'multiple_service_selection' => $multiple,
 					'currency_type'			=> $clinic_data->currency_type,
-					'currency_amount'			=> $input['currency_amount'] ? $input['currency_amount'] : 3,
+					'currency_amount'			=> $currency,
 					'lite_plan_enabled'     => $lite_plan_enabled,
-					'consultation_fees'		=> $consultation_fees
+					'consultation_fees'		=> $consultation_fees,
+					'default_currency'		=> $wallet_data->currency_type
 				);
+
+				if($wallet_data->currency_type == "myr") {
+					$consultation_fees = $consultation_fees * $currency;
+					$temp['procedure_cost'] = $temp['procedure_cost'] / $currency;
+				}
 
 				if($clinic_peak_status) {
 					$temp['peak_hour_status'] = 1;
@@ -326,14 +341,11 @@ class TransactionController extends BaseController {
 					} 
 				}
 
-                // return $temp;
-
 				try {
 					$result = $transaction->createTransaction($temp);
 					if($lite_plan_enabled == 1) {
 						$transaction_data = DB::table('transaction_history')->where('transaction_id', $result->id)->first();
 						// $user_id = PlanHelper::getDependentOwnerID($input['id']);
-						$wallet_data = DB::table('e_wallet')->where('UserID', $owner_id)->first();
 						
 						if($transaction_data->spending_type == "medical") {
 							$balance = $wallet_data->balance;
@@ -1689,17 +1701,17 @@ class TransactionController extends BaseController {
 				// if((int)$trans->lite_plan_enabled == 1 && (int)$trans->lite_plan_use_credits == 0) {
 				// 	$mednefits_credits = $trans->credit_cost + $trans->consultation_fees;
 				// } else {
-					$mednefits_credits = $trans->credit_cost;
+				$mednefits_credits = $trans->credit_cost;
 				// }
 			}
 
 			$registration_date = null;
 			// get check in time data
 			$check_in_data = DB::table('user_check_in_clinic')
-												->where('user_id', $trans->UserID)
-												->where('clinic_id', $trans->ClinicID)
-												->where('id', $trans->transaction_id)
-												->first();
+			->where('user_id', $trans->UserID)
+			->where('clinic_id', $trans->ClinicID)
+			->where('id', $trans->transaction_id)
+			->first();
 
 			if($check_in_data) {
 				$registration_date = date('d F Y, h:i a', strtotime($check_in_data->check_in_time));
