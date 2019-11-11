@@ -1434,7 +1434,8 @@ class PlanHelper {
 				'account_update_status'		=> 1,
 				'account_update_date' => date('Y-m-d H:i:s'),
 				'account_already_update'	=> 1,
-				'communication_type'	=> $communication_type
+				'communication_type'	=> $communication_type,
+				'currency_type'		=> $customer_data->currency_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
@@ -3113,7 +3114,8 @@ class PlanHelper {
 			$date_today = date('Y-m-d');
 	    	// $last_day_of_coverage = date('Y-m-d', strtotime($input['last_day_coverage']));
 			$plan_start = date('Y-m-d', strtotime($input['plan_start']));
-			
+			$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+
 			$user_plan_history = DB::table('user_plan_history')
 			->where('user_id', $replace_id)
 			->where('type', 'started')
@@ -3153,7 +3155,8 @@ class PlanHelper {
 				'DOB'       => $input['dob'],
 				'Zip_Code'  => $input['postal_code'],
 				'pending'		=> $pending,
-				'Active'        => 1
+				'Active'        => 1,
+				'currency_type'	=> $customer_data->currency_type
 			);
 
 			$user_id = $user->createUserFromCorporate($data);
