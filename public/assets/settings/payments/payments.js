@@ -517,8 +517,8 @@ function getClinicInvoiceList(date) {
   }).done(function(data) {
     console.log(data);
 
-    $('.currencyType').text(currencyType);
-    console.log($('.currencyType').text(currencyType));
+    $('.currencyType').text(data.currency_type);
+    // console.log($('.currencyType').text(currencyType));
 
     
     if (data.status == 400) {
@@ -541,15 +541,15 @@ function getClinicInvoiceList(date) {
         for( var i = 0; i < data.transaction_lists.length; i++ ){
           $("#invoice-items-table").append('<tr>' +
             '<td style="text-align: left !important;">' + data.transaction_lists[i].transaction_id + ' ' +  data.transaction_lists[i].customer +'</td>' +
-            '<td><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> '+ data.transaction_lists[i].mednefits_fee + '</b></td>' +
-            '<td><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> ' + data.transaction_lists[i].mednefits_credits + '</b></td>' +
-            '<td><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> ' + data.transaction_lists[i].total + '</b></td>' +
+            '<td><b><span style="text-transform: uppercase">' + data.transaction_lists[i].currency_type + '</span> '+ data.transaction_lists[i].mednefits_fee + '</b></td>' +
+            '<td><b><span style="text-transform: uppercase">' + data.transaction_lists[i].currency_type + '</span> ' + data.transaction_lists[i].mednefits_credits + '</b></td>' +
+            '<td><b><span style="text-transform: uppercase">' + data.transaction_lists[i].currency_type + '</span> ' + data.transaction_lists[i].total + '</b></td>' +
           '</tr>');
         }
 
         $("#invoice-items-table").append('<tr>' +
             '<td colspan="3" style="text-align:right;border: none !important;"><b>Total Amount Due <span style="display: inline-block">(SGD)</span><span style="display: none">(RM)</span>:</b></td>' +
-            '<td style="border: none !important;"><b><span style="text-transform: uppercase">' + data.clinic.currency_type + '</span> ' + data.total + '</b></td>' +
+            '<td style="border: none !important;"><b><span style="text-transform: uppercase">' + data.currency_type + '</span> ' + data.total + '</b></td>' +
           '</tr>');
 
         if (data.clinic) {
