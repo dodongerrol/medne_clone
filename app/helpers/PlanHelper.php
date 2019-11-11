@@ -1391,7 +1391,7 @@ class PlanHelper {
 
 			$user = new User();
 
-			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+			$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
             // try {
 			$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 			if(!$customer_active_plan_id) {
@@ -1520,7 +1520,7 @@ class PlanHelper {
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $data_enrollee->credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer_data->currency_type
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1537,7 +1537,7 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => $customer->balance - $data_enrollee->credits,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer_data->currency_type
 						);
 
 						$customer_credit_logs = new CustomerCreditLogs( );
@@ -1567,7 +1567,7 @@ class PlanHelper {
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $data_enrollee->wellness_credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer_data->currency_type
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1582,7 +1582,7 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => $customer->wellness_credits - $data_enrollee->wellness_credits,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer_data->currency_type
 						);
 						$customer_credits_logs = new CustomerWellnessCreditLogs();
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);

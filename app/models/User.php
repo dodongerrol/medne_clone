@@ -117,7 +117,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
         public function createUserFromCorporate($data){
                 $customer_id = PlanHelper::getCusomerIdToken();
-                $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
+                $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
                 $this->Name = $data['Name'];
                 $this->Password = $data['Password'];
