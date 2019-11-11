@@ -4780,7 +4780,7 @@ public function getEclaimDetails($id)
       $status_text = 'Pending';
     }
 
-    if($res->currency_type == "myr" && $res->default_currency == "myr") {
+    if($transaction->currency_type == "myr" && $transaction->default_currency == "myr") {
       $currency_symbol = "MYR";
     } else {
       $currency_symbol = "SGD";
