@@ -166,17 +166,40 @@ class EclaimController extends \BaseController {
 
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($user_id);
-		// $check_plan = PlanHelper::checkEmployeePlanStatus($employee->UserID);
+		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
 			}
 		}
 
+		$currency_data = DB::table('currency_options')->where('currency_type', $check_user_balance->currency_type)->first();
+		if($currency_data) {
+			$currency = $currency_data->currency_value;
+		} else {
+			$currency = 3.00;
+		}
+
+		if($check_user_balance->currency_type == $input['currency_type'] && $check_user_balance->currency_type == "myr") {
+	    $amount = trim($input['amount']);
+	  } else {
+	    if(Input::has('currency_type') && $input['currency_type'] != null) {
+	      if(strtolower($input['currency_type']) == "myr") {
+	        $amount = $input['amount'] / $currency;
+	      } else {
+	        $amount = trim($input['amount']);
+	      }
+	    } else {
+	      $amount = trim($input['amount']);
+	    }
+	  }
+
 		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
     $customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
+
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 	    // recalculate employee balance
 			PlanHelper::reCalculateEmployeeBalance($user_id);
@@ -186,21 +209,20 @@ class EclaimController extends \BaseController {
       // return $check_user_balance->balance;
       $balance = round($check_user_balance->balance, 2);
 
-			if($input['amount'] > $balance || $balance <= 0) {
+			if($amount > $balance || $balance <= 0) {
 				return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
 			}
 	    // check user pending e-claims amount
 			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
 			$total_claim_amount = $check_user_balance->balance - $claim_amounts;
-			$amount = trim($input['amount']);
+			$amount = trim($amount);
 			$total_claim_amount = trim($total_claim_amount);
 
 			if($amount > $total_claim_amount) {
 				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
 			}
     } else {
-    	$amount = trim($input['amount']);
-    	$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+    	$amount = trim($amount);
     }
 
     // get customer id
@@ -360,6 +382,28 @@ class EclaimController extends \BaseController {
 			}
 		}
 
+		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
+		$currency_data = DB::table('currency_options')->where('currency_type', $check_user_balance->currency_type)->first();
+		if($currency_data) {
+			$currency = $currency_data->currency_value;
+		} else {
+			$currency = 3.00;
+		}
+
+		if($check_user_balance->currency_type == $input['currency_type'] && $check_user_balance->currency_type == "myr") {
+	    $amount = trim($input['amount']);
+	  } else {
+	    if(Input::has('currency_type') && $input['currency_type'] != null) {
+	      if(strtolower($input['currency_type']) == "myr") {
+	        $amount = $input['amount'] / $currency;
+	      } else {
+	        $amount = trim($input['amount']);
+	      }
+	    } else {
+	      $amount = trim($input['amount']);
+	    }
+	  }
+
 		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
     $customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
@@ -372,7 +416,7 @@ class EclaimController extends \BaseController {
 			$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
 			$balance = round($check_user_balance->wellness_balance, 2);
 			
-			if($input['amount'] > $balance || $balance <= 0) {
+			if($amount > $balance || $balance <= 0) {
 				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 			}
 
@@ -381,11 +425,9 @@ class EclaimController extends \BaseController {
 
 			$total_claim_amount = $check_user_balance->wellness_balance - $claim_amounts;
 	    // return $total_claim_amount;
-			if(floatval($input['amount']) > floatval($total_claim_amount)) {
+			if(floatval($amount) > floatval($total_claim_amount)) {
 				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
 			}
-    } else {
-    	$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
     }
 
     // get customer id
@@ -397,7 +439,7 @@ class EclaimController extends \BaseController {
 			'user_id'   => $input['user_id'],
 			'service'   => $input['service'],
 			'merchant'  => $input['merchant'],
-			'amount'    => $input['amount'],
+			'amount'    => $amount,
 			'date'      => date('Y-m-d', strtotime($input['date'])),
 			'time'      => $time,
 			'spending_type' => 'wellness',
