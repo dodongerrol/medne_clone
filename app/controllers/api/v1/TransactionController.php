@@ -58,24 +58,24 @@ class Api_V1_TransactionController extends \BaseController
 					$user = DB::table('user')->where('UserID', $findUserID)->first();
 					if((int)$type['user_type'] == 5 && (int)$type['access_type'] == 0 || (int)$type['user_type'] == 5 && (int)$type['access_type'] == 1)
 					{
-					   $user_id = $findUserID;
-					   $customer_id = $findUserID;
-					   $email_address = $user->Email;
-					   $dependent_user = false;
+						$user_id = $findUserID;
+						$customer_id = $findUserID;
+						$email_address = $user->Email;
+						$dependent_user = false;
 					} else {
 					                // find owner
-					   $owner = DB::table('employee_family_coverage_sub_accounts')
-					   ->where('user_id', $findUserID)
-					   ->first();
-					   $user_id = $owner->owner_id;
-					   $user_email = DB::table('user')->where('UserID', $user_id)->first();
-					   $email_address = $user_email->Email;
-					   $customer_id = $findUserID;
-					   $dependent_user = true;
+						$owner = DB::table('employee_family_coverage_sub_accounts')
+						->where('user_id', $findUserID)
+						->first();
+						$user_id = $owner->owner_id;
+						$user_email = DB::table('user')->where('UserID', $user_id)->first();
+						$email_address = $user_email->Email;
+						$customer_id = $findUserID;
+						$dependent_user = true;
 					}
 
 					// check block access
-          $block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
+					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 					if($block) {
 						$returnObject->status = FALSE;
 						$returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
@@ -88,17 +88,17 @@ class Api_V1_TransactionController extends \BaseController
 					$consultation_fees = 0;
 
 					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-          $customer_active_plan = DB::table('customer_active_plan')
-                                    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                                    ->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
 
-          if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-            $spending_type = $clinic_type->spending_type;
-            $user_credits = 100000000000;
-            $wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
-          } else {
+					if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+						$spending_type = $clinic_type->spending_type;
+						$user_credits = 100000000000;
+						$wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
+					} else {
 						// recalculate employee balance
-	         	PlanHelper::reCalculateEmployeeBalance($user_id);
+						PlanHelper::reCalculateEmployeeBalance($user_id);
 						// check user credits and amount key in
 						$spending_type = "medical";
 						$wallet_user = DB::table('e_wallet')->where('UserID', $user_id)->first();
@@ -113,21 +113,21 @@ class Api_V1_TransactionController extends \BaseController
 
 						if($user_credits == 0) {
 							$returnObject->status = FALSE;
-	            $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
-	            $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-	            return Response::json($returnObject);
+							$returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
+							$returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+							return Response::json($returnObject);
 						}
-          }
+					}
 
-          $currency_data = DB::table('currency_options')->where('currency_type', $wallet_user->currency_type)->first();
-          $user_curreny_type = $wallet_user->currency_type;
-          if($currency_data) {
-          	$currency = $currency_data->currency_value;
-          	$currency_data_type = $currency_data->currency_type;
-          } else {
-          	$currency = 3.00;
-          	$currency_data_type = "sgd";
-          }
+					$currency_data = DB::table('currency_options')->where('currency_type', $wallet_user->currency_type)->first();
+					$user_curreny_type = $wallet_user->currency_type;
+					if($currency_data) {
+						$currency = $currency_data->currency_value;
+						$currency_data_type = $currency_data->currency_type;
+					} else {
+						$currency = 3.00;
+						$currency_data_type = "sgd";
+					}
 
 
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
@@ -155,9 +155,9 @@ class Api_V1_TransactionController extends \BaseController
 
 
 					if($clinic->currency_type == "myr") {
-					  $total_amount = $input_amount / 3;
+						$total_amount = $input_amount / 3;
 					} else {
-					  $total_amount = $input_amount;
+						$total_amount = $input_amount;
 					}
 
 					// if($total_amount > $user_credits) {
@@ -178,14 +178,14 @@ class Api_V1_TransactionController extends \BaseController
 					$cap_amount = 0;
 					if($plan_tier) {
 						if($wallet_user->cap_per_visit_medical > 0) {
-						  $cap_amount = $wallet_user->cap_per_visit_medical;
+							$cap_amount = $wallet_user->cap_per_visit_medical;
 						} else {
-						  $cap_amount = $plan_tier->gp_cap_per_visit;
+							$cap_amount = $plan_tier->gp_cap_per_visit;
 						}
 					} else {
-					  if($wallet_user->cap_per_visit_medical > 0) {
-					    $cap_amount = $wallet_user->cap_per_visit_medical;
-					  }
+						if($wallet_user->cap_per_visit_medical > 0) {
+							$cap_amount = $wallet_user->cap_per_visit_medical;
+						}
 					}
 
 					if($wallet_user->currency_type == "myr") {
@@ -234,9 +234,9 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					$transaction = new Transaction();
-  				$wallet = new Wallet( );
+					$wallet = new Wallet( );
 
-  				$multiple = false;
+					$multiple = false;
 					if(sizeof($input['services']) > 1) {
 						$services = 0;
 						$multiple_service_selection = 1;
@@ -276,38 +276,38 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					$data = array(
-				   'UserID'                => $customer_id,
-				   'ProcedureID'           => $services,
-				   'date_of_transaction'   => $date_of_transaction,
-				   'claim_date'            => $date_of_transaction,
-				   'ClinicID'              => $input['clinic_id'],
-				   'procedure_cost'        => $total_procedure_cost,
-				   'AppointmenID'          => 0,
-				   'revenue'               => 0,
-				   'debit'                 => 0,
-				   'clinic_discount'       => $clinic->discount,
-				   'medi_percent'          => $clinic->medicloud_transaction_fees,
-				   'currency_type'         => $clinic->currency_type,
-				   'wallet_use'            => 1,
-				   'current_wallet_amount' => $wallet_user->balance,
-				   'credit_cost'           => $total_credits_cost,
-				   'paid'                  => 1,
-				   'co_paid_status'        => $co_paid_status,
-				   'co_paid_amount'        => $co_paid_amount,
-				   'DoctorID'              => 0,
-				   'backdate_claim'        => 1,
-				   'in_network'            => 1,
-				   'mobile'                => 1,
-				   'multiple_service_selection' => $multiple_service_selection,
-				   'currency_type'         => $clinic->currency_type,
-				   'lite_plan_enabled'     => $lite_plan_enabled,
-				   'cash_cost'            => $cash,
-				   'half_credits'          => $half_payment == true ? 1 : 0,
-				   'consultation_fees'      => $consultation_fees,
-				   'cap_per_visit'        => $cap_amount,
-           'created_at'						 => $date_of_transaction,
-           'updated_at'						 => $date_of_transaction,
-           'default_currency'			=> $currency_data_type
+						'UserID'                => $customer_id,
+						'ProcedureID'           => $services,
+						'date_of_transaction'   => $date_of_transaction,
+						'claim_date'            => $date_of_transaction,
+						'ClinicID'              => $input['clinic_id'],
+						'procedure_cost'        => $total_procedure_cost,
+						'AppointmenID'          => 0,
+						'revenue'               => 0,
+						'debit'                 => 0,
+						'clinic_discount'       => $clinic->discount,
+						'medi_percent'          => $clinic->medicloud_transaction_fees,
+						'currency_type'         => $clinic->currency_type,
+						'wallet_use'            => 1,
+						'current_wallet_amount' => $wallet_user->balance,
+						'credit_cost'           => $total_credits_cost,
+						'paid'                  => 1,
+						'co_paid_status'        => $co_paid_status,
+						'co_paid_amount'        => $co_paid_amount,
+						'DoctorID'              => 0,
+						'backdate_claim'        => 1,
+						'in_network'            => 1,
+						'mobile'                => 1,
+						'multiple_service_selection' => $multiple_service_selection,
+						'currency_type'         => $clinic->currency_type,
+						'lite_plan_enabled'     => $lite_plan_enabled,
+						'cash_cost'            => $cash,
+						'half_credits'          => $half_payment == true ? 1 : 0,
+						'consultation_fees'      => $consultation_fees,
+						'cap_per_visit'        => $cap_amount,
+						'created_at'						 => $date_of_transaction,
+						'updated_at'						 => $date_of_transaction,
+						'default_currency'			=> $currency_data_type
 					);
 
 					if($clinic_peak_status) {
@@ -321,7 +321,7 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					if($currency) {
-					 $data['currency_amount'] = $currency;
+						$data['currency_amount'] = $currency;
 					}
 
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
@@ -344,8 +344,8 @@ class Api_V1_TransactionController extends \BaseController
 
 							if($multiple == true) {
 								foreach ($input['services'] as $key => $value) {
-								  $procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value)->first();
-								  $procedure_temp .= ucwords($procedure_data->Name).',';
+									$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value)->first();
+									$procedure_temp .= ucwords($procedure_data->Name).',';
 								}
 								$procedure = rtrim($procedure_temp, ',');
 							} else {
@@ -393,26 +393,26 @@ class Api_V1_TransactionController extends \BaseController
 										$total_credits_cost = $total_credits_cost * $currency;
 										$consultation_fees = $consultation_fees * $currency;
 										$lite_plan_credits_log = array(
-										 'wallet_id'     => $wallet_user->wallet_id,
-										 'credit'        => $consultation_fees,
-										 'logs'          => 'deducted_from_mobile_payment',
-										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
-										 'where_spend'   => 'in_network_transaction',
-										 'id'            => $transaction_id,
-										 'lite_plan_enabled' => 1,
-										 'currency_type' => $user_curreny_type,
+											'wallet_id'     => $wallet_user->wallet_id,
+											'credit'        => $consultation_fees,
+											'logs'          => 'deducted_from_mobile_payment',
+											'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+											'where_spend'   => 'in_network_transaction',
+											'id'            => $transaction_id,
+											'lite_plan_enabled' => 1,
+											'currency_type' => $user_curreny_type,
 											'currency_value'	=> $currency
 										);
 									} else {
 										$lite_plan_credits_log = array(
-										 'wallet_id'     => $wallet_user->wallet_id,
-										 'credit'        => $consultation_fees,
-										 'logs'          => 'deducted_from_mobile_payment',
-										 'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
-										 'where_spend'   => 'in_network_transaction',
-										 'id'            => $transaction_id,
-										 'lite_plan_enabled' => 1,
-										 'currency_type' => $user_curreny_type,
+											'wallet_id'     => $wallet_user->wallet_id,
+											'credit'        => $consultation_fees,
+											'logs'          => 'deducted_from_mobile_payment',
+											'running_balance' => $wallet_user->balance - $total_credits_cost - $consultation_fees,
+											'where_spend'   => 'in_network_transaction',
+											'id'            => $transaction_id,
+											'lite_plan_enabled' => 1,
+											'currency_type' => $user_curreny_type,
 											'currency_value'	=> $currency
 										);
 									}
@@ -722,166 +722,166 @@ class Api_V1_TransactionController extends \BaseController
 				}
 			} else {
 				$returnObject->status = FALSE;
-	      $returnObject->message = StringHelper::errorMessage("Token");
-	      return Response::json($returnObject);
+				$returnObject->message = StringHelper::errorMessage("Token");
+				return Response::json($returnObject);
 			}
 		} else {
 			$returnObject->status = FALSE;
-      $returnObject->message = StringHelper::errorMessage("Token");
-      return Response::json($returnObject);
+			$returnObject->message = StringHelper::errorMessage("Token");
+			return Response::json($returnObject);
 		}
 	}
 
 	public function notifyClinicDirectPayment( )
-{
-   $AccessToken = new Api_V1_AccessTokenController();
-   $returnObject = new stdClass();
-   $authSession = new OauthSessions();
-   $getRequestHeader = StringHelper::requestHeader();
-   $input = Input::all();
+	{
+		$AccessToken = new Api_V1_AccessTokenController();
+		$returnObject = new stdClass();
+		$authSession = new OauthSessions();
+		$getRequestHeader = StringHelper::requestHeader();
+		$input = Input::all();
 
-   if(!empty($getRequestHeader['Authorization'])){
-      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
-      if($getAccessToken){
-         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+		if(!empty($getRequestHeader['Authorization'])){
+			$getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+			if($getAccessToken){
+				$findUserID = $authSession->findUserID($getAccessToken->session_id);
                 // return $findUserID;
-         if($findUserID){
-         		$input_amount = 0;
-            if(!isset($input['services'])) {
-               $returnObject->status = FALSE;
-               $returnObject->message = 'Please choose a service.';
-               return Response::json($returnObject);
-           } 
-           if(sizeof($input['services']) == 0) {
-               $returnObject->status = FALSE;
-               $returnObject->message = 'Please choose a service.';
-               return Response::json($returnObject);
-           }
+				if($findUserID){
+					$input_amount = 0;
+					if(!isset($input['services'])) {
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Please choose a service.';
+						return Response::json($returnObject);
+					} 
+					if(sizeof($input['services']) == 0) {
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Please choose a service.';
+						return Response::json($returnObject);
+					}
 
-           if(is_array($input['services']) == false) {
-               $returnObject->status = FALSE;
-               $returnObject->message = 'Parameter error. service should be an array';
-               return Response::json($returnObject);
-           }
+					if(is_array($input['services']) == false) {
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Parameter error. service should be an array';
+						return Response::json($returnObject);
+					}
 
-           if(!isset($input['clinic_id'])) {
-               $returnObject->status = FALSE;
-               $returnObject->message = 'Please choose a clinic.';
-               return Response::json($returnObject);
-           }
+					if(!isset($input['clinic_id'])) {
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Please choose a clinic.';
+						return Response::json($returnObject);
+					}
 
-           if(isset($input['input_amount'])) {
-           	$input_amount = trim($input['input_amount']);
-           }
+					if(isset($input['input_amount'])) {
+						$input_amount = trim($input['input_amount']);
+					}
 
         				// check block access
-           $block = PlanHelper::checkCompanyBlockAccess($findUserID, $input['clinic_id']);
+					$block = PlanHelper::checkCompanyBlockAccess($findUserID, $input['clinic_id']);
 
-           if($block) {
-               $returnObject->status = FALSE;
-               $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
-               return Response::json($returnObject);
-           }
+					if($block) {
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
+						return Response::json($returnObject);
+					}
 
-           $returnObject->status = TRUE;
-           $returnObject->message = 'Success.';
+					$returnObject->status = TRUE;
+					$returnObject->message = 'Success.';
                     // check user type 
-           $type = StringHelper::checkUserType($findUserID);
-           $lite_plan_status = false;
-           $lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
-           $currency = 3.00;
+					$type = StringHelper::checkUserType($findUserID);
+					$lite_plan_status = false;
+					$lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
+					$currency = 3.00;
 
-           $user = DB::table('user')->where('UserID', $findUserID)->first();
-           if($type['user_type'] == 5 && $type['access_type'] == 0 || $type['user_type'] == "5" && $type['access_type'] == "0" || $type['user_type'] == 5 && $type['access_type'] == 1 || $type['user_type'] == "5" && $type['access_type'] == "1")
-           {
-               $user_id = $findUserID;
-               $customer_id = $findUserID;
-           } else {
+					$user = DB::table('user')->where('UserID', $findUserID)->first();
+					if($type['user_type'] == 5 && $type['access_type'] == 0 || $type['user_type'] == "5" && $type['access_type'] == "0" || $type['user_type'] == 5 && $type['access_type'] == 1 || $type['user_type'] == "5" && $type['access_type'] == "1")
+					{
+						$user_id = $findUserID;
+						$customer_id = $findUserID;
+					} else {
                         // find owner
-               $owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $findUserID)->first();
-               $user_id = $owner->owner_id;
+						$owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $findUserID)->first();
+						$user_id = $owner->owner_id;
                         // $user_id = $findUserID;
-               $customer_id = $findUserID;
-           }
+						$customer_id = $findUserID;
+					}
 
-           $transaction = new Transaction();
-           $wallet = new Wallet( );
-           $clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
-           $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
+					$transaction = new Transaction();
+					$wallet = new Wallet( );
+					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
+					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
 
                     // check if multiple services selected
-           $multiple = false;
-           if(sizeof($input['services']) == 1) {
-               $services = $input['services'][0];
-               $multiple_service_selection = 0;
-               $multiple = false;
-           } else {
-               $services = 0;
-               $multiple_service_selection = 1;
-               $multiple = true;
-           }
+					$multiple = false;
+					if(sizeof($input['services']) == 1) {
+						$services = $input['services'][0];
+						$multiple_service_selection = 0;
+						$multiple = false;
+					} else {
+						$services = 0;
+						$multiple_service_selection = 1;
+						$multiple = true;
+					}
 
-          $wallet_data = $wallet->getUserWallet($user_id);
-          $date_of_transaction = null;
+					$wallet_data = $wallet->getUserWallet($user_id);
+					$date_of_transaction = null;
 
-          if(!empty($input['check_out_time']) && $input['check_out_time'] != null) {
-            $date_of_transaction = date('Y-m-d H:i:s', strtotime($input['check_out_time']));
-          } else {
-            $date_of_transaction = date('Y-m-d H:i:s');
-          }
+					if(!empty($input['check_out_time']) && $input['check_out_time'] != null) {
+						$date_of_transaction = date('Y-m-d H:i:s', strtotime($input['check_out_time']));
+					} else {
+						$date_of_transaction = date('Y-m-d H:i:s');
+					}
 
-          $clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $date_of_transaction, $user_id);
-          $peak_amount = $clinic_co_payment['peak_amount'];
-          $co_paid_amount = $clinic_co_payment['co_paid_amount'];
-          $co_paid_status = $clinic_co_payment['co_paid_status'];
-          $clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
+					$clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $date_of_transaction, $user_id);
+					$peak_amount = $clinic_co_payment['peak_amount'];
+					$co_paid_amount = $clinic_co_payment['co_paid_amount'];
+					$co_paid_status = $clinic_co_payment['co_paid_status'];
+					$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 
-           if($lite_plan_status && $clinic_type->lite_plan_enabled == 1) {
-              $lite_plan_enabled = 1;
-              $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
-           } else {
-              $lite_plan_enabled = 0;
-              $consultation_fees = 0;
-           }
+					if($lite_plan_status && $clinic_type->lite_plan_enabled == 1) {
+						$lite_plan_enabled = 1;
+						$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
+					} else {
+						$lite_plan_enabled = 0;
+						$consultation_fees = 0;
+					}
 
-           if($clinic_data->currency_type == "myr") {
-						  $total_amount = $input_amount / 3;
-						} else {
-						  $total_amount = $input_amount;
-						}
+					if($clinic_data->currency_type == "myr") {
+						$total_amount = $input_amount / 3;
+					} else {
+						$total_amount = $input_amount;
+					}
 
-           $data = array(
-               'UserID'                => $customer_id,
-               'ProcedureID'           => $services,
-               'date_of_transaction'   => $date_of_transaction,
-               'ClinicID'              => $input['clinic_id'],
-               'procedure_cost'        => $total_amount,
-               'AppointmenID'          => 0,
-               'revenue'               => 0,
-               'debit'                 => 0,
-               'medi_percent'          => $clinic_data->medicloud_transaction_fees,
-               'clinic_discount'       => $clinic_data->discount,
-               'wallet_use'            => 0,
-               'current_wallet_amount' => $wallet_data->balance,
-               'credit_cost'           => 0,
-               'paid'                  => 1,
-               'co_paid_status'        => $co_paid_status,
-               'co_paid_amount'        => $co_paid_amount,
-               'DoctorID'              => 0,
-               'backdate_claim'        => 1,
-               'in_network'            => 1,
-               'mobile'                => 1,
-               'health_provider_done'  => 1,
-               'multiple_service_selection' => $multiple_service_selection,
-               'spending_type'         => $clinic_type->spending_type,
-               'lite_plan_enabled'     => $lite_plan_enabled,
-               'currency_type'				 => $clinic_data->currency_type,
-               'consultation_fees'		 => $consultation_fees,
-               'created_at'						 => $date_of_transaction,
-               'updated_at'						 => $date_of_transaction
-           );
+					$data = array(
+						'UserID'                => $customer_id,
+						'ProcedureID'           => $services,
+						'date_of_transaction'   => $date_of_transaction,
+						'ClinicID'              => $input['clinic_id'],
+						'procedure_cost'        => $total_amount,
+						'AppointmenID'          => 0,
+						'revenue'               => 0,
+						'debit'                 => 0,
+						'medi_percent'          => $clinic_data->medicloud_transaction_fees,
+						'clinic_discount'       => $clinic_data->discount,
+						'wallet_use'            => 0,
+						'current_wallet_amount' => $wallet_data->balance,
+						'credit_cost'           => 0,
+						'paid'                  => 1,
+						'co_paid_status'        => $co_paid_status,
+						'co_paid_amount'        => $co_paid_amount,
+						'DoctorID'              => 0,
+						'backdate_claim'        => 1,
+						'in_network'            => 1,
+						'mobile'                => 1,
+						'health_provider_done'  => 1,
+						'multiple_service_selection' => $multiple_service_selection,
+						'spending_type'         => $clinic_type->spending_type,
+						'lite_plan_enabled'     => $lite_plan_enabled,
+						'currency_type'				 => $clinic_data->currency_type,
+						'consultation_fees'		 => $consultation_fees,
+						'created_at'						 => $date_of_transaction,
+						'updated_at'						 => $date_of_transaction
+					);
 
-           if($clinic_peak_status) {
+					if($clinic_peak_status) {
 						$data['peak_hour_status'] = 1;
 						if((int)$clinic_data->co_paid_status == 1) {
 							$gst_peak = $peak_amount * $clinic_data->gst_percent;
@@ -892,289 +892,289 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					if($currency) {
-					 $data['currency_amount'] = $currency;
+						$data['currency_amount'] = $currency;
 					}
 					
-           try {
+					try {
 
-               $result = $transaction->createTransaction($data);
-               $transaction_id = $result->id;
+						$result = $transaction->createTransaction($data);
+						$transaction_id = $result->id;
 
-               if($result) {
+						if($result) {
                             // insert transation services
-                  $ts = new TransctionServices( );
-                  $save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+							$ts = new TransctionServices( );
+							$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
 
-                  if($lite_plan_enabled == 1) {
-										$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();
-										
-										if($data['spending_type'] == "medical") {
-											$balance = $wallet_data->balance;
-										} else {
-											$balance = $wallet_data->wellness_balance;
-										}
+							if($lite_plan_enabled == 1) {
+								$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();
+
+								if($data['spending_type'] == "medical") {
+									$balance = $wallet_data->balance;
+								} else {
+									$balance = $wallet_data->wellness_balance;
+								}
 										// check user credits and deduct
 
-										if($balance >= $consultation_fees) {
-											$wallet = new Wallet( );
+								if($balance >= $consultation_fees) {
+									$wallet = new Wallet( );
 											// deduct wallet
-											$lite_plan_credits_log = array(
-												'wallet_id'     => $wallet_data->wallet_id,
-												'credit'        => $consultation_fees,
-												'logs'          => 'deducted_from_mobile_payment',
-												'running_balance' => $balance - $consultation_fees,
-												'where_spend'   => 'in_network_transaction',
-												'id'            => $transaction_id,
-												'lite_plan_enabled' => 1,
-											);
+									$lite_plan_credits_log = array(
+										'wallet_id'     => $wallet_data->wallet_id,
+										'credit'        => $consultation_fees,
+										'logs'          => 'deducted_from_mobile_payment',
+										'running_balance' => $balance - $consultation_fees,
+										'where_spend'   => 'in_network_transaction',
+										'id'            => $transaction_id,
+										'lite_plan_enabled' => 1,
+									);
 
-											try {
+									try {
 												// create logs
-												if($data['spending_type'] == "medical") {
-													$deduct_history = \WalletHistory::create($lite_plan_credits_log);
-													$wallet_history_id = $deduct_history->id;
-												} else {
-													$deduct_history = \WellnessWalletHistory::create($lite_plan_credits_log);
-													$wallet_history_id = $deduct_history->id;
-												}
+										if($data['spending_type'] == "medical") {
+											$deduct_history = \WalletHistory::create($lite_plan_credits_log);
+											$wallet_history_id = $deduct_history->id;
+										} else {
+											$deduct_history = \WellnessWalletHistory::create($lite_plan_credits_log);
+											$wallet_history_id = $deduct_history->id;
+										}
 
-												if($data['spending_type'] == "medical") {
-													$wallet->deductCredits($user_id, $data['co_paid_amount']);
-												} else {
-													$wallet->deductWellnessCredits($user_id, $data['co_paid_amount']);
-												}
+										if($data['spending_type'] == "medical") {
+											$wallet->deductCredits($user_id, $data['co_paid_amount']);
+										} else {
+											$wallet->deductWellnessCredits($user_id, $data['co_paid_amount']);
+										}
 
 												// update transaction
-												$update_trans = array(
-													'lite_plan_use_credits' => 1
-												);
+										$update_trans = array(
+											'lite_plan_use_credits' => 1
+										);
 
-												$transaction->updateTransaction($transaction_id, $update_trans);
+										$transaction->updateTransaction($transaction_id, $update_trans);
 
-											} catch(Exception $e) {
+									} catch(Exception $e) {
 
-												if($data['spending_type'] == "medical") {
-													$history = new WalletHistory( );
-													$history->deleteFailedWalletHistory($wallet_history_id);
-												} else {
-													\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
-												}
-
-												$email = [];
-												$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
-												$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e;
-												$email['emailSubject'] = 'Error log.';
-												EmailHelper::sendErrorLogs($email);
-												return array('status' => FALSE, 'message' => 'Failed to save transaction.');
-											}
+										if($data['spending_type'] == "medical") {
+											$history = new WalletHistory( );
+											$history->deleteFailedWalletHistory($wallet_history_id);
+										} else {
+											\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
 										}
+
+										$email = [];
+										$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
+										$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e;
+										$email['emailSubject'] = 'Error log.';
+										EmailHelper::sendErrorLogs($email);
+										return array('status' => FALSE, 'message' => 'Failed to save transaction.');
 									}
+								}
+							}
 
                             // send notification to browser
-                  Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
+							Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
 
                             // send realtime update to claim clinic admin
                   // PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
 
                   // check if check_in_id exist
-                  if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
+							if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
                   // check check_in_id data
-                    $check_in = DB::table('user_check_in_clinic')
-                    ->where('check_in_id', $input['check_in_id'])
-                    ->first();
-                    if($check_in) {
+								$check_in = DB::table('user_check_in_clinic')
+								->where('check_in_id', $input['check_in_id'])
+								->first();
+								if($check_in) {
                   // update check in date
-                      DB::table('user_check_in_clinic')
-                      ->where('check_in_id', $input['check_in_id'])
-                      ->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
-                      PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
-                    }
-                  }
+									DB::table('user_check_in_clinic')
+									->where('check_in_id', $input['check_in_id'])
+									->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
+									PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
+								}
+							}
 
-              $returnObject->status = TRUE;
-              $returnObject->message = 'Transaction Done.';
-          }
-			      } catch(Exception $e) {
-			         $returnObject->status = FALSE;
-			         $returnObject->message = 'Cannot process payment direct to health provider. Please try again.';
+							$returnObject->status = TRUE;
+							$returnObject->message = 'Transaction Done.';
+						}
+					} catch(Exception $e) {
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Cannot process payment direct to health provider. Please try again.';
 			                        // send email logs
-			         $email = [];
-			         $email['end_point'] = url('v1/clinic/payment_direct', $parameter = array(), $secure = null);
-			         $email['logs'] = 'Mobile Payment Direct - '.$e;
-			         $email['emailSubject'] = 'Error log.';
-			         EmailHelper::sendErrorLogs($email);
-			     }
+						$email = [];
+						$email['end_point'] = url('v1/clinic/payment_direct', $parameter = array(), $secure = null);
+						$email['logs'] = 'Mobile Payment Direct - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+					}
 
-		     	return Response::json($returnObject);
-				 } else {
-				  $returnObject->status = FALSE;
-				  $returnObject->message = StringHelper::errorMessage("Token");
-				  return Response::json($returnObject);
+					return Response::json($returnObject);
+				} else {
+					$returnObject->status = FALSE;
+					$returnObject->message = StringHelper::errorMessage("Token");
+					return Response::json($returnObject);
 				}
 			} else {
-			   $returnObject->status = FALSE;
-			   $returnObject->message = StringHelper::errorMessage("Token");
-			   return Response::json($returnObject);
+				$returnObject->status = FALSE;
+				$returnObject->message = StringHelper::errorMessage("Token");
+				return Response::json($returnObject);
 			}
 		} else {
-		  $returnObject->status = FALSE;
-		  $returnObject->message = StringHelper::errorMessage("Token");
-		  return Response::json($returnObject);
+			$returnObject->status = FALSE;
+			$returnObject->message = StringHelper::errorMessage("Token");
+			return Response::json($returnObject);
 		}
 	}
 
 	public function getNetworkTransactions( )
 	{
-   $AccessToken = new Api_V1_AccessTokenController();
-   $returnObject = new stdClass();
-   $authSession = new OauthSessions();
-   $getRequestHeader = StringHelper::requestHeader();
-   $input = Input::all();
-   if(!empty($getRequestHeader['Authorization'])){
-      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
-      if($getAccessToken){
-         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+		$AccessToken = new Api_V1_AccessTokenController();
+		$returnObject = new stdClass();
+		$authSession = new OauthSessions();
+		$getRequestHeader = StringHelper::requestHeader();
+		$input = Input::all();
+		if(!empty($getRequestHeader['Authorization'])){
+			$getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+			if($getAccessToken){
+				$findUserID = $authSession->findUserID($getAccessToken->session_id);
 
-         if($findUserID){
-            $returnObject->status = TRUE;
-            $returnObject->message = 'Success.';
-            $user = DB::table('user')->where('UserID', $findUserID)->first();
-            $lite_plan_status = false;
+				if($findUserID){
+					$returnObject->status = TRUE;
+					$returnObject->message = 'Success.';
+					$user = DB::table('user')->where('UserID', $findUserID)->first();
+					$lite_plan_status = false;
             // $lite_plan_status = StringHelper::litePlanStatus($findUserID);
 
                     // $type = StringHelper::checkUserType($findUserID);
-            $transaction_details = [];
-            $ids = StringHelper::getSubAccountsID($findUserID);
-            $transactions = DB::table('transaction_history')->whereIn('UserID', $ids)->orderBy('created_at', 'desc')->get();
-              foreach ($transactions as $key => $trans) {
-               if($trans) {
-                  $receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
-                  $clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
-                  $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
-                  $customer = DB::table('user')->where('UserID', $trans->UserID)->first();
-                  $procedure_temp = "";
-                  $procedure = "";
+					$transaction_details = [];
+					$ids = StringHelper::getSubAccountsID($findUserID);
+					$transactions = DB::table('transaction_history')->whereIn('UserID', $ids)->orderBy('created_at', 'desc')->get();
+					foreach ($transactions as $key => $trans) {
+						if($trans) {
+							$receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
+							$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
+							$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
+							$customer = DB::table('user')->where('UserID', $trans->UserID)->first();
+							$procedure_temp = "";
+							$procedure = "";
                             // get services
-                  if((int)$trans->multiple_service_selection == 1)
-                  {
+							if((int)$trans->multiple_service_selection == 1)
+							{
                                 // get multiple service
-                     $service_lists = DB::table('transaction_services')
-                     ->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
-                     ->where('transaction_services.transaction_id', $trans->transaction_id)
-                     ->get();
+								$service_lists = DB::table('transaction_services')
+								->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
+								->where('transaction_services.transaction_id', $trans->transaction_id)
+								->get();
 
-                     foreach ($service_lists as $key => $service) {
-                        $procedure_temp .= ucwords($service->Name).',';
-                        $procedure = rtrim($procedure_temp, ',');
-                    }
-                    $clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
-                } else {
-                   $service_lists = DB::table('clinic_procedure')
-                   ->where('ProcedureID', $trans->ProcedureID)
-                   ->first();
-                   if($service_lists) {
-                      $procedure = ucwords($service_lists->Name);
-                      $clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
-                  } else {
-                      $clinic_name = ucwords($clinic_type->Name);
-                  }
-              }
+								foreach ($service_lists as $key => $service) {
+									$procedure_temp .= ucwords($service->Name).',';
+									$procedure = rtrim($procedure_temp, ',');
+								}
+								$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
+							} else {
+								$service_lists = DB::table('clinic_procedure')
+								->where('ProcedureID', $trans->ProcedureID)
+								->first();
+								if($service_lists) {
+									$procedure = ucwords($service_lists->Name);
+									$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
+								} else {
+									$clinic_name = ucwords($clinic_type->Name);
+								}
+							}
 
                             // check if there is a receipt image
-              $receipt = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->count();
+							$receipt = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->count();
 
-              if($receipt > 0) {
-                 $receipt_status = TRUE;
-             } else {
-                 $receipt_status = FALSE;
-             }
+							if($receipt > 0) {
+								$receipt_status = TRUE;
+							} else {
+								$receipt_status = FALSE;
+							}
 
 
-             $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
-             $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+							$clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
+							$transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
-             $total_amount = 0;
+							$total_amount = 0;
 
-             if(strripos($trans->procedure_cost, '$') !== false) {
-                 $temp_cost = explode('$', $trans->procedure_cost);
-                 $cost = $temp_cost[1];
-             } else {
-                 $cost = floatval($trans->procedure_cost);
-             }
+							if(strripos($trans->procedure_cost, '$') !== false) {
+								$temp_cost = explode('$', $trans->procedure_cost);
+								$cost = $temp_cost[1];
+							} else {
+								$cost = floatval($trans->procedure_cost);
+							}
 
-             $total_amount = $cost;
+							$total_amount = $cost;
 
-             if((int)$trans->health_provider_done == 1) {
-                 $receipt_status = TRUE;
-                 $health_provider_status = TRUE;
-                 if((int)$trans->lite_plan_enabled == 1) {
-                    $total_amount = $cost + $trans->consultation_fees;
-                } else {
-                    $total_amount = $cost;
-                }
-                $type = "cash";
-            } else {
-               $health_provider_status = FALSE;
-               if((int)$trans->lite_plan_enabled == 1) {
-               	if((int)$trans->half_credits == 1) {
-                  $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+							if((int)$trans->health_provider_done == 1) {
+								$receipt_status = TRUE;
+								$health_provider_status = TRUE;
+								if((int)$trans->lite_plan_enabled == 1) {
+									$total_amount = $cost + $trans->consultation_fees;
+								} else {
+									$total_amount = $cost;
+								}
+								$type = "cash";
+							} else {
+								$health_provider_status = FALSE;
+								if((int)$trans->lite_plan_enabled == 1) {
+									if((int)$trans->half_credits == 1) {
+										$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                   // $total_amount = $trans->credit_cost + $trans->cash_cost;
-               	} else {
-               		$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-               	}
-              } else {
-                  $total_amount = $cost;
-              }
-              $type = "credits";
-          	}
+									} else {
+										$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+									}
+								} else {
+									$total_amount = $cost;
+								}
+								$type = "credits";
+							}
 
-          $currency_symbol = null;
-          $converted_amount = null;
+							$currency_symbol = null;
+							$converted_amount = null;
 
-          if($trans->default_currency == "sgd") {
-            $currency_symbol = "SGD";
-            $converted_amount = $total_amount;
-          } else if($trans->default_currency == "myr") {
-            $currency_symbol = "MYR";
-            $converted_amount = $total_amount * $trans->currency_amount;
-            $total_amount = $converted_amount;
-          }
+							if($trans->default_currency == "sgd") {
+								$currency_symbol = "SGD";
+								$converted_amount = $total_amount;
+							} else if($trans->default_currency == "myr") {
+								$currency_symbol = "MYR";
+								$converted_amount = $total_amount * $trans->currency_amount;
+								$total_amount = $converted_amount;
+							}
 
-					$format = array(
-						'clinic_name'       => $clinic->Name,
-						'amount'            => number_format($total_amount, 2),
-						'converted_amount'  => number_format($converted_amount, 2),
-						'currency_symbol'   => $currency_symbol,
-						'clinic_type_and_service' => $clinic_name,
-						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
-						'customer'          => ucwords($customer->Name),
-						'transaction_id'    => (string)$transaction_id,
-						'receipt_status'    => $receipt_status,
-						'health_provider_status' => $health_provider_status,
-						'user_id'           => (string)$trans->UserID,
-						'type'              => $type,
-						'refunded'          => (int)$trans->refunded == 1 ? TRUE : FALSE
-					);
+							$format = array(
+								'clinic_name'       => $clinic->Name,
+								'amount'            => number_format($total_amount, 2),
+								'converted_amount'  => number_format($converted_amount, 2),
+								'currency_symbol'   => $currency_symbol,
+								'clinic_type_and_service' => $clinic_name,
+								'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
+								'customer'          => ucwords($customer->Name),
+								'transaction_id'    => (string)$transaction_id,
+								'receipt_status'    => $receipt_status,
+								'health_provider_status' => $health_provider_status,
+								'user_id'           => (string)$trans->UserID,
+								'type'              => $type,
+								'refunded'          => (int)$trans->refunded == 1 ? TRUE : FALSE
+							);
 
-	        array_push($transaction_details, $format);
-	      }
-	  }
-		  $returnObject->data = $transaction_details;
-		  return Response::json($returnObject);
+							array_push($transaction_details, $format);
+						}
+					}
+					$returnObject->data = $transaction_details;
+					return Response::json($returnObject);
+				} else {
+					$returnObject->status = FALSE;
+					$returnObject->message = StringHelper::errorMessage("Token");
+					return Response::json($returnObject);
+				}
+			} else {
+				$returnObject->status = FALSE;
+				$returnObject->message = StringHelper::errorMessage("Token");
+				return Response::json($returnObject);
+			}
 		} else {
-		  $returnObject->status = FALSE;
-		  $returnObject->message = StringHelper::errorMessage("Token");
-		  return Response::json($returnObject);
-		}
-		} else {
-		   $returnObject->status = FALSE;
-		   $returnObject->message = StringHelper::errorMessage("Token");
-		   return Response::json($returnObject);
-		}
-		} else {
-		  $returnObject->status = FALSE;
-		  $returnObject->message = StringHelper::errorMessage("Token");
-		  return Response::json($returnObject);
+			$returnObject->status = FALSE;
+			$returnObject->message = StringHelper::errorMessage("Token");
+			return Response::json($returnObject);
 		}
 	}
 
@@ -1191,9 +1191,9 @@ class Api_V1_TransactionController extends \BaseController
 
 			if($getAccessToken){
 				$findUserID = $authSession->findUserID($getAccessToken->session_id);
-        $transaction_id = (int)preg_replace('/[^0-9]/', '', $id);
+				$transaction_id = (int)preg_replace('/[^0-9]/', '', $id);
 
-        if($findUserID){
+				if($findUserID){
 					$returnObject->status = TRUE;
 					$returnObject->message = 'Success.';
 					$user_id = StringHelper::getUserId($findUserID);
@@ -1210,9 +1210,9 @@ class Api_V1_TransactionController extends \BaseController
 					$company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
 
 					if($company_wallet_status) {
-					   if($company_wallet_status == "Health Wallet") {
-					      $wallet_status = true;
-					  }
+						if($company_wallet_status == "Health Wallet") {
+							$wallet_status = true;
+						}
 					}
 
 					if($transaction) {
@@ -1223,32 +1223,32 @@ class Api_V1_TransactionController extends \BaseController
 						$procedure_temp = "";
 
 						if((int)$transaction->lite_plan_enabled == 1) {
-						  if($transaction->spending_type == 'medical') {
-						     $table_wallet_history = 'wallet_history';
-						   } else {
-						       $table_wallet_history = 'wellness_wallet_history';
-						   }
+							if($transaction->spending_type == 'medical') {
+								$table_wallet_history = 'wallet_history';
+							} else {
+								$table_wallet_history = 'wellness_wallet_history';
+							}
 
-						 $logs_lite_plan = DB::table($table_wallet_history)
-						 ->where('logs', 'deducted_from_mobile_payment')
-						 ->where('lite_plan_enabled', 1)
-						 ->where('id', $transaction->transaction_id)
-						 ->first();
+							$logs_lite_plan = DB::table($table_wallet_history)
+							->where('logs', 'deducted_from_mobile_payment')
+							->where('lite_plan_enabled', 1)
+							->where('id', $transaction->transaction_id)
+							->first();
 
-						 if($logs_lite_plan && $transaction->credit_cost > 0 && (int)$transaction->lite_plan_use_credits == 0) {
-						   $consultation_credits = true;
+							if($logs_lite_plan && $transaction->credit_cost > 0 && (int)$transaction->lite_plan_use_credits == 0) {
+								$consultation_credits = true;
 						    // $service_credits = true;
-						    $consultation = $logs_lite_plan->credit;
-						 } else if($logs_lite_plan && $transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 1) {
-						   $consultation_credits = true;
+								$consultation = $logs_lite_plan->credit;
+							} else if($logs_lite_plan && $transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 1) {
+								$consultation_credits = true;
 						    // $service_credits = true;
-						    $consultation = $logs_lite_plan->credit;
-						 } else if($transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 0) {
+								$consultation = $logs_lite_plan->credit;
+							} else if($transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 0) {
 						  // $total_consultation += floatval($trans->co_paid_amount);
-						    $consultation = floatval($transaction->consultation_fees);
-						 } else {
-						  $consultation = floatval($transaction->consultation_fees);
-						 }
+								$consultation = floatval($transaction->consultation_fees);
+							} else {
+								$consultation = floatval($transaction->consultation_fees);
+							}
 						}
 
 						$doc_files = [];
@@ -1264,10 +1264,10 @@ class Api_V1_TransactionController extends \BaseController
 							}
 
 							$temp_doc = array(
-							  'transaction_doc_id'    => $doc->image_receipt_id,
-							  'transaction_id'            => $doc->transaction_id,
-							  'file'                      => $fil,
-							  'file_type'             => $doc->type
+								'transaction_doc_id'    => $doc->image_receipt_id,
+								'transaction_id'            => $doc->transaction_id,
+								'file'                      => $fil,
+								'file_type'             => $doc->type
 							);
 
 							array_push($doc_files, $temp_doc);
@@ -1286,7 +1286,7 @@ class Api_V1_TransactionController extends \BaseController
 								$procedure_temp .= ucwords($service->Name).',';
 								$procedure = rtrim($procedure_temp, ',');
 							}
-								$service = $procedure;
+							$service = $procedure;
 						} else {
 							$service_lists = DB::table('clinic_procedure')
 							->where('ProcedureID', $transaction->ProcedureID)
@@ -1436,21 +1436,21 @@ class Api_V1_TransactionController extends \BaseController
 						}
 
 						if($transaction->default_currency == "sgd") {
-	            $currency_symbol = "SGD";
-	            $total_amount = $total_amount;
-	            if((int)$transaction->lite_plan_enabled == 1) {
+							$currency_symbol = "SGD";
+							$total_amount = $total_amount;
+							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = number_format($consultation, 2);
 							}
-	          } else if($transaction->default_currency == "myr") {
-	            $currency_symbol = "MYR";
-	            $total_amount = $total_amount * $transaction->currency_amount;
-	            $bill_amount = $bill_amount * $transaction->currency_amount;
-	            $cash_cost = $cash_cost * $transaction->currency_amount;
-	            $paid_by_credits = $paid_by_credits * $transaction->currency_amount;
-	            if((int)$transaction->lite_plan_enabled == 1) {
+						} else if($transaction->default_currency == "myr") {
+							$currency_symbol = "MYR";
+							$total_amount = $total_amount * $transaction->currency_amount;
+							$bill_amount = $bill_amount * $transaction->currency_amount;
+							$cash_cost = $cash_cost * $transaction->currency_amount;
+							$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
+							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
 							}
-	          }
+						}
 
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,
@@ -1471,7 +1471,7 @@ class Api_V1_TransactionController extends \BaseController
 							'lite_plan'         => $lite_plan_status,
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
 							'cap_transaction'   => $half_credits,
-    					'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
+							'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
 							'services' => $service,
 							'convert_option'		=> $transaction->default_currency != $transaction->currency_type ? true : false,
 							'currency_amount'		=> $transaction->currency_amount,
@@ -1485,11 +1485,11 @@ class Api_V1_TransactionController extends \BaseController
 						$returnObject->message = 'Transaction does not exist.';
 						return Response::json($returnObject);
 					}
-        } else {
+				} else {
 					$returnObject->status = FALSE;
 					$returnObject->message = StringHelper::errorMessage("Token");
 					return Response::json($returnObject);
-        }
+				}
 			} else {
 				$returnObject->status = FALSE;
 				$returnObject->message = StringHelper::errorMessage("Token");
@@ -1532,9 +1532,9 @@ class Api_V1_TransactionController extends \BaseController
 					$check = DB::table('transaction_history')->where('transaction_id', $transaction_id)->first();
 
 					if(!$check) {
-					 $returnObject->status = FALSE;
-					 $returnObject->message = 'Transaction data does not exist.';
-					 return Response::json($returnObject);
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Transaction data does not exist.';
+						return Response::json($returnObject);
 					}
 
 					if(empty(Input::file('files')) || sizeof(Input::file('files')) == 0) {
@@ -1544,70 +1544,70 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					$rules = array(
-            'file' => 'required | mimes:jpeg,jpg,png,pdf,xls,xlsx',
-          );
+						'file' => 'required | mimes:jpeg,jpg,png,pdf,xls,xlsx',
+					);
 
-          $trans_docs = new UserImageReceipt( );
-          $results = [];
+					$trans_docs = new UserImageReceipt( );
+					$results = [];
 					foreach (Input::file('files') as $key => $file) {
 						if(!$file) {
-              $returnObject->status = FALSE;
-              $returnObject->message = 'Please input a file.';
-              return Response::json($returnObject);
-            }
+							$returnObject->status = FALSE;
+							$returnObject->message = 'Please input a file.';
+							return Response::json($returnObject);
+						}
 
 						// check if file is image
 						$validator = Validator::make(
-						  array('file' => $file),
-						  $rules
+							array('file' => $file),
+							$rules
 						);
 
 						if($validator->passes()) {
-              $file_size = $file->getSize();
+							$file_size = $file->getSize();
               // check file size if exceeds 10 mb
-              if($file_size > 20000000) {
-                $returnObject->status = FALSE;
-                $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
-                return Response::json($returnObject);
-              }
-              
+							if($file_size > 20000000) {
+								$returnObject->status = FALSE;
+								$returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
+								return Response::json($returnObject);
+							}
+
               // if (false !== mb_strpos($file->getMimeType(), "video")) {
               //   $returnObject->status = FALSE;
               //   $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
               //   return Response::json($returnObject);
               // }
-            } else {
-              $returnObject->status = FALSE;
-              $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
-              return Response::json($returnObject);
-            }
-          }
+						} else {
+							$returnObject->status = FALSE;
+							$returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
+							return Response::json($returnObject);
+						}
+					}
 
-          try {
-	          foreach (Input::file('files') as $key => $file) {
+					try {
+						foreach (Input::file('files') as $key => $file) {
 	            // save receipt data
 							$file_name = time().' - '.$file->getClientOriginalName();
 							$aws_upload = false;
 							if($file->getClientOriginalExtension() == "pdf") {
-							    $receipt = array(
-						       'user_id'           => $findUserID,
-						       'transaction_id'    => $transaction_id,
-						       'file'  => $file_name,
-						       'type'  => "pdf"
-							   );
-							    $file->move(public_path().'/receipts/', $file_name);
-							    $aws_upload = true;
-							    $result = $trans_docs->saveReceipt($receipt);
+								$receipt = array(
+									'user_id'           => $findUserID,
+									'transaction_id'    => $transaction_id,
+									'file'  => $file_name,
+									'type'  => "pdf"
+								);
+								$file->move(public_path().'/receipts/', $file_name);
+								$aws_upload = true;
+								$result = $trans_docs->saveReceipt($receipt);
 							} else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
-							    $receipt = array(
-						       'user_id'           => $findUserID,
-						       'transaction_id'    => $transaction_id,
-						       'file'  => $file_name,
-						       'type'  => "excel"
-							   );
-							    $file->move(public_path().'/receipts/', $file_name);
-							    $aws_upload = true;
-							    $result = $trans_docs->saveReceipt($receipt);
+								$receipt = array(
+									'user_id'           => $findUserID,
+									'transaction_id'    => $transaction_id,
+									'file'  => $file_name,
+									'type'  => "excel"
+								);
+								$file->move(public_path().'/receipts/', $file_name);
+								$aws_upload = true;
+								$result = $trans_docs->saveReceipt($receipt);
 							} else {
 								// $random = StringHelper::get_random_password(6);
 								// $file_name = $random.'-'.$random;
@@ -1624,46 +1624,46 @@ class Api_V1_TransactionController extends \BaseController
 						  //      	'created_at'	=> date('Y-m-d H:i:s'),
 						  //      	'updated_at' => date('Y-m-d H:i:s')
 	       //          );
-						    $image = \Cloudinary\Uploader::upload($file->getPathName());
-						    $receipt = array(
-					       'user_id'           => $findUserID,
-					       'file'      => $image['secure_url'],
-					       'type'      => "image",
-					       'transaction_id'    => $transaction_id,
-						   );
-						    $result = $trans_docs->saveReceipt($receipt);
+								$image = \Cloudinary\Uploader::upload($file->getPathName());
+								$receipt = array(
+									'user_id'           => $findUserID,
+									'file'      => $image['secure_url'],
+									'type'      => "image",
+									'transaction_id'    => $transaction_id,
+								);
+								$result = $trans_docs->saveReceipt($receipt);
 							}
 
 							if($result) {
 	              // if(StringHelper::Deployment()==1){
-	                 if($aws_upload == true) {
+								if($aws_upload == true) {
 	                  //   aws
-	                  $s3 = AWS::get('s3');
-	                  $s3->putObject(array(
-	                   'Bucket'     => 'mednefits',
-	                   'Key'        => 'receipts/'.$file_name,
-	                   'SourceFile' => public_path().'/receipts/'.$file_name,
-	                 ));
-	                }
+									$s3 = AWS::get('s3');
+									$s3->putObject(array(
+										'Bucket'     => 'mednefits',
+										'Key'        => 'receipts/'.$file_name,
+										'SourceFile' => public_path().'/receipts/'.$file_name,
+									));
+								}
 	              // }
-	              array_push($results, $result);
-	            } else {
-	            	$returnObject->status = FALSE;
-	              $returnObject->message = 'Failed to save transaction receipt.';
-	              return Response::json($returnObject);
-	            }
+								array_push($results, $result);
+							} else {
+								$returnObject->status = FALSE;
+								$returnObject->message = 'Failed to save transaction receipt.';
+								return Response::json($returnObject);
+							}
 						}
-          } catch(Exception $e) {
-          	$email['end_point'] = url('v2/user/upload_in_network_receipt_bulk', $parameter = array(), $secure = null);
+					} catch(Exception $e) {
+						$email['end_point'] = url('v2/user/upload_in_network_receipt_bulk', $parameter = array(), $secure = null);
 						$email['logs'] = 'In-Network Upload Receipt - '.$e;
 						$email['emailSubject'] = 'Error log. - In-Network Upload Receipt';
 						EmailHelper::sendErrorLogs($email);
-          }
+					}
 
 					$returnObject->status = TRUE;
-          $returnObject->message = 'Success.';
-          $returnObject->data = $results;
-          return Response::json($returnObject);
+					$returnObject->message = 'Success.';
+					$returnObject->data = $results;
+					return Response::json($returnObject);
 				} else {
 					$returnObject->status = FALSE;
 					$returnObject->message = StringHelper::errorMessage("Token");
@@ -1706,15 +1706,15 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					$check_in = DB::table('user_check_in_clinic')
-												->where('check_in_id', $input['check_in_id'])
-												->where('status', 0)
-												->first();
+					->where('check_in_id', $input['check_in_id'])
+					->where('status', 0)
+					->first();
 
 					if(!$check_in) {
 						$returnObject->status = FALSE;
-          	$returnObject->message = 'Check In Registration removed by Health Provider. Please make another Check-In Registration.';
-          	$returnObject->check_in_status_removed = true;
-          	return Response::json($returnObject);
+						$returnObject->message = 'Check In Registration removed by Health Provider. Please make another Check-In Registration.';
+						$returnObject->check_in_status_removed = true;
+						return Response::json($returnObject);
 					}
 
 					// check if still valid
@@ -1728,9 +1728,9 @@ class Api_V1_TransactionController extends \BaseController
 					// return date('d M, h:i a', $check_in_expiry_time);
 					if($today > $check_in_expiry_time) {
 						$returnObject->status = FALSE;
-          	$returnObject->message = 'Check In Registration is expired. Please make another Check-In Registration.';
-          	$returnObject->check_in_status_removed = true;
-          	return Response::json($returnObject);
+						$returnObject->message = 'Check In Registration is expired. Please make another Check-In Registration.';
+						$returnObject->check_in_status_removed = true;
+						return Response::json($returnObject);
 					}
 
 					$user = DB::table('user')->where('UserID', $check_in->user_id)->first();
@@ -1743,15 +1743,15 @@ class Api_V1_TransactionController extends \BaseController
 					$data['nric'] = $user->NRIC;
 					$data['member'] = ucwords($user->Name);
 					if($check_in->currency_symbol == "myr") {
-					 $cap_currency_symbol = "RM";
+						$cap_currency_symbol = "RM";
 					} else {
-					 $cap_currency_symbol = "S$";
+						$cap_currency_symbol = "S$";
 					}
 					$data['cap_currency_symbol'] = $cap_currency_symbol;
 					$returnObject->status = TRUE;
-          $returnObject->message = 'Success.';
-          $returnObject->data = $data;
-          return Response::json($returnObject);
+					$returnObject->message = 'Success.';
+					$returnObject->data = $data;
+					return Response::json($returnObject);
 				} else {
 					$returnObject->status = FALSE;
 					$returnObject->message = StringHelper::errorMessage("Token");

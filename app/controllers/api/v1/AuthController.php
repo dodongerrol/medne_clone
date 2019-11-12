@@ -1082,11 +1082,11 @@ return Response::json($returnObject);
                     $status_text = 'Pending';
                   }
 
-                  if($res->default_currency == "myr") {
+                  if($res->default_currency == "sgd") {
+                    $currency_symbol = "SGD";
+                  } else {
                     $currency_symbol = "MYR";
                     $res->amount = $res->amount * $res->currency_value;
-                  } else {
-                    $currency_symbol = "SGD";
                   }
 
                   $member = DB::table('user')->where('UserID', $res->user_id)->first();
@@ -1204,13 +1204,20 @@ return Response::json($returnObject);
                   $type = "credits";
                 }
 
-                if($trans->currency_type == "sgd") {
+                if($trans->default_currency == "sgd") {
                   $currency_symbol = "SGD";
                   $converted_amount = $total_amount;
-                } else if($trans->currency_type == "myr") {
+                } else {
                   $currency_symbol = "MYR";
                   $converted_amount = $total_amount * $trans->currency_amount;
                 }
+                // if($trans->currency_type == "sgd") {
+                //   $currency_symbol = "SGD";
+                //   $converted_amount = $total_amount;
+                // } else if($trans->currency_type == "myr") {
+                //   $currency_symbol = "MYR";
+                //   $converted_amount = $total_amount * $trans->currency_amount;
+                // }
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
@@ -4715,7 +4722,7 @@ public function getEclaimTransactions( )
     $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
     $currency_symbol = "S$";
-    if($res->currency_type == "myr" && $res->default_currency == "myr") {
+    if($res->default_currency == "myr") {
       $currency_symbol = "MYR";
     } else {
       $currency_symbol = "SGD";
@@ -5108,7 +5115,7 @@ public function createEclaim( )
   } else {
     if(Input::has('currency_type') && $input['currency_type'] != null) {
       if(strtolower($input['currency_type']) == "myr") {
-        $input_amount = $input['amount'] / 3;
+        $input_amount = $input['amount'] / $input['currency_exchange_rate'];
       } else {
         $input_amount = trim($input['amount']);
       }
