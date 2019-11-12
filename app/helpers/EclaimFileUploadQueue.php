@@ -22,9 +22,9 @@ class EclaimFileUploadQueue
 		    'updated_at'		=> date('Y-m-d H:i:s')
 		);
 
-		DB::table('e_claim')->insert($receipt);
-		// $e_claim_docs = new EclaimDocs( );
-		// $e_claim_docs->createEclaimDocs($receipt);
+		// DB::table('e_claim')->insert($receipt);
+		$e_claim_docs = new \EclaimDocs( );
+		$e_claim_docs->createEclaimDocs($receipt);
 		$job->delete();
 		// sleep(1);
 		// return $receipt;
