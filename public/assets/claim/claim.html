@@ -441,9 +441,11 @@
 			        			</span>
 			        		</p>
 			        		<p><label>Date:</label> <span ng-bind="your_transaction.date">Jun 14,2016</span></p>
-			        		<p><label>Amount:</label> 
+			        		<p>
+			        			<label>Amount:</label> 
 			        			<span ng-bind="currencyType" class="currency-type"></span>
-			        			<span ng-bind="temp_list[0].amount | number: 2">50.00</span></p>
+			        			<span ng-bind="your_transaction.amount">50.00</span>
+			        		</p>
 			        		<p><label>Type:</label> <span ng-bind="your_transaction.type" style="font-family: 'Helvetica Medium';color: #000;">Cash</span></p>
 			        	</div>
 

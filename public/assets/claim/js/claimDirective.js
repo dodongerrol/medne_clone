@@ -347,6 +347,8 @@ app.directive("claimDirective", [
               if( response.data.status == true && response.data.error == 0){
                 scope.your_transaction = response.data.new_transaction;
                 scope.other_transaction = response.data.duplicates;
+
+                console.log(scope.your_transaction);
                 $('.isNotDoneChecking').hide();
                 $('.isDoneChecking').show();
               }else{
