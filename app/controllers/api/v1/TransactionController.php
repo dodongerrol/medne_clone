@@ -328,7 +328,7 @@ class Api_V1_TransactionController extends \BaseController
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
 
-					// return $data;
+					return $data;
 					
 					try {
 						$result = $transaction->createTransaction($data);

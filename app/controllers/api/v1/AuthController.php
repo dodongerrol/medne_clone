@@ -1953,6 +1953,7 @@ if($clinic->currency_type == "myr" && $wallet->currency_type == "sgd") {
  $cap_currency_symbol = "MYR";
  $balance = number_format($balance * $currency_value, 2);
  $cap_amount = $cap_amount * $currency_value;
+ $current_balance = $current_balance * $currency_value;
 } else if($clinic->currency_type == "sgd" && $wallet->currency_type == "sgd"){
  $currency = "SGD";
  $balance = number_format($balance, 2);
