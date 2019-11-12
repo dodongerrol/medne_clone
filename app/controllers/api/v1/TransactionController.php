@@ -1478,7 +1478,7 @@ class Api_V1_TransactionController extends \BaseController
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
 							'cap_transaction'   => $half_credits,
 							'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
-							'cap_per_visit_converted'     => number_format($transaction->cap_per_visit * $transaction->currency_amount,, 2),
+							'cap_per_visit_converted'     => number_format($transaction->cap_per_visit * $transaction->currency_amount, 2),
 							'services' => $service,
 							'convert_option'		=> $transaction->default_currency != $transaction->currency_type ? true : false,
 							'currency_amount'		=> $transaction->currency_amount,
