@@ -539,11 +539,11 @@ class Api_V1_TransactionController extends \BaseController
 
 										$transaction_results = array(
 											'clinic_name'       => ucwords($clinic->Name),
-											'bill_amount'				=> number_format(TransactionHelper::floatvalue($input['input_amount']), 2),
-											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($data['consultation_fees'] * $currency, 2) : number_format($data['consultation_fees'], 2),
-											'total_amount'     => number_format($total_amount, 2),
-											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * $currency, 2) : number_format($credits, 2),
-											'paid_by_cash'              => $clinic->currency_type == "myr" ? number_format($cash * $currency, 2) : number_format($cash, 2),
+											'bill_amount'				=> TransactionHelper::floatvalue($input['input_amount']),
+											'consultation_fees'	=> $clinic->currency_type == "myr" ? $data['consultation_fees'] * $currency : $data['consultation_fees'],
+											'total_amount'     => $total_amount,
+											'paid_by_credits'  => $clinic->currency_type == "myr" ? $credits * $currency : $credits,
+											'paid_by_cash'     => $clinic->currency_type == "myr" ? $cash * $currency : $cash,
 											'transaction_time'  => date('m-d-Y h:i a', strtotime($date_of_transaction)),
 											'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)).$trans_id,
 											'services'          => $procedure,
