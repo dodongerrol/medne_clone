@@ -551,7 +551,7 @@ class Api_V1_TransactionController extends \BaseController
 											'dependent_user'    => $dependent_user,
 											'half_credits_payment' => $half_payment,
 											'user_id'						=> $customer_id,
-											'convert_option'		=> $result->currency_type != $result->default_currency
+											'convert_option'		=> $result->currency_type != $result->default_currency ? true : false
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
