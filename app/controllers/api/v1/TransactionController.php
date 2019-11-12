@@ -1447,6 +1447,7 @@ class Api_V1_TransactionController extends \BaseController
 							$bill_amount = $bill_amount * $transaction->currency_amount;
 							$cash_cost = $cash_cost * $transaction->currency_amount;
 							$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
+							$transaction->cap_per_visit = $transaction->cap_per_visit * $transaction->currency_amount;
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
 							}
