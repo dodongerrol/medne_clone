@@ -216,9 +216,9 @@ function getTransactions( data ){
 									'<td>' + list[i].user_name + '</td>' + 
 									// '<td>' + list[i].NRIC + '</td>' +
 									'<td>' + list[i].procedure_name + '</td>' +
-									'<td style="text-align: center">S$' + list[i].mednefits_fee + '</td>' + 
-									'<td style="text-align: center">S$' + list[i].mednefits_credits + '</td>' + 
-									'<td style="text-align: center">S$' + list[i].cash + '</td>' + 
+									'<td><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_fee + '</td>' + 
+									'<td><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].mednefits_credits + '</td>' + 
+									'<td><span style="text-transform: uppercase">' + list[i].currency_type + '</span> ' + list[i].cash + '</td>' + 
 								'</tr>');
 		      	}else{
 		      		$( '.trans-history-tbl tbody' ).append('<tr>' +

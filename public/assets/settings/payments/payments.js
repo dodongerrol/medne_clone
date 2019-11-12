@@ -548,7 +548,7 @@ function getClinicInvoiceList(date) {
         }
 
         $("#invoice-items-table").append('<tr>' +
-            '<td colspan="3" style="text-align:right;border: none !important;"><b>Total Amount Due <span style="display: inline-block">(SGD)</span><span style="display: none">(RM)</span>:</b></td>' +
+            '<td colspan="3" style="text-align:right;border: none !important;"><b>Total Amount Due <span style="display: inline-block">(SGD)</span><span style="display: none">(MYR)</span>:</b></td>' +
             '<td style="border: none !important;"><b><span style="text-transform: uppercase">' + data.currency_type + '</span> ' + data.total + '</b></td>' +
           '</tr>');
 
