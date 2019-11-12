@@ -57,6 +57,7 @@ class DependentController extends \BaseController {
 			$file->move('excel_upload', $temp_file);
 			$data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
 			$headerRow = $data_array->first()->keys();
+			// return $data_array;
 			$temp_users = [];
 			$row_keys = self::getDependentKeys($headerRow);
 			$dependents_count = count($row_keys) / 5;

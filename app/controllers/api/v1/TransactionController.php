@@ -550,7 +550,8 @@ class Api_V1_TransactionController extends \BaseController
 											'currency_symbol'   => $email_currency_symbol,
 											'dependent_user'    => $dependent_user,
 											'half_credits_payment' => $half_payment,
-											'user_id'						=> $customer_id
+											'user_id'						=> $customer_id,
+											'convert_option'		=> $result->currency_type != $result->default_currency
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
@@ -601,7 +602,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
 
 										try {
-											// EmailHelper::sendPaymentAttachment($email);
+											EmailHelper::sendPaymentAttachment($email);
 											// send to clinic
 											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
 
