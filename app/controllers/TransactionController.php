@@ -3367,13 +3367,15 @@ class TransactionController extends BaseController {
 			array_push($format, $temp);
 		}
 
-		$user = DB::table("user")->where("UserID", $input['user_id'])->first();
-
+		$user_id = StringHelper::getUserId($input['user_id']);
+		$user = DB::table("user")->where("UserID", $user_id)->first();
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
 		$new_transaction = array(
 			'name'		=> ucwords($user->Name),
 			'date'		=> date('d F Y', strtotime($trans->date_of_transaction)),
 			'amount'	=> number_format($input['amount'] ? $input['amount'] : 0, 2),
-			'type'		=> 'Cash'
+			'type'		=> 'Cash',
+			'currency_type' => strtoupper($wallet->currency_type)
 		);
 
 		return array('status' => TRUE, 'error' => 0, 'duplicates' => $format, 'new_transaction' => $new_transaction);
