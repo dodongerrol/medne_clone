@@ -1425,25 +1425,29 @@ class Api_V1_TransactionController extends \BaseController
 							$half_credits = true;
 						}
 
-						// if($transaction->default_currency == "sgd") {
+						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr") {
+							$currency_symbol = "MYR";
+							$total_amount = $total_amount * $transaction->currency_amount;
+							$bill_amount = $bill_amount * $transaction->currency_amount;
+							$cash_cost = $cash_cost * $transaction->currency_amount;
+							$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
+							$transaction->cap_per_visit = $transaction->cap_per_visit * $transaction->currency_amount;
+							if((int)$transaction->lite_plan_enabled == 1) {
+								$consultation_fee = number_format($consultation, 2);
+							}
+							// $total_amount_converted = $total_amount;
+							// $bill_amount_converted = $bill_amount
+							// $consultation_fee_converted = $consultation_fee * $transaction->currency_amount;
+							// $paid_by_cash_converted = $cash_cost * $transaction->currency_amount;
+							// $paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount;
+							// $cap_per_visit_converted = $transaction->cap_per_visit * $transaction->currency_amount;
+						} else {
 							$currency_symbol = "SGD";
 							$total_amount = $total_amount;
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = number_format($consultation, 2);
 							}
-						// }
-
-						// else if($transaction->default_currency == "myr") {
-						// 	$currency_symbol = "MYR";
-						// 	$total_amount = $total_amount * $transaction->currency_amount;
-						// 	$bill_amount = $bill_amount * $transaction->currency_amount;
-						// 	$cash_cost = $cash_cost * $transaction->currency_amount;
-						// 	$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
-						// 	$transaction->cap_per_visit = $transaction->cap_per_visit * $transaction->currency_amount;
-						// 	if((int)$transaction->lite_plan_enabled == 1) {
-						// 		$consultation_fee = number_format($consultation, 2);
-						// 	}
-						// }
+						}
 
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,

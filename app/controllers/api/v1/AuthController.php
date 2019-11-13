@@ -1086,7 +1086,6 @@ return Response::json($returnObject);
                     $currency_symbol = "SGD";
                   } else {
                     $currency_symbol = "MYR";
-                    $res->amount = $res->amount * $res->currency_value;
                   }
 
                   $member = DB::table('user')->where('UserID', $res->user_id)->first();
@@ -4717,7 +4716,7 @@ public function getEclaimTransactions( )
 
     $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
-    $currency_symbol = "S$";
+    $currency_symbol = "SGD";
     if($res->default_currency == "myr") {
       $currency_symbol = "MYR";
     } else {
@@ -5105,8 +5104,7 @@ public function createEclaim( )
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
   $input_amount = 0;
 
-
-  if($check_user_balance->currency_type == $input['currency_type'] && $check_user_balance->currency_type == "myr") {
+  if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
     $input_amount = trim($input['amount']);
   } else {
     if(Input::has('currency_type') && $input['currency_type'] != null) {
@@ -5205,6 +5203,8 @@ if($customer_id) {
     $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
   }
 }
+
+// return $data;
 
 try {
  $result = $claim->createEclaim($data);
