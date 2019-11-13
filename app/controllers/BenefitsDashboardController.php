@@ -1964,6 +1964,7 @@ class BenefitsDashboardController extends \BaseController {
 			->first();
 
 			$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_active_plan_history->customer_active_plan_id)->first();
+			$plan_type = $active_plan->account_type;
 			if($active_plan->account_type == 'stand_alone_plan') {
 				$plan_name = "Pro Plan";
 			} else if($active_plan->account_type == 'insurance_bundle') {
@@ -2158,7 +2159,8 @@ class BenefitsDashboardController extends \BaseController {
 				'schedule'				=> $schedule,
 				'plan_withdraw_status' 	=> $plan_withdraw,
 				'emp_status'			=> $emp_status,
-				'account_status'		=> $user->Active == 1 ? true : false
+				'account_status'		=> $user->Active == 1 ? true : false,
+				'plan_type'					=> $plan_type
 			);
 			array_push($final_user, $temp);
 		}
@@ -2850,6 +2852,7 @@ class BenefitsDashboardController extends \BaseController {
 			->first();
 
 			$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_active_plan_history->customer_active_plan_id)->first();
+			$plan_type = $active_plan->account_type;
 			if($active_plan->account_type == 'stand_alone_plan') {
 				$plan_name = "Pro Plan";
 			} else if($active_plan->account_type == 'insurance_bundle') {
@@ -3032,7 +3035,8 @@ class BenefitsDashboardController extends \BaseController {
 				'schedule'				=> $schedule,
 				'plan_withdraw_status' 	=> $plan_withdraw,
 				'emp_status'			=> $emp_status,
-				'account_status'		=> $user->Active == 1 ? true : false
+				'account_status'		=> $user->Active == 1 ? true : false,
+				'plan_type'				=> $plan_type
 			);
 			array_push($final_user, $temp);
 		}
@@ -3433,10 +3437,17 @@ class BenefitsDashboardController extends \BaseController {
 			'user_id'					=> $user_id,
 			'customer_active_plan_id'	=> $active_plan->customer_active_plan_id,
 			'date_withdraw'				=> $expiry_date,
-			'amount'					=> $amount,
-			'refund_status'				=> 2,
-			'vacate_seat'				=> 1
+			'amount'					=> $amount
+			// 'refund_status'				=> 2,
+			// 'vacate_seat'				=> 1
 		);
+
+		if($active_plan->account_type == "lite_plan") {
+			$data['refund_status'] = 2;
+		} else {
+			$data['refund_status'] = $refund_status == true ? 0 : 2;
+			$data['vacate_seat'] = 1;
+		}
 		// save history
 		// if($history) {
 		// 	$user_plan_history_data = array(
@@ -3564,8 +3575,14 @@ class BenefitsDashboardController extends \BaseController {
 				'date_withdraw'				=> $expiry_date,
 				'amount'					=> $amount,
 				// 'refund_status'				=> $refund_status == true ? 0 : 2
-				'refund_status'				=> 2
+				// 'refund_status'				=> 2
 			);
+
+			if($active_plan->account_type == "lite_plan") {
+				$data['refund_status'] = 2;
+			} else {
+				$data['refund_status'] = $refund_status == true ? 0 : 2;
+			}
 
 			$withdraw->createPlanWithdraw($data);
 
@@ -12328,7 +12345,8 @@ class BenefitsDashboardController extends \BaseController {
 			'spent'					=> number_format($total_medical_spent, 2),
 			'exceed'				=> $exceed,
 			'exceeded_by'			=> number_format($total_medical_spent - $total_pro_medical_allocation, 2),
-			'balance'				=> number_format($medical_balance, 2)
+			'balance'				=> number_format($medical_balance, 2),
+			'currency_type'	=> $wallet->currency_type
 		);
 		// }
 
@@ -12404,7 +12422,8 @@ class BenefitsDashboardController extends \BaseController {
 			'pending_e_claim'		=> number_format($pending_e_claim_wellness, 2),
 			'exceed'				=> $exceed_wellness,
 			'exceeded_by'			=> number_format($total_wellness_spent - $total_pro_wellness_allocation, 2),
-			'balance'				=> number_format($wellness_balance, 2)
+			'balance'				=> number_format($wellness_balance, 2),
+			'currency_type'	=> $wallet->currency_type
 		);
 		// } else {
 		// 	$wellness = false;
@@ -12416,7 +12435,8 @@ class BenefitsDashboardController extends \BaseController {
 				'pro_rated_start' => $pro_allocation_medical_date->pro_allocation_start_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_start_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
 				'pro_rated_end' => $pro_allocation_medical_date->pro_allocation_end_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_end_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
 				'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
-				'usage_end'		=> $usage_date
+				'usage_end'		=> $usage_date,
+				'currency_type'	=> $wallet->currency_type
 			);
 		} else {
 			$date = array(
@@ -12426,6 +12446,7 @@ class BenefitsDashboardController extends \BaseController {
 				'usage_end'		=> $usage_date,
 				'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? $input['pro_allocation_start_date'] : null,
 				'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? $input['pro_allocation_end_date'] : null,
+				'currency_type'	=> $wallet->currency_type
 			);
 			// return $date;
 		}
@@ -12464,7 +12485,8 @@ class BenefitsDashboardController extends \BaseController {
 						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
 						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
           			// begin medical callibration
@@ -12475,7 +12497,8 @@ class BenefitsDashboardController extends \BaseController {
 						'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
 						'spending_type'     => 'medical',
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
 					// return credits to company
@@ -12539,7 +12562,8 @@ class BenefitsDashboardController extends \BaseController {
 						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
 						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
           			// begin medical callibration
@@ -12550,7 +12574,8 @@ class BenefitsDashboardController extends \BaseController {
 						'running_balance'   => $total_allocation_wellness - $total_pro_wellness_allocation,
 						'spending_type'     => 'wellness',
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
 					// return credits to company

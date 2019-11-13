@@ -1893,16 +1893,11 @@ $jsonArray['name'] = $clinic->CLName;
 $jsonArray['email'] = $email;
 $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLState.' '.$clinic->CLPostal;
 $jsonArray['image_url'] = $clinic->CLImage;
-$jsonArray['lattitude'] = $clinic->CLLat;
-$jsonArray['longitude'] = $clinic->CLLng;
-$jsonArray['description'] = $descr;
-$jsonArray['website'] = $website;
-$jsonArray['custom_title'] = $custitle;
-$jsonArray['clinic_price'] = $clprice;
 $jsonArray['member'] = ucwords($user->Name);
 $jsonArray['nric'] = $user->NRIC;
 $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
 $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
+$jsonArray['plan_type'] = $plan_coverage['plan_type'];
 $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
         // check if employee has plan tier cap

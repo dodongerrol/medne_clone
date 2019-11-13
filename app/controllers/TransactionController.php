@@ -2441,11 +2441,7 @@ class TransactionController extends BaseController {
 		$pdf = PDF::loadView('pdf-download.transaction-history', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'landscape');
-
-
 		return $pdf->download(ucwords($clinic->Name).' - ( '.$period.' ) - '.time().'.pdf');
-
-		// return array('status' => TRUE, 'data' => $data);
 	}
 
 	public function searchTransaction( )

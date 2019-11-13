@@ -138,21 +138,10 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					if($clinic->currency_type == "myr") {
-						$input_amount = TransactionHelper::floatvalue($input['input_amount']) + TransactionHelper::floatvalue($consultation_fees * 3);
+						$input_amount = TransactionHelper::floatvalue($input['input_amount']) + TransactionHelper::floatvalue($consultation_fees * $currency);
 					} else {
 						$input_amount = TransactionHelper::floatvalue($input['input_amount']) + TransactionHelper::floatvalue($consultation_fees);
 					}
-
-					// check for lite plan
-					// if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-					// 	if($consultation_fees > $user_credits) {
-					// 		$returnObject->status = FALSE;
-	    //         $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account for consultation fee credit deduction.';
-	    //         $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-	    //         return Response::json($returnObject);
-					// 	}
-					// }
-
 
 					if($clinic->currency_type == "myr") {
 						$total_amount = $input_amount / 3;
@@ -160,13 +149,6 @@ class Api_V1_TransactionController extends \BaseController
 						$total_amount = $input_amount;
 					}
 
-					// if($total_amount > $user_credits) {
-					// 	$returnObject->status = FALSE;
-     //        $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account.';
-     //        $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
-     //        return Response::json($returnObject);
-					// }
-					// return $total_amount;
 					// get details for clinic co paid
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
 					$peak_amount = $clinic_co_payment['peak_amount'];
@@ -539,11 +521,11 @@ class Api_V1_TransactionController extends \BaseController
 
 										$transaction_results = array(
 											'clinic_name'       => ucwords($clinic->Name),
-											'bill_amount'				=> number_format(TransactionHelper::floatvalue($input['input_amount']), 2),
-											'consultation_fees'	=> $clinic->currency_type == "myr" ? number_format($data['consultation_fees'] * $currency, 2) : number_format($data['consultation_fees'], 2),
-											'total_amount'     => number_format($total_amount, 2),
-											'paid_by_credits'            => $clinic->currency_type == "myr" ? number_format($credits * $currency, 2) : number_format($credits, 2),
-											'paid_by_cash'              => $clinic->currency_type == "myr" ? number_format($cash * $currency, 2) : number_format($cash, 2),
+											'bill_amount'				=> TransactionHelper::floatvalue($input['input_amount']),
+											'consultation_fees'	=> $clinic->currency_type == "myr" ? $data['consultation_fees'] * $currency : $data['consultation_fees'],
+											'total_amount'     => $total_amount,
+											'paid_by_credits'  => $clinic->currency_type == "myr" ? $credits * $currency : $credits,
+											'paid_by_cash'     => $clinic->currency_type == "myr" ? $cash * $currency : $cash,
 											'transaction_time'  => date('m-d-Y h:i a', strtotime($date_of_transaction)),
 											'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)).$trans_id,
 											'services'          => $procedure,
@@ -1238,11 +1220,19 @@ class Api_V1_TransactionController extends \BaseController
 							if($logs_lite_plan && $transaction->credit_cost > 0 && (int)$transaction->lite_plan_use_credits == 0) {
 								$consultation_credits = true;
 						    // $service_credits = true;
-								$consultation = $logs_lite_plan->credit;
+						    if($transaction->default_currency == "myr") {
+						    	$consultation = $logs_lite_plan->credit / $transaction->currency_amount;
+						    } else {
+									$consultation = $logs_lite_plan->credit;
+						    }
 							} else if($logs_lite_plan && $transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 1) {
 								$consultation_credits = true;
 						    // $service_credits = true;
-								$consultation = $logs_lite_plan->credit;
+								if($transaction->default_currency == "myr") {
+						    	$consultation = $logs_lite_plan->credit / $transaction->currency_amount;
+						    } else {
+									$consultation = $logs_lite_plan->credit;
+						    }
 							} else if($transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 0) {
 						  // $total_consultation += floatval($trans->co_paid_amount);
 								$consultation = floatval($transaction->consultation_fees);
@@ -1408,9 +1398,9 @@ class Api_V1_TransactionController extends \BaseController
 							$paid_by_credits = $transaction->credit_cost + $consultation;
 						} else {
 							if($consultation_credits == true) {
-								if((int)$transaction->half_credits == 0) {
+								// if((int)$transaction->half_credits == 1) {
 									$paid_by_credits += $consultation;
-								}
+								// }
 							}
 						}
 
@@ -1435,23 +1425,25 @@ class Api_V1_TransactionController extends \BaseController
 							$half_credits = true;
 						}
 
-						if($transaction->default_currency == "sgd") {
+						// if($transaction->default_currency == "sgd") {
 							$currency_symbol = "SGD";
 							$total_amount = $total_amount;
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = number_format($consultation, 2);
 							}
-						} else if($transaction->default_currency == "myr") {
-							$currency_symbol = "MYR";
-							$total_amount = $total_amount * $transaction->currency_amount;
-							$bill_amount = $bill_amount * $transaction->currency_amount;
-							$cash_cost = $cash_cost * $transaction->currency_amount;
-							$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
-							$transaction->cap_per_visit = $transaction->cap_per_visit * $transaction->currency_amount;
-							if((int)$transaction->lite_plan_enabled == 1) {
-								$consultation_fee = number_format($consultation * $transaction->currency_amount, 2);
-							}
-						}
+						// }
+
+						// else if($transaction->default_currency == "myr") {
+						// 	$currency_symbol = "MYR";
+						// 	$total_amount = $total_amount * $transaction->currency_amount;
+						// 	$bill_amount = $bill_amount * $transaction->currency_amount;
+						// 	$cash_cost = $cash_cost * $transaction->currency_amount;
+						// 	$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
+						// 	$transaction->cap_per_visit = $transaction->cap_per_visit * $transaction->currency_amount;
+						// 	if((int)$transaction->lite_plan_enabled == 1) {
+						// 		$consultation_fee = number_format($consultation, 2);
+						// 	}
+						// }
 
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,
@@ -1459,20 +1451,26 @@ class Api_V1_TransactionController extends \BaseController
 							'clinic_type'       => $type,
 							'clinic_type_image' => $image,
 							'total_amount'       => number_format($total_amount, 2),
+							'total_amount_converted'       => number_format($total_amount * $transaction->currency_amount, 2),
 							"currency_symbol" => $currency_symbol,
 							'transaction_id'    => (string)$id,
 							'date_of_transaction' => date('d-m-Y, h:ia', strtotime($transaction->date_of_transaction)),
 							'customer'            => ucwords($customer->Name),
 							'payment_type'		=> $payment_type,
 							'bill_amount'				=> number_format($bill_amount, 2),
+							'bill_amount_converted'				=> number_format($bill_amount * $transaction->currency_amount, 2),
 							'consultation_fee'	=> $consultation_fee,
+							'consultation_fee_converted'	=> $consultation_fee * $transaction->currency_amount,
 							'paid_by_cash'      => number_format($cash_cost, 2),
+							'paid_by_cash_converted'      => number_format($cash_cost * $transaction->currency_amount, 2),
 							'paid_by_credits'      => number_format($paid_by_credits, 2),
+							'paid_by_credits_converted'      => number_format($paid_by_credits * $transaction->currency_amount, 2),
 							'files'             => $doc_files,
 							'lite_plan'         => $lite_plan_status,
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
 							'cap_transaction'   => $half_credits,
 							'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
+							'cap_per_visit_converted'     => number_format($transaction->cap_per_visit * $transaction->currency_amount, 2),
 							'services' => $service,
 							'convert_option'		=> $transaction->default_currency != $transaction->currency_type ? true : false,
 							'currency_amount'		=> $transaction->currency_amount,

@@ -255,7 +255,7 @@
           <p>ACRA 201415681W</p> -->
 
           <p style="margin: 10px 0 0 0;font-size: 11px;">Please contact us for any questions related to your invoice/contract at happiness@mednefits.com</p>
-          <p style="margin-bottom: 0;font-size: 14px; color: red;">Please send all payment advice to finance@mednefits.com</p>
+          <p>Please send all payment advice to finance@mednefits.com</p>
           @if(isset($notes))
             @if($notes && $notes != 'NULL')
             <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $notes }}</p>
