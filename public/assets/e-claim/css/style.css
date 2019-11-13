@@ -2013,3 +2013,32 @@ body::-webkit-scrollbar-thumb
   text-transform: uppercase;
 }
 
+.currency-type-selector {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  z-index: 1;
+  background: #fff;
+  list-style-type: none;
+  border: 1px solid rgba(0,0,0,.15);
+  text-align: center;
+  padding: 0;
+  min-width: 55px;
+  padding: 5px 0;
+  margin: 0;
+}
+
+.currency-type-selector a {
+  display: block;
+  padding: 3px 8px;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.btn.member-input-field:hover {
+  position: relative;
+  z-index: 0;
+}
+

@@ -15,7 +15,6 @@ app.directive('eclaimSubmitDirective', [
 				scope.eclaim = {};
 				scope.eclaim.selectedDayTime = 'AM';
 				scope.eclaim.selectedCurrencyType = 'SGD';
-				scope.selectCurrencyTypeDropdown = false;
 				scope.receipts = [];
 				scope.uploading_files = [];
 				scope.submitting = false;
@@ -168,9 +167,11 @@ app.directive('eclaimSubmitDirective', [
 				}
 
 				scope.showCurrencyDropdown = function() {
-					console.log(scope.selectCurrencyTypeDropdown);
+					
+					console.log('sadasdsa');
+
 					if ( scope.currency_myr === 'sgd' ) {
-						scope.selectCurrencyTypeDropdown = scope.selectCurrencyTypeDropdown == false ? true : false;
+						$('.currency-type-selector').toggle();
 					}
 					
 

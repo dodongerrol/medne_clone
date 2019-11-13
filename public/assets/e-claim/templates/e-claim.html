@@ -83,7 +83,7 @@
 								  <span class="input-group-addon daytime-drop">
 								    <span ng-bind="eclaim.selectedDayTime"></span>
 							    	<span class="caret" style="border-width: 6px;display: block;position: relative;top: 5px;left: 1px;"></span>
-									  <ul class="dropdown-menu">
+									  <ul class="dropdown-menu am-pm-selector-container">
 									    <li><a href="javascript:void(0)" ng-click="selectDayTime('AM')">AM</a></li>
 									    <li><a href="javascript:void(0)" ng-click="selectDayTime('PM')">PM</a></li>
 									  </ul>
@@ -135,7 +135,7 @@
 								  <span ng-click="showCurrencyDropdown()" class="input-group-addon" id="sizing-addon2" style="color: #0086D3;font-weight: 700;">
 								  	<span ng-bind="eclaim.selectedCurrencyType" class="currency-type"></span>
 								  </span>
-								  <ul class="dropdown-menu" ng-if="selectCurrencyTypeDropdown" style="display: block;">
+								  <ul class="currency-type-selector" style="display: none;">
 								  	<li>
 								  		<a ng-click="selectCurrencyType('SGD')">SGD</a>
 								  	</li>
@@ -151,7 +151,7 @@
 					    <label>Member<span>*</span></label>
 					    <div class="input-wrapper">
 						    <div class="btn-group " style="width: 100%">
-								  <button type="button" class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;height: 34px">
+								  <button type="button" class="btn btn-default dropdown-toggle text-left member-input-field" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;height: 34px">
 								  	<span class="member-name" ng-bind="eclaim.member_selected.name"></span>
 								    <span class="caret" style="position: absolute;top: 15px;right: 10px;"></span>
 								  </button>
@@ -405,6 +405,14 @@
 	$("body").click(function(e){
   	if ($(e.target).parents(".visit-time-form").length === 0) {
         $(".time-select-container").hide();
+    }
+
+    if ($(e.target).parents(".visit-time-form").length === 0) {
+        $(".am-pm-selector-container").hide();
+    }
+
+    if ($(e.target).parents(".eclaim-left-container").length === 0) {
+        $(".currency-type-selector").hide();
     }
 	 });
 </script>
