@@ -2342,7 +2342,7 @@ class TransactionController extends BaseController {
 					$cash = 0.00;
 				} else {
 					$mednefits_credits += 0;
-					$cash = number_format((float)$trans->procedure_cost);
+					$cash = (float)$trans->procedure_cost;
 				}
 
 // 
@@ -2398,16 +2398,11 @@ class TransactionController extends BaseController {
 			'period'							=> $period
 		);
 
-    // return View::make('pdf-download/transaction-history', $data);
-
-		$pdf = PDF::loadView('pdf-download/transaction-history', $data);
+    // return View::make('pdf-download.transaction-history', $data);
+		$pdf = PDF::loadView('pdf-download.transaction-history', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'landscape');
-
-
 		return $pdf->download(ucwords($clinic->Name).' - ( '.$period.' ) - '.time().'.pdf');
-
-		// return array('status' => TRUE, 'data' => $data);
 	}
 
 	public function searchTransaction( )
