@@ -12328,7 +12328,8 @@ class BenefitsDashboardController extends \BaseController {
 			'spent'					=> number_format($total_medical_spent, 2),
 			'exceed'				=> $exceed,
 			'exceeded_by'			=> number_format($total_medical_spent - $total_pro_medical_allocation, 2),
-			'balance'				=> number_format($medical_balance, 2)
+			'balance'				=> number_format($medical_balance, 2),
+			'currency_type'	=> $wallet->currency_type
 		);
 		// }
 
@@ -12404,7 +12405,8 @@ class BenefitsDashboardController extends \BaseController {
 			'pending_e_claim'		=> number_format($pending_e_claim_wellness, 2),
 			'exceed'				=> $exceed_wellness,
 			'exceeded_by'			=> number_format($total_wellness_spent - $total_pro_wellness_allocation, 2),
-			'balance'				=> number_format($wellness_balance, 2)
+			'balance'				=> number_format($wellness_balance, 2),
+			'currency_type'	=> $wallet->currency_type
 		);
 		// } else {
 		// 	$wellness = false;
@@ -12416,7 +12418,8 @@ class BenefitsDashboardController extends \BaseController {
 				'pro_rated_start' => $pro_allocation_medical_date->pro_allocation_start_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_start_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
 				'pro_rated_end' => $pro_allocation_medical_date->pro_allocation_end_date ? date('d/m/Y', strtotime($pro_allocation_medical_date->pro_allocation_end_date)) : date('d/m/Y', strtotime($pro_allocation_medical_date->created_at)),
 				'usage_start'	=> date('d/m/Y', strtotime($coverage['plan_start'])),
-				'usage_end'		=> $usage_date
+				'usage_end'		=> $usage_date,
+				'currency_type'	=> $wallet->currency_type
 			);
 		} else {
 			$date = array(
@@ -12426,6 +12429,7 @@ class BenefitsDashboardController extends \BaseController {
 				'usage_end'		=> $usage_date,
 				'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? $input['pro_allocation_start_date'] : null,
 				'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? $input['pro_allocation_end_date'] : null,
+				'currency_type'	=> $wallet->currency_type
 			);
 			// return $date;
 		}
@@ -12464,7 +12468,8 @@ class BenefitsDashboardController extends \BaseController {
 						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
 						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
           			// begin medical callibration
@@ -12475,7 +12480,8 @@ class BenefitsDashboardController extends \BaseController {
 						'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
 						'spending_type'     => 'medical',
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
 					// return credits to company
@@ -12539,7 +12545,8 @@ class BenefitsDashboardController extends \BaseController {
 						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
 						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
           			// begin medical callibration
@@ -12550,7 +12557,8 @@ class BenefitsDashboardController extends \BaseController {
 						'running_balance'   => $total_allocation_wellness - $total_pro_wellness_allocation,
 						'spending_type'     => 'wellness',
 						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
 					);
 
 					// return credits to company

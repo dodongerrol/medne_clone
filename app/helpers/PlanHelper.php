@@ -2404,7 +2404,9 @@ class PlanHelper {
 			->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
 			->where('customer_buy_start.customer_buy_start_id', $active_plan->customer_start_buy_id)
 			->count();
-            // create refund payment
+      
+      $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
+      // create refund payment
 			$check = 10 + $refund_count;
 			$temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
 			$invoice_number = 'OMC'.$temp_invoice_number.'A';
@@ -2415,7 +2417,8 @@ class PlanHelper {
 			$data = array(
 				'customer_active_plan_id'   => $id,
 				'cancellation_number'       => $invoice_number,
-				'date_refund'               => $date_refund
+				'date_refund'               => $date_refund,
+				'currency_type'							=> $customer->currency_type
 			);
 
 			$result = \PaymentRefund::create($data);
