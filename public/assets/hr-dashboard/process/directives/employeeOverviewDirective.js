@@ -632,9 +632,10 @@ app.directive("employeeOverviewDirective", [
         scope.openUpdateEmployeeModal = function(){
           scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
-          scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
+          // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
+          console.log(scope.selectedEmployee.dob);
           // scope.selectedEmployee.country_code = scope.selectedEmployee.country_code;
-          $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob );
+          $('.datepicker').datepicker('setDate',scope.selectedEmployee.dob );
           scope.inititalizeGeoCode();
           console.log( scope.selectedEmployee );
         }
@@ -661,6 +662,9 @@ app.directive("employeeOverviewDirective", [
               scope.addActiveDependent_index = scope.dependents.occupied_seats + 1;
             }
             // console.log( emp );
+
+            scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
+            // console.log(scope.selectedEmployee.dob);
             scope.showLoading();
             scope.hideLoading();
             scope.fetchRefundStatus( emp.user_id );
@@ -1253,6 +1257,8 @@ app.directive("employeeOverviewDirective", [
 
               if( scope.selectedEmployee_index != null ){
                 scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
+                console.log(scope.selectedEmployee);
+                scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, 'YYYY-DD-MM').format('DD/MM/YYYY');
                 if( scope.selectedEmployee.plan_tier != null || scope.selectedEmployee.plan_tier ){
                   scope.addActiveDependent_index = scope.selectedEmployee.plan_tier.dependent_enrolled_count + 1;
                 }else{

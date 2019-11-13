@@ -6005,6 +6005,7 @@ public function searchEmployeeEclaimActivity( )
 			'claim_amount'      => (int)$res->status == 0 ? 0 : number_format($res->claim_amount, 2),
 			'cap_amount'				=> $res->cap_amount,
 			'member'            => ucwords($member->Name),
+			'email_address'			=> $member->Email,
 			'type'              => 'E-Claim',
 			'transaction_id'    => 'MNF'.$id,
 			'trans_id'          => $res->e_claim_id,
@@ -6219,6 +6220,7 @@ public function hrEclaimActivity( )
 				'claim_amount'      => (int)$res->status == 0 ? 0 : number_format($res->claim_amount, 2),
 				'cap_amount'				=> $res->amount < $res->cap_amount ? 0 : $res->cap_amount,
 				'member'            => ucwords($member->Name),
+				'email_address'			=> $member->Email,
 				'type'              => 'E-Claim',
 				'transaction_id'    => 'MNF'.$id,
 				'trans_id'          => $res->e_claim_id,
@@ -6827,7 +6829,7 @@ public function createHrStatement( )
 		'in_network_transactions'    => $statement_result['in_network_transactions'],
 		'e_claim_transactions'       => $statement_result['e_claim_transactions'],
 		'total_transaction_spent'   => number_format($statement_result['total_transaction_spent'], 2),
-		'total_e_claim_spent'       => $statement_result['total_e_claim_spent'],
+		'total_e_claim_spent'       => number_format($statement_result['total_e_claim_spent'], 2),
 		'total_consultation'        => number_format($statement_result['total_consultation'], 2),
 		'lite_plan'                 => $lite_plan,
 		'sub_total'                 => number_format($sub_total, 2),
@@ -8694,7 +8696,6 @@ public function downloadEclaimCsv( )
 	                // get docs
 			$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
 
-
 			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
 			if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
@@ -8708,6 +8709,7 @@ public function downloadEclaimCsv( )
 				$bank_name = $temp_account->bank_name;
 				$bank_code = $temp_account->bank_code;
 				$bank_brh = $temp_account->bank_brh;
+				$email = "";
 			} else {
 				$sub_account = FALSE;
 				$sub_account_type = FALSE;
@@ -8717,12 +8719,14 @@ public function downloadEclaimCsv( )
 				$bank_name = $member->bank_name;
 				$bank_code = $member->bank_code;
 				$bank_brh = $member->bank_brh;
+				$email = $member->Email;
 			}
 
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$container[] = array(
 					'MEMBER'						=> ucwords($member->Name),
 					'MOBILE NO'							=> $member->PhoneCode.$member->PhoneNo,
+					'EMAIL ADDRESS'			=> $email,
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
 					'EMPLOYEE'					=> $sub_account ? $sub_account : null,
 					'CLAIM DATE'				=> date('d F Y h:i A', strtotime($res->created_at)),
