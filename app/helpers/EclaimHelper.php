@@ -30,6 +30,14 @@ class EclaimHelper
       )
     );
 
+    foreach ($data as $key => $curr) {
+      $currency = DB::table('currency_options')->where('currency_type', $curr['currency_type'])->first();
+      
+      if($currency) {
+        $curr['currency_exchange_rate'] = $currency->currency_value;
+      }
+    }
+
     return $data;
   }
 
