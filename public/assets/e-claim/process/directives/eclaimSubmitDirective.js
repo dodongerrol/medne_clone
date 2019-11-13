@@ -174,7 +174,6 @@ app.directive('eclaimSubmitDirective', [
 						$('.currency-type-selector').toggle();
 					}
 					
-
 				}
 
 				scope.selectCurrencyType = function ( currencyTime ) {
@@ -182,7 +181,7 @@ app.directive('eclaimSubmitDirective', [
 					var temp = currencyTime;
 
 					scope.eclaim.selectedCurrencyType = currencyTime;
-
+					$('.currency-type-selector').hide();
 					console.log(temp);
 
 				}

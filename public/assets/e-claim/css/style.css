@@ -2035,6 +2035,11 @@ body::-webkit-scrollbar-thumb
   color: #999;
   font-size: 12px;
   font-weight: 700;
+  cursor: pointer;
+}
+
+.currency-type-selector a:hover {
+  background-color: #f5f5f5;
 }
 
 .btn.member-input-field:hover {
