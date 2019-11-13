@@ -5104,7 +5104,7 @@ public function createEclaim( )
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
   $input_amount = 0;
 
-  if($check_user_balance->currency_type == $input['currency_type'] && $check_user_balance->currency_type == "myr") {
+  if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
     $input_amount = trim($input['amount']);
   } else {
     if(Input::has('currency_type') && $input['currency_type'] != null) {
