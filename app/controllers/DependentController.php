@@ -50,8 +50,8 @@ class DependentController extends \BaseController {
 				$result = $file->getClientOriginalExtension();
 				// return array('res' => $result);
 				if(!in_array($result,$extensions)){
-			        return array('status' => false, 'message' => 'Invalid File.');
-			    }
+		       return array('status' => false, 'message' => 'Invalid File.');
+		    }
 
 				$temp_file = time().$file->getClientOriginalName();
 				$file->move('excel_upload', $temp_file);
