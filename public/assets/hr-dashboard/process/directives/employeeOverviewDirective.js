@@ -64,6 +64,8 @@ app.directive("employeeOverviewDirective", [
         scope.statementHide = true;
         scope.empStatementShow = false;
         scope.arrowStatement = false;
+        scope.litePlanCheckbox = false;
+        scope.hideLitePlanCheckbox = true;
 
         var iti = null;
 
@@ -650,6 +652,15 @@ app.directive("employeeOverviewDirective", [
 
         scope.toggleEmployee = function(emp, index){
           console.log(emp);
+
+          scope.plan_name = emp.plan_name;
+          console.log(scope.plan_name);
+
+          if (scope.plan_name === 'Lite Plan') {
+            scope.hideLitePlanCheckbox = false;
+            scope.litePlanCheckbox = true;
+          }
+
           if( scope.isEmployeeShow == false ){
             scope.isEmployeeShow = true;
             scope.empTabSelected = 0;
