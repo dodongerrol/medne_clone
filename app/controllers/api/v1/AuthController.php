@@ -2050,7 +2050,7 @@ $consultation_status = StringHelper::newLitePlanStatus($findUserID);
 $returnObject->data['consultation_status'] = $consultation_status;
 if($consultation_status == true && (int)$clinic_type->lite_plan_enabled == 1) {
   $clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $owner_id);
-  $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
+  $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic->consultation_fees : $clinic_co_payment['consultation_fees'];
   $returnObject->data['consultation_fees'] = $clinic->currency_type == "myr" ? $consultation_fees * 3.00 : $consultation_fees;
   $returnObject->data['consultation_fee_symbol'] = $clinic->currency_type == "myr" ? "RM" : "S$";
 } else {
