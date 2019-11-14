@@ -1999,7 +1999,7 @@ class TransactionController extends BaseController {
 				'date_of_transaction'		=> date('d F Y, h:i a', strtotime($trans->date_of_transaction)),
 				'claim_date'				=> $trans->claim_date ? date('d F Y, h:i a', strtotime($trans->claim_date)) : date('d F Y, h:i a', strtotime($trans->created_at)),
 				'paid'									=> $trans->paid,
-				'procedure_cost'				=> $cash,
+				'procedure_cost'				=> number_format($cash, 2),
 				'procedure_name'				=> $procedure,
 				'trans_id'						=> $trans->transaction_id,
 				'transaction_id'				=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
