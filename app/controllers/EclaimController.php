@@ -1325,7 +1325,7 @@ class EclaimController extends \BaseController {
 				'time'				=> $res->time,
 				'service'			=> $res->service,
 				'merchant'		=> $res->merchant,
-				'amount'			=> $res->amount,
+				'amount'			=> number_format($res->amount, 2),
 				'member'			=> ucwords($member->Name),
 				'type'				=> 'E-Claim',
 				'transaction_id' => 'MNF'.$id,
