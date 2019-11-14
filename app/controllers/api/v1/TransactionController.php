@@ -123,7 +123,7 @@ class Api_V1_TransactionController extends \BaseController
 
 					$clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $user_id);
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
-						$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic_data->consultation_fees : $clinic_co_payment['consultation_fees'];
+						$consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic->consultation_fees : $clinic_co_payment['consultation_fees'];
 					} else {
 						$consultation_fees = 0;
 					}
