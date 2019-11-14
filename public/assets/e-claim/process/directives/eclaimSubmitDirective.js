@@ -191,7 +191,7 @@ app.directive('eclaimSubmitDirective', [
 				}
 
 				scope.setVisitDate = function( date ) {
-					scope.eclaim.visit_date = moment(date).format('MMMM DD, YYYY');
+					scope.eclaim.visit_date = moment(date).format('DD MMMM, YYYY');
 				}
 
 				scope.showToast = function( text ) {
@@ -444,7 +444,7 @@ app.directive('eclaimSubmitDirective', [
 				scope.initializeDatepickers = function(){
 					setTimeout(function() {
 	        	var visit_date_dp =  $('#visitDateInput').datetimepicker({
-				    	format : 'MMMM DD, YYYY',
+				    	format : 'DD MMMM, YYYY',
 				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
 				    	maxDate : new Date( moment( ) ),
