@@ -426,13 +426,14 @@ class SpendingInvoiceLibrary
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 							$procedure_cost = $procedure_cost * $trans->currency_amount;
 							$consultation_credits = $consultation_credits * $trans->currency_amount;
-							$consultation = $consultation * $trans->currency_amount;
+							// $consultation = $consultation * $trans->currency_amount;
 							$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
 							$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
 							$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
 							$total_amount = $total_amount * $trans->currency_amount;
 							$cash = $cash * $trans->currency_amount;
 							$mednefits_credits = $mednefits_credits * $trans->currency_amount;
+							$treatment = $treatment * $trans->currency_amount;
 						}
 
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
@@ -469,8 +470,8 @@ class SpendingInvoiceLibrary
 							'consultation'		=> number_format($consultation, 2),
 							'service_credits'   => $service_credits,
 							'transaction_type'  => $transaction_type,
-							'treatment'			=> $treatment,
-							'amount'			=> $treatment,
+							'treatment'			=> number_format($treatment, 2),
+							'amount'			=> number_format($treatment, 2),
 							'spending_type'		=> $trans->spending_type,
 							'dependent_relationship'	=> $dependent_relationship,
 							'lite_plan'			=> (int)$trans['lite_plan_enabled'] == 1 ? true : false,
@@ -600,7 +601,7 @@ class SpendingInvoiceLibrary
 					'time'              => $res->time,
 					'service'           => $res->service,
 					'merchant'          => $res->merchant,
-					'amount'            => $res->amount,
+					'amount'            => number_format($res->amount, 2),
 					'member'            => ucwords($member->Name),
 					'employee_dependent_name' => $sub_account ? $sub_account : null,
 					'claim_member_type'       => $dependent_relationship ? 'DEPENDENT' : 'EMPLOYEE',

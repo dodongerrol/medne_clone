@@ -1433,8 +1433,9 @@ class Api_V1_TransactionController extends \BaseController
 							$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
 							$transaction->cap_per_visit = $transaction->cap_per_visit * $transaction->currency_amount;
 							if((int)$transaction->lite_plan_enabled == 1) {
-								$consultation_fee = number_format($consultation, 2);
+								$consultation_fee = $consultation;
 							}
+							$consultation_fee = $consultation_fee * $transaction->currency_amount;
 							// $total_amount_converted = $total_amount;
 							// $bill_amount_converted = $bill_amount
 							// $consultation_fee_converted = $consultation_fee * $transaction->currency_amount;
@@ -1445,7 +1446,7 @@ class Api_V1_TransactionController extends \BaseController
 							$currency_symbol = "SGD";
 							$total_amount = $total_amount;
 							if((int)$transaction->lite_plan_enabled == 1) {
-								$consultation_fee = number_format($consultation, 2);
+								$consultation_fee = $consultation;
 							}
 						}
 
@@ -1463,8 +1464,8 @@ class Api_V1_TransactionController extends \BaseController
 							'payment_type'		=> $payment_type,
 							'bill_amount'				=> number_format($bill_amount, 2),
 							'bill_amount_converted'				=> number_format($bill_amount * $transaction->currency_amount, 2),
-							'consultation_fee'	=> $consultation_fee,
-							'consultation_fee_converted'	=> $consultation_fee * $transaction->currency_amount,
+							'consultation_fee'	=> number_format($consultation_fee, 2),
+							'consultation_fee_converted'	=> number_format($consultation_fee * $transaction->currency_amount, 2),
 							'paid_by_cash'      => number_format($cash_cost, 2),
 							'paid_by_cash_converted'      => number_format($cash_cost * $transaction->currency_amount, 2),
 							'paid_by_credits'      => number_format($paid_by_credits, 2),

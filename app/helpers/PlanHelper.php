@@ -2004,6 +2004,7 @@ class PlanHelper {
 		$credits_back = 0;
 		$deducted_by_hr_medical = 0;
 		$in_network_temp_spent = 0;
+		$in_network_spent = 0;
 		$e_claim_spent = 0;
 		$deleted_employee_allocation = 0;
 		$total_deduction_credits = 0;
@@ -2045,6 +2046,7 @@ class PlanHelper {
 
 			if($history->where_spend == "in_network_transaction") {
 				$in_network_temp_spent += $history->credit;
+				$in_network_spent += $history->credit;
 			}
 
 			if($history->where_spend == "credits_back_from_in_network") {
@@ -2058,6 +2060,7 @@ class PlanHelper {
 		->sum('credit');
 
 		$get_allocation_spent_temp = $in_network_temp_spent + $e_claim_spent;
+		$in_network_spent = $in_network_spent - $credits_back;
 		$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
 		$medical_balance = 0;
 
@@ -2086,7 +2089,7 @@ class PlanHelper {
 			$allocation = $pro_allocation;
 		}
 
-		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
+		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $in_network_spent, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
 	}
 
 	public static function memberWellnessAllocatedCredits($wallet_id, $user_id)

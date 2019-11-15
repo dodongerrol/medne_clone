@@ -1089,7 +1089,7 @@ class EclaimController extends \BaseController {
 				}
 
 				$total_amount = number_format((float)$trans->procedure_cost, 2);
-
+				$treatment = 0;
 				// if(strripos($trans->procedure_cost, '$') !== false) {
 				// 	$temp_cost = explode('$', $trans->procedure_cost);
 				// 	$total_amount = number_format($temp_cost[1]);
@@ -1098,19 +1098,36 @@ class EclaimController extends \BaseController {
 				// }
 
 				if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
-					if((int)$trans->lite_plan_enabled == 1) {
-						$total_in_network_spent += (float)$trans->procedure_cost + $trans->consultation_fees;
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						if((int)$trans->lite_plan_enabled == 1) {
+							$total_in_network_spent += ((float)$trans->procedure_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+						} else {
+							$total_in_network_spent += (float)$trans->procedure_cost * $trans->currency_amount;
+						}
 					} else {
-						$total_in_network_spent += (float)$trans->procedure_cost;
+						if((int)$trans->lite_plan_enabled == 1) {
+							$total_in_network_spent += (float)$trans->procedure_cost + $trans->consultation_fees;
+						} else {
+							$total_in_network_spent += (float)$trans->procedure_cost;
+						}
 					}
 					$total_cash += (float)$trans->procedure_cost;
 				} else if($trans->credit_cost > 0 && (int)$trans->deleted == 0) {
-					if((int)$trans->lite_plan_enabled == 1) {
-						$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						if((int)$trans->lite_plan_enabled == 1) {
+							$total_in_network_spent += ($trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+						} else {
+							$total_in_network_spent += $trans->credit_cost * $trans->currency_amount;
+						}
+						$total_credits += $trans->credit_cost * $trans->currency_amount;
 					} else {
-						$total_in_network_spent += $trans->credit_cost;
+						if((int)$trans->lite_plan_enabled == 1) {
+							$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
+						} else {
+							$total_in_network_spent += $trans->credit_cost;
+						}
+						$total_credits += $trans->credit_cost;
 					}
-					$total_credits += $trans->credit_cost;
 				}
 
 				$half_credits = false;
@@ -1154,12 +1171,14 @@ class EclaimController extends \BaseController {
 					// }
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
-	              // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-							$total_amount = $trans->credit_cost + $trans->cash_cost;
+	            $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+							// $total_amount = $trans->credit_cost + $trans->cash_cost;
 							$cash = $trans->cash_cost;
 							$payment_type = 'Mednefits Credits + Cash';
+							$treatment = $trans->credit_cost + $trans->cash_cost;
 						} else {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
+							$treatment = $trans->credit_cost;
 	              // $total_amount = $trans->procedure_cost;
 							if($trans->credit_cost > 0) {
 								$cash = 0;
@@ -1170,6 +1189,7 @@ class EclaimController extends \BaseController {
 						}
 					} else {
 						$total_amount = (float)$trans->procedure_cost;
+						$treatment = $trans->credit_cost + $trans->cash_cost;
 						if((int)$trans->half_credits == 1) {
 							$cash = $trans->cash_cost;
 						} else {
@@ -1227,8 +1247,8 @@ class EclaimController extends \BaseController {
 					$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
 					$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
 					$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
-					$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
-					$consultation_fees = $consultation_fees * $trans->currency_amount;
+					$treatment = $treatment * $trans->currency_amount;
+					// $consultation_fees = $consultation_fees * $trans->currency_amount;
 				}
 
 				$format = array(
@@ -1236,7 +1256,7 @@ class EclaimController extends \BaseController {
 					'clinic_image'      => $clinic->image,
 					'clinic_type'       => $type,
 					'amount'            => number_format($total_amount, 2),
-					'procedure_cost'    => number_format($trans->credit_cost, 2),
+					'procedure_cost'    => number_format($treatment, 2),
 					'procedure'         => $procedure,
 					'clinic_type_and_service' => $clinic_name,
 					'clinic_type_name'  => $clinic_type_name,
@@ -5046,20 +5066,20 @@ public function getHrActivity( )
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
-				if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
-					$e_claim_pending += $res->amount * $res->currency_value;
-				} else {
+				// if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
+				// 	$e_claim_pending += $res->amount * $res->currency_value;
+				// } else {
 					$e_claim_pending += $res->amount;
-				}
+				// }
 			} else if($res->status == 1) {
 				$status_text = 'Approved';
-				if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
-					$e_claim_spent += $res->amount * $res->currency_value;
-					$total_e_claim_spent += $res->amount * $res->currency_value;
-				} else {
+				// if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
+				// 	$e_claim_spent += $res->amount * $res->currency_value;
+				// 	$total_e_claim_spent += $res->amount * $res->currency_value;
+				// } else {
 					$e_claim_spent += $res->amount;
 					$total_e_claim_spent += $res->amount;
-				}
+				// }
 			} else if($res->status == 2) {
 				$status_text = 'Rejected';
 			} else {
