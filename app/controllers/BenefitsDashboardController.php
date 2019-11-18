@@ -3442,7 +3442,7 @@ class BenefitsDashboardController extends \BaseController {
 			// 'vacate_seat'				=> 1
 		);
 
-		if($active_plan->account_type == "lite_plan") {
+		if($plan_active->account_type == "lite_plan") {
 			$data['refund_status'] = 2;
 		} else {
 			$data['refund_status'] = $refund_status == true ? 0 : 2;
@@ -3578,7 +3578,7 @@ class BenefitsDashboardController extends \BaseController {
 				// 'refund_status'				=> 2
 			);
 
-			if($active_plan->account_type == "lite_plan") {
+			if($plan_active->account_type == "lite_plan") {
 				$data['refund_status'] = 2;
 			} else {
 				$data['refund_status'] = $refund_status == true ? 0 : 2;
