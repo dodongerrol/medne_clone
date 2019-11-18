@@ -1714,7 +1714,7 @@ class TransactionController extends BaseController {
 				'discount'							=> $trans->clinic_discount,
 				'multiple_service_selection' => $trans->multiple_service_selection,
 				'mednefits_credits'			=> number_format($mednefits_credits, 2),
-				'cash'									=> $cash,
+				'cash'									=> number_format($cash, 2),
 				'text' 									=> $text,
 				'deleted'								=> (int)$trans->deleted == 1 ? TRUE : FALSE,
 				'refunded'							=> (int)$trans->refunded == 1 ? TRUE : FALSE,
@@ -1959,7 +1959,7 @@ class TransactionController extends BaseController {
 				'date_of_transaction'		=> date('d F Y, h:i a', strtotime($trans->date_of_transaction)),
 				'claim_date'				=> $trans->claim_date ? date('d F Y, h:i a', strtotime($trans->claim_date)) : date('d F Y, h:i a', strtotime($trans->created_at)),
 				'paid'									=> $trans->paid,
-				'procedure_cost'				=> $cash,
+				'procedure_cost'				=> number_format($cash, 2),
 				'procedure_name'				=> $procedure,
 				'trans_id'						=> $trans->transaction_id,
 				'transaction_id'				=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
@@ -2342,7 +2342,7 @@ class TransactionController extends BaseController {
 					$cash = 0.00;
 				} else {
 					$mednefits_credits += 0;
-					$cash = number_format((float)$trans->procedure_cost);
+					$cash = (float)$trans->procedure_cost;
 				}
 
 // 
@@ -2398,16 +2398,11 @@ class TransactionController extends BaseController {
 			'period'							=> $period
 		);
 
-    // return View::make('pdf-download/transaction-history', $data);
-
-		$pdf = PDF::loadView('pdf-download/transaction-history', $data);
+    // return View::make('pdf-download.transaction-history', $data);
+		$pdf = PDF::loadView('pdf-download.transaction-history', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'landscape');
-
-
 		return $pdf->download(ucwords($clinic->Name).' - ( '.$period.' ) - '.time().'.pdf');
-
-		// return array('status' => TRUE, 'data' => $data);
 	}
 
 	public function searchTransaction( )
