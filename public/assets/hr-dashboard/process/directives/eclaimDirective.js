@@ -355,7 +355,7 @@
 								list.approved_status = true;
 								list.approved_date = moment().format( 'DD MMMM YYYY hh:mm A' );
 								list.rejected_date = null;
-								list.claim_amount = list.claim_amount == 0 && list.cap_amount == 0 ? list.amount : list.approve_claim_amount;
+								list.claim_amount = list.approve_claim_amount;
 							}
 							
 							if( response.data.status == true ){
