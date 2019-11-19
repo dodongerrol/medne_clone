@@ -4886,7 +4886,8 @@ $temp = array(
   'rejected_status'   => $rejected_status,
   'rejected_message'   => $transaction->rejected_reason,
   'spending_type'     => ucwords($transaction->spending_type),
-  'currency_symbol'   => $currency_symbol
+  'currency_symbol'   => $currency_symbol,
+  'status'            => $transaction->status
 );
 $returnObject->status = TRUE;
 $returnObject->data = $temp;
