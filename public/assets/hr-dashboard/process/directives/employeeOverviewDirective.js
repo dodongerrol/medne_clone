@@ -653,20 +653,20 @@ app.directive("employeeOverviewDirective", [
         scope.toggleEmployee = function(emp, index){
           console.log(emp);
 
-          scope.plan_name = emp.plan_name;
-          console.log(scope.plan_name);
-
-          if (scope.plan_name === 'Lite Plan') {
-            scope.hideLitePlanCheckbox = false;
-            scope.litePlanCheckbox = true;
-          }
-
           if( scope.isEmployeeShow == false ){
             scope.isEmployeeShow = true;
             scope.empTabSelected = 0;
             scope.healthSpendingAccountTabIsShow = false;
             scope.selectedEmployee_index = index;
             scope.selectedEmployee = emp;
+            scope.plan_name = emp.plan_name;
+            console.log(scope.plan_name);
+
+            if (scope.plan_name === 'Lite Plan') {
+              scope.hideLitePlanCheckbox = false;
+              scope.litePlanCheckbox = true;
+            }
+
             if( scope.selectedEmployee.plan_tier != null || scope.selectedEmployee.plan_tier ){
               scope.addActiveDependent_index = scope.selectedEmployee.plan_tier.dependent_enrolled_count + 1;
             }else{
