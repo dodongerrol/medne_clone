@@ -127,11 +127,19 @@ class UserPackage extends Eloquent
                         $active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
                         $data['start_date'] = date('d F Y', strtotime($dependent_plan_history->plan_start));
                         
-                        if((int)$dependent_plan_history->fixed == 1 || $dependent_plan_history->fixed == "1") {
-                            $temp_valid_date = date('d F Y', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+
+                        $dependent_plan_extenstion = DB::table('dependent_plans')->where('customer_plan_id', $dependent_plan->customer_plan_id)->where('type', 'extension_plan')->first();
+
+                        if($dependent_plan_extenstion && $dependent_plan_extenstion->activate_plan_extension == 1) {
+                            $temp_valid_date = date('d F Y', strtotime('+'.$dependent_plan_extenstion->duration, strtotime($dependent_plan_extenstion->plan_start)));
                             $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
-                        } else if($dependent_plan_history->fixed == 0 | $dependent_plan_history->fixed == "0") {
-                            $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($dependent_plan_history->plan_start)));
+                        } else {
+                            if((int)$dependent_plan_history->fixed == 1) {
+                                $temp_valid_date = date('d F Y', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+                                $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
+                            } else if((int)$dependent_plan_history->fixed == 0) {
+                                $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($dependent_plan_history->plan_start)));
+                            }
                         }
 
                         $data['fullname'] = ucwords($user_details->Name);
