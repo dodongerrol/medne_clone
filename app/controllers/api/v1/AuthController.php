@@ -1179,6 +1179,7 @@ return Response::json($returnObject);
                  $total_amount = $cost;
 
                  if((int)$trans->health_provider_done == 1) {
+                  $receipt_status = TRUE;
                   $health_provider_status = TRUE;
                   $credit_status = FALSE;
                   if((int)$trans->lite_plan_enabled == 1) {
@@ -1192,10 +1193,10 @@ return Response::json($returnObject);
                   $credit_status = TRUE;
                   if((int)$trans->lite_plan_enabled == 1) {
                     if((int)$trans->half_credits == 1) {
-                      // $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-                      $total_amount = $trans->credit_cost + $trans->cash_cost;
+                      $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                    // $total_amount = $trans->credit_cost + $trans->cash_cost;
                     } else {
-                      $total_amount = $trans->procedure_cost;
+                      $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                     }
                   } else {
                     $total_amount = $cost;
@@ -1210,13 +1211,13 @@ return Response::json($returnObject);
                   $currency_symbol = "MYR";
                   $converted_amount = $total_amount * $trans->currency_amount;
                 }
-                // if($trans->currency_type == "sgd") {
-                //   $currency_symbol = "SGD";
-                //   $converted_amount = $total_amount;
-                // } else if($trans->currency_type == "myr") {
-                //   $currency_symbol = "MYR";
-                //   $converted_amount = $total_amount * $trans->currency_amount;
-                // }
+                if($trans->default_currency == "sgd") {
+                  $currency_symbol = "SGD";
+                  $converted_amount = $total_amount;
+                } else if($trans->default_currency == "myr") {
+                  $currency_symbol = "MYR";
+                  $converted_amount = $total_amount * $trans->currency_amount;
+                }
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
@@ -4795,7 +4796,7 @@ public function getEclaimDetails($id)
       $status_text = 'Pending';
     } else if($transaction->status == 1) {
       $status_text = 'Approved';
-      $transaction->amount = $transaction->claim_amount > 0 ? $transaction->claim_amount : $transaction->amount;
+      // $transaction->amount = $transaction->claim_amount > 0 ? $transaction->claim_amount : $transaction->amount;
     } else if($transaction->status == 2) {
       $status_text = 'Rejected';
       $rejected_status = true;
@@ -4855,12 +4856,13 @@ if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5
 }
 
 $date = null;
+$claim_amount = null;
 if($transaction->status == 1) {
-  $date = date('d F Y, h:i A', strtotime($transaction->approved_date));
+  $date = date('d F Y', strtotime($transaction->approved_date));
+  $claim_amount = $transaction->claim_amount;
 } else {
   $date = date('d F Y', strtotime($transaction->date)).', '.$transaction->time;
 }
-
 
 $id = str_pad($transaction->e_claim_id, 6, "0", STR_PAD_LEFT);
 $temp = array(
@@ -4871,6 +4873,7 @@ $temp = array(
   'service'           => $transaction->service,
   'merchant'          => $transaction->merchant,
   'amount'            => number_format($transaction->amount, 2),
+  'claim_amount'      => number_format($claim_amount, 2),
   'member'            => ucwords($member->Name),
   'type'              => 'E-Claim',
   'transaction_id'    => 'MNF'.$id,
@@ -4883,7 +4886,8 @@ $temp = array(
   'rejected_status'   => $rejected_status,
   'rejected_message'   => $transaction->rejected_reason,
   'spending_type'     => ucwords($transaction->spending_type),
-  'currency_symbol'   => $currency_symbol
+  'currency_symbol'   => $currency_symbol,
+  'status'            => $transaction->status
 );
 $returnObject->status = TRUE;
 $returnObject->data = $temp;
