@@ -635,8 +635,8 @@ app.directive("employeeOverviewDirective", [
           scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
           // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
-          console.log(scope.selectedEmployee.dob);
           // scope.selectedEmployee.country_code = scope.selectedEmployee.country_code;
+          console.log(scope.selectedEmployee.dob);
           $('.datepicker').datepicker('setDate',scope.selectedEmployee.dob );
           scope.inititalizeGeoCode();
           console.log( scope.selectedEmployee );
@@ -698,10 +698,10 @@ app.directive("employeeOverviewDirective", [
 
         scope.getEmpPlans = function( id ) {
           dependentsSettings.fetchEmpPlans( id )
-              .then(function(response){
-                console.log( response );
-                scope.selectedEmployee.plan_list = response.data;
-              });
+            .then(function(response){
+              console.log( response );
+              scope.selectedEmployee.plan_list = response.data;
+            });
         }
 
         scope.prevSelectedEmployee = function(){
@@ -769,7 +769,7 @@ app.directive("employeeOverviewDirective", [
                   value.start_date = moment( value.start_date ).format("DD/MM/YYYY");
                   value.start_date_format = moment( value.start_date, 'DD/MM/YYYY' ).format("DD MMMM YYYY");
                   value.end_date_format = moment( value.expiry_date ).format("DD MMMM YYYY");
-                  // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
+                  value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
                 });
                 $(".employee-overview-pagination").hide();
                 scope.hideLoading();
@@ -778,6 +778,8 @@ app.directive("employeeOverviewDirective", [
                 console.log( scope.selectedEmployee );
                 if( scope.selectedEmployee_index != null ){
                   scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
+                  console.log(scope.selectedEmployee);
+                  scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
                   if( scope.selectedEmployee.plan_tier != null || scope.selectedEmployee.plan_tier ){
                     scope.addActiveDependent_index = scope.selectedEmployee.plan_tier.dependent_enrolled_count + 1;
                   }else{
@@ -1247,6 +1249,7 @@ app.directive("employeeOverviewDirective", [
 
         scope.getEmployeeList = function(page){
           $(".employee-overview-pagination").show();
+          
           scope.showLoading();
           hrSettings.getEmployees(scope.page_ctr, page)
             .then(function(response) {
@@ -1254,13 +1257,15 @@ app.directive("employeeOverviewDirective", [
               scope.employees = response.data;
               scope.employees.total_allocation = response.data.total_allocation;
               scope.employees.allocated = response.data.allocated;
+              
               angular.forEach(scope.employees.data, function(value, key) {
                 value.fname = scope.employees.data[ key ].name.substring( 0, value.name.lastIndexOf(" ") );
                 value.lname = scope.employees.data[ key ].name.substring( value.name.lastIndexOf(" ") + 1 );
                 value.start_date = moment( value.start_date ).format("DD/MM/YYYY");
                 value.start_date_format = moment( value.start_date, 'DD/MM/YYYY' ).format("DD MMMM YYYY");
                 value.end_date_format = moment( value.expiry_date ).format("DD MMMM YYYY");
-                // value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
+                value.expiry_date = moment( value.expiry_date ).format("MM/DD/YYYY");
+                value.dob = moment(value.dob).format('DD/MM/YYYY');
               });
               $(".loader-table").hide();
               $(".main-table").fadeIn();
@@ -1268,8 +1273,9 @@ app.directive("employeeOverviewDirective", [
 
               if( scope.selectedEmployee_index != null ){
                 scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
+                // scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
+                // console.log(scope.selectedEmployee.dob);
                 console.log(scope.selectedEmployee);
-                scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, 'YYYY-DD-MM').format('DD/MM/YYYY');
                 if( scope.selectedEmployee.plan_tier != null || scope.selectedEmployee.plan_tier ){
                   scope.addActiveDependent_index = scope.selectedEmployee.plan_tier.dependent_enrolled_count + 1;
                 }else{
@@ -1379,7 +1385,7 @@ app.directive("employeeOverviewDirective", [
               console.log( data );
               var update_data = {
                 name: data.name,
-                dob: data.dob,
+                dob: moment(data.dob, 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
                 nric: data.nric == '' || data.nric == null ? '' : data.nric,
                 email: data.email,
                 phone_no: data.phone_no,
