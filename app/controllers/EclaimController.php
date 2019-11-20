@@ -1335,6 +1335,15 @@ class EclaimController extends \BaseController {
 				$doc_files = FALSE;
 			}
 
+			if($res->currency_type == "myr" && $res->default_currency == "myr") {
+	      $res->default_currency = "MYR";
+	    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+	      $res->default_currency = "SGD";
+	      $res->amount = $res->amount / $res->currency_value;
+	    } else {
+	      $res->default_currency = "SGD";
+	    }
+
 			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
 			$temp = array(
@@ -2869,6 +2878,15 @@ public function getActivityOutNetworkTransactions( )
 				$e_claim_receipt_status = FALSE;
 				$doc_files = FALSE;
 			}
+
+			if($res->currency_type == "myr" && $res->default_currency == "myr") {
+	      $res->default_currency = "MYR";
+	    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+	      $res->default_currency = "SGD";
+	      $res->amount = $res->amount / $res->currency_value;
+	    } else {
+	      $res->default_currency = "SGD";
+	    }
 
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(
@@ -6011,6 +6029,16 @@ public function searchEmployeeEclaimActivity( )
 		} else {
 			$approved_status = false;
 		}
+
+		if($res->currency_type == "myr" && $res->default_currency == "myr") {
+      $res->default_currency = "MYR";
+    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+      $res->default_currency = "SGD";
+      $res->amount = $res->amount / $res->currency_value;
+    } else {
+      $res->default_currency = "SGD";
+    }
+
 		$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 		$temp = array(
 			'status'            => $res->status,
@@ -6044,7 +6072,8 @@ public function searchEmployeeEclaimActivity( )
 			'bank_name'					=> $bank_name,
 			'bank_code'					=> $bank_code,
 			'bank_brh'					=> $bank_brh,
-			'nric'							=> $member->NRIC
+			'nric'							=> $member->NRIC,
+			'currency_type'			=> $res->default_currency
 		);
 
 		array_push($e_claim, $temp);
@@ -6225,6 +6254,15 @@ public function hrEclaimActivity( )
 			if($res->status == 1) {
 				$approved_status = true;
 			}
+
+			if($res->currency_type == "myr" && $res->default_currency == "myr") {
+	      $res->default_currency = "MYR";
+	    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+	      $res->default_currency = "SGD";
+	      $res->amount = $res->amount / $res->currency_value;
+	    } else {
+	      $res->default_currency = "SGD";
+	    }
 
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(

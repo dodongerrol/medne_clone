@@ -4718,7 +4718,10 @@ public function getEclaimTransactions( )
     $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
     $currency_symbol = "SGD";
-    if($res->default_currency == "myr") {
+    if($res->default_currency == "myr" && $res->currency_type == "sgd") {
+      $currency_symbol = "SGD";
+       $res->amount = $res->amount / $res->currency_value;
+    } else if($res->default_currency == "myr") {
       $currency_symbol = "MYR";
     } else {
       $currency_symbol = "SGD";
@@ -4806,6 +4809,9 @@ public function getEclaimDetails($id)
 
     if($transaction->currency_type == "myr" && $transaction->default_currency == "myr") {
       $currency_symbol = "MYR";
+    } else if($transaction->currency_type == "sgd" && $transaction->default_currency == "myr"){
+      $currency_symbol = "SGD";
+      $transaction->amount = $transaction->amount / $transaction->currency_value;
     } else {
       $currency_symbol = "SGD";
     }
@@ -5114,6 +5120,8 @@ public function createEclaim( )
     if(Input::has('currency_type') && $input['currency_type'] != null) {
       if(strtolower($input['currency_type']) == "myr") {
         $input_amount = $input['amount'] / $input['currency_exchange_rate'];
+      } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
+        $input_amount = $input['amount'] * $input['currency_exchange_rate'];
       } else {
         $input_amount = trim($input['amount']);
       }
