@@ -1084,6 +1084,9 @@ return Response::json($returnObject);
 
                   if($res->default_currency == "sgd") {
                     $currency_symbol = "SGD";
+                  } else if($res->default_currency == "myr" && $res->currency_type == "sgd") {
+                    $currency_symbol = "SGD";
+                    $res->amount = $res->amount / $res->currency_value;
                   } else {
                     $currency_symbol = "MYR";
                   }

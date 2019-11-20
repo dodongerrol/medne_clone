@@ -20,7 +20,7 @@ class EclaimHelper
     $data = array(
       array(
         'currency_name'   => "SGD - Singapore Dollar",
-        'currency_exchange_rate'  => 0,
+        'currency_exchange_rate'  => 3.00,
         'currency_type'   => 'sgd'
       ),
       array(

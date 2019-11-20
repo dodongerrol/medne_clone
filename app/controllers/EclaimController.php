@@ -187,7 +187,9 @@ class EclaimController extends \BaseController {
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr") {
 	        $amount = $input['amount'] / $currency;
-	      } else {
+	      } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
+        	$amount = $input['amount'] * $currency;
+      	} else {
 	        $amount = trim($input['amount']);
 	      }
 	    } else {
@@ -239,7 +241,8 @@ class EclaimController extends \BaseController {
 			'time'		=> $time,
 			'spending_type' => 'medical',
 			'currency_type'	=> isset($input['currency_type']) ? strtolower($input['currency_type']) : "sgd",
-			'default_currency'	=> $check_user_balance->currency_type
+			'default_currency'	=> $check_user_balance->currency_type,
+			'currency_value' => $currency
 		);
 
 		if($customer_id) {
@@ -396,7 +399,9 @@ class EclaimController extends \BaseController {
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr") {
 	        $amount = $input['amount'] / $currency;
-	      } else {
+	      } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
+        	$amount = $input['amount'] * $currency;
+      	}	else {
 	        $amount = trim($input['amount']);
 	      }
 	    } else {
@@ -444,7 +449,8 @@ class EclaimController extends \BaseController {
 			'time'      => $time,
 			'spending_type' => 'wellness',
 			'currency_type'	=> isset($input['currency_type']) ? strtolower($input['currency_type']) : "sgd",
-			'default_currency'	=> $check_user_balance->currency_type
+			'default_currency'	=> $check_user_balance->currency_type,
+			'currency_value' => $currency
 		);
 
 		if($customer_id) {
