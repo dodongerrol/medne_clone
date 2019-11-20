@@ -7534,11 +7534,12 @@ ul.typeahead li a.dropdown-item
 .health-provider-header-container h4 {
   margin: 0;
   color: #283e52;
+  font-weight: 700;
 }
 
 .health-provider-header-container button {
   margin: 0;
-  padding: 6px 10px;
+  padding: 4px 0px;
   border-radius: 2px;
 }
 
@@ -7554,6 +7555,16 @@ ul.typeahead li a.dropdown-item
   display: grid;
   grid-template-columns: 45% 10% 45%;
   min-height: 540px;
+}
+
+.health-provider-header-container button.save-continue-disabled {
+	background-color: #9dc8e4;
+	border-color: #9dc8e4;
+	cursor: not-allowed;
+}
+
+.health-provider-header-container button.save-continue-disabled:focus {
+	border-color: #9dc8e4;
 }
 
 .health-partner-access-container >div {
@@ -7592,6 +7603,7 @@ ul.typeahead li a.dropdown-item
   position: absolute;
   top: 0;
   right: 20px;
+  cursor: pointer;
 }
 
 .clinic-name-header label {
@@ -7698,8 +7710,6 @@ ul.typeahead li a.dropdown-item
   display: none;
 }
 
-
-
 .health-checkbox-container .health-checkmark:after {
   top: 3px;
   left: 3px;
@@ -7714,8 +7724,115 @@ ul.typeahead li a.dropdown-item
   display: block;
 }
 
+.sort-container {
+	text-align: center;
+}
 
+.sort-container img {
+  transform: translate(0, 22rem) rotate(90deg);
+  height: 50px;
+}
 
+.health-partner-container {
+	margin-bottom: 40px;
+}
+
+.health-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+  position: absolute;
+  bottom: 40px;
+  right: 0px;
+  width: 100%;
+  text-align: right;
+  color: #777;
+}
+
+.health-pagination span {
+  margin-right: 0px;
+  font-size: 12px;
+}
+
+.page-scroll {
+  background-color: #e8e6e6;
+  color: rgba(33,33,33,0.87);
+  font-size: 12px;
+  overflow-y: scroll;
+  max-height: 227px;
+  width: 137px;
+  position: absolute;
+  bottom: -15px;
+  right: -50px;
+}
+
+.page-scroll-container span {
+  cursor: pointer;
+}
+
+.page-scroll-container {
+  position: relative;
+  display: initial;
+  margin-right: 20px;
+}
+
+.page-scroll span {
+  display: block;
+  text-align: left;
+  height: 48px;
+  padding: 0 16px;
+  margin-right: 0;
+  vertical-align: middle;
+  line-height: 4;
+  cursor: pointer;
+}
+
+.page-scroll span:hover {
+  background: rgb(238,238,238);
+}
+
+.health-pagination .page-wrapper >span,
+.health-pagination .rows-page-wrapper >span,
+.health-pagination .per-page-container,
+.health-pagination .per-page-wrapper .fa-angle-left {
+	margin-right: 20px;
+}
+
+.search-input-wrapper input {
+  border: 0;
+  border-bottom: 1px solid #ecebeb;
+  width: 94%;
+  padding: 4px 5px 5px 5px;
+  outline: none;
+}
+
+.health-block-btn {
+	background-color: #ee5556;
+}
+
+.health-open-btn {
+	background-color: #469d59;
+}
+
+.gp-cap-health-provider-wrapper {
+	padding: 0 20px;
+}
+
+.gp-cap-health-provider-wrapper .active-link:hover {
+	cursor: pointer;
+}
+
+.gp-cap-health-provider-wrapper .health-provider-header-container {
+  display: flex;
+  align-items: center;
+  margin: 0 0 20px;
+}
+
+.gp-cap-health-provider-wrapper .health-provider-header-container h3 {
+  flex: 1;
+  color: #333;
+  font-weight: 7000;
+}
 
 /*@media screen and (max-width: 1440px) { 
 

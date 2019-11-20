@@ -603,6 +603,17 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/first-time-login.html'
         }
       }
+    })
+    .state('settings', {
+      url: '/settings',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/settings.html'
+        }
+      }
     });
 
     $urlRouterProvider.otherwise('/introduction');

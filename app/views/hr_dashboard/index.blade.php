@@ -190,6 +190,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/statementDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/teamBenefitsTierDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/firstTimeLoginDirective.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/settingsDirective.js?_={{ $date->format('U') }}"></script>
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>
 	<!-- Services -->
@@ -198,4 +199,5 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/dependentsService.js?_={{ $date->format('U') }}"></script>
 	<!-- Factories -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/factories/dashboardFactory.js?_={{ $date->format('U') }}"></script>
+
 </html>

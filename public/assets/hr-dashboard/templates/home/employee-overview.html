@@ -341,7 +341,7 @@
 						<h4>Health Prioviders Access</h4>
 					</div>
 					<div>
-						<button class="replace-employee-update-button update-replace">SAVE & CONTINUE</button>
+						<button class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button>
 						<img ng-click="settingsShow('close')" src="../assets/hr-dashboard/img/icons/cancel.png" style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 20px;">
 					</div>
 				</div>
@@ -475,91 +475,205 @@
 				<div ng-if="showBlockHealthProviders" class="health-partner-wrapper">
 					<div class="health-partner-access-container">
 						<div class="health-partner-access-blocked">
-							<div class="blocked-opened-header">
-								<span>Health Partner Access - BLOCKED</span>
-								<i class="fa fa-search"></i>
-							</div>
 
-							<div class="clinic-name-header">
-								<label class="health-checkbox-container">
-									<span>Blocked Acess</span>
-									<input type="checkbox">
-									<span class="health-checkmark"></span>
-								</label>
-								<div class="select-filter-wrapper">
-									<div class="select-filter-div">
-										<select>
-											<option>All Region</option>
-											<option>Singapore - SGD</option>
-											<option>Malaysia - MYR</option>
-										</select>
+							<div class="health-partner-container">
+								<div class="blocked-opened-header">
+									<span ng-if="!clinic_blocked_search_trap">Health Partner Access - BLOCKED</span>
+									<div ng-if="clinic_blocked_search_trap" class="search-input-wrapper">
+										<input type="text" placeholder="Seach for partner access">
 									</div>
-									<div class="select-filter-div">
-										<select>
-											<option>Clinic Type</option>
-											<option>Clinic Name</option>
-										</select>
-									</div>
-									<button class="health-btn-open-block">OPEN</button>
+									<i ng-if="clinic_blocked_search_trap" ng-click="toggleBlockedClinicSearch()" class="fa fa-times"></i>
+									<i ng-if="!clinic_blocked_search_trap" ng-click="toggleBlockedClinicSearch()" class="fa fa-search"></i>
 								</div>
-							</div>
 
-							<div class="clinic-name-wrapper">
-								<div class="clinic-name-container">
+								<div class="clinic-name-header">
 									<label class="health-checkbox-container">
-										<span>Onecare Choa Chu Kang</span>
+										<span>Opened Acess</span>
 										<input type="checkbox">
 										<span class="health-checkmark"></span>
 									</label>
-									<div class="country-type">
-										<span>Singapore</span>
+									<div class="select-filter-wrapper">
+										<div class="select-filter-div">
+											<select>
+												<option>All Region</option>
+												<option>Singapore - SGD</option>
+												<option>Malaysia - MYR</option>
+											</select>
+										</div>
+										<div class="select-filter-div">
+											<select>
+												<option>Clinic Type</option>
+												<option>Clinic Name</option>
+											</select>
+										</div>
+										<button class="health-btn-open-block health-open-btn">OPEN</button>
 									</div>
+								</div>
+
+								<div class="clinic-name-wrapper">
+									<div class="clinic-name-container">
+										<label class="health-checkbox-container">
+											<span>Onecare Choa Chu Kang</span>
+											<input type="checkbox">
+											<span class="health-checkmark"></span>
+										</label>
+										<div class="country-type">
+											<span>Singapore</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="health-pagination">
+								<div class="page-wrapper">
+									<span>Page: </span>
+									<div class="page-scroll-container page-blocked">
+										<span ng-click="showPageScroll('blocked_page')">
+											<span>1</span> 
+											<i class="fa fa-caret-down"></i>
+										</span>
+										<div class="blocked-page-scroll page-scroll" style="display: none">
+											<span>1</span>
+											<span>2</span>
+											<span>3</span>
+											<span>4</span>
+											<span>5</span>
+											<span>6</span>
+										</div>
+									</div>
+								</div>
+								<div class="rows-page-wrapper">
+									<span>Rows per page:</span>
+									<div class="page-scroll-container rows-per-page-blocked">
+										<span ng-click="showPageScroll('blocked_per_page')">
+											<span>10</span> 
+											<i class="fa fa-caret-down"></i>
+										</span>
+										<div class="blocked-per-page-scroll page-scroll" style="display: none">
+											<span>10</span>
+											<span>20</span>
+											<span>30</span>
+											<span>40</span>
+											<span>50</span>
+											<span>100</span>
+										</div>
+									</div>
+								</div>
+								<div class="per-page-wrapper">
+									<span class="per-page-container">
+										<span>
+											<span>1</span>
+											-
+											<span>10</span>
+											of
+											<span>56</span>
+										</span>
+									</span>
+									<i class="fa fa-angle-left" ></i>
+									<i class="fa fa-angle-right" ></i>
 								</div>
 							</div>
 						</div>
 						<div class="sort-container">
-							
+							<img src="../assets/hr-dashboard/img/sort.png">
 						</div>
 						<div class="health-partner-access-opened">
-							<div class="blocked-opened-header">
-								<span>Health Partner Access - BLOCKED</span>
-								<i class="fa fa-search"></i>
-							</div>
 
-							<div class="clinic-name-header">
-								<label class="health-checkbox-container">
-									<span>Blocked Acess</span>
-									<input type="checkbox">
-									<span class="health-checkmark"></span>
-								</label>
-								<div class="select-filter-wrapper">
-									<div class="select-filter-div">
-										<select>
-											<option>All Region</option>
-											<option>Singapore - SGD</option>
-											<option>Malaysia - MYR</option>
-										</select>
+							<div class="health-partner-container">
+								<div class="blocked-opened-header">
+									<span ng-if="!clinic_opened_search_trap">Health Partner Access - OPENED</span>
+									<div ng-if="clinic_opened_search_trap" class="search-input-wrapper">
+										<input type="text" placeholder="Seach for partner access">
 									</div>
-									<div class="select-filter-div">
-										<select>
-											<option>Clinic Type</option>
-											<option>Clinic Name</option>
-										</select>
-									</div>
-									<button class="health-btn-open-block">OPEN</button>
+									<i ng-if="clinic_opened_search_trap" ng-click="toggleOpenedClinicSearch()" class="fa fa-times"></i>
+									<i ng-if="!clinic_opened_search_trap" ng-click="toggleOpenedClinicSearch()" class="fa fa-search"></i>
 								</div>
-							</div>
 
-							<div class="clinic-name-wrapper">
-								<div class="clinic-name-container">
+								<div class="clinic-name-header">
 									<label class="health-checkbox-container">
-										<span>Onecare Choa Chu Kang</span>
+										<span>Blocked Acess</span>
 										<input type="checkbox">
 										<span class="health-checkmark"></span>
 									</label>
-									<div class="country-type">
-										<span>Singapore</span>
+									<div class="select-filter-wrapper">
+										<div class="select-filter-div">
+											<select>
+												<option>All Region</option>
+												<option>Singapore - SGD</option>
+												<option>Malaysia - MYR</option>
+											</select>
+										</div>
+										<div class="select-filter-div">
+											<select>
+												<option>Clinic Type</option>
+												<option>Clinic Name</option>
+											</select>
+										</div>
+										<button class="health-btn-open-block health-block-btn">BLOCK</button>
 									</div>
+								</div>
+
+								<div class="clinic-name-wrapper">
+									<div class="clinic-name-container">
+										<label class="health-checkbox-container">
+											<span>Onecare Choa Chu Kang</span>
+											<input type="checkbox">
+											<span class="health-checkmark"></span>
+										</label>
+										<div class="country-type">
+											<span>Singapore</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="health-pagination">
+								<div class="page-wrapper">
+									<span>Page: </span>
+									<div class="page-scroll-container page-opened">
+										<span ng-click="showPageScroll('opened-page-scroll')">
+											<span>1</span> 
+											<i class="fa fa-caret-down"></i>
+										</span>
+										<div class="opened-page-scroll page-scroll" style="display: none;">
+											<span>1</span>
+											<span>2</span>
+											<span>3</span>
+											<span>4</span>
+											<span>5</span>
+											<span>6</span>
+										</div>
+									</div>
+								</div>
+								<div class="rows-page-wrapper">
+									<span>Rows per page:</span>
+									<div class="page-scroll-container rows-per-page-opened">
+										<span ng-click="showPageScroll('opened-per-page-scroll')">
+											<span>10</span> 
+											<i class="fa fa-caret-down"></i>
+										</span>
+										<div class="opened-per-page-scroll page-scroll" style="display: none">
+											<span>10</span>
+											<span>20</span>
+											<span>30</span>
+											<span>40</span>
+											<span>50</span>
+											<span>100</span>
+										</div>
+									</div>
+								</div>
+								<div class="per-page-wrapper">
+									<span class="per-page-container">
+										<span>
+											<span>1</span>
+											-
+											<span>10</span>
+											of
+											<span>56</span>
+										</span>
+									</span>
+									<i class="fa fa-angle-left" ></i>
+									<i class="fa fa-angle-right" ></i>
 								</div>
 							</div>
 						</div>
