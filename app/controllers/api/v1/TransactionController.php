@@ -544,7 +544,7 @@ class Api_V1_TransactionController extends \BaseController
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
 										$type = $clinic_type_properties['type'];
 										$image = $clinic_type_properties['image'];
-										
+
 										// check if check_in_id exist
 										if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
 											// check check_in_id data
@@ -1127,7 +1127,7 @@ class Api_V1_TransactionController extends \BaseController
 								$total_amount = $converted_amount;
 							} else if ($trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 								$currency_symbol = "SGD";
-								$converted_amount = $total_amount / $trans->currency_amount;
+								$converted_amount = $total_amount;
 								$total_amount = $converted_amount;
 							}
 

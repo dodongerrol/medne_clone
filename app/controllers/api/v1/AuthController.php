@@ -1210,17 +1210,21 @@ return Response::json($returnObject);
                 if($trans->default_currency == "sgd") {
                   $currency_symbol = "SGD";
                   $converted_amount = $total_amount;
+                } else if($trans->default_currency == "myr" && $trans->currency_type == "sgd") {
+                  $currency_symbol = "SGD";
+                  $converted_amount = $total_amount;
                 } else {
                   $currency_symbol = "MYR";
                   $converted_amount = $total_amount * $trans->currency_amount;
                 }
-                if($trans->default_currency == "sgd") {
-                  $currency_symbol = "SGD";
-                  $converted_amount = $total_amount;
-                } else if($trans->default_currency == "myr") {
-                  $currency_symbol = "MYR";
-                  $converted_amount = $total_amount * $trans->currency_amount;
-                }
+
+                // if($trans->default_currency == "sgd") {
+                //   $currency_symbol = "SGD";
+                //   $converted_amount = $total_amount;
+                // } else if($trans->default_currency == "myr") {
+                //   $currency_symbol = "MYR";
+                //   $converted_amount = $total_amount * $trans->currency_amount;
+                // }
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
