@@ -171,6 +171,10 @@ class EclaimController extends \BaseController {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
 			}
+
+			if($check_plan['e_claim_access'] == false) {
+				return array('status' => FALSE, 'message' => 'Your Company is not allowed to transact E-Claim Submission.');
+			}
 		}
 
 		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
@@ -355,6 +359,10 @@ class EclaimController extends \BaseController {
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan is expired. You cannot submit an e-claim request.');
+			}
+
+			if($check_plan['e_claim_access'] == false) {
+				return array('status' => FALSE, 'message' => 'Your Company is not allowed to transact E-Claim Submission.');
 			}
 		}
 
