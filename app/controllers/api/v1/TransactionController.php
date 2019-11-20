@@ -170,9 +170,15 @@ class Api_V1_TransactionController extends \BaseController
 						}
 					}
 
+					$currency_type = $clinic->currency_type;
 					if($wallet_user->currency_type == "myr") {
 						$cap_amount = $cap_amount / $currency;
 						$user_credits = $user_credits / $currency;
+						$balance = $wallet_user->balance / $currency;
+					} else {
+						$cap_amount = $cap_amount / $currency;
+						$user_credits = $user_credits / $currency;
+						$balance = $wallet_user->balance / $currency;
 					}
 
 					$credits = 0;
@@ -269,9 +275,9 @@ class Api_V1_TransactionController extends \BaseController
 						'debit'                 => 0,
 						'clinic_discount'       => $clinic->discount,
 						'medi_percent'          => $clinic->medicloud_transaction_fees,
-						'currency_type'         => $clinic->currency_type,
+						'currency_type'         => $currency_type,
 						'wallet_use'            => 1,
-						'current_wallet_amount' => $wallet_user->balance,
+						'current_wallet_amount' => $balance,
 						'credit_cost'           => $total_credits_cost,
 						'paid'                  => 1,
 						'co_paid_status'        => $co_paid_status,
@@ -309,8 +315,6 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
-
-					// return $data;
 					
 					try {
 						$result = $transaction->createTransaction($data);
@@ -533,13 +537,14 @@ class Api_V1_TransactionController extends \BaseController
 											'dependent_user'    => $dependent_user,
 											'half_credits_payment' => $half_payment,
 											'user_id'						=> $customer_id,
-											'convert_option'		=> $result->currency_type != $result->default_currency ? true : false
+											'convert_option'		=> $result->currency_type != $result->default_currency ? true : false,
+											'currency'					=> $currency
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
 										$type = $clinic_type_properties['type'];
 										$image = $clinic_type_properties['image'];
-
+										
 										// check if check_in_id exist
 										if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
 											// check check_in_id data
@@ -554,7 +559,7 @@ class Api_V1_TransactionController extends \BaseController
 												PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
 											}
 										}
-
+										// return $transaction_results;
 										// send email
 										$email['member'] = ucwords($user->Name);
 										$email['credits'] = $clinic->currency_type == "myr" ? number_format($total_credits_cost * $currency, 2) : number_format($total_credits_cost, 2);
@@ -1116,9 +1121,13 @@ class Api_V1_TransactionController extends \BaseController
 							if($trans->default_currency == "sgd") {
 								$currency_symbol = "SGD";
 								$converted_amount = $total_amount;
-							} else if($trans->default_currency == "myr") {
+							} else if($trans->default_currency == "myr" && $trans->currency_type == "myr") {
 								$currency_symbol = "MYR";
 								$converted_amount = $total_amount * $trans->currency_amount;
+								$total_amount = $converted_amount;
+							} else if ($trans->default_currency == "myr" && $trans->currency_type == "sgd") {
+								$currency_symbol = "SGD";
+								$converted_amount = $total_amount / $trans->currency_amount;
 								$total_amount = $converted_amount;
 							}
 

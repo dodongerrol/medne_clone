@@ -1845,12 +1845,12 @@ public function getNewClinicDetails($id)
    $user = DB::table('user')->where('UserID', $findUserID)->first();
    $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
 
-   if($wallet->currency_type != $clinic->currency_type && $wallet->currency_type == "myr") {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'Member is prohibited to access this clinic from Singpapore';
-     $returnObject->employee_status = false;
-     return Response::json($returnObject);
-   }
+   // if($wallet->currency_type != $clinic->currency_type && $wallet->currency_type == "myr") {
+   //   $returnObject->status = FALSE;
+   //   $returnObject->message = 'Member is prohibited to access this clinic from Singpapore';
+   //   $returnObject->employee_status = false;
+   //   return Response::json($returnObject);
+   // }
 
 
    $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
@@ -1946,6 +1946,8 @@ if($customer_active_plan && $customer_active_plan->account_type == "enterprise_p
   $balance = $current_balance;
 }
 
+$real_balance = $current_balance;
+
 if($clinic->currency_type == "myr" && $wallet->currency_type == "sgd") {
  $currency = "MYR";
  $cap_currency_symbol = "MYR";
@@ -1959,12 +1961,19 @@ if($clinic->currency_type == "myr" && $wallet->currency_type == "sgd") {
   $balance = number_format($balance, 2);
   $currency = "MYR";
   $cap_currency_symbol = "MYR";
+} else  if($clinic->currency_type == "sgd" && $wallet->currency_type == "myr") {
+  $currency = "SGD";
+  $cap_currency_symbol = "SGD";
+  $balance = number_format($balance / $currency_value, 2);
+  $cap_amount = $cap_amount / $currency_value;
+  $current_balance = $current_balance / $currency_value;
 }
 
 if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
   $currency = "";
 }
 
+$jsonArray['real_balance'] = $real_balance;
 $jsonArray['current_balance'] = $currency.' '.$balance;
 $jsonArray['balance'] = $current_balance;
 $jsonArray['current_balance_in_sgd'] = $current_balance;

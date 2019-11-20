@@ -981,6 +981,8 @@ class EclaimController extends \BaseController {
 				if((int)$trans->deleted == 0) {
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 						$in_network_spent += floatval($trans->credit_cost) * $trans->currency_amount;
+					} else if($trans->currency_type == "sgd" && $trans->default_currency == "myr") {
+						$in_network_spent += floatval($trans->credit_cost) * $trans->currency_amount;
 					} else {
 						$in_network_spent += floatval($trans->credit_cost);
 					}
@@ -1300,7 +1302,7 @@ class EclaimController extends \BaseController {
 					'paid_by_cash'      => number_format($trans->cash_cost, 2),
 					'paid_by_credits'   => number_format($trans->credit_cost, 2),
 					'currency_symbol' 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
-					'currency_type'			=> $trans->default_currency
+					'currency_type'			=> $trans->currency_type
 				);
 
 				array_push($transaction_details, $format);
@@ -1907,7 +1909,7 @@ class EclaimController extends \BaseController {
 				'transaction_id' => $res->e_claim_id,
 				'visit_date'	=> date('d F Y', strtotime($res->date)).', '.$res->time,
 				'spending_type' => $res->spending_type,
-				'currency_type'	=> $res->default_currency
+				'currency_type'	=> $res->currency_type
 			);
 
 			array_push($e_claim, $temp);
@@ -2056,7 +2058,7 @@ class EclaimController extends \BaseController {
 					'credit_status'     => $credit_status,
 					'user_id'           => $trans->UserID,
 					'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
-					'currency_type'			=> $trans->default_currency
+					'currency_type'			=> $trans->currency_type
 				);
 
 				array_push($transaction_details, $format);
@@ -3031,7 +3033,7 @@ public function getActivityInNetworkTransactions( )
 
 			if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
 				if($trans->deleted == 0 || $trans->deleted == "0") {
-					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_spent += $trans->credit_cost * $trans->currency_amount;
 					} else {
 						$in_network_spent += $trans->credit_cost;
@@ -3445,7 +3447,7 @@ public function getActivityInNetworkTransactions( )
 					'paid_by_cash'      => number_format($trans->cash_cost, 2),
 					'paid_by_credits'   => number_format($paid_by_credits, 2),
 					"currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
-					"currency_type" 		=> $trans->default_currency == "myr" ? "MYR" : "SGD",
+					"currency_type" 		=> $trans->currency_type == "myr" ? "MYR" : "SGD",
 					'files'							=> $doc_files
 				);
 
@@ -4660,7 +4662,7 @@ public function getHrActivity( )
 
 				if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
 					if((int)$trans->deleted == 0) {
-						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
 						} else {
 							$in_network_spent += $trans->credit_cost;
@@ -5356,7 +5358,7 @@ public function searchEmployeeActivity( )
 
 				if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
 					if((int)$trans->deleted == 0) {
-						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
 						} else {
 							$in_network_spent += $trans->credit_cost;

@@ -258,7 +258,7 @@ class SpendingInvoiceLibrary
 				$service_credits = false;
 
 				if((int)$trans['deleted'] == 0) {
-					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_transactions += $trans['credit_cost'] * $trans->currency_amount;
 					} else {
 						$in_network_transactions += $trans['credit_cost'];
@@ -480,7 +480,7 @@ class SpendingInvoiceLibrary
 							'paid_by_cash'      => number_format($trans->cash_cost, 2),
 							'paid_by_credits'   => number_format($trans->credit_cost, 2),
 							"currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
-							"currency_type" 	=> $trans->default_currency == "myr" ? "MYR" : "SGD"
+							"currency_type" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD"
 						);
 
 						array_push($transaction_details, $format);

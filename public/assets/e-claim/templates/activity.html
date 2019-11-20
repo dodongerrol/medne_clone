@@ -250,7 +250,7 @@
 								<span ng-bind="list.clinic_name">Drs Chua & Partners (AV) Pte Ltd</span>
 							</td>
 							<td class="xs-hide-table-cell">
-								<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>  
+								<span ng-bind="list.currency_type" class="currency-type">SGD</span>  
 								<span ng-bind="list.amount">22.00</span>
 							</td>
 							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
@@ -258,7 +258,7 @@
 								<span ng-bind="list.procedure_cost">Not Available</span>
 							</td>
 							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
-								<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+								<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 								<span ng-bind="list.consultation">Not Available</span>
 							</td>
 							<td class="xs-hide-table-cell">
@@ -349,18 +349,18 @@
 											</div>
 											<div class="desc-wrapper">
 												<p style="margin-bottom: 10px;"><span class="color-gray2" >
-													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span ng-bind="list.amount">22</span></span></p>
 												<!--  -->
 												<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status">
 													<span class="color-gray2" ng-bind="list.procedure"></span>
 												</p>
 												<p style="margin-bottom: 5px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >
-													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span ng-bind="list.procedure_cost">22</span></span></p>
 												<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >Consultation</p>
 												<p style="margin-bottom: 20px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >
-													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span> 
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span> 
 													<span ng-bind="list.consultation">22</span></span></p>
 											</div>
 										</div>
