@@ -7515,4 +7515,236 @@ ul.typeahead li a.dropdown-item
   background: #eee;
 }
 
+.employee-dependent-selection.health-provider-header-container {
+	position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.employee-dependent-selection.health-provider-header-container >div {
+	padding: 0;
+	display: inherit;
+}
+
+.employee-dependent-selection.health-provider-header-container >div:nth-child(1) { 
+	width: 80%;
+}
+
+.health-provider-header-container h4 {
+  margin: 0;
+  color: #283e52;
+}
+
+.health-provider-header-container button {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 2px;
+}
+
+.health-provider-header-container .replace-employee-update-button:focus {
+	border: solid 2px #0392cf;
+}
+
+.health-partner-wrapper {
+	padding: 40px 20px;
+}
+
+.health-partner-access-container {
+  display: grid;
+  grid-template-columns: 45% 10% 45%;
+  min-height: 540px;
+}
+
+.health-partner-access-container >div {
+	position: relative;
+}
+
+.health-partner-access-blocked,
+.health-partner-access-opened {
+	background-color: #fff;
+  padding: 20px 0 40px;
+  box-shadow: 0 0px 3px 0 rgba(0,0,0,.2), 0 4px 6px 0 rgba(0,0,0,.14), 0 0px 4px 2px rgba(0,0,0,0.12);
+}
+
+.clinic-name-header {
+  border-bottom: 1px solid #cbcbcb;
+  padding: 20px 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.blocked-opened-header {
+  position: relative;
+  padding: 0 20px;
+  margin-bottom: 30px;
+}
+
+.health-partner-access-blocked span, 
+.health-partner-access-opened span {
+	color: #333;
+}
+
+.blocked-opened-header i {
+  font-size: 18px;
+  color: #777;
+  position: absolute;
+  top: 0;
+  right: 20px;
+}
+
+.clinic-name-header label {
+  flex: 1;
+}
+
+.select-filter-wrapper {
+	display: flex;
+	align-items: center;
+}
+
+.select-filter-div select {
+	display: inline-block;
+  flex: 1;
+  width: fit-content;
+  margin: 0 10px 0 0;
+  border-radius: 0;
+  /* -webkit-appearance: none; */
+  border: 1px solid #eee;
+  border-width: 0 0 1px 0;
+  padding: 5px 8px;
+  height: 32px;
+  color: #888;
+  background: #fafafa;
+  font-family: 'Helvetica Light';
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.health-btn-open-block {
+  /* position: absolute; */
+  /* right: 20px; */
+  /* top: 13px; */
+  background-color: #4154AF;
+  border-radius: 2px;
+  border: 0;
+  color: #fff;
+  font-weight: 300;
+  width: 70px;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.clinic-name-wrapper {
+  overflow-y: auto;
+  height: 500px;
+}
+
+.clinic-name-container {
+  color: #333;
+  padding: 20px 20px;
+  border-bottom: 1px solid #cbcbcb;
+  display: flex;
+}
+
+.health-checkbox-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  /* margin-bottom: 12px; */
+  cursor: pointer;
+  /*font-size: 22px;*/
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  flex: 1;
+}
+
+.health-checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.health-checkbox-container input:checked ~ .health-checkmark {
+  background-color: #fff;
+  border: 1px solid #cbcbcb;
+  border-radius: 2px;
+}
+
+.clinic-name-header span {
+  display: block;
+  color: #777;
+}
+
+.health-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #fff;
+  border: 1px solid #cbcbcb;
+  border-radius: 2px;
+  margin: 4px 0 0;
+}
+
+.health-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+
+
+.health-checkbox-container .health-checkmark:after {
+  top: 3px;
+  left: 3px;
+  width: 7px;
+  height: 7px;
+  background-color: #4154AF;
+  border-radius: 2px;
+  content: "";
+}
+
+.health-checkbox-container input:checked ~ .health-checkmark:after {
+  display: block;
+}
+
+
+
+
+/*@media screen and (max-width: 1440px) { 
+
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

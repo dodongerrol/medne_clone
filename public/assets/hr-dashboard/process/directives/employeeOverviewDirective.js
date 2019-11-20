@@ -66,6 +66,7 @@ app.directive("employeeOverviewDirective", [
         scope.arrowStatement = false;
         scope.litePlanCheckbox = false;
         scope.hideLitePlanCheckbox = true;
+        scope.showBlockHealthProviders = false;
 
         var iti = null;
 
@@ -101,6 +102,16 @@ app.directive("employeeOverviewDirective", [
 
         scope.manageCap = function(){
           $("#manage-cap-modal").modal('show');
+        }
+        scope.settingsShow = function ( data ) {
+          let x = data;
+
+          if (x === 'open') {
+            console.log('gawas ang open');
+            scope.showBlockHealthProviders = true;
+          } else if (x === 'close') {
+            scope.showBlockHealthProviders = false;
+          }
         }
         scope.submitCapPerVisit = function( cap ){
           scope.showLoading();
