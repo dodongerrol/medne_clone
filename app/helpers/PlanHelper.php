@@ -200,6 +200,8 @@ class PlanHelper {
 			return FALSE;
 		}
 
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->first();
+		$data['company_name'] = ucwords($company->company_name);
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$plan_user = DB::table('user_plan_type')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
@@ -295,6 +297,12 @@ class PlanHelper {
 		$data['user_type'] = "employee";
 		$data['currency_type'] = $wallet->currency_type;
 		$data['plan_type'] = $active_plan->account_type;
+
+		if((int)$customer->access_e_claim == 1) {
+ 			$data['e_claim_access'] = true;
+		} else {
+			$data['e_claim_access'] = false;
+		}
 
 		if(date('Y-m-d') > date('Y-m-d', strtotime($data['valid_date']))) {
 			$data['expired'] = TRUE;

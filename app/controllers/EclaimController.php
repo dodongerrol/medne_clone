@@ -172,6 +172,10 @@ class EclaimController extends \BaseController {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
 			}
+
+			if($check_plan['e_claim_access'] == false) {
+				return array('status' => FALSE, 'message' => 'Your Company is not allowed to transact E-Claim Submission.');
+			}
 		}
 
 		$currency_data = DB::table('currency_options')->where('currency_type', $check_user_balance->currency_type)->first();
@@ -382,6 +386,10 @@ class EclaimController extends \BaseController {
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan is expired. You cannot submit an e-claim request.');
+			}
+
+			if($check_plan['e_claim_access'] == false) {
+				return array('status' => FALSE, 'message' => 'Your Company is not allowed to transact E-Claim Submission.');
 			}
 		}
 

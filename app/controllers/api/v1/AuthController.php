@@ -5110,11 +5110,23 @@ public function createEclaim( )
     }
   }
 
+
   $returnObject->status = TRUE;
   $returnObject->message = 'Success.';
   $ids = StringHelper::getSubAccountsID($findUserID);
   $user_id = StringHelper::getUserId($findUserID);
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+  
+  $customer_id = PlanHelper::getCustomerId($user_id);
+
+  $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+  if($customer && (int)$customer->access_e_claim == 0) {
+    $returnObject->status = FALSE;
+    $returnObject->message = 'Your Company is not allowed to transact E-Claim Submission.';
+    return Response::json($returnObject);
+  }
+
   $input_amount = 0;
 
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
