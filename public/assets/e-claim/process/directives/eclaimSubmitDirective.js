@@ -170,9 +170,9 @@ app.directive('eclaimSubmitDirective', [
 					
 					console.log('sadasdsa');
 
-					if ( scope.currency_myr === 'sgd' ) {
+					// if ( scope.currency_myr === 'sgd' ) {
 						$('.currency-type-selector').toggle();
-					}
+					// }
 					
 				}
 
