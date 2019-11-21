@@ -1051,39 +1051,73 @@ class EmployeeController extends \BaseController {
         }
 
         if(isset($input['search']) && !empty($input['search']) || isset($input['search']) && $input['search'] != null) {
-          if($input['region'] == "all_region") {
-            $clinics = DB::table('clinic')
-                    ->whereNotIn('ClinicID', $new_array)
-                    ->where('Name', 'like', '%'.$input['search'].'%')
-                    ->where('Active', 1)
-                    ->whereIn('currency_type', ["company", "employee"])
-                    ->orderBy('Created_on', 'desc')
-                    ->get();
-          } else {
-            $clinics = DB::table('clinic')
-                    ->whereNotIn('ClinicID', $new_array)
-                    ->where('Name', 'like', '%'.$input['search'].'%')
-                    ->where('Active', 1)
-                    ->where('currency_type', $input['region'])
-                    ->orderBy('Created_on', 'desc')
-                    ->get();
-          }
+            if(sizeof($new_array) > 0) {
+                  if($input['region'] == "all_region") {
+                    $clinics = DB::table('clinic')
+                            ->whereNotIn('ClinicID', $new_array)
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->whereIn('currency_type', ["company", "employee"])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  } else {
+                    $clinics = DB::table('clinic')
+                            ->whereNotIn('ClinicID', $new_array)
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->where('currency_type', $input['region'])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  }
+
+              } else {
+                if($input['region'] == "all_region") {
+                    $clinics = DB::table('clinic')
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->whereIn('currency_type', ["company", "employee"])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  } else {
+                    $clinics = DB::table('clinic')
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->where('currency_type', $input['region'])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  }
+              }
           
         } else {
-          if($input['region'] == "all_region") {
-            $clinics = DB::table('clinic')
-                    ->whereNotIn('ClinicID', $new_array)
-                    ->where('Active', 1)
-                    ->orderBy('Created_on', 'desc')
-                    ->paginate($limit);
-          } else {
-            $clinics = DB::table('clinic')
-                    ->whereNotIn('ClinicID', $new_array)
-                    ->where('Active', 1)
-                    ->where('currency_type', $input['region'])
-                    ->orderBy('Created_on', 'desc')
-                    ->paginate($limit);
-          }
+            if(sizeof($new_array) > 0) {
+              if($input['region'] == "all_region") {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Active', 1)
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              } else {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              }
+            } else {
+                if($input['region'] == "all_region") {
+                $clinics = DB::table('clinic')
+                        ->where('Active', 1)
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              } else {
+                $clinics = DB::table('clinic')
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              }
+            }
         }
 
 
