@@ -393,12 +393,20 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_company_account_type', 'BenefitsDashboardController@getCompanyPlanAccountType');
 	// get clinic type lists for company block
 	Route::get('hr/get_block_clinic_type_lists_status', 'EmployeeController@getBlockClinicTypeLists');
+	// get clinic type lists for employee block
+	Route::get('hr/get_employee_block_clinic_type_lists_status', 'EmployeeController@getBlockClinicTypeListsEmployee');
 	// route get clinic lists for compay block
 	Route::get('hr/get_company_block_lists', 'EmployeeController@getCompanyBlockClinicLists');
+	// route get clinic lists for emplouee block
+	Route::get('hr/get_employee_company_block_lists', 'EmployeeController@getCompanyBlockClinicListsEmployee');
 	// route get clnic active lists company block
 	Route::get('hr/get_clinic_lists_block_company', 'EmployeeController@getCompanyActiveClinicLists');
+	// route get clnic active lists company block
+	Route::get('hr/get_employee_clinic_lists_block_company', 'EmployeeController@getCompanyActiveClinicListsEmployee');
 	// create company block
 	Route::post('hr/create_company_block_lists', 'EmployeeController@createCompanyBlockClinicLists');
+	// create employee block
+	Route::post('hr/create_employee_company_block_lists', 'EmployeeController@createCompanyBlockClinicListsEmployee');
 });
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
 
