@@ -56,18 +56,10 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 
-      // 'host'      => 'localhost',
-      //  'database'  => 'medicloud_v3',
-      //  'username'  => 'root',
-      //  'password'  => 'medicloud',
-
-
-
-
-  		'host'      => 'localhost',
-      'database'  => 'medicloud_v3',
-      'username'  => 'root',
-      'password'  => '',
+       'host'      => 'localhost',
+        'database'  => 'medicloud_v3',
+        'username'  => 'root',
+        'password'  => 'medicloud',
 
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
