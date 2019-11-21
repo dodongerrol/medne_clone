@@ -6371,6 +6371,7 @@ public function updateEclaimStatus( )
 	}
 
 	if((int)$input['status'] == 1) {
+		$amount = !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount;
 		// check e-claim if already approve
 		$employee = StringHelper::getUserId($e_claim_details->user_id);
 
@@ -6391,12 +6392,12 @@ public function updateEclaimStatus( )
 
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
-				if($e_claim_details->amount > $balance_medical) {
+				if($amount > $balance_medical) {
 					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
 				}
 			} else {
 				$balance_wellness = round($balance['balance'], 2);
-				if($e_claim_details->amount > $balance_wellness) {
+				if($amount > $balance_wellness) {
 					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
 				}
 			}
@@ -6413,7 +6414,7 @@ public function updateEclaimStatus( )
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
 				'wallet_id'     => $wallet->wallet_id,
-				'credit'        => $e_claim_details->amount,
+				'credit'        => $amount,
 				'logs'          => 'deducted_from_e_claim',
 				'where_spend'   => 'e_claim_transaction',
 				'id'            => $e_claim_id,
@@ -6426,7 +6427,7 @@ public function updateEclaimStatus( )
 					$wallet_logs['back_date_deduction'] = 1;
 					$wallet_logs['created_at'] = $e_claim_details->created_at;
 				}
-				$wallet_logs['running_balance'] = $balance['balance'] - $e_claim_details->amount;
+				$wallet_logs['running_balance'] = $balance['balance'] - $amount;
 			} else {
 				$wallet_logs['unlimited'] = 1;
 				$wallet_logs['running_balance'] = 0;
@@ -6439,7 +6440,7 @@ public function updateEclaimStatus( )
 					$rejected_reason = isset($input['rejected_reason']) ? $input['rejected_reason'] : null;
 					if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 						if($balance['back_date'] == false) {
-							$deduct_result = $wallet_class->deductCredits($employee, $e_claim_details->amount);
+							$deduct_result = $wallet_class->deductCredits($employee, $amount);
 						} else {
 							$deduct_result = true;
 						}
@@ -6511,7 +6512,7 @@ public function updateEclaimStatus( )
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
 				'wallet_id'     => $wallet->wallet_id,
-				'credit'        => $e_claim_details->amount,
+				'credit'        => $amount,
 				'logs'          => 'deducted_from_e_claim',
 				'where_spend'   => 'e_claim_transaction',
 				'id'            => $e_claim_id,
@@ -6524,7 +6525,7 @@ public function updateEclaimStatus( )
 				$wallet_logs['unlimited'] = 1;
 				$wallet_logs['running_balance'] = 0;
 			} else {
-				$wallet_logs['running_balance'] = $balance['balance'] - $e_claim_details->amount;
+				$wallet_logs['running_balance'] = $balance['balance'] - $amount;
 				if($balance['back_date'] == true) {
 					$wallet_logs['back_date_deduction'] = 1;
 					$wallet_logs['created_at'] = $e_claim_details->created_at;
@@ -6537,7 +6538,7 @@ public function updateEclaimStatus( )
 				try {
 					if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 						if($balance['back_date'] == false) {
-							$deduct_result = $wallet_class->deductWellnessCredits($employee, $e_claim_details->amount);
+							$deduct_result = $wallet_class->deductWellnessCredits($employee, $amount);
 						} else {
 							$deduct_result = true;
 						}

@@ -1076,6 +1076,7 @@ return Response::json($returnObject);
                     $status_text = 'Pending';
                   } else if($res->status == 1) {
                     $status_text = 'Approved';
+                    $res->amount = $res->claim_amount;
                   } else if($res->status == 2) {
                     $status_text = 'Rejected';
                   } else {
