@@ -290,7 +290,7 @@ class SpendingInvoiceLibrary
 							$consultation_credits = true;
 							$service_credits = true;
 						} else if(floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 0){
-							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 								$total_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
 								$consultation = number_format($trans['consultation_fees'] * $trans->currency_amount, 2);
 							} else {

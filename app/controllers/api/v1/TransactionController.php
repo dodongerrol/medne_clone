@@ -315,6 +315,8 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
+
+					return $data;
 					
 					try {
 						$result = $transaction->createTransaction($data);
