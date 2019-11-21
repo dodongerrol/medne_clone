@@ -5136,7 +5136,7 @@ public function createEclaim( )
 
   if($customer && (int)$customer->access_e_claim == 0) {
     $returnObject->status = FALSE;
-    $returnObject->message = 'Your Company is not allowed to transact E-Claim Submission.';
+    $returnObject->message = 'The E-claim function is disabled for your company.';
     return Response::json($returnObject);
   }
 

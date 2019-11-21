@@ -174,7 +174,7 @@ class EclaimController extends \BaseController {
 			}
 
 			if($check_plan['e_claim_access'] == false) {
-				return array('status' => FALSE, 'message' => 'Your Company is not allowed to transact E-Claim Submission.');
+				return array('status' => FALSE, 'message' => 'The E-claim function is disabled for your company.');
 			}
 		}
 
@@ -389,7 +389,7 @@ class EclaimController extends \BaseController {
 			}
 
 			if($check_plan['e_claim_access'] == false) {
-				return array('status' => FALSE, 'message' => 'Your Company is not allowed to transact E-Claim Submission.');
+				return array('status' => FALSE, 'message' => 'The E-claim function is disabled for your company.');
 			}
 		}
 
@@ -6048,9 +6048,9 @@ public function searchEmployeeEclaimActivity( )
 
 		if($res->currency_type == "myr" && $res->default_currency == "myr") {
       $res->default_currency = "MYR";
-    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
-      $res->default_currency = "SGD";
-      $res->amount = $res->amount / $res->currency_value;
+    } else if($res->default_currency == "myr"){
+      $res->default_currency = "MYR";
+      $res->amount = $res->amount;
     } else {
       $res->default_currency = "SGD";
     }
@@ -6273,9 +6273,9 @@ public function hrEclaimActivity( )
 
 			if($res->currency_type == "myr" && $res->default_currency == "myr") {
 	      $res->default_currency = "MYR";
-	    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
-	      $res->default_currency = "SGD";
-	      $res->amount = $res->amount / $res->currency_value;
+	    } else if($res->default_currency == "myr"){
+	      $res->default_currency = "MYR";
+	      $res->amount = $res->amount;
 	    } else {
 	      $res->default_currency = "SGD";
 	    }
