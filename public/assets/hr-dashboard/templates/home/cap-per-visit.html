@@ -29,8 +29,11 @@
 				<tr>
 					<td>4</td>
 					<td>Filbert Tan</td>
-					<td>
-						<span><span>S$</span> <span>30.00</span></span>
+					<td ng-click="editTableCell()">
+						<span ng-if="showDataText"><span>S$</span> <span>30.00</span></span>
+						<span ng-if="showInputText" style="display: flex;">
+							<span>S$</span> <span><input class="edit-input" type="text"></span>
+						</span>
 					</td>
 				</tr>
 				<tr>
@@ -95,7 +98,7 @@
 
 
 	<div class="modal fade" id="file_upload" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
-	  <div class="modal-dialog" role="document" style="width: 350px;margin-top: 200px;">
+	  <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
 	    <div class="modal-content">
 	    	<form>
 		      <div class="modal-header">
@@ -104,15 +107,27 @@
 		      </div>
 		      <div class="modal-body">
 		        <div class="drop-box">
-              <img src="../images/upload.png" style="width: 100px;margin-bottom: 5px">
+		        	<div>
+		        		<div class="drop-file-upload">
+			            <img src="../assets/hr-dashboard/img/fileupload.png">
+			            <p>Drop a file to upload, or </p>
+		              <button class="file-btn"> <input class="choose-file" type="file"> Browse</button>
+	              </div>
 
-              <p style="color:green;height: 10px"></p>
-
-              <p style="margin-top: 20px;">Drop .xlxs file here or click to upload</p>
+	              <div>
+	              	<div class="progress-wrapper">
+	              		<span>
+		              		<i class="fa fa-file-o"></i>
+											<span>Employee list.csv</span>
+										</span>
+										<div class="progress-bar" style="width: 87.5%;"></div>
+									</div>
+	              </div>
+              </div>
             </div>
 		      </div>
 		      <div class="modal-footer">
-		        <button>Upload</button>
+		        <button class="file-btn">Upload</button>
 		      </div>
 	      </form>
 	    </div>
