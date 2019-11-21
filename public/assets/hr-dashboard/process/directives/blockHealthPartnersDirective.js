@@ -1,4 +1,4 @@
-app.directive('settingsDirective', [
+app.directive('blockHealthPartnersDirective', [
 	'$state',
 	'hrSettings',
 	'dashboardFactory',
@@ -7,10 +7,10 @@ app.directive('settingsDirective', [
 			restrict: "A",
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
-				console.log("settingsDirective Runnning !");
+				console.log("blockHealthPartnersDirective Runnning !");
 				scope.clinic_blocked_search_trap = false;
 				scope.clinic_opened_search_trap = false;
-				scope.settings_active = 0;
+				scope.settings_active = 1;
 
 				scope.showPageScroll = function ( data ) {
           let x = data;
@@ -56,9 +56,7 @@ app.directive('settingsDirective', [
             scope.clinic_opened_search_trap = false;
           }
         }
-        scope.selectSettingsTab = function ( opt ) {
-        	scope.settings_active = opt;
-        }
+       
         scope.onLoad = function( ){
         		        
         }
