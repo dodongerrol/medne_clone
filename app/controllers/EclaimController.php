@@ -1353,9 +1353,9 @@ class EclaimController extends \BaseController {
 
 			if($res->currency_type == "myr" && $res->default_currency == "myr") {
 	      $res->default_currency = "MYR";
-	    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
-	      $res->default_currency = "SGD";
-	      $res->amount = $res->amount / $res->currency_value;
+	    } else if($res->default_currency == "myr"){
+	      $res->default_currency = "MYR";
+	      $res->amount = $res->amount;
 	    } else {
 	      $res->default_currency = "SGD";
 	    }
@@ -1891,9 +1891,9 @@ class EclaimController extends \BaseController {
 
 			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-			// if($res->currency_type == $res->default_currency && $res->default_currency == "myr") {
-			// 	$res->amount = $res->amount * $res->currency_value;
-			// }
+			if($res->default_currency == "myr") {
+				$res->currency_type = $res->default_currency;
+			}
 
 			$temp = array(
 				'status'			=> $res->status,
