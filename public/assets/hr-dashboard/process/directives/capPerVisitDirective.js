@@ -28,6 +28,16 @@ app.directive('capPerVisitDirective', [
 						scope.showDatatText = false;
 					}
 				}
+
+				scope.showPageScroll = function() {
+					$(".opened-per-page-scroll").show();
+
+					$("body").click(function(e){ 
+            if ($(e.target).parents(".rows-page-wrapper").length === 0) {
+              $(".opened-per-page-scroll").hide();
+            }
+          });  
+				}
        
         scope.onLoad = function( ){
         		        

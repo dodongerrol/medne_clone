@@ -63,7 +63,6 @@
 		<div class="health-pagination">
 			<div class="page-wrapper">
 				<div class="page-scroll-container page-opened">
-					<!-- <span ng-click="showPageScroll('opened-page-scroll')"> -->
 					<span>	
 						<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
 						<span>Prev</span>
@@ -82,7 +81,7 @@
 			<div class="rows-page-wrapper">
 				<span><span>25</span> per page</span>
 				<span>	
-					<i class="fa fa-caret-down"></i>
+					<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
 				</span>
 				<div class="opened-per-page-scroll page-scroll" style="display: none">
 					<span>10</span>
