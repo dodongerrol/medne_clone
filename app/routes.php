@@ -391,6 +391,14 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	
 	// get account type
 	Route::get('hr/get_company_account_type', 'BenefitsDashboardController@getCompanyPlanAccountType');
+	// get clinic type lists for company block
+	Route::get('hr/get_block_clinic_type_lists_status', 'EmployeeController@getBlockClinicTypeLists');
+	// route get clinic lists for compay block
+	Route::get('hr/get_company_block_lists', 'EmployeeController@getCompanyBlockClinicLists');
+	// route get clnic active lists company block
+	Route::get('hr/get_clinic_lists_block_company', 'EmployeeController@getCompanyActiveClinicLists');
+	// create company block
+	Route::post('hr/create_company_block_lists', 'EmployeeController@createCompanyBlockClinicLists');
 });
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
 
