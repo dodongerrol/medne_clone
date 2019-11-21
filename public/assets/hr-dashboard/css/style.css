@@ -7834,6 +7834,103 @@ ul.typeahead li a.dropdown-item
   font-weight: 7000;
 }
 
+.cap-per-visit-wrapper .health-provider-header-container img {
+	height: 17px;
+	width: 16px;
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.cap-per-visit-wrapper {
+	width: 700px;
+}
+
+.gp-cap-table-wrapper table {
+	font-size: 14px;
+	color: #333;
+	border: 1px solid #d0d0d0;
+	margin: 0 0 20px;
+}
+
+.gp-cap-table-wrapper table th,
+.gp-cap-table-wrapper table td {
+	border: 1px solid #d0d0d0;
+	padding: 15px;
+}
+
+.gp-cap-table-wrapper table th {
+	background-color: #eff2f4;
+}
+
+.gp-cap-table-wrapper table th:nth-child(1) {
+	width: 15%;
+}
+
+.gp-cap-table-wrapper table th:nth-child(2) {
+	width: 60%;
+}
+
+.gp-cap-table-wrapper table td {
+	padding: 10px;
+}
+
+.gp-cap-table-wrapper .not-applicable-text {
+	color: rgba(0,0,0,.54);
+}
+
+.cap-per-visit-wrapper .health-pagination {
+	justify-content: inherit;
+	right: initial;
+	left: 20px;
+	bottom: initial;
+	position: initial;
+}
+
+.cap-per-visit-wrapper .page-wrapper {
+	display: inline-flex;
+	align-items: flex-end;
+}
+
+.cap-per-visit-wrapper .fa-angle-left {
+	margin-right: 5px;
+}
+
+.cap-per-visit-wrapper .fa-angle-right {
+	margin-left: 5px;
+}
+
+.cap-per-visit-wrapper .page-scroll-container {
+	display: flex;
+	/*align-items: center;*/
+}
+
+.cap-per-visit-wrapper .rows-page-wrapper {
+	position: relative;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div {
+	display: inherit;
+	margin: 0 10px;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div span {
+	margin-right: 10px;
+	cursor: initial;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div span:last-child {
+	margin-right: 0px;
+}
+
+.cap-per-visit-wrapper .rows-page-wrapper >span:first-child {
+	margin-right: 5px;
+}
+
+.cap-per-visit-wrapper .rows-page-wrapper .fa-caret-down {
+	cursor: pointer;
+}
+
+
 /*@media screen and (max-width: 1440px) { 
 
 }*/
