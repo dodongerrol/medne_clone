@@ -318,25 +318,25 @@ class Api_V1_TransactionController extends \BaseController
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
 
-					$transaction_results = array(
-							'clinic_name'       => ucwords($clinic->Name),
-							'bill_amount'				=> TransactionHelper::floatvalue($input['input_amount']),
-							'consultation_fees'	=> $clinic->currency_type == "myr" ? $data['consultation_fees'] * $currency : $data['consultation_fees'],
-							'total_amount'     => $total_amount,
-							'paid_by_credits'  => $clinic->currency_type == "myr" ? $credits * $currency : $credits,
-							'paid_by_cash'     => $clinic->currency_type == "myr" ? $cash * $currency : $cash,
-							'transaction_time'  => date('m-d-Y h:i a', strtotime($date_of_transaction)),
-							'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)),
-							// 'services'          => $procedure,
-							// 'currency_symbol'   => $email_currency_symbol,
-							// 'dependent_user'    => $dependent_user,
-							'half_credits_payment' => $half_payment,
-							'user_id'						=> $customer_id,
-							// 'convert_option'		=> $result->currency_type != $result->default_currency ? true : false,
-							'currency'					=> $currency
-						);
+					// $transaction_results = array(
+					// 		'clinic_name'       => ucwords($clinic->Name),
+					// 		'bill_amount'				=> TransactionHelper::floatvalue($input['input_amount']),
+					// 		'consultation_fees'	=> $clinic->currency_type == "myr" ? $data['consultation_fees'] * $currency : $data['consultation_fees'],
+					// 		'total_amount'     => $total_amount,
+					// 		'paid_by_credits'  => $clinic->currency_type == "myr" ? $credits * $currency : $credits,
+					// 		'paid_by_cash'     => $clinic->currency_type == "myr" ? $cash * $currency : $cash,
+					// 		'transaction_time'  => date('m-d-Y h:i a', strtotime($date_of_transaction)),
+					// 		'transation_id'     => strtoupper(substr($clinic->Name, 0, 3)),
+					// 		// 'services'          => $procedure,
+					// 		// 'currency_symbol'   => $email_currency_symbol,
+					// 		// 'dependent_user'    => $dependent_user,
+					// 		'half_credits_payment' => $half_payment,
+					// 		'user_id'						=> $customer_id,
+					// 		// 'convert_option'		=> $result->currency_type != $result->default_currency ? true : false,
+					// 		'currency'					=> $currency
+					// 	);
 
-					return $data;
+					// return $data;
 					
 					try {
 						$result = $transaction->createTransaction($data);
