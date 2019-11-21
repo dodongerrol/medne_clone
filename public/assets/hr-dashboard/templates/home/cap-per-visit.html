@@ -18,45 +18,18 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>4</td>
-					<td>Filbert Tan</td>
-					<td>
-						<span ng-if="false"><span>S$</span> <span>30.00</span></span>
-						<span class="not-applicable-text">Not applicable</span>
-					</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>Filbert Tan</td>
-					<td ng-click="editTableCell()">
-						<span ng-if="showDataText"><span>S$</span> <span>30.00</span></span>
-						<span ng-if="showInputText" style="display: flex;">
-							<span>S$</span> <span><input class="edit-input" type="text"></span>
+				<tr ng-repeat="list in gpCapPerVisitInfo track by $index">
+					<td ng-bind="list.id">4</td>
+					<td ng-bind="list.name">Filbert Tan</td>
+					<td ng-click="editTableCell( $index, list )">
+						<span ng-if="showDataText[ $index ]"><span>S$</span> <span ng-bind="list.cap">{{$index}}</span></span>
+						<span ng-if="showInputText[ $index ]" style="display: flex;">
+							<span>S$</span> <span><input class="edit-input" type="number" ng-model="indexInput[$index]"></span>
 						</span>
+						<span ng-if="false" class="not-applicable-text">Not applicable</span>
 					</td>
 				</tr>
-				<tr>
-					<td>4</td>
-					<td>Filbert Tan</td>
-					<td>
-						<span><span>S$</span> <span>30.00</span></span>
-					</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>Filbert Tan</td>
-					<td>
-						<span><span>S$</span> <span>30.00</span></span>
-					</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>Filbert Tan</td>
-					<td>
-						<span><span>S$</span> <span>30.00</span></span>
-					</td>
-				</tr>
+				
 			</tbody>
 		</table>
 

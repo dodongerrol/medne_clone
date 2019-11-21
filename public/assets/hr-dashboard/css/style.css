@@ -8036,6 +8036,7 @@ ul.typeahead li a.dropdown-item
   padding: 0 4px;
   border: 0;
   width: 130px;
+  border-bottom: 1px solid #ddd;
 }
 
 .cap-per-visit-wrapper .health-provider-header-container h3 {
