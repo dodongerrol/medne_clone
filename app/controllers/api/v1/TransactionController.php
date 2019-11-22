@@ -1484,7 +1484,7 @@ class Api_V1_TransactionController extends \BaseController
 							$paid_by_cash_converted = $temp_cash_cost * $transaction->currency_amount;
 							$paid_by_credits_converted = $temp_paid_by_credits * $transaction->currency_amount
 							$cap_per_visit_converted = $temp_cap_per_visit * $transaction->currency_amount;
-						} else if$transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
+						} else if($transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
 							$currency_symbol = "MYR";
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = $consultation;
@@ -1496,8 +1496,7 @@ class Api_V1_TransactionController extends \BaseController
 							$paid_by_cash_converted = $cash_cost * $transaction->currency_amount;
 							$paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount
 							$cap_per_visit_converted = $transaction->cap_per_visit; * $transaction->currency_amount;
-						} 
-						else {
+						} else {
 							$currency_symbol = "SGD";
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = $consultation;
