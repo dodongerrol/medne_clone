@@ -512,8 +512,8 @@ class SpendingInvoiceLibrary
 		->first();
 
 		$corporate_members = DB::table('corporate_members')
-		->where('corporate_id', $account->corporate_id
-	)->get();
+		->where('corporate_id', $account->corporate_id)
+		->get();
 		$total_e_claim_spent = 0;
 		$e_claim = [];
 		foreach ($corporate_members as $key => $member) {
@@ -534,7 +534,7 @@ class SpendingInvoiceLibrary
 
 				$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-	                // check user if it is spouse or dependent
+	      // check user if it is spouse or dependent
 				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -593,6 +593,15 @@ class SpendingInvoiceLibrary
 				}
 
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
+
+				if($res->currency_type == "myr" && $res->default_currency == "myr") {
+		      $res->default_currency = "MYR";
+		    } else if($res->default_currency == "myr"){
+		      $res->default_currency = "MYR";
+		      $res->amount = $res->amount;
+		    } else {
+		      $res->default_currency = "SGD";
+		    }
 
 				$temp = array(
 					'status'            => $res->status,

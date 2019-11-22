@@ -1501,12 +1501,25 @@ class Api_V1_TransactionController extends \BaseController
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = $consultation;
 							}
+							$temp_total_amount = $total_amount;
+							$temp_bill_amount = $bill_amount;
+							$temp_cash_cost = $cash_cost;
+							$temp_paid_by_credits = $paid_by_credits;
+							$temp_cap_per_visit = $transaction->cap_per_visit;
 							$total_amount_converted = $total_amount;
 							$bill_amount_converted = $bill_amount;
 							$consultation_fee_converted = $consultation_fee;
 							$paid_by_cash_converted = $cash_cost;
 							$paid_by_credits_converted = $paid_by_credits;
 							$cap_per_visit_converted = $transaction->cap_per_visit;
+
+
+							$total_amount_converted = $temp_total_amount * $transaction->currency_amount;
+							$bill_amount_converted = $temp_bill_amount * $transaction->currency_amount;;
+							$consultation_fee_converted = $temp_consultation_fee * $transaction->currency_amount;
+							$paid_by_cash_converted = $temp_cash_cost * $transaction->currency_amount;
+							$paid_by_credits_converted = $temp_paid_by_credits * $transaction->currency_amount;
+							$cap_per_visit_converted = $temp_cap_per_visit * $transaction->currency_amount;
 						}
 
 						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr" || $transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
