@@ -1459,7 +1459,7 @@ class Api_V1_TransactionController extends \BaseController
 							$paid_by_credits = $transaction->consultation_fees;
 						}
 
-						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr" || $transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
+						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr") {
 							$currency_symbol = "MYR";
 							$temp_total_amount = $total_amount;
 							$temp_bill_amount = $bill_amount;
@@ -1478,15 +1478,27 @@ class Api_V1_TransactionController extends \BaseController
 							$temp_consultation_fee = $consultation_fee;
 							$consultation_fee = $consultation_fee * $transaction->currency_amount;
 
-							$total_amount_converted = $temp_total_amount * $transaction->currency_amount;;
+							$total_amount_converted = $temp_total_amount * $transaction->currency_amount;
 							$bill_amount_converted = $temp_bill_amount * $transaction->currency_amount;;
-							$consultation_fee_converted = $temp_consultation_fee * $transaction->currency_amount;;
-							$paid_by_cash_converted = $temp_cash_cost * $transaction->currency_amount;;
-							$paid_by_credits_converted = $temp_paid_by_credits * $transaction->currency_amount;
-							$cap_per_visit_converted = $temp_cap_per_visit * $transaction->currency_amount;;
-						} else {
+							$consultation_fee_converted = $temp_consultation_fee * $transaction->currency_amount;
+							$paid_by_cash_converted = $temp_cash_cost * $transaction->currency_amount;
+							$paid_by_credits_converted = $temp_paid_by_credits * $transaction->currency_amount
+							$cap_per_visit_converted = $temp_cap_per_visit * $transaction->currency_amount;
+						} else if$transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
+							$currency_symbol = "MYR";
+							if((int)$transaction->lite_plan_enabled == 1) {
+								$consultation_fee = $consultation;
+							}
+							$consultation_fee = $consultation_fee * $transaction->currency_amount;
+							$total_amount_converted = $total_amount * $transaction->currency_amount;
+							$bill_amount_converted = $bill_amount * $transaction->currency_amount;;
+							$consultation_fee_converted = $consultation_fee * $transaction->currency_amount;
+							$paid_by_cash_converted = $cash_cost * $transaction->currency_amount;
+							$paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount
+							$cap_per_visit_converted = $transaction->cap_per_visit; * $transaction->currency_amount;
+						} 
+						else {
 							$currency_symbol = "SGD";
-							$total_amount = $total_amount;
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = $consultation;
 							}
