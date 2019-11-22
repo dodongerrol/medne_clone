@@ -4736,7 +4736,7 @@ public function getEclaimTransactions( )
 
     $currency_symbol = "SGD";
     if($res->default_currency == "myr" && $res->currency_type == "sgd") {
-      $currency_symbol = "SGD";
+      $currency_symbol = "MYR";
        $res->amount = $res->amount / $res->currency_value;
     } else if($res->default_currency == "myr") {
       $currency_symbol = "MYR";
