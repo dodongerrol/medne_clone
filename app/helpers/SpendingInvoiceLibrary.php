@@ -423,7 +423,7 @@ class SpendingInvoiceLibrary
 							$dependent_relationship = FALSE;
 						}
 
-						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+						if($trans->default_currency == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "sgd" && $trans->default_currency == "myr") {
 							$procedure_cost = $procedure_cost * $trans->currency_amount;
 							$consultation_credits = $consultation_credits * $trans->currency_amount;
 							// $consultation = $consultation * $trans->currency_amount;
@@ -434,6 +434,7 @@ class SpendingInvoiceLibrary
 							$cash = $cash * $trans->currency_amount;
 							$mednefits_credits = $mednefits_credits * $trans->currency_amount;
 							$treatment = $treatment * $trans->currency_amount;
+							$trans->currency_type = "myr";
 						}
 
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
