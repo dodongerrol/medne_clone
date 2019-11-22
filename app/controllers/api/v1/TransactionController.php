@@ -1490,7 +1490,7 @@ class Api_V1_TransactionController extends \BaseController
 								$consultation_fee = $consultation;
 							}
 							$temp_consultation_fee = $consultation_fee;
-							$consultation_fee = $consultation_fee * $transaction->currency_amount;
+							// $consultation_fee = $consultation_fee * $transaction->currency_amount;
 							$total_amount_converted = $total_amount * $transaction->currency_amount;
 							$bill_amount_converted = $bill_amount * $transaction->currency_amount;;
 							$consultation_fee_converted = $temp_consultation_fee * $transaction->currency_amount;
