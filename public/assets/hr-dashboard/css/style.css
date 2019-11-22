@@ -8033,10 +8033,12 @@ ul.typeahead li a.dropdown-item
 }
 
 .gp-cap-table-wrapper .edit-input {
+  margin: 0 4px;
   padding: 0 4px;
   border: 0;
   width: 130px;
-  border-bottom: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  outline: none;
 }
 
 .cap-per-visit-wrapper .health-provider-header-container h3 {

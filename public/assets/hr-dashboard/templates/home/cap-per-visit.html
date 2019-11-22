@@ -4,7 +4,7 @@
 		<div>
 			<img src="../assets/hr-dashboard/img/Group.png">
 			<img ng-click="fileUploadModal(emp)" data-toggle="modal" data-target="#file_upload" src="../assets/hr-dashboard/img/Import icon.svg">
-			<button class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button>
+			<button ng-click="saveBtn()" class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button>
 		</div>
 	</div>	
 
@@ -22,11 +22,16 @@
 					<td ng-bind="list.id">4</td>
 					<td ng-bind="list.name">Filbert Tan</td>
 					<td ng-click="editTableCell( $index, list )">
-						<span ng-if="showDataText[ $index ]"><span>S$</span> <span ng-bind="list.cap">{{$index}}</span></span>
-						<span ng-if="showInputText[ $index ]" style="display: flex;">
-							<span>S$</span> <span><input class="edit-input" type="number" ng-model="indexInput[$index]"></span>
+						<span ng-if="showDataText[ $index ]">
+							<span>S$</span> 
+							<span ng-bind="list.cap" style="margin: 0 5px;">{{$index}}</span>
 						</span>
-						<span ng-if="false" class="not-applicable-text">Not applicable</span>
+						<span ng-if="showInputText[ $index ]" style="display: flex;">
+							<span>S$</span> <span><input class="edit-input" type="number" ng-model="list.cap"></span>
+						</span>
+						<span ng-if="capPerVisitNoValue[ $index ]">
+							<span class="not-applicable-text">Not applicable</span>
+						</span>	
 					</td>
 				</tr>
 				
