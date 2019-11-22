@@ -1494,8 +1494,8 @@ class Api_V1_TransactionController extends \BaseController
 							$bill_amount_converted = $bill_amount * $transaction->currency_amount;;
 							$consultation_fee_converted = $consultation_fee * $transaction->currency_amount;
 							$paid_by_cash_converted = $cash_cost * $transaction->currency_amount;
-							$paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount
-							$cap_per_visit_converted = $transaction->cap_per_visit; * $transaction->currency_amount;
+							$paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount;
+							$cap_per_visit_converted = $transaction->cap_per_visit * $transaction->currency_amount;
 						} else {
 							$currency_symbol = "SGD";
 							if((int)$transaction->lite_plan_enabled == 1) {
