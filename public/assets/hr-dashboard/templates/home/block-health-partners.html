@@ -1,7 +1,13 @@
 <div block-health-partners-directive style="padding-bottom: 150px;">
 	<div class="health-provider-header-container">
 		<h3>Health Providers Access</h3>
-		<button class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button>
+		<button 
+			ng-click="saveClinics()" 
+			ng-class="{ 'save-continue-disabled': transaction_ctr == 0 }" 
+			class="replace-employee-update-button update-replace"
+		>
+			SAVE & CONTINUE
+		</button>
 	</div>
 
 	<div class="health-partner-access-container">
@@ -11,65 +17,74 @@
 				<div class="blocked-opened-header">
 					<span ng-if="!clinic_blocked_search_trap">Health Partner Access - BLOCKED</span>
 					<div ng-if="clinic_blocked_search_trap" class="search-input-wrapper">
-						<input type="text" placeholder="Seach for partner access">
+						<form ng-submit="searchClinics( search.clinic_blocked_search_text, 'block' )">
+							<input type="text" placeholder="Seach for partner access" ng-model="search.clinic_blocked_search_text">
+						</form>
 					</div>
-					<i ng-if="clinic_blocked_search_trap" ng-click="toggleBlockedClinicSearch()" class="fa fa-times"></i>
-					<i ng-if="!clinic_blocked_search_trap" ng-click="toggleBlockedClinicSearch()" class="fa fa-search"></i>
+					<i ng-if="clinic_blocked_search_trap && list_opt_block == 'name'" ng-click="toggleBlockedClinicSearch()" class="fa fa-times"></i>
+					<i ng-if="!clinic_blocked_search_trap && list_opt_block == 'name'" ng-click="toggleBlockedClinicSearch()" class="fa fa-search"></i>
 				</div>
 
 				<div class="clinic-name-header">
 					<label class="health-checkbox-container">
 						<span>Blocked Acess</span>
-						<input type="checkbox">
+						<input type="checkbox" ng-model="allBlockSelected" ng-click="toggleAllBlockedClinic()">
 						<span class="health-checkmark"></span>
 					</label>
 					<div class="select-filter-wrapper">
 						<div class="select-filter-div">
-							<select>
-								<option>All Region</option>
-								<option>Singapore - SGD</option>
-								<option>Malaysia - MYR</option>
+							<select ng-model="filter_regionBlocked" ng-change="regionOpt(filter_regionBlocked, 'blocked')">
+								<option value="all_region">All Region</option>
+								<option value="sgd">Singapore - SGD</option>
+								<option value="myr">Malaysia - MYR</option>
 							</select>
 						</div>
 						<div class="select-filter-div">
-							<select>
-								<option>Clinic Type</option>
-								<option>Clinic Name</option>
+							<select ng-model="list_opt_block" ng-change="changeFilterType( list_opt_block, 'block' )">
+								<option value="type">Clinic Type</option>
+								<option value="name">Clinic Name</option>
 							</select>
 						</div>
-						<button class="health-btn-open-block health-open-btn" >OPEN</button>
+						<button class="health-btn-open-block health-open-btn" ng-click="blockToOpen( 0, filter_regionBlocked, list_opt_block )">OPEN</button>
 					</div>
 				</div>
 
 				<div class="clinic-name-wrapper">
-					<div class="clinic-name-container">
+					<div ng-if="list_opt_block == 'name'" ng-repeat="list in clinic_block_arr" class="clinic-name-container">
 						<label class="health-checkbox-container">
-							<span>Onecare Choa Chu Kang</span>
-							<input type="checkbox">
+							<span ng-bind="list.Name">Onecare Choa Chu Kang</span>
+							<input type="checkbox" ng-model="list.selected">
 							<span class="health-checkmark"></span>
 						</label>
-						<div class="country-type">
-							<span>Singapore</span>
+						<div class="country-type" >
+							<span ng-bind="list.currency_type == 'myr' ? 'Malaysia' : 'Singapore'"></span>
+						</div>
+					</div>
+
+					<div ng-if="list_opt_block == 'type'" ng-repeat="list in clinic_type_block_arr" class="clinic-name-container">
+						<label class="health-checkbox-container">
+							<span ng-bind="list.Name">Lorem</span>
+							<input type="checkbox" ng-model="list.selected">
+							<span class="health-checkmark"></span>
+						</label>
+						<div class="country-type" ng-repeat="list in list.region">
+							&nbsp;&nbsp;&nbsp;<span ng-bind="list"></span>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="health-pagination">
+			<div ng-if="!isBlockSearch && list_opt_block == 'name'" class="health-pagination">
 				<div class="page-wrapper">
 					<span>Page: </span>
 					<div class="page-scroll-container page-blocked">
 						<span ng-click="showPageScroll('blocked_page')">
-							<span>1</span> 
+							<span ng-bind="block_pagination.current_page">1</span> 
 							<i class="fa fa-caret-down"></i>
 						</span>
 						<div class="blocked-page-scroll page-scroll" style="display: none">
-							<span>1</span>
-							<span>2</span>
-							<span>3</span>
-							<span>4</span>
-							<span>5</span>
-							<span>6</span>
+							<span ng-repeat="list in range( block_pagination.last_page )" ng-click="pageBlock(list)"
+									ng-bind="list">1</span>
 						</div>
 					</div>
 				</div>
@@ -77,47 +92,50 @@
 					<span>Rows per page:</span>
 					<div class="page-scroll-container rows-per-page-blocked">
 						<span ng-click="showPageScroll('blocked_per_page')">
-							<span>10</span> 
+							<span ng-bind="block_pagination.per_page">10</span> 
 							<i class="fa fa-caret-down"></i>
 						</span>
 						<div class="blocked-per-page-scroll page-scroll" style="display: none">
-							<span>10</span>
-							<span>20</span>
-							<span>30</span>
-							<span>40</span>
-							<span>50</span>
-							<span>100</span>
+							<span ng-repeat="list in per_page_arr" ng-click="perPageBlock(list)" ng-bind="list">10</span>
 						</div>
 					</div>
 				</div>
 				<div class="per-page-wrapper">
 					<span class="per-page-container">
 						<span>
-							<span>1</span>
+							<span
+								ng-bind="(block_pagination.current_page * block_pagination.per_page) - ( block_pagination.per_page - 1 )">1</span>
 							-
-							<span>10</span>
+							<span ng-if="( block_pagination.current_page * block_pagination.per_page ) <= block_pagination.total"
+								ng-bind="block_pagination.current_page * block_pagination.per_page">1</span>
+							<span ng-if="( block_pagination.current_page * block_pagination.per_page ) > block_pagination.total"
+								ng-bind="block_pagination.total">1</span>
 							of
-							<span>56</span>
+							<span ng-bind="block_pagination.total">416</span>
 						</span>
 					</span>
-					<i class="fa fa-angle-left" ></i>
-					<i class="fa fa-angle-right" ></i>
+					<i class="fa fa-angle-left" ng-click="backPageBlock()"></i>
+					<i class="fa fa-angle-right" ng-click="nextPageBlock()"></i>
 				</div>
 			</div>
 		</div>
+
 		<div class="sort-container">
 			<img src="../assets/hr-dashboard/img/sort.png">
 		</div>
+		
 		<div class="health-partner-access-opened">
 
 			<div class="health-partner-container">
 				<div class="blocked-opened-header">
 					<span ng-if="!clinic_opened_search_trap">Health Partner Access - OPENED</span>
 					<div ng-if="clinic_opened_search_trap" class="search-input-wrapper">
-						<input type="text" placeholder="Seach for partner access">
+						<form ng-submit="searchClinics( search.clinic_open_search_text, 'open' )">
+							<input type="text" placeholder="Seach for partner access" ng-model="search.clinic_open_search_text">
+						</form>
 					</div>
-					<i ng-if="clinic_opened_search_trap" ng-click="toggleOpenedClinicSearch()" class="fa fa-times"></i>
-					<i ng-if="!clinic_opened_search_trap" ng-click="toggleOpenedClinicSearch()" class="fa fa-search"></i>
+					<i ng-if="clinic_opened_search_trap && list_opt_open == 'name'" ng-click="toggleOpenedClinicSearch()" class="fa fa-times"></i>
+					<i ng-if="!clinic_opened_search_trap && list_opt_open == 'name'" ng-click="toggleOpenedClinicSearch()" class="fa fa-search"></i>
 				</div>
 
 				<div class="clinic-name-header">
@@ -128,51 +146,58 @@
 					</label>
 					<div class="select-filter-wrapper">
 						<div class="select-filter-div">
-							<select>
-								<option>All Region</option>
-								<option>Singapore - SGD</option>
-								<option>Malaysia - MYR</option>
+							<select ng-model="filter_regionOpened" ng-change="regionOpt(filter_regionOpened, 'open')">
+								<option value="all_region">All Region</option>
+								<option value="sgd">Singapore - SGD</option>
+								<option value="myr">Malaysia - MYR</option>
 							</select>
 						</div>
 						<div class="select-filter-div">
-							<select>
-								<option>Clinic Type</option>
-								<option>Clinic Name</option>
+							<select ng-model="list_opt_open" ng-change="changeFilterType( list_opt_open, 'block' )">
+								<option value="type">Clinic Type</option>
+								<option value="name">Clinic Name</option>
 							</select>
 						</div>
-						<button class="health-btn-open-block health-block-btn">BLOCK</button>
+						<button class="health-btn-open-block health-block-btn" ng-click="blockToOpen( 1, filter_regionOpened, list_opt_open )">BLOCK</button>
 					</div>
 				</div>
 
 				<div class="clinic-name-wrapper">
-					<div class="clinic-name-container">
+					<div ng-if="list_opt_open == 'name'" ng-repeat="list in clinic_open_arr" class="clinic-name-container">
 						<label class="health-checkbox-container">
-							<span>Onecare Choa Chu Kang</span>
+							<span ng-bind="list.Name">Onecare Choa Chu Kang</span>
 							<input type="checkbox">
 							<span class="health-checkmark"></span>
 						</label>
 						<div class="country-type">
-							<span>Singapore</span>
+							<span ng-bind="list.currency_type == 'myr' ? 'Malaysia' : 'Singapore'"></span>
+						</div>
+					</div>
+
+					<div ng-if="list_opt_open == 'type'" ng-repeat="list in clinic_type_open_arr" class="clinic-name-container">
+						<label class="health-checkbox-container">
+							<span ng-bind="list.Name">Lorem</span>
+							<input type="checkbox">
+							<span class="health-checkmark"></span>
+						</label>
+						<div class="country-type" ng-repeat="list in list.region">
+							&nbsp;&nbsp;&nbsp;<span ng-bind="list"></span>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="health-pagination">
+			<div ng-if="!isOpenSearch && list_opt_open == 'name'" class="health-pagination">
 				<div class="page-wrapper">
 					<span>Page: </span>
 					<div class="page-scroll-container page-opened">
 						<span ng-click="showPageScroll('opened-page-scroll')">
-							<span>1</span> 
+							<span ng-bind="open_pagination.current_page">1</span> 
 							<i class="fa fa-caret-down"></i>
 						</span>
 						<div class="opened-page-scroll page-scroll" style="display: none;">
-							<span>1</span>
-							<span>2</span>
-							<span>3</span>
-							<span>4</span>
-							<span>5</span>
-							<span>6</span>
+							<span ng-repeat="list in range( open_pagination.last_page )" ng-click="pageOpen(list)"
+									ng-bind="list">1</span>
 						</div>
 					</div>
 				</div>
@@ -180,31 +205,30 @@
 					<span>Rows per page:</span>
 					<div class="page-scroll-container rows-per-page-opened">
 						<span ng-click="showPageScroll('opened-per-page-scroll')">
-							<span>10</span> 
+							<span ng-bind="open_pagination.per_page">10</span> 
 							<i class="fa fa-caret-down"></i>
 						</span>
 						<div class="opened-per-page-scroll page-scroll" style="display: none">
-							<span>10</span>
-							<span>20</span>
-							<span>30</span>
-							<span>40</span>
-							<span>50</span>
-							<span>100</span>
+							<span ng-repeat="list in per_page_arr" ng-click="perPageOpen(list)" ng-bind="list">10</span>
 						</div>
 					</div>
 				</div>
 				<div class="per-page-wrapper">
 					<span class="per-page-container">
 						<span>
-							<span>1</span>
+							<span
+								ng-bind="(open_pagination.current_page * open_pagination.per_page) - ( open_pagination.per_page - 1 )">1</span>
 							-
-							<span>10</span>
+							<span ng-if="( open_pagination.current_page * open_pagination.per_page ) <= open_pagination.total"
+								ng-bind="open_pagination.current_page * open_pagination.per_page">1</span>
+							<span ng-if="( open_pagination.current_page * open_pagination.per_page ) > open_pagination.total"
+								ng-bind="open_pagination.total">1</span>
 							of
-							<span>56</span>
+							<span ng-bind="open_pagination.total">416</span>
 						</span>
 					</span>
-					<i class="fa fa-angle-left" ></i>
-					<i class="fa fa-angle-right" ></i>
+					<i class="fa fa-angle-left" ng-click="backPageOpen()"></i>
+					<i class="fa fa-angle-right" ng-click="nextPageOpen()"></i>
 				</div>
 			</div>
 		</div>
