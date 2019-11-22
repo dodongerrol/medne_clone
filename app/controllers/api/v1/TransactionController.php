@@ -243,11 +243,10 @@ class Api_V1_TransactionController extends \BaseController
 
 						if( $total_credits_cost > $consultation_fees ){
 							$total_credits_cost -= $consultation_fees;
-						}else if( $consultation_fees > $total_credits_cost ){
+						}else if( $consultation_fees > $total_credits_cost || $consultation_fees == $total_credits_cost && (float)$input['input_amount'] == 0){
 							// $cash -= ( $consultation_fees - $total_credits_cost );
 							$consultation_fees = $total_credits_cost;
 							$total_credits_cost = 0;
-
 						}
 					} else {
 						$lite_plan_enabled = 0;
@@ -1148,8 +1147,8 @@ class Api_V1_TransactionController extends \BaseController
 								$converted_amount = $total_amount * $trans->currency_amount;
 								$total_amount = $converted_amount;
 							} else if ($trans->default_currency == "myr" && $trans->currency_type == "sgd") {
-								$currency_symbol = "SGD";
-								$converted_amount = $total_amount;
+								$currency_symbol = "MYR";
+								$converted_amount = $total_amount * $trans->currency_amount;;
 								$total_amount = $converted_amount;
 							}
 
@@ -1471,12 +1470,6 @@ class Api_V1_TransactionController extends \BaseController
 								$consultation_fee = $consultation;
 							}
 							$consultation_fee = $consultation_fee * $transaction->currency_amount;
-							// $total_amount_converted = $total_amount;
-							// $bill_amount_converted = $bill_amount
-							// $consultation_fee_converted = $consultation_fee * $transaction->currency_amount;
-							// $paid_by_cash_converted = $cash_cost * $transaction->currency_amount;
-							// $paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount;
-							// $cap_per_visit_converted = $transaction->cap_per_visit * $transaction->currency_amount;
 						} else {
 							$currency_symbol = "SGD";
 							$total_amount = $total_amount;
