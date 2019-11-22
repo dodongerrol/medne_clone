@@ -1470,12 +1470,24 @@ class Api_V1_TransactionController extends \BaseController
 								$consultation_fee = $consultation;
 							}
 							$consultation_fee = $consultation_fee * $transaction->currency_amount;
+							$total_amount_converted = $total_amount * $transaction->currency_amount;;
+							$bill_amount_converted = $bill_amount * $transaction->currency_amount;;
+							$consultation_fee_converted = $consultation_fee * $transaction->currency_amount;;
+							$paid_by_cash_converted = $cash_cost * $transaction->currency_amount;;
+							$paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount;
+							$cap_per_visit_converted = $transaction->cap_per_visit * $transaction->currency_amount;;
 						} else {
 							$currency_symbol = "SGD";
 							$total_amount = $total_amount;
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = $consultation;
 							}
+							$total_amount_converted = $total_amount;
+							$bill_amount_converted = $bill_amount;
+							$consultation_fee_converted = $consultation_fee;
+							$paid_by_cash_converted = $cash_cost;
+							$paid_by_credits_converted = $paid_by_credits;
+							$cap_per_visit_converted = $transaction->cap_per_visit;
 						}
 
 						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr" || $transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
@@ -1490,26 +1502,26 @@ class Api_V1_TransactionController extends \BaseController
 							'clinic_type'       => $type,
 							'clinic_type_image' => $image,
 							'total_amount'       => number_format($total_amount, 2),
-							'total_amount_converted'       => number_format($total_amount * $transaction->currency_amount, 2),
+							'total_amount_converted'       => number_format($total_amount_converted, 2),
 							"currency_symbol" => $currency_symbol,
 							'transaction_id'    => (string)$id,
 							'date_of_transaction' => date('d-m-Y, h:ia', strtotime($transaction->date_of_transaction)),
 							'customer'            => ucwords($customer->Name),
 							'payment_type'		=> $payment_type,
 							'bill_amount'				=> number_format($bill_amount, 2),
-							'bill_amount_converted'				=> number_format($bill_amount * $transaction->currency_amount, 2),
+							'bill_amount_converted'				=> number_format($bill_amount_converted, 2),
 							'consultation_fee'	=> number_format($consultation_fee, 2),
-							'consultation_fee_converted'	=> number_format($consultation_fee * $transaction->currency_amount, 2),
+							'consultation_fee_converted'	=> number_format($consultation_fee_converted, 2),
 							'paid_by_cash'      => number_format($cash_cost, 2),
-							'paid_by_cash_converted'      => number_format($cash_cost * $transaction->currency_amount, 2),
+							'paid_by_cash_converted'      => number_format($paid_by_cash_converted, 2),
 							'paid_by_credits'      => number_format($paid_by_credits, 2),
-							'paid_by_credits_converted'      => number_format($paid_by_credits * $transaction->currency_amount, 2),
+							'paid_by_credits_converted'      => number_format($paid_by_credits_converted, 2),
 							'files'             => $doc_files,
 							'lite_plan'         => $lite_plan_status,
 							'lite_plan_enabled' => $transaction->lite_plan_enabled,
 							'cap_transaction'   => $half_credits,
 							'cap_per_visit'     => number_format($transaction->cap_per_visit, 2),
-							'cap_per_visit_converted'     => number_format($transaction->cap_per_visit * $transaction->currency_amount, 2),
+							'cap_per_visit_converted'     => number_format($cap_per_visit_converted, 2),
 							'services' => $service,
 							'convert_option'		=> $transaction->default_currency != $transaction->currency_type ? true : false,
 							'currency_amount'		=> $transaction->currency_amount,
