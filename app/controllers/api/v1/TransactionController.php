@@ -1478,6 +1478,12 @@ class Api_V1_TransactionController extends \BaseController
 							}
 						}
 
+						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr" || $transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
+							$default_currency = "myr";
+						} else {
+							$default_currency = "sgd";
+						}
+
 						$transaction_details = array(
 							'clinic_name'       => $clinic->Name,
 							'clinic_image'      => $clinic->image ? $clinic->image : 'https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514443281/rjfremupirvnuvynz4bv.jpg',
@@ -1507,7 +1513,8 @@ class Api_V1_TransactionController extends \BaseController
 							'services' => $service,
 							'convert_option'		=> $transaction->default_currency != $transaction->currency_type ? true : false,
 							'currency_amount'		=> $transaction->currency_amount,
-							'currency_symbols'	=> ["SGD", "MYR"]
+							'currency_symbols'	=> ["SGD", "MYR"],
+							'default_currency'	=> $default_currency
 						);
 
 						$returnObject->data = $transaction_details;
