@@ -1498,6 +1498,7 @@ class Api_V1_TransactionController extends \BaseController
 							$cap_per_visit_converted = $transaction->cap_per_visit * $transaction->currency_amount;
 						} else {
 							$currency_symbol = "SGD";
+							$temp_consultation_fee = $consultation_fee;
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = $consultation;
 							}
