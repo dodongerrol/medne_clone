@@ -1459,7 +1459,7 @@ class Api_V1_TransactionController extends \BaseController
 							$paid_by_credits = $transaction->consultation_fees;
 						}
 
-						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr") {
+						if($transaction->default_currency == "myr" && $transaction->currency_type == "myr" || $transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
 							$currency_symbol = "MYR";
 							$temp_total_amount = $total_amount;
 							$temp_bill_amount = $bill_amount;
