@@ -28,11 +28,6 @@ app.directive('blockHealthPartnersDirective', [
         
 
         //-- blocked --//
-          scope.clinic_block_selected = [];
-          scope.clinic_id_block_selected = [];
-          scope.clinic_type_block_selected = [];
-          scope.clinic_type_id_block_selected = [];
-
           scope.clinic_block_arr = [];
           scope.clinic_type_block_arr = [];
           scope.block_pagination = {};
@@ -44,11 +39,6 @@ app.directive('blockHealthPartnersDirective', [
         //-------------//
 
         //-- opened --//
-          scope.clinic_open_selected = [];
-          scope.clinic_id_open_selected = [];
-          scope.clinic_type_open_selected = [];
-          scope.clinic_type_id_open_selected = [];
-
           scope.clinic_open_arr = [];
           scope.clinic_type_open_arr = [];
           scope.open_pagination = {};
@@ -89,10 +79,6 @@ app.directive('blockHealthPartnersDirective', [
           }
         }
         scope.changeFilterType = function( filter, type ){
-          scope.clinic_id_block_selected = [];
-          scope.clinic_block_selected = [];
-          scope.clinic_type_id_block_selected = [];
-          scope.clinic_type_block_selected = [];
           if( type == 'open' ){
             scope.allOpenSelected = false;
             angular.forEach( scope.clinic_type_open_arr, function( value, key ){
@@ -178,6 +164,14 @@ app.directive('blockHealthPartnersDirective', [
             scope.clinic_opened_search_trap = false;
           }
         }
+        scope.deleteItems = function( keys, array ){
+          for( var i = array.length; i >= 0; i-- ){
+            var index = $.inArray( i, keys );
+            if( index > -1 ){
+              array.splice( index, 1 );
+            }
+          }
+        }
 
 
 
@@ -236,127 +230,72 @@ app.directive('blockHealthPartnersDirective', [
 
 
         // ----- OPEN CLINIC FUNCTIONS ----- //
+          scope.openToBlock = function( status, region, opt ) {
+            if( opt == 'name' ){
+              angular.forEach( scope.clinic_block_arr, function( value, key ){
+                if( value.selected ){
+                  scope.updateClinics( value.ClinicID, status, region, opt );
+                }
+                if( scope.clinic_block_arr.length - 1 == key ){
 
+                }
+              });
+            }
+            if( opt == 'type' ){
+              angular.forEach( scope.clinic_type_block_arr, function( value, key ){
+                if( value.selected ){
+                  scope.updateClinics( value.ClinicTypeID, status, region, opt );
+                }
+                if( scope.clinic_block_arr.length - 1 == key ){
+                  
+                }
+              });
+            }
+          }
         // --------------------------------- //
 
         // ----- BLOCK CLINIC FUNCTIONS ----- //
-          scope.addBlockClinicToArr = function( data, opt ) {
-            // scope.clinic_id_block_selected = [];
-            // scope.clinic_block_selected = [];
-            // scope.clinic_type_id_block_selected = [];
-            // scope.clinic_type_block_selected = [];
+          scope.blockToOpen = function( status, region, opt ) {
             if( opt == 'name' ){
-              var index = $.inArray( data.ClinicID, scope.clinic_id_block_selected );
-              if( index < 0 ){
-                scope.clinic_id_block_selected.push( data.ClinicID );
-                scope.clinic_block_selected.push( data );
-              }else{
-                scope.clinic_id_block_selected.splice( index, 1 );
-                scope.clinic_block_selected.splice( index, 1 );
-              }
+              angular.forEach( scope.clinic_block_arr, function( value, key ){
+                if( value.selected ){
+                  scope.updateClinics( value.ClinicID, status, region, opt );
+                }
+                if( scope.clinic_block_arr.length - 1 == key ){
+
+                }
+              });
             }
             if( opt == 'type' ){
-              var index = $.inArray( data.ClinicTypeID, scope.clinic_type_id_block_selected );
-              if( index < 0 ){
-                scope.clinic_type_id_block_selected.push( data.ClinicTypeID );
-                scope.clinic_type_block_selected.push( data );
-              }else{
-                scope.clinic_type_id_block_selected.splice( index, 1 );
-                scope.clinic_type_block_selected.splice( index, 1 );
-              }
+              angular.forEach( scope.clinic_type_block_arr, function( value, key ){
+                if( value.selected ){
+                  scope.updateClinics( value.ClinicTypeID, status, region, opt );
+                }
+                if( scope.clinic_block_arr.length - 1 == key ){
+                  
+                }
+              });
             }
-
-            console.log( scope.clinic_id_block_selected );
-            console.log( scope.clinic_block_selected );
-            console.log( scope.clinic_type_id_block_selected );
-            console.log( scope.clinic_type_block_selected );
           }
         // --------------------------------- //
 
 
 
         // --------- HTTP REQUESTS ---------- //
-          scope.saveClinics = function() {
-            console.log( "open clinics", scope.clinic_id_open_selected );
-            console.log( "open clinic types", scope.clinic_type_id_open_selected );
-
-            console.log( "block clinics", scope.clinic_id_block_selected );
-            console.log( "block clinic types", scope.clinic_type_id_block_selected );
-
-            // scope.showLoading();
-            // var data = {
-            //   access_status: opt,
-            //   clinic_id: scope.clinic_id_selected,
-            //   clinic_type_id: scope.clinic_type_id_selected,
-            //   region: region,
-            //   status: status,
-            //   type: type,
-            // }
-            // hrActivity.OpenBlockClinics( data ) 
-            //   .then(function(response) { 
-            //     console.log(response);
-            //     scope.hideLoading();
-            //   });
+          scope.updateClinics = function( id, status, region, type ) {
+            var data = {
+              access_status: status,
+              region: region,
+              clinic_id: id,
+              clinic_type_id: id,
+              status: status,
+              type: type == 'name' ? 'clinic_name' : 'clinic_type',
+            }
+            hrActivity.OpenBlockClinics( data ) 
+              .then(function(response) { 
+                console.log(response);
+              });
           }
-
-          scope.updateClinics = function( status, clinic_opt ) {
-            console.log( "open clinics", scope.clinic_open_selected );
-            console.log( "open clinic types", scope.clinic_type_open_selected );
-            console.log( "block clinics", scope.clinic_block_selected );
-            console.log( "block clinic types", scope.clinic_type_block_selected );
-            if( scope.clinic_open_selected.length > 0 || scope.clinic_type_open_selected.length > 0 || scope.clinic_block_selected.length > 0 || scope.clinic_type_block_selected.length > 0 ){
-              scope.transaction_ctr += 1;
-            }
-            scope.showLoading();
-            if( clinic_opt == 'name' ){
-              if( status == 'block-to-open' ){
-                angular.forEach( scope.clinic_block_selected, function( value, key ){
-                  scope.clinic_open_arr.push( value );
-                  if( scope.clinic_block_selected.length - 1 == key ){
-                    scope.clinic_open_arr.sort(function (a, b) {
-                      return b.ClinicID - a.ClinicID;
-                    });
-
-                    console.log( scope.clinic_open_arr );
-                  }
-                });
-              }
-              if( status == 'open-to-block' ){
-                angular.forEach( scope.clinic_open_selected, function( value, key ){
-                  scope.clinic_block_arr.push( value );
-                  if( scope.clinic_open_selected.length - 1 == key ){
-                    scope.clinic_block_arr.sort(function (a, b) {
-                      return a.ClinicID - b.ClinicID;
-                    });
-                  }
-                });
-              }
-            }
-            if( clinic_opt == 'type' ){
-              if( status == 'block-to-open' ){
-                angular.forEach( scope.clinic_type_block_selected, function( value, key ){
-                  scope.clinic_type_open_arr.push( value );
-                  if( scope.clinic_type_block_selected.length - 1 == key ){
-                    scope.clinic_type_open_arr.sort(function (a, b) {
-                      return a.company_block_clinic_access_id - b.company_block_clinic_access_id;
-                    });
-                  }
-                });
-              }
-              if( status == 'open-to-block' ){
-                angular.forEach( scope.clinic_type_open_selected, function( value, key ){
-                  scope.clinic_type_block_arr.push( value );
-                  if( scope.clinic_type_open_selected.length - 1 == key ){
-                    scope.clinic_type_block_arr.sort(function (a, b) {
-                      return a.company_block_clinic_access_id - b.company_block_clinic_access_id;
-                    });
-                  }
-                });
-              }
-            }
-            scope.hideLoading();
-          }
-
           scope.getClinicTypes = function() {
             hrActivity.fetchClinicTypes( 'open', scope.filter_regionOpened ) 
               .then(function(response) { 
