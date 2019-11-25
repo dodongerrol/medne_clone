@@ -188,12 +188,23 @@ class EclaimController extends \BaseController {
 		if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
 	    $amount = trim($input['amount']);
 	  } else {
+	    // if(Input::has('currency_type') && $input['currency_type'] != null) {
+	    //   if(strtolower($input['currency_type']) == "myr") {
+	    //     $amount = $input['amount'] / $currency;
+	    //   } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
+     //    	$amount = $input['amount'] * $currency;
+     //  	} else {
+	    //     $amount = trim($input['amount']);
+	    //   }
+	    // } else {
+	    //   $amount = trim($input['amount']);
+	    // }
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
-	      if(strtolower($input['currency_type']) == "myr") {
+	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
-	      } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
-        	$amount = $input['amount'] * $currency;
-      	} else {
+	      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
+	        $amount = $input['amount'] * $currency;
+	      } else {
 	        $amount = trim($input['amount']);
 	      }
 	    } else {
@@ -404,12 +415,23 @@ class EclaimController extends \BaseController {
 		if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
 	    $amount = trim($input['amount']);
 	  } else {
+	    // if(Input::has('currency_type') && $input['currency_type'] != null) {
+	    //   if(strtolower($input['currency_type']) == "myr") {
+	    //     $amount = $input['amount'] / $currency;
+	    //   } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
+     //    	$amount = $input['amount'] * $currency;
+     //  	}	else {
+	    //     $amount = trim($input['amount']);
+	    //   }
+	    // } else {
+	    //   $amount = trim($input['amount']);
+	    // }
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
-	      if(strtolower($input['currency_type']) == "myr") {
+	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
-	      } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
-        	$amount = $input['amount'] * $currency;
-      	}	else {
+	      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
+	        $amount = $input['amount'] * $currency;
+	      } else {
 	        $amount = trim($input['amount']);
 	      }
 	    } else {
