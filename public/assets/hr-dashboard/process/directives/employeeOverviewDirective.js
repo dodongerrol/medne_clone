@@ -460,6 +460,8 @@ app.directive("employeeOverviewDirective", [
                     scope.blockHealthPatnerLoad();
                     scope.hideLoading();
                   }
+                }else{
+                  swal('Error!', response.data.message, 'error');
                 }
               });
           }
