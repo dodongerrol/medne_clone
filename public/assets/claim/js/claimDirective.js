@@ -37,6 +37,7 @@ app.directive("claimDirective", [
         scope.e_card_data = {};
         scope.registration_arr = [];
         scope.isLoading = false;
+        scope.currencyType = localStorage.getItem("currency_type");
 
         scope.verifyNRIC = function(){
           $('#modalNRIC').modal('show');
@@ -337,6 +338,7 @@ app.directive("claimDirective", [
               user_id: scope.add_claim_data.selected_nric_data.id,
               date_transaction : moment( scope.add_claim_data.visit_date ).format('YYYY-MM-DD'),
               amount : scope.add_claim_data.amount,
+              currency_type: scope.currencyType,
             }
             console.log( data );
             $http.post(base_url + "check_duplicate_transaction", data)
@@ -345,6 +347,8 @@ app.directive("claimDirective", [
               if( response.data.status == true && response.data.error == 0){
                 scope.your_transaction = response.data.new_transaction;
                 scope.other_transaction = response.data.duplicates;
+
+                console.log(scope.your_transaction);
                 $('.isNotDoneChecking').hide();
                 $('.isDoneChecking').show();
               }else{
@@ -611,6 +615,7 @@ app.directive("claimDirective", [
                 console.log( response );
                 // scope.hideLoading();
                 scope.backdate_list = response;
+                localStorage.setItem("currency_type",scope.backdate_list.data.data.currency_type);
               });
           };
         // ================ //
@@ -682,6 +687,7 @@ app.directive("claimDirective", [
           scope.getServices();
           scope.initializeDatePickers();
           scope.getClinicCheckIns();
+          console.log(scope.currencyType);
         }
 
         scope.onLoad();

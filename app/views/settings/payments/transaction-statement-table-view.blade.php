@@ -22,8 +22,8 @@
       @endif
       <td> {{ $value['payment']->invoice_number }} </td>
       <td> {{ $value['clinic']->Name }} </td>
-      <td> ${{ $value['total']}} </td>
-      <td> ${{ $value['amount_due']}} </td>
+      <td> <span class="currency_type"> </span> {{ $value['total']}} </td>
+      <td> <span class="currency_type"> </span> {{ $value['amount_due']}} </td>
       <td>
           @if((int)$value['payment']->status == 1)
             <a class="view-statement-button" href="javascript:void(0)">View </a>
@@ -41,5 +41,15 @@
           @endif
       </td>
 </tr>
+
+<script type="text/javascript">
+
+	// Currency condition
+	setTimeout(() => {
+    var currency = localStorage.getItem('currency_type');
+		$('.currency_type').text(currency);
+	}, 1000);
+
+</script>
 
 @endforeach

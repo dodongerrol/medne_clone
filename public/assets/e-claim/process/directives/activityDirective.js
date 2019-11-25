@@ -216,6 +216,7 @@ app.directive('activityDirective', [
 					data.spending_type = scope.spendingTypeSelected;
 					eclaimSettings.employeeSearchActivity( data )
 						.then(function(response){
+							console.log(response.data)
 							scope.activity_results = response.data;
 							console.log(scope.activity_results);
 							if( parseInt(scope.activity_results.total_allocation) > 0 ){

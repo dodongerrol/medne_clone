@@ -236,7 +236,7 @@
             Your Receipt
           </p>
           <p style="font-size: 44px;font-weight: 700;margin-top: 0;">
-            S$ <span>{{ $total_amount }}</span>
+            {{ $currency_symbol }} <span>{{ $total_amount }}</span>
           </p>
 
         </div>
@@ -326,7 +326,7 @@
               {{ $service }}
             </div>
             <div class="clinic-type-credits">
-              S$ <span>{{ $credits }}</span>
+              {{ $currency_symbol }} <span>{{ $credits }}</span>
             </div>
           </div>
 
@@ -338,7 +338,7 @@
               Consultation
             </div>
             <div class="clinic-type-credits">
-              S$ <span>{{ $consultation }}</span>
+              {{ $currency_symbol }} <span>{{ $consultation }}</span>
             </div>
           </div>
           @endif
@@ -348,7 +348,7 @@
               Total
             </div>
             <div class="two">
-              S$ <span>{{ $total_amount }}</span>
+              {{ $currency_symbol }} <span>{{ $total_amount }}</span>
             </div>
           </div>
 

@@ -128,9 +128,9 @@
 							<p class="">Total Transactions</p>
 							<p class="color-blue total-trans-num"></p>
 						</div>
-						<div class="flex-5">
+						<div class="mednefits-wallet-container flex-5">
 							<p class="">Mednefits Wallet</p>
-							<p class="color-blue">S$ <span class="medni-wallet-num">189.40</span></p>
+							<p class="color-blue"><span class="currencyType" style="text-transform: uppercase;"> </span> <span class="medni-wallet-num">189.40</span></p>
 						</div>
 					</div>
 

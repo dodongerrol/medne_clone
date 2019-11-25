@@ -55,7 +55,7 @@
 
          $procedurecount =0;
 
-				foreach ($services as $value) {
+				foreach ($services as $key => $value) {
 
 					if($doctor_services){
 
@@ -84,8 +84,8 @@
 												<div class="col-md-2" style="padding-top: 16px; width: 15%;">
 									        		<span>{{ $value->Duration}} mins</span>
 									      		</div>
-									      		<div class="col-md-2" style="padding-top: 16px; width: 8%;">
-									        		<span>{{ $value->Price}}</span>
+									      		<div class="col-md-2" style="padding-top: 16px; width: 30%;">
+									        		<span class="cost_val index<?php echo $key?>">{{ $value->Price}}</span>
 									      		</div>
 											</div>
 										</div>
@@ -118,8 +118,8 @@
 										<div class="col-md-2" style="padding-top: 16px; width: 15%;">
 							        		<span>{{ $value->Duration}} mins</span>
 							      		</div>
-							      		<div class="col-md-2" style="padding-top: 16px; width: 8%;">
-							        		<span>{{ $value->Price}}</span>
+							      		<div class="col-md-2" style="padding-top: 16px; width: 30%;">
+							        		<span> {{ $value->Price}}</span>
 							      		</div>
 									</div>
 								</div>
@@ -137,6 +137,26 @@
 
 
 <script type="text/javascript">
+
+	// Currency condition
+	// $('.sg').show();
+	var currency;
+	var arrLength = $('.cost_val').size();
+	// console.log(currency,arrLength);
+	
+	for ( var i = 0; i <= arrLength - 1; i++ ) {
+		var str = $('.index' + i).text();
+		if (str.includes('S$')) {
+			currency = $('.index' + i).text().replace('S$', 'SGD ');
+			$('.index' + i ).text(currency);
+		} else if (str.includes('RM')) {
+			currency = $('.index' + i).text().replace('RM', 'MYR ');
+			$('.index' + i ).text(currency);
+		}
+		
+		console.log(currency,arrLength);
+	}
+
 	
 	// --------- Set Navigation bar height ------------------
 

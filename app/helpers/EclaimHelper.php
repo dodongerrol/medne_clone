@@ -20,7 +20,7 @@ class EclaimHelper
     $data = array(
       array(
         'currency_name'   => "SGD - Singapore Dollar",
-        'currency_exchange_rate'  => 0,
+        'currency_exchange_rate'  => 3.00,
         'currency_type'   => 'sgd'
       ),
       array(
@@ -29,6 +29,14 @@ class EclaimHelper
         'currency_type'   => 'myr'
       )
     );
+
+    foreach ($data as $key => $curr) {
+      $currency = DB::table('currency_options')->where('currency_type', $curr['currency_type'])->first();
+      
+      if($currency) {
+        $curr['currency_exchange_rate'] = $currency->currency_value;
+      }
+    }
 
     return $data;
   }

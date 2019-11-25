@@ -174,7 +174,7 @@
 				</div>
 				<div class="item">
 					<p class="">Mednefits Wallet</p>
-					<p class="color-blue">S$ <span class="medni-wallet-num">{{ $mednefits_wallet }}</span></p>
+					<p class="color-blue">{{ $currency_type }} <span class="medni-wallet-num">{{ $mednefits_wallet }}</span></p>
 				</div>
 			</div>
 
@@ -204,9 +204,9 @@
 					</td>
 					<!-- <td>{{ $trans['NRIC'] }}</td> -->
 					<td>{{ $trans['procedure_name'] }}</td>
-					<td>S$ {{ $trans['mednefits_fee'] }}</td>
-					<td>S$ {{ $trans['mednefits_credits'] }}</td>
-					<td>S$ {{ $trans['cash'] }}</td>
+					<td>{{ $trans['currency_type'] }} {{ $trans['mednefits_fee'] }}</td>
+					<td>{{ $trans['currency_type'] }} {{ $trans['mednefits_credits'] }}</td>
+					<td>{{ $trans['currency_type'] }} {{ $trans['cash'] }}</td>
 				</tr>
 				@endforeach
 			</table>
