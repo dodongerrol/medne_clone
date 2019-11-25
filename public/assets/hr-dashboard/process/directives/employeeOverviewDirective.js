@@ -138,7 +138,7 @@ app.directive("employeeOverviewDirective", [
             scope.block_per_page = 10;
             scope.filter_regionBlocked = 'all_region';
             scope.allBlockSelected = false;
-            scope.list_opt_block = 'name';
+            scope.list_opt_block = 'type';
           //-------------//
 
           //-- opened --//
@@ -150,7 +150,7 @@ app.directive("employeeOverviewDirective", [
             scope.open_per_page = 10;
             scope.filter_regionOpened = 'all_region';
             scope.allOpenSelected = false;
-            scope.list_opt_open = 'name';
+            scope.list_opt_open = 'type';
           //-------------//
           scope.range = function (range) {
             var arr = []; 
