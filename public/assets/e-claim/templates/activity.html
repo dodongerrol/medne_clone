@@ -105,12 +105,14 @@
 			<div class="white-space-10"></div>
 
 			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left">
-				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6" ng-if="activity_results.account_type != 'enterprise_plan'">S$ <span ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span></h4>
-				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6" ng-if="activity_results.account_type == 'enterprise_plan'"><span ng-bind="activity_results.total_allocation"></span></h4>
+				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6">
+					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span> 
+					<span ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span></h4>
 				<p class="color-gray font-12 weight-700">TOTAL ALLOCATION</p>
 				<div class="white-space-10"></div>
-				<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6" ng-if="activity_results.account_type != 'enterprise_plan'">S$ <span ng-bind="(activity_results.balance) ? activity_results.balance : 00"></span></h4>
-				<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6" ng-if="activity_results.account_type == 'enterprise_plan'"><span ng-bind="activity_results.balance"></span></h4>
+				<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6">
+					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+					<span ng-bind="(activity_results.balance) ? activity_results.balance : 00"></span></h4>
 				<p class="color-gray font-12 weight-700">BALANCE</p>
 			</div>
 
@@ -118,7 +120,9 @@
 				<div class="spent-box text-left">
 					<div class="white-space-30 xxs-hide"></div>
 					<div class="white-space-5 "></div>
-					<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6">S$ <span ng-bind="(activity_results.total_spent) ? activity_results.total_spent : 00"></span></h4>
+					<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6">
+						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+						<span ng-bind="(activity_results.total_spent) ? activity_results.total_spent : 00"></span></h4>
 					<p class="color-gray font-12 weight-700">SPENT</p>
 				</div>
 			</div>
@@ -133,12 +137,16 @@
 					<div class="white-space-10"></div>
 
 					<div class="in-network-box">
-						<p class="weight-700 color-blue-custom">S$ <span ng-bind="(activity_results.in_network_spent) ? activity_results.in_network_spent : 00"></span></p>
+						<p class="weight-700 color-blue-custom">
+							<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+							<span ng-bind="(activity_results.in_network_spent) ? activity_results.in_network_spent : 00"></span></p>
 						<p class="color-gray font-10 weight-700">IN-NETWORK</p>
 					</div>
 
 					<div class="out-network-box">
-						<p class="weight-700 color-blue-custom">S$ <span ng-bind="(activity_results.e_claim_spent) ? activity_results.e_claim_spent : 00"></span></p>
+						<p class="weight-700 color-blue-custom">
+							<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+							<span ng-bind="(activity_results.e_claim_spent) ? activity_results.e_claim_spent : 00"></span></p>
 						<p class="color-gray font-10 weight-700">OUT-OF-NETWORK</p>
 					</div>
 				</div>
@@ -181,7 +189,7 @@
 				<p class="color-black3 font-15 weight-700">
 					Total Spent 
 					<label class="font-medium2" style="width: 90px">
-						S$ 
+						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span> 
 						<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_spent"></span>
 						<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim_spent"></span>
 					</label>
@@ -201,7 +209,7 @@
 				<p class="color-black3 font-15 weight-700 xs-hide2">
 					Total Spent 
 					<label class="font-medium2" style="width: 90px">
-						S$ 
+						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span> 
 						<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_spent"></span>
 						<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim_spent"></span>
 					</label>
@@ -242,13 +250,16 @@
 								<span ng-bind="list.clinic_name">Drs Chua & Partners (AV) Pte Ltd</span>
 							</td>
 							<td class="xs-hide-table-cell">
-								S$ <span ng-bind="list.amount">22.00</span>
+								<span ng-bind="list.currency_type" class="currency-type">SGD</span>  
+								<span ng-bind="list.amount">22.00</span>
 							</td>
 							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
-								S$ <span ng-bind="list.procedure_cost">Not Available</span>
+								<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+								<span ng-bind="list.procedure_cost">Not Available</span>
 							</td>
 							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
-								S$ <span ng-bind="list.consultation">Not Available</span>
+								<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+								<span ng-bind="list.consultation">Not Available</span>
 							</td>
 							<td class="xs-hide-table-cell">
 								<span ng-bind="list.payment_type">Cash</span>
@@ -337,14 +348,20 @@
 												</div>
 											</div>
 											<div class="desc-wrapper">
-												<p style="margin-bottom: 10px;"><span class="color-gray2" >S$ <span ng-bind="list.amount">22</span></span></p>
+												<p style="margin-bottom: 10px;"><span class="color-gray2" >
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+													<span ng-bind="list.amount">22</span></span></p>
 												<!--  -->
 												<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status">
 													<span class="color-gray2" ng-bind="list.procedure"></span>
 												</p>
-												<p style="margin-bottom: 5px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >S$ <span ng-bind="list.procedure_cost">22</span></span></p>
+												<p style="margin-bottom: 5px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+													<span ng-bind="list.procedure_cost">22</span></span></p>
 												<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >Consultation</p>
-												<p style="margin-bottom: 20px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >S$ <span ng-bind="list.consultation">22</span></span></p>
+												<p style="margin-bottom: 20px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span> 
+													<span ng-bind="list.consultation">22</span></span></p>
 											</div>
 										</div>
 										<div class="trans-row">
@@ -369,7 +386,10 @@
 												<p><label>Caps per visit</label></p>
 											</div>
 											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.cap_per_visit">Filbert Tan</span></p>
+												<p>
+													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span class="color-gray2" ng-bind="list.cap_per_visit"></span>
+												</p>
 											</div>
 										</div>
 										<div ng-if="list.cap_transaction" class="trans-row">
@@ -377,7 +397,10 @@
 												<p><label>Paid by Credits</label></p>
 											</div>
 											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.paid_by_credits">Filbert Tan</span></p>
+												<p>
+													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span class="color-gray2" ng-bind="list.paid_by_credits"></span>
+												</p>
 											</div>
 										</div>
 										<div ng-if="list.cap_transaction" class="trans-row">
@@ -385,7 +408,10 @@
 												<p><label>Paid by Cash</label></p>
 											</div>
 											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.paid_by_cash">Filbert Tan</span></p>
+												<p>
+													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span class="color-gray2" ng-bind="list.paid_by_cash"></span>
+												</p>
 											</div>
 										</div>
 
@@ -466,7 +492,8 @@
 							<span ng-bind="list.merchant">Spectacle Hut</span>
 						</td>
 						<td class="xs-hide-table-cell">
-							S$ <span ng-bind="list.amount"></span>
+							<span ng-bind="list.currency_type" class="currency-type">SGD</span> 
+							<span ng-bind="list.amount"></span>
 						</td>
 						<td class="xs-hide-table-cell">
 							<span ng-bind="list.member">Filbert Tan</span>
@@ -504,7 +531,9 @@
 									<p><label>TRANSACTION #</label> <span class="color-gray2" ng-bind="list.transaction_id">IN74859204</span></p>
 									<p><label>CLAIM TYPE</label> <span class="color-gray2" ng-bind="list.service">General Practitioner Visit</span></p>
 									<p><label>PROVIDER</label> <span class="color-gray2" ng-bind="list.merchant">CLINIC</span></p>
-									<p><label>TOTAL AMOUNT</label> <span class="color-gray2" >S$ <span ng-bind="list.amount">22.00</span></span></p>
+									<p><label>TOTAL AMOUNT</label> <span class="color-gray2" >
+										<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+										<span ng-bind="list.amount">22.00</span></span></p>
 									<p><label>SPENDING ACCOUNT</label> <span class="color-gray2"><span ng-bind="list.spending_type">Medical</span></span></p>
 									<p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
 									<p><label>MEMBER</label> <span class="color-gray2" ng-bind="list.member">Filbert Tan</span></p>

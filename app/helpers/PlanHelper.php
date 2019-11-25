@@ -186,6 +186,7 @@ class PlanHelper {
 		$data = [];
 
 		$user_details = $user->getUserProfileMobile($user_id);
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
 		$company = DB::table('corporate_members')
 		->join('corporate', 'corporate.corporate_id', '=',  'corporate_members.corporate_id')
 		->where('corporate_members.user_id', '=', $user_id)
@@ -199,14 +200,12 @@ class PlanHelper {
 			return FALSE;
 		}
 
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->first();
 		$data['company_name'] = ucwords($company->company_name);
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
-
 		$plan_user = DB::table('user_plan_type')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-
-		$data['start_date'] = date('F d, Y', strtotime($plan_user->plan_start));
-
+		
 		if((int)$active_plan->plan_extention_enable == 1) {
 			$plan_user_history = DB::table('user_plan_history')
 			->where('user_id', $user_id)
@@ -290,10 +289,20 @@ class PlanHelper {
 			}
 		}
 
+		$data['company_name'] = ucwords($company->company_name);
+		$data['start_date'] = date('F d, Y', strtotime($plan_user->plan_start));
 		$data['fullname'] = ucwords($user_details->Name);
 		$data['user_id'] = $user_details->UserID;
 		$data['nric'] = $user_details->NRIC;
 		$data['user_type'] = "employee";
+		$data['currency_type'] = $wallet->currency_type;
+		$data['plan_type'] = $active_plan->account_type;
+
+		if((int)$customer->access_e_claim == 1) {
+ 			$data['e_claim_access'] = true;
+		} else {
+			$data['e_claim_access'] = false;
+		}
 
 		if(date('Y-m-d') > date('Y-m-d', strtotime($data['valid_date']))) {
 			$data['expired'] = TRUE;
@@ -1391,6 +1400,7 @@ class PlanHelper {
 
 		$user = new User();
 
+		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
             // try {
 		$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 		if(!$customer_active_plan_id) {
@@ -1433,7 +1443,8 @@ class PlanHelper {
 			'account_update_status'		=> 1,
 			'account_update_date' => date('Y-m-d H:i:s'),
 			'account_already_update'	=> 1,
-			'communication_type'	=> $communication_type
+			'communication_type'	=> $communication_type,
+			'currency_type'		=> $customer_data->currency_type
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
@@ -1518,7 +1529,8 @@ class PlanHelper {
 					'credit'            => $data_enrollee->credits,
 					'logs'              => 'added_by_hr',
 					'running_balance'   => $data_enrollee->credits,
-					'customer_active_plan_id' => $customer_active_plan_id
+					'customer_active_plan_id' => $customer_active_plan_id,
+					'currency_type'		=> $customer_data->currency_type
 				);
 
 				$employee_logs->createWalletHistory($wallet_history);
@@ -1534,7 +1546,8 @@ class PlanHelper {
 						'logs'                  => 'added_employee_credits',
 						'user_id'               => $user_id,
 						'running_balance'       => $customer->balance - $data_enrollee->credits,
-						'customer_active_plan_id' => $customer_active_plan_id
+						'customer_active_plan_id' => $customer_active_plan_id,
+						'currency_type'		=> $customer_data->currency_type
 					);
 
 					$customer_credit_logs = new CustomerCreditLogs( );
@@ -1563,7 +1576,8 @@ class PlanHelper {
 					'credit'        => $data_enrollee->wellness_credits,
 					'logs'          => 'added_by_hr',
 					'running_balance'   => $data_enrollee->wellness_credits,
-					'customer_active_plan_id' => $customer_active_plan_id
+					'customer_active_plan_id' => $customer_active_plan_id,
+					'currency_type'		=> $customer_data->currency_type
 				);
 
 				\WellnessWalletHistory::create($wallet_history);
@@ -1577,7 +1591,8 @@ class PlanHelper {
 						'logs'                  => 'added_employee_credits',
 						'user_id'               => $user_id,
 						'running_balance'       => $customer->wellness_credits - $data_enrollee->wellness_credits,
-						'customer_active_plan_id' => $customer_active_plan_id
+						'customer_active_plan_id' => $customer_active_plan_id,
+						'currency_type'		=> $customer_data->currency_type
 					);
 					$customer_credits_logs = new CustomerWellnessCreditLogs();
 					$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
@@ -1997,6 +2012,7 @@ class PlanHelper {
 		$credits_back = 0;
 		$deducted_by_hr_medical = 0;
 		$in_network_temp_spent = 0;
+		$in_network_spent = 0;
 		$e_claim_spent = 0;
 		$deleted_employee_allocation = 0;
 		$total_deduction_credits = 0;
@@ -2038,6 +2054,7 @@ class PlanHelper {
 
 			if($history->where_spend == "in_network_transaction") {
 				$in_network_temp_spent += $history->credit;
+				$in_network_spent += $history->credit;
 			}
 
 			if($history->where_spend == "credits_back_from_in_network") {
@@ -2051,6 +2068,7 @@ class PlanHelper {
 		->sum('credit');
 
 		$get_allocation_spent_temp = $in_network_temp_spent + $e_claim_spent;
+		$in_network_spent = $in_network_spent - $credits_back;
 		$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
 		$medical_balance = 0;
 
@@ -2079,7 +2097,7 @@ class PlanHelper {
 			$allocation = $pro_allocation;
 		}
 
-		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
+		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $in_network_spent, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
 	}
 
 	public static function memberWellnessAllocatedCredits($wallet_id, $user_id)
@@ -2398,7 +2416,9 @@ class PlanHelper {
 		->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
 		->where('customer_buy_start.customer_buy_start_id', $active_plan->customer_start_buy_id)
 		->count();
-            // create refund payment
+
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
+      // create refund payment
 		$check = 10 + $refund_count;
 		$temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
 		$invoice_number = 'OMC'.$temp_invoice_number.'A';
@@ -2409,7 +2429,8 @@ class PlanHelper {
 		$data = array(
 			'customer_active_plan_id'   => $id,
 			'cancellation_number'       => $invoice_number,
-			'date_refund'               => $date_refund
+			'date_refund'               => $date_refund,
+			'currency_type'							=> $customer->currency_type
 		);
 
 		$result = \PaymentRefund::create($data);
@@ -3108,6 +3129,7 @@ class PlanHelper {
 		$date_today = date('Y-m-d');
 	    	// $last_day_of_coverage = date('Y-m-d', strtotime($input['last_day_coverage']));
 		$plan_start = date('Y-m-d', strtotime($input['plan_start']));
+		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
 
 		$user_plan_history = DB::table('user_plan_history')
 		->where('user_id', $replace_id)
@@ -3148,7 +3170,8 @@ class PlanHelper {
 			'DOB'       => $input['dob'],
 			'Zip_Code'  => $input['postal_code'],
 			'pending'		=> $pending,
-			'Active'        => 1
+			'Active'        => 1,
+			'currency_type'	=> $customer_data->currency_type
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
@@ -3581,6 +3604,7 @@ class PlanHelper {
 			->where('plan_tiers.customer_id', $customer_id)
 			->first();
 		}
+	
 
 		if($plan_tier) {
 			return $plan_tier;
@@ -4745,7 +4769,6 @@ class PlanHelper {
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$data['plan_start'] = date('F d, Y', strtotime($dependent_plan_history->plan_start));
 
-
 		$dependent_plan_extenstion = DB::table('dependent_plans')->where('customer_plan_id', $dependent_plan->customer_plan_id)->where('type', 'extension_plan')->first();
 
 		if($dependent_plan_extenstion && $dependent_plan_extenstion->activate_plan_extension == 1) {
@@ -4773,7 +4796,7 @@ class PlanHelper {
 		}
 
 		$data['user_type'] = "dependents";
-
+		$data['plan_type'] = $dependent_plan->account_type;
 		return $data;
 	}
 

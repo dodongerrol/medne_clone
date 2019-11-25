@@ -654,314 +654,314 @@ return Response::json($returnObject);
         	$findUserMedication = $this->GetUserMedications($profileid);
         	$findUserCondition = $this->GetUserConditions($profileid);
         	$findMedicalHistory = $this->GetUserMedicalHistory($profileid);
+          $user_id = StringHelper::getUserId($profileid);
                 // return $findUserProfile);
-        	if($findUserProfile){
+          if($findUserProfile){
                     //$userPolicy = $userinsurancepolicy->getUserInsurancePolicy($findUserProfile->UserID);
-        		$userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
-
-        		$returnArray->status = TRUE;
-        		$returnArray->login_status = TRUE;
-                    //$returnArray->data['profile'] = $findUserProfile;
-        		$returnArray->data['profile']['user_id'] = $findUserProfile->UserID;
-        		$returnArray->data['profile']['email'] = $findUserProfile->Email;
-        		$returnArray->data['profile']['full_name'] = $findUserProfile->Name;
-                    //$returnArray->data['profile']['image'] = URL::to('/assets/upload/user/'.$findUserProfile->Image);
-        		$returnArray->data['profile']['nric'] = $findUserProfile->NRIC;
-        		$returnArray->data['profile']['fin'] = $findUserProfile->FIN;
-        		$returnArray->data['profile']['mobile_phone'] = $findUserProfile->PhoneNo;
-        		$returnArray->data['profile']['dob'] = $findUserProfile->DOB;
-        		$returnArray->data['profile']['age'] = $findUserProfile->Age;
-        		$returnArray->data['profile']['weight'] = $findUserProfile->Weight;
+            $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
+            $returnArray->status = TRUE;
+            $returnArray->login_status = TRUE;
+            $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+            $returnArray->data['profile']['user_id'] = $findUserProfile->UserID;
+            $returnArray->data['profile']['email'] = $findUserProfile->Email;
+            $returnArray->data['profile']['full_name'] = $findUserProfile->Name;
+            $returnArray->data['profile']['nric'] = $findUserProfile->NRIC;
+            $returnArray->data['profile']['fin'] = $findUserProfile->FIN;
+            $returnArray->data['profile']['mobile_phone'] = $findUserProfile->PhoneNo;
+            $returnArray->data['profile']['dob'] = $findUserProfile->DOB;
+            $returnArray->data['profile']['age'] = $findUserProfile->Age;
+            $returnArray->data['profile']['weight'] = $findUserProfile->Weight;
             $returnArray->data['profile']['height'] = $findUserProfile->Height;
+            $returnArray->data['profile']['currency_type'] = $wallet->currency_type;
             if((int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 0 || (int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 1) {
-                $returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
+              $returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
             } else {
               $returnArray->data['profile']['to_update_auto_logout'] = false;
             }
-        		
-        		if(!empty($findUserProfile->Weight) && !empty($findUserProfile->Height)){
-        			$bmi = $findUserProfile->Weight / (($findUserProfile->Height / 100) * ($findUserProfile->Height / 100));
-        		}else {$bmi = 0; }
 
-        		$returnArray->data['profile']['bmi'] =  $bmi;
-        		$returnArray->data['profile']['blood_type'] = $findUserProfile->Blood_Type;
+            if(!empty($findUserProfile->Weight) && !empty($findUserProfile->Height)){
+             $bmi = $findUserProfile->Weight / (($findUserProfile->Height / 100) * ($findUserProfile->Height / 100));
+           }else {$bmi = 0; }
+
+           $returnArray->data['profile']['bmi'] =  $bmi;
+           $returnArray->data['profile']['blood_type'] = $findUserProfile->Blood_Type;
                     //This one need to change when image upload available
-        		$returnArray->data['profile']['photo_url'] = $findUserProfile->Image;
-        		if($userPolicy){
-        			$returnArray->data['profile']['insurance_company'] = $userPolicy->Name;
-        			$returnArray->data['profile']['insurance_policy_no'] = $userPolicy->PolicyNo;
-        			$returnArray->data['profile']['insurance_policy_name'] = $userPolicy->PolicyName;
-        		}else{
-        			$returnArray->data['profile']['insurance_company'] = null;
-        			$returnArray->data['profile']['insurance_policy_no'] = null;
-        			$returnArray->data['profile']['insurance_policy_name'] = null;
-        		}
+           $returnArray->data['profile']['photo_url'] = $findUserProfile->Image;
+           if($userPolicy){
+             $returnArray->data['profile']['insurance_company'] = $userPolicy->Name;
+             $returnArray->data['profile']['insurance_policy_no'] = $userPolicy->PolicyNo;
+             $returnArray->data['profile']['insurance_policy_name'] = $userPolicy->PolicyName;
+           }else{
+             $returnArray->data['profile']['insurance_company'] = null;
+             $returnArray->data['profile']['insurance_policy_no'] = null;
+             $returnArray->data['profile']['insurance_policy_name'] = null;
+           }
                     //Insurance details
-        		if($userPolicy){
-        			$returnArray->data['insurance']['insurance_id'] = $userPolicy->UserInsurancePolicyID;
-        			$returnArray->data['insurance']['name'] = $userPolicy->Name;
-        			$returnArray->data['insurance']['policy_no'] = $userPolicy->PolicyNo;
-        			$returnArray->data['insurance']['policy_name'] = $userPolicy->PolicyName;
-        			$returnArray->data['insurance']['expire_date'] = 0;
+           if($userPolicy){
+             $returnArray->data['insurance']['insurance_id'] = $userPolicy->UserInsurancePolicyID;
+             $returnArray->data['insurance']['name'] = $userPolicy->Name;
+             $returnArray->data['insurance']['policy_no'] = $userPolicy->PolicyNo;
+             $returnArray->data['insurance']['policy_name'] = $userPolicy->PolicyName;
+             $returnArray->data['insurance']['expire_date'] = 0;
                         //$returnArray->data['insurance']['image_url'] = URL::to('/assets/'.$userPolicy->Image);
-        			$returnArray->data['insurance']['image_url'] = $userPolicy->Image;
-        		}else{
-        			$returnArray->data['insurance'] = null;
-        		}
+             $returnArray->data['insurance']['image_url'] = $userPolicy->Image;
+           }else{
+             $returnArray->data['insurance'] = null;
+           }
 
                     //Allagies
-        		if($findUserAllergy){
-        			foreach($findUserAllergy as $allergy){
-        				$getAllergy['allergy_id'] = $allergy->AllergyID;
-        				$getAllergy['name'] = $allergy->Name;
-        				$allAllergy[] = $getAllergy;
-        			}
-        			$returnArray->data['allergies'] = $allAllergy;
-        		}else{
-        			$returnArray->data['allergies'] = null;
-        		}
+           if($findUserAllergy){
+             foreach($findUserAllergy as $allergy){
+              $getAllergy['allergy_id'] = $allergy->AllergyID;
+              $getAllergy['name'] = $allergy->Name;
+              $allAllergy[] = $getAllergy;
+            }
+            $returnArray->data['allergies'] = $allAllergy;
+          }else{
+           $returnArray->data['allergies'] = null;
+         }
 
                     //Medications
-        		if($findUserMedication){
-        			foreach($findUserMedication as $medication){
-        				$getMedication['medication_id'] = $medication->MedicationID;
-        				$getMedication['name'] = $medication->Name;
-        				$getMedication['dosage'] = $medication->Dosage;
-        				$allMedication[] = $getMedication;
-        			}
-        			$returnArray->data['medications'] = $allMedication;
-        		}else{
-        			$returnArray->data['medications']= null;
-        		}
+         if($findUserMedication){
+           foreach($findUserMedication as $medication){
+            $getMedication['medication_id'] = $medication->MedicationID;
+            $getMedication['name'] = $medication->Name;
+            $getMedication['dosage'] = $medication->Dosage;
+            $allMedication[] = $getMedication;
+          }
+          $returnArray->data['medications'] = $allMedication;
+        }else{
+         $returnArray->data['medications']= null;
+       }
 
                     //Conditions
-        		if($findUserCondition){
-        			foreach($findUserCondition as $condition){
-        				$getCondition['condition_id'] = $condition->ConditionID;
-        				$getCondition['name'] = $condition->Name;
-        				$newDate = date("d-m-Y", strtotime($condition->Date));
-        				$getCondition['date'] = $newDate;
-        				$allConditions[] = $getCondition;
-        			}
-        			$returnArray->data['conditions'] = $allConditions;
-        		}else{
-        			$returnArray->data['conditions'] = null;
-        		}
+       if($findUserCondition){
+         foreach($findUserCondition as $condition){
+          $getCondition['condition_id'] = $condition->ConditionID;
+          $getCondition['name'] = $condition->Name;
+          $newDate = date("d-m-Y", strtotime($condition->Date));
+          $getCondition['date'] = $newDate;
+          $allConditions[] = $getCondition;
+        }
+        $returnArray->data['conditions'] = $allConditions;
+      }else{
+       $returnArray->data['conditions'] = null;
+     }
 
                     //History
-        		if($findMedicalHistory){
-        			foreach($findMedicalHistory as $history){
-        				$historyDetail = new UserMedicalHistoryDetail();
-        				$findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
-        				$newDate = date("d-m-Y", strtotime($history->Date));
-        				$getHistory['date'] = $newDate;
-        				$getHistory['record_id'] = $history->HistoryID;
-        				$getHistory['visit_type'] = $history->VisitType;
+     if($findMedicalHistory){
+       foreach($findMedicalHistory as $history){
+        $historyDetail = new UserMedicalHistoryDetail();
+        $findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
+        $newDate = date("d-m-Y", strtotime($history->Date));
+        $getHistory['date'] = $newDate;
+        $getHistory['record_id'] = $history->HistoryID;
+        $getHistory['visit_type'] = $history->VisitType;
                             //$getHistory['list']['doctor'] = $history->Name;
-        				$getHistory['doctor'] = $history->Doctor_Name;
-        				$getHistory['clinic_name'] = $history->Clinic_Name;
+        $getHistory['doctor'] = $history->Doctor_Name;
+        $getHistory['clinic_name'] = $history->Clinic_Name;
                             //need to check clinic
                             ///$getHistory['list']['clinic_name'] = $history->Name;
-        				$getHistory['note'] = $history->Note;
+        $getHistory['note'] = $history->Note;
                             //$getHistory['date'] = $newDate;
-        				if($findHistoryDetail){
-        					foreach($findHistoryDetail as $hisDetail){
-        						$getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
-        						$getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
-        						$getHistory1[] = $getHistoryDetail;
-        					}
-        					$getHistory['attachments'] = $getHistory1;
-        				}else{
-        					$getHistory['attachments'] = null;
-        				}
-        				$allHistory[] = $getHistory;
-        			}
-
-        			$returnArray->data['history'] = $allHistory;
-        		}else{
-        			$returnArray->data['history'] = null;
-        		}
-        	}else{
-        		$returnArray->status = FALSE;
-        		$returnArray->message = StringHelper::errorMessage("NoRecords");
-        	}
-        	return $returnArray;
+        if($findHistoryDetail){
+         foreach($findHistoryDetail as $hisDetail){
+          $getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
+          $getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
+          $getHistory1[] = $getHistoryDetail;
         }
+        $getHistory['attachments'] = $getHistory1;
+      }else{
+       $getHistory['attachments'] = null;
+     }
+     $allHistory[] = $getHistory;
+   }
+
+   $returnArray->data['history'] = $allHistory;
+ }else{
+   $returnArray->data['history'] = null;
+ }
+}else{
+  $returnArray->status = FALSE;
+  $returnArray->message = StringHelper::errorMessage("NoRecords");
+}
+return $returnArray;
+}
 
         //Add new user allergy
-        public function AddNewAllergy(){
-        	$allergy = Input::get('allergy');
-        	$userid = Input::get('userid');
+public function AddNewAllergy(){
+ $allergy = Input::get('allergy');
+ $userid = Input::get('userid');
 
-        	$userallergy = new UserAllergy();
-        	$dataArray = array();
-        	$dataArray['allergy']= $allergy;
-        	$dataArray['userid']= $userid;
+ $userallergy = new UserAllergy();
+ $dataArray = array();
+ $dataArray['allergy']= $allergy;
+ $dataArray['userid']= $userid;
 
-        	$returnObject = new stdClass();
+ $returnObject = new stdClass();
 
-        	$insertedID = $userallergy->insertAllergy($dataArray);
-        	if($insertedID){
-        		$returnObject->status = TRUE;
-        		$returnObject->data['record_id'] = $insertedID;
-        	}else{
-        		$returnObject->status = FALSE;
-        		$returnObject->message = StringHelper::errorMessage("Tryagain");
-        	}
-        	return Response::json($returnObject);
-        }
+ $insertedID = $userallergy->insertAllergy($dataArray);
+ if($insertedID){
+  $returnObject->status = TRUE;
+  $returnObject->data['record_id'] = $insertedID;
+}else{
+  $returnObject->status = FALSE;
+  $returnObject->message = StringHelper::errorMessage("Tryagain");
+}
+return Response::json($returnObject);
+}
 
         //Add new user medical condition
-        public function AddNewMedicalCondition(){
-        	$condition = Input::get ('condition');
-        	$userid = Input::get ('userid');
-        	$date = Input::get ('date');
-        	$newDate = date("d-m-Y", strtotime($date));
+public function AddNewMedicalCondition(){
+ $condition = Input::get ('condition');
+ $userid = Input::get ('userid');
+ $date = Input::get ('date');
+ $newDate = date("d-m-Y", strtotime($date));
 
-        	$medicalcondition = new UserCondition();
-        	$dataArray = array();
-        	$dataArray['condition']= $condition;
-        	$dataArray['userid']= $userid;
-        	$dataArray['date']= $newDate;
+ $medicalcondition = new UserCondition();
+ $dataArray = array();
+ $dataArray['condition']= $condition;
+ $dataArray['userid']= $userid;
+ $dataArray['date']= $newDate;
 
-        	$returnObject = new stdClass();
+ $returnObject = new stdClass();
 
-        	$insertedID = $medicalcondition->insertMedicalCondition($dataArray);
-        	if($insertedID){
-        		$returnObject->status = TRUE;
-        		$returnObject->data['record_id'] = $insertedID;
-        	}else{
-        		$returnObject->status = FALSE;
-        		$returnObject->message = StringHelper::errorMessage("Tryagain");
-        	}
-        	return Response::json($returnObject);
-        }
+ $insertedID = $medicalcondition->insertMedicalCondition($dataArray);
+ if($insertedID){
+  $returnObject->status = TRUE;
+  $returnObject->data['record_id'] = $insertedID;
+}else{
+  $returnObject->status = FALSE;
+  $returnObject->message = StringHelper::errorMessage("Tryagain");
+}
+return Response::json($returnObject);
+}
 
         //Add new user medication
-        public function AddNewUserMedication(){
-        	$medication = Input::get ('medication');
-        	$userid = Input::get ('userid');
-        	$dosage = Input::get ('dosage');
+public function AddNewUserMedication(){
+ $medication = Input::get ('medication');
+ $userid = Input::get ('userid');
+ $dosage = Input::get ('dosage');
 
-        	$usermedication = new UserMedication();
-        	$dataArray = array();
-        	$dataArray['medication']= $medication;
-        	$dataArray['userid']= $userid;
-        	$dataArray['dosage']= $dosage;
+ $usermedication = new UserMedication();
+ $dataArray = array();
+ $dataArray['medication']= $medication;
+ $dataArray['userid']= $userid;
+ $dataArray['dosage']= $dosage;
 
-        	$returnObject = new stdClass();
+ $returnObject = new stdClass();
 
-        	$insertedID = $usermedication->insertUserMedication($dataArray);
-        	if($insertedID){
-        		$returnObject->status = TRUE;
-        		$returnObject->data['record_id'] = $insertedID;
-        	}else{
-        		$returnObject->status = FALSE;
-        		$returnObject->message = StringHelper::errorMessage("Tryagain");
-        	}
-        	return Response::json($returnObject);
-        }
+ $insertedID = $usermedication->insertUserMedication($dataArray);
+ if($insertedID){
+  $returnObject->status = TRUE;
+  $returnObject->data['record_id'] = $insertedID;
+}else{
+  $returnObject->status = FALSE;
+  $returnObject->message = StringHelper::errorMessage("Tryagain");
+}
+return Response::json($returnObject);
+}
 
         //Add new medical history
-        public function AddNewMedicalHistory(){
-        	$visittype = Input::get ('visit_type');
-        	$userid = Input::get ('user_id');
-        	$doctor = Input::get ('doctor');
-        	$clinic = Input::get ('clinic_name');
-        	$note = Input::get ('note');
-        	$date = Input::get ('date');
-        	$newDate = date("d-m-Y", strtotime($date));
+public function AddNewMedicalHistory(){
+ $visittype = Input::get ('visit_type');
+ $userid = Input::get ('user_id');
+ $doctor = Input::get ('doctor');
+ $clinic = Input::get ('clinic_name');
+ $note = Input::get ('note');
+ $date = Input::get ('date');
+ $newDate = date("d-m-Y", strtotime($date));
 
-        	$medicalhistory = new UserMedicalHistory();
-        	$dataArray = array();
-        	$dataArray['visittype']= $visittype;
-        	$dataArray['userid']= $userid;
-        	$dataArray['doctor']= $doctor;
-        	$dataArray['clinic']= $clinic;
-        	$dataArray['note']= $note;
-        	$dataArray['date']= $newDate;
+ $medicalhistory = new UserMedicalHistory();
+ $dataArray = array();
+ $dataArray['visittype']= $visittype;
+ $dataArray['userid']= $userid;
+ $dataArray['doctor']= $doctor;
+ $dataArray['clinic']= $clinic;
+ $dataArray['note']= $note;
+ $dataArray['date']= $newDate;
 
-        	$returnObject = new stdClass();
+ $returnObject = new stdClass();
 
-        	$insertedID = $medicalhistory->insertMedicalHistory($dataArray);
-        	if($insertedID){
-        		$returnObject->status = TRUE;
-        		$returnObject->data['record_id'] = $insertedID;
-        	}else{
-        		$returnObject->status = FALSE;
-        		$returnObject->message = StringHelper::errorMessage("Tryagain");
-        	}
-        	return Response::json($returnObject);
-        }
+ $insertedID = $medicalhistory->insertMedicalHistory($dataArray);
+ if($insertedID){
+  $returnObject->status = TRUE;
+  $returnObject->data['record_id'] = $insertedID;
+}else{
+  $returnObject->status = FALSE;
+  $returnObject->message = StringHelper::errorMessage("Tryagain");
+}
+return Response::json($returnObject);
+}
 
-        public function UpdateMedicalHistory(){
-        	$allUpdatedata = Input::all();
-        	$userhistory = new UserMedicalHistory();
+public function UpdateMedicalHistory(){
+ $allUpdatedata = Input::all();
+ $userhistory = new UserMedicalHistory();
             //$insurancepolicy = new UserInsurancePolicy();
-        	$returnObject = new stdClass();
+ $returnObject = new stdClass();
 
-        	if(is_array($allUpdatedata) && count($allUpdatedata) >0 ){
-        		if(!empty($allUpdatedata['visit_type'])) {
-        			$dataArray['VisitType'] = $allUpdatedata['visit_type'];
-        		}if(!empty($allUpdatedata['doctor'])) {
-        			$dataArray['Doctor_Name'] = $allUpdatedata['doctor'];
-        		}if($allUpdatedata['clinic_name']) {
-        			$dataArray['Clinic_Name'] = $allUpdatedata['clinic_name'];
-        		}if(!empty($allUpdatedata['note'])) {
-        			$dataArray['Note'] = $allUpdatedata['note'];
-        		}if(!empty($allUpdatedata['date'])) {
-        			$dataArray['Note'] = date("d-m-Y", strtotime($allUpdatedata['date']));
-        		}
-        		$dataArray['updated_at'] = time();
-        		$dataArray['historyid'] = $allUpdatedata['history_id'];
+ if(is_array($allUpdatedata) && count($allUpdatedata) >0 ){
+  if(!empty($allUpdatedata['visit_type'])) {
+   $dataArray['VisitType'] = $allUpdatedata['visit_type'];
+ }if(!empty($allUpdatedata['doctor'])) {
+   $dataArray['Doctor_Name'] = $allUpdatedata['doctor'];
+ }if($allUpdatedata['clinic_name']) {
+   $dataArray['Clinic_Name'] = $allUpdatedata['clinic_name'];
+ }if(!empty($allUpdatedata['note'])) {
+   $dataArray['Note'] = $allUpdatedata['note'];
+ }if(!empty($allUpdatedata['date'])) {
+   $dataArray['Note'] = date("d-m-Y", strtotime($allUpdatedata['date']));
+ }
+ $dataArray['updated_at'] = time();
+ $dataArray['historyid'] = $allUpdatedata['history_id'];
 
-        		$updateHistory = $userhistory->updateMedicalHistory($dataArray);
-        		if($updateHistory){
-        			$returnObject->status = TRUE;
-        		}else{
-        			$returnObject->status = FALSE;
-        			$returnObject->message = StringHelper::errorMessage("Update");
-        		}
-        	}else{
-        		$returnObject->status = FALSE;
-        		$returnObject->message = StringHelper::errorMessage("EmailEmpty");
-        	}
-        	return Response::json($returnObject);
-        }
+ $updateHistory = $userhistory->updateMedicalHistory($dataArray);
+ if($updateHistory){
+   $returnObject->status = TRUE;
+ }else{
+   $returnObject->status = FALSE;
+   $returnObject->message = StringHelper::errorMessage("Update");
+ }
+}else{
+  $returnObject->status = FALSE;
+  $returnObject->message = StringHelper::errorMessage("EmailEmpty");
+}
+return Response::json($returnObject);
+}
 
 
-        public function ChangePassword(){
-        	$returnObject = new stdClass();
-        	$findUserID = AuthLibrary::validToken();
-        	if($findUserID){
+public function ChangePassword(){
+ $returnObject = new stdClass();
+ $findUserID = AuthLibrary::validToken();
+ if($findUserID){
                 // check User ID
-        		$type = StringHelper::checkUserType($findUserID);
-        		if((int)$type['user_type'] == 5 && (int)$type['access_type'] == 0 || (int)$type['user_type'] == 5 && (int)$type['access_type'] == 1)
-        		{
-        			$returnObject = AuthLibrary::ChangePassword($findUserID);
-        		} else {
-        			$returnObject->status = FALSE;
-        			$returnObject->message = 'Only Employee User can update the password.';
-        		}
+  $type = StringHelper::checkUserType($findUserID);
+  if((int)$type['user_type'] == 5 && (int)$type['access_type'] == 0 || (int)$type['user_type'] == 5 && (int)$type['access_type'] == 1)
+  {
+   $returnObject = AuthLibrary::ChangePassword($findUserID);
+ } else {
+   $returnObject->status = FALSE;
+   $returnObject->message = 'Only Employee User can update the password.';
+ }
 
-        	}else{
-        		$returnObject->status = FALSE;
-        		$returnObject->message = StringHelper::errorMessage("Token");
-        	}
-        	return Response::json($returnObject);
-        }
+}else{
+  $returnObject->status = FALSE;
+  $returnObject->message = StringHelper::errorMessage("Token");
+}
+return Response::json($returnObject);
+}
 
-        public function AddDeviceToken(){
-        	$returnObject = new stdClass();
-        	$findUserID = AuthLibrary::validToken();
-        	if($findUserID){
-        		$returnObject = AuthLibrary::AddDeviceToken($findUserID);
-        	}else{
-        		$returnObject->status = FALSE;
-        		$returnObject->message = StringHelper::errorMessage("Token");
-        	}
-        	return Response::json($returnObject);
-        }
+public function AddDeviceToken(){
+ $returnObject = new stdClass();
+ $findUserID = AuthLibrary::validToken();
+ if($findUserID){
+  $returnObject = AuthLibrary::AddDeviceToken($findUserID);
+}else{
+  $returnObject->status = FALSE;
+  $returnObject->message = StringHelper::errorMessage("Token");
+}
+return Response::json($returnObject);
+}
 
         /* Use          :   Used to disable a user profile
          * Access       :   Public
@@ -1076,18 +1076,21 @@ return Response::json($returnObject);
                     $status_text = 'Pending';
                   } else if($res->status == 1) {
                     $status_text = 'Approved';
+                    $res->amount = $res->claim_amount;
                   } else if($res->status == 2) {
                     $status_text = 'Rejected';
                   } else {
                     $status_text = 'Pending';
                   }
 
-                  // if($res->currency_type == "myr") {
-                  //   $currency_symbol = "RM";
-                  //   $res->amount = $res->amount * 3;
-                  // } else {
-                  $currency_symbol = "S$";
-                  // }
+                  if($res->default_currency == "sgd") {
+                    $currency_symbol = "SGD";
+                  } else if($res->default_currency == "myr" && $res->currency_type == "sgd") {
+                    $currency_symbol = "MYR";
+                    $res->amount = $res->amount;
+                  } else {
+                    $currency_symbol = "MYR";
+                  }
 
                   $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
@@ -1179,78 +1182,8 @@ return Response::json($returnObject);
 
                  $total_amount = $cost;
 
-                // $total_amount = $trans->procedure_cost;
-
-                // if((int)$trans->health_provider_done == 1) {
-                //       $receipt_status = TRUE;
-                //       $health_provider_status = TRUE;
-                //       $credit_status = FALSE;
-                //       if((int)$trans->lite_plan_enabled == 1) {
-                //           $total_amount = $cost + $trans->consultation_fees;
-                //       } else {
-                //           $total_amount = $cost;
-                //       }
-                // } else {
-                //   $health_provider_status = FALSE;
-                //   $credit_status = TRUE;
-
-                //   if((int)$trans->lite_plan_enabled == 1) {
-                //       $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-                //   } else {
-                //       $total_amount = $cost;
-                //   }
-                // }
-
-                // if((int)$trans->health_provider_done == 1) {
-                //   $receipt_status = TRUE;
-                //   $health_provider_status = TRUE;
-                //   $credit_status = FALSE;
-                //   if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-                //     if((int)$trans->half_credits == 1) {
-                //       $total_amount = $trans->credit_cost + $trans->consultation_fees;
-                //       $cash_cost = $transation->cash_cost;
-                //     } else {
-                //       $total_amount = $trans->procedure_cost;
-                //       $cash_cost = $trans->procedure_cost;
-                //     }
-                //   } else {
-                //     if((int)$trans->half_credits == 1) {
-                //       $cash_cost = $trans->cash_cost;
-                //     } else {
-                //       $cash_cost = $trans->procedure_cost;
-                //     }
-                //   }
-                // } else {
-                //   $health_provider_status = FALSE;
-                //   $credit_status = TRUE;
-                //   if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
-                //     if((int)$trans->half_credits == 1) {
-                //       $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-                //       $cash_cost = $trans->cash_cost;
-                //     } else {
-                //       // $total_amount = $trans->credit_cost + $trans->consultation_fees;
-                //       $total_amount = $trans->procedure_cost;
-                //       if($trans->credit_cost > 0) {
-                //         $cash_cost = 0;
-                //       } else {
-                //         $cash_cost = $trans->procedure_cost - $trans->consultation_fees;
-                //       }
-                //     }
-                //   } else {
-                //     $total_amount = $trans->procedure_cost;
-                //     if((int)$trans->half_credits == 1) {
-                //       $cash_cost = $trans->cash_cost;
-                //     } else {
-                //       if($trans->credit_cost > 0) {
-                //         $cash_cost = 0;
-                //       } else {
-                //         $cash_cost = $trans->procedure_cost;
-                //       }
-                //     }
-                //   }
-                // }
-
                  if((int)$trans->health_provider_done == 1) {
+                  $receipt_status = TRUE;
                   $health_provider_status = TRUE;
                   $credit_status = FALSE;
                   if((int)$trans->lite_plan_enabled == 1) {
@@ -1264,10 +1197,10 @@ return Response::json($returnObject);
                   $credit_status = TRUE;
                   if((int)$trans->lite_plan_enabled == 1) {
                     if((int)$trans->half_credits == 1) {
-                      // $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-                      $total_amount = $trans->credit_cost + $trans->cash_cost;
+                      $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+                    // $total_amount = $trans->credit_cost + $trans->cash_cost;
                     } else {
-                      $total_amount = $trans->procedure_cost;
+                      $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
                     }
                   } else {
                     $total_amount = $cost;
@@ -1275,12 +1208,23 @@ return Response::json($returnObject);
                   $type = "credits";
                 }
 
-                // if($trans->currency_type == "sgd") {
-                $currency_symbol = "S$";
-                $converted_amount = $total_amount;
-                // } else if($trans->currency_type == "myr") {
-                //   $currency_symbol = "RM";
-                //   $converted_amount = $total_amount * 3;
+                if($trans->default_currency == "sgd") {
+                  $currency_symbol = "SGD";
+                  $converted_amount = $total_amount;
+                } else if($trans->default_currency == "myr" && $trans->currency_type == "sgd") {
+                  $currency_symbol = "MYR";
+                  $converted_amount = $total_amount * $trans->currency_amount;
+                } else {
+                  $currency_symbol = "MYR";
+                  $converted_amount = $total_amount * $trans->currency_amount;
+                }
+
+                // if($trans->default_currency == "sgd") {
+                //   $currency_symbol = "SGD";
+                //   $converted_amount = $total_amount;
+                // } else if($trans->default_currency == "myr") {
+                //   $currency_symbol = "MYR";
+                //   $converted_amount = $total_amount * $trans->currency_amount;
                 // }
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
@@ -1295,11 +1239,10 @@ return Response::json($returnObject);
                   'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->created_at)),
                   'customer'          => ucwords($customer->Name),
                   'transaction_id'    => $transaction_id,
-                // 'receipt_status'    => $receipt_status,
                   'cash_status'       => $health_provider_status,
                   'credit_status'     => $credit_status,
                   'user_id'           => $trans->UserID,
-                  'refunded'          => $trans->refunded == 1 || $trans->refunded == "1" ? TRUE : FALSE,
+                  'refunded'          => (int)$trans->refunded == 1? TRUE : FALSE,
                   'currency_symbol'   => $currency_symbol
                 );
 
@@ -1318,16 +1261,15 @@ return Response::json($returnObject);
 
             $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
             $customer_active_plan = DB::table('customer_active_plan')
-                                      ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                                      ->first();
+            ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+            ->first();
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
               $currency_symbol = "";
               $balance = "N.A.";
             } else {
-              $currency_symbol = "S$";
+              $currency_symbol = strtoupper($wallet->currency_type);
               $balance = number_format($balance, 2);
             }
-
 
             $wallet_data = array(
               'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
@@ -1906,10 +1848,20 @@ public function getNewClinicDetails($id)
 
            // return $plan_coverage;
    $user = DB::table('user')->where('UserID', $findUserID)->first();
+   $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+
+   // if($wallet->currency_type != $clinic->currency_type && $wallet->currency_type == "myr") {
+   //   $returnObject->status = FALSE;
+   //   $returnObject->message = 'Member is prohibited to access this clinic from Singpapore';
+   //   $returnObject->employee_status = false;
+   //   return Response::json($returnObject);
+   // }
+
+
    $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
    $customer_active_plan = DB::table('customer_active_plan')
-                              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                              ->first();
+   ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+   ->first();
 
    $procedures = DB::table('clinic_procedure')
    ->where('ClinicID', $id)
@@ -1949,16 +1901,11 @@ $jsonArray['name'] = $clinic->CLName;
 $jsonArray['email'] = $email;
 $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLState.' '.$clinic->CLPostal;
 $jsonArray['image_url'] = $clinic->CLImage;
-$jsonArray['lattitude'] = $clinic->CLLat;
-$jsonArray['longitude'] = $clinic->CLLng;
-$jsonArray['description'] = $descr;
-$jsonArray['website'] = $website;
-$jsonArray['custom_title'] = $custitle;
-$jsonArray['clinic_price'] = $clprice;
 $jsonArray['member'] = ucwords($user->Name);
 $jsonArray['nric'] = $user->NRIC;
 $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
 $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
+$jsonArray['plan_type'] = $plan_coverage['plan_type'];
 $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
         // check if employee has plan tier cap
@@ -1975,9 +1922,16 @@ if($customer_id) {
  ->first();
 }
 
-$cap_currency_symbol = "S$";
+$cap_currency_symbol = "SGD";
 $cap_amount = 0;
-$wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+  
+$currency_data = DB::table('currency_options')->where('currency_type', $wallet->currency_type)->first();
+if($currency_data) {
+  $currency_value = $currency_data->currency_value;
+} else {
+  $currency_value = 3.00;
+}
+
 if($plan_tier) {
   if($wallet->cap_per_visit_medical > 0) {
     $cap_amount = $wallet->cap_per_visit_medical;
@@ -1997,20 +1951,34 @@ if($customer_active_plan && $customer_active_plan->account_type == "enterprise_p
   $balance = $current_balance;
 }
 
-if($clinic->currency_type == "myr") {
- $currency = "RM";
- $cap_currency_symbol = "RM";
- $balance = number_format($balance * 3, 2);
- $cap_amount = $cap_amount * 3;
-} else {
- $currency = "S$";
+$real_balance = $current_balance;
+
+if($clinic->currency_type == "myr" && $wallet->currency_type == "sgd") {
+ $currency = "MYR";
+ $cap_currency_symbol = "MYR";
+ $balance = number_format($balance * $currency_value, 2);
+ $cap_amount = $cap_amount * $currency_value;
+ $current_balance = $current_balance * $currency_value;
+} else if($clinic->currency_type == "sgd" && $wallet->currency_type == "sgd"){
+ $currency = "SGD";
  $balance = number_format($balance, 2);
+} else if($clinic->currency_type == "myr" && $wallet->currency_type == "myr") {
+  $balance = number_format($balance, 2);
+  $currency = "MYR";
+  $cap_currency_symbol = "MYR";
+} else  if($clinic->currency_type == "sgd" && $wallet->currency_type == "myr") {
+  $currency = "SGD";
+  $cap_currency_symbol = "SGD";
+  $balance = number_format($balance / $currency_value, 2);
+  $cap_amount = $cap_amount / $currency_value;
+  $current_balance = $current_balance / $currency_value;
 }
 
 if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
   $currency = "";
 }
 
+$jsonArray['real_balance'] = $real_balance;
 $jsonArray['current_balance'] = $currency.' '.$balance;
 $jsonArray['balance'] = $current_balance;
 $jsonArray['current_balance_in_sgd'] = $current_balance;
@@ -2032,7 +2000,7 @@ $check_in_data = array(
   'check_in_type'   => 'in_network_transaction',
   'cap_per_visit'   => $cap_amount,
   'currency_symbol' => $clinic->currency_type == "myr" ? "myr" : "sgd",
-  'currency_value'  => $clinic->currency_type == "myr" ? 3.00 : 0.00,
+  'currency_value'  => $clinic->currency_type == "myr" ? $currency_value : 0.00,
 );
 
 $check_in_class = new EmployeeClinicCheckIn( );
@@ -2045,14 +2013,14 @@ $returnObject->data = $jsonArray;
 $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
 
         // get transaction consultation
-$returnObject->data['consultation_fee_symbol'] = "S$";
+$returnObject->data['consultation_fee_symbol'] = "SGD";
 $consultation_status = StringHelper::newLitePlanStatus($findUserID);
 $returnObject->data['consultation_status'] = $consultation_status;
 if($consultation_status == true && (int)$clinic_type->lite_plan_enabled == 1) {
   $clinic_co_payment = TransactionHelper::getCoPayment($clinic, date('Y-m-d H:i:s'), $owner_id);
   $consultation_fees = $clinic_co_payment['consultation_fees'] == 0 ? $clinic->consultation_fees : $clinic_co_payment['consultation_fees'];
-  $returnObject->data['consultation_fees'] = $clinic->currency_type == "myr" ? $consultation_fees * 3.00 : $consultation_fees;
-  $returnObject->data['consultation_fee_symbol'] = $clinic->currency_type == "myr" ? "RM" : "S$";
+  $returnObject->data['consultation_fees'] = $clinic->currency_type == "myr" ? $consultation_fees * $currency_value : $consultation_fees;
+  $returnObject->data['consultation_fee_symbol'] = $clinic->currency_type == "myr" ? "MYR" : "SGD";
 } else {
   $returnObject->data['consultation_fee_symbol'] = null;
   $returnObject->data['consultation_fees'] = 0;
@@ -4766,12 +4734,34 @@ public function getEclaimTransactions( )
 
     $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
-    $currency_symbol = "S$";
-    if($res->currency_type == "myr") {
-                // $currency_symbol = "RM";
-                // $res->amount = round($res->amount * 3, 2);
+    $currency_symbol = "SGD";
+    if($res->default_currency == "myr" && $res->currency_type == "sgd") {
+      $currency_symbol = "MYR";
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount;
+      } else {
+        $res->amount = $res->amount;
+      }
+    } else if($res->default_currency == "myr" && $res->currency_type == "myr") {
+      $currency_symbol = "MYR";
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount;
+      } else {
+        $res->amount = $res->amount;
+      }
+    } else if($res->default_currency == "sgd" && $res->currency_type == "myr") {
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount;
+      } else {
+        $res->amount = $res->amount;
+      }
     } else {
-                // $currency_symbol = "S$";
+      $currency_symbol = "SGD";
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount;
+      } else {
+        $res->amount = $res->amount;
+      }
     }
 
     if((int)$res->status == 1) {
@@ -4846,7 +4836,7 @@ public function getEclaimDetails($id)
       $status_text = 'Pending';
     } else if($transaction->status == 1) {
       $status_text = 'Approved';
-      $transaction->amount = $transaction->claim_amount > 0 ? $transaction->claim_amount : $transaction->amount;
+      // $transaction->amount = $transaction->claim_amount > 0 ? $transaction->claim_amount : $transaction->amount;
     } else if($transaction->status == 2) {
       $status_text = 'Rejected';
       $rejected_status = true;
@@ -4854,8 +4844,21 @@ public function getEclaimDetails($id)
       $status_text = 'Pending';
     }
 
+    if($transaction->currency_type == "myr" && $transaction->default_currency == "myr") {
+      $currency_symbol = "MYR";
+    } else if($transaction->currency_type == "sgd" && $transaction->default_currency == "myr"){
+      $currency_symbol = "MYR";
+      $transaction->amount = $transaction->amount;
+      $transaction->claim_amount = $transaction->claim_amount;
+    } else if($transaction->currency_type == "myr" && $transaction->default_currency == "sgd"){
+      $currency_symbol = "SGD";
+      $transaction->amount = $transaction->amount;
+      $transaction->claim_amount = $transaction->claim_amount;
+    } else {
+      $currency_symbol = "SGD";
+    }
 
-                        // get docs
+    // get docs
     $docs = DB::table('e_claim_docs')->where('e_claim_id', $transaction->e_claim_id)->get();
 
     if(sizeof($docs) > 0) {
@@ -4901,18 +4904,13 @@ if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5
 }
 
 $date = null;
+$claim_amount = null;
 if($transaction->status == 1) {
-  $date = date('d F Y, h:i A', strtotime($transaction->approved_date));
+  $date = date('d F Y', strtotime($transaction->approved_date));
+  $claim_amount = $transaction->claim_amount;
 } else {
   $date = date('d F Y', strtotime($transaction->date)).', '.$transaction->time;
 }
-
-          // if($transaction->currency_type == "myr") {
-          //   $currency_symbol = "RM";
-          //   $transaction->amount = round($transaction->amount * 3, 2);
-          // } else {
-$currency_symbol = "S$";
-          // }
 
 $id = str_pad($transaction->e_claim_id, 6, "0", STR_PAD_LEFT);
 $temp = array(
@@ -4923,6 +4921,7 @@ $temp = array(
   'service'           => $transaction->service,
   'merchant'          => $transaction->merchant,
   'amount'            => number_format($transaction->amount, 2),
+  'claim_amount'      => number_format($claim_amount, 2),
   'member'            => ucwords($member->Name),
   'type'              => 'E-Claim',
   'transaction_id'    => 'MNF'.$id,
@@ -4935,7 +4934,8 @@ $temp = array(
   'rejected_status'   => $rejected_status,
   'rejected_message'   => $transaction->rejected_reason,
   'spending_type'     => ucwords($transaction->spending_type),
-  'currency_symbol'   => $currency_symbol
+  'currency_symbol'   => $currency_symbol,
+  'status'            => $transaction->status
 );
 $returnObject->status = TRUE;
 $returnObject->data = $temp;
@@ -4982,27 +4982,27 @@ public function getHealthLists( )
      return Response::json($returnObject);
    }
 
-    $user_id = StringHelper::getUserId($findUserID);
-    $customer_id = PlanHelper::getCustomerId($user_id);
-    if($customer_id) {
+   $user_id = StringHelper::getUserId($findUserID);
+   $customer_id = PlanHelper::getCustomerId($user_id);
+   if($customer_id) {
       // get claim type service cap
-      $get_company_e_claim_services = DB::table('company_e_claim_service_types')
-                                        ->where('customer_id', $customer_id)
-                                        ->where('type', $input['spending_type'])
-                                        ->where('active', 1)
-                                        ->get();
-      if(sizeof($get_company_e_claim_services) > 0) {
-        $spending_types = $get_company_e_claim_services;
-      } else { 
-        $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
-      }
-    } else {
+    $get_company_e_claim_services = DB::table('company_e_claim_service_types')
+    ->where('customer_id', $customer_id)
+    ->where('type', $input['spending_type'])
+    ->where('active', 1)
+    ->get();
+    if(sizeof($get_company_e_claim_services) > 0) {
+      $spending_types = $get_company_e_claim_services;
+    } else { 
       $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
     }
-    
-   $returnObject->data = $spending_types;
-   return Response::json($returnObject);
- } else {
+  } else {
+    $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
+  }
+
+  $returnObject->data = $spending_types;
+  return Response::json($returnObject);
+} else {
   $returnObject->status = FALSE;
   $returnObject->message = StringHelper::errorMessage("Token");
   return Response::json($returnObject);
@@ -5032,308 +5032,328 @@ public function checkPendingEclaims($user_ids, $spending_type)
 
 public function createEclaim( )
 {
-   $AccessToken = new Api_V1_AccessTokenController();
-   $returnObject = new stdClass();
-   $authSession = new OauthSessions();
-   $getRequestHeader = StringHelper::requestHeader();
-   $input = Input::all();
-   if(!empty($getRequestHeader['Authorization'])){
-    $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
-    if($getAccessToken){
-     $findUserID = $authSession->findUserID($getAccessToken->session_id);
-     if($findUserID){
+ $AccessToken = new Api_V1_AccessTokenController();
+ $returnObject = new stdClass();
+ $authSession = new OauthSessions();
+ $getRequestHeader = StringHelper::requestHeader();
+ $input = Input::all();
+ if(!empty($getRequestHeader['Authorization'])){
+  $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+  if($getAccessToken){
+   $findUserID = $authSession->findUserID($getAccessToken->session_id);
+   if($findUserID){
 
-      if(sizeof(Input::file('files')) == 0) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Please input a file.';
-       return Response::json($returnObject);
-     }
+    if(sizeof(Input::file('files')) == 0) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Please input a file.';
+     return Response::json($returnObject);
+   }
 
-     $file_types = ["jpeg","jpg","png","pdf","xls","xlsx","PNG", "JPG", "JPEG"];
+   $file_types = ["jpeg","jpg","png","pdf","xls","xlsx","PNG", "JPG", "JPEG"];
 
-     if(empty($input['amount']) || $input['amount'] == null) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Please indicate the amount.';
-       return Response::json($returnObject);
-     }
+   if(empty($input['amount']) || $input['amount'] == null) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Please indicate the amount.';
+     return Response::json($returnObject);
+   }
 
-     if(empty($input['merchant']) || $input['merchant'] == null) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Please indicate the Provider.';
-       return Response::json($returnObject);
-     }
+   if(empty($input['merchant']) || $input['merchant'] == null) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Please indicate the Provider.';
+     return Response::json($returnObject);
+   }
 
-     if(empty($input['service']) || $input['service'] == null) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Please choose a claim type.';
-       return Response::json($returnObject);
-     }
+   if(empty($input['service']) || $input['service'] == null) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Please choose a claim type.';
+     return Response::json($returnObject);
+   }
 
-     if(empty($input['spending_type']) || $input['spending_type'] == null) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Please choose a spending wallet.';
-       return Response::json($returnObject);
-     }
+   if(empty($input['spending_type']) || $input['spending_type'] == null) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Please choose a spending wallet.';
+     return Response::json($returnObject);
+   }
 
-     if(empty($input['date']) || $input['date'] == null) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Date of Visit is required.';
-       return Response::json($returnObject);
-     }
+   if(empty($input['date']) || $input['date'] == null) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Date of Visit is required.';
+     return Response::json($returnObject);
+   }
 
-     if(empty($input['time']) || $input['time'] == null) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Time of Visit is required.';
-       return Response::json($returnObject);
-     }
+   if(empty($input['time']) || $input['time'] == null) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Time of Visit is required.';
+     return Response::json($returnObject);
+   }
 
-     if(empty($input['spending_type']) || $input['spending_type'] == null) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Spending Account is required (Medical or Wellness)';
-       return Response::json($returnObject);
-     }
+   if(empty($input['spending_type']) || $input['spending_type'] == null) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Spending Account is required (Medical or Wellness)';
+     return Response::json($returnObject);
+   }
 
              // validate wellness
-     $spending = ["medical", "wellness"];
+   $spending = ["medical", "wellness"];
 
-     if(!in_array($input['spending_type'], $spending)) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Spending Account should be medical or wellness only.';
-       return Response::json($returnObject);
-     }
+   if(!in_array($input['spending_type'], $spending)) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Spending Account should be medical or wellness only.';
+     return Response::json($returnObject);
+   }
 
-     $validate_date = SpendingInvoiceLibrary::validateStartDate($input['date']);
+   $validate_date = SpendingInvoiceLibrary::validateStartDate($input['date']);
 
-     if(!$validate_date) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Date of Visit must be a date.';
-       return Response::json($returnObject);
-     }
+   if(!$validate_date) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Date of Visit must be a date.';
+     return Response::json($returnObject);
+   }
 
-     $validate_time = SpendingInvoiceLibrary::validateStartDate($input['time']);
+   $validate_time = SpendingInvoiceLibrary::validateStartDate($input['time']);
 
-     if(!$validate_time) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Time of Visit must be a time (00:00 AM/PM).';
-       return Response::json($returnObject);
-     }
+   if(!$validate_time) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Time of Visit must be a time (00:00 AM/PM).';
+     return Response::json($returnObject);
+   }
              // $rules = array('file' => 'mimes:jpeg,png,gif,bmp,pdf,doc,docx');
-     $rules = array('file' => 'image|max:20000000');
+   $rules = array('file' => 'image|max:20000000');
                       // loop through the files ang validate
-     foreach (Input::file('files') as $key => $file) {
+   foreach (Input::file('files') as $key => $file) {
         // return var_dump($file);
-       if(!$file) {
-        $returnObject->status = FALSE;
-        $returnObject->message = 'Please input a file.';
-        return Response::json($returnObject);
-      }
-
-      // check if file is image
-      $validator = Validator::make(
-        array('file' => $file),
-        $rules
-      );
-
-      if($validator->passes()) {
-        $file_size = $file->getSize();
-        // check file size if exceeds 10 mb
-        if($file_size > 20000000) {
-          $returnObject->status = FALSE;
-          $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
-          return Response::json($returnObject);
-        }
-      } else {
-        $returnObject->status = FALSE;
-        $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
-        return Response::json($returnObject);
-      }
+     if(!$file) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'Please input a file.';
+      return Response::json($returnObject);
     }
 
-    $returnObject->status = TRUE;
-    $returnObject->message = 'Success.';
-    $ids = StringHelper::getSubAccountsID($findUserID);
-    $user_id = StringHelper::getUserId($findUserID);
+      // check if file is image
+    $validator = Validator::make(
+      array('file' => $file),
+      $rules
+    );
 
-    $input_amount = 0;
+    if($validator->passes()) {
+      $file_size = $file->getSize();
+        // check file size if exceeds 10 mb
+      if($file_size > 20000000) {
+        $returnObject->status = FALSE;
+        $returnObject->message = $file->getClientOriginalName().' file is too large. File must be 10mb size of image.';
+        return Response::json($returnObject);
+      }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
+      return Response::json($returnObject);
+    }
+  }
 
+
+  $returnObject->status = TRUE;
+  $returnObject->message = 'Success.';
+  $ids = StringHelper::getSubAccountsID($findUserID);
+  $user_id = StringHelper::getUserId($findUserID);
+  $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+  
+  $customer_id = PlanHelper::getCustomerId($user_id);
+
+  $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+  if($customer && (int)$customer->access_e_claim == 0) {
+    $returnObject->status = FALSE;
+    $returnObject->message = 'The E-claim function is disabled for your company.';
+    return Response::json($returnObject);
+  }
+
+  $input_amount = 0;
+
+  if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
+    $input_amount = trim($input['amount']);
+  } else {
     if(Input::has('currency_type') && $input['currency_type'] != null) {
-      if(strtolower($input['currency_type']) == "myr") {
-        $input_amount = $input['amount'] / 3;
+      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
+        $input_amount = $input['amount'] / $input['currency_exchange_rate'];
+      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
+        $input_amount = $input['amount'] * $input['currency_exchange_rate'];
       } else {
         $input_amount = trim($input['amount']);
       }
     } else {
       $input_amount = trim($input['amount']);
     }
+  }
 
-    $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-    $customer_active_plan = DB::table('customer_active_plan')
-                                ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                                ->first();
+  $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+  $customer_active_plan = DB::table('customer_active_plan')
+  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+  ->first();
 
-    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-      if($input['spending_type'] == "medical") {
+  if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+    if($input['spending_type'] == "medical") {
         // recalculate employee balance
-        PlanHelper::reCalculateEmployeeBalance($user_id);
-      } else {
-        PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-      }
-
-      $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
-      if(!$check_user_balance) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'User does not have a wallet data.';
-       return Response::json($returnObject);
-      }
-
-     if($input['spending_type'] == "medical") {
-       $balance = $check_user_balance->balance;
-     } else {
-       $balance = $check_user_balance->wellness_balance;
-     }
-
-
-      $amount = trim($input_amount);
-      $balance = round($balance, 2);
-
-      if($amount > $balance) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
-       return Response::json($returnObject);
-      }
-
-      $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
-      if($input['spending_type'] == "medical") {
-       $claim_amounts = $check_user_balance->balance - $check_pending;
-      } else {
-       $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
-      }
-
-      $claim_amounts = trim($claim_amounts);
-
-      if($amount > $claim_amounts) {
-       $returnObject->status = FALSE;
-       $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
-       return Response::json($returnObject);
-      }
+      PlanHelper::reCalculateEmployeeBalance($user_id);
     } else {
-      $amount = trim($input_amount);
+      PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
     }
+
+    $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+    if(!$check_user_balance) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'User does not have a wallet data.';
+     return Response::json($returnObject);
+   }
+
+   if($input['spending_type'] == "medical") {
+     $balance = $check_user_balance->balance;
+   } else {
+     $balance = $check_user_balance->wellness_balance;
+   }
+
+   $amount = trim($input_amount);
+   $balance = round($balance, 2);
+
+   if($amount > $balance) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+     return Response::json($returnObject);
+   }
+
+   $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
+   if($input['spending_type'] == "medical") {
+     $claim_amounts = $check_user_balance->balance - $check_pending;
+   } else {
+     $claim_amounts = $check_user_balance->wellness_balance - $check_pending;
+   }
+
+   $claim_amounts = trim($claim_amounts);
+
+   if($amount > $claim_amounts) {
+     $returnObject->status = FALSE;
+     $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
+     return Response::json($returnObject);
+   }
+ } else {
+  $amount = trim($input_amount);
+}
   // get customer id
-  $customer_id = PlanHelper::getCustomerId($user_id);
+$customer_id = PlanHelper::getCustomerId($user_id);
 
-  $time = date('h:i A', strtotime($input['time']));
-  $claim = new Eclaim();
-  $data = array(
-   'user_id'   => $input['user_id'],
-   'service'   => $input['service'],
-   'merchant'  => $input['merchant'],
-   'amount'    => $amount,
-   'date'      => date('Y-m-d', strtotime($input['date'])),
-   'time'      => $time,
-   'spending_type' => $input['spending_type']
-  );
+$time = date('h:i A', strtotime($input['time']));
+$claim = new Eclaim();
+$data = array(
+ 'user_id'   => $input['user_id'],
+ 'service'   => $input['service'],
+ 'merchant'  => $input['merchant'],
+ 'amount'    => $amount,
+ 'date'      => date('Y-m-d', strtotime($input['date'])),
+ 'time'      => $time,
+ 'spending_type' => $input['spending_type'],
+ 'default_currency' => $check_user_balance->currency_type
+);
 
-  if(Input::has('currency_type') && $input['currency_type'] != null) {
-    $data['currency_type'] = strtolower($input['currency_type']);
-    $data['currency_value'] = $input['currency_exchange_rate'];
-  }
+if(Input::has('currency_type') && $input['currency_type'] != null) {
+  $data['currency_type'] = strtolower($input['currency_type']);
+  $data['currency_value'] = $input['currency_exchange_rate'];
+}
 
-  if($customer_id) {
+if($customer_id) {
     // get claim type service cap
-    $get_company_e_claim_service = DB::table('company_e_claim_service_types')
-                                      ->where('name', $input['service'])
-                                      ->where('type', $input['spending_type'])
-                                      ->where('customer_id', $customer_id)
-                                      ->where('active', 1)
-                                      ->first();
-    if($get_company_e_claim_service) {
-      $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
-    }
+  $get_company_e_claim_service = DB::table('company_e_claim_service_types')
+  ->where('name', $input['service'])
+  ->where('type', $input['spending_type'])
+  ->where('customer_id', $customer_id)
+  ->where('active', 1)
+  ->first();
+  if($get_company_e_claim_service) {
+    $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
   }
+}
 
-  try {
-   $result = $claim->createEclaim($data);
-   $id = $result->id;
+// return $data;
 
-   if($result) {
-    $e_claim_docs = new EclaimDocs( );
+try {
+ $result = $claim->createEclaim($data);
+ $id = $result->id;
+
+ if($result) {
+  $e_claim_docs = new EclaimDocs( );
     // loop ang process
-    foreach (Input::file('files') as $key => $file) {
-     $file_name = time().' - '.$file->getClientOriginalName();
-     if($file->getClientOriginalExtension() == "pdf") {
-      $receipt_file = $file_name;
-      $receipt_type = "pdf";
-      $file->move(public_path().'/receipts/', $file_name);
+  foreach (Input::file('files') as $key => $file) {
+   $file_name = time().' - '.$file->getClientOriginalName();
+   if($file->getClientOriginalExtension() == "pdf") {
+    $receipt_file = $file_name;
+    $receipt_type = "pdf";
+    $file->move(public_path().'/receipts/', $file_name);
 
-      $receipt = array(
-        'e_claim_id'    => $id,
-        'doc_file'      => $receipt_file,
-        'file_type'     => $receipt_type
-      );
+    $receipt = array(
+      'e_claim_id'    => $id,
+      'doc_file'      => $receipt_file,
+      'file_type'     => $receipt_type
+    );
 
-      $result_doc = $e_claim_docs->createEclaimDocs($receipt);
-    } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
-      $receipt_file = $file_name;
-      $receipt_type = "xls";
-      $file->move(public_path().'/receipts/', $file_name);
+    $result_doc = $e_claim_docs->createEclaimDocs($receipt);
+  } else if($file->getClientOriginalExtension() == "xls" || $file->getClientOriginalExtension() == "xlsx") {
+    $receipt_file = $file_name;
+    $receipt_type = "xls";
+    $file->move(public_path().'/receipts/', $file_name);
 
-      $receipt = array(
-        'e_claim_id'    => $id,
-        'doc_file'      => $receipt_file,
-        'file_type'     => $receipt_type
-      );
+    $receipt = array(
+      'e_claim_id'    => $id,
+      'doc_file'      => $receipt_file,
+      'file_type'     => $receipt_type
+    );
 
-      $result_doc = $e_claim_docs->createEclaimDocs($receipt);
-    } else {
-      $file_name = StringHelper::get_random_password(6).' - '.$file_name;
+    $result_doc = $e_claim_docs->createEclaimDocs($receipt);
+  } else {
+    $file_name = StringHelper::get_random_password(6).' - '.$file_name;
                       // $receipt_file = $file_name;
-      $file->move(public_path().'/temp_uploads/', $file_name);
-      $result_doc = Queue::connection('redis_high')->push('\EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
-      $receipt = array(
-        'file_type'     => "image"
-      );
+    $file->move(public_path().'/temp_uploads/', $file_name);
+    $result_doc = Queue::connection('redis_high')->push('\EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
+    $receipt = array(
+      'file_type'     => "image"
+    );
                       // $image = \Cloudinary\Uploader::upload($file->getPathName());
                       // $image = \Cloudinary\Uploader::upload($file->getRealPath());
                       // $receipt_file = $image['secure_url'];
                       // $receipt_type = "image";
-    }
+  }
 
-    if($result_doc) {
-      if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
+  if($result_doc) {
+    if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
                                           //   aws
-       $s3 = AWS::get('s3');
-       $s3->putObject(array(
-        'Bucket'     => 'mednefits',
-        'Key'        => 'receipts/'.$file_name,
-        'SourceFile' => public_path().'/receipts/'.$file_name,
-      ));
-     }
-   } else {
-    $email = [];
-    $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
-    $email['logs'] = 'E-Claim Mobile Receipt Submission - '.$e;
-    $email['emailSubject'] = 'Error log.';
-    EmailHelper::sendErrorLogs($email);
-    $returnObject->status = TRUE;
-    $returnObject->message = 'E-Claim created successfully but failed to create E-Receipt.';
-  }
+     $s3 = AWS::get('s3');
+     $s3->putObject(array(
+      'Bucket'     => 'mednefits',
+      'Key'        => 'receipts/'.$file_name,
+      'SourceFile' => public_path().'/receipts/'.$file_name,
+    ));
+   }
+ } else {
+  $email = [];
+  $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
+  $email['logs'] = 'E-Claim Mobile Receipt Submission - '.$e;
+  $email['emailSubject'] = 'Error log.';
+  EmailHelper::sendErrorLogs($email);
+  $returnObject->status = TRUE;
+  $returnObject->message = 'E-Claim created successfully but failed to create E-Receipt.';
+}
                   // sleep(1);
-  }
+}
 
                                 // get customer id
-  $customer_id = StringHelper::getCustomerId($user_id);
+$customer_id = StringHelper::getCustomerId($user_id);
 
-  if($customer_id) {
+if($customer_id) {
                                     // send notification
-   $user = DB::table('user')->where('UserID', $findUserID)->first();
-   Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
-  }
-  EclaimHelper::sendEclaimEmail($user_id, $id);
-  $returnObject->status = TRUE;
-  $returnObject->message = 'E-Claim successfully created.';
+ $user = DB::table('user')->where('UserID', $findUserID)->first();
+ Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
+}
+EclaimHelper::sendEclaimEmail($user_id, $id);
+$returnObject->status = TRUE;
+$returnObject->message = 'E-Claim successfully created.';
 
-  }
+}
 } catch(Exception $e) {
                                 // send email logs
  $email = [];

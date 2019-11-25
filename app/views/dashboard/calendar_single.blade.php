@@ -792,7 +792,7 @@
     <label class="details-label col-sm-2" style="padding: 0px; padding-left: 33px;">Price</label>
 
     <div class="col-sm-2" >
-     	<input type="text" id="service-price-reserve" class="dropdown-btn" style="height: 35px; width: 90px;">
+     	<input type="text" id="service-price-reserve" class="dropdown-btn" style="height: 35px; width: 90px; text-transform: uppercase;">
     	<!-- <div class="form-group input-group">
             <span class="input-group-addon">@</span>
             <input type="text" class="form-control dropdown-btn" placeholder="Username">
@@ -944,7 +944,7 @@
 		</tr>
 		<tr>
 		    <td class="col-sm-2">Cost</td>
-		    <td class="col-sm-8" id="appointment-cost-detail"></td>
+		    <td style="text-transform: uppercase;" class="col-sm-8" id="appointment-cost-detail"></td>
 		</tr>
 		<tr>
 		    <td class="col-sm-2">Customer</td>

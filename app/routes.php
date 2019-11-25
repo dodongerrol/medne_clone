@@ -1035,17 +1035,17 @@ Route::group(array('prefix' => 'v2'), function()
 		    // get member list for employee
 		    Route::get("user/member_lists", 'Api_V1_AuthController@getFamilCoverageAccounts');
 		    // save device token
-			Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
-			// get currency lists
-			Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
-			// get app notification message
-			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
-			// update notification to read
-			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
-			// remove check in data
-			Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
-			// get check_in_id data
-			Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
+				Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
+				// get currency lists
+				Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
+				// get app notification message
+				Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
+				// update notification to read
+				Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
+				// remove check in data
+				Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
+				// get check_in_id data
+				Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
 	 	});
 	});
 });

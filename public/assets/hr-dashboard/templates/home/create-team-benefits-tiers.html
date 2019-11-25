@@ -77,9 +77,8 @@
 									<div class="input-container">
 										<input type="number" min="0" ng-model="tier_data.medical_annual_cap">
 										<div class="icon-item">
-											S
-    									<i class="fa fa-usd icon"></i>
-  									</div>
+											<span ng-bind="showCurrencyType" class="currency-type">S$</span>
+										</div>	 
 									</div>
 								</div>
 								<div class="input-wrapper">
@@ -87,8 +86,7 @@
 									<div class="input-container">
 										<input type="number" min="0" ng-model="tier_data.wellness_annual_cap">
   									<div class="icon-item">
-  										S
-    									<i class="fa fa-usd icon"></i>
+  										<span ng-bind="showCurrencyType" class="currency-type">S$</span> 
   									</div>
 									</div>
 								</div>
@@ -104,8 +102,7 @@
 									<div class="input-container">
 										<input type="number" min="0" ng-model="tier_data.gp_cap_per_visit">
   									<div class="icon-item">
-  										S
-    									<i class="fa fa-usd icon"></i>
+  										<span ng-bind="showCurrencyType" class="currency-type">S$</span> 
   									</div>
 									</div>
 								</div>
@@ -153,15 +150,23 @@
 									<div class="benefits-tier-summary-details">
 										<div class="benefits-tier-summary-label-text">
 											<span class="summary-label">Medical annual cap: </span>
-											<span class="summary-text">S$ <span ng-bind="list.medical_annual_cap">1000</span></span>
+											<span class="summary-text">
+												<span ng-bind="showCurrencyType" class="currency-type"></span> 
+												<span ng-bind="list.medical_annual_cap">1000</span>
+											</span>
 										</div>
 										<div class="benefits-tier-summary-label-text">
 											<span class="summary-label">Wellness annual cap: </span>
-											<span class="summary-text">S$ <span ng-bind="list.wellness_annual_cap">1000</span></span>
+											<span class="summary-text">
+												<span ng-bind="showCurrencyType" class="currency-type"></span>  
+												<span ng-bind="list.wellness_annual_cap">1000</span>
+											</span>
 										</div>
 										<div class="benefits-tier-summary-label-text">
 											<span class="summary-label">GP cap per visit: </span>
-											<span class="summary-text">S$ <span ng-bind="list.gp_cap_per_visit">1000</span></span>
+											<span class="summary-text">
+											<span ng-bind="showCurrencyType" class="currency-type"></span> 
+											<span ng-bind="list.gp_cap_per_visit">1000</span></span>
 										</div>	
 									</div>
 								</div>
