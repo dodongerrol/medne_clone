@@ -138,7 +138,7 @@ app.directive("employeeOverviewDirective", [
             scope.block_per_page = 10;
             scope.filter_regionBlocked = 'all_region';
             scope.allBlockSelected = false;
-            scope.list_opt_block = 'name';
+            scope.list_opt_block = 'type';
           //-------------//
 
           //-- opened --//
@@ -150,7 +150,7 @@ app.directive("employeeOverviewDirective", [
             scope.open_per_page = 10;
             scope.filter_regionOpened = 'all_region';
             scope.allOpenSelected = false;
-            scope.list_opt_open = 'name';
+            scope.list_opt_open = 'type';
           //-------------//
           scope.range = function (range) {
             var arr = []; 
@@ -166,7 +166,6 @@ app.directive("employeeOverviewDirective", [
             $('.opened-per-page-scroll').hide();
           }
           scope.searchClinics = function( search, opt ) {
-            console.log( scope.search );
             if( search != "" ){
               if( opt == 'block' ){
                 scope.block_page = 1;
@@ -418,7 +417,6 @@ app.directive("employeeOverviewDirective", [
               angular.forEach( scope.clinic_block_arr, function( value, key ){
                 if( value.selected ){
                   ctr += 1;
-                  console.log( value.selected );
                   scope.showLoading();
                   scope.updateClinics( value.ClinicID, status, region, opt );
                 }
@@ -462,6 +460,8 @@ app.directive("employeeOverviewDirective", [
                     scope.blockHealthPatnerLoad();
                     scope.hideLoading();
                   }
+                }else{
+                  swal('Error!', response.data.message, 'error');
                 }
               });
           }
@@ -471,7 +471,7 @@ app.directive("employeeOverviewDirective", [
                 console.log(response);
                 scope.clinic_type_open_arr = response.data;
               });
-            hrActivity.fetchClinicTypesEmp( 'block', scope.filter_regionBlocked ) 
+            hrActivity.fetchClinicTypesEmp( 'block', scope.filter_regionBlocked, scope.selectedEmployee.user_id ) 
               .then(function(response) { 
                 console.log(response);
                 scope.clinic_type_block_arr = response.data;
