@@ -11,6 +11,21 @@ app.directive('settingsDirective', [
 				scope.clinic_blocked_search_trap = false;
 				scope.clinic_opened_search_trap = false;
 				scope.settings_active = 0;
+        scope.statementHide = true;
+        scope.empStatementShow = false;
+        scope.arrowStatement = false;
+
+        scope.companyAccountType = function () {
+          scope.account_type = localStorage.getItem('company_account_type');
+          console.log(scope.account_type);
+
+          if(scope.account_type === 'enterprise_plan') {
+            $('.statement-hide').hide();
+            scope.statementHide = false;
+            scope.empStatementShow = true;
+            scope.arrowStatement = true;
+          }
+        }
 
 				scope.showPageScroll = function ( data ) {
           let x = data;
