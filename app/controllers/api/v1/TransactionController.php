@@ -1500,10 +1500,10 @@ class Api_V1_TransactionController extends \BaseController
 
 						} else {
 							$currency_symbol = "SGD";
-							$temp_consultation_fee = $consultation_fee;
 							if((int)$transaction->lite_plan_enabled == 1) {
 								$consultation_fee = $consultation;
 							}
+							$temp_consultation_fee = $consultation_fee;
 							$temp_total_amount = $total_amount;
 							$temp_bill_amount = $bill_amount;
 							$temp_cash_cost = $cash_cost;
