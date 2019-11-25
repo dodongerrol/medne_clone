@@ -7810,8 +7810,16 @@ ul.typeahead li a.dropdown-item
 	background-color: #ee5556;
 }
 
+.health-block-btn:focus {
+	background-color: #ee5556;
+}
+
 .health-open-btn {
 	background-color: #469d59;
+}
+
+.health-open-btn:focus {
+	background-color: #469d59
 }
 
 .gp-cap-health-provider-wrapper {
