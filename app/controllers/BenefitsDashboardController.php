@@ -9756,11 +9756,16 @@ class BenefitsDashboardController extends \BaseController {
 		$trans_id = str_pad($transaction_id, 6, "0", STR_PAD_LEFT);
 		$type = "";
 		$image = "";
-		$user = DB::table('user')->where('UserID', $transaction->UserID)->first();
 		$procedure = "";
 		$procedure_temp = "";
 		$lite_plan_status = false;
 		$lite_plan = false;
+		$lite_plan_status = false;
+		$total_amount = 0;
+		$service_credits = false;
+		$consultation_credits = false;
+		$consultation = 0;
+		$wallet_status = false;
 		// $lite_plan = StringHelper::litePlanStatus($transaction->UserID);
 
 		if((int)$transaction->lite_plan_enabled == 1) {
@@ -9768,39 +9773,316 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 
-		if($transaction->multiple_service_selection == 1 || $transaction->multiple_service_selection == "1") {
-			$services = DB::table('transaction_services')->where('transaction_id', $transaction->transaction_id)->get();
-			foreach ($services as $key => $value) {
-				$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value->service_id)->first();
-				$procedure_temp .= ucwords($procedure_data->Name).',';
+		// if($transaction->multiple_service_selection == 1 || $transaction->multiple_service_selection == "1") {
+		// 	$services = DB::table('transaction_services')->where('transaction_id', $transaction->transaction_id)->get();
+		// 	foreach ($services as $key => $value) {
+		// 		$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value->service_id)->first();
+		// 		$procedure_temp .= ucwords($procedure_data->Name).',';
+		// 	}
+		// 	$procedure = rtrim($procedure_temp, ',');
+		// } else {
+		// 	$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $transaction->ProcedureID)->first();
+		// 	$procedure = ucwords($procedure_data->Name);
+		// }
+
+		// $clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
+		// $type = $clinic_type_properties['type'];
+		// $image = $clinic_type_properties['image'];
+
+		// $total_amount = floatval($transaction->credit_cost);
+		// if($transaction->credit_cost > 0) {
+		// 	$transaction_type = 'Mednefits Credits';
+		// 	$amount = $transaction->credit_cost;
+
+		// 	if($lite_plan_status) {
+		// 		$total_amount = floatval($transaction->consultation_fees) + floatval($transaction->credit_cost);
+		// 	}
+		// } else {
+		// 	$transaction_type = 'Cash';
+		// 	$amount = $transaction->procedure_cost;
+		// 	$total_amount = floatval($amount);
+		// }
+		$user_id = StringHelper::getUserId($transaction->UserID);
+		$company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
+
+		if($company_wallet_status) {
+			if($company_wallet_status == "Health Wallet") {
+				$wallet_status = true;
 			}
-			$procedure = rtrim($procedure_temp, ',');
-		} else {
-			$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $transaction->ProcedureID)->first();
-			$procedure = ucwords($procedure_data->Name);
+		}
+		$customer = DB::table('user')->where('UserID', $transaction->UserID)->first();
+		$procedure_temp = "";
+
+		if((int)$transaction->lite_plan_enabled == 1) {
+			if($transaction->spending_type == 'medical') {
+				$table_wallet_history = 'wallet_history';
+			} else {
+				$table_wallet_history = 'wellness_wallet_history';
+			}
+
+			$logs_lite_plan = DB::table($table_wallet_history)
+			->where('logs', 'deducted_from_mobile_payment')
+			->where('lite_plan_enabled', 1)
+			->where('id', $transaction->transaction_id)
+			->first();
+
+			if($logs_lite_plan && $transaction->credit_cost > 0 && (int)$transaction->lite_plan_use_credits == 0) {
+				$consultation_credits = true;
+		    // $service_credits = true;
+		    if($transaction->default_currency == "myr") {
+		    	$consultation = $logs_lite_plan->credit / $transaction->currency_amount;
+		    } else {
+					$consultation = $logs_lite_plan->credit;
+		    }
+			} else if($logs_lite_plan && $transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 1) {
+				$consultation_credits = true;
+		    // $service_credits = true;
+				if($transaction->default_currency == "myr") {
+		    	$consultation = $logs_lite_plan->credit / $transaction->currency_amount;
+		    } else {
+					$consultation = $logs_lite_plan->credit;
+		    }
+			} else if($transaction->procedure_cost >= 0 && (int)$transaction->lite_plan_use_credits == 0) {
+		  // $total_consultation += floatval($trans->co_paid_amount);
+				$consultation = floatval($transaction->consultation_fees);
+			} else {
+				$consultation = floatval($transaction->consultation_fees);
+			}
 		}
 
-		$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
-		$type = $clinic_type_properties['type'];
-		$image = $clinic_type_properties['image'];
+		// get services
+		if((int)$transaction->multiple_service_selection == 1)
+		{
+			// get multiple service
+			$service_lists = DB::table('transaction_services')
+			->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
+			->where('transaction_services.transaction_id', $transaction->transaction_id)
+			->get();
 
-		$total_amount = floatval($transaction->credit_cost);
-		if($transaction->credit_cost > 0) {
-			$transaction_type = 'Mednefits Credits';
-			$amount = $transaction->credit_cost;
+			foreach ($service_lists as $key => $service) {
+				$procedure_temp .= ucwords($service->Name).',';
+				$procedure = rtrim($procedure_temp, ',');
+			}
+			$service = $procedure;
+		} else {
+			$service_lists = DB::table('clinic_procedure')
+			->where('ProcedureID', $transaction->ProcedureID)
+			->first();
+			if($service_lists) {
+				$procedure = ucwords($service_lists->Name);
+				$service = $procedure;
+			} else {
+				$service = ucwords($clinic_type->Name);
+			}
+		}
 
-			if($lite_plan_status) {
-				$total_amount = floatval($transaction->consultation_fees) + floatval($transaction->credit_cost);
+		$trans_image = TransactionHelper::getClinicImageType($clinic_type);
+		$type = $trans_image['type'];
+		$image = $trans_image['image'];
+
+		$half_credits = false;
+		$total_amount = $transaction->procedure_cost;
+		$bill_amount = 0;
+		$cash_cost = 0;
+
+		$procedure_cost = number_format($transaction->procedure_cost, 2);
+		if((int)$transaction->health_provider_done == 1) {
+			$payment_type = 'Cash';
+			if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
+				if((int)$transaction->half_credits == 1) {
+					$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
+					$cash_cost = $transation->cash_cost;
+				} else {
+					$total_amount = $transaction->procedure_cost + $transaction->consultation_fees + $transaction->cash_cost;
+					$cash_cost = $transaction->procedure_cost;
+				}
+			} else {
+				if((int)$transaction->half_credits == 1) {
+					$cash_cost = $transaction->cash_cost;
+				} else {
+					$cash_cost = $transaction->procedure_cost;
+				}
 			}
 		} else {
-			$transaction_type = 'Cash';
-			$amount = $transaction->procedure_cost;
-			$total_amount = floatval($amount);
+			if($transaction->credit_cost > 0 && $transaction->cash_cost > 0) {
+				$payment_type = 'Mednefits Credits + Cash';
+				$half_credits = true;
+			} else {
+				$payment_type = 'Mednefits Credits';
+			}
+			$service_credits = true;
+			if((int)$transaction->lite_plan_enabled == 1) {
+				if((int)$transaction->half_credits == 1) {
+					$total_amount = $transaction->credit_cost + $transaction->cash_cost + $transaction->consultation_fees;
+					// $total_amount = $transaction->credit_cost + $transaction->cash_cost;
+					$cash_cost = $transaction->cash_cost;
+				} else {
+					$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
+					if($transaction->credit_cost > 0) {
+						$cash_cost = 0;
+					} else {
+						$cash_cost = $transaction->procedure_cost - $transaction->consultation_fees;
+					}
+				}
+			} else {
+				$total_amount = $transaction->procedure_cost;
+				if((int)$transaction->half_credits == 1) {
+					$cash_cost = $transaction->cash_cost;
+				} else {
+					if($transaction->credit_cost > 0) {
+						$cash_cost = 0;
+					} else {
+						$cash_cost = $transaction->procedure_cost;
+					}
+				}
+			}
+		}
+
+		if((int)$transaction->half_credits == 1) {
+			if((int)$transaction->lite_plan_enabled == 1) {
+				if((int)$transaction->health_provider_done == 1) {
+					$bill_amount = $transaction->procedure_cost;
+				} else {
+					$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees;
+				}
+			} else {
+				$bill_amount = 	$transaction->procedure_cost;
+			}
+		} else {
+			if((int)$transaction->lite_plan_enabled == 1) {
+				if((int)$transaction->health_provider_done == 1) {
+					if((int)$transaction->lite_plan_use_credits == 1) {
+						$bill_amount = 	$transaction->procedure_cost;
+					} else {
+						$bill_amount = 	$transaction->procedure_cost;
+					}
+				} else {
+					if((int)$transaction->lite_plan_use_credits == 1) {
+						$bill_amount = 	$transaction->procedure_cost;
+					} else {
+						$bill_amount = 	$transaction->credit_cost + $transaction->cash_cost;
+					}
+				}
+			} else {
+				if((int)$transaction->health_provider_done == 1) {
+					$bill_amount = 	$transaction->procedure_cost;
+				} else {
+					$bill_amount = 	$transaction->procedure_cost;
+				}
+			}
+		}
+
+		$paid_by_credits = $transaction->credit_cost;
+		if($transaction->cap_per_visit == $transaction->credit_cost + $consultation && (int)$transaction->half_credits == 1 && $consultation_credits == true) {
+			$paid_by_credits = $transaction->credit_cost + $consultation;
+		} else {
+			if($consultation_credits == true) {
+				// if((int)$transaction->half_credits == 1) {
+					$paid_by_credits += $consultation;
+				// }
+			}
+		}
+
+		$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
+		
+		if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == false) {
+			$service_credits = false;
+			$consultation_credits = false;
+			$lite_plan_status = false;
+		}
+
+		$consultation_fee = 0;
+		$lite_plan_status = (int)$transaction->lite_plan_enabled == 1 ? TRUE : FALSE;
+
+		if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == false) {
+			$service_credits = false;
+			$consultation_credits = false;
+			$lite_plan_status = false;
+		}
+
+		if($transaction->cap_per_visit > 0) {
+			$half_credits = true;
+		}
+
+		if($transaction->credit_cost == 0 && $transaction->consultation_fees > 0 && $transaction->lite_plan_enabled == 1) {
+			$paid_by_credits = $transaction->consultation_fees;
+		}
+
+		if($transaction->default_currency == "myr" && $transaction->currency_type == "myr") {
+			$currency_symbol = "MYR";
+			$temp_total_amount = $total_amount;
+			$temp_bill_amount = $bill_amount;
+			$temp_cash_cost = $cash_cost;
+			$temp_paid_by_credits = $paid_by_credits;
+			$temp_cap_per_visit = $transaction->cap_per_visit;
+			$total_amount = $total_amount * $transaction->currency_amount;
+			$bill_amount = $bill_amount * $transaction->currency_amount;
+			$cash_cost = $cash_cost * $transaction->currency_amount;
+			$paid_by_credits = $paid_by_credits * $transaction->currency_amount;
+			$transaction->cap_per_visit = $transaction->cap_per_visit * $transaction->currency_amount;
+			if((int)$transaction->lite_plan_enabled == 1) {
+				$consultation_fee = $consultation;
+			}
+
+			$temp_consultation_fee = $consultation_fee;
+			$consultation_fee = $consultation_fee * $transaction->currency_amount;
+
+			$total_amount_converted = $temp_total_amount * $transaction->currency_amount;
+			$bill_amount_converted = $temp_bill_amount * $transaction->currency_amount;;
+			$consultation_fee_converted = $temp_consultation_fee * $transaction->currency_amount;
+			$paid_by_cash_converted = $temp_cash_cost * $transaction->currency_amount;
+			$paid_by_credits_converted = $temp_paid_by_credits * $transaction->currency_amount;
+			$cap_per_visit_converted = $temp_cap_per_visit * $transaction->currency_amount;
+		} else if($transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
+			$currency_symbol = "MYR";
+			if((int)$transaction->lite_plan_enabled == 1) {
+				$consultation_fee = $consultation;
+			}
+			$temp_consultation_fee = $consultation_fee;
+			// $consultation_fee = $consultation_fee * $transaction->currency_amount;
+			$total_amount_converted = $total_amount * $transaction->currency_amount;
+			$bill_amount_converted = $bill_amount * $transaction->currency_amount;;
+			$consultation_fee_converted = $temp_consultation_fee * $transaction->currency_amount;
+			$paid_by_cash_converted = $cash_cost * $transaction->currency_amount;
+			$paid_by_credits_converted = $paid_by_credits * $transaction->currency_amount;
+			$cap_per_visit_converted = $transaction->cap_per_visit * $transaction->currency_amount;
+
+		} else {
+			$currency_symbol = "SGD";
+			if((int)$transaction->lite_plan_enabled == 1) {
+				$consultation_fee = $consultation;
+			}
+			$temp_consultation_fee = $consultation_fee;
+			$temp_total_amount = $total_amount;
+			$temp_bill_amount = $bill_amount;
+			$temp_cash_cost = $cash_cost;
+			$temp_paid_by_credits = $paid_by_credits;
+			$temp_cap_per_visit = $transaction->cap_per_visit;
+			$total_amount_converted = $total_amount;
+			$bill_amount_converted = $bill_amount;
+			$consultation_fee_converted = $consultation_fee;
+			$paid_by_cash_converted = $cash_cost;
+			$paid_by_credits_converted = $paid_by_credits;
+			$cap_per_visit_converted = $transaction->cap_per_visit;
+
+
+			$total_amount_converted = $temp_total_amount * $transaction->currency_amount;
+			$bill_amount_converted = $temp_bill_amount * $transaction->currency_amount;;
+			$consultation_fee_converted = $temp_consultation_fee * $transaction->currency_amount;
+			$paid_by_cash_converted = $temp_cash_cost * $transaction->currency_amount;
+			$paid_by_credits_converted = $temp_paid_by_credits * $transaction->currency_amount;
+			$cap_per_visit_converted = $temp_cap_per_visit * $transaction->currency_amount;
+		}
+
+		if($transaction->default_currency == "myr" && $transaction->currency_type == "myr" || $transaction->default_currency == "myr" && $transaction->currency_type == "sgd") {
+			$default_currency = "myr";
+		} else {
+			$default_currency = "sgd";
 		}
 
 	    // send email
-		$email['member'] = ucwords($user->Name);
-		$email['credits'] = number_format($amount, 2);
+		$email['member'] = ucwords($customer->Name);
+		$email['credits'] = number_format($bill_amount, 2);
 		$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
 		$email['transaction_date'] = date('d F Y, h:ia', strtotime($transaction->created_at));
 		$email['health_provider_name'] = ucwords($clinic->Name);
@@ -9809,12 +10091,13 @@ class BenefitsDashboardController extends \BaseController {
 		$email['health_provider_country'] = $clinic->Country;
 		$email['health_provider_phone'] = $clinic->Phone;
 		$email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
-		$email['transaction_type'] = $transaction_type;
+		$email['transaction_type'] = $payment_type;
 		$email['lite_plan_status'] = $lite_plan_status;
-		$email['consultation'] = $transaction->consultation_fees;
-		$email['total_amount'] = $total_amount;
+		$email['consultation'] = number_format($consultation_fee, 2);
+		$email['total_amount'] = number_format($total_amount, 2);
 		$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
 		$email['clinic_type_image'] = $image;
+		$email['currency_symbol'] = $currency_symbol;
 		// return View::make('pdf-download.member-successful-transac', $email);
 		$pdf = PDF::loadView('pdf-download.member-successful-transac', $email);
     	// $pdf->setPaper('A4', 'landscape');
