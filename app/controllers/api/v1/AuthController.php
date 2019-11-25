@@ -4751,9 +4751,9 @@ public function getEclaimTransactions( )
       }
     } else if($res->default_currency == "sgd" && $res->currency_type == "myr") {
       if($res->status == 1) {
-        $res->amount = $res->claim_amount * $res->currency_value;
+        $res->amount = $res->claim_amount;
       } else {
-        $res->amount = $res->amount * $res->currency_value;;
+        $res->amount = $res->amount;
       }
     } else {
       $currency_symbol = "SGD";
