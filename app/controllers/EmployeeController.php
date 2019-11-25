@@ -1267,13 +1267,13 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'messsage' => 'Access status is required');
           }
 
-          $clinic_type = DB::table('clinic_types')
-                          ->where('ClinicTypeID', $input['clinic_type_id'])
-                          ->first();
+          // $clinic_type = DB::table('clinic_types')
+          //                 ->where('ClinicTypeID', $input['clinic_type_id'])
+          //                 ->first();
 
-          if(!$clinic_type) {
-            return array('status' => false, 'message' => 'Clinic Type does not exist');
-          }
+          // if(!$clinic_type) {
+          //   return array('status' => false, 'message' => 'Clinic Type does not exist');
+          // }
           
           if($input['region'] == "all_region") {
             $clinic_ids = DB::table('clinic')
@@ -1427,7 +1427,7 @@ class EmployeeController extends \BaseController {
                   'type'      => 'admin_company_block_clinic_access',
                   'data'      => serialize($block)
               );
-              \AdminHelper::createAdminLog($admin_logs);
+              \SystemLogLibrary::createAdminLog($admin_logs);
           } else {
             $block = array(
               'customer_id' => $customer_id,
@@ -1439,7 +1439,7 @@ class EmployeeController extends \BaseController {
                   'type'      => 'admin_company_block_clinic_access',
                   'data'      => serialize($block)
               );
-              \AdminHelper::createAdminLog($admin_logs);
+              \SystemLogLibrary::createAdminLog($admin_logs);
           }
         }
 
@@ -1489,13 +1489,13 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'messsage' => 'Access status is required');
           }
 
-          $clinic_type = DB::table('clinic_types')
-                          ->where('ClinicTypeID', $input['clinic_type_id'])
-                          ->first();
+          // $clinic_type = DB::table('clinic_types')
+          //                 ->where('ClinicTypeID', $input['clinic_type_id'])
+          //                 ->first();
 
-          if(!$clinic_type) {
-            return array('status' => false, 'message' => 'Clinic Type does not exist');
-          }
+          // if(!$clinic_type) {
+          //   return array('status' => false, 'message' => 'Clinic Type does not exist');
+          // }
           
           if($input['region'] == "all_region") {
             $clinic_ids = DB::table('clinic')
@@ -1649,7 +1649,7 @@ class EmployeeController extends \BaseController {
                   'type'      => 'admin_company_block_clinic_access',
                   'data'      => serialize($block)
               );
-              \AdminHelper::createAdminLog($admin_logs);
+              \SystemLogLibrary::createAdminLog($admin_logs);
           } else {
             $block = array(
               'customer_id' => $customer_id,
@@ -1661,7 +1661,7 @@ class EmployeeController extends \BaseController {
                   'type'      => 'admin_company_block_clinic_access',
                   'data'      => serialize($block)
               );
-              \AdminHelper::createAdminLog($admin_logs);
+              \SystemLogLibrary::createAdminLog($admin_logs);
           }
         }
 

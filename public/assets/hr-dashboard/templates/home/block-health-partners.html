@@ -1,13 +1,13 @@
 <div block-health-partners-directive style="padding-bottom: 150px;">
 	<div class="health-provider-header-container">
 		<h3>Health Providers Access</h3>
-		<button 
+		<!-- <button 
 			ng-click="saveClinics()" 
 			ng-class="{ 'save-continue-disabled': transaction_ctr == 0 }" 
 			class="replace-employee-update-button update-replace"
 		>
 			SAVE & CONTINUE
-		</button>
+		</button> -->
 	</div>
 
 	<div class="health-partner-access-container">
@@ -27,8 +27,8 @@
 
 				<div class="clinic-name-header">
 					<label class="health-checkbox-container">
-						<span>Blocked Acess</span>
-						<input type="checkbox" ng-model="allBlockSelected" ng-click="toggleAllBlockedClinic()">
+						<span>Blocked Access</span>
+						<input type="checkbox" ng-model="allBlockSelected" ng-click="toggleAllBlockedClinic( )">
 						<span class="health-checkmark"></span>
 					</label>
 					<div class="select-filter-wrapper">
@@ -40,7 +40,7 @@
 							</select>
 						</div>
 						<div class="select-filter-div">
-							<select ng-model="list_opt_block" ng-change="changeFilterType( list_opt_block, 'block' )">
+							<select ng-model="list_opt_block" ng-change="changeFilterType( 'block' )">
 								<option value="type">Clinic Type</option>
 								<option value="name">Clinic Name</option>
 							</select>
@@ -141,7 +141,7 @@
 				<div class="clinic-name-header">
 					<label class="health-checkbox-container">
 						<span>Opened Acess</span>
-						<input type="checkbox">
+						<input type="checkbox" ng-model="allOpenSelected" ng-click="toggleAllOpenedClinic()">
 						<span class="health-checkmark"></span>
 					</label>
 					<div class="select-filter-wrapper">
@@ -153,12 +153,12 @@
 							</select>
 						</div>
 						<div class="select-filter-div">
-							<select ng-model="list_opt_open" ng-change="changeFilterType( list_opt_open, 'block' )">
+							<select ng-model="list_opt_open" ng-change="changeFilterType( 'open' )">
 								<option value="type">Clinic Type</option>
 								<option value="name">Clinic Name</option>
 							</select>
 						</div>
-						<button class="health-btn-open-block health-block-btn" ng-click="blockToOpen( 1, filter_regionOpened, list_opt_open )">BLOCK</button>
+						<button class="health-btn-open-block health-block-btn" ng-click="openToBlock( 1, filter_regionOpened, list_opt_open )">BLOCK</button>
 					</div>
 				</div>
 
@@ -166,7 +166,7 @@
 					<div ng-if="list_opt_open == 'name'" ng-repeat="list in clinic_open_arr" class="clinic-name-container">
 						<label class="health-checkbox-container">
 							<span ng-bind="list.Name">Onecare Choa Chu Kang</span>
-							<input type="checkbox">
+							<input type="checkbox" ng-model="list.selected">
 							<span class="health-checkmark"></span>
 						</label>
 						<div class="country-type">
@@ -177,7 +177,7 @@
 					<div ng-if="list_opt_open == 'type'" ng-repeat="list in clinic_type_open_arr" class="clinic-name-container">
 						<label class="health-checkbox-container">
 							<span ng-bind="list.Name">Lorem</span>
-							<input type="checkbox">
+							<input type="checkbox" ng-model="list.selected">
 							<span class="health-checkmark"></span>
 						</label>
 						<div class="country-type" ng-repeat="list in list.region">
