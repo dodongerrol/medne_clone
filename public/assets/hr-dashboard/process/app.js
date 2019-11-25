@@ -611,6 +611,33 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/first-time-login.html'
         }
       }
+    })
+    .state('settings', {
+      url: '/settings',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/settings.html'
+        }
+      }
+    })
+    .state('settings.cap-per-visit', {
+      url: '/cap-per-visit',
+      views: {
+        'child-content@settings': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/cap-per-visit.html'
+        }
+      }
+    })
+    .state('settings.block-health-partners', {
+      url: '/block-health-partners',
+      views: {
+        'child-content@settings': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
+        }
+      }
     });
 
     $urlRouterProvider.otherwise('/introduction');

@@ -7517,4 +7517,564 @@ ul.typeahead li a.dropdown-item
   background: #eee;
 }
 
+.employee-dependent-selection.health-provider-header-container {
+	position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.employee-dependent-selection.health-provider-header-container >div {
+	padding: 0;
+	display: inherit;
+}
+
+.employee-dependent-selection.health-provider-header-container >div:nth-child(1) { 
+	width: 80%;
+}
+
+.health-provider-header-container h4 {
+  margin: 0;
+  color: #283e52;
+  font-weight: 700;
+}
+
+.health-provider-header-container button {
+  margin: 0;
+  padding: 4px 0px;
+  border-radius: 2px;
+}
+
+.health-provider-header-container .replace-employee-update-button:focus {
+	border: solid 2px #0392cf;
+}
+
+.health-partner-wrapper {
+	padding: 40px 20px;
+}
+
+.health-partner-access-container {
+  display: grid;
+  grid-template-columns: 45% 10% 45%;
+  min-height: 540px;
+}
+
+.health-provider-header-container button.save-continue-disabled {
+	background-color: #9dc8e4;
+	border-color: #9dc8e4;
+	cursor: not-allowed;
+}
+
+.health-provider-header-container button.save-continue-disabled:focus {
+	border-color: #9dc8e4;
+}
+
+.health-partner-access-container >div {
+	position: relative;
+}
+
+.health-partner-access-blocked,
+.health-partner-access-opened {
+	background-color: #fff;
+  padding: 20px 0 40px;
+  box-shadow: 0 0px 3px 0 rgba(0,0,0,.2), 0 4px 6px 0 rgba(0,0,0,.14), 0 0px 4px 2px rgba(0,0,0,0.12);
+}
+
+.clinic-name-header {
+  border-bottom: 1px solid #cbcbcb;
+  padding: 20px 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.blocked-opened-header {
+  position: relative;
+  padding: 0 20px;
+  margin-bottom: 30px;
+}
+
+.health-partner-access-blocked span, 
+.health-partner-access-opened span {
+	color: #333;
+}
+
+.blocked-opened-header i {
+  font-size: 18px;
+  color: #777;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  cursor: pointer;
+}
+
+.clinic-name-header label {
+  flex: 1;
+}
+
+.select-filter-wrapper {
+	display: flex;
+	align-items: center;
+}
+
+.select-filter-div select {
+	display: inline-block;
+  flex: 1;
+  width: fit-content;
+  margin: 0 10px 0 0;
+  border-radius: 0;
+  /* -webkit-appearance: none; */
+  border: 1px solid #eee;
+  border-width: 0 0 1px 0;
+  padding: 5px 8px;
+  height: 32px;
+  color: #888;
+  background: #fafafa;
+  font-family: 'Helvetica Light';
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.health-btn-open-block {
+  /* position: absolute; */
+  /* right: 20px; */
+  /* top: 13px; */
+  background-color: #4154AF;
+  border-radius: 2px;
+  border: 0;
+  color: #fff;
+  font-weight: 300;
+  width: 70px;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.clinic-name-wrapper {
+  overflow-y: auto;
+  height: 500px;
+}
+
+.clinic-name-container {
+  color: #333;
+  padding: 20px 20px;
+  border-bottom: 1px solid #cbcbcb;
+  display: flex;
+}
+
+.health-checkbox-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  /* margin-bottom: 12px; */
+  cursor: pointer;
+  /*font-size: 22px;*/
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  flex: 1;
+}
+
+.health-checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.health-checkbox-container input:checked ~ .health-checkmark {
+  background-color: #fff;
+  border: 1px solid #cbcbcb;
+  border-radius: 2px;
+}
+
+.clinic-name-header span {
+  display: block;
+  color: #777;
+}
+
+.health-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #fff;
+  border: 1px solid #cbcbcb;
+  border-radius: 2px;
+  margin: 4px 0 0;
+}
+
+.health-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.health-checkbox-container .health-checkmark:after {
+  top: 3px;
+  left: 3px;
+  width: 7px;
+  height: 7px;
+  background-color: #4154AF;
+  border-radius: 2px;
+  content: "";
+}
+
+.health-checkbox-container input:checked ~ .health-checkmark:after {
+  display: block;
+}
+
+.sort-container {
+	text-align: center;
+}
+
+.sort-container img {
+  transform: translate(0, 22rem) rotate(90deg);
+  height: 50px;
+}
+
+.health-partner-container {
+	margin-bottom: 40px;
+}
+
+.health-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+  position: absolute;
+  bottom: 40px;
+  right: 0px;
+  width: 100%;
+  text-align: right;
+  color: #777;
+}
+
+.health-pagination span {
+  margin-right: 0px;
+  font-size: 12px;
+}
+
+.page-scroll {
+  background-color: #e8e6e6;
+  color: rgba(33,33,33,0.87);
+  font-size: 12px;
+  overflow-y: scroll;
+  max-height: 227px;
+  width: 137px;
+  position: absolute;
+  bottom: -15px;
+  right: -50px;
+}
+
+.page-scroll-container span {
+  cursor: pointer;
+}
+
+.page-scroll-container {
+  position: relative;
+  display: initial;
+  margin-right: 20px;
+}
+
+.page-scroll span {
+  display: block;
+  text-align: left;
+  height: 48px;
+  padding: 0 16px;
+  margin-right: 0;
+  vertical-align: middle;
+  line-height: 4;
+  cursor: pointer;
+}
+
+.page-scroll span:hover {
+  background: rgb(238,238,238);
+}
+
+.health-pagination .page-wrapper >span,
+.health-pagination .rows-page-wrapper >span,
+.health-pagination .per-page-container,
+.health-pagination .per-page-wrapper .fa-angle-left {
+	margin-right: 20px;
+}
+
+.search-input-wrapper input {
+  border: 0;
+  border-bottom: 1px solid #ecebeb;
+  width: 94%;
+  padding: 4px 5px 5px 5px;
+  outline: none;
+}
+
+.health-block-btn {
+	background-color: #ee5556;
+}
+
+.health-open-btn {
+	background-color: #469d59;
+}
+
+.gp-cap-health-provider-wrapper {
+	padding: 0 20px;
+}
+
+.gp-cap-health-provider-wrapper .active-link:hover {
+	cursor: pointer;
+}
+
+.gp-cap-health-provider-wrapper .health-provider-header-container {
+  display: flex;
+  align-items: center;
+  margin: 0 0 20px;
+}
+
+.gp-cap-health-provider-wrapper .health-provider-header-container h3 {
+  flex: 1;
+  color: #333;
+  font-weight: 7000;
+}
+
+.cap-per-visit-wrapper .health-provider-header-container img {
+	height: 17px;
+	width: 16px;
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.cap-per-visit-wrapper {
+	width: 700px;
+}
+
+.gp-cap-table-wrapper table {
+	font-size: 14px;
+	color: #333;
+	border: 1px solid #d0d0d0;
+	margin: 0 0 20px;
+}
+
+.gp-cap-table-wrapper table th,
+.gp-cap-table-wrapper table td {
+	border: 1px solid #d0d0d0;
+	padding: 15px;
+}
+
+.gp-cap-table-wrapper table th {
+	background-color: #eff2f4;
+}
+
+.gp-cap-table-wrapper table th:nth-child(1) {
+	width: 15%;
+}
+
+.gp-cap-table-wrapper table th:nth-child(2) {
+	width: 60%;
+}
+
+.gp-cap-table-wrapper table td {
+	padding: 10px;
+}
+
+.gp-cap-table-wrapper .not-applicable-text {
+	color: rgba(0,0,0,.54);
+}
+
+.cap-per-visit-wrapper .health-pagination {
+	justify-content: inherit;
+	right: initial;
+	left: 20px;
+	bottom: initial;
+	position: initial;
+}
+
+.cap-per-visit-wrapper .page-wrapper {
+	display: inline-flex;
+	align-items: flex-end;
+}
+
+.cap-per-visit-wrapper .fa-angle-left {
+	margin-right: 5px;
+}
+
+.cap-per-visit-wrapper .fa-angle-right {
+	margin-left: 5px;
+}
+
+.cap-per-visit-wrapper .page-scroll-container {
+	display: flex;
+	/*align-items: center;*/
+}
+
+.cap-per-visit-wrapper .rows-page-wrapper {
+	position: relative;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div {
+	display: inherit;
+	margin: 0 10px;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div span {
+	margin-right: 10px;
+	cursor: initial;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div span:last-child {
+	margin-right: 0px;
+}
+
+.cap-per-visit-wrapper .rows-page-wrapper >span:first-child {
+	margin-right: 5px;
+}
+
+.cap-per-visit-wrapper .rows-page-wrapper .fa-caret-down {
+	cursor: pointer;
+}
+
+#file_upload {
+	color: #2E4057;
+}
+
+#file_upload .modal-header {
+	display: flex;
+}
+
+#file_upload .modal-header h4 {
+	flex: 1;
+	margin: 0;
+}
+
+#file_upload .modal-header img {
+	height: 13px;
+	widows: 13px;
+	cursor: pointer;
+}
+
+#file_upload .modal-header,
+#file_upload .modal-body,
+#file_upload .modal-footer {
+	border-bottom: 0;
+	border-top: 0;
+	padding: 15px 20px;
+}
+
+#file_upload .drop-box {
+  border: 2px dashed #408FCA;
+  width: 100%;
+  height: 152px;
+  display: flex;
+  justify-content: center;
+}
+
+#file_upload .drop-box >div:nth-child(1) {
+	width: 100%;
+	padding: 30px 20px;
+}
+
+#file_upload .drop-box .drop-file-upload {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#file_upload .drop-box >div:nth-child(1) p {
+	margin: 0 10px;
+}
+
+#file_upload .drop-box >div:nth-child(1) img {
+	height: 23px;
+	width: 23px;
+}
+
+#file_upload .choose-file {
+	position: absolute;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+
+#file_upload .file-btn {
+	background-color: #4154af;
+	border-radius: 3px;
+	width: 80px;
+	height: 38px;
+	color: #fff;
+	position: relative;
+	cursor: pointer;
+}
+
+#file_upload .modal-footer {
+	text-align: left;
+}
+
+#file_upload .progress-wrapper {
+	width: 100%;
+  height: 25px;
+  background-color: rgba(205, 205, 205, 0.3);
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+#file_upload .progress-bar {
+	background-color: #78E997;
+	height: 25px;
+ color: #2E4057;
+}
+
+#file_upload .progress-wrapper {
+	position: relative;
+}
+
+#file_upload .progress-wrapper >span {
+	position: absolute;
+	left: 10px;
+}
+
+.gp-cap-table-wrapper .edit-input {
+  margin: 0 4px;
+  padding: 0 4px;
+  border: 0;
+  width: 130px;
+  border-left: 1px solid #ddd;
+  outline: none;
+}
+
+.cap-per-visit-wrapper .health-provider-header-container h3 {
+	margin: 0;
+}
+
+/*@media screen and (max-width: 1440px) { 
+
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
