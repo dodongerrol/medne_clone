@@ -28,6 +28,7 @@ app.directive('blockHealthPartnersDirective', [
         
 
         //-- blocked --//
+          scope.clinic_type_block_ids = [];
           scope.clinic_block_arr = [];
           scope.clinic_type_block_arr = [];
           scope.block_pagination = {};
@@ -39,6 +40,7 @@ app.directive('blockHealthPartnersDirective', [
         //-------------//
 
         //-- opened --//
+          scope.clinic_type_open_ids = [];
           scope.clinic_open_arr = [];
           scope.clinic_type_open_arr = [];
           scope.open_pagination = {};
@@ -84,21 +86,9 @@ app.directive('blockHealthPartnersDirective', [
         }
         scope.changeFilterType = function( type ){
           if( type == 'open' ){
-            scope.allOpenSelected = false;
-            angular.forEach( scope.clinic_type_open_arr, function( value, key ){
-              value.selected = false;
-            });
-            angular.forEach( scope.clinic_open_arr, function( value, key ){
-              value.selected = false;
-            });
+            scope.resetOpenCheckBoxes();
           }else{
-            scope.allBlockSelected = false;
-            angular.forEach( scope.clinic_type_block_arr, function( value, key ){
-              value.selected = false;
-            });
-            angular.forEach( scope.clinic_block_arr, function( value, key ){
-              value.selected = false;
-            });
+            scope.resetBlockCheckBoxes();
           }
         }
         scope.regionOpt = function( opt, source ){
@@ -111,13 +101,7 @@ app.directive('blockHealthPartnersDirective', [
             } else if (opt == 'myr') {
               scope.filterByRegionOpened = 'Malaysia';
             }
-            scope.allOpenSelected = false;
-            angular.forEach( scope.clinic_type_open_arr, function( value, key ){
-              value.selected = false;
-            });
-            angular.forEach( scope.clinic_open_arr, function( value, key ){
-              value.selected = false;
-            });
+            scope.resetOpenCheckBoxes();
           } else if (source == 'blocked') {
             scope.filter_regionBlocked = opt;
             if(opt == 'all_region') {
@@ -127,15 +111,8 @@ app.directive('blockHealthPartnersDirective', [
             } else if (opt == 'myr') {
               scope.filterByRegionBlocked = 'Malaysia';
             }
-            scope.allBlockSelected = false;
-            angular.forEach( scope.clinic_type_block_arr, function( value, key ){
-              value.selected = false;
-            });
-            angular.forEach( scope.clinic_block_arr, function( value, key ){
-              value.selected = false;
-            });
+            scope.resetBlockCheckBoxes();
           }
-          console.log('opt',opt);
           scope.onLoad();
         }
 				scope.showPageScroll = function ( data ) {
@@ -210,6 +187,26 @@ app.directive('blockHealthPartnersDirective', [
             });
           }
         }
+        scope.resetOpenCheckBoxes = function(){
+          scope.clinic_type_open_ids = [];
+          scope.allOpenSelected = false;
+          angular.forEach( scope.clinic_type_open_arr, function( value, key ){
+            value.selected = false;
+          });
+          angular.forEach( scope.clinic_open_arr, function( value, key ){
+            value.selected = false;
+          });
+        }
+        scope.resetBlockCheckBoxes = function(){
+          scope.clinic_type_block_ids = [];
+          scope.allBlockSelected = false;
+          angular.forEach( scope.clinic_type_block_arr, function( value, key ){
+            value.selected = false;
+          });
+          angular.forEach( scope.clinic_block_arr, function( value, key ){
+            value.selected = false;
+          });
+        }
 
 
 
@@ -270,22 +267,30 @@ app.directive('blockHealthPartnersDirective', [
         // ----- OPEN CLINIC FUNCTIONS ----- //
           scope.openToBlock = function( status, region, opt ) {
             if( opt == 'name' ){
+              var ctr = 0;
               angular.forEach( scope.clinic_open_arr, function( value, key ){
                 if( value.selected ){
+                  ctr += 1;
+                  scope.showLoading();
                   scope.updateClinics( value.ClinicID, status, region, opt );
                 }
-                if( scope.clinic_open_arr.length - 1 == key ){
-
+                if( ctr > 0 && scope.clinic_open_arr.length - 1 == key ){
+                  scope.hideLoading();
+                  scope.onLoad();
+                  swal('Success!', 'Clinic Block Lists updated.', 'success');
                 }
               });
             }
             if( opt == 'type' ){
+              var ctr = 0;
               angular.forEach( scope.clinic_type_open_arr, function( value, key ){
                 if( value.selected ){
-                  scope.updateClinics( value.ClinicTypeID, status, region, opt );
+                  ctr += 1;
+                  scope.showLoading();
+                  scope.clinic_type_block_ids.push( value.ClinicTypeID );
                 }
-                if( scope.clinic_type_open_arr.length - 1 == key ){
-                  
+                if( ctr > 0 && scope.clinic_type_open_arr.length - 1 == key ){
+                  scope.updateClinics( scope.clinic_type_block_ids, status, region, opt );
                 }
               });
             }
@@ -295,22 +300,31 @@ app.directive('blockHealthPartnersDirective', [
         // ----- BLOCK CLINIC FUNCTIONS ----- //
           scope.blockToOpen = function( status, region, opt ) {
             if( opt == 'name' ){
+              var ctr = 0;
               angular.forEach( scope.clinic_block_arr, function( value, key ){
                 if( value.selected ){
+                  ctr += 1;
+                  console.log( value.selected );
+                  scope.showLoading();
                   scope.updateClinics( value.ClinicID, status, region, opt );
                 }
-                if( scope.clinic_block_arr.length - 1 == key ){
-
+                if( ctr > 0 && scope.clinic_block_arr.length - 1 == key ){
+                  scope.hideLoading();
+                  scope.onLoad();
+                  swal('Success!', 'Clinic Block Lists updated.', 'success');
                 }
               });
             }
             if( opt == 'type' ){
+              var ctr = 0;
               angular.forEach( scope.clinic_type_block_arr, function( value, key ){
                 if( value.selected ){
-                  scope.updateClinics( value.ClinicTypeID, status, region, opt );
+                  ctr += 1;
+                  scope.showLoading();
+                  scope.clinic_type_open_ids.push( value.ClinicTypeID );
                 }
-                if( scope.clinic_type_block_arr.length - 1 == key ){
-                  
+                if( ctr > 0 && scope.clinic_type_block_arr.length - 1 == key ){
+                  scope.updateClinics( scope.clinic_type_open_ids, status, region, opt );
                 }
               });
             }
@@ -332,6 +346,13 @@ app.directive('blockHealthPartnersDirective', [
             hrActivity.OpenBlockClinics( data ) 
               .then(function(response) { 
                 console.log(response);
+                if( response.data.status ){
+                  if( type == 'type' ){
+                    swal('Success!', response.data.message, 'success');
+                    scope.onLoad();
+                    scope.hideLoading();
+                  }
+                }
               });
           }
           scope.getClinicTypes = function() {
@@ -391,6 +412,12 @@ app.directive('blockHealthPartnersDirective', [
         }
        
         scope.onLoad = function( ){
+          scope.search = {
+            clinic_open_search_text : '',
+            clinic_blocked_search_text : '',
+          }
+          scope.resetOpenCheckBoxes();
+          scope.resetBlockCheckBoxes();
           scope.getClinicTypes();
         	scope.getBlockedClinics();
         }

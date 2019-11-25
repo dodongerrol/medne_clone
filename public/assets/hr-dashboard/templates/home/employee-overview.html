@@ -472,7 +472,7 @@
 					</div>
 				</div>
 
-				<div ng-if="showBlockHealthProviders" class="health-partner-wrapper">
+				<div ng-show="showBlockHealthProviders" class="health-partner-wrapper">
 					<div class="health-partner-access-container">
 						<div class="health-partner-access-blocked">
 
@@ -503,7 +503,7 @@
 											</select>
 										</div>
 										<div class="select-filter-div">
-											<select ng-model="list_opt_block" ng-change="changeFilterType( list_opt_block, 'block' )">
+											<select ng-model="list_opt_block" ng-change="changeFilterType( 'block' )">
 												<option value="type">Clinic Type</option>
 												<option value="name">Clinic Name</option>
 											</select>
@@ -616,7 +616,7 @@
 											</select>
 										</div>
 										<div class="select-filter-div">
-											<select ng-model="list_opt_open" ng-change="changeFilterType( list_opt_open, 'open' )">
+											<select ng-model="list_opt_open" ng-change="changeFilterType( 'open' )">
 												<option value="type">Clinic Type</option>
 												<option value="name">Clinic Name</option>
 											</select>
