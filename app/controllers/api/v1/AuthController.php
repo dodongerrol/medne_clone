@@ -5172,9 +5172,9 @@ public function createEclaim( )
     $input_amount = trim($input['amount']);
   } else {
     if(Input::has('currency_type') && $input['currency_type'] != null) {
-      if(strtolower($input['currency_type']) == "myr") {
+      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
         $input_amount = $input['amount'] / $input['currency_exchange_rate'];
-      } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
+      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
         $input_amount = $input['amount'] * $input['currency_exchange_rate'];
       } else {
         $input_amount = trim($input['amount']);
