@@ -1196,9 +1196,9 @@ class EclaimController extends \BaseController {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
 							$treatment = $trans->credit_cost;
 	              // $total_amount = $trans->procedure_cost;
+								$payment_type = 'Mednefits Credits';
 							if($trans->credit_cost > 0) {
 								$cash = 0;
-								$payment_type = 'Mednefits Credits';
 							} else {
 								$cash = (float)$trans->procedure_cost - $trans->consultation_fees;
 							}
@@ -1352,14 +1352,27 @@ class EclaimController extends \BaseController {
 				$doc_files = FALSE;
 			}
 
+			// if($res->currency_type == "myr" && $res->default_currency == "myr") {
+	  //     $res->default_currency = "MYR";
+	  //   } else if($res->default_currency == "myr"){
+	  //     $res->default_currency = "MYR";
+	  //     $res->amount = $res->amount;
+	  //   } else {
+	  //     $res->default_currency = "SGD";
+	  //   }
 			if($res->currency_type == "myr" && $res->default_currency == "myr") {
-	      $res->default_currency = "MYR";
-	    } else if($res->default_currency == "myr"){
-	      $res->default_currency = "MYR";
-	      $res->amount = $res->amount;
-	    } else {
-	      $res->default_currency = "SGD";
-	    }
+				$currency_symbol = "MYR";
+			} else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+				$currency_symbol = "MYR";
+				$res->amount = $res->amount;
+				$res->claim_amount = $res->claim_amount;
+			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
+				$currency_symbol = "MYR";
+				$res->amount = $res->amount * $res->currency_value;
+				$res->claim_amount = $res->claim_amount * $res->currency_value;;
+			} else {
+				$currency_symbol = "SGD";
+			}
 
 			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
@@ -1892,9 +1905,26 @@ class EclaimController extends \BaseController {
 
 			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-			if($res->default_currency == "myr") {
-				$res->currency_type = $res->default_currency;
-			}
+			// if($res->default_currency == "myr") {
+			// 	$res->currency_type = $res->default_currency;
+			// }
+			if($res->currency_type == "myr" && $res->default_currency == "myr") {
+	      $res->currency_type = "myr";
+	    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+	      $res->currency_type = "myr";
+	      $res->amount = $res->amount;
+	      $res->claim_amount = $res->claim_amount;
+	    } else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
+	      $res->currency_type = "myr";
+	      $res->amount = $res->amount * $res->currency_value;
+	      $res->claim_amount = $res->claim_amount * $res->currency_value;;
+	    } else {
+	      $res->currency_type = "sgd";
+	    }
+
+	    if((int)$res->status == 1) {
+	    	$res->amount = $res->claim_amount;
+	    }
 
 			$temp = array(
 				'status'			=> $res->status,
@@ -2897,14 +2927,31 @@ public function getActivityOutNetworkTransactions( )
 				$doc_files = FALSE;
 			}
 
+			// if($res->currency_type == "myr" && $res->default_currency == "myr") {
+	  //     $res->default_currency = "MYR";
+	  //   } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+	  //     $res->default_currency = "MYR";
+	  //     $res->amount = $res->amount;
+	  //   } else {
+	  //     $res->default_currency = "SGD";
+	  //   }
 			if($res->currency_type == "myr" && $res->default_currency == "myr") {
-	      $res->default_currency = "MYR";
-	    } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
-	      $res->default_currency = "MYR";
-	      $res->amount = $res->amount;
-	    } else {
-	      $res->default_currency = "SGD";
-	    }
+				$res->default_currency = "MYR";
+			} else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+				$res->default_currency = "MYR";
+				$res->amount = $res->amount;
+				$res->claim_amount = $res->claim_amount;
+			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
+				$res->default_currency = "MYR";
+				$res->amount = $res->amount * $res->currency_value;
+				$res->claim_amount = $res->claim_amount * $res->currency_value;;
+			} else {
+				$res->default_currency = "SGD";
+			}
+
+			if((int)$res->status == 1) {
+				$res->amount = $res->claim_amount;
+			}
 
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(

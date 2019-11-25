@@ -4737,11 +4737,31 @@ public function getEclaimTransactions( )
     $currency_symbol = "SGD";
     if($res->default_currency == "myr" && $res->currency_type == "sgd") {
       $currency_symbol = "MYR";
-       $res->amount = $res->amount / $res->currency_value;
-    } else if($res->default_currency == "myr") {
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount;
+      } else {
+        $res->amount = $res->amount;
+      }
+    } else if($res->default_currency == "myr" && $res->currency_type == "myr") {
       $currency_symbol = "MYR";
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount;
+      } else {
+        $res->amount = $res->amount;
+      }
+    } else if($res->default_currency == "sgd" && $res->currency_type == "myr") {
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount * $res->currency_value;
+      } else {
+        $res->amount = $res->amount * $res->currency_value;;
+      }
     } else {
       $currency_symbol = "SGD";
+      if($res->status == 1) {
+        $res->amount = $res->claim_amount;
+      } else {
+        $res->amount = $res->amount;
+      }
     }
 
     if((int)$res->status == 1) {
@@ -4829,6 +4849,11 @@ public function getEclaimDetails($id)
     } else if($transaction->currency_type == "sgd" && $transaction->default_currency == "myr"){
       $currency_symbol = "MYR";
       $transaction->amount = $transaction->amount;
+      $transaction->claim_amount = $transaction->claim_amount;
+    } else if($transaction->currency_type == "myr" && $transaction->default_currency == "sgd"){
+      $currency_symbol = "MYR";
+      $transaction->amount = $transaction->amount * $transaction->currency_value;
+      $transaction->claim_amount = $transaction->claim_amount * $transaction->currency_value;;
     } else {
       $currency_symbol = "SGD";
     }
