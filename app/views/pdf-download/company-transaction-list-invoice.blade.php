@@ -165,7 +165,7 @@
 
 				<div class="item">
 					<p>Total Spent</p>
-					<p style="margin-top: 5px;color: #4d8ad6;">S$ {{ $statement_total_amount }}</p>
+					<p style="margin-top: 5px;color: #4d8ad6;">{{ strtoupper($currency_type) }} {{ $statement_total_amount }}</p>
 				</div>
     	</div>
 
@@ -190,20 +190,18 @@
   			<!-- LOOP HERE -->
   			@foreach($in_network as $key => $trans)
         <tr class="tbody">
-			<td>{{ $trans['transaction_id'] }}</td>
-			<td>{{ $trans['employee'] }}</td>
-			<td>{{ $trans['dependent'] }}</td>
-			<td>{{ $trans['member'] }}</td>
-			<!-- <td>{{ $trans['nric'] }}</td> -->
-          	<td>{{ $trans['date_of_transaction'] }}</td>
-			<td>{{ $trans['clinic_type_name'] }}</td>
-			<td>{{ $trans['clinic_type_and_service'] }}</td>
-			<td>{{ $trans['clinic_name'] }}</td>
-			<td>S${{ $trans['total_amount'] }}</td>
-			@if($lite_plan)
-			<td>{{ $trans['treatment'] }}</td>
-			<td>{{ $trans['consultation'] }}</td>
-			@endif
+				<td>{{ $trans['transaction_id'] }}</td>
+				<td>{{ $trans['member'] }}</td>
+				<!-- <td>{{ $trans['nric'] }}</td> -->
+	          	<td>{{ $trans['date_of_transaction'] }}</td>
+				<td>{{ $trans['clinic_type_name'] }}</td>
+				<td>{{ $trans['clinic_type_and_service'] }}</td>
+				<td>{{ $trans['clinic_name'] }}</td>
+				<td>{{ $trans['currency_type'] }} {{ $trans['total_amount'] }}</td>
+				@if($lite_plan)
+				<td>{{ $trans['currency_type'] }} {{ $trans['treatment'] }}</td>
+				<td>{{ $trans['currency_type'] }} {{ $trans['consultation'] }}</td>
+				@endif
 			<!-- <td>{{ $trans['payment_type'] }}</td> -->
         </tr>
         @endforeach

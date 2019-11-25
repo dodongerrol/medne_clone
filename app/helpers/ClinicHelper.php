@@ -67,52 +67,65 @@ public static function getClinicTypeImage($clinic_type)
 {
     $type = "";
     $image = "";
+    $type_name = "";
     if($clinic_type->head == 1 || $clinic_type->head == "1") {
-      if($clinic_type->Name == "General Practitioner") {
-       $type = "General Practitioner";
+      if($clinic_type->Name == "GP") {
+       $type = "GP";
+       $type_name = "general_practitioner";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-     } else if($clinic_type->Name == "Dental Care") {
-       $type = "Dental Care";
+     } else if($clinic_type->Name == "Dental") {
+       $type = "Dental";
+       $type_name = "dental_care";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-     } else if($clinic_type->Name == "Traditional Chinese Medicine") {
-       $type = "Traditional Chinese Medicine";
+     } else if($clinic_type->Name == "TCM") {
+       $type = "TCM";
+       $type_name = "tcm";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-     } else if($clinic_type->Name == "Health Screening") {
-       $type = "Health Screening";
+     } else if($clinic_type->Name == "Screening") {
+       $type = "Screening";
+       $type_name = "health_screening";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
      } else if($clinic_type->Name == "Wellness") {
        $type = "Wellness";
+       $type_name = "wellness";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-     } else if($clinic_type->Name == "Health Specialist") {
-       $type = "Health Specialist";
+     } else if($clinic_type->Name == "Specialist") {
+       $type = "Specialist";
+       $type_name = "health_specialist";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
      }
     } else {
       $find_head = DB::table('clinic_types')
       ->where('ClinicTypeID', $clinic_type->sub_id)
       ->first();
-      if($find_head->Name == "General Practitioner") {
-       $type = "General Practitioner";
+      if($find_head->Name == "GP") {
+       $type = "GP";
+       $type_name = "general_practitioner";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-     } else if($find_head->Name == "Dental Care") {
-       $type = "Dental Care";
+     } else if($find_head->Name == "Dental") {
+       $type = "Dental";
+       $type_name = "dental_care";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-     } else if($find_head->Name == "Traditional Chinese Medicine") {
-       $type = "Traditional Chinese Medicine";
+     } else if($find_head->Name == "TCM") {
+       $type = "TCM";
+       $type_name = "tcm";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-     } else if($find_head->Name == "Health Screening") {
-       $type = "Health Screening";
+     } else if($find_head->Name == "Screening") {
+       $type = "Screening";
+       $type_name = "health_screening";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
      } else if($find_head->Name == "Wellness") {
        $type = "Wellness";
+       $type_name = "wellness";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-     } else if($find_head->Name == "Health Specialist") {
-       $type = "Health Specialist";
+     } else if($find_head->Name == "Specialist") {
+       $type = "Specialist";
+       $type_name = "health_specialist";
        $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
      }
     }
 
-    return array('type' => $type, 'image' => $image);
+    return array('type' => $type, 'image' => $image, 'type_name' => $type_name);
   }
 
   public static function removeBlockClinics($clinics)

@@ -105,7 +105,13 @@
                     <!-- <p><label>Invoice Date: </label> <span class="invoice_first_day"></span></p>
                     <p><label>Payment Due: </label> <span class="invoice_due_date"></span></p> -->
                     <p><label>Period Date: </label> <span class="period_date">1 Dec - 31 Dec 2018</span></p>
-                    <p><label>Amount Due (SGD): </label> <b>$<span class="invoice_amount_due"></span></b></p>
+                    <p>
+                        <label>Amount Due 
+                          (<span class="currencyType" style="text-transform: uppercase;"></span>): 
+                        </label> 
+                        <b>
+                          <span class="currencyType" style="text-transform: uppercase;"></span>
+                          <span class="invoice_amount_due"></span></b></p>
                 </div>
             </div>
         </div>

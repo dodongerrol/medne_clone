@@ -5,9 +5,10 @@ class PlanTierController extends \BaseController {
 	public function getPlanTiers( )
 	{
 		$customer_id = PlanHelper::getCusomerIdToken();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$plan_tiers = DB::table('plan_tiers')->where('customer_id', $customer_id)->where('active', 1)->get();
 
-		return array('status' => true, 'data' => $plan_tiers);
+		return array('status' => true, 'data' => $plan_tiers, 'currency_type' => $customer->currency_type);
 	}
 	public function createPlanTier( )
 	{
@@ -81,10 +82,12 @@ class PlanTierController extends \BaseController {
 		// get plan tier head count
 		$plan_tier_member_head_count = DB::table('plan_tiers')
 										->where('customer_id', $customer_id)
+										->where('active', 1)
 										->sum('member_head_count');
 
 		$plan_tier_member_enrolled_count = DB::table('plan_tiers')
 											->where('customer_id', $customer_id)
+											->where('active', 1)
 											->sum('member_enrolled_count');
 
 		$total_left_plan_tier_members = $plan_tier_member_head_count - $plan_tier_member_enrolled_count;

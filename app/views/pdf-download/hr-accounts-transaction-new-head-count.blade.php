@@ -197,7 +197,7 @@
     			@if(isset($payment_date))
     			<p><label>Payment Date: </label> {{ $payment_date }}</p>
     			@endif
-    			<p style="background: #eee;"><label>Amount Due (SGD): </label> <b>${{ $amount_due }}</b></p>
+    			<p style="background: #eee;"><label>Amount Due: </label> <b>{{ $currency_type }} {{ $amount_due }}</b></p>
 	    	</div>
     	</div>
 
@@ -234,8 +234,8 @@
 					<p>Note: {{ $notes }}</p>
           </td>
           <td><b>{{ $number_employess }}</b></td>
-          <td><b>S$ {{ $price }}</b></td>
-          <td><b>S$ {{ $amount }}</b></td>
+          <td><b>{{ $currency_type }} {{ $price }}</b></td>
+          <td><b>{{ $currency_type }} {{ $amount }}</b></td>
         </tr>
 
     	</table>
@@ -246,7 +246,7 @@
 
 					<div style="border-bottom: 1px solid #aaa;display: inline-block;width: 100%;padding-bottom: 10px;"></div>
 
-					<p style="margin-top: 5px;"><label>Amount Due (SGD):</label> <b>${{ $amount_due }}</b></p>
+					<p style="margin-top: 5px;"><label>Amount Due:</label> <b>{{ $currency_type }} {{ $amount_due }}</b></p>
     		</div>
     	</div>
 
