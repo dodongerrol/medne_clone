@@ -7489,7 +7489,9 @@ ul.typeahead li a.dropdown-item
 	display: inline-block;
 }
 
-
+.currency-type {
+	text-transform: uppercase;
+}
 .right-download-block{
 	position: relative;
 	display: inline-block;

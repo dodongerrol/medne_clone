@@ -52,6 +52,7 @@
 				scope.receipts_approved = [];
 				scope.receipts_rejected = [];
 				scope.receipts_arr = [];
+				scope.eclaimCurrencyType = localStorage.getItem("currency_type");
 				scope.statementHide = true;
 				scope.empStatementShow = false;
 
