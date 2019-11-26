@@ -39,6 +39,7 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     }
 
     Appcues.page( );
+    console.log('new page loaded!.');
   });
 
 }]);
