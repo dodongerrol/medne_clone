@@ -1288,6 +1288,8 @@ class EclaimController extends \BaseController {
 					$treatment = $treatment * $trans->currency_amount;
 					$trans->currency_type = "myr";
 					// $consultation_fees = $consultation_fees * $trans->currency_amount;
+				} else if($trans->currency_type == "myr" && $trans->default_currency == "sgd") {
+					$trans->currency_type = "sgd";
 				}
 
 				$format = array(
@@ -1390,8 +1392,8 @@ class EclaimController extends \BaseController {
 				$res->claim_amount = $res->claim_amount;
 			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
 				$currency_symbol = "MYR";
-				$res->amount = $res->amount * $res->currency_value;
-				$res->claim_amount = $res->claim_amount * $res->currency_value;;
+				$res->amount = $res->amount;
+				$res->claim_amount = $res->claim_amount;
 			} else {
 				$currency_symbol = "SGD";
 			}
@@ -1937,9 +1939,9 @@ class EclaimController extends \BaseController {
 	      $res->amount = $res->amount;
 	      $res->claim_amount = $res->claim_amount;
 	    } else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
-	      $res->currency_type = "myr";
-	      $res->amount = $res->amount * $res->currency_value;
-	      $res->claim_amount = $res->claim_amount * $res->currency_value;;
+	      $res->currency_type = "sgd";
+	      // $res->amount = $res->amount / $res->currency_value;
+	      // $res->claim_amount = $res->claim_amount / $res->currency_value;;
 	    } else {
 	      $res->currency_type = "sgd";
 	    }
@@ -2098,6 +2100,8 @@ class EclaimController extends \BaseController {
 				if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->currency_type == "sgd" && $trans->default_currency == "myr") {
 					$total_amount = $total_amount * $trans->currency_amount;
 					$trans->currency_type = "myr";
+				} else if($trans->currency_type == "myr" && $trans->default_currency == "sgd"){
+					$trans->currency_type = "sgd";
 				}
 
 				$format = array(
@@ -2964,9 +2968,9 @@ public function getActivityOutNetworkTransactions( )
 				$res->amount = $res->amount;
 				$res->claim_amount = $res->claim_amount;
 			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
-				$res->default_currency = "MYR";
-				$res->amount = $res->amount * $res->currency_value;
-				$res->claim_amount = $res->claim_amount * $res->currency_value;;
+				$res->default_currency = "SGD";
+				$res->amount = $res->amount;
+				$res->claim_amount = $res->claim_amount;
 			} else {
 				$res->default_currency = "SGD";
 			}
@@ -3476,6 +3480,8 @@ public function getActivityInNetworkTransactions( )
 					$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					$trans->currency_type = "myr";
+				} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
+					$trans->currency_type = "sgd";
 				}
 
 
