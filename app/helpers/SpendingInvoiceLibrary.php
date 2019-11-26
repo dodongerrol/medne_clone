@@ -444,6 +444,8 @@ class SpendingInvoiceLibrary
 							$mednefits_credits = $mednefits_credits * $trans->currency_amount;
 							$treatment = $treatment * $trans->currency_amount;
 							$trans->currency_type = "myr";
+						} else {
+							$trans->currency_type = "sgd";
 						}
 
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);

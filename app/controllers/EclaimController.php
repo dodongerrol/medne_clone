@@ -2964,7 +2964,7 @@ public function getActivityOutNetworkTransactions( )
 				$res->amount = $res->amount;
 				$res->claim_amount = $res->claim_amount;
 			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
-				$res->default_currency = "MYR";
+				$res->default_currency = "SGD";
 				$res->amount = $res->amount;
 				$res->claim_amount = $res->claim_amount;
 			} else {
