@@ -1413,8 +1413,8 @@ class EclaimController extends \BaseController {
 				$res->claim_amount = $res->claim_amount;
 			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
 				$currency_symbol = "MYR";
-				$res->amount = $res->amount * $res->currency_value;
-				$res->claim_amount = $res->claim_amount * $res->currency_value;;
+				$res->amount = $res->amount;
+				$res->claim_amount = $res->claim_amount;
 			} else {
 				$currency_symbol = "SGD";
 			}
@@ -1971,9 +1971,9 @@ class EclaimController extends \BaseController {
 	      $res->amount = $res->amount;
 	      $res->claim_amount = $res->claim_amount;
 	    } else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
-	      $res->currency_type = "myr";
-	      $res->amount = $res->amount * $res->currency_value;
-	      $res->claim_amount = $res->claim_amount * $res->currency_value;;
+	      $res->currency_type = "sgd";
+	      // $res->amount = $res->amount / $res->currency_value;
+	      // $res->claim_amount = $res->claim_amount / $res->currency_value;;
 	    } else {
 	      $res->currency_type = "sgd";
 	    }
@@ -2999,8 +2999,8 @@ public function getActivityOutNetworkTransactions( )
 				$res->claim_amount = $res->claim_amount;
 			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
 				$res->default_currency = "MYR";
-				$res->amount = $res->amount * $res->currency_value;
-				$res->claim_amount = $res->claim_amount * $res->currency_value;;
+				$res->amount = $res->amount;
+				$res->claim_amount = $res->claim_amount;
 			} else {
 				$res->default_currency = "SGD";
 			}
