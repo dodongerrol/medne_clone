@@ -296,7 +296,7 @@ class Api_V1_TransactionController extends \BaseController
 						'cap_per_visit'        => $cap_amount,
 						'created_at'						 => $date_of_transaction,
 						'updated_at'						 => $date_of_transaction,
-						'default_currency'			=> $currency_data_type
+						'default_currency'			=> $user_curreny_type
 					);
 
 					if($clinic_peak_status) {
