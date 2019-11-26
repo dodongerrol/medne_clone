@@ -3510,6 +3510,8 @@ public function getActivityInNetworkTransactions( )
 					$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					$trans->currency_type = "myr";
+				} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
+					$trans->currency_type = "sgd";
 				}
 
 
