@@ -333,6 +333,10 @@ app.directive('activityPage', [
 							scope.getOutNetworkPagination( );
 						}
 					});
+
+					if( data.length == 0 ){
+						scope.getOutNetworkPagination( );
+					}
 				}
 
 				scope.filterActivityByDateEclaim = function( data ){
@@ -998,7 +1002,7 @@ app.directive('activityPage', [
 		    	} else {
 						// scope.searchActivity( activity_search );
 						scope.getAllocation( activity_search );
-						scope.searchActivityPagination( );
+						// scope.searchActivityPagination( );
 		    	}
 				}
 
