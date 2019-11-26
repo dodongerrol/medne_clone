@@ -185,15 +185,24 @@ class SpendingInvoiceLibrary
 	  } else {
 	  	$currency = 3.00;
 	  }
+		
 		if((int)$spending_invoice_day == 31) {
-			if((int)$spending_invoice_day > (int)$day) {
-				$statement_date = date('Y-m-'.$day, strtotime('+1 month', strtotime($start)));
-			} else {
-				$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
-			}
-		} else {
-			$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
-		}
+    	if($customer->invoice_step == "before") {
+    		if((int)$spending_invoice_day > (int)$day) {
+      		$statement_date = date('Y-m-'.$day, strtotime('-1 month', strtotime($start)));
+      	} else {
+      		$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('-1 month', strtotime($start)));
+      	}
+    	} else {
+      	if((int)$spending_invoice_day > (int)$day) {
+      		$statement_date = date('Y-m-'.$day, strtotime('+1 month', strtotime($start)));
+      	} else {
+      		$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+      	}
+    	}
+    } else {
+      $statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+    }
 
 		$statement_due = date('Y-m-d', strtotime('+15 days', strtotime($statement_date)));
 		$statement_data = array(
