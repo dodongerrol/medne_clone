@@ -31,13 +31,6 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     }else{
       $('body').removeClass('bg-color-home');
     }
-
-    Appcues.page( );
-    Appcues.track();
-    Appcues.identify(
-      "57952", // unique, required
-      {}
-    );
     
   });
 

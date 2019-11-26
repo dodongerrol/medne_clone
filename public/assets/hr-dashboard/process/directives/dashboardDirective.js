@@ -8,6 +8,13 @@ app.directive('dashboardDirective', [
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log("dashboardDirective Runnning !");
+				Appcues.page( );
+		    Appcues.track();
+		    Appcues.identify(
+		      "57952", // unique, required
+		      {}
+		    );
+				
 				scope.options = {};
 				scope.progress = {};
 				scope.spendingAccountType = 0;

@@ -11,6 +11,11 @@ app.directive('activityPage', [
 				console.log('running activityPage');
 
 				Appcues.page( );
+		    Appcues.track();
+		    Appcues.identify(
+		      "57952", // unique, required
+		      {}
+		    );
 				
 				scope.inNetWorkTable = true;
 				scope.outNetWorkTable = false;

@@ -14,6 +14,11 @@ app.directive("employeeOverviewDirective", [
         console.log("employeeOverviewDirective Runnning !");
 
         Appcues.page( );
+        Appcues.track();
+        Appcues.identify(
+          "57952", // unique, required
+          {}
+        );
 
         scope.employees = {};
         scope.options = {};
