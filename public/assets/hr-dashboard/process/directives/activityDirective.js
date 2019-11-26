@@ -9,13 +9,6 @@ app.directive('activityPage', [
 			scope: true,
 			link: function link(scope, element, attributeSet) {
 				console.log('running activityPage');
-
-				Appcues.page( );
-		    Appcues.track();
-		    Appcues.identify(
-		      "57952", // unique, required
-		      {}
-		    );
 				
 				scope.inNetWorkTable = true;
 				scope.outNetWorkTable = false;
