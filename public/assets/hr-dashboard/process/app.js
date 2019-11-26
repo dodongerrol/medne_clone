@@ -15,6 +15,12 @@ function ($rootScope, $state, $stateParams, $templateCache) {
       $templateCache.removeAll();
    });
 
+  Appcues.track();
+  Appcues.identify(
+    "57952", // unique, required
+    {}
+  );
+
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
     window.ga('create', 'UA-78188906-2', 'auto');
     window.ga('set', 'page', toState.url);
@@ -31,7 +37,8 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     }else{
       $('body').removeClass('bg-color-home');
     }
-    
+
+    Appcues.page( );
   });
 
 }]);
