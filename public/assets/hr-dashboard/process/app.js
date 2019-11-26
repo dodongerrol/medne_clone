@@ -22,9 +22,7 @@ function ($rootScope, $state, $stateParams, $templateCache) {
   );
 
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-    window.ga('create', 'UA-78188906-2', 'auto');
-    window.ga('set', 'page', toState.url);
-    window.ga('send', 'pageview');
+    
     console.log( toState );
     if( toState.url != '/e-claim' ){
       $('.download-receipt-message').hide();
@@ -40,6 +38,10 @@ function ($rootScope, $state, $stateParams, $templateCache) {
 
     Appcues.page( );
     console.log('new page loaded!.');
+
+    window.ga('create', 'UA-78188906-2', 'auto');
+    window.ga('set', 'page', toState.url);
+    window.ga('send', 'pageview');
   });
 
 }]);
