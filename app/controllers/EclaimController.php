@@ -1311,6 +1311,8 @@ class EclaimController extends \BaseController {
 					$treatment = $treatment * $trans->currency_amount;
 					$trans->currency_type = "myr";
 					// $consultation_fees = $consultation_fees * $trans->currency_amount;
+				} else if($trans->currency_type == "myr" && $trans->default_currency == "sgd") {
+					$trans->currency_type = "sgd";
 				}
 
 				$format = array(
@@ -2132,6 +2134,8 @@ class EclaimController extends \BaseController {
 				if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->currency_type == "sgd" && $trans->default_currency == "myr") {
 					$total_amount = $total_amount * $trans->currency_amount;
 					$trans->currency_type = "myr";
+				} else if($trans->currency_type == "myr" && $trans->default_currency == "sgd"){
+					$trans->currency_type = "sgd";
 				}
 
 				$format = array(

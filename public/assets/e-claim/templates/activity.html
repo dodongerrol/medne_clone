@@ -261,7 +261,7 @@
 								<span ng-bind="list.amount">22.00</span>
 							</td>
 							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
-								<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+								<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 								<span ng-bind="list.procedure_cost">Not Available</span>
 							</td>
 							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
@@ -394,7 +394,7 @@
 											</div>
 											<div class="desc-wrapper">
 												<p>
-													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span class="color-gray2" ng-bind="list.cap_per_visit"></span>
 												</p>
 											</div>
@@ -405,7 +405,7 @@
 											</div>
 											<div class="desc-wrapper">
 												<p>
-													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span class="color-gray2" ng-bind="list.paid_by_credits"></span>
 												</p>
 											</div>
@@ -416,7 +416,7 @@
 											</div>
 											<div class="desc-wrapper">
 												<p>
-													<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span class="color-gray2" ng-bind="list.paid_by_cash"></span>
 												</p>
 											</div>
