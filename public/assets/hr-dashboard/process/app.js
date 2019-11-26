@@ -15,8 +15,10 @@ function ($rootScope, $state, $stateParams, $templateCache) {
       $templateCache.removeAll();
    });
 
-  Appcues.track();
-  Appcues.identify(
+  console.log( window.Appcues );
+
+  window.Appcues.track();
+  window.Appcues.identify(
     "57952", // unique, required
     {}
   );
@@ -36,7 +38,7 @@ function ($rootScope, $state, $stateParams, $templateCache) {
       $('body').removeClass('bg-color-home');
     }
 
-    Appcues.page( );
+    window.Appcues.page( );
     console.log('new page loaded!.');
 
     window.ga('create', 'UA-78188906-2', 'auto');
