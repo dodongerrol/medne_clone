@@ -7863,7 +7863,7 @@ ul.typeahead li a.dropdown-item
 .gp-cap-table-wrapper table th,
 .gp-cap-table-wrapper table td {
 	border: 1px solid #d0d0d0;
-	padding: 15px;
+	padding: 15px 10px;
 }
 
 .gp-cap-table-wrapper table th {
@@ -7924,6 +7924,10 @@ ul.typeahead li a.dropdown-item
 .cap-per-visit-wrapper .page-scroll-container >div span {
 	margin-right: 10px;
 	cursor: initial;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div span {
+	cursor: pointer;
 }
 
 .cap-per-visit-wrapper .page-scroll-container >div span:last-child {
