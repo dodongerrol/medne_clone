@@ -206,4 +206,11 @@
 	<!-- Factories -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/factories/dashboardFactory.js?_={{ $date->format('U') }}"></script>
 
+	<script type="text/javascript">
+		window.Appcues.identify(
+	    "57952", // unique, required
+	    {}
+	  );
+	</script>
+
 </html>
