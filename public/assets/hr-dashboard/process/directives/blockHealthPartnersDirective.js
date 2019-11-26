@@ -10,6 +10,9 @@ app.directive('blockHealthPartnersDirective', [
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log("blockHealthPartnersDirective Runnning !");
+
+        Appcues.page( );
+
 				scope.clinic_blocked_search_trap = false;
 				scope.clinic_opened_search_trap = false;
 				scope.settings_active = 1;
