@@ -1,8 +1,10 @@
 app.directive('capPerVisitDirective', [
+	'$http',
+	'serverUrl',
 	'$state',
 	'hrSettings',
 	'dashboardFactory',
-	function directive($state,hrSettings,dashboardFactory) {
+	function directive($http,serverUrl,$state,hrSettings,dashboardFactory) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -29,30 +31,41 @@ app.directive('capPerVisitDirective', [
 						boolInput: true
 					}
 				]*/
-
-				scope.gpCapPerVisitInfo = [
-					{ id : 4, name : 'Filbert Tan', cap : 30.00 },
-					{ id : 1, name : 'Sarah Lim', cap : 40.00 },
-					{ id : 5, name : 'Calvin Lee', cap : 50.00 },
-					{ id : 3, name : 'Kryss Kynn', cap : 20.00 },
-					{ id : 9, name : 'Jeamar Libres', cap : 10.00 },
-					{ id : 9, name : 'Kintoy Salado', cap : 0 },
-				];
+				//http://medicloud.local/hr/employee_cap_per_visit_list?per_page=5
+				// scope.gpCapPerVisitInfo = [
+				// 	{ id : 4, name : 'Filbert Tan', cap : 30.00 },
+				// 	{ id : 1, name : 'Sarah Lim', cap : 40.00 },
+				// 	{ id : 5, name : 'Calvin Lee', cap : 50.00 },
+				// 	{ id : 3, name : 'Kryss Kynn', cap : 20.00 },
+				// 	{ id : 9, name : 'Jeamar Libres', cap : 10.00 },
+				// 	{ id : 9, name : 'Kintoy Salado', cap : 0 },
+				// ];
 				scope.indexInput = [];
 				// scope.capPerVisitNoValue[index] = false;
 
 				// Count total numbers, init
-				for (let i = 0; i < scope.gpCapPerVisitInfo.length; i++) {
-					scope.showDataText[i] = true;
-					scope.showInputText[i] = false;
-					console.log(scope.gpCapPerVisitInfo[i].cap);
-					scope.capPerVisitNoValue[i] = false;
+				
 
-					if (scope.gpCapPerVisitInfo[i].cap == 0) {
-						scope.capPerVisitNoValue[i] = true;
-						scope.showDataText[i] = false;
-						scope.showInputText[i] = false;
-					} 
+				scope.getGpCapPerVisit = function () {
+					$http.get(serverUrl.url + "/hr/employee_cap_per_visit_list?per_page=5&page=1")
+            .success(function(response) {
+              console.log(response);
+              scope.gpCapPerVisitInfo = response.data;
+              
+              for (let i = 0; i < scope.gpCapPerVisitInfo.length; i++) {
+								scope.showDataText[i] = true;
+								scope.showInputText[i] = false;
+								console.log(scope.gpCapPerVisitInfo[i].cap);
+								scope.capPerVisitNoValue[i] = false;
+
+								if (scope.gpCapPerVisitInfo[i].cap == 0) {
+									scope.capPerVisitNoValue[i] = true;
+									scope.showDataText[i] = false;
+									scope.showInputText[i] = false;
+								} 
+							}
+            });
+     				console.log('get cap per visit list');
 				}
 
 				scope.gpCapAddFile = function ( file ) {
@@ -77,7 +90,7 @@ app.directive('capPerVisitDirective', [
 
 				scope.getTableCell = function ( index ) {
 					data = scope.gpCapPerVisitInfo;
-					scope.not_applicable[index] = data[5].cap;
+					// scope.not_applicable[index] = data[5].cap;
 					
 				}
 
@@ -105,8 +118,8 @@ app.directive('capPerVisitDirective', [
 					angular.forEach( scope.gpCapPerVisitInfo , function(value,key) {
 						console.log( value );
 						var cap = {
-							employee_id : value.id,
-		          cap_amount : value.cap,
+							employee_id : value.user_id,
+		          cap_amount : value.cap_amount,
 		        }
 		        console.log(cap);
 						scope.showDataText[key] = true;
@@ -120,6 +133,7 @@ app.directive('capPerVisitDirective', [
 		        
 						hrSettings.updateCapPerVisit( cap )
             .then(function(response){
+            	console.log(response);
               if( response.data.status ){
                 swal( 'Success!', response.data.message, 'success' );
               }else{
@@ -141,6 +155,7 @@ app.directive('capPerVisitDirective', [
        
         scope.onLoad = function( ){
         	scope.getTableCell();
+        	scope.getGpCapPerVisit();
         	data = scope.gpCapPerVisitInfo;
         	console.log(data);        
         }
