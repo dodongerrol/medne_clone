@@ -1057,7 +1057,7 @@ class EmployeeController extends \BaseController {
                             ->whereNotIn('ClinicID', $new_array)
                             ->where('Name', 'like', '%'.$input['search'].'%')
                             ->where('Active', 1)
-                            ->whereIn('currency_type', ["company", "employee"])
+                            ->whereIn('currency_type', ["sg", "myr"])
                             ->orderBy('Created_on', 'desc')
                             ->get();
                   } else {
@@ -1075,7 +1075,7 @@ class EmployeeController extends \BaseController {
                     $clinics = DB::table('clinic')
                             ->where('Name', 'like', '%'.$input['search'].'%')
                             ->where('Active', 1)
-                            ->whereIn('currency_type', ["company", "employee"])
+                            ->whereIn('currency_type', ["sg", "myr"])
                             ->orderBy('Created_on', 'desc')
                             ->get();
                   } else {
@@ -1165,14 +1165,14 @@ class EmployeeController extends \BaseController {
                         ->whereNotIn('ClinicID', $new_array)
                         ->where('Name', 'like', '%'.$input['search'].'%')
                         ->where('Active', 1)
-                        ->whereIn('currency_type', ["company", "employee"])
+                        ->whereIn('currency_type', ["sg", "myr"])
                         ->orderBy('Created_on', 'desc')
                         ->get();
             } else {
                 $clinics = DB::table('clinic')
                         ->where('Name', 'like', '%'.$input['search'].'%')
                         ->where('Active', 1)
-                        ->whereIn('currency_type', ["company", "employee"])
+                        ->whereIn('currency_type', ["sg", "myr"])
                         ->orderBy('Created_on', 'desc')
                         ->get();
             }
@@ -1473,8 +1473,8 @@ class EmployeeController extends \BaseController {
         $admin_id = Session::get('admin-session-id');
         $account_type = "employee";
 
-        $check = $customer = DB::table('customer_buy_start')
-                    ->where('customer_buy_start_id', $customer_id)
+        $check = $customer = DB::table('user')
+                    ->where('UserID', $customer_id)
                     ->first();
         if(!$customer) {
             return array('status' => false, 'message' => 'Customer/Company does not exist.');
