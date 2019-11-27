@@ -52,6 +52,7 @@
 				scope.receipts_approved = [];
 				scope.receipts_rejected = [];
 				scope.receipts_arr = [];
+				scope.eclaimCurrencyType = localStorage.getItem("currency_type");
 				scope.statementHide = true;
 				scope.empStatementShow = false;
 
@@ -289,11 +290,16 @@
 				}
 
 				scope.updateStatus = function( list, num ){
+					console.log( list );
 					if( num == 1 ){
 						list.showReasonInput = false;
 						list.showRemarksInput = true;
 						if( !list.claim_amount || list.claim_amount == 0 ){
-							list.approve_claim_amount = list.cap_amount;
+							if( !list.cap_amount || list.cap_amount == 0 || list.amount < list.cap_amount ){
+								list.approve_claim_amount = list.amount;
+							}else{
+								list.approve_claim_amount = list.cap_amount;
+							}
 						}else{
 							list.approve_claim_amount = list.claim_amount;
 						}
@@ -350,7 +356,7 @@
 								list.approved_status = true;
 								list.approved_date = moment().format( 'DD MMMM YYYY hh:mm A' );
 								list.rejected_date = null;
-								list.claim_amount = list.claim_amount == 0 && list.cap_amount == 0 ? list.amount : list.approve_claim_amount;
+								list.claim_amount = parseFloat(list.approve_claim_amount).toFixed(2);
 							}
 							
 							if( response.data.status == true ){

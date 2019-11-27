@@ -148,6 +148,7 @@ app.directive('teamBenefitsTierDirective', [
 							console.log( response );
 							if( response.data.status ){
 								scope.tier_arr = response.data.data;
+								scope.tier_arr_currency_type = response.data.currency_type;
 								if( scope.tier_arr.length > 0 ){
 									$('.account-tier-container').fadeIn();
 								}else{

@@ -349,6 +349,10 @@ span.arrow-right {
   color: #FFF;
 }
 
+.currency-type {
+  text-transform: uppercase;
+}
+
 @media only screen and (max-width : 1200px) {
   .table-successfulTransaction th,
   .table-successfulTransaction td{

@@ -116,7 +116,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         }
 
         public function createUserFromCorporate($data){
-
                 $this->Name = $data['Name'];
                 $this->Password = $data['Password'];
                 $this->Email = $data['Email'];
@@ -144,13 +143,17 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 if($this->save()){
                     $insertedId = $this->id;
                     $wallet = new Wallet( );
-                    $data = array(
+                    $data_wallet = array(
                         'UserID'        => $insertedId,
                         'balance'       => 0,
                         'created_at'    => Carbon::now(),
                         'updated_at'    => Carbon::now()
                     );
-                    $wallet->createWallet($data);
+
+                    if(isset($data['currency_type']) || !empty($data['currency_type'])) {
+                        $data_wallet['currency_type'] = $data['currency_type'];
+                    }
+                    $wallet->createWallet($data_wallet);
                     return $insertedId;
                 }else{
                     return false;

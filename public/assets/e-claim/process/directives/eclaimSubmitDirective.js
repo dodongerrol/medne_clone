@@ -14,6 +14,7 @@ app.directive('eclaimSubmitDirective', [
 				scope.step_active = 1;
 				scope.eclaim = {};
 				scope.eclaim.selectedDayTime = 'AM';
+				scope.eclaim.selectedCurrencyType = 'SGD';
 				scope.receipts = [];
 				scope.uploading_files = [];
 				scope.submitting = false;
@@ -165,12 +166,32 @@ app.directive('eclaimSubmitDirective', [
 					}
 				}
 
+				scope.showCurrencyDropdown = function() {
+					
+					console.log('sadasdsa');
+
+					// if ( scope.currency_myr === 'sgd' ) {
+						$('.currency-type-selector').toggle();
+					// }
+					
+				}
+
+				scope.selectCurrencyType = function ( currencyTime ) {
+					console.log('currency type');
+					var temp = currencyTime;
+
+					scope.eclaim.selectedCurrencyType = currencyTime;
+					$('.currency-type-selector').hide();
+					console.log(temp);
+
+				}
+
 				scope.selectMember = function( member ) {
 					scope.eclaim.member_selected = member;
 				}
 
 				scope.setVisitDate = function( date ) {
-					scope.eclaim.visit_date = moment(date).format('MMMM DD, YYYY');
+					scope.eclaim.visit_date = moment(date).format('DD MMMM, YYYY');
 				}
 
 				scope.showToast = function( text ) {
@@ -293,7 +314,8 @@ app.directive('eclaimSubmitDirective', [
 						amount: scope.eclaim.claim_amount,
 						date: moment(scope.eclaim.visit_date).format('YYYY-MM-DD'),
 						time: scope.eclaim.visit_time + '' + scope.eclaim.selectedDayTime,
-						receipts: scope.receipts
+						receipts: scope.receipts,
+						currency_type: scope.eclaim.selectedCurrencyType,
 					}
 
 					console.log(data);
@@ -398,6 +420,12 @@ app.directive('eclaimSubmitDirective', [
 								scope.total_balance = (response.data.total_allocation.indexOf(",") >= 0) ? response.data.total_allocation.replace(",", "") : response.data.total_allocation;
 								// scope.total_balance = parseInt(scope.total_balance);
 								// console.log(scope.total_balance);
+								scope.currency_myr = response.data.currency_type;
+								console.log(scope.currency_myr);
+
+								if (scope.currency_myr === 'myr') {
+									scope.eclaim.selectedCurrencyType = scope.currency_myr;
+								}
 							}
 
 							scope.hideIntroLoader();
@@ -416,7 +444,7 @@ app.directive('eclaimSubmitDirective', [
 				scope.initializeDatepickers = function(){
 					setTimeout(function() {
 	        	var visit_date_dp =  $('#visitDateInput').datetimepicker({
-				    	format : 'MMMM DD, YYYY',
+				    	format : 'DD MMMM, YYYY',
 				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
 				    	maxDate : new Date( moment( ) ),

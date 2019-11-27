@@ -1687,7 +1687,11 @@ function getPrcedureDetails() {
       $("#service-price").val(data.Price);
       stat_price = data.Price;
       $("#service-price-search").val(data.Price);
-      $("#service-price-reserve").val(data.Price);
+      var currency_type = localStorage.getItem('currency_type');
+      console.log(currency_type);
+      var str_price = data.Price;
+      var new_price = str_price.replace('S$', currency_type + ' ');
+      $("#service-price-reserve").val(new_price);
 
     });
 

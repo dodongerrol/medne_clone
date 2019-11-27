@@ -116,7 +116,7 @@
 					<td>{{ $data['claim_date'] }}</td>
 					<td>{{ $data['service'] }}</td>
 					<td>{{ $data['merchant'] }}</td>
-					<td>S$ {{ $data['amount'] }}</td>
+					<td>{{ strtoupper($data['currency_type']) }} {{ $data['amount'] }}</td>
 					<td>{{ $data['member'] }}</td>
 				</tr>
 				@endforeach

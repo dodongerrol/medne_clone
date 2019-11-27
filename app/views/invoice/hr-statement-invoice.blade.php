@@ -187,7 +187,7 @@
             @endif
             <p class="color-black no-margin">
               <label class="color-black3 font-15 font-medium2 weight-700 line-height-1">Amount Due (SGD):</label>
-              <span>$<span>{{ $total_due }}</span></span>
+              <span>{{ strtoupper($currency_type) }} <span>{{ $total_due }}</span></span>
             </p>
           </div>
         </div>
@@ -198,20 +198,20 @@
           </div>
           <div class="col-md-12">
             <div class="charges-row">
-              <p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right">S$ {{ $statement_in_network_amount }}</span></p>
+              <p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right">{{ strtoupper($currency_type) }} {{ $statement_in_network_amount }}</span></p>
               <p class="weight-700 no-margin" style="color:#777;padding-bottom: 15px;font-size: 14px;">Statement for {{ $statement_start_date }} - {{ $statement_end_date }}</p>
               @if($lite_plan)
-              <p class="color-black3 weight-700 no-margin" style="padding: 0 0 0 50px;">Consultation Spent - General Practitioner <span class="pull-right">S$ {{ $total_consultation }}</span></p>
+              <p class="color-black3 weight-700 no-margin" style="padding: 0 0 0 50px;">Consultation Spent - General Practitioner <span class="pull-right">{{ strtoupper($currency_type) }} {{ $total_consultation }}</span></p>
               @endif
             </div>
             <div class="charges-row">
-              <p class="color-blue-custom2 weight-700 no-margin">Sub Total <span class="pull-right">S$ {{ $sub_total }}</span></p>
+              <p class="color-blue-custom2 weight-700 no-margin">Sub Total <span class="pull-right">{{ strtoupper($currency_type) }} {{ $sub_total }}</span></p>
             </div>
           </div>
           <div class="col-md-12 text-right" style="position: relative;text-align: right;height: 70px;">
             <div style="position: absolute;right: 15px;top: 0;">
               <div class="total-due">
-                <p class="font-medium2 weight-700 no-margin">Total Due <span class="pull-right">S$ {{ $total_due }}</span></p>
+                <p class="font-medium2 weight-700 no-margin">Total Due <span class="pull-right">{{ strtoupper($currency_type) }} {{ $total_due }}</span></p>
               </div>
             </div>
           </div>
@@ -225,6 +225,7 @@
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Bank: UOB</p>
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Account Name: Medicloud Pte Ltd</p>
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Account Number: 3743069399</p>
+            <p>Please send all payment advice to finance@mednefits.com</p>
             @if($payment_remarks)
             <p class="color-gray font-14 no-margin weight-700 line-height-1">Note: {{ $payment_remarks }}</p>
             @endif

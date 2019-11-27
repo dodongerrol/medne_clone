@@ -131,25 +131,21 @@
 							<td class="medical-details-container">
 								<div class="medical-details">
 									<strong>Allocation:</strong>
-									<span ng-if="emp.spending_account.medical.credits_allocation != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
-									<span ng-if="emp.spending_account.medical.credits_allocation == 'UNLIMITED'"><span ng-bind="emp.spending_account.medical.credits_allocation"></span></span>
+									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
 								</div>
 								<div class="medical-details">
 									<strong>Balance:</strong>
-									<span ng-if="emp.spending_account.medical.balance != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
-									<span ng-if="emp.spending_account.medical.balance == 'UNLIMITED'"><span ng-bind="emp.spending_account.medical.balance"></span></span>
+									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
 								</div>
 							</td>
 							<td class="wellness-details-container">
 								<div class="wellness-details">
 									<strong>Allocation:</strong>
-									<span ng-if="emp.spending_account.wellness.credits_allocation_wellness != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
-									<span ng-if="emp.spending_account.wellness.credits_allocation_wellness == 'UNLIMITED'"><span ng-bind="emp.spending_account.wellness.credits_allocation_wellness"></span></span>
+									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
 								</div>
 								<div class="wellness-details">
 									<strong>Balance:</strong>
-									<span ng-if="emp.spending_account.wellness.balance != 'UNLIMITED'">S$ <span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
-									<span ng-if="emp.spending_account.wellness.balance == 'UNLIMITED'"><span ng-bind="emp.spending_account.wellness.balance"></span></span>
+									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
 								</div>
 							</td>
 						</tr>
@@ -230,8 +226,10 @@
 					<div class="employee-cap" ng-if="selectedEmployee.gp_cap_per_visit != null && selectedEmployee.plan_tier == null">
 						<p class="font-helvetica-medium">Cap</p><span></span>
 						<strong>GP Cap per Visit</strong>
-						<span>S$<span ng-bind="selectedEmployee.gp_cap_per_visit">50</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.gp_cap_per_visit">50</span></span>
 					</div>
+
+					<!-- Plan tier no currency type. balikan -->
 					<div ng-if="selectedEmployee.plan_tier != null" class="employee-tier-wrapper" >
 						<div ng-click="toggleTierDetails()" class="employee-tier-container ">
 							<strong class="font-helvetica-medium">Tier</strong>
@@ -242,15 +240,15 @@
 						<div ng-if="isTierDetailsShow" class="tier-dropdown-details">
 							<div class="annual-cap">
 								<span>Medical annual cap:</span>
-								<span>S$ <span ng-bind="selectedEmployee.plan_tier.medical_annual_cap">1000</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.plan_tier.medical_annual_cap">1000</span></span>
 							</div>
 							<div class="annual-cap">
 								<span>Wellness annual cap:</span>
-								<span>S$ <span ng-bind="selectedEmployee.plan_tier.wellness_annual_cap">300</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.plan_tier.wellness_annual_cap">300</span></span>
 							</div>
 							<div class="gp-cap">
 								<span>GP Cap per visit:</span>
-								<span>S$ <span ng-bind="selectedEmployee.plan_tier.gp_cap_per_visit">50</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.plan_tier.gp_cap_per_visit">50</span></span>
 							</div>
 						</div>
 					</div>
@@ -268,7 +266,7 @@
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.medical.credits_allocation != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Allocation</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
 					</div>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.medical.credits_allocation == 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Allocation</strong>
@@ -277,24 +275,24 @@
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleMedicalUsage()" class="usage-container">
 							<strong class="font-helvetica-medium">Usage</strong>
-							<span>S$ <span ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication ) | number : 2">700.00</span></span>
+							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication ) | number : 2">700.00</span></span>
 						</div>
 						<i ng-if="!isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-right" aria-hidden="true"></i>
 						<i ng-if="isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-down" aria-hidden="true"></i>
 						<div ng-if="isMedicalUsageShow" class="usage-dropdown-details">
 							<div class="usage-details">
 								<span>Spent:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.credits_spent | number : 2">650</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.credits_spent | number : 2">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication | number : 2">50</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication | number : 2">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.medical.balance != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.medical.balance | number: 2">300.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.balance | number: 2">300.00</span></span>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.medical.balance == 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
@@ -306,7 +304,7 @@
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.wellness.credits_allocation_wellness != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Allocation</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
 					</div>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.wellness.credits_allocation_wellness == 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Allocation</strong>
@@ -315,24 +313,24 @@
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleWellnessUsage()" class="usage-container">
 							<strong class="font-helvetica-medium">Usage</strong>
-							<span>S$ <span ng-bind="getUsage( selectedEmployee.spending_account.wellness.credits_spent_wellness, selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness ) | number : 2">700.00</span></span>
+							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="getUsage( selectedEmployee.spending_account.wellness.credits_spent_wellness, selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness ) | number : 2">700.00</span></span>
 						</div>
 						<i ng-if="!isWellnessUsageShow" ng-click="toggleWellnessUsage()" class="fa fa-angle-right" aria-hidden="true"></i>
 						<i ng-if="isWellnessUsageShow" ng-click="toggleWellnessUsage()" class="fa fa-angle-down" aria-hidden="true"></i>
 						<div ng-if="isWellnessUsageShow" class="usage-dropdown-details">
 							<div class="usage-details">
 								<span>Spent:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness | number: 2">650</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness | number: 2">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
-								<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness | number: 2">50</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness | number: 2">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.wellness.balance != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span>S$ <span ng-bind="selectedEmployee.spending_account.wellness.balance | number: 2">380.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.balance | number: 2">380.00</span></span>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.wellness.balance == 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
@@ -497,28 +495,28 @@
 								<div class="spending-account-details">
 								<div class="inital-allocation-container weight-700">
 									<strong class="font-helvetica-medium">Initial Allocation</strong>
-									<span>S$ <span ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
+									<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
 								</div>
 								<div class="pro-rated-container weight-700">
 									<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-									<span class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
+									<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
 								</div>
 								<div class="current-usage-container weight-700">
 									<strong class="font-helvetica-medium">Current Usage</strong>
-									<span ng-if="health_spending_summary.medical.exceed == false" class="on-track">S$ <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
-									<span ng-if="health_spending_summary.medical.exceed == true" class="exceed">S$ <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+									<span ng-if="health_spending_summary.medical.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+									<span ng-if="health_spending_summary.medical.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
 								</div>
 								<div class="spent-container weight-700">
 									Spent
-									<span>S$ <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
+									<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
 								</div>
 								<div class="pending-claim-container weight-700">
 									Pending claim
-									<span>S$ <span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
+									<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
 								</div>
 								<div class="spending-balance-container weight-700">
 									<strong class="font-helvetica-medium">Balance</strong>
-									<span class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.medical.balance">250.00</span></span>
+									<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.balance">250.00</span></span>
 								</div>
 							</div>
 								<span ng-if="health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
@@ -530,28 +528,28 @@
 								<div class="spending-account-details">
 									<div class="inital-allocation-container weight-700">
 										<strong class="font-helvetica-medium">Initial Allocation</strong>
-										<span>S$ <span ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
 									</div>
 									<div class="pro-rated-container weight-700">
 										<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-										<span class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
+										<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
 									</div>
 									<div class="current-usage-container weight-700">
 										<strong class="font-helvetica-medium">Current Usage</strong>
-										<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track">S$ <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
-										<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed">S$ <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+										<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+										<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
 									</div>
 									<div class="spent-container weight-700">
 										Spent
-										<span>S$ <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 									</div>
 									<div class="pending-claim-container weight-700">
 										Pending claim
-										<span>S$ <span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
 									</div>
 									<div class="spending-balance-container weight-700">
 										<strong class="font-helvetica-medium">Balance</strong>
-										<span class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.wellness.balance">250.00</span></span>
+										<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.balance">250.00</span></span>
 									</div>
 								</div>
 								<span ng-if="health_spending_summary.wellness.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
@@ -576,16 +574,18 @@
 			<p class="text-center weight-700" ng-bind="selectedEmployee.name">Calvin Lee</p>
 			<h1 class="text-center weight-700 font-helvetica-medium">Add a dependent</h1>
 			<p class="text-center weight-700" style="margin-bottom: 50px;">
-			<span ng-if="selectedEmployee.plan_tier">
-				<span><span ng-bind="selectedEmployee.plan_tier.plan_tier_name">1</span> :</span> 
-				DEPENDENT 
-				<span ng-bind="addActiveDependent_index">1</span> OF <span ng-bind="selectedEmployee.plan_tier.dependent_head_count">1</span>
-			</span>
-			<span ng-if="!selectedEmployee.plan_tier"> 
-				<span></span>
-				DEPENDENT 
-				<span ng-bind="addActiveDependent_index">1</span> OF <span ng-bind="dependents.total_number_of_seats">1</span></p>
-			</span>
+				<span ng-if="selectedEmployee.plan_tier">
+					<span><span ng-bind="selectedEmployee.plan_tier.plan_tier_name">1</span> :</span> 
+					DEPENDENT 
+					<span ng-bind="addActiveDependent_index">1</span> OF <span ng-bind="selectedEmployee.plan_tier.dependent_head_count">1</span>
+				</span>
+				<span ng-if="!selectedEmployee.plan_tier"> 
+					<span></span>
+					DEPENDENT 
+					<span ng-bind="addActiveDependent_index">1</span> OF 
+					<span ng-bind="dependents.total_number_of_seats">1</span>
+				</span>
+			</p>
 			<form>
 				<div class="employee-input-wrapper">
 					<label for="fname">Full Name</label>
@@ -669,10 +669,22 @@
 				<span class="review-prepare-template-text" style="font-size: 10px;line-height: 1;">*Note: Once this employee is removed, the occupied seat will move to a vacant seat.</span>
 				<span class="review-checkmark"></span>
 			</label>
-			<label ng-if="refund_status == true" class="review-container">
+		<!-- 	<label ng-if="refund_status == true" class="review-container">
 				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
 				<span class="review-prepare-template-text">Please remove the seat completely.</span>
-				<!-- <span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span> -->
+				<span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
+				<span class="review-checkmark"></span>
+			</label> -->
+			<label ng-if="refund_status == true && hideLitePlanCheckbox" class="review-container">
+				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
+				<!-- <span class="review-prepare-template-text">Please remove the seat completely.</span> -->
+				<span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
+				<span class="review-checkmark"></span>
+			</label>
+
+			<label class="review-container" ng-if="litePlanCheckbox">
+				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
+				<span class="review-prepare-template-text">Please remove the seat completely.</span>
 				<span class="review-checkmark"></span>
 			</label>
 		</div>
@@ -824,33 +836,33 @@
 			<div class="spending-account-details">
 				<div class="inital-allocation-container weight-700">
 					<strong class="font-helvetica-medium">Initial Allocation</strong>
-					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="health_spending_summary.medical.initial_allocation | number : 2">1,000.00</span></span>
-					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="health_spending_summary.wellness.initial_allocation | number : 2">1,000.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.initial_allocation | number : 2">1,000.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.initial_allocation | number : 2">1,000.00</span></span>
 				</div>
 				<div class="pro-rated-container weight-700">
 					<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-					<span ng-if="health_spending_summary.medical" class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
-					<span ng-if="health_spending_summary.wellness" class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
+					<span ng-if="health_spending_summary.medical" class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
+					<span ng-if="health_spending_summary.wellness" class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
 				</div>
 				<div class="current-usage-container weight-700">
 					<strong class="font-helvetica-medium">Current Usage</strong>
-					<span ng-if="health_spending_summary.medical" class="on-track">S$ <span ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
-					<span ng-if="health_spending_summary.wellness" class="on-track">S$ <span ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.medical" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.wellness" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
 				</div>
 				<div class="spent-container weight-700">
 					Spent
-					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
-					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 				</div>
 				<div class="pending-claim-container weight-700">
 					Pending claim
-					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="health_spending_summary.medical.pending_e_claim | number : 2">50.00</span></span>
-					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="health_spending_summary.wellness.pending_e_claim | number : 2">50.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pending_e_claim | number : 2">50.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pending_e_claim | number : 2">50.00</span></span>
 				</div>
 				<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
 					<strong class="font-helvetica-medium">Balance</strong>
-					<span ng-if="health_spending_summary.medical">S$ <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
-					<span ng-if="health_spending_summary.wellness">S$ <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
 				</div>
 			</div>
 			<span ng-if="health_spending_summary.medical && health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
@@ -865,28 +877,28 @@
 				<div class="spending-account-details">
 				<div class="inital-allocation-container weight-700">
 					<strong class="font-helvetica-medium">Initial Allocation</strong>
-					<span>S$ <span ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
+					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
 				</div>
 				<div class="pro-rated-container weight-700">
 					<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-					<span class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
+					<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
 				</div>
 				<div class="current-usage-container weight-700">
 					<strong class="font-helvetica-medium">Current Usage</strong>
-					<span ng-if="health_spending_summary.medical.exceed == false" class="on-track">S$ <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
-					<span ng-if="health_spending_summary.medical.exceed == true" class="exceed">S$ <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+					<span ng-if="health_spending_summary.medical.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+					<span ng-if="health_spending_summary.medical.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
 				</div>
 				<div class="spent-container weight-700">
 					Spent
-					<span>S$ <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
+					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
 				</div>
 				<div class="pending-claim-container weight-700">
 					Pending claim
-					<span>S$ <span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
+					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
 				</div>
 				<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
 					<strong class="font-helvetica-medium">Balance</strong>
-					<span>S$ <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
+					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
 				</div>
 			</div>
 				<span ng-if="health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
@@ -898,28 +910,28 @@
 				<div class="spending-account-details">
 					<div class="inital-allocation-container weight-700">
 						<strong class="font-helvetica-medium">Initial Allocation</strong>
-						<span>S$ <span ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
 					</div>
 					<div class="pro-rated-container weight-700">
 						<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-						<span class="font-helvetica-medium">S$ <span ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
+						<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
 					</div>
 					<div class="current-usage-container weight-700">
 						<strong class="font-helvetica-medium">Current Usage</strong>
-						<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track">S$ <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
-						<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed">S$ <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+						<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+						<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
 					</div>
 					<div class="spent-container weight-700">
 						Spent
-						<span>S$ <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 					</div>
 					<div class="pending-claim-container weight-700">
 						Pending claim
-						<span>S$ <span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
 					</div>
 					<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span>S$ <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
 					</div>
 				</div>
 				<span ng-if="health_spending_summary.wellness.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
@@ -1217,7 +1229,7 @@
         			<label>GP cap per visit</label>
         			<div class="input-group">
 							  <input type="num" class="form-control" min="0" aria-describedby="basic-addon2" ng-model="selectedEmployee.gp_cap_per_visit">
-							  <span class="input-group-addon" id="basic-addon2">S$</span>
+							  <span class="input-group-addon" id="basic-addon2"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span></span>
 							</div>
         		</div>
         	</form>
