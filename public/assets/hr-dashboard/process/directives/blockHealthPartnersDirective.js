@@ -326,7 +326,7 @@ app.directive('blockHealthPartnersDirective', [
                   swal('Error!', 'Please Select a clinic first.', 'error');
                 }
               });
-              if( scope.clinic_open_arr.length == 0 ){
+              if( scope.clinic_block_arr.length == 0 ){
                 swal('Error!', 'Please Select a clinic first.', 'error');
               }
             }
@@ -344,7 +344,7 @@ app.directive('blockHealthPartnersDirective', [
                   swal('Error!', 'Please Select a clinic type first.', 'error');
                 }
               });
-              if( scope.clinic_type_open_arr.length == 0 ){
+              if( scope.clinic_type_block_arr.length == 0 ){
                 swal('Error!', 'Please Select a clinic type first.', 'error');
               }
             }
