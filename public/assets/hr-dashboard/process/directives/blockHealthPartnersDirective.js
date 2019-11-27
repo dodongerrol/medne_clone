@@ -278,7 +278,7 @@ app.directive('blockHealthPartnersDirective', [
                   scope.hideLoading();
                   scope.onLoad();
                   swal('Success!', 'Clinic Block Lists updated.', 'success');
-                }else{
+                }else if( ctr == 0 && scope.clinic_open_arr.length - 1 == key ){
                   swal('Error!', 'Please Select a clinic first.', 'error');
                 }
               });
@@ -296,7 +296,7 @@ app.directive('blockHealthPartnersDirective', [
                 }
                 if( ctr > 0 && scope.clinic_type_open_arr.length - 1 == key ){
                   scope.updateClinics( scope.clinic_type_block_ids, status, region, opt );
-                }else{
+                }else if( ctr == 0 && scope.clinic_type_open_arr.length - 1 == key ){
                   swal('Error!', 'Please Select a clinic type first.', 'error');
                 }
               });
@@ -322,7 +322,7 @@ app.directive('blockHealthPartnersDirective', [
                   scope.hideLoading();
                   scope.onLoad();
                   swal('Success!', 'Clinic Block Lists updated.', 'success');
-                }else{
+                }else if( ctr == 0 && scope.clinic_block_arr.length - 1 == key ){
                   swal('Error!', 'Please Select a clinic first.', 'error');
                 }
               });
@@ -340,7 +340,7 @@ app.directive('blockHealthPartnersDirective', [
                 }
                 if( ctr > 0 && scope.clinic_type_block_arr.length - 1 == key ){
                   scope.updateClinics( scope.clinic_type_open_ids, status, region, opt );
-                }else{
+                }else if( ctr == 0 && scope.clinic_type_block_arr.length - 1 == key ){
                   swal('Error!', 'Please Select a clinic type first.', 'error');
                 }
               });
