@@ -1701,7 +1701,8 @@ class EmployeeController extends \BaseController {
             $final_user[] = array(
                 'user_id'   => $user->UserID,
                 'name'      => ucwords($user->Name),
-                'cap_amount'    => $cap_amount
+                'cap_amount'    => $cap_amount,
+                'currency_type' => strtoupper($wallet->currency_type)
             );
         }
 

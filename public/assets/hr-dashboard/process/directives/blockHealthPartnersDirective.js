@@ -278,8 +278,13 @@ app.directive('blockHealthPartnersDirective', [
                   scope.hideLoading();
                   scope.onLoad();
                   swal('Success!', 'Clinic Block Lists updated.', 'success');
+                }else{
+                  swal('Error!', 'Please Select a clinic first.', 'error');
                 }
               });
+              if( scope.clinic_open_arr.length == 0 ){
+                swal('Error!', 'Please Select a clinic first.', 'error');
+              }
             }
             if( opt == 'type' ){
               var ctr = 0;
@@ -291,8 +296,13 @@ app.directive('blockHealthPartnersDirective', [
                 }
                 if( ctr > 0 && scope.clinic_type_open_arr.length - 1 == key ){
                   scope.updateClinics( scope.clinic_type_block_ids, status, region, opt );
+                }else{
+                  swal('Error!', 'Please Select a clinic type first.', 'error');
                 }
               });
+              if( scope.clinic_type_open_arr.length == 0 ){
+                swal('Error!', 'Please Select a clinic type first.', 'error');
+              }
             }
           }
         // --------------------------------- //
@@ -312,8 +322,13 @@ app.directive('blockHealthPartnersDirective', [
                   scope.hideLoading();
                   scope.onLoad();
                   swal('Success!', 'Clinic Block Lists updated.', 'success');
+                }else{
+                  swal('Error!', 'Please Select a clinic first.', 'error');
                 }
               });
+              if( scope.clinic_block_arr.length == 0 ){
+                swal('Error!', 'Please Select a clinic first.', 'error');
+              }
             }
             if( opt == 'type' ){
               var ctr = 0;
@@ -325,8 +340,13 @@ app.directive('blockHealthPartnersDirective', [
                 }
                 if( ctr > 0 && scope.clinic_type_block_arr.length - 1 == key ){
                   scope.updateClinics( scope.clinic_type_open_ids, status, region, opt );
+                }else{
+                  swal('Error!', 'Please Select a clinic type first.', 'error');
                 }
               });
+              if( scope.clinic_type_block_arr.length == 0 ){
+                swal('Error!', 'Please Select a clinic type first.', 'error');
+              }
             }
           }
         // --------------------------------- //
