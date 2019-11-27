@@ -7560,7 +7560,7 @@ ul.typeahead li a.dropdown-item
 .health-provider-header-container button.save-continue-disabled {
 	background-color: #9dc8e4;
 	border-color: #9dc8e4;
-	cursor: not-allowed;
+	pointer-events: none;
 }
 
 .health-provider-header-container button.save-continue-disabled:focus {

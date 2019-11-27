@@ -55,6 +55,10 @@ app.directive('capPerVisitDirective', [
 					} 
 				}
 
+				scope.gpCapAddFile = function ( file ) {
+					console.log('add file');
+				}
+
 
 				scope.fileUploadModal = function( emp ){
 					scope.selected_emp = emp;
@@ -100,16 +104,28 @@ app.directive('capPerVisitDirective', [
 				scope.saveBtn = function () {
 					angular.forEach( scope.gpCapPerVisitInfo , function(value,key) {
 						console.log( value );
+						var cap = {
+							employee_id : value.id,
+		          cap_amount : value.cap,
+		        }
+		        console.log(cap);
 						scope.showDataText[key] = true;
 						scope.showInputText[key] = false;
 						$("button").addClass("save-continue-disabled");
-
-						console.log(value.cap);
 
 						if (value.cap === 0) {
 							scope.showDataText[key] = false;
 							scope.showInputText[key] = false;
 						} 
+		        
+						hrSettings.updateCapPerVisit( cap )
+            .then(function(response){
+              if( response.data.status ){
+                swal( 'Success!', response.data.message, 'success' );
+              }else{
+                swal( 'Error!', response.data.message, 'error' );
+              }
+            });
 					});
 				}
 
