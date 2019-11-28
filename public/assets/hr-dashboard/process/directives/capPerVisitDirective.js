@@ -41,6 +41,7 @@ app.directive('capPerVisitDirective', [
 				// 	{ id : 9, name : 'Kintoy Salado', cap : 0 },
 				// ];
 				scope.indexInput = [];
+				scope.per_page_arr = [10,20,30,40,50,100];
 				// scope.capPerVisitNoValue[index] = false;
 
 				// Count total numbers, init

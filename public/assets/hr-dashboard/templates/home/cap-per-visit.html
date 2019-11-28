@@ -62,12 +62,7 @@
 					<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
 				</span>
 				<div class="opened-per-page-scroll page-scroll" style="display: none">
-					<span>10</span>
-					<span>20</span>
-					<span>30</span>
-					<span>40</span>
-					<span>50</span>
-					<span>100</span>
+					<span ng-repeat="list in per_page_arr" ng-bind="list"></span>
 				</div>
 			</div>
 		</div>
