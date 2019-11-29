@@ -7909,7 +7909,7 @@ ul.typeahead li a.dropdown-item
 
 .cap-per-visit-wrapper .page-scroll-container {
 	display: flex;
-	/*align-items: center;*/
+	align-items: center;
 }
 
 .cap-per-visit-wrapper .rows-page-wrapper {
@@ -7922,8 +7922,17 @@ ul.typeahead li a.dropdown-item
 }
 
 .cap-per-visit-wrapper .page-scroll-container >div span {
-	margin-right: 10px;
-	cursor: initial;
+  margin-right: 10px;
+  cursor: pointer;
+  padding: 0px 7px;
+}
+
+.prev-page-gp-cap.prev-disabled {
+  pointer-events: none;
+}
+
+.health-page-num.active {
+  background-color: #e8e8e8;
 }
 
 .cap-per-visit-wrapper .page-scroll-container >div span {
@@ -8026,13 +8035,17 @@ ul.typeahead li a.dropdown-item
   height: 25px;
   background-color: rgba(205, 205, 205, 0.3);
   overflow: hidden;
-  margin: 15px 0;
+  margin: 15px 0 0;
 }
 
 #file_upload .progress-bar {
 	background-color: #78E997;
 	height: 25px;
  color: #2E4057;
+}
+
+#file_upload .progress-bar.error {
+  background-color: #d46448 !important;
 }
 
 #file_upload .progress-wrapper {
