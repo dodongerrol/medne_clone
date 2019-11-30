@@ -54,6 +54,16 @@ app.directive('capPerVisitDirective', [
           return arr;
         };
 
+        scope.showLoading = function(){
+          $(".circle-loader").fadeIn();
+        };
+
+        scope.hideLoading = function(){
+          setTimeout(function() {
+            $(".circle-loader").fadeOut();
+          }, 1000);
+        };
+
         // scope.showLoading = function( ){
         //   $( ".main-loader" ).fadeIn(); 
         // }
@@ -62,8 +72,10 @@ app.directive('capPerVisitDirective', [
         scope.selectCapPerPage = 10;
         scope.gpCapPerVisitInfo_pagination = {};
 				scope.getGpCapPerVisit = function () {
+					scope.showLoading();
 					$http.get(serverUrl.url + "/hr/employee_cap_per_visit_list?&page=" + scope.selectCapPage + '&per_page=' + scope.selectCapPerPage)
             .success(function(response) {
+            	scope.hideLoading();
               console.log(response);
               scope.gpCapPerVisitInfo = response.data;
               scope.gpCapPerVisitInfo_pagination = response;
