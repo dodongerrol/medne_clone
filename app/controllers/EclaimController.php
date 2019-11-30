@@ -6451,6 +6451,8 @@ public function updateEclaimStatus( )
 
 	if((int)$input['status'] == 1) {
 		$amount = !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount;
+		$amount = TransactionHelper::floatvalue($amount);
+		$claim_amount = TransactionHelper::floatvalue($input['claim_amount']);
 		// check e-claim if already approve
 		$employee = StringHelper::getUserId($e_claim_details->user_id);
 
@@ -6534,7 +6536,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount
+							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : (float)$check->amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
@@ -6632,7 +6634,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount
+							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : $check->amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
@@ -6695,7 +6697,7 @@ public function updateEclaimStatus( )
 				'status'						=> 2,
 				'rejected_reason'		=> $rejected_reason,
 				'updated_at'				=> date('Y-m-d H:i:s'),
-				'claim_amount'			=> !empty($input['claim_amount']) ? $input['claim_amount'] : 0
+				'claim_amount'			=> !empty((float)$input['claim_amount']) ? (float)$input['claim_amount'] : 0
 			);
 
 			$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
