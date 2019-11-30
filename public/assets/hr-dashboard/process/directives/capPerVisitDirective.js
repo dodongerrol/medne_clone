@@ -117,6 +117,7 @@ app.directive('capPerVisitDirective', [
 				
 				scope.closePass = function( ) {
 					$('#file_upload').modal('hide');
+					scope.gpCapFile = {};
 				}
 
 				/**
@@ -176,9 +177,10 @@ app.directive('capPerVisitDirective', [
 							console.log(response); 
 							if( response.data.status == true){
                 file.uploading = 100;
-                // setTimeout(function(){
-                //   $mdDialog.hide();
-                // }, 2000);
+                setTimeout(function(){
+                  $("#file_upload").modal("hide");
+                  scope.gpCapFile = {};
+                }, 2000);
                 scope.getGpCapPerVisit();
               }else{
                 file.uploading = 10;
