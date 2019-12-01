@@ -6695,8 +6695,8 @@ public function updateEclaimStatus( )
 			$update_data = array(
 				'status'						=> 2,
 				'rejected_reason'		=> $rejected_reason,
-				'updated_at'				=> date('Y-m-d H:i:s'),
-				'claim_amount'			=> !empty((float)$input['claim_amount']) ? (float)$input['claim_amount'] : 0
+				'updated_at'				=> date('Y-m-d H:i:s')
+				// 'claim_amount'			=> !empty((float)$input['claim_amount']) ? (float)$input['claim_amount'] : 0
 			);
 
 			$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
