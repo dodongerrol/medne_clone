@@ -397,6 +397,8 @@
 									list.res = false;
 									list.message = response.data.message;
 								}
+							} else {
+								swal('Oops!', response.data.message, 'error')
 							}
 						});
 					}
