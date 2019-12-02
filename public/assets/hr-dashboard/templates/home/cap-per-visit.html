@@ -25,11 +25,11 @@
 							<td ng-bind="list.name">Filbert Tan</td>
 							<td ng-click="editTableCell( $index, list )">
 								<span ng-if="showDataText[ $index ]">
-									<span>S$</span> 
+									<span ng-bind="list.currency_type" class="currency-type">S$</span> 
 									<span ng-bind="list.cap_amount" style="margin: 0 5px;">{{$index}}</span>
 								</span>
 								<span ng-if="showInputText[ $index ]" style="display: flex;">
-									<span>S$</span> <span><input class="edit-input" type="number" ng-model="list.cap_amount"></span>
+									<span ng-bind="list.currency_type" class="currency-type">S$</span> <span><input class="edit-input" type="number" ng-model="list.cap_amount"></span>
 								</span>
 								<span ng-if="capPerVisitNoValue[ $index ]">
 									<span class="not-applicable-text">Not applicable</span>
