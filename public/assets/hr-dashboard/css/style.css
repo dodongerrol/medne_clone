@@ -8070,6 +8070,15 @@ ul.typeahead li a.dropdown-item
 	margin: 0;
 }
 
+.gp-cap-table-info-container {
+  height: 500px;
+}
+
+.gp-cap-table-info-wrapper {
+  overflow: auto;
+  margin: 0 0 20px;
+}
+
 /*@media screen and (max-width: 1440px) { 
 
 }*/

@@ -9,34 +9,38 @@
 	</div>	
 
 	<div class="gp-cap-table-wrapper">
-		<table>
-			<thead>
-				<tr>
-					<th>Member Id</th>
-					<th>Name</th>
-					<th>Cap per Visit</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="list in gpCapPerVisitInfo track by $index">
-					<td ng-bind="list.user_id">4</td>
-					<td ng-bind="list.name">Filbert Tan</td>
-					<td ng-click="editTableCell( $index, list )">
-						<span ng-if="showDataText[ $index ]">
-							<span>S$</span> 
-							<span ng-bind="list.cap_amount" style="margin: 0 5px;">{{$index}}</span>
-						</span>
-						<span ng-if="showInputText[ $index ]" style="display: flex;">
-							<span>S$</span> <span><input class="edit-input" type="number" ng-model="list.cap_amount"></span>
-						</span>
-						<span ng-if="capPerVisitNoValue[ $index ]">
-							<span class="not-applicable-text">Not applicable</span>
-						</span>	
-					</td>
-				</tr>
-				
-			</tbody>
-		</table>
+		<div class="gp-cap-table-info-wrapper">
+			<div class="gp-cap-table-info-container">
+				<table>
+					<thead>
+						<tr>
+							<th>Member Id</th>
+							<th>Name</th>
+							<th>Cap per Visit</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="list in gpCapPerVisitInfo track by $index">
+							<td ng-bind="list.user_id">4</td>
+							<td ng-bind="list.name">Filbert Tan</td>
+							<td ng-click="editTableCell( $index, list )">
+								<span ng-if="showDataText[ $index ]">
+									<span>S$</span> 
+									<span ng-bind="list.cap_amount" style="margin: 0 5px;">{{$index}}</span>
+								</span>
+								<span ng-if="showInputText[ $index ]" style="display: flex;">
+									<span>S$</span> <span><input class="edit-input" type="number" ng-model="list.cap_amount"></span>
+								</span>
+								<span ng-if="capPerVisitNoValue[ $index ]">
+									<span class="not-applicable-text">Not applicable</span>
+								</span>	
+							</td>
+						</tr>
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
 
 		<div class="health-pagination">
 			<div class="page-wrapper">
@@ -55,7 +59,7 @@
 				</div>
 			</div>
 			<div class="rows-page-wrapper">
-				<span><span ng-bind="gpCapPerVisitInfo_pagination.per_page"></span> per page</span>
+				<span><span ng-bind="gpCapPerVisitInfo_pagination.count"></span> per page</span>
 				<span>	
 					<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
 				</span>

@@ -80,6 +80,7 @@ app.directive('capPerVisitDirective', [
               scope.gpCapPerVisitInfo = response.data;
               scope.gpCapPerVisitInfo_pagination = response;
               console.log(scope.gpCapPerVisitInfo_pagination);
+              
               for (let i = 0; i < scope.gpCapPerVisitInfo.length; i++) {
 								scope.showDataText[i] = true;
 								scope.showInputText[i] = false;
