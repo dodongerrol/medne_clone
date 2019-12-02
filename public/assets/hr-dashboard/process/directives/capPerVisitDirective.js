@@ -72,22 +72,22 @@ app.directive('capPerVisitDirective', [
         scope.selectCapPerPage = 10;
         scope.gpCapPerVisitInfo_pagination = {};
 				scope.getGpCapPerVisit = function () {
-					scope.showLoading();
+					// scope.showLoading();
 					$http.get(serverUrl.url + "/hr/employee_cap_per_visit_list?&page=" + scope.selectCapPage + '&per_page=' + scope.selectCapPerPage)
             .success(function(response) {
-            	scope.hideLoading();
+            	// scope.hideLoading();
               console.log(response);
               scope.gpCapPerVisitInfo = response.data;
               scope.gpCapPerVisitInfo_pagination = response;
               console.log(scope.gpCapPerVisitInfo_pagination);
               
               for (let i = 0; i < scope.gpCapPerVisitInfo.length; i++) {
+              	scope.gpCapPerVisitInfo[i].index = i;
 								scope.showDataText[i] = true;
 								scope.showInputText[i] = false;
-								console.log(scope.gpCapPerVisitInfo[i].cap_amount);
 								scope.capPerVisitNoValue[i] = false;
 
-								if (scope.gpCapPerVisitInfo[i].cap_amount == 0) {
+								if (scope.gpCapPerVisitInfo[i].cap_amount == 0 || scope.gpCapPerVisitInfo[i].cap_amount == "0.00") {
 									scope.capPerVisitNoValue[i] = true;
 									scope.showDataText[i] = false;
 									scope.showInputText[i] = false;
@@ -150,15 +150,31 @@ app.directive('capPerVisitDirective', [
 				scope.editTableCell = function ( index, data ) {
 					// console.log('row index: ' + index);
 					$("button").removeClass("save-continue-disabled");
-					data.cap_amount = parseFloat(data.cap_amount);
+					data.cap_amount = parseFloat(data.cap_amount).toFixed(2);
           scope.showDataText[index] = false;
           scope.showInputText[index] = true;
+           let hideMe = document.getElementById('hideMe');
 
-					if ( data.cap_amount == 0 ) {
+					if ( scope.gpCapPerVisitInfo[index].cap_amount == 0 ) {
+						console.log( index + " " + scope.gpCapPerVisitInfo[index].cap_amount );
             scope.capPerVisitNoValue[index] = false;
             scope.showDataText[index] = false;
             scope.showInputText[index] = true;
+
+            document.onclick = function(e) {
+	          	console.log( 'hideMe' + index );
+	          	if(e.target.id !== 'hideMe' + index && e.target.id !== 'hideMe') {
+	          		var value = $( "#hideMe" + index ).val();
+	          		if( parseInt( value ) == 0 ){
+	          			scope.capPerVisitNoValue[index] = true;
+		          		scope.showInputText[index] = false;
+		          		scope.showDataText[index] = false;
+		          		scope.$apply();
+	          		}
+	          	}
+	          }
           } 
+
 					// console.log('showDataText', scope.showDataText)
 					// console.log('showInputText', scope.showInputText)      
 				}
@@ -208,33 +224,30 @@ app.directive('capPerVisitDirective', [
         }
 
 				scope.saveBtn = function () {
+					var err_ctr = 0;
 					angular.forEach( scope.gpCapPerVisitInfo , function(value,key) {
-						console.log( value );
+						// console.log( value );
 						var cap = {
 							employee_id : value.user_id,
-		          cap_amount : parseFloat(value.cap_amount),
+		          cap_amount : parseFloat(value.cap_amount).toFixed(2),
 		        }
-		        console.log(cap);
-						scope.showDataText[key] = true;
-						scope.showInputText[key] = false;
-						scope.capPerVisitNoValue[key] = false;
 						$("button").addClass("save-continue-disabled");
 
-						if (cap.cap_amount == 0) {
-							scope.showDataText[key] = false;
-							scope.showInputText[key] = false;
-							scope.capPerVisitNoValue[key] = true;
-						} 
-		        
 						hrSettings.updateCapPerVisit( cap )
             .then(function(response){
-            	console.log(response);
               if( response.data.status ){
-                swal( 'Success!', response.data.message, 'success' );
+              	
               }else{
+              	err_ctr += 1;
                 swal( 'Error!', response.data.message, 'error' );
               }
             });
+
+            if( scope.gpCapPerVisitInfo.length - 1 == key && err_ctr == 0 ){
+            	$("button").addClass("save-continue-disabled");
+            	scope.getGpCapPerVisit();
+              swal( 'Success!', 'Cap updated', 'success' );
+            }
 					});
 				}
 
@@ -251,9 +264,7 @@ app.directive('capPerVisitDirective', [
         scope.onLoad = function( ){
         	scope.getDownloadToken();
         	scope.getTableCell();
-        	scope.getGpCapPerVisit();
-        	data = scope.gpCapPerVisitInfo;
-        	console.log(data);        
+        	scope.getGpCapPerVisit(); 
         }
 
         scope.onLoad();
