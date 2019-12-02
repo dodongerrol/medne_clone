@@ -29,7 +29,7 @@ app.directive("companyContactsDirective", [
         scope.benefits_spending_page = 1;
         scope.spending_deposit_page = 1;
         scope.statementHide = true;
-        scope.empStatementShow = false;
+        // scope.empStatementShow = false;
 
         scope.$on("informationRefresh", function(evt, data){
           scope.onLoad();
@@ -466,7 +466,6 @@ app.directive("companyContactsDirective", [
         }
 
         scope.onLoad = function(){
-          scope.companyAccountType();
           scope.getDownloadToken();
           hrSettings.getSession( )
             .then(function(response){
@@ -487,6 +486,7 @@ app.directive("companyContactsDirective", [
             scope.getBillingList();
             scope.getPlanSubscriptions();
             scope.getActiveCompPlans();
+            scope.companyAccountType();
           }
           
         };

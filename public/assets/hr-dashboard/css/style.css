@@ -7898,6 +7898,7 @@ ul.typeahead li a.dropdown-item
 .cap-per-visit-wrapper .page-wrapper {
 	display: inline-flex;
 	align-items: flex-end;
+	padding-bottom: 150px;
 }
 
 .cap-per-visit-wrapper .fa-angle-left {
