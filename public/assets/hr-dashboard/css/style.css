@@ -7858,6 +7858,7 @@ ul.typeahead li a.dropdown-item
 	color: #333;
 	border: 1px solid #d0d0d0;
 	margin: 0 0 20px;
+	padding-bottom: 150px;
 }
 
 .gp-cap-table-wrapper table th,
@@ -8061,7 +8062,7 @@ ul.typeahead li a.dropdown-item
   margin: 0 4px;
   padding: 0 4px;
   border: 0;
-  width: 130px;
+  width: 110px;
   border-left: 1px solid #ddd;
   outline: none;
 }
