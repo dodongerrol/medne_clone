@@ -2,72 +2,74 @@
 	<div class="health-provider-header-container">
 		<h3>GP - Cap per Visit</h3>
 		<div>
-			<img src="../assets/hr-dashboard/img/Group.png">
+			<img ng-click="downloadGpCapExcelTemplate()" src="../assets/hr-dashboard/img/Group.png">
 			<img ng-click="fileUploadModal(emp)" data-toggle="modal" data-target="#file_upload" src="../assets/hr-dashboard/img/Import icon.svg">
 			<button ng-click="saveBtn()" class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button>
 		</div>
 	</div>	
 
 	<div class="gp-cap-table-wrapper">
-		<table>
-			<thead>
-				<tr>
-					<th>Member Id</th>
-					<th>Name</th>
-					<th>Cap per Visit</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="list in gpCapPerVisitInfo track by $index">
-					<td ng-bind="list.id">4</td>
-					<td ng-bind="list.name">Filbert Tan</td>
-					<td ng-click="editTableCell( $index, list )">
-						<span ng-if="showDataText[ $index ]">
-							<span>S$</span> 
-							<span ng-bind="list.cap" style="margin: 0 5px;">{{$index}}</span>
-						</span>
-						<span ng-if="showInputText[ $index ]" style="display: flex;">
-							<span>S$</span> <span><input class="edit-input" type="number" ng-model="list.cap"></span>
-						</span>
-						<span ng-if="capPerVisitNoValue[ $index ]">
-							<span class="not-applicable-text">Not applicable</span>
-						</span>	
-					</td>
-				</tr>
-				
-			</tbody>
-		</table>
+		<div class="gp-cap-table-info-wrapper">
+			<div class="gp-cap-table-info-container">
+				<table>
+					<thead>
+						<tr>
+							<th>Member Id</th>
+							<th>Name</th>
+							<th>Cap per Visit</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="list in gpCapPerVisitInfo track by $index">
+							<td ng-bind="list.user_id">4</td>
+							<td ng-bind="list.name">Filbert Tan</td>
+							<td ng-click="editTableCell( $index, list )">
+								<span ng-if="showDataText[ $index ]">
+									<span>S$</span> 
+									<span ng-bind="list.cap_amount" style="margin: 0 5px;">{{$index}}</span>
+								</span>
+								<span ng-if="showInputText[ $index ]" style="display: flex;">
+									<span>S$</span> <span><input class="edit-input" type="number" ng-model="list.cap_amount"></span>
+								</span>
+								<span ng-if="capPerVisitNoValue[ $index ]">
+									<span class="not-applicable-text">Not applicable</span>
+								</span>	
+							</td>
+						</tr>
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
 
 		<div class="health-pagination">
 			<div class="page-wrapper">
 				<div class="page-scroll-container page-opened">
 					<span>	
 						<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
-						<span>Prev</span>
+						<span ng-click="prevPageGpCap()">Prev</span>
 					</span>
 					<div>
-						<span>1</span>
-						<span>2</span>
-						<span>3</span>
+						<span ng-repeat="list in range( gpCapPerVisitInfo_pagination.last_page )" ng-bind="$index + 1" ng-click="goToGpCap(list + 1)" class="health-page-num" ng-class="{'active' : list + 1 == selectCapPage}"></span>
 					</div>
 					<span>	
-						<span>Next</span>
+						<span ng-click="nextPageGpCap()">Next</span>
 						<i class="fa fa-angle-right" style="font-size: 14px;"></i> 
 					</span>
 				</div>
 			</div>
 			<div class="rows-page-wrapper">
-				<span><span>25</span> per page</span>
+				<span><span ng-bind="gpCapPerVisitInfo_pagination.count"></span> per page</span>
 				<span>	
 					<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
 				</span>
 				<div class="opened-per-page-scroll page-scroll" style="display: none">
-					<span>10</span>
-					<span>20</span>
-					<span>30</span>
-					<span>40</span>
-					<span>50</span>
-					<span>100</span>
+					<span ng-click="changeGpPerPage(10)">10</span>
+          <span ng-click="changeGpPerPage(20)">20</span>
+          <span ng-click="changeGpPerPage(30)">30</span>
+          <span ng-click="changeGpPerPage(40)">40</span>
+          <span ng-click="changeGpPerPage(50)">50</span>
+          <span ng-click="changeGpPerPage(100)">100</span>
 				</div>
 			</div>
 		</div>
@@ -83,28 +85,30 @@
 		        <img ng-click="closePass()" src="../assets/hr-dashboard/img/icons/cancel.png">
 		      </div>
 		      <div class="modal-body">
-		        <div class="drop-box">
+		        <div class="drop-box" ngf-drop="uploadGpCapChanged( gpCapFile )" ngf-select="uploadGpCapChanged( gpCapFile )" ng-model="gpCapFile" ngf-drag-over-class="'dragover'">
 		        	<div>
 		        		<div class="drop-file-upload">
-			            <img src="../assets/hr-dashboard/img/fileupload.png">
+			            <img src="../assets/hr-da	shboard/img/fileupload.png">
 			            <p>Drop a file to upload, or </p>
-		              <button class="file-btn"> <input class="choose-file" type="file"> Browse</button>
+		              <div class="file-btn" style="height: auto; padding: 10px 0px; text-align: center;">Browse</div>
+		              <!-- <input class="choose-file" type="file"> -->
 	              </div>
 
-	              <div>
+	              <div ng-if="gpCapFile.name">
 	              	<div class="progress-wrapper">
 	              		<span>
 		              		<i class="fa fa-file-o"></i>
-											<span>Employee list.csv</span>
+											<span ng-bind="gpCapFile.name">Employee list.csv</span>
 										</span>
-										<div class="progress-bar" style="width: 87.5%;"></div>
+										<div class="progress-bar" ng-class="{ 'error' : gpCapFile.error }" style="width: {{ gpCapFile.uploading }}%;" style="font-size: 11px;"></div>
 									</div>
+									<span ng-if="gpCapFile.error" ng-bind="gpCapFile.error_text" style="font-size: 11px;"></span>
 	              </div>
               </div>
             </div>
 		      </div>
 		      <div class="modal-footer">
-		        <button class="file-btn">Upload</button>
+		        <button class="file-btn" ng-click="uploadGpCapPerVisit( gpCapFile )">Upload</button>
 		      </div>
 	      </form>
 	    </div>

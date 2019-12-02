@@ -7562,7 +7562,7 @@ ul.typeahead li a.dropdown-item
 .health-provider-header-container button.save-continue-disabled {
 	background-color: #9dc8e4;
 	border-color: #9dc8e4;
-	cursor: not-allowed;
+	pointer-events: none;
 }
 
 .health-provider-header-container button.save-continue-disabled:focus {
@@ -7911,7 +7911,7 @@ ul.typeahead li a.dropdown-item
 
 .cap-per-visit-wrapper .page-scroll-container {
 	display: flex;
-	/*align-items: center;*/
+	align-items: center;
 }
 
 .cap-per-visit-wrapper .rows-page-wrapper {
@@ -7924,8 +7924,17 @@ ul.typeahead li a.dropdown-item
 }
 
 .cap-per-visit-wrapper .page-scroll-container >div span {
-	margin-right: 10px;
-	cursor: initial;
+  margin-right: 10px;
+  cursor: pointer;
+  padding: 0px 7px;
+}
+
+.prev-page-gp-cap.prev-disabled {
+  pointer-events: none;
+}
+
+.health-page-num.active {
+  background-color: #e8e8e8;
 }
 
 .cap-per-visit-wrapper .page-scroll-container >div span {
@@ -8028,13 +8037,17 @@ ul.typeahead li a.dropdown-item
   height: 25px;
   background-color: rgba(205, 205, 205, 0.3);
   overflow: hidden;
-  margin: 15px 0;
+  margin: 15px 0 0;
 }
 
 #file_upload .progress-bar {
 	background-color: #78E997;
 	height: 25px;
  color: #2E4057;
+}
+
+#file_upload .progress-bar.error {
+  background-color: #d46448 !important;
 }
 
 #file_upload .progress-wrapper {
@@ -8057,6 +8070,15 @@ ul.typeahead li a.dropdown-item
 
 .cap-per-visit-wrapper .health-provider-header-container h3 {
 	margin: 0;
+}
+
+.gp-cap-table-info-container {
+  height: 500px;
+}
+
+.gp-cap-table-info-wrapper {
+  overflow: auto;
+  margin: 0 0 20px;
 }
 
 /*@media screen and (max-width: 1440px) { 
