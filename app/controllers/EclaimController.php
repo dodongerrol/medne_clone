@@ -2895,6 +2895,12 @@ public function getActivityOutNetworkTransactions( )
 	$paginate['to'] = $e_claim_result->getTo();
 	$paginate['total'] = $e_claim_result->getTotal();
 
+	if($spending_type == 'medical') {
+		$table_wallet_history = 'wallet_history';
+	} else {
+		$table_wallet_history = 'wellness_wallet_history';
+	}
+
 	foreach($e_claim_result as $key => $res) {
 		if($res->status == 0) {
 			$status_text = 'Pending';
@@ -2976,7 +2982,16 @@ public function getActivityOutNetworkTransactions( )
 			}
 
 			if((int)$res->status == 1) {
-				$res->amount = $res->claim_amount;
+				// find wallet history
+				$history = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_e_claim')
+						->where('where_spend', 'e_claim_transaction')
+						->where('id', $res->e_claim_id)
+						->first();
+
+				if($history) {
+					$res->amount = $history->credit;
+				}
 			}
 
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
@@ -2996,9 +3011,9 @@ public function getActivityOutNetworkTransactions( )
 				'owner_id'          => $owner_id,
 				'sub_account_type'  => $sub_account_type,
 				'sub_account'       => $sub_account,
-				'month'             => date('M', strtotime($res->approved_date)),
-				'day'               => date('d', strtotime($res->approved_date)),
-				'time'              => date('h:ia', strtotime($res->approved_date)),
+				'month'             => date('M', strtotime($res->date)),
+				'day'               => date('d', strtotime($res->date)),
+				'time'              => date('h:ia', strtotime($res->date)),
 				'receipt_status'    => $e_claim_receipt_status,
 				'files'             => $doc_files,
 				'spending_type'     => ucwords($res->spending_type),
