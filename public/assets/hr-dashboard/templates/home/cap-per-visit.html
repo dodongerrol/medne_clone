@@ -30,7 +30,7 @@
 								</span>
 								<span ng-if="showInputText[ $index ]" style="display: flex;">
 									<span ng-bind="list.currency_type" class="currency-type">S$</span> <span>
-									<input id="hideMe{{$index}}" class="edit-input show-input-text" type="text" pattern="^\d*(\.\d{0,2})?$" ng-model="list.cap_amount"></span>
+									<input id="hideMe{{$index}}" class="edit-input show-input-text" type="text" pattern="^\d*(\.\d{0,2})?$" ng-change="inputActiveSaveBtn()" ng-model="list.cap_amount"></span>
 								</span>
 								<span ng-if="capPerVisitNoValue[ $index ]">
 									<span class="not-applicable-text" id="hideMe{{$index}}">Not applicable</span>

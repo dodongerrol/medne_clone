@@ -146,16 +146,19 @@ app.directive('capPerVisitDirective', [
 					
 				}
 
+				scope.inputActiveSaveBtn = function () {
+					$("button").removeClass("save-continue-disabled");
+				}
+
 
 				scope.editTableCell = function ( index, data ) {
 					// console.log('row index: ' + index);
-					$("button").removeClass("save-continue-disabled");
-					data.cap_amount = parseFloat(data.cap_amount).toFixed(2);
+					data.cap_amount = data.cap_amount == "" ? "0.00" : parseFloat(data.cap_amount).toFixed(2);
           scope.showDataText[index] = false;
           scope.showInputText[index] = true;
            let hideMe = document.getElementById('hideMe');
 
-					if ( scope.gpCapPerVisitInfo[index].cap_amount == 0 ) {
+					if ( scope.gpCapPerVisitInfo[index].cap_amount == 0 || scope.gpCapPerVisitInfo[index].cap_amount == "") {
 						console.log( index + " " + scope.gpCapPerVisitInfo[index].cap_amount );
             scope.capPerVisitNoValue[index] = false;
             scope.showDataText[index] = false;
@@ -163,17 +166,42 @@ app.directive('capPerVisitDirective', [
 
             document.onclick = function(e) {
 	          	console.log( 'hideMe' + index );
-	          	if(e.target.id !== 'hideMe' + index && e.target.id !== 'hideMe') {
+
+	          	if(e.target.id != 'hideMe' + index && e.target.id != 'hideMe') {
 	          		var value = $( "#hideMe" + index ).val();
-	          		if( parseInt( value ) == 0 ){
+	          		console.log( value );
+	          		if( parseInt( value ) == 0 || value == "" ){
+	          			// console.log('click ni siya');
+	          			$( "#hideMe" + index ).val("0.00");
+	          			scope.gpCapPerVisitInfo[index].cap_amount = "0.00";
 	          			scope.capPerVisitNoValue[index] = true;
 		          		scope.showInputText[index] = false;
 		          		scope.showDataText[index] = false;
 		          		scope.$apply();
 	          		}
+
+	          		angular.forEach( scope.gpCapPerVisitInfo,function(value,key){
+			          	if( value.cap_amount == 0 || value.cap_amount == "" ){
+			          		value.cap_amount = "0.00";
+			          		scope.capPerVisitNoValue[key] = true;
+			          		scope.showInputText[key] = false;
+			          		scope.showDataText[key] = false;
+			          	}
+			        	});
 	          	}
+
+	          	
+	          	angular.forEach( scope.gpCapPerVisitInfo,function(value,key){
+		          	if( value.cap_amount == "" ){
+		          		value.cap_amount = "0.00";
+		          	}
+		        	});
+
+	          	
 	          }
           } 
+
+
 
 					// console.log('showDataText', scope.showDataText)
 					// console.log('showInputText', scope.showInputText)      
