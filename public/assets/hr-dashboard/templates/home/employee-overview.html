@@ -467,7 +467,7 @@
 						<div class="employee-settings-wrapper">
 							<button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset Account</button>
 							<button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
-							<button class="btn" ng-click="settingsShow('open')"><i class="fa fa-cogs"></i> Settings</button>
+							<button class="btn" ng-click="settingsShow('open')"><i class="fa fa-cogs"></i> Health Providers Access</button>
 						</div>
 					</div>
 				</div>
@@ -478,7 +478,7 @@
 
 							<div class="health-partner-container">
 								<div class="blocked-opened-header">
-									<span ng-if="!clinic_blocked_search_trap">Health Partner Access - BLOCKED</span>
+									<span ng-if="!clinic_blocked_search_trap">Health Providers Access - BLOCKED</span>
 									<div ng-if="clinic_blocked_search_trap" class="search-input-wrapper">
 										<form ng-submit="searchClinics( search.clinic_blocked_search_text, 'block' )">
 											<input type="text" placeholder="Seach for partner access" ng-model="search.clinic_blocked_search_text">
@@ -591,7 +591,7 @@
 
 							<div class="health-partner-container">
 								<div class="blocked-opened-header">
-									<span ng-if="!clinic_opened_search_trap">Health Partner Access - OPENED</span>
+									<span ng-if="!clinic_opened_search_trap">Health Providers Access - OPENED</span>
 									<div ng-if="clinic_opened_search_trap" class="search-input-wrapper">
 										<form ng-submit="searchClinics( search.clinic_open_search_text, 'open' )">
 											<input type="text" placeholder="Seach for partner access" ng-model="search.clinic_open_search_text">
