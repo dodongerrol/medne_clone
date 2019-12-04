@@ -1347,8 +1347,8 @@ class EmployeeController extends \BaseController {
             }
 
             // process queue
-            Queue::connection('redis_high')->push('\BlockClinicProcessQueue', array('customer_id' => $customer_id, 'ids' => $clinic_datas));
-            // BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas));
+            // Queue::connection('redis_high')->push('\BlockClinicProcessQueue', array('customer_id' => $customer_id, 'ids' => $clinic_datas));
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas));
           } else {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
