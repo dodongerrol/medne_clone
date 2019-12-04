@@ -8,6 +8,6 @@ class CustomerLinkBuy extends Eloquent
 
   public function getData($id)
   {
-  	return AdminLogs::where('customer_buy_start_id', $id)->first();
+  	return CustomerLinkBuy::where('customer_buy_start_id', $id)->first();
   }
 }
