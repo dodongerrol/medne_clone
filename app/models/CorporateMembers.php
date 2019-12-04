@@ -8,6 +8,6 @@ class CorporateMembers extends Eloquent
 
   public function getActiveMembers($id)
   {
-  	CorporateMembers::where('corporate_id', $id)->where('removed_status', 0)->get()
+  	return CorporateMembers::where('corporate_id', $id)->where('removed_status', 0)->get();
   }
 }
