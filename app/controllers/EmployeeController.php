@@ -1288,12 +1288,16 @@ class EmployeeController extends \BaseController {
                             ->get();
           }
           
+          $clinic_datas = array();
+
           if($input['access_status'] == "block") {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
+                array_push($clinic_datas, $id);
               // check if clinic block already exits
               $check = DB::table('company_block_clinic_access')
                         ->where('customer_id', $customer_id)
+                        ->where('account_type', 'company')
                         ->where('clinic_id', $id)
                         ->first();
 
@@ -1341,6 +1345,9 @@ class EmployeeController extends \BaseController {
                 }
               }
             }
+
+            // process queue
+            Queue::connection('redis_high')->push('\BlockClinicProcessQueue', array('customer_id' => $customer_id, 'ids' => $clinic_datas));
           } else {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
@@ -1348,6 +1355,7 @@ class EmployeeController extends \BaseController {
               $check = DB::table('company_block_clinic_access')
                         ->where('customer_id', $customer_id)
                         ->where('clinic_id', $id)
+                        ->where('account_type', 'company')
                         ->first();
               if($check && (int)$check->status == 1) {
                 $result = DB::table('company_block_clinic_access')->where('company_block_clinic_access_id', $check->company_block_clinic_access_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
@@ -1392,9 +1400,11 @@ class EmployeeController extends \BaseController {
                 }
             }
 
-            $check = DB::table('company_block_clinic_access')->where('clinic_id', $input['clinic_id'])
-                                          ->where('customer_id', $customer_id)
-                                          ->first();
+            $check = DB::table('company_block_clinic_access')
+                        ->where('clinic_id', $input['clinic_id'])
+                      ->where('customer_id', $customer_id)
+                      ->where('account_type', 'company')
+                      ->first();
           
           $status = $input['status'];
 
