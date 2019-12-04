@@ -5,8 +5,10 @@ class BlockClinicProcessQueue
 	
 	public function fire($job, $data)
 	{
-		$account = \DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $data['customer_id'])->first();
-		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
+    $link = new \CustomerLinkBuy();
+		$account = $link->getData($data['customer_id']);
+    $corporate = new \CorporateMembers();
+		$corporate_members = $corporate->getActiveMembers($account->corporate_id);
 
 		$block_access = new \CompanyBlockClinicAccess();
 		foreach ($corporate_members as $key => $member) {
