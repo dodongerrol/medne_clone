@@ -1348,10 +1348,11 @@ class EmployeeController extends \BaseController {
 
             // process queue
             // Queue::connection('redis_high')->push('\BlockClinicProcessQueue', array('customer_id' => $customer_id, 'ids' => $clinic_datas));
-            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas));
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas), 1);
           } else {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
+                array_push($clinic_datas, $id);
               // check if clinic block already exits
               $check = DB::table('company_block_clinic_access')
                         ->where('customer_id', $customer_id)
@@ -1389,6 +1390,7 @@ class EmployeeController extends \BaseController {
                 }
               }
             }
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas), 0);
           }
         } else {
           if(empty($input['clinic_id']) || $input['clinic_id'] == null) {
@@ -1426,6 +1428,8 @@ class EmployeeController extends \BaseController {
                                           ->where('customer_id', $customer_id)
                                           ->update(['status' => $status, 'updated_at'  => date('Y-m-d H:i:s')]);
             }
+
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => [$input['clinic_id']]), $status);
 
           if($admin_id) {
             $block = array(
