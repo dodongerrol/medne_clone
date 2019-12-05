@@ -2609,7 +2609,7 @@ class TransactionController extends BaseController {
 					$cash = "0.00";
 				} else {
 					$mednefits_credits += 0;
-					$cash = number_format($trans->procedure_cost, 2);
+					$cash = $trans->procedure_cost;
 				}
 
 
