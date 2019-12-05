@@ -1,0 +1,113 @@
+<div cap-per-visit-directive class="cap-per-visit-wrapper">
+	<div class="health-provider-header-container">
+		<h3>GP - Cap per Visit</h3>
+		<div>
+			<img src="../assets/hr-dashboard/img/Group.png">
+			<img ng-click="fileUploadModal(emp)" data-toggle="modal" data-target="#file_upload" src="../assets/hr-dashboard/img/Import icon.svg">
+			<button ng-click="saveBtn()" class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button>
+		</div>
+	</div>	
+
+	<div class="gp-cap-table-wrapper">
+		<table>
+			<thead>
+				<tr>
+					<th>Member Id</th>
+					<th>Name</th>
+					<th>Cap per Visit</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="list in gpCapPerVisitInfo track by $index">
+					<td ng-bind="list.id">4</td>
+					<td ng-bind="list.name">Filbert Tan</td>
+					<td ng-click="editTableCell( $index, list )">
+						<span ng-if="showDataText[ $index ]">
+							<span>S$</span> 
+							<span ng-bind="list.cap" style="margin: 0 5px;">{{$index}}</span>
+						</span>
+						<span ng-if="showInputText[ $index ]" style="display: flex;">
+							<span>S$</span> <span><input class="edit-input" type="number" ng-model="list.cap"></span>
+						</span>
+						<span ng-if="capPerVisitNoValue[ $index ]">
+							<span class="not-applicable-text">Not applicable</span>
+						</span>	
+					</td>
+				</tr>
+				
+			</tbody>
+		</table>
+
+		<div class="health-pagination">
+			<div class="page-wrapper">
+				<div class="page-scroll-container page-opened">
+					<span>	
+						<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
+						<span>Prev</span>
+					</span>
+					<div>
+						<span>1</span>
+						<span>2</span>
+						<span>3</span>
+					</div>
+					<span>	
+						<span>Next</span>
+						<i class="fa fa-angle-right" style="font-size: 14px;"></i> 
+					</span>
+				</div>
+			</div>
+			<div class="rows-page-wrapper">
+				<span><span>25</span> per page</span>
+				<span>	
+					<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
+				</span>
+				<div class="opened-per-page-scroll page-scroll" style="display: none">
+					<span>10</span>
+					<span>20</span>
+					<span>30</span>
+					<span>40</span>
+					<span>50</span>
+					<span>100</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="file_upload" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
+	  <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+	    <div class="modal-content">
+	    	<form>
+		      <div class="modal-header">
+		        <h4>File Uploader</h4>
+		        <img ng-click="closePass()" src="../assets/hr-dashboard/img/icons/cancel.png">
+		      </div>
+		      <div class="modal-body">
+		        <div class="drop-box">
+		        	<div>
+		        		<div class="drop-file-upload">
+			            <img src="../assets/hr-dashboard/img/fileupload.png">
+			            <p>Drop a file to upload, or </p>
+		              <button class="file-btn"> <input class="choose-file" type="file"> Browse</button>
+	              </div>
+
+	              <div>
+	              	<div class="progress-wrapper">
+	              		<span>
+		              		<i class="fa fa-file-o"></i>
+											<span>Employee list.csv</span>
+										</span>
+										<div class="progress-bar" style="width: 87.5%;"></div>
+									</div>
+	              </div>
+              </div>
+            </div>
+		      </div>
+		      <div class="modal-footer">
+		        <button class="file-btn">Upload</button>
+		      </div>
+	      </form>
+	    </div>
+	  </div>
+	</div>
+</div>
