@@ -332,4 +332,1339 @@ class EmployeeController extends \BaseController {
 
         return array('status' => true, 'message' => 'OTPCode is valid');
     }
+
+    public function getBlockClinicTypeLists( )
+    {
+        $input = Input::all();
+
+        if(empty($input['region']) || $input['region'] == null) {
+          return array('status' => false, 'message' => 'Region is required.');
+        }
+
+        if(empty($input['status']) || $input['status'] == null) {
+          return array('status' => false, 'message' => 'Status should be block or open.');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+        $account_type = "company";
+
+        $clinic_type_lists = DB::table('clinic_types')->get();
+        $format = array();
+
+        foreach ($clinic_type_lists as $key => $list) {
+            if($input['status'] == "block") {
+                if($input['region'] == "all_region") {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->whereIn('clinic.currency_type', ["sgd", "myr"])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+
+                    $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+
+                    if($clinic_block) {
+                        $list->block_clinic = true;
+                        if($sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if($myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        array_push($format, $list);
+                    } else {
+                        $list->block_clinic = false;
+                        if(!$sgd && $sgd_clinic || $sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+                        if(!$myr && $myr_clinic || $myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                    }
+                } else {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('clinic.currency_type', $input['region'])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $myr_clinic = null;
+                    $sgd_clinic = null;
+                    if($input['region'] == "sgd"){
+                        $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+                        $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    } else if($input['region'] == "myr"){
+                        $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+                        $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    }
+
+                    if($clinic_block) {
+                        $list->block_clinic = true;
+                        if($sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if($myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        array_push($format, $list);
+                    } else {
+                        $list->block_clinic = false;
+                    }
+                }
+            } else {
+                if($input['region'] == "all_region") {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->whereIn('clinic.currency_type', ["sgd", "myr"])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+
+                    $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    // return [$sgd,$sgd_clinic,$myr,$myr_clinic];
+                    if($clinic_block) {
+                        
+                        if(!$sgd && $sgd_clinic || !$myr && $myr_clinic){
+                            $list->open_clinic = true;
+
+                            if(!$sgd && $sgd_clinic){
+                                $list->region[] = "Singapore";
+                            } 
+                            if(!$myr && $myr_clinic){
+                                $list->region[] = "Malaysia";
+                            }
+
+                            if($sgd_clinic || $myr_clinic) {
+                                array_push($format, $list);
+                            }
+                        }else{
+                            $list->open_clinic = false;
+
+                            if($sgd && $sgd_clinic){
+                                $list->region[] = "Singapore";
+                            }
+
+                            if($myr && $myr_clinic){
+                                $list->region[] = "Malaysia";
+                            }
+                        }
+
+                    } else {
+                        $list->open_clinic = true;
+                        if(!$sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if(!$myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        if($sgd_clinic || $myr_clinic) {
+                            array_push($format, $list);
+                        }
+                    }
+                } else {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('clinic.currency_type', $input['region'])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $myr_clinic = null;
+                    $sgd_clinic = null;
+                    if($input['region'] == "sgd"){
+                        $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+                        $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    } else if($input['region'] == "myr"){
+                        $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+                        $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    }
+                    
+                    if(!$clinic_block) {
+                        $list->open_clinic = true;
+                        if(!$sgd && $sgd_clinic || $sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if(!$myr && $myr_clinic || $myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        array_push($format, $list);
+                    } else {
+                        $list->open_clinic = false;
+                    }
+                }
+            }
+            
+            // array_push($format, $list);
+        }
+
+        return $format;
+    }
+
+    public function getBlockClinicTypeListsEmployee( )
+    {
+        $input = Input::all();
+
+        if(empty($input['region']) || $input['region'] == null) {
+          return array('status' => false, 'message' => 'Region is required.');
+        }
+
+        if(empty($input['user_id']) || $input['user_id'] == null) {
+          return array('status' => false, 'message' => 'Member ID is required.');
+        }
+
+        if(empty($input['status']) || $input['status'] == null) {
+          return array('status' => false, 'message' => 'Status should be block or open.');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $input['user_id'];
+        $account_type = "employee";
+
+        $clinic_type_lists = DB::table('clinic_types')->get();
+        $format = array();
+
+        foreach ($clinic_type_lists as $key => $list) {
+            if($input['status'] == "block") {
+                if($input['region'] == "all_region") {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->whereIn('clinic.currency_type', ["sgd", "myr"])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+
+                    $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+
+                    if($clinic_block) {
+                        $list->block_clinic = true;
+                        if($sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if($myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        array_push($format, $list);
+                    } else {
+                        $list->block_clinic = false;
+                        if(!$sgd && $sgd_clinic || $sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+                        if(!$myr && $myr_clinic || $myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                    }
+                } else {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('clinic.currency_type', $input['region'])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $myr_clinic = null;
+                    $sgd_clinic = null;
+                    if($input['region'] == "sgd"){
+                        $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+                        $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    } else if($input['region'] == "myr"){
+                        $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+                        $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    }
+
+                    if($clinic_block) {
+                        $list->block_clinic = true;
+                        if($sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if($myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        array_push($format, $list);
+                    } else {
+                        $list->block_clinic = false;
+                    }
+                }
+            } else {
+                if($input['region'] == "all_region") {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->whereIn('clinic.currency_type', ["sgd", "myr"])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+
+                    $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    // return [$sgd,$sgd_clinic,$myr,$myr_clinic];
+                    if($clinic_block) {
+                        
+                        if(!$sgd && $sgd_clinic || !$myr && $myr_clinic){
+                            $list->open_clinic = true;
+
+                            if(!$sgd && $sgd_clinic){
+                                $list->region[] = "Singapore";
+                            } 
+                            if(!$myr && $myr_clinic){
+                                $list->region[] = "Malaysia";
+                            }
+
+                            if($sgd_clinic || $myr_clinic) {
+                                array_push($format, $list);
+                            }
+                        }else{
+                            $list->open_clinic = false;
+
+                            if($sgd && $sgd_clinic){
+                                $list->region[] = "Singapore";
+                            }
+
+                            if($myr && $myr_clinic){
+                                $list->region[] = "Malaysia";
+                            }
+                        }
+
+                    } else {
+                        $list->open_clinic = true;
+                        if(!$sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if(!$myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        if($sgd_clinic || $myr_clinic) {
+                            array_push($format, $list);
+                        }
+                    }
+                } else {
+                    $clinic_block = DB::table('clinic_types')
+                                        ->join('clinic', 'clinic.Clinic_Type', '=', 'clinic_types.ClinicTypeID')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('clinic.currency_type', $input['region'])
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+
+                    $sgd = null;
+                    $myr = null;
+                    $myr_clinic = null;
+                    $sgd_clinic = null;
+                    if($input['region'] == "sgd"){
+                        $sgd = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.Active', 1)
+                                        ->where('clinic.currency_type', 'sgd')
+                                        ->first();
+                        $sgd_clinic = DB::table('clinic')->where('currency_type', 'sgd')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    } else if($input['region'] == "myr"){
+                        $myr = DB::table('clinic')
+                                        ->join('company_block_clinic_access', 'company_block_clinic_access.clinic_id', '=', 'clinic.ClinicID')
+                                        ->where('clinic.Clinic_Type', $list->ClinicTypeID)
+                                        ->where('clinic.Active', 1)
+                                        ->where('company_block_clinic_access.account_type', $account_type)
+                                        ->where('company_block_clinic_access.customer_id', $customer_id)
+                                        ->where('clinic.currency_type', 'myr')
+                                        ->where('company_block_clinic_access.status', 1)
+                                        ->first();
+                        $myr_clinic = DB::table('clinic')->where('currency_type', 'myr')->where('Clinic_Type', $list->ClinicTypeID)->where('Active', 1)->first();
+                    }
+                    
+                    if(!$clinic_block) {
+                        $list->open_clinic = true;
+                        if(!$sgd && $sgd_clinic || $sgd && $sgd_clinic){
+                            $list->region[] = "Singapore";
+                        } 
+
+                        if(!$myr && $myr_clinic || $myr && $myr_clinic){
+                            $list->region[] = "Malaysia";
+                        }
+                        array_push($format, $list);
+                    } else {
+                        $list->open_clinic = false;
+                    }
+                }
+            }
+            
+            // array_push($format, $list);
+        }
+
+        return $format;
+    }
+
+    public function getCompanyBlockClinicLists( )
+    {
+        $input = Input::all();
+
+        if(empty($input['region']) || $input['region'] == null) {
+          return array('status' => false, 'message' => 'Region is required.');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+        $account_type = "company";
+
+        $limit = !empty($input['per_page']) ? $input['per_page'] : 10;
+
+        if(isset($input['search']) && !empty($input['search']) || isset($input['search']) && $input['search'] != null) {
+          if($input['region'] == "all_region") {
+           $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('clinic.Name', 'like', '%'.$input['search'].'%')
+                    ->where('clinic.Active', 1)
+                    ->whereIn('clinic.currency_type', ["sgd", "myr", "all_region"])
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->get();
+          } else {
+            $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('clinic.Name', 'like', '%'.$input['search'].'%')
+                    ->where('clinic.Active', 1)
+                    ->where('clinic.currency_type', $input['region'])
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->get();
+          }
+        } else {
+          if($input['region'] == "all_region") {
+            $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('clinic.Active', 1)
+                    ->whereIn('clinic.currency_type', ["sgd", "myr", "all_region"])
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->paginate($limit);
+          } else {
+            $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('clinic.Active', 1)
+                    ->where('clinic.currency_type', $input['region'])
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->paginate($limit);
+          }
+          
+
+        }
+        return $results;
+        return array('status' => true, 'data' => $results);
+    }
+
+    public function getCompanyBlockClinicListsEmployee( )
+    {
+        $input = Input::all();
+
+        if(empty($input['region']) || $input['region'] == null) {
+          return array('status' => false, 'message' => 'Region is required.');
+        }
+
+        if(empty($input['user_id']) || $input['user_id'] == null) {
+          return array('status' => false, 'message' => 'Member ID is required.');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $input['user_id'];
+        $account_type = "employee";
+
+        $limit = !empty($input['per_page']) ? $input['per_page'] : 10;
+
+        if(isset($input['search']) && !empty($input['search']) || isset($input['search']) && $input['search'] != null) {
+          if($input['region'] == "all_region") {
+           $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('clinic.Name', 'like', '%'.$input['search'].'%')
+                    ->where('clinic.Active', 1)
+                    ->whereIn('clinic.currency_type', ["sgd", "myr", "all_region"])
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->get();
+          } else {
+            $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('clinic.Name', 'like', '%'.$input['search'].'%')
+                    ->where('clinic.Active', 1)
+                    ->where('clinic.currency_type', $input['region'])
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->get();
+          }
+        } else {
+          if($input['region'] == "all_region") {
+            $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('clinic.Active', 1)
+                    ->whereIn('clinic.currency_type', ["sgd", "myr", "all_region"])
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->paginate($limit);
+          } else {
+            $results = DB::table('company_block_clinic_access')
+                    ->where('customer_id', $customer_id)
+                    ->join('clinic', 'clinic.ClinicID', '=', 'company_block_clinic_access.clinic_id')
+                    ->where('company_block_clinic_access.status', 1)
+                    ->where('clinic.Active', 1)
+                    ->where('clinic.currency_type', $input['region'])
+                    ->where('company_block_clinic_access.account_type', $account_type)
+                    ->paginate($limit);
+          }
+          
+
+        }
+        return $results;
+        return array('status' => true, 'data' => $results);
+    }
+
+    public function getCompanyActiveClinicLists( )
+    {
+        $input = Input::all();
+        if(empty($input['region']) || $input['region'] == null) {
+          return array('status' => false, 'message' => 'Region is required.');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+        $account_type = "company";
+
+        $format = [];
+        $limit = !empty($input['per_page']) ? $input['per_page'] : 10;
+
+        $results = DB::table('company_block_clinic_access')
+                            ->where('customer_id', $customer_id)
+                          ->where('account_type', $account_type)
+                          ->where('status', 1)
+                          ->get();
+        $new_array = [];
+        foreach ($results as $key => $result) {
+          $new_array[] = $result->clinic_id;
+        }
+
+        if(isset($input['search']) && !empty($input['search']) || isset($input['search']) && $input['search'] != null) {
+            if(sizeof($new_array) > 0) {
+                  if($input['region'] == "all_region") {
+                    $clinics = DB::table('clinic')
+                            ->whereNotIn('ClinicID', $new_array)
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->whereIn('currency_type', ["company", "employee"])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  } else {
+                    $clinics = DB::table('clinic')
+                            ->whereNotIn('ClinicID', $new_array)
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->where('currency_type', $input['region'])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  }
+
+              } else {
+                if($input['region'] == "all_region") {
+                    $clinics = DB::table('clinic')
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->whereIn('currency_type', ["company", "employee"])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  } else {
+                    $clinics = DB::table('clinic')
+                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Active', 1)
+                            ->where('currency_type', $input['region'])
+                            ->orderBy('Created_on', 'desc')
+                            ->get();
+                  }
+              }
+          
+        } else {
+            if(sizeof($new_array) > 0) {
+              if($input['region'] == "all_region") {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Active', 1)
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              } else {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              }
+            } else {
+                if($input['region'] == "all_region") {
+                $clinics = DB::table('clinic')
+                        ->where('Active', 1)
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              } else {
+                $clinics = DB::table('clinic')
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+              }
+            }
+        }
+
+
+        return $clinics;
+        return array('status' => true, 'data' => $clinics);
+    }
+
+    public function getCompanyActiveClinicListsEmployee( )
+    {
+        $input = Input::all();
+        if(empty($input['region']) || $input['region'] == null) {
+          return array('status' => false, 'message' => 'Region is required.');
+        }
+
+        if(empty($input['user_id']) || $input['user_id'] == null) {
+          return array('status' => false, 'message' => 'Member ID is required.');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $input['user_id'];
+        $account_type = "employee";
+
+        $format = [];
+        $limit = !empty($input['per_page']) ? $input['per_page'] : 10;
+
+        $results = DB::table('company_block_clinic_access')
+                            ->where('customer_id', $customer_id)
+                          ->where('account_type', $account_type)
+                          ->where('status', 1)
+                          ->get();
+        $new_array = [];
+        foreach ($results as $key => $result) {
+          $new_array[] = $result->clinic_id;
+        }
+
+        if(isset($input['search']) && !empty($input['search']) || isset($input['search']) && $input['search'] != null) {
+          if($input['region'] == "all_region") {
+            if(sizeof($new_array) > 0) {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Name', 'like', '%'.$input['search'].'%')
+                        ->where('Active', 1)
+                        ->whereIn('currency_type', ["company", "employee"])
+                        ->orderBy('Created_on', 'desc')
+                        ->get();
+            } else {
+                $clinics = DB::table('clinic')
+                        ->where('Name', 'like', '%'.$input['search'].'%')
+                        ->where('Active', 1)
+                        ->whereIn('currency_type', ["company", "employee"])
+                        ->orderBy('Created_on', 'desc')
+                        ->get();
+            }
+          } else {
+            if(sizeof($new_array) > 0) {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Name', 'like', '%'.$input['search'].'%')
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->get();
+            } else {
+                $clinics = DB::table('clinic')
+                        ->where('Name', 'like', '%'.$input['search'].'%')
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->get();
+            }
+          }
+          
+        } else {
+          if($input['region'] == "all_region") {
+            if(sizeof($new_array) > 0) {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Active', 1)
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+            } else {
+                $clinics = DB::table('clinic')
+                        ->where('Active', 1)
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+            }
+          } else {
+            if(sizeof($new_array) > 0) {
+                $clinics = DB::table('clinic')
+                        ->whereNotIn('ClinicID', $new_array)
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+            } else {
+                $clinics = DB::table('clinic')
+                        ->where('Active', 1)
+                        ->where('currency_type', $input['region'])
+                        ->orderBy('Created_on', 'desc')
+                        ->paginate($limit);
+            }
+          }
+        }
+
+
+        return $clinics;
+        return array('status' => true, 'data' => $clinics);
+    }
+
+    public function createCompanyBlockClinicLists( )
+    {
+        $input = Input::all();
+        if(empty($input['type']) || $input['type'] == null) {
+          return array('status' => false, 'message' => 'Block access type access is required');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+        $hr_id = $result->hr_dashboard_id;
+        $admin_id = Session::get('admin-session-id');
+        $account_type = "company";
+
+        $check = $customer = DB::table('customer_buy_start')
+                    ->where('customer_buy_start_id', $customer_id)
+                    ->first();
+        if(!$customer) {
+            return array('status' => false, 'message' => 'Customer/Company does not exist.');
+        }
+
+        if($input['type'] == "clinic_type") {
+          if(empty($input['clinic_type_id']) || $input['clinic_type_id'] == null) {
+            return array('status' => false, 'messsage' => 'Clinic Type ID is required');
+          }
+
+          if(empty($input['access_status']) || $input['access_status'] == null) {
+            return array('status' => false, 'messsage' => 'Access status is required');
+          }
+
+          // $clinic_type = DB::table('clinic_types')
+          //                 ->where('ClinicTypeID', $input['clinic_type_id'])
+          //                 ->first();
+
+          // if(!$clinic_type) {
+          //   return array('status' => false, 'message' => 'Clinic Type does not exist');
+          // }
+          
+          if($input['region'] == "all_region") {
+            $clinic_ids = DB::table('clinic')
+                            ->join('clinic_types', 'clinic_types.ClinicTypeID', '=', 'clinic.Clinic_Type')
+                            ->whereIn('clinic.Clinic_Type', $input['clinic_type_id'])
+                            ->get();
+          } else {
+            $clinic_ids = DB::table('clinic')
+                            ->join('clinic_types', 'clinic_types.ClinicTypeID', '=', 'clinic.Clinic_Type')
+                            ->where('clinic.currency_type', $input['region'])
+                            ->whereIn('clinic.Clinic_Type', $input['clinic_type_id'])
+                            ->get();
+          }
+          
+          if($input['access_status'] == "block") {
+            foreach ($clinic_ids as $key => $clinic_id) {
+                $id = $clinic_id->ClinicID;
+              // check if clinic block already exits
+              $check = DB::table('company_block_clinic_access')
+                        ->where('customer_id', $customer_id)
+                        ->where('clinic_id', $id)
+                        ->first();
+
+              if(!$check) {
+                // create block access
+                $data = array(
+                  'customer_id' => $customer_id,
+                  'clinic_id'   => $id,
+                  'account_type' => $account_type,
+                  'status'      => 1,
+                  'created_at'  => date('Y-m-d H:i:s'),
+                  'updated_at'  => date('Y-m-d H:i:s')
+                );
+                $result = DB::table('company_block_clinic_access')->insert($data);
+                if($result) {
+                  if($admin_id) {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $id,
+                      'status'      => 1
+                    );
+                    $admin_logs = array(
+                        'admin_id'  => $admin_id,
+                        'type'      => 'admin_company_block_clinic_access',
+                        'data'      => serialize($block)
+                    );
+                    SystemLogLibrary::createAdminLog($admin_logs);
+                  } else {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $id,
+                      'status'      => 1
+                    );
+                    $admin_logs = array(
+                        'admin_id'  => $hr_id,
+                        'type'      => 'admin_company_block_clinic_access',
+                        'data'      => serialize($block)
+                    );
+                    SystemLogLibrary::createAdminLog($admin_logs);
+                  }
+                }
+              } else {
+                if((int)$check->status == 0) {
+                  $result = DB::table('company_block_clinic_access')->where('company_block_clinic_access_id', $check->company_block_clinic_access_id)->update(['status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
+                }
+              }
+            }
+          } else {
+            foreach ($clinic_ids as $key => $clinic_id) {
+                $id = $clinic_id->ClinicID;
+              // check if clinic block already exits
+              $check = DB::table('company_block_clinic_access')
+                        ->where('customer_id', $customer_id)
+                        ->where('clinic_id', $id)
+                        ->first();
+              if($check && (int)$check->status == 1) {
+                $result = DB::table('company_block_clinic_access')->where('company_block_clinic_access_id', $check->company_block_clinic_access_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                if($result) {
+                  if($admin_id) {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $input['clinic_id'],
+                      'status'      => 0
+                    );
+                      $admin_logs = array(
+                          'admin_id'  => $admin_id,
+                          'type'      => 'admin_company_block_clinic_access',
+                          'data'      => serialize($block)
+                      );
+                      SystemLogLibrary::createAdminLog($admin_logs);
+                  } else {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $input['clinic_id'],
+                      'status'      => 0
+                    );
+                      $admin_logs = array(
+                          'admin_id'  => $hr_id,
+                          'type'      => 'admin_company_block_clinic_access',
+                          'data'      => serialize($block)
+                      );
+                      SystemLogLibrary::createAdminLog($admin_logs);
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          if(empty($input['clinic_id']) || $input['clinic_id'] == null) {
+            return array('status' => false, 'message' => 'Clinic ID is required.');
+          }
+          $status_codes = [0, 1];
+            if(!empty($input['status'])) {
+                if(!in_array((int)$input['status'], $status_codes)) {
+                    return array('status' => false, 'message' => 'Status should only be 1 or 0');
+                }
+            }
+
+            $check = DB::table('company_block_clinic_access')->where('clinic_id', $input['clinic_id'])
+                                          ->where('customer_id', $customer_id)
+                                          ->first();
+          
+          $status = $input['status'];
+
+            if(!$check) {
+                // create
+                $block = array(
+              'customer_id' => $customer_id,
+              'clinic_id'   => $input['clinic_id'],
+              'account_type' => $account_type,
+              'status'      => $status,
+              'created_at'  => date('Y-m-d H:i:s'),
+              'updated_at'  => date('Y-m-d H:i:s')
+              );
+
+              DB::table('company_block_clinic_access')->insert($block);
+            } else {
+                DB::table('company_block_clinic_access')->where('clinic_id', $input['clinic_id'])
+                                          ->where('customer_id', $customer_id)
+                                          ->update(['status' => $status, 'updated_at'  => date('Y-m-d H:i:s')]);
+            }
+
+          if($admin_id) {
+            $block = array(
+              'customer_id' => $customer_id,
+              'clinic_id'   => $input['clinic_id'],
+              'status'      => $status
+            );
+              $admin_logs = array(
+                  'admin_id'  => $admin_id,
+                  'type'      => 'admin_company_block_clinic_access',
+                  'data'      => serialize($block)
+              );
+              \SystemLogLibrary::createAdminLog($admin_logs);
+          } else {
+            $block = array(
+              'customer_id' => $customer_id,
+              'clinic_id'   => $input['clinic_id'],
+              'status'      => $status
+            );
+              $admin_logs = array(
+                  'admin_id'  => $hr_id,
+                  'type'      => 'admin_company_block_clinic_access',
+                  'data'      => serialize($block)
+              );
+              \SystemLogLibrary::createAdminLog($admin_logs);
+          }
+        }
+
+        return array('status' => true, 'message' => 'Clinic Block Lists updated.');
+    }
+
+    public function createCompanyBlockClinicListsEmployee( )
+    {
+        $input = Input::all();
+        if(empty($input['type']) || $input['type'] == null) {
+          return array('status' => false, 'message' => 'Block access type access is required');
+        }
+
+        if(empty($input['region']) || $input['region'] == null) {
+          return array('status' => false, 'message' => 'Region is required');
+        }
+
+        if(empty($input['user_id']) || $input['user_id'] == null) {
+          return array('status' => false, 'message' => 'Member ID is required');
+        }
+
+        $region_type = ["sgd", "myr", "all_region"];
+
+        if(!in_array($input['region'], $region_type)) {
+          return array('status' => false, 'message' => 'Region Type must be sgd or myr');
+        }
+
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $input['user_id'];
+        $hr_id = $result->hr_dashboard_id;
+        $admin_id = Session::get('admin-session-id');
+        $account_type = "employee";
+
+        $check = $customer = DB::table('customer_buy_start')
+                    ->where('customer_buy_start_id', $customer_id)
+                    ->first();
+        if(!$customer) {
+            return array('status' => false, 'message' => 'Customer/Company does not exist.');
+        }
+
+        if($input['type'] == "clinic_type") {
+          if(empty($input['clinic_type_id']) || $input['clinic_type_id'] == null) {
+            return array('status' => false, 'messsage' => 'Clinic Type ID is required');
+          }
+
+          if(empty($input['access_status']) || $input['access_status'] == null) {
+            return array('status' => false, 'messsage' => 'Access status is required');
+          }
+
+          // $clinic_type = DB::table('clinic_types')
+          //                 ->where('ClinicTypeID', $input['clinic_type_id'])
+          //                 ->first();
+
+          // if(!$clinic_type) {
+          //   return array('status' => false, 'message' => 'Clinic Type does not exist');
+          // }
+          
+          if($input['region'] == "all_region") {
+            $clinic_ids = DB::table('clinic')
+                            ->join('clinic_types', 'clinic_types.ClinicTypeID', '=', 'clinic.Clinic_Type')
+                            ->whereIn('clinic.Clinic_Type', $input['clinic_type_id'])
+                            ->get();
+          } else {
+            $clinic_ids = DB::table('clinic')
+                            ->join('clinic_types', 'clinic_types.ClinicTypeID', '=', 'clinic.Clinic_Type')
+                            ->where('clinic.currency_type', $input['region'])
+                            ->whereIn('clinic.Clinic_Type', $input['clinic_type_id'])
+                            ->get();
+          }
+          
+          if($input['access_status'] == "block") {
+            foreach ($clinic_ids as $key => $clinic_id) {
+                $id = $clinic_id->ClinicID;
+              // check if clinic block already exits
+              $check = DB::table('company_block_clinic_access')
+                        ->where('customer_id', $customer_id)
+                        ->where('clinic_id', $id)
+                        ->first();
+
+              if(!$check) {
+                // create block access
+                $data = array(
+                  'customer_id' => $customer_id,
+                  'clinic_id'   => $id,
+                  'account_type' => $account_type,
+                  'status'      => 1,
+                  'created_at'  => date('Y-m-d H:i:s'),
+                  'updated_at'  => date('Y-m-d H:i:s')
+                );
+                $result = DB::table('company_block_clinic_access')->insert($data);
+                if($result) {
+                  if($admin_id) {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $id,
+                      'status'      => 1
+                    );
+                    $admin_logs = array(
+                        'admin_id'  => $admin_id,
+                        'type'      => 'admin_company_block_clinic_access',
+                        'data'      => serialize($block)
+                    );
+                    SystemLogLibrary::createAdminLog($admin_logs);
+                  } else {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $id,
+                      'status'      => 1
+                    );
+                    $admin_logs = array(
+                        'admin_id'  => $hr_id,
+                        'type'      => 'admin_company_block_clinic_access',
+                        'data'      => serialize($block)
+                    );
+                    SystemLogLibrary::createAdminLog($admin_logs);
+                  }
+                }
+              } else {
+                if((int)$check->status == 0) {
+                  $result = DB::table('company_block_clinic_access')->where('company_block_clinic_access_id', $check->company_block_clinic_access_id)->update(['status' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
+                }
+              }
+            }
+          } else {
+            foreach ($clinic_ids as $key => $clinic_id) {
+                $id = $clinic_id->ClinicID;
+              // check if clinic block already exits
+              $check = DB::table('company_block_clinic_access')
+                        ->where('customer_id', $customer_id)
+                        ->where('clinic_id', $id)
+                        ->first();
+              if($check && (int)$check->status == 1) {
+                $result = DB::table('company_block_clinic_access')->where('company_block_clinic_access_id', $check->company_block_clinic_access_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+                if($result) {
+                  if($admin_id) {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $input['clinic_id'],
+                      'status'      => 0
+                    );
+                      $admin_logs = array(
+                          'admin_id'  => $admin_id,
+                          'type'      => 'admin_company_block_clinic_access',
+                          'data'      => serialize($block)
+                      );
+                      SystemLogLibrary::createAdminLog($admin_logs);
+                  } else {
+                    $block = array(
+                      'customer_id' => $customer_id,
+                      'clinic_id'   => $input['clinic_id'],
+                      'status'      => 0
+                    );
+                      $admin_logs = array(
+                          'admin_id'  => $hr_id,
+                          'type'      => 'admin_company_block_clinic_access',
+                          'data'      => serialize($block)
+                      );
+                      SystemLogLibrary::createAdminLog($admin_logs);
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          if(empty($input['clinic_id']) || $input['clinic_id'] == null) {
+            return array('status' => false, 'message' => 'Clinic ID is required.');
+          }
+          $status_codes = [0, 1];
+            if(!empty($input['status'])) {
+                if(!in_array((int)$input['status'], $status_codes)) {
+                    return array('status' => false, 'message' => 'Status should only be 1 or 0');
+                }
+            }
+
+            $check = DB::table('company_block_clinic_access')->where('clinic_id', $input['clinic_id'])
+                                          ->where('customer_id', $customer_id)
+                                          ->first();
+          
+          $status = $input['status'];
+
+            if(!$check) {
+                // create
+                $block = array(
+              'customer_id' => $customer_id,
+              'clinic_id'   => $input['clinic_id'],
+              'account_type' => $account_type,
+              'status'      => $status,
+              'created_at'  => date('Y-m-d H:i:s'),
+              'updated_at'  => date('Y-m-d H:i:s')
+              );
+
+              DB::table('company_block_clinic_access')->insert($block);
+            } else {
+                DB::table('company_block_clinic_access')->where('clinic_id', $input['clinic_id'])
+                                          ->where('customer_id', $customer_id)
+                                          ->update(['status' => $status, 'updated_at'  => date('Y-m-d H:i:s')]);
+            }
+
+          if($admin_id) {
+            $block = array(
+              'customer_id' => $customer_id,
+              'clinic_id'   => $input['clinic_id'],
+              'status'      => $status
+            );
+              $admin_logs = array(
+                  'admin_id'  => $admin_id,
+                  'type'      => 'admin_company_block_clinic_access',
+                  'data'      => serialize($block)
+              );
+              \SystemLogLibrary::createAdminLog($admin_logs);
+          } else {
+            $block = array(
+              'customer_id' => $customer_id,
+              'clinic_id'   => $input['clinic_id'],
+              'status'      => $status
+            );
+              $admin_logs = array(
+                  'admin_id'  => $hr_id,
+                  'type'      => 'admin_company_block_clinic_access',
+                  'data'      => serialize($block)
+              );
+              \SystemLogLibrary::createAdminLog($admin_logs);
+          }
+        }
+
+        return array('status' => true, 'message' => 'Clinic Block Lists updated.');
+    }
 }
