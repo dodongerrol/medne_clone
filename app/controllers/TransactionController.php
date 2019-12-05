@@ -2575,7 +2575,7 @@ class TransactionController extends BaseController {
 					}
 				}
 				$procedure_id = 0;
-				if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1") {
+				if((int)$trans->multiple_service_selection == 1) {
 			        // get multiple service
 					$service_lists = DB::table('transaction_services')
 					->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
@@ -2606,7 +2606,7 @@ class TransactionController extends BaseController {
 
 				if($trans->credit_cost > 0) {
 					$mednefits_credits += $trans->credit_cost;
-					$cash = "0.00";
+					$cash = 0;
 				} else {
 					$mednefits_credits += 0;
 					$cash = $trans->procedure_cost;
@@ -2651,7 +2651,7 @@ class TransactionController extends BaseController {
 					'UserID'								=> $trans->UserID,
 					'date_of_transaction'		=> date('d F Y, h:i a', strtotime($trans->date_of_transaction)),
 					'paid'									=> $trans->paid,
-					'procedure_cost'				=> number_format($trans->procedure_cost, 2),
+					'procedure_cost'				=> $trans->procedure_cost,
 					'procedure_name'				=> $procedure,
 					'transaction_id'				=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 					'user_name'							=> ucwords($trans->user_name),
