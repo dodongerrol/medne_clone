@@ -8,6 +8,7 @@ app.directive('dashboardDirective', [
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log("dashboardDirective Runnning !");
+				
 				scope.options = {};
 				scope.progress = {};
 				scope.spendingAccountType = 0;
