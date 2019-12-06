@@ -8106,6 +8106,7 @@ ul.typeahead li a.dropdown-item
 	color: #2c3e50;
 	font-size: 18px;
 	margin-bottom: 15px;
+  position: relative;
 }
 .prompt-page-container .item-select .select-value{
   display: inline-block;
@@ -8152,5 +8153,60 @@ ul.typeahead li a.dropdown-item
 }
 .prompt-page-container .select-drop-box .select-option:hover{
 	background: #3EA4DF;
+}
+.prompt-page-container .medical-info-box,
+.prompt-page-container .wellness-info-box{
+  position: absolute;
+  right: 0;
+  top: 35px;
+  display: none;
+}
+.prompt-page-container .custom-box{
+  position: absolute;
+  right: -3px;
+  top: -10px;
+  background: #424242;
+  border: 1px solid #000000;
+  border-radius: 2px;
+  transform: rotate(-45deg);
+  width: 20px;
+  height: 20px;
+}
+.prompt-page-container .main-info-box{
+  background: #424242;
+  border-radius: 2px;
+  color: #FFF;
+  z-index: 5;
+  position: absolute;
+  right: -165px;
+  top: -1px;
+  width: 350px;
+  padding: 10px 15px;
+  font-size: 13px;
+}
+.main-info-box p{
+  line-height: 1.4;
+  margin-bottom: 5px;	
+}
+.main-info-box .custom-line{
+	border: 0.5px solid #FFFFFF;
+  margin: 10px 0;
+}
+.main-info-box .btn-container{
+	text-align: center;
+	margin: 10px 0; 
+}
+.main-info-box .btn-container .btn-got-it{
+	background: #0392CF;
+	border-radius: 3px; 
+	color: #FFF;
+	width: 86px;
+	height: 31px;
+	font-weight: 700;
+	font-family: 'Helvetica Light';
+	border: none;
+	line-height: 31px;
+  display: inline-block;
+  cursor: pointer;
 }
 

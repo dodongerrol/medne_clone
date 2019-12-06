@@ -90,6 +90,19 @@ app.directive('enrollmentOptionsDirective', [
 			  	$(this).closest('.select-div').find(".select-drop-box").show();
 			  });
 
+			  $(".medical-info-click").click(function(e){
+			  	$(".medical-info-box").show();
+			  });
+			  $(".medical-info-close").click(function(e){
+			  	$(".medical-info-box").hide();
+			  });
+			  $(".wellness-info-click").click(function(e){
+			  	$(".wellness-info-box").show();
+			  });
+			  $(".wellness-info-close").click(function(e){
+			  	$(".wellness-info-box").hide();
+			  });
+
 			  $("body").click(function(e){
 			    if ( $(e.target).parents(".select-div").length === 0) {
 			      $(".select-drop-box").hide();

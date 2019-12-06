@@ -432,13 +432,13 @@
 								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
 							</div>
 							<div class="employee-input-wrapper">
-								<div ng-if="hasMedicalBalance">
+								<div ng-if="employee_data.hasMedicalBalance">
 									<label for="fname">Medical Entitlement Balance</label>
 	  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement_balance">
   							</div>
 							</div>
 							<div class="employee-input-wrapper">
-								<div ng-if="hasWellnessBalance">
+								<div ng-if="employee_data.hasWellnessBalance">
 									<label for="fname">Wellness Entitlement Balance</label>
 	  							<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement_balance">
 	  						</div>

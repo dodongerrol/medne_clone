@@ -135,8 +135,9 @@ app.directive('benefitsTiersDirective', [
 						if( scope.isExcelSelected == true ){
 							scope.isExcel = true;
 						}else{
-							scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance');
-							scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance');
+							scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance') == 'true' ? true : false;
+							scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
+							console.log(scope.employee_data);
 							scope.isWebInput = true;
 							scope.isFromUpload = false;
 							scope.inititalizeDatepicker();
@@ -1018,6 +1019,7 @@ app.directive('benefitsTiersDirective', [
 				// HTTP REQUEST
 
 				scope.enrollEmployees = function(){
+					console.log( scope.employee_data );
 					var emp_arr = [];
 					if( !scope.employee_data.fullname  && !scope.employee_data.dob 
 							&& !scope.employee_data.mobile && !scope.employee_data.email ){
