@@ -1288,12 +1288,16 @@ class EmployeeController extends \BaseController {
                             ->get();
           }
           
+          $clinic_datas = array();
+
           if($input['access_status'] == "block") {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
+                array_push($clinic_datas, $id);
               // check if clinic block already exits
               $check = DB::table('company_block_clinic_access')
                         ->where('customer_id', $customer_id)
+                        ->where('account_type', 'company')
                         ->where('clinic_id', $id)
                         ->first();
 
@@ -1341,13 +1345,19 @@ class EmployeeController extends \BaseController {
                 }
               }
             }
+
+            // process queue
+            // Queue::connection('redis_high')->push('\BlockClinicProcessQueue', array('customer_id' => $customer_id, 'ids' => $clinic_datas));
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas), 1);
           } else {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
+                array_push($clinic_datas, $id);
               // check if clinic block already exits
               $check = DB::table('company_block_clinic_access')
                         ->where('customer_id', $customer_id)
                         ->where('clinic_id', $id)
+                        ->where('account_type', 'company')
                         ->first();
               if($check && (int)$check->status == 1) {
                 $result = DB::table('company_block_clinic_access')->where('company_block_clinic_access_id', $check->company_block_clinic_access_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
@@ -1380,6 +1390,7 @@ class EmployeeController extends \BaseController {
                 }
               }
             }
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas), 0);
           }
         } else {
           if(empty($input['clinic_id']) || $input['clinic_id'] == null) {
@@ -1392,9 +1403,11 @@ class EmployeeController extends \BaseController {
                 }
             }
 
-            $check = DB::table('company_block_clinic_access')->where('clinic_id', $input['clinic_id'])
-                                          ->where('customer_id', $customer_id)
-                                          ->first();
+            $check = DB::table('company_block_clinic_access')
+                        ->where('clinic_id', $input['clinic_id'])
+                      ->where('customer_id', $customer_id)
+                      ->where('account_type', 'company')
+                      ->first();
           
           $status = $input['status'];
 
@@ -1415,6 +1428,8 @@ class EmployeeController extends \BaseController {
                                           ->where('customer_id', $customer_id)
                                           ->update(['status' => $status, 'updated_at'  => date('Y-m-d H:i:s')]);
             }
+
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => [$input['clinic_id']]), $status);
 
           if($admin_id) {
             $block = array(
