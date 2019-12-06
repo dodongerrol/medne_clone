@@ -9,6 +9,7 @@ app.directive('activityPage', [
 			scope: true,
 			link: function link(scope, element, attributeSet) {
 				console.log('running activityPage');
+				
 				scope.inNetWorkTable = true;
 				scope.outNetWorkTable = false;
 				scope.options = {};

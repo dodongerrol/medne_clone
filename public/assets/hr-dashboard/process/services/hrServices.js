@@ -405,5 +405,57 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
     });
   };
 
+  hrFactory.fetchBlockedClinics = function( per, page, opt, search) {
+    var url = serverUrl.url + "/hr/get_company_block_lists?per_page=" + per + "&page=" + page + "&region=" + opt;
+    if( search != null && search != '' ){
+      url += "&search=" + search;
+    }
+    return $http.get( url );
+  };
+
+  hrFactory.fetchOpenedClinics = function( per, page, opt, search ) {
+    var url = serverUrl.url + "/hr/get_clinic_lists_block_company?per_page=" + per + "&page=" + page + "&region=" + opt;
+    if( search != null && search != '' ){
+      url += "&search=" + search;
+    }
+    return $http.get( url );
+  };
+
+  hrFactory.fetchClinicTypes = function( status, region ) {
+    return $http.get( serverUrl.url + "/hr/get_block_clinic_type_lists_status?status=" + status + "&region=" + region );
+  };
+
+  hrFactory.OpenBlockClinics = function( data ) {
+    return $http.post( serverUrl.url + "/hr/create_company_block_lists", data );
+  };
+
+
+
+
+
+  hrFactory.fetchBlockedClinicsEmp = function( per, page, opt, search, id) {
+    var url = serverUrl.url + "/hr/get_employee_company_block_lists?per_page=" + per + "&page=" + page + "&region=" + opt + "&user_id=" + id;
+    if( search != null && search != '' ){
+      url += "&search=" + search;
+    }
+    return $http.get( url );
+  };
+
+  hrFactory.fetchOpenedClinicsEmp = function( per, page, opt, search, id ) {
+    var url = serverUrl.url + "/hr/get_employee_clinic_lists_block_company?per_page=" + per + "&page=" + page + "&region=" + opt + "&user_id=" + id;
+    if( search != null && search != '' ){
+      url += "&search=" + search;
+    }
+    return $http.get( url );
+  };
+
+  hrFactory.fetchClinicTypesEmp = function( status, region, id ) {
+    return $http.get( serverUrl.url + "/hr/get_employee_block_clinic_type_lists_status?status=" + status + "&region=" + region + "&user_id=" + id );
+  };
+
+  hrFactory.OpenBlockClinicsEmp = function( data ) {
+    return $http.post( serverUrl.url + "/hr/create_employee_company_block_lists", data );
+  };
+
   return hrFactory;
 });
