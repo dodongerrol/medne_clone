@@ -74,8 +74,9 @@ app.directive('settingsDirective', [
         scope.selectSettingsTab = function ( opt ) {
         	scope.settings_active = opt;
         }
+
         scope.onLoad = function( ){
-        		        
+          scope.companyAccountType();
         }
 
         scope.onLoad();

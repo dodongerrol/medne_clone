@@ -1055,15 +1055,15 @@ class EmployeeController extends \BaseController {
                   if($input['region'] == "all_region") {
                     $clinics = DB::table('clinic')
                             ->whereNotIn('ClinicID', $new_array)
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
-                            ->whereIn('currency_type', ["company", "employee"])
+                            ->whereIn('currency_type', ["sgd", "myr"])
                             ->orderBy('Created_on', 'desc')
                             ->get();
                   } else {
                     $clinics = DB::table('clinic')
                             ->whereNotIn('ClinicID', $new_array)
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
                             ->where('currency_type', $input['region'])
                             ->orderBy('Created_on', 'desc')
@@ -1073,14 +1073,15 @@ class EmployeeController extends \BaseController {
               } else {
                 if($input['region'] == "all_region") {
                     $clinics = DB::table('clinic')
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
-                            ->whereIn('currency_type', ["company", "employee"])
+                            ->whereIn('currency_type', ["sgd", "myr"])
                             ->orderBy('Created_on', 'desc')
                             ->get();
+                    return $clinics;
                   } else {
                     $clinics = DB::table('clinic')
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
                             ->where('currency_type', $input['region'])
                             ->orderBy('Created_on', 'desc')
@@ -1165,14 +1166,14 @@ class EmployeeController extends \BaseController {
                         ->whereNotIn('ClinicID', $new_array)
                         ->where('Name', 'like', '%'.$input['search'].'%')
                         ->where('Active', 1)
-                        ->whereIn('currency_type', ["company", "employee"])
+                        ->whereIn('currency_type', ["sgd", "myr"])
                         ->orderBy('Created_on', 'desc')
                         ->get();
             } else {
                 $clinics = DB::table('clinic')
                         ->where('Name', 'like', '%'.$input['search'].'%')
                         ->where('Active', 1)
-                        ->whereIn('currency_type', ["company", "employee"])
+                        ->whereIn('currency_type', ["sgd", "myr"])
                         ->orderBy('Created_on', 'desc')
                         ->get();
             }
@@ -1288,12 +1289,16 @@ class EmployeeController extends \BaseController {
                             ->get();
           }
           
+          $clinic_datas = array();
+
           if($input['access_status'] == "block") {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
+                array_push($clinic_datas, $id);
               // check if clinic block already exits
               $check = DB::table('company_block_clinic_access')
                         ->where('customer_id', $customer_id)
+                        ->where('account_type', 'company')
                         ->where('clinic_id', $id)
                         ->first();
 
@@ -1341,13 +1346,19 @@ class EmployeeController extends \BaseController {
                 }
               }
             }
+
+            // process queue
+            // Queue::connection('redis_high')->push('\BlockClinicProcessQueue', array('customer_id' => $customer_id, 'ids' => $clinic_datas));
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas), 1);
           } else {
             foreach ($clinic_ids as $key => $clinic_id) {
                 $id = $clinic_id->ClinicID;
+                array_push($clinic_datas, $id);
               // check if clinic block already exits
               $check = DB::table('company_block_clinic_access')
                         ->where('customer_id', $customer_id)
                         ->where('clinic_id', $id)
+                        ->where('account_type', 'company')
                         ->first();
               if($check && (int)$check->status == 1) {
                 $result = DB::table('company_block_clinic_access')->where('company_block_clinic_access_id', $check->company_block_clinic_access_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
@@ -1380,6 +1391,7 @@ class EmployeeController extends \BaseController {
                 }
               }
             }
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => $clinic_datas), 0);
           }
         } else {
           if(empty($input['clinic_id']) || $input['clinic_id'] == null) {
@@ -1392,9 +1404,11 @@ class EmployeeController extends \BaseController {
                 }
             }
 
-            $check = DB::table('company_block_clinic_access')->where('clinic_id', $input['clinic_id'])
-                                          ->where('customer_id', $customer_id)
-                                          ->first();
+            $check = DB::table('company_block_clinic_access')
+                        ->where('clinic_id', $input['clinic_id'])
+                      ->where('customer_id', $customer_id)
+                      ->where('account_type', 'company')
+                      ->first();
           
           $status = $input['status'];
 
@@ -1415,6 +1429,8 @@ class EmployeeController extends \BaseController {
                                           ->where('customer_id', $customer_id)
                                           ->update(['status' => $status, 'updated_at'  => date('Y-m-d H:i:s')]);
             }
+
+            BlockClinicProcessQueue::execute(array('customer_id' => $customer_id, 'ids' => [$input['clinic_id']]), $status);
 
           if($admin_id) {
             $block = array(
@@ -1473,8 +1489,8 @@ class EmployeeController extends \BaseController {
         $admin_id = Session::get('admin-session-id');
         $account_type = "employee";
 
-        $check = $customer = DB::table('customer_buy_start')
-                    ->where('customer_buy_start_id', $customer_id)
+        $check = $customer = DB::table('user')
+                    ->where('UserID', $customer_id)
                     ->first();
         if(!$customer) {
             return array('status' => false, 'message' => 'Customer/Company does not exist.');
@@ -1666,5 +1682,167 @@ class EmployeeController extends \BaseController {
         }
 
         return array('status' => true, 'message' => 'Clinic Block Lists updated.');
+    }
+
+    public function employeeCapPerVisit( )
+    {
+        $input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+        $per_page = isset($input['per_page']) || !empty($input['per_page']) ? $input['per_page'] : 25;
+        $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+        $final_user = [];
+        $paginate = [];
+
+        $users = DB::table('user')
+        ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+        ->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+        ->where('corporate.corporate_id', $account_link->corporate_id)
+        ->where('user.Active', 1)
+        ->select('user.UserID', 'user.Name')
+        ->orderBy('corporate_members.removed_status', 'asc')
+        ->orderBy('user.UserID', 'asc')
+        ->paginate($per_page);
+
+        $paginate['last_page'] = $users->getLastPage();
+        $paginate['current_page'] = $users->getCurrentPage();
+        $paginate['total_data'] = $users->getTotal();
+        $paginate['from'] = $users->getFrom();
+        $paginate['to'] = $users->getTo();
+        $paginate['count'] = $users->count();
+
+        foreach ($users as $key => $user) {
+            $wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->first();
+            $cap_amount = $wallet->cap_per_visit_medical;
+            $final_user[] = array(
+                'user_id'   => $user->UserID,
+                'name'      => ucwords($user->Name),
+                'cap_amount'    => $cap_amount,
+                'currency_type' => strtoupper($wallet->currency_type)
+            );
+        }
+
+        $paginate['data'] = $final_user;
+        return $paginate;
+    }
+
+    public function downloadCaperPervisitCSV( )
+    {
+        $input = Input::all();
+        $result = StringHelper::checkToken($input['token']);
+        $customer_id = $result->customer_buy_start_id;
+        $per_page = isset($input['per_page']) || !empty($input['per_page']) ? $input['per_page'] : 25;
+        $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+        $final_user = [];
+
+        $users = DB::table('user')
+        ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+        ->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+        ->where('corporate.corporate_id', $account_link->corporate_id)
+        ->where('user.Active', 1)
+        ->select('user.UserID', 'user.Name')
+        ->orderBy('corporate_members.removed_status', 'asc')
+        ->orderBy('user.UserID', 'asc')
+        ->get();
+
+        foreach ($users as $key => $user) {
+            $wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->first();
+            $cap_amount = $wallet->cap_per_visit_medical;
+            $final_user[] = array(
+                'Member ID'   => $user->UserID,
+                'Employee Name'      => ucwords($user->Name),
+                'Cap Per Visit'    => $cap_amount > 0 ? $cap_amount : "Not Applicable"
+            );
+        }
+
+        return \Excel::create('Employee Cap Per Visit', function($excel) use($final_user) {
+            $excel->sheet('Cap Per Visit', function($sheet) use($final_user) {
+                $sheet->fromArray( $final_user );
+            });
+        })->export('csv');
+    }
+
+    public function uploadCaperPervisit( )
+    {
+        $input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+        $admin_id = Session::get('admin-session-id');
+        $hr_id = $result->hr_dashboard_id;
+        $per_page = isset($input['per_page']) || !empty($input['per_page']) ? $input['per_page'] : 25;
+
+        if(Input::hasFile('file')) {
+            $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+            $file = Input::file('file');
+            $temp_file = time().$file->getClientOriginalName();
+            $file->move('excel_upload', $temp_file);
+            $data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->get();
+            $headerRow = $data_array->first()->keys();
+            
+            $memberid = false;
+            $name = false;
+            $cap = false;
+            foreach ($headerRow as $key => $row) {
+                if($row == "member_id") {
+                    $memberid = true;
+                } else if($row == "employee_name") {
+                    $name = true;
+                } else if($row == "cap_per_visit") {
+                    $cap = true;
+                }
+            }
+
+            if(!$memberid || !$name || !$cap) {
+                return array(
+                    'status'    => FALSE,
+                    'message' => 'Excel is invalid format. Please download the recommended file for Employee Cap Per Visit.'
+                );
+            }
+
+            foreach ($data_array as $key => $user) {
+                if($user['member_id'] || $user['member_id'] != null) {
+                    // check user
+                    $member = DB::table('user')->where('UserID', $user['member_id'])->first();
+                    if(!$member) {
+                        return array('status' => false, 'message' => 'Member with ID '.$user['member_id'].' does not exist');
+                    }
+
+                    // check if user is assign to company
+                    $check_member = DB::table('corporate_members')->where('user_id', $user['member_id'])->first();
+                    if(!$check_member) {
+                        return array('status' => false, 'message' => 'Member with ID '.$user['member_id'].' - '.$user['employee_name'].' is not assigned to this company');
+                    }
+
+                    $cap_amount = 0;
+                    if(is_numeric($user['cap_per_visit'])) {
+                        $cap_amount = $user['cap_per_visit'];
+                        $result = DB::table('e_wallet')->where('UserID', $user['member_id'])->update(['cap_per_visit_medical' => $cap_amount, 'updated_at' => date('Y-m-d H:i:s')]);
+                        if($admin_id) {
+                            $admin_logs = array(
+                                'admin_id'  => $admin_id,
+                                'admin_type' => 'mednefits',
+                                'type'      => 'admin_updated_cap_per_visit_cap',
+                                'data'      => SystemLogLibrary::serializeData($cap)
+                            );
+                            SystemLogLibrary::createAdminLog($admin_logs);
+                        } else {
+                            $admin_logs = array(
+                                'admin_id'  => $hr_id,
+                                'admin_type' => 'hr',
+                                'type'      => 'admin_updated_cap_per_visit_cap',
+                                'data'      => SystemLogLibrary::serializeData($cap)
+                            );
+                            SystemLogLibrary::createAdminLog($admin_logs);
+                        }
+                    }
+                }
+            }
+
+            return array('status' => true, 'message' => 'Employee Cap Per Visit updated');
+        } else {
+            return array('status' => false, 'message' => 'File is required');
+        }
+
+
     }
 }
