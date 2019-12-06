@@ -7635,6 +7635,27 @@ ul.typeahead li a.dropdown-item
   font-size: 14px;
 }
 
+@media (max-width: 1400px) {
+	.employee-dependent-information .health-partner-access-container {
+		grid-template-columns: 47% 6% 47%;
+	}
+
+	.employee-dependent-information .select-filter-div select {
+		font-size: 12px;
+		padding: 5px 0px;
+		width: 100px;
+		margin: 0 5px 0 0;
+	}
+
+	.employee-dependent-information .health-btn-open-block {
+		width: 60px;
+	}
+
+	.employee-dependent-information .sort-container img {
+		height: 35px;
+	}
+}
+
 .health-btn-open-block {
   /* position: absolute; */
   /* right: 20px; */

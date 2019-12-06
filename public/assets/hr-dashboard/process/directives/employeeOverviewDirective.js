@@ -1143,6 +1143,7 @@ app.directive("employeeOverviewDirective", [
             scope.selectedEmployee_index--;
             scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
             scope.getEmpDependents( scope.selectedEmployee.user_id );
+            scope.blockHealthPatnerLoad();
           }
         };
 
@@ -1155,6 +1156,7 @@ app.directive("employeeOverviewDirective", [
             scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
             scope.getEmpDependents( scope.selectedEmployee.user_id );
             scope.getEmpPlans( scope.selectedEmployee.user_id );
+            scope.blockHealthPatnerLoad();
           }
         };
 
