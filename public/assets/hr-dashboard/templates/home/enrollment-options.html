@@ -15,7 +15,7 @@
 	<div class="hrdb-body-container ">
 		<div class="container">
 			<div class="col-lg-12">
-				<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Let’s get to know more about your team.</h1>
+				<!-- <h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Let’s get to know more about your team.</h1>
 				<div class="white-space-20"></div>
 				<div class="enrollment-options-container center-block">
 					<div class="enrollment-options-subheading">
@@ -26,6 +26,35 @@
 						<button ng-class="{'active': isRequiredTiering == false}" ng-click="toggleEnrollmentOptions(false)">No</button>
 						<button ng-class="{'active': isRequiredTiering == true}" ng-click="toggleEnrollmentOptions(true)">Yes</button>
 					</div>
+				</div> -->
+				<div class="prompt-page-container">
+					<h1 class="text-center weight-700" style="color: #2c3e50;">Let us know more about the enrollment.</h1>
+					<div class="item-select">
+						<label>Is there any <span>Medical Entitlement Balance?</span> <img src="../images/info-icon.png"></label>
+						<div class="select-div">
+							<div class="select-value">
+								<span ng-if="selected_option.medical_opt != null" ng-bind="selected_option.medical_opt == true ? 'Yes' : 'No'"></span>
+							</div>
+							<div class="select-drop-box">
+								<div class="select-option" ng-click="selectMedicalOpt(true)">Yes</div>
+								<div class="select-option" ng-click="selectMedicalOpt(false)">No</div>
+							</div>
+							<i class="fa fa-angle-down"></i>
+						</div>
+					</div>
+					<div class="item-select">
+						<label>Is there any <span>Wellness Entitlement Balance?</span> <img src="../images/info-icon.png"></label>
+						<div class="select-div">
+							<div class="select-value">
+								<span ng-if="selected_option.wellness_opt != null" ng-bind="selected_option.wellness_opt == true ? 'Yes' : 'No'"></span>
+							</div>
+							<div class="select-drop-box">
+								<div class="select-option" ng-click="selectWellnessOpt(true)">Yes</div>
+								<div class="select-option" ng-click="selectWellnessOpt(false)">No</div>
+							</div>
+							<i class="fa fa-angle-down"></i>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -34,7 +63,7 @@
 	<div class="prev-next-buttons-container">
 		<div class="container">
 			<button ng-click="backButton()" class="pull-left btn btn-info back-btn" style="background-color: transparent;color: #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button>
-			<button ng-click="enrollmentNextBtn()"  class="pull-right btn btn-info next-wizard-button" ng-disabled="isOptionSelected == false">NEXT</button>
+			<button ng-click="enrollmentNextBtn()"  class="pull-right btn btn-info next-wizard-button" ng-disabled="selected_option.medical_opt == null || selected_option.wellness_opt == null">NEXT</button>
 		</div>
 	</div>
 </div>

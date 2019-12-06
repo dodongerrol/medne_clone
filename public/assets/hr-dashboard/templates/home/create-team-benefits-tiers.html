@@ -413,7 +413,7 @@
 								<label for="fname">Start Date</label>
   							<input type="text" name="start-date" class="start-date-datepicker" ng-model="employee_data.plan_start">
 							</div>
-							<div class="employee-input-wrapper">
+							<!-- <div class="employee-input-wrapper">
 								<label for="fname" style="line-height: 1;margin-top: 5px;">Medical Credits</label>
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="medical-credits" ng-model="employee_data.medical_credits">
@@ -422,6 +422,26 @@
 								<label for="fname" style="line-height: 1;margin-top: 5px;">Wellness Credits</label>
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
+							</div> -->
+							<div class="employee-input-wrapper">
+								<label for="fname">Medical Entitlement</label>
+  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Wellness Entitlement</label>
+								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
+							</div>
+							<div class="employee-input-wrapper">
+								<div ng-if="hasMedicalBalance">
+									<label for="fname">Medical Entitlement Balance</label>
+	  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement_balance">
+  							</div>
+							</div>
+							<div class="employee-input-wrapper">
+								<div ng-if="hasWellnessBalance">
+									<label for="fname">Wellness Entitlement Balance</label>
+	  							<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement_balance">
+	  						</div>
 							</div>
 						</form>
 					</div>

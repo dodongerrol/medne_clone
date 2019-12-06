@@ -135,6 +135,8 @@ app.directive('benefitsTiersDirective', [
 						if( scope.isExcelSelected == true ){
 							scope.isExcel = true;
 						}else{
+							scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance');
+							scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance');
 							scope.isWebInput = true;
 							scope.isFromUpload = false;
 							scope.inititalizeDatepicker();

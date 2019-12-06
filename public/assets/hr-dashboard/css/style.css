@@ -7518,3 +7518,71 @@ ul.typeahead li a.dropdown-item
 }
 
 
+/* ENROLLMENT NEW RENEWAL VERSION */
+#enroll-option-wrapper .prompt-page-container{
+	padding-top: 100px;
+  width: 375px;
+  margin: 0 auto;
+  min-width: 350px;
+}
+.prompt-page-container h1{
+	color: #2c3e50;
+  font-size: 20px !important;
+  margin-bottom: 60px;
+  font-family: 'Helvetica Medium';
+}
+.prompt-page-container .item-select{
+	margin-bottom: 20px;
+}
+.prompt-page-container .item-select label{
+	color: #2c3e50;
+	font-size: 18px;
+	margin-bottom: 15px;
+}
+.prompt-page-container .item-select .select-value{
+  display: inline-block;
+  border: 1px solid #979797;
+  width: 95px;
+  height: 35px;
+  line-height: 35px;
+  border-radius: 2px;
+  font-size: 16px;
+  padding: 0 10px;
+  color: #333;
+  cursor: pointer;
+}
+.prompt-page-container .item-select img{
+	width: 15px;
+	cursor: pointer;
+}
+.prompt-page-container .item-select .select-div{
+  position: relative;
+  width: 95px;
+  height: 35px;
+}
+.prompt-page-container .item-select .select-div i{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.prompt-page-container .select-drop-box{
+  position: absolute;
+  top: 36px;
+  left: 0;
+  border: 1px solid #979797;
+  border-radius: 2px;
+  font-size: 14px;
+  color: #333;
+  background: #FFF;
+  width: 100%;
+  z-index: 9;
+  display: none;
+}
+.prompt-page-container .select-drop-box .select-option{
+	padding: 5px 10px;
+  font-size: 14px;
+}
+.prompt-page-container .select-drop-box .select-option:hover{
+	background: #3EA4DF;
+}
+
