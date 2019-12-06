@@ -508,10 +508,10 @@ class testcontroller extends BaseController {
 		$data['nric'] = 'fdddsad2432';
 		$data['password'] = '123';
 		$data['phone'] = '+639064317892';
-
+		$data['sms_type'] = 'LA';
 		$data['message'] = SmsHelper::formatWelcomeEmployeeMessage($data);
-		return $data['message'];
-		// return SmsHelper::sendSms($data);
+		// return $data['message'];
+		return SmsHelper::sendSms($data);
 	}
 
 	public function testNRIC( )
