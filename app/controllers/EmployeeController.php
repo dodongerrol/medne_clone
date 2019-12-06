@@ -1055,15 +1055,15 @@ class EmployeeController extends \BaseController {
                   if($input['region'] == "all_region") {
                     $clinics = DB::table('clinic')
                             ->whereNotIn('ClinicID', $new_array)
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
-                            ->whereIn('currency_type', ["sg", "myr"])
+                            ->whereIn('currency_type', ["sgd", "myr"])
                             ->orderBy('Created_on', 'desc')
                             ->get();
                   } else {
                     $clinics = DB::table('clinic')
                             ->whereNotIn('ClinicID', $new_array)
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
                             ->where('currency_type', $input['region'])
                             ->orderBy('Created_on', 'desc')
@@ -1073,14 +1073,15 @@ class EmployeeController extends \BaseController {
               } else {
                 if($input['region'] == "all_region") {
                     $clinics = DB::table('clinic')
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
-                            ->whereIn('currency_type', ["sg", "myr"])
+                            ->whereIn('currency_type', ["sgd", "myr"])
                             ->orderBy('Created_on', 'desc')
                             ->get();
+                    return $clinics;
                   } else {
                     $clinics = DB::table('clinic')
-                            ->where('Name', 'like', '%'.$input['search'].'%')
+                            ->where('Name', 'like', '%'.strtolower($input['search']).'%')
                             ->where('Active', 1)
                             ->where('currency_type', $input['region'])
                             ->orderBy('Created_on', 'desc')
@@ -1165,14 +1166,14 @@ class EmployeeController extends \BaseController {
                         ->whereNotIn('ClinicID', $new_array)
                         ->where('Name', 'like', '%'.$input['search'].'%')
                         ->where('Active', 1)
-                        ->whereIn('currency_type', ["sg", "myr"])
+                        ->whereIn('currency_type', ["sgd", "myr"])
                         ->orderBy('Created_on', 'desc')
                         ->get();
             } else {
                 $clinics = DB::table('clinic')
                         ->where('Name', 'like', '%'.$input['search'].'%')
                         ->where('Active', 1)
-                        ->whereIn('currency_type', ["sg", "myr"])
+                        ->whereIn('currency_type', ["sgd", "myr"])
                         ->orderBy('Created_on', 'desc')
                         ->get();
             }
