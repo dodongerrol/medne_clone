@@ -7562,7 +7562,7 @@ ul.typeahead li a.dropdown-item
 .health-provider-header-container button.save-continue-disabled {
 	background-color: #9dc8e4;
 	border-color: #9dc8e4;
-	cursor: not-allowed;
+	pointer-events: none;
 }
 
 .health-provider-header-container button.save-continue-disabled:focus {
@@ -7633,6 +7633,27 @@ ul.typeahead li a.dropdown-item
   font-family: 'Helvetica Light';
   font-weight: 700;
   font-size: 14px;
+}
+
+@media (max-width: 1400px) {
+	.employee-dependent-information .health-partner-access-container {
+		grid-template-columns: 47% 6% 47%;
+	}
+
+	.employee-dependent-information .select-filter-div select {
+		font-size: 12px;
+		padding: 5px 0px;
+		width: 100px;
+		margin: 0 5px 0 0;
+	}
+
+	.employee-dependent-information .health-btn-open-block {
+		width: 60px;
+	}
+
+	.employee-dependent-information .sort-container img {
+		height: 35px;
+	}
 }
 
 .health-btn-open-block {
@@ -7860,12 +7881,13 @@ ul.typeahead li a.dropdown-item
 	color: #333;
 	border: 1px solid #d0d0d0;
 	margin: 0 0 20px;
+	padding-bottom: 150px;
 }
 
 .gp-cap-table-wrapper table th,
 .gp-cap-table-wrapper table td {
 	border: 1px solid #d0d0d0;
-	padding: 15px;
+	padding: 15px 10px;
 }
 
 .gp-cap-table-wrapper table th {
@@ -7899,6 +7921,7 @@ ul.typeahead li a.dropdown-item
 .cap-per-visit-wrapper .page-wrapper {
 	display: inline-flex;
 	align-items: flex-end;
+	padding-bottom: 150px;
 }
 
 .cap-per-visit-wrapper .fa-angle-left {
@@ -7911,7 +7934,7 @@ ul.typeahead li a.dropdown-item
 
 .cap-per-visit-wrapper .page-scroll-container {
 	display: flex;
-	/*align-items: center;*/
+	align-items: center;
 }
 
 .cap-per-visit-wrapper .rows-page-wrapper {
@@ -7924,8 +7947,21 @@ ul.typeahead li a.dropdown-item
 }
 
 .cap-per-visit-wrapper .page-scroll-container >div span {
-	margin-right: 10px;
-	cursor: initial;
+  margin-right: 10px;
+  cursor: pointer;
+  padding: 0px 7px;
+}
+
+.prev-page-gp-cap.prev-disabled {
+  pointer-events: none;
+}
+
+.health-page-num.active {
+  background-color: #e8e8e8;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div span {
+	cursor: pointer;
 }
 
 .cap-per-visit-wrapper .page-scroll-container >div span:last-child {
@@ -8024,13 +8060,17 @@ ul.typeahead li a.dropdown-item
   height: 25px;
   background-color: rgba(205, 205, 205, 0.3);
   overflow: hidden;
-  margin: 15px 0;
+  margin: 15px 0 0;
 }
 
 #file_upload .progress-bar {
 	background-color: #78E997;
 	height: 25px;
  color: #2E4057;
+}
+
+#file_upload .progress-bar.error {
+  background-color: #d46448 !important;
 }
 
 #file_upload .progress-wrapper {
@@ -8046,13 +8086,22 @@ ul.typeahead li a.dropdown-item
   margin: 0 4px;
   padding: 0 4px;
   border: 0;
-  width: 130px;
+  width: 110px;
   border-left: 1px solid #ddd;
   outline: none;
 }
 
 .cap-per-visit-wrapper .health-provider-header-container h3 {
 	margin: 0;
+}
+
+.gp-cap-table-info-container {
+  height: 500px;
+}
+
+.gp-cap-table-info-wrapper {
+  overflow: auto;
+  margin: 0 0 20px;
 }
 
 /*@media screen and (max-width: 1440px) { 
