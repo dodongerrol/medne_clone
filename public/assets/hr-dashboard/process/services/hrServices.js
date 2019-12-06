@@ -189,6 +189,13 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     });
   };
 
+  hrFactory.uploadCapExcel = function(data) {
+    return Upload.upload({
+      url: serverUrl.url + "/hr/upload_employee_cap_per_visit",
+      data: data
+    });
+  };
+
   hrFactory.newPurchaseUploadExcel = function(data) {
     return Upload.upload({
       url: serverUrl.url + "/hr/new_purchase_active_plan/excel",
