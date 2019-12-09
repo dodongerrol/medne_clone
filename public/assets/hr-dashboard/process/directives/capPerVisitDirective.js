@@ -87,7 +87,7 @@ app.directive('capPerVisitDirective', [
 								scope.showInputText[i] = false;
 								scope.capPerVisitNoValue[i] = false;
 
-								if (scope.gpCapPerVisitInfo[i].cap_amount == 0 || scope.gpCapPerVisitInfo[i].cap_amount == "0.00") {
+								if (scope.gpCapPerVisitInfo[i].cap_amount == 0 || scope.gpCapPerVisitInfo[i].cap_amount == "0.00" || scope.gpCapPerVisitInfo[i].cap_amount == "") {
 									scope.capPerVisitNoValue[i] = true;
 									scope.showDataText[i] = false;
 									scope.showInputText[i] = false;
