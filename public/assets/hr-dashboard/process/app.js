@@ -1,7 +1,7 @@
 var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModule','authService', 'hrService', 'dependentsService', 'checkCtrl', 'bootstrap3-typeahead', 'ngJsonExportExcel', 'ngFileUpload','cp.ng.fix-image-orientation']);
 
-app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', 
-function ($rootScope, $state, $stateParams, $templateCache) {
+app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window',
+function ($rootScope, $state, $stateParams, $templateCache, $window) {
   
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
@@ -10,15 +10,18 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     $('body').css('overflow','auto');
   }
 
-
   $rootScope.$on('$viewContentLoaded', function() {
       $templateCache.removeAll();
    });
 
+  $rootScope.$on('$locationChangeSuccess', function() {
+     if ($window.Appcues) {
+        $window.Appcues.page();
+      }
+   });
+
+
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-    window.ga('create', 'UA-78188906-2', 'auto');
-    window.ga('set', 'page', toState.url);
-    window.ga('send', 'pageview');
     console.log( toState );
     if( toState.url != '/e-claim' ){
       $('.download-receipt-message').hide();
@@ -32,13 +35,9 @@ function ($rootScope, $state, $stateParams, $templateCache) {
       $('body').removeClass('bg-color-home');
     }
 
-    Appcues.page( );
-    Appcues.track();
-    Appcues.identify(
-      "57952", // unique, required
-      {}
-    );
-    
+    window.ga('create', 'UA-78188906-2', 'auto');
+    window.ga('set', 'page', toState.url);
+    window.ga('send', 'pageview');
   });
 
 }]);

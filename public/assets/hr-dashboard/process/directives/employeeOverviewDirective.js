@@ -12,7 +12,7 @@ app.directive("employeeOverviewDirective", [
       scope: true,
       link: function link(scope, element, attributeSet) {
         console.log("employeeOverviewDirective Runnning !");
-
+        
         scope.employees = {};
         scope.options = {};
         scope.page_ctr = 5;
