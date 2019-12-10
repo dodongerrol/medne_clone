@@ -238,6 +238,7 @@ app.directive('capPerVisitDirective', [
                   $("#file_upload").modal("hide");
                   scope.gpCapFile = {};
                 }, 2000);
+                $("button").removeClass("save-continue-disabled");
                 scope.getGpCapPerVisit();
               }else{
                 file.uploading = 10;
