@@ -4643,7 +4643,6 @@ class PlanHelper {
 			} else {
 				if($user->PhoneNo) {
 					$phone = SmsHelper::newformatNumber($user);
-
 					if($phone) {
 						$compose = [];
 						$compose['name'] = $user->Name;
@@ -4653,8 +4652,9 @@ class PlanHelper {
 						$compose['nric'] = $user->PhoneNo;
 						$compose['password'] = $password;
 						$compose['phone'] = $phone;
-
+						$compose['sms_type'] = "LA";
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+						// return $compose;
 						$result_sms = SmsHelper::sendSms($compose);
 						return array('status' => true, 'message' => 'Employee Account Resetted and sent using sms.');
 					} else {
