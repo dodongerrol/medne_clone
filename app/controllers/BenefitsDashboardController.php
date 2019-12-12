@@ -4483,6 +4483,7 @@ class BenefitsDashboardController extends \BaseController {
 				} else {
 					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
 				}
+				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
 				// $duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
 				$data['price']          = number_format($calculated_prices, 2);
 				$data['amount']					= number_format($get_invoice->employees * $calculated_prices, 2);
@@ -5391,7 +5392,7 @@ class BenefitsDashboardController extends \BaseController {
 			} else {
 				$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active_plan->plan_start, $calculated_prices_end_date);
 			}
-
+			$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
 			$duration = PlanHelper::getPlanDuration($active_plan->customer_start_buy_id, $active_plan->plan_start);
 		}
 
@@ -9552,11 +9553,6 @@ class BenefitsDashboardController extends \BaseController {
 			$total_refund = 0;
 			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->get();
 			foreach ($withdraws as $key => $user) {
-
-				if($user->paid == 0) {
-					$amount_due += $user->amount;
-				}
-
 				if((int)$user->has_no_user == 0) {
 					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
 					$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
@@ -9583,7 +9579,7 @@ class BenefitsDashboardController extends \BaseController {
 
 					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
 
-					$total_refund += $withdraw_data->amount;
+					$total_refund += $temp_sub_total;
 
 					$temp = array(
 						'user_id'			=> $user->user_id,
@@ -9622,6 +9618,10 @@ class BenefitsDashboardController extends \BaseController {
 						'after_amount' => number_format($user->amount, 2),
 						'has_no_user'	=> true
 					);
+				}
+
+				if($user->paid == 0) {
+					$amount_due += $temp['before_amount'];
 				}
 
 				array_push($users, $temp);
@@ -9673,6 +9673,7 @@ class BenefitsDashboardController extends \BaseController {
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
 				'users' => $users,
+				'currency_type' => strtoupper($refund_payment->currency_type)
 			);
 
 			// return View::make('pdf-download.hr-accounts-refund', $refund_data);
