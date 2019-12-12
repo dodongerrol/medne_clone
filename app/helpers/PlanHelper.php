@@ -4764,6 +4764,28 @@ class PlanHelper {
 		->orderBy('created_at', 'desc')
 		->first();
 
+		if(!$dependent_plan_history) {
+			$owner_id = StringHelper::getUserId($user_id);
+			$new_data_history = DependentHelper::createDependentPlanHistory($owner_id, $user_id);
+      // create plan history
+      $plan_history = array(
+          'user_id'               => $user_id,
+          'dependent_plan_id'     => $new_data_history->dependent_plan_id,
+          'package_group_id'      => $new_data_history->package_group_id,
+          'plan_start'            => $new_data_history->plan_start,
+          'duration'              => $new_data_history->duration,
+          'type'                  => $new_data_history->type,
+          'fixed'                 => $new_data_history->fixed,
+          'created_at'            => date('Y-m-d H:i:s'),
+          'updated_at'            => date('Y-m-d H:i:s')
+      );
+      DB::table('dependent_plan_history')->insert($plan_history);
+      $dependent_plan_history = DB::table('dependent_plan_history')
+                              ->where('user_id', $user_id)
+                              ->orderBy('created_at', 'desc')
+                              ->first();
+		}
+
 		$dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
 
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
