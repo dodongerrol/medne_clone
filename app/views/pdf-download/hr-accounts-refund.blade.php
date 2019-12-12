@@ -166,7 +166,7 @@
 	    	<div class="item right-wrapper" >
     			<p><label>Cancellation Number: </label> {{ $cancellation_number }}</p>
     			<p><label>Cancellation Date: </label> {{ $cancellation_date }}</p>
-    			<p style="background: #eee;margin-top: 20px;"><label>Amount Due (SGD): </label> <b>${{ $amount_due }}</b></p>
+    			<p style="background: #eee;margin-top: 20px;"><label>Amount Due ({{ $currency_type }}): </label> <b>{{ $amount_due }}</b></p>
 	    	</div>
     	</div>
 
@@ -189,19 +189,19 @@
           	<p>Refund: 70% of unused period {{ $user['period_of_unused'] }}</p>
           </td>
           <td><b>1</b></td>
-          <td><b>S$({{ $user['after_amount'] }})</b></td>
-          <td><b>S$({{ $user['after_amount'] }})</b></td>
+          <td><b>{{ $currency_type }} ({{ $user['after_amount'] }})</b></td>
+          <td><b>{{ $currency_type }} ({{ $user['after_amount'] }})</b></td>
         </tr>
         @endforeach
     	</table>
 
     	<div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative;height: 150px;">
     		<div style="width: 250px;display: inline-block;position: absolute;right: 10px;top: 15px;">
-    			<p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> $-{{ $total_refund }}</p>
+    			<p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> {{ $currency_type }} {{ $total_refund }}</p>
 
 					<div style="border-bottom: 1px solid #aaa;display: inline-block;width: 100%;padding-bottom: 10px;"></div>
 
-					<p style="margin-top: 5px;"><label>Amount Due (SGD):</label> <b>$-{{ $amount_due }}</b></p>
+					<p style="margin-top: 5px;"><label>Amount Due ({{ $currency_type }}):</label> <b>{{ $amount_due }}</b></p>
     		</div>
     	</div>
 
