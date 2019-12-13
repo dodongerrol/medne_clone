@@ -9551,7 +9551,7 @@ class BenefitsDashboardController extends \BaseController {
 			$end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_end_date)));
 
 			$total_refund = 0;
-			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->get();
+			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->whereIn('refund_status', [0,1])->get();
 			foreach ($withdraws as $key => $user) {
 				if((int)$user->has_no_user == 0) {
 					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
