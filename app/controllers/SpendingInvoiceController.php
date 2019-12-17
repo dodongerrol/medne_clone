@@ -146,8 +146,9 @@ class SpendingInvoiceController extends \BaseController {
 		$container = array();
 		foreach ($data['in_network'] as $key => $trans) {
 			$temp = array(
-				'TRANSACTION ID'	=> $trans['transaction_id'],
-				'MEMBER' 	=> $trans['member'],
+				'TRANSACTION #'	=> $trans['transaction_id'],
+                'EMPLOYEE'  => $trans['member'],
+				// 'DEPENDENT' 	=> $trans['member'],
 				'DATE'		=> $trans['date_of_transaction'],
 				'ITEMS/SERVICE' => $trans['service'],
 				'PROVIDER'	=> $trans['clinic_name'],

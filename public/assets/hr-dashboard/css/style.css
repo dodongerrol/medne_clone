@@ -7658,6 +7658,29 @@ span.dropdwon-entitlement {
   font-size: 14px;
 }
 
+@media (max-width: 1400px) {
+	.health-partner-access-container {
+		grid-template-columns: 47% 6% 47%;
+	}
+
+	.select-filter-div select {
+		font-size: 12px;
+		padding: 5px 0px;
+		width: 100px;
+		margin: 0 5px 0 0;
+	}
+
+	.health-btn-open-block,
+	.health-btn-open-block.health-open-btn,
+	.health-btn-open-block.health-block-btn  {
+		width: 60px;
+	}
+
+	.sort-container img {
+		height: 35px;
+	}
+}
+
 .health-btn-open-block {
   /* position: absolute; */
   /* right: 20px; */
@@ -7879,16 +7902,17 @@ span.dropdwon-entitlement {
 }
 
 .gp-cap-table-wrapper table {
-  font-size: 14px;
-  color: #333;
-  border: 1px solid #d0d0d0;
-  margin: 0 0 20px;
+	font-size: 14px;
+	color: #333;
+	border: 1px solid #d0d0d0;
+	margin: 0 0 20px;
+	padding-bottom: 150px;
 }
 
 .gp-cap-table-wrapper table th,
 .gp-cap-table-wrapper table td {
-  border: 1px solid #d0d0d0;
-  padding: 15px;
+	border: 1px solid #d0d0d0;
+	padding: 15px 10px;
 }
 
 .gp-cap-table-wrapper table th {
@@ -7920,8 +7944,9 @@ span.dropdwon-entitlement {
 }
 
 .cap-per-visit-wrapper .page-wrapper {
-  display: inline-flex;
-  align-items: flex-end;
+	display: inline-flex;
+	align-items: flex-end;
+	padding-bottom: 150px;
 }
 
 .cap-per-visit-wrapper .fa-angle-left {
@@ -7933,8 +7958,8 @@ span.dropdwon-entitlement {
 }
 
 .cap-per-visit-wrapper .page-scroll-container {
-  display: flex;
-  /*align-items: center;*/
+	display: flex;
+	align-items: center;
 }
 
 .cap-per-visit-wrapper .rows-page-wrapper {
@@ -7948,7 +7973,20 @@ span.dropdwon-entitlement {
 
 .cap-per-visit-wrapper .page-scroll-container > div span {
   margin-right: 10px;
-  cursor: initial;
+  cursor: pointer;
+  padding: 0px 7px;
+}
+
+.prev-page-gp-cap.prev-disabled {
+  pointer-events: none;
+}
+
+.health-page-num.active {
+  background-color: #e8e8e8;
+}
+
+.cap-per-visit-wrapper .page-scroll-container >div span {
+	cursor: pointer;
 }
 
 .cap-per-visit-wrapper .page-scroll-container > div span:last-child {
@@ -8047,13 +8085,17 @@ span.dropdwon-entitlement {
   height: 25px;
   background-color: rgba(205, 205, 205, 0.3);
   overflow: hidden;
-  margin: 15px 0;
+  margin: 15px 0 0;
 }
 
 #file_upload .progress-bar {
   background-color: #78e997;
   height: 25px;
   color: #2e4057;
+}
+
+#file_upload .progress-bar.error {
+  background-color: #d46448 !important;
 }
 
 #file_upload .progress-wrapper {
@@ -8069,13 +8111,22 @@ span.dropdwon-entitlement {
   margin: 0 4px;
   padding: 0 4px;
   border: 0;
-  width: 130px;
+  width: 110px;
   border-left: 1px solid #ddd;
   outline: none;
 }
 
 .cap-per-visit-wrapper .health-provider-header-container h3 {
   margin: 0;
+}
+
+.gp-cap-table-info-container {
+  height: 500px;
+}
+
+.gp-cap-table-info-wrapper {
+  overflow: auto;
+  margin: 0 0 20px;
 }
 
 /*@media screen and (max-width: 1440px) { 

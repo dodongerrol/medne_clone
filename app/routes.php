@@ -143,6 +143,9 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 });
 
+// check Employee e-claim submission visit date
+Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
+
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
 Route::get('list/local_network_partners/{id}', 'NetworkPatnerController@getLocalNetworkPartnerList');
@@ -407,8 +410,14 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_company_block_lists', 'EmployeeController@createCompanyBlockClinicLists');
 	// create employee block
 	Route::post('hr/create_employee_company_block_lists', 'EmployeeController@createCompanyBlockClinicListsEmployee');
+	// get employee cap per visits
+	Route::get('hr/employee_cap_per_visit_list', 'EmployeeController@employeeCapPerVisit');
+	// upload employee cap per visit
+	Route::post('hr/upload_employee_cap_per_visit', 'EmployeeController@uploadCaperPervisit');
 });
+// download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
+Route::get('hr/download_employee_cap_per_visit', 'EmployeeController@downloadCaperPervisitCSV');
 
 // intro login for clinic
 Route::get('provider-portal-login', 'HomeController@clinicLogin');

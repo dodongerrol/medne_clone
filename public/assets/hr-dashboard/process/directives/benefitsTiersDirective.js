@@ -840,7 +840,8 @@ app.directive('benefitsTiersDirective', [
 						if( scope.downloadWithDependents == false ){
 							window.location.href = '/excel/Employee Enrollment Listing.xlsx';
 						}else{
-							window.location.href = '/excel/Employees and Dependents.xlsx';
+							// window.location.href = '/excel/Employees and Dependents.xlsx';
+							window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+%2B+Dependents.xlsx';
 						}
 					}else{
 						swal( 'Error!', 'Please select an option for you template.', 'error' );

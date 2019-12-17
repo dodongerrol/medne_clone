@@ -4641,7 +4641,6 @@ class PlanHelper {
 			} else {
 				if($user->PhoneNo) {
 					$phone = SmsHelper::newformatNumber($user);
-
 					if($phone) {
 						$compose = [];
 						$compose['name'] = $user->Name;
@@ -4651,8 +4650,9 @@ class PlanHelper {
 						$compose['nric'] = $user->PhoneNo;
 						$compose['password'] = $password;
 						$compose['phone'] = $phone;
-
+						$compose['sms_type'] = "LA";
 						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+						// return $compose;
 						$result_sms = SmsHelper::sendSms($compose);
 						return array('status' => true, 'message' => 'Employee Account Resetted and sent using sms.');
 					} else {
@@ -4761,6 +4761,28 @@ class PlanHelper {
 		->where('type', 'started')
 		->orderBy('created_at', 'desc')
 		->first();
+
+		if(!$dependent_plan_history) {
+			$owner_id = StringHelper::getUserId($user_id);
+			$new_data_history = DependentHelper::createDependentPlanHistory($owner_id, $user_id);
+      // create plan history
+      $plan_history = array(
+          'user_id'               => $user_id,
+          'dependent_plan_id'     => $new_data_history->dependent_plan_id,
+          'package_group_id'      => $new_data_history->package_group_id,
+          'plan_start'            => $new_data_history->plan_start,
+          'duration'              => $new_data_history->duration,
+          'type'                  => $new_data_history->type,
+          'fixed'                 => $new_data_history->fixed,
+          'created_at'            => date('Y-m-d H:i:s'),
+          'updated_at'            => date('Y-m-d H:i:s')
+      );
+      DB::table('dependent_plan_history')->insert($plan_history);
+      $dependent_plan_history = DB::table('dependent_plan_history')
+                              ->where('user_id', $user_id)
+                              ->orderBy('created_at', 'desc')
+                              ->first();
+		}
 
 		$dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
 
