@@ -1053,6 +1053,8 @@ return Response::json($returnObject);
                 $user_id = StringHelper::getUserId($findUserID);
 
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+                $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+                return $filter;
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
                 if($spending_type == 'medical') {
                   $table_wallet_history = 'wallet_history';
