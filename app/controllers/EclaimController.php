@@ -1340,7 +1340,19 @@ class EclaimController extends \BaseController {
 				$status_text = 'Pending';
 			} else if($res->status == 1) {
 				$status_text = 'Approved';
-				$e_claim_spent += $res->amount;
+				$e_claim_data = DB::table($table_wallet_history)
+				->where('id', $res->e_claim_id)
+				->where('where_spend', 'e_claim_transaction')
+				->first();
+
+				if($e_claim_data) {
+					$e_claim_spent += $e_claim_data->credit;
+					$res->claim_amount = $e_claim_data->credit;
+					$res->amount = $e_claim_data->credit;
+				} else {
+					$e_claim_spent += $res->claim_amount;
+				}
+				
 			} else if($res->status == 2) {
 				$status_text = 'Rejected';
 			} else {
