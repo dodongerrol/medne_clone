@@ -141,10 +141,11 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee_care_package', 'BenefitsDashboardController@employeePackages');
 	// get doc presigned url
 	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
+	// check Employee e-claim submission visit date
+	Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
 });
 
-// check Employee e-claim submission visit date
-Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
+
 
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
@@ -1071,6 +1072,8 @@ Route::group(array('prefix' => 'v2'), function()
 				Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
 				// get check_in_id data
 				Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
+				// check e-claim member visit date spending
+				Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
 	 	});
 	});
 });

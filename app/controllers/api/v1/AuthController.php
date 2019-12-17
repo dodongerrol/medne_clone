@@ -5184,18 +5184,22 @@ public function createEclaim( )
     }
   }
 
+  $date = date('Y-m-d', strtotime($input['date']));
+
   $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
   $customer_active_plan = DB::table('customer_active_plan')
   ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
   ->first();
 
   if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-    if($input['spending_type'] == "medical") {
-        // recalculate employee balance
-      PlanHelper::reCalculateEmployeeBalance($user_id);
-    } else {
-      PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-    }
+    // if($input['spending_type'] == "medical") {
+    //     // recalculate employee balance
+    //   PlanHelper::reCalculateEmployeeBalance($user_id);
+    // } else {
+    //   PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+    // }
+    $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+    $balance = number_format($spending['balance'], 2);
 
     $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     if(!$check_user_balance) {
@@ -5204,11 +5208,11 @@ public function createEclaim( )
      return Response::json($returnObject);
    }
 
-   if($input['spending_type'] == "medical") {
-     $balance = $check_user_balance->balance;
-   } else {
-     $balance = $check_user_balance->wellness_balance;
-   }
+   // if($input['spending_type'] == "medical") {
+   //   $balance = $check_user_balance->balance;
+   // } else {
+   //   $balance = $check_user_balance->wellness_balance;
+   // }
 
    $amount = trim($input_amount);
    $balance = number_format($balance, 2);
@@ -5219,7 +5223,8 @@ public function createEclaim( )
      return Response::json($returnObject);
    }
 
-   $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
+   // $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
+   $check_pending = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
    if($input['spending_type'] == "medical") {
      $claim_amounts = $balance - $check_pending;
    } else {
@@ -5246,7 +5251,8 @@ $data = array(
  'service'   => $input['service'],
  'merchant'  => $input['merchant'],
  'amount'    => $amount,
- 'date'      => date('Y-m-d', strtotime($input['date'])),
+ 'claim_amount' => trim($input['claim_amount']),
+ 'date'      => $date,
  'time'      => $time,
  'spending_type' => $input['spending_type'],
  'default_currency' => $check_user_balance->currency_type
@@ -6080,4 +6086,69 @@ public function updateUserNotification( )
   return Response::json($returnObject);
 }
 }
+  public function checkEclaimVisit( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+    $input = Input::all();
+
+    if(empty($input['visit_date']) || $input['visit_date'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'visit_date is required';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['spending_type']) || $input['spending_type'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'spending_type is required';
+      return Response::json($returnObject);
+    }
+
+    if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+         if($findUserID){
+          $user_id = StringHelper::getUserId($findUserID);
+          $date = date('Y-m-d', strtotime($input['visit_date']));
+          $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+          $ids = StringHelper::getSubAccountsID($user_id);
+          // get pending back dates
+          $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
+          $balance = $spending['balance'] - $claim_amounts;
+
+          $term_status = null;
+          if($spending['back_date'] == true) {
+            $term_status = "Last terms's data";
+          } else {
+            $term_status = "Current terms's data";
+          }
+
+          $data = array(
+            'balance' => DecimalHelper::formatDecimal($balance), 
+            'term_status' => $term_status, 
+            'currency_type' => $spending['currency_type']
+          );
+
+          $returnObject->status = true;
+          $returnObject->data = $data;
+          return Response::json($returnObject);
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+     }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
 }
