@@ -294,7 +294,12 @@ class EmployeeController extends \BaseController {
         $phone = $code.$mobile_number;
 
         $otp_code = StringHelper::OTPChallenge();
-        StringHelper::TestSendOTPSMS($phone, $otp_code);
+        // StringHelper::TestSendOTPSMS($phone, $otp_code);
+        $data = array();
+        $data['phone'] = $phone;
+        $data['message'] = $otp_code.' is your Mednefits verification code.';
+        $data['sms_type'] = "LA";
+        SmsHelper::sendSms($data);
         DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
         return array('status' => true, 'message' => 'OTP SMS sent');
         return $otp_code;
