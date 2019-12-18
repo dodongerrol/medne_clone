@@ -139,7 +139,7 @@
 							</div>
 						</div>
 						<div class="form-group col-md-12 amount-input">
-							<label>Reciept Amount<span>*</span></label>
+							<label>Receipt Amount<span>*</span></label>
 							<div class="input-wrapper claim-amount-input-wrapper">
 								<div class="input-group date" style="width: 100%">
 									<input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="Price"
@@ -292,12 +292,24 @@
 
 							</p>
 						</div>
+						<!-- receipt amount  pero ng model is claim-->
+						<div class="form-group col-xs-12 col-sm-12 col-md-12">
+							<p class="color-blue-custom">
+								<label class="color-black3">Receipt Amount<span></span></label>
+								<span>
+									<span ng-bind="eclaim.selectedCurrencyType">Sgd</span>
+									<span ng-bind="eclaim.claim_amount | number"></span>
+								</span>
+							</p>
+						</div>
+						<!-- claim amount ng model is new_claim_amount -->
 						<div class="form-group col-xs-12 col-sm-12 col-md-12">
 							<p class="color-blue-custom">
 								<label class="color-black3">Claim Amount<span></span></label>
 								<span>
 									<span ng-bind="eclaim.selectedCurrencyType">Sgd</span>
-									<span ng-bind="eclaim.claim_amount | number"></span></span>
+									<span ng-bind="eclaim.new_claim_amount | number"></span>
+								</span>
 							</p>
 						</div>
 						<div class="form-group col-xs-12 col-sm-12 col-md-12">
@@ -411,21 +423,21 @@
 		<div class="white-space-50"></div>
 	</div>
 
-	<div class="new-popup baackdrop" ng-if="step_active == 3 || true">
+	<div class="new-popup baackdrop" ng-if="summ_reminder">
 		<div class="popup-container">
 			<div class="popup-row">
 				<div class="popup-header">
 					<i class="fa fa-bell-o" aria-hidden="true"></i>
 				</div>
-				<div class="popup-content" >
-					<p>Based on Visit Date, this claim will be recorded on <span class="bold">Last term's data</span>.</p>
-					<p ng-if="false">Last term's balance is <span class="bold">S$70.00</span> and is <span class="bold">sufficient</span> for
+				<div class="popup-content">
+					<p>Based on Visit Date, this claim will be recorded on <span class="bold">{{checkEclaimVisit_data.term_status}}</span>.</p>
+					<p ng-if="checkEclaimVisit_data.balance >= eclaim.claim_amount ">{{checkEclaimVisit_data.term_status}} balance is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance}}</span> and is <span class="bold">sufficient</span> for
 						this claim.</p>
-					<p ng-if="true">Last term's balance is <span class="bold">S$70.00</span>; hence your Claim Amount is <span class="bold">S$70.00</span>.</p>
+					<p ng-if="checkEclaimVisit_data.balance < eclaim.claim_amount">{{checkEclaimVisit_data.term_status}} balance is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance}}</span>; hence your Claim Amount is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance}}</span>.</p>
 				</div>
 
 				<div class="popup-footer">
-					<button class="btn">Close</button>
+					<button class="btn" ng-click="close_new_popup()">Close</button>
 				</div>
 			</div>
 		</div>
