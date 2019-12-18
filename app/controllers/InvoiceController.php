@@ -514,7 +514,6 @@ class InvoiceController extends \BaseController {
 		}
 
 		$transactions['amount_due'] = number_format($balance, 2);
-
     // return View::make('pdf-download.clinic_invoice', $transactions);
 		$pdf = PDF::loadView('pdf-download.clinic_invoice', $transactions);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
@@ -2522,7 +2521,24 @@ class InvoiceController extends \BaseController {
 				$transactions['clinic'] = $clinic;
 				$transactions['billing_name'] = $clinic->billing_name ? ucwords($clinic->billing_name) : $clinic->Name;
 				$transactions['billing_address'] = $clinic->billing_address ? ucwords($clinic->billing_address) : $clinic->Address;
+				$email_to = "medicloud.finance@receiptbank.me";
+				// $email = [];
+
+				// $email['emailSubject'] = 'MEDNEFITS CLINIC INVOICE';
+				// $email['emailName'] = 'Mednefits';
+				// $email['emailPage'] = 'email.blank';
+				// $email['emailTo'] = $email_to;
+				// $email['data'] = $transactions
+				// // return $email;
+				// \EmailHelper::sendEmailEmpoyeeRefundInvoiceFile($email);
 				array_push($result_data, $transactions);
+
+				// send email for clinic invoice
+				try {
+
+				} catch(Exception $e) {
+
+				}
 				try {
 					$invoice_status = DB::table('invoice_record')->where('invoice_id', $invoice_id)->first();
 					$admin_logs = array(
