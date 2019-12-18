@@ -419,7 +419,11 @@ app.directive('activityDirective', [
 				}
 
 				// --------------
-				scope.applyDates = function () {
+				scope.applyDates = function (data) {
+					if(data == 'custom') {
+						scope.select_to_date = false;
+					}
+
 					var activity_search = {
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
