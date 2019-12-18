@@ -15,6 +15,19 @@ class EclaimHelper
     return $amount;
   }
 
+  public static function checkPendingEclaimsByVisitDate($user_ids, $type, $date)
+  {
+    $amount = DB::table('e_claim')
+              ->whereIn('user_id', $user_ids)
+              ->where('date', '>=', $date)
+              ->where('date', '<=', $date)
+              ->where('status', 0)
+              ->where('spending_type', $type)
+              ->sum('amount');
+
+    return $amount;
+  }
+
   public static function getCurrencies( )
   {
     $data = array(
@@ -161,8 +174,6 @@ class EclaimHelper
     } else {
       $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
     }
-    
-    // return $start_date.' - '.$end_date;
 
     foreach ($wallet_history as $key => $history) {
       if($history->logs == "added_by_hr") {
@@ -215,7 +226,7 @@ class EclaimHelper
       $allocation = $pro_allocation;
     }
 
-    return array('balance' => $balance, 'back_date' => $back_date);
+    return array('balance' => $balance, 'back_date' => $back_date, 'currency_type' => strtoupper($wallet->currency_type));
 
     // return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
 

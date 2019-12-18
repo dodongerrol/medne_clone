@@ -1047,13 +1047,28 @@ class Api_V1_TransactionController extends \BaseController
 					$returnObject->status = TRUE;
 					$returnObject->message = 'Success.';
 					$user = DB::table('user')->where('UserID', $findUserID)->first();
+					$user_id = StringHelper::getUserId($findUserID);
+					$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+          $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+          $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
 					$lite_plan_status = false;
             // $lite_plan_status = StringHelper::litePlanStatus($findUserID);
 
                     // $type = StringHelper::checkUserType($findUserID);
 					$transaction_details = [];
 					$ids = StringHelper::getSubAccountsID($findUserID);
-					$transactions = DB::table('transaction_history')->whereIn('UserID', $ids)->orderBy('created_at', 'desc')->get();
+
+					if($dates) {
+						$transactions = DB::table('transaction_history')
+													->whereIn('UserID', $ids)
+													->where('created_at', '>=', $dates['start'])
+                  				->where('created_at', '<=', $dates['end'])
+													->orderBy('created_at', 'desc')
+													->get();
+					} else {
+						$transactions = [];
+					}
+
 					foreach ($transactions as $key => $trans) {
 						if($trans) {
 							$receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();

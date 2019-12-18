@@ -167,7 +167,7 @@ class EclaimController extends \BaseController {
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($user_id);
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
-
+		$date = date('Y-m-d', strtotime($input['date']));
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
@@ -188,17 +188,6 @@ class EclaimController extends \BaseController {
 		if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
 	    $amount = trim($input['amount']);
 	  } else {
-	    // if(Input::has('currency_type') && $input['currency_type'] != null) {
-	    //   if(strtolower($input['currency_type']) == "myr") {
-	    //     $amount = $input['amount'] / $currency;
-	    //   } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
-     //    	$amount = $input['amount'] * $currency;
-     //  	} else {
-	    //     $amount = trim($input['amount']);
-	    //   }
-	    // } else {
-	    //   $amount = trim($input['amount']);
-	    // }
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
@@ -219,18 +208,21 @@ class EclaimController extends \BaseController {
 
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 	    // recalculate employee balance
-			PlanHelper::reCalculateEmployeeBalance($user_id);
+			// PlanHelper::reCalculateEmployeeBalance($user_id);
 
 	    // check if e-claim can proceed
-			$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
+			// $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
       // return $check_user_balance->balance;
-      $balance = number_format($check_user_balance->balance, 2);
+      // $balance = number_format($check_user_balance->balance, 2);
+      $spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
+			$balance = number_format($spending['balance'], 2);
       $balance = TransactionHelper::floatvalue($balance);
 			if($amount > $balance || $balance <= 0) {
 				return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
 			}
 	    // check user pending e-claims amount
-			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
+			// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
+			$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'medical', $date);
 			$total_claim_amount = $balance - $claim_amounts;
 			$amount = trim($amount);
 			$total_claim_amount = trim($total_claim_amount);
@@ -251,7 +243,8 @@ class EclaimController extends \BaseController {
 			'service'	=> $input['service'],
 			'merchant'	=> $input['merchant'],
 			'amount'	=> $amount,
-			'date'		=> date('Y-m-d', strtotime($input['date'])),
+			'claim_amount'	=> trim($input['claim_amount']),
+			'date'		=> $date,
 			'approved_date' => null,
 			'time'		=> $time,
 			'spending_type' => 'medical',
@@ -393,7 +386,7 @@ class EclaimController extends \BaseController {
 
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($employee->UserID);
-
+		$date = date('Y-m-d', strtotime($input['date']));
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan is expired. You cannot submit an e-claim request.');
@@ -446,17 +439,19 @@ class EclaimController extends \BaseController {
 
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			// recalculate employee balance
-			PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+			// PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
 	        // check if e-claim can proceed
-			$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
-			$balance = number_format($check_user_balance->wellness_balance, 2);
+			// $check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
+			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'wellness');
+			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
 			if($amount > $balance || $balance <= 0) {
 				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 			}
 
 	    // check user pending e-claims amount
-			$claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
+			// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
+			$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'wellness', $date);
 
 			$total_claim_amount = $balance  - $claim_amounts;
 	    // return $total_claim_amount;
@@ -475,7 +470,7 @@ class EclaimController extends \BaseController {
 			'service'   => $input['service'],
 			'merchant'  => $input['merchant'],
 			'amount'    => $amount,
-			'date'      => date('Y-m-d', strtotime($input['date'])),
+			'date'      => $date,
 			'time'      => $time,
 			'spending_type' => 'wellness',
 			'currency_type'	=> isset($input['currency_type']) ? strtolower($input['currency_type']) : "sgd",
@@ -1340,7 +1335,19 @@ class EclaimController extends \BaseController {
 				$status_text = 'Pending';
 			} else if($res->status == 1) {
 				$status_text = 'Approved';
-				$e_claim_spent += $res->amount;
+				$e_claim_data = DB::table($table_wallet_history)
+				->where('id', $res->e_claim_id)
+				->where('where_spend', 'e_claim_transaction')
+				->first();
+
+				if($e_claim_data) {
+					$e_claim_spent += $e_claim_data->credit;
+					$res->claim_amount = $e_claim_data->credit;
+					$res->amount = $e_claim_data->credit;
+				} else {
+					$e_claim_spent += $res->claim_amount;
+				}
+				
 			} else if($res->status == 2) {
 				$status_text = 'Rejected';
 			} else {
@@ -6478,12 +6485,13 @@ public function updateEclaimStatus( )
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 	    // check user balance
 			// recalculate balance
-			PlanHelper::reCalculateEmployeeBalance($employee);
+			// PlanHelper::reCalculateEmployeeBalance($employee);
 
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 			$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
-			// return $date;
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
+			// return $date;
+			// $balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
 
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
@@ -9535,6 +9543,37 @@ public function downloadEclaimCsv( )
 	      });
 	    })->export('xls');
     }
+	}
+
+	public function checkEClaimDatesBalance( )
+	{
+		$input = Input::all();
+		$employee = StringHelper::getEmployeeSession( );
+
+		if(empty($input['visit_date']) || $input['visit_date'] == null) {
+			return array('status' => false, 'message' => 'visit_date is required');
+		}
+
+		if(empty($input['spending_type']) || $input['spending_type'] == null) {
+			return array('status' => false, 'message' => 'spending_type is required');
+		}
+
+		$date = date('Y-m-d', strtotime($input['visit_date']));
+		$user_id = $employee->UserID;
+		$spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+		$ids = StringHelper::getSubAccountsID($user_id);
+		// get pending back dates
+		$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
+		$balance = $spending['balance'] - $claim_amounts;
+
+		$term_status = null;
+		if($spending['back_date'] == true) {
+			$term_status = "Last terms's data";
+		} else {
+			$term_status = "Current terms's data";
+		}
+
+		return array('status' => true, 'balance' => DecimalHelper::formatDecimal($balance), 'term_status' => $term_status, 'currency_type' => $spending['currency_type']);
 	}
 }
 ?>
