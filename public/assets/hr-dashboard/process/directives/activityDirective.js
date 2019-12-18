@@ -73,7 +73,7 @@ app.directive('activityPage', [
 				// plan renwal function
 				scope.select_term = 'current';
 				scope.term_value = 0;
-				scope.select_to_date = 'wtd';
+				scope.select_to_date = 'ytd';
 				//New Filter Date
 
 				scope.toDate = function () {
