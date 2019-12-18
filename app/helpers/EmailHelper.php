@@ -22,6 +22,19 @@ class EmailHelper{
         }); 
     }
 
+    public static function sendEmailClinicInvoiceFile($dataArray) {
+        Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){    
+            $message->from('noreply@medicloud.sg', 'MediCloud');
+            $message->to($dataArray['emailTo'],$dataArray['emailName']);
+            $message->subject($dataArray['emailSubject']);
+
+            $pdf_transactions = PDF::loadView('pdf-download.clinic_invoice', $dataArray['data']);
+            $pdf_transactions->getDomPDF()->get_option('enable_html5_parser');
+            $pdf_transactions->setPaper('A4', 'portrait');
+            $message->attachData($pdf_transactions->output(), $dataArray['data']['invoice_number'].' - '.time().'.pdf');
+        }); 
+    }
+
     public static function sendPaymentAttachment($dataArray) {
         Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $pdf = PDF::loadView($dataArray['pdf_file'], $dataArray);
