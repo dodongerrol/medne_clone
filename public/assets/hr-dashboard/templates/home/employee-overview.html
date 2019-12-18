@@ -1,170 +1,184 @@
 <div employee-overview-directive class="employee-overview-new">
 	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
 		<!-- <div class="container"> -->
-			<div class="welcome-container">
-				<h4 ui-sref="benefits-dashboard">Overview</h4>
-				<div class="arrow-up" style="visibility: hidden;"></div>
+		<div class="welcome-container">
+			<h4 ui-sref="benefits-dashboard">Overview</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container" ng-if="statementHide">
+			<div class="dropdown" ng-if="options.accessibility == 1">
+				<h4 class="dropdown-toggle navbar-active" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="true">
+					Employee
+				</h4>
+				<ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
+					<li><a href="javascript:void(0)" ng-click="gotToOverview()" ui-sref="employee-overview">Overview</a></li>
+					<li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				</ul>
 			</div>
-			<div class="welcome-container" ng-if="statementHide">
-				<div class="dropdown" ng-if="options.accessibility == 1">
-				  <h4 class="dropdown-toggle navbar-active" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				    Employee
-				  </h4>
-				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
-				    <li><a href="javascript:void(0)" ng-click="gotToOverview()" ui-sref="employee-overview">Overview</a></li>
-				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
-				  </ul>
-				</div>	
-				<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
-				<div class="arrow-up-2" style="visibility: hidden;"></div>
-			</div>
-			<div class="welcome-container" ng-if="empStatementShow">
-				<h4 ui-sref="employee-overview" ui-sref="employee-overview" ng-if="options.accessibility == 1">Employee</h4>
-				<div class="arrow-up-statement" ng-if="arrowStatement"></div>
-			</div>
-			<div class="welcome-container">
-				<h4 ui-sref="activity">Activity</h4>
-				<div class="arrow-up-3" style="visibility: hidden;"></div>
-			</div>
-			<div class="welcome-container" ng-if="options.accessibility == 1">
-				<h4 ui-sref="e-claim">Claim</h4>
-				<div class="arrow-up-4" style="visibility: hidden;"></div>
-			</div>
-			<div class="welcome-container statement-hide">
-				<h4 ui-sref="statement">Statement</h4>
-				<div class="arrow-up-5" style="visibility: hidden;"></div>
-			</div>
-			<div class="welcome-container">
-				<h4 ui-sref="account-and-payment">Account</h4>
-				<div class="arrow-up-5" style="visibility: hidden;"></div>
-			</div>
+			<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
+			<div class="arrow-up-2" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container" ng-if="empStatementShow">
+			<h4 ui-sref="employee-overview" ui-sref="employee-overview" ng-if="options.accessibility == 1">Employee</h4>
+			<div class="arrow-up-statement" ng-if="arrowStatement"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="activity">Activity</h4>
+			<div class="arrow-up-3" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container" ng-if="options.accessibility == 1">
+			<h4 ui-sref="e-claim">Claim</h4>
+			<div class="arrow-up-4" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container statement-hide">
+			<h4 ui-sref="statement">Statement</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="account-and-payment">Account</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
 		<!-- </div> -->
 	</div>
 	<div class="hrdb-body-container">
 		<!-- <div class="container"> -->
-			<div class="employee-overview-header">
-				<div class="overview-title">
-					<h1>Employee Overview</h1>
-					<h4><span ng-bind="member_count"></span> total members</h4>
-				</div>
-				<div class="overview-menu">
-					<form ng-submit="searchEmployee(inputSearch)" style="display: inline-block;">
-						<label class="overview-input-wrapper">
-							<input type="text" placeholder="Search for a member" ng-model="inputSearch">
-							<i class="fa fa-search" aria-hidden="true" ng-if="!inputSearch"></i>
-							<!-- <img ng-if="!inputSearch" src="../assets/hr-dashboard/img/icons/magnifying-glass.png"> -->
-							<img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()">
-						</label>
-					</form>
-					<button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button>
-					<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
-					<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
+		<div class="employee-overview-header">
+			<div class="overview-title">
+				<h1>Employee Overview</h1>
+				<h4><span ng-bind="member_count"></span> total members</h4>
+			</div>
+			<div class="overview-menu">
+				<form ng-submit="searchEmployee(inputSearch)" style="display: inline-block;">
+					<label class="overview-input-wrapper">
+						<input type="text" placeholder="Search for a member" ng-model="inputSearch">
+						<i class="fa fa-search" aria-hidden="true" ng-if="!inputSearch"></i>
+						<!-- <img ng-if="!inputSearch" src="../assets/hr-dashboard/img/icons/magnifying-glass.png"> -->
+						<img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()">
+					</label>
+				</form>
+				<button class="btn-export-member" ng-click="empDetailsLoadingState()"><img
+						src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button>
+				<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
+				<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0"
+					ng-click="enrollMoreEmployees()">Enroll employees</button>
 
-					<button id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE' }" filename="'Employee Details'" separator="," hidden></button>
-					
-				</div>
+				<button id="empDetailsBtn" ng-json-export-excel data="allEmpData"
+					report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE' }"
+					filename="'Employee Details'" separator="," hidden></button>
+
 			</div>
-			<div class="employee-overview-table">
-				<table>
-					<thead>
-						<tr>
-							<th class="name-title">Name
-								<div class="name-chevron-icon">
-									<!-- <img class="employee-arrow-up" src="../assets/hr-dashboard/img/icons/down-arrow.svg"> -->
-									<!-- <img src="../assets/hr-dashboard/img/icons/down-arrow.svg"> -->
-									<i class="fa fa-angle-up" aria-hidden="true"></i>
-									<i class="fa fa-angle-down" aria-hidden="true"></i>
-								</div>
-							</th>
-							<th class="status-title">Status</th>
-							<th class="nric-fin-title">Mobile Number</th>
-							<!-- <th class="nric-fin-title">NRIC/FIN</th> -->
-							<th class="plan-details-title">Plan details</th>
-							<th class="family-coverage-title">Family coverage</th>
-							<th class="spending-account-medical-title">Spending account <span>(medical)</span></th>
-							<th class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="emp in employees.data" ng-click="toggleEmployee(emp, $index)">
-							<td class="emp-name-container">
-								<strong ng-bind="emp.name">Calvin Lee</strong>
-							</td>
-							<td class="status-details-wrapper">
-								<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'pending'">
-									<span class="status-color pending"></span>
-									<span>Pending</span>
-								</div>	
-								<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'active' || emp.account_status && emp.schedule">
-									<span class="status-color active"></span>
-									<span>Active</span>
-								</div>
-								<div class="status-details-container" ng-if="!emp.account_status || emp.emp_status == 'deleted'">
-									<span class="status-color removed"></span>
-									<span>Removed</span>
-								</div>	
-								<div class="status-expired-container" ng-if="emp.deletion || emp.schedule">
-									<span ng-bind="emp.deletion_text"></span>
-								</div>
-							</td>
-							<td class="nric-fin-details" >
-								<span ng-bind="emp.mobile_no == 0 ? '-' : emp.mobile_no"></span>
-							</td>
-							<!-- <td class="nric-fin-details" ng-bind="emp.nric">S8575893G</td> -->
-							<td class="plan-start-container">
-								<span ng-bind="emp.plan_tier.plan_tier_name">Tier 1</span>
-								<div class="plan-details">
-									<strong>Plan type: </strong>
-									<span ng-bind="emp.plan_name">Pro Plan</span>
-								</div>
-								<div class="plan-details">
-									<strong>Start date: </strong>
-									<span ng-bind="emp.start_date">01/12/2018</span>
-								</div>
-							</td>
-							<td class="family-coverage-details">
-								<div class="family-dependent-details">
-									<strong>Dependent: </strong> 
-									<span ng-bind="emp.dependents">2</span>
-								</div>
-							</td>
-							<td class="medical-details-container">
-								<div class="medical-details">
-									<strong>Allocation:</strong>
-									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
-								</div>
-								<div class="medical-details">
-									<strong>Balance:</strong>
-									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
-								</div>
-							</td>
-							<td class="wellness-details-container">
-								<div class="wellness-details">
-									<strong>Allocation:</strong>
-									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
-								</div>
-								<div class="wellness-details">
-									<strong>Balance:</strong>
-									<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
-								</div>
-							</td>
-						</tr>
-					<tbody>
-				</table>
-			</div>
+		</div>
+		<div class="employee-overview-table">
+			<table>
+				<thead>
+					<tr>
+						<th class="name-title">Name
+							<div class="name-chevron-icon">
+								<!-- <img class="employee-arrow-up" src="../assets/hr-dashboard/img/icons/down-arrow.svg"> -->
+								<!-- <img src="../assets/hr-dashboard/img/icons/down-arrow.svg"> -->
+								<i class="fa fa-angle-up" aria-hidden="true"></i>
+								<i class="fa fa-angle-down" aria-hidden="true"></i>
+							</div>
+						</th>
+						<th class="status-title">Status</th>
+						<th class="nric-fin-title">Mobile Number</th>
+						<!-- <th class="nric-fin-title">NRIC/FIN</th> -->
+						<th class="plan-details-title">Plan details</th>
+						<th class="family-coverage-title">Family coverage</th>
+						<th class="spending-account-medical-title">Spending account <span>(medical)</span></th>
+						<th class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="emp in employees.data" ng-click="toggleEmployee(emp, $index)">
+						<td class="emp-name-container">
+							<strong ng-bind="emp.name">Calvin Lee</strong>
+						</td>
+						<td class="status-details-wrapper">
+							<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'pending'">
+								<span class="status-color pending"></span>
+								<span>Pending</span>
+							</div>
+							<div class="status-details-container"
+								ng-if="emp.account_status && emp.emp_status == 'active' || emp.account_status && emp.schedule">
+								<span class="status-color active"></span>
+								<span>Active</span>
+							</div>
+							<div class="status-details-container" ng-if="!emp.account_status || emp.emp_status == 'deleted'">
+								<span class="status-color removed"></span>
+								<span>Removed</span>
+							</div>
+							<div class="status-expired-container" ng-if="emp.deletion || emp.schedule">
+								<span ng-bind="emp.deletion_text"></span>
+							</div>
+						</td>
+						<td class="nric-fin-details">
+							<span ng-bind="emp.mobile_no == 0 ? '-' : emp.mobile_no"></span>
+						</td>
+						<!-- <td class="nric-fin-details" ng-bind="emp.nric">S8575893G</td> -->
+						<td class="plan-start-container">
+							<span ng-bind="emp.plan_tier.plan_tier_name">Tier 1</span>
+							<div class="plan-details">
+								<strong>Plan type: </strong>
+								<span ng-bind="emp.plan_name">Pro Plan</span>
+							</div>
+							<div class="plan-details">
+								<strong>Start date: </strong>
+								<span ng-bind="emp.start_date">01/12/2018</span>
+							</div>
+						</td>
+						<td class="family-coverage-details">
+							<div class="family-dependent-details">
+								<strong>Dependent: </strong>
+								<span ng-bind="emp.dependents">2</span>
+							</div>
+						</td>
+						<td class="medical-details-container">
+							<div class="medical-details">
+								<strong>Allocation:</strong>
+								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
+										ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
+							</div>
+							<div class="medical-details">
+								<strong>Balance:</strong>
+								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
+										ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
+							</div>
+						</td>
+						<td class="wellness-details-container">
+							<div class="wellness-details">
+								<strong>Allocation:</strong>
+								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
+										ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
+							</div>
+							<div class="wellness-details">
+								<strong>Balance:</strong>
+								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
+										ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
+							</div>
+						</td>
+					</tr>
+				<tbody>
+			</table>
+		</div>
 		<!-- </div> -->
 		<div class="employee-pagination-wrapper employee-overview-pagination">
 			<div class="employee-pagination">
-				<div class="prev-pagination" ng-click="prevPage()" ng-class="{'active' : page_active > 1, 'disabled' : page_active < 2}">
+				<div class="prev-pagination" ng-click="prevPage()"
+					ng-class="{'active' : page_active > 1, 'disabled' : page_active < 2}">
 					<i class="fa fa-angle-left" aria-hidden="true"></i>
 					<span>Prev</span>
 				</div>
 
 				<!-- <span ng-if="page_active > 4" ng-click="goToPage(list+1)" class="numeric-pagination" style="letter-spacing: 2px;padding-right: 0;margin-right: 0;">1...</span> -->
-				<span ng-repeat="list in range(employees.last_page) | limitTo:pagesToDisplay:startIndex() track by $index" class="numeric-pagination" ng-class="{'active' : page_active == list+1}" ng-click="goToPage(list+1)" ng-bind="list+1">1</span>
+				<span ng-repeat="list in range(employees.last_page) | limitTo:pagesToDisplay:startIndex() track by $index"
+					class="numeric-pagination" ng-class="{'active' : page_active == list+1}" ng-click="goToPage(list+1)"
+					ng-bind="list+1">1</span>
 				<!-- <span ng-if="page_active < employees.last_page - 5" ng-click="goToPage(list+1)" class="numeric-pagination" style="letter-spacing: 2px;padding-left: 0;margin-left: 0;">...6</span> -->
 
-				<div class="next-pagination" ng-click="nextPage()" ng-class="{'active' : page_active < employees.last_page, 'disabled' : page_active == employees.last_page}">
+				<div class="next-pagination" ng-click="nextPage()"
+					ng-class="{'active' : page_active < employees.last_page, 'disabled' : page_active == employees.last_page}">
 					<i class="fa fa-angle-right" aria-hidden="true"></i>
 					<span>Next</span>
 				</div>
@@ -199,8 +213,9 @@
 							<div class="status-label-container">
 								<span class="status-label">Status</span>
 							</div>
-							<div class="status-text-container">	
-								<span class="status-text active" ng-if="selectedEmployee.emp_status == 'active' || selectedEmployee.account_status && selectedEmployee.schedule">Active</span>
+							<div class="status-text-container">
+								<span class="status-text active"
+									ng-if="selectedEmployee.emp_status == 'active' || selectedEmployee.account_status && selectedEmployee.schedule">Active</span>
 								<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending'">Pending</span>
 								<span class="status-text removed" ng-if="!selectedEmployee.account_status">Removed</span>
 							</div>
@@ -223,32 +238,38 @@
 						<strong class="font-helvetica-medium">Plan Covers</strong>
 						<span><span ng-bind="selectedEmployee.dependents + 1">3</span> People</span>
 					</div>
-					<div class="employee-cap" ng-if="selectedEmployee.gp_cap_per_visit != null && selectedEmployee.plan_tier == null">
+					<div class="employee-cap"
+						ng-if="selectedEmployee.gp_cap_per_visit != null && selectedEmployee.plan_tier == null">
 						<p class="font-helvetica-medium">Cap</p><span></span>
 						<strong>GP Cap per Visit</strong>
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.gp_cap_per_visit">50</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="selectedEmployee.gp_cap_per_visit">50</span></span>
 					</div>
 
 					<!-- Plan tier no currency type. balikan -->
-					<div ng-if="selectedEmployee.plan_tier != null" class="employee-tier-wrapper" >
+					<div ng-if="selectedEmployee.plan_tier != null" class="employee-tier-wrapper">
 						<div ng-click="toggleTierDetails()" class="employee-tier-container ">
 							<strong class="font-helvetica-medium">Tier</strong>
 							<span><strong ng-bind="selectedEmployee.plan_tier.plan_tier_name">1</strong></span>
 						</div>
-						<i ng-if="!isTierDetailsShow" ng-click="toggleTierDetails()" class="fa fa-angle-right" aria-hidden="true"></i>
+						<i ng-if="!isTierDetailsShow" ng-click="toggleTierDetails()" class="fa fa-angle-right"
+							aria-hidden="true"></i>
 						<i ng-if="isTierDetailsShow" ng-click="toggleTierDetails()" class="fa fa-angle-down" aria-hidden="true"></i>
 						<div ng-if="isTierDetailsShow" class="tier-dropdown-details">
 							<div class="annual-cap">
 								<span>Medical annual cap:</span>
-								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.plan_tier.medical_annual_cap">1000</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+									<span ng-bind="selectedEmployee.plan_tier.medical_annual_cap">1000</span></span>
 							</div>
 							<div class="annual-cap">
 								<span>Wellness annual cap:</span>
-								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.plan_tier.wellness_annual_cap">300</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+									<span ng-bind="selectedEmployee.plan_tier.wellness_annual_cap">300</span></span>
 							</div>
 							<div class="gp-cap">
 								<span>GP Cap per visit:</span>
-								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.plan_tier.gp_cap_per_visit">50</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+									<span ng-bind="selectedEmployee.plan_tier.gp_cap_per_visit">50</span></span>
 							</div>
 						</div>
 					</div>
@@ -266,29 +287,38 @@
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-container">
 						<strong class="font-helvetica-medium">Allocation</strong>
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
+						<p class="small">*The amount of SGD 833.33 will be updated on 01/05/2019.</p>
 					</div>
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleMedicalUsage()" class="usage-container">
 							<strong class="font-helvetica-medium">Usage</strong>
-							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication ) | number : 2">700.00</span></span>
+							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+									ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication ) | number : 2">700.00</span></span>
 						</div>
-						<i ng-if="!isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-right" aria-hidden="true"></i>
-						<i ng-if="isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-down" aria-hidden="true"></i>
+						<i ng-if="!isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-right"
+							aria-hidden="true"></i>
+						<i ng-if="isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-down"
+							aria-hidden="true"></i>
 						<div ng-if="isMedicalUsageShow" class="usage-dropdown-details">
 							<div class="usage-details">
 								<span>Spent:</span>
-								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.credits_spent | number : 2">650</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent | number : 2">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
-								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication | number : 2">50</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+									<span
+										ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication | number : 2">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.medical.balance | number: 2">300.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="selectedEmployee.spending_account.medical.balance | number: 2">300.00</span></span>
 					</div>
 				</div>
 
@@ -296,46 +326,62 @@
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-container">
 						<strong class="font-helvetica-medium">Allocation</strong>
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
+						<p class="small">*The amount of SGD 833.33 will be updated on 01/05/2019.</p>
 					</div>
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleWellnessUsage()" class="usage-container">
 							<strong class="font-helvetica-medium">Usage</strong>
-							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="getUsage( selectedEmployee.spending_account.wellness.credits_spent_wellness, selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness ) | number : 2">700.00</span></span>
+							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+									ng-bind="getUsage( selectedEmployee.spending_account.wellness.credits_spent_wellness, selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness ) | number : 2">700.00</span></span>
 						</div>
-						<i ng-if="!isWellnessUsageShow" ng-click="toggleWellnessUsage()" class="fa fa-angle-right" aria-hidden="true"></i>
-						<i ng-if="isWellnessUsageShow" ng-click="toggleWellnessUsage()" class="fa fa-angle-down" aria-hidden="true"></i>
+						<i ng-if="!isWellnessUsageShow" ng-click="toggleWellnessUsage()" class="fa fa-angle-right"
+							aria-hidden="true"></i>
+						<i ng-if="isWellnessUsageShow" ng-click="toggleWellnessUsage()" class="fa fa-angle-down"
+							aria-hidden="true"></i>
 						<div ng-if="isWellnessUsageShow" class="usage-dropdown-details">
 							<div class="usage-details">
 								<span>Spent:</span>
-								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness | number: 2">650</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+									<span
+										ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness | number: 2">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
-								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness | number: 2">50</span></span>
+								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+									<span
+										ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness | number: 2">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="selectedEmployee.spending_account.wellness.balance | number: 2">380.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="selectedEmployee.spending_account.wellness.balance | number: 2">380.00</span></span>
 					</div>
 				</div>
 
-				<div class="remove-btn-container"  ng-if="selectedEmployee.emp_status == 'active'">
+				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active'">
 					<button class="btn-remove-employee" ng-click="removeBtn()">Remove Employee</button>
 				</div>
 
-				<div class="health-spending-btn-container" ng-if="selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true">
+				<div class="health-spending-btn-container"
+					ng-if="selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true">
 					<button ng-click="viewEmployeeSpendingSummary()">Health Spending Account Summary</button>
 				</div>
 			</div>
 
 			<div class="employee-dependent-information">
 				<div ng-if="!showBlockHealthProviders" class="employee-dependent-selection">
-					<div class="employee-selection" ng-class="{'active' : empTabSelected == 0}" ng-click="toggleEmpTab(0)">Employee</div>
-					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection" ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">Settings</div>
+					<div class="employee-selection" ng-class="{'active' : empTabSelected == 0}" ng-click="toggleEmpTab(0)">
+						Employee</div>
+					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
+						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
+					<div class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
+						Entitlement</div>
+					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">
+						Settings</div>
 				</div>
 
 				<div ng-if="showBlockHealthProviders" class="employee-dependent-selection health-provider-header-container">
@@ -344,7 +390,8 @@
 					</div>
 					<div>
 						<!-- <button class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button> -->
-						<img ng-click="settingsShow('close')" src="../assets/hr-dashboard/img/icons/cancel.png" style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 10px;">
+						<img ng-click="settingsShow('close')" src="../assets/hr-dashboard/img/icons/cancel.png"
+							style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 10px;">
 					</div>
 				</div>
 
@@ -352,7 +399,8 @@
 					<div ng-if="empTabSelected == 0" class="employee-information">
 						<div class="employee-btn-edit-wrapper">
 							<h3 class="weight-700">Employee Information</h3>
-							<button class="btn-edit" ng-click="openUpdateEmployeeModal()"><img src="../assets/hr-dashboard/img/icons/edit.png">Edit</button>
+							<button class="btn-edit" ng-click="openUpdateEmployeeModal()"><img
+									src="../assets/hr-dashboard/img/icons/edit.png">Edit</button>
 						</div>
 						<div class="employee-information-details">
 							<div class="col-1-employee-information-details">
@@ -369,17 +417,36 @@
 									<span ng-bind="selectedEmployee.lname">Lee</span>
 								</div> -->
 								<div>
-									<strong class="font-helvetica-medium">Date of Birth</strong>
-									<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
+									<strong class="font-helvetica-medium">Member ID</strong>
+									<span ng-bind="selectedEmployee.member_id">657834</span>
+								</div>
+								<div class="entitlementWithIcon">
+									<strong class="font-helvetica-medium">Medical Entitlement</strong>
+									<span>{{selectedEmployee.member_id}} <span class="custom small">(The amount of SGD 1,000.00 will be
+											updated on 01/05/2019)</span></span>
+									<!-- <span class="custom small">(The amount of SGD 1,000.00 will be updated on 01/05/2019)</span> -->
+									<i ng-click="dropdownEntitlement.medical = !dropdownEntitlement.medical" class="fa fa-ellipsis-v"
+										aria-hidden="true"></i>
+									<span ng-if="dropdownEntitlement.medical" class="dropdwon-entitlement">Update</span>
+								</div>
+								<div class="entitlementWithIcon">
+									<strong class="font-helvetica-medium">Wellness Entitlement</strong>
+									<span>{{selectedEmployee.member_id}} <span class="custom small">(The amount of SGD 1,000.00 will be
+											updated on 01/05/2019)</span></span>
+									<i ng-click="dropdownEntitlement.wellness = !dropdownEntitlement.wellness" class="fa fa-ellipsis-v"
+										aria-hidden="true"></i>
+									<span ng-if="dropdownEntitlement.wellness" class="dropdwon-entitlement">Update</span>
 								</div>
 								<div>
-									<strong class="font-helvetica-medium">Postal Code</strong>
-									<span ng-bind="selectedEmployee.postal_code">645362</span>
+									<strong class="font-helvetica-medium">Date of Birth</strong>
+									<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Job Title</strong>
 									<span ng-bind="selectedEmployee.job_title">Accountant</span>
 								</div>
+							</div>
+							<div class="col-2-employee-information-details">
 								<div>
 									<strong class="font-helvetica-medium">Country Code</strong>
 									<span ng-bind="selectedEmployee.country_code">+63</span>
@@ -387,16 +454,14 @@
 								<div>
 									<strong class="font-helvetica-medium">Mobile Number</strong>
 									<span ng-bind="selectedEmployee.phone_no">87589582</span>
-								</div>			
-							</div>
-							<div class="col-2-employee-information-details">
-								<div>
-									<strong class="font-helvetica-medium">Member ID</strong>
-									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Work Email</strong>
 									<span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
+								</div>
+								<div>
+									<strong class="font-helvetica-medium">Postal Code</strong>
+									<span ng-bind="selectedEmployee.postal_code">645362</span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Bank Account Number</strong>
@@ -413,9 +478,11 @@
 							</div>
 						</div>
 
-						<div ng-if="dependents_status.dependent_status" class="employee-btn-add-seat-wrapper" ng-click="toggleAddDependent()">
+						<div ng-if="dependents_status.dependent_status" class="employee-btn-add-seat-wrapper"
+							ng-click="toggleAddDependent()">
 							<h3 class="weight-700">Add a Dependent?</h3>
-							<button class="btn-add-seat" ng-click="toggleAddDependents()"><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add</button>
+							<button class="btn-add-seat" ng-click="toggleAddDependents()"><img
+									src="../assets/hr-dashboard/img/icons/add-employee.svg">Add</button>
 						</div>
 					</div>
 					<div ng-if="empTabSelected == 1" class="dependent-information">
@@ -424,9 +491,12 @@
 							<h3 ng-if="$index == 0" class="weight-700">Dependent Information</h3>
 							<div class="dependent-information-button">
 								<!-- <button class="btn-remove" ng-click="deleteDependent( list )"><img src="../assets/hr-dashboard/img/icons/dustbin.png">Remove</button> -->
-								<button class="btn-remove" ng-click="removeDependentBtn( list )" ng-if="!list.deletion"><img src="../assets/hr-dashboard/img/icons/dustbin.png">Remove</button>
-								<button class="btn-remove btn-remove-text" disabled ng-if="list.deletion"><span ng-bind="list.deletion_text"></span></button>
-								<button class="btn-edit" ng-click="openUpdateDependentModal( list )"><img src="../assets/hr-dashboard/img/icons/edit.png">Edit</button>
+								<button class="btn-remove" ng-click="removeDependentBtn( list )" ng-if="!list.deletion"><img
+										src="../assets/hr-dashboard/img/icons/dustbin.png">Remove</button>
+								<button class="btn-remove btn-remove-text" disabled ng-if="list.deletion"><span
+										ng-bind="list.deletion_text"></span></button>
+								<button class="btn-edit" ng-click="openUpdateDependentModal( list )"><img
+										src="../assets/hr-dashboard/img/icons/edit.png">Edit</button>
 							</div>
 							<div class="employee-information-details">
 								<div class="col-1-employee-information-details">
@@ -449,12 +519,13 @@
 									<div>
 										<strong class="font-helvetica-medium">Date of Birth</strong>
 										<span ng-bind="list.dob | date:'dd/MM/yyyy'">04/03/1984</span>
-									</div> 
+									</div>
 								</div>
 								<div class="col-2-employee-information-details">
 									<div>
 										<strong class="font-helvetica-medium">Relationship</strong>
-										<span style="text-transform: capitalize;" ng-if="list.relationship != null" ng-bind="list.relationship">Spouse</span>
+										<span style="text-transform: capitalize;" ng-if="list.relationship != null"
+											ng-bind="list.relationship">Spouse</span>
 										<span ng-if="list.relationship == null">Dependent of <span ng-bind="list.Name"></span></span>
 									</div>
 									<div>
@@ -465,9 +536,159 @@
 							</div>
 						</div>
 					</div>
-					<div ng-if="empTabSelected == 2" class="settings-information">
+					<div ng-if="empTabSelected == 2" class="entitlement-information">
+						<div class="entitlement-btn-edit-wrapper">
+							<h3 class="weight-700">Entitlement Information</h3>
+							<button class="btn-update">Update</button>
+						</div>
+
+						<div class="entitlement-information-details">
+							<h4 class="weight-700 medical-entitlement">Medical Entitlement</h4>
+							<div class="col-md-12 no-margin-15 medical-entitlement-container">
+								<div class="col-md-2">
+									<div class="entitlement-input-container original">
+										<h5 class="weight-700">Original Entitlement</h5>
+										<div class="entitlement-input-label">
+											<label class="entitlement-label">SGD</label>
+											<input class="entitlement-input form-control" type="number" readonly="readonly"
+												placeholder="0.00">
+										</div>
+										<p class="small">*Updated from SGD 500.00 to SGD 1,000 on 30/04/2019</p>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="entitlement-input-container new">
+										<h5 class="weight-700">New Entitlement</h5>
+										<div class="entitlement-input-label">
+											<label class="entitlement-label">SGD</label>
+											<input class="entitlement-input form-control" type="number" placeholder="0.00">
+										</div>
+										<p class="small">*Updated on 30/04/2019</p>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="entitlement-input-container usage">
+										<h5 class="weight-700">Effective Date of New Entitlement</h5>
+										<div class="entitlement-input-label withIcon">
+											<label class="entitlement-label">SGD</label>
+											<!-- <input class="datepicker" type="text"> -->
+											<input type="text" name="usage_date"
+												class="entitlement-input dateWithIcon form-control datepicker"
+												ng-model="entitlement_data.wellness.usage_date" placeholder="DD/MM/YYYY">
+											<i class="fa fa-calendar-o" aria-hidden="true"></i>
+										</div>
+										<p class="small">*Updated on 30/04/2019</p>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="entitlement-input-container proration">
+										<h5 class="weight-700">Proration</h5>
+										<div class="entitlement-input-label withIcon">
+											<!-- <label class="entitlement-label">SGD</label> -->
+											<!-- <input class="datepicker" type="text"> -->
+											<select class="form-control">
+												<option value="months">Months</option>
+												<option value="days">Days</option>
+											</select>
+											<!-- <i class="fa fa-calendar-o" aria-hidden="true"></i> -->
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="entitlement-input-container allocation">
+										<h5 class="weight-700">New Allocation</h5>
+										<div class="entitlement-calculation">
+											<h4> <span class="weight-700">SGD</span> 0.00</h4>
+											<button class="btn-calculate">Calculate</button>
+										</div>
+									</div>
+									<div class="see-more">
+										<small ng-click="dropdownEntitlement.med_alloc_formula = !dropdownEntitlement.med_alloc_formula"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i> See how this is calculated</small>
+										<p ng-if="dropdownEntitlement.med_alloc_formula">New Prorated allocation is: <br> SGD500 x 4/12 +
+											SGD1000 x 8/12 = SGD 833.33</p>
+									</div>
+								</div>
+							</div>
+
+
+							<!-- class="weight-700 wellness-entitlement" -->
+							<h4 class="weight-700 wellness-entitlement">Wellness Entitlement</h4>
+							<div class="col-md-12 no-margin-15 wellness-entitlement-container">
+								<div class="col-md-2">
+									<div class="entitlement-input-container original">
+										<h5 class="weight-700">Original Entitlement</h5>
+										<div class="entitlement-input-label">
+											<label class="entitlement-label">SGD</label>
+											<input class="entitlement-input form-control" type="number" readonly="readonly"
+												placeholder="0.00">
+										</div>
+										<p class="small">*Updated from SGD 500.00 to SGD 1,000 on 30/04/2019</p>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="entitlement-input-container new">
+										<h5 class="weight-700">New Entitlement</h5>
+										<div class="entitlement-input-label">
+											<label class="entitlement-label">SGD</label>
+											<input class="entitlement-input form-control" type="number" placeholder="0.00">
+										</div>
+										<p class="small">*Updated on 30/04/2019</p>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="entitlement-input-container usage">
+										<h5 class="weight-700">Effective Date of New Entitlement</h5>
+										<div class="entitlement-input-label withIcon">
+											<label class="entitlement-label">SGD</label>
+											<!-- <input class="datepicker" type="text"> -->
+											<input type="text" name="usage_date"
+												class="entitlement-input dateWithIcon form-control datepicker"
+												ng-model="entitlement_data.wellness.usage_date" placeholder="DD/MM/YYYY">
+											<i class="fa fa-calendar-o" aria-hidden="true"></i>
+										</div>
+										<p class="small">*Updated on 30/04/2019</p>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="entitlement-input-container proration">
+										<h5 class="weight-700">Proration</h5>
+										<div class="entitlement-input-label withIcon">
+											<!-- <label class="entitlement-label">SGD</label> -->
+											<!-- <input class="datepicker" type="text"> -->
+											<select class="form-control">
+												<option value="months">Months</option>
+												<option value="days">Days</option>
+											</select>
+											<!-- <i class="fa fa-calendar-o" aria-hidden="true"></i> -->
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="entitlement-input-container allocation">
+										<h5 class="weight-700">New Allocation</h5>
+										<div class="entitlement-calculation">
+											<h4> <span class="weight-700">SGD</span> 0.00</h4>
+											<button class="btn-calculate">Calculate</button>
+										</div>
+									</div>
+									<div class="see-more">
+										<small
+											ng-click="dropdownEntitlement.well_alloc_formula = !dropdownEntitlement.well_alloc_formula"><i
+												class="fa fa-chevron-down" aria-hidden="true"></i> See how this is calculated</small>
+										<p ng-if="dropdownEntitlement.well_alloc_formula">New Prorated allocation is: <br> SGD500 x 4/12 +
+											SGD1000 x 8/12 = SGD 833.33</p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+					<div ng-if="empTabSelected == 3" class="settings-information">
 						<div class="employee-settings-wrapper">
-							<button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset Account</button>
+							<button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset
+								Account</button>
 							<button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
 							<button class="btn" ng-click="settingsShow('open')"><i class="fa fa-cogs"></i> Health Providers Access</button>
 						</div>
@@ -483,17 +704,21 @@
 									<span ng-if="!clinic_blocked_search_trap">Health Providers Access - BLOCKED</span>
 									<div ng-if="clinic_blocked_search_trap" class="search-input-wrapper">
 										<form ng-submit="searchClinics( search.clinic_blocked_search_text, 'block' )">
-											<input type="text" placeholder="Seach for partner access" ng-model="search.clinic_blocked_search_text">
+											<input type="text" placeholder="Seach for partner access"
+												ng-model="search.clinic_blocked_search_text">
 										</form>
 									</div>
-									<i ng-if="clinic_blocked_search_trap && list_opt_block == 'name'" ng-click="toggleBlockedClinicSearch()" class="fa fa-times"></i>
-									<i ng-if="!clinic_blocked_search_trap && list_opt_block == 'name'" ng-click="toggleBlockedClinicSearch()" class="fa fa-search"></i>
+									<i ng-if="clinic_blocked_search_trap && list_opt_block == 'name'"
+										ng-click="toggleBlockedClinicSearch()" class="fa fa-times"></i>
+									<i ng-if="!clinic_blocked_search_trap && list_opt_block == 'name'"
+										ng-click="toggleBlockedClinicSearch()" class="fa fa-search"></i>
 								</div>
 
 								<div class="clinic-name-header">
 									<label class="health-checkbox-container">
 										<span>Blocked Access</span>
-										<input type="checkbox" ng-model="allBlockSelected" value="true" ng-click="toggleAllBlockedClinic( allBlockSelected )">
+										<input type="checkbox" ng-model="allBlockSelected" value="true"
+											ng-click="toggleAllBlockedClinic( allBlockSelected )">
 										<span class="health-checkmark"></span>
 									</label>
 									<div class="select-filter-wrapper">
@@ -510,23 +735,26 @@
 												<option value="name">Clinic Name</option>
 											</select>
 										</div>
-										<button class="health-btn-open-block health-open-btn" ng-click="blockToOpen( 0, filter_regionBlocked, list_opt_block )">OPEN</button>
+										<button class="health-btn-open-block health-open-btn"
+											ng-click="blockToOpen( 0, filter_regionBlocked, list_opt_block )">OPEN</button>
 									</div>
 								</div>
 
 								<div class="clinic-name-wrapper">
-									<div ng-if="list_opt_block == 'name'" ng-repeat="list in clinic_block_arr" class="clinic-name-container">
+									<div ng-if="list_opt_block == 'name'" ng-repeat="list in clinic_block_arr"
+										class="clinic-name-container">
 										<label class="health-checkbox-container">
 											<span ng-bind="list.Name">Onecare Choa Chu Kang</span>
 											<input type="checkbox" ng-model="list.selected">
 											<span class="health-checkmark"></span>
 										</label>
-										<div class="country-type" >
+										<div class="country-type">
 											<span ng-bind="list.currency_type == 'myr' ? 'Malaysia' : 'Singapore'"></span>
 										</div>
 									</div>
 
-									<div ng-if="list_opt_block == 'type'" ng-repeat="list in clinic_type_block_arr" class="clinic-name-container">
+									<div ng-if="list_opt_block == 'type'" ng-repeat="list in clinic_type_block_arr"
+										class="clinic-name-container">
 										<label class="health-checkbox-container">
 											<span ng-bind="list.Name">Lorem</span>
 											<input type="checkbox" ng-model="list.selected">
@@ -544,12 +772,12 @@
 									<span>Page: </span>
 									<div class="page-scroll-container page-blocked">
 										<span ng-click="showPageScroll('blocked_page')">
-											<span ng-bind="block_pagination.current_page">1</span> 
+											<span ng-bind="block_pagination.current_page">1</span>
 											<i class="fa fa-caret-down"></i>
 										</span>
 										<div class="blocked-page-scroll page-scroll" style="display: none">
 											<span ng-repeat="list in range( block_pagination.last_page )" ng-click="pageBlock(list)"
-													ng-bind="list">1</span>
+												ng-bind="list">1</span>
 										</div>
 									</div>
 								</div>
@@ -557,7 +785,7 @@
 									<span>Rows per page:</span>
 									<div class="page-scroll-container rows-per-page-blocked">
 										<span ng-click="showPageScroll('blocked_per_page')">
-											<span ng-bind="block_pagination.per_page">10</span> 
+											<span ng-bind="block_pagination.per_page">10</span>
 											<i class="fa fa-caret-down"></i>
 										</span>
 										<div class="blocked-per-page-scroll page-scroll" style="display: none">
@@ -571,9 +799,11 @@
 											<span
 												ng-bind="(block_pagination.current_page * block_pagination.per_page) - ( block_pagination.per_page - 1 )">1</span>
 											-
-											<span ng-if="( block_pagination.current_page * block_pagination.per_page ) <= block_pagination.total"
+											<span
+												ng-if="( block_pagination.current_page * block_pagination.per_page ) <= block_pagination.total"
 												ng-bind="block_pagination.current_page * block_pagination.per_page">1</span>
-											<span ng-if="( block_pagination.current_page * block_pagination.per_page ) > block_pagination.total"
+											<span
+												ng-if="( block_pagination.current_page * block_pagination.per_page ) > block_pagination.total"
 												ng-bind="block_pagination.total">1</span>
 											of
 											<span ng-bind="block_pagination.total">416</span>
@@ -588,7 +818,7 @@
 						<div class="sort-container">
 							<img src="../assets/hr-dashboard/img/sort.png">
 						</div>
-						
+
 						<div class="health-partner-access-opened">
 
 							<div class="health-partner-container">
@@ -596,17 +826,21 @@
 									<span ng-if="!clinic_opened_search_trap">Health Providers Access - OPENED</span>
 									<div ng-if="clinic_opened_search_trap" class="search-input-wrapper">
 										<form ng-submit="searchClinics( search.clinic_open_search_text, 'open' )">
-											<input type="text" placeholder="Seach for partner access" ng-model="search.clinic_open_search_text">
+											<input type="text" placeholder="Seach for partner access"
+												ng-model="search.clinic_open_search_text">
 										</form>
 									</div>
-									<i ng-if="clinic_opened_search_trap && list_opt_open == 'name'" ng-click="toggleOpenedClinicSearch()" class="fa fa-times"></i>
-									<i ng-if="!clinic_opened_search_trap && list_opt_open == 'name'" ng-click="toggleOpenedClinicSearch()" class="fa fa-search"></i>
+									<i ng-if="clinic_opened_search_trap && list_opt_open == 'name'" ng-click="toggleOpenedClinicSearch()"
+										class="fa fa-times"></i>
+									<i ng-if="!clinic_opened_search_trap && list_opt_open == 'name'" ng-click="toggleOpenedClinicSearch()"
+										class="fa fa-search"></i>
 								</div>
 
 								<div class="clinic-name-header">
 									<label class="health-checkbox-container">
 										<span>Opened Access</span>
-										<input type="checkbox" ng-model="allOpenSelected" value="true" ng-click="toggleAllOpenedClinic( allOpenSelected )">
+										<input type="checkbox" ng-model="allOpenSelected" value="true"
+											ng-click="toggleAllOpenedClinic( allOpenSelected )">
 										<span class="health-checkmark"></span>
 									</label>
 									<div class="select-filter-wrapper">
@@ -623,12 +857,14 @@
 												<option value="name">Clinic Name</option>
 											</select>
 										</div>
-										<button class="health-btn-open-block health-block-btn" ng-click="openToBlock( 1, filter_regionOpened, list_opt_open )">BLOCK</button>
+										<button class="health-btn-open-block health-block-btn"
+											ng-click="openToBlock( 1, filter_regionOpened, list_opt_open )">BLOCK</button>
 									</div>
 								</div>
 
 								<div class="clinic-name-wrapper">
-									<div ng-if="list_opt_open == 'name'" ng-repeat="list in clinic_open_arr" class="clinic-name-container">
+									<div ng-if="list_opt_open == 'name'" ng-repeat="list in clinic_open_arr"
+										class="clinic-name-container">
 										<label class="health-checkbox-container">
 											<span ng-bind="list.Name">Onecare Choa Chu Kang</span>
 											<input type="checkbox" ng-model="list.selected">
@@ -639,7 +875,8 @@
 										</div>
 									</div>
 
-									<div ng-if="list_opt_open == 'type'" ng-repeat="list in clinic_type_open_arr" class="clinic-name-container">
+									<div ng-if="list_opt_open == 'type'" ng-repeat="list in clinic_type_open_arr"
+										class="clinic-name-container">
 										<label class="health-checkbox-container">
 											<span ng-bind="list.Name">Lorem</span>
 											<input type="checkbox" ng-model="list.selected">
@@ -658,12 +895,12 @@
 									<span>Page: </span>
 									<div class="page-scroll-container page-opened">
 										<span ng-click="showPageScroll('opened-page-scroll')">
-											<span ng-bind="open_pagination.current_page">1</span> 
+											<span ng-bind="open_pagination.current_page">1</span>
 											<i class="fa fa-caret-down"></i>
 										</span>
 										<div class="opened-page-scroll page-scroll" style="display: none;">
 											<span ng-repeat="list in range( open_pagination.last_page )" ng-click="pageOpen(list)"
-													ng-bind="list">1</span>
+												ng-bind="list">1</span>
 										</div>
 									</div>
 								</div>
@@ -671,7 +908,7 @@
 									<span>Rows per page:</span>
 									<div class="page-scroll-container rows-per-page-opened">
 										<span ng-click="showPageScroll('opened-per-page-scroll')">
-											<span ng-bind="open_pagination.per_page">10</span> 
+											<span ng-bind="open_pagination.per_page">10</span>
 											<i class="fa fa-caret-down"></i>
 										</span>
 										<div class="opened-per-page-scroll page-scroll" style="display: none">
@@ -705,47 +942,64 @@
 					<div class="account-summary-wrapper">
 						<span class="account-summary-name weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
 						<h1 class="text-center weight-700">Health Spending Account Summary</h1>
-						<div class="account-summary-pro-rated weight-700 text-center">Pro-rated allocation from 
-							<span><strong class="font-helvetica-medium">Start</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.pro_rated_start">01/11/2018</span></span> to 
-							<span><strong class="font-helvetica-medium">End</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.pro_rated_end">01/01/2019</span></span>
+						<div class="account-summary-pro-rated weight-700 text-center">Pro-rated allocation from
+							<span><strong class="font-helvetica-medium">Start</strong> - <span class="account-summary-date"
+									ng-bind="health_spending_summary.date.pro_rated_start">01/11/2018</span></span> to
+							<span><strong class="font-helvetica-medium">End</strong> - <span class="account-summary-date"
+									ng-bind="health_spending_summary.date.pro_rated_end">01/01/2019</span></span>
 						</div>
 						<div class="account-summary-usage weight-700 text-center">Usage from
-							<span><strong class="font-helvetica-medium"> Start</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.usage_start">01/11/2018</span></span> to 
-							<span> <strong class="font-helvetica-medium">Current</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.usage_end">01/12/2018</span></span>
+							<span><strong class="font-helvetica-medium"> Start</strong> - <span class="account-summary-date"
+									ng-bind="health_spending_summary.date.usage_start">01/11/2018</span></span> to
+							<span> <strong class="font-helvetica-medium">Current</strong> - <span class="account-summary-date"
+									ng-bind="health_spending_summary.date.usage_end">01/12/2018</span></span>
 						</div>
 
 						<div class="medical-wellness-container">
 							<div class="medical-container">
 								<h4 class="font-helvetica-medium">Medical Spending Account</h4>
 								<div class="spending-account-details">
-								<div class="inital-allocation-container weight-700">
-									<strong class="font-helvetica-medium">Initial Allocation</strong>
-									<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
+									<div class="inital-allocation-container weight-700">
+										<strong class="font-helvetica-medium">Initial Allocation</strong>
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+											<span ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
+									</div>
+									<div class="pro-rated-container weight-700">
+										<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
+										<span class="font-helvetica-medium"><span class="currency-type"
+												ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
+									</div>
+									<div class="current-usage-container weight-700">
+										<strong class="font-helvetica-medium">Current Usage</strong>
+										<span ng-if="health_spending_summary.medical.exceed == false" class="on-track"><span
+												class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+										<span ng-if="health_spending_summary.medical.exceed == true" class="exceed"><span
+												class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+									</div>
+									<div class="spent-container weight-700">
+										Spent
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+											<span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
+									</div>
+									<div class="pending-claim-container weight-700">
+										Pending claim
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+											<span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
+									</div>
+									<div class="spending-balance-container weight-700">
+										<strong class="font-helvetica-medium">Balance</strong>
+										<span class="font-helvetica-medium"><span class="currency-type"
+												ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.medical.balance">250.00</span></span>
+									</div>
 								</div>
-								<div class="pro-rated-container weight-700">
-									<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-									<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
-								</div>
-								<div class="current-usage-container weight-700">
-									<strong class="font-helvetica-medium">Current Usage</strong>
-									<span ng-if="health_spending_summary.medical.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
-									<span ng-if="health_spending_summary.medical.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
-								</div>
-								<div class="spent-container weight-700">
-									Spent
-									<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
-								</div>
-								<div class="pending-claim-container weight-700">
-									Pending claim
-									<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
-								</div>
-								<div class="spending-balance-container weight-700">
-									<strong class="font-helvetica-medium">Balance</strong>
-									<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.balance">250.00</span></span>
-								</div>
-							</div>
-								<span ng-if="health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
-								<span ng-if="health_spending_summary.medical.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
+								<span ng-if="health_spending_summary.medical.exceed == false"
+									class="spending-account-status on-track weight-700">On Track</span>
+								<span ng-if="health_spending_summary.medical.exceed == true"
+									class="spending-account-status exceed weight-700">Exceed</span>
 							</div>
 							<div class="separator"></div>
 							<div class="wellness-container">
@@ -753,32 +1007,45 @@
 								<div class="spending-account-details">
 									<div class="inital-allocation-container weight-700">
 										<strong class="font-helvetica-medium">Initial Allocation</strong>
-										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+											<span ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
 									</div>
 									<div class="pro-rated-container weight-700">
 										<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-										<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
+										<span class="font-helvetica-medium"><span class="currency-type"
+												ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
 									</div>
 									<div class="current-usage-container weight-700">
 										<strong class="font-helvetica-medium">Current Usage</strong>
-										<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
-										<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+										<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track"><span
+												class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+										<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed"><span
+												class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
 									</div>
 									<div class="spent-container weight-700">
 										Spent
-										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+											<span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 									</div>
 									<div class="pending-claim-container weight-700">
 										Pending claim
-										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
+										<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
+											<span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
 									</div>
 									<div class="spending-balance-container weight-700">
 										<strong class="font-helvetica-medium">Balance</strong>
-										<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.balance">250.00</span></span>
+										<span class="font-helvetica-medium"><span class="currency-type"
+												ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+												ng-bind="health_spending_summary.wellness.balance">250.00</span></span>
 									</div>
 								</div>
-								<span ng-if="health_spending_summary.wellness.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
-								<span ng-if="health_spending_summary.wellness.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
+								<span ng-if="health_spending_summary.wellness.exceed == false"
+									class="spending-account-status on-track weight-700">On Track</span>
+								<span ng-if="health_spending_summary.wellness.exceed == true"
+									class="spending-account-status exceed weight-700">Exceed</span>
 							</div>
 						</div>
 					</div>
@@ -789,8 +1056,10 @@
 		<div class="employee-prev-next-button">
 			<button class="employee-btn-back" ng-click="toggleEmployee()">Back to employee overview</button>
 			<div class="pull-right">
-				<button class="employee-btn-prev" ng-class="{'disabled': selectedEmployee_index == 0}" ng-click="prevSelectedEmployee()">Previous</button>
-				<button class="employee-btn-next" ng-class="{'disabled': selectedEmployee_index == (employees.data.length-1)}" ng-click="nextSelectedEmployee()">Next employee</button>
+				<button class="employee-btn-prev" ng-class="{'disabled': selectedEmployee_index == 0}"
+					ng-click="prevSelectedEmployee()">Previous</button>
+				<button class="employee-btn-next" ng-class="{'disabled': selectedEmployee_index == (employees.data.length-1)}"
+					ng-click="nextSelectedEmployee()">Next employee</button>
 			</div>
 		</div>
 	</div>
@@ -801,25 +1070,26 @@
 			<h1 class="text-center weight-700 font-helvetica-medium">Add a dependent</h1>
 			<p class="text-center weight-700" style="margin-bottom: 50px;">
 				<span ng-if="selectedEmployee.plan_tier">
-					<span><span ng-bind="selectedEmployee.plan_tier.plan_tier_name">1</span> :</span> 
-					DEPENDENT 
-					<span ng-bind="addActiveDependent_index">1</span> OF <span ng-bind="selectedEmployee.plan_tier.dependent_head_count">1</span>
+					<span><span ng-bind="selectedEmployee.plan_tier.plan_tier_name">1</span> :</span>
+					DEPENDENT
+					<span ng-bind="addActiveDependent_index">1</span> OF <span
+						ng-bind="selectedEmployee.plan_tier.dependent_head_count">1</span>
 				</span>
-				<span ng-if="!selectedEmployee.plan_tier"> 
+				<span ng-if="!selectedEmployee.plan_tier">
 					<span></span>
-					DEPENDENT 
-					<span ng-bind="addActiveDependent_index">1</span> OF 
+					DEPENDENT
+					<span ng-bind="addActiveDependent_index">1</span> OF
 					<span ng-bind="dependents.total_number_of_seats">1</span>
 				</span>
 			</p>
 			<form>
 				<div class="employee-input-wrapper">
 					<label for="fname">Full Name</label>
-  				<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.fullname">
+					<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.fullname">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Date of Birth</label>
-  				<input type="text" name="datebirth" class="datepicker" ng-model="dependent_data.dob">
+					<input type="text" name="datebirth" class="datepicker" ng-model="dependent_data.dob">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Relationship</label>
@@ -830,24 +1100,30 @@
 						<option value="parent">Parent</option>
 					</select>
 					<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
-  					<!-- <input type="text" name="relationship" ng-model="dependent_data.relationship">
+					<!-- <input type="text" name="relationship" ng-model="dependent_data.relationship">
   					<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg"> -->
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Start Date</label>
-  				<input type="text" name="start-date" class="start-date-datepicker-dependent" ng-model="dependent_data.start_date">
+					<input type="text" name="start-date" class="start-date-datepicker-dependent"
+						ng-model="dependent_data.start_date">
 				</div>
 
 				<div class="summary-left-right-button">
-					<img ng-if="dependents_ctr > 0" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png" ng-click="prevActiveDependent()">
-					<img ng-if="dependents_ctr < addDependents_arr.length" class="summary-right-btn" src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextActiveDependent()">
+					<img ng-if="dependents_ctr > 0" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png"
+						ng-click="prevActiveDependent()">
+					<img ng-if="dependents_ctr < addDependents_arr.length" class="summary-right-btn"
+						src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextActiveDependent()">
 				</div>
 			</form>
 			<div class="dependent-details-btn">
 				<button class="btn-cancel" ng-click="toggleAddDependents( )">CANCEL</button>
 				<div class="dependent-btn-right-wrapper">
-					<button ng-if="selectedEmployee.plan_tier && addActiveDependent_index < selectedEmployee.plan_tier.dependent_head_count + 1" class="btn-add" ng-click="pushActiveDependent( dependent_data )">ADD</button>
-					<button ng-if="!selectedEmployee.plan_tier && addActiveDependent_index < dependents.occupied_seats + 1" class="btn-add" ng-click="pushActiveDependent( dependent_data )">ADD</button>
+					<button
+						ng-if="selectedEmployee.plan_tier && addActiveDependent_index < selectedEmployee.plan_tier.dependent_head_count + 1"
+						class="btn-add" ng-click="pushActiveDependent( dependent_data )">ADD</button>
+					<button ng-if="!selectedEmployee.plan_tier && addActiveDependent_index < dependents.occupied_seats + 1"
+						class="btn-add" ng-click="pushActiveDependent( dependent_data )">ADD</button>
 					<button class="btn-save-continue" ng-click="saveActiveDependents(  )">SAVE & CONTINUE</button>
 				</div>
 			</div>
@@ -859,8 +1135,8 @@
 		<form>
 			<div class="remove-employee-input-wrapper">
 				<label for="fname">Full Name</label>
-  			<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.name" readonly>
-  			<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.name" readonly>
+				<input ng-if="!isDeleteDependent" type="text" name="fname" ng-model="selectedEmployee.name" readonly>
+				<input ng-if="isDeleteDependent" type="text" name="fname" ng-model="selectedDependent.name" readonly>
 			</div>
 			<!-- <div class="remove-employee-input-wrapper">
 				<label for="fname">First / Given Name</label>
@@ -874,7 +1150,8 @@
 			</div> -->
 			<div class="last-day-input-wrapper" style="display: inline-block;">
 				<label for="fname">Last day of coverage</label>
-  				<input type="text" name="fname" class="last-day-coverage-datepicker" ng-model="remove_employee_data.last_day_coverage">
+				<input type="text" name="fname" class="last-day-coverage-datepicker"
+					ng-model="remove_employee_data.last_day_coverage">
 			</div>
 		</form>
 		<img ng-click="removeBackBtn()" src="../assets/hr-dashboard/img/icons/cancel.png">
@@ -886,16 +1163,19 @@
 			<span class="outcome-title">Please select one of the outcome:</span>
 			<label class="review-container">
 				<input type="checkbox" ng-model="remove_employee_data.replace" ng-click="changeRemoveOption(1)">
-				<span class="review-prepare-template-text">To replace the leaving employee, I would like to pre-enroll the new joiner.</span>
+				<span class="review-prepare-template-text">To replace the leaving employee, I would like to pre-enroll the new
+					joiner.</span>
 				<span class="review-checkmark"></span>
 			</label>
 			<label class="review-container">
 				<input type="checkbox" ng-model="remove_employee_data.reserve" ng-click="changeRemoveOption(2)">
-				<span class="review-prepare-template-text">I'm not ready to pre-enroll the new joiner, please hold the seat for future hire.</span>
-				<span class="review-prepare-template-text" style="font-size: 10px;line-height: 1;">*Note: Once this employee is removed, the occupied seat will move to a vacant seat.</span>
+				<span class="review-prepare-template-text">I'm not ready to pre-enroll the new joiner, please hold the seat for
+					future hire.</span>
+				<span class="review-prepare-template-text" style="font-size: 10px;line-height: 1;">*Note: Once this employee is
+					removed, the occupied seat will move to a vacant seat.</span>
 				<span class="review-checkmark"></span>
 			</label>
-		<!-- 	<label ng-if="refund_status == true" class="review-container">
+			<!-- 	<label ng-if="refund_status == true" class="review-container">
 				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
 				<span class="review-prepare-template-text">Please remove the seat completely.</span>
 				<span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
@@ -924,7 +1204,7 @@
 			<form>
 				<div class="employee-input-wrapper">
 					<label for="fname">Full Name</label>
-	  			<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.fullname">
+					<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.fullname">
 				</div>
 				<!-- <div class="employee-input-wrapper">
 					<label for="fname">First / Given Name</label>
@@ -947,34 +1227,35 @@
 				</div> -->
 				<div class="employee-input-wrapper">
 					<label for="fname">Date of Birth</label>
-	  			<input type="text" name="datebirth" class="datepicker" ng-model="replace_emp_data.dob">
+					<input type="text" name="datebirth" class="datepicker" ng-model="replace_emp_data.dob">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Work Email</label>
-	  			<input type="text" name="work-email" ng-model="replace_emp_data.email">
+					<input type="text" name="work-email" ng-model="replace_emp_data.email">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Mobile</label>
-	  			<!-- <input type="text" name="mobile" ng-model="replace_emp_data.mobile"> -->
+					<!-- <input type="text" name="mobile" ng-model="replace_emp_data.mobile"> -->
 					<input valid-number id="area_code2" type="text" name="mobile" ng-model="replace_emp_data.mobile">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Postal Code</label>
-	  			<input type="text" name="postal-code" ng-model="replace_emp_data.postal_code">
+					<input type="text" name="postal-code" ng-model="replace_emp_data.postal_code">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Start Date</label>
-	  			<input type="text" name="start-date" class="start-date-datepicker-replace" ng-model="replace_emp_data.plan_start">
+					<input type="text" name="start-date" class="start-date-datepicker-replace"
+						ng-model="replace_emp_data.plan_start">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname" style="line-height: 1;margin-top: 5px;">Medical Credits</label>
 					<label class="subtext">*If there are no credits to allocate, please key in 0</label>
-	  			<input type="number" name="medical-credits" ng-model="replace_emp_data.medical_credits">
+					<input type="number" name="medical-credits" ng-model="replace_emp_data.medical_credits">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname" style="line-height: 1;margin-top: 5px;">Wellness Credits</label>
 					<label class="subtext">*If there are no credits to allocate, please key in 0</label>
-	  			<input type="number" name="wellness-credits" ng-model="replace_emp_data.wellness_credits">
+					<input type="number" name="wellness-credits" ng-model="replace_emp_data.wellness_credits">
 				</div>
 			</form>
 		</div>
@@ -988,11 +1269,11 @@
 			<form>
 				<div class="employee-input-wrapper">
 					<label for="fname">Full Name</label>
-	  			<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.fullname">
+					<input disabled-specific-characters type="text" name="fname" ng-model="replace_emp_data.fullname">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Date of Birth</label>
-	  			<input type="text" name="datebirth" class="datepicker" ng-model="replace_emp_data.dob">
+					<input type="text" name="datebirth" class="datepicker" ng-model="replace_emp_data.dob">
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Relationship</label>
@@ -1003,13 +1284,14 @@
 						<option value="parent">Parent</option>
 					</select>
 					<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
-					
-  					<!-- <input type="text" name="relationship" ng-model="replace_emp_data.relationship">
+
+					<!-- <input type="text" name="relationship" ng-model="replace_emp_data.relationship">
   					<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg"> -->
 				</div>
 				<div class="employee-input-wrapper">
 					<label for="fname">Start Date</label>
-	  			<input type="text" name="start-date" class="start-date-datepicker-replace" ng-model="replace_emp_data.start_date">
+					<input type="text" name="start-date" class="start-date-datepicker-replace"
+						ng-model="replace_emp_data.start_date">
 				</div>
 			</form>
 		</div>
@@ -1022,7 +1304,7 @@
 		<form>
 			<div class="date-enrollment-input-wrapper">
 				<label for="fname">Date for enrollment</label>
-  				<input type="text" name="fname" class="future-datepicker" ng-model="reserve_emp_date">
+				<input type="text" name="fname" class="future-datepicker" ng-model="reserve_emp_date">
 			</div>
 		</form>
 		<img ng-click="removeBackBtn()" src="../assets/hr-dashboard/img/icons/cancel.png">
@@ -1031,18 +1313,18 @@
 	<div class="account-summary-wrapper" style="display: none;">
 		<span class="account-summary-name weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
 		<h1 class="text-center weight-700">Health Spending Account Summary</h1>
-		<div class="account-summary-pro-rated weight-700 text-center" style="margin-left: 30px;">Pro-rated allocation from 
+		<div class="account-summary-pro-rated weight-700 text-center" style="margin-left: 30px;">Pro-rated allocation from
 			<span>
-				<strong class="font-helvetica-medium">Start</strong> - 
+				<strong class="font-helvetica-medium">Start</strong> -
 				<button class="btn btn-custom-start">
 					<i class="fa fa-calendar"></i>
 					<span id="rangePicker_start">01/01/2018</span>
 					<i class="fa fa-caret-down"></i>
 				</button>
 				<!-- <span class="account-summary-date" ng-bind="health_spending_summary.date.pro_rated_start">01/11/2018</span> -->
-			</span> to 
+			</span> to
 			<span>
-				<strong class="font-helvetica-medium">End</strong> - 
+				<strong class="font-helvetica-medium">End</strong> -
 				<button class="btn btn-custom-end">
 					<i class="fa fa-calendar"></i>
 					<span id="rangePicker_end">04/01/2018</span>
@@ -1053,82 +1335,127 @@
 			<button class="btn btn-calculate" ng-click="calculateHealthSpending()">Calculate</button>
 		</div>
 		<div class="account-summary-usage weight-700 text-center">Usage from
-			<span><strong class="font-helvetica-medium"> Start</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.usage_start">01/11/2018</span></span> to 
-			<span> <strong class="font-helvetica-medium">Current</strong> - <span class="account-summary-date" ng-bind="health_spending_summary.date.usage_end">01/12/2018</span></span>
+			<span><strong class="font-helvetica-medium"> Start</strong> - <span class="account-summary-date"
+					ng-bind="health_spending_summary.date.usage_start">01/11/2018</span></span> to
+			<span> <strong class="font-helvetica-medium">Current</strong> - <span class="account-summary-date"
+					ng-bind="health_spending_summary.date.usage_end">01/12/2018</span></span>
 		</div>
-		<div ng-if="(health_spending_summary.medical && !health_spending_summary.wellness) || (!health_spending_summary.medical && health_spending_summary.wellness)" class="medical-spending-account-container">
+		<div
+			ng-if="(health_spending_summary.medical && !health_spending_summary.wellness) || (!health_spending_summary.medical && health_spending_summary.wellness)"
+			class="medical-spending-account-container">
 			<h4 ng-if="health_spending_summary.medical" class="font-helvetica-medium">Medical Spending Account</h4>
 			<h4 ng-if="health_spending_summary.wellness" class="font-helvetica-medium">Wellness Spending Account</h4>
 			<div class="spending-account-details">
 				<div class="inital-allocation-container weight-700">
 					<strong class="font-helvetica-medium">Initial Allocation</strong>
-					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.initial_allocation | number : 2">1,000.00</span></span>
-					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.initial_allocation | number : 2">1,000.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.initial_allocation | number : 2">1,000.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.wellness.initial_allocation | number : 2">1,000.00</span></span>
 				</div>
 				<div class="pro-rated-container weight-700">
 					<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-					<span ng-if="health_spending_summary.medical" class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
-					<span ng-if="health_spending_summary.wellness" class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
+					<span ng-if="health_spending_summary.medical" class="font-helvetica-medium"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
+					<span ng-if="health_spending_summary.wellness" class="font-helvetica-medium"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.pro_allocation | number : 2">169.86</span></span>
 				</div>
 				<div class="current-usage-container weight-700">
 					<strong class="font-helvetica-medium">Current Usage</strong>
-					<span ng-if="health_spending_summary.medical" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
-					<span ng-if="health_spending_summary.wellness" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.medical" class="on-track"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.wellness" class="on-track"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.current_usage | number : 2">700.00</span></span>
 				</div>
 				<div class="spent-container weight-700">
 					Spent
-					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
-					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.spent">650.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 				</div>
 				<div class="pending-claim-container weight-700">
 					Pending claim
-					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pending_e_claim | number : 2">50.00</span></span>
-					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pending_e_claim | number : 2">50.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.pending_e_claim | number : 2">50.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.wellness.pending_e_claim | number : 2">50.00</span></span>
 				</div>
 				<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
 					<strong class="font-helvetica-medium">Balance</strong>
-					<span ng-if="health_spending_summary.medical"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
-					<span ng-if="health_spending_summary.wellness"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.medical"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
+					<span ng-if="health_spending_summary.wellness"><span class="currency-type"
+							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+							ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
 				</div>
 			</div>
-			<span ng-if="health_spending_summary.medical && health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
-			<span ng-if="health_spending_summary.medical && health_spending_summary.medical.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
-			<span ng-if="health_spending_summary.wellness && health_spending_summary.wellness.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
-			<span ng-if="health_spending_summary.wellness && health_spending_summary.wellness.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
+			<span ng-if="health_spending_summary.medical && health_spending_summary.medical.exceed == false"
+				class="spending-account-status on-track weight-700">On Track</span>
+			<span ng-if="health_spending_summary.medical && health_spending_summary.medical.exceed == true"
+				class="spending-account-status exceed weight-700">Exceed</span>
+			<span ng-if="health_spending_summary.wellness && health_spending_summary.wellness.exceed == false"
+				class="spending-account-status on-track weight-700">On Track</span>
+			<span ng-if="health_spending_summary.wellness && health_spending_summary.wellness.exceed == true"
+				class="spending-account-status exceed weight-700">Exceed</span>
 		</div>
 
-		<div ng-if="health_spending_summary.medical && health_spending_summary.wellness " class="medical-wellness-container">
+		<div ng-if="health_spending_summary.medical && health_spending_summary.wellness "
+			class="medical-wellness-container">
 			<div class="medical-container">
 				<h4 class="font-helvetica-medium">Medical Spending Account</h4>
 				<div class="spending-account-details">
-				<div class="inital-allocation-container weight-700">
-					<strong class="font-helvetica-medium">Initial Allocation</strong>
-					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
+					<div class="inital-allocation-container weight-700">
+						<strong class="font-helvetica-medium">Initial Allocation</strong>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
+					</div>
+					<div class="pro-rated-container weight-700">
+						<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
+						<span class="font-helvetica-medium"><span class="currency-type"
+								ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
+					</div>
+					<div class="current-usage-container weight-700">
+						<strong class="font-helvetica-medium">Current Usage</strong>
+						<span ng-if="health_spending_summary.medical.exceed == false" class="on-track"><span class="currency-type"
+								ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+						<span ng-if="health_spending_summary.medical.exceed == true" class="exceed"><span class="currency-type"
+								ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
+					</div>
+					<div class="spent-container weight-700">
+						Spent
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.medical.spent">650.00</span></span>
+					</div>
+					<div class="pending-claim-container weight-700">
+						Pending claim
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
+					</div>
+					<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
+						<strong class="font-helvetica-medium">Balance</strong>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
+					</div>
 				</div>
-				<div class="pro-rated-container weight-700">
-					<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-					<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pro_allocation">169.86</span></span>
-				</div>
-				<div class="current-usage-container weight-700">
-					<strong class="font-helvetica-medium">Current Usage</strong>
-					<span ng-if="health_spending_summary.medical.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
-					<span ng-if="health_spending_summary.medical.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
-				</div>
-				<div class="spent-container weight-700">
-					Spent
-					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.spent">650.00</span></span>
-				</div>
-				<div class="pending-claim-container weight-700">
-					Pending claim
-					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
-				</div>
-				<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
-					<strong class="font-helvetica-medium">Balance</strong>
-					<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
-				</div>
-			</div>
-				<span ng-if="health_spending_summary.medical.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
-				<span ng-if="health_spending_summary.medical.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
+				<span ng-if="health_spending_summary.medical.exceed == false"
+					class="spending-account-status on-track weight-700">On Track</span>
+				<span ng-if="health_spending_summary.medical.exceed == true"
+					class="spending-account-status exceed weight-700">Exceed</span>
 			</div>
 			<div class="separator"></div>
 			<div class="wellness-container">
@@ -1136,173 +1463,209 @@
 				<div class="spending-account-details">
 					<div class="inital-allocation-container weight-700">
 						<strong class="font-helvetica-medium">Initial Allocation</strong>
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
 					</div>
 					<div class="pro-rated-container weight-700">
 						<strong class="font-helvetica-medium">Pro-rated Allocation</strong>
-						<span class="font-helvetica-medium"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
+						<span class="font-helvetica-medium"><span class="currency-type"
+								ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
 					</div>
 					<div class="current-usage-container weight-700">
 						<strong class="font-helvetica-medium">Current Usage</strong>
-						<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
-						<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+						<span ng-if="health_spending_summary.wellness.exceed == false" class="on-track"><span class="currency-type"
+								ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
+						<span ng-if="health_spending_summary.wellness.exceed == true" class="exceed"><span class="currency-type"
+								ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.wellness.current_usage">700.00</span></span>
 					</div>
 					<div class="spent-container weight-700">
 						Spent
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.wellness.spent">650.00</span></span>
 					</div>
 					<div class="pending-claim-container weight-700">
 						Pending claim
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
 					</div>
 					<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
 						<strong class="font-helvetica-medium">Balance</strong>
-						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
+						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
+								ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
 					</div>
 				</div>
-				<span ng-if="health_spending_summary.wellness.exceed == false" class="spending-account-status on-track weight-700">On Track</span>
-				<span ng-if="health_spending_summary.wellness.exceed == true" class="spending-account-status exceed weight-700">Exceed</span>
+				<span ng-if="health_spending_summary.wellness.exceed == false"
+					class="spending-account-status on-track weight-700">On Track</span>
+				<span ng-if="health_spending_summary.wellness.exceed == true"
+					class="spending-account-status exceed weight-700">Exceed</span>
 			</div>
 		</div>
 		<img ng-click="removeBackBtn()" src="../assets/hr-dashboard/img/icons/cancel.png">
-	</div>	
+	</div>
 
 	<div class="health-spending-account-wrapper" style="display: none;">
 		<span class="weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
 		<h1 class="text-center weight-700">Health Spending Account</h1>
 		<p class="text-center members-wallet-text">Do you want us to update the member’s wallet by reflecting the
-		pro-rated credits amount and balance?</p>
-		<p class="text-center members-wallet-note">(note: by doing so, this member might not be able to pay with credits if the current usage exceeded the pro-rated allocation)
+			pro-rated credits amount and balance?</p>
+		<p class="text-center members-wallet-note">(note: by doing so, this member might not be able to pay with credits if
+			the current usage exceeded the pro-rated allocation)
 		</p>
 		<div class="spending-account-btn-container">
-			<button ng-class="{'active': update_member_wallet_status == false}" ng-click="changeMemberWalletUpdateStatus(false)">NO</button>
-			<button ng-class="{'active': update_member_wallet_status == true}" ng-click="changeMemberWalletUpdateStatus(true)">YES</button>
+			<button ng-class="{'active': update_member_wallet_status == false}"
+				ng-click="changeMemberWalletUpdateStatus(false)">NO</button>
+			<button ng-class="{'active': update_member_wallet_status == true}"
+				ng-click="changeMemberWalletUpdateStatus(true)">YES</button>
 		</div>
 		<img ng-click="removeBackBtn()" src="../assets/hr-dashboard/img/icons/cancel.png">
 	</div>
 
 	<div class="prev-next-buttons-container" style="display: none;">
 		<div class="container">
-			<button ng-if="isRemoveEmployeeShow" ng-click="removeBackBtn()" class="pull-left btn btn-info back-btn remove-emp-back-btn" >CANCEL</button>
-			<button ng-if="isRemoveEmployeeShow" ng-click="removeNextBtn()" ng-disabled="!remove_employee_data.last_day_coverage" class="pull-right btn btn-info next-wizard-button">NEXT</button>
+			<button ng-if="isRemoveEmployeeShow" ng-click="removeBackBtn()"
+				class="pull-left btn btn-info back-btn remove-emp-back-btn">CANCEL</button>
+			<button ng-if="isRemoveEmployeeShow" ng-click="removeNextBtn()"
+				ng-disabled="!remove_employee_data.last_day_coverage"
+				class="pull-right btn btn-info next-wizard-button">NEXT</button>
 
-			<button ng-if="!isRemoveEmployeeShow" ng-click="removeBackBtn()" class="pull-left btn btn-info back-btn remove-emp-back-btn" >BACK</button>
-			<button ng-if="!isRemoveEmployeeShow && !isHealthSpendingAccountShow && !isHealthSpendingAccountSummaryShow" ng-click="removeNextBtn()" ng-disabled="!remove_employee_data.replace && !remove_employee_data.reserve && !remove_employee_data.remove" class="pull-right btn btn-info next-wizard-button">NEXT</button>
+			<button ng-if="!isRemoveEmployeeShow" ng-click="removeBackBtn()"
+				class="pull-left btn btn-info back-btn remove-emp-back-btn">BACK</button>
+			<button ng-if="!isRemoveEmployeeShow && !isHealthSpendingAccountShow && !isHealthSpendingAccountSummaryShow"
+				ng-click="removeNextBtn()"
+				ng-disabled="!remove_employee_data.replace && !remove_employee_data.reserve && !remove_employee_data.remove"
+				class="pull-right btn btn-info next-wizard-button">NEXT</button>
 
-			<button ng-if="isHealthSpendingAccountSummaryShow" ng-disabled="!isCalculateBtnActive" ng-click="removeNextBtn()" class="pull-right btn btn-info next-wizard-button">NEXT</button>
+			<button ng-if="isHealthSpendingAccountSummaryShow" ng-disabled="!isCalculateBtnActive" ng-click="removeNextBtn()"
+				class="pull-right btn btn-info next-wizard-button">NEXT</button>
 
-			<button ng-if="isHealthSpendingAccountShow" ng-click="confirmWalletUpdateBtn()" class="pull-right btn-confirm">CONFIRM</button>
-			
+			<button ng-if="isHealthSpendingAccountShow" ng-click="confirmWalletUpdateBtn()"
+				class="pull-right btn-confirm">CONFIRM</button>
+
 		</div>
 	</div>
 
-	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-employee-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-lg" role="document" style="width: 800px;">
-      <div class="modal-content" style="border-radius: 0;">
-        <div class="modal-body">
-          
-          <p class="text-center" style="margin-top: 5px;color: #888;font-size: 20px;font-weight: 700;">
-          	<span ng-bind="selectedEmployee.name">Calvin Klein</span>
-          	<img src="../assets/hr-dashboard/img/icons/close-blue.svg" style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 20px;" data-dismiss="modal">
-          </p>
-          <p class="text-center font-helvetica-medium" style="color: #444;font-weight: 500;font-size: 35px;margin: 35px 0 40px 0;">Edit employee details</p>
-          <p class="text-center status-wrapper" style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
-          <div class="row">
-            <div class="col-md-12">
-              <form class="form update-form">
-              	<div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Full Name</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.name">
-                  </div>
-                </div>
-               <!--  <div class="col-lg-6">
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-employee-modal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document" style="width: 800px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-body">
+
+					<p class="text-center" style="margin-top: 5px;color: #888;font-size: 20px;font-weight: 700;">
+						<span ng-bind="selectedEmployee.name">Calvin Klein</span>
+						<img src="../assets/hr-dashboard/img/icons/close-blue.svg"
+							style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 20px;" data-dismiss="modal">
+					</p>
+					<p class="text-center font-helvetica-medium"
+						style="color: #444;font-weight: 500;font-size: 35px;margin: 35px 0 40px 0;">Edit employee details</p>
+					<p class="text-center status-wrapper"
+						style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
+					<div class="row">
+						<div class="col-md-12">
+							<form class="form update-form">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Full Name</label>
+										<input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.name">
+									</div>
+								</div>
+								<!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">First Name</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.fname">
                   </div>
                 </div> -->
-               <!--  <div class="col-lg-6">
+								<!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">NRIC</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.nric" >
                   </div>
                 </div> -->
-                 <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Date of Birth</label>
-                    <input type="text" class="form-control edit-employee-modal-input datepicker" ng-model="selectedEmployee.dob">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Postal Code</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.postal_code">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Job Title</label>
-                    <select class="form-control edit-employee-modal-input" ng-model="selectedEmployee.job_title">
-                      <!-- For Current Job Title -->
-                      <option ng-repeat="job in job_list">{{job.job_title}}</option>
-                    </select>
-                  </div>
-                </div>
-                <!-- <div class="col-lg-6">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Date of Birth</label>
+										<input type="text" class="form-control edit-employee-modal-input datepicker"
+											ng-model="selectedEmployee.dob">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Postal Code</label>
+										<input type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedEmployee.postal_code">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Job Title</label>
+										<select class="form-control edit-employee-modal-input" ng-model="selectedEmployee.job_title">
+											<!-- For Current Job Title -->
+											<option ng-repeat="job in job_list">{{job.job_title}}</option>
+										</select>
+									</div>
+								</div>
+								<!-- <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Country Code</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.country_code">
                   </div>
                 </div> -->
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Mobile Number</label>
-                  	<input valid-number id="area_code" type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.phone_no">
-                  </div>
-                </div>
-                <!-- <div class="col-lg-6">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Mobile Number</label>
+										<input valid-number id="area_code" type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedEmployee.phone_no">
+									</div>
+								</div>
+								<!-- <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Last Name</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.lname">
                   </div>
                 </div> -->
-                
-                
-               
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Member ID</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.member_id" readonly>
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Work Email</label>
-                    <input type="email" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.email">
-                  </div>
-                </div>
-               
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Bank Account Number</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.bank_account">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Bank Code</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.bank_code">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Bank BRH</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.bank_branch">
-                  </div>
-                </div>
-                
-                
+
+
+
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Member ID</label>
+										<input type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedEmployee.member_id" readonly>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Work Email</label>
+										<input type="email" class="form-control edit-employee-modal-input"
+											ng-model="selectedEmployee.email">
+									</div>
+								</div>
+
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Bank Account Number</label>
+										<input type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedEmployee.bank_account">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Bank Code</label>
+										<input type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedEmployee.bank_code">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Bank BRH</label>
+										<input type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedEmployee.bank_branch">
+									</div>
+								</div>
+
+
 								<!-- <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Date of Transfer</label>
@@ -1310,175 +1673,194 @@
                   </div>
                 </div> -->
 
-                <div class="col-md-12">
-                  <p ng-if="invalid_email" class="text-error text-left">Invalid Email</p>
-                  <p ng-if="invalid_nric" class="text-error text-left">Invalid NRIC</p>
-                  <p ng-if="error_message" class="text-error text-left">{{error_message}}</p>
-                </div>
-                <div class="col-md-12">
-                	<button class="pull-left cancel-employee-update-button" data-dismiss="modal">
-	                  CANCEL
-	                 </button>
-                  <div class="status-wrapper pull-right" style="height: 20px;width: 20px;text-align: center;margin-top: 30px;margin-left: 10px;display: none">
-                    <i class="fa fa-check" style="color: green;font-size: 30px"></i>
-                  </div>
-                  <button ng-click="saveEmployee( selectedEmployee )" class="pull-right replace-employee-update-button update-replace">SAVE & CONTINUE</button>
+								<div class="col-md-12">
+									<p ng-if="invalid_email" class="text-error text-left">Invalid Email</p>
+									<p ng-if="invalid_nric" class="text-error text-left">Invalid NRIC</p>
+									<p ng-if="error_message" class="text-error text-left">{{error_message}}</p>
+								</div>
+								<div class="col-md-12">
+									<button class="pull-left cancel-employee-update-button" data-dismiss="modal">
+										CANCEL
+									</button>
+									<div class="status-wrapper pull-right"
+										style="height: 20px;width: 20px;text-align: center;margin-top: 30px;margin-left: 10px;display: none">
+										<i class="fa fa-check" style="color: green;font-size: 30px"></i>
+									</div>
+									<button ng-click="saveEmployee( selectedEmployee )"
+										class="pull-right replace-employee-update-button update-replace">SAVE & CONTINUE</button>
 
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-	  </div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-dependent-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog modal-lg" role="document" style="width: 800px;">
-      <div class="modal-content" style="border-radius: 0;">
-        <div class="modal-body">
-          
-          <p class="text-center" style="margin-top: 5px;color: #888;font-size: 20px;font-weight: 700;">
-          	<span ng-bind="selectedDependent.name">Calvin Klein</span>
-          	<img src="../assets/hr-dashboard/img/icons/close-blue.svg" style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 20px;" data-dismiss="modal">
-          </p>
-          <p class="text-center font-helvetica-medium" style="color: #444;font-weight: 500;font-size: 35px;margin: 35px 0 40px 0;">Edit dependent details</p>
-          <p class="text-center status-wrapper" style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
-          <div class="row">
-            <div class="col-md-12">
-              <form class="form update-form">
-              	<div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Full Name</label>
-                    <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.name">
-                  </div>
-                </div>
-               <!--  <div class="col-lg-6">
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-dependent-modal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document" style="width: 800px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-body">
+
+					<p class="text-center" style="margin-top: 5px;color: #888;font-size: 20px;font-weight: 700;">
+						<span ng-bind="selectedDependent.name">Calvin Klein</span>
+						<img src="../assets/hr-dashboard/img/icons/close-blue.svg"
+							style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 20px;" data-dismiss="modal">
+					</p>
+					<p class="text-center font-helvetica-medium"
+						style="color: #444;font-weight: 500;font-size: 35px;margin: 35px 0 40px 0;">Edit dependent details</p>
+					<p class="text-center status-wrapper"
+						style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
+					<div class="row">
+						<div class="col-md-12">
+							<form class="form update-form">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Full Name</label>
+										<input disabled-specific-characters type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedDependent.name">
+									</div>
+								</div>
+								<!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">First Name</label>
                     <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.first_name">
                   </div>
                 </div> -->
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Date of Birth</label>
-                    <input type="text" class="form-control edit-employee-modal-input datepicker" ng-model="selectedDependent.dob">
-                  </div>
-                </div>
-              <!--   <div class="col-lg-6">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Date of Birth</label>
+										<input type="text" class="form-control edit-employee-modal-input datepicker"
+											ng-model="selectedDependent.dob">
+									</div>
+								</div>
+								<!--   <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">Last Name</label>
                     <input disabled-specific-characters type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.last_name">
                   </div>
                 </div> -->
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">Relationship</label>
-                    <!-- <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.relationship"> -->
-                    <select class="form-control edit-employee-modal-input" ng-model="selectedDependent.relationship">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Relationship</label>
+										<!-- <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.relationship"> -->
+										<select class="form-control edit-employee-modal-input" ng-model="selectedDependent.relationship">
 											<option value="spouse">Spouse</option>
 											<option value="child">Child</option>
 											<option value="family">Family</option>
 											<option value="parent">Parent</option>
 										</select>
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label class="edit-employee-modal-label">MemberID</label>
-                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.member_id" readonly>
-                  </div>
-                </div>
-               <!--  <div class="col-lg-6">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">MemberID</label>
+										<input type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedDependent.member_id" readonly>
+									</div>
+								</div>
+								<!--  <div class="col-lg-6">
                   <div class="form-group">
                     <label class="edit-employee-modal-label">NRIC/FIN</label>
                     <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedDependent.nric" readonly>
                   </div>
                 </div> -->
-                
-                <div class="col-md-12">
-                  <p ng-if="invalid_email" class="text-error text-left">Invalid Email</p>
-                  <p ng-if="invalid_nric" class="text-error text-left">Invalid NRIC</p>
-                  <p ng-if="error_message" class="text-error text-left">{{error_message}}</p>
-                </div>
-                <div class="col-md-12">
-                	<button class="pull-left cancel-employee-update-button" data-dismiss="modal">
-	                  CANCEL
-	                 </button>
-                  <div class="status-wrapper pull-right" style="height: 20px;width: 20px;text-align: center;margin-top: 30px;margin-left: 10px;display: none">
-                    <i class="fa fa-check" style="color: green;font-size: 30px"></i>
-                  </div>
-                  <button ng-click="saveDependent( selectedDependent )" class="pull-right replace-employee-update-button update-replace">SAVE & CONTINUE</button>
 
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-	  </div>
+								<div class="col-md-12">
+									<p ng-if="invalid_email" class="text-error text-left">Invalid Email</p>
+									<p ng-if="invalid_nric" class="text-error text-left">Invalid NRIC</p>
+									<p ng-if="error_message" class="text-error text-left">{{error_message}}</p>
+								</div>
+								<div class="col-md-12">
+									<button class="pull-left cancel-employee-update-button" data-dismiss="modal">
+										CANCEL
+									</button>
+									<div class="status-wrapper pull-right"
+										style="height: 20px;width: 20px;text-align: center;margin-top: 30px;margin-left: 10px;display: none">
+										<i class="fa fa-check" style="color: green;font-size: 30px"></i>
+									</div>
+									<button ng-click="saveDependent( selectedDependent )"
+										class="pull-right replace-employee-update-button update-replace">SAVE & CONTINUE</button>
+
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div class="modal fade" id="input-pass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
-	  <div class="modal-dialog" role="document" style="width: 350px;margin-top: 200px;">
-	    <div class="modal-content">
-	    	<form ng-submit="confirmPassword(passCredit)">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel"><b>Input Password</b></h5>
-		      </div>
-		      <div class="modal-body">
-		        <div class="form-group">
-		            <input type="password" class="form-control" ng-model="passCredit">
-		        </div> 
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal" style="color: #333;background-color: #fff;">Cancel</button>
-		        <button id="password-submit" type="submit" class="btn btn-primary custom-btn">Submit</button>
-		      </div>
-	      </form>
-	    </div>
-	  </div>
+	<div class="modal fade" id="input-pass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
+		<div class="modal-dialog" role="document" style="width: 350px;margin-top: 200px;">
+			<div class="modal-content">
+				<form ng-submit="confirmPassword(passCredit)">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel"><b>Input Password</b></h5>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<input type="password" class="form-control" ng-model="passCredit">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							style="color: #333;background-color: #fff;">Cancel</button>
+						<button id="password-submit" type="submit" class="btn btn-primary custom-btn">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 
-	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="manage-cap-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document" style="width: 400px;">
-      <div class="modal-content" style="border-radius: 0;">
-      	<div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">
-	        	<b>Manage Cap Per Visit</b>
-	        	<img src="../assets/hr-dashboard/img/icons/close.svg" style="width: 15px;cursor: pointer;position: absolute;right: 16px;top: 16px;" data-dismiss="modal">
-	        </h5>
-	      </div>
-        <div class="modal-body">
-        	<form>
-        		<div class="form-group">
-        			<label>GP cap per visit</label>
-        			<div class="input-group">
-							  <input type="num" class="form-control" min="0" aria-describedby="basic-addon2" ng-model="selectedEmployee.gp_cap_per_visit">
-							  <span class="input-group-addon" id="basic-addon2"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span></span>
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="manage-cap-modal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document" style="width: 400px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">
+						<b>Manage Cap Per Visit</b>
+						<img src="../assets/hr-dashboard/img/icons/close.svg"
+							style="width: 15px;cursor: pointer;position: absolute;right: 16px;top: 16px;" data-dismiss="modal">
+					</h5>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label>GP cap per visit</label>
+							<div class="input-group">
+								<input type="num" class="form-control" min="0" aria-describedby="basic-addon2"
+									ng-model="selectedEmployee.gp_cap_per_visit">
+								<span class="input-group-addon" id="basic-addon2"><span class="currency-type"
+										ng-bind="selectedEmployee.spending_account.currency_type"></span></span>
 							</div>
-        		</div>
-        	</form>
-        </div>
-        <div class="modal-footer">
-	        <button class="btn btn-primary custom-btn" ng-click="submitCapPerVisit( selectedEmployee.gp_cap_per_visit )">SAVE & CONTINUE</button>
-	      </div>
-      </div>
-	  </div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary custom-btn"
+						ng-click="submitCapPerVisit( selectedEmployee.gp_cap_per_visit )">SAVE & CONTINUE</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </div>
 
 <style type="text/css">
-	body{
+	body {
 		overflow: hidden;
 	}
-	
+
 	.datepicker-dropdown {
-	    z-index: 9999 !important;
+		z-index: 9999 !important;
 	}
 
-	.datepicker table tr td.disabled, .datepicker table tr td.disabled:hover{
+	.datepicker table tr td.disabled,
+	.datepicker table tr td.disabled:hover {
 		color: #ddd !important;
 	}
 </style>
@@ -1490,7 +1872,7 @@
 	var pagi_header_height = $('.employee-pagination-wrapper').outerHeight(true);
 
 
-	$('.employee-overview-table tbody').css( 'height', height - ( body_header_height + table_header_height + pagi_header_height + 120) );
+	$('.employee-overview-table tbody').css('height', height - (body_header_height + table_header_height + pagi_header_height + 120));
 
 	// console.log( $(window).height() );
 	// console.log( body_header_height );

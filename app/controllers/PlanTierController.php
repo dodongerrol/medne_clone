@@ -491,14 +491,8 @@ class PlanTierController extends \BaseController {
 				$postal_code = $user['postal_code'];
 			}
       
-      // $user['plan_start'] = date('Y-m-d', strtotime($user['plan_start']));
-      // $user['dob'] = date('Y-m-d',s strtotime($user['dob']));
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
-
-			// $plan_start_temp = date_create_from_format("Y-m-d", $user['plan_start']);
-			// $plan_start = date_format($plan_start_temp, "d/m/Y");
-			// return $plan_start;
-
+			$mobile = preg_replace('/\s+/', '', $user['mobile']);
 			$temp_enrollment_data = array(
 				'customer_buy_start_id'	=> $customer_id,
 				'active_plan_id'		=> $customer_active_plan_id,

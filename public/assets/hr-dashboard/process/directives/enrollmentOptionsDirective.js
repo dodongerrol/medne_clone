@@ -13,6 +13,21 @@ app.directive('enrollmentOptionsDirective', [
 				scope.isOptionSelected = false;
 				scope.isRequiredTiering = null;
 
+				scope.selected_option = {
+					medical_opt : null,
+					wellness_opt : null,
+				}
+
+
+				scope.selectMedicalOpt = function( opt ){
+					scope.selected_option.medical_opt = opt;
+					$(".select-drop-box").hide();
+				}
+				scope.selectWellnessOpt = function( opt ){
+					scope.selected_option.wellness_opt = opt;
+					$(".select-drop-box").hide();
+				}
+
 				scope.backButton = function(){
 					if( localStorage.getItem('fromEmpOverview') == true || localStorage.getItem('fromEmpOverview') == 'true' ){
 						$state.go( 'employee-overview' );
@@ -29,6 +44,8 @@ app.directive('enrollmentOptionsDirective', [
 				}
 
 				scope.enrollmentNextBtn = function(){
+					localStorage.setItem('hasMedicalEntitlementBalance', scope.selected_option.medical_opt);
+					localStorage.setItem('hasWellnessEntitlementBalance', scope.selected_option.wellness_opt);
 					// if( scope.isRequiredTiering == true ){
 						$state.go( 'create-team-benefits-tiers' );
 					// }else{
@@ -67,6 +84,30 @@ app.directive('enrollmentOptionsDirective', [
 			    $( "#global_modal" ).modal('show');
 			    $( "#global_message" ).text(message);
 			  }
+
+			  $(".select-value").click(function(e){
+			  	$(".select-drop-box").hide();
+			  	$(this).closest('.select-div').find(".select-drop-box").show();
+			  });
+
+			  $(".medical-info-click").click(function(e){
+			  	$(".medical-info-box").show();
+			  });
+			  $(".medical-info-close").click(function(e){
+			  	$(".medical-info-box").hide();
+			  });
+			  $(".wellness-info-click").click(function(e){
+			  	$(".wellness-info-box").show();
+			  });
+			  $(".wellness-info-close").click(function(e){
+			  	$(".wellness-info-box").hide();
+			  });
+
+			  $("body").click(function(e){
+			    if ( $(e.target).parents(".select-div").length === 0) {
+			      $(".select-drop-box").hide();
+			    }
+				});
 
         scope.onLoad = function( ){
         	scope.toggleLoading();
