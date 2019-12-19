@@ -465,19 +465,6 @@ app.directive("employeeOverviewDirective", [
             }
           }
         }
-        if (opt == 'type') {
-          var ctr = 0;
-          angular.forEach(scope.clinic_type_open_arr, function (value, key) {
-            if (value.selected) {
-              ctr += 1;
-              scope.showLoading();
-              scope.clinic_type_block_ids.push(value.ClinicTypeID);
-            }
-            if (ctr > 0 && scope.clinic_type_open_arr.length - 1 == key) {
-              scope.updateClinics(scope.clinic_type_block_ids, status, region, opt);
-            }
-          });
-        }
 
         scope.blockToOpen = function (status, region, opt) {
           if (opt == 'name') {
