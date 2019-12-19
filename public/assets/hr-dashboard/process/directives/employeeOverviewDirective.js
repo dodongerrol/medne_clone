@@ -357,112 +357,53 @@ app.directive("employeeOverviewDirective", [
           scope.getOpenedClinics();
         }
 
-            scope.nextPageOpen = function(){
-              if( scope.open_page_active != scope.open_pagination.last_page ){
-                scope.open_page_active++;
-                scope.getBlockedClinics();
-              scope.getOpenedClinics();
-              }
-            }
-            scope.backPageOpen = function(){
-              if( scope.open_page_active != 1 ){
-                scope.open_page_active--;
-                scope.getBlockedClinics();
-              scope.getOpenedClinics();
-              }
-            }
-            scope.perPageOpen = function(page){
-              scope.hideDropDowns();
-              scope.open_per_page = page;
-              scope.open_page_active = 1;
-              scope.getBlockedClinics();
-              scope.getOpenedClinics();
-            }
-            scope.pageOpen = function(page){
-              scope.hideDropDowns();
-              scope.open_page_active = page;
-              scope.getBlockedClinics();
-              scope.getOpenedClinics();
-            }
-          // --------------------------- // 
-          scope.openToBlock = function( status, region, opt ) {
-            if( opt == 'name' ){
-              var ctr = 0;
-              angular.forEach( scope.clinic_open_arr, function( value, key ){
-                if( value.selected ){
-                  ctr += 1;
-                  scope.showLoading();
-                  scope.updateClinics( value.ClinicID, status, region, opt );
-                }
-                if( ctr > 0 && scope.clinic_open_arr.length - 1 == key ){
-                  scope.blockHealthPatnerLoad();
-                  swal('Success!', 'Clinic Block Lists updated.', 'success');
-                  scope.hideLoading();
-                }else if( ctr == 0 && scope.clinic_open_arr.length - 1 == key ){
-                  swal('Error!', 'Please Select a clinic first.', 'error');
-                }
-              });
-              if( scope.clinic_open_arr.length == 0 ){
-                swal('Error!', 'Please Select a clinic first.', 'error');
-              }
-            }
-            if( opt == 'type' ){
-              var ctr = 0;
-              angular.forEach( scope.clinic_type_open_arr, function( value, key ){
-                if( value.selected ){
-                  ctr += 1;
-                  scope.showLoading();
-                  scope.clinic_type_block_ids.push( value.ClinicTypeID );
-                }
-                if( ctr > 0 && scope.clinic_type_open_arr.length - 1 == key ){
-                  scope.updateClinics( scope.clinic_type_block_ids, status, region, opt );
-                }else if( ctr == 0 && scope.clinic_type_open_arr.length - 1 == key ){
-                  swal('Error!', 'Please Select a clinic type first.', 'error');
-                }
-              });
-              if( scope.clinic_type_open_arr.length == 0 ){
-                swal('Error!', 'Please Select a clinic type first.', 'error');
-              }
-            }
+        scope.nextPageOpen = function () {
+          if (scope.open_page_active != scope.open_pagination.last_page) {
+            scope.open_page_active++;
+            scope.getBlockedClinics();
+            scope.getOpenedClinics();
           }
-          scope.blockToOpen = function( status, region, opt ) {
-            if( opt == 'name' ){
-              var ctr = 0;
-              angular.forEach( scope.clinic_block_arr, function( value, key ){
-                if( value.selected ){
-                  ctr += 1;
-                  scope.showLoading();
-                  scope.updateClinics( value.ClinicID, status, region, opt );
-                }
-                if( ctr > 0 && scope.clinic_block_arr.length - 1 == key ){
-                  scope.blockHealthPatnerLoad();
-                  swal('Success!', 'Clinic Block Lists updated.', 'success');
-                  scope.hideLoading();
-                }else if( ctr == 0 && scope.clinic_block_arr.length - 1 == key ){
-                  swal('Error!', 'Please Select a clinic first.', 'error');
-                }
-              });
-              if( scope.clinic_block_arr.length == 0 ){
+        }
+        scope.backPageOpen = function () {
+          if (scope.open_page_active != 1) {
+            scope.open_page_active--;
+            scope.getBlockedClinics();
+            scope.getOpenedClinics();
+          }
+        }
+        scope.perPageOpen = function (page) {
+          scope.hideDropDowns();
+          scope.open_per_page = page;
+          scope.open_page_active = 1;
+          scope.getBlockedClinics();
+          scope.getOpenedClinics();
+        }
+        scope.pageOpen = function (page) {
+          scope.hideDropDowns();
+          scope.open_page_active = page;
+          scope.getBlockedClinics();
+          scope.getOpenedClinics();
+        }
+        // --------------------------- // 
+        scope.openToBlock = function (status, region, opt) {
+          if (opt == 'name') {
+            var ctr = 0;
+            angular.forEach(scope.clinic_open_arr, function (value, key) {
+              if (value.selected) {
+                ctr += 1;
+                scope.showLoading();
+                scope.updateClinics(value.ClinicID, status, region, opt);
+              }
+              if (ctr > 0 && scope.clinic_open_arr.length - 1 == key) {
+                scope.blockHealthPatnerLoad();
+                swal('Success!', 'Clinic Block Lists updated.', 'success');
+                scope.hideLoading();
+              } else if (ctr == 0 && scope.clinic_open_arr.length - 1 == key) {
                 swal('Error!', 'Please Select a clinic first.', 'error');
               }
-            }
-            if( opt == 'type' ){
-              var ctr = 0;
-              angular.forEach( scope.clinic_type_block_arr, function( value, key ){
-                if( value.selected ){
-                  ctr += 1;
-                  scope.showLoading();
-                  scope.clinic_type_open_ids.push( value.ClinicTypeID );
-                }
-                if( ctr > 0 && scope.clinic_type_block_arr.length - 1 == key ){
-                  scope.updateClinics( scope.clinic_type_open_ids, status, region, opt );
-                }else if( ctr == 0 && scope.clinic_type_block_arr.length - 1 == key ){
-                  swal('Error!', 'Please Select a clinic type first.', 'error');
-                }
-              });
-              if( scope.clinic_type_block_arr.length == 0 ){
-                swal('Error!', 'Please Select a clinic type first.', 'error');
-              }
+            });
+            if (scope.clinic_open_arr.length == 0) {
+              swal('Error!', 'Please Select a clinic first.', 'error');
             }
           }
           if (opt == 'type') {
@@ -475,10 +416,69 @@ app.directive("employeeOverviewDirective", [
               }
               if (ctr > 0 && scope.clinic_type_open_arr.length - 1 == key) {
                 scope.updateClinics(scope.clinic_type_block_ids, status, region, opt);
+              } else if (ctr == 0 && scope.clinic_type_open_arr.length - 1 == key) {
+                swal('Error!', 'Please Select a clinic type first.', 'error');
               }
             });
+            if (scope.clinic_type_open_arr.length == 0) {
+              swal('Error!', 'Please Select a clinic type first.', 'error');
+            }
           }
         }
+        scope.blockToOpen = function (status, region, opt) {
+          if (opt == 'name') {
+            var ctr = 0;
+            angular.forEach(scope.clinic_block_arr, function (value, key) {
+              if (value.selected) {
+                ctr += 1;
+                scope.showLoading();
+                scope.updateClinics(value.ClinicID, status, region, opt);
+              }
+              if (ctr > 0 && scope.clinic_block_arr.length - 1 == key) {
+                scope.blockHealthPatnerLoad();
+                swal('Success!', 'Clinic Block Lists updated.', 'success');
+                scope.hideLoading();
+              } else if (ctr == 0 && scope.clinic_block_arr.length - 1 == key) {
+                swal('Error!', 'Please Select a clinic first.', 'error');
+              }
+            });
+            if (scope.clinic_block_arr.length == 0) {
+              swal('Error!', 'Please Select a clinic first.', 'error');
+            }
+          }
+          if (opt == 'type') {
+            var ctr = 0;
+            angular.forEach(scope.clinic_type_block_arr, function (value, key) {
+              if (value.selected) {
+                ctr += 1;
+                scope.showLoading();
+                scope.clinic_type_open_ids.push(value.ClinicTypeID);
+              }
+              if (ctr > 0 && scope.clinic_type_block_arr.length - 1 == key) {
+                scope.updateClinics(scope.clinic_type_open_ids, status, region, opt);
+              } else if (ctr == 0 && scope.clinic_type_block_arr.length - 1 == key) {
+                swal('Error!', 'Please Select a clinic type first.', 'error');
+              }
+            });
+            if (scope.clinic_type_block_arr.length == 0) {
+              swal('Error!', 'Please Select a clinic type first.', 'error');
+            }
+          }
+        }
+        if (opt == 'type') {
+          var ctr = 0;
+          angular.forEach(scope.clinic_type_open_arr, function (value, key) {
+            if (value.selected) {
+              ctr += 1;
+              scope.showLoading();
+              scope.clinic_type_block_ids.push(value.ClinicTypeID);
+            }
+            if (ctr > 0 && scope.clinic_type_open_arr.length - 1 == key) {
+              scope.updateClinics(scope.clinic_type_block_ids, status, region, opt);
+            }
+          });
+        }
+
         scope.blockToOpen = function (status, region, opt) {
           if (opt == 'name') {
             var ctr = 0;
@@ -1067,7 +1067,7 @@ app.directive("employeeOverviewDirective", [
         };
 
         scope.toggleEmpTab = function (opt) {
-          
+
           setTimeout(() => {
             var dt = new Date();
             // dt.setFullYear(new Date().getFullYear()-18);
@@ -1207,8 +1207,8 @@ app.directive("employeeOverviewDirective", [
             scope.showLoading();
             scope.hideLoading();
             scope.selectedEmployee_index--;
-            scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
-            scope.getEmpDependents( scope.selectedEmployee.user_id );
+            scope.selectedEmployee = scope.employees.data[scope.selectedEmployee_index];
+            scope.getEmpDependents(scope.selectedEmployee.user_id);
             scope.blockHealthPatnerLoad();
           }
         };
@@ -1219,9 +1219,9 @@ app.directive("employeeOverviewDirective", [
             scope.showLoading();
             scope.hideLoading();
             scope.selectedEmployee_index++;
-            scope.selectedEmployee = scope.employees.data[ scope.selectedEmployee_index ];
-            scope.getEmpDependents( scope.selectedEmployee.user_id );
-            scope.getEmpPlans( scope.selectedEmployee.user_id );
+            scope.selectedEmployee = scope.employees.data[scope.selectedEmployee_index];
+            scope.getEmpDependents(scope.selectedEmployee.user_id);
+            scope.getEmpPlans(scope.selectedEmployee.user_id);
             scope.blockHealthPatnerLoad();
           }
         };
@@ -2258,6 +2258,6 @@ app.directive("employeeOverviewDirective", [
         // -------------- //
 
       }
-    };
+    }
   }
 ]);
