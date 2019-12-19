@@ -1073,7 +1073,7 @@ app.directive('activityPage', [
 					hrSettings.getCheckCredits();
 				}
 
-				scope.applyDates = function () {
+				scope.applyDates = function (data) {
 					if(data == 'custom') {
 						scope.select_to_date = false;
 					}
