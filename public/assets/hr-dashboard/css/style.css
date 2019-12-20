@@ -2698,7 +2698,7 @@ span.number-with-circle {
   background: #fff;
   color: #555;
   font-weight: 700;
-  padding: 5px 20px;
+  padding: 8px 34px;
   box-shadow: none;
   border: 2px solid #ddd;
   font-size: 14px;
@@ -2713,12 +2713,12 @@ span.number-with-circle {
   background: #0392cf;
   color: #fff;
   font-weight: 700;
-  padding: 5px 20px;
+  padding: 7px 25px;
   box-shadow: none;
   border: 2px solid #0392cf;
   font-size: 14px;
   border-radius: 4px;
-  margin-left: 20px;
+  margin-left: 8px;
 }
 
 /*DATERANGE OVERWRITE*/
@@ -8278,7 +8278,7 @@ span.dropdwon-entitlement {
   height: 100%;
   background: none;
   border: none;
-  /* -webkit-appearance: none; */
+  -webkit-appearance: none;
   padding: 0 0 0 10px;
   cursor: pointer;
   /* font: 300 18px/1.5 'Roboto', sans-serif; */
@@ -8288,8 +8288,8 @@ span.dropdwon-entitlement {
 
 .new-body-container .custom-select .select {
   position: relative;
-  width: 150px;
-  height: 34px;
+  width: 188px;
+  height: 41px;
   cursor: pointer;
   border-radius: 3px;
   background: #fff;
@@ -8297,7 +8297,13 @@ span.dropdwon-entitlement {
   font-weight: 700;
   box-shadow: none;
   border: 2px solid #ddd;
-  margin-right: 30px;
+  margin-right: 37px;
+}
+
+.input-label.custom-select.withIcon i {
+  position: relative;
+  left: -70px;
+  font-size: 10px;
 }
 
 .new-body-container .input-label .radio {
@@ -8305,17 +8311,17 @@ span.dropdwon-entitlement {
   background: #fff;
   color: #555;
   font-weight: 700;
-  padding: 5px 10px !important;
+  padding: 5px 12.5px !important;
   box-shadow: none;
   border-radius: 3px;
   border: 2px solid #ddd;
   font-size: 14px;
-  height: 39px !important;
+  height: 41px !important;
   /* margin: 20px 0; */
-  width: 110px;
-  margin-right: 15px;
+  width: 101px;
+  margin-right: 10px;
   cursor: pointer;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .new-body-container [type="radio"]:checked + label,
@@ -8383,12 +8389,12 @@ span.dropdwon-entitlement {
   display: inline-block;
   font-weight: 700;
   font-size: 16px;
-  padding: 5px 15px;
+  padding: 7px 21px;
   border-width: 2px;
   background: #fff;
   color: #333;
   box-shadow: none;
-  margin: 15px 0;
+  margin: 15px 5px;
 }
 
 .new-activity-header-calendar .eclaim-spending-type-container .btn-medical,
@@ -8403,8 +8409,12 @@ span.dropdwon-entitlement {
   text-align: center;
 }
 
+.new_spent, .new_breakDown {
+  font-family: Helvetica Neue !important;
+}
+
 .new_breakDown .benefit-box {
-  width: 250px;
+  width: 300px;
   margin: 30px auto;
   padding-left: 0;
   text-align: left;
