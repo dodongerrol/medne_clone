@@ -4994,7 +4994,15 @@ public function getHrActivity( )
 					}
 
 					$half_credits = false;
-					$total_amount = number_format($trans->procedure_cost, 2);
+					if(strripos($trans->procedure_cost, '$') !== false) {
+						$temp_cost = explode('$', $trans->procedure_cost);
+	            // $cost = number_format($temp_cost[1]);
+						$cost = $temp_cost[1];
+					} else {
+	            // $cost = number_format($trans->procedure_cost, 2);
+						$cost = floatval($trans->procedure_cost);
+					}
+					$total_amount = $cost;
 
 					if((int)$trans->health_provider_done == 1) {
 						$payment_type = "Cash";
@@ -5004,15 +5012,15 @@ public function getHrActivity( )
 								$total_amount = $trans->credit_cost + $trans->consultation_fees;
 								$cash = $transation->cash_cost;
 							} else {
-								$total_amount = $trans->procedure_cost;
-								$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+								$total_amount = $cost;
+								$total_amount = $cost + $trans->consultation_fees;
 								$cash = $trans->procedure_cost;
 							}
 						} else {
 							if((int)$trans->half_credits == 1) {
 								$cash = $trans->cash_cost;
 							} else {
-								$cash = $trans->procedure_cost;
+								$cash = $cost;
 							}
 						}
 					} else {
@@ -5035,18 +5043,18 @@ public function getHrActivity( )
 								if($trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
-									$cash = $trans->procedure_cost - $trans->consultation_fees;
+									$cash = $cost - $trans->consultation_fees;
 								}
 							}
 						} else {
-							$total_amount = $trans->procedure_cost;
+							$total_amount = $cost;
 							if((int)$trans->half_credits == 1) {
 								$cash = $trans->cash_cost;
 							} else {
 								if($trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
-									$cash = $trans->procedure_cost;
+									$cash = $cost;
 								}
 							}
 						}
@@ -5056,44 +5064,44 @@ public function getHrActivity( )
 					if((int)$trans->half_credits == 1) {
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->health_provider_done == 1) {
-								$bill_amount = $trans->procedure_cost;
+								$bill_amount = $cost;
 							} else {
-								$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+								$bill_amount = $cost - $trans->consultation_fees;
 							}
 						} else {
-							$bill_amount = 	$trans->procedure_cost;
+							$bill_amount = 	$cost;
 						}
 					} else {
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->lite_plan_use_credits == 1) {
-								$bill_amount = 	$trans->procedure_cost;
+								$bill_amount = 	$cost;
 							} else {
 								if((int)$trans->health_provider_done == 1) {
-									$bill_amount = 	$trans->procedure_cost;
+									$bill_amount = 	$cost;
 								} else {
 									$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
 								}
 							}
 						} else {
-							$bill_amount = 	$trans->procedure_cost;
+							$bill_amount = 	$cost;
 						}
 					}
 
 					if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
-						$total_search_cash += $trans->procedure_cost;
-						$total_in_network_spent_cash_transaction += $trans->procedure_cost;
+						$total_search_cash += $cost;
+						$total_in_network_spent_cash_transaction += $cost;
 						$total_cash_transactions++;
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += ($trans->procedure_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+								$total_in_network_spent += ($cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
 							} else {
-								$total_in_network_spent += $trans->procedure_cost * $trans->currency_amount;
+								$total_in_network_spent += $cost * $trans->currency_amount;
 							}
 						} else {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += $trans->procedure_cost + $trans->consultation_fees;
+								$total_in_network_spent += $cost + $trans->consultation_fees;
 							} else {
-								$total_in_network_spent += $trans->procedure_cost;
+								$total_in_network_spent += $cost;
 							}
 						}
 					} else if($trans->credit_cost > 0 && $trans->deleted == 0 || $trans->credit_cost > "0" && $trans->deleted == "0") {
