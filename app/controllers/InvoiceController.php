@@ -2529,8 +2529,8 @@ class InvoiceController extends \BaseController {
 
 					// send email for clinic invoice
 					try {
-						// $email_to = "medicloud.finance@receiptbank.me";
-						$email_to = "allan.alzula.work@gmail.com";
+						$email_to = "medicloud.finance@receiptbank.me";
+						// $email_to = "allan.alzula.work@gmail.com";
 						$email = [];
 
 						$email['emailSubject'] = 'MEDNEFITS CLINIC INVOICE';
@@ -2564,21 +2564,20 @@ class InvoiceController extends \BaseController {
 		}
 
 
-		// $currenttime = StringHelper::CurrentTime();
+		$currenttime = StringHelper::CurrentTime();
+		$emailDdata['emailName']= 'Mednefits Booking Automatic Invoice Generate';
+		$emailDdata['emailPage']= 'email-templates.invoice-generate';
+		$emailDdata['emailTo']= 'info@medicloud.sg';
+		$emailDdata['emailSubject'] = "Cron for Invoice Generate";
+		$emailDdata['actionDate'] = date('d-m-Y');
+		$emailDdata['actionTime'] = $currenttime;
+		$emailDdata['total_success'] = $total_success_generate;
+		$emailDdata['total_fail'] = $total_fail_generate;
+		$emailDdata['totalRecords'] = count($result_data);
+		EmailHelper::sendEmailDirect($emailDdata);
 
-		// $emailDdata['emailName']= 'Mednefits Booking Automatic Invoice Generate';
-		// $emailDdata['emailPage']= 'email-templates.invoice-generate';
-		// $emailDdata['emailTo']= 'info@medicloud.sg';
-		// $emailDdata['emailSubject'] = "Cron for Invoice Generate";
-		// $emailDdata['actionDate'] = date('d-m-Y');
-		// $emailDdata['actionTime'] = $currenttime;
-		// $emailDdata['total_success'] = $total_success_generate;
-		// $emailDdata['total_fail'] = $total_fail_generate;
-		// $emailDdata['totalRecords'] = count($result_data);
-		// EmailHelper::sendEmailDirect($emailDdata);
-
-		// $emailDdata['emailTo']= 'developer.mednefits@gmail.com';
-		// EmailHelper::sendEmailDirect($emailDdata);
+		$emailDdata['emailTo']= 'developer.mednefits@gmail.com';
+		EmailHelper::sendEmailDirect($emailDdata);
 		return $result_data;
 
 	}
