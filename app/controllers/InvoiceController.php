@@ -2542,6 +2542,7 @@ class InvoiceController extends \BaseController {
 						EmailHelper::sendEmailClinicInvoiceFile($email);
 						array_push($result_data, $invoice_data);
 					} catch(Exception $e) {
+						array_push($result_data, ['res' => $e->getMessage()]);
 						// return $e->getMessage();
 					}
 
@@ -2556,6 +2557,7 @@ class InvoiceController extends \BaseController {
 					SystemLogLibrary::createAdminLog($admin_logs);
 				} catch(Exception $e) {
 					// return $e->getMessage();
+					array_push($result_data, ['res' => $e->getMessage()]);
 				}
 			}
 
