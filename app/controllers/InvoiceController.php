@@ -514,7 +514,6 @@ class InvoiceController extends \BaseController {
 		}
 
 		$transactions['amount_due'] = number_format($balance, 2);
-
     // return View::make('pdf-download.clinic_invoice', $transactions);
 		$pdf = PDF::loadView('pdf-download.clinic_invoice', $transactions);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
@@ -2466,63 +2465,88 @@ class InvoiceController extends \BaseController {
 		    	// $check_payment_record['payment_record_id'] = $check_payment_record->id;
 				}
 
-				$transactions = [];
-				$details = [];
-				$total = 0;
-				$total_procedure = 0;
-				$total_percentage = 0;
-				$transaction_results = $invoice_record_detail->getTransaction($invoice_id);
-				foreach ($transaction_results as $key => $value) {
-					$trans['transaction'] = $transaction->getTransactionById($value->transaction_id);
-					$procedure_name = $procedure->ClinicProcedureByID($trans['transaction']['ProcedureID']);
-					$trans['procedure'] = $procedure_name ? $procedure_name->Name : '';
-					$customer = $user->getUserProfile($trans['transaction']['UserID']);
-					$trans['customer'] = $customer ? $customer->Name : 'Mednefits User';
-					if($trans['transaction']['procedure_cost'] <= 500) {
-						if($trans['transaction']['co_paid_status'] == 1) {
-							if($trans['transaction']['co_paid_amount'] > 0) {
-								$amount = $trans['transaction']['credit_cost'] + $trans['transaction']['co_paid_amount'];
-							} else {
-								$amount = $trans['transaction']['credit_cost'] + 13.91;
-							}
-							$trans['discount_value'] = '$13.91';
-						} else {
-							$clinic_cost = $trans['transaction']['procedure_cost'] * $trans['transaction']['medi_percent'];
-							$amount = $trans['transaction']['credit_cost'] + $clinic_cost;
-							$trans['discount_value'] = $trans['transaction']['medi_percent'] * 100 .'%';
-						}
+				$invoice_data = self::sendClinicIvoice($invoice_id);
+				if($invoice_data) {
+					// $total += $invoice_data['total'];
+					// $transactions = [];
+					// $details = [];
+					// $total = 0;
+					// $total_procedure = 0;
+					// $total_percentage = 0;
+					// $transaction_results = $invoice_record_detail->getTransaction($invoice_id);
+					// foreach ($transaction_results as $key => $value) {
+					// 	$trans['transaction'] = $transaction->getTransactionById($value->transaction_id);
+					// 	$procedure_name = $procedure->ClinicProcedureByID($trans['transaction']['ProcedureID']);
+					// 	$trans['procedure'] = $procedure_name ? $procedure_name->Name : '';
+					// 	$customer = $user->getUserProfile($trans['transaction']['UserID']);
+					// 	$trans['customer'] = $customer ? $customer->Name : 'Mednefits User';
+					// 	if($trans['transaction']['procedure_cost'] <= 500) {
+					// 		if($trans['transaction']['co_paid_status'] == 1) {
+					// 			if($trans['transaction']['co_paid_amount'] > 0) {
+					// 				$amount = $trans['transaction']['credit_cost'] + $trans['transaction']['co_paid_amount'];
+					// 			} else {
+					// 				$amount = $trans['transaction']['credit_cost'] + 13.91;
+					// 			}
+					// 			$trans['discount_value'] = '$13.91';
+					// 		} else {
+					// 			$clinic_cost = $trans['transaction']['procedure_cost'] * $trans['transaction']['medi_percent'];
+					// 			$amount = $trans['transaction']['credit_cost'] + $clinic_cost;
+					// 			$trans['discount_value'] = $trans['transaction']['medi_percent'] * 100 .'%';
+					// 		}
 
-						$total += $amount;
+					// 		$total += $amount;
 
-						$total_percentage += $trans['transaction']['medi_percent'];
-						$total_procedure += $trans['transaction']['procedure_cost'];
-					} else {
-						$amount = 0;
+					// 		$total_percentage += $trans['transaction']['medi_percent'];
+					// 		$total_procedure += $trans['transaction']['procedure_cost'];
+					// 	} else {
+					// 		$amount = 0;
+					// 	}
+
+
+					// 	$trans['calculations'] = $amount;
+					// 	$transactions['items'][] = $trans;
+					// 	$amount = 0;
+					// }
+					// if($total > 0) {
+					// 	DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "true"]);
+					// 	$total_success_generate++;
+					// } else {
+					// 	$total_fail_generate++;
+					// 	DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "false"]);
+					// }
+					// $get_payment_record = $payment_record->getPaymentRecord($check_payment_record);
+					// $get_payment_details = $bank->getBankDetails($clinic->ClinicID);
+					// $transactions['payment_record'] = $get_payment_record;
+					// $transactions['bank_details'] = $get_payment_details;
+					// $transactions['invoice_record'] = $invoice_data;
+					// $transactions['invoice_due'] = date('Y-m-d', strtotime('+1 month', strtotime($invoice_data['end_date'])));
+					// $transactions['total'] = $total;
+					// $transactions['clinic'] = $clinic;
+					// $transactions['billing_name'] = $clinic->billing_name ? ucwords($clinic->billing_name) : $clinic->Name;
+					// $transactions['billing_address'] = $clinic->billing_address ? ucwords($clinic->billing_address) : $clinic->Address;
+					
+					
+
+					// send email for clinic invoice
+					try {
+						$email_to = "medicloud.finance@receiptbank.me";
+						// $email_to = "allan.alzula.work@gmail.com";
+						$email = [];
+
+						$email['emailSubject'] = 'MEDNEFITS CLINIC INVOICE';
+						$email['emailName'] = 'Mednefits';
+						$email['emailPage'] = 'email-templates.blank';
+						$email['emailTo'] = $email_to;
+						$email['data'] = $invoice_data;
+						// return $email;
+						EmailHelper::sendEmailClinicInvoiceFile($email);
+						array_push($result_data, $invoice_data);
+					} catch(Exception $e) {
+						array_push($result_data, ['res' => $e->getMessage()]);
+						// return $e->getMessage();
 					}
 
-
-					$trans['calculations'] = $amount;
-					$transactions['items'][] = $trans;
-					$amount = 0;
 				}
-				if($total > 0) {
-					DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "true"]);
-					$total_success_generate++;
-				} else {
-					$total_fail_generate++;
-					DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "false"]);
-				}
-				$get_payment_record = $payment_record->getPaymentRecord($check_payment_record);
-				$get_payment_details = $bank->getBankDetails($clinic->ClinicID);
-				$transactions['payment_record'] = $get_payment_record;
-				$transactions['bank_details'] = $get_payment_details;
-				$transactions['invoice_record'] = $invoice_data;
-				$transactions['invoice_due'] = date('Y-m-d', strtotime('+1 month', strtotime($invoice_data['end_date'])));
-				$transactions['total'] = $total;
-				$transactions['clinic'] = $clinic;
-				$transactions['billing_name'] = $clinic->billing_name ? ucwords($clinic->billing_name) : $clinic->Name;
-				$transactions['billing_address'] = $clinic->billing_address ? ucwords($clinic->billing_address) : $clinic->Address;
-				array_push($result_data, $transactions);
 				try {
 					$invoice_status = DB::table('invoice_record')->where('invoice_id', $invoice_id)->first();
 					$admin_logs = array(
@@ -2532,7 +2556,8 @@ class InvoiceController extends \BaseController {
 					);
 					SystemLogLibrary::createAdminLog($admin_logs);
 				} catch(Exception $e) {
-					return $e->getMessage();
+					// return $e->getMessage();
+					array_push($result_data, ['res' => $e->getMessage()]);
 				}
 			}
 
@@ -2540,7 +2565,6 @@ class InvoiceController extends \BaseController {
 
 
 		$currenttime = StringHelper::CurrentTime();
-
 		$emailDdata['emailName']= 'Mednefits Booking Automatic Invoice Generate';
 		$emailDdata['emailPage']= 'email-templates.invoice-generate';
 		$emailDdata['emailTo']= 'info@medicloud.sg';
@@ -2556,6 +2580,225 @@ class InvoiceController extends \BaseController {
 		EmailHelper::sendEmailDirect($emailDdata);
 		return $result_data;
 
+	}
+
+	public function sendClinicIvoice($id)
+	{
+		$invoice_record_detail = new InvoiceRecordDetails();
+		$invoice_data = DB::table('invoice_record')->where('invoice_id', $id)->first();
+
+		if(!$invoice_data) {
+			return false;
+		}
+
+		$transaction = new Transaction();
+		$invoice = new InvoiceRecord();
+		$payment_record = new PaymentRecord();
+		$doctor = new Doctor();
+		$procedure = new ClinicProcedures();
+		$user = new User();
+		$bank = new PartnerDetails();
+
+		$transactions = [];
+		$transaction_data = [];
+		$details = [];
+		$total = 0;
+		$mednefits_total_fee = 0;
+		$mednefits_total_credits = 0;
+		$total_cash = 0;
+		$total_procedure = 0;
+		$total_percentage = 0;
+		$total_transaction = 0;
+		$total_fees = 0;
+		$total_credits_transactions = 0;
+		$total_cash_transactions = 0;
+
+		$transaction_results = $invoice_record_detail->getTransaction($id);
+
+		foreach ($transaction_results as $key => $value) {
+			$trans = DB::table('transaction_history')
+			->join('user', 'user.UserID', '=', 'transaction_history.UserID')
+			->where('transaction_history.transaction_id', $value->transaction_id)
+			->where('transaction_history.deleted', 0)
+			->where('transaction_history.paid', 1)
+			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.gst_percent_value', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount')
+			->first();
+
+			if($trans) {
+				if($trans->deleted == 0 || $trans->deleted == "0") {
+					$procedure_temp = "";
+					$procedure = "";
+					$procedure_ids = [];
+					$mednefits_total_fee += $trans->credit_cost;
+					if($trans->paid == 1 && $trans->deleted == 0 || $trans->paid == "1" && $trans->deleted == "0") {
+						$mednefits_total_credits += $trans->credit_cost;
+					}
+					if($trans->co_paid_status == 0) {
+						if(strrpos($trans->clinic_discount, '%')) {
+							$percentage = chop($trans->clinic_discount, '%');
+							if($trans->credit_cost > 0) {
+								$amount = $trans->credit_cost;
+							} else {
+								$amount = $trans->procedure_cost;
+							}
+
+							$total_percentage = $percentage + $trans->medi_percent;
+
+							$formatted_percentage = $total_percentage / 100;
+							$temp_fee = $amount / ( 1 - $formatted_percentage );
+							// if non gst
+							$mednefits_pecent = $trans->medi_percent / 100;
+							$fee = $temp_fee * $mednefits_pecent;
+						} else {
+							if((int)$trans->peak_hour_status == 1) {
+								$fee = (float)$trans->peak_hour_amount;
+							} else {
+								$fee = (float)$trans->co_paid_amount;
+							}
+						}
+					} else {
+						if(strrpos($trans->clinic_discount, '%')) {
+							$percentage = chop($trans->clinic_discount, '%');
+							if($trans->credit_cost > 0) {
+								$amount = $trans->credit_cost;
+							} else {
+								$amount = $trans->procedure_cost;
+							}
+
+							$total_percentage = $percentage + $trans->medi_percent;
+
+							$formatted_percentage = $total_percentage / 100;
+							$temp_fee = $amount / ( 1 - $formatted_percentage );
+							// if non gst
+							$mednefits_pecent = $trans->medi_percent / 100;
+							$temp_mednefits_fee = $temp_fee * $mednefits_pecent;
+							$fee = $temp_mednefits_fee * $trans->gst_percent_value;
+						} else {
+							if((int)$trans->peak_hour_status == 1) {
+								$fee = (float)$trans->peak_hour_amount;
+							} else {
+								$fee = (float)$trans->co_paid_amount;
+							}
+						}
+					}
+					$total_fees += $fee;
+
+					if($trans->credit_cost > 0) {
+						$mednefits_credits = $trans->credit_cost;
+						$cash = 0.00;
+						$total_credits_transactions++;
+					} else {
+						if(strripos($trans->procedure_cost, '$') !== false) {
+							$temp_cost = explode('$', $trans->procedure_cost);
+		            // $cost = number_format($temp_cost[1]);
+							$cost = $temp_cost[1];
+						} else {
+		            // $cost = number_format($trans->procedure_cost, 2);
+							$cost = floatval($trans->procedure_cost);
+						}
+						$mednefits_credits = 00;
+						$cash = $cost;
+						$total_cash_transactions++;
+					}
+
+					if((int)$trans->health_provider_done == 1 && (int)$trans->credit_cost == 0) {
+						if(strripos($trans->procedure_cost, '$') !== false) {
+							$temp_cost = explode('$', $trans->procedure_cost);
+		            // $cost = number_format($temp_cost[1]);
+							$cost = $temp_cost[1];
+						} else {
+		            // $cost = number_format($trans->procedure_cost, 2);
+							$cost = floatval($trans->procedure_cost);
+						}
+						$total_cash += $cost;
+					}
+
+					$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
+
+					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+
+					$temp = array(
+						'transaction_id'    		=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
+						'ClinicID'							=> $trans->ClinicID,
+						'NRIC'									=> $trans->NRIC,
+					// 'ProcedureID'						=> $procedure_id,
+						'UserID'								=> $trans->UserID,
+						'date_of_transaction'		=> date('d F Y', strtotime($trans->date_of_transaction)),
+						'paid'									=> $trans->paid,
+						'procedure_cost'				=> $trans->procedure_cost,
+						'services'							=> $procedure,
+						'customer'							=> ucwords($trans->user_name),
+						'mednefits_fee'					=> number_format($fee, 2),
+						'discount'							=> $trans->clinic_discount,
+						'multiple_procedures' 	=> $trans->multiple_service_selection,
+						'health_provider'				=> $trans->health_provider_done,
+						'mednefits_credits'			=> number_format($mednefits_credits, 2),
+						'cash'									=> number_format($cash, 2),
+						'procedure_ids'					=> $procedure_ids,
+						'total'									=> number_format($fee + $mednefits_credits, 2),
+						'currency_type'					=> "SGD"
+					);
+					array_push($transaction_data, $temp);
+
+					$mednefits_total_fee += $fee;
+					$total_transaction++;
+				}
+			}
+		}
+
+		if($total_transaction == 0) {
+			return false;
+		}
+
+		$get_payment_record = \PaymentRecord::where('invoice_id', $id)->first();
+		$get_payment_details = $bank->getBankDetails($get_payment_record->clinic_id);
+		$transactions['payment_record'] = $get_payment_record;
+		$transactions['bank_details'] = $get_payment_details;
+		$paid_amount = (float)$transactions['payment_record']['amount_paid'];
+
+		$end_date = date('Y-m-t', strtotime('+1 month', strtotime($invoice_data->start_date)));
+		$invoice_record = array(
+			'clinic_id'		=> $invoice_data->clinic_id,
+			'invoice_id'	=> $invoice_data->invoice_id,
+			'start_date'	=> date('F d, Y', strtotime('+1 month', strtotime($invoice_data->start_date))),
+			'end_date'		=> date('F d, Y', strtotime($end_date)),
+			'created_at'	=> $invoice_data->created_at,
+			'updated_at'	=> $invoice_data->updated_at
+		);
+		$transactions['period'] = date('j M', strtotime($invoice_data->start_date)).' - '.date('j M Y', strtotime($invoice_data->end_date));
+		$transactions['invoice_record'] = $invoice_record;
+		$transactions['invoice_due'] = $invoice_record['end_date'];
+		$transactions['total'] = number_format($mednefits_total_fee, 2);
+		$transactions['mednefits_fee'] = number_format($mednefits_total_fee, 2);
+		$transactions['mednefits_credits'] = number_format($mednefits_total_credits, 2);
+		$transactions['total_cash'] = number_format($total_cash, 2);
+		$transactions['clinic'] = DB::table('clinic')->where('ClinicID', $invoice_data->clinic_id)->first();
+    // $transactions['total_transaction'] = sizeof($transaction_data);
+		$transactions['total_transaction'] = $total_transaction;
+		$transactions['total_fees'] = number_format($total_fees, 2);
+		$transactions['total_credits_transactions'] = $total_credits_transactions;
+		$transactions['total_cash_transactions'] = $total_cash_transactions;
+		$transactions['currency_type'] = "SGD";
+		$transactions['transactions'] = $transaction_data;
+		$balance = $mednefits_total_fee - $paid_amount;
+
+		if($balance > 0) {
+			$amount_due = $balance;
+		} else if($balance < 0) {
+			$amount_due = 0;
+		} else {
+			$amount_due = $balance;
+		}
+
+		$transactions['amount_due'] = number_format($balance, 2);
+		$transactions['invoice_number'] = $get_payment_record->invoice_number;
+		return $transactions;
+    // return View::make('pdf-download.clinic_invoice', $transactions);
+		// $pdf = PDF::loadView('pdf-download.clinic_invoice', $transactions);
+		// $pdf->getDomPDF()->get_option('enable_html5_parser');
+		// $pdf->setPaper('A4', 'portrait');
+
+		return $pdf->stream($get_payment_record->invoice_number.' - '.time().'.pdf');
 	}
 
 	public function createClinicInvoice( )
