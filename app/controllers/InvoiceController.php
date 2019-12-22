@@ -2535,7 +2535,7 @@ class InvoiceController extends \BaseController {
 
 						$email['emailSubject'] = 'MEDNEFITS CLINIC INVOICE';
 						$email['emailName'] = 'Mednefits';
-						$email['emailPage'] = 'email-templates.blank';
+						$email['emailPage'] = 'email.blank';
 						$email['emailTo'] = $email_to;
 						$email['data'] = $invoice_data;
 						// return $email;
