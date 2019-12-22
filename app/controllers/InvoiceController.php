@@ -2791,7 +2791,7 @@ class InvoiceController extends \BaseController {
 			$amount_due = $balance;
 		}
 
-		$transactions['amount_due'] = $balance;
+		$transactions['amount_due'] = number_format($balance, 2);
 		$transactions['invoice_number'] = $get_payment_record->invoice_number;
 		return $transactions;
     // return View::make('pdf-download.clinic_invoice', $transactions);
