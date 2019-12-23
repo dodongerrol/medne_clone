@@ -309,7 +309,6 @@ app.directive('activityDirective', [
 				scope.hideIntroLoader = function( ){
 					setTimeout(function() {
 						$( ".main-loader" ).fadeOut();
-						$( ".circle-loader" ).fadeOut();
 						introLoader_trap = false;
 					}, 1000);
 				}
