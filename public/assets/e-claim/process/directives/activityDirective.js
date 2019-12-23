@@ -212,7 +212,7 @@ app.directive('activityDirective', [
 				}
 
 				scope.searchActivity = function( data ){
-					scope.toggleLoading();
+					scope.showLoading();
 					data.spending_type = scope.spendingTypeSelected;
 					eclaimSettings.employeeSearchActivity( data )
 						.then(function(response){
@@ -247,7 +247,7 @@ app.directive('activityDirective', [
 							}
 							$( ".spent-box .progress-wrapper .progress-bar" ).css({ 'width': scope.spent_progress_percentage + '%' });
 							scope.hideIntroLoader( );
-							scope.toggleLoading();
+							scope.hideLoading();
 						});
 				}
 
