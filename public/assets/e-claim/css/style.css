@@ -15,6 +15,10 @@ html {
   background-color: #f1f1f1;
 }
 
+.no-margin-15 {
+  margin: 0 -15px;
+}
+
 /*.login-form{
     overflow: hidden;
     margin: 10% auto;
@@ -279,7 +283,7 @@ html {
 }
 
 .home-container {
-  padding: 0 70px;
+  padding: 0 30px;
   /*overflow: hidden;*/
   display: inline-block;
   width: 100%;
@@ -834,14 +838,14 @@ html {
 }
 
 .date-selection-container button {
+  margin: 20px 0;
   background: #fff;
   color: #555;
   font-weight: 700;
-  padding: 5px 20px;
+  padding: 8px 34px;
   box-shadow: none;
   border: 2px solid #ddd;
   font-size: 14px;
-  margin: 20px 0;
 }
 
 .date-selection-container button.btn-apply {
@@ -853,14 +857,15 @@ html {
   border: 2px solid #0392cf;
   font-size: 14px;
   border-radius: 4px;
-  margin-left: 20px;
+  margin-left: 5px;
 }
 
 .benefit-dollars-container {
+  font-family: Helvetica Neue;
   background: #fff;
-  height: 285px;
+  height: 330px;
   box-shadow: 2px 2px 5px #999;
-  margin: 30px 70px;
+  margin: 30px 45px;
   padding: 15px 30px;
   overflow: hidden;
 }
@@ -870,6 +875,7 @@ html {
 }
 
 .benefit-dollars-container h5 {
+  width: fit-content;
   padding-bottom: 15px;
 }
 
@@ -1835,7 +1841,7 @@ body::-webkit-scrollbar-thumb {
 .spending-type-container .btn {
   display: inline-block;
   margin-bottom: 25px;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 16px;
   padding: 10px 20px;
   margin-left: -4px;
@@ -2046,7 +2052,7 @@ body::-webkit-scrollbar-thumb {
   height: 100%;
   background: none;
   border: none;
-  /* -webkit-appearance: none; */
+  -webkit-appearance: none;
   padding: 0 0 0 10px;
   cursor: pointer;
   /* font: 300 18px/1.5 'Roboto', sans-serif; */
@@ -2055,8 +2061,8 @@ body::-webkit-scrollbar-thumb {
 
 .custom-select .select {
   position: relative;
-  width: 150px;
-  height: 34px;
+  width: 188px;
+  height: 41px;
   cursor: pointer;
   border-radius: 3px;
   background: #fff;
@@ -2064,7 +2070,14 @@ body::-webkit-scrollbar-thumb {
   font-weight: 700;
   box-shadow: none;
   border: 2px solid #ddd;
-  margin-right: 30px;
+  margin-right: 37px;
+}
+
+.input-label.custom-select.withIcon i {
+  position: relative;
+  left: -70px;
+  font-size: 10px;
+  color: #979797;
 }
 
 .input-label .radio {
@@ -2072,15 +2085,17 @@ body::-webkit-scrollbar-thumb {
   background: #fff;
   color: #555;
   font-weight: 700;
-  padding: 5px 10px;
+  padding: 8px 12.5px !important;
   box-shadow: none;
   border-radius: 3px;
   border: 2px solid #ddd;
   font-size: 14px;
+  height: 41px !important;
   margin: 20px 0;
-  width: 110px;
-  margin-right: 15px;
+  width: 101px;
+  margin-right: 10px;
   cursor: pointer;
+  /* text-align: center; */
 }
 
 .input-label input[type="radio"] {
@@ -2091,12 +2106,12 @@ body::-webkit-scrollbar-thumb {
 }
 
 .date-range-view {
-  top: 22px;
-  left: 0;
+  top: 25px;
+  left: -5px;
   z-index: 1;
   padding: 7px;
   position: absolute;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 /* Submit E-Claim */
@@ -2114,8 +2129,8 @@ body::-webkit-scrollbar-thumb {
 }
 
 .new-popup .popup-container {
-	width: 325px;
-	height: 300px;
+  width: 325px;
+  height: 300px;
   margin: 0 auto;
   background: #fff;
   -webkit-box-shadow: 0px 0px 6px 1px rgba(156, 156, 156, 1);
@@ -2134,8 +2149,8 @@ body::-webkit-scrollbar-thumb {
 .new-popup .popup-header {
   padding: 10px 0;
   text-align: center;
-	font-size: 40px;
-	color: #0086d3;
+  font-size: 40px;
+  color: #0086d3;
 }
 
 .new-popup .popup-content {
@@ -2143,23 +2158,23 @@ body::-webkit-scrollbar-thumb {
 }
 
 .new-popup .bold {
-	font-weight: 600 !important;
+  font-weight: 600 !important;
   font-family: "Helvetica ", sans-serif;
 }
 
 .new-popup .popup-footer {
-	text-align: center;
-	padding: 15px 0;
+  text-align: center;
+  padding: 15px 0;
 }
 
 .popup-footer button {
-	background-color: #0086d3;
-	color: #fff;
-	padding: 5px 30px;
-	font-weight: 700;
-	font-size: 14px;
+  background-color: #0086d3;
+  color: #fff;
+  padding: 5px 30px;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 .popup-footer .btn:hover {
-	color: #fff;
+  color: #fff;
 }

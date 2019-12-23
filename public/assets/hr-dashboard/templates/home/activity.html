@@ -86,13 +86,14 @@
 					<div class="new-body-container">
 						<div class="container-fluid">
 							<div class="row">
-								<div class="col-md-6">
+								<div class="col-md-7">
 									<div class="date-selection-container left-input">
-										<div class="input-label custom-select">
+										<div class="input-label custom-select withIcon">
 											<select class="select" ng-change="toDate()" ng-model="select_term" name="term" id="">
 												<option value="current">Current Term</option>
 												<option value="last">Last Term</option>
 											</select>
+											<i class="fa fa-chevron-down" aria-hidden="true"></i>
 										</div>
 
 										<div class="input-label">
@@ -113,7 +114,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-5">
 									<div class="date-selection-container right-input">
 										<div class="custom-date-selector btn-custom-date">
 											<button class="btn btn-custom-start">
@@ -122,7 +123,7 @@
 												<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
 											</button>
 
-											<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
+											<span style="margin: 0 10px;"><i class="fa fa-long-arrow-right"></i></span>
 
 											<button class="btn btn-custom-end">
 												<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
@@ -241,11 +242,11 @@
 
 						<div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
 							<div class=" benefit-box">
-								<h5 class="font-medium2 color-blue-custom2 weight-700 font-24 no-margin-top"><span class="currency-type"
+								<h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
 										ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
 										ng-bind="activity.total_spent_format_number | number:2">0.00</span></h5>
-								<p class="color-gray2 font-12 weight-700 no-margin">SPENT</p>
-								<p class="color-gray2 font-12 weight-700 no-margin">{{rangePicker_start}} - {{rangePicker_end}}</p>
+								<p class="color-gray2 font-16 weight-300 no-margin" style="padding:13px 0 18px 0;">SPENT</p>
+								<p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p>
 							</div>
 						</div>
 
@@ -253,17 +254,17 @@
 							<div class="col-md-6">
 								<div class="benefit-box">
 									<div>
-										<p class="color-black3 weight-700 font-14">Spending Breakdown</p>
-										<p class="color-black3 weight-700 font-14">In-Network: <span
-												class="weight-700 color-blue-custom currency-type"
+										<p class="color-black3 weight-500 font-14">Spending Breakdown</p>
+										<p class="color-black3 weight-300 font-14">In-Network: <span
+												class="weight-300 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-												class="weight-700 color-blue-custom"
+												class="weight-300 color-blue-custom"
 												ng-bind="activity.in_network_spending_format_number | number:2">0.00</span>
 										</p>
-										<p class="color-black3 weight-700 font-14">E-claim(Out-of-Network): <span
-												class="weight-700 color-blue-custom currency-type"
+										<p class="color-black3 weight-300 font-14">E-claim(Out-of-Network): <span
+												class="weight-300 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-												class="weight-700 color-blue-custom"
+												class="weight-300 color-blue-custom"
 												ng-bind="activity.e_claim_spending_format_number | number:2">0.00</span>
 										</p>
 									</div>
@@ -272,27 +273,25 @@
 							<div class="col-md-6">
 								<div class="benefit-box">
 									<div>
-										<p class="color-black3 weight-700 font-14">Total Allocated Credits: <span
-												class="weight-700 color-blue-custom currency-type"
+										<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+												class="weight-500 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-												class="weight-700 color-blue-custom"
+												class="weight-500 color-blue-custom"
 												ng-bind="activity.in_network_spending_format_number | number:2">0.00</span>
 										</p>
-										<p class="color-black3 weight-700 font-14">Balance:
-											<span class="color-blue-custom2 weight-700 font-14 no-margin-top"
+										<p class="color-black3 weight-500 font-16">Balance:
+											<span class="color-blue-custom2 weight-500 font-14 no-margin-top"
 												ng-if="activitySpendingType == 0">
 												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span ng-bind="credits.total_medical_employee_balance">0.00</span>
 											</span>
-											<span class="color-blue-custom2 weight-700 font-14 no-margin-top"
+											<span class="color-blue-custom2 weight-500 font-16no-margin-top"
 												ng-if="activitySpendingType == 1">
 												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
 											</span>
 										</p>
-										<small class="weight-700 font-10 no-margin-top">*total Allocated Credits and Balance are displayed
-											as
-											Year-to-date.</small>
+										<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are Displayed as Year-to-date.</small>
 									</div>
 								</div>
 							</div>
