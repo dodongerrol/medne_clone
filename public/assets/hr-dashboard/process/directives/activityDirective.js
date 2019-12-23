@@ -834,7 +834,7 @@ app.directive('activityPage', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},2000)
+					},10)
 				}
 
 				scope.checkSession = function( ){
