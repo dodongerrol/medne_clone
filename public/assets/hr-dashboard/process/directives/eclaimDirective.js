@@ -500,7 +500,7 @@
 							$("#done_fetching_text").show();
 							setTimeout(function() {
 								$("#fetching_users").fadeOut('slow');
-							}, 2000);
+							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
@@ -597,7 +597,7 @@
 							$("#done_fetching_text").show();
 							setTimeout(function() {
 								$("#fetching_users").fadeOut('slow');
-							}, 2000);
+							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
@@ -755,7 +755,7 @@
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},2000)
+					},10)
 				}
 
 				scope.showCustomDate = function( num ){
