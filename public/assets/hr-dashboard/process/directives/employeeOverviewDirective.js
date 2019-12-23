@@ -1939,7 +1939,7 @@ app.directive("employeeOverviewDirective", [
               setTimeout(function() {
                 $( ".export-emp-details-message" ).hide();
                 $( "#empDetailsBtn" ).click();
-              }, 1000);
+              }, 10);
             });
         }
 

@@ -471,7 +471,7 @@ app.directive('activityPage', [
 
 								setTimeout(function() {
 									$("#fetching_users").fadeOut('slow');
-								}, 2000);
+								}, 10);
 
 								$(".searchActivityLoader").hide();
 								$(".searchActivityLoader2").hide();
@@ -581,7 +581,7 @@ app.directive('activityPage', [
 
 								setTimeout(function() {
 									$("#fetching_users").fadeOut('slow');
-								}, 2000);
+								}, 10);
 								
 								$(".searchActivityLoader").hide();
 								$(".searchActivityLoader2").hide();
