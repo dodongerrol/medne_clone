@@ -1259,7 +1259,7 @@ app.directive("employeeOverviewDirective", [
           setTimeout(function() {
             $(".circle-loader").fadeOut();
             loading_trap = false;
-          }, 1000);
+          }, 10);
         };
 
         scope.isCalculateBtnActive = false;
@@ -1939,7 +1939,7 @@ app.directive("employeeOverviewDirective", [
               setTimeout(function() {
                 $( ".export-emp-details-message" ).hide();
                 $( "#empDetailsBtn" ).click();
-              }, 1000);
+              }, 10);
             });
         }
 
