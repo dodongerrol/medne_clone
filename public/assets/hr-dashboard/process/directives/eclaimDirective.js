@@ -760,7 +760,7 @@
 
 				scope.hideLoading = function( ){
 					setTimeout(function() {
-						$( ".circle-loader" ).fadeOut();
+						$(".circle-loader").hide();
 						loading_trap = false;
 					},10)
 				}
