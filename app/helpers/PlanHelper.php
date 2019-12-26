@@ -1399,7 +1399,7 @@ class PlanHelper {
 		}
 
 		$user = new User();
-
+		$customer_spending = CustomerHelper::getCustomerWalletStatus($customer_id);
 		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
             // try {
 		$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
@@ -1505,97 +1505,104 @@ class PlanHelper {
                 // check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 
-		if($data_enrollee->credits > 0) {
-                    // medical credits
-			if($customer->balance >= $data_enrollee->credits) {
+		if($customer_spending['medical'] == true) {
+			if($data_enrollee->credits > 0) {
+	      // medical credits
+				if($customer->balance >= $data_enrollee->credits) {
 
-				$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $data_enrollee->credits, "medical");
+					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $data_enrollee->credits, "medical");
 
-				if($result_customer_active_plan) {
-					$customer_active_plan_id = $result_customer_active_plan;
-				} else {
-					$customer_active_plan_id = NULL;
-				}
+					if($result_customer_active_plan) {
+						$customer_active_plan_id = $result_customer_active_plan;
+					} else {
+						$customer_active_plan_id = NULL;
+					}
 
-                        // give credits
-				$wallet_class = new Wallet();
-				$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-				$update_wallet = $wallet_class->addCredits($user_id, $data_enrollee->credits);
+	                        // give credits
+					$wallet_class = new Wallet();
+					$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+					$update_wallet = $wallet_class->addCredits($user_id, $data_enrollee->credits);
 
-				$employee_logs = new WalletHistory();
+					$employee_logs = new WalletHistory();
 
-				$wallet_history = array(
-					'wallet_id'     => $wallet->wallet_id,
-					'credit'            => $data_enrollee->credits,
-					'logs'              => 'added_by_hr',
-					'running_balance'   => $data_enrollee->credits,
-					'customer_active_plan_id' => $customer_active_plan_id,
-					'currency_type'		=> $customer_data->currency_type
-				);
-
-				$employee_logs->createWalletHistory($wallet_history);
-				$customer_credits = new CustomerCredits();
-
-				$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $data_enrollee->credits);
-				$customer_credits_left = DB::table('customer_credits')->where('customer_credits_id', $customer->customer_credits_id)->first();
-				$data['medical_credit_history'] = $wallet_history;
-				if($customer_credits_result) {
-					$company_deduct_logs = array(
-						'customer_credits_id'   => $customer->customer_credits_id,
-						'credit'                => $data_enrollee->credits,
-						'logs'                  => 'added_employee_credits',
-						'user_id'               => $user_id,
-						'running_balance'       => $customer->balance - $data_enrollee->credits,
+					$wallet_history = array(
+						'wallet_id'     => $wallet->wallet_id,
+						'credit'            => $data_enrollee->credits,
+						'logs'              => 'added_by_hr',
+						'running_balance'   => $data_enrollee->credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
 						'currency_type'		=> $customer_data->currency_type
 					);
 
-					$customer_credit_logs = new CustomerCreditLogs( );
-					$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+					$employee_logs->createWalletHistory($wallet_history);
+					$customer_credits = new CustomerCredits();
+
+					$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $data_enrollee->credits);
+					$customer_credits_left = DB::table('customer_credits')->where('customer_credits_id', $customer->customer_credits_id)->first();
+					$data['medical_credit_history'] = $wallet_history;
+					if($customer_credits_result) {
+						$company_deduct_logs = array(
+							'customer_credits_id'   => $customer->customer_credits_id,
+							'credit'                => $data_enrollee->credits,
+							'logs'                  => 'added_employee_credits',
+							'user_id'               => $user_id,
+							'running_balance'       => $customer->balance - $data_enrollee->credits,
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'		=> $customer_data->currency_type
+						);
+
+						$customer_credit_logs = new CustomerCreditLogs( );
+						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+					}
 				}
 			}
+
+			// create medical entitlement
+			
 		}
+		
+		if($customer_spending['wellness'] == true) {
+			if($data_enrollee->wellness_credits > 0) {
+	      // wellness credits
+				if($customer->wellness_credits >= $data_enrollee->wellness_credits) {
+					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $data_enrollee->wellness_credits, "wellness");
 
-		if($data_enrollee->wellness_credits > 0) {
-                    // wellness credits
-			if($customer->wellness_credits >= $data_enrollee->wellness_credits) {
-				$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $data_enrollee->wellness_credits, "wellness");
+					if($result_customer_active_plan) {
+						$customer_active_plan_id = $result_customer_active_plan;
+					} else {
+						$customer_active_plan_id = NULL;
+					}
+	                        // give credits
+					$wallet_class = new Wallet();
+					$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+					$update_wallet = $wallet_class->addWellnessCredits($user_id, $data_enrollee->wellness_credits);
 
-				if($result_customer_active_plan) {
-					$customer_active_plan_id = $result_customer_active_plan;
-				} else {
-					$customer_active_plan_id = NULL;
-				}
-                        // give credits
-				$wallet_class = new Wallet();
-				$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-				$update_wallet = $wallet_class->addWellnessCredits($user_id, $data_enrollee->wellness_credits);
-
-				$wallet_history = array(
-					'wallet_id'     => $wallet->wallet_id,
-					'credit'        => $data_enrollee->wellness_credits,
-					'logs'          => 'added_by_hr',
-					'running_balance'   => $data_enrollee->wellness_credits,
-					'customer_active_plan_id' => $customer_active_plan_id,
-					'currency_type'		=> $customer_data->currency_type
-				);
-
-				\WellnessWalletHistory::create($wallet_history);
-				$customer_credits = new CustomerCredits();
-				$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $data_enrollee->wellness_credits);
-				$data['wellness_credit_history'] = $wallet_history;
-				if($customer_credits_result) {
-					$company_deduct_logs = array(
-						'customer_credits_id'   => $customer->customer_credits_id,
-						'credit'                => $data_enrollee->wellness_credits,
-						'logs'                  => 'added_employee_credits',
-						'user_id'               => $user_id,
-						'running_balance'       => $customer->wellness_credits - $data_enrollee->wellness_credits,
+					$wallet_history = array(
+						'wallet_id'     => $wallet->wallet_id,
+						'credit'        => $data_enrollee->wellness_credits,
+						'logs'          => 'added_by_hr',
+						'running_balance'   => $data_enrollee->wellness_credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
 						'currency_type'		=> $customer_data->currency_type
 					);
-					$customer_credits_logs = new CustomerWellnessCreditLogs();
-					$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+
+					\WellnessWalletHistory::create($wallet_history);
+					$customer_credits = new CustomerCredits();
+					$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $data_enrollee->wellness_credits);
+					$data['wellness_credit_history'] = $wallet_history;
+					if($customer_credits_result) {
+						$company_deduct_logs = array(
+							'customer_credits_id'   => $customer->customer_credits_id,
+							'credit'                => $data_enrollee->wellness_credits,
+							'logs'                  => 'added_employee_credits',
+							'user_id'               => $user_id,
+							'running_balance'       => $customer->wellness_credits - $data_enrollee->wellness_credits,
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'		=> $customer_data->currency_type
+						);
+						$customer_credits_logs = new CustomerWellnessCreditLogs();
+						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+					}
 				}
 			}
 		}

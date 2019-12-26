@@ -1905,7 +1905,7 @@ class BenefitsDashboardController extends \BaseController {
 		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 		->where('corporate.corporate_id', $account_link->corporate_id)
 		// ->where('corporate_members.removed_status', 0)
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet')
 		->orderBy('corporate_members.removed_status', 'asc')
 		->orderBy('user.UserID', 'asc')
 		->paginate($per_page);
@@ -1925,6 +1925,8 @@ class BenefitsDashboardController extends \BaseController {
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 
+			// get medical entitlement
+			$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $user->UserID)->orderBy('created_at', 'desc')->first();
 		  // check if account is schedule for deletion
 			$deletion = DB::table('customer_plan_withdraw')->where('user_id', $user->UserID)->first();
 			$dependets = DB::table('employee_family_coverage_sub_accounts')
@@ -2081,6 +2083,7 @@ class BenefitsDashboardController extends \BaseController {
 			->sum('amount');
 
 			$medical = array(
+				'entitlement' => $wallet_entitlement->medical_entitlement,
 				'credits_allocation' => $medical_credit_data['allocation'],
 				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 				'balance'			=> $medical_credit_data['balance'],
@@ -2088,21 +2091,12 @@ class BenefitsDashboardController extends \BaseController {
 			);
 
 			$wellness = array(
+				'entitlement' => $wallet_entitlement->wellness_entitlement,
 				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
 				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
 				'balance'						=> $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
 				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 			);
-
-			// $name = explode(" ", $user->Name);
-
-			// if(!empty($name[0]) && !empty($name[1])) {
-			// 	$first_name = $name[0];
-			// 	$last_name = $name[1];
-			// } else {
-			// 	$first_name = $user->Name;
-			// 	$last_name = $user->Name;
-			// }	
 
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
@@ -2159,8 +2153,9 @@ class BenefitsDashboardController extends \BaseController {
 				'schedule'				=> $schedule,
 				'plan_withdraw_status' 	=> $plan_withdraw,
 				'emp_status'			=> $emp_status,
-				'account_status'		=> $user->Active == 1 ? true : false,
-				'plan_type'					=> $plan_type
+				'account_status'		=> (int)$user->Active == 1 ? true : false,
+				'plan_type'					=> $plan_type,
+				'wallet_enabled' => (int)$user->wallet == 1 ? true : false
 			);
 			array_push($final_user, $temp);
 		}
@@ -2769,7 +2764,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('corporate.corporate_id', $id);
 		})
 		->groupBy('user.UserID')
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet')
 		->get();
 
 		if(sizeof($users) == 0) {
@@ -2797,7 +2792,7 @@ class BenefitsDashboardController extends \BaseController {
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 				->where('user.UserID', $dependent->employee_user_id)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet')
 				->first();
 				if($user) {
 					array_push($users, $user);
@@ -2811,6 +2806,7 @@ class BenefitsDashboardController extends \BaseController {
 
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
+			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 
 		  // check if account is schedule for deletion
@@ -2968,6 +2964,7 @@ class BenefitsDashboardController extends \BaseController {
 			->sum('amount');
 
 			$medical = array(
+				'entitlement' => $wallet_entitlement->medical_entitlement,
 				'credits_allocation' => $medical_credit_data['allocation'],
 				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 				'balance'			=> $medical_credit_data['balance'],
@@ -2975,6 +2972,7 @@ class BenefitsDashboardController extends \BaseController {
 			);
 
 			$wellness = array(
+				'entitlement' => $wallet_entitlement->wellness_entitlement,
 				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
 				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
 				'balance'						=> $wellness_credit_data['balance'],
@@ -3035,8 +3033,9 @@ class BenefitsDashboardController extends \BaseController {
 				'schedule'				=> $schedule,
 				'plan_withdraw_status' 	=> $plan_withdraw,
 				'emp_status'			=> $emp_status,
-				'account_status'		=> $user->Active == 1 ? true : false,
-				'plan_type'				=> $plan_type
+				'account_status'		=> (int)$user->Active == 1 ? true : false,
+				'plan_type'				=> $plan_type,
+				'wallet_enabled' => (int)$user->wallet == 1 ? true : false
 			);
 			array_push($final_user, $temp);
 		}
