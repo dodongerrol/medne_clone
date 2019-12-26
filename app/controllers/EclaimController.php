@@ -217,19 +217,22 @@ class EclaimController extends \BaseController {
       $spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
 			$balance = number_format($spending['balance'], 2);
       $balance = TransactionHelper::floatvalue($balance);
-			if($amount > $balance || $balance <= 0) {
-				return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
-			}
-	    // check user pending e-claims amount
-			// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
-			$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'medical', $date);
-			$total_claim_amount = $balance - $claim_amounts;
-			$amount = trim($amount);
-			$total_claim_amount = trim($total_claim_amount);
 
-			if($amount > $total_claim_amount) {
-				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
-			}
+      if($spending['back_date'] == false) {
+				if($amount > $balance || $balance <= 0) {
+					return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
+				}
+		    // check user pending e-claims amount
+				// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
+				$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'medical', $date);
+				$total_claim_amount = $balance - $claim_amounts;
+				$amount = trim($amount);
+				$total_claim_amount = trim($total_claim_amount);
+
+				if($amount > $total_claim_amount) {
+					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
+				}
+      }
     } else {
     	$amount = trim($amount);
     }
@@ -445,18 +448,21 @@ class EclaimController extends \BaseController {
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'wellness');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
-			if($amount > $balance || $balance <= 0) {
-				return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
-			}
 
-	    // check user pending e-claims amount
-			// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
-			$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'wellness', $date);
+			if($spending['back_date'] == false) {
+				if($amount > $balance || $balance <= 0) {
+					return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
+				}
 
-			$total_claim_amount = $balance  - $claim_amounts;
-	    // return $total_claim_amount;
-			if(floatval($amount) > floatval($total_claim_amount)) {
-				return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
+		    // check user pending e-claims amount
+				// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
+				$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'wellness', $date);
+
+				$total_claim_amount = $balance  - $claim_amounts;
+		    // return $total_claim_amount;
+				if(floatval($amount) > floatval($total_claim_amount)) {
+					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
+				}
 			}
     }
 
