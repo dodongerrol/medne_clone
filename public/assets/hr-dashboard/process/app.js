@@ -2,7 +2,7 @@ var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModu
 
 app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window',
 function ($rootScope, $state, $stateParams, $templateCache, $window) {
-  
+   
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
 
@@ -19,6 +19,11 @@ function ($rootScope, $state, $stateParams, $templateCache, $window) {
         $window.Appcues.page();
       }
    });
+
+  window.Appcues.identify(
+    "57952", // unique, required
+    {}
+  );
 
 
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
