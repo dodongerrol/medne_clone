@@ -558,6 +558,7 @@ app.directive('activityPage', [
 									$(".searchActivityLoader2").hide();
 									scope.hideLoading();
 
+									pointer_trap = true;
 									scope.togglePointerEvents();
 									scope.currentPage = 1;
 									// scope.stockACtivityData();
@@ -668,6 +669,8 @@ app.directive('activityPage', [
 									$(".searchActivityLoader2").hide();
 
 									scope.hideLoading();
+
+									pointer_trap = true;
 									scope.togglePointerEvents();
 									scope.stockACtivityData();
 								}
@@ -1090,7 +1093,7 @@ app.directive('activityPage', [
 						// scope.searchActivityPagination( );
 					}
 
-					scope.togglePointerEvents();
+					// scope.togglePointerEvents();
 				}
 
 				scope.initializeNewCustomDatePicker = function () {
