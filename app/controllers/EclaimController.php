@@ -9582,9 +9582,9 @@ public function downloadEclaimCsv( )
 
 		$term_status = null;
 		if($spending['back_date'] == true) {
-			$term_status = "Last terms's data";
+			$term_status = "Last";
 		} else {
-			$term_status = "Current terms's data";
+			$term_status = "Current";
 		}
 
 		return array('status' => true, 'balance' => DecimalHelper::formatDecimal($balance), 'term_status' => $term_status, 'currency_type' => $spending['currency_type']);
