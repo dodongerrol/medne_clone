@@ -415,6 +415,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/employee_cap_per_visit_list', 'EmployeeController@employeeCapPerVisit');
 	// upload employee cap per visit
 	Route::post('hr/upload_employee_cap_per_visit', 'EmployeeController@uploadCaperPervisit');
+	// get customer spending account status
+	Route::get('hr/get_spending_account_status', 'PlanRenewalController@getEntitlementEnrolmentStatus');
 });
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');

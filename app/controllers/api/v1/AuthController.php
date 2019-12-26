@@ -5252,7 +5252,6 @@ public function createEclaim( )
    // }
 
    $amount = trim($input_amount);
-   $balance = number_format($balance, 2);
    $balance = TransactionHelper::floatvalue($balance);
    if($amount > $balance) {
      $returnObject->status = FALSE;
