@@ -5237,43 +5237,39 @@ public function createEclaim( )
     // }
     $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
     $balance = number_format($spending['balance'], 2);
+    $amount = trim($input_amount);
+    $balance = TransactionHelper::floatvalue($balance);
 
     $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     if(!$check_user_balance) {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'User does not have a wallet data.';
-     return Response::json($returnObject);
-   }
+      $returnObject->status = FALSE;
+      $returnObject->message = 'User does not have a wallet data.';
+      return Response::json($returnObject);
+    }
 
-   // if($input['spending_type'] == "medical") {
-   //   $balance = $check_user_balance->balance;
-   // } else {
-   //   $balance = $check_user_balance->wellness_balance;
-   // }
+    if($spending['back_date'] == false) {
+      if($amount > $balance) {
+        $returnObject->status = FALSE;
+        $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        return Response::json($returnObject);
+      }
 
-   $amount = trim($input_amount);
-   $balance = TransactionHelper::floatvalue($balance);
-   if($amount > $balance) {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
-     return Response::json($returnObject);
-   }
+      // $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
+     $check_pending = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
+     if($input['spending_type'] == "medical") {
+       $claim_amounts = $balance - $check_pending;
+     } else {
+       $claim_amounts = $balance - $check_pending;
+     }
 
-   // $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
-   $check_pending = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
-   if($input['spending_type'] == "medical") {
-     $claim_amounts = $balance - $check_pending;
-   } else {
-     $claim_amounts = $balance - $check_pending;
-   }
+     $claim_amounts = trim($claim_amounts);
 
-   $claim_amounts = trim($claim_amounts);
-
-   if($amount > $claim_amounts) {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
-     return Response::json($returnObject);
-   }
+     if($amount > $claim_amounts) {
+       $returnObject->status = FALSE;
+       $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
+       return Response::json($returnObject);
+     }
+    }
  } else {
   $amount = trim($input_amount);
 }
