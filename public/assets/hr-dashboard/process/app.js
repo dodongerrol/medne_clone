@@ -20,11 +20,6 @@ function ($rootScope, $state, $stateParams, $templateCache, $window) {
       }
    });
 
-  window.Appcues.identify(
-    "57952", // unique, required
-    {}
-  );
-
 
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
     console.log( toState );
