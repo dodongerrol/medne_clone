@@ -4756,89 +4756,106 @@ public function getEclaimTransactions( )
     $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
     $ids = StringHelper::getSubAccountsID($findUserID);
     $e_claim = [];
-
+    $paginate = [];
+    
     if($dates) {
-      $e_claims = DB::table('e_claim')->whereIn('user_id', $ids)->orderBy('created_at', 'desc')->get();
+      if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+        $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
+        $e_claims = DB::table('e_claim')->whereIn('user_id', $ids)->orderBy('created_at', 'desc')->paginate($per_page);
+      } else {
+        $e_claims = DB::table('e_claim')->whereIn('user_id', $ids)->orderBy('created_at', 'desc')->get();
+      }
 
       foreach ($e_claims as $key => $res) {
-       $member = DB::table('user')->where('UserID', $res->user_id)->first();
+        $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
                           // check user if it is spouse or dependent
        if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
-        $temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
-        $temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
-        $sub_account = ucwords($temp_account->Name);
-        $sub_account_type = $temp_sub->user_type;
-        $owner_id = $temp_sub->owner_id;
-      } else {
-        $sub_account = FALSE;
-        $sub_account_type = FALSE;
-        $owner_id = $member->UserID;
-      }
+          $temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+          $temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+          $sub_account = ucwords($temp_account->Name);
+          $sub_account_type = $temp_sub->user_type;
+          $owner_id = $temp_sub->owner_id;
+        } else {
+          $sub_account = FALSE;
+          $sub_account_type = FALSE;
+          $owner_id = $member->UserID;
+        }
 
-      $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
+        $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
-      $currency_symbol = "SGD";
-      if($res->default_currency == "myr" && $res->currency_type == "sgd") {
-        $currency_symbol = "MYR";
-        if($res->status == 1) {
-          $res->amount = $res->claim_amount;
-        } else {
-          $res->amount = $res->amount;
-        }
-      } else if($res->default_currency == "myr" && $res->currency_type == "myr") {
-        $currency_symbol = "MYR";
-        if($res->status == 1) {
-          $res->amount = $res->claim_amount;
-        } else {
-          $res->amount = $res->amount;
-        }
-      } else if($res->default_currency == "sgd" && $res->currency_type == "myr") {
-        if($res->status == 1) {
-          $res->amount = $res->claim_amount;
-        } else {
-          $res->amount = $res->amount;
-        }
-      } else {
         $currency_symbol = "SGD";
-        if($res->status == 1) {
-          $res->amount = $res->claim_amount;
+        if($res->default_currency == "myr" && $res->currency_type == "sgd") {
+          $currency_symbol = "MYR";
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
+        } else if($res->default_currency == "myr" && $res->currency_type == "myr") {
+          $currency_symbol = "MYR";
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
+        } else if($res->default_currency == "sgd" && $res->currency_type == "myr") {
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
         } else {
-          $res->amount = $res->amount;
+          $currency_symbol = "SGD";
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
         }
+
+        if((int)$res->status == 1) {
+          $res->amount = $res->claim_amount > 0 ? $res->claim_amount : $res->amount;
+        }
+
+        $temp = array(
+          'status'            => $res->status,
+          'claim_date'        => date('d F Y', strtotime($res->created_at)),
+          'time'              => $res->time,
+          'service'           => ucwords($res->service),
+          'merchant'          => ucwords($res->merchant),
+          'amount'            => number_format($res->amount, 2),
+          'member'            => ucwords($member->Name),
+          'type'              => 'E-Claim',
+          'transaction_id'    => 'MNF'.$id,
+          'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,
+          'owner_id'          => $owner_id,
+          'sub_account_type'  => $sub_account_type,
+          'sub_account'       => $sub_account,
+          'month'             => date('M', strtotime($res->approved_date)),
+          'day'               => date('d', strtotime($res->approved_date)),
+          'time'              => date('h:ia', strtotime($res->approved_date)),
+          'spending_type'     => $res->spending_type,
+          'currency_symbol'   => $currency_symbol
+        );
+
+        array_push($e_claim, $temp);
       }
-
-      if((int)$res->status == 1) {
-        $res->amount = $res->claim_amount > 0 ? $res->claim_amount : $res->amount;
-      }
-
-      $temp = array(
-        'status'            => $res->status,
-        'claim_date'        => date('d F Y', strtotime($res->created_at)),
-        'time'              => $res->time,
-        'service'           => ucwords($res->service),
-        'merchant'          => ucwords($res->merchant),
-        'amount'            => number_format($res->amount, 2),
-        'member'            => ucwords($member->Name),
-        'type'              => 'E-Claim',
-        'transaction_id'    => 'MNF'.$id,
-        'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,
-        'owner_id'          => $owner_id,
-        'sub_account_type'  => $sub_account_type,
-        'sub_account'       => $sub_account,
-        'month'             => date('M', strtotime($res->approved_date)),
-        'day'               => date('d', strtotime($res->approved_date)),
-        'time'              => date('h:ia', strtotime($res->approved_date)),
-        'spending_type'     => $res->spending_type,
-        'currency_symbol'   => $currency_symbol
-      );
-
-      array_push($e_claim, $temp);
     }
 
-  }
+    if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+      $paginate['total'] = $e_claims->getTotal();
+      $paginate['per_page'] = $e_claims->getPerPage();
+      $paginate['current_page'] = $e_claims->getCurrentPage();
+      $paginate['last_page'] = $e_claims->getLastPage();
+      $paginate['from'] = $e_claims->getFrom();
+      $paginate['to'] = $e_claims->getTo();
+      $paginate['data'] = $e_claim;
+      $returnObject->data = $paginate;
+    } else {
+      $returnObject->data = $e_claim;
+    }
   
-  $returnObject->data = $e_claim;
   return Response::json($returnObject);
 } else {
   $returnObject->status = FALSE;
