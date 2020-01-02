@@ -1018,6 +1018,7 @@ Route::group(array('prefix' => 'v2'), function()
 
 		    // get credit details
 		    Route::get('user/credits', 'Api_V1_AuthController@getUserWallet');
+		    Route::get('member/wallet_details', 'Api_V1_AuthController@getMemberPartialWallet');
 		    Route::post('user/match/promo', 'Api_V1_AuthController@getPromoCredit');
 
 		    // backup email
