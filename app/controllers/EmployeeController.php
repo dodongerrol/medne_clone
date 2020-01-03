@@ -2063,6 +2063,7 @@ class EmployeeController extends \BaseController {
                 'proration'                 => $input['proration_type'],
                 'new_allocation_credits'    => $new_entitlement_credits,
                 'new_entitlement_credits'   => $input['new_entitlement_credits'],
+                'old_entitlement_credits'   => $wallet_entitlement->medical_entitlement,
                 'plan_end'                  => date('Y-m-d', strtotime($plan_dates['valid_date'])),
                 'effective_date'            => date('Y-m-d', strtotime($input['entitlement_usage_date'])),
                 'spending_type'             => $input['entitlement_spending_type'],
@@ -2099,6 +2100,7 @@ class EmployeeController extends \BaseController {
                 'proration'                 => $input['proration_type'],
                 'new_allocation_credits'    => $new_entitlement_credits,
                 'new_entitlement_credits'   => $input['new_entitlement_credits'],
+                'old_entitlement_credits'   => $wallet_entitlement->wellness_entitlement,
                 'plan_end'                  => date('Y-m-d', strtotime($plan_dates['valid_date'])),
                 'effective_date'            => date('Y-m-d', strtotime($input['entitlement_usage_date'])),
                 'spending_type'             => $input['entitlement_spending_type'],
@@ -2113,6 +2115,72 @@ class EmployeeController extends \BaseController {
             return array('status' => true, 'message' => 'New Entitlement has been created');
         } else {
             return array('status' => false, 'message' => 'Failed to create new entitlement for member');
+        }
+    }
+
+    public function entitlementStatus( )
+    {
+        $input = Input::all();
+
+        if(empty($input['member_id']) || $input['member_id'] == null) {
+            return array('status' => false, 'message' => 'member_id is required');
+        }
+
+        $member = DB::table('user')->where('UserID', $input['member_id'])->where('UserType', 5)->first();
+
+        if(!$member) {
+            return array('status' => false, 'message' => 'Member does not exist');
+        }
+
+        $wallet = DB::table('e_wallet')->where('UserID', $input['member_id'])->first();
+        $wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $input['member_id'])->orderBy('created_at', 'desc')->first();
+
+        if(!$wallet_entitlement) {
+            return array('status' => false, 'message' => 'member wallet entitlement does not exist');
+        }
+
+        $schedule_medical =  DB::table('wallet_entitlement_schedule')
+                            ->where('member_id', $input['member_id'])
+                            ->where('spending_type', 'medical')
+                            ->where('status', 0)
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+
+        $schedule_wellness =  DB::table('wallet_entitlement_schedule')
+                            ->where('member_id', $input['member_id'])
+                            ->where('spending_type', 'wellness')
+                            ->where('status', 0)
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+
+        if($schedule_medical || $schedule_wellness) {
+            $medical_entitlement = null;
+            $wellness_entitlement = null;
+            if($schedule_medical) {
+                $medical_entitlement = array(
+                    'wallet_entitlement_schedule_id'    => $schedule_medical->wallet_entitlement_schedule_id,
+                    'member_id'                         => $schedule_medical->member_id,
+                    'new_entitlement_credits'           => $schedule_medical->new_entitlement_credits,
+                    'new_allocation_credits'           => $schedule_medical->new_allocation_credits,
+                    'effective_date'                    => $schedule_medical->effective_date,
+                    'currency_type'                     => $wallet->currency_type
+                );
+            }
+
+            if($schedule_wellness) {
+                $wellness_entitlement = array(
+                    'wallet_entitlement_schedule_id'    => $schedule_wellness->wallet_entitlement_schedule_id,
+                    'member_id'                         => $schedule_wellness->member_id,
+                    'new_entitlement_credits'           => $schedule_wellness->new_entitlement_credits,
+                    'new_allocation_credits'           => $schedule_wellness->new_allocation_credits,
+                    'effective_date'                    => $schedule_wellness->effective_date,
+                    'currency_type'                     => $wallet->currency_type
+                );
+            }
+
+            return array('status' => true, 'medical_entitlement' => $medical_entitlement, 'wellness_entitlement' => $wellness_entitlement);
+        } else {
+            return array('status' => false, 'message' => 'No entitlement schedule');
         }
     }
 }
