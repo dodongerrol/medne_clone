@@ -91,17 +91,32 @@ app.directive('enrollmentOptionsDirective', [
 			  });
 
 			  $(".medical-info-click").click(function(e){
-			  	$(".medical-info-box").show();
+					$(".medical-info-box").show();
+					
+					$( ".medical-info-box" ).mouseleave(function(e) {
+						$(".medical-info-box").hide();
+					});
 			  });
 			  $(".medical-info-close").click(function(e){
 			  	$(".medical-info-box").hide();
-			  });
+				});
+				// $( ".medical-info-box" ).mouseleave(function(e) {
+				// 	$(".medical-info-box").hide();
+				// });
+
+
 			  $(".wellness-info-click").click(function(e){
-			  	$(".wellness-info-box").show();
+					$(".wellness-info-box").show();
+					
+					$( ".wellness-info-box" ).mouseleave(function(e) {
+						$(".wellness-info-box").hide();
+					});
 			  });
 			  $(".wellness-info-close").click(function(e){
 			  	$(".wellness-info-box").hide();
-			  });
+				});
+				
+				
 
 			  $("body").click(function(e){
 			    if ( $(e.target).parents(".select-div").length === 0) {
