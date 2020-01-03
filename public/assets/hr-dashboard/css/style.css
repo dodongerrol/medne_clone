@@ -8223,7 +8223,7 @@ span.dropdwon-entitlement {
   background: #424242;
   border-radius: 2px;
   color: #fff;
-  z-index: 5;
+  z-index: 9999;
   position: absolute;
   right: -165px;
   top: -1px;

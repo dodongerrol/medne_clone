@@ -491,8 +491,11 @@ class PlanTierController extends \BaseController {
 				$postal_code = $user['postal_code'];
 			}
       
-			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 			$mobile = preg_replace('/\s+/', '', $user['mobile']);
+      $user['medical_credits'] = $user['medical_entitlement'];
+      $user['wellness_credits'] = $user['wellness_entitlement'];
+			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
+
 			$temp_enrollment_data = array(
 				'customer_buy_start_id'	=> $customer_id,
 				'active_plan_id'		=> $customer_active_plan_id,
@@ -506,6 +509,8 @@ class PlanTierController extends \BaseController {
 				'credits'				=> $user['medical_credits'],
 				'wellness_credits'		=> $user['wellness_credits'],
 				'start_date'			=> $user['plan_start'],
+				'medical_balance_entitlement'			=> !empty($user['medical_entitlement_balance']) ? $user['medical_entitlement_balance'] : 0,
+				'wellness_balance_entitlement'			=> !empty($user['wellness_entitlement_balance']) ? $user['wellness_entitlement_balance'] : 0,
 				'postal_code'			=> $postal_code,
 				'error_logs'			=> serialize($error_member_logs)
 			);
