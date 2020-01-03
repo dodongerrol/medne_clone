@@ -1057,14 +1057,24 @@ class Api_V1_TransactionController extends \BaseController
                     // $type = StringHelper::checkUserType($findUserID);
 					$transaction_details = [];
 					$ids = StringHelper::getSubAccountsID($findUserID);
-
+					$paginate = [];
 					if($dates) {
-						$transactions = DB::table('transaction_history')
-													->whereIn('UserID', $ids)
-													->where('created_at', '>=', $dates['start'])
-                  				->where('created_at', '<=', $dates['end'])
-													->orderBy('created_at', 'desc')
-													->get();
+						if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+							$per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
+							$transactions = DB::table('transaction_history')
+														->whereIn('UserID', $ids)
+														->where('created_at', '>=', $dates['start'])
+	                  				->where('created_at', '<=', $dates['end'])
+														->orderBy('created_at', 'desc')
+														->paginate($per_page);
+						} else {
+							$transactions = DB::table('transaction_history')
+														->whereIn('UserID', $ids)
+														->where('created_at', '>=', $dates['start'])
+	                  				->where('created_at', '<=', $dates['end'])
+														->orderBy('created_at', 'desc')
+														->get();
+						}
 					} else {
 						$transactions = [];
 					}
@@ -1186,7 +1196,20 @@ class Api_V1_TransactionController extends \BaseController
 							array_push($transaction_details, $format);
 						}
 					}
-					$returnObject->data = $transaction_details;
+
+					if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+						$paginate['total'] = $transactions->getTotal();
+						$paginate['per_page'] = $transactions->getPerPage();
+						$paginate['current_page'] = $transactions->getCurrentPage();
+						$paginate['last_page'] = $transactions->getLastPage();
+						$paginate['from'] = $transactions->getFrom();
+						$paginate['to'] = $transactions->getTo();
+						$paginate['data'] = $transaction_details;
+						$returnObject->data = $paginate;
+					} else {
+						$returnObject->data = $transaction_details;
+					}
+
 					return Response::json($returnObject);
 				} else {
 					$returnObject->status = FALSE;
