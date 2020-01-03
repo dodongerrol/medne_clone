@@ -1374,7 +1374,7 @@ class PlanHelper {
 
 	public static function createEmployee($temp_enrollment_id, $customer_id)
 	{
-			// get admin session from mednefits admin login
+		// get admin session from mednefits admin login
 		$admin_id = Session::get('admin-session-id');
 		$hr_data = StringHelper::getJwtHrSession();
 		$hr_id = $hr_data->hr_dashboard_id;
@@ -1390,7 +1390,6 @@ class PlanHelper {
 		$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $planned->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
 		$total = $plan_status->employees_input - $plan_status->enrolled_employees;
-            // return $total;
 		if($total <= 0) {
 			return array(
 				'status'    => false,
@@ -1401,7 +1400,6 @@ class PlanHelper {
 		$user = new User();
 
 		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
-            // try {
 		$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 		if(!$customer_active_plan_id) {
 			$active_plan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -1462,7 +1460,6 @@ class PlanHelper {
 		DB::table('corporate_members')->insert($corporate_member);
 		$plan_type = new UserPlanType();
 
-
 		$plan_add_on = self::getCompanyAccountTypeEnrollee($customer_id);
 		$result = self::getEnrolleePackages($active_plan->customer_active_plan_id, $plan_add_on);
 
@@ -1502,11 +1499,11 @@ class PlanHelper {
 
 		$user_plan_history->createUserPlanHistory($user_plan_history_data);
 
-                // check company credits
+    // check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 
 		if($data_enrollee->credits > 0) {
-                    // medical credits
+      // medical credits
 			if($customer->balance >= $data_enrollee->credits) {
 
 				$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $data_enrollee->credits, "medical");
@@ -1557,7 +1554,7 @@ class PlanHelper {
 		}
 
 		if($data_enrollee->wellness_credits > 0) {
-                    // wellness credits
+      // wellness credits
 			if($customer->wellness_credits >= $data_enrollee->wellness_credits) {
 				$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $data_enrollee->wellness_credits, "wellness");
 
@@ -1606,9 +1603,9 @@ class PlanHelper {
 		->where('temp_enrollment_id', $temp_enrollment_id)
 		->update(['enrolled_status' => "true", 'active_plan_id' => $active_plan->customer_active_plan_id]);
 
-                    // check if there is a plan tier
+    // check if there is a plan tier
 		if($data_enrollee->plan_tier_id) {
-                    // check plan tier if exist
+    // check plan tier if exist
 			$plan_tier = DB::table('plan_tiers')
 			->where('plan_tier_id', $data_enrollee->plan_tier_id)
 			->first();
@@ -1627,9 +1624,9 @@ class PlanHelper {
 			}
 		}
 
-                // enrolle dependent if any
+    // enrolle dependent if any
 		self::enrollDependents($temp_enrollment_id, $customer_id, $user_id, $planned->customer_plan_id);
-                // send email to new employee
+    // send email to new employee
 		$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
 		$total_dependents_count = DB::table('dependent_temp_enrollment')
 		->where('employee_temp_id', $temp_enrollment_id)
@@ -1740,9 +1737,6 @@ class PlanHelper {
 		}
 
 		return array('status' => true, 'message' => 'Employee Enrolled.', 'total_dependents_enrolled' => $total_dependents_count, 'total_employee_enrolled' => 1);
-            // } catch(Exception $e) {
-            //     return $e->getMessage();
-            // }
 	}
 
 	public static function enrollDependents($temp_enrollment_id, $customer_id, $employee_id, $customer_plan_id)
@@ -2409,22 +2403,23 @@ class PlanHelper {
 
 	public static function createPaymentsRefund($id, $date_refund)
 	{
-		$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $id)->first();
-		$refund_count = DB::table('payment_refund')
-		->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', '=', 'payment_refund.customer_active_plan_id')
-		->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'customer_active_plan.plan_id')
-		->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
-		->where('customer_buy_start.customer_buy_start_id', $active_plan->customer_start_buy_id)
-		->count();
+		// $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $id)->first();
+		// $refund_count = DB::table('payment_refund')
+		// ->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', '=', 'payment_refund.customer_active_plan_id')
+		// ->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'customer_active_plan.plan_id')
+		// ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
+		// ->where('customer_buy_start.customer_buy_start_id', $active_plan->customer_start_buy_id)
+		// ->count();
 
-		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
-      // create refund payment
-		$check = 10 + $refund_count;
-		$temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
-		$invoice_number = 'OMC'.$temp_invoice_number.'A';
-		if($refund_count > 0) {
-			++$invoice_number;
-		}
+		// $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
+  //     // create refund payment
+		// $check = 10 + $refund_count;
+		// $temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
+		// $invoice_number = 'OMC'.$temp_invoice_number.'A';
+		// if($refund_count > 0) {
+		// 	++$invoice_number;
+		// }
+		$invoice_number = InvoiceLibrary::getInvoiceNuber('payment_refund', 4);
 
 		$data = array(
 			'customer_active_plan_id'   => $id,
@@ -2440,19 +2435,20 @@ class PlanHelper {
 	public static function createPaymentsRefundDependent($id, $date_refund)
 	{
             // $active_plan = DB::table('dependent_plans')->where('customer_active_plan_id', $id)->first();
-		$refund_count = DB::table('dependent_payment_refund')
-		->join('dependent_plans', 'dependent_plans.dependent_plan_id', '=', 'dependent_payment_refund.dependent_plan_id')
-		->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'dependent_plans.customer_plan_id')
-		->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
-		->where('dependent_plans.dependent_plan_id', $id)
-		->count();
-            // create refund payment
-		$check = 10 + $refund_count;
-		$temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
-		$invoice_number = 'OMC'.$temp_invoice_number.'A';
-		if($refund_count > 0) {
-			++$invoice_number;
-		}
+		// $refund_count = DB::table('dependent_payment_refund')
+		// ->join('dependent_plans', 'dependent_plans.dependent_plan_id', '=', 'dependent_payment_refund.dependent_plan_id')
+		// ->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'dependent_plans.customer_plan_id')
+		// ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
+		// ->where('dependent_plans.dependent_plan_id', $id)
+		// ->count();
+  //           // create refund payment
+		// $check = 10 + $refund_count;
+		// $temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
+		// $invoice_number = 'OMC'.$temp_invoice_number.'A';
+		// if($refund_count > 0) {
+		// 	++$invoice_number;
+		// }
+		$invoice_number = \InvoiceLibrary::getInvoiceNuber('dependent_payment_refund', 6);
 
 		$data = array(
 			'dependent_plan_id'   => $id,

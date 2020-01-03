@@ -11,13 +11,13 @@ class PaymentRecord extends Eloquent {
   {
     $check = PaymentRecord::where('invoice_id', '=', $id)->get();
     if(sizeof($check) == 0) {
-      $clinic = new Clinic();
-      $check_number = PaymentRecord::where('clinic_id', '=', $clinic_id)->count();
-      $getClinic = $clinic->getClinicName($clinic_id);
-      // return $getClinic;
-      $number = str_pad($check_number + 1, 5, "0", STR_PAD_LEFT);
-      $invoice_number = 'MN'.strtoupper(substr($getClinic[0], 0, 2)).$number;
-      // return $invoice_number;
+      // $clinic = new Clinic();
+      // $check_number = PaymentRecord::where('clinic_id', '=', $clinic_id)->count();
+      // $getClinic = $clinic->getClinicName($clinic_id);
+      // // return $getClinic;
+      // $number = str_pad($check_number + 1, 5, "0", STR_PAD_LEFT);
+      // $invoice_number = 'MN'.strtoupper(substr($getClinic[0], 0, 2)).$number;
+      $invoice_number = InvoiceLibrary::getInvoiceNuber('payment_record', 7);
       $data = array(
         'invoice_id'      => $id, 
         'amount_paid'     => null,
