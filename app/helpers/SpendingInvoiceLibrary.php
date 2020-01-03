@@ -174,8 +174,9 @@ class SpendingInvoiceLibrary
 		}
 
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
-		$statement = DB::table('company_credits_statement')->count();
-		$number = str_pad($statement + 1, 8, "0", STR_PAD_LEFT);
+		// $statement = DB::table('company_credits_statement')->count();
+		// $number = str_pad($statement + 1, 8, "0", STR_PAD_LEFT);
+		$number = InvoiceLibrary::getInvoiceNuber('company_credits_statement', 3);
 
 		$spending_invoice_day = $customer->spending_default_invoice_day;
 		$day = date('t', strtotime('+1 month', strtotime($start)));
@@ -207,7 +208,7 @@ class SpendingInvoiceLibrary
 		$statement_due = date('Y-m-d', strtotime('+15 days', strtotime($statement_date)));
 		$statement_data = array(
 			'statement_customer_id'     => $customer_id,
-			'statement_number'          => 'MC'.$number,
+			'statement_number'          => $number,
 			'statement_date'            => date('Y-m-d', strtotime($statement_date)),
 			'statement_due'             => date('Y-m-d', strtotime($statement_due)),
 			'statement_start_date'      => $start,
