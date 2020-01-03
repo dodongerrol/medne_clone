@@ -2409,22 +2409,23 @@ class PlanHelper {
 
 	public static function createPaymentsRefund($id, $date_refund)
 	{
-		$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $id)->first();
-		$refund_count = DB::table('payment_refund')
-		->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', '=', 'payment_refund.customer_active_plan_id')
-		->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'customer_active_plan.plan_id')
-		->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
-		->where('customer_buy_start.customer_buy_start_id', $active_plan->customer_start_buy_id)
-		->count();
+		// $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $id)->first();
+		// $refund_count = DB::table('payment_refund')
+		// ->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', '=', 'payment_refund.customer_active_plan_id')
+		// ->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'customer_active_plan.plan_id')
+		// ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
+		// ->where('customer_buy_start.customer_buy_start_id', $active_plan->customer_start_buy_id)
+		// ->count();
 
-		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
-      // create refund payment
-		$check = 10 + $refund_count;
-		$temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
-		$invoice_number = 'OMC'.$temp_invoice_number.'A';
-		if($refund_count > 0) {
-			++$invoice_number;
-		}
+		// $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
+  //     // create refund payment
+		// $check = 10 + $refund_count;
+		// $temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
+		// $invoice_number = 'OMC'.$temp_invoice_number.'A';
+		// if($refund_count > 0) {
+		// 	++$invoice_number;
+		// }
+		$invoice_number = InvoiceLibrary::getInvoiceNuber('payment_refund', 4);
 
 		$data = array(
 			'customer_active_plan_id'   => $id,
@@ -2440,19 +2441,20 @@ class PlanHelper {
 	public static function createPaymentsRefundDependent($id, $date_refund)
 	{
             // $active_plan = DB::table('dependent_plans')->where('customer_active_plan_id', $id)->first();
-		$refund_count = DB::table('dependent_payment_refund')
-		->join('dependent_plans', 'dependent_plans.dependent_plan_id', '=', 'dependent_payment_refund.dependent_plan_id')
-		->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'dependent_plans.customer_plan_id')
-		->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
-		->where('dependent_plans.dependent_plan_id', $id)
-		->count();
-            // create refund payment
-		$check = 10 + $refund_count;
-		$temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
-		$invoice_number = 'OMC'.$temp_invoice_number.'A';
-		if($refund_count > 0) {
-			++$invoice_number;
-		}
+		// $refund_count = DB::table('dependent_payment_refund')
+		// ->join('dependent_plans', 'dependent_plans.dependent_plan_id', '=', 'dependent_payment_refund.dependent_plan_id')
+		// ->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'dependent_plans.customer_plan_id')
+		// ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
+		// ->where('dependent_plans.dependent_plan_id', $id)
+		// ->count();
+  //           // create refund payment
+		// $check = 10 + $refund_count;
+		// $temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
+		// $invoice_number = 'OMC'.$temp_invoice_number.'A';
+		// if($refund_count > 0) {
+		// 	++$invoice_number;
+		// }
+		$invoice_number = \InvoiceLibrary::getInvoiceNuber('dependent_payment_refund', 6);
 
 		$data = array(
 			'dependent_plan_id'   => $id,
