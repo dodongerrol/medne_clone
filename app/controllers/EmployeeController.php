@@ -1859,18 +1859,83 @@ class EmployeeController extends \BaseController {
         }
 
         $entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $input['member_id'])->orderBy('created_at', 'desc')->first();
+        // / check for existing entitlement
+        $check_entitlement_medical = DB::table('wallet_entitlement_schedule')
+                                ->where('member_id', $input['member_id'])
+                                ->where('spending_type', 'medical')
+                                ->where('status', 1)
+                                ->orderBy('created_at', 'desc')
+                                ->first();
 
-        $data = array(
-            'status' => true,
-            'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
-            'member_id' => $input['member_id'],
-            'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
-            'medical_entitlement_date' => $entitlement->medical_usage_date,
-            'medical_proration'        => $entitlement->medical_proration,
-            'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
-            'wellness_entitlement_date' => $entitlement->wellness_usage_date,
-            'wellness_proration'        => $entitlement->wellness_proration,
-        );
+        $check_entitlement_wellness = DB::table('wallet_entitlement_schedule')
+                                ->where('member_id', $input['member_id'])
+                                ->where('spending_type', 'wellness')
+                                ->where('status', 1)
+                                ->orderBy('created_at', 'desc')
+                                ->first();
+        if($check_entitlement_medical || $check_entitlement_wellness) {
+            if($check_entitlement_medical && $check_entitlement_wellness) {
+                $data = array(
+                    'status' => true,
+                    'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
+                    'member_id' => $input['member_id'],
+                    'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                    'old_medical_entitlement' => DecimalHelper::formatDecimal($check_entitlement_medical->old_entitlement_credits),
+                    'medical_entitlement_date' => $entitlement->medical_usage_date,
+                    'medical_proration'        => $entitlement->medical_proration,
+                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                    'old_wellness_entitlement' => DecimalHelper::formatDecimal($check_entitlement_wellness->old_entitlement_credits),
+                    'wellness_entitlement_date' => $entitlement->wellness_usage_date,
+                    'wellness_proration'        => $entitlement->wellness_proration,
+                    'updated_medical_entitlement' => true,
+                    'updated_wellness_entitlement' => true
+                );
+            } else if($check_entitlement_medical) {
+                $data = array(
+                    'status' => true,
+                    'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
+                    'member_id' => $input['member_id'],
+                    'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                    'old_medical_entitlement' => DecimalHelper::formatDecimal($check_entitlement_medical->old_entitlement_credits),
+                    'medical_entitlement_date' => $entitlement->medical_usage_date,
+                    'medical_proration'        => $entitlement->medical_proration,
+                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                    'wellness_entitlement_date' => $entitlement->wellness_usage_date,
+                    'wellness_proration'        => $entitlement->wellness_proration,
+                    'updated_medical_entitlement' => true,
+                    'updated_wellness_entitlement' => false
+                );
+            } else {
+                $data = array(
+                    'status' => true,
+                    'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
+                    'member_id' => $input['member_id'],
+                    'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                    'medical_entitlement_date' => $entitlement->medical_usage_date,
+                    'medical_proration'        => $entitlement->medical_proration,
+                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                    'old_wellness_entitlement' => DecimalHelper::formatDecimal($check_entitlement_wellness->old_entitlement_credits),
+                    'wellness_entitlement_date' => $entitlement->wellness_usage_date,
+                    'wellness_proration'        => $entitlement->wellness_proration,
+                    'updated_medical_entitlement' => false,
+                    'updated_wellness_entitlement' => true
+                );
+            }
+        } else {
+            $data = array(
+                'status' => true,
+                'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
+                'member_id' => $input['member_id'],
+                'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                'medical_entitlement_date' => $entitlement->medical_usage_date,
+                'medical_proration'        => $entitlement->medical_proration,
+                'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                'wellness_entitlement_date' => $entitlement->wellness_usage_date,
+                'wellness_proration'        => $entitlement->wellness_proration,
+                'updated_medical_entitlement' => false,
+                'updated_wellness_entitlement' => false
+            );
+        }
 
         return $data;
     }
@@ -2188,8 +2253,17 @@ class EmployeeController extends \BaseController {
 
     public function activateNewEntitlement( )
     {
+
+        $input = Input::all();
+        if(!empty($input['date']) || $input['date'] != null) {
+            $date = date('Y-m-d', strtotime($input['date']));
+        } else {
+            $date = date('Y-m-d');
+        }
+
         $schedules = DB::table('wallet_entitlement_schedule')
                                 ->where('status', 0)
+                                ->where('effective_date', $date)
                                 ->groupBy('member_id')
                                 ->get();
 

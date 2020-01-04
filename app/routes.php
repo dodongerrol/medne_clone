@@ -418,13 +418,13 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get customer spending account status
 	Route::get('hr/get_spending_account_status', 'PlanRenewalController@getEntitlementEnrolmentStatus');
 	// get member entitlement
-	Route::get('hr/get_member_entitlement', 'EmployeeController@getMemberEntitlement');
-	// calculate pro ration
-	Route::post('hr/get_member_entitlement_calculation', 'EmployeeController@calculateProRation');
+
 	
 	
 });
-
+	Route::get('hr/get_member_entitlement', 'EmployeeController@getMemberEntitlement');
+	// calculate pro ration
+	Route::post('hr/get_member_entitlement_calculation', 'EmployeeController@calculateProRation');
 // get entitlement status
 	Route::get('hr/get_member_new_entitlement_status', 'EmployeeController@entitlementStatus');
 
