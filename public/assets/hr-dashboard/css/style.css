@@ -6341,13 +6341,62 @@ span.dropdwon-entitlement {
 
 .entitlement-input.dateWithIcon {
   padding-left: 30px !important;
-  width: 45%;
+  /*width: 45%;*/
+  width: 150px;
+}
+
+.entitlement-date-input-wrapper {
+  position: relative;
+}
+
+.allocation-wrapper {
+  border-bottom: 1px solid #cbcbcb;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.allocation-wrapper .allocation-container {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.allocation-wrapper .small {
+  color: #0392cf;
+  font-size: 65%;
+  line-height: 1.5;
+  margin-bottom: 0;
+  width: 145px;
+}
+
+.medical-entitlement-container >div,
+.wellness-entitlement-container >div {
+  padding: 0;
+}
+
+.medical-entitlement-container input,
+.wellness-entitlement-container input {
+  padding: 6px 8px;
 }
 
 .entitlement-input-label.withIcon i {
   position: absolute;
-  left: 60px;
+  /*left: 60px;*/
+  top: 9px;
+  left: 10px;
   color: #555555ad;
+}
+
+.entitlement-input-container .btn-calculate.med_btn_calculate.med-disabled {
+  background: #88ccf1;
+  border-color: #88ccf1;
+  pointer-events: none;
+}
+
+.entitlement-input-container .btn-calculate.wellness-btn-calculate.well-disabled {
+  background: #88ccf1;
+  border-color: #88ccf1;
+  pointer-events: none;
 }
 
 .entitlement-input-container .btn-calculate {
@@ -6363,6 +6412,7 @@ span.dropdwon-entitlement {
   cursor: pointer;
   margin: 35px 0 0 0;
 }
+
 
 .wellness-entitlement-container .see-more,
 .medical-entitlement-container .see-more {

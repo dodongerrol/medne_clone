@@ -464,5 +464,13 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/create_employee_company_block_lists", data );
   };
 
+  hrFactory.fetchMemberEntitlement = function( id ) {
+    return $http.get( serverUrl.url + "/hr/get_member_entitlement?member_id=" + id );
+  };
+
+  hrFactory.fetchMemberNewEntitlementStatus = function( id ) {
+    return $http.get( serverUrl.url + "/hr/get_member_new_entitlement_status?member_id=" + id );
+  };
+
   return hrFactory;
 });
