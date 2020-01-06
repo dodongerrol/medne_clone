@@ -2008,9 +2008,9 @@ class EmployeeController extends \BaseController {
                 $plan_duration = $plan_duration->days + 1;
             }
 
-            
+            $old_entitlement_credits = $wallet_entitlement->medical_entitlement;
             $new_entitlement_credits = ($wallet_entitlement->medical_entitlement * $plan_month_duration / $plan_duration) + ($input['new_entitlement_credits'] * $entitlement_duration / $plan_duration);
-            return ['new_entitlement_credits' => $new_entitlement_credits, 'medical_entitlement' => $wallet_entitlement->medical_entitlement, 'duration' => $plan_month_duration, 'medical_usage_date' => $wallet_entitlement->medical_usage_date, 'entitlement_usage_date' => $input['entitlement_usage_date'], 'plan_duration' => $plan_duration, 'entitlement_duration' => $entitlement_duration, 'plan_dates' => $plan_dates];
+            // return ['new_entitlement_credits' => $new_entitlement_credits, 'medical_entitlement' => $wallet_entitlement->medical_entitlement, 'duration' => $plan_month_duration, 'medical_usage_date' => $wallet_entitlement->medical_usage_date, 'entitlement_usage_date' => $input['entitlement_usage_date'], 'plan_duration' => $plan_duration, 'entitlement_duration' => $entitlement_duration, 'plan_dates' => $plan_dates];
         } else {
             $plan_duration = new DateTime($wallet_entitlement->wellness_usage_date);
             $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($plan_dates['valid_date']))));
@@ -2031,14 +2031,21 @@ class EmployeeController extends \BaseController {
                 $plan_duration = $plan_duration->days + 1;
             }
 
-            
+            $old_entitlement_credits = $wallet_entitlement->wellness_entitlement;
             $new_entitlement_credits = ($wallet_entitlement->wellness_entitlement * $plan_month_duration / $plan_duration) + ($input['new_entitlement_credits'] * $entitlement_duration / $plan_duration);
-            return ['new_entitlement_credits' => $new_entitlement_credits, 'wellness_entitlement' => $wallet_entitlement->wellness_entitlement, 'duration' => $plan_month_duration, 'medical_usage_date' => $wallet_entitlement->medical_usage_date, 'entitlement_usage_date' => $input['entitlement_usage_date'], 'plan_duration' => $plan_duration, 'entitlement_duration' => $entitlement_duration, 'plan_dates' => $plan_dates];
+            // return ['new_entitlement_credits' => $new_entitlement_credits, 'wellness_entitlement' => $wallet_entitlement->wellness_entitlement, 'duration' => $plan_month_duration, 'medical_usage_date' => $wallet_entitlement->medical_usage_date, 'entitlement_usage_date' => $input['entitlement_usage_date'], 'plan_duration' => $plan_duration, 'entitlement_duration' => $entitlement_duration, 'plan_dates' => $plan_dates];
         }
 
-       
-
-        return $plan_dates;
+       return[
+        'new_allocation'            => DecimalHelper::formatDecimal($new_entitlement_credits),
+        'old_entitlement_credits'   => DecimalHelper::formatDecimal($old_entitlement_credits),
+        'new_entitlement_credits'   => $input['new_entitlement_credits'],
+        'plan_month_duration'       => $plan_month_duration,
+        'plan_year_duration'        => $plan_duration,
+        'entitlement_duration'      => $entitlement_duration,
+        'currency_type'             => strtoupper($wallet_entitlement->currency_type),
+        'entitlement_spending_type' => $input['entitlement_spending_type']
+       ];
     }
 
     public function createNewEntitlement( )
