@@ -472,5 +472,9 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/get_member_new_entitlement_status?member_id=" + id );
   };
 
+  hrFactory.openEntitlementCalc = function( id, entitlement_credits, entitlement_date, proration, entitlement_type ) {
+    return $http.post( serverUrl.url + "/hr/get_member_entitlement_calculation?member_id=" + id + "&new_entitlement_credits=" + entitlement_credits + "&entitlement_usage_date=" + entitlement_date + "&proration_type=" + proration + "&entitlement_spending_type=" + entitlement_type );
+  };
+
   return hrFactory;
 });
