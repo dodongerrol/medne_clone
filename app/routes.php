@@ -418,15 +418,21 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get customer spending account status
 	Route::get('hr/get_spending_account_status', 'PlanRenewalController@getEntitlementEnrolmentStatus');
 	// get member entitlement
-	Route::get('hr/get_member_entitlement', 'EmployeeController@getMemberEntitlement');
-});
 
-// calculate pro ration
-Route::post('hr/get_member_entitlement_calculation', 'EmployeeController@calculateProRation');
-// create new entitlement
-Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
+	
+	
+});
+	Route::get('hr/get_member_entitlement', 'EmployeeController@getMemberEntitlement');
+	// calculate pro ration
+	Route::post('hr/get_member_entitlement_calculation', 'EmployeeController@calculateProRation');
 // get entitlement status
-Route::get('hr/get_member_new_entitlement_status', 'EmployeeController@entitlementStatus');
+	Route::get('hr/get_member_new_entitlement_status', 'EmployeeController@entitlementStatus');
+
+// create new entitlement
+	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
+// activate new entitlment schedule
+Route::get('cron/activate_new_entitlment', 'EmployeeController@activateNewEntitlement');
+
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
 Route::get('hr/download_employee_cap_per_visit', 'EmployeeController@downloadCaperPervisitCSV');
