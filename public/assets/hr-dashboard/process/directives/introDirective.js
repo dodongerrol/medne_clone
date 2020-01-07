@@ -58,7 +58,7 @@ app.directive('introDirective', [
           		setTimeout(function() {
           			$('.main-container').fadeIn();
           			$('.loader-container').hide();
-          		}, 200);
+          		}, 100);
           	});
 				}
 
@@ -66,7 +66,7 @@ app.directive('introDirective', [
 					setTimeout(function() {
 						$( ".main-loader" ).fadeOut();
 						introLoader_trap = false;
-					}, 1000);
+					}, 100);
 				}
 
 				scope.checkCompanyBalance = function() {

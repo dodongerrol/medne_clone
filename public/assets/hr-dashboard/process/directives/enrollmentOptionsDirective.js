@@ -47,7 +47,7 @@ app.directive('enrollmentOptionsDirective', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -60,7 +60,7 @@ app.directive('enrollmentOptionsDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},1000)
+					},100)
 				}
 
 				scope.showGlobalModal = function( message ){
@@ -73,7 +73,7 @@ app.directive('enrollmentOptionsDirective', [
 
         	setTimeout(function() {
         		scope.toggleLoading();
-        	}, 500);
+        	}, 100);
 
         // 	scope.toggleEnrollmentOptions( false );
       		// $state.go( 'create-team-benefits-tiers' );

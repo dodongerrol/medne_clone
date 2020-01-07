@@ -24,7 +24,7 @@ app.directive('prepareDirective', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -37,7 +37,7 @@ app.directive('prepareDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},1000)
+					},100)
 				}
 
 				scope.showGlobalModal = function( message ){
@@ -50,7 +50,7 @@ app.directive('prepareDirective', [
 
         	setTimeout(function() {
         		scope.toggleLoading();
-        	}, 500);
+        	}, 100);
 
         	$('body').scrollTop(0);
         }
