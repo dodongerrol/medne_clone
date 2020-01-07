@@ -351,7 +351,7 @@
 					</div>
 
 					<div ng-if="isSuccessfulEnroll" class="successfully-enrolled tier-feature-item item-fade">
-						<h1 class="weight-700 font-25 download-template-title" style="color: #2c3e50;">We've succesfully enrolled <span ng-bind="current_enrolled_count.total_employee_enrolled">5</span> employees and <span ng-bind="current_enrolled_count.total_dependents_enrolled">5</span> dependents to the selected tier plan</h1>
+						<h1 class="weight-700 font-25 download-template-title" style="color: #2c3e50;">We've succesfully enrolled <span ng-bind="current_enrolled_count.total_employee_enrolled">5</span> employees and <span ng-bind="current_enrolled_count.total_dependents_enrolled">5</span> dependents to the selected plan</h1>
 						<div class="white-space-20"></div>
 						<div class="white-space-20"></div>
 						<div class="successfully-enrolled-img">
@@ -477,6 +477,8 @@
   								<select ng-model="dependent_data.relationship">
   									<option value="spouse">Spouse</option>
   									<option value="child">Child</option>
+  									<option value="parent">Parent</option>
+  									<option value="sibling">Sibling</option>
   									<option value="family">Family</option>
   								</select>
   								<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
@@ -709,9 +711,10 @@
 	                        <label>Relationship</label>
 	                        <select class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.relationship_error == true}" ng-model="list.enrollee.relationship">
 				  									<option value="spouse">Spouse</option>
-				  									<option value="child">Child</option>
+														<option value="child">Child</option>
+														<option value="parent">Parent</option>
+  													<option value="sibling">Sibling</option>
 				  									<option value="family">Family</option>
-				  									<option value="parent">Parent</option>
 				  								</select>
 	                        <span class="error-message" ng-bind="list.error_logs.relationship_message"></span>
 	                    </div>

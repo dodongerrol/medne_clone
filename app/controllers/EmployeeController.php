@@ -1932,7 +1932,8 @@ class EmployeeController extends \BaseController {
                     'updated_medical_entitlement' => true,
                     'updated_wellness_entitlement' => true,
                     'medical_calculation'          => $medical_calculation,
-                    'wellness_calculation'          => $wellness_calculation
+                    'wellness_calculation'          => $wellness_calculation,
+                    'currency_type'                => strtoupper($entitlement->currency_type)
                 );
             } else if($check_entitlement_medical) {
                 // medical calculation
@@ -1969,7 +1970,8 @@ class EmployeeController extends \BaseController {
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => true,
                     'updated_wellness_entitlement' => false,
-                    'medical_calculation'          => $medical_calculation
+                    'medical_calculation'          => $medical_calculation,
+                    'currency_type'                => strtoupper($entitlement->currency_type)
                 );
             } else {
                 $plan_duration_wellness = new DateTime($check_entitlement_wellness->old_usage_date);
@@ -2004,7 +2006,8 @@ class EmployeeController extends \BaseController {
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => false,
                     'updated_wellness_entitlement' => true,
-                    'wellness_calculation'          => $wellness_calculation
+                    'wellness_calculation'          => $wellness_calculation,
+                    'currency_type'                => strtoupper($entitlement->currency_type)
                 );
             }
         } else {
@@ -2019,7 +2022,8 @@ class EmployeeController extends \BaseController {
                 'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                 'wellness_proration'        => $entitlement->wellness_proration,
                 'updated_medical_entitlement' => false,
-                'updated_wellness_entitlement' => false
+                'updated_wellness_entitlement' => false,
+                'currency_type'                => strtoupper($entitlement->currency_type)
             );
         }
 
