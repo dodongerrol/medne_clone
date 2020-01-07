@@ -126,6 +126,7 @@ class EclaimHelper
                 ->where('spending_type', $spending_type)
                 ->where('user_type', 'employee')
                 ->get();
+    // return $reset;
     
     $first_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->first();
     $allocation_date = date('Y-m-d', strtotime($first_wallet_history->created_at));
@@ -150,6 +151,7 @@ class EclaimHelper
         }
       }
 
+      // return $start_date.' '.$end_date;
       $wallet_history = DB::table($wallet_table_logs)
               ->join('e_wallet', 'e_wallet.wallet_id', '=', $wallet_table_logs.'.wallet_id')
               ->where($wallet_table_logs.'.wallet_id', $wallet_id)
@@ -157,7 +159,7 @@ class EclaimHelper
               ->where($wallet_table_logs.'.created_at',  '>=', $start_date)
               ->where($wallet_table_logs.'.created_at',  '<=', $end_date)
               ->get();
-
+      // return $wallet_history;
     } else {
       $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
     }
@@ -214,6 +216,8 @@ class EclaimHelper
     if($pro_allocation > 0) {
       $allocation = $pro_allocation;
     }
+
+    return $balance;
 
     return array('balance' => $balance, 'back_date' => $back_date);
 

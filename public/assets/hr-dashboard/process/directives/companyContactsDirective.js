@@ -57,7 +57,7 @@ app.directive("companyContactsDirective", [
         scope.goToEmpOverview = function(){
           setTimeout(function() {
             $state.go('employee-overview');
-          }, 1000);
+          }, 100);
         }
 
         scope.openEditInfoModal = function(data) {
@@ -494,7 +494,7 @@ app.directive("companyContactsDirective", [
             setTimeout(function() {
               $( ".circle-loader" ).fadeOut();
               loading_trap = false;
-            }, 500)
+            }, 100)
           }
         }
 

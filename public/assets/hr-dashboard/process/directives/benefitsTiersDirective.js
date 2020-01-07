@@ -1527,7 +1527,7 @@ app.directive('benefitsTiersDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},1000)
+					},100)
 				}
 
 				scope.onLoad = function( ){

@@ -61,7 +61,7 @@ app.directive('capPerVisitDirective', [
         scope.hideLoading = function(){
           setTimeout(function() {
             $(".circle-loader").fadeOut();
-          }, 1000);
+          }, 100);
         };
 
         // scope.showLoading = function( ){
@@ -237,7 +237,7 @@ app.directive('capPerVisitDirective', [
                 setTimeout(function(){
                   $("#file_upload").modal("hide");
                   scope.gpCapFile = {};
-                }, 2000);
+                }, 1000);
                 $("button").removeClass("save-continue-disabled");
                 scope.getGpCapPerVisit();
               }else{

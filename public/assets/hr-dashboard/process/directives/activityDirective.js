@@ -779,7 +779,7 @@ app.directive('activityPage', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},10)
 					}
 				} 
 
