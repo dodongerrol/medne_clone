@@ -327,6 +327,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.getEclaimPresignedUrl = function(data) {
     return $http.get(serverUrl.url + "/hr/get_e_claim_doc?id=" + data);
   };
+
+  hrFactory.getSpendingAccountStatus = function() {
+    return $http.get( serverUrl.url + "/hr/get_spending_account_status");
+  };
   
   return hrFactory;
 });
@@ -471,6 +475,8 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   hrFactory.fetchMemberNewEntitlementStatus = function( id ) {
     return $http.get( serverUrl.url + "/hr/get_member_new_entitlement_status?member_id=" + id );
   };
+
+
 
   return hrFactory;
 });
