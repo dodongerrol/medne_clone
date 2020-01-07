@@ -169,7 +169,7 @@ app.directive('teamBenefitsTierDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},2000)
+					},100)
 				}
 
         scope.onLoad = function( ){
