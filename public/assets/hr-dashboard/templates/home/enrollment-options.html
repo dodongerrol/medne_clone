@@ -29,7 +29,7 @@
 				</div> -->
 				<div class="prompt-page-container">
 					<h1 class="text-center weight-700" style="color: #2c3e50;">Let us know more about the enrollment.</h1>
-					<div class="item-select">
+					<div ng-show="spending_account_status.medical" class="item-select">
 						<label>Is there any <span>Medical Entitlement Balance?</span> <img class="medical-info-click" src="../images/info-icon.png">
 
 							<div class="medical-info-box">
@@ -59,7 +59,7 @@
 							<i class="fa fa-angle-down"></i>
 						</div>
 					</div>
-					<div class="item-select">
+					<div ng-show="spending_account_status.wellness" class="item-select">
 						<label>Is there any <span>Wellness Entitlement Balance?</span> <img class="wellness-info-click" src="../images/info-icon.png">
 
 							<div class="wellness-info-box">
@@ -97,7 +97,11 @@
 	<div class="prev-next-buttons-container">
 		<div class="container">
 			<button ng-click="backButton()" class="pull-left btn btn-info back-btn" style="background-color: transparent;color: #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button>
-			<button ng-click="enrollmentNextBtn()"  class="pull-right btn btn-info next-wizard-button" ng-disabled="selected_option.medical_opt == null || selected_option.wellness_opt == null">NEXT</button>
+			<button ng-if="spending_account_status.medical && spending_account_status.wellness == false" ng-click="enrollmentNextBtn()"  class="pull-right btn btn-info next-wizard-button" ng-disabled="selected_option.medical_opt == null">NEXT</button>
+
+			<button ng-if="spending_account_status.wellness && spending_account_status.medical == false" ng-click="enrollmentNextBtn()"  class="pull-right btn btn-info next-wizard-button" ng-disabled="selected_option.wellness_opt == null">NEXT</button>
+			
+			<button ng-if="spending_account_status.medical && spending_account_status.wellness" ng-click="enrollmentNextBtn()"  class="pull-right btn btn-info next-wizard-button" ng-disabled="selected_option.medical_opt == null || selected_option.wellness_opt == null">NEXT</button>
 		</div>
 	</div>
 </div>

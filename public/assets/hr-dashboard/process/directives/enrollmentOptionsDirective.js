@@ -13,6 +13,8 @@ app.directive('enrollmentOptionsDirective', [
 				scope.isOptionSelected = false;
 				scope.isRequiredTiering = null;
 
+				scope.spending_account_status = {};
+
 				scope.selected_option = {
 					medical_opt : null,
 					wellness_opt : null,
@@ -44,6 +46,13 @@ app.directive('enrollmentOptionsDirective', [
 				}
 
 				scope.enrollmentNextBtn = function(){
+					if (scope.selected_option.medical_opt == null) {
+						scope.selected_option.medical_opt = false
+					}
+					if (scope.selected_option.wellness_opt == null) {
+						scope.selected_option.wellness_opt = false;
+					}
+
 					localStorage.setItem('hasMedicalEntitlementBalance', scope.selected_option.medical_opt);
 					localStorage.setItem('hasWellnessEntitlementBalance', scope.selected_option.wellness_opt);
 					// if( scope.isRequiredTiering == true ){
@@ -51,6 +60,14 @@ app.directive('enrollmentOptionsDirective', [
 					// }else{
 					// 	$state.go( 'enrollment-method' );
 					// }
+				}
+
+				scope.getSpendingAccountStatus = function () {
+					hrSettings.getSpendingAccountStatus()
+						.then(function (response) {
+							console.log(response);
+							scope.spending_account_status = response.data;
+						});
 				}
 
 
@@ -125,7 +142,8 @@ app.directive('enrollmentOptionsDirective', [
 				});
 
         scope.onLoad = function( ){
-        	scope.toggleLoading();
+					scope.toggleLoading();
+					scope.getSpendingAccountStatus();
 
         	setTimeout(function() {
         		scope.toggleLoading();
