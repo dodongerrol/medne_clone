@@ -327,6 +327,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.getEclaimPresignedUrl = function(data) {
     return $http.get(serverUrl.url + "/hr/get_e_claim_doc?id=" + data);
   };
+
+  hrFactory.getSpendingAccountStatus = function() {
+    return $http.get( serverUrl.url + "/hr/get_spending_account_status");
+  };
   
   return hrFactory;
 });
