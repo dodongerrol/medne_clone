@@ -1874,7 +1874,49 @@ class EmployeeController extends \BaseController {
                                 ->orderBy('created_at', 'desc')
                                 ->first();
         if($check_entitlement_medical || $check_entitlement_wellness) {
+            $medical_calculation = array();
+            $wellness_calculation = array();
             if($check_entitlement_medical && $check_entitlement_wellness) {
+                // medical calculation
+                $plan_duration = new DateTime($check_entitlement_medical->old_usage_date);
+                $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
+                
+                $medical_duration_start = new DateTime($check_entitlement_medical->old_usage_date);
+                $medical_months = $medical_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->new_usage_date))));
+
+                $entitlement_duration = new DateTime($check_entitlement_medical->new_usage_date);
+                $entitlement_duration = $entitlement_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
+
+
+                if($check_entitlement_medical->proration == "months") {
+                    $medical_calculation['plan_month_duration'] = $medical_months->m + 1;
+                    $medical_calculation['entitlement_duration'] = $entitlement_duration->m;
+                    $medical_calculation['plan_duration'] = $plan_duration->m + 1;
+                } else {
+                    $medical_calculation['plan_month_duration'] = $medical_months->days + 1;
+                    $medical_calculation['entitlement_duration'] = $entitlement_duration->days + 1;
+                    $medical_calculation['plan_duration'] = $plan_duration->days + 1;
+                }
+
+                $plan_duration_wellness = new DateTime($check_entitlement_wellness->old_usage_date);
+                $plan_duration_wellness = $plan_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
+                
+                $wellness_duration_start = new DateTime($check_entitlement_wellness->old_usage_date);
+                $wellness_months = $wellness_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->new_usage_date))));
+
+                $entitlement_duration_wellness = new DateTime($check_entitlement_wellness->new_usage_date);
+                $entitlement_duration_wellness = $entitlement_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
+
+                if($check_entitlement_wellness->proration == "months") {
+                    $wellness_calculation['plan_month_duration'] = $wellness_months->m + 1;
+                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->m;
+                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->m + 1;
+                } else {
+                    $wellness_calculation['plan_month_duration'] = $wellness_months->days + 1;
+                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->days + 1;
+                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->days + 1;
+                }
+
                 $data = array(
                     'status' => true,
                     'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
@@ -1888,9 +1930,32 @@ class EmployeeController extends \BaseController {
                     'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => true,
-                    'updated_wellness_entitlement' => true
+                    'updated_wellness_entitlement' => true,
+                    'medical_calculation'          => $medical_calculation,
+                    'wellness_calculation'          => $wellness_calculation
                 );
             } else if($check_entitlement_medical) {
+                // medical calculation
+                $plan_duration = new DateTime($check_entitlement_medical->old_usage_date);
+                $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
+                
+                $medical_duration_start = new DateTime($check_entitlement_medical->old_usage_date);
+                $medical_months = $medical_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->new_usage_date))));
+
+                $entitlement_duration = new DateTime($check_entitlement_medical->new_usage_date);
+                $entitlement_duration = $entitlement_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
+
+
+                if($check_entitlement_medical->proration == "months") {
+                    $medical_calculation['plan_month_duration'] = $medical_months->m + 1;
+                    $medical_calculation['entitlement_duration'] = $entitlement_duration->m;
+                    $medical_calculation['plan_duration'] = $plan_duration->m + 1;
+                } else {
+                    $medical_calculation['plan_month_duration'] = $medical_months->days + 1;
+                    $medical_calculation['entitlement_duration'] = $entitlement_duration->days + 1;
+                    $medical_calculation['plan_duration'] = $plan_duration->days + 1;
+                }
+
                 $data = array(
                     'status' => true,
                     'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
@@ -1903,9 +1968,29 @@ class EmployeeController extends \BaseController {
                     'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => true,
-                    'updated_wellness_entitlement' => false
+                    'updated_wellness_entitlement' => false,
+                    'medical_calculation'          => $medical_calculation
                 );
             } else {
+                $plan_duration_wellness = new DateTime($check_entitlement_wellness->old_usage_date);
+                $plan_duration_wellness = $plan_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
+                
+                $wellness_duration_start = new DateTime($check_entitlement_wellness->old_usage_date);
+                $wellness_months = $wellness_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->new_usage_date))));
+
+                $entitlement_duration_wellness = new DateTime($check_entitlement_wellness->new_usage_date);
+                $entitlement_duration_wellness = $entitlement_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
+
+                if($check_entitlement_wellness->proration == "months") {
+                    $wellness_calculation['plan_month_duration'] = $wellness_months->m + 1;
+                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->m;
+                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->m + 1;
+                } else {
+                    $wellness_calculation['plan_month_duration'] = $wellness_months->days + 1;
+                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->days + 1;
+                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->days + 1;
+                }
+
                 $data = array(
                     'status' => true,
                     'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
@@ -1918,7 +2003,8 @@ class EmployeeController extends \BaseController {
                     'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => false,
-                    'updated_wellness_entitlement' => true
+                    'updated_wellness_entitlement' => true,
+                    'wellness_calculation'          => $wellness_calculation
                 );
             }
         } else {
@@ -2106,6 +2192,7 @@ class EmployeeController extends \BaseController {
 
         // get user plan dates
         $plan_dates = PlanHelper::checkEmployeePlanStatus($input['member_id']);
+        // $plan_dates = DB::table('employee_wallet_entitlement')->where('member_id', $input['member_id'])->orderBy('created_at', 'desc')->first();
 
         if($input['entitlement_spending_type'] == 'medical') {
             $plan_duration = new DateTime($wallet_entitlement->medical_usage_date);
