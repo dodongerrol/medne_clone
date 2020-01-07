@@ -135,8 +135,10 @@ app.directive('benefitsTiersDirective', [
 					if (scope.isEnrollmentOptions == true) {
 						scope.isEnrollmentOptions = false;
 						if (scope.isExcelSelected == true) {
+							//excel input
 							scope.isExcel = true;
 						} else {
+							//web input
 							scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance') == 'true' ? true : false;
 							scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
 							console.log(scope.employee_data);
