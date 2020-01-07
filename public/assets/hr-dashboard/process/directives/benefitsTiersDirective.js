@@ -844,7 +844,7 @@ app.directive('benefitsTiersDirective', [
 					var medical_entitlement = localStorage.getItem('hasMedicalEntitlementBalance');
 					var wellness_entitlement = localStorage.getItem('hasWellnessEntitlementBalance');
 
-					
+
 
 					if (scope.downloadWithDependents != null) {
 						if (scope.downloadWithDependents == false) {
@@ -858,7 +858,7 @@ app.directive('benefitsTiersDirective', [
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+No+Wellness+Spending+Account.xlsx';
 								console.log('scenario 3');
 							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.loacation.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
 								console.log('scenario 4');
 							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'true') {
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
@@ -1623,7 +1623,7 @@ app.directive('benefitsTiersDirective', [
 					scope.getMethod();
 					scope.getBenefitsTier();
 					scope.getSpendingAccountStatus();
-					
+
 
 					$timeout(function () {
 						loading_trap = false;
@@ -1631,17 +1631,21 @@ app.directive('benefitsTiersDirective', [
 
 						scope.toggleTierLoader();
 
-						if (scope.isTiering == true || scope.isTiering == 'true') {
-							if (scope.tier_arr.length > 0) {
-								scope.isTierSummary = true;
-							} else {
-								scope.isTierBtn = true;
-							}
-						} else {
-							scope.isTierSummary = false;
-							scope.isTierBtn = false;
-							scope.isEnrollmentOptions = true;
-						}
+						scope.isTierSummary = false;
+						scope.isTierBtn = false;
+						scope.isEnrollmentOptions = true;
+						
+						// if (scope.isTiering == true || scope.isTiering == 'true') {
+						// 	if (scope.tier_arr.length > 0) {
+						// 		scope.isTierSummary = true;
+						// 	} else {
+						// 		scope.isTierBtn = true;
+						// 	}
+						// } else {
+						// 	scope.isTierSummary = false;
+						// 	scope.isTierBtn = false;
+						// 	scope.isEnrollmentOptions = true;
+						// }
 
 						// scope.getEnrollTempEmployees();
 						// scope.isReviewEnroll = true;
