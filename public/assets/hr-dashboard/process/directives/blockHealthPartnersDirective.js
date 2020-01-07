@@ -429,7 +429,7 @@ app.directive('blockHealthPartnersDirective', [
         scope.hideLoading = function( ){
           setTimeout(function() {
             $( ".circle-loader" ).fadeOut();
-          },1000)
+          },100)
         }
        
         scope.onLoad = function( ){

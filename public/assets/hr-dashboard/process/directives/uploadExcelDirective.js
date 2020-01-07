@@ -94,7 +94,7 @@ app.directive('uploadExcelDirective', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -107,7 +107,7 @@ app.directive('uploadExcelDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},1000)
+					},100)
 				}
 
 				scope.showGlobalModal = function( message ){
@@ -123,7 +123,7 @@ app.directive('uploadExcelDirective', [
 
         	setTimeout(function() {
         		scope.toggleLoading();
-        	}, 500);
+        	}, 100);
 
         	console.log( $("#upload-here").val() );
         }
