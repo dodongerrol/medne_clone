@@ -1501,7 +1501,7 @@ class PlanHelper {
 		);
 
 		$user_plan_history->createUserPlanHistory($user_plan_history_data);
-
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
     // check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 
@@ -1527,7 +1527,6 @@ class PlanHelper {
 
 	                        // give credits
 					$wallet_class = new Wallet();
-					$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
 					$update_wallet = $wallet_class->addCredits($user_id, $credits);
 
 					$employee_logs = new WalletHistory();
@@ -1587,7 +1586,6 @@ class PlanHelper {
 					}
 	                        // give credits
 					$wallet_class = new Wallet();
-					$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
 					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
 
 					$wallet_history = array(
