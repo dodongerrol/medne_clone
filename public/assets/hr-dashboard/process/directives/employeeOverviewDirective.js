@@ -83,6 +83,11 @@ app.directive("employeeOverviewDirective", [
           scope.emp_arr = [];
         });
 
+        scope.emp_entitlement = {};
+        scope.entitlement_status = {};
+        scope.medicalCalculatedInfo = false;
+        scope.wellnessCalculatedInfo = false;
+
         scope.pagesToDisplay = 5;
         scope.startIndex = function () {
           if (scope.page_active > ((scope.pagesToDisplay / 2) + 1)) {
@@ -1054,6 +1059,11 @@ app.directive("employeeOverviewDirective", [
         };
 
         scope.toggleEmpTab = function (opt) {
+          scope.emp_entitlement.medical_new_entitlement = '';
+          scope.emp_entitlement.wellness_new_entitlement = '';
+          scope.med_effective_date  = '';
+          scope.well_effective_date = '';
+          
 
           setTimeout(() => {
             var dt = new Date();
@@ -1165,6 +1175,9 @@ app.directive("employeeOverviewDirective", [
             scope.fetchRefundStatus(emp.user_id);
             scope.getEmpDependents(emp.user_id);
             scope.getEmpPlans(emp.user_id);
+            scope.getMemberEntitlement(emp.user_id);
+            scope.getMemberNewEntitlementStatus(emp.user_id);
+            scope.entitlementCalc(emp.user_id);
             $('body').css('overflow', 'auto');
             $(".hrdb-body-container").hide();
             $(".employee-information-wrapper").fadeIn();
@@ -1187,6 +1200,75 @@ app.directive("employeeOverviewDirective", [
               scope.selectedEmployee.plan_list = response.data;
             });
         }
+
+        scope.getMemberEntitlement = function ( emp ) {
+
+          scope.med_effective_date = moment(scope.med_effective_date).format('DD/MM/YYYY');
+          scope.well_effective_date = moment(scope.well_effective_date).format('DD/MM/YYYY');
+          console.log(scope.med_effective_date);
+ 
+          scope.emp_member_id = emp;
+          hrActivity.fetchMemberEntitlement( scope.emp_member_id ) 
+              .then(function(response) {
+                console.log(response);
+                scope.emp_entitlement = response.data;
+                scope.emp_entitlement.medical_entitlement_date = moment( scope.emp_entitlement.medical_entitlement_date, 'YYYY-MM-DD' ).format('DD/MM/YYYY');
+                scope.emp_entitlement.wellness_entitlement_date = moment( scope.emp_entitlement.wellness_entitlement_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+                // console.log(scope.emp_entitlement.medical_entitlement_date);
+                // console.log(scope.emp_entitlement.wellness_entitlement_date);
+                // console.log(scope.emp_entitlement);
+
+                // scope.proration = scope.emp_entitlement.wellness_proration;
+                
+          });
+        }
+        
+        scope.getMemberNewEntitlementStatus = function ( emp ) {
+          hrActivity.fetchMemberNewEntitlementStatus( scope.emp_member_id ) 
+              .then(function(response) {
+                // console.log(response);
+                scope.entitlement_status = response.data;
+                scope.entitlement_status.medical_entitlement.effective_date = moment( scope.entitlement_status.medical_entitlement.effective_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+                scope.entitlement_status.wellness_entitlement.effective_date = moment( scope.entitlement_status.wellness_entitlement.effective_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+                console.log(scope.entitlement_status);
+
+          });
+        }
+
+        scope.entitlementCalc = function ( type ) {
+          
+          var entitlement_credits = scope.emp_entitlement.medical_new_entitlement;
+          var entitlement_spending_type = type;
+          var med_proration = scope.emp_entitlement.medical_proration;
+          var med_effective_date = moment( $('.medical-entitlement-date').val() ).format('YYYY-MM-DD');
+          var well_proration = scope.emp_entitlement.wellness_proration;
+          var well_effective_date = moment( $('.wellness-entitlement-date').val() ).format('YYYY-MM-DD');
+          console.log(scope.med_effective_date);
+
+          if ( type == 'medical' ) {
+            scope.showLoading();
+            hrActivity.openEntitlementCalc( scope.emp_member_id, entitlement_credits, med_effective_date, med_proration, entitlement_spending_type) 
+                .then(function(response) {
+                  console.log(response);
+                  console.log(scope.med_effective_date);
+                  scope.hideLoading();
+                  scope.calc_entitlement = response.data;
+                  scope.medicalCalculatedInfo = true;
+            });
+          } 
+          if (type == 'wellness') {
+            scope.showLoading();
+            hrActivity.openEntitlementCalc( scope.emp_member_id, entitlement_credits, well_effective_date, well_proration, entitlement_spending_type) 
+                .then(function(response) {
+                  console.log(response);
+                  scope.hideLoading();
+                  scope.calc_entitlement = response.data;
+                  scope.wellnessCalculatedInfo = true;
+            });
+          }
+  
+         
+        }  
 
         scope.prevSelectedEmployee = function () {
           scope.empTabSelected = 0;
@@ -1743,7 +1825,7 @@ app.directive("employeeOverviewDirective", [
               scope.employees = response.data;
               scope.employees.total_allocation = response.data.total_allocation;
               scope.employees.allocated = response.data.allocated;
-
+          
               angular.forEach(scope.employees.data, function (value, key) {
                 value.fname = scope.employees.data[key].name.substring(0, value.name.lastIndexOf(" "));
                 value.lname = scope.employees.data[key].name.substring(value.name.lastIndexOf(" ") + 1);
