@@ -285,8 +285,8 @@ class DependentController extends \BaseController {
 					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
 				}
 				
-				$user['medical_credits'] = !$user['medical_entitlementlimit'] ? 0 : $user['medical_entitlementlimit'];
-				$user['wellness_credits'] = !$user['wellness_entitlementlimit'] ? 0 : $user['wellness_entitlementlimit'];
+				$user['medical_credits'] = !isset($user['medical_entitlementlimit']) ? 0 : $user['medical_entitlementlimit'];
+				$user['wellness_credits'] = !isset($user['wellness_entitlementlimit']) ? 0 : $user['wellness_entitlementlimit'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
@@ -301,10 +301,10 @@ class DependentController extends \BaseController {
 					'mobile'				=> trim($mobile),
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
-					'credits'				=> !$user['medical_entitlementlimit'] ? 0 : $user['medical_entitlementlimit'],
-					'medical_balance_entitlement'				=> !$user['medical_entitlement_balance'] ? 0 : $user['medical_entitlement_balance'],
-					'wellness_credits'		=> !$user['wellness_entitlementlimit'] ? 0 : $user['wellness_entitlementlimit'],
-					'wellness_balance_entitlement'				=> !$user['wellness_entitlement_balance'] ? 0 : $user['wellness_entitlement_balance'],
+					'credits'				=> !isset($user['medical_entitlementlimit']) ? 0 : $user['medical_entitlementlimit'],
+					'medical_balance_entitlement'				=> !isset($user['medical_entitlement_balance']) ? 0 : $user['medical_entitlement_balance'],
+					'wellness_credits'		=> !isset($user['wellness_entitlementlimit']) ? 0 : $user['wellness_entitlementlimit'],
+					'wellness_balance_entitlement'				=> !isset($user['wellness_entitlement_balance']) ? 0 : $user['wellness_entitlement_balance'],
 					'postal_code'			=> trim($user['postal_code']),
 					'start_date'			=> $user['plan_start'],
 					'error_logs'			=> serialize($error_member_logs)
