@@ -409,7 +409,7 @@ app.directive('statementPage', [
 					setTimeout(function() {
 						$( ".main-loader" ).fadeOut();
 						introLoader_trap = false;
-					}, 1000);
+					}, 100);
 				}
 
 				scope.toggleLoading = function( ){
@@ -420,7 +420,7 @@ app.directive('statementPage', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -607,7 +607,7 @@ app.directive('statementPage', [
 						var range_data = date_slider.getValue();
 						var activity_search = scope.getFirstEndDate( range_data , range_data );
 						scope.searchActivity( activity_search );
-					}, 500);
+					}, 100);
 				}
 
 				scope.checkCompanyBalance = function(){

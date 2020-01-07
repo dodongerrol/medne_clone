@@ -572,8 +572,10 @@ app.directive("claimDirective", [
             });
           };
           scope.getClinicSocketConnection = function( ) {
+            console.log( base_url + 'clinic_socket_connection' );
             $http.get(base_url + 'clinic_socket_connection')
             .then(function(response){
+              console.log( response );
               if(response.data.status) {
                 scope.getPusherConfig(response.data.socket_connection_pay_direct);
                 scope.getCheckInConfig(response.data.socket_connection_check_in);
