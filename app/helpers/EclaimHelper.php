@@ -217,8 +217,6 @@ class EclaimHelper
       $allocation = $pro_allocation;
     }
 
-    return $balance;
-
     return array('balance' => $balance, 'back_date' => $back_date);
 
     // return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
