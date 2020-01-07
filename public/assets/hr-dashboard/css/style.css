@@ -6387,17 +6387,18 @@ span.dropdwon-entitlement {
   color: #555555ad;
 }
 
-.entitlement-input-container .btn-calculate.med_btn_calculate.med-disabled {
+.entitlement-input-container .btn-calculate.med_btn_calculate:disabled,
+.entitlement-input-container .btn-calculate.wellness_btn_calculate:disabled {
   background: #88ccf1;
   border-color: #88ccf1;
   pointer-events: none;
 }
 
-.entitlement-input-container .btn-calculate.wellness-btn-calculate.well-disabled {
+/*.entitlement-input-container .btn-calculate.wellness-btn-calculate.well-disabled {
   background: #88ccf1;
   border-color: #88ccf1;
   pointer-events: none;
-}
+}*/
 
 .entitlement-input-container .btn-calculate {
   background: #0392cf;
