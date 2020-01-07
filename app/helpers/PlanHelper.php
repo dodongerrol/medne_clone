@@ -1072,6 +1072,7 @@ class PlanHelper {
 	public static function enrollmentEmployeeValidation($user, $except_enrolle_email_validation)
 	{
 		$customer_id = self::getCusomerIdToken();
+		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 		$mobile_error = false;
 		$mobile_message = '';
 		$mobile_area_error = false;
@@ -1218,30 +1219,39 @@ class PlanHelper {
 
 
 		if(!isset($user['medical_credits']) || is_null($user['medical_credits'])) {
-			$credit_medical_amount = 0;
 			$credits_medical_error = false;
 			$credits_medical_message = '';
 		} else {
 			if(is_numeric($user['medical_credits'])) {
-				$credits_medical_error = false;
-				$credits_medical_message = '';
+				// check
+				if($user['medical_credits'] > $customer_wallet->balance) {
+					$credits_medical_error = true;
+					$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
+				} else {
+					$credits_medical_error = false;
+					$credits_medical_message = '';
+				}
 			} else {
 				$credits_medical_error = true;
-				$credits_medical_message = 'Credits is not a number.';                
+				$credits_medical_message = '*Credits is not a number.';                
 			}
 		}
 
 		if(!isset($user['wellness_credits']) || is_null($user['wellness_credits'])) {
-			$credit_wellness_amount = 0;
 			$credits_wellness_error = false;
 			$credits_wellnes_message = '';
 		} else {
 			if(is_numeric($user['wellness_credits'])) {
-				$credits_wellness_error = false;
-				$credits_wellnes_message = '';
+				if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
+					$credits_wellness_error = true;
+					$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
+				} else {
+					$credits_wellness_error = false;
+					$credits_wellnes_message = '';
+				}
 			} else {
 				$credits_wellness_error = true;
-				$credits_wellnes_message = 'Credits is not a number.';
+				$credits_wellnes_message = '*Credits is not a number.';
 			}
 		}
 
@@ -1501,7 +1511,7 @@ class PlanHelper {
 		);
 
 		$user_plan_history->createUserPlanHistory($user_plan_history_data);
-
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
     // check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 
@@ -1527,7 +1537,6 @@ class PlanHelper {
 
 	                        // give credits
 					$wallet_class = new Wallet();
-					$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
 					$update_wallet = $wallet_class->addCredits($user_id, $credits);
 
 					$employee_logs = new WalletHistory();
@@ -1587,7 +1596,6 @@ class PlanHelper {
 					}
 	                        // give credits
 					$wallet_class = new Wallet();
-					$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
 					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
 
 					$wallet_history = array(
