@@ -671,8 +671,21 @@ app.directive("employeeOverviewDirective", [
           // localStorage.setItem('fromEmpOverview', false);
           // $state.go('create-team-benefits-tiers');
           localStorage.setItem('fromEmpOverview', true);
-          $state.go('enrollment-options');
-          $('body').css('overflow', 'auto');
+          hrSettings.getSpendingAccountStatus()
+						.then(function (response) {
+							console.log(response);
+              var spending_account_status = response.data;
+
+              if(spending_account_status.medical == true || spending_account_status.wellness == true) {
+                $state.go('enrollment-options');
+                $('body').css('overflow', 'auto');
+              } else {
+                $state.go( 'create-team-benefits-tiers' );
+                $('body').css('overflow', 'auto');
+              }
+              // $state.go('enrollment-options');
+              // $('body').css('overflow', 'auto');
+						});
         }
 
         scope.removeBtn = function () {

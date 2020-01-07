@@ -40,7 +40,7 @@
 		<div class="container">
 			<div class="col-lg-12">
 				<div class="benefits-tiers-container center-block"> 
-					<div ng-if="isTierLoaderShow" class="tier-loader item-fade">
+					<div ng-if="isTierLoaderShow || false" class="tier-loader item-fade">
 						<!-- <h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1> -->
 						<div class="white-space-20"></div>
 						<div class="preloader-wrapper big active">
@@ -56,14 +56,14 @@
 					  </div>
 		    	</div>
 
-					<div ng-if="isTierBtn" class="benefits-tier-btn-content tier-feature-item item-fade">
+					<div ng-if="isTierBtn || false" class="benefits-tier-btn-content tier-feature-item item-fade">
 						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1>
 						<div class="white-space-20"></div>
 						<h4>Add a tier </h4>
 						<button ng-click="addTierBtn()"><img src="../assets/hr-dashboard/img/plus-gray.png"></button>
 					</div>
 
-					<div ng-if="isTierInput" class="tier-item-container tier-feature-item item-fade">
+					<div ng-if="isTierInput || false" class="tier-item-container tier-feature-item item-fade">
 						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1>
 						<div class="white-space-20"></div>
 						<div class="tier-item-form" >
@@ -132,7 +132,7 @@
 						</div>
 					</div>
 
-					<div ng-if="isTierSummary" class="benefits-tier-summary-container-wrapper tier-feature-item item-fade">
+					<div ng-if="isTierSummary || false" class="benefits-tier-summary-container-wrapper tier-feature-item item-fade">
 						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1>
 						<div class="white-space-20"></div>
 
@@ -423,11 +423,11 @@
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
 							</div> -->
-							<div class="employee-input-wrapper">
+							<div ng-if="spending_account_status.medical" class="employee-input-wrapper">
 								<label for="fname">Medical Entitlement</label>
   							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
 							</div>
-							<div class="employee-input-wrapper">
+							<div ng-if="spending_account_status.wellness" class="employee-input-wrapper">
 								<label for="fname">Wellness Entitlement</label>
 								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
 							</div>
@@ -672,8 +672,8 @@
                     </div>
                     <div class="form-group">
                         <label>Wellness Credits</label>
-                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.wellness_credits_error == true}" ng-model="selected_edit_details_data.employee.wellness_credits">
-                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.wellness_credits_message"></span>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.credits_wellness_error == true}" ng-model="selected_edit_details_data.employee.wellness_credits">
+                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.credits_wellnes_message"></span>
                     </div>
                     <div class="form-group">
                         <label>Start Date</label>
