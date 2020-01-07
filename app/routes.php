@@ -38,8 +38,6 @@ Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 // Route::get('test_employee_plan_coverage', 'testcontroller@testGetuserPlanCoverage');
 
 // cron jobs
-// activate new entitlment schedule
-Route::get('cron/activate_new_entitlment', 'EmployeeController@activateNewEntitlement');
 // care plan expiration
 Route::get('cron/get_customer_expire_plan', 'BenefitsDashboardController@getCompanyExpirePlan');
 // cron for activate user

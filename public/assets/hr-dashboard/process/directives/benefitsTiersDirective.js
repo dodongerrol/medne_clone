@@ -120,22 +120,25 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.nextBtn = function () {
-					if (scope.isTierBtn == true) {
-						scope.isTierBtn = false;
-						scope.isTierInput = true;
-					} else if (scope.isTierInput == true) {
+					// if (scope.isTierBtn == true) {
+					// 	scope.isTierBtn = false;
+					// 	scope.isTierInput = true;
+					// } else if (scope.isTierInput == true) {
 
-					} else if (scope.isTierSummary == true) {
-						scope.isTierSummary = false;
-						scope.isNextBtnDisabled = true;
-						scope.isEnrollmentOptions = true;
-						scope.isExcelSelected = false;
-						scope.isWebInputSelected = false;
-					} else if (scope.isEnrollmentOptions == true) {
+					// } else if (scope.isTierSummary == true) {
+					// 	scope.isTierSummary = false;
+					// 	scope.isNextBtnDisabled = true;
+					// 	scope.isEnrollmentOptions = true;
+					// 	scope.isExcelSelected = false;
+					// 	scope.isWebInputSelected = false;
+					// } 
+					if (scope.isEnrollmentOptions == true) {
 						scope.isEnrollmentOptions = false;
 						if (scope.isExcelSelected == true) {
+							//excel input
 							scope.isExcel = true;
 						} else {
+							//web input
 							scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance') == 'true' ? true : false;
 							scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
 							console.log(scope.employee_data);
@@ -193,23 +196,25 @@ app.directive('benefitsTiersDirective', [
 
 				scope.backBtn = function () {
 					scope.isEditActive = false;
-					if (scope.isTierBtn == true) {
-						$state.go('enrollment-options');
-						// $state.go('benefits-dashboard');
-					} else if (scope.isTierInput == true) {
-						scope.isTierInput = false;
-						if (scope.tier_arr.length > 0) {
-							scope.isTierSummary = true;
-						} else {
-							scope.isTierBtn = true;
-						}
-					} else if (scope.isTierSummary == true) {
-						$state.go('enrollment-options');
-						// $state.go('benefits-dashboard');
-					} else if (scope.isEnrollmentOptions == true) {
-						if (scope.isTiering == true || scope.isTiering == 'true') {
-							scope.isTierSummary = true;
+					// if (scope.isTierBtn == true) {
+					// 	$state.go('enrollment-options');
+					// 	// $state.go('benefits-dashboard');
+					// } else if (scope.isTierInput == true) {
+					// 	scope.isTierInput = false;
+					// 	if (scope.tier_arr.length > 0) {
+					// 		scope.isTierSummary = false;
+					// 	} else {
+					// 		scope.isTierBtn = false;
+					// 	}
+					// } else if (scope.isTierSummary == true) {
+					// 	$state.go('enrollment-options');
+					// 	// $state.go('benefits-dashboard');
+					// } 
+					if (scope.isEnrollmentOptions == true) {
+						if (scope.spending_account_status.medical == false || scope.spending_account_status.wellness == false) {
+							// scope.isTierSummary = false;
 							scope.isEnrollmentOptions = false;
+							$state.go('benefits-dashboard');
 						} else {
 							$state.go('enrollment-options');
 						}
@@ -935,9 +940,9 @@ app.directive('benefitsTiersDirective', [
 						file: file,
 						plan_start: moment().format('YYYY-MM-DD'),
 					}
-					if (scope.isTiering == true || scope.isTiering == 'true') {
-						data.plan_tier_id = scope.tierSelected.plan_tier_id;
-					}
+					// if (scope.isTiering == true || scope.isTiering == 'true') {
+					// 	data.plan_tier_id = scope.tierSelected.plan_tier_id;
+					// }
 					scope.showLoading();
 					hrSettings.uploadExcel(data)
 						.then(function (response) {
@@ -1131,9 +1136,9 @@ app.directive('benefitsTiersDirective', [
 								employees: emp_arr,
 								plan_tier_id: null
 							}
-							if (scope.isTiering == true || scope.isTiering == 'true') {
-								data.plan_tier_id = scope.tierSelected.plan_tier_id;
-							}
+							// if (scope.isTiering == true || scope.isTiering == 'true') {
+							// 	data.plan_tier_id = scope.tierSelected.plan_tier_id;
+							// }
 							console.log(data);
 							dependentsSettings.addEnrollEmployees(data)
 								.then(function (response) {
@@ -1441,7 +1446,7 @@ app.directive('benefitsTiersDirective', [
 										gp_cap_status: false,
 									};
 									scope.isTierInput = false;
-									scope.isTierSummary = true;
+									scope.isTierSummary = false;
 								} else {
 									swal('Error!', response.data.message, 'error');
 									$('.tier-item-container').fadeIn();
@@ -1613,11 +1618,11 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.onLoad = function () {
-					if (localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true) {
-						scope.isTiering = true;
-					} else {
-						scope.isTiering = false;
-					}
+					// if (localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true) {
+					// 	scope.isTiering = true;
+					// } else {
+					// 	scope.isTiering = false;
+					// }
 					scope.getProgress();
 					scope.companyDependents();
 					scope.getMethod();
@@ -1634,7 +1639,7 @@ app.directive('benefitsTiersDirective', [
 						scope.isTierSummary = false;
 						scope.isTierBtn = false;
 						scope.isEnrollmentOptions = true;
-						
+
 						// if (scope.isTiering == true || scope.isTiering == 'true') {
 						// 	if (scope.tier_arr.length > 0) {
 						// 		scope.isTierSummary = true;
