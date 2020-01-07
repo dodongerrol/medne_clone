@@ -844,7 +844,7 @@ app.directive('benefitsTiersDirective', [
 					var medical_entitlement = localStorage.getItem('hasMedicalEntitlementBalance');
 					var wellness_entitlement = localStorage.getItem('hasWellnessEntitlementBalance');
 
-					
+
 
 					if (scope.downloadWithDependents != null) {
 						if (scope.downloadWithDependents == false) {
@@ -1623,7 +1623,7 @@ app.directive('benefitsTiersDirective', [
 					scope.getMethod();
 					scope.getBenefitsTier();
 					scope.getSpendingAccountStatus();
-					
+
 
 					$timeout(function () {
 						loading_trap = false;
@@ -1631,17 +1631,21 @@ app.directive('benefitsTiersDirective', [
 
 						scope.toggleTierLoader();
 
-						if (scope.isTiering == true || scope.isTiering == 'true') {
-							if (scope.tier_arr.length > 0) {
-								scope.isTierSummary = true;
-							} else {
-								scope.isTierBtn = true;
-							}
-						} else {
-							scope.isTierSummary = false;
-							scope.isTierBtn = false;
-							scope.isEnrollmentOptions = true;
-						}
+						scope.isTierSummary = false;
+						scope.isTierBtn = false;
+						scope.isEnrollmentOptions = true;
+						
+						// if (scope.isTiering == true || scope.isTiering == 'true') {
+						// 	if (scope.tier_arr.length > 0) {
+						// 		scope.isTierSummary = true;
+						// 	} else {
+						// 		scope.isTierBtn = true;
+						// 	}
+						// } else {
+						// 	scope.isTierSummary = false;
+						// 	scope.isTierBtn = false;
+						// 	scope.isEnrollmentOptions = true;
+						// }
 
 						// scope.getEnrollTempEmployees();
 						// scope.isReviewEnroll = true;
