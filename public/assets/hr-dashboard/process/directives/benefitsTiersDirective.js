@@ -135,8 +135,10 @@ app.directive('benefitsTiersDirective', [
 					if (scope.isEnrollmentOptions == true) {
 						scope.isEnrollmentOptions = false;
 						if (scope.isExcelSelected == true) {
+							//excel input
 							scope.isExcel = true;
 						} else {
+							//web input
 							scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance') == 'true' ? true : false;
 							scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
 							console.log(scope.employee_data);
@@ -938,9 +940,9 @@ app.directive('benefitsTiersDirective', [
 						file: file,
 						plan_start: moment().format('YYYY-MM-DD'),
 					}
-					if (scope.isTiering == true || scope.isTiering == 'true') {
-						data.plan_tier_id = scope.tierSelected.plan_tier_id;
-					}
+					// if (scope.isTiering == true || scope.isTiering == 'true') {
+					// 	data.plan_tier_id = scope.tierSelected.plan_tier_id;
+					// }
 					scope.showLoading();
 					hrSettings.uploadExcel(data)
 						.then(function (response) {
@@ -1134,9 +1136,9 @@ app.directive('benefitsTiersDirective', [
 								employees: emp_arr,
 								plan_tier_id: null
 							}
-							if (scope.isTiering == true || scope.isTiering == 'true') {
-								data.plan_tier_id = scope.tierSelected.plan_tier_id;
-							}
+							// if (scope.isTiering == true || scope.isTiering == 'true') {
+							// 	data.plan_tier_id = scope.tierSelected.plan_tier_id;
+							// }
 							console.log(data);
 							dependentsSettings.addEnrollEmployees(data)
 								.then(function (response) {
@@ -1616,11 +1618,11 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.onLoad = function () {
-					if (localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true) {
-						scope.isTiering = true;
-					} else {
-						scope.isTiering = false;
-					}
+					// if (localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true) {
+					// 	scope.isTiering = true;
+					// } else {
+					// 	scope.isTiering = false;
+					// }
 					scope.getProgress();
 					scope.companyDependents();
 					scope.getMethod();
