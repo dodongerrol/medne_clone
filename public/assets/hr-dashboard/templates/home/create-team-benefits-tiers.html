@@ -423,11 +423,11 @@
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
 							</div> -->
-							<div class="employee-input-wrapper">
+							<div ng-if="spending_account_status.medical" class="employee-input-wrapper">
 								<label for="fname">Medical Entitlement</label>
   							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
 							</div>
-							<div class="employee-input-wrapper">
+							<div ng-if="spending_account_status.wellness" class="employee-input-wrapper">
 								<label for="fname">Wellness Entitlement</label>
 								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
 							</div>
