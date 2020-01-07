@@ -1328,7 +1328,7 @@ class PlanHelper {
 		$relationship_message = '';
 
 		if(!empty($user['relationship'])) {
-			$rel = ["spouse", "child", "family"];
+			$rel = ["spouse", "child", "family", "parent", "sibling"];
 			if(!in_array($user['relationship'], $rel)) {
 				$relationship_error = true;
 				$relationship_message = '*Relationship type should be either Spouse, Child or Family.';
