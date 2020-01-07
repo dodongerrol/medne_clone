@@ -189,7 +189,7 @@ app.directive('webPreviewDirective', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -202,7 +202,7 @@ app.directive('webPreviewDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},1000)
+					},100)
 				}
 
 				scope.showGlobalModal = function( message ){

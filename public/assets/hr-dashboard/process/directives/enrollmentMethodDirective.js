@@ -37,7 +37,7 @@ app.directive('enrollmentMethodDirective', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -50,7 +50,7 @@ app.directive('enrollmentMethodDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},1000)
+					},100)
 				}
 
 				scope.showGlobalModal = function( message ){
@@ -63,7 +63,7 @@ app.directive('enrollmentMethodDirective', [
 
         	setTimeout(function() {
         		scope.toggleLoading();
-        	}, 500);
+        	}, 100);
         	console.log( dashboardFactory.getHeadCountStatus() );
         }
 
