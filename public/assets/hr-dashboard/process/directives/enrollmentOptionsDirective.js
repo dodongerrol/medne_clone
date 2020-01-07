@@ -144,7 +144,7 @@ app.directive('enrollmentOptionsDirective', [
         scope.onLoad = function( ){
 					scope.toggleLoading();
 					scope.getSpendingAccountStatus();
-
+					
         	setTimeout(function() {
         		scope.toggleLoading();
         	}, 500);
