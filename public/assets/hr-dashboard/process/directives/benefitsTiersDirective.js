@@ -858,7 +858,7 @@ app.directive('benefitsTiersDirective', [
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+No+Wellness+Spending+Account.xlsx';
 								console.log('scenario 3');
 							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.loacation.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
 								console.log('scenario 4');
 							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'true') {
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
