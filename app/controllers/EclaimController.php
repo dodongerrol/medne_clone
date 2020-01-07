@@ -6486,7 +6486,7 @@ public function updateEclaimStatus( )
     $customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
-
+    $date = null;
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 	    // check user balance
 			// recalculate balance
@@ -6496,7 +6496,6 @@ public function updateEclaimStatus( )
 			$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
 			// return $date;
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
-
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
 				if($amount > $balance_medical) {
@@ -6532,7 +6531,7 @@ public function updateEclaimStatus( )
 			if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 				if($balance['back_date'] == true) {
 					$wallet_logs['back_date_deduction'] = 1;
-					$wallet_logs['created_at'] = $e_claim_details->created_at;
+					$wallet_logs['created_at'] = $date ? $date : $e_claim_details->created_at;
 				}
 				$wallet_logs['running_balance'] = $balance['balance'] - $amount;
 			} else {
@@ -6635,7 +6634,7 @@ public function updateEclaimStatus( )
 				$wallet_logs['running_balance'] = $balance['balance'] - $amount;
 				if($balance['back_date'] == true) {
 					$wallet_logs['back_date_deduction'] = 1;
-					$wallet_logs['created_at'] = $e_claim_details->created_at;
+					$wallet_logs['created_at'] = $date ? $date : $e_claim_details->created_at;
 				}
 			}
 
