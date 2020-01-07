@@ -872,7 +872,7 @@ app.directive('benefitsTiersDirective', [
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
 								console.log('scenario 6');
 							} else if (med_spending_acct == false && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance+-+No+Medical+Spending+Accountxlsx.xlsx';
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
 								console.log('scenario 7');
 							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Wellness+Spending+Account.xlsx';
