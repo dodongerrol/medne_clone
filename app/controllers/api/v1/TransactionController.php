@@ -1077,8 +1077,6 @@ class Api_V1_TransactionController extends \BaseController
 						$transactions = [];
 					}
 
-					return $transactions;
-
 					foreach ($transactions as $key => $trans) {
 						if($trans) {
 							$receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
