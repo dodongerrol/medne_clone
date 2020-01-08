@@ -82,6 +82,8 @@
 			</div>
 		</div>
 	</div>
+
+	<span id="siteseal" ><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=IBA1VkaKk5DN8d4AN9x7GgMo6hpwnXt6KbMJckSIsUPE6g5vqXIArdK9w6Ui"></script></span>
 </body>
 
 
