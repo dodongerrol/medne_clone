@@ -169,6 +169,7 @@
 		  </div>
 		</div>
 	</div>
+
 </body>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/jquery.min.js?_={{ $date->format('U') }}"></script>
