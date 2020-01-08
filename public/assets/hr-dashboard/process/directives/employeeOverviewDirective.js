@@ -1929,11 +1929,13 @@ app.directive("employeeOverviewDirective", [
           });
         }
 
+        scope.last_term_credits = false;
         scope.empDetailsLoadingState = function(){
           scope.showLoading();
           $( ".export-emp-details-message" ).show();
           hrSettings.getEployeeDetails()
             .then(function(response) {
+              scope.last_term_credits = response.data.last_term_credits;
               scope.allEmpData = response.data.data;
               scope.hideLoading();
               setTimeout(function() {
