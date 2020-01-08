@@ -63,6 +63,7 @@
 			@endif
 		</div>
 	</div>
+
 </body>
 	
 	{{ HTML::script('assets/e-claim/js/jquery.min.js') }}
