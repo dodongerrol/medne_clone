@@ -1052,9 +1052,7 @@ class Api_V1_TransactionController extends \BaseController
           $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
           $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
 					$lite_plan_status = false;
-            // $lite_plan_status = StringHelper::litePlanStatus($findUserID);
 
-                    // $type = StringHelper::checkUserType($findUserID);
 					$transaction_details = [];
 					$ids = StringHelper::getSubAccountsID($findUserID);
 					$paginate = [];
@@ -1078,6 +1076,8 @@ class Api_V1_TransactionController extends \BaseController
 					} else {
 						$transactions = [];
 					}
+
+					return $transactions;
 
 					foreach ($transactions as $key => $trans) {
 						if($trans) {

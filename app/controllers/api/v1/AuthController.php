@@ -4823,15 +4823,25 @@ public function getEclaimTransactions( )
     if($dates) {
       if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
         $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
-        $e_claims = DB::table('e_claim')->whereIn('user_id', $ids)->orderBy('created_at', 'desc')->paginate($per_page);
+        $e_claims = DB::table('e_claim')
+                      ->whereIn('user_id', $ids)
+                      ->where('created_at', '>=', $dates['start'])
+                      ->where('created_at', '<=', $dates['end'])
+                      ->orderBy('created_at', 'desc')
+                      ->paginate($per_page);
       } else {
-        $e_claims = DB::table('e_claim')->whereIn('user_id', $ids)->orderBy('created_at', 'desc')->get();
+        $e_claims = DB::table('e_claim')
+                      ->whereIn('user_id', $ids)
+                      ->where('created_at', '>=', $dates['start'])
+                      ->where('created_at', '<=', $dates['end'])
+                      ->orderBy('created_at', 'desc')
+                      ->get();
       }
 
       foreach ($e_claims as $key => $res) {
         $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-                          // check user if it is spouse or dependent
+        // check user if it is spouse or dependent
        if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
           $temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
           $temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
