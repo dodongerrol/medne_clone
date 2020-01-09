@@ -115,8 +115,7 @@
 
 		          <p style="min-height: 73px;">
 		            <label>Job Title:</label>
-		            <span ng-if="emp.job_title != ''" style="font-size:14px;display:block;color: #777" ng-bind="emp.job_title"></span>
-		            <span ng-if="emp.job_title == ''" style="font-size:14px;display:block;color: #777">null</span>
+		            <span style="font-size:14px;display:block;color: #777" ng-bind="emp.job_title"></span>
 		          </p>
 
 		          <p class="no-margin-bottom">
@@ -126,21 +125,32 @@
 		              <button ng-class="{ 'active': emp.creditAllocSpendingType == 0 }" class="btn btn-default btn-medical" ng-click="setSpendType(emp,0)">Medical</button>
 		              <button ng-class="{ 'active': emp.creditAllocSpendingType == 1 }" class="btn btn-default btn-wellness" ng-click="setSpendType(emp,1)">Wellness</button>
 		          </div>
-		          <div class="col-md-6 no-padding">
-		          	<p style="margin: 2px 0">
+		          <div class="col-md-7 no-padding">
+		          	<!-- <p style="margin: 2px 0">
 			            <span ng-if="emp.creditAllocSpendingType == 0" style="width: 75px;display: inline-block;font-size: 12px;font-weight: 700;">
 			            	<span ng-bind="company_properties.currency_type" class="currency-type">SGD</span> 
-			            	<span ng-bind="emp.spending_account.medical.credits_allocation"></span>
+			            	<span ng-bind="emp.spending_account.medical.credits_allocation | number: 2"></span>
 			        	</span>
 			            <span ng-if="emp.creditAllocSpendingType == 1" style="width: 75px;display: inline-block;font-size: 12px;font-weight: 700;">
 			            <span ng-bind="company_properties.currency_type" class="currency-type">SGD</span>
-			            <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness"></span>
+			            <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2"></span>
+			        	</span>
+			            <span style="font-size: 12px;font-weight: 700;">Allocated</span>
+			          </p> -->
+			          <p style="margin: 2px 0">
+			            <span ng-if="emp.creditAllocSpendingType == 0" style="width: 100px;display: inline-block;font-size: 12px;font-weight: 700;">
+			            	<span ng-bind="company_properties.currency_type" class="currency-type">SGD</span> 
+			            	<span ng-bind="emp.spending_account.medical.credits_allocation | number: 2"></span>
+			        	</span>
+			            <span ng-if="emp.creditAllocSpendingType == 1" style="width: 100px;display: inline-block;font-size: 12px;font-weight: 700;">
+			            <span ng-bind="company_properties.currency_type" class="currency-type">SGD</span>
+			            <span ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2"></span>
 			        	</span>
 			            <span style="font-size: 12px;font-weight: 700;">Allocated</span>
 			          </p>
 		          </div>
 
-		          <div class="col-md-6">
+		          <div class="col-md-5" style="padding: 0;">
 	              <div class="cred-allocation-trans-type-container">
 	                <button ng-class="{ 'active': emp.creditAllocTransactionType == 0 }" class="btn btn-default btn-add" ng-click="setTransType(emp,0)">Add</button>
 	                <button ng-class="{ 'active': emp.creditAllocTransactionType == 1 }" class="btn btn-default btn-deduct" ng-click="setTransType(emp,1)">Deduct</button>
@@ -148,13 +158,13 @@
 	            </div>
 		          
 		          <p style="margin: 2px 0">
-		            <span ng-if="emp.creditAllocSpendingType == 0" style="width: 75px;display: inline-block;font-size: 12px;font-weight: 700;">
+		            <span ng-if="emp.creditAllocSpendingType == 0" style="width: 100px;display: inline-block;font-size: 12px;font-weight: 700;">
 		            	<span ng-bind="company_properties.currency_type" class="currency-type">SGD</span>  
-		            	<span ng-bind="emp.spending_account.medical.credits_spent"></span>
+		            	<span ng-bind="emp.spending_account.medical.credits_spent | number: 2"></span>
 		        	</span>
-		            <span ng-if="emp.creditAllocSpendingType == 1" style="width: 75px;display: inline-block;font-size: 12px;font-weight: 700;">
+		            <span ng-if="emp.creditAllocSpendingType == 1" style="width: 100px;display: inline-block;font-size: 12px;font-weight: 700;">
 		            	<span ng-bind="company_properties.currency_type" class="currency-type">SGD</span>  
-		            	<span ng-bind="emp.spending_account.wellness.credits_spent_wellness"></span>
+		            	<span ng-bind="emp.spending_account.wellness.credits_spent_wellness | number: 2"></span>
 		        	</span>
 		            <span style="font-size: 12px;font-weight: 700;">Spent</span> 
 		          </p>
