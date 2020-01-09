@@ -428,7 +428,8 @@
 								</div>
 								<div class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Medical Entitlement</strong>
-									<span>{{selectedEmployee.member_id}} 
+									<span>
+										<span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
 										<span ng-if="entitlement_status.medical_entitlement != null" class="custom small">(The amount of 
 										<span ng-bind="entitlement_status.medical_entitlement.currency_type" class="currency-type">SGD</span> 
 										<span ng-bind="entitlement_status.medical_entitlement.new_entitlement_credits">1,000.00</span> will be
@@ -442,7 +443,8 @@
 								</div>
 								<div class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Wellness Entitlement</strong>
-									<span>{{selectedEmployee.member_id}} 
+									<span>
+										<span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
 										<span ng-if="entitlement_status.wellness_entitlement != null" class="custom small">
 											(The amount of <span ng-bind="entitlement_status.wellness_entitlement.currency_type" class="currency-type">SGD</span>
 									 	<span ng-bind="entitlement_status.wellness_entitlement.new_entitlement_credits">1,000.00</span> will be
