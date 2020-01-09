@@ -6289,7 +6289,7 @@ ul.typeahead li a.dropdown-item {
   cursor: pointer;
 }
 
-span.dropdwon-entitlement {
+span.dropdown-entitlement {
   position: absolute;
   right: 10px;
   top: 22px;

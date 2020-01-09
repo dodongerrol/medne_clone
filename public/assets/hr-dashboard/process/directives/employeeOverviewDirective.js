@@ -1091,7 +1091,14 @@ app.directive("employeeOverviewDirective", [
         
           scope.medicalCalculatedInfo = false;
           scope.wellnessCalculatedInfo = false;
+
+          $('.dropdown-entitlement').toggle();
           
+          $("body").click(function(e){ 
+            if ($(e.target).parents(".entitlementWithIcon").length === 0) {
+              $(".dropdown-entitlement").hide();
+            }
+          });
 
           setTimeout(() => {
             var dt = new Date();
