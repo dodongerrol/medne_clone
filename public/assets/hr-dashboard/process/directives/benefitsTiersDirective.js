@@ -874,9 +874,9 @@ app.directive('benefitsTiersDirective', [
 							} else if (med_spending_acct == false && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
 								console.log('scenario 7');
-							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Wellness+Spending+Account.xlsx';
-								console.log('scenario 8');
+							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
+								console.log('scenario 8 feedback 20');
 							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'false') {
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
 								console.log('scenario 9');
@@ -907,9 +907,9 @@ app.directive('benefitsTiersDirective', [
 							} else if (med_spending_acct == false && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
 								console.log('scenario 7');
-							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+With+Wellness+Spending+Account.xlsx';
-								console.log('scenario 8');
+							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
+								console.log('scenario 8 feedback 20');
 							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'false') {
 								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
 								console.log('scenario 9');
