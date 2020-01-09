@@ -1270,7 +1270,7 @@ app.directive("employeeOverviewDirective", [
 
           scope.entitlement_credits = {
             med_credits : scope.emp_entitlement.medical_new_entitlement,
-            well_credis : scope.emp_entitlement.wellness_new_entitlement,
+            well_credits : scope.emp_entitlement.wellness_new_entitlement,
           }
           scope.effective_date = {
             med_date : moment( $('.medical-entitlement-date').val() ).format('YYYY-MM-DD'),
@@ -1358,13 +1358,14 @@ app.directive("employeeOverviewDirective", [
               console.log(response);
               // console.log(data);
               console.log(response.data.status);
-
+              console.log( wellness_data );
               if (response.data.status) {
                 swal('Success!', response.message,'success');
                 scope.hideLoading();
                 scope.getMemberEntitlement( scope.emp_member_id )
               } else {
                 swal('Error!', response.data.message,'error');
+                console.log( response.data.message );
               }
               
           });
