@@ -10620,9 +10620,11 @@ class BenefitsDashboardController extends \BaseController {
 
 				$temp['Medical_Allocation_Last_Term'] = DecimalHelper::formatDecimal($medical_last_term_credit_data['allocation']);
 				$temp['Medical_Usage_Last_Term'] = DecimalHelper::formatDecimal($medical_last_term_credit_data['total_spent']);
+				$temp['Medical_Balance_Last_Term'] = DecimalHelper::formatDecimal($medical_last_term_credit_data['balance']);
 			} else {
 				$temp['Medical_Allocation_Last_Term'] = 0;
 				$temp['Medical_Usage_Last_Term'] = 0;
+				$temp['Medical_Balance_Last_Term'] = 0;
 			}
 
 			$wellness_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'wellness');
@@ -10633,9 +10635,11 @@ class BenefitsDashboardController extends \BaseController {
 
 				$temp['Wellness_Allocation_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['allocation']);
 				$temp['Wellness_Usage_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['total_spent']);
+				$temp['Wellness_Balance_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['balance']);
 			} else {
 				$temp['Wellness_Allocation_Last_Term'] = 0;
 				$temp['Wellness_Usage_Last_Term'] = 0;
+				$temp['Wellness_Balance_Last_Term'] = 0;
 			}
 
 			$final_user[] = $temp;
