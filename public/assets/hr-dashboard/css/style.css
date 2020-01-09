@@ -637,6 +637,9 @@ button {
   padding-top: 5px;
   font-weight: normal;
 }
+.privacy-policy-buttons-container .agree-text::after {
+  transform: scale(1) !important;
+}
 
 /* LOGIN DASHBOARD RESET CSS */
 
