@@ -637,6 +637,9 @@ button {
   padding-top: 5px;
   font-weight: normal;
 }
+.privacy-policy-buttons-container .agree-text::after {
+  transform: scale(1) !important;
+}
 
 /* LOGIN DASHBOARD RESET CSS */
 
@@ -6286,7 +6289,7 @@ ul.typeahead li a.dropdown-item {
   cursor: pointer;
 }
 
-span.dropdwon-entitlement {
+span.dropdown-entitlement {
   position: absolute;
   right: 10px;
   top: 22px;
