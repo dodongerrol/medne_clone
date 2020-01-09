@@ -83,7 +83,7 @@ app.directive('introDirective', [
         }
 
         // scope.checkCompanyBalance();
-      	scope.onLoad();
+      	// scope.onLoad();
 			}
 		}
 	}
