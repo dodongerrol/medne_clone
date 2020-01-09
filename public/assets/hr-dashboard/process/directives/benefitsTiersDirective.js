@@ -157,8 +157,9 @@ app.directive('benefitsTiersDirective', [
 						} else {
 							swal('Error!', 'Please select an option for you template.', 'error');
 						}
-					} else if (scope.downloadWithDependentsCheckbox == true) {
-						if (scope.reviewExcelData.format && scope.reviewExcelData.name &&
+					} else if (scope.downloadWithDependentsCheckbox == true) { 
+						//scope.reviewExcelData.name slide 21
+						if (scope.reviewExcelData.format &&
 							scope.reviewExcelData.dob && scope.reviewExcelData.email &&
 							scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start) {
 							if (scope.downloadWithDependents == true) {
@@ -1190,9 +1191,23 @@ app.directive('benefitsTiersDirective', [
 				scope.getEnrollTempEmployees = function () {
 					scope.temp_employees = [];
 					scope.hasError = false;
+					var hasMedicalBalance = false;
+					var hasWellnessBalance = false;
+					var option = {
+						minimumFractionDigits: 2, 
+						maximumFractionDigits: 2
+					}
+					if(scope.employee_data.hasMedicalBalance == 'true' || scope.employee_data.hasMedicalBalance == true) {
+						hasMedicalBalance = true;
+					}
+					if(scope.employee_data.hasWellnessBalance == 'true' || scope.employee_data.hasWellnessBalance == true) {
+						hasWellnessBalance = true;
+					} 
+					console.log(hasMedicalBalance, hasWellnessBalance);
+					
 					$timeout(function () {
 						$("#enrollee-details-tbl tbody").html('');
-						$("#enrollee-details-tbl thead tr").html($compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th><th>Medical Credits</th><th>Wellness Credits</th>')(scope));
+						$("#enrollee-details-tbl thead tr").html($compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th ><th ng-if="spending_account_status.medical">Medical Entitlement</th><th ng-if="'+ hasMedicalBalance +'">Medical Entitlement Balance</th><th ng-if="spending_account_status.wellness">Wellness Entitlement</th><th ng-if="'+ hasWellnessBalance +'">Medical Entitlement Balance</th>')(scope));
 						dependentsSettings.getTempEmployees()
 							.then(function (response) {
 								// console.log( response );
@@ -1210,7 +1225,7 @@ app.directive('benefitsTiersDirective', [
 											value.success = false;
 											value.fail = false;
 											scope.isTrError = (value.error_logs.error == true) ? 'has-error' : '';
-											var html_tr = '<tr class="dependent-hover-container ' + scope.isTrError + ' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.fullname + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal(' + key + ')">Edit</button></td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>+' + value.employee.mobile_area_code + '</td><td>' + value.employee.mobile + '</td><td>' + value.employee.credits + '</td><td>' + value.employee.wellness_credits + '</td>';
+											var html_tr = '<tr class="dependent-hover-container ' + scope.isTrError + ' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.fullname + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal(' + key + ')">Edit</button></td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>+' + value.employee.mobile_area_code + '</td><td>' + value.employee.mobile + '</td><td>' + parseFloat(value.employee.credits).toLocaleString('en', option) + '</td><td ng-if="'+ hasMedicalBalance +'">' + value.employee.medical_balance_entitlement.toLocaleString('en', option) + '</td><td>' + parseFloat(value.employee.wellness_credits).toLocaleString('en', option) + '</td><td ng-if="'+ hasWellnessBalance +'">' + value.employee.wellness_balance_entitlement.toLocaleString('en', option) + '</td>';
 											var emp_ctr = 0;
 											while (emp_ctr != value.dependents.length) {
 												scope.isTrError = (value.dependents[emp_ctr].error_logs.error == true) ? 'has-error' : '';
