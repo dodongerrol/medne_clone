@@ -1247,6 +1247,7 @@
                     <label class="edit-employee-modal-label">Job Title</label>
                     <select class="form-control edit-employee-modal-input" ng-model="selectedEmployee.job_title">
                       <!-- For Current Job Title -->
+                      <option value=""></option>
                       <option ng-repeat="job in job_list">{{job.job_title}}</option>
                     </select>
                   </div>
