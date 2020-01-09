@@ -10606,9 +10606,11 @@ class BenefitsDashboardController extends \BaseController {
 				'End_Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
 				'Medical_Allocation' => number_format($medical_credit_data['allocation'], 2),
 				'Medical_Usage' => number_format($medical_credit_data['get_allocation_spent'], 2),
+				'Medical_Balance' => number_format($medical_credit_data['balance'], 2),
 				'Credits' => number_format($medical_credit_data['balance'], 2),
 				'Wellness_Allocation' => number_format($wellness_credit_data['allocation'], 2),
 				'Wellness_Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
+				'Wellness_Balance' => number_format($wellness_credit_data['balance'], 2),
 				'Credits_Wellness' => number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2)
 			);
 
