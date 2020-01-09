@@ -90,7 +90,7 @@
 	    </div>
 	</div>
 
-	<span id="siteseal" style="position: fixed;bottom: 8px;left: 8px;"><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=IBA1VkaKk5DN8d4AN9x7GgMo6hpwnXt6KbMJckSIsUPE6g5vqXIArdK9w6Ui"></script></span>
+	<span id="siteseal" style="position: fixed; bottom: 8px; left: 8px;"><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=UJjiOv0ThIvbJiVEP3Csx2qHmSWwQ1FP3QkB55XTnkysyqGC2w3u7kKI5k7o"></script></span>
 </body>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/calendar/moment/moment.js?_={{ $date->format('U') }}"></script>
