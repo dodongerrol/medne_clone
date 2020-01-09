@@ -1099,13 +1099,21 @@ app.directive("employeeOverviewDirective", [
               $(".dropdown-entitlement").hide();
             }
           });
-
+          
           setTimeout(() => {
             var dt = new Date();
             // dt.setFullYear(new Date().getFullYear()-18);
             $('.datepicker').datepicker({
               format: 'dd/mm/yyyy',
               endDate: dt
+            });
+
+            $('.datepicker-medical').datepicker({
+              format: 'dd/mm/yyyy',
+            });
+
+            $('.datepicker-wellness').datepicker({
+              format: 'dd/mm/yyyy',
             });
 
             $('.datepicker').datepicker().on('hide', function (evt) {

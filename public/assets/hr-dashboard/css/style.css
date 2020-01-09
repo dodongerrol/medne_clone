@@ -6289,6 +6289,13 @@ ul.typeahead li a.dropdown-item {
   cursor: pointer;
 }
 
+.entitlementWithIcon .custom-ellipsis {
+  position: absolute;
+  right: 0px;
+  top: 5px;
+  cursor: pointer;
+}
+
 span.dropdown-entitlement {
   position: absolute;
   right: 10px;
@@ -8472,4 +8479,15 @@ span.dropdown-entitlement {
   margin: 30px auto;
   padding-left: 0;
   text-align: left;
+}
+
+.custom-ellipsis {
+  cursor: pointer;
+}
+
+.custom-ellipsis > div{
+  padding: 2px;
+  background-color: #333;
+  margin-bottom: 2px;
+  border-radius: 50%;
 }
