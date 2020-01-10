@@ -2074,11 +2074,21 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'member wallet entitlement does not exist');
         }
 
+        $customer_id = PlanHelper::getCustomerId($input['member_id']);
+        // get customer spending account
+        $plan_dates = [];
+        $entitlement_usage_date = date('Y-m-d', strtotime($input['entitlement_usage_date']));
+        $spending_account_company = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
         // get user plan dates
-        $plan_dates = PlanHelper::checkEmployeePlanStatus($input['member_id']);
-        // plan duration
+        // $plan_dates = PlanHelper::checkEmployeePlanStatus($input['member_id']);
+        // plan duration'
+
 
         if($input['entitlement_spending_type'] == 'medical') {
+            if($entitlement_usage_date > $spending_account_company->medical_spending_end_date) {
+                return array('status' => false, 'message' => 'New Medical Entitlement Usage Date exceeded the Spending End Date.');
+            }
+            $plan_dates['valid_date'] = $spending_account_company->medical_spending_end_date;
             $plan_duration = new DateTime($wallet_entitlement->medical_usage_date);
             $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($plan_dates['valid_date']))));
             
@@ -2100,8 +2110,11 @@ class EmployeeController extends \BaseController {
 
             $old_entitlement_credits = $wallet_entitlement->medical_entitlement;
             $new_entitlement_credits = ($wallet_entitlement->medical_entitlement * $plan_month_duration / $plan_duration) + ($input['new_entitlement_credits'] * $entitlement_duration / $plan_duration);
-            // return ['new_entitlement_credits' => $new_entitlement_credits, 'medical_entitlement' => $wallet_entitlement->medical_entitlement, 'duration' => $plan_month_duration, 'medical_usage_date' => $wallet_entitlement->medical_usage_date, 'entitlement_usage_date' => $input['entitlement_usage_date'], 'plan_duration' => $plan_duration, 'entitlement_duration' => $entitlement_duration, 'plan_dates' => $plan_dates];
         } else {
+            if($entitlement_usage_date > $spending_account_company->wellness_spending_end_date) {
+                return array('status' => false, 'message' => 'New Wellness Entitlement Usage Date exceeded the Spending End Date.');
+            }
+            $plan_dates['valid_date'] = $spending_account_company->wellness_spending_end_date;
             $plan_duration = new DateTime($wallet_entitlement->wellness_usage_date);
             $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($plan_dates['valid_date']))));
             
@@ -2123,7 +2136,6 @@ class EmployeeController extends \BaseController {
 
             $old_entitlement_credits = $wallet_entitlement->wellness_entitlement;
             $new_entitlement_credits = ($wallet_entitlement->wellness_entitlement * $plan_month_duration / $plan_duration) + ($input['new_entitlement_credits'] * $entitlement_duration / $plan_duration);
-            // return ['new_entitlement_credits' => $new_entitlement_credits, 'wellness_entitlement' => $wallet_entitlement->wellness_entitlement, 'duration' => $plan_month_duration, 'medical_usage_date' => $wallet_entitlement->medical_usage_date, 'entitlement_usage_date' => $input['entitlement_usage_date'], 'plan_duration' => $plan_duration, 'entitlement_duration' => $entitlement_duration, 'plan_dates' => $plan_dates];
         }
 
        return[
@@ -2134,7 +2146,9 @@ class EmployeeController extends \BaseController {
         'plan_year_duration'        => $plan_duration,
         'entitlement_duration'      => $entitlement_duration,
         'currency_type'             => strtoupper($wallet_entitlement->currency_type),
-        'entitlement_spending_type' => $input['entitlement_spending_type']
+        'entitlement_spending_type' => $input['entitlement_spending_type'],
+        'plan_dates'                => $plan_dates,
+        'spending_account_company'  => $spending_account_company
        ];
     }
 
@@ -2182,6 +2196,7 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'member wallet entitlement does not exist');
         }
 
+        $customer_id = PlanHelper::getCustomerId($input['member_id']);
         // check for existing entitlement
         $check_entitlement = DB::table('wallet_entitlement_schedule')
                                 ->where('member_id', $input['member_id'])
@@ -2194,11 +2209,19 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'Member has still a schedule new entitlement');
         }
 
+        $today = date('Y-m-d');
+        $new_usage_date = date('Y-m-d', strtotime($input['entitlement_usage_date']));
         // get user plan dates
-        $plan_dates = PlanHelper::checkEmployeePlanStatus($input['member_id']);
+        // $plan_dates = PlanHelper::checkEmployeePlanStatus($input['member_id']);
         // $plan_dates = DB::table('employee_wallet_entitlement')->where('member_id', $input['member_id'])->orderBy('created_at', 'desc')->first();
-
+        // get customer spending account
+        $plan_dates = [];
+        $spending_account_company = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
         if($input['entitlement_spending_type'] == 'medical') {
+            if($new_usage_date > $spending_account_company->medical_spending_end_date) {
+                return array('status' => false, 'message' => 'New Medical Entitlement Usage Date exceeded the Spending End Date.');
+            }
+            $plan_dates['valid_date'] = $spending_account_company->medical_spending_end_date;
             $plan_duration = new DateTime($wallet_entitlement->medical_usage_date);
             $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($plan_dates['valid_date']))));
             
@@ -2236,6 +2259,10 @@ class EmployeeController extends \BaseController {
                 'updated_at'                => date('Y-m-d H:i:s')
             );
         } else {
+            if($new_usage_date > $spending_account_company->wellness_spending_end_date) {
+                return array('status' => false, 'message' => 'New Wellness Entitlement Usage Date exceeded the Spending End Date.');
+            }
+            $plan_dates['valid_date'] = $spending_account_company->wellness_spending_end_date;
             $plan_duration = new DateTime($wallet_entitlement->wellness_usage_date);
             $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($plan_dates['valid_date']))));
             
@@ -2277,6 +2304,10 @@ class EmployeeController extends \BaseController {
         $result = DB::table('wallet_entitlement_schedule')->insert($data);
 
         if($result) {
+            if($today >= $new_usage_date) {
+                // activate now
+            }
+
             return array('status' => true, 'message' => 'New Entitlement has been created');
         } else {
             return array('status' => false, 'message' => 'Failed to create new entitlement for member');

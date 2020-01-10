@@ -719,6 +719,15 @@ class PlanTierController extends \BaseController {
 			'start_date'				=> $input['plan_start'],
 			'error_logs'				=> serialize($error_logs)
 		);
+
+		if(isset($input['medical_balance_entitlement']) && !empty($input['medical_balance_entitlement'])) {
+			$data['medical_balance_entitlement'] = $input['medical_balance_entitlement'];
+		}
+
+		if(isset($input['wellness_balance_entitlement']) && !empty($input['wellness_balance_entitlement'])) {
+			$data['wellness_balance_entitlement'] = $input['wellness_balance_entitlement'];
+		}
+		
 		$result = $temp_enroll->updateEnrollee($data);
 
 		if($result) {
