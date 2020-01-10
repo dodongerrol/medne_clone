@@ -2303,11 +2303,12 @@ class EmployeeController extends \BaseController {
             );
         }
 
-        $result = DB::table('wallet_entitlement_schedule')->insert($data);
-
+        $new_entitlment = new NewEmployeeEntitlementSchedule();
+        $result = $new_entitlment->createData($data);
         if($result) {
             if($today >= $new_usage_date) {
                 // activate now
+                MemberHelper::activateNewEntitlement($input['member_id'], $result->id);
             }
 
             return array('status' => true, 'message' => 'New Entitlement has been created');
