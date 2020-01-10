@@ -2131,7 +2131,7 @@ class EmployeeController extends \BaseController {
                 $entitlement_duration = $entitlement_duration->m;
                 $plan_duration = $plan_duration->m + 1;
             } else {
-                $plan_month_duration = $wellness_months->days + 1;
+                $plan_month_duration = $wellness_months->days;
                 $entitlement_duration = $entitlement_duration->days + 1;
                 $plan_duration = $plan_duration->days + 1;
             }
@@ -2203,12 +2203,14 @@ class EmployeeController extends \BaseController {
         $check_entitlement = DB::table('wallet_entitlement_schedule')
                                 ->where('member_id', $input['member_id'])
                                 ->where('spending_type', $input['entitlement_spending_type'])
-                                ->where('status', 0)
+                                ->whereIn('status', [0, 1])
                                 ->orderBy('created_at', 'desc')
                                 ->first();
 
-        if($check_entitlement) {
+        if($check_entitlement && (int)$check_entitlement->status == 0) {
             return array('status' => false, 'message' => 'Member has still a schedule new entitlement');
+        } else if($check_entitlement && (int)$check_entitlement->status == 1) {
+            return array('status' => false, 'message' => 'Member has already have a '.strtoupper($input['entitlement_spending_type']).' new entitlement');
         }
 
         $today = date('Y-m-d');
@@ -2239,7 +2241,7 @@ class EmployeeController extends \BaseController {
                 $plan_duration = $plan_duration->m + 1;
             } else {
                 $plan_month_duration = $medical_months->days;
-                $entitlement_duration = $entitlement_duration->days;
+                $entitlement_duration = $entitlement_duration->days + 1;
                 $plan_duration = $plan_duration->days + 1;
             }
 
@@ -2279,7 +2281,7 @@ class EmployeeController extends \BaseController {
                 $entitlement_duration = $entitlement_duration->m;
                 $plan_duration = $plan_duration->m + 1;
             } else {
-                $plan_month_duration = $wellness_months->days + 1;
+                $plan_month_duration = $wellness_months->days;
                 $entitlement_duration = $entitlement_duration->days + 1;
                 $plan_duration = $plan_duration->days + 1;
             }
