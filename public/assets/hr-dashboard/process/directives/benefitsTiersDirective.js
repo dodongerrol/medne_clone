@@ -1206,7 +1206,7 @@ app.directive('benefitsTiersDirective', [
 						scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
 						console.log(scope.employee_data.hasWellnessBalance, scope.employee_data.hasWellnessBalance);
 						$("#enrollee-details-tbl tbody").html('');
-						$("#enrollee-details-tbl thead tr").html($compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th ><th ng-if="spending_account_status.medical">Medical Entitlement</th><th ng-if="employee_data.hasMedicalBalance">Medical Entitlement Balance</th><th ng-if="spending_account_status.wellness">Wellness Entitlement</th><th ng-if="employee_data.hasWellnessBalance">Medical Entitlement Balance</th>')(scope));
+						$("#enrollee-details-tbl thead tr").html($compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th ><th ng-if="spending_account_status.medical">Medical Entitlement</th><th ng-if="employee_data.hasMedicalBalance">Medical Entitlement Balance</th><th ng-if="spending_account_status.wellness">Wellness Entitlement</th><th ng-if="employee_data.hasWellnessBalance">Wellness Entitlement Balance</th>')(scope));
 						dependentsSettings.getTempEmployees()
 							.then(function (response) {
 								// console.log( response );
