@@ -437,11 +437,13 @@
 											<span ng-bind="entitlement_status.medical_entitlement.effective_date">01/05/2019</span>)</span>
 									</span>
 									<!-- <span class="custom small">(The amount of SGD 1,000.00 will be updated on 01/05/2019)</span> -->
-									<span ng-click="dropdownEntitlement.medical = !dropdownEntitlement.medical" class="custom-ellipsis">
-										<div></div>
-										<div></div>
-										<div></div>
-									</span>
+									<div ng-click="dropdownEntitlement.medical = !dropdownEntitlement.medical" class="custom-ellipsis-wrapper">
+										<span class="custom-ellipsis">
+											<div></div>
+											<div></div>
+											<div></div>
+										</span>
+									</div>
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
 								</div>
 								<div class="entitlementWithIcon">
@@ -454,11 +456,13 @@
 											updated on 
 											<span ng-bind="entitlement_status.wellness_entitlement.effective_date">01/05/2019</span>)</span>
 									</span>
-									<span ng-click="dropdownEntitlement.wellness = !dropdownEntitlement.wellness" class="custom-ellipsis">
-										<div></div>
-										<div></div>
-										<div></div>
-									</span>
+									<div ng-click="dropdownEntitlement.wellness = !dropdownEntitlement.wellness" class="custom-ellipsis-wrapper">
+										<span class="custom-ellipsis">
+											<div></div>
+											<div></div>
+											<div></div>
+										</span>
+									</div>
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.wellness" class="dropdown-entitlement">Update</span>
 								</div>
 								<div>

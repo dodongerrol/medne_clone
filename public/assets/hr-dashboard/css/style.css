@@ -6289,11 +6289,30 @@ ul.typeahead li a.dropdown-item {
   cursor: pointer;
 }
 
-.entitlementWithIcon .custom-ellipsis {
+/*.entitlementWithIcon .custom-ellipsis {
   position: absolute;
   right: 0px;
   top: 5px;
   cursor: pointer;
+}*/
+
+.col-1-employee-information-details div.custom-ellipsis-wrapper, 
+.col-2-employee-information-details div.custom-ellipsis-wrapper {
+  display: flex;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  height: 30px;
+  width: 35px;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-ellipsis-wrapper {
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+  right: -16px;  
 }
 
 span.dropdown-entitlement {
