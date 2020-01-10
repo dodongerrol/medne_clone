@@ -6500,14 +6500,12 @@ span.dropdown-entitlement {
   margin-right: 10px;
 }
 
-.employee-btn-edit-wrapper,
-.entitlement-btn-edit-wrapper {
+.employee-btn-edit-wrapper {
   position: relative;
   margin-bottom: 70px;
 }
 
-.employee-btn-edit-wrapper .btn-edit,
-.entitlement-btn-edit-wrapper .btn-update {
+.employee-btn-edit-wrapper .btn-edit {
   position: absolute;
   right: 0;
   top: 0;
@@ -6520,6 +6518,17 @@ span.dropdown-entitlement {
   margin-bottom: 50px;
   font-size: 14px;
   font-weight: 700;
+}
+
+.entitlement-btn-edit-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 70px;
+}
+
+.entitlement-btn-edit-wrapper h3 {
+  flex: 1;
+  margin: 0;
 }
 
 .col-1-employee-information-details div,
