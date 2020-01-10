@@ -579,8 +579,8 @@
 													placeholder="0.00" ng-model="emp_entitlement.original_medical_entitlement">
 											</div>
 											<p ng-if="emp_entitlement.updated_medical_entitlement == true" class="small">*Updated from 
-												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.original_medical_entitlement">500.00</span> to 
-												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span>1,000</span> on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span>
+												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.old_medical_entitlement">500.00</span> to 
+												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.original_medical_entitlement">1,000</span> on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span>
 											</p>
 										</div>
 									</div>
@@ -662,8 +662,8 @@
 													placeholder="0.00" ng-model="emp_entitlement.original_wellness_entitlement">
 											</div>
 											<p ng-if="emp_entitlement.updated_wellness_entitlement == true" class="small">*Updated from 
-												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.original_wellness_entitlement">500.00</span> to 
-												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span>1,000</span> on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
+												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.old_wellness_entitlement">500.00</span> to 
+												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.original_wellness_entitlement">1,000</span> on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
 										</div>
 									</div>
 									<div class="col-md-2">
