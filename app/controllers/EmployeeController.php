@@ -1952,7 +1952,7 @@ class EmployeeController extends \BaseController {
                     $medical_calculation['entitlement_duration'] = $entitlement_duration->m;
                     $medical_calculation['plan_duration'] = $plan_duration->m + 1;
                 } else {
-                    $medical_calculation['plan_month_duration'] = $medical_months->days + 1;
+                    $medical_calculation['plan_month_duration'] = $medical_months->days;
                     $medical_calculation['entitlement_duration'] = $entitlement_duration->days + 1;
                     $medical_calculation['plan_duration'] = $plan_duration->days + 1;
                 }
@@ -1988,7 +1988,7 @@ class EmployeeController extends \BaseController {
                     $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->m;
                     $wellness_calculation['plan_duration'] = $plan_duration_wellness->m + 1;
                 } else {
-                    $wellness_calculation['plan_month_duration'] = $wellness_months->days + 1;
+                    $wellness_calculation['plan_month_duration'] = $wellness_months->days;
                     $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->days + 1;
                     $wellness_calculation['plan_duration'] = $plan_duration_wellness->days + 1;
                 }
@@ -2105,7 +2105,7 @@ class EmployeeController extends \BaseController {
                 $entitlement_duration = $entitlement_duration->m;
                 $plan_duration = $plan_duration->m + 1;
             } else {
-                $plan_month_duration = $medical_months->days + 1;
+                $plan_month_duration = $medical_months->days;
                 $entitlement_duration = $entitlement_duration->days + 1;
                 $plan_duration = $plan_duration->days + 1;
             }
@@ -2238,8 +2238,8 @@ class EmployeeController extends \BaseController {
                 $entitlement_duration = $entitlement_duration->m;
                 $plan_duration = $plan_duration->m + 1;
             } else {
-                $plan_month_duration = $medical_months->days + 1;
-                $entitlement_duration = $entitlement_duration->days + 1;
+                $plan_month_duration = $medical_months->days;
+                $entitlement_duration = $entitlement_duration->days;
                 $plan_duration = $plan_duration->days + 1;
             }
 
