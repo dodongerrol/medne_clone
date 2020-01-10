@@ -6561,7 +6561,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : (float)$check->amount
+							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : $amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
@@ -6659,7 +6659,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : $check->amount
+							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : $amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
