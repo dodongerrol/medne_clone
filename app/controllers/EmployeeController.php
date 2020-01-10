@@ -2131,7 +2131,7 @@ class EmployeeController extends \BaseController {
                 $entitlement_duration = $entitlement_duration->m;
                 $plan_duration = $plan_duration->m + 1;
             } else {
-                $plan_month_duration = $wellness_months->days + 1;
+                $plan_month_duration = $wellness_months->days;
                 $entitlement_duration = $entitlement_duration->days + 1;
                 $plan_duration = $plan_duration->days + 1;
             }
@@ -2239,7 +2239,7 @@ class EmployeeController extends \BaseController {
                 $plan_duration = $plan_duration->m + 1;
             } else {
                 $plan_month_duration = $medical_months->days;
-                $entitlement_duration = $entitlement_duration->days;
+                $entitlement_duration = $entitlement_duration->days + 1;
                 $plan_duration = $plan_duration->days + 1;
             }
 
@@ -2279,7 +2279,7 @@ class EmployeeController extends \BaseController {
                 $entitlement_duration = $entitlement_duration->m;
                 $plan_duration = $plan_duration->m + 1;
             } else {
-                $plan_month_duration = $wellness_months->days + 1;
+                $plan_month_duration = $wellness_months->days;
                 $entitlement_duration = $entitlement_duration->days + 1;
                 $plan_duration = $plan_duration->days + 1;
             }
