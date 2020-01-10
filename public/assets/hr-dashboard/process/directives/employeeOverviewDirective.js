@@ -1283,13 +1283,15 @@ app.directive("employeeOverviewDirective", [
 
         scope.entitlementCalc = function ( type ) {
 
+          console.log( $('.medical-entitlement-date').val() );
+
           scope.entitlement_credits = {
             med_credits : scope.emp_entitlement.medical_new_entitlement,
             well_credits : scope.emp_entitlement.wellness_new_entitlement,
           }
           scope.effective_date = {
-            med_date : moment( $('.medical-entitlement-date').val() ).format('YYYY-MM-DD'),
-            well_date : moment( $('.wellness-entitlement-date').val() ).format('YYYY-MM-DD'),
+            med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+            well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
           }
           scope.proration = {
             med_proration : scope.emp_entitlement.medical_proration,
@@ -1297,13 +1299,14 @@ app.directive("employeeOverviewDirective", [
           }
           scope.entitlement_spending_type = type;
 
-          console.log(scope.proration);
+          console.log($('.medical-entitlement-date').val());
 
           if ( type == 'medical' ) {
             scope.showLoading();
             hrActivity.openEntitlementCalc( scope.emp_member_id, scope.entitlement_credits.med_credits, scope.effective_date.med_date, scope.proration.med_proration, scope.entitlement_spending_type) 
                 .then(function(response) {
                   console.log(response);
+                  console.log(scope.effective_date.med_date);
                   scope.hideLoading();
                   scope.calc_entitlement = response.data;
                   scope.new_allocation_med = scope.calc_entitlement.new_allocation;
