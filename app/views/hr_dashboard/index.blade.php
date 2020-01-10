@@ -130,7 +130,7 @@
 		  	May take a while depending on the number of employees.
 		  </p>
 		  <p class="text-center download-receipt-message color-black2 weight-700" style="margin-top: 30px;" hidden>
-		  	Downloading <span class="ctr">0</span> of <span class="total">0</span>
+		  	Downloading <span class="ctr">0</span> of <span class="total">0</span> receipts.
 		  </p>
 		</div>
 	</div>
