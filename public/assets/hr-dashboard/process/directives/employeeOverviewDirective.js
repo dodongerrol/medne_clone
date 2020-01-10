@@ -813,23 +813,24 @@ app.directive("employeeOverviewDirective", [
           //     }
           //   } 
           // }
-          if( !data.dob ){
-            swal( 'Error!', 'Date of Birth is required.', 'error' );
+          if ( (data.email == "" && data.phone_no == "") || (data.email == null && data.phone_no == null) ) {
+            swal( 'Error!', 'Phone number or Email Address is required.', 'error' );
             return false;
           }
-          if( !data.email ){
-            swal( 'Error!', 'Email is required.', 'error' );
-            return false;
-          }else{
+          console.log( data );
+          if (data.email) {
+            console.log( data.email );
+            console.log( scope.checkEmail(data.email) );
             if( scope.checkEmail(data.email) == false ){
               swal( 'Error!', 'Email is invalid.', 'error' );
               return false;
             }
           }
-          if( !data.phone_no ){
-            swal( 'Error!', 'Mobile Number is required.', 'error' );
-            return false;
-          }else{
+          // if( !data.phone_no ){
+          //   swal( 'Error!', 'Mobile Number is required.', 'error' );
+          //   return false;
+          // }else{
+          if( data.phone_no ){
             // console.log( iti.getSelectedCountryData().iso2 );
             if( iti.getSelectedCountryData().iso2 == 'sg' && data.phone_no.length < 8 ){
               swal( 'Error!', 'Mobile Number for your country code should be 8 digits.', 'error' );
@@ -844,6 +845,20 @@ app.directive("employeeOverviewDirective", [
               return false;
             }
           }
+
+          if( !data.dob ){
+            swal( 'Error!', 'Date of Birth is required.', 'error' );
+            return false;
+          }
+          // if( !data.email ){
+          //   swal( 'Error!', 'Email is required.', 'error' );
+          //   return false;
+          // }else{
+          //   if( scope.checkEmail(data.email) == false ){
+          //     swal( 'Error!', 'Email is invalid.', 'error' );
+          //     return false;
+          //   }
+          // }
           // if( !data.postal_code ){
           //   swal( 'Error!', 'Postal Code is required.', 'error' );
           //   return false;
