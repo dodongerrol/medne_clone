@@ -337,7 +337,7 @@
 						e_claim_id: list.transaction_id,
 						status: num,
 						rejected_reason : list.reason,
-						claim_amount : list.approve_claim_amount,
+						claim_amount : Number( list.approve_claim_amount.replace(",", "") ),
 					}
 
 					console.log(data);
@@ -356,7 +356,7 @@
 								list.approved_status = true;
 								list.approved_date = moment().format( 'DD MMMM YYYY hh:mm A' );
 								list.rejected_date = null;
-								list.claim_amount = parseFloat(list.approve_claim_amount).toFixed(2);
+								list.claim_amount = list.approve_claim_amount;
 							}
 							
 							if( response.data.status == true ){
