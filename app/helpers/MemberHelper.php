@@ -117,7 +117,7 @@ class MemberHelper
 						'created_at'			=> date('Y-m-d H:i:s'),
 						'updated_at'			=> date('Y-m-d H:i:s')
 					);
-					DB::table('customer_credits')->insert($company_credit_logs);
+					DB::table('customer_credit_logs')->insert($company_credit_logs);
 				} else {
 					$wallet_result = Wallet::where('UserID', $member_id)->decrement('balance', $new_medical_allocation);
 					$employee_credit_logs = array(
