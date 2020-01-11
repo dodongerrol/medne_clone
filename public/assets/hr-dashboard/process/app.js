@@ -2,7 +2,7 @@ var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModu
 
 app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window',
 function ($rootScope, $state, $stateParams, $templateCache, $window) {
-  
+   
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
 
