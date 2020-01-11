@@ -1204,16 +1204,20 @@ class EclaimController extends \BaseController {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
 							$cash = $transation->cash_cost;
+							$treatment = $trans->credit_cost + $trans->cash_cost;
 						} else {
 							$total_amount = (float)$trans->procedure_cost + $trans->consultation_fees;
               // $total_amount = $trans->procedure_cost;
 							$cash = (float)$trans->procedure_cost;
+							$treatment = $trans->credit_cost;
 						}
 					} else {
 						if((int)$trans->half_credits == 1) {
 							$cash = $trans->cash_cost;
+							$treatment = $trans->cash_cost;
 						} else {
 							$cash = (float)$trans->procedure_cost;
+							$treatment = $trans->procedure_cost;
 						}
 					}
 				} else {

@@ -1,9 +1,24 @@
 var checkCtrl = angular.module('checkCtrl', [])
 
 
-checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state ){
+checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state, hrSettings ){
 	var vm = this;
 	vm.account_type = null;
+
+
+	vm.getCompanyContacts = function() {
+    hrSettings.getContacts().then(function(response) {
+      console.log(response);
+      console.log( response.data.data.business_information.created_at );
+      console.log( moment( response.data.data.business_information.created_at ).unix() );
+      window.Appcues.identify(
+		    "57952", // unique, required
+		    {
+		    	created_at : moment( response.data.data.business_information.created_at ).unix()
+		    }
+		  );
+    });
+  };
 
 	vm.showGlobalModal = ( message ) =>{
     $( "#global_modal" ).modal('show');
@@ -59,6 +74,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	}
 
 	vm.accountType();
+	vm.getCompanyContacts();
 	setTimeout(function() {
 		vm.onLoad();
 	}, 500);
