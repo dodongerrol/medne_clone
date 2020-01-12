@@ -49,40 +49,24 @@ class SpendingInvoiceLibrary
 		$transactions = 0;
 		foreach ($corporate_members as $key => $member) {
 			$ids = StringHelper::getSubAccountsID($member->user_id);
-	            // get e claim
-			if($lite_plan) {
-				$temp_trans_lite_plan = DB::table('transaction_history')
-				->whereIn('UserID', $ids)
-				->where('lite_plan_enabled', 1)
-				->where('deleted', 0)
-				->where('paid', 1)
-				->where('date_of_transaction', '>=', $start)
-				->where('date_of_transaction', '<=', $end)
-				->orderBy('created_at', 'desc')
-				->count();
+			$temp_trans_lite_plan = DB::table('transaction_history')
+                    ->whereIn('UserID', $ids)
+                    ->where('lite_plan_enabled', 1)
+                    ->where('deleted', 0)
+                    ->where('paid', 1)
+                    ->where('created_at', '>=', $start)
+                    ->where('created_at', '<=', $end)
+                    ->count();
 
-				$temp_trans = DB::table('transaction_history')
-				->whereIn('UserID', $ids)
-				->where('health_provider_done', 0)
-				->where('deleted', 0)
-				->where('paid', 1)
-				->where('date_of_transaction', '>=', $start)
-				->where('date_of_transaction', '<=', $end)
-				->orderBy('created_at', 'desc')
-				->count();
-				$transactions += $temp_trans_lite_plan + $temp_trans;
-			} else {
-	                // get in-network transactions
-				$in_network_temp = DB::table('transaction_history')
-				->whereIn('UserID', $ids)
-				->where('health_provider_done', 0)
-				->where('deleted', 0)
-				->where('paid', 1)
-				->where('date_of_transaction', '>=', $start)
-				->where('date_of_transaction', '<=', $end)
-				->count();
-				$transactions += $in_network_temp;
-			}
+    	$temp_trans = DB::table('transaction_history')
+                    ->whereIn('UserID', $ids)
+                    ->where('credit_cost', '>', 0)
+                    ->where('deleted', 0)
+                    ->where('paid', 1)
+                    ->where('created_at', '>=', $start)
+                    ->where('created_at', '<=', $end)
+                    ->count();
+      $transactions += $temp_trans_lite_plan + $temp_trans;
 		}
 
 		if($transactions == 0) {
