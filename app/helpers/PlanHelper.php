@@ -5372,7 +5372,8 @@ class PlanHelper {
 												->first();
 				return ['start' => $credit_reset_start->date_resetted, 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_reset_end->date_resetted)))];
 			} else {
-
+				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))];
 			}
 		} else if(sizeof($credit_resets) == 1){
 			$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
