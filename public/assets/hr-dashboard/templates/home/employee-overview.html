@@ -567,10 +567,27 @@
 					<div ng-if="empTabSelected == 2" class="entitlement-information">
 						<div class="entitlement-btn-edit-wrapper">
 							<h3>Entitlement Information</h3>
-							<button ng-if="cal_one == false && cal_two == false" ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false}" class="btn-update">Update</button>
-							<button ng-if="cal_one == true && cal_two == false" ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false}" ng-click="updateMedicalEntitlement()" class="btn-update">Update</button>
-							<button ng-if="cal_one == false && cal_two == true" ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false}" ng-click="updateWellnessEntitlement()" class="btn-update">Update</button>
-							<button ng-if="cal_one == true && cal_two == true" ng-class="{'disabled' : calc_update_med == false || calc_update_well == false}" ng-click="updateAllEntitlement()" class="btn-update">Update</button>
+							<button ng-if="cal_one == false && cal_two == false" class="btn-update">Update</button>
+
+	            <button 
+	            ng-if="cal_one == true && cal_two == false" 
+
+	            ng-class="{'calc-disabled' : calc_update_med == false }" 
+
+	            ng-click="updateMedicalEntitlement()" class="btn-update">Update</button>
+
+	            <button 
+	            ng-if="cal_one == false && cal_two == true" 
+	            ng-class="{'calc-disabled' : calc_update_well == false }" 
+	            ng-click="updateWellnessEntitlement()" class="btn-update">Update</button>
+
+
+	            <button 
+	            ng-if="cal_one == true && cal_two == true" 
+
+	            ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false }" 
+
+	            ng-click="updateAllEntitlement()" class="btn-update">Update</button>
 						</div>
 
 						<div class="entitlement-information-details">
@@ -724,7 +741,7 @@
 													<span ng-if="new_allocation_well != null" ng-bind="(new_allocation_well | number : 2 )"></span>
 												</h4>
 												<button ng-disabled="emp_entitlement.wellness_new_entitlement == '' || well_effective_date == '' " class="btn-calculate wellness_btn_calculate" ng-click="entitlementCalc('wellness', 2)">Calculate</button>
-												<p ng-if="emp_entitlement.updated_wellness_entitlement == true" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
+												 <p ng-if="effectiveWellDateError" class="effective-date-error">New Medical Entitlement Usage Date exceeded the Spending End Date.</p>
 											</div>
 										</div>
 										<div ng-if="wellnessCalculatedInfo" class="see-more">
