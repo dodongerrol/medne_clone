@@ -189,7 +189,7 @@ class MemberHelper
 						'created_at'			=> date('Y-m-d H:i:s'),
 						'updated_at'			=> date('Y-m-d H:i:s')
 					);
-					DB::table('wellness_wallet_history')->inser($employee_credit_logs);
+					DB::table('wellness_wallet_history')->insert($employee_credit_logs);
 				}
 	    }
 

@@ -1917,6 +1917,11 @@ class BenefitsDashboardController extends \BaseController {
 		$paginate['to'] = $users->getTo();
 		$paginate['count'] = $users->count();
 
+		// spending account
+		$spending_account = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+		$medical_wallet = (int)$spending_account->medical_enable == 1 ? true : false;
+		$wellness_wallet = (int)$spending_account->wellness_enable == 1 ? true : false;
+
 		// return $users;
 		foreach ($users as $key => $user) {
 			$ids = StringHelper::getSubAccountsID($user->UserID);
@@ -2122,6 +2127,8 @@ class BenefitsDashboardController extends \BaseController {
 					'wellness'	=> $wellness,
 					'currency_type' => $wallet->currency_type
 				),
+				'medical_wallet'		=> $medical_wallet,
+				'wellness_wallet'		=> $wellness_wallet,
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
 				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
