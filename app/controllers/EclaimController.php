@@ -5421,8 +5421,11 @@ public function searchEmployeeActivity( )
 	$total_search_credits = 0;
 	$total_in_network_spent = 0;
 	$total_credits_transactions = 0;
+	$total_search_cash = 0;
+	$total_in_network_spent_cash_transaction = 0;
+	$total_cash_transactions = 0;
 
-        // check user
+  // check user
 	$check_user = DB::table('user')->where('UserID', $input['user_id'])->count();
 
 	if($check_user == 0) {
