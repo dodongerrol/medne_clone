@@ -6034,9 +6034,9 @@ public function searchEmployeeEclaimActivity( )
 	$pending = 0;
 	$rejected = 0;
 
-        // get total e-claim spend
+  // get total e-claim spend
 
-        // foreach ($corporate_members as $key => $member) {
+  // foreach ($corporate_members as $key => $member) {
 	$ids = StringHelper::getSubAccountsID($input['user_id']);
 	$total_e_claim_submitted +=  DB::table('e_claim')
 	->where('spending_type', $spending_type)
@@ -6082,7 +6082,22 @@ public function searchEmployeeEclaimActivity( )
 			$pending += $res->amount;
 		} else if($res->status == 1) {
 			$status_text = 'Approved';
-			$e_claim_spent += $res->amount;
+			// get logs
+			if($spending_type == "medical") {
+				$table_wallet_history = 'wallet_history';
+			} else {
+				$table_wallet_history = 'wellness_wallet_history';
+			}
+
+			$logs = DB::table($table_wallet_history)
+					->where('where_spend', 'e_claim_transaction')
+					->where('id',  $res->e_claim_id)
+					->first();
+			if($logs) {
+				$e_claim_spent += $logs->credit;
+			} else {
+				$e_claim_spent += $res->amount;
+			}
 		} else if($res->status == 2) {
 			$status_text = 'Rejected';
 			$rejected += $res->amount;

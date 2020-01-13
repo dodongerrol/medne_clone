@@ -128,7 +128,7 @@ class EclaimHelper
                 ->get();
     
     $first_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->first();
-    $allocation_date = date('Y-m-d', strtotime($first_wallet_history->created_at));
+    $allocation_date = date('Y-m-d', strtotime($wallet->created_at));
     $temp_start_date = $allocation_date;
     $start_date = null;
     $end_date = null;
