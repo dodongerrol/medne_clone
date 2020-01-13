@@ -384,7 +384,7 @@
 						Employee</div>
 					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
 						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div ng-if="medical_wallet && wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
+					<div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
 						Entitlement</div>
 					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">
 						Settings</div>
