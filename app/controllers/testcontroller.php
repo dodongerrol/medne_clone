@@ -627,4 +627,11 @@ class testcontroller extends BaseController {
 
 		return EclaimHelper::getSpendingBalance($user_id, $date, $spending_type);
 	}
+
+	public function getMemberResetDateTest( )
+	{
+		$input = Input::all();
+
+		return PlanHelper::getMemberCreditReset($input['id'], $input['spending_type']);
+	}
 }
