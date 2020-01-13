@@ -89,6 +89,8 @@ app.directive("employeeOverviewDirective", [
         scope.proration = {};
         scope.medicalCalculatedInfo = false;
         scope.wellnessCalculatedInfo = false;
+        scope.effectiveMedDateError = false;
+        scope.effectiveWellDateError = false;
 
         scope.pagesToDisplay = 5;
         scope.startIndex = function () {
@@ -1191,6 +1193,10 @@ app.directive("employeeOverviewDirective", [
 
         scope.toggleEmployee = function (emp, index) {
           console.log(emp);
+          scope.medical_wallet = emp.medical_wallet;
+          scope.wellness_wallet = emp.wellness_wallet;
+          console.log(scope.medical_wallet);
+          console.log(scope.wellness_wallet);
 
           if (scope.isEmployeeShow == false) {
             scope.isEmployeeShow = true;
@@ -1285,6 +1291,8 @@ app.directive("employeeOverviewDirective", [
 
         scope.cal_one = false;
         scope.cal_two = false;
+        scope.calc_update_med = false;
+        scope.calc_update_well = false;
 
         scope.entitlementCalc = function ( type, cal ) {
 
@@ -1300,7 +1308,7 @@ app.directive("employeeOverviewDirective", [
 
           scope.entitlement_credits = {
             med_credits : scope.emp_entitlement.medical_new_entitlement,
-            well_credits : scope.emp_entitlement.wellness_new_entitlement,
+            well_credits : scope.emp_entitlement.wellness_new_entitlement
           }
           scope.effective_date = {
             med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
@@ -1319,11 +1327,22 @@ app.directive("employeeOverviewDirective", [
             hrActivity.openEntitlementCalc( scope.emp_member_id, scope.entitlement_credits.med_credits, scope.effective_date.med_date, scope.proration.med_proration, scope.entitlement_spending_type) 
                 .then(function(response) {
                   console.log(response);
-                  console.log(scope.effective_date.med_date);
+                  console.log( scope.entitlement_credits.med_credits );
                   scope.hideLoading();
                   scope.calc_entitlement = response.data;
                   scope.new_allocation_med = scope.calc_entitlement.new_allocation;
                   scope.medicalCalculatedInfo = true;
+
+                  if ( response.data.status == false ) {
+                    console.log('New Medical Entitlement Usage Date exceeded the Spending End Date.');
+                    scope.medicalCalculatedInfo = false;
+                    scope.effectiveMedDateError = true;
+                    scope.calc_update_med = false;
+                  } else {
+                    scope.effectiveMedDateError = false;
+                    scope.calc_update_med = true;
+                  }
+
             });
           
           } 
@@ -1333,10 +1352,22 @@ app.directive("employeeOverviewDirective", [
             hrActivity.openEntitlementCalc( scope.emp_member_id, scope.entitlement_credits.well_credits, scope.effective_date.well_date, scope.proration.well_proration, scope.entitlement_spending_type) 
                 .then(function(response) {
                   console.log(response);
+                  console.log( scope.entitlement_credits.well_credits );
                   scope.hideLoading();
                   scope.calc_entitlement = response.data;
                   scope.new_allocation_well = scope.calc_entitlement.new_allocation;
                   scope.wellnessCalculatedInfo = true;
+
+                  if ( response.data.status == false ) {
+                    console.log('New Medical Entitlement Usage Date exceeded the Spending End Date.');
+                    scope.wellnessCalculatedInfo = false;
+                    scope.effectiveWellDateError = true;
+                    scope.calc_update_well = false;
+                  } else {
+                    scope.effectiveWellDateError = false;
+                    scope.calc_update_well = true;
+                  }
+
             });
   
           }
