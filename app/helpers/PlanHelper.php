@@ -2289,14 +2289,11 @@ class PlanHelper {
 		$total_deduction_credits_wellness = 0;
 
 		$user = DB::table('user')->where('UserID', $user_id)->first();
-
 		$wallet_history = DB::table('wellness_wallet_history')
-		->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
-		->where('wellness_wallet_history.wallet_id', $wallet_id)
-		->where('e_wallet.UserID', $user_id)
-		->where('wellness_wallet_history.created_at',  '>=', $start)
-		->where('wellness_wallet_history.created_at',  '>=', $end)
-		->get();
+						->where('wallet_id', $wallet_id)
+						->where('created_at',  '>=', $start)
+						->where('created_at',  '<=', $end)
+						->get();		
 
 		foreach ($wallet_history as $key => $history) {
 			if($history->logs == "added_by_hr") {
@@ -2320,7 +2317,6 @@ class PlanHelper {
 				$credits_back_wellness += $history->credit;
 			}
 		}
-
 
 		$pro_allocation = DB::table('wellness_wallet_history')
 		->where('wallet_id', $wallet_id)
@@ -5355,21 +5351,32 @@ class PlanHelper {
 
 	public static function getMemberCreditReset($member_id, $spending_type)
 	{
-		$credit_reset_start = DB::table('credit_reset')
+		$credit_resets = DB::table('credit_reset')
+											->where('id', $member_id)->where('user_type', 'employee')
+											->where('spending_type', $spending_type)
+											->get();
+
+		if(sizeof($credit_resets) > 1) {
+			$credit_reset_start = DB::table('credit_reset')
 											->where('id', $member_id)->where('user_type', 'employee')
 											->where('spending_type', $spending_type)
 											->orderBy('created_at', 'desc')
 											->skip(1)
 											->take(1)
 											->first();
+			if($credit_reset_start) {
+				$credit_reset_end = DB::table('credit_reset')
+												->where('id', $member_id)->where('user_type', 'employee')
+												->where('spending_type', $spending_type)
+												->orderBy('created_at', 'desc')
+												->first();
+				return ['start' => $credit_reset_start->date_resetted, 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_reset_end->date_resetted)))];
+			} else {
 
-		if($credit_reset_start) {
-			$credit_reset_end = DB::table('credit_reset')
-											->where('id', $member_id)->where('user_type', 'employee')
-											->where('spending_type', $spending_type)
-											->orderBy('created_at', 'desc')
-											->first();
-			return ['start' => $credit_reset_start->date_resetted, 'end' => date('Y-m-d', strtotime('-1 days', strtotime($credit_reset_end->date_resetted)))];
+			}
+		} else if(sizeof($credit_resets) == 1){
+			$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+			return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))];
 		} else {
 			return false;
 		}

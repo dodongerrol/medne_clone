@@ -11,7 +11,8 @@
 |
 */
 
-
+// test member credit reset dates
+Route::get('test_get_member_reset_dates', 'testcontroller@getMemberResetDateTest');
 // test wallet balance for reset credits
 Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
 // test date format
