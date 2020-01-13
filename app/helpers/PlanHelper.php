@@ -2287,8 +2287,8 @@ class PlanHelper {
 						->where('wallet_id', $wallet_id)
 						->where('created_at',  '>=', $start)
 						->where('created_at',  '<=', $end)
-						->get();		
-
+						->get();
+		// return $wallet_history;
 		foreach ($wallet_history as $key => $history) {
 			if($history->logs == "added_by_hr") {
 				$get_wellness_allocation += $history->credit;
