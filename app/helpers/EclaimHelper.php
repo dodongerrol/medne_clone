@@ -126,12 +126,12 @@ class EclaimHelper
                 ->where('spending_type', $spending_type)
                 ->where('user_type', 'employee')
                 ->get();
-    // return $reset;
     
     $first_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->first();
     $allocation_date = date('Y-m-d', strtotime($first_wallet_history->created_at));
     $temp_start_date = $allocation_date;
-
+    $start_date = null;
+    $end_date = null;
     if(sizeof($reset) > 0) {
       for( $i = 0; $i < sizeof( $reset ); $i++ ){
         $temp_end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $reset[$i]->date_resetted ) ) ));
@@ -146,82 +146,85 @@ class EclaimHelper
           if( $start_date == null && $end_date == null ){
             $back_date = false;
             $start_date = $temp_start_date;
-            $end_date = date('Y-m-d',(strtotime ( '+1 day' , strtotime( date('Y-m-d') ))));
+            $end_date = PlanHelper::endDate(date('Y-m-d',(strtotime ( '+1 day' , strtotime( date('Y-m-d') )))));
           }
         }
       }
 
-      // return $start_date.' '.$end_date;
-      $wallet_history = DB::table($wallet_table_logs)
-              ->join('e_wallet', 'e_wallet.wallet_id', '=', $wallet_table_logs.'.wallet_id')
-              ->where($wallet_table_logs.'.wallet_id', $wallet_id)
-              ->where('e_wallet.UserID', $user_id)
-              ->where($wallet_table_logs.'.created_at',  '>=', $start_date)
-              ->where($wallet_table_logs.'.created_at',  '<=', $end_date)
-              ->get();
-      // return $wallet_history;
+      // $wallet_history = DB::table($wallet_table_logs)
+      //         ->join('e_wallet', 'e_wallet.wallet_id', '=', $wallet_table_logs.'.wallet_id')
+      //         ->where($wallet_table_logs.'.wallet_id', $wallet_id)
+      //         ->where('e_wallet.UserID', $user_id)
+      //         ->where($wallet_table_logs.'.created_at',  '>=', $start_date)
+      //         ->where($wallet_table_logs.'.created_at',  '<=', $end_date)
+      //         ->get();
     } else {
-      $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
+      // $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
+      $last_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->orderBy('created_at', 'desc')->first();
+      $start_date = $allocation_date;
+      $end_date = PlanHelper::endDate($last_wallet_history->created_at);
     }
     
-    // return $start_date.' - '.$end_date;
-
-    foreach ($wallet_history as $key => $history) {
-      if($history->logs == "added_by_hr") {
-        $get_allocation += $history->credit;
-      }
-
-      if($history->logs == "deducted_by_hr") {
-        $deducted_credits += $history->credit;
-      }
-
-      if($history->where_spend == "e_claim_transaction") {
-        $e_claim_spent += $history->credit;
-      }
-
-      if($history->where_spend == "in_network_transaction") {
-        $in_network_temp_spent += $history->credit;
-      }
-
-      if($history->where_spend == "credits_back_from_in_network") {
-        $credits_back += $history->credit;
-      }
-    }
-
-    $pro_allocation = DB::table($wallet_table_logs)
-    ->where('wallet_id', $wallet_id)
-    ->where('logs', 'pro_allocation')
-    ->sum('credit');
-
-    $get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
-    $get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
-    $medical_balance = 0;
-
-    if($pro_allocation) {
-      $allocation = $pro_allocation;
-      $balance = $pro_allocation - $get_allocation_spent;
-      $medical_balance = $balance;
-
-      if($balance < 0) {
-        $balance = 0;
-        $medical_balance = $balance;
-      }
+    // return $start_date.' '.$end_date;
+    if($spending_type == "medical") {
+      $result = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet_id, $user_id, $start_date, $end_date);
     } else {
-      $allocation = $get_allocation - $deducted_credits;
-      $balance = $allocation - $get_allocation_spent;
-      $medical_balance = $balance;
-      $total_deduction_credits += $deducted_credits;
+      $result = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet_id, $user_id, $start_date, $end_date);
     }
+    // return $start_date.' '.$end_date;
+    // foreach ($wallet_history as $key => $history) {
+    //   if($history->logs == "added_by_hr") {
+    //     $get_allocation += $history->credit;
+    //   }
 
-    if($pro_allocation > 0) {
-      $allocation = $pro_allocation;
-    }
+    //   if($history->logs == "deducted_by_hr") {
+    //     $deducted_credits += $history->credit;
+    //   }
 
-    return array('balance' => $balance, 'back_date' => $back_date);
+    //   if($history->where_spend == "e_claim_transaction") {
+    //     $e_claim_spent += $history->credit;
+    //   }
 
-    // return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
+    //   if($history->where_spend == "in_network_transaction") {
+    //     $in_network_temp_spent += $history->credit;
+    //   }
 
-    // return array('status' => true, 'data' => $reset);
+    //   if($history->where_spend == "credits_back_from_in_network") {
+    //     $credits_back += $history->credit;
+    //   }
+    // }
+
+    // // return $wallet_history;
+    // $pro_allocation = DB::table($wallet_table_logs)
+    // ->where('wallet_id', $wallet_id)
+    // ->where('logs', 'pro_allocation')
+    // ->sum('credit');
+
+    // $get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
+    // $get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
+    // $medical_balance = 0;
+
+    // if($pro_allocation) {
+    //   $allocation = $pro_allocation;
+    //   $balance = $pro_allocation - $get_allocation_spent;
+    //   $medical_balance = $balance;
+
+    //   if($balance < 0) {
+    //     $balance = 0;
+    //     $medical_balance = $balance;
+    //   }
+    // } else {
+    //   $allocation = $get_allocation - $deducted_credits;
+    //   $balance = $allocation - $get_allocation_spent;
+    //   $medical_balance = $balance;
+    //   $total_deduction_credits += $deducted_credits;
+    // }
+
+    // if($pro_allocation > 0) {
+    //   $allocation = $pro_allocation;
+    // }
+
+    return array('balance' => $result['balance'], 'back_date' => $back_date, 'start_date' => $start_date, 'end_date' => $end_date);
   }
 }
 ?>
