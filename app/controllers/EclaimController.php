@@ -6051,13 +6051,13 @@ public function searchEmployeeEclaimActivity( )
 	->where('created_at', '<=', $end)
 	->where('status', 0)
 	->sum('amount');
-	$total_e_claim_approved +=  DB::table('e_claim')
-	->where('spending_type', $spending_type)
-	->whereIn('user_id', $ids)
-	->where('created_at', '>=', $start)
-	->where('created_at', '<=', $end)
-	->where('status', 1)
-	->sum('amount');
+	// $total_e_claim_approved +=  DB::table('e_claim')
+	// ->where('spending_type', $spending_type)
+	// ->whereIn('user_id', $ids)
+	// ->where('created_at', '>=', $start)
+	// ->where('created_at', '<=', $end)
+	// ->where('status', 1)
+	// ->sum('amount');
 	$total_e_claim_rejected +=  DB::table('e_claim')
 	->where('spending_type', $spending_type)
 	->whereIn('user_id', $ids)
@@ -6073,6 +6073,7 @@ public function searchEmployeeEclaimActivity( )
 	->where('created_at', '<=', $end)
 	->orderBy('created_at', 'desc')
 	->get();
+
 	foreach($e_claim_result as $key => $res) {
 		$approved_status = FALSE;
 		$rejected_status = FALSE;
@@ -6095,8 +6096,10 @@ public function searchEmployeeEclaimActivity( )
 					->first();
 			if($logs) {
 				$e_claim_spent += $logs->credit;
+				$total_e_claim_approved += $logs->credit;
 			} else {
 				$e_claim_spent += $res->amount;
+				$total_e_claim_approved += $res->amount;
 			}
 		} else if($res->status == 2) {
 			$status_text = 'Rejected';

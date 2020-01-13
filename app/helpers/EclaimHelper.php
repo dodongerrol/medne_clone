@@ -170,6 +170,7 @@ class EclaimHelper
       $result = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet_id, $user_id, $start_date, $end_date);
     } else {
       $result = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet_id, $user_id, $start_date, $end_date);
+      return $result;
     }
     // return $start_date.' '.$end_date;
     // foreach ($wallet_history as $key => $history) {
