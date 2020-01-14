@@ -116,6 +116,7 @@ class UserPackage extends Eloquent
                         // get dependents plan history
                         $dependent_plan_history = DB::table('dependent_plan_history')
                                                     ->where('user_id', $user_id)
+                                                    ->where('type', 'started')
                                                     ->orderBy('created_at', 'desc')
                                                     ->first();
                         if(!$dependent_plan_history) {
