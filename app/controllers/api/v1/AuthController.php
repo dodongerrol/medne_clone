@@ -1055,19 +1055,25 @@ return Response::json($returnObject);
                   $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
                   $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
                   $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
+                  $user_spending_dates = MemberHelper::getMemberSpendingDateTerms($user_id, $filter, $spending_type);
                   $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
                   // return $dates;
-                  if($dates) {
+
+                  if($user_spending_dates) {
                     if($spending_type == 'medical') {
                       $table_wallet_history = 'wallet_history';
                       $history_column_id = "wallet_history_id";
-                      $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
+                      $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
                     } else {
                       $table_wallet_history = 'wellness_wallet_history';
                       $history_column_id = "wellness_wallet_history_id";
-                      $credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
+                      $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
                     }
+                  } else {
+                    $credit_data = null;
+                  }
 
+                  if($dates) {
                     $e_claim_result = DB::table('e_claim')
                     ->whereIn('user_id', $ids)
                     ->where('spending_type', $spending_type)
@@ -1086,34 +1092,9 @@ return Response::json($returnObject);
                     ->orderBy('created_at', 'desc')
                     ->take(3)
                     ->get();
-                  }
-                   else {
-                  //   if($spending_type == 'medical') {
-                  //     $table_wallet_history = 'wallet_history';
-                  //     $history_column_id = "wallet_history_id";
-                  //     $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDate($wallet->wallet_id, $user_id, $dates['start'], $dates['end']);
-                  //   } else {
-                  //     $table_wallet_history = 'wellness_wallet_history';
-                  //     $history_column_id = "wellness_wallet_history_id";
-                  //     $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDate($wallet->wallet_id, $user_id, $dates['start'], $dates['end']);
-                  //   }
-                  //   $e_claim_result = DB::table('e_claim')
-                  //   ->whereIn('user_id', $ids)
-                  //   ->where('spending_type', $spending_type)
-                  //   ->orderBy('created_at', 'desc')
-                  //   ->take(3)
-                  //   ->get();
-
-                  //   // get in-network transactions
-                  //   $transactions = DB::table('transaction_history')
-                  //   ->whereIn('UserID', $ids)
-                  //   ->where('spending_type', $spending_type)
-                  //   ->orderBy('created_at', 'desc')
-                  //   ->take(3)
-                  //   ->get();
+                  } else {
                     $e_claim_result = [];
                     $transactions = [];
-                    $credit_data = null;
                   }
 
                   foreach($e_claim_result as $key => $res) {
@@ -1255,14 +1236,6 @@ return Response::json($returnObject);
                     $currency_symbol = "MYR";
                     $converted_amount = $total_amount * $trans->currency_amount;
                   }
-
-                  // if($trans->default_currency == "sgd") {
-                  //   $currency_symbol = "SGD";
-                  //   $converted_amount = $total_amount;
-                  // } else if($trans->default_currency == "myr") {
-                  //   $currency_symbol = "MYR";
-                  //   $converted_amount = $total_amount * $trans->currency_amount;
-                  // }
 
                   $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                   $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);

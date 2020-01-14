@@ -24,6 +24,36 @@ class MemberHelper
 		}
 	}
 
+	public static function getMemberSpendingDateTerms($member_id, $term, $spending_type)
+	{
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		if($term == "current_term") {
+			$member_wallet = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
+			$spending_account = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+			if($spending_type == "medical") {
+				return ['start' => $member_wallet->medical_usage_date, 'end' => PlanHelper::endDate($spending_account->medical_spending_end_date)];
+			} else {
+				return ['start' => $member_wallet->wellness_usage_date, 'end' => PlanHelper::endDate($spending_account->wellness_spending_end_date)];
+			}
+		} else {
+			$member_wallet = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->skip(1)->take(1)->first();
+			if($member_wallet) {
+				$spending_account = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->skip(1)->take(1)->first();
+				if($spending_account) {
+					if($spending_type == "medical") {
+						return ['start' => $member_wallet->medical_usage_date, 'end' => PlanHelper::endDate($spending_account->medical_spending_end_date)];
+					} else {
+						return ['start' => $member_wallet->wellness_usage_date, 'end' => PlanHelper::endDate($spending_account->wellness_spending_end_date)];
+					}
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+	}
+
 	public static function activateNewEntitlement($member_id, $id)
 	{
 		$customer_id = PlanHelper::getCustomerId($member_id);
