@@ -1193,10 +1193,7 @@ app.directive("employeeOverviewDirective", [
 
         scope.toggleEmployee = function (emp, index) {
           console.log(emp);
-          scope.medical_wallet = emp.medical_wallet;
-          scope.wellness_wallet = emp.wellness_wallet;
-          console.log(scope.medical_wallet);
-          console.log(scope.wellness_wallet);
+          
 
           if (scope.isEmployeeShow == false) {
             scope.isEmployeeShow = true;
@@ -1207,6 +1204,11 @@ app.directive("employeeOverviewDirective", [
             scope.plan_name = emp.plan_name;
             console.log(scope.plan_name);
 
+            scope.medical_wallet = emp.medical_wallet;
+            scope.wellness_wallet = emp.wellness_wallet;
+            console.log(scope.medical_wallet);
+            console.log(scope.wellness_wallet);
+            
             if (scope.plan_name === 'Lite Plan') {
               scope.hideLitePlanCheckbox = false;
               scope.litePlanCheckbox = true;

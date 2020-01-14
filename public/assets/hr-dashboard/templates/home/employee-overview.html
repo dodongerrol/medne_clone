@@ -444,7 +444,7 @@
 											<div></div>
 										</span>
 									</div>
-									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
+									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement" ng-class="{ 'disabled' : medical_wallet == false && wellness_wallet == false}">Update</span>
 								</div>
 								<div class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Wellness Entitlement</strong>
@@ -463,7 +463,7 @@
 											<div></div>
 										</span>
 									</div>
-									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.wellness" class="dropdown-entitlement">Update</span>
+									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.wellness" class="dropdown-entitlement" ng-class="{ 'disabled' : medical_wallet == false && wellness_wallet == false}">Update</span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Date of Birth</strong>
