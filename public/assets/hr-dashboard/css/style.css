@@ -6327,6 +6327,10 @@ span.dropdown-entitlement {
   cursor: pointer;
 }
 
+span.dropdown-entitlement.disabled {
+  pointer-events: none;
+}
+
 .entitlement-information .btn-update {
   background-color: #0392cf;
   color: #fff;

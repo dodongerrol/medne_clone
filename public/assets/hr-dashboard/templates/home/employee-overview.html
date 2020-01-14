@@ -426,7 +426,7 @@
 									<strong class="font-helvetica-medium">Member ID</strong>
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
-								<div class="entitlementWithIcon">
+								<div ng-if="medical_wallet" class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Medical Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
@@ -446,7 +446,7 @@
 									</div>
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
 								</div>
-								<div class="entitlementWithIcon">
+								<div ng-if="wellness_wallet" class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Wellness Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
