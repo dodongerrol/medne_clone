@@ -36,9 +36,9 @@ class MemberHelper
 				return ['start' => $member_wallet->wellness_usage_date, 'end' => PlanHelper::endDate($spending_account->wellness_spending_end_date)];
 			}
 		} else {
-			$member_wallet = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->skip(1)->take(1)->first();
+			$member_wallet = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('employee_wallet_entitlement_id', 'desc')->skip(1)->take(1)->first();
 			if($member_wallet) {
-				$spending_account = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->skip(1)->take(1)->first();
+				$spending_account = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('spending_account_settings_id', 'desc')->skip(1)->take(1)->first();
 				if($spending_account) {
 					if($spending_type == "medical") {
 						return ['start' => $member_wallet->medical_usage_date, 'end' => PlanHelper::endDate($spending_account->medical_spending_end_date)];

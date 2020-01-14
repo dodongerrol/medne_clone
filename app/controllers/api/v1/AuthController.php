@@ -1071,7 +1071,10 @@ return Response::json($returnObject);
                     }
                   } else {
                     $credit_data = null;
+                    return "none";
                   }
+
+                  return $credit_data;
 
                   if($dates) {
                     $e_claim_result = DB::table('e_claim')
