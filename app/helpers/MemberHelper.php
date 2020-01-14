@@ -24,6 +24,55 @@ class MemberHelper
 		}
 	}
 
+	public static function getMemberCreditReset($member_id, $spending_type)
+	{
+		if($term == "current_term") {
+			$credit_resets = DB::table('credit_reset')
+												->where('id', $member_id)->where('user_type', 'employee')
+												->where('spending_type', $spending_type)
+												->orderBy('created_at', 'desc')
+												->first();
+			if($credit_resets) {
+				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				return ['start' => $credit_resets->date_resetted, 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_reset_end->date_resetted)))];
+			} else {
+				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+			}
+		} else {
+			$credit_resets = DB::table('credit_reset')
+												->where('id', $member_id)->where('user_type', 'employee')
+												->where('spending_type', $spending_type)
+												->get();
+
+			if(sizeof($credit_resets) > 1) {
+				$credit_reset_start = DB::table('credit_reset')
+												->where('id', $member_id)->where('user_type', 'employee')
+												->where('spending_type', $spending_type)
+												->orderBy('created_at', 'desc')
+												->skip(1)
+												->take(1)
+												->first();
+				if($credit_reset_start) {
+					$credit_reset_end = DB::table('credit_reset')
+													->where('id', $member_id)->where('user_type', 'employee')
+													->where('spending_type', $spending_type)
+													->orderBy('created_at', 'desc')
+													->first();
+					return ['start' => $credit_reset_start->date_resetted, 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_reset_end->date_resetted)))];
+				} else {
+					$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+					return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))];
+				}
+			} else if(sizeof($credit_resets) == 1){
+				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))];
+			} else {
+				return false;
+			}
+		}
+	}
+
 	public static function getMemberSpendingDateTerms($member_id, $term, $spending_type)
 	{
 		$customer_id = PlanHelper::getCustomerId($member_id);
@@ -36,21 +85,47 @@ class MemberHelper
 				return ['start' => $member_wallet->wellness_usage_date, 'end' => PlanHelper::endDate($spending_account->wellness_spending_end_date)];
 			}
 		} else {
-			$member_wallet = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('employee_wallet_entitlement_id', 'desc')->skip(1)->take(1)->first();
-			if($member_wallet) {
-				$spending_account = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('spending_account_settings_id', 'desc')->skip(1)->take(1)->first();
-				if($spending_account) {
-					if($spending_type == "medical") {
-						return ['start' => $member_wallet->medical_usage_date, 'end' => PlanHelper::endDate($spending_account->medical_spending_end_date)];
+			// $member_wallets = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->get();
+
+			// if(sizeof($member_wallets) > 1) {
+				// $member_wallet = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('employee_wallet_entitlement_id', 'desc')->skip(1)->take(1)->first();
+
+				// if($member_wallet) {
+					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('spending_account_setting_id', 'desc')->get();
+
+					if(sizeof($spending_accounts) > 1) {
+						$spending_account = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('spending_account_setting_id', 'desc')->skip(1)->take(1)->first();
+
+						if($spending_account) {
+							if($spending_type == "medical") {
+								return ['start' => $spending_account->medical_spending_start_date, 'end' => PlanHelper::endDate($spending_account->medical_spending_end_date)];
+							} else {
+								return ['start' => $spending_account->wellness_spending_start_date, 'end' => PlanHelper::endDate($spending_account->wellness_spending_end_date)];
+							}
+						} else {
+							return false;
+						}
+					} else if(sizeof($spending_accounts) == 1) {
+						if($spending_type == "medical") {
+							return ['start' => $spending_accounts[0]->medical_spending_start_date, 'end' => PlanHelper::endDate($spending_accounts[0]->medical_spending_end_date)];
+						} else {
+							return ['start' => $spending_accounts[0]->wellness_spending_start_date, 'end' => PlanHelper::endDate($spending_accounts[0]->wellness_spending_end_date)];
+						}
 					} else {
-						return ['start' => $member_wallet->wellness_usage_date, 'end' => PlanHelper::endDate($spending_account->wellness_spending_end_date)];
+						return false;
 					}
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
+
+					
+					
+				// } else {
+				// 	return false;
+				// }
+			// } else if(sizeof($member_wallets) == 1){
+
+			// }
+
+			
+			
 		}
 	}
 
