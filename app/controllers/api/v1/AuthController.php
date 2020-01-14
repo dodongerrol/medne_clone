@@ -1053,8 +1053,8 @@ return Response::json($returnObject);
 
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
                 $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
-                $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
-                $user_spending_dates = MemberHelper::getMemberSpendingDateTerms($user_id, $filter, $spending_type);
+                $dates = MemberHelper::getMemberDateTerms($user_id, $filter, $spending_type);
+                $user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
                 // return $user_spending_dates;
 
