@@ -85,7 +85,8 @@ app.directive("employeeOverviewDirective", [
 
         scope.emp_entitlement = {};
         scope.entitlement_status = {};
-        scope.calc_entitlement = {};
+        scope.calc_entitlement_med = {};
+        scope.calc_entitlement_well = {};
         scope.proration = {};
         scope.medicalCalculatedInfo = false;
         scope.wellnessCalculatedInfo = false;
@@ -1331,8 +1332,8 @@ app.directive("employeeOverviewDirective", [
                   console.log(response);
                   console.log( scope.entitlement_credits.med_credits );
                   scope.hideLoading();
-                  scope.calc_entitlement = response.data;
-                  scope.new_allocation_med = scope.calc_entitlement.new_allocation;
+                  scope.calc_entitlement_med = response.data;
+                  scope.new_allocation_med = scope.calc_entitlement_med.new_allocation;
                   scope.medicalCalculatedInfo = true;
 
                   if ( response.data.status == false ) {
@@ -1356,8 +1357,8 @@ app.directive("employeeOverviewDirective", [
                   console.log(response);
                   console.log( scope.entitlement_credits.well_credits );
                   scope.hideLoading();
-                  scope.calc_entitlement = response.data;
-                  scope.new_allocation_well = scope.calc_entitlement.new_allocation;
+                  scope.calc_entitlement_well = response.data;
+                  scope.new_allocation_well = scope.calc_entitlement_well.new_allocation;
                   scope.wellnessCalculatedInfo = true;
 
                   if ( response.data.status == false ) {

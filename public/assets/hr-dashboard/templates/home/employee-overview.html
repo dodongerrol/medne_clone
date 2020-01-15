@@ -665,9 +665,9 @@
 											<small ng-click="dropdownEntitlement.med_alloc_formula = !dropdownEntitlement.med_alloc_formula"><i
 													class="fa fa-chevron-down" aria-hidden="true"></i> See how this is calculated</small>
 											<p ng-if="dropdownEntitlement.med_alloc_formula">New Prorated allocation is: <br> 	
-												<span ng-bind="calc_entitlement.currency_type"></span> <span ng-bind="calc_entitlement.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement.plan_month_duration">4</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> + 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="emp_entitlement.medical_new_entitlement">1000</span> x <span ng-bind="calc_entitlement.entitlement_duration">8</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> = 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="new_allocation_med">833.33</span></p>
+												<span ng-bind="calc_entitlement_med.currency_type"></span> <span ng-bind="calc_entitlement_med.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement_med.plan_month_duration">4</span>/<span ng-bind="calc_entitlement_med.plan_year_duration">12</span> + 
+												<span ng-bind="calc_entitlement_med.currency_type">SGD</span> <span ng-bind="emp_entitlement.medical_new_entitlement">1000</span> x <span ng-bind="calc_entitlement_med.entitlement_duration">8</span>/<span ng-bind="calc_entitlement_med.plan_year_duration">12</span> = 
+												<span ng-bind="calc_entitlement_med.currency_type">SGD</span> <span ng-bind="new_allocation_med">833.33</span></p>
 										</div>
 									</div>
 								</div>
@@ -749,9 +749,9 @@
 												ng-click="dropdownEntitlement.well_alloc_formula = !dropdownEntitlement.well_alloc_formula"><i
 													class="fa fa-chevron-down" aria-hidden="true"></i> See how this is calculated</small>
 											<p ng-if="dropdownEntitlement.well_alloc_formula">New Prorated allocation is: <br> 
-												<span ng-bind="calc_entitlement.currency_type"></span> <span ng-bind="calc_entitlement.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement.plan_month_duration">4</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> + 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="emp_entitlement.wellness_new_entitlement">1000</span> x <span ng-bind="calc_entitlement.entitlement_duration">8</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> = 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="new_allocation_well">833.33</span>
+												<span ng-bind="calc_entitlement_well.currency_type"></span> <span ng-bind="calc_entitlement_well.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement_well.plan_month_duration">4</span>/<span ng-bind="calc_entitlement_well.plan_year_duration">12</span> + 
+												<span ng-bind="calc_entitlement_well.currency_type">SGD</span> <span ng-bind="emp_entitlement.wellness_new_entitlement">1000</span> x <span ng-bind="calc_entitlement_well.entitlement_duration">8</span>/<span ng-bind="calc_entitlement_well.plan_year_duration">12</span> = 
+												<span ng-bind="calc_entitlement_well.currency_type">SGD</span> <span ng-bind="new_allocation_well">833.33</span>
 											</p>
 										</div>
 									</div>
