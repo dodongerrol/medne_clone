@@ -105,7 +105,7 @@ app.directive('activityDirective', [
 
 					if (scope.select_to_date == 'wtd') {
 						// scope.select_to_date = data;
-						var currentDate = moment();
+						var currentDate = moment().subtract(scope.term_value, 'year');
 						var weekStart = currentDate.clone().startOf('week');
 						var weekEnd = currentDate.clone().endOf('week');
 
@@ -113,8 +113,8 @@ app.directive('activityDirective', [
 						// for (i = 0; i <= 6; i++) {
 						// 	days.push(moment(weekStart).add(i, 'days').format("DD/MM/YYYY"));
 						// };
-						scope.rangePicker_start = weekStart.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
-						scope.rangePicker_end = currentDate.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
+						scope.rangePicker_start = weekStart.format('DD/MM/YYYY');
+						scope.rangePicker_end = moment().format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
@@ -122,19 +122,19 @@ app.directive('activityDirective', [
 						// console.log('week_now', days);
 					} else if (scope.select_to_date == 'mtd') {
 						// scope.select_to_date = data;
-						var currentDate = moment();
+						var currentDate = moment().subtract(scope.term_value, 'year');
 						var weekStart = currentDate.clone().startOf('week');
 						var weekEnd = currentDate.clone().endOf('week');
 						var monthStart = currentDate.clone().startOf('month');
 
-						scope.rangePicker_start = monthStart.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
-						scope.rangePicker_end = currentDate.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
+						scope.rangePicker_start = monthStart.format('DD/MM/YYYY');
+						scope.rangePicker_end = moment().format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
 					} else if (scope.select_to_date == 'qtd') {
 						// scope.select_to_date = data;
-						var currentDate = moment();
+						var currentDate = moment().subtract(scope.term_value, 'year');
 						var currentQuarter = moment(currentDate.format('YYYY-MM-DD')).utc().quarter();
 						var yearStart = currentDate.clone().startOf('year');
 						var weekStart = currentDate.clone().startOf('week');
@@ -142,15 +142,15 @@ app.directive('activityDirective', [
 						var monthStart = currentDate.clone().startOf('month');
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
-						scope.rangePicker_start = quarterStart.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
-						scope.rangePicker_end = currentDate.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
+						scope.rangePicker_start = quarterStart.format('DD/MM/YYYY');
+						scope.rangePicker_end = moment().format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
 						// console.log(currentQuarter,'quarter '+scope.rangePicker_start+ ' to '+scope.rangePicker_end) ;
 					} else if (scope.select_to_date == 'ytd') {
 						// scope.select_to_date = data;
-						var currentDate = moment();
+						var currentDate = moment().subtract(scope.term_value, 'year');
 						var currentQuarter = moment(currentDate.format('YYYY-MM-DD')).utc().quarter();
 						var yearStart = currentDate.clone().startOf('year');
 						var weekStart = currentDate.clone().startOf('week');
@@ -158,8 +158,8 @@ app.directive('activityDirective', [
 						var monthStart = currentDate.clone().startOf('month');
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
-						scope.rangePicker_start = yearStart.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
-						scope.rangePicker_end = currentDate.subtract(scope.term_value, 'year').format('DD/MM/YYYY');
+						scope.rangePicker_start = yearStart.format('DD/MM/YYYY');
+						scope.rangePicker_end = moment().format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
