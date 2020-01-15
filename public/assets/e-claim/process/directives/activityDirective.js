@@ -114,7 +114,7 @@ app.directive('activityDirective', [
 						// 	days.push(moment(weekStart).add(i, 'days').format("DD/MM/YYYY"));
 						// };
 						scope.rangePicker_start = weekStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
@@ -128,7 +128,7 @@ app.directive('activityDirective', [
 						var monthStart = currentDate.clone().startOf('month');
 
 						scope.rangePicker_start = monthStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
@@ -143,7 +143,7 @@ app.directive('activityDirective', [
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
 						scope.rangePicker_start = quarterStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
@@ -159,7 +159,7 @@ app.directive('activityDirective', [
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
 						scope.rangePicker_start = yearStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();

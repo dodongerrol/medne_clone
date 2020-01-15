@@ -96,7 +96,7 @@ app.directive('activityPage', [
 						// 	days.push(moment(weekStart).add(i, 'days').format("DD/MM/YYYY"));
 						// };
 						scope.rangePicker_start = weekStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
@@ -110,7 +110,7 @@ app.directive('activityPage', [
 						var monthStart = currentDate.clone().startOf('month');
 
 						scope.rangePicker_start = monthStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
@@ -125,7 +125,7 @@ app.directive('activityPage', [
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
 						scope.rangePicker_start = quarterStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
@@ -141,7 +141,7 @@ app.directive('activityPage', [
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
 						scope.rangePicker_start = yearStart.format('DD/MM/YYYY');
-						scope.rangePicker_end = moment().format('DD/MM/YYYY');
+						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 
 						console.log(currentDate,scope.term_value,'-',scope.rangePicker_start, '-', scope.rangePicker_end);
 						$("#rangePicker_start").text(scope.rangePicker_start);
