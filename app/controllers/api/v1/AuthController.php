@@ -1281,7 +1281,6 @@ return Response::json($returnObject);
             }
 
             $wallet_data = array(
-              'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
               'spending_type'             => $spending_type,
               'balance'                   => $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
