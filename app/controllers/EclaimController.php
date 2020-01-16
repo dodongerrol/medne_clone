@@ -6542,7 +6542,7 @@ public function updateEclaimStatus( )
 			if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 				if($balance['back_date'] == true) {
 					$wallet_logs['back_date_deduction'] = 1;
-					$wallet_logs['created_at'] = $e_claim_details->created_at;
+					$wallet_logs['created_at'] = $date;
 				}
 				$wallet_logs['running_balance'] = $balance['balance'] - $amount;
 			} else {
@@ -6572,7 +6572,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : (float)$check->amount
+							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : (float)$amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
@@ -6645,7 +6645,7 @@ public function updateEclaimStatus( )
 				$wallet_logs['running_balance'] = $balance['balance'] - $amount;
 				if($balance['back_date'] == true) {
 					$wallet_logs['back_date_deduction'] = 1;
-					$wallet_logs['created_at'] = $e_claim_details->created_at;
+					$wallet_logs['created_at'] = $date;
 				}
 			}
 
@@ -6670,7 +6670,7 @@ public function updateEclaimStatus( )
 							'approved_date'			=> date('Y-m-d H:i:s'),
 							'rejected_reason'		=> $rejected_reason,
 							'updated_at'				=> date('Y-m-d H:i:s'),
-							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : $check->amount
+							'claim_amount'			=> !empty($claim_amount) ? $claim_amount : $amount
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
