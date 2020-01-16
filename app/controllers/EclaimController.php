@@ -2870,7 +2870,7 @@ public function getActivityOutNetworkTransactions( )
         // $customer_id = $input['customer_id'];
 
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
+	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$e_claim = [];
 	$paginate = [];
@@ -3051,7 +3051,7 @@ public function getActivityInNetworkTransactions( )
         // $customer_id = $input['customer_id'];
 
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
+	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
@@ -4669,7 +4669,7 @@ public function getHrActivity( )
 {
 	$input = Input::all();
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
+	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$paginate = [];
 
@@ -5363,7 +5363,7 @@ public function searchEmployeeActivity( )
 {
 	$input = Input::all();
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = SpendingInvoiceLibrary::getEndDate($input['end']);
+	$end = PlanHelper::getEndDate($input['end']);
 	$spending_type = $input['spending_type'];
 	$e_claim = [];
 	$transaction_details = [];
