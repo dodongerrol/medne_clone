@@ -226,11 +226,7 @@ class EclaimHelper
       $allocation = $pro_allocation;
     }
 
-    return array('balance' => $balance, 'back_date' => $back_date, 'currency_type' => strtoupper($wallet->currency_type));
-
-    // return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
-
-    // return array('status' => true, 'data' => $reset);
+    return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation);
   }
 }
 ?>

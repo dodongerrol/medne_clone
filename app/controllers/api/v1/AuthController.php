@@ -6230,7 +6230,8 @@ public function updateUserNotification( )
           $data = array(
             'balance' => DecimalHelper::formatDecimal($balance), 
             'term_status' => $term_status, 
-            'currency_type' => $spending['currency_type']
+            'currency_type' => $spending['currency_type'],
+            'last_term' => $spending['back_date']
           );
 
           $returnObject->status = true;
