@@ -384,7 +384,7 @@
 						Employee</div>
 					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
 						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div ng-if="medical_wallet && wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
+					<div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
 						Entitlement</div>
 					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">
 						Settings</div>
@@ -426,7 +426,7 @@
 									<strong class="font-helvetica-medium">Member ID</strong>
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
-								<div class="entitlementWithIcon">
+								<div ng-if="medical_wallet" class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Medical Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
@@ -446,7 +446,7 @@
 									</div>
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
 								</div>
-								<div class="entitlementWithIcon">
+								<div ng-if="wellness_wallet" class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Wellness Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
@@ -567,10 +567,27 @@
 					<div ng-if="empTabSelected == 2" class="entitlement-information">
 						<div class="entitlement-btn-edit-wrapper">
 							<h3>Entitlement Information</h3>
-							<button ng-if="cal_one == false && cal_two == false" ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false}" class="btn-update">Update</button>
-							<button ng-if="cal_one == true && cal_two == false" ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false}" ng-click="updateMedicalEntitlement()" class="btn-update">Update</button>
-							<button ng-if="cal_one == false && cal_two == true" ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false}" ng-click="updateWellnessEntitlement()" class="btn-update">Update</button>
-							<button ng-if="cal_one == true && cal_two == true" ng-class="{'disabled' : calc_update_med == false || calc_update_well == false}" ng-click="updateAllEntitlement()" class="btn-update">Update</button>
+							<button ng-if="cal_one == false && cal_two == false" class="btn-update">Update</button>
+
+	            <button 
+	            ng-if="cal_one == true && cal_two == false" 
+
+	            ng-class="{'calc-disabled' : calc_update_med == false }" 
+
+	            ng-click="updateMedicalEntitlement()" class="btn-update">Update</button>
+
+	            <button 
+	            ng-if="cal_one == false && cal_two == true" 
+	            ng-class="{'calc-disabled' : calc_update_well == false }" 
+	            ng-click="updateWellnessEntitlement()" class="btn-update">Update</button>
+
+
+	            <button 
+	            ng-if="cal_one == true && cal_two == true" 
+
+	            ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false }" 
+
+	            ng-click="updateAllEntitlement()" class="btn-update">Update</button>
 						</div>
 
 						<div class="entitlement-information-details">
@@ -585,7 +602,7 @@
 												<input class="entitlement-input form-control" type="number" readonly="readonly"
 													placeholder="0.00" ng-model="emp_entitlement.original_medical_entitlement">
 											</div>
-											<p ng-if="emp_entitlement.updated_medical_entitlement == true" class="small">*Updated from 
+											<p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated from 
 												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.old_medical_entitlement">500.00</span> to 
 												<span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.original_medical_entitlement">1,000</span> on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span>
 											</p>
@@ -598,7 +615,7 @@
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
 												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement">
 											</div>
-											<p ng-if="emp_entitlement.updated_medical_entitlement == true" class="small">*Updated on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span></p>
+											<p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span></p>
 										</div>
 									</div>
 									<div class="col-md-3">
@@ -610,11 +627,11 @@
 												<div class="entitlement-date-input-wrapper">
 													<input type="text" name="usage_date"
 														class="medical-entitlement-date entitlement-input dateWithIcon form-control datepicker-medical"
-														ng-model="med_effective_date" placeholder="DD/MM/YYYY">
+														ng-model="emp_entitlement.medical_entitlement_date" placeholder="DD/MM/YYYY">
 													<i class="fa fa-calendar-o" aria-hidden="true"></i>
 												</div>
 											</div>
-											<p ng-if="emp_entitlement.updated_medical_entitlement == true" class="small">*Updated on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span></p>
+											<p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span></p>
 										</div>
 									</div>
 									<div class="col-md-2">
@@ -640,7 +657,7 @@
 													<span ng-if="new_allocation_med == null">0.00</span>
 													<span ng-if="new_allocation_med != null" ng-bind="(new_allocation_med | number : 2 )"></span>
 												</h4>
-												<button ng-disabled="emp_entitlement.medical_new_entitlement == '' || med_effective_date == '' " class="btn-calculate med_btn_calculate" ng-click="entitlementCalc('medical', 1)">Calculate</button>
+												<button ng-disabled="emp_entitlement.medical_new_entitlement == '' || emp_entitlement.medical_entitlement_date == '' " class="btn-calculate med_btn_calculate" ng-click="entitlementCalc('medical', 1)">Calculate</button>
 												 <p ng-if="effectiveMedDateError" class="effective-date-error">New Medical Entitlement Usage Date exceeded the Spending End Date.</p>
 											</div>
 										</div>
@@ -648,9 +665,9 @@
 											<small ng-click="dropdownEntitlement.med_alloc_formula = !dropdownEntitlement.med_alloc_formula"><i
 													class="fa fa-chevron-down" aria-hidden="true"></i> See how this is calculated</small>
 											<p ng-if="dropdownEntitlement.med_alloc_formula">New Prorated allocation is: <br> 	
-												<span ng-bind="calc_entitlement.currency_type"></span> <span ng-bind="calc_entitlement.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement.plan_month_duration">4</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> + 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="emp_entitlement.medical_new_entitlement">1000</span> x <span ng-bind="calc_entitlement.entitlement_duration">8</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> = 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="new_allocation_med">833.33</span></p>
+												<span ng-bind="calc_entitlement_med.currency_type"></span> <span ng-bind="calc_entitlement_med.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement_med.plan_month_duration">4</span>/<span ng-bind="calc_entitlement_med.plan_year_duration">12</span> + 
+												<span ng-bind="calc_entitlement_med.currency_type">SGD</span> <span ng-bind="emp_entitlement.medical_new_entitlement">1000</span> x <span ng-bind="calc_entitlement_med.entitlement_duration">8</span>/<span ng-bind="calc_entitlement_med.plan_year_duration">12</span> = 
+												<span ng-bind="calc_entitlement_med.currency_type">SGD</span> <span ng-bind="new_allocation_med">833.33</span></p>
 										</div>
 									</div>
 								</div>
@@ -681,7 +698,7 @@
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
 												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement">
 											</div>
-											<p ng-if="emp_entitlement.updated_wellness_entitlement == true" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
+											<p ng-if="emp_entitlement.updated_wellness_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
 										</div>
 									</div>
 									<div class="col-md-3">
@@ -693,11 +710,11 @@
 												<div class="entitlement-date-input-wrapper">
 													<input type="text" name="usage_date"
 														class="wellness-entitlement-date entitlement-input dateWithIcon form-control datepicker-wellness"
-														ng-model="well_effective_date" placeholder="DD/MM/YYYY">
+														ng-model="emp_entitlement.wellness_entitlement_date" placeholder="DD/MM/YYYY">
 													<i class="fa fa-calendar-o" aria-hidden="true"></i>
 												</div>
 											</div>
-											<p ng-if="emp_entitlement.updated_wellness_entitlement == true" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
+											<p ng-if="emp_entitlement.updated_wellness_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
 										</div>
 									</div>
 									<div class="col-md-2">
@@ -724,7 +741,7 @@
 													<span ng-if="new_allocation_well != null" ng-bind="(new_allocation_well | number : 2 )"></span>
 												</h4>
 												<button ng-disabled="emp_entitlement.wellness_new_entitlement == '' || well_effective_date == '' " class="btn-calculate wellness_btn_calculate" ng-click="entitlementCalc('wellness', 2)">Calculate</button>
-												<p ng-if="emp_entitlement.updated_wellness_entitlement == true" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
+												 <p ng-if="effectiveWellDateError" class="effective-date-error">New Medical Entitlement Usage Date exceeded the Spending End Date.</p>
 											</div>
 										</div>
 										<div ng-if="wellnessCalculatedInfo" class="see-more">
@@ -732,9 +749,9 @@
 												ng-click="dropdownEntitlement.well_alloc_formula = !dropdownEntitlement.well_alloc_formula"><i
 													class="fa fa-chevron-down" aria-hidden="true"></i> See how this is calculated</small>
 											<p ng-if="dropdownEntitlement.well_alloc_formula">New Prorated allocation is: <br> 
-												<span ng-bind="calc_entitlement.currency_type"></span> <span ng-bind="calc_entitlement.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement.plan_month_duration">4</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> + 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="emp_entitlement.wellness_new_entitlement">1000</span> x <span ng-bind="calc_entitlement.entitlement_duration">8</span>/<span ng-bind="calc_entitlement.plan_year_duration">12</span> = 
-												<span ng-bind="calc_entitlement.currency_type">SGD</span> <span ng-bind="new_allocation_well">833.33</span>
+												<span ng-bind="calc_entitlement_well.currency_type"></span> <span ng-bind="calc_entitlement_well.old_entitlement_credits">500</span> x <span ng-bind="calc_entitlement_well.plan_month_duration">4</span>/<span ng-bind="calc_entitlement_well.plan_year_duration">12</span> + 
+												<span ng-bind="calc_entitlement_well.currency_type">SGD</span> <span ng-bind="emp_entitlement.wellness_new_entitlement">1000</span> x <span ng-bind="calc_entitlement_well.entitlement_duration">8</span>/<span ng-bind="calc_entitlement_well.plan_year_duration">12</span> = 
+												<span ng-bind="calc_entitlement_well.currency_type">SGD</span> <span ng-bind="new_allocation_well">833.33</span>
 											</p>
 										</div>
 									</div>
@@ -1034,7 +1051,7 @@
 										<span ng-if="health_spending_summary.medical.exceed == false" class="on-track"><span
 												class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 												ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
-										<span ng-if="health_spending_summary.medical.exceed == true" class="exceed"><span
+										<span ng-if="health_spending_summary.medical.exceed" class="exceed"><span
 												class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 												ng-bind="health_spending_summary.medical.current_usage">700.00</span></span>
 									</div>

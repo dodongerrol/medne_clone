@@ -1858,7 +1858,7 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'member_id is required');
         }
 
-        $entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $input['member_id'])->orderBy('created_at', 'desc')->first();
+        $entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $input['member_id'])->orderBy('created_at', 'desc')->orderBy('employee_wallet_entitlement_id', 'desc')->first();
         // / check for existing entitlement
         $check_entitlement_medical = DB::table('wallet_entitlement_schedule')
                                 ->where('member_id', $input['member_id'])

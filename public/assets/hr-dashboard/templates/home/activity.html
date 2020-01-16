@@ -277,7 +277,7 @@
 												class="weight-500 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
 												class="weight-500 color-blue-custom"
-												ng-bind="activity.in_network_spending_format_number | number:2">0.00</span>
+												ng-bind="activity.total_allocation | number:2">0.00</span>
 										</p>
 										<p class="color-black3 weight-500 font-16">Balance:
 											<span class="color-blue-custom2 weight-500 font-14 no-margin-top"
@@ -291,7 +291,7 @@
 												<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
 											</span>
 										</p>
-										<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are Displayed as Year-to-date.</small>
+										<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed as <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span>.</small>
 									</div>
 								</div>
 							</div>

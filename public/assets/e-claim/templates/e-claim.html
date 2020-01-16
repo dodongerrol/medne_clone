@@ -430,10 +430,10 @@
 					<i class="fa fa-bell-o" aria-hidden="true"></i>
 				</div>
 				<div class="popup-content">
-					<p>Based on Visit Date, this claim will be recorded on <span class="bold">{{checkEclaimVisit_data.term_status}}</span>.</p>
+					<p>Based on Visit Date, this claim will be recorded on <span class="bold">{{checkEclaimVisit_data.term_status}} term's data</span>.</p>
 					<p ng-if="checkEclaimVisit_data.balance >= eclaim.claim_amount ">{{checkEclaimVisit_data.term_status}} balance is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance | number:2}}</span> and is <span class="bold">sufficient</span> for
 						this claim.</p>
-					<p ng-if="checkEclaimVisit_data.balance < eclaim.claim_amount">{{checkEclaimVisit_data.term_status}} balance is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance | number:2}}</span>; hence your Claim Amount is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance | number:2}}</span>.</p>
+					<p ng-if="checkEclaimVisit_data.balance < eclaim.claim_amount">{{checkEclaimVisit_data.term_status}} term's balance is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance | number:2}}</span>; hence your Claim Amount is <span class="bold">{{checkEclaimVisit_data.currency_type}} {{checkEclaimVisit_data.balance | number:2}}</span>.</p>
 				</div>
 
 				<div class="popup-footer">
