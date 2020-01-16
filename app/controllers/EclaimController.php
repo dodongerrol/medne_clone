@@ -2927,153 +2927,160 @@ public function getActivityOutNetworkTransactions( )
 		->paginate($input['per_page']);
 	} else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);
-		$e_claim_result = DB::table('e_claim')
-		->where('spending_type', $spending_type)
-		->whereIn('user_id', $user_ids)
-		->where('status', 1)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
-		->orderBy('created_at', 'desc')
-		->paginate($input['per_page']);
-	}
-
-        // return $e_claim_result;
-	$paginate['current_page'] = $e_claim_result->getCurrentPage();
-	$paginate['from'] = $e_claim_result->getFrom();
-	$paginate['last_page'] = $e_claim_result->getLastPage();
-	$paginate['per_page'] = $e_claim_result->getPerPage();
-	$paginate['to'] = $e_claim_result->getTo();
-	$paginate['total'] = $e_claim_result->getTotal();
-
-	if($spending_type == 'medical') {
-		$table_wallet_history = 'wallet_history';
-	} else {
-		$table_wallet_history = 'wellness_wallet_history';
-	}
-
-	foreach($e_claim_result as $key => $res) {
-		if($res->status == 0) {
-			$status_text = 'Pending';
-		} else if($res->status == 1) {
-			$status_text = 'Approved';
-		} else if($res->status == 2) {
-			$status_text = 'Rejected';
+		if(sizeof($user_ids)) {
+			$e_claim_result = DB::table('e_claim')
+			->where('spending_type', $spending_type)
+			->whereIn('user_id', $user_ids)
+			->where('status', 1)
+			->where('created_at', '>=', $start)
+			->where('created_at', '<=', $end)
+			->orderBy('created_at', 'desc')
+			->paginate($input['per_page']);
 		} else {
-			$status_text = 'Pending';
-		}
-
-		if($res->status == 1) {
-			$member = DB::table('user')->where('UserID', $res->user_id)->first();
-
-                // check user if it is spouse or dependent
-			if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
-				$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
-				$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
-				$sub_account = ucwords($temp_account->Name);
-				$sub_account_type = $temp_sub->user_type;
-				$owner_id = $temp_sub->owner_id;
-				$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-			} else {
-				$sub_account = FALSE;
-				$sub_account_type = FALSE;
-				$owner_id = $member->UserID;
-				$dependent_relationship = FALSE;
-			}
-
-                // get docs
-			$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
-
-			if(sizeof($docs) > 0) {
-				$e_claim_receipt_status = TRUE;
-				$doc_files = [];
-				foreach ($docs as $key => $doc) {
-					if($doc->file_type == "pdf" || $doc->file_type == "xls") {
-						// $fil = url('').'/receipts/'.$doc->doc_file;
-						$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
-					} else if($doc->file_type == "image") {
-						// $fil = $doc->doc_file;
-						$fil = FileHelper::formatImageAutoQualityCustomer($doc->doc_file, 40);
-					}
-
-					$temp_doc = array(
-						'e_claim_doc_id'    => $doc->e_claim_doc_id,
-						'e_claim_id'            => $doc->e_claim_id,
-						'file'                      => $fil,
-						'file_type'             => $doc->file_type
-					);
-
-					array_push($doc_files, $temp_doc);
-				}
-			} else {
-				$e_claim_receipt_status = FALSE;
-				$doc_files = FALSE;
-			}
-
-			// if($res->currency_type == "myr" && $res->default_currency == "myr") {
-	  //     $res->default_currency = "MYR";
-	  //   } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
-	  //     $res->default_currency = "MYR";
-	  //     $res->amount = $res->amount;
-	  //   } else {
-	  //     $res->default_currency = "SGD";
-	  //   }
-			if($res->currency_type == "myr" && $res->default_currency == "myr") {
-				$res->default_currency = "MYR";
-			} else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
-				$res->default_currency = "MYR";
-				$res->amount = $res->amount;
-				$res->claim_amount = $res->claim_amount;
-			} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
-				$res->default_currency = "SGD";
-				$res->amount = $res->amount;
-				$res->claim_amount = $res->claim_amount;
-			} else {
-				$res->default_currency = "SGD";
-			}
-
-			if((int)$res->status == 1) {
-				// find wallet history
-				$history = DB::table($table_wallet_history)
-						->where('logs', 'deducted_from_e_claim')
-						->where('where_spend', 'e_claim_transaction')
-						->where('id', $res->e_claim_id)
-						->first();
-
-				if($history) {
-					$res->amount = $history->credit;
-				}
-			}
-
-			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
-			$temp = array(
-				'status'            => $res->status,
-				'status_text'       => $status_text,
-				'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
-				'approved_date'     => date('d F Y', strtotime($res->approved_date)),
-				'time'              => $res->time,
-				'service'           => $res->service,
-				'merchant'          => $res->merchant,
-				'amount'            => number_format($res->amount, 2),
-				'member'            => ucwords($member->Name),
-				'type'              => 'E-Claim',
-				'transaction_id'    => 'MNF'.$id,
-				'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,
-				'owner_id'          => $owner_id,
-				'sub_account_type'  => $sub_account_type,
-				'sub_account'       => $sub_account,
-				'month'             => date('M', strtotime($res->date)),
-				'day'               => date('d', strtotime($res->date)),
-				'time'              => date('h:ia', strtotime($res->date)),
-				'receipt_status'    => $e_claim_receipt_status,
-				'files'             => $doc_files,
-				'spending_type'     => ucwords($res->spending_type),
-				'dependent_relationship'    => $dependent_relationship,
-				'currency_type'     => $res->default_currency
-			);
-
-			array_push($e_claim, $temp);
+			$e_claim_result = [];
 		}
 	}
+
+  
+  if(sizeof($e_claim_result) > 0) {
+		$paginate['current_page'] = $e_claim_result->getCurrentPage();
+		$paginate['from'] = $e_claim_result->getFrom();
+		$paginate['last_page'] = $e_claim_result->getLastPage();
+		$paginate['per_page'] = $e_claim_result->getPerPage();
+		$paginate['to'] = $e_claim_result->getTo();
+		$paginate['total'] = $e_claim_result->getTotal();
+		
+		if($spending_type == 'medical') {
+			$table_wallet_history = 'wallet_history';
+		} else {
+			$table_wallet_history = 'wellness_wallet_history';
+		}
+
+		foreach($e_claim_result as $key => $res) {
+			if($res->status == 0) {
+				$status_text = 'Pending';
+			} else if($res->status == 1) {
+				$status_text = 'Approved';
+			} else if($res->status == 2) {
+				$status_text = 'Rejected';
+			} else {
+				$status_text = 'Pending';
+			}
+
+			if($res->status == 1) {
+				$member = DB::table('user')->where('UserID', $res->user_id)->first();
+
+	                // check user if it is spouse or dependent
+				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
+					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+					$sub_account = ucwords($temp_account->Name);
+					$sub_account_type = $temp_sub->user_type;
+					$owner_id = $temp_sub->owner_id;
+					$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+				} else {
+					$sub_account = FALSE;
+					$sub_account_type = FALSE;
+					$owner_id = $member->UserID;
+					$dependent_relationship = FALSE;
+				}
+
+	                // get docs
+				$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
+
+				if(sizeof($docs) > 0) {
+					$e_claim_receipt_status = TRUE;
+					$doc_files = [];
+					foreach ($docs as $key => $doc) {
+						if($doc->file_type == "pdf" || $doc->file_type == "xls") {
+							// $fil = url('').'/receipts/'.$doc->doc_file;
+							$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
+						} else if($doc->file_type == "image") {
+							// $fil = $doc->doc_file;
+							$fil = FileHelper::formatImageAutoQualityCustomer($doc->doc_file, 40);
+						}
+
+						$temp_doc = array(
+							'e_claim_doc_id'    => $doc->e_claim_doc_id,
+							'e_claim_id'            => $doc->e_claim_id,
+							'file'                      => $fil,
+							'file_type'             => $doc->file_type
+						);
+
+						array_push($doc_files, $temp_doc);
+					}
+				} else {
+					$e_claim_receipt_status = FALSE;
+					$doc_files = FALSE;
+				}
+
+				// if($res->currency_type == "myr" && $res->default_currency == "myr") {
+		  //     $res->default_currency = "MYR";
+		  //   } else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+		  //     $res->default_currency = "MYR";
+		  //     $res->amount = $res->amount;
+		  //   } else {
+		  //     $res->default_currency = "SGD";
+		  //   }
+				if($res->currency_type == "myr" && $res->default_currency == "myr") {
+					$res->default_currency = "MYR";
+				} else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
+					$res->default_currency = "MYR";
+					$res->amount = $res->amount;
+					$res->claim_amount = $res->claim_amount;
+				} else if($res->currency_type == "myr" && $res->default_currency == "sgd"){
+					$res->default_currency = "SGD";
+					$res->amount = $res->amount;
+					$res->claim_amount = $res->claim_amount;
+				} else {
+					$res->default_currency = "SGD";
+				}
+
+				if((int)$res->status == 1) {
+					// find wallet history
+					$history = DB::table($table_wallet_history)
+							->where('logs', 'deducted_from_e_claim')
+							->where('where_spend', 'e_claim_transaction')
+							->where('id', $res->e_claim_id)
+							->first();
+
+					if($history) {
+						$res->amount = $history->credit;
+					}
+				}
+
+				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
+				$temp = array(
+					'status'            => $res->status,
+					'status_text'       => $status_text,
+					'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
+					'approved_date'     => date('d F Y', strtotime($res->approved_date)),
+					'time'              => $res->time,
+					'service'           => $res->service,
+					'merchant'          => $res->merchant,
+					'amount'            => number_format($res->amount, 2),
+					'member'            => ucwords($member->Name),
+					'type'              => 'E-Claim',
+					'transaction_id'    => 'MNF'.$id,
+					'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,
+					'owner_id'          => $owner_id,
+					'sub_account_type'  => $sub_account_type,
+					'sub_account'       => $sub_account,
+					'month'             => date('M', strtotime($res->date)),
+					'day'               => date('d', strtotime($res->date)),
+					'time'              => date('h:ia', strtotime($res->date)),
+					'receipt_status'    => $e_claim_receipt_status,
+					'files'             => $doc_files,
+					'spending_type'     => ucwords($res->spending_type),
+					'dependent_relationship'    => $dependent_relationship,
+					'currency_type'     => $res->default_currency
+				);
+
+				array_push($e_claim, $temp);
+			}
+		}
+  }
+
 
 	$paginate['data'] = $e_claim;
 	$paginate['status'] = true;
@@ -3139,22 +3146,28 @@ public function getActivityInNetworkTransactions( )
 		->paginate($input['per_page']);
 	} else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);
-		$transactions = DB::table('transaction_history')
-		->where('spending_type', $spending_type)
-		->whereIn('UserID', $user_ids)
-		->where('paid', 1)
-		->where('date_of_transaction', '>=', $start)
-		->where('date_of_transaction', '<=', $end)
-		->orderBy('date_of_transaction', 'desc')
-		->paginate($input['per_page']);
+		if(sizeof($user_ids) > 0) {
+			$transactions = DB::table('transaction_history')
+			->where('spending_type', $spending_type)
+			->whereIn('UserID', $user_ids)
+			->where('paid', 1)
+			->where('date_of_transaction', '>=', $start)
+			->where('date_of_transaction', '<=', $end)
+			->orderBy('date_of_transaction', 'desc')
+			->paginate($input['per_page']);
+		} else {
+			$transactions = [];
+		}
 	}
 
-	$paginate['current_page'] = $transactions->getCurrentPage();
-	$paginate['from'] = $transactions->getFrom();
-	$paginate['last_page'] = $transactions->getLastPage();
-	$paginate['per_page'] = $transactions->getPerPage();
-	$paginate['to'] = $transactions->getTo();
-	$paginate['total'] = $transactions->getTotal();
+	if(sizeof($transactions) > 0) {
+		$paginate['current_page'] = $transactions->getCurrentPage();
+		$paginate['from'] = $transactions->getFrom();
+		$paginate['last_page'] = $transactions->getLastPage();
+		$paginate['per_page'] = $transactions->getPerPage();
+		$paginate['to'] = $transactions->getTo();
+		$paginate['total'] = $transactions->getTotal();
+	}
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
