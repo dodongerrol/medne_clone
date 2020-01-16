@@ -9587,7 +9587,7 @@ public function downloadEclaimCsv( )
 			$term_status = "Current";
 		}
 
-		return array('status' => true, 'balance' => DecimalHelper::formatDecimal($balance), 'term_status' => $term_status, 'currency_type' => $spending['currency_type']);
+		return array('status' => true, 'balance' => DecimalHelper::formatDecimal($balance), 'term_status' => $term_status, 'currency_type' => $spending['currency_type'], 'last_term' => $spending['back_date']);
 	}
 }
 ?>
