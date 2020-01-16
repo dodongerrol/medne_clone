@@ -1086,8 +1086,8 @@ app.directive("employeeOverviewDirective", [
           //   med_date : new Date( $('.medical-entitlement-date').val() ),
           //   well_date : new Date( $('.medical-entitlement-date').val() ),
           // }
-          scope.emp_entitlement.medical_entitlement_date = '';
-          scope.emp_entitlement.wellness_entitlement_date = '';
+          scope.med_effective_date = '';
+          scope.well_effective_date = '';
           scope.cal_one = false;
           scope.cal_two = false;
           
@@ -1254,17 +1254,20 @@ app.directive("employeeOverviewDirective", [
             });
         }
 
+        scope.medical_date = null;
+
         scope.getMemberEntitlement = function ( emp ) {
 
-          scope.med_effective_date = moment(scope.med_effective_date).format('DD/MM/YYYY');
-          scope.well_effective_date = moment(scope.well_effective_date).format('DD/MM/YYYY');
-          // console.log(scope.med_effective_date);
  
           scope.emp_member_id = emp;
           hrActivity.fetchMemberEntitlement( scope.emp_member_id ) 
               .then(function(response) {
                 console.log(response);
                 scope.emp_entitlement = response.data;
+
+                scope.med_effective_date = moment(scope.emp_entitlement.medical_entitlement_date).format('DD/MM/YYYY');
+                scope.well_effective_date = moment(scope.emp_entitlement.wellness_entitlement_date).format('DD/MM/YYYY');
+
                 console.log(scope.emp_entitlement.updated_medical_entitlement);
                 console.log(scope.emp_entitlement.updated_wellness_entitlement);
                 scope.emp_entitlement.medical_entitlement_date = moment( scope.emp_entitlement.medical_entitlement_date, 'YYYY-MM-DD' ).format('DD/MM/YYYY');
@@ -1382,7 +1385,7 @@ app.directive("employeeOverviewDirective", [
             hrActivity.updateEntitlement( medical_data ) 
               .then(function(response) {
                 console.log(response);
-                // console.log(data);
+                console.log(medical_data);
                 console.log(response.data.status);
 
                 if (response.data.status) {
