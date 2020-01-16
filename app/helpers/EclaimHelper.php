@@ -226,7 +226,7 @@ class EclaimHelper
       $allocation = $pro_allocation;
     }
 
-    return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation);
+    return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'currency_type' => $wallet->currency_type);
   }
 }
 ?>
