@@ -153,10 +153,10 @@ app.directive('dashboardDirective', [
 					hrSettings.getCheckCredits()
 						.then(function (response) {
 							scope.credits = response.data;
-							localStorage.setItem('currency_type', scope.credits.currency_type);
+							localStorage.setItem('currency_type', scope.credits.currency);
 							$('.credit-load').hide();
 							$('.credit-box').fadeIn();
-							localStorage.setItem("currency_type", scope.credits.currency_type);
+							localStorage.setItem("currency_type", scope.credits.currency);
 						});
 
 					// hrSettings.getDashCredits()
