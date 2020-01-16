@@ -948,7 +948,7 @@ app.directive('activityPage', [
 							scope.currentPage = 1;
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
-							$('.btn-custom-end').data('daterangepicker').setMinDate(start);
+							// $('.btn-custom-end').data('daterangepicker'); //.setMinDate(start)
 							if (scope.rangePicker_end && (scope.rangePicker_end > scope.rangePicker_start)) {
 								var activity_search = {
 									start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -1110,7 +1110,7 @@ app.directive('activityPage', [
 							scope.currentPage = 1;
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
-							$('.btn-custom-end').data('daterangepicker').setMinDate(start);
+							// $('.btn-custom-end').data('daterangepicker').setMinDate(start);
 
 							if (scope.rangePicker_end && (moment(scope.rangePicker_end, 'DD/MM/YYYY') < moment(scope.rangePicker_start, 'DD/MM/YYYY'))) {
 								scope.rangePicker_end = moment(start).format('DD/MM/YYYY');
@@ -1196,7 +1196,7 @@ app.directive('activityPage', [
 							end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						}
 
-						$('.btn-custom-end').data('daterangepicker').setMinDate(activity_search.start);
+						// $('.btn-custom-end').data('daterangepicker').setMinDate(activity_search.start);
 						scope.getAllocation(activity_search);
 					}, 500);
 				};
