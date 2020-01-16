@@ -95,7 +95,7 @@ app.directive('activityPage', [
 						// for (i = 0; i <= 6; i++) {
 						// 	days.push(moment(weekStart).add(i, 'days').format("DD/MM/YYYY"));
 						// };
-						scope.rangePicker_start = weekStart.format('DD/MM/YYYY');
+						scope.rangePicker_start = weekStart.add(1, 'day').format('DD/MM/YYYY');
 						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
