@@ -95,7 +95,7 @@ app.directive('activityPage', [
 						// for (i = 0; i <= 6; i++) {
 						// 	days.push(moment(weekStart).add(i, 'days').format("DD/MM/YYYY"));
 						// };
-						scope.rangePicker_start = weekStart.format('DD/MM/YYYY');
+						scope.rangePicker_start = weekStart.add(1, 'day').format('DD/MM/YYYY');
 						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
@@ -948,7 +948,7 @@ app.directive('activityPage', [
 							scope.currentPage = 1;
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
-							$('.btn-custom-end').data('daterangepicker').setMinDate(start);
+							// $('.btn-custom-end').data('daterangepicker'); //.setMinDate(start)
 							if (scope.rangePicker_end && (scope.rangePicker_end > scope.rangePicker_start)) {
 								var activity_search = {
 									start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -1110,7 +1110,7 @@ app.directive('activityPage', [
 							scope.currentPage = 1;
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
-							$('.btn-custom-end').data('daterangepicker').setMinDate(start);
+							// $('.btn-custom-end').data('daterangepicker').setMinDate(start);
 
 							if (scope.rangePicker_end && (moment(scope.rangePicker_end, 'DD/MM/YYYY') < moment(scope.rangePicker_start, 'DD/MM/YYYY'))) {
 								scope.rangePicker_end = moment(start).format('DD/MM/YYYY');
@@ -1196,7 +1196,7 @@ app.directive('activityPage', [
 							end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						}
 
-						$('.btn-custom-end').data('daterangepicker').setMinDate(activity_search.start);
+						// $('.btn-custom-end').data('daterangepicker').setMinDate(activity_search.start);
 						scope.getAllocation(activity_search);
 					}, 500);
 				};

@@ -1086,13 +1086,12 @@ app.directive("employeeOverviewDirective", [
           //   med_date : new Date( $('.medical-entitlement-date').val() ),
           //   well_date : new Date( $('.medical-entitlement-date').val() ),
           // }
-          scope.med_effective_date = '';
-          scope.well_effective_date = '';
+          scope.emp_entitlement.medical_entitlement_date = '';
+          scope.emp_entitlement.wellness_entitlement_date = '';
           scope.cal_one = false;
           scope.cal_two = false;
           
-          console.log(scope.effective_date.med_date);
-          console.log(scope.effective_date.well_date);
+         
         
           scope.medicalCalculatedInfo = false;
           scope.wellnessCalculatedInfo = false;
@@ -1193,7 +1192,7 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.toggleEmployee = function (emp, index) {
-          console.log(emp);
+          // console.log(emp);
           
 
           if (scope.isEmployeeShow == false) {
@@ -1203,12 +1202,12 @@ app.directive("employeeOverviewDirective", [
             scope.selectedEmployee_index = index;
             scope.selectedEmployee = emp;
             scope.plan_name = emp.plan_name;
-            console.log(scope.plan_name);
+            // console.log(scope.plan_name);
 
             scope.medical_wallet = emp.medical_wallet;
             scope.wellness_wallet = emp.wellness_wallet;
-            console.log(scope.medical_wallet);
-            console.log(scope.wellness_wallet);
+            // console.log(scope.medical_wallet);
+            // console.log(scope.wellness_wallet);
             
             if (scope.plan_name === 'Lite Plan') {
               scope.hideLitePlanCheckbox = false;
@@ -1250,7 +1249,7 @@ app.directive("employeeOverviewDirective", [
         scope.getEmpPlans = function (id) {
           dependentsSettings.fetchEmpPlans(id)
             .then(function (response) {
-              console.log(response);
+              // console.log(response);
               scope.selectedEmployee.plan_list = response.data;
             });
         }
@@ -1259,31 +1258,27 @@ app.directive("employeeOverviewDirective", [
 
           scope.med_effective_date = moment(scope.med_effective_date).format('DD/MM/YYYY');
           scope.well_effective_date = moment(scope.well_effective_date).format('DD/MM/YYYY');
-          console.log(scope.med_effective_date);
+          // console.log(scope.med_effective_date);
  
           scope.emp_member_id = emp;
           hrActivity.fetchMemberEntitlement( scope.emp_member_id ) 
               .then(function(response) {
                 console.log(response);
                 scope.emp_entitlement = response.data;
+                console.log(scope.emp_entitlement.updated_medical_entitlement);
+                console.log(scope.emp_entitlement.updated_wellness_entitlement);
                 scope.emp_entitlement.medical_entitlement_date = moment( scope.emp_entitlement.medical_entitlement_date, 'YYYY-MM-DD' ).format('DD/MM/YYYY');
                 scope.emp_entitlement.wellness_entitlement_date = moment( scope.emp_entitlement.wellness_entitlement_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
-                // console.log(scope.emp_entitlement.medical_entitlement_date);
-                // console.log(scope.emp_entitlement.wellness_entitlement_date);
-                // console.log(scope.emp_entitlement);
-
-                // scope.proration = scope.emp_entitlement.wellness_proration;
-                
           });
         }
         
         scope.getMemberNewEntitlementStatus = function ( emp ) {
           hrActivity.fetchMemberNewEntitlementStatus( scope.emp_member_id ) 
               .then(function(response) {
-                console.log(response);
+                // console.log(response);
                 
                 scope.entitlement_status = response.data;
-                console.log(scope.entitlement_status);
+                // console.log(scope.entitlement_status);
 
                 if ( scope.entitlement_status.medical_entitlement != null && scope.entitlement_status.wellness_entitlement != null ) {
                   scope.entitlement_status.medical_entitlement.effective_date = moment( scope.entitlement_status.medical_entitlement.effective_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
@@ -1307,8 +1302,6 @@ app.directive("employeeOverviewDirective", [
             scope.cal_two  = true;
           } 
 
-          console.log( $('.medical-entitlement-date').val() );
-
           scope.entitlement_credits = {
             med_credits : scope.emp_entitlement.medical_new_entitlement,
             well_credits : scope.emp_entitlement.wellness_new_entitlement
@@ -1322,8 +1315,6 @@ app.directive("employeeOverviewDirective", [
             well_proration : scope.emp_entitlement.wellness_proration
           }
           scope.entitlement_spending_type = type;
-
-          console.log($('.medical-entitlement-date').val());
 
           if ( type == 'medical' ) {
             scope.showLoading();
@@ -2331,7 +2322,7 @@ app.directive("employeeOverviewDirective", [
         scope.getEmpDependents = function (id) {
           hrSettings.getDependents(id)
             .then(function (response) {
-              console.log(response);
+              // console.log(response);
               scope.selected_emp_dependents = response.data.dependents;
               angular.forEach(scope.selected_emp_dependents, function (value, key) {
                 value.dob = moment(value.dob).format('DD/MM/YYYY');
