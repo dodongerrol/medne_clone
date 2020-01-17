@@ -625,6 +625,11 @@ class testcontroller extends BaseController {
 		$date = $input['date'];
 		$spending_type = $input['spending_type'];
 
-		return EclaimHelper::getSpendingBalance($user_id, $date, $spending_type);
+		if($input['type'] == "member") {
+			return EclaimHelper::getSpendingBalance($user_id, $date, $spending_type);
+		} else {
+			$result = CustomerHelper::getCustomerCreditReset($user_id, $input['filter'], $spending_type);
+			return ['result' => $result];
+		}
 	}
 }
