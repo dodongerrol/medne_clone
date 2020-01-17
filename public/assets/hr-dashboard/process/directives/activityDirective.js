@@ -81,8 +81,10 @@ app.directive('activityPage', [
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;
+						scope.select_to_date = 'ytd';
 					} else {
 						scope.term_value = 1;
+						scope.select_to_date = 'ytd';
 					}
 
 					if (scope.select_to_date == 'wtd') {
@@ -340,11 +342,13 @@ app.directive('activityPage', [
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 					}
 					scope.currentPage = 1;
+					
 					if (scope.search.user_id) {
 						scope.searchEmployeeActivity(scope.search.user_id);
 					} else {
-						scope.searchActivity(activity_search);
-						scope.searchActivityPagination();
+						scope.getAllocation(activity_search);
+						// scope.searchActivity(activity_search);
+						// scope.searchActivityPagination();
 					}
 				}
 
@@ -611,7 +615,8 @@ app.directive('activityPage', [
 								if (scope.activity.spending_type == "medical") {
 									scope.activity.total_allocation = scope.total_allocation.total_allocation;
 								} else {
-									scope.activity.total_allocation = scope.total_allocation.total_wellness_allocation;
+									scope.activity.total_allocation = scope.total_allocation.total_allocation;
+									// total_wellness_allocation;
 								}
 								scope.in_network_transactions = response.data.data.in_network_transactions;
 								scope.e_claim_transactions = response.data.data.e_claim_transactions;
@@ -1060,15 +1065,26 @@ app.directive('activityPage', [
 				}
 
 				scope.getAllocation = function (dates) {
+					var term_status;
+					if (scope.term_value == 0) {
+						term_status = 'current_term';
+					} else if (scope.term_value == 1) {
+						term_status = 'last_term';
+					}
+
 					var data = {
 						start: dates.start,
-						end: dates.end
+						end: dates.end,
+						spending_type: scope.activitySpendingTypeSelected,
+						filter: term_status,
 					}
+					console.log('piste ka', data);
 					hrActivity.getTotalAlloc(data)
 						.then(function (response) {
 							// console.log(response);
 							scope.total_allocation = response.data;
-							
+							console.log('piste ka', scope.total_allocation);
+
 							var activity_search = {
 								start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 								end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -1103,6 +1119,7 @@ app.directive('activityPage', [
 					} else {
 						// scope.searchActivity( activity_search );
 						scope.getAllocation(activity_search);
+						console.log('piste ka');
 						// scope.searchActivityPagination( );
 					}
 
