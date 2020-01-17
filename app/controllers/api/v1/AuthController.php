@@ -6214,6 +6214,7 @@ public function updateUserNotification( )
           $user_id = StringHelper::getUserId($findUserID);
           $date = date('Y-m-d', strtotime($input['visit_date']));
           $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+          // return $spending;
           $ids = StringHelper::getSubAccountsID($user_id);
           // get pending back dates
           $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
@@ -6230,7 +6231,8 @@ public function updateUserNotification( )
             'balance' => DecimalHelper::formatDecimal($balance), 
             'term_status' => $term_status, 
             'currency_type' => $spending['currency_type'],
-            'last_term' => $spending['back_date']
+            'last_term' => $spending['back_date'],
+            'claim_amounts' => $claim_amounts
           );
 
           $returnObject->status = true;

@@ -133,7 +133,7 @@ class EclaimHelper
     $start_date = null;
     $end_date = null;
     $back_date = false;
-
+    $first_plan = PlanHelper::getUserFirstPlanStart($user_id);
     $reset = DB::table('credit_reset')
                 ->where('id', $user_id)
                 ->where('spending_type', $spending_type)
@@ -186,14 +186,14 @@ class EclaimHelper
             $end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_date)));
             $back_date = true;
           } else {
-            $start_date = date('Y-m-d', $start_temp);
+            $start_date = date('Y-m-d', strtotime($first_plan));
             $end_date = date('Y-m-d', $date_resetted);
             $end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_date)));
             $back_date = true;
           }
         } else {
           $default_start = true;
-          $start_date = date('Y-m-d', $date_resetted);
+          $start_date = date('Y-m-d', $first_plan);
           $end_date = date('Y-m-d', strtotime('-1 day'));
         }
       }
