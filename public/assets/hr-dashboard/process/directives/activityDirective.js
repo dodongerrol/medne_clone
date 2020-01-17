@@ -1060,9 +1060,18 @@ app.directive('activityPage', [
 				}
 
 				scope.getAllocation = function (dates) {
+					var term_status;
+					if (scope.term_value == 0) {
+						term_status = 'current_term';
+					} else if (scope.term_value == 1) {
+						term_status = 'last_term';
+					}
+
 					var data = {
 						start: dates.start,
-						end: dates.end
+						end: dates.end,
+						spending_type: scope.activitySpendingTypeSelected,
+						filter: term_status,
 					}
 					hrActivity.getTotalAlloc(data)
 						.then(function (response) {

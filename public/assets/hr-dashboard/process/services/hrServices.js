@@ -397,7 +397,7 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   };
 
   hrFactory.getTotalAlloc = function(data) {
-    return $http.get(serverUrl.url + "/hr/total_credits_allocation?start="+data.start+"&end="+data.end);
+    return $http.get(serverUrl.url + "/hr/total_credits_allocation?start="+data.start+"&end="+data.end+"&spending_type="+data.spending_type+"&filter="+data.filter);
   };
 
   hrFactory.downloadStatment = function(id) {
