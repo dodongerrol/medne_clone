@@ -140,19 +140,20 @@
 			<div class="white-space-10"></div>
 
 			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left">
-				<h4 class="font-medium2 no-wrap color-blue-custom margin-bottom-6">
+				<h4 class="font-medium2 font-18 no-wrap color-blue-custom margin-bottom-6">
 					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 					<span
 						ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span>
 				</h4>
 				<p class="color-gray font-10">TOTAL ALLOCATION</p>
 				<div class="white-space-10"></div>
-				<h4 class="no-wrap color-blue-custom margin-bottom-6">
+				<h4 class="no-wrap font-18 color-blue-custom margin-bottom-6">
 					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 					<span ng-bind="(activity_results.balance) ? activity_results.balance : 00"></span></h4>
 				<p class="color-gray font-10">BALANCE</p>
-				<p class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed as <span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span><span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span>.
+				<p class="weight-300 font-10 no-margin-top">*Total Allocated Credits and Balance are displayed as Year-to-Date.
 				</p>
+				<!-- <span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span><span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span> -->
 			</div>
 
 			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 xs-no-padding text-center">

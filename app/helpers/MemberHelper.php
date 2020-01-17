@@ -79,7 +79,7 @@ class MemberHelper
 			if($credit_resets) {
 				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
 				$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->orderBy('created_at', 'desc')->first();
-				return ['start' => $credit_resets->date_resetted, 'end' => date('Y-m-d', strtotime($wallet_history->created_at)), 'id' => $credit_resets->wallet_history_id];
+				return ['start' => $credit_resets->date_resetted, 'end' => PlanHelper::endDate(date('Y-m-d')), 'id' => $credit_resets->wallet_history_id];
 			} else {
 				$customer_id = PlanHelper::getCustomerId($member_id);
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -108,7 +108,6 @@ class MemberHelper
 													->orderBy('created_at', 'desc')
 													->first();
 					if($credit_reset_end) {
-						// return ['res' => $credit_reset_end];
 						return ['start' => $credit_reset_start->date_resetted, 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_reset_end->date_resetted))), 'id' => $credit_reset_end->wallet_history_id];
 					} else {
 						$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
