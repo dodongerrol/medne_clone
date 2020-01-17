@@ -2360,8 +2360,6 @@ class PlanHelper {
 		$total_deduction_credits_wellness = 0;
 
 		$user = DB::table('user')->where('UserID', $user_id)->first();
-		$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
-		$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
 		$wallet_history = DB::table('wellness_wallet_history')
 											->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
 											->where('wellness_wallet_history.wallet_id', $wallet_id)
