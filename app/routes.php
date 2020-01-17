@@ -1086,6 +1086,8 @@ Route::group(array('prefix' => 'v2'), function()
 				Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
 				// check e-claim member visit date spending
 				Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
+				// get member dates coverage
+				Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
 	 	});
 	});
 });

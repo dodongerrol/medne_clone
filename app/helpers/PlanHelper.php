@@ -200,11 +200,12 @@ class PlanHelper {
 			return FALSE;
 		}
 
+		// $first_plan = PlanHelper::getUserFirstPlanStart($user_id);
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->first();
 		$data['company_name'] = ucwords($company->company_name);
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
-		$plan_user = DB::table('user_plan_type')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+		$first_plan = DB::table('user_plan_type')->where('user_id', $user_id)->first();
 		
 		if((int)$active_plan->plan_extention_enable == 1) {
 			$plan_user_history = DB::table('user_plan_history')
@@ -290,7 +291,7 @@ class PlanHelper {
 		}
 
 		$data['company_name'] = ucwords($company->company_name);
-		$data['start_date'] = date('F d, Y', strtotime($plan_user->plan_start));
+		$data['start_date'] = date('F d, Y', strtotime($first_plan->plan_start));
 		$data['fullname'] = ucwords($user_details->Name);
 		$data['user_id'] = $user_details->UserID;
 		$data['nric'] = $user_details->NRIC;
@@ -310,7 +311,7 @@ class PlanHelper {
 			$data['expired'] = FALSE;
 		}
 
-		if(date('Y-m-d', strtotime($plan_user->plan_start)) > date('Y-m-d')) {
+		if(date('Y-m-d', strtotime($first_plan->plan_start)) > date('Y-m-d')) {
 			$data['pending'] = true;
 		} else {
 			$data['pending'] = false;
