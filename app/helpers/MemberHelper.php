@@ -122,8 +122,9 @@ class MemberHelper
 					return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted))), 'id' => $credit_resets[0]->wallet_history_id];
 				}
 			} else if(sizeof($credit_resets) == 1){
-				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
-				return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted))), 'id' => $credit_resets[0]->wallet_history_id];
+				// $wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				$first_plan = PlanHelper::getUserFirstPlanStart($member_id);
+				return ['start' => date('Y-m-d', strtotime($first_plan)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted))), 'id' => $credit_resets[0]->wallet_history_id];
 			} else {
 				return false;
 			}
