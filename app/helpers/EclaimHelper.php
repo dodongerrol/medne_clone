@@ -228,7 +228,7 @@ class EclaimHelper
       $allocation = $pro_allocation;
     }
 
-    return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent);
+    return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent, 'currency_type' => $wallet->currency_type);
   }
 }
 ?>

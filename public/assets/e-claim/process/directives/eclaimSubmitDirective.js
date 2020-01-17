@@ -150,11 +150,10 @@ app.directive('eclaimSubmitDirective', [
 
 					scope.checkEclaimVisit_data = {};
 					if(scope.step_active == 3) {
-						scope.summ_reminder = true;
-
 						var data = {
 							visit_date: moment(scope.eclaim.visit_date).format('YYYY-MM-DD'),
-							spending_type: scope.eclaim.spending_type
+							spending_type: scope.eclaim.spending_type,
+							currency_type: localStorage.getItem('currency_type'),
 						}
 
 						eclaimSettings.getCheckEclaimVisit(data)
@@ -166,6 +165,10 @@ app.directive('eclaimSubmitDirective', [
 								scope.eclaim.new_claim_amount = scope.eclaim.claim_amount;
 							} else {
 								scope.eclaim.new_claim_amount = scope.checkEclaimVisit_data.balance
+							}
+
+							if( scope.checkEclaimVisit_data.last_term == true) {
+								scope.summ_reminder = true;
 							}
 							console.log('new api 8-9', scope.checkEclaimVisit_data);
 						});
