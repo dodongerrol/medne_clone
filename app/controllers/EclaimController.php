@@ -1389,14 +1389,6 @@ class EclaimController extends \BaseController {
 				$doc_files = FALSE;
 			}
 
-			// if($res->currency_type == "myr" && $res->default_currency == "myr") {
-	  //     $res->default_currency = "MYR";
-	  //   } else if($res->default_currency == "myr"){
-	  //     $res->default_currency = "MYR";
-	  //     $res->amount = $res->amount;
-	  //   } else {
-	  //     $res->default_currency = "SGD";
-	  //   }
 			if($res->currency_type == "myr" && $res->default_currency == "myr") {
 				$currency_symbol = "MYR";
 			} else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
@@ -1441,7 +1433,6 @@ class EclaimController extends \BaseController {
 
 
 		$total_spent = $in_network_spent + $e_claim_spent;
-		// $balance = $total_allocation - $deducted_allocation - $total_spent;
 
 		$pro_allocation = DB::table($table_wallet_history)
 		->where('wallet_id', $wallet->wallet_id)
