@@ -13,6 +13,23 @@ app.directive('enrollmentOptionsDirective', [
 				scope.isOptionSelected = false;
 				scope.isRequiredTiering = null;
 
+				scope.spending_account_status = {};
+
+				scope.selected_option = {
+					medical_opt : null,
+					wellness_opt : null,
+				}
+
+
+				scope.selectMedicalOpt = function( opt ){
+					scope.selected_option.medical_opt = opt;
+					$(".select-drop-box").hide();
+				}
+				scope.selectWellnessOpt = function( opt ){
+					scope.selected_option.wellness_opt = opt;
+					$(".select-drop-box").hide();
+				}
+
 				scope.backButton = function(){
 					if( localStorage.getItem('fromEmpOverview') == true || localStorage.getItem('fromEmpOverview') == 'true' ){
 						$state.go( 'employee-overview' );
@@ -29,11 +46,28 @@ app.directive('enrollmentOptionsDirective', [
 				}
 
 				scope.enrollmentNextBtn = function(){
+					if (scope.selected_option.medical_opt == null) {
+						scope.selected_option.medical_opt = false
+					}
+					if (scope.selected_option.wellness_opt == null) {
+						scope.selected_option.wellness_opt = false;
+					}
+
+					localStorage.setItem('hasMedicalEntitlementBalance', scope.selected_option.medical_opt);
+					localStorage.setItem('hasWellnessEntitlementBalance', scope.selected_option.wellness_opt);
 					// if( scope.isRequiredTiering == true ){
 						$state.go( 'create-team-benefits-tiers' );
 					// }else{
 					// 	$state.go( 'enrollment-method' );
 					// }
+				}
+
+				scope.getSpendingAccountStatus = function () {
+					hrSettings.getSpendingAccountStatus()
+						.then(function (response) {
+							console.log(response);
+							scope.spending_account_status = response.data;
+						});
 				}
 
 
@@ -68,9 +102,49 @@ app.directive('enrollmentOptionsDirective', [
 			    $( "#global_message" ).text(message);
 			  }
 
-        scope.onLoad = function( ){
-        	scope.toggleLoading();
+			  $(".select-value").click(function(e){
+			  	$(".select-drop-box").hide();
+			  	$(this).closest('.select-div').find(".select-drop-box").show();
+			  });
 
+			  $(".medical-info-click").click(function(e){
+					$(".medical-info-box").show();
+					
+					// $( ".medical-info-box" ).mouseleave(function(e) {
+					// 	$(".medical-info-box").hide();
+					// });
+			  });
+			  $(".medical-info-close").click(function(e){
+			  	$(".medical-info-box").hide();
+				});
+				// $( ".medical-info-box" ).mouseleave(function(e) {
+				// 	$(".medical-info-box").hide();
+				// });
+
+
+			  $(".wellness-info-click").click(function(e){
+					$(".wellness-info-box").show();
+					
+					// $( ".wellness-info-box" ).mouseleave(function(e) {
+					// 	$(".wellness-info-box").hide();
+					// });
+			  });
+			  $(".wellness-info-close").click(function(e){
+			  	$(".wellness-info-box").hide();
+				});
+				
+				
+
+			  $("body").click(function(e){
+			    if ( $(e.target).parents(".select-div").length === 0) {
+			      $(".select-drop-box").hide();
+			    }
+				});
+
+        scope.onLoad = function( ){
+					scope.toggleLoading();
+					scope.getSpendingAccountStatus();
+					
         	setTimeout(function() {
         		scope.toggleLoading();
         	}, 100);

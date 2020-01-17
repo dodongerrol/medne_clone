@@ -1039,7 +1039,6 @@ return Response::json($returnObject);
           $authSession = new OauthSessions();
           $getRequestHeader = StringHelper::requestHeader();
           $input = Input::all();
-          $rm = false;
 
           if(!empty($getRequestHeader['Authorization'])){
             $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
@@ -1053,23 +1052,49 @@ return Response::json($returnObject);
                 $user_id = StringHelper::getUserId($findUserID);
 
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+                $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+                $dates = MemberHelper::getMemberDateTerms($user_id, $filter, $spending_type);
+                $user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
-                if($spending_type == 'medical') {
-                  $table_wallet_history = 'wallet_history';
-                  $history_column_id = "wallet_history_id";
-                  $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
+                // return $user_spending_dates;
+
+                if($user_spending_dates) {
+                  if($spending_type == 'medical') {
+                    $table_wallet_history = 'wallet_history';
+                    $history_column_id = "wallet_history_id";
+                    $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+                  } else {
+                    $table_wallet_history = 'wellness_wallet_history';
+                    $history_column_id = "wellness_wallet_history_id";
+                    $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+                  }
                 } else {
-                  $table_wallet_history = 'wellness_wallet_history';
-                  $history_column_id = "wellness_wallet_history_id";
-                  $credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
+                  $credit_data = null;
                 }
 
-                $e_claim_result = DB::table('e_claim')
-                ->whereIn('user_id', $ids)
-                ->where('spending_type', $spending_type)
-                ->orderBy('created_at', 'desc')
-                ->take(3)
-                ->get();
+                if($dates) {
+                  $e_claim_result = DB::table('e_claim')
+                  ->whereIn('user_id', $ids)
+                  ->where('spending_type', $spending_type)
+                  ->where('created_at', '>=', $dates['start'])
+                  ->where('created_at', '<=', $dates['end'])
+                  ->orderBy('created_at', 'desc')
+                  ->take(3)
+                  ->get();
+
+                  // get in-network transactions
+                  $transactions = DB::table('transaction_history')
+                  ->whereIn('UserID', $ids)
+                  ->where('spending_type', $spending_type)
+                  ->where('created_at', '>=', $dates['start'])
+                  ->where('created_at', '<=', $dates['end'])
+                  ->orderBy('created_at', 'desc')
+                  ->take(3)
+                  ->get();
+                } else {
+                  $e_claim_result = [];
+                  $transactions = [];
+                }
 
                 foreach($e_claim_result as $key => $res) {
                   if($res->status == 0) {
@@ -1114,14 +1139,6 @@ return Response::json($returnObject);
 
                   array_push($e_claim, $temp);
                 }
-
-                // get in-network transactions
-                $transactions = DB::table('transaction_history')
-                ->whereIn('UserID', $ids)
-                ->where('spending_type', $spending_type)
-                ->orderBy('created_at', 'desc')
-                ->take(3)
-                ->get();
 
                 foreach ($transactions as $key => $trans) {
                   if($trans) {
@@ -1219,14 +1236,6 @@ return Response::json($returnObject);
                   $converted_amount = $total_amount * $trans->currency_amount;
                 }
 
-                // if($trans->default_currency == "sgd") {
-                //   $currency_symbol = "SGD";
-                //   $converted_amount = $total_amount;
-                // } else if($trans->default_currency == "myr") {
-                //   $currency_symbol = "MYR";
-                //   $converted_amount = $total_amount * $trans->currency_amount;
-                // }
-
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
@@ -1250,11 +1259,11 @@ return Response::json($returnObject);
               }
             }
 
-            $allocation = $credit_data['allocation'];
-            $current_spending = $credit_data['get_allocation_spent'];
-            $e_claim_spent = $credit_data['e_claim_spent'];
-            $in_network_spent = $credit_data['in_network_spent'];
-            $balance = $credit_data['balance'];
+            $allocation = $credit_data ? $credit_data['allocation'] : 0;
+            $current_spending = $credit_data ? $credit_data['get_allocation_spent'] : 0;
+            $e_claim_spent = $credit_data ? $credit_data['e_claim_spent'] : 0;
+            $in_network_spent = $credit_data ? $credit_data['in_network_spent'] : 0;
+            $balance = $credit_data ? $credit_data['balance'] : 0;
 
             PlanHelper::reCalculateEmployeeBalance($user_id);
             $user = DB::table('user')->where('UserID', $user_id)->first();
@@ -1272,7 +1281,6 @@ return Response::json($returnObject);
             }
 
             $wallet_data = array(
-              'profile'                   => DB::table('user')->where('UserID', $findUserID)->first(),
               'spending_type'             => $spending_type,
               'balance'                   => $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
@@ -1292,18 +1300,80 @@ return Response::json($returnObject);
             $returnObject->message = StringHelper::errorMessage("Token");
             return Response::json($returnObject);
           }
-        } else {
-         $returnObject->status = FALSE;
-         $returnObject->message = StringHelper::errorMessage("Token");
-         return Response::json($returnObject);
-       }
-     } else {
-      $returnObject->status = FALSE;
-      $returnObject->message = StringHelper::errorMessage("Token");
-      return Response::json($returnObject);
-    }
+          } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+          }
+         } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+          }
 
-  }
+        }
+
+        public function getMemberPartialWallet( )
+        {
+
+          $AccessToken = new Api_V1_AccessTokenController();
+          $returnObject = new stdClass();
+          $authSession = new OauthSessions();
+          $getRequestHeader = StringHelper::requestHeader();
+          $input = Input::all();
+
+          if(!empty($getRequestHeader['Authorization'])){
+            $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+            if($getAccessToken){
+              $findUserID = $authSession->findUserID($getAccessToken->session_id);
+              if($findUserID){
+                $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+                $user_id = StringHelper::getUserId($findUserID);
+                $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+                $balance = 0;
+
+                PlanHelper::reCalculateEmployeeBalance($user_id);
+                $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+                $customer_active_plan = DB::table('customer_active_plan')
+                ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                ->first();
+
+                if($spending_type == 'medical') {
+                  $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
+                } else {
+                  $credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
+                }
+
+                $balance = $credit_data ? $credit_data['balance'] : 0;
+                if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
+                  $currency_symbol = "";
+                  $balance = "N.A.";
+                } else {
+                  $currency_symbol = strtoupper($wallet->currency_type);
+                  $balance = number_format($balance, 2);
+                }
+
+                $returnObject->status = true;
+                $returnObject->message = "Success";
+                $returnObject->data = ['balance' => $balance, 'currency_symbol' => $currency_symbol];
+
+                return Response::json($returnObject);
+              } else {
+                $returnObject->status = FALSE;
+                $returnObject->message = StringHelper::errorMessage("Token");
+                return Response::json($returnObject);
+              }
+            } else {
+              $returnObject->status = FALSE;
+              $returnObject->message = StringHelper::errorMessage("Token");
+              return Response::json($returnObject);
+            }
+          } else {
+            $returnObject->status = FALSE;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject);
+          }
+        }
 
   public function getUserCredits( )
   {   
@@ -4712,87 +4782,123 @@ public function getEclaimTransactions( )
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->message = 'Success.';
+
+    $user_id = StringHelper::getUserId($findUserID);
+    $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+    $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+    $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
     $ids = StringHelper::getSubAccountsID($findUserID);
     $e_claim = [];
-    $e_claims = DB::table('e_claim')->whereIn('user_id', $ids)->orderBy('created_at', 'desc')->get();
+    $paginate = [];
+    
+    if($dates) {
+      if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+        $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
+        $e_claims = DB::table('e_claim')
+                      ->whereIn('user_id', $ids)
+                      ->where('created_at', '>=', $dates['start'])
+                      ->where('created_at', '<=', $dates['end'])
+                      ->orderBy('created_at', 'desc')
+                      ->paginate($per_page);
+      } else {
+        $e_claims = DB::table('e_claim')
+                      ->whereIn('user_id', $ids)
+                      ->where('created_at', '>=', $dates['start'])
+                      ->where('created_at', '<=', $dates['end'])
+                      ->orderBy('created_at', 'desc')
+                      ->get();
+      }
 
-    foreach ($e_claims as $key => $res) {
-     $member = DB::table('user')->where('UserID', $res->user_id)->first();
+      foreach ($e_claims as $key => $res) {
+        $member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-                        // check user if it is spouse or dependent
-     if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
-      $temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
-      $temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
-      $sub_account = ucwords($temp_account->Name);
-      $sub_account_type = $temp_sub->user_type;
-      $owner_id = $temp_sub->owner_id;
+        // check user if it is spouse or dependent
+       if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
+          $temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+          $temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+          $sub_account = ucwords($temp_account->Name);
+          $sub_account_type = $temp_sub->user_type;
+          $owner_id = $temp_sub->owner_id;
+        } else {
+          $sub_account = FALSE;
+          $sub_account_type = FALSE;
+          $owner_id = $member->UserID;
+        }
+
+        $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
+
+        $currency_symbol = "SGD";
+        if($res->default_currency == "myr" && $res->currency_type == "sgd") {
+          $currency_symbol = "MYR";
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
+        } else if($res->default_currency == "myr" && $res->currency_type == "myr") {
+          $currency_symbol = "MYR";
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
+        } else if($res->default_currency == "sgd" && $res->currency_type == "myr") {
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
+        } else {
+          $currency_symbol = "SGD";
+          if($res->status == 1) {
+            $res->amount = $res->claim_amount;
+          } else {
+            $res->amount = $res->amount;
+          }
+        }
+
+        if((int)$res->status == 1) {
+          $res->amount = $res->claim_amount > 0 ? $res->claim_amount : $res->amount;
+        }
+
+        $temp = array(
+          'status'            => $res->status,
+          'claim_date'        => date('d F Y', strtotime($res->created_at)),
+          'time'              => $res->time,
+          'service'           => ucwords($res->service),
+          'merchant'          => ucwords($res->merchant),
+          'amount'            => number_format($res->amount, 2),
+          'member'            => ucwords($member->Name),
+          'type'              => 'E-Claim',
+          'transaction_id'    => 'MNF'.$id,
+          'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,
+          'owner_id'          => $owner_id,
+          'sub_account_type'  => $sub_account_type,
+          'sub_account'       => $sub_account,
+          'month'             => date('M', strtotime($res->approved_date)),
+          'day'               => date('d', strtotime($res->approved_date)),
+          'time'              => date('h:ia', strtotime($res->approved_date)),
+          'spending_type'     => $res->spending_type,
+          'currency_symbol'   => $currency_symbol
+        );
+
+        array_push($e_claim, $temp);
+      }
+    }
+
+    if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+      $paginate['total'] = $e_claims->getTotal();
+      $paginate['per_page'] = $e_claims->getPerPage();
+      $paginate['current_page'] = $e_claims->getCurrentPage();
+      $paginate['last_page'] = $e_claims->getLastPage();
+      $paginate['from'] = $e_claims->getFrom();
+      $paginate['to'] = $e_claims->getTo();
+      $paginate['data'] = $e_claim;
+      $returnObject->data = $paginate;
     } else {
-      $sub_account = FALSE;
-      $sub_account_type = FALSE;
-      $owner_id = $member->UserID;
+      $returnObject->data = $e_claim;
     }
-
-    $id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
-
-    $currency_symbol = "SGD";
-    if($res->default_currency == "myr" && $res->currency_type == "sgd") {
-      $currency_symbol = "MYR";
-      if($res->status == 1) {
-        $res->amount = $res->claim_amount;
-      } else {
-        $res->amount = $res->amount;
-      }
-    } else if($res->default_currency == "myr" && $res->currency_type == "myr") {
-      $currency_symbol = "MYR";
-      if($res->status == 1) {
-        $res->amount = $res->claim_amount;
-      } else {
-        $res->amount = $res->amount;
-      }
-    } else if($res->default_currency == "sgd" && $res->currency_type == "myr") {
-      if($res->status == 1) {
-        $res->amount = $res->claim_amount;
-      } else {
-        $res->amount = $res->amount;
-      }
-    } else {
-      $currency_symbol = "SGD";
-      if($res->status == 1) {
-        $res->amount = $res->claim_amount;
-      } else {
-        $res->amount = $res->amount;
-      }
-    }
-
-    if((int)$res->status == 1) {
-      $res->amount = $res->claim_amount > 0 ? $res->claim_amount : $res->amount;
-    }
-
-    $temp = array(
-      'status'            => $res->status,
-      'claim_date'        => date('d F Y', strtotime($res->created_at)),
-      'time'              => $res->time,
-      'service'           => ucwords($res->service),
-      'merchant'          => ucwords($res->merchant),
-      'amount'            => number_format($res->amount, 2),
-      'member'            => ucwords($member->Name),
-      'type'              => 'E-Claim',
-      'transaction_id'    => 'MNF'.$id,
-      'visit_date'        => date('d F Y', strtotime($res->date)).', '.$res->time,
-      'owner_id'          => $owner_id,
-      'sub_account_type'  => $sub_account_type,
-      'sub_account'       => $sub_account,
-      'month'             => date('M', strtotime($res->approved_date)),
-      'day'               => date('d', strtotime($res->approved_date)),
-      'time'              => date('h:ia', strtotime($res->approved_date)),
-      'spending_type'     => $res->spending_type,
-      'currency_symbol'   => $currency_symbol
-    );
-
-    array_push($e_claim, $temp);
-  }
-
-  $returnObject->data = $e_claim;
+  
   return Response::json($returnObject);
 } else {
   $returnObject->status = FALSE;
@@ -5184,55 +5290,55 @@ public function createEclaim( )
     }
   }
 
+  $date = date('Y-m-d', strtotime($input['date']));
+
   $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
   $customer_active_plan = DB::table('customer_active_plan')
   ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
   ->first();
 
   if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-    if($input['spending_type'] == "medical") {
-        // recalculate employee balance
-      PlanHelper::reCalculateEmployeeBalance($user_id);
-    } else {
-      PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-    }
+    // if($input['spending_type'] == "medical") {
+    //     // recalculate employee balance
+    //   PlanHelper::reCalculateEmployeeBalance($user_id);
+    // } else {
+    //   PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
+    // }
+    $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+    $balance = number_format($spending['balance'], 2);
+    $amount = trim($input_amount);
+    $balance = TransactionHelper::floatvalue($balance);
 
     $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     if(!$check_user_balance) {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'User does not have a wallet data.';
-     return Response::json($returnObject);
-   }
+      $returnObject->status = FALSE;
+      $returnObject->message = 'User does not have a wallet data.';
+      return Response::json($returnObject);
+    }
 
-   if($input['spending_type'] == "medical") {
-     $balance = $check_user_balance->balance;
-   } else {
-     $balance = $check_user_balance->wellness_balance;
-   }
+    if($spending['back_date'] == false) {
+      if($amount > $balance) {
+        $returnObject->status = FALSE;
+        $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        return Response::json($returnObject);
+      }
 
-   $amount = trim($input_amount);
-   $balance = number_format($balance, 2);
-   $balance = TransactionHelper::floatvalue($balance);
-   if($amount > $balance) {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
-     return Response::json($returnObject);
-   }
+      // $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
+     $check_pending = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
+     if($input['spending_type'] == "medical") {
+       $claim_amounts = $balance - $check_pending;
+     } else {
+       $claim_amounts = $balance - $check_pending;
+     }
 
-   $check_pending = EclaimHelper::checkPendingEclaims($ids, $input['spending_type']);
-   if($input['spending_type'] == "medical") {
-     $claim_amounts = $balance - $check_pending;
-   } else {
-     $claim_amounts = $balance - $check_pending;
-   }
+     $claim_amounts = trim($claim_amounts);
 
-   $claim_amounts = trim($claim_amounts);
-
-   if($amount > $claim_amounts) {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
-     return Response::json($returnObject);
-   }
+     if($amount > $claim_amounts) {
+       $returnObject->status = FALSE;
+       $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
+       return Response::json($returnObject);
+     }
+    }
  } else {
   $amount = trim($input_amount);
 }
@@ -5246,7 +5352,8 @@ $data = array(
  'service'   => $input['service'],
  'merchant'  => $input['merchant'],
  'amount'    => $amount,
- 'date'      => date('Y-m-d', strtotime($input['date'])),
+ 'claim_amount' => trim($input['claim_amount']),
+ 'date'      => $date,
  'time'      => $time,
  'spending_type' => $input['spending_type'],
  'default_currency' => $check_user_balance->currency_type
@@ -6080,4 +6187,105 @@ public function updateUserNotification( )
   return Response::json($returnObject);
 }
 }
+  public function checkEclaimVisit( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+    $input = Input::all();
+
+    if(empty($input['visit_date']) || $input['visit_date'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'visit_date is required';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['spending_type']) || $input['spending_type'] == null) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'spending_type is required';
+      return Response::json($returnObject);
+    }
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+         if($findUserID){
+          $user_id = StringHelper::getUserId($findUserID);
+          $date = date('Y-m-d', strtotime($input['visit_date']));
+          $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+          $ids = StringHelper::getSubAccountsID($user_id);
+          // get pending back dates
+          $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
+          $balance = $spending['balance'] - $claim_amounts;
+
+          $term_status = null;
+          if($spending['back_date'] == true) {
+            $term_status = "Last";
+          } else {
+            $term_status = "Current";
+          }
+
+          $data = array(
+            'balance' => DecimalHelper::formatDecimal($balance), 
+            'term_status' => $term_status, 
+            'currency_type' => $spending['currency_type'],
+            'last_term' => $spending['back_date']
+          );
+
+          $returnObject->status = true;
+          $returnObject->data = $data;
+          return Response::json($returnObject);
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+     }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
+
+  public function getDatesCoverage( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+         if($findUserID){
+          $user_id = StringHelper::getUserId($findUserID);
+          $data = PlanHelper::checkEmployeePlanStatus($user_id);
+          $returnObject->status = true;
+
+          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['valid_date']))];
+          return Response::json($returnObject);
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+     }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
 }

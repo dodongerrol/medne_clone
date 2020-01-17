@@ -55,9 +55,9 @@ class DependentController extends \BaseController {
 
 			$temp_file = time().$file->getClientOriginalName();
 			$file->move('excel_upload', $temp_file);
-			$data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+			$data_array = Excel::selectSheets('Sheet1')->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
 			$headerRow = $data_array->first()->keys();
-			// return $data_array;
+			
 			$temp_users = [];
 			$row_keys = self::getDependentKeys($headerRow);
 			$dependents_count = count($row_keys) / 5;
@@ -83,10 +83,6 @@ class DependentController extends \BaseController {
 					$dob = true;
 				} elseif ($row == "mobile" || $row == "mobile_number") {
 					$mobile = true;
-				} else if($row == "wellness_credits") {
-					$wellness_credits = true;
-				} else if($row == "medical_credits") {
-					$medical_credits = true;
 				} else if($row == "start_date" || $row == "start_date_ddmmyyyy") {
 					$start_date = true;
 				} else if($row == "postal_code") {
@@ -197,7 +193,6 @@ class DependentController extends \BaseController {
 				}
 			}
 
-
 			if($plan_tier_id) {
 				$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
 				if(sizeof($temp_users) > $total_left_count) {
@@ -290,6 +285,8 @@ class DependentController extends \BaseController {
 					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
 				}
 				
+				$user['medical_credits'] = !isset($user['medical_entitlementlimit']) ? 0 : $user['medical_entitlementlimit'];
+				$user['wellness_credits'] = !isset($user['wellness_entitlementlimit']) ? 0 : $user['wellness_entitlementlimit'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
@@ -299,15 +296,15 @@ class DependentController extends \BaseController {
 					'active_plan_id'		=> $customer_active_plan_id,
 					'plan_tier_id'			=> $plan_tier_id,
 					'first_name'			=> trim($user['fullname']),
-						// 'last_name'				=> trim($user['last_name']),
-						// 'nric'					=> $user['nric'],
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
 					'mobile'				=> trim($mobile),
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
-					'credits'				=> !$user['medical_credits'] ? 0 : $user['medical_credits'],
-					'wellness_credits'		=> !$user['wellness_credits'] ? 0 : $user['wellness_credits'],
+					'credits'				=> !isset($user['medical_entitlementlimit']) || $user['medical_entitlementlimit'] == null ? 0 : $user['medical_entitlementlimit'],
+					'medical_balance_entitlement'				=> !isset($user['medical_entitlement_balance']) || $user['medical_entitlement_balance'] == null ? 0 : $user['medical_entitlement_balance'],
+					'wellness_credits'		=> !isset($user['wellness_entitlementlimit']) || $user['wellness_entitlementlimit'] == null ? 0 : $user['wellness_entitlementlimit'],
+					'wellness_balance_entitlement'				=> !isset($user['wellness_entitlement_balance']) || $user['wellness_entitlement_balance'] == null ? 0 : $user['wellness_entitlement_balance'],
 					'postal_code'			=> trim($user['postal_code']),
 					'start_date'			=> $user['plan_start'],
 					'error_logs'			=> serialize($error_member_logs)

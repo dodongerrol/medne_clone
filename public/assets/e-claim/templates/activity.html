@@ -1,26 +1,58 @@
 <div class="main-container" style="" activity-directive>
 
-  <div id="white-nav" ui-view="navigation" style=""></div>
+	<div id="white-nav" ui-view="navigation" style=""></div>
 
 	<div class="col-xs-12 col-sm-12 col-md-12">
 		<div class="home-container">
 			<div class="white-space-50"></div>
-			<p class="color-gray text-left weight-700 activity-date-header">
-				<span style="margin-right: 10px;">Select a timeframe </span>
-				<!-- <span class="xs-show2"></span>
+			<!-- <p class="color-gray text-left weight-700 activity-date-header"> -->
+			<!-- <span style="margin-right: 10px;">Select a timeframe </span> -->
+			<!-- <span class="xs-show2"></span>
 				<span class="year-selector"><a href="javascript:void(0)" ng-class="{'active' : year_active == 1}" ng-click="setYear('1')">This year</a></span>
 				<span class="year-selector"><a href="javascript:void(0)" ng-class="{'active' : year_active == 2}" ng-click="setYear('2')">Last year</a></span>
 				<span class="year-selector"><a href="javascript:void(0)" ng-class="{'active' : year_active == 3}" ng-click="showCustomDate(3)">Custom</a></span> -->
-			</p>
+			<!-- </p> -->
 
-			<div class="date-selection-container" style="display: inline-block;">
+			<!-- left-input -->
+			<div class="date-selection-container col-md-7" style="display: inline-block;">
+				<div class="input-label custom-select withIcon">
+					<select class="select" ng-change="toDate()" ng-model="select_term" name="term" id="">
+						<option value="current">Current Term</option>
+						<option value="last">Last Term</option>
+					</select>
+					<i class="fa fa-chevron-down" aria-hidden="true"></i>
+				</div>
+
+				<div class="input-label">
+					<input type="radio" name="td" id="wtd" ng-change="toDate()" ng-model="select_to_date" value="wtd"
+						placeholder="WTD">
+					<label class="radio" for="wtd">WTD</label>
+				</div>
+				<div class="input-label">
+					<input type="radio" name="td" id="mtd" ng-change="toDate()" ng-model="select_to_date" value="mtd"
+						placeholder="MTD">
+					<label class="radio" for="mtd">MTD</label>
+				</div>
+				<div class="input-label">
+					<input type="radio" name="td" id="qtd" ng-change="toDate()" ng-model="select_to_date" value="qtd"
+						placeholder="QTD">
+					<label class="radio" for="qtd">QTD</label>
+				</div>
+				<div class="input-label">
+					<input type="radio" name="td" id="ytd" ng-change="toDate()" ng-model="select_to_date" value="ytd"
+						placeholder="YTD">
+					<label class="radio" for="ytd">YTD</label>
+				</div>
+			</div>
+			<!-- right-input -->
+			<div class="date-selection-container col-md-5" style="display: inline-block; text-align: right;">
 				<button class="btn btn-custom-start">
 					<i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
 					<span id="rangePicker_start">01/01/2018</span>
 					<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
 				</button>
 
-				<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
+				<span style="margin: 0 10px;"><i class="fa fa-long-arrow-right"></i></span>
 
 				<button class="btn btn-custom-end">
 					<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
@@ -28,7 +60,7 @@
 					<i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
 				</button>
 
-				<button class="btn btn-apply" ng-click="applyDates()">
+				<button class="btn btn-apply" ng-click="applyDates('custom')">
 					Apply
 				</button>
 			</div>
@@ -37,7 +69,7 @@
 				
 				<div class="white-space-50"></div>
 				<input id="timeframe-range" type="text"/><br/> -->
-				<!-- <div class="white-space-50 slider-container-space"></div>
+			<!-- <div class="white-space-50 slider-container-space"></div>
 				<div class="white-space-20 slider-container-space-show"></div> -->
 			<!-- </div> -->
 
@@ -60,7 +92,7 @@
 					</button>
 				</div>
 			</div> -->
-			
+
 
 			<!-- <div class="xs-date-selector">
 
@@ -94,42 +126,49 @@
 	<div class="col-xs-12 col-sm-12 col-md-12">
 		<div class="benefit-dollars-container">
 			<div class="col-md-12 border-bottom no-padding text-center " style="margin: 10px 0 20px 0;">
-				<h5 class="color-black3 weight-700 font-16 no-margin spend-text" style="">Spending Account</h5>
+				<h5 class="color-black3 weight-500 font-20 no-margin spend-text">Spending Account</h5>
+				<span class="date-range-view font-16">{{rangePicker_start}} - {{rangePicker_end}}</span>
 
 				<div class="spending-type-container">
-					<button class="btn btn-default btn-medical" ng-class="{'active' : spendingTypeOpt == 0}" ng-click="spendingType( 0 )">Medical</button>
-					<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingTypeOpt == 1}" ng-click="spendingType( 1 )">Wellness</button>
+					<button class="btn btn-default btn-medical" ng-class="{'active' : spendingTypeOpt == 0}"
+						ng-click="spendingType( 0 )">Medical</button>
+					<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingTypeOpt == 1}"
+						ng-click="spendingType( 1 )">Wellness</button>
 				</div>
-			</div>	
+			</div>
 			<!-- <h5 class="color-black3 weight-700 font-16 border-bottom">Benefit Dollars</h5> -->
 			<div class="white-space-10"></div>
 
 			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left">
-				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6">
-					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span> 
-					<span ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span></h4>
-				<p class="color-gray font-12 weight-700">TOTAL ALLOCATION</p>
+				<h4 class="font-medium2 no-wrap color-blue-custom margin-bottom-6">
+					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+					<span
+						ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span>
+				</h4>
+				<p class="color-gray font-10">TOTAL ALLOCATION</p>
 				<div class="white-space-10"></div>
-				<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6">
+				<h4 class="no-wrap color-blue-custom margin-bottom-6">
 					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 					<span ng-bind="(activity_results.balance) ? activity_results.balance : 00"></span></h4>
-				<p class="color-gray font-12 weight-700">BALANCE</p>
+				<p class="color-gray font-10">BALANCE</p>
+				<p class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed as <span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span><span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span>.
+				</p>
 			</div>
 
 			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 xs-no-padding text-center">
 				<div class="spent-box text-left">
-					<div class="white-space-30 xxs-hide"></div>
-					<div class="white-space-5 "></div>
-					<h4 class="no-wrap weight-700 color-blue-custom margin-bottom-6">
+					<!-- <div class="white-space-30 xxs-hide"></div>
+					<div class="white-space-5 "></div> -->
+					<h4 class="no-wrap color-blue-custom margin-bottom-6">
 						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 						<span ng-bind="(activity_results.total_spent) ? activity_results.total_spent : 00"></span></h4>
-					<p class="color-gray font-12 weight-700">SPENT</p>
+					<p class="color-gray font-12">SPENT</p>
 				</div>
 			</div>
 
 			<div class="col-xs-12 col-sm-8 col-md-8 xs-no-padding">
 				<div class="spent-box spent-prog text-left">
-					<p class="color-black3 weight-700 font-16">Spending Breakdown</p>
+					<p class="color-black3 weight-500 font-16">Spending Breakdown</p>
 					<div class="progress-wrapper">
 						<div class="progress-bar"></div>
 					</div>
@@ -137,17 +176,17 @@
 					<div class="white-space-10"></div>
 
 					<div class="in-network-box">
-						<p class="weight-700 color-blue-custom">
+						<p class="color-blue-custom">
 							<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 							<span ng-bind="(activity_results.in_network_spent) ? activity_results.in_network_spent : 00"></span></p>
-						<p class="color-gray font-10 weight-700">IN-NETWORK</p>
+						<p class="color-gray font-10">IN-NETWORK</p>
 					</div>
 
 					<div class="out-network-box">
-						<p class="weight-700 color-blue-custom">
+						<p class="color-blue-custom">
 							<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 							<span ng-bind="(activity_results.e_claim_spent) ? activity_results.e_claim_spent : 00"></span></p>
-						<p class="color-gray font-10 weight-700">OUT-OF-NETWORK</p>
+						<p class="color-gray font-10">OUT-OF-NETWORK</p>
 					</div>
 				</div>
 			</div>
@@ -163,18 +202,20 @@
 				<div class="white-space-5"></div>
 				<div class="white-space-2"></div>
 				<p class="color-black2 weight-700">
-					<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim.length"></span> 
-					<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_transactions"></span> 
+					<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim.length"></span>
+					<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_transactions"></span>
 					Total Transactions
 				</p>
 			</div>
 
 			<div class="col-xs-12 col-sm-6 col-md-6 no-padding text-center xs-flex">
-				<button class="btn-in-network" ng-class="{'active':inNetWorkTable}" ng-click="inNetWorkTable = true;outNetWorkTable = false;" style="margin-right: 5px;">
+				<button class="btn-in-network" ng-class="{'active':inNetWorkTable}"
+					ng-click="inNetWorkTable = true;outNetWorkTable = false;" style="margin-right: 5px;">
 					IN-NETWORK<br>TRANSACTIONS
 				</button>
 
-				<button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="inNetWorkTable = false;outNetWorkTable = true;" style="margin-left: 5px;">
+				<button class="btn-out-network" ng-class="{'active':outNetWorkTable}"
+					ng-click="inNetWorkTable = false;outNetWorkTable = true;" style="margin-left: 5px;">
 					OUT-OF-NETWORK<br>TRANSACTIONS
 				</button>
 			</div>
@@ -182,14 +223,14 @@
 			<div class="col-xs-6 col-sm-3 col-md-3 no-padding xs-show2">
 				<div class="white-space-50"></div>
 				<p class="color-black2 weight-700">
-					<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim.length"></span> 
-					<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_transactions"></span> 
+					<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim.length"></span>
+					<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_transactions"></span>
 					Total Transactions
 				</p>
 				<p class="color-black3 font-15 weight-700">
-					Total Spent 
+					Total Spent
 					<label class="font-medium2" style="width: 90px">
-						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span> 
+						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 						<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_spent"></span>
 						<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim_spent"></span>
 					</label>
@@ -198,18 +239,33 @@
 
 			<div class="col-xs-6 col-sm-3 col-md-3 no-padding text-right">
 				<div class="white-space-50 xs-show2"></div>
-				<p class="color-blue-custom font-15 weight-700 pointer-cursor" ng-json-export-excel data="in_network_transactions" report-fields="{date_of_transaction: 'DATE', transaction_id: 'TRANSACTION NO', payment_type: 'PAYMENT TYPE', clinic_type_and_service: 'ITEM/SERVICE', clinic_name: 'PROVIDER', amount: 'TOTAL AMOUNT', member: 'MEMBER', refund_text: 'REFUNDED'}" filename="'In-Network-Transactions'" separator="," ng-if="inNetWorkTable == true && activity_results.lite_plan == false">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+				<p class="color-blue-custom font-15 weight-700 pointer-cursor" ng-json-export-excel
+					data="in_network_transactions"
+					report-fields="{date_of_transaction: 'DATE', transaction_id: 'TRANSACTION NO', payment_type: 'PAYMENT TYPE', clinic_type_and_service: 'ITEM/SERVICE', clinic_name: 'PROVIDER', amount: 'TOTAL AMOUNT', member: 'MEMBER', refund_text: 'REFUNDED'}"
+					filename="'In-Network-Transactions'" separator=","
+					ng-if="inNetWorkTable == true && activity_results.lite_plan == false">DOWNLOAD <img
+						src="../assets/e-claim/img/new-assets/Download.png"
+						style="width: 20px;display: inline-block;margin-left: 5px;"></p>
 
-				<p class="color-blue-custom font-15 weight-700 pointer-cursor" ng-json-export-excel data="in_network_transactions" report-fields="{date_of_transaction: 'DATE', transaction_id: 'TRANSACTION NO', payment_type: 'PAYMENT TYPE', clinic_type_and_service: 'ITEM/SERVICE', clinic_name: 'PROVIDER', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', member: 'MEMBER', refund_text: 'REFUNDED'}" filename="'In-Network-Transactions'" separator="," ng-if="inNetWorkTable == true && activity_results.lite_plan == true">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+				<p class="color-blue-custom font-15 weight-700 pointer-cursor" ng-json-export-excel
+					data="in_network_transactions"
+					report-fields="{date_of_transaction: 'DATE', transaction_id: 'TRANSACTION NO', payment_type: 'PAYMENT TYPE', clinic_type_and_service: 'ITEM/SERVICE', clinic_name: 'PROVIDER', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', member: 'MEMBER', refund_text: 'REFUNDED'}"
+					filename="'In-Network-Transactions'" separator=","
+					ng-if="inNetWorkTable == true && activity_results.lite_plan == true">DOWNLOAD <img
+						src="../assets/e-claim/img/new-assets/Download.png"
+						style="width: 20px;display: inline-block;margin-left: 5px;"></p>
 
-				<p class="color-blue-custom font-15 weight-700 pointer-cursor" ng-json-export-excel data="e_claim_transactions" 
-				report-fields="{claim_date: 'CLAIM DATE', service: 'ITEM/SERVICE', merchant: 'PROVIDER', amount: 'TOTAL AMOUNT', member: 'MEMBER'}" filename="'E-Claim-Transactions'" separator="," ng-if="outNetWorkTable == true;">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+				<p class="color-blue-custom font-15 weight-700 pointer-cursor" ng-json-export-excel data="e_claim_transactions"
+					report-fields="{claim_date: 'CLAIM DATE', service: 'ITEM/SERVICE', merchant: 'PROVIDER', amount: 'TOTAL AMOUNT', member: 'MEMBER'}"
+					filename="'E-Claim-Transactions'" separator="," ng-if="outNetWorkTable == true;">DOWNLOAD <img
+						src="../assets/e-claim/img/new-assets/Download.png"
+						style="width: 20px;display: inline-block;margin-left: 5px;"></p>
 				<div class="white-space-5"></div>
 				<div class="white-space-2"></div>
 				<p class="color-black3 font-15 weight-700 xs-hide2">
-					Total Spent 
+					Total Spent
 					<label class="font-medium2" style="width: 90px">
-						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span> 
+						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 						<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_spent"></span>
 						<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim_spent"></span>
 					</label>
@@ -220,7 +276,7 @@
 		<div class="white-space-20"></div>
 	</div>
 
-	<div ng-if="inNetWorkTable" id="in-network-table" class="col-xs-12 col-sm-12 col-md-12 no-padding " >
+	<div ng-if="inNetWorkTable" id="in-network-table" class="col-xs-12 col-sm-12 col-md-12 no-padding ">
 		<div class="transaction-table-container">
 			<div class="white-space-20"></div>
 
@@ -231,234 +287,255 @@
 						<th style="width: 18%;">ITEM/SERVICE</th>
 						<th style="width: 20%;" class="xxs-hide-table-cell">PROVIDER</th>
 						<th style="width: 15%;" class="xs-hide-table-cell">TOTAL AMOUNT</th>
-						<th class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">MEDICINE & TREATMENT</th>
-						<th class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">CONSULTATION</th>
+						<th class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">MEDICINE
+							& TREATMENT</th>
+						<th class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
+							CONSULTATION</th>
 						<th class="xs-hide-table-cell">PAYMENT TYPE</th>
 						<th class="xs-hide-table-cell">MEMBER</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody ng-repeat="list in activity_results.in_network_transactions">
-						<tr ng-click="openDetails(list)">
-							<td>
-								<span ng-bind="list.date_of_transaction">20 October 2017, 09:30am</span>
-							</td>
-							<td>
-								<span ng-bind="list.clinic_type_and_service">General Practioner Visit</span>
-							</td>
-							<td class="xxs-hide-table-cell">
-								<span ng-bind="list.clinic_name">Drs Chua & Partners (AV) Pte Ltd</span>
-							</td>
-							<td class="xs-hide-table-cell">
-								<span ng-bind="list.currency_type" class="currency-type">SGD</span>  
-								<span ng-bind="list.amount">22.00</span>
-							</td>
-							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
-								<span ng-bind="list.currency_type" class="currency-type">SGD</span>
-								<span ng-bind="list.procedure_cost">Not Available</span>
-							</td>
-							<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
-								<span ng-bind="list.currency_type" class="currency-type">SGD</span>
-								<span ng-bind="list.consultation">Not Available</span>
-							</td>
-							<td class="xs-hide-table-cell">
-								<span ng-bind="list.payment_type">Cash</span>
-							</td>
-							<td class="xs-hide-table-cell">
-								<span ng-bind="list.member">Jeamar</span>
-							</td>
-							<td>
-								<a href="javascript:void(0)" >
-									<i ng-if="!list.showTransacDetails" class="fa fa-angle-right color-black3 font-30"></i>
-									<i ng-if="list.showTransacDetails" class="fa fa-angle-down color-black3 font-30"></i>
-								</a>
-							</td>
-						</tr>
+					<tr ng-click="openDetails(list)">
+						<td>
+							<span ng-bind="list.date_of_transaction">20 October 2017, 09:30am</span>
+						</td>
+						<td>
+							<span ng-bind="list.clinic_type_and_service">General Practioner Visit</span>
+						</td>
+						<td class="xxs-hide-table-cell">
+							<span ng-bind="list.clinic_name">Drs Chua & Partners (AV) Pte Ltd</span>
+						</td>
+						<td class="xs-hide-table-cell">
+							<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+							<span ng-bind="list.amount">22.00</span>
+						</td>
+						<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
+							<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+							<span ng-bind="list.procedure_cost">Not Available</span>
+						</td>
+						<td class="xs-hide-table-cell" ng-if="activity_results.lite_plan && activity_results.wallet_status">
+							<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+							<span ng-bind="list.consultation">Not Available</span>
+						</td>
+						<td class="xs-hide-table-cell">
+							<span ng-bind="list.payment_type">Cash</span>
+						</td>
+						<td class="xs-hide-table-cell">
+							<span ng-bind="list.member">Jeamar</span>
+						</td>
+						<td>
+							<a href="javascript:void(0)">
+								<i ng-if="!list.showTransacDetails" class="fa fa-angle-right color-black3 font-30"></i>
+								<i ng-if="list.showTransacDetails" class="fa fa-angle-down color-black3 font-30"></i>
+							</a>
+						</td>
+					</tr>
 
-						<tr ng-if="list.showTransacDetails" class="in-network-subtr">
-							<td colspan="6">
-								<div class="col-xs-12 col-sm-3 col-md-3 no-padding text-center">
-									<img ng-src="{{list.clinic_image}}" style="width: 50px;height: 50px;border-radius: 50%;border: 1px solid #999;">
-									<!-- <img ng-src="../assets/e-claim/img/overview.png" style="width: 50px;"> -->
+					<tr ng-if="list.showTransacDetails" class="in-network-subtr">
+						<td colspan="6">
+							<div class="col-xs-12 col-sm-3 col-md-3 no-padding text-center">
+								<img ng-src="{{list.clinic_image}}"
+									style="width: 50px;height: 50px;border-radius: 50%;border: 1px solid #999;">
+								<!-- <img ng-src="../assets/e-claim/img/overview.png" style="width: 50px;"> -->
 
-									<div class="white-space-10"></div>
-									<p ng-bind="list.clinic_name">Drs Chua & Partners (AV) Pte Ltd</p>
-									<div class="white-space-20"></div>
+								<div class="white-space-10"></div>
+								<p ng-bind="list.clinic_name">Drs Chua & Partners (AV) Pte Ltd</p>
+								<div class="white-space-20"></div>
 
-									<div class="service-box">
-										<img ng-src="{{ list.clinic_type_image }}" style="width: 35px;">
-										<label style="display: inline-block;margin-top: 8px;margin-left: 10px;">
-											<span ng-if="list.clinic_type == 'general_practitioner'" class="font-18">General Practitioner</span>
-											<span ng-if="list.clinic_type == 'dental_care'" class="font-18">Dental Care</span>
-											<span ng-if="list.clinic_type == 'tcm'" class="font-18">Traditional Chinese Medicine</span>
-											<span ng-if="list.clinic_type == 'health_screening'" class="font-18">Health Screening</span>
-											<span ng-if="list.clinic_type == 'wellness'" class="font-18">Wellness</span>
-											<span ng-if="list.clinic_type == 'health_specialist'" class="font-18">Health Specialist</span>
-										</label>
-									</div>
-
-									<div class="white-space-50"></div>
+								<div class="service-box">
+									<img ng-src="{{ list.clinic_type_image }}" style="width: 35px;">
+									<label style="display: inline-block;margin-top: 8px;margin-left: 10px;">
+										<span ng-if="list.clinic_type == 'general_practitioner'" class="font-18">General Practitioner</span>
+										<span ng-if="list.clinic_type == 'dental_care'" class="font-18">Dental Care</span>
+										<span ng-if="list.clinic_type == 'tcm'" class="font-18">Traditional Chinese Medicine</span>
+										<span ng-if="list.clinic_type == 'health_screening'" class="font-18">Health Screening</span>
+										<span ng-if="list.clinic_type == 'wellness'" class="font-18">Wellness</span>
+										<span ng-if="list.clinic_type == 'health_specialist'" class="font-18">Health Specialist</span>
+									</label>
 								</div>
 
-								<div class="col-xs-12 col-sm-6 col-md-5 no-padding text-center">
-									<div class="transac-details text-left">
-										<!-- <p><label>DATE</label> <span class="color-gray2" ng-bind="list.date_of_transaction">20 October 2017, 09:30am</span></p>
+								<div class="white-space-50"></div>
+							</div>
+
+							<div class="col-xs-12 col-sm-6 col-md-5 no-padding text-center">
+								<div class="transac-details text-left">
+									<!-- <p><label>DATE</label> <span class="color-gray2" ng-bind="list.date_of_transaction">20 October 2017, 09:30am</span></p>
 										<p><label>TRANSACTION #</label> <span class="color-gray2" ng-bind="list.transaction_id">IN74859204</span></p>
 										<p><label>ITEM/SERVICE</label> <span class="color-gray2" ng-bind="list.clinic_type_and_service | limitTo: 35">General Practitioner Visit</span>{{list.clinic_type_and_service.length > 35 ? '...' : ''}}</p>
 										<p><label>TOTAL AMOUNT</label> <span class="color-gray2">S$ <span ng-bind="list.amount"></span></span></p>
 										<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.payment_type">Cash</span></p>
 										<p><label>MEMBER</label> <span class="color-gray2" ng-bind="list.member">Filbert Tan</span></p> -->
 
-										<div class="trans-row">
-											<div class="label-wrapper">
-												<p><label>DATE</label></p>
+									<div class="trans-row">
+										<div class="label-wrapper">
+											<p><label>DATE</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p><span class="color-gray2" ng-bind="list.date_of_transaction">20 October 2017, 09:30am</span>
+											</p>
+										</div>
+									</div>
+									<div class="trans-row">
+										<div class="label-wrapper">
+											<p><label>TRANSACTION #</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p><span class="color-gray2" ng-bind="list.transaction_id">IN74859204</span></p>
+										</div>
+									</div>
+									<div class="trans-row">
+										<div class="label-wrapper">
+											<p><label>ITEM/SERVICE</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p><span class="color-gray2" ng-bind="list.clinic_type_and_service">General Practitioner
+													Visit</span></p>
+										</div>
+									</div>
+									<div class="trans-row">
+										<div class="label-wrapper">
+											<p style="margin-bottom: 12px;"><label>TOTAL AMOUNT</label></p>
+											<div></div>
+											<div class="procedure-indicator"
+												ng-class="list.service_credits && list.transaction_type == 'credits' ? 'blue' : 'green'"
+												ng-if="list.lite_plan && activity_results.wallet_status">
+												<span
+													ng-if="!list.service_credits && list.transaction_type == 'cash' || list.service_credits && list.transaction_type == 'cash'">Cash</span>
+												<span ng-if="list.service_credits && list.transaction_type == 'credits'">Credits</span>
 											</div>
-											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.date_of_transaction">20 October 2017, 09:30am</span></p>
+											<div ng-if="list.lite_plan && activity_results.wallet_status"
+												style="border-bottom: 1px solid #999;width: 50px;margin: 0 20px 8px auto;"></div>
+											<div class="consultation-indicator blue"
+												ng-if="list.lite_plan && ( list.consultation_credits || list.service_credits ) && activity_results.wallet_status">
+												<span ng-if="list.consultation_credits || list.service_credits">Credits</span>
+												<span hidden>Cash</span>
 											</div>
 										</div>
-										<div class="trans-row">
-											<div class="label-wrapper">
-												<p><label>TRANSACTION #</label></p>
-											</div>
-											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.transaction_id">IN74859204</span></p>
-											</div>
-										</div>
-										<div class="trans-row">
-											<div class="label-wrapper">
-												<p><label>ITEM/SERVICE</label></p>
-											</div>
-											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.clinic_type_and_service">General Practitioner Visit</span></p>
-											</div>
-										</div>
-										<div class="trans-row">
-											<div class="label-wrapper">
-												<p style="margin-bottom: 12px;"><label>TOTAL AMOUNT</label></p>
-												<div></div>
-												<div class="procedure-indicator" ng-class="list.service_credits && list.transaction_type == 'credits' ? 'blue' : 'green'" ng-if="list.lite_plan && activity_results.wallet_status">
-													<span ng-if="!list.service_credits && list.transaction_type == 'cash' || list.service_credits && list.transaction_type == 'cash'">Cash</span>
-													<span ng-if="list.service_credits && list.transaction_type == 'credits'">Credits</span>
-												</div>
-												<div ng-if="list.lite_plan && activity_results.wallet_status" style="border-bottom: 1px solid #999;width: 50px;margin: 0 20px 8px auto;"></div>
-												<div class="consultation-indicator blue" ng-if="list.lite_plan && ( list.consultation_credits || list.service_credits ) && activity_results.wallet_status">
-													<span ng-if="list.consultation_credits || list.service_credits">Credits</span>
-													<span hidden>Cash</span>
-												</div>
-											</div>
-											<div class="desc-wrapper">
-												<p style="margin-bottom: 10px;"><span class="color-gray2" >
+										<div class="desc-wrapper">
+											<p style="margin-bottom: 10px;"><span class="color-gray2">
 													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span ng-bind="list.amount">22</span></span></p>
-												<!--  -->
-												<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status">
-													<span class="color-gray2" ng-bind="list.procedure"></span>
-												</p>
-												<p style="margin-bottom: 5px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >
+											<!--  -->
+											<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status">
+												<span class="color-gray2" ng-bind="list.procedure"></span>
+											</p>
+											<p style="margin-bottom: 5px;" ng-if="list.lite_plan && activity_results.wallet_status"><span
+													class="color-gray2">
 													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span ng-bind="list.procedure_cost">22</span></span></p>
-												<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >Consultation</p>
-												<p style="margin-bottom: 20px;" ng-if="list.lite_plan && activity_results.wallet_status"><span class="color-gray2" >
-													<span ng-bind="list.currency_type" class="currency-type">SGD</span> 
+											<p style="margin-bottom: 0;" ng-if="list.lite_plan && activity_results.wallet_status"><span
+													class="color-gray2">Consultation</p>
+											<p style="margin-bottom: 20px;" ng-if="list.lite_plan && activity_results.wallet_status"><span
+													class="color-gray2">
+													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 													<span ng-bind="list.consultation">22</span></span></p>
-											</div>
 										</div>
-										<div class="trans-row">
-											<div class="label-wrapper">
-												<p><label>PAYMENT TYPE</label></p>
-											</div>
-											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.payment_type">In-Network</span></p>
-											</div>
-										</div>
-										<div class="trans-row">
-											<div class="label-wrapper">
-												<p><label>MEMBER</label></p>
-											</div>
-											<div class="desc-wrapper">
-												<p><span class="color-gray2" ng-bind="list.member">Filbert Tan</span></p>
-											</div>
-										</div>
-
-										<div ng-if="list.cap_transaction" class="trans-row">
-											<div class="label-wrapper">
-												<p><label>Caps per visit</label></p>
-											</div>
-											<div class="desc-wrapper">
-												<p>
-													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
-													<span class="color-gray2" ng-bind="list.cap_per_visit"></span>
-												</p>
-											</div>
-										</div>
-										<div ng-if="list.cap_transaction" class="trans-row">
-											<div class="label-wrapper">
-												<p><label>Paid by Credits</label></p>
-											</div>
-											<div class="desc-wrapper">
-												<p>
-													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
-													<span class="color-gray2" ng-bind="list.paid_by_credits"></span>
-												</p>
-											</div>
-										</div>
-										<div ng-if="list.cap_transaction" class="trans-row">
-											<div class="label-wrapper">
-												<p><label>Paid by Cash</label></p>
-											</div>
-											<div class="desc-wrapper">
-												<p>
-													<span ng-bind="list.currency_type" class="currency-type">SGD</span>
-													<span class="color-gray2" ng-bind="list.paid_by_cash"></span>
-												</p>
-											</div>
-										</div>
-
-
-										<p ng-if="list.status_text" style="text-align:center;background: rgb(79, 151, 98);color: white;padding: 10px;width: 28%;margin-left: 135px;" ng-bind="list.status_text"></p>
 									</div>
-								</div>
-
-								<div class="col-xs-12 col-sm-3 col-md-4 no-padding xs-text-center">
-									<!-- list.transaction_files && list.transaction_files.length > 0 ||  -->
-									<button ng-disabled="list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceipt(list)">
-										Upload Receipt
-										<span ng-if="list.uploading"><i class="fa fa-circle-o-notch fa-spin"></i></span>
-									</button>
-
-									<button ng-disabled="!list.transaction_files || list.transaction_files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.transaction_files, list)">
-										Download Receipt
-									</button>
-									<p ng-if="list.upload_err" class="text-error" ng-bind="list.upload_err_message">Upload Failed.</p>
-									<div class="trans-receipts-wrapper">
-										<div class="click_box_wrapper" ng-click="showPreview(img)" ng-repeat="img in list.transaction_files" style="display: inline-block;position: relative;">
-											<a href="javascript:void(0)">
-												<div class="click_box">
-													<i class="fa fa-plus color-white font-25"></i>
-												</div>
-
-												<img ng-if="img.type == 'image' || img.file_type == 'image'" ng-src="{{img.file}}" >
-												<img ng-if="img.type == 'excel' || img.file_type == 'excel'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
-												<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png">
-											</a>
+									<div class="trans-row">
+										<div class="label-wrapper">
+											<p><label>PAYMENT TYPE</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p><span class="color-gray2" ng-bind="list.payment_type">In-Network</span></p>
+										</div>
+									</div>
+									<div class="trans-row">
+										<div class="label-wrapper">
+											<p><label>MEMBER</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p><span class="color-gray2" ng-bind="list.member">Filbert Tan</span></p>
 										</div>
 									</div>
 
-									<div class="white-space-20"></div>
-									<button class="btn-download-receipt" ng-if="list.payment_type == 'Mednefits Credits'" ng-click="downloadMednefitsReceipt(list.trans_id)" style="background: #51BEF2 !important;">
-										Mednefits E-Receipt
-									</button>
+									<div ng-if="list.cap_transaction" class="trans-row">
+										<div class="label-wrapper">
+											<p><label>Caps per visit</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p>
+												<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+												<span class="color-gray2" ng-bind="list.cap_per_visit"></span>
+											</p>
+										</div>
+									</div>
+									<div ng-if="list.cap_transaction" class="trans-row">
+										<div class="label-wrapper">
+											<p><label>Paid by Credits</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p>
+												<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+												<span class="color-gray2" ng-bind="list.paid_by_credits"></span>
+											</p>
+										</div>
+									</div>
+									<div ng-if="list.cap_transaction" class="trans-row">
+										<div class="label-wrapper">
+											<p><label>Paid by Cash</label></p>
+										</div>
+										<div class="desc-wrapper">
+											<p>
+												<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+												<span class="color-gray2" ng-bind="list.paid_by_cash"></span>
+											</p>
+										</div>
+									</div>
+
+
+									<p ng-if="list.status_text"
+										style="text-align:center;background: rgb(79, 151, 98);color: white;padding: 10px;width: 28%;margin-left: 135px;"
+										ng-bind="list.status_text"></p>
 								</div>
-							</td>
-						</tr>
+							</div>
+
+							<div class="col-xs-12 col-sm-3 col-md-4 no-padding xs-text-center">
+								<!-- list.transaction_files && list.transaction_files.length > 0 ||  -->
+								<button ng-disabled="list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload"
+									ng-change="uploadReceipt(list)">
+									Upload Receipt
+									<span ng-if="list.uploading"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+								</button>
+
+								<button ng-disabled="!list.transaction_files || list.transaction_files.length == 0"
+									class="btn-download-receipt" ng-click="downloadReceipt(list.transaction_files, list)">
+									Download Receipt
+								</button>
+								<p ng-if="list.upload_err" class="text-error" ng-bind="list.upload_err_message">Upload Failed.</p>
+								<div class="trans-receipts-wrapper">
+									<div class="click_box_wrapper" ng-click="showPreview(img)" ng-repeat="img in list.transaction_files"
+										style="display: inline-block;position: relative;">
+										<a href="javascript:void(0)">
+											<div class="click_box">
+												<i class="fa fa-plus color-white font-25"></i>
+											</div>
+
+											<img ng-if="img.type == 'image' || img.file_type == 'image'" ng-src="{{img.file}}">
+											<img ng-if="img.type == 'excel' || img.file_type == 'excel'"
+												src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png">
+											<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'"
+												src="../assets/e-claim/img/new-assets/Receipt-pdf.png">
+										</a>
+									</div>
+								</div>
+
+								<div class="white-space-20"></div>
+								<button class="btn-download-receipt" ng-if="list.payment_type == 'Mednefits Credits'"
+									ng-click="downloadMednefitsReceipt(list.trans_id)" style="background: #51BEF2 !important;">
+									Mednefits E-Receipt
+								</button>
+							</div>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
 
 	</div>
 
-	<div ng-if="outNetWorkTable" id="out-network-table" class="col-xs-12 col-sm-12 col-md-12 no-padding" >
+	<div ng-if="outNetWorkTable" id="out-network-table" class="col-xs-12 col-sm-12 col-md-12 no-padding">
 		<div class="transaction-table-container">
 			<div class="white-space-20"></div>
 
@@ -478,9 +555,9 @@
 
 					<tr ng-click="openDetails(list)">
 						<td class="text-center xs-hide-table-cell">
-							<label ng-if="list.status == 0" class="status-box pending" >Pending</label>
-							<label ng-if="list.status == 1" class="status-box approved" >Approved</label>
-							<label ng-if="list.status == 2" class="status-box rejected" >Rejected</label>
+							<label ng-if="list.status == 0" class="status-box pending">Pending</label>
+							<label ng-if="list.status == 1" class="status-box approved">Approved</label>
+							<label ng-if="list.status == 2" class="status-box rejected">Rejected</label>
 						</td>
 						<td>
 							<span ng-bind="list.claim_date">20 October 2017</span>
@@ -492,14 +569,14 @@
 							<span ng-bind="list.merchant">Spectacle Hut</span>
 						</td>
 						<td class="xs-hide-table-cell">
-							<span ng-bind="list.currency_type" class="currency-type">SGD</span> 
+							<span ng-bind="list.currency_type" class="currency-type">SGD</span>
 							<span ng-bind="list.amount"></span>
 						</td>
 						<td class="xs-hide-table-cell">
 							<span ng-bind="list.member">Filbert Tan</span>
 						</td>
 						<td>
-							<a href="javascript:void(0)" >
+							<a href="javascript:void(0)">
 								<i ng-if="!list.showTransacDetails" class="fa fa-angle-right color-black3 font-30"></i>
 								<i ng-if="list.showTransacDetails" class="fa fa-angle-down color-black3 font-30"></i>
 							</a>
@@ -512,9 +589,12 @@
 								<div class="status-box-left">
 									<p class="font-20 color-black3" ng-bind="list.status_text">Approved</p>
 									<!-- <p class="font-14 color-black3" ng-if="list.rejected_reason">Reason: <span ng-bind="list.rejected_reason"></span></p> -->
-									<p ng-if="list.status == 0" class="font-12 color-black3">Claim Date: <span ng-bind="list.claim_date">05 October 2017</span></p>	
-									<p ng-if="list.status == 1" class="font-12 color-black3">Date: <span ng-bind="list.approved_date">05 October 2017</span></p>	
-									<p ng-if="list.status == 2" class="font-12 color-black3">Date: <span ng-bind="list.rejected_date">05 October 2017</span></p>	
+									<p ng-if="list.status == 0" class="font-12 color-black3">Claim Date: <span
+											ng-bind="list.claim_date">05 October 2017</span></p>
+									<p ng-if="list.status == 1" class="font-12 color-black3">Date: <span ng-bind="list.approved_date">05
+											October 2017</span></p>
+									<p ng-if="list.status == 2" class="font-12 color-black3">Date: <span ng-bind="list.rejected_date">05
+											October 2017</span></p>
 								</div>
 
 								<div ng-if="list.status == 2" class="reason-container">
@@ -526,15 +606,20 @@
 
 							<div class="col-xs-12 col-sm-6 col-md-5 no-padding text-center">
 								<div class="transac-details text-left">
-									<p><label>CLAIM DATE</label> <span class="color-gray2" ng-bind="list.claim_date">20 October 2017, 09:30am</span></p>
-									<p><label>VISIT DATE</label> <span class="color-gray2" ng-bind="list.visit_date">20 October 2017, 09:30am</span></p>
-									<p><label>TRANSACTION #</label> <span class="color-gray2" ng-bind="list.transaction_id">IN74859204</span></p>
-									<p><label>CLAIM TYPE</label> <span class="color-gray2" ng-bind="list.service">General Practitioner Visit</span></p>
+									<p><label>CLAIM DATE</label> <span class="color-gray2" ng-bind="list.claim_date">20 October 2017,
+											09:30am</span></p>
+									<p><label>VISIT DATE</label> <span class="color-gray2" ng-bind="list.visit_date">20 October 2017,
+											09:30am</span></p>
+									<p><label>TRANSACTION #</label> <span class="color-gray2"
+											ng-bind="list.transaction_id">IN74859204</span></p>
+									<p><label>CLAIM TYPE</label> <span class="color-gray2" ng-bind="list.service">General Practitioner
+											Visit</span></p>
 									<p><label>PROVIDER</label> <span class="color-gray2" ng-bind="list.merchant">CLINIC</span></p>
-									<p><label>TOTAL AMOUNT</label> <span class="color-gray2" >
-										<span ng-bind="list.currency_type" class="currency-type">SGD</span>
-										<span ng-bind="list.amount">22.00</span></span></p>
-									<p><label>SPENDING ACCOUNT</label> <span class="color-gray2"><span ng-bind="list.spending_type">Medical</span></span></p>
+									<p><label>TOTAL AMOUNT</label> <span class="color-gray2">
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.amount">22.00</span></span></p>
+									<p><label>SPENDING ACCOUNT</label> <span class="color-gray2"><span
+												ng-bind="list.spending_type">Medical</span></span></p>
 									<p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
 									<p><label>MEMBER</label> <span class="color-gray2" ng-bind="list.member">Filbert Tan</span></p>
 									<p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">Filbert Tan</span></p>
@@ -543,28 +628,35 @@
 
 							<div class="col-xs-12 col-sm-3 col-md-4 no-padding xs-text-center">
 								<!-- list.files && list.files.length > 0 ||  -->
-								<button ng-disabled="list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload" ng-change="uploadReceiptOut(list)">
+								<button ng-disabled="list.uploading" class="btn-upload-receipt" ngf-select ng-model="list.upload"
+									ng-change="uploadReceiptOut(list)">
 									Upload Receipt
 									<span ng-if="list.uploading"><i class="fa fa-circle-o-notch fa-spin"></i></span>
 								</button>
 
-								<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt" ng-click="downloadReceipt(list.files, list)">
+								<button ng-disabled="!list.files || list.files.length == 0" class="btn-download-receipt"
+									ng-click="downloadReceipt(list.files, list)">
 									Download Receipt
 								</button>
 
 								<div class="trans-receipts-wrapper">
 
-									<div class="click_box_wrapper" ng-click="showPreview(img)" ng-repeat="img in list.files" style="display: inline-block;position: relative;">
+									<div class="click_box_wrapper" ng-click="showPreview(img)" ng-repeat="img in list.files"
+										style="display: inline-block;position: relative;">
 										<a href="javascript:void(0)">
 											<div class="click_box">
 												<i class="fa fa-plus color-white font-25"></i>
 											</div>
 
-											<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file" ng-src="{{img.file}}" >
-											<img ng-if="img.type == 'xls' || img.file_type == 'xls' || img.type == 'xlxs' || img.file_type == 'xlxs'" src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png" >
-											<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'" src="../assets/e-claim/img/new-assets/Receipt-pdf.png" >
+											<img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file"
+												ng-src="{{img.file}}">
+											<img
+												ng-if="img.type == 'xls' || img.file_type == 'xls' || img.type == 'xlxs' || img.file_type == 'xlxs'"
+												src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png">
+											<img ng-if="img.type == 'pdf' || img.file_type == 'pdf'"
+												src="../assets/e-claim/img/new-assets/Receipt-pdf.png">
 										</a>
-										
+
 									</div>
 								</div>
 							</div>
@@ -581,7 +673,7 @@
 <div class="preview-box">
 	<div class="img-container">
 		<a href="javascript:void(0)" id="hidePreview">
-			<i class="fa fa-times" ></i>
+			<i class="fa fa-times"></i>
 		</a>
 
 		<img hidden>
@@ -592,8 +684,8 @@
 </div>
 
 <script type="text/javascript">
-	$("#hidePreview").click(function() {
+	$("#hidePreview").click(function () {
 		$(".preview-box").fadeOut();
 	});
-	
+
 </script>

@@ -3,6 +3,10 @@ var service = angular.module("eclaimService", []);
 service.factory("eclaimSettings", function($http, serverUrl, Upload) {
   var eclaimFactory = {};
 
+  eclaimFactory.getCheckEclaimVisit = function(data) {
+    return $http.post(serverUrl.url + "/employee/check_e_claim_visit", data);
+  };
+
   eclaimFactory.loginEmp = function(data) {
     return $http.post(serverUrl.url + "/app/e_claim/login", data);
   };
