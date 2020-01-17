@@ -185,7 +185,7 @@ class EclaimHelper
             $end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_date)));
             $back_date = true;
           } else {
-            $start_date = date('Y-m-d', $start_temp);
+            $start_date = date('Y-m-d', strtotime($first_plan));
             $end_date = date('Y-m-d', $date_resetted);
             $end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_date)));
             $back_date = true;
