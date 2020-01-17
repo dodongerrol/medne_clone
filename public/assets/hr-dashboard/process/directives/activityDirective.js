@@ -793,9 +793,16 @@ app.directive('activityPage', [
 					$(".hidden-details-container").animate({ 'right': '-100%' }, 'slow');
 					var activity_search = null;
 					scope.currentPage = 1;
+					var term_status;
+					if (scope.term_value == 0) {
+						term_status = 'current_term';
+					} else if (scope.term_value == 1) {
+						term_status = 'last_term';
+					}
 					activity_search = {
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+						filter: term_status
 					}
 					scope.search.user_id = user_id;
 					activity_search.user_id = user_id;
@@ -950,10 +957,11 @@ app.directive('activityPage', [
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							// $('.btn-custom-end').data('daterangepicker'); //.setMinDate(start)
 							if (scope.rangePicker_end && (scope.rangePicker_end > scope.rangePicker_start)) {
+								
 								var activity_search = {
 									start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 									end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-								};
+								}
 								if (scope.search.user_id) {
 									scope.searchEmployeeActivity(scope.search.user_id);
 								} else {
@@ -975,10 +983,11 @@ app.directive('activityPage', [
 							scope.currentPage = 1;
 							scope.rangePicker_end = moment(end).format('DD/MM/YYYY');
 							$("#rangePicker_end").text(scope.rangePicker_end);
+							
 							var activity_search = {
 								start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 								end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-							};
+							}
 							if (scope.search.user_id) {
 								scope.searchEmployeeActivity(scope.search.user_id);
 							} else {
@@ -1059,6 +1068,7 @@ app.directive('activityPage', [
 						.then(function (response) {
 							// console.log(response);
 							scope.total_allocation = response.data;
+							
 							var activity_search = {
 								start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 								end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -1086,7 +1096,7 @@ app.directive('activityPage', [
 					var activity_search = {
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-					};
+					}
 					scope.showLoading();
 					if (scope.search.user_id) {
 						scope.searchEmployeeActivity(scope.search.user_id);
