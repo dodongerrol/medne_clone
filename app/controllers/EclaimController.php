@@ -6497,7 +6497,7 @@ public function updateEclaimStatus( )
 				$wallet_logs['unlimited'] = 1;
 				$wallet_logs['running_balance'] = 0;
 			}
-			return $wallet_logs;
+			
 			try {
 				$deduct_history = $history->createWalletHistory($wallet_logs);
 				$wallet_history_id = $deduct_history->id;
