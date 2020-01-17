@@ -1265,13 +1265,19 @@ app.directive("employeeOverviewDirective", [
                 console.log(response);
                 scope.emp_entitlement = response.data;
 
-                scope.med_effective_date = moment(scope.emp_entitlement.medical_entitlement_date).format('DD/MM/YYYY');
-                scope.well_effective_date = moment(scope.emp_entitlement.wellness_entitlement_date).format('DD/MM/YYYY');
+                scope.med_effective_date = scope.emp_entitlement.medical_entitlement_date;
+                scope.well_effective_date = scope.emp_entitlement.wellness_entitlement_date;
 
                 console.log(scope.emp_entitlement.updated_medical_entitlement);
                 console.log(scope.emp_entitlement.updated_wellness_entitlement);
+
                 scope.emp_entitlement.medical_entitlement_date = moment( scope.emp_entitlement.medical_entitlement_date, 'YYYY-MM-DD' ).format('DD/MM/YYYY');
                 scope.emp_entitlement.wellness_entitlement_date = moment( scope.emp_entitlement.wellness_entitlement_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+
+                scope.emp_entitlement.medical_new_entitlement = '';
+                scope.emp_entitlement.wellness_new_entitlement = '';
+                scope.med_effective_date = '';
+                scope.well_effective_date = '';
           });
         }
         
@@ -1432,6 +1438,9 @@ app.directive("employeeOverviewDirective", [
 
 
         scope.updateAllEntitlement = function () {
+          console.log(scope.effective_date.med_date);
+          console.log(scope.effective_date.well_date);
+
           var medical_data = {
             member_id : scope.emp_member_id,
             new_entitlement_credits : scope.entitlement_credits.med_credits,
@@ -1455,9 +1464,9 @@ app.directive("employeeOverviewDirective", [
               console.log(response.data.status);
 
               if (response.data.status) {
-                swal('Success!', response.message,'success');
-                scope.hideLoading();
-                scope.getMemberEntitlement( scope.emp_member_id );
+                // swal('Success!', response.message,'success');
+                // scope.hideLoading();
+                // scope.getMemberEntitlement( scope.emp_member_id );
               } else {
                 swal('Error!', response.data.message,'error');
               }
@@ -1477,7 +1486,6 @@ app.directive("employeeOverviewDirective", [
                 scope.getMemberEntitlement( scope.emp_member_id )
               } else {
                 swal('Error!', response.data.message,'error');
-                console.log( response.data.message );
               }
               
           });  
