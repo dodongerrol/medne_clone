@@ -85,10 +85,11 @@ class MemberHelper
 				}
 				return ['start' => $credit_resets->date_resetted, 'end' => $today, 'id' => $credit_resets->wallet_history_id];
 			} else {
-				$customer_id = PlanHelper::getCustomerId($member_id);
-				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
-				return ['start' => $wallet->created_at, 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
+				// $customer_id = PlanHelper::getCustomerId($member_id);
+				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+				// $wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				$entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
+				return ['start' => $entitlement->medical_usage_date, 'end' => $today, 'id' => null];
 			}
 		} else {
 			$credit_resets = DB::table('credit_reset')

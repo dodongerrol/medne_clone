@@ -192,7 +192,7 @@ class EclaimHelper
           }
         } else {
           $default_start = true;
-          $start_date = date('Y-m-d', $first_plan);
+          $start_date = date('Y-m-d', strtotime($first_plan));
           $end_date = date('Y-m-d', strtotime('-1 day'));
         }
       }

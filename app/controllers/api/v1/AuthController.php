@@ -1056,7 +1056,6 @@ return Response::json($returnObject);
                 $dates = MemberHelper::getMemberDateTerms($user_id, $filter, $spending_type);
                 $user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
-
                 if($user_spending_dates) {
                   if($spending_type == 'medical') {
                     $table_wallet_history = 'wallet_history';
