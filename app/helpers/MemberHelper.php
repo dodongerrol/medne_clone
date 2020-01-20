@@ -112,20 +112,20 @@ class MemberHelper
 													->orderBy('created_at', 'desc')
 													->first();
 					if($credit_reset_end) {
-						return ['start' => $credit_reset_start->date_resetted, 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_reset_end->date_resetted))), 'id' => $credit_reset_end->wallet_history_id];
+						return ['start' => $credit_reset_start->date_resetted, 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_reset_end->date_resetted)))), 'id' => $credit_reset_end->wallet_history_id];
 					} else {
 						$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
 						$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->orderBy('created_at', 'desc')->first();
-						return ['start' => $credit_reset_start->date_resetted, 'end' => date('Y-m-d', strtotime('-1 day', strtotime($wallet_history->created_at))), 'id' => $credit_reset_start->wallet_history_id];
+						return ['start' => $credit_reset_start->date_resetted, 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($wallet_history->created_at)))), 'id' => $credit_reset_start->wallet_history_id];
 					}
 				} else {
 					$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
-					return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted))), 'id' => $credit_resets[0]->wallet_history_id];
+					return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => $credit_resets[0]->wallet_history_id];
 				}
 			} else if(sizeof($credit_resets) == 1){
 				// $wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
 				$first_plan = PlanHelper::getUserFirstPlanStart($member_id);
-				return ['start' => date('Y-m-d', strtotime($first_plan)), 'end' => date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted))), 'id' => $credit_resets[0]->wallet_history_id];
+				return ['start' => date('Y-m-d', strtotime($first_plan)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => $credit_resets[0]->wallet_history_id];
 			} else {
 				return false;
 			}
