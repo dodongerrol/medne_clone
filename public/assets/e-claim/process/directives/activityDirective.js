@@ -91,11 +91,15 @@ app.directive('activityDirective', [
 				// plan renwal function
 				scope.select_term = 'current';
 				scope.term_value = 0;
-				scope.select_to_date = 'ytd';
+				scope.select_to_date = 'mtd';
 				//New Filter Date
 
 				scope.toDate = function () {
 					// console.log(scope.select_to_date);
+
+					if(scope.select_to_date == false) {
+						scope.select_to_date = 'mtd';
+					}
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;

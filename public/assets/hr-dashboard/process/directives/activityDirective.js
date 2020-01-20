@@ -73,20 +73,26 @@ app.directive('activityPage', [
 				// plan renwal function
 				scope.select_term = 'current';
 				scope.term_value = 0;
-				scope.select_to_date = 'ytd';
+				scope.select_to_date = 'mtd';
 				//New Filter Date
 
 				scope.toDate = function (data) {
 					// console.log(scope.select_to_date);
+					
+					if(scope.select_to_date == false) {
+						scope.select_to_date = 'mtd';
+					}
+					// console.log(scope.select_to_date);
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;
-						scope.select_to_date = 'ytd';
+						// scope.select_to_date = 'ytd';
+						
 					} else {
 						scope.term_value = 1;
-						scope.select_to_date = 'ytd';
+						// scope.select_to_date = 'ytd';
 					}
-
+					
 					if (scope.select_to_date == 'wtd') {
 						// scope.select_to_date = data;
 						var currentDate = moment().subtract(scope.term_value, 'year');
@@ -1078,12 +1084,12 @@ app.directive('activityPage', [
 						spending_type: scope.activitySpendingTypeSelected,
 						filter: term_status,
 					}
-					console.log('piste ka', data);
+					//console.log('piste ka', data);
 					hrActivity.getTotalAlloc(data)
 						.then(function (response) {
 							// console.log(response);
 							scope.total_allocation = response.data;
-							console.log('piste ka', scope.total_allocation);
+							//console.log('piste ka', scope.total_allocation);
 
 							var activity_search = {
 								start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -1119,7 +1125,7 @@ app.directive('activityPage', [
 					} else {
 						// scope.searchActivity( activity_search );
 						scope.getAllocation(activity_search);
-						console.log('piste ka');
+						//console.log('piste ka');
 						// scope.searchActivityPagination( );
 					}
 
