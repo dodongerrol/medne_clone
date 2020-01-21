@@ -96,21 +96,23 @@
 											<i class="fa fa-chevron-down" aria-hidden="true"></i>
 										</div>
 
-										<div class="input-label">
-											<input type="radio" name="td" id="wtd" ng-change="toDate()" ng-model="select_to_date" value="wtd" placeholder="WTD">
-											<label class="radio" for="wtd">WTD</label>
-										</div>
-										<div class="input-label">
-											<input type="radio" name="td" id="mtd" ng-change="toDate()" ng-model="select_to_date" value="mtd" placeholder="MTD">
-											<label class="radio" for="mtd">MTD</label>
-										</div>
-										<div class="input-label">
-											<input type="radio" name="td" id="qtd" ng-change="toDate()" ng-model="select_to_date" value="qtd" placeholder="QTD">
-											<label class="radio" for="qtd">QTD</label>
-										</div>
-										<div class="input-label">
-											<input type="radio" name="td" id="ytd" ng-change="toDate()" ng-model="select_to_date" value="ytd" placeholder="YTD">
-											<label class="radio" for="ytd">YTD</label>
+										<div ng-if="select_term == 'current'" style="display: inline-block">
+											<div class="input-label">
+												<input type="radio" name="td" id="wtd" ng-change="toDate()" ng-model="select_to_date" value="wtd" placeholder="WTD">
+												<label class="radio" for="wtd">WTD</label>
+											</div>
+											<div class="input-label">
+												<input type="radio" name="td" id="mtd" ng-change="toDate()" ng-model="select_to_date" value="mtd" placeholder="MTD">
+												<label class="radio" for="mtd">MTD</label>
+											</div>
+											<div class="input-label">
+												<input type="radio" name="td" id="qtd" ng-change="toDate()" ng-model="select_to_date" value="qtd" placeholder="QTD">
+												<label class="radio" for="qtd">QTD</label>
+											</div>
+											<div class="input-label">
+												<input type="radio" name="td" id="ytd" ng-change="toDate()" ng-model="select_to_date" value="ytd" placeholder="YTD">
+												<label class="radio" for="ytd">YTD</label>
+											</div>
 										</div>
 									</div>
 								</div>

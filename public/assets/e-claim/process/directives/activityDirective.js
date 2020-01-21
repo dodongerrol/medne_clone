@@ -92,7 +92,26 @@ app.directive('activityDirective', [
 				scope.select_term = 'current';
 				scope.term_value = 0;
 				scope.select_to_date = 'mtd';
+				scope.dateTerms = {},
+				scope.min_rangePicker_start;
+				scope.max_rangePicker_end;
 				//New Filter Date
+
+
+				scope.getDateTermsApi = function() {
+					eclaimSettings.getDateTerms()
+						.then(function (response) {
+							if (response.status) {
+								scope.dateTerms = response.data;
+								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
+								scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end).format('DD/MM/YYYY');
+								console.log('dateTerms',scope.dateTerms);
+							}
+							scope.toDate();
+
+							scope.initializeNewCustomDatePicker();
+						});
+				}
 
 				scope.toDate = function () {
 					// console.log(scope.select_to_date);
@@ -103,8 +122,30 @@ app.directive('activityDirective', [
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;
+
+						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+						scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end);
+
+						scope.rangePicker_start = scope.min_rangePicker_start.format("DD/MM/YYYY");
+						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
+						$("#rangePicker_start").text(scope.rangePicker_start);
+						$("#rangePicker_end").text(scope.rangePicker_end);
+
+						scope.initializeNewCustomDatePicker();
 					} else {
-						scope.term_value = 1;
+						// scope.term_value = 1;
+
+						scope.select_to_date = false;
+
+						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
+						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end);
+
+						scope.rangePicker_start = scope.min_rangePicker_start.format("DD/MM/YYYY");
+						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
+						$("#rangePicker_start").text(scope.rangePicker_start);
+						$("#rangePicker_end").text(scope.rangePicker_end);
+
+						scope.initializeNewCustomDatePicker();
 					}
 
 					if (scope.select_to_date == 'wtd') {
@@ -466,7 +507,7 @@ app.directive('activityDirective', [
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
 
-							$('.btn-custom-end').data('daterangepicker').setMinDate(start);
+							// $('.btn-custom-end').data('daterangepicker').setMinDate(start);
 
 							if (scope.rangePicker_end && (scope.rangePicker_end > scope.rangePicker_start)) {
 								var activity_search = {
@@ -568,11 +609,13 @@ app.directive('activityDirective', [
 							autoApply: true,
 							singleDatePicker: true,
 							startDate: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
+							minDate: moment(scope.min_rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
+							maxDate: moment(scope.max_rangePicker_end, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 						}, function (start, end, label) {
 							scope.currentPage = 1;
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
-							$('.btn-custom-end').data('daterangepicker').setMinDate(start);
+							// $('.btn-custom-end').data('daterangepicker').setMinDate(start);
 							if (scope.rangePicker_end && (moment(scope.rangePicker_end, 'DD/MM/YYYY') < moment(scope.rangePicker_start, 'DD/MM/YYYY'))) {
 								scope.rangePicker_end = moment(start).format('DD/MM/YYYY');
 								$("#rangePicker_end").text(scope.rangePicker_end);
@@ -585,6 +628,8 @@ app.directive('activityDirective', [
 							autoApply: true,
 							singleDatePicker: true,
 							startDate: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('MM/DD/YYYY'),
+							minDate: moment(scope.min_rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
+							maxDate: moment(scope.max_rangePicker_end, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 						}, function (start, end, label) {
 							scope.currentPage = 1;
 							scope.rangePicker_end = moment(end).format('DD/MM/YYYY');
@@ -597,19 +642,21 @@ app.directive('activityDirective', [
 				}
 
 				scope.onLoad = function () {
-					scope.toDate();
+					scope.getDateTermsApi();
+					// scope.toDate();
 					scope.showLoading();
 					scope.getDetails();
 					// scope.initializeRangeSlider();
 					scope.initializeNewCustomDatePicker();
 
 					setTimeout(function () {
+						
 						var activity_search = {
 							start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 							end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						}
 
-						$('.btn-custom-end').data('daterangepicker').setMinDate(moment(activity_search.start, 'YYYY-MM-DD').format('MM/DD/YYYY'));
+						// $('.btn-custom-end').data('daterangepicker').setMinDate(moment(activity_search.start, 'YYYY-MM-DD').format('MM/DD/YYYY'));
 						scope.searchActivity(activity_search);
 					}, 500);
 				}
