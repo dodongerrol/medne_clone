@@ -2384,4 +2384,15 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'No entitlement schedule');
         }
     }
+
+    public function getEmployeeDateTerms( )
+    {
+        $input = Input::all();
+        $employee = StringHelper::getEmployeeSession( );
+        $user_id = $employee->UserID;
+        $current_term = MemberHelper::getMemberCreditReset($user_id, 'current_term', 'medical');
+        $last_term = MemberHelper::getMemberCreditReset($user_id, 'last_term', 'medical');
+
+        return ['status' => true, 'current_term' => $current_term, 'last_term' => $last_term];
+    }
 }

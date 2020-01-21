@@ -12,6 +12,7 @@
 */
 
 
+Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
 // test wallet balance for reset credits
 Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
 // test date format
@@ -143,6 +144,8 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 	// check Employee e-claim submission visit date
 	Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
+	// get date terms
+	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
 });
 
 
