@@ -12,6 +12,8 @@
 */
 
 
+Route::get('test_customer_reset_credits_dates', 'testcontroller@testCustomerResetDates');
+Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
 // test wallet balance for reset credits
 Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
 // test date format
@@ -143,6 +145,8 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
 	// check Employee e-claim submission visit date
 	Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
+	// get date terms
+	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
 });
 
 
@@ -425,6 +429,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_member_new_entitlement_status', 'EmployeeController@entitlementStatus');
 	// create new entitlement
 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
+	// get hr date terms
+	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
 });
 
 // download employee cap per visit
@@ -1086,6 +1092,8 @@ Route::group(array('prefix' => 'v2'), function()
 				Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
 				// check e-claim member visit date spending
 				Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
+				// get member dates coverage
+				Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
 	 	});
 	});
 });

@@ -878,6 +878,7 @@ class EclaimController extends \BaseController {
 		$user_id = $data->UserID;
 		$start = date('Y-m-d', strtotime($input['start']));
 		$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+		$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
 		$lite_plan_status = false;
 		$end = PlanHelper::endDate($input['end']);
 
@@ -919,55 +920,28 @@ class EclaimController extends \BaseController {
 		->where('type', 'started')
 		->first();
 
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')
 							->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 							->first();
+		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
+		if($user_spending_dates) {
+      if($spending_type == 'medical') {
+        $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+      } else {
+        $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+      }
+    } else {
+      $credit_data = null;
+    }
 
-		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
-		$wallet_reset = PlanHelper::getResetWallet($user_id, $spending_type, $start, $input['end'], 'employee');
-
+    // return $credit_data;
 		$spending_end_date = PlanHelper::endDate($input['end']);
-		if($wallet_reset) {
-			$wallet_history_id = $wallet_reset->wallet_history_id;
-			$wallet_start_date = $wallet_reset->date_resetted;
-	        // get credits allocation
-			$allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-			->where($table_wallet_history.".created_at", '>=', $wallet_start_date)
-			->where($table_wallet_history.'.logs', 'added_by_hr')
-			->sum($table_wallet_history.'.credit');
-
-			$deducted_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			// ->where($table_wallet_history.".".$history_column_id, '>=', $wallet_history_id)
-			->where($table_wallet_history.".created_at", '>=', $wallet_start_date)
-			->where('e_wallet.UserID', $user_id)
-			->where('logs', 'deducted_by_hr')
-			->sum($table_wallet_history.'.credit');
-		} else {
-			$allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->where($table_wallet_history.'.logs', 'added_by_hr')
-			->sum($table_wallet_history.'.credit');
-
-			$deducted_allocation = DB::table('e_wallet')
-			->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-			->where('e_wallet.UserID', $user_id)
-			->where('logs', 'deducted_by_hr')
-			->sum($table_wallet_history.'.credit');
-		}
-
-		$e_claim_total = DB::table($table_wallet_history)
-		->where('wallet_id', $wallet->wallet_id)
-		->where('where_spend', 'e_claim_transaction')
-		->sum('credit');
-
+		$allocation = $credit_data ? $credit_data['allocation'] : 0;
+		$balance = $credit_data ? $credit_data['balance'] : 0;
 		$ids = StringHelper::getSubAccountsID($user_id);
-
-        // get e claim
+    
+    // get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -975,7 +949,8 @@ class EclaimController extends \BaseController {
 		->where('created_at', '<=', $spending_end_date)
 		->orderBy('created_at', 'desc')
 		->get();
-        // get in-network transactions
+    
+    // get in-network transactions
 		$transactions = DB::table('transaction_history')
 		->whereIn('UserID', $ids)
 		->where('spending_type', $spending_type)
@@ -984,6 +959,7 @@ class EclaimController extends \BaseController {
 		->where('paid', 1)
 		->orderBy('created_at', 'desc')
 		->get();
+
 		foreach ($transactions as $key => $trans) {
 			if($trans) {
 				$consultation_fees = $trans->consultation_fees;
@@ -1389,14 +1365,6 @@ class EclaimController extends \BaseController {
 				$doc_files = FALSE;
 			}
 
-			// if($res->currency_type == "myr" && $res->default_currency == "myr") {
-	  //     $res->default_currency = "MYR";
-	  //   } else if($res->default_currency == "myr"){
-	  //     $res->default_currency = "MYR";
-	  //     $res->amount = $res->amount;
-	  //   } else {
-	  //     $res->default_currency = "SGD";
-	  //   }
 			if($res->currency_type == "myr" && $res->default_currency == "myr") {
 				$currency_symbol = "MYR";
 			} else if($res->currency_type == "sgd" && $res->default_currency == "myr"){
@@ -1439,34 +1407,14 @@ class EclaimController extends \BaseController {
 			array_push($e_claim, $temp);
 		}
 
-
 		$total_spent = $in_network_spent + $e_claim_spent;
-		// $balance = $total_allocation - $deducted_allocation - $total_spent;
-
-		$pro_allocation = DB::table($table_wallet_history)
-		->where('wallet_id', $wallet->wallet_id)
-		->where('logs', 'pro_allocation')
-		->sum('credit');
-
-		if($pro_allocation > 0) {
-			$final_allocation = $pro_allocation;
-			$balance = $pro_allocation - $total_spent;
-			if($balance < 0) {
-				$balance = 0;
-			}
-		} else {
-			$final_allocation = $allocation - $deducted_allocation;
-			$balance = $final_allocation - $total_spent;
-		}
-
 		if($active_plan->account_type == "enterprise_plan") {
-			$final_allocation = "N.A.";
+			$allocation = "N.A.";
 			$balance = "N.A.";
 		} else {
-			$final_allocation = number_format($final_allocation, 2);
+			$final_allocation = number_format($allocation, 2);
 			$balance = number_format($balance, 2);
 		}
-
 
 		return array(
 			'status' 				   => TRUE,
@@ -6549,7 +6497,7 @@ public function updateEclaimStatus( )
 				$wallet_logs['unlimited'] = 1;
 				$wallet_logs['running_balance'] = 0;
 			}
-
+			
 			try {
 				$deduct_history = $history->createWalletHistory($wallet_logs);
 				$wallet_history_id = $deduct_history->id;
@@ -9587,7 +9535,7 @@ public function downloadEclaimCsv( )
 			$term_status = "Current";
 		}
 
-		return array('status' => true, 'balance' => DecimalHelper::formatDecimal($balance), 'term_status' => $term_status, 'currency_type' => $spending['currency_type']);
+		return array('status' => true, 'balance' => DecimalHelper::formatDecimal($balance), 'term_status' => $term_status, 'currency_type' => $spending['currency_type'], 'last_term' => $spending['back_date']);
 	}
 }
 ?>

@@ -1056,8 +1056,6 @@ return Response::json($returnObject);
                 $dates = MemberHelper::getMemberDateTerms($user_id, $filter, $spending_type);
                 $user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
-                // return $user_spending_dates;
-
                 if($user_spending_dates) {
                   if($spending_type == 'medical') {
                     $table_wallet_history = 'wallet_history';
@@ -6208,13 +6206,14 @@ public function updateUserNotification( )
     }
 
     if(!empty($getRequestHeader['Authorization'])){
-        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
-        if($getAccessToken){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
          $findUserID = $authSession->findUserID($getAccessToken->session_id);
          if($findUserID){
           $user_id = StringHelper::getUserId($findUserID);
           $date = date('Y-m-d', strtotime($input['visit_date']));
           $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+          // return $spending;
           $ids = StringHelper::getSubAccountsID($user_id);
           // get pending back dates
           $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
@@ -6230,11 +6229,47 @@ public function updateUserNotification( )
           $data = array(
             'balance' => DecimalHelper::formatDecimal($balance), 
             'term_status' => $term_status, 
-            'currency_type' => $spending['currency_type']
+            'currency_type' => $spending['currency_type'],
+            'last_term' => $spending['back_date'],
+            'claim_amounts' => $claim_amounts
           );
 
           $returnObject->status = true;
           $returnObject->data = $data;
+          return Response::json($returnObject);
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+     }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
+
+  public function getDatesCoverage( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+         if($findUserID){
+          $user_id = StringHelper::getUserId($findUserID);
+          $data = MemberHelper::getMemberSpendingCoverageDate($user_id);
+          $returnObject->status = true;
+          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['end_date']))];
           return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;

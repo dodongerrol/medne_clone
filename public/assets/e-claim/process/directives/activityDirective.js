@@ -91,11 +91,15 @@ app.directive('activityDirective', [
 				// plan renwal function
 				scope.select_term = 'current';
 				scope.term_value = 0;
-				scope.select_to_date = 'ytd';
+				scope.select_to_date = 'mtd';
 				//New Filter Date
 
 				scope.toDate = function () {
 					// console.log(scope.select_to_date);
+
+					if(scope.select_to_date == false) {
+						scope.select_to_date = 'mtd';
+					}
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;
@@ -292,6 +296,15 @@ app.directive('activityDirective', [
 				}
 
 				scope.searchActivity = function (data) {
+
+					var term_status;
+					if (scope.term_value == 0) {
+						term_status = 'current_term';
+						data.filter = term_status;
+					} else if (scope.term_value == 1) {
+						term_status = 'last_term';
+						data.filter = term_status;
+					}
 					scope.toggleLoading();
 					data.spending_type = scope.spendingTypeSelected;
 					eclaimSettings.employeeSearchActivity(data)

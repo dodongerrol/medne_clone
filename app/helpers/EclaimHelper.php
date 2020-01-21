@@ -133,7 +133,7 @@ class EclaimHelper
     $start_date = null;
     $end_date = null;
     $back_date = false;
-
+    $first_plan = PlanHelper::getUserFirstPlanStart($user_id);
     $reset = DB::table('credit_reset')
                 ->where('id', $user_id)
                 ->where('spending_type', $spending_type)
@@ -141,28 +141,67 @@ class EclaimHelper
                 ->get();
     
     $first_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->first();
-    $allocation_date = date('Y-m-d', strtotime($first_wallet_history->created_at));
+    $allocation_date = date('Y-m-d', strtotime($wallet->created_at));
     $temp_start_date = $allocation_date;
 
     if(sizeof($reset) > 0) {
+      // for( $i = 0; $i < sizeof( $reset ); $i++ ){
+      //   $temp_end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $reset[$i]->date_resetted ) ) ));
+      //   $temp_end_date = PlanHelper::endDate($temp_end_date);
+      //   if( strtotime( $temp_start_date ) < strtotime($date) && strtotime($date) < strtotime( $temp_end_date ) ){
+      //     $start_date = $temp_start_date;
+      //     $end_date = $temp_end_date;
+      //   }
+      //   $temp_start_date = $reset[$i]->date_resetted;
+      //   $back_date = true;
+      //   if( $i == (sizeof( $reset )-1) ){
+      //     if( $start_date == null && $end_date == null ){
+      //       $back_date = false;
+      //       $start_date = $temp_start_date;
+      //       $end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( date('Y-m-d') ) ) ));
+      //       $end_date = PlanHelper::endDate($end_date);
+      //     }
+      //   }
+      // }
+
+      $start_temp = strtotime($date);
+      $default_start = false;
       for( $i = 0; $i < sizeof( $reset ); $i++ ){
-        $temp_end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $reset[$i]->date_resetted ) ) ));
-        $temp_end_date = PlanHelper::endDate($temp_end_date);
-        if( strtotime( $temp_start_date ) < strtotime($date) && strtotime($date) < strtotime( $temp_end_date ) ){
-          $start_date = $temp_start_date;
-          $end_date = $temp_end_date;
-        }
-        $temp_start_date = $reset[$i]->date_resetted;
-        $back_date = true;
-        if( $i == (sizeof( $reset )-1) ){
-          if( $start_date == null && $end_date == null ){
-            $back_date = false;
-            $start_date = $temp_start_date;
-            $end_date = date('Y-m-d',(strtotime ( '+1 day' , strtotime( date('Y-m-d') ))));
+        $date_resetted = strtotime($reset[$i]->date_resetted);
+
+        if($start_temp < $date_resetted) {
+          $default_start = false;
+          // get lastest credit reset
+          $latest_reset = DB::table('credit_reset')
+                ->where('id', $user_id)
+                ->where('spending_type', $spending_type)
+                ->where('user_type', 'employee')
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+          if(strtotime($latest_reset->date_resetted) > $date_resetted) {
+            $start_date = date('Y-m-d', $date_resetted);
+            $end_date = date('Y-m-d', strtotime($latest_reset->date_resetted));
+            $end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_date)));
+            $back_date = true;
+          } else {
+            $start_date = date('Y-m-d', strtotime($first_plan));
+            $end_date = date('Y-m-d', $date_resetted);
+            $end_date = date('Y-m-d', strtotime('-1 day', strtotime($end_date)));
+            $back_date = true;
           }
+        } else {
+          $default_start = true;
+          $start_date = date('Y-m-d', strtotime($first_plan));
+          $end_date = date('Y-m-d', strtotime('-1 day'));
         }
       }
-
+      
+      if($start_date > $end_date) {
+        $end_date = $start_date;
+      }
+      $end_date = PlanHelper::endDate($end_date);
+      // return $start_date.' - '.$end_date;
       $wallet_history = DB::table($wallet_table_logs)
               ->join('e_wallet', 'e_wallet.wallet_id', '=', $wallet_table_logs.'.wallet_id')
               ->where($wallet_table_logs.'.wallet_id', $wallet_id)
@@ -226,11 +265,7 @@ class EclaimHelper
       $allocation = $pro_allocation;
     }
 
-    return array('balance' => $balance, 'back_date' => $back_date, 'currency_type' => strtoupper($wallet->currency_type));
-
-    // return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
-
-    // return array('status' => true, 'data' => $reset);
+    return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent, 'currency_type' => strtoupper($wallet->currency_type));
   }
 }
 ?>
