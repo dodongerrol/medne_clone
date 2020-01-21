@@ -12,6 +12,7 @@
 */
 
 
+Route::get('test_customer_reset_credits_dates', 'testcontroller@testCustomerResetDates');
 Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
 // test wallet balance for reset credits
 Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
@@ -428,6 +429,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_member_new_entitlement_status', 'EmployeeController@entitlementStatus');
 	// create new entitlement
 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
+	// get hr date terms
+	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
 });
 
 // download employee cap per visit
