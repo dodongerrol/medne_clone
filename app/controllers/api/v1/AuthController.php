@@ -6267,10 +6267,9 @@ public function updateUserNotification( )
          $findUserID = $authSession->findUserID($getAccessToken->session_id);
          if($findUserID){
           $user_id = StringHelper::getUserId($findUserID);
-          $data = PlanHelper::checkEmployeePlanStatus($user_id);
+          $data = MemberHelper::getMemberSpendingCoverageDate($user_id);
           $returnObject->status = true;
-
-          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['valid_date']))];
+          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['end_date']))];
           return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;
