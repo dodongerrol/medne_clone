@@ -376,7 +376,7 @@ class MemberHelper
 		$customer_id = PlanHelper::getCustomerId($member_id);
 		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
-		return ['start_date' => $spending_accounts->medical_spending_start_date, 'end_date' => $spending_accounts->medical_spending_end_date];
+		return ['start_date' => $spending_accounts->medical_spending_start_date, 'end_date' => date('Y-m-d', strtotime('+3 months', strtotime($spending_accounts->medical_spending_end_date)))];
 	}
 }
 ?>
