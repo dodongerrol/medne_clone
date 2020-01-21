@@ -78,12 +78,14 @@ class MemberHelper
 												->orderBy('created_at', 'desc')
 												->first();
 			if($credit_resets) {
-				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
-				$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->orderBy('created_at', 'desc')->first();
-				if($credit_resets->date_resetted > $today) {
-					$today = PlanHelper::endDate($credit_resets->date_resetted);
-				}
-				return ['start' => $credit_resets->date_resetted, 'end' => $today, 'id' => $credit_resets->wallet_history_id];
+				// $wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				// $wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet->wallet_id)->orderBy('created_at', 'desc')->first();
+				// if($credit_resets->date_resetted > $today) {
+				// 	$today = PlanHelper::endDate($credit_resets->date_resetted);
+				// }
+				$customer_id = PlanHelper::getCustomerId($member_id);
+				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+				return ['start' => $credit_resets->date_resetted, 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date) 'id' => $credit_resets->wallet_history_id];
 			} else {
 				// $customer_id = PlanHelper::getCustomerId($member_id);
 				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
