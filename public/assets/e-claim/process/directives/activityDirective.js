@@ -107,14 +107,15 @@ app.directive('activityDirective', [
 								scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end).format('DD/MM/YYYY');
 								console.log('dateTerms',scope.dateTerms);
 							}
-							scope.toDate();
+							scope.toDate('mtd');
 
 							scope.initializeNewCustomDatePicker();
 						});
 				}
 
-				scope.toDate = function () {
-					// console.log(scope.select_to_date);
+				scope.toDate = function (data) {
+					scope.select_to_date = data;
+					console.log(scope.select_to_date);
 
 					if(scope.select_to_date == false) {
 						scope.select_to_date = 'mtd';
@@ -122,6 +123,7 @@ app.directive('activityDirective', [
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;
+						// scope.select_to_date = 'mtd';
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 						scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end);
@@ -132,25 +134,34 @@ app.directive('activityDirective', [
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
 						scope.initializeNewCustomDatePicker();
+						scope.applyDates();
 					} else {
 						// scope.term_value = 1;
-
-						scope.select_to_date = false;
+						// scope.select_to_date = false;
+						
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
 						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end);
 
-						scope.rangePicker_start = scope.min_rangePicker_start.format("DD/MM/YYYY");
+						var currentDate = moment(scope.max_rangePicker_end, 'DD/MM/YYYY');
+						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
+
+
+						scope.rangePicker_start = scope.quarterStart.format("DD/MM/YYYY");
 						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
+						console.log('quarter start', scope.rangePicker_start);
+
 						scope.initializeNewCustomDatePicker();
+						scope.applyDates();
 					}
 
 					if (scope.select_to_date == 'wtd') {
+						console.log('wtd 1st');
 						// scope.select_to_date = data;
-						var currentDate = moment().subtract(scope.term_value, 'year');
+						var currentDate = moment(); //.subtract(scope.term_value, 'year')
 						var weekStart = currentDate.clone().startOf('week');
 						var weekEnd = currentDate.clone().endOf('week');
 
@@ -164,7 +175,7 @@ app.directive('activityDirective', [
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
 						scope.applyDates();
-						// console.log('week_now', days);
+						console.log('wtd', scope.rangePicker_start);
 					} else if (scope.select_to_date == 'mtd') {
 						// scope.select_to_date = data;
 						var currentDate = moment().subtract(scope.term_value, 'year');
@@ -177,7 +188,9 @@ app.directive('activityDirective', [
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
+						console.log('mtd', monthStart);
 					} else if (scope.select_to_date == 'qtd') {
+						console.log('qtd 1st');
 						// scope.select_to_date = data;
 						var currentDate = moment().subtract(scope.term_value, 'year');
 						var currentQuarter = moment(currentDate.format('YYYY-MM-DD')).utc().quarter();
@@ -192,6 +205,7 @@ app.directive('activityDirective', [
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
+						console.log('qtd', quarterStart);
 						// console.log(currentQuarter,'quarter '+scope.rangePicker_start+ ' to '+scope.rangePicker_end) ;
 					} else if (scope.select_to_date == 'ytd') {
 						// scope.select_to_date = data;
@@ -208,6 +222,7 @@ app.directive('activityDirective', [
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
+						console.log('ytd', yearStart);
 						// console.log('year start ' + yearStart.format('DD/MM/YYYY'));
 					}
 				}

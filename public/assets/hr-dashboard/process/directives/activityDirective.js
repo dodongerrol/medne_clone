@@ -88,13 +88,15 @@ app.directive('activityPage', [
 								scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end).format('DD/MM/YYYY');
 								console.log('dateTerms',scope.dateTerms);
 							}
+							scope.toDate('mtd');
 
 							scope.initializeNewCustomDatePicker();
 						});
 				}
 
 				scope.toDate = function (data) {
-					// console.log(scope.select_to_date);
+					scope.select_to_date = data;
+					console.log(scope.select_to_date);
 					
 					
 					if(scope.select_to_date == false) {
@@ -115,20 +117,27 @@ app.directive('activityPage', [
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
 						scope.initializeNewCustomDatePicker();
+						scope.applyDates();
 						
 					} else {
 						// scope.term_value = 1;
-						scope.select_to_date = false;
+						// scope.select_to_date = false;
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
 						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end);
+
+						// var currentDate = moment(scope.max_rangePicker_end, 'DD/MM/YYYY');
+						// var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
 						scope.rangePicker_start = scope.min_rangePicker_start.format("DD/MM/YYYY");
 						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
+						// console.log('quarter start', scope.rangePicker_start);
+
 						scope.initializeNewCustomDatePicker();
+						scope.applyDates();
 					}
 					
 					if (scope.select_to_date == 'wtd') {
@@ -984,7 +993,7 @@ app.directive('activityPage', [
 				scope.checkSession = function () {
 					hrSettings.getSession()
 						.then(function (response) {
-							// console.log(response);
+							console.log(response);
 							scope.selected_customer_id = response.data.customer_buy_start_id;
 							scope.options.accessibility = response.data.accessibility;
 							// scope.getEmployeeLists( );
@@ -1271,7 +1280,7 @@ app.directive('activityPage', [
 
 				scope.onLoad = function () {
 					scope.getDateTermsApi();
-					scope.toDate();
+					// scope.toDate('mtd');
 					scope.companyAccountType();
 					scope.checkSession();
 					scope.getEmployeeLists();
