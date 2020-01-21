@@ -6353,7 +6353,7 @@ public function hrEclaimActivity( )
 				'service'           => $res->service,
 				'merchant'          => $res->merchant,
 				'amount'            => number_format($res->amount, 2),
-				'claim_amount'      => (int)$res->status == 0 ? 0 : number_format($res->claim_amount, 2),
+				'claim_amount'      => number_format($res->claim_amount, 2),
 				'cap_amount'				=> $res->amount < $res->cap_amount ? 0 : $res->cap_amount,
 				'member'            => ucwords($member->Name),
 				'email_address'			=> $member->Email,
