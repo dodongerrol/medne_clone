@@ -6269,7 +6269,7 @@ public function updateUserNotification( )
           $user_id = StringHelper::getUserId($findUserID);
           $data = MemberHelper::getMemberSpendingCoverageDate($user_id);
           $returnObject->status = true;
-          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['end_date']))];
+          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['end_date'])), 'today' => $data['today'], 'grace_period' => $data['grace_period']];
           return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;
