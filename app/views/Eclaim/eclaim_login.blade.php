@@ -59,7 +59,7 @@
 			</a>
 		</div>
 		<div class="col-sm-12 col-md-12 col-lg-12">
-			<img src="assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
 			<form class="med-form" ng-submit="loginHr()">
 				<div class="form-group">
@@ -99,7 +99,7 @@
 		</div>
 		<div class="col-sm-12 col-md-12 col-lg-12" id="login-container">
 			<div class="login-container-header">
-				<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+				<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 				<h2 class="text-center text-below-image">for member</h2>
 			</div>
 			<div class="notification-wrapper">
@@ -137,7 +137,7 @@
 
 		<div class="col-sm-12 col-md-12 col-lg-12" id="forgot-password" hidden>
 			<div class="login-container-header">
-				<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+				<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 				<h2 class="text-center text-below-image">for member</h2>
 			</div>
 			<form class="med-form" ng-submit="resetPassword()">
