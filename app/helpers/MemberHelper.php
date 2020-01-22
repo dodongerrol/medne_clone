@@ -85,7 +85,7 @@ class MemberHelper
 				// }
 				$customer_id = PlanHelper::getCustomerId($member_id);
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-				return ['start' => $credit_resets->date_resetted, 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date) 'id' => $credit_resets->wallet_history_id];
+				return ['start' => $credit_resets->date_resetted, 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => $credit_resets->wallet_history_id];
 			} else {
 				// $customer_id = PlanHelper::getCustomerId($member_id);
 				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
