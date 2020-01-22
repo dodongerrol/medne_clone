@@ -65,7 +65,7 @@
 	<div class="container-fluid">
 	    <!-- Brand and toggle get grouped for better mobile display -->
 	    <div class="navbar-header">
-        	<img alt="Brand" src="{{ URL::asset('assets/images/mednefits logo v3 (white) LARGE.png') }}" class="nav-logo" >
+        	<img alt="Brand" src="{{ URL::asset('assets/images/Mednefits Logo V2.svg') }}" class="nav-logo" >
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

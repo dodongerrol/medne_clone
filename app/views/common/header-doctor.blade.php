@@ -47,7 +47,7 @@ body,td,th,input,textarea {font-family: 'sinkin_sans300_light'; }
  
   <!--HEADER START-->
     <div class="mc-header">
-      <div class="mc-logo-container mc-fl"><img src="{{ URL::asset('assets/images/mednefits logo v3 (white) LARGE.png') }}" width="197" height="43" alt="medicloud-logo" longdesc="images/mednefits logo v3 (white) LARGE.png"></div>
+      <div class="mc-logo-container mc-fl"><img src="{{ URL::asset('assets/images/Mednefits Logo V2.svg') }}" width="197" height="43" alt="medicloud-logo" longdesc="images/Mednefits Logo V2.svg"></div>
         <div class="mc-main-menu ">
             <div class=" mc-fr ">{{ HTML::link('/app/auth/logout', 'Logout','class="mc-btn-logout"')}}</div>
          <ul >
