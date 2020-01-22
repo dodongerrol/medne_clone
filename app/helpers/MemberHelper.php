@@ -375,7 +375,7 @@ class MemberHelper
 		// return ['start_date' => $spending_accounts->medical_spending_start_date, 'end_date' => date('Y-m-d', strtotime('+3 months', strtotime($spending_accounts->medical_spending_end_date)))];
     $current_term = MemberHelper::getMemberCreditReset($member_id, 'current_term', 'medical');
     $last_term = MemberHelper::getMemberCreditReset($member_id, 'last_term', 'medical');
-    $today = date('Y-m-d');
+    $today = date('Y-m-d', strtotime('+3 months'));
     $grace_period = null;
     if($last_term) {
     	$grace_period = date('Y-m-d', strtotime('+3 months', strtotime($current_term['start'])));
