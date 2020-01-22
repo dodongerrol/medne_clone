@@ -55,7 +55,7 @@ class DependentController extends \BaseController {
 
 			$temp_file = time().$file->getClientOriginalName();
 			$file->move('excel_upload', $temp_file);
-			$data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+			$data_array = Excel::selectSheets('Sheet1')->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
 			$headerRow = $data_array->first()->keys();
 			// return $data_array;
 			$temp_users = [];

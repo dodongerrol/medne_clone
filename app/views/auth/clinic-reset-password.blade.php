@@ -34,7 +34,7 @@
 			</a>
 		</div>
 		<div class="col-sm-12 col-md-12 col-lg-12">
-			<img src="{{ $server }}/assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+			<img src="{{ $server }}/assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for health provider</h2>
 
 			<p ng-if="!password_success" class="text-center" style="font-size: 20px;color: #222;margin: 40px 0;">We received your reset password request.<br>Please enter your new password!</p>

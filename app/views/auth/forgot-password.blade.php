@@ -112,7 +112,7 @@ color: #999999 !important;
 
 <div style="clear: both"></div>
   <div class="mc-background-effect" style="margin-top:5 %; height: 100%;"> 
-    <div class="mc-logo-center" style="width: 250px;padding-top: 15px;"><img src="{{ URL::asset('../assets/userWeb/img/mednefits logo v3 (white) LARGE.png') }}" style="width: 100%" alt="medicloud-logo"></div>
+    <div class="mc-logo-center" style="width: 250px;padding-top: 15px;"><img src="{{ URL::asset('../assets/userWeb/img/Mednefits Logo V2.svg') }}" style="width: 100%" alt="medicloud-logo"></div>
 
     <div style="height: 490px; width: 500px; margin: auto;">
     
