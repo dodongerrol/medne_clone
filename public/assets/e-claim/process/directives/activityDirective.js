@@ -147,12 +147,12 @@ app.directive('activityDirective', [
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
 
-						scope.rangePicker_start = scope.quarterStart.format("DD/MM/YYYY");
+						scope.rangePicker_start = scope.max_rangePicker_end.clone().subtract(3, 'months').format("DD/MM/YYYY");
 						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
-						console.log('quarter start', scope.rangePicker_start);
+						console.log('- 3 months ', scope.rangePicker_end);
 
 						scope.initializeNewCustomDatePicker();
 						scope.applyDates();
