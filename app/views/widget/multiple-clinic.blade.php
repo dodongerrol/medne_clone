@@ -287,7 +287,7 @@
 
 		<div class="footer">
 		<div class="col-md-12 appointment-footer" style="overflow: hidden;">
-			<img src="{{asset('assets/images/mednefits logo v3 (white) LARGE.png')}}" class="img-30">
+			<img src="{{asset('assets/images/Mednefits Logo V2.svg')}}" class="img-30">
 		</div>
 	</div>
 

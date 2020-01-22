@@ -72,7 +72,7 @@
   
     <div class="section-left">
       <div class="logo-container">
-        <img src="{{ URL::asset('assets/images/mednefits logo v3 (white) LARGE.png') }}" width="261" height="52"  alt=""/>
+        <img src="{{ URL::asset('assets/images/Mednefits Logo V2.svg') }}" width="261" height="52"  alt=""/>
       </div><!--END LOGO CONTAINER--> 
     </div><!--END SECTION RIGHT-->
     
