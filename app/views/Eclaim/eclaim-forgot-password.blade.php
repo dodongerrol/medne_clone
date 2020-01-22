@@ -33,7 +33,7 @@
 			</a>
 		</div>
 		<div class="col-sm-12 col-md-12 col-lg-12">
-			<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+			<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for member</h2>
 			@if(!$expire_token)
 			<p ng-if="!password_success && !expire_token" class="text-center" style="font-size: 20px;color: #222;margin: 40px 0;">We received your reset password request.<br>Please enter your new password!</p>
