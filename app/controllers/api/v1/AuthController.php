@@ -1056,7 +1056,6 @@ return Response::json($returnObject);
                 $dates = MemberHelper::getMemberDateTerms($user_id, $filter, $spending_type);
                 $user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
-
                 if($user_spending_dates) {
                   if($spending_type == 'medical') {
                     $table_wallet_history = 'wallet_history';
@@ -4795,16 +4794,16 @@ public function getEclaimTransactions( )
         $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
         $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
-                      ->where('created_at', '>=', $dates['start'])
-                      ->where('created_at', '<=', $dates['end'])
-                      ->orderBy('created_at', 'desc')
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
                       ->paginate($per_page);
       } else {
         $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
-                      ->where('created_at', '>=', $dates['start'])
-                      ->where('created_at', '<=', $dates['end'])
-                      ->orderBy('created_at', 'desc')
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
                       ->get();
       }
 
@@ -6268,10 +6267,9 @@ public function updateUserNotification( )
          $findUserID = $authSession->findUserID($getAccessToken->session_id);
          if($findUserID){
           $user_id = StringHelper::getUserId($findUserID);
-          $data = PlanHelper::checkEmployeePlanStatus($user_id);
+          $data = MemberHelper::getMemberSpendingCoverageDate($user_id);
           $returnObject->status = true;
-
-          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['valid_date']))];
+          $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['end_date'])), 'today' => $data['today'], 'grace_period' => $data['grace_period']];
           return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;

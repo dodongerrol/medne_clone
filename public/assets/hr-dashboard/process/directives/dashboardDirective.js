@@ -150,7 +150,7 @@ app.directive('dashboardDirective', [
 					$('.credit-load').show();
 					$('.credit-box').hide();
 
-					hrSettings.getCheckCredits()
+					hrSettings.getCheckCredits('current_term')
 						.then(function (response) {
 							scope.credits = response.data;
 							localStorage.setItem('currency_type', scope.credits.currency);

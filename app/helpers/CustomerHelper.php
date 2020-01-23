@@ -29,13 +29,14 @@ class CustomerHelper
 												->first();
 			if($spending_type == "medical") {
 				if($credit_resets) {
+					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
 					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
 					$wallet_history = DB::table('customer_credit_logs')->where('customer_credits_id', $wallet->customer_credits_id)->orderBy('created_at', 'desc')->first();
-					return ['start' => $credit_resets->date_resetted, 'end' => date('Y-m-d', strtotime($wallet_history->created_at)), 'id' => $credit_resets->wallet_history_id];
+					return ['start' => $credit_resets->date_resetted, 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => $credit_resets->wallet_history_id];
 				} else {
 					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
 					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
-					return ['start' => $wallet->created_at, 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
+					return ['start' => $spending_accounts->medical_spending_start_date, 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
 				}
 			} else {
 				if($credit_resets) {
@@ -90,8 +91,9 @@ class CustomerHelper
 					return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => $credit_resets[0]->wallet_history_id];
 				}
 			} else if(sizeof($credit_resets) == 1){
+				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->first();
 				$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
-				return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => $credit_resets[0]->wallet_history_id];
+				return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => null];
 			} else {
 				return false;
 			}

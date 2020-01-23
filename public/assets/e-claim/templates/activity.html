@@ -16,32 +16,34 @@
 			<!-- left-input -->
 			<div class="date-selection-container col-md-7" style="display: inline-block;">
 				<div class="input-label custom-select withIcon">
-					<select class="select" ng-change="toDate()" ng-model="select_term" name="term" id="">
+					<select class="select" ng-change="toDate('mtd')" ng-model="select_term" name="term" id="">
 						<option value="current">Current Term</option>
 						<option value="last">Last Term</option>
 					</select>
 					<i class="fa fa-chevron-down" aria-hidden="true"></i>
 				</div>
 
-				<div class="input-label">
-					<input type="radio" name="td" id="wtd" ng-change="toDate()" ng-model="select_to_date" value="wtd"
-						placeholder="WTD">
-					<label class="radio" for="wtd">WTD</label>
-				</div>
-				<div class="input-label">
-					<input type="radio" name="td" id="mtd" ng-change="toDate()" ng-model="select_to_date" value="mtd"
-						placeholder="MTD">
-					<label class="radio" for="mtd">MTD</label>
-				</div>
-				<div class="input-label">
-					<input type="radio" name="td" id="qtd" ng-change="toDate()" ng-model="select_to_date" value="qtd"
-						placeholder="QTD">
-					<label class="radio" for="qtd">QTD</label>
-				</div>
-				<div class="input-label">
-					<input type="radio" name="td" id="ytd" ng-change="toDate()" ng-model="select_to_date" value="ytd"
-						placeholder="YTD">
-					<label class="radio" for="ytd">YTD</label>
+				<div ng-if="select_term == 'current'" style="display: inline-block">
+					<div class="input-label">
+						<input type="radio" name="td" id="wtd" ng-change="toDate('wtd')" ng-model="select_to_date" value="wtd"
+							placeholder="WTD">
+						<label class="radio" for="wtd">WTD</label>
+					</div>
+					<div class="input-label">
+						<input type="radio" name="td" id="mtd" ng-change="toDate('mtd')" ng-model="select_to_date" value="mtd"
+							placeholder="MTD">
+						<label class="radio" for="mtd">MTD</label>
+					</div>
+					<div class="input-label">
+						<input type="radio" name="td" id="qtd" ng-change="toDate('qtd')" ng-model="select_to_date" value="qtd"
+							placeholder="QTD">
+						<label class="radio" for="qtd">QTD</label>
+					</div>
+					<div class="input-label">
+						<input type="radio" name="td" id="ytd" ng-change="toDate('ytd')" ng-model="select_to_date" value="ytd"
+							placeholder="YTD">
+						<label class="radio" for="ytd">YTD</label>
+					</div>
 				</div>
 			</div>
 			<!-- right-input -->

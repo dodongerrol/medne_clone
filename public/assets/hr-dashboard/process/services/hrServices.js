@@ -211,8 +211,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/credits");
   };
 
-  hrFactory.getCheckCredits = function() {
-    return $http.get(serverUrl.url + "/hr/check_balance");
+  hrFactory.getCheckCredits = function(data) {
+    return $http.get(serverUrl.url + "/hr/check_balance?filter="+ data);
   };
 
   hrFactory.assignCredits = function(data) {
@@ -342,8 +342,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 service.factory("hrActivity", function($http, serverUrl, Upload) {
   var hrFactory = {};
 
+  hrFactory.getDateTerms = function(data) {
+    return $http.get(serverUrl.url + "/hr/get_date_terms");
+  };
+
   hrFactory.getHrActivity = function(data) {
-    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type);
+    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter);
   };
 
   hrFactory.getHrActivityInNetworkWithPagination = function(data) {

@@ -633,10 +633,30 @@ class testcontroller extends BaseController {
 		}
 	}
 
+
 	public function getMemberResetDateTest( )
 	{
 		$input = Input::all();
 
 		return PlanHelper::getMemberCreditReset($input['id'], $input['spending_type']);
+	}
+	public function testMemberResetDates( )
+	{
+		$input = Input::all();
+		$user_id = $input['user_id'];
+		$filter = $input['filter'];
+		$spending_type = $input['spending_type'];
+		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
+		return $user_spending_dates;
+	}
+
+	public function testCustomerResetDates( )
+	{
+		$input = Input::all();
+		$user_id = $input['user_id'];
+		$filter = $input['filter'];
+		$spending_type = $input['spending_type'];
+		$user_spending_dates = CustomerHelper::getCustomerCreditReset($user_id, $filter, $spending_type);
+		return $user_spending_dates;
 	}
 }
