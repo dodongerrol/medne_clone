@@ -4794,16 +4794,16 @@ public function getEclaimTransactions( )
         $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
         $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
-                      ->where('created_at', '>=', $dates['start'])
-                      ->where('created_at', '<=', $dates['end'])
-                      ->orderBy('created_at', 'desc')
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
                       ->paginate($per_page);
       } else {
         $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
-                      ->where('created_at', '>=', $dates['start'])
-                      ->where('created_at', '<=', $dates['end'])
-                      ->orderBy('created_at', 'desc')
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
                       ->get();
       }
 

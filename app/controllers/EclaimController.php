@@ -2832,9 +2832,9 @@ public function getActivityOutNetworkTransactions( )
 		->where('corporate_members.user_id', $input['user_id'])
 		->where('e_claim.spending_type', $spending_type)
 		->where('e_claim.status', 1)
-		->where('e_claim.created_at', '>=', $start)
-		->where('e_claim.created_at', '<=', $end)
-		->orderBy('e_claim.created_at', 'desc')
+		->where('e_claim.date', '>=', $start)
+		->where('e_claim.date', '<=', $end)
+		->orderBy('e_claim.date', 'desc')
 		->paginate($input['per_page']);
 	} else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);
@@ -2842,13 +2842,12 @@ public function getActivityOutNetworkTransactions( )
 		->where('spending_type', $spending_type)
 		->whereIn('user_id', $user_ids)
 		->where('status', 1)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
-		->orderBy('created_at', 'desc')
+		->where('date', '>=', $start)
+		->where('date', '<=', $end)
+		->orderBy('date', 'desc')
 		->paginate($input['per_page']);
 	}
 
-        // return $e_claim_result;
 	$paginate['current_page'] = $e_claim_result->getCurrentPage();
 	$paginate['from'] = $e_claim_result->getFrom();
 	$paginate['last_page'] = $e_claim_result->getLastPage();
@@ -2972,9 +2971,9 @@ public function getActivityOutNetworkTransactions( )
 				'owner_id'          => $owner_id,
 				'sub_account_type'  => $sub_account_type,
 				'sub_account'       => $sub_account,
-				'month'             => date('M', strtotime($res->created_at)),
-				'day'               => date('d', strtotime($res->created_at)),
-				'time'              => date('h:ia', strtotime($res->created_at)),
+				'month'             => date('M', strtotime($res->date)),
+				'day'               => date('d', strtotime($res->date)),
+				'time'              => date('h:ia', strtotime($res->date)),
 				'receipt_status'    => $e_claim_receipt_status,
 				'files'             => $doc_files,
 				'spending_type'     => ucwords($res->spending_type),
@@ -5158,7 +5157,7 @@ public function getHrActivity( )
 
 		}
 
-            // e-claim transactions
+    // e-claim transactions
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
@@ -5271,9 +5270,9 @@ public function getHrActivity( )
 					'sub_account_type'  => $sub_account_type,
 					'sub_account'       => $sub_account,
 					'employee_dependent_name'       => $sub_account ? $sub_account : null,
-					'month'             => date('M', strtotime($res->approved_date)),
-					'day'               => date('d', strtotime($res->approved_date)),
-					'time'              => date('h:ia', strtotime($res->approved_date)),
+					'month'             => date('M', strtotime($res->date)),
+					'day'               => date('d', strtotime($res->date)),
+					'time'              => date('h:ia', strtotime($res->date)),
 					'receipt_status'    => $e_claim_receipt_status,
 					'files'             => $doc_files,
 					'spending_type'     => ucwords($res->spending_type),
