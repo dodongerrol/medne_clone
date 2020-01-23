@@ -4688,10 +4688,10 @@ public function getHrActivity( )
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
+		->where('date', '>=', $start)
+		->where('date', '<=', $end)
 		->where('status', 1)
-		->orderBy('created_at', 'desc')
+		->orderBy('date', 'desc')
 		->get();
 
         // get in-network transactions
@@ -5173,9 +5173,24 @@ public function getHrActivity( )
 				// 	$e_claim_spent += $res->amount * $res->currency_value;
 				// 	$total_e_claim_spent += $res->amount * $res->currency_value;
 				// } else {
-					$e_claim_spent += $res->amount;
-					$total_e_claim_spent += $res->amount;
+					// $e_claim_spent += $res->amount;
+					// $total_e_claim_spent += $res->amount;
 				// }
+				$status_text = 'Approved';
+				$e_claim_data = DB::table($table_wallet_history)
+				->where('id', $res->e_claim_id)
+				->where('where_spend', 'e_claim_transaction')
+				->first();
+
+				if($e_claim_data) {
+					$e_claim_spent += $e_claim_data->credit;
+					$res->claim_amount = $e_claim_data->credit;
+					$res->amount = $e_claim_data->credit;
+					$total_e_claim_spent += $e_claim_data->credit;
+				} else {
+					$e_claim_spent += $res->claim_amount;
+					$total_e_claim_spent += $res->claim_amount;
+				}
 			} else if($res->status == 2) {
 				$status_text = 'Rejected';
 			} else {
@@ -5394,10 +5409,10 @@ public function searchEmployeeActivity( )
         // get e claim
 	$e_claim_result = DB::table('e_claim')
 	->whereIn('user_id', $ids)
-	->where('created_at', '>=', $start)
-	->where('created_at', '<=', $spending_end_date)
+	->where('date', '>=', $start)
+	->where('date', '<=', $spending_end_date)
 	->where('spending_type', $spending_type)
-	->orderBy('created_at', 'desc')
+	->orderBy('date', 'desc')
 	->get();
         // get in-network transactions
 	$transactions = DB::table('transaction_history')
@@ -5861,8 +5876,20 @@ public function searchEmployeeActivity( )
 			$e_claim_pending += $res->amount;
 		} else if($res->status == 1) {
 			$status_text = 'Approved';
-			$e_claim_spent += $res->amount;
-			$total_e_claim_spent += $res->amount;
+			$e_claim_data = DB::table($table_wallet_history)
+				->where('id', $res->e_claim_id)
+				->where('where_spend', 'e_claim_transaction')
+				->first();
+
+			if($e_claim_data) {
+				$e_claim_spent += $e_claim_data->credit;
+				$res->claim_amount = $e_claim_data->credit;
+				$res->amount = $e_claim_data->credit;
+				$total_e_claim_spent += $e_claim_data->credit;
+			} else {
+				$e_claim_spent += $res->claim_amount;
+				$total_e_claim_spent += $res->claim_amount;
+			}
 		} else if($res->status == 2) {
 			$status_text = 'Rejected';
 		} else {
