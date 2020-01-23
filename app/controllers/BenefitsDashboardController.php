@@ -2396,7 +2396,7 @@ class BenefitsDashboardController extends \BaseController {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($user, $filter, 'medical');
 			$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($user, $filter, 'wellness');
 			$medical_wallet = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
-			$wellness_wallet = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+			$wellness_wallet = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
 			// array_push($temp, $wellness_wallet);
 			$get_allocation_spent += $medical_wallet['get_allocation_spent'];
 			$allocated += $medical_wallet['allocation'];
@@ -2406,8 +2406,8 @@ class BenefitsDashboardController extends \BaseController {
 
 			$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
 			$allocated_wellness += $wellness_wallet['allocation'];
-			$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits'];
-			$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation'];
+			$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
+			$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
 			$total_wellness_balance += $wellness_wallet['balance'];
 		}
 
