@@ -146,6 +146,8 @@ app.directive('activityPage', [
 						scope.initializeNewCustomDatePicker();
 						scope.applyDates();
 					}
+
+					scope.dashCredits();
 					
 					if (scope.select_to_date == 'wtd') {
 						
@@ -1182,7 +1184,6 @@ app.directive('activityPage', [
 				}
 
 				scope.checkCompanyBalance = function () {
-
 					hrSettings.getCheckCredits();
 				}
 
@@ -1322,7 +1323,15 @@ app.directive('activityPage', [
 				scope.credits = {};
 
 				scope.dashCredits = function () {
-					hrSettings.getCheckCredits()
+
+					var term_status;
+					if (scope.term_value == 0) {
+						term_status = 'current_term';
+					} else if (scope.term_value == 1) {
+						term_status = 'last_term';
+					}
+
+					hrSettings.getCheckCredits(term_status)
 						.then(function (response) {
 							console.log(response);
 							scope.credits = response.data;

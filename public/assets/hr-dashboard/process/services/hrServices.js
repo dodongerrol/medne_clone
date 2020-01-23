@@ -211,8 +211,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/credits");
   };
 
-  hrFactory.getCheckCredits = function() {
-    return $http.get(serverUrl.url + "/hr/check_balance");
+  hrFactory.getCheckCredits = function(data) {
+    return $http.get(serverUrl.url + "/hr/check_balance?filter="+ data);
   };
 
   hrFactory.assignCredits = function(data) {
