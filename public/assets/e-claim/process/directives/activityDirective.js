@@ -691,16 +691,16 @@ app.directive('activityDirective', [
 					// scope.initializeRangeSlider();
 					scope.initializeNewCustomDatePicker();
 
-					setTimeout(function () {
+					// setTimeout(function () {
 						
-						var activity_search = {
-							start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-							end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-						}
+					// 	var activity_search = {
+					// 		start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+					// 		end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+					// 	}
 
-						// $('.btn-custom-end').data('daterangepicker').setMinDate(moment(activity_search.start, 'YYYY-MM-DD').format('MM/DD/YYYY'));
-						scope.searchActivity(activity_search);
-					}, 500);
+					// 	// $('.btn-custom-end').data('daterangepicker').setMinDate(moment(activity_search.start, 'YYYY-MM-DD').format('MM/DD/YYYY'));
+					// 	scope.searchActivity(activity_search);
+					// }, 500);
 				}
 
 				scope.downloadMednefitsReceipt = function (id) {
