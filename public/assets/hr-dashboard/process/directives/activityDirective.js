@@ -98,18 +98,17 @@ app.directive('activityPage', [
 					scope.select_to_date = data;
 					console.log(scope.select_to_date);
 					
-					
-					if(scope.select_to_date == false) {
-						scope.select_to_date = 'mtd';
-					}
 					// console.log(scope.select_to_date);
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;
+						// if(scope.select_to_date == false) {
+						// 	scope.select_to_date = 'mtd';
+						// }
 						// scope.select_to_date = 'ytd';
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-						scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end);
+						scope.max_rangePicker_end = moment();
 
 						scope.rangePicker_start = scope.min_rangePicker_start.format("DD/MM/YYYY");
 						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");

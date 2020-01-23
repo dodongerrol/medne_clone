@@ -136,7 +136,7 @@ app.directive('activityDirective', [
 						scope.initializeNewCustomDatePicker();
 						scope.applyDates();
 					} else {
-						// scope.term_value = 1;
+						scope.term_value = 1;
 						// scope.select_to_date = false;
 						
 
