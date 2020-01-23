@@ -945,9 +945,9 @@ class EclaimController extends \BaseController {
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $spending_end_date)
-		->orderBy('created_at', 'desc')
+		->where('date', '>=', $start)
+		->where('date', '<=', $spending_end_date)
+		->orderBy('date', 'desc')
 		->get();
     
     // get in-network transactions
