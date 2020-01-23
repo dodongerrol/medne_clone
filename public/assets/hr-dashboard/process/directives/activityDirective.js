@@ -148,7 +148,7 @@ app.directive('activityPage', [
 					}
 
 					scope.dashCredits();
-					
+
 					if (scope.select_to_date == 'wtd') {
 						
 						// scope.select_to_date = data;
@@ -414,6 +414,7 @@ app.directive('activityPage', [
 				scope.setSpendType = function (opt) {
 					scope.activitySpendingType = opt;
 					scope.activitySpendingTypeSelected = opt == 0 ? 'medical' : 'wellness';
+					scope.dashCredits();
 
 					var activity_search = {
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
