@@ -2410,7 +2410,7 @@ class BenefitsDashboardController extends \BaseController {
 			$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
 			$total_wellness_balance += $wellness_wallet['balance'];
 		}
-
+		
 		$total_medical_allocated = $allocated - $deleted_employee_allocation;
 		$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness;
 		$credits = $total_medical_allocation - $total_medical_allocated;

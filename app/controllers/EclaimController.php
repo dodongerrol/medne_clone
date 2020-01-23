@@ -4618,6 +4618,7 @@ public function getHrActivity( )
 	$start = date('Y-m-d', strtotime($input['start']));
 	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+	$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
 	$paginate = [];
 
 	$session = self::checkSession();
@@ -4673,7 +4674,7 @@ public function getHrActivity( )
 	$paginate['to'] = $corporate_members->getTo();
 	$paginate['total'] = $corporate_members->getTotal();
 
-    // $start = date('Y-m-d', strtotime($wallet->created_at));
+  $total_allocation = 0;
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
@@ -4683,6 +4684,16 @@ public function getHrActivity( )
 
 	foreach ($corporate_members as $key => $member) {
 		$ids = StringHelper::getSubAccountsID($member->user_id);
+		$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
+		if($spending_type == "medical") {
+			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'medical');
+			$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+			$total_allocation += $credit_data['allocation'];
+		} else {
+			$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'wellness');
+			$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+			$total_allocation += $credit_data['allocation'];
+		}
             // get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
@@ -5270,9 +5281,9 @@ public function getHrActivity( )
 					'sub_account_type'  => $sub_account_type,
 					'sub_account'       => $sub_account,
 					'employee_dependent_name'       => $sub_account ? $sub_account : null,
-					'month'             => date('M', strtotime($res->date)),
-					'day'               => date('d', strtotime($res->date)),
-					'time'              => date('h:ia', strtotime($res->date)),
+					'month'             => date('M', strtotime($res->created_at)),
+					'day'               => date('d', strtotime($res->created_at)),
+					'time'              => date('h:ia', strtotime($res->created_at)),
 					'receipt_status'    => $e_claim_receipt_status,
 					'files'             => $doc_files,
 					'spending_type'     => ucwords($res->spending_type),
@@ -5299,6 +5310,8 @@ public function getHrActivity( )
 	});
 
 	$paginate['data'] = array(
+		'total_allocation' => $total_allocation,
+		'total_balance'			=> $total_allocation - $total_spent,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
 		'in_network_spent'  => number_format($in_network_spent, 2),
@@ -5354,6 +5367,7 @@ public function searchEmployeeActivity( )
 	$total_search_credits = 0;
 	$total_in_network_spent = 0;
 	$total_credits_transactions = 0;
+	$total_allocation;
 
         // check user
 	$check_user = DB::table('user')->where('UserID', $input['user_id'])->count();
@@ -5369,40 +5383,47 @@ public function searchEmployeeActivity( )
 	}
 
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
-
-	$user = DB::table('user')->where('UserID', $input['user_id'])->first();
-
+	// $user = DB::table('user')->where('UserID', $input['user_id'])->first();
 	$wallet = DB::table('e_wallet')->where('UserID', $input['user_id'])->orderBy('created_at', 'desc')->first();
-	$wallet_reset = PlanHelper::getResetWalletDate($input['user_id'], $spending_type, $start, $input['end'], 'employee');
-
+	// $wallet_reset = PlanHelper::getResetWalletDate($input['user_id'], $spending_type, $start, $input['end'], 'employee');
+	$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
 	// return array('result' => $wallet_reset);
-	if($wallet_reset) {
-		$wallet_start_date = $wallet_reset;
+	// if($wallet_reset) {
+	// 	$wallet_start_date = $wallet_reset;
+	// } else {
+	// 	$wallet_start_date = $start;
+	// }
+
+	if($spending_type == "medical") {
+		$member_spending_dates_medical = MemberHelper::getMemberCreditReset($input['user_id'], $filter, 'medical');
+		$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+		$total_allocation += $credit_data['allocation'];
 	} else {
-		$wallet_start_date = $start;
+		$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($input['user_id'], $filter, 'wellness');
+		$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+		$total_allocation += $credit_data['allocation'];
 	}
 
 	$spending_end_date = PlanHelper::endDate($input['end']);
 
     // total employee allocation
-	$total_allocation = DB::table('e_wallet')
-	->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-	->where('e_wallet.UserID', $input['user_id'])
-	->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
-	->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
-                                // ->where('wallet_history.created_at', '>=', $start)
-                                // ->where('wallet_history.created_at', '<=', $spending_end_date)
-	->where($table_wallet_history.'.logs', 'added_by_hr')
-	->sum($table_wallet_history.'.credit');
+	// $total_allocation = DB::table('e_wallet')
+	// ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+	// ->where('e_wallet.UserID', $input['user_id'])
+	// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
+	// ->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
+ //                                // ->where('wallet_history.created_at', '>=', $start)
+ //                                // ->where('wallet_history.created_at', '<=', $spending_end_date)
+	// ->where($table_wallet_history.'.logs', 'added_by_hr')
+	// ->sum($table_wallet_history.'.credit');
 
-	$deducted_allocation = DB::table('e_wallet')
-	->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-	->where('e_wallet.UserID', $input['user_id'])
-	->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
-	->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
-	->whereIn('logs', ['deducted_by_hr'])
-	->sum($table_wallet_history.'.credit');
-
+	// $deducted_allocation = DB::table('e_wallet')
+	// ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
+	// ->where('e_wallet.UserID', $input['user_id'])
+	// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
+	// ->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
+	// ->whereIn('logs', ['deducted_by_hr'])
+	// ->sum($table_wallet_history.'.credit');
 	$ids = StringHelper::getSubAccountsID($input['user_id']);
 
         // get e claim
@@ -5936,9 +5957,9 @@ public function searchEmployeeActivity( )
 					'owner_id'          => $owner_id,
 					'sub_account_type'  => $sub_account_type,
 					'sub_account'       => $sub_account,
-					'month'             => date('M', strtotime($res->approved_date)),
-					'day'               => date('d', strtotime($res->approved_date)),
-					'time'              => date('h:ia', strtotime($res->approved_date)),
+					'month'             => date('M', strtotime($res->created_at)),
+					'day'               => date('d', strtotime($res->created_at)),
+					'time'              => date('h:ia', strtotime($res->created_at)),
 					'spending_type'     => $spending_type == 'medical' ? 'Medical' : 'Wellness',
 					'bank_account_number' => $bank_account_number,
 					'bank_name'					=> $bank_name,
@@ -5965,11 +5986,12 @@ public function searchEmployeeActivity( )
 	// 	'wellness_breakdown'             => $wellness_breakdown > 0 ? number_format($wellness_breakdown / $in_network_spent * 100, 0) : 0
 	// );
 
-	$balance = $total_allocation - $total_spent - $deducted_allocation;
-	$grand_total_credits_cash = $total_credits - $deleted_transaction_credits - $deleted_transaction_cash;
+	// $balance = $total_allocation - $total_spent - $deducted_allocation;
+	// $grand_total_credits_cash = $total_credits - $deleted_transaction_credits - $deleted_transaction_cash;
 	return array(
-		'total_allocation'  => number_format($total_allocation, 2),
-		'allocation'  => number_format($total_allocation - $deducted_allocation, 2),
+		'total_allocation'  => $total_allocation,
+		'total_balance'  => $total_allocation - $total_spent,
+		// 'allocation'  => number_format($total_allocation - $deducted_allocation, 2),
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
 		'balance'           => $balance > 0 ? number_format($balance, 2) : number_format(0, 2),
@@ -5982,7 +6004,7 @@ public function searchEmployeeActivity( )
 		'employee'          => ucwords($user->Name),
 		'in_network_spending_format_number' => $in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
-		'total_in_network_credits_cash' => $grand_total_credits_cash > 0 ? number_format($grand_total_credits_cash, 2) : number_format(0, 2),
+		// 'total_in_network_credits_cash' => $grand_total_credits_cash > 0 ? number_format($grand_total_credits_cash, 2) : number_format(0, 2),
 		'total_in_network_spent'    => number_format($total_in_network_spent, 2),
 		'total_in_network_spent_format_number'    => $total_in_network_spent,
 		'total_cash'            => $total_cash,
