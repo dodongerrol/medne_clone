@@ -9793,7 +9793,6 @@ class BenefitsDashboardController extends \BaseController {
 			// $refund_payment = DB::table('payment_refund')->where('customer_active_plan_id', $id)->first();
 			$company_active_plan = DB::table('customer_active_plan')
 			->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
-									// ->where('account_type', 'stand_alone_plan')
 			->first();
 			$company_plan = DB::table('customer_plan')
 			->where('customer_plan_id', $company_active_plan->plan_id)
@@ -9812,19 +9811,17 @@ class BenefitsDashboardController extends \BaseController {
 				if((int)$user->has_no_user == 0) {
 					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
 					$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
-
+					$invoice = DB::table('corporate_invoice')
+						->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
+						->first();
 					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
-
 					$days = $diff->format('%a') + 1;
-
 
 					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 					$remaining_days = $total_days - $days;
 
-					// return $remaining_days;
-					$cost_plan_and_days = (99/$total_days);
+					$cost_plan_and_days = ($invoice->individual_price/$total_days);
 					$temp_total = $cost_plan_and_days * $remaining_days;
-
 					$temp_sub_total = $temp_total * 0.70;
 
 					// check withdraw amount
@@ -9834,7 +9831,6 @@ class BenefitsDashboardController extends \BaseController {
 					}
 
 					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
-
 					$total_refund += $temp_sub_total;
 
 					$temp = array(
@@ -9877,7 +9873,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 
 				if($user->paid == 0) {
-					$amount_due += $temp['before_amount'];
+					$amount_due += $temp['after_amount'];
 				}
 
 				array_push($users, $temp);
