@@ -117,16 +117,27 @@ app.directive('activityDirective', [
 					scope.select_to_date = data;
 					console.log(scope.select_to_date);
 
-					if(scope.select_to_date == false) {
-						scope.select_to_date = 'mtd';
-					}
+					// if(scope.select_to_date == false) {
+					// 	scope.select_to_date = 'mtd';
+					// }
 
 					if (scope.select_term == 'current') {
 						scope.term_value = 0;
 						// scope.select_to_date = 'mtd';
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-						scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end);
+						scope.max_rangePicker_end = moment();
+
+						var currentDate = moment();
+						var monthStart = currentDate.clone().startOf('month');
+
+						if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM') ) {
+							console.log('follow SA start date');
+							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+						} else {
+							console.log('follow MTD 1st day');
+							scope.min_rangePicker_start = monthStart;
+						}
 
 						scope.rangePicker_start = scope.min_rangePicker_start.format("DD/MM/YYYY");
 						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
@@ -137,7 +148,7 @@ app.directive('activityDirective', [
 						scope.applyDates();
 					} else {
 						scope.term_value = 1;
-						// scope.select_to_date = false;
+						scope.select_to_date = false;
 						
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
@@ -177,13 +188,29 @@ app.directive('activityDirective', [
 						scope.applyDates();
 						console.log('wtd', scope.rangePicker_start);
 					} else if (scope.select_to_date == 'mtd') {
+
 						// scope.select_to_date = data;
+
+						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+						scope.max_rangePicker_end = moment();
+
 						var currentDate = moment();
 						var weekStart = currentDate.clone().startOf('week');
 						var weekEnd = currentDate.clone().endOf('week');
 						var monthStart = currentDate.clone().startOf('month');
 
-						scope.rangePicker_start = monthStart.format('DD/MM/YYYY');
+
+						if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM') ) {
+							console.log('follow SA start date');
+							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+						} else {
+							console.log('follow MTD 1st day');
+							scope.min_rangePicker_start = monthStart;
+						}
+
+
+
+						scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
 						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
