@@ -178,7 +178,7 @@ app.directive('activityDirective', [
 						console.log('wtd', scope.rangePicker_start);
 					} else if (scope.select_to_date == 'mtd') {
 						// scope.select_to_date = data;
-						var currentDate = moment().subtract(scope.term_value, 'year');
+						var currentDate = moment();
 						var weekStart = currentDate.clone().startOf('week');
 						var weekEnd = currentDate.clone().endOf('week');
 						var monthStart = currentDate.clone().startOf('month');
@@ -192,7 +192,7 @@ app.directive('activityDirective', [
 					} else if (scope.select_to_date == 'qtd') {
 						console.log('qtd 1st');
 						// scope.select_to_date = data;
-						var currentDate = moment().subtract(scope.term_value, 'year');
+						var currentDate = moment();
 						var currentQuarter = moment(currentDate.format('YYYY-MM-DD')).utc().quarter();
 						var yearStart = currentDate.clone().startOf('year');
 						var weekStart = currentDate.clone().startOf('week');
@@ -209,7 +209,7 @@ app.directive('activityDirective', [
 						// console.log(currentQuarter,'quarter '+scope.rangePicker_start+ ' to '+scope.rangePicker_end) ;
 					} else if (scope.select_to_date == 'ytd') {
 						// scope.select_to_date = data;
-						var currentDate = moment().subtract(scope.term_value, 'year');
+						var currentDate = moment();
 						var currentQuarter = moment(currentDate.format('YYYY-MM-DD')).utc().quarter();
 						var yearStart = currentDate.clone().startOf('year');
 						var weekStart = currentDate.clone().startOf('week');
