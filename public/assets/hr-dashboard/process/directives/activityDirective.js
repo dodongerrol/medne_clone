@@ -75,18 +75,18 @@ app.directive('activityPage', [
 				scope.term_value = 0;
 				scope.select_to_date = 'mtd';
 				scope.dateTerms = {},
-				scope.min_rangePicker_start;
+					scope.min_rangePicker_start;
 				scope.max_rangePicker_end;
 				//New Filter Date
 
-				scope.getDateTermsApi = function() {
+				scope.getDateTermsApi = function () {
 					hrActivity.getDateTerms()
 						.then(function (response) {
 							if (response.status) {
 								scope.dateTerms = response.data;
 								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
 								scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end).format('DD/MM/YYYY');
-								console.log('dateTerms',scope.dateTerms);
+								console.log('dateTerms', scope.dateTerms);
 							}
 							scope.toDate('mtd');
 
@@ -97,7 +97,7 @@ app.directive('activityPage', [
 				scope.toDate = function (data) {
 					scope.select_to_date = data;
 					console.log(scope.select_to_date);
-					
+
 					// console.log(scope.select_to_date);
 
 					if (scope.select_term == 'current') {
@@ -110,7 +110,7 @@ app.directive('activityPage', [
 						var currentDate = moment();
 						var monthStart = currentDate.clone().startOf('month');
 
-						if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM') ) {
+						if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
 							console.log('follow SA start date');
 							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 						} else {
@@ -125,7 +125,7 @@ app.directive('activityPage', [
 
 						scope.initializeNewCustomDatePicker();
 						scope.applyDates();
-						
+
 					} else {
 						scope.term_value = 1;
 						scope.select_to_date = false;
@@ -150,7 +150,7 @@ app.directive('activityPage', [
 					scope.dashCredits();
 
 					if (scope.select_to_date == 'wtd') {
-						
+
 						// scope.select_to_date = data;
 						var currentDate = moment(); //
 						var weekStart = currentDate.clone().startOf('week');
@@ -179,7 +179,7 @@ app.directive('activityPage', [
 						var weekEnd = currentDate.clone().endOf('week');
 						var monthStart = currentDate.clone().startOf('month');
 
-						if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM') ) {
+						if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
 							console.log('follow SA start date');
 							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 						} else {
@@ -223,7 +223,7 @@ app.directive('activityPage', [
 						scope.rangePicker_start = yearStart.format('DD/MM/YYYY');
 						scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 
-						console.log(currentDate,scope.term_value,'-',scope.rangePicker_start, '-', scope.rangePicker_end);
+						console.log(currentDate, scope.term_value, '-', scope.rangePicker_start, '-', scope.rangePicker_end);
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 						scope.applyDates();
@@ -421,7 +421,7 @@ app.directive('activityPage', [
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 					}
 					scope.currentPage = 1;
-					
+
 					if (scope.search.user_id) {
 						scope.searchEmployeeActivity(scope.search.user_id);
 					} else {
@@ -691,12 +691,14 @@ app.directive('activityPage', [
 									to: response.data.total
 								}
 
-								if (scope.activity.spending_type == "medical") {
-									scope.activity.total_allocation = scope.total_allocation.total_allocation;
-								} else {
-									scope.activity.total_allocation = scope.total_allocation.total_allocation;
-									// total_wellness_allocation;
-								}
+								// if (scope.activity.spending_type == "medical") {
+								// 	// scope.activity.total_allocation = scope.credits.total_medical_employee_allocated;
+								// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
+								// } else {
+								// 	// scope.activity.total_allocation = scope.credits.total_wellness_employee_allocated;
+								// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
+								// 	// total_wellness_allocation;
+								// }
 								scope.in_network_transactions = response.data.data.in_network_transactions;
 								scope.e_claim_transactions = response.data.data.e_claim_transactions;
 								scope.activity.total_lite_plan_consultation = response.data.data.total_lite_plan_consultation;
@@ -904,11 +906,14 @@ app.directive('activityPage', [
 								scope.activity = response.data;
 								scope.activity.total_lite_plan_consultation = response.data.total_lite_plan_consultation;
 
-								if (scope.activity.spending_type == "medical") {
-									scope.activity.total_allocation = scope.total_allocation.total_allocation;
-								} else {
-									scope.activity.total_allocation = scope.total_allocation.total_wellness_allocation;
-								}
+								// if (scope.activity.spending_type == "medical") {
+								// 	// scope.activity.total_allocation = scope.credits.total_medical_employee_allocated;
+								// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
+								// } else {
+								// 	// scope.activity.total_allocation = scope.credits.total_wellness_employee_allocated;
+								// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
+								// 	// scope.activity.total_allocation = scope.total_allocation.total_wellness_allocation;
+								// }
 
 								if (scope.activity.balance.indexOf(',') > -1) {
 									scope.activity.balance = scope.activity.balance.replace(",", "");
@@ -1036,7 +1041,7 @@ app.directive('activityPage', [
 							singleDatePicker: true,
 							startDate: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 						}, function (start, end, label) {
-							console.log('date ni start',start);
+							console.log('date ni start', start);
 							scope.currentPage = 1;
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
@@ -1045,10 +1050,18 @@ app.directive('activityPage', [
 							// $('.btn-custom-end').data('daterangepicker').setMaxDate(start);
 
 							if (scope.rangePicker_end && (scope.rangePicker_end > scope.rangePicker_start)) {
-								
+
+								var term_status;
+								if (scope.term_value == 0) {
+									term_status = 'current_term';
+								} else if (scope.term_value == 1) {
+									term_status = 'last_term';
+								}
+
 								var activity_search = {
 									start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 									end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+									fitler: term_status,
 								}
 								if (scope.search.user_id) {
 									scope.searchEmployeeActivity(scope.search.user_id);
@@ -1073,10 +1086,18 @@ app.directive('activityPage', [
 							$("#rangePicker_end").text(scope.rangePicker_end);
 							// $('.btn-custom-start').data('daterangepicker').setMinDate(end);
 							// $('.btn-custom-start').data('daterangepicker').setMaxDate(end);
-							
+
+							var term_status;
+							if (scope.term_value == 0) {
+								term_status = 'current_term';
+							} else if (scope.term_value == 1) {
+								term_status = 'last_term';
+							}
+
 							var activity_search = {
 								start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 								end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+								filter: term_status,
 							}
 							if (scope.search.user_id) {
 								scope.searchEmployeeActivity(scope.search.user_id);
@@ -1101,6 +1122,7 @@ app.directive('activityPage', [
 						yearToday = moment().subtract(1, 'years').format('YYYY');
 					}
 					var range_data = date_slider.getValue();
+
 					var activity_search = scope.getFirstEndDate(range_data[0], range_data[1]);
 					scope.currentPage = 1;
 					if (scope.search.user_id) {
@@ -1173,6 +1195,7 @@ app.directive('activityPage', [
 							var activity_search = {
 								start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 								end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+								filter: term_status
 							}
 							if (scope.search.user_id) {
 								scope.searchEmployeeActivity(scope.search.user_id);
@@ -1189,13 +1212,21 @@ app.directive('activityPage', [
 				}
 
 				scope.applyDates = function (data) {
-					if(data == 'custom') {
+					if (data == 'custom') {
 						scope.select_to_date = false;
 						console.log(scope.select_to_date);
+					}
+
+					var term_status;
+					if (scope.term_value == 0) {
+						term_status = 'current_term';
+					} else if (scope.term_value == 1) {
+						term_status = 'last_term';
 					}
 					var activity_search = {
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+						filter: term_status,
 					}
 					scope.showLoading();
 					if (scope.search.user_id) {
@@ -1220,7 +1251,7 @@ app.directive('activityPage', [
 							minDate: moment(scope.min_rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 							maxDate: moment(scope.max_rangePicker_end, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 						}, function (start, end, label) {
-							console.log('date ni start',start);
+							console.log('date ni start', start);
 							scope.currentPage = 1;
 							scope.rangePicker_start = moment(start).format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
@@ -1334,7 +1365,7 @@ app.directive('activityPage', [
 
 					hrSettings.getCheckCredits(term_status)
 						.then(function (response) {
-							console.log(response);
+							console.log('mao ni sya',response);
 							scope.credits = response.data;
 						});
 				}

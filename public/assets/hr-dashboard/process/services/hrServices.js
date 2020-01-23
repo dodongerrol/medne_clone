@@ -347,7 +347,7 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   };
 
   hrFactory.getHrActivity = function(data) {
-    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type);
+    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter);
   };
 
   hrFactory.getHrActivityInNetworkWithPagination = function(data) {

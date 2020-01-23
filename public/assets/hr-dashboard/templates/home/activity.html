@@ -98,19 +98,23 @@
 
 										<div ng-show="select_term == 'current'" style="display: inline-block">
 											<div class="input-label">
-												<input type="radio" name="td" id="wtd" ng-change="toDate('wtd')" ng-model="select_to_date" value="wtd" placeholder="WTD">
+												<input type="radio" name="td" id="wtd" ng-change="toDate('wtd')" ng-model="select_to_date"
+													value="wtd" placeholder="WTD">
 												<label class="radio" for="wtd">WTD</label>
 											</div>
 											<div class="input-label">
-												<input type="radio" name="td" id="mtd" ng-change="toDate('mtd')" ng-model="select_to_date" value="mtd" placeholder="MTD">
+												<input type="radio" name="td" id="mtd" ng-change="toDate('mtd')" ng-model="select_to_date"
+													value="mtd" placeholder="MTD">
 												<label class="radio" for="mtd">MTD</label>
 											</div>
 											<div class="input-label">
-												<input type="radio" name="td" id="qtd" ng-change="toDate('qtd')" ng-model="select_to_date" value="qtd" placeholder="QTD">
+												<input type="radio" name="td" id="qtd" ng-change="toDate('qtd')" ng-model="select_to_date"
+													value="qtd" placeholder="QTD">
 												<label class="radio" for="qtd">QTD</label>
 											</div>
 											<div class="input-label">
-												<input type="radio" name="td" id="ytd" ng-change="toDate('ytd')" ng-model="select_to_date" value="ytd" placeholder="YTD">
+												<input type="radio" name="td" id="ytd" ng-change="toDate('ytd')" ng-model="select_to_date"
+													value="ytd" placeholder="YTD">
 												<label class="radio" for="ytd">YTD</label>
 											</div>
 										</div>
@@ -277,12 +281,19 @@
 									<div>
 										<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
 												class="weight-500 color-blue-custom currency-type"
-												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-												class="weight-500 color-blue-custom"
+												ng-bind="total_allocation.currency_type">MYR/SGD</span>
+											<span class="weight-500 color-blue-custom"
 												ng-bind="activity.total_allocation | number:2">0.00</span>
+											<!-- <span ng-if="activitySpendingType == 0" class="weight-500 color-blue-custom" ng-bind="credits.total_medical_employee_allocated">0.00</span>
+												<span ng-if="activitySpendingType == 1" class="weight-500 color-blue-custom" ng-bind="credits.total_wellness_employee_allocated">0.00</span> -->
 										</p>
 										<p class="color-black3 weight-500 font-16">Balance:
-											<span class="color-blue-custom2 weight-500 font-14 no-margin-top"
+											<span class="color-blue-custom2 weight-500 font-14 no-margin-top">
+												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+												<span ng-bind="activity.total_balance | number:2">0.00</span>
+												<!-- <span ng-bind="credits.total_medical_employee_balance">0.00</span> -->
+											</span>
+											<!-- <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
 												ng-if="activitySpendingType == 0">
 												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span ng-bind="credits.total_medical_employee_balance">0.00</span>
@@ -291,9 +302,10 @@
 												ng-if="activitySpendingType == 1">
 												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
-											</span>
+											</span> -->
 										</p>
-										<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed as Year-to-Date.</small>
+										<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+											as Year-to-Date.</small>
 										<!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
 									</div>
 								</div>
