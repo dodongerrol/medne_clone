@@ -1308,15 +1308,15 @@ app.directive('activityPage', [
 					// scope.initializeRangeSlider( );
 					scope.initializeNewCustomDatePicker();
 
-					setTimeout(function () {
-						var activity_search = {
-							start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-							end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-						}
+					// setTimeout(function () {
+					// 	var activity_search = {
+					// 		start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+					// 		end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+					// 	}
 
-						// $('.btn-custom-end').data('daterangepicker').setMinDate(activity_search.start);
-						scope.getAllocation(activity_search);
-					}, 500);
+					// 	// $('.btn-custom-end').data('daterangepicker').setMinDate(activity_search.start);
+					// 	scope.getAllocation(activity_search);
+					// }, 500);
 				};
 
 				scope.credits = {};
