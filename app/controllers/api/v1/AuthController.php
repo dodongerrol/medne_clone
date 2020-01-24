@@ -1074,9 +1074,9 @@ return Response::json($returnObject);
                   $e_claim_result = DB::table('e_claim')
                   ->whereIn('user_id', $ids)
                   ->where('spending_type', $spending_type)
-                  ->where('created_at', '>=', $dates['start'])
-                  ->where('created_at', '<=', $dates['end'])
-                  ->orderBy('created_at', 'desc')
+                  ->where('date', '>=', $dates['start'])
+                  ->where('date', '<=', $dates['end'])
+                  ->orderBy('date', 'desc')
                   ->take(3)
                   ->get();
 
