@@ -239,6 +239,15 @@ class EclaimHelper
       }
     }
 
+    $pro_allocation = DB::table($wallet_table_logs)
+    ->where('wallet_id', $wallet_id)
+    ->where('logs', 'pro_allocation')
+    ->sum('credit');
+
+    $get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
+    $get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
+    $medical_balance = 0;
+
     if($pro_allocation) {
       $allocation = $pro_allocation;
       $balance = $pro_allocation - $get_allocation_spent;
