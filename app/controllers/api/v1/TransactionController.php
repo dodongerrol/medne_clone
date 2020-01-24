@@ -1048,13 +1048,36 @@ class Api_V1_TransactionController extends \BaseController
 					$returnObject->status = TRUE;
 					$returnObject->message = 'Success.';
 					$user = DB::table('user')->where('UserID', $findUserID)->first();
+					$user_id = StringHelper::getUserId($findUserID);
+					$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
+          $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+          $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
 					$lite_plan_status = false;
-            // $lite_plan_status = StringHelper::litePlanStatus($findUserID);
 
-                    // $type = StringHelper::checkUserType($findUserID);
 					$transaction_details = [];
 					$ids = StringHelper::getSubAccountsID($findUserID);
-					$transactions = DB::table('transaction_history')->whereIn('UserID', $ids)->orderBy('created_at', 'desc')->get();
+					$paginate = [];
+					if($dates) {
+						if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+							$per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
+							$transactions = DB::table('transaction_history')
+														->whereIn('UserID', $ids)
+														->where('created_at', '>=', $dates['start'])
+	                  				->where('created_at', '<=', $dates['end'])
+														->orderBy('created_at', 'desc')
+														->paginate($per_page);
+						} else {
+							$transactions = DB::table('transaction_history')
+														->whereIn('UserID', $ids)
+														->where('created_at', '>=', $dates['start'])
+	                  				->where('created_at', '<=', $dates['end'])
+														->orderBy('created_at', 'desc')
+														->get();
+						}
+					} else {
+						$transactions = [];
+					}
+
 					foreach ($transactions as $key => $trans) {
 						if($trans) {
 							$receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans->transaction_id)->get();
@@ -1172,7 +1195,20 @@ class Api_V1_TransactionController extends \BaseController
 							array_push($transaction_details, $format);
 						}
 					}
-					$returnObject->data = $transaction_details;
+
+					if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
+						$paginate['total'] = $transactions->getTotal();
+						$paginate['per_page'] = $transactions->getPerPage();
+						$paginate['current_page'] = $transactions->getCurrentPage();
+						$paginate['last_page'] = $transactions->getLastPage();
+						$paginate['from'] = $transactions->getFrom();
+						$paginate['to'] = $transactions->getTo();
+						$paginate['data'] = $transaction_details;
+						$returnObject->data = $paginate;
+					} else {
+						$returnObject->data = $transaction_details;
+					}
+
 					return Response::json($returnObject);
 				} else {
 					$returnObject->status = FALSE;

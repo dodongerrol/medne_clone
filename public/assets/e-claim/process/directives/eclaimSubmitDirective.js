@@ -31,6 +31,7 @@ app.directive('eclaimSubmitDirective', [
 				scope.spendingTypeOpt = 0;
 
 				scope.claim_type_arr = [];
+				scope.summ_reminder = false;
 
 				scope.setSpendingType = function( opt ){
 					scope.spendingTypeOpt = opt;
@@ -147,12 +148,43 @@ app.directive('eclaimSubmitDirective', [
 				scope.nextStep = function( ) {
 					scope.step_active++;
 
+					scope.checkEclaimVisit_data = {};
+					if(scope.step_active == 3) {
+						var data = {
+							visit_date: moment(scope.eclaim.visit_date).format('YYYY-MM-DD'),
+							spending_type: scope.eclaim.spending_type,
+							currency_type: localStorage.getItem('currency_type'),
+						}
+
+						eclaimSettings.getCheckEclaimVisit(data)
+						.then(function(response){
+							scope.checkEclaimVisit_data = response.data;
+							
+							// claim_amount = receipt & new_claim_amount = claim_amount
+							if (scope.checkEclaimVisit_data.balance >= scope.eclaim.claim_amount ) {
+								scope.eclaim.new_claim_amount = scope.eclaim.claim_amount;
+							} else {
+								scope.eclaim.new_claim_amount = scope.checkEclaimVisit_data.balance
+							}
+
+							if( scope.checkEclaimVisit_data.last_term == true) {
+								scope.summ_reminder = true;
+							}
+							console.log('new api 8-9', scope.checkEclaimVisit_data);
+						});
+					}
+
 					scope.eclaim = storageFactory.getEclaim();
 					console.log(scope.eclaim);
 				}
 
 				scope.backStep = function( ) {
 					scope.step_active--;
+				}
+
+				scope.close_new_popup = function() {
+					scope.summ_reminder = false;
+
 				}
 
 				scope.selectDayTime = function( daytime ) {
@@ -316,6 +348,7 @@ app.directive('eclaimSubmitDirective', [
 						time: scope.eclaim.visit_time + '' + scope.eclaim.selectedDayTime,
 						receipts: scope.receipts,
 						currency_type: scope.eclaim.selectedCurrencyType,
+						claim_amount: scope.eclaim.new_claim_amount
 					}
 
 					console.log(data);
