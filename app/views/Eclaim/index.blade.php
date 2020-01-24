@@ -45,7 +45,7 @@
 
 	<div class="main-loader">
 		<div class="preloader-container">
-			<img src="../assets/e-claim/img/loading_logo.png" style="width: 65%;">
+			<img src="../assets/e-claim/img/Smiley_Favicon.png" style="width: 65%;">
 			<div class="white-space-20"></div>
 			<div class="preloader-box">
 				<div class="preloader-bar"></div>
