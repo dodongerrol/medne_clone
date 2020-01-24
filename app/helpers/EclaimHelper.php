@@ -239,15 +239,6 @@ class EclaimHelper
       }
     }
 
-    $pro_allocation = DB::table($wallet_table_logs)
-    ->where('wallet_id', $wallet_id)
-    ->where('logs', 'pro_allocation')
-    ->sum('credit');
-
-    $get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
-    $get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
-    $medical_balance = 0;
-
     if($pro_allocation) {
       $allocation = $pro_allocation;
       $balance = $pro_allocation - $get_allocation_spent;
@@ -258,7 +249,14 @@ class EclaimHelper
         $medical_balance = $balance;
       }
     } else {
-      $result = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet_id, $user_id, $start_date, $end_date);
+      $allocation = $get_allocation - $deducted_credits;
+      $balance = $allocation - $get_allocation_spent;
+      $medical_balance = $balance;
+      $total_deduction_credits += $deducted_credits;
+    }
+
+    if($pro_allocation > 0) {
+      $allocation = $pro_allocation;
     }
 
     return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent, 'currency_type' => strtoupper($wallet->currency_type));
