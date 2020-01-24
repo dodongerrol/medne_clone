@@ -211,8 +211,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/credits");
   };
 
-  hrFactory.getCheckCredits = function() {
-    return $http.get(serverUrl.url + "/hr/check_balance");
+  hrFactory.getCheckCredits = function(data) {
+    return $http.get(serverUrl.url + "/hr/check_balance?filter="+ data);
   };
 
   hrFactory.assignCredits = function(data) {
@@ -327,6 +327,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.getEclaimPresignedUrl = function(data) {
     return $http.get(serverUrl.url + "/hr/get_e_claim_doc?id=" + data);
   };
+
+  hrFactory.getSpendingAccountStatus = function() {
+    return $http.get( serverUrl.url + "/hr/get_spending_account_status");
+  };
   
   return hrFactory;
 });
@@ -338,8 +342,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 service.factory("hrActivity", function($http, serverUrl, Upload) {
   var hrFactory = {};
 
+  hrFactory.getDateTerms = function(data) {
+    return $http.get(serverUrl.url + "/hr/get_date_terms");
+  };
+
   hrFactory.getHrActivity = function(data) {
-    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type);
+    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter);
   };
 
   hrFactory.getHrActivityInNetworkWithPagination = function(data) {
@@ -393,7 +401,7 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   };
 
   hrFactory.getTotalAlloc = function(data) {
-    return $http.get(serverUrl.url + "/hr/total_credits_allocation?start="+data.start+"&end="+data.end);
+    return $http.get(serverUrl.url + "/hr/total_credits_allocation?start="+data.start+"&end="+data.end+"&spending_type="+data.spending_type+"&filter="+data.filter);
   };
 
   hrFactory.downloadStatment = function(id) {
@@ -462,6 +470,22 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
 
   hrFactory.OpenBlockClinicsEmp = function( data ) {
     return $http.post( serverUrl.url + "/hr/create_employee_company_block_lists", data );
+  };
+
+  hrFactory.fetchMemberEntitlement = function( id ) {
+    return $http.get( serverUrl.url + "/hr/get_member_entitlement?member_id=" + id );
+  };
+
+  hrFactory.fetchMemberNewEntitlementStatus = function( id ) {
+    return $http.get( serverUrl.url + "/hr/get_member_new_entitlement_status?member_id=" + id );
+  };
+
+  hrFactory.openEntitlementCalc = function( id, entitlement_credits, entitlement_date, proration, entitlement_type ) {
+    return $http.post( serverUrl.url + "/hr/get_member_entitlement_calculation?member_id=" + id + "&new_entitlement_credits=" + entitlement_credits + "&entitlement_usage_date=" + entitlement_date + "&proration_type=" + proration + "&entitlement_spending_type=" + entitlement_type );
+  };
+
+  hrFactory.updateEntitlement = function( data  ) {
+    return $http.post( serverUrl.url + "/hr/create_member_new_entitlement", data  );
   };
 
   return hrFactory;

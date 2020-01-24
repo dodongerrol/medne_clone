@@ -639,6 +639,8 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     });
 
-    $urlRouterProvider.otherwise('/introduction');
+    
+    $urlRouterProvider.otherwise('/benefits-dashboard');
+    // $urlRouterProvider.otherwise('/introduction');
     // $locationProvider.html5Mode(true);
 });
