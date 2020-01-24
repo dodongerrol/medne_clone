@@ -366,7 +366,7 @@ class PlanHelper {
 		$user = DB::table('user')->where('UserID', $id)->first();
 
 		if($user) {
-			$corporate_member = DB::table('corporate_members')->where('user_id', $id)->where('removed_status', 0)->first();
+			$corporate_member = DB::table('corporate_members')->where('user_id', $id)->first();
 			if($corporate_member) {
 				$corporate = DB::table('corporate')->where('corporate_id', $corporate_member->corporate_id)->first();
 				if($corporate) {
