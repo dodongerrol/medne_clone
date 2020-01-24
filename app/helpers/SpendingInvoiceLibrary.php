@@ -403,13 +403,18 @@ class SpendingInvoiceLibrary
 						$clinic_type_name = $clinic_type_data['type'];
 						$image = $clinic_type_data['image'];
 							// check user if it is spouse or dependent
+
+						$employee = $customer->Name;
+						$dependent = null;
 						if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 							$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 							$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
 							$sub_account = ucwords($temp_account->Name);
+							$employee = $sub_account;
 							$sub_account_type = $temp_sub->user_type;
 							$owner_id = $temp_sub->owner_id;
 							$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+							$dependent = $customer->Name;
 						} else {
 							$sub_account = FALSE;
 							$sub_account_type = FALSE;
@@ -443,6 +448,8 @@ class SpendingInvoiceLibrary
 							'service'			=> $procedure,
 							'date_of_transaction' => date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 							'member'            => ucwords($customer->Name),
+							'employee'            => ucwords($employee),
+							'dependent'					=> ucwords($dependent),
 							'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 							'receipt_status'    => $receipt_status,
 							'receipt_files'      => $receipt_files,
