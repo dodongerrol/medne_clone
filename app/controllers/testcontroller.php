@@ -625,13 +625,38 @@ class testcontroller extends BaseController {
 		$date = $input['date'];
 		$spending_type = $input['spending_type'];
 
-		return EclaimHelper::getSpendingBalance($user_id, $date, $spending_type);
+		if($input['type'] == "member") {
+			return EclaimHelper::getSpendingBalance($user_id, $date, $spending_type);
+		} else {
+			$result = CustomerHelper::getCustomerCreditReset($user_id, $input['filter'], $spending_type);
+			return ['result' => $result];
+		}
 	}
+
 
 	public function getMemberResetDateTest( )
 	{
 		$input = Input::all();
 
 		return PlanHelper::getMemberCreditReset($input['id'], $input['spending_type']);
+	}
+	public function testMemberResetDates( )
+	{
+		$input = Input::all();
+		$user_id = $input['user_id'];
+		$filter = $input['filter'];
+		$spending_type = $input['spending_type'];
+		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
+		return $user_spending_dates;
+	}
+
+	public function testCustomerResetDates( )
+	{
+		$input = Input::all();
+		$user_id = $input['user_id'];
+		$filter = $input['filter'];
+		$spending_type = $input['spending_type'];
+		$user_spending_dates = CustomerHelper::getCustomerCreditReset($user_id, $filter, $spending_type);
+		return $user_spending_dates;
 	}
 }

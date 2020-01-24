@@ -254,10 +254,13 @@ class StringHelper{
         {
 
             $secret = Config::get('config.secret_key');
-            $token = StringHelper::getToken();
+            $token = self::getToken();
             $result = FALSE;
             try {
                 $result = JWT::decode($token, $secret);
+                if(!$result) {
+                    return false;
+                }
             } catch(Exception $e) {
                 return FALSE;
             }
