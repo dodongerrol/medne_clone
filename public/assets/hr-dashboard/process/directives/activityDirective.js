@@ -147,7 +147,7 @@ app.directive('activityPage', [
 						scope.applyDates();
 					}
 
-					scope.dashCredits();
+					// scope.dashCredits();
 
 					if (scope.select_to_date == 'wtd') {
 
@@ -434,7 +434,7 @@ app.directive('activityPage', [
 				scope.setSpendType = function (opt) {
 					scope.activitySpendingType = opt;
 					scope.activitySpendingTypeSelected = opt == 0 ? 'medical' : 'wellness';
-					scope.dashCredits();
+					// scope.dashCredits();
 
 					var activity_search = {
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -1390,7 +1390,7 @@ app.directive('activityPage', [
 				}
 
 				scope.onLoad();
-				scope.dashCredits();
+				// scope.dashCredits();
 
 				$(document).on('click', ".per-page", function (ev) {
 					$(".per-page-drop").fadeIn();

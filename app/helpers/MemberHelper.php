@@ -125,6 +125,9 @@ class MemberHelper
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
 				return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => $credit_resets[0]->wallet_history_id];
 			} else {
+				$customer_id = PlanHelper::getCustomerId($member_id);
+				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+				return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($spending_accounts->medical_spending_end_date)))), 'id' => null];
 				return false;
 			}
 		}
