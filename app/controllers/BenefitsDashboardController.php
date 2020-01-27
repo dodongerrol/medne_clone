@@ -2341,7 +2341,7 @@ class BenefitsDashboardController extends \BaseController {
 				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
 						->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $user_spending_dates_wellness['id'])
 				->where('customer_wellness_credits_logs.created_at', '>=', $user_spending_dates_wellness['start'])
-				->where('customer_wellness_credits_logs.created_at', '<=', $user_spending_dates_wellness['start'])
+				->where('customer_wellness_credits_logs.created_at', '<=', $user_spending_dates_wellness['end'])
 				->sum('customer_wellness_credits_logs.credit');
 
 				$temp_total_deduction_wellness = DB::table('customer_credits')
@@ -2350,7 +2350,7 @@ class BenefitsDashboardController extends \BaseController {
 				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
 						->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $user_spending_dates_wellness['id'])
 				->where('customer_wellness_credits_logs.created_at', '>=', $user_spending_dates_wellness['start'])
-				->where('customer_wellness_credits_logs.created_at', '<=', $user_spending_dates_wellness['start'])
+				->where('customer_wellness_credits_logs.created_at', '<=', $user_spending_dates_wellness['end'])
 				->sum('customer_wellness_credits_logs.credit');
 			} else {
 				$temp_total_allocation_wellness = DB::table('customer_credits')
