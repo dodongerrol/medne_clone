@@ -211,10 +211,10 @@ class EclaimHelper
               ->where($wallet_table_logs.'.created_at',  '<=', $end_date)
               ->get();
     } else {
-      // $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
-      $last_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->orderBy('created_at', 'desc')->first();
-      $start_date = $allocation_date;
-      $end_date = PlanHelper::endDate($last_wallet_history->created_at);
+      $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
+      // $last_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->orderBy('created_at', 'desc')->first();
+      // $start_date = $allocation_date;
+      // $end_date = PlanHelper::endDate($last_wallet_history->created_at);
     }
 
     foreach ($wallet_history as $key => $history) {
