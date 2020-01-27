@@ -19,7 +19,7 @@
 	<meta http-equiv="Expires" content="0" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>E-Claim</title>
-	<link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/ico">
+	<link rel="shortcut icon" href="<?php echo $server; ?>/assets/new_landing/images/favicon.ico" type="image/ico">
 
 	<!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet"> -->
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/e-claim/css/bootstrap.min.css?_={{ $date->format('U') }}">
