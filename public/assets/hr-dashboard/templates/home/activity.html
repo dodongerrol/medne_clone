@@ -250,7 +250,7 @@
 							<div class=" benefit-box">
 								<h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
 										ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-										ng-bind="activity.total_spent_format_number | number:2">0.00</span></h5>
+										ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
 								<p class="color-gray2 font-16 weight-300 no-margin" style="padding:13px 0 18px 0;">SPENT</p>
 								<p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p>
 							</div>
@@ -265,13 +265,13 @@
 												class="weight-300 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
 												class="weight-300 color-blue-custom"
-												ng-bind="activity.in_network_spending_format_number | number:2">0.00</span>
+												ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
 										</p>
 										<p class="color-black3 weight-300 font-14">E-claim(Out-of-Network): <span
 												class="weight-300 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
 												class="weight-300 color-blue-custom"
-												ng-bind="activity.e_claim_spending_format_number | number:2">0.00</span>
+												ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
 										</p>
 									</div>
 								</div>
@@ -283,14 +283,14 @@
 												class="weight-500 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span>
 											<span class="weight-500 color-blue-custom"
-												ng-bind="activity.total_allocation | number:2">0.00</span>
+												ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
 											<!-- <span ng-if="activitySpendingType == 0" class="weight-500 color-blue-custom" ng-bind="credits.total_medical_employee_allocated">0.00</span>
 												<span ng-if="activitySpendingType == 1" class="weight-500 color-blue-custom" ng-bind="credits.total_wellness_employee_allocated">0.00</span> -->
 										</p>
 										<p class="color-black3 weight-500 font-16">Balance:
 											<span class="color-blue-custom2 weight-500 font-14 no-margin-top">
 												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
-												<span ng-bind="activity.total_balance | number:2">0.00</span>
+												<span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
 												<!-- <span ng-bind="credits.total_medical_employee_balance">0.00</span> -->
 											</span>
 											<!-- <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
@@ -738,7 +738,7 @@
 								<span class="pull-right">Total Spent
 									<span class="font-medium2" style="margin-left: 15px"><span class="currency-type"
 											ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="activity.total_in_network_spent_format_number | number:2">0.00</span></span>
+											ng-bind="activity.total_in_network_spent_format_number ? (activity.total_in_network_spent_format_number | number:2 ) : '0.00'">0.00</span></span>
 								</span>
 							</p>
 

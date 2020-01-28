@@ -106,6 +106,8 @@ app.directive('activityDirective', [
 								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
 								scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end).format('DD/MM/YYYY');
 								console.log('dateTerms',scope.dateTerms);
+
+								// scope.dateTerms.last_term = false;
 							}
 							scope.toDate('mtd');
 
@@ -166,6 +168,16 @@ app.directive('activityDirective', [
 						console.log('- 3 months ', scope.rangePicker_end);
 
 						scope.initializeNewCustomDatePicker();
+
+						// console.log(scope.dateTerms,'gawas');
+						// if (scope.dateTerms.last_term != false) {
+						// 	console.log(scope.dateTerms,'sulod');
+						// 	scope.applyDates();
+						// } else {
+						// 	scope.activity_results = {};
+						// 	// scope.activity_dates = {};
+						// 	console.log(scope.dateTerms,'else');
+						// }
 						scope.applyDates();
 					}
 
@@ -341,7 +353,16 @@ app.directive('activityDirective', [
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 					};
-					scope.searchActivity(activity_search);
+
+					if (scope.term_value == 0 || scope.dateTerms.last_term != false) {
+						console.log(scope.dateTerms,'sulod');
+						scope.searchActivity(activity_search);
+					} else {
+						scope.activity_results = {};
+						// scope.activity_dates = {};
+						console.log(scope.dateTerms,'else');
+					}
+					// scope.searchActivity(activity_search);
 				}
 
 				scope.uploadReceipt = function (list) {
@@ -543,7 +564,18 @@ app.directive('activityDirective', [
 						start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 					};
-					scope.searchActivity(activity_search);
+					
+					console.log(scope.term_value , scope.dateTerms.last_term);
+
+					if (scope.term_value == 0 || scope.dateTerms.last_term != false ) {
+						console.log(scope.dateTerms,'sulod');
+						scope.searchActivity(activity_search);
+					} else {
+						scope.activity_results = {};
+						// scope.activity_dates = {};
+						console.log(scope.dateTerms,'else');
+					}
+					// scope.searchActivity(activity_search);
 				}
 
 				scope.showCustomDate = function (num) {
