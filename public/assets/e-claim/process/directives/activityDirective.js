@@ -109,9 +109,10 @@ app.directive('activityDirective', [
 
 								// scope.dateTerms.last_term = false;
 							}
+							scope.initializeNewCustomDatePicker();
 							scope.toDate('mtd');
 
-							scope.initializeNewCustomDatePicker();
+							
 						});
 				}
 
@@ -127,24 +128,27 @@ app.directive('activityDirective', [
 						scope.term_value = 0;
 						// scope.select_to_date = 'mtd';
 
-						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-						scope.max_rangePicker_end = moment();
-
+						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
+						scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
+						console.log( scope.min_rangePicker_start );
+						console.log( scope.max_rangePicker_end );
 						scope.initializeNewCustomDatePicker();
 
 						var currentDate = moment();
+						var minStart = moment(scope.dateTerms.current_term.start);
 						var monthStart = currentDate.clone().startOf('month');
+						var new_date;
 
-						if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM') ) {
+						if (monthStart.format('YYYY/MM') == minStart.format('YYYY/MM')) {
 							console.log('follow SA start date');
-							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+							new_date = moment(scope.dateTerms.current_term.start);
 						} else {
 							console.log('follow MTD 1st day');
-							scope.min_rangePicker_start = monthStart;
+							new_date = monthStart;
 						}
 
-						scope.rangePicker_start = scope.min_rangePicker_start.format("DD/MM/YYYY");
-						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
+						scope.rangePicker_start = new_date.format("DD/MM/YYYY");
+						scope.rangePicker_end = currentDate.format("DD/MM/YYYY");
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
@@ -155,17 +159,27 @@ app.directive('activityDirective', [
 						scope.select_to_date = false;
 						
 
-						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
-						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end);
+						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start).format("DD/MM/YYYY");
+						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end).format("DD/MM/YYYY");
+						console.log( scope.min_rangePicker_start );
+						console.log( scope.max_rangePicker_end );
+						scope.initializeNewCustomDatePicker();
+
+						var currentDate = moment();
+						var minStart = moment(scope.dateTerms.last_term.start);
+						
+						var maxEnd = moment(scope.dateTerms.last_term.end);
+						var monthStart = currentDate.clone().startOf('month');
+						var new_date;
 
 						scope.initializeNewCustomDatePicker();
 
-						var currentDate = moment(scope.max_rangePicker_end, 'DD/MM/YYYY');
-						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
+						// var currentDate = moment(scope.max_rangePicker_end, 'DD/MM/YYYY');
+						// var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
-						scope.rangePicker_start = scope.max_rangePicker_end.clone().subtract(3, 'months').format("DD/MM/YYYY");
-						scope.rangePicker_end = scope.max_rangePicker_end.format("DD/MM/YYYY");
+						scope.rangePicker_start = maxEnd.clone().subtract(3, 'months').format("DD/MM/YYYY");
+						scope.rangePicker_end = maxEnd.clone().format("DD/MM/YYYY");
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
@@ -744,7 +758,7 @@ app.directive('activityDirective', [
 					scope.showLoading();
 					scope.getDetails();
 					// scope.initializeRangeSlider();
-					scope.initializeNewCustomDatePicker();
+					// scope.initializeNewCustomDatePicker();
 
 					// setTimeout(function () {
 						
