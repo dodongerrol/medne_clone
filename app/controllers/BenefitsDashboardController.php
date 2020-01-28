@@ -2398,21 +2398,38 @@ class BenefitsDashboardController extends \BaseController {
 		foreach ($user_allocated as $key => $user) {
 			$wallet = DB::table('e_wallet')->where('UserID', $user)->first();
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($user, $filter, 'medical');
-			$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($user, $filter, 'wellness');
-			$medical_wallet = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
-			$wellness_wallet = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
-			// array_push($temp, $wellness_wallet);
-			$get_allocation_spent += $medical_wallet['get_allocation_spent'];
-			$allocated += $medical_wallet['allocation'];
-			$total_deduction_credits += $medical_wallet['total_deduction_credits'];
-			$deleted_employee_allocation += $medical_wallet['deleted_employee_allocation'];
-			$total_medical_balance += $medical_wallet['balance'];
 
-			$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
-			$allocated_wellness += $wellness_wallet['allocation'];
-			$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
-			$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
-			$total_wellness_balance += $wellness_wallet['balance'];
+			if($member_spending_dates_medical) {
+				$medical_wallet = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+				$get_allocation_spent += $medical_wallet['get_allocation_spent'];
+				$allocated += $medical_wallet['allocation'];
+				$total_deduction_credits += $medical_wallet['total_deduction_credits'];
+				$deleted_employee_allocation += $medical_wallet['deleted_employee_allocation'];
+				$total_medical_balance += $medical_wallet['balance'];
+			} else {
+				$get_allocation_spent += 0;
+				$allocated += 0;
+				$total_deduction_credits += 0;
+				$deleted_employee_allocation += 0;
+				$total_medical_balance += 0;
+			}
+
+			$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($user, $filter, 'wellness');
+
+			if($member_spending_dates_wellness) {
+				$wellness_wallet = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+				$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
+				$allocated_wellness += $wellness_wallet['allocation'];
+				$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
+				$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
+				$total_wellness_balance += $wellness_wallet['balance'];
+			} else {
+				$get_allocation_spent_wellness =+ 0;
+				$allocated_wellness += 0;
+				$total_deduction_credits_wellness += 0;
+				$deleted_employee_allocation_wellness += 0;
+				$total_wellness_balance += 0;
+			}
 		}
 		
 		$total_medical_allocated = $allocated - $deleted_employee_allocation;
