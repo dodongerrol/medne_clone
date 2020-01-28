@@ -108,6 +108,7 @@ app.directive('activityPage', [
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 						scope.max_rangePicker_end = moment();
+						scope.initializeNewCustomDatePicker();
 
 						var currentDate = moment();
 						var monthStart = currentDate.clone().startOf('month');
@@ -137,7 +138,7 @@ app.directive('activityPage', [
 						// 	scope.searchActivityPagination();
 						// }
 
-						scope.initializeNewCustomDatePicker();
+						
 						scope.applyDates();
 
 					} else {
@@ -146,6 +147,8 @@ app.directive('activityPage', [
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
 						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end);
+
+						scope.initializeNewCustomDatePicker();
 
 
 						// var currentDate = moment(scope.max_rangePicker_end, 'DD/MM/YYYY');
@@ -158,7 +161,7 @@ app.directive('activityPage', [
 
 						console.log('- 3 months ', scope.rangePicker_end);
 
-						scope.initializeNewCustomDatePicker();
+						// scope.initializeNewCustomDatePicker();
 
 						console.log(scope.dateTerms, 'gawas');
 						if (scope.dateTerms.last_term != false) {
@@ -167,6 +170,7 @@ app.directive('activityPage', [
 						} else {
 							scope.activity = {};
 							scope.activity_dates = {};
+							scope.eclaim_dates = {};
 							console.log(scope.dateTerms, 'else');
 						}
 
@@ -480,6 +484,7 @@ app.directive('activityPage', [
 					} else {
 						scope.activity = {};
 						scope.activity_dates = {};
+						scope.eclaim_dates = {};
 						scope.hideLoading();
 						console.log(scope.dateTerms, 'else');
 					}
@@ -1323,6 +1328,7 @@ app.directive('activityPage', [
 					} else {
 						scope.activity = {};
 						scope.activity_dates = {};
+						scope.eclaim_dates = {};
 						scope.hideLoading();
 						console.log(scope.dateTerms, 'else');
 					}

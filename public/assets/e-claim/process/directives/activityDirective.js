@@ -130,6 +130,8 @@ app.directive('activityDirective', [
 						scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 						scope.max_rangePicker_end = moment();
 
+						scope.initializeNewCustomDatePicker();
+
 						var currentDate = moment();
 						var monthStart = currentDate.clone().startOf('month');
 
@@ -146,7 +148,7 @@ app.directive('activityDirective', [
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
-						scope.initializeNewCustomDatePicker();
+						// scope.initializeNewCustomDatePicker();
 						scope.applyDates();
 					} else {
 						scope.term_value = 1;
@@ -155,6 +157,8 @@ app.directive('activityDirective', [
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
 						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end);
+
+						scope.initializeNewCustomDatePicker();
 
 						var currentDate = moment(scope.max_rangePicker_end, 'DD/MM/YYYY');
 						var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
@@ -167,7 +171,7 @@ app.directive('activityDirective', [
 
 						console.log('- 3 months ', scope.rangePicker_end);
 
-						scope.initializeNewCustomDatePicker();
+						// scope.initializeNewCustomDatePicker();
 
 						// console.log(scope.dateTerms,'gawas');
 						// if (scope.dateTerms.last_term != false) {
