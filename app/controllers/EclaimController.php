@@ -4741,12 +4741,20 @@ public function getHrActivity( )
 		$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
 		if($spending_type == "medical") {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'medical');
-			$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
-			$total_allocation += $credit_data['allocation'];
+			if($member_spending_dates_medical) {
+				$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+				$total_allocation += $credit_data['allocation'];
+			} else {
+				$total_allocation += 0;
+			}
 		} else {
 			$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'wellness');
-			$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
-			$total_allocation += $credit_data['allocation'];
+			if($member_spending_dates_wellness) {
+				$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+				$total_allocation += $credit_data['allocation'];
+			} else {
+				$total_allocation += 0;
+			}
 		}
             // get e claim
 		$e_claim_result = DB::table('e_claim')
