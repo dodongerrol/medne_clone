@@ -87,6 +87,8 @@ app.directive('activityPage', [
 								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
 								scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end).format('DD/MM/YYYY');
 								console.log('dateTerms', scope.dateTerms);
+
+								// scope.dateTerms.last_term = false;
 							}
 							scope.toDate('mtd');
 
@@ -123,6 +125,18 @@ app.directive('activityPage', [
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
+						// if (scope.dateTerms.last_term != false) {
+
+						// var activity_search = {
+						// 	start: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+						// 	end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+						// 	fitler: term_status,
+						// }
+
+						// 	scope.searchActivity(activity_search);
+						// 	scope.searchActivityPagination();
+						// }
+
 						scope.initializeNewCustomDatePicker();
 						scope.applyDates();
 
@@ -132,6 +146,7 @@ app.directive('activityPage', [
 
 						scope.min_rangePicker_start = moment(scope.dateTerms.last_term.start);
 						scope.max_rangePicker_end = moment(scope.dateTerms.last_term.end);
+
 
 						// var currentDate = moment(scope.max_rangePicker_end, 'DD/MM/YYYY');
 						// var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
@@ -144,7 +159,17 @@ app.directive('activityPage', [
 						console.log('- 3 months ', scope.rangePicker_end);
 
 						scope.initializeNewCustomDatePicker();
-						scope.applyDates();
+
+						console.log(scope.dateTerms, 'gawas');
+						if (scope.dateTerms.last_term != false) {
+							console.log(scope.dateTerms, 'sulod');
+							scope.applyDates();
+						} else {
+							scope.activity = {};
+							scope.activity_dates = {};
+							console.log(scope.dateTerms, 'else');
+						}
+
 					}
 
 					// scope.dashCredits();
@@ -442,13 +467,30 @@ app.directive('activityPage', [
 					}
 					scope.currentPage = 1;
 
-					if (scope.search.user_id) {
-						scope.searchEmployeeActivity(scope.search.user_id);
+					console.log(scope.dateTerms, 'gawas');
+					if (scope.term_value == 0 || scope.dateTerms.last_term != false) {
+						console.log(scope.dateTerms, 'sulod');
+						if (scope.search.user_id) {
+							scope.searchEmployeeActivity(scope.search.user_id);
+						} else {
+							scope.getAllocation(activity_search);
+							// scope.searchActivity(activity_search);
+							// scope.searchActivityPagination();
+						}
 					} else {
-						scope.getAllocation(activity_search);
-						// scope.searchActivity(activity_search);
-						// scope.searchActivityPagination();
+						scope.activity = {};
+						scope.activity_dates = {};
+						scope.hideLoading();
+						console.log(scope.dateTerms, 'else');
 					}
+
+					// if (scope.search.user_id) {
+					// 	scope.searchEmployeeActivity(scope.search.user_id);
+					// } else {
+					// 	scope.getAllocation(activity_search);
+					// 	// scope.searchActivity(activity_search);
+					// 	// scope.searchActivityPagination();
+					// }
 				}
 
 				scope.showDetails = function (e, list) {
@@ -567,6 +609,8 @@ app.directive('activityPage', [
 				scope.fetchNextPage = function (data) {
 					scope.currentPage = scope.currentPage + 1;
 					data.page = scope.currentPage;
+
+					// if ( scope.term_value == 0 && scope.dateTerms.last_term != false) {
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
 							if (response.status == 200) {
@@ -670,6 +714,12 @@ app.directive('activityPage', [
 								}
 							}
 						});
+					// } else {
+					// 	scope.activity = {};
+					// 	$(".searchActivityLoader").hide();
+					// 	$(".searchActivityLoader2").hide();
+					// 	scope.hideLoading();
+					// }
 				}
 
 				scope.downloadInNetwork = function () {
@@ -695,6 +745,8 @@ app.directive('activityPage', [
 						from: 0,
 						to: 0
 					}
+
+					// if (scope.term_value == 0 && scope.dateTerms.last_term != false) {
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
 							// console.log(response);
@@ -784,6 +836,14 @@ app.directive('activityPage', [
 								}
 							}
 						});
+					// } 
+					// // else {
+					// // 	scope.activity = {};
+					// // 	$(".searchActivityLoader").hide();
+					// // 	$(".searchActivityLoader2").hide();
+					// // 	scope.hideLoading();
+					// // }
+
 				}
 
 				scope.searchActivityPagination = function () {
@@ -1248,14 +1308,33 @@ app.directive('activityPage', [
 						filter: term_status,
 					}
 					scope.showLoading();
-					if (scope.search.user_id) {
-						scope.searchEmployeeActivity(scope.search.user_id);
+
+					console.log(scope.dateTerms, 'gawas');
+					if (scope.term_value == 0 || scope.dateTerms.last_term != false) {
+						console.log(scope.dateTerms, 'sulod');
+						if (scope.search.user_id) {
+							scope.searchEmployeeActivity(scope.search.user_id);
+						} else {
+							// scope.searchActivity( activity_search );
+							scope.getAllocation(activity_search);
+							//console.log('piste ka');
+							// scope.searchActivityPagination( );
+						}
 					} else {
-						// scope.searchActivity( activity_search );
-						scope.getAllocation(activity_search);
-						//console.log('piste ka');
-						// scope.searchActivityPagination( );
+						scope.activity = {};
+						scope.activity_dates = {};
+						scope.hideLoading();
+						console.log(scope.dateTerms, 'else');
 					}
+
+					// if (scope.search.user_id) {
+					// 	scope.searchEmployeeActivity(scope.search.user_id);
+					// } else {
+					// 	// scope.searchActivity( activity_search );
+					// 	scope.getAllocation(activity_search);
+					// 	//console.log('piste ka');
+					// 	// scope.searchActivityPagination( );
+					// }
 
 					// scope.togglePointerEvents();
 				}
@@ -1384,7 +1463,7 @@ app.directive('activityPage', [
 
 					hrSettings.getCheckCredits(term_status)
 						.then(function (response) {
-							console.log('mao ni sya',response);
+							console.log('mao ni sya', response);
 							scope.credits = response.data;
 						});
 				}

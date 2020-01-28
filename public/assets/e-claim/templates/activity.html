@@ -144,13 +144,13 @@
 				<h4 class="font-medium2 font-18 no-wrap color-blue-custom margin-bottom-6">
 					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 					<span
-						ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '00.00' | number : 2"></span>
+						ng-bind="(activity_results.total_allocation) ? activity_results.total_allocation : '0.00' | number : 2"></span>
 				</h4>
 				<p class="color-gray font-10">TOTAL ALLOCATION</p>
 				<div class="white-space-10"></div>
 				<h4 class="no-wrap font-18 color-blue-custom margin-bottom-6">
 					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
-					<span ng-bind="(activity_results.balance) ? activity_results.balance : 00"></span></h4>
+					<span ng-bind="(activity_results.balance) ? activity_results.balance : '0.00'"></span></h4>
 				<p class="color-gray font-10">BALANCE</p>
 				<p class="weight-300 font-10 no-margin-top">*Total Allocated Credits and Balance are displayed as Year-to-Date.
 				</p>
@@ -171,7 +171,7 @@
 					<div class="white-space-5 "></div> -->
 					<h4 class="no-wrap color-blue-custom margin-bottom-6">
 						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
-						<span ng-bind="(activity_results.total_spent) ? activity_results.total_spent : 00"></span></h4>
+						<span ng-bind="(activity_results.total_spent) ? activity_results.total_spent : '0.00'"></span></h4>
 					<p class="color-gray font-12">SPENT</p>
 				</div>
 			</div>
@@ -242,7 +242,7 @@
 					<label class="font-medium2" style="width: 90px">
 						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 						<span ng-if="inNetWorkTable" ng-bind="activity_results.total_in_network_spent"></span>
-						<span ng-if="outNetWorkTable" ng-bind="activity_results.e_claim_spent"></span>
+						<span ng-if="outNetWorkTable" ng-bind="(activity_results.e_claim_spent) ? activity_results.e_claim_spent : '0.00' | number : 2"></span>
 					</label>
 				</p>
 			</div>
