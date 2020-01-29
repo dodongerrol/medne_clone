@@ -103,7 +103,7 @@
 
 	<div class="main-loader">
 		<div class="preloader-container">
-			<img src="../assets/e-claim/img/Smiley_Favicon.png" style="width: 65%;">
+			<img src="../assets/e-claim/img/Blue_smiley__120px.svg" style="width: 50%;">
 			<div class="white-space-20"></div>
 			<div class="preloader-box">
 				<div class="preloader-bar"></div>
