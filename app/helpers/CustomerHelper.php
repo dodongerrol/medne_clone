@@ -36,7 +36,7 @@ class CustomerHelper
 				} else {
 					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
 					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
-					return ['start' => $spending_accounts->medical_spending_start_date, 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
+					return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
 				}
 			} else {
 				if($credit_resets) {
@@ -46,7 +46,7 @@ class CustomerHelper
 				} else {
 					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
 					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
-					return ['start' => $wallet->created_at, 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
+					return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
 				}
 			}
 		} else {
