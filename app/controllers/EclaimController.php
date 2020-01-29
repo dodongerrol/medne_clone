@@ -1867,19 +1867,34 @@ class EclaimController extends \BaseController {
     // get user wallet_id
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 
-		if($spending_type == 'medical') {
-			$table_wallet_history = 'wallet_history';
-			$credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
-		} else {
-			$table_wallet_history = 'wellness_wallet_history';
-			$credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
-		}
+		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, 'current_term', $spending_type);
+    if($user_spending_dates) {
+      if($spending_type == 'medical') {
+        $table_wallet_history = 'wallet_history';
+        $history_column_id = "wallet_history_id";
+        $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+      } else {
+        $table_wallet_history = 'wellness_wallet_history';
+        $history_column_id = "wellness_wallet_history_id";
+        $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+      }
+    } else {
+      $credit_data = null;
+    }
 
-		$allocation = $credit_data['allocation'];
-		$current_spending = $credit_data['get_allocation_spent'];
-		$e_claim_spent = $credit_data['e_claim_spent'];
-		$in_network_spent = $credit_data['in_network_spent'];
-		$balance = $credit_data['balance'];
+    if($credit_data) {
+			$allocation = $credit_data['allocation'];
+			$current_spending = $credit_data['get_allocation_spent'];
+			$e_claim_spent = $credit_data['e_claim_spent'];
+			$in_network_spent = $credit_data['in_network_spent'];
+			$balance = $credit_data['balance'];
+    } else {
+    	$allocation = 0;
+			$current_spending = 0;
+			$e_claim_spent = 0;
+			$in_network_spent = 0;
+			$balance = 0;
+    }
 
 		// get in-network transactions
 		$transactions = DB::table('transaction_history')
