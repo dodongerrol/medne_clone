@@ -2161,11 +2161,9 @@ class PlanHelper {
 
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wallet_history')
-		->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
-		->where('wallet_history.wallet_id', $wallet_id)
-		->where('e_wallet.UserID', $user_id)
-		->where('wallet_history.created_at',  '>=', $start)
-		->where('wallet_history.created_at',  '<=', $end)
+		->where('wallet_id', $wallet_id)
+		->where('created_at',  '>=', $start)
+		->where('created_at',  '<=', $end)
 		->get();
 
 		foreach ($wallet_history as $key => $history) {
@@ -2190,7 +2188,7 @@ class PlanHelper {
 				$credits_back += $history->credit;
 			}
 		}
-
+		// return $wallet_history;
 		$pro_allocation = DB::table('wallet_history')
 		->where('wallet_id', $wallet_id)
 		->where('logs', 'pro_allocation')
