@@ -705,7 +705,8 @@ class TransactionController extends BaseController {
 							'where_spend'		=> "credits_back_from_in_network",
 							"id"				=> $transaction->transaction_id,
 							"currency_type" => $transaction->currency_type,
-							"currency_value" => $transaction->currency_amount
+							"currency_value" => $transaction->currency_amount,
+							"created_at"	=> $transaction->created_at
 						);
 					} else {
 						$wallet_history = array(
@@ -716,7 +717,8 @@ class TransactionController extends BaseController {
 							'where_spend'		=> "credits_back_from_in_network",
 							"id"				=> $transaction->transaction_id,
 							"currency_type" => $transaction->currency_type,
-							"currency_value" => $transaction->currency_amount
+							"currency_value" => $transaction->currency_amount,
+							"created_at"	=> $transaction->created_at
 						);
 					}
 
@@ -733,7 +735,8 @@ class TransactionController extends BaseController {
 								"id"				=> $transaction->transaction_id,
 								'lite_plan_enabled' => 1,
 								"currency_type" => $transaction->currency_type,
-								"currency_value" => $transaction->currency_amount
+								"currency_value" => $transaction->currency_amount,
+								"created_at"	=> $transaction->created_at
 							);
 						} else {
 							$wallet_history_lite_plan = array(
@@ -745,7 +748,8 @@ class TransactionController extends BaseController {
 								"id"				=> $transaction->transaction_id,
 								'lite_plan_enabled' => 1,
 								"currency_type" => $transaction->currency_type,
-								"currency_value" => $transaction->currency_amount
+								"currency_value" => $transaction->currency_amount,
+								"created_at"	=> $transaction->created_at
 							);
 						}
 					}
