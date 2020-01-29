@@ -16,6 +16,19 @@ app.directive('teamBenefitsTierDirective', [
 					gp_cap_status : false,
 				};
 				scope.tier_arr = [];
+				scope.statementHide = true;
+				scope.empStatementShow = false;
+
+				scope.companyAccountType = function () {
+					scope.account_type = localStorage.getItem('company_account_type');
+					console.log(scope.account_type);
+
+					if(scope.account_type === 'enterprise_plan') {
+						$('.statement-hide').hide();
+						scope.statementHide = false;
+						scope.empStatementShow = true;
+					}
+				}
 
 				scope.toggleEditTier = function( data, index ){
 					if( scope.editTierIsShow == false ){
@@ -135,6 +148,7 @@ app.directive('teamBenefitsTierDirective', [
 							console.log( response );
 							if( response.data.status ){
 								scope.tier_arr = response.data.data;
+								scope.tier_arr_currency_type = response.data.currency_type;
 								if( scope.tier_arr.length > 0 ){
 									$('.account-tier-container').fadeIn();
 								}else{
@@ -155,10 +169,11 @@ app.directive('teamBenefitsTierDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},2000)
+					},100)
 				}
 
         scope.onLoad = function( ){
+        	scope.companyAccountType();
         	scope.getTiers();
         }
 

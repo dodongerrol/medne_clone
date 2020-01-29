@@ -222,7 +222,7 @@ body { /*background-color: #30F;  height:100vh;*/ }/*BLUE*/
     <div class="modal-content">
       <div class="modal-header" style="background: #114158;">
         <!-- <h4 class="modal-title" id="myModalLabel" style="padding-left: 35px;">Appointment</h4> -->
-        <img class="mobile-logo"  src="{{ URL::asset('assets/images/mednefits logo v3 (white) LARGE.png') }}"   alt="" style="padding: 5px;border-right: 1px solid #ECECEC; float:left; width: 200px;" />&nbsp;
+        <img class="mobile-logo"  src="{{ URL::asset('assets/images/Mednefits Logo V2.svg') }}"   alt="" style="padding: 5px;border-right: 1px solid #ECECEC; float:left; width: 200px;" />&nbsp;
                 <div class="mobile-header" style=" float:left; padding-left:10px; padding-top:15px; color: white; font-size: 16px;"  >{{ $clincname }}</div><br>
       </div>
 

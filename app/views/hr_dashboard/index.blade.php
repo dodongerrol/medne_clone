@@ -10,6 +10,11 @@
 
 	  gtag('config', 'UA-78188906-2');
 	</script>
+	<!-- Facebook Pixel Code -->
+	
+	<script>!function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s) }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '165152804138364'); fbq('track', 'PageView');</script>
+	<noscript><img height="1" width="1" src="https://www.facebook.com/tr?id=165152804138364&ev=PageView(44 B)https://www.facebook.com/tr?id=165152804138364&ev=PageView&noscript=1" /></noscript>
+	<!-- End Facebook Pixel Code -->
 	<!-- <base href="/company-benefits-dashboard/"></base> -->
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -26,7 +31,7 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/font-awesome.min.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/jquery.toast.min.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bootstrap-datepicker.min.css?_={{ $date->format('U') }}">
-	<!-- <link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/daterangepicker.css?_={{ $date->format('U') }}"> -->
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/daterangepicker.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/sweetalert.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/intlTelInput.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/css/offline-theme-default.css?_={{ $date->format('U') }}">
@@ -36,6 +41,10 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/custom.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/fonts.css?_={{ $date->format('U') }}">
 	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async="async"></script>
+
+
+
+	<script src="//fast.appcues.com/57952.js"></script>
 
 </head>
 <body>
@@ -94,7 +103,7 @@
 
 	<div class="main-loader">
 		<div class="preloader-container">
-			<img src="../assets/e-claim/img/loading_logo.png" style="width: 65%;">
+			<img src="../assets/e-claim/img/Smiley_Favicon.png" style="width: 65%;">
 			<div class="white-space-20"></div>
 			<div class="preloader-box">
 				<div class="preloader-bar"></div>
@@ -121,10 +130,12 @@
 		  	May take a while depending on the number of employees.
 		  </p>
 		  <p class="text-center download-receipt-message color-black2 weight-700" style="margin-top: 30px;" hidden>
-		  	Downloading <span class="ctr">0</span> of <span class="total">0</span>
+		  	Downloading <span class="ctr">0</span> of <span class="total">0</span> receipts.
 		  </p>
 		</div>
 	</div>
+
+	<span id="siteseal" style="position: fixed; bottom: 8px; left: 8px;"><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=UJjiOv0ThIvbJiVEP3Csx2qHmSWwQ1FP3QkB55XTnkysyqGC2w3u7kKI5k7o"></script></span>
 </body>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/calendar/moment/moment.js?_={{ $date->format('U') }}"></script>
@@ -186,6 +197,9 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/statementDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/teamBenefitsTierDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/firstTimeLoginDirective.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/settingsDirective.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/blockHealthPartnersDirective.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/capPerVisitDirective.js?_={{ $date->format('U') }}"></script>
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>
 	<!-- Services -->
@@ -194,4 +208,12 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/dependentsService.js?_={{ $date->format('U') }}"></script>
 	<!-- Factories -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/factories/dashboardFactory.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript">
+		window.Appcues.identify(
+	    "57952", // unique, required
+	    {}
+	  );
+	</script>
+
 </html>

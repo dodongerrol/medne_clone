@@ -5,9 +5,10 @@ class PlanTierController extends \BaseController {
 	public function getPlanTiers( )
 	{
 		$customer_id = PlanHelper::getCusomerIdToken();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$plan_tiers = DB::table('plan_tiers')->where('customer_id', $customer_id)->where('active', 1)->get();
 
-		return array('status' => true, 'data' => $plan_tiers);
+		return array('status' => true, 'data' => $plan_tiers, 'currency_type' => $customer->currency_type);
 	}
 	public function createPlanTier( )
 	{
@@ -81,10 +82,12 @@ class PlanTierController extends \BaseController {
 		// get plan tier head count
 		$plan_tier_member_head_count = DB::table('plan_tiers')
 										->where('customer_id', $customer_id)
+										->where('active', 1)
 										->sum('member_head_count');
 
 		$plan_tier_member_enrolled_count = DB::table('plan_tiers')
 											->where('customer_id', $customer_id)
+											->where('active', 1)
 											->sum('member_enrolled_count');
 
 		$total_left_plan_tier_members = $plan_tier_member_head_count - $plan_tier_member_enrolled_count;
@@ -488,13 +491,11 @@ class PlanTierController extends \BaseController {
 				$postal_code = $user['postal_code'];
 			}
       
-      // $user['plan_start'] = date('Y-m-d', strtotime($user['plan_start']));
-      // $user['dob'] = date('Y-m-d',s strtotime($user['dob']));
-			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
-			// $plan_start_temp = date_create_from_format("Y-m-d", $user['plan_start']);
-			// $plan_start = date_format($plan_start_temp, "d/m/Y");
-			// return $plan_start;
+			$mobile = preg_replace('/\s+/', '', $user['mobile']);
+      $user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
+      $user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
+			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
 			$temp_enrollment_data = array(
 				'customer_buy_start_id'	=> $customer_id,
@@ -509,6 +510,8 @@ class PlanTierController extends \BaseController {
 				'credits'				=> $user['medical_credits'],
 				'wellness_credits'		=> $user['wellness_credits'],
 				'start_date'			=> $user['plan_start'],
+				'medical_balance_entitlement'			=> !empty($user['medical_entitlement_balance']) ? $user['medical_entitlement_balance'] : 0,
+				'wellness_balance_entitlement'			=> !empty($user['wellness_entitlement_balance']) ? $user['wellness_entitlement_balance'] : 0,
 				'postal_code'			=> $postal_code,
 				'error_logs'			=> serialize($error_member_logs)
 			);
@@ -530,7 +533,7 @@ class PlanTierController extends \BaseController {
 													->where('customer_plan_id', $customer_active_plan->plan_id )
 													->orderBy('created_at', 'desc')
 													->first();
-								$depedent_plan_id = $dependent_plan->depedent_plan_id;
+								$depedent_plan_id = $dependent_plan->dependent_plan_id;
 							}
 
 							$temp_enrollment_dependent = array(
@@ -716,6 +719,15 @@ class PlanTierController extends \BaseController {
 			'start_date'				=> $input['plan_start'],
 			'error_logs'				=> serialize($error_logs)
 		);
+
+		if(isset($input['medical_balance_entitlement']) && !empty($input['medical_balance_entitlement'])) {
+			$data['medical_balance_entitlement'] = $input['medical_balance_entitlement'];
+		}
+
+		if(isset($input['wellness_balance_entitlement']) && !empty($input['wellness_balance_entitlement'])) {
+			$data['wellness_balance_entitlement'] = $input['wellness_balance_entitlement'];
+		}
+		
 		$result = $temp_enroll->updateEnrollee($data);
 
 		if($result) {

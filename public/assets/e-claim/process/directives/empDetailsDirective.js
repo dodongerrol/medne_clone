@@ -67,6 +67,7 @@ app.directive('empDetailsDirective', [
 					scope.showLoading();
 					eclaimSettings.employeeCurrentActivity(speding_type)
 						.then(function(response){
+							console.log(response.data);
 							scope.hideLoading();
 							if(response.status == 200) {
 								scope.current_spending = response.data;

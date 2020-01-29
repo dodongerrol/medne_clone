@@ -195,7 +195,7 @@
           @if(isset($payment_date))
           <p><label>Payment Date: </label> {{ $payment_date }}</p>
           @endif
-          <p style="background: #eee;"><label>Amount Due (SGD): </label> <b>${{ $amount_due }}</b></p>
+          <p style="background: #eee;"><label>Amount Due ({{ $currency_type }}): </label> <b>{{ $amount_due }}</b></p>
         </div>
       </div>
 
@@ -219,19 +219,19 @@
             <p>Plan Duration: {{ $duration }}</p>
           </td>
           <td><b>{{ $number_employess }}</b></td>
-          <td><b>S$ {{ $price }}</b></td>
-          <td><b>S$ {{ $amount }}</b></td>
+          <td><b>{{ $currency_type }} {{ $price }}</b></td>
+          <td><b>{{ $currency_type }} {{ $amount }}</b></td>
         </tr>
 
       </table>
 
       <div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative;height: 80px;">
         <div style="width: 300px;display: inline-block;position: absolute;right: 10px;top: 15px;">
-          <p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> ${{ $total }}</p>
+          <p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> {{ $currency_type }} {{ $total }}</p>
 
           <div style="border-bottom: 1px solid #aaa;display: inline-block;width: 100%;padding-bottom: 10px;"></div>
 
-          <p style="margin-top: 5px;"><label>Amount Due (SGD):</label> <b>${{ $amount_due }}</b></p>
+          <p style="margin-top: 5px;"><label>Amount Due ({{ $currency_type }}):</label> <b>{{ $amount_due }}</b></p>
         </div>
       </div>
 
@@ -255,6 +255,7 @@
           <p>ACRA 201415681W</p> -->
 
           <p style="margin: 10px 0 0 0;font-size: 11px;">Please contact us for any questions related to your invoice/contract at happiness@mednefits.com</p>
+          <p>Please send all payment advice to finance@mednefits.com</p>
           @if(isset($notes))
             @if($notes && $notes != 'NULL')
             <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $notes }}</p>

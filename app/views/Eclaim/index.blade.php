@@ -19,7 +19,7 @@
 	<meta http-equiv="Expires" content="0" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>E-Claim</title>
-	<link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/ico">
+	<link rel="shortcut icon" href="<?php echo $server; ?>/assets/new_landing/images/favicon.ico" type="image/ico">
 
 	<!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto" rel="stylesheet"> -->
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/e-claim/css/bootstrap.min.css?_={{ $date->format('U') }}">
@@ -45,7 +45,7 @@
 
 	<div class="main-loader">
 		<div class="preloader-container">
-			<img src="../assets/e-claim/img/loading_logo.png" style="width: 65%;">
+			<img src="../assets/e-claim/img/Smiley_Favicon.png" style="width: 65%;">
 			<div class="white-space-20"></div>
 			<div class="preloader-box">
 				<div class="preloader-bar"></div>
@@ -89,6 +89,8 @@
 	      </div>
 	    </div>
 	</div>
+
+	<span id="siteseal" style="position: fixed; bottom: 8px; left: 8px;"><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=UJjiOv0ThIvbJiVEP3Csx2qHmSWwQ1FP3QkB55XTnkysyqGC2w3u7kKI5k7o"></script></span>
 </body>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/calendar/moment/moment.js?_={{ $date->format('U') }}"></script>

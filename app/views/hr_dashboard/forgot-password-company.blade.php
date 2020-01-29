@@ -36,7 +36,7 @@
 		<div class="col-sm-12 col-md-12 col-lg-12">
 			
 			<a href="/company-benefits-dashboard-login">
-			<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+			<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			</a>
 			<h2 class="text-center text-below-image">for business</h2>
 
@@ -68,6 +68,7 @@
 			@endif
 		</div>
 	</div>
+
 </body>
 
 

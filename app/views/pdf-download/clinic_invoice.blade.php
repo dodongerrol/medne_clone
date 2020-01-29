@@ -177,7 +177,7 @@
           <!-- <p><label>Invoice Date: </label> {{ $invoice_record['start_date'] }}</p>
           <p><label>Payment Due: </label> {{ $invoice_record['end_date'] }}</p> -->
           <p><label>Period Date: </label> <b>{{ $period }}</b></p>
-          <p><label>Amount Due (SGD): </label> <b>$ {{ $amount_due }}</b></p>
+          <p><label>Amount Due ({{ $currency_type }}): </label> <b>{{ $amount_due }}</b></p>
         </div>
       </div>
 
@@ -202,17 +202,17 @@
           <td style="text-align: left !important;padding-left: 30px;">
             <p><b> <span>{{ $trans['transaction_id'] }}</span> <span>{{ $trans['customer'] }}</span> </b></p>
           </td>
-          <td><b>S$ {{ $trans['mednefits_fee'] }}</b></td>
-          <td><b>S$ {{ $trans['mednefits_credits'] }}</b></td>
-          <td><b>S$ {{ $trans['total'] }}</b></td>
+          <td><b>{{ $trans['currency_type'] }} {{ $trans['mednefits_fee'] }}</b></td>
+          <td><b>{{ $trans['currency_type'] }} {{ $trans['mednefits_credits'] }}</b></td>
+          <td><b>{{ $trans['currency_type'] }} {{ $trans['total'] }}</b></td>
         </tr>
         @endforeach
 
         <tr class="tfooter">
           <td colspan="3" style="text-align:right;border: none !important;">
-            <b>Total Amount Due (SGD):</b>
+            <b>Total Amount Due ({{ $currency_type }}):</b>
           </td>
-          <td><b>S$ {{ $total }}</b></td>
+          <td><b>{{ $total }}</b></td>
         </tr>
 
       </table>

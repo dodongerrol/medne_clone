@@ -105,7 +105,7 @@ class SpendingInvoiceController extends \BaseController {
             'in_network_transactions'    => $statement['in_network'],
             'e_claim_transactions'       => $e_claims['e_claim_transactions'],
             'total_transaction_spent'   => number_format($statement['total_in_network_amount'], 2),
-            'total_e_claim_spent'       => $e_claims['total_e_claim_spent'],
+            'total_e_claim_spent'       => round($e_claims['total_e_claim_spent'], 2),
             'total_consultation'        => number_format($statement['total_consultation'], 2),
             'lite_plan'                 => $statement['lite_plan'],
             'sub_total'                 => number_format($sub_total, 2),
@@ -146,8 +146,9 @@ class SpendingInvoiceController extends \BaseController {
 		$container = array();
 		foreach ($data['in_network'] as $key => $trans) {
 			$temp = array(
-				'TRANSACTION ID'	=> $trans['transaction_id'],
-				'MEMBER' 	=> $trans['member'],
+				'TRANSACTION #'	=> $trans['transaction_id'],
+                'EMPLOYEE'  => $trans['employee'],
+				'DEPENDENT' 	=> $trans['dependent'],
 				'DATE'		=> $trans['date_of_transaction'],
 				'ITEMS/SERVICE' => $trans['service'],
 				'PROVIDER'	=> $trans['clinic_name'],
@@ -194,7 +195,6 @@ class SpendingInvoiceController extends \BaseController {
 			return self::downloadCSV($statement);
 		} else {
 			// return View::make('pdf-download.company-transaction-list-invoice', $statement);
-
 		    $pdf = PDF::loadView('pdf-download.company-transaction-list-invoice', $statement);
 				$pdf->getDomPDF()->get_option('enable_html5_parser');
 		    $pdf->setPaper('A4', 'landscape');
@@ -402,7 +402,8 @@ class SpendingInvoiceController extends \BaseController {
                     'type'              => 'Invoice',
                     'amount'            => 'S$'.$statement['statement_total_amount'],
                     'status'            => (int)$data->statement_status,
-                    'statement_id'      => $data->statement_id
+                    'statement_id'      => $data->statement_id,
+                    'currency_type'     => $statement['currency_type']
                 );
 
                 array_push($format, $temp);
@@ -428,14 +429,11 @@ class SpendingInvoiceController extends \BaseController {
                       ->first();
         $start = date('Y-m-01', strtotime($statement->statement_start_date));
         $end = SpendingInvoiceLibrary::getEndDate($statement->statement_end_date);
-        // return $start.' - '.$end;
         $e_claims = SpendingInvoiceLibrary::getEclaims($result->customer_buy_start_id, $start, $end);
-        // return $e_claims;
         $format['statement'] = date('d F', strtotime($statement->statement_start_date)).' - '.date('d F Y', strtotime($statement->statement_end_date));
         $format['transaction_details'] = $e_claims['e_claim_transactions'];
 
         // return View::make('pdf-download.hr-statement-full-eclaim', $format);
-
         $pdf = PDF::loadView('pdf-download.hr-statement-full-eclaim', $format);
             $pdf->getDomPDF()->get_option('enable_html5_parser');
         $pdf->setPaper('A4', 'landscape');

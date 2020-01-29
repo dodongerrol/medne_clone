@@ -195,7 +195,7 @@
           @if(isset($payment_date))
           <p><label>Payment Date: </label> {{date('F d, Y', strtotime($payment_date))}}</p>
           @endif
-          <p style="background: #eee;"><label>Amount Due (SGD): </label> <b>$${{$amount_due}}</b></p>
+          <p style="background: #eee;"><label>Amount Due: </label> <b> {{ $currency_type }} {{$amount_due}}</b></p>
         </div>
       </div>
 
@@ -219,8 +219,8 @@
             <p>Plan Duration: {{ $duration }}</p>
           </td>
           <td><b>{{$number_employess}}</b></td>
-          <td><b>S$ {{$price}}</b></td>
-          <td><b>S$ {{$amount}}</b></td>
+          <td><b>{{ $currency_type }} {{$price}}</b></td>
+          <td><b>{{ $currency_type }} {{$amount}}</b></td>
         </tr>
         @foreach($dependents as $key => $dependent)
         <tr class="tbody" style="border-top: 1px solid #eee;">
@@ -232,8 +232,8 @@
             <p>Plan Duration: {{ $dependent['duration'] }}</p>
           </td>
           <td><b>{{ $dependent['total_dependents'] }}</b></td>
-          <td><b>S$ {{ $dependent['price'] }}</b></td>
-          <td><b>S$ {{ $dependent['amount'] }}</b></td>
+          <td><b>{{ $currency_type }} {{ $dependent['price'] }}</b></td>
+          <td><b>{{ $currency_type }} {{ $dependent['amount'] }}</b></td>
         </tr>
         @endforeach
 
@@ -241,11 +241,11 @@
 
       <div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative;height: 70px;">
         <div style="width: 200px;display: inline-block;position: absolute;right: 10px;top: 5px;">
-          <p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> ${{$total}}</p>
+          <p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> {{ $currency_type }} {{$total}}</p>
 
           <div style="border-bottom: 1px solid #aaa;display: inline-block;width: 100%;padding-bottom: 10px;"></div>
 
-          <p style="margin-top: 5px;"><label>Amount Due (SGD):</label> <b>${{$amount_due}}</b></p>
+          <p style="margin-top: 5px;"><label>Amount Due:</label> <b>{{ $currency_type }} {{$amount_due}}</b></p>
         </div>
       </div>
 
@@ -271,6 +271,8 @@
           @if($notes && $notes != 'NULL')
           <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $notes }}</p>
           @endif
+
+          <p>Please send all payment advice to finance@mednefits.com</p>
         </div>
 
         <div class="item-col2">

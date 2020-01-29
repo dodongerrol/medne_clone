@@ -1,8 +1,8 @@
 var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModule','authService', 'hrService', 'dependentsService', 'checkCtrl', 'bootstrap3-typeahead', 'ngJsonExportExcel', 'ngFileUpload','cp.ng.fix-image-orientation']);
 
-app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', 
-function ($rootScope, $state, $stateParams, $templateCache) {
-  
+app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window',
+function ($rootScope, $state, $stateParams, $templateCache, $window) {
+   
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
 
@@ -10,16 +10,19 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     $('body').css('overflow','auto');
   }
 
-
   $rootScope.$on('$viewContentLoaded', function() {
       $templateCache.removeAll();
    });
 
+  $rootScope.$on('$locationChangeSuccess', function() {
+     if ($window.Appcues) {
+        $window.Appcues.page();
+      }
+   });
+
+
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-    window.ga('create', 'UA-78188906-2', 'auto');
-    window.ga('set', 'page', toState.url);
-    window.ga('send', 'pageview');
-    console.log( toState.url );
+    console.log( toState );
     if( toState.url != '/e-claim' ){
       $('.download-receipt-message').hide();
     }
@@ -31,6 +34,10 @@ function ($rootScope, $state, $stateParams, $templateCache) {
     }else{
       $('body').removeClass('bg-color-home');
     }
+
+    window.ga('create', 'UA-78188906-2', 'auto');
+    window.ga('set', 'page', toState.url);
+    window.ga('send', 'pageview');
   });
 
 }]);
@@ -603,8 +610,37 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/first-time-login.html'
         }
       }
+    })
+    .state('settings', {
+      url: '/settings',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/settings.html'
+        }
+      }
+    })
+    .state('settings.cap-per-visit', {
+      url: '/cap-per-visit',
+      views: {
+        'child-content@settings': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/cap-per-visit.html'
+        }
+      }
+    })
+    .state('settings.block-health-partners', {
+      url: '/block-health-partners',
+      views: {
+        'child-content@settings': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
+        }
+      }
     });
 
-    $urlRouterProvider.otherwise('/introduction');
+    
+    $urlRouterProvider.otherwise('/benefits-dashboard');
+    // $urlRouterProvider.otherwise('/introduction');
     // $locationProvider.html5Mode(true);
 });

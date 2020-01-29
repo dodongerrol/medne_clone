@@ -116,8 +116,29 @@ class UserPackage extends Eloquent
                         // get dependents plan history
                         $dependent_plan_history = DB::table('dependent_plan_history')
                                                     ->where('user_id', $user_id)
+                                                    ->where('type', 'started')
                                                     ->orderBy('created_at', 'desc')
                                                     ->first();
+                        if(!$dependent_plan_history) {
+                            $new_data_history = DependentHelper::createDependentPlanHistory($owner_id, $user_id);
+                            // create plan history
+                            $plan_history = array(
+                                'user_id'               => $user_id,
+                                'dependent_plan_id'     => $new_data_history->dependent_plan_id,
+                                'package_group_id'      => $new_data_history->package_group_id,
+                                'plan_start'            => $new_data_history->plan_start,
+                                'duration'              => $new_data_history->duration,
+                                'type'                  => $new_data_history->type,
+                                'fixed'                 => $new_data_history->fixed,
+                                'created_at'            => date('Y-m-d H:i:s'),
+                                'updated_at'            => date('Y-m-d H:i:s')
+                            );
+                            DB::table('dependent_plan_history')->insert($plan_history);
+                            $dependent_plan_history = DB::table('dependent_plan_history')
+                                                    ->where('user_id', $user_id)
+                                                    ->orderBy('created_at', 'desc')
+                                                    ->first();
+                        }
 
                         $dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_history->dependent_plan_id)->first();
                         // return array('res' => $dependent_plan);
@@ -127,11 +148,19 @@ class UserPackage extends Eloquent
                         $active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
                         $data['start_date'] = date('d F Y', strtotime($dependent_plan_history->plan_start));
                         
-                        if((int)$dependent_plan_history->fixed == 1 || $dependent_plan_history->fixed == "1") {
-                            $temp_valid_date = date('d F Y', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+
+                        $dependent_plan_extenstion = DB::table('dependent_plans')->where('customer_plan_id', $dependent_plan->customer_plan_id)->where('type', 'extension_plan')->first();
+
+                        if($dependent_plan_extenstion && $dependent_plan_extenstion->activate_plan_extension == 1) {
+                            $temp_valid_date = date('d F Y', strtotime('+'.$dependent_plan_extenstion->duration, strtotime($dependent_plan_extenstion->plan_start)));
                             $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
-                        } else if($dependent_plan_history->fixed == 0 | $dependent_plan_history->fixed == "0") {
-                            $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($dependent_plan_history->plan_start)));
+                        } else {
+                            if((int)$dependent_plan_history->fixed == 1) {
+                                $temp_valid_date = date('d F Y', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+                                $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
+                            } else if((int)$dependent_plan_history->fixed == 0) {
+                                $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($dependent_plan_history->plan_start)));
+                            }
                         }
 
                         $data['fullname'] = ucwords($user_details->Name);
@@ -143,6 +172,10 @@ class UserPackage extends Eloquent
                         $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
                         $data['mobile'] = null;
+
+                        if($data['plan_type'] == "Enterprise Plan") {
+                            $data['plan_add_on'] = "N.A.";
+                        }
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')
@@ -153,9 +186,9 @@ class UserPackage extends Eloquent
 
                         if($plan_tier) {
                             if($wallet->cap_per_visit_medical > 0) {
-                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
+                                $cap_per_visit = strtoupper($wallet->currency_type)." ".number_format($wallet->cap_per_visit_medical, 2);
                             } else {
-                                $cap_per_visit = "S$ ".number_format($plan_tier->gp_cap_per_visit, 2);
+                                $cap_per_visit = strtoupper($wallet->currency_type)." ".number_format($plan_tier->gp_cap_per_visit, 2);
                             }
                         } else {
                             if($wallet->cap_per_visit_medical > 0) {
@@ -253,6 +286,9 @@ class UserPackage extends Eloquent
                         $data['care_online'] = TRUE;
                         $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
                         $data['mobile'] = (string)$user_details->PhoneCode." ".(string)$user_details->PhoneNo;
+                        if($data['plan_type'] == "Enterprise Plan") {
+                            $data['plan_add_on'] = "N.A.";
+                        }
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')
@@ -263,13 +299,13 @@ class UserPackage extends Eloquent
 
                         if($plan_tier) {
                             if($wallet->cap_per_visit_medical > 0) {
-                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
+                                $cap_per_visit = strtoupper($wallet->currency_type)." ".number_format($wallet->cap_per_visit_medical, 2);
                             } else {
-                                $cap_per_visit = "S$ ".number_format($plan_tier->gp_cap_per_visit, 2);
+                                $cap_per_visit = strtoupper($wallet->currency_type)." ".number_format($plan_tier->gp_cap_per_visit, 2);
                             }
                         } else {
                             if($wallet->cap_per_visit_medical > 0) {
-                                $cap_per_visit = "S$ ".number_format($wallet->cap_per_visit_medical, 2);
+                                $cap_per_visit = strtoupper($wallet->currency_type)." ".number_format($wallet->cap_per_visit_medical, 2);
                             }
                         }
 

@@ -32,7 +32,7 @@
 <body>
 	<div class="container-fluid">
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-			<img src="../assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block intro-login-logo">
+			<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block intro-login-logo">
 			<div class="intro-login-container">
 				<div class="white-space-10"></div>
 				<p class="text-center weight-300 font-24 color-gray">Login as</p>
@@ -82,6 +82,8 @@
 			</div>
 		</div>
 	</div>
+
+	<span id="siteseal" style="position: fixed; bottom: 8px; left: 8px;"><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=UJjiOv0ThIvbJiVEP3Csx2qHmSWwQ1FP3QkB55XTnkysyqGC2w3u7kKI5k7o"></script></span>
 </body>
 
 

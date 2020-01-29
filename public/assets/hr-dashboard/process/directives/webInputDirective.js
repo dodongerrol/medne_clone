@@ -364,7 +364,7 @@ app.directive('webInputDirective', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -377,7 +377,7 @@ app.directive('webInputDirective', [
 					setTimeout(function() {
 						$( ".circle-loader" ).fadeOut();
 						loading_trap = false;
-					},1000)
+					},100)
 				}
 
 				scope.showGlobalModal = function( message ){
@@ -397,7 +397,7 @@ app.directive('webInputDirective', [
 
         	setTimeout(function() {
         		scope.toggleLoading();
-        	}, 500);
+        	}, 100);
       		
       		window.onbeforeunload = function(e) {
 	      		console.log(e);

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="hr">
+
 <head>
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-78188906-2"></script>
@@ -20,18 +21,24 @@
 	<link rel="shortcut icon" href="assets/hr-dashboard/img/icons/favicon.ico" type="image/ico">
 
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-	<script>
+	<!-- <script>
       (adsbygoogle = window.adsbygoogle || []).push({
         google_ad_client: "ca-pub-8344843655918366",
         enable_page_level_ads: true
       });
-    </script>
+	</script> -->
+
+	<!-- Facebook Pixel Code -->
+	<script>!function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s) }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '165152804138364'); fbq('track', 'PageView');</script>
+	<noscript><img height="1" width="1" src="https://www.facebook.com/tr?id=165152804138364&ev=PageView(44 B)https://www.facebook.com/tr?id=165152804138364&ev=PageView&noscript=1" /></noscript>
+	<!-- End Facebook Pixel Code -->
 	{{ HTML::style('assets/hr-dashboard/css/bootstrap.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/font-awesome.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/style.css') }}
 	<!-- {{ HTML::style('assets/hr-dashboard/css/responsive.css') }} -->
 
 </head>
+
 <body login-section>
 	<div class="container">
 		<div class="login-need-help-container">
@@ -49,34 +56,40 @@
 			</a>
 		</div>
 		<div class="col-sm-12 col-md-12 col-lg-12">
-			<img src="assets/hr-dashboard/img/mednefits_logo_v3_(blue)_LARGE.png" class="center-block login-logo">
+			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
 			<form class="med-form" ng-submit="loginHr()">
 				<div class="form-group">
-					<input type="email" name="email" class="form-control med-input" placeholder="Email Address" ng-model="login_details.email" required>
+					<input type="email" name="email" class="form-control med-input" placeholder="Email Address"
+						ng-model="login_details.email" required>
 				</div>
 				<div class="form-group">
-					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="login_details.password" required style="margin-bottom: 15px">
+					<input type="password" class="form-control med-input" placeholder="Enter password"
+						ng-model="login_details.password" required style="margin-bottom: 15px">
 				</div>
 				<div class="checkbox">
-			    <label style="color: #777;font-size: 15px;">
-			      <input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed in
-			    </label>
-			  </div>
+					<label style="color: #777;font-size: 15px;">
+						<input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed
+						in
+					</label>
+				</div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">Log in</button>
 				</div>
 				<span ng-if="ng_fail">*Please check your login credentials</span>
-				<a href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot password?</a>
+				<a href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
+					password?</a>
 			</form>
 		</div>
 	</div>
+
 </body>
 
 
-	{{ HTML::script('assets/hr-dashboard/js/jquery.min.js') }}
-	{{ HTML::script('assets/hr-dashboard/js/bootstrap.min.js') }}
-	{{ HTML::script('assets/hr-dashboard/js/parallax.min.js') }}
-	{{ HTML::script('assets/hr-dashboard/js/angular.min.js') }}
-	{{ HTML::script('assets/hr-dashboard/process/hr_login.js') }}
+{{ HTML::script('assets/hr-dashboard/js/jquery.min.js') }}
+{{ HTML::script('assets/hr-dashboard/js/bootstrap.min.js') }}
+{{ HTML::script('assets/hr-dashboard/js/parallax.min.js') }}
+{{ HTML::script('assets/hr-dashboard/js/angular.min.js') }}
+{{ HTML::script('assets/hr-dashboard/process/hr_login.js') }}
+
 </html>

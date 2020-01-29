@@ -24,8 +24,8 @@ app.directive('statementPage', [
 				scope.monthEnd = moment().endOf('month').format('D MMMM');
 				scope.year = moment().format('YYYY');
 				scope.download_token = {};
-				scope.rangePicker_start = moment().startOf('year').format( 'DD/MM/YYYY' );
-				scope.rangePicker_end = moment().format( 'DD/MM/YYYY' );
+				scope.rangePicker_start = moment().startOf('month').format( 'DD/MM/YYYY' );
+				scope.rangePicker_end = moment().endOf('month').format( 'DD/MM/YYYY' );
 
 				scope.showCustomPicker = false;
 				scope.year_active = 1;
@@ -366,6 +366,10 @@ app.directive('statementPage', [
 
 					scope.monthStart = moment(firstDay).startOf('month').format('D MMMM');
 					scope.monthEnd = moment(lastDay).endOf('month').format('D MMMM');
+					scope.year = yearToday;
+
+					scope.rangePicker_start = moment( firstDay ).startOf('month').format( 'DD/MM/YYYY' );
+					scope.rangePicker_end = moment( lastDay ).endOf('month').format( 'DD/MM/YYYY' );
 					// console.log(scope.monthStart);
 					// console.log(scope.monthEnd);
 
@@ -380,7 +384,7 @@ app.directive('statementPage', [
 					setTimeout(function() {
 						$( ".main-loader" ).fadeOut();
 						introLoader_trap = false;
-					}, 1000);
+					}, 100);
 				}
 
 				scope.toggleLoading = function( ){
@@ -391,7 +395,7 @@ app.directive('statementPage', [
 						setTimeout(function() {
 							$( ".circle-loader" ).fadeOut();
 							loading_trap = false;
-						},1000)
+						},100)
 					}
 				}
 
@@ -402,9 +406,9 @@ app.directive('statementPage', [
 
 				scope.hideLoading = function( ){
 					setTimeout(function() {
-						$( ".circle-loader" ).fadeOut();
+						$(".circle-loader").hide();
 						loading_trap = false;
-					},1000)
+					},10)
 				}
 
 				scope.showCustomDate = function( num ){
@@ -423,6 +427,7 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_start = moment( start ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_start").text( scope.rangePicker_start );
+							scope.monthStart = moment( start ).format('D MMMM');
 
 							$('.btn-custom-end').data('daterangepicker').setMinDate( start );
 
@@ -452,6 +457,8 @@ app.directive('statementPage', [
 
 						  scope.rangePicker_end = moment( end ).format( 'DD/MM/YYYY' );
 							$("#rangePicker_end").text( scope.rangePicker_end );
+							scope.monthEnd = moment( end ).format('D MMMM');
+							scope.year = moment( end ).format( 'YYYY' );
 
 							var activity_search = {
 						  	start: moment(scope.rangePicker_start,'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -484,6 +491,7 @@ app.directive('statementPage', [
 					}
 
 					var range_data = date_slider.getValue();
+
 
 		    	var activity_search = scope.getFirstEndDate( range_data, range_data );
 		    	// var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
@@ -574,7 +582,7 @@ app.directive('statementPage', [
 						var range_data = date_slider.getValue();
 						var activity_search = scope.getFirstEndDate( range_data , range_data );
 						scope.searchActivity( activity_search );
-					}, 500);
+					}, 100);
 				}
 
 				scope.checkCompanyBalance = function(){

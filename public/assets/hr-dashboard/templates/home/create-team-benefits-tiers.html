@@ -40,7 +40,7 @@
 		<div class="container">
 			<div class="col-lg-12">
 				<div class="benefits-tiers-container center-block"> 
-					<div ng-if="isTierLoaderShow" class="tier-loader item-fade">
+					<div ng-if="isTierLoaderShow || false" class="tier-loader item-fade">
 						<!-- <h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1> -->
 						<div class="white-space-20"></div>
 						<div class="preloader-wrapper big active">
@@ -56,14 +56,14 @@
 					  </div>
 		    	</div>
 
-					<div ng-if="isTierBtn" class="benefits-tier-btn-content tier-feature-item item-fade">
+					<div ng-if="isTierBtn || false" class="benefits-tier-btn-content tier-feature-item item-fade">
 						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1>
 						<div class="white-space-20"></div>
-						<h4>Add a tier</h4>
+						<h4>Add a tier </h4>
 						<button ng-click="addTierBtn()"><img src="../assets/hr-dashboard/img/plus-gray.png"></button>
 					</div>
 
-					<div ng-if="isTierInput" class="tier-item-container tier-feature-item item-fade">
+					<div ng-if="isTierInput || false" class="tier-item-container tier-feature-item item-fade">
 						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1>
 						<div class="white-space-20"></div>
 						<div class="tier-item-form" >
@@ -77,9 +77,8 @@
 									<div class="input-container">
 										<input type="number" min="0" ng-model="tier_data.medical_annual_cap">
 										<div class="icon-item">
-											S
-    									<i class="fa fa-usd icon"></i>
-  									</div>
+											<span ng-bind="showCurrencyType" class="currency-type">S$</span>
+										</div>	 
 									</div>
 								</div>
 								<div class="input-wrapper">
@@ -87,8 +86,7 @@
 									<div class="input-container">
 										<input type="number" min="0" ng-model="tier_data.wellness_annual_cap">
   									<div class="icon-item">
-  										S
-    									<i class="fa fa-usd icon"></i>
+  										<span ng-bind="showCurrencyType" class="currency-type">S$</span> 
   									</div>
 									</div>
 								</div>
@@ -104,8 +102,7 @@
 									<div class="input-container">
 										<input type="number" min="0" ng-model="tier_data.gp_cap_per_visit">
   									<div class="icon-item">
-  										S
-    									<i class="fa fa-usd icon"></i>
+  										<span ng-bind="showCurrencyType" class="currency-type">S$</span> 
   									</div>
 									</div>
 								</div>
@@ -135,7 +132,7 @@
 						</div>
 					</div>
 
-					<div ng-if="isTierSummary" class="benefits-tier-summary-container-wrapper tier-feature-item item-fade">
+					<div ng-if="isTierSummary || false" class="benefits-tier-summary-container-wrapper tier-feature-item item-fade">
 						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Create team benefits tiers.</h1>
 						<div class="white-space-20"></div>
 
@@ -153,15 +150,23 @@
 									<div class="benefits-tier-summary-details">
 										<div class="benefits-tier-summary-label-text">
 											<span class="summary-label">Medical annual cap: </span>
-											<span class="summary-text">S$ <span ng-bind="list.medical_annual_cap">1000</span></span>
+											<span class="summary-text">
+												<span ng-bind="showCurrencyType" class="currency-type"></span> 
+												<span ng-bind="list.medical_annual_cap">1000</span>
+											</span>
 										</div>
 										<div class="benefits-tier-summary-label-text">
 											<span class="summary-label">Wellness annual cap: </span>
-											<span class="summary-text">S$ <span ng-bind="list.wellness_annual_cap">1000</span></span>
+											<span class="summary-text">
+												<span ng-bind="showCurrencyType" class="currency-type"></span>  
+												<span ng-bind="list.wellness_annual_cap">1000</span>
+											</span>
 										</div>
 										<div class="benefits-tier-summary-label-text">
 											<span class="summary-label">GP cap per visit: </span>
-											<span class="summary-text">S$ <span ng-bind="list.gp_cap_per_visit">1000</span></span>
+											<span class="summary-text">
+											<span ng-bind="showCurrencyType" class="currency-type"></span> 
+											<span ng-bind="list.gp_cap_per_visit">1000</span></span>
 										</div>	
 									</div>
 								</div>
@@ -223,12 +228,13 @@
 							  <span class="review-checkmark"></span>
 							</label>
 							<p class="review-tick-title">Review the data in your file:</p>
-							<label class="review-container">
+							<!--feedback slide 21 -->
+							<!-- <label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.name">
 							  <span class="review-prepare-template-text">Employee's first name and last name are separated.</span>
 							  <span class="review-prepare-template-subtext">Separate the full name to first name as given name; last name as family name.</span>
 							  <span class="review-checkmark"></span>
-							</label>
+							</label> -->
 							<label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.dob">
 							  <span class="review-prepare-template-text">Input employee's date of birth according to the format (dd/mm/yyyy).</span>
@@ -267,12 +273,12 @@
 							  <span class="review-checkmark"></span>
 							</label>
 							<p class="review-tick-title">Review the data in your file:</p>
-							<label class="review-container">
+							<!-- <label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.name">
 							  <span class="review-prepare-template-text">Employee, dependent/s first name and last name are separated.</span>
 							  <span class="review-prepare-template-subtext">Separate the full name to first name as given name; last name as family name.</span>
 							  <span class="review-checkmark"></span>
-							</label>
+							</label> -->
 							<label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.dob">
 							  <span class="review-prepare-template-text">Input employee, dependent/s date of birth according to the format (dd/mm/yyyy).</span>
@@ -346,7 +352,7 @@
 					</div>
 
 					<div ng-if="isSuccessfulEnroll" class="successfully-enrolled tier-feature-item item-fade">
-						<h1 class="weight-700 font-25 download-template-title" style="color: #2c3e50;">We've succesfully enrolled <span ng-bind="current_enrolled_count.total_employee_enrolled">5</span> employees and <span ng-bind="current_enrolled_count.total_dependents_enrolled">5</span> dependents to the selected tier plan</h1>
+						<h1 class="weight-700 font-25 download-template-title" style="color: #2c3e50;">We've succesfully enrolled <span ng-bind="current_enrolled_count.total_employee_enrolled">5</span> employees and <span ng-bind="current_enrolled_count.total_dependents_enrolled">5</span> dependents to the selected plan</h1>
 						<div class="white-space-20"></div>
 						<div class="white-space-20"></div>
 						<div class="successfully-enrolled-img">
@@ -408,7 +414,7 @@
 								<label for="fname">Start Date</label>
   							<input type="text" name="start-date" class="start-date-datepicker" ng-model="employee_data.plan_start">
 							</div>
-							<div class="employee-input-wrapper">
+							<!-- <div class="employee-input-wrapper">
 								<label for="fname" style="line-height: 1;margin-top: 5px;">Medical Credits</label>
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="medical-credits" ng-model="employee_data.medical_credits">
@@ -417,6 +423,26 @@
 								<label for="fname" style="line-height: 1;margin-top: 5px;">Wellness Credits</label>
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
+							</div> -->
+							<div ng-if="spending_account_status.medical" class="employee-input-wrapper">
+								<label for="fname">Medical Entitlement</label>
+  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
+							</div>
+							<div ng-if="spending_account_status.wellness" class="employee-input-wrapper">
+								<label for="fname">Wellness Entitlement</label>
+								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
+							</div>
+							<div class="employee-input-wrapper">
+								<div ng-if="employee_data.hasMedicalBalance">
+									<label for="fname">Medical Entitlement Balance</label>
+	  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement_balance">
+  							</div>
+							</div>
+							<div class="employee-input-wrapper">
+								<div ng-if="employee_data.hasWellnessBalance">
+									<label for="fname">Wellness Entitlement Balance</label>
+	  							<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement_balance">
+	  						</div>
 							</div>
 						</form>
 					</div>
@@ -452,6 +478,8 @@
   								<select ng-model="dependent_data.relationship">
   									<option value="spouse">Spouse</option>
   									<option value="child">Child</option>
+  									<option value="parent">Parent</option>
+  									<option value="sibling">Sibling</option>
   									<option value="family">Family</option>
   								</select>
   								<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
@@ -509,7 +537,9 @@
 								<label for="fname">Relationship</label>
   								<select ng-model="added_dependent_data.relationship">
   									<option value="spouse">Spouse</option>
-  									<option value="child">Child</option>
+										<option value="child">Child</option>
+										<option value="parent">Parent</option>
+  									<option value="sibling">Sibling</option>
   									<option value="family">Family</option>
   								</select>
   								<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
@@ -647,8 +677,8 @@
                     </div>
                     <div class="form-group">
                         <label>Wellness Credits</label>
-                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.wellness_credits_error == true}" ng-model="selected_edit_details_data.employee.wellness_credits">
-                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.wellness_credits_message"></span>
+                        <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.credits_wellness_error == true}" ng-model="selected_edit_details_data.employee.wellness_credits">
+                        <span class="error-message" ng-bind="selected_edit_details_data.error_logs.credits_wellnes_message"></span>
                     </div>
                     <div class="form-group">
                         <label>Start Date</label>
@@ -684,9 +714,10 @@
 	                        <label>Relationship</label>
 	                        <select class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.relationship_error == true}" ng-model="list.enrollee.relationship">
 				  									<option value="spouse">Spouse</option>
-				  									<option value="child">Child</option>
+														<option value="child">Child</option>
+														<option value="parent">Parent</option>
+  													<option value="sibling">Sibling</option>
 				  									<option value="family">Family</option>
-				  									<option value="parent">Parent</option>
 				  								</select>
 	                        <span class="error-message" ng-bind="list.error_logs.relationship_message"></span>
 	                    </div>

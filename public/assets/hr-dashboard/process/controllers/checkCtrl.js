@@ -1,8 +1,24 @@
 var checkCtrl = angular.module('checkCtrl', [])
 
 
-checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state ){
+checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state, hrSettings ){
 	var vm = this;
+	vm.account_type = null;
+
+
+	vm.getCompanyContacts = function() {
+    hrSettings.getContacts().then(function(response) {
+      console.log(response);
+      console.log( response.data.data.business_information.created_at );
+      console.log( moment( response.data.data.business_information.created_at ).unix() );
+      window.Appcues.identify(
+		    "57952", // unique, required
+		    {
+		    	created_at : moment( response.data.data.business_information.created_at ).unix()
+		    }
+		  );
+    });
+  };
 
 	vm.showGlobalModal = ( message ) =>{
     $( "#global_modal" ).modal('show');
@@ -39,6 +55,17 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 		vm.hideIntroLoader();
 	};
 
+	vm.accountType = function(){
+		$http.get(window.location.origin + '/hr/get_company_account_type' )
+		.success(function(response){
+			console.log(response);
+
+			vm.account_type = response.account_type;
+			
+			localStorage.setItem('company_account_type', vm.account_type);
+		});
+	};
+
 	vm.hideIntroLoader = ( ) =>{
 		setTimeout(function() {
 			$( ".main-loader" ).fadeOut();
@@ -46,6 +73,8 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 		}, 1000);
 	}
 
+	vm.accountType();
+	vm.getCompanyContacts();
 	setTimeout(function() {
 		vm.onLoad();
 	}, 500);
@@ -58,7 +87,7 @@ checkCtrl.controller('resetCtrl', function( $scope, $http, $stateParams){
 	vm.onLoad = function(){
 		$http.get(window.location.origin + '/hr/reset-password-details/' + $stateParams.token)
 		.success(function(response){
-			// console.log(response);
+			console.log(response);
 			if(response.status == false) {
 				$('#token-expired').fadeIn();
 			} else if(response.status == true) {

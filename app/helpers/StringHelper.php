@@ -254,10 +254,13 @@ class StringHelper{
         {
 
             $secret = Config::get('config.secret_key');
-            $token = StringHelper::getToken();
+            $token = self::getToken();
             $result = FALSE;
             try {
                 $result = JWT::decode($token, $secret);
+                if(!$result) {
+                    return false;
+                }
             } catch(Exception $e) {
                 return FALSE;
             }
@@ -451,6 +454,7 @@ class StringHelper{
         }
 
         public static function TestSendOTPSMS($phone, $message){
+            // $config = \SmsHelper::commzGateConfigs();
             $config = self::twilioConfigs();
             $client = new Client($config['sid'], $config['token']);
             $new_message = $message.' is your Mednefits verification code.';
@@ -498,6 +502,25 @@ class StringHelper{
                     'body' => $new_message,
                 )
             );
+            // $mobile = preg_replace('/\s+/', '', $phone);
+            // $data_message = array(
+            //     'ID'        => $config['id'],
+            //     'Password'  => $config['password'],
+            //     'Mobile'    => $mobile,
+            //     'Message'   => $new_message,
+            //     'Type'      => 'A',
+            //     'Sender'    => $config['from']
+            // );
+
+            // $fields_string = http_build_query($data_message);
+            // $url = "https://www.commzgate.net/gateway/SendMsg?".$fields_string;
+            // $curl = curl_init();
+            // curl_setopt($curl, CURLOPT_URL, $url);
+            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            // $resp = curl_exec($curl);
+            // curl_close($curl);
+            // return $resp;
         }
 
 

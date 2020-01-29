@@ -97,7 +97,7 @@
             </div>
 
             <div class="social-contact">
-              <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/mednefits_logo_v3_(blue-box)_LARGE.png" style="width: 35px;margin-bottom: 10px;">
+              <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/Mednefits Logo V2.svg" style="width: 35px;margin-bottom: 10px;">
 
               <p style="color: #807b7b;margin: 0;font-size: 12px;">7 Temasek Boulevard, #18-02,</p>
               <p style="color: #807b7b;margin: 0;font-size: 12px;">Suntec Tower One, Singapore 038987</p>

@@ -193,7 +193,7 @@
           @if(isset($payment_date))
           <p><label>Payment Date: </label> {{ $payment_date }}</p>
           @endif
-          <p style="background: #eee;"><label>Amount Due (SGD): </label> <b>${{ $amount_due }}</b></p>
+          <p style="background: #eee;"><label>Amount Due: </label> <b>{{ $currency_type }} {{ $amount_due }}</b></p>
         </div>
       </div>
 
@@ -215,11 +215,11 @@
             <p>Medical Spending Account</p>
             <p>
               <span style="margin-right: 15px;">
-                Total: S$<span>{{ $total_medical }}</span>
+                Total: <span>{{ $currency_type }} {{ $total_medical }}</span>
               </span>
 
               <span>
-                Deposit: S$<span>{{ $medical_deposit_amount }}</span>
+                Deposit: <span>{{ $currency_type }} {{ $medical_deposit_amount }}</span>
               </span>
             </p>
             @endif
@@ -227,28 +227,28 @@
             <p>Wellness Spending Account</p>
             <p>
               <span style="margin-right: 15px;">
-                Total: S$<span>{{ $total_wellness }}</span>
+                Total: <span>{{ $currency_type }} {{ $total_wellness }}</span>
               </span>
 
               <span>
-                Deposit: S$<span>{{ $wellness_deposit_amount }}</span>
+                Deposit: <span>{{ $currency_type }} {{ $wellness_deposit_amount }}</span>
               </span>
             </p>
             @endif
           </td>
-          <td><b>S$ {{ $price }}</b></td>
-          <td><b>S$ {{ $amount }}</b></td>
+          <td><b>{{ $currency_type }} {{ $price }}</b></td>
+          <td><b>{{ $currency_type }} {{ $amount }}</b></td>
         </tr>
 
       </table>
 
       <div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative;height: 78px;">
         <div style="width: 300px;display: inline-block;position: absolute;right: 10px;top: -5px;">
-          <p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> ${{ $total }}</p>
+          <p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> {{ $currency_type }} {{ $total }}</p>
 
           <div style="border-bottom: 1px solid #aaa;display: inline-block;width: 100%;padding-bottom: 10px;"></div>
 
-          <p style="margin-top: 5px;"><label>Amount Due (SGD):</label> <b>${{ $amount_due }}</b></p>
+          <p style="margin-top: 5px;"><label>Amount Due:</label> <b>{{ $currency_type }} {{ $amount_due }}</b></p>
         </div>
       </div>
 
@@ -276,6 +276,8 @@
             <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $notes }}</p>
             @endif
           @endif
+
+          <p>Please send all payment advice to finance@mednefits.com</p>
         </div>
 
         <div class="item-col2">
