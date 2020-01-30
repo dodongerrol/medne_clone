@@ -86,6 +86,10 @@ class MemberHelper
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 				$entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
 				$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
+				if(!$entitlement) {
+					PlanHelper::createMemberEntitlement($member_id);
+					$entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
+				}
 				return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => null];
 			}
 		} else {

@@ -5643,5 +5643,44 @@ class PlanHelper {
 			return false;
 		}
 	}
+
+	public static function createMemberEntitlement($member_id)
+	{
+		$wallet = DB::table('e_wallet')->where('UserID', $member_id)->orderBy('created_at', 'desc')->first();
+		$medical = self::memberMedicalAllocatedCredits($wallet->wallet_id, $member_id);
+		$wellness = self::memberWellnessAllocatedCredits($wallet->wallet_id, $member_id);
+
+		if($medical && $wellness) {
+			// check
+			$member_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)
+																											->where('medical_usage_date', $medical['plan_start'])
+																											->where('wellness_usage_date', $wellness['plan_start'])
+																											->first();
+			if(!$member_entitlement) {
+				// create entitlement
+				$data = array(
+					'member_id'										=> $member_id,
+					'medical_usage_date'					=> $medical['plan_start'],
+					'medical_proration'						=> 'months',
+					'medical_entitlement'					=> $medical['allocation'],
+					'medical_allocation'					=> $medical['allocation'],
+					'medical_entitlement_balance'	=> $medical['allocation'],
+					'wellness_usage_date'					=> $wellness['plan_start'],
+					'wellness_proration'					=> 'months',
+					'wellness_entitlement'				=> $wellness['allocation'],
+					'wellness_allocation'					=> $wellness['allocation'],
+					'wellness_entitlement_balance'	=> $wellness['allocation'],
+					'currency_type'								=> $wallet->currency_type,
+					'created_at'					=> date('Y-m-d H:i:s'),
+					'updated_at'					=> date('Y-m-d H:i:s')
+				);
+				return DB::table('employee_wallet_entitlement')->create($data);
+			} else {
+				return $member_entitlement;
+			}
+		} else {
+			return false;
+		}
+	}
 }
 ?>
