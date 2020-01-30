@@ -4733,8 +4733,9 @@ public function getHrActivity( )
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
 	$corporate_members = DB::table('corporate_members')
-	->where('corporate_id', $account->corporate_id)
-	->paginate(10);
+													->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+													->where('corporate_members.corporate_id', $account->corporate_id)
+													->paginate(10);
 
 	$paginate['current_page'] = $corporate_members->getCurrentPage();
 	$paginate['from'] = $corporate_members->getFrom();
@@ -6346,7 +6347,8 @@ public function hrEclaimActivity( )
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 
 	$corporate_members = DB::table('corporate_members')
-	->where('corporate_id', $account->corporate_id)
+	->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+	->where('corporate_members.corporate_id', $account->corporate_id)
 	->paginate(100);
 
 	$paginate['current_page'] = $corporate_members->getCurrentPage();
