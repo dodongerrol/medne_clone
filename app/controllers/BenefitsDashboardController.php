@@ -1938,12 +1938,22 @@ class BenefitsDashboardController extends \BaseController {
 		$wellness_wallet = (int)$spending_account->wellness_enable == 1 ? true : false;
 
 		// return $users;
+    $filter = 'current_term';
 		foreach ($users as $key => $user) {
 			$ids = StringHelper::getSubAccountsID($user->UserID);
-
+			$user_spending_dates = MemberHelper::getMemberCreditReset($user->UserID, $filter, 'medical');
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
-			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
-			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
+
+			if($user_spending_dates) {
+				$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
+				$wellness_credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
+			} else {
+				$medical_credit_data['allocation'] = 0;
+				$medical_credit_data['get_allocation_spent'] = 0;
+			 	$medical_credit_data['balance'] = 0;
+			 	$wellness_credit_data['allocation'] = 0;
+			 	$wellness_credit_data['get_allocation_spent'] = 0;
+			}
 
 			// get medical entitlement
 			$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $user->UserID)->orderBy('created_at', 'desc')->first();
@@ -3080,14 +3090,31 @@ class BenefitsDashboardController extends \BaseController {
 			// return $users;
 		}
 
+		// spending account
+		$spending_account = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+		$medical_wallet = (int)$spending_account->medical_enable == 1 ? true : false;
+		$wellness_wallet = (int)$spending_account->wellness_enable == 1 ? true : false;
+
+		$filter = "current_term";
 		foreach ($users as $key => $user) {
 			$ids = StringHelper::getSubAccountsID($user->UserID);
 
-			$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $user->UserID)->orderBy('created_at', 'desc')->first();
+			$user_spending_dates = MemberHelper::getMemberCreditReset($user->UserID, $filter, 'medical');
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
-			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
-			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 
+			if($user_spending_dates) {
+				$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
+				$wellness_credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
+			} else {
+				$medical_credit_data['allocation'] = 0;
+				$medical_credit_data['get_allocation_spent'] = 0;
+			 	$medical_credit_data['balance'] = 0;
+			 	$wellness_credit_data['allocation'] = 0;
+			 	$wellness_credit_data['get_allocation_spent'] = 0;
+			}
+
+			// get medical entitlement
+			$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $user->UserID)->orderBy('created_at', 'desc')->first();
 		  // check if account is schedule for deletion
 			$deletion = DB::table('customer_plan_withdraw')->where('user_id', $user->UserID)->first();
 			$dependets = DB::table('employee_family_coverage_sub_accounts')
@@ -3314,7 +3341,9 @@ class BenefitsDashboardController extends \BaseController {
 				'emp_status'			=> $emp_status,
 				'account_status'		=> (int)$user->Active == 1 ? true : false,
 				'plan_type'				=> $plan_type,
-				'wallet_enabled' => (int)$user->wallet == 1 ? true : false
+				'wallet_enabled' => (int)$user->wallet == 1 ? true : false,
+				'medical_wallet'		=> $medical_wallet,
+				'wellness_wallet'		=> $wellness_wallet
 			);
 			array_push($final_user, $temp);
 		}
