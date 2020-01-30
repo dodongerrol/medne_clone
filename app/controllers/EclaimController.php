@@ -5020,7 +5020,9 @@ public function getHrActivity( )
 						}
 					}
 
-	                        // check user if it is spouse or dependent
+	        $employee = $customer->Name;
+					$dependent = null;
+	        // check user if it is spouse or dependent
 					if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 						$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 						$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -5028,6 +5030,8 @@ public function getHrActivity( )
 						$sub_account_type = $temp_sub->user_type;
 						$owner_id = $temp_sub->owner_id;
 						$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+						$dependent = $customer->Name;
+						$employee = $sub_account;
 					} else {
 						$sub_account = FALSE;
 						$sub_account_type = FALSE;
@@ -5205,6 +5209,8 @@ public function getHrActivity( )
 						'procedure'         => $procedure,
 						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
 						'member'            => ucwords($customer->Name),
+						'employee'					=> $employee,
+						'dependent'					=> $dependent,
 						'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 						'trans_id'          => $trans->transaction_id,
 						'receipt_status'    => $receipt_status,
@@ -9211,48 +9217,47 @@ public function downloadEclaimCsv( )
 		}
 
 		foreach($e_claim_result as $key => $res) {
-			$approved_status = FALSE;
-			$rejected_status = FALSE;
+				$approved_status = FALSE;
+				$rejected_status = FALSE;
 
-			if($res->status == 0) {
-				$status_text = 'Pending';
-			} else if($res->status == 1) {
-				$status_text = 'Approved';
-			} else if($res->status == 2) {
-				$status_text = 'Rejected';
-			} else {
-				$status_text = 'Pending';
-			}
+				if($res->status == 0) {
+					$status_text = 'Pending';
+				} else if($res->status == 1) {
+					$status_text = 'Approved';
+				} else if($res->status == 2) {
+					$status_text = 'Rejected';
+				} else {
+					$status_text = 'Pending';
+				}
 
 
-	                // get docs
-			$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
+		    // get docs
+				$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
+				$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-			$member = DB::table('user')->where('UserID', $res->user_id)->first();
-
-			if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
-				$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
-				$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
-				$sub_account = ucwords($temp_account->Name);
-				$sub_account_type = $temp_sub->user_type;
-				$owner_id = $temp_sub->owner_id;
-				$relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-				$bank_account_number = $temp_account->bank_account;
-				$bank_name = $temp_account->bank_name;
-				$bank_code = $temp_account->bank_code;
-				$bank_brh = $temp_account->bank_brh;
-				$email = "";
-			} else {
-				$sub_account = FALSE;
-				$sub_account_type = FALSE;
-				$owner_id = $member->UserID;
-				$relationship = false;
-				$bank_account_number = $member->bank_account;
-				$bank_name = $member->bank_name;
-				$bank_code = $member->bank_code;
-				$bank_brh = $member->bank_brh;
-				$email = $member->Email;
-			}
+				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
+					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+					$sub_account = ucwords($temp_account->Name);
+					$sub_account_type = $temp_sub->user_type;
+					$owner_id = $temp_sub->owner_id;
+					$relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+					$bank_account_number = $temp_account->bank_account;
+					$bank_name = $temp_account->bank_name;
+					$bank_code = $temp_account->bank_code;
+					$bank_brh = $temp_account->bank_brh;
+					$email = "";
+				} else {
+					$sub_account = FALSE;
+					$sub_account_type = FALSE;
+					$owner_id = $member->UserID;
+					$relationship = false;
+					$bank_account_number = $member->bank_account;
+					$bank_name = $member->bank_name;
+					$bank_code = $member->bank_code;
+					$bank_brh = $member->bank_brh;
+					$email = $member->Email;
+				}
 
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$container[] = array(
@@ -9278,7 +9283,7 @@ public function downloadEclaimCsv( )
 					'BANK CODE'					=> $bank_code,
 					'BRANCH CODE'				=> $bank_brh
 				);
-			}
+		}
 
 
 
@@ -9460,7 +9465,9 @@ public function downloadEclaimCsv( )
 								}
 							}
 
-			                        // check user if it is spouse or dependent
+							$employee = $customer->Name;
+							$dependent = null;
+			        // check user if it is spouse or dependent
 							if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 								$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 								$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -9468,6 +9475,8 @@ public function downloadEclaimCsv( )
 								$sub_account_type = $temp_sub->user_type;
 								$owner_id = $temp_sub->owner_id;
 								$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+								$dependent = $customer->Name;
+								$employee = $sub_account;
 							} else {
 								$sub_account = FALSE;
 								$sub_account_type = FALSE;
@@ -9593,7 +9602,8 @@ public function downloadEclaimCsv( )
 
 							if((int) $trans->lite_plan_enabled == 1) {
 								$in_network_transactions[] = array(
-									'EMPLOYEE'				=> ucwords($customer->Name),
+									'EMPLOYEE'				=> $employee,
+									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,
 									'DATE'						=> date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 									'TRANSACTION ID'	=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
@@ -9606,7 +9616,8 @@ public function downloadEclaimCsv( )
 								);
 							} else {
 								$in_network_transactions[] = array(
-									'EMPLOYEE'				=> ucwords($customer->Name),
+									'EMPLOYEE'				=> $employee,
+									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,
 									'DATE'						=> date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 									'TRANSACTION ID'	=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
