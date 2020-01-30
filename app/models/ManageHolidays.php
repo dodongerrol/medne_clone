@@ -154,6 +154,14 @@ class ManageHolidays extends Eloquent implements UserInterface, RemindableInterf
 
         public function FindTodayClinicTimeOFF($clinicid, $bookdate){
 
+            $results = DB::table('manage_holidays')
+                        ->where('PartyID', $clinicid)
+                        ->where('Party', 3)
+                        ->where('Active', 1)
+                        ->where('From_Holiday', '>=', $bookdate)
+                        ->where('To_Holiday', '<=', $bookdate)
+                        ->get();
+            return $results;
             $results = DB::select("SELECT * FROM medi_manage_holidays WHERE PartyID=? and Party=? and Active=? and (? between From_Holiday AND To_Holiday)", array($clinicid,3,1,$bookdate));
 
             return $results;
