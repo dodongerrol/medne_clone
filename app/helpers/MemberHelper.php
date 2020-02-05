@@ -201,7 +201,8 @@ class MemberHelper
                             ->where('wallet_entitlement_schedule_id', $id)
                             ->where('status', 0)
                             ->get();
-
+    $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
     $wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
     $data = [];
     $data['member_id'] = $member_id;
@@ -259,7 +260,11 @@ class MemberHelper
 																								->where('logs', 'added_by_hr')
 																								->orderBy('created_at', 'desc')
 																								->first();
-				$last_customer_active_plan_id_medical = $last_customer_active_plan_id_medical->customer_active_plan_id;
+				if(!$last_customer_active_plan_id_medical) {
+					$last_customer_active_plan_id_medical = $customer_active_plan->customer_active_plan_id;
+				} else {
+					$last_customer_active_plan_id_medical = $last_customer_active_plan_id_medical->customer_active_plan_id;
+				}
 
 				if($type_allocation_medical == "added_by_hr") {
 					// medical
@@ -318,7 +323,11 @@ class MemberHelper
 																								->where('logs', 'added_by_hr')
 																								->orderBy('created_at', 'desc')
 																								->first();
-				$last_customer_active_plan_id_wellness = $last_customer_active_plan_id_wellness->customer_active_plan_id;
+				if(!$last_customer_active_plan_id_wellness) {
+					$last_customer_active_plan_id_wellness = $customer_active_plan->customer_active_plan_id;
+				} else {
+					$last_customer_active_plan_id_wellness = $last_customer_active_plan_id_wellness->customer_active_plan_id;
+				}
 				if($type_allocation_wellness == "added_by_hr") {
 					// wellness
 					$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->increment('wellness_balance', $new_wellness_allocation);
