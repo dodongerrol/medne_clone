@@ -70,7 +70,7 @@ class MemberHelper
 
 	public static function getMemberCreditReset($member_id, $term, $spending_type)
 	{
-		$today = PlanHelper::endDate(date('Y-m-d'));
+		$today = date('Y-m-d H:i:s');
 		if($term == "current_term") {
 			$credit_resets = DB::table('credit_reset')
 												->where('id', $member_id)->where('user_type', 'employee')
@@ -78,9 +78,9 @@ class MemberHelper
 												->orderBy('created_at', 'desc')
 												->first();
 			if($credit_resets) {
-				$customer_id = PlanHelper::getCustomerId($member_id);
-				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-				return ['start' => $credit_resets->date_resetted, 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => $credit_resets->wallet_history_id];
+				// $customer_id = PlanHelper::getCustomerId($member_id);
+				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+				return ['start' => $credit_resets->date_resetted, 'end' => $today, 'id' => $credit_resets->wallet_history_id];
 			} else {
 				$customer_id = PlanHelper::getCustomerId($member_id);
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -90,7 +90,7 @@ class MemberHelper
 					PlanHelper::createMemberEntitlement($member_id);
 					$entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
 				}
-				return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => null];
 			}
 		} else {
 			$credit_resets = DB::table('credit_reset')
@@ -201,7 +201,8 @@ class MemberHelper
                             ->where('wallet_entitlement_schedule_id', $id)
                             ->where('status', 0)
                             ->get();
-
+    $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
     $wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
     $data = [];
     $data['member_id'] = $member_id;
@@ -259,7 +260,11 @@ class MemberHelper
 																								->where('logs', 'added_by_hr')
 																								->orderBy('created_at', 'desc')
 																								->first();
-				$last_customer_active_plan_id_medical = $last_customer_active_plan_id_medical->customer_active_plan_id;
+				if(!$last_customer_active_plan_id_medical) {
+					$last_customer_active_plan_id_medical = $customer_active_plan->customer_active_plan_id;
+				} else {
+					$last_customer_active_plan_id_medical = $last_customer_active_plan_id_medical->customer_active_plan_id;
+				}
 
 				if($type_allocation_medical == "added_by_hr") {
 					// medical
@@ -318,7 +323,11 @@ class MemberHelper
 																								->where('logs', 'added_by_hr')
 																								->orderBy('created_at', 'desc')
 																								->first();
-				$last_customer_active_plan_id_wellness = $last_customer_active_plan_id_wellness->customer_active_plan_id;
+				if(!$last_customer_active_plan_id_wellness) {
+					$last_customer_active_plan_id_wellness = $customer_active_plan->customer_active_plan_id;
+				} else {
+					$last_customer_active_plan_id_wellness = $last_customer_active_plan_id_wellness->customer_active_plan_id;
+				}
 				if($type_allocation_wellness == "added_by_hr") {
 					// wellness
 					$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->increment('wellness_balance', $new_wellness_allocation);

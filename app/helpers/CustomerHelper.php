@@ -21,6 +21,7 @@ class CustomerHelper
 	public static function getCustomerCreditReset($member_id, $term, $spending_type)
 	{
 		if($term == "current_term") {
+			$today = date('Y-m-d H:i:s');
 			$credit_resets = DB::table('credit_reset')
 												->where('id', $member_id)
 												->where('user_type', 'company')
@@ -29,10 +30,10 @@ class CustomerHelper
 												->first();
 			if($spending_type == "medical") {
 				if($credit_resets) {
-					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
-					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
-					$wallet_history = DB::table('customer_credit_logs')->where('customer_credits_id', $wallet->customer_credits_id)->orderBy('created_at', 'desc')->first();
-					return ['start' => $credit_resets->date_resetted, 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => $credit_resets->wallet_history_id];
+					// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
+					// $wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
+					// $wallet_history = DB::table('customer_credit_logs')->where('customer_credits_id', $wallet->customer_credits_id)->orderBy('created_at', 'desc')->first();
+					return ['start' => $credit_resets->date_resetted, 'end' => $today, 'id' => $credit_resets->wallet_history_id];
 				} else {
 					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
 					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
@@ -40,9 +41,9 @@ class CustomerHelper
 				}
 			} else {
 				if($credit_resets) {
-					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
-					$wallet_history = DB::table('customer_wellness_credits_logs')->where('customer_credits_id', $wallet->customer_credits_id)->orderBy('created_at', 'desc')->first();
-					return ['start' => $credit_resets->date_resetted, 'end' => date('Y-m-d', strtotime($wallet_history->created_at)), 'id' => $credit_resets->wallet_history_id];
+					// $wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
+					// $wallet_history = DB::table('customer_wellness_credits_logs')->where('customer_credits_id', $wallet->customer_credits_id)->orderBy('created_at', 'desc')->first();
+					return ['start' => $credit_resets->date_resetted, 'end' => $today, 'id' => $credit_resets->wallet_history_id];
 				} else {
 					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
 					$wallet = DB::table('customer_credits')->where('customer_id', $member_id)->first();
