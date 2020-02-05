@@ -2109,8 +2109,13 @@ $jsonArray['check_in_time'] = date('d M, h:i a', strtotime($check_in_time));
 $jsonArray['check_in_expiry_time'] = date('Y-m-d H:i:s', strtotime('+120 minutes', strtotime($check_in_time)));
 $returnObject->data = $jsonArray;
 $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
+$default_service = null;
 
-        // get transaction consultation
+if(sizeof($returnObject->data['clinic_procedures']) == 0) {
+  $default_service = ClinicHelper::getDefaultService( );
+}
+// get transaction consultation
+$returnObject->data['default_service'] = $default_service;
 $returnObject->data['consultation_fee_symbol'] = "SGD";
 $consultation_status = StringHelper::newLitePlanStatus($findUserID);
 $returnObject->data['consultation_status'] = $consultation_status;

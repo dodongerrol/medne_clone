@@ -70,7 +70,7 @@ class MemberHelper
 
 	public static function getMemberCreditReset($member_id, $term, $spending_type)
 	{
-		$today = PlanHelper::endDate(date('Y-m-d'));
+		$today = date('Y-m-d H:i:s');
 		if($term == "current_term") {
 			$credit_resets = DB::table('credit_reset')
 												->where('id', $member_id)->where('user_type', 'employee')
@@ -78,9 +78,9 @@ class MemberHelper
 												->orderBy('created_at', 'desc')
 												->first();
 			if($credit_resets) {
-				$customer_id = PlanHelper::getCustomerId($member_id);
-				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-				return ['start' => $credit_resets->date_resetted, 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => $credit_resets->wallet_history_id];
+				// $customer_id = PlanHelper::getCustomerId($member_id);
+				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+				return ['start' => $credit_resets->date_resetted, 'end' => $today, 'id' => $credit_resets->wallet_history_id];
 			} else {
 				$customer_id = PlanHelper::getCustomerId($member_id);
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -90,7 +90,7 @@ class MemberHelper
 					PlanHelper::createMemberEntitlement($member_id);
 					$entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
 				}
-				return ['start' => date('Y-m-d', strtotime($wallet->created_at)), 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => null];
 			}
 		} else {
 			$credit_resets = DB::table('credit_reset')
