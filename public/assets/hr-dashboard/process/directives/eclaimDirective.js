@@ -267,20 +267,24 @@
 						scope.filter_text = 'All';
 						scope.receipts_arr = scope.receipts_all;
 						scope.csv_dl = scope.csv_e_claim_transactions;
+						console.log( scope.receipts_arr );
 					}else if( num == 2 ){
 						scope.filter_text = 'Pending';
 						scope.receipts_arr = scope.receipts_pending;
 						scope.csv_dl = scope.csv_e_claim_transactions_pending;
+						console.log( scope.receipts_arr );
 					}else if( num == 3 ){
 						scope.filter_text = 'Approved';
 						scope.receipts_arr = scope.receipts_approved;
 						scope.csv_dl = scope.csv_e_claim_transactions_approved;
+						console.log( scope.receipts_arr );
 					}else{
 						scope.filter_text = 'Rejected';
 						scope.receipts_arr = scope.receipts_rejected;
 						scope.csv_dl = scope.csv_e_claim_transactions_rejected;
+						console.log( scope.receipts_arr );
 					}
-					console.log( scope.receipts_arr );
+					// console.log( scope.receipts_arr );
 					scope.hideLoading();
 				}
 
@@ -468,7 +472,8 @@
 							scope.csv_e_claim_transactions = scope.activity.e_claim_transactions;
 
 							if( scope.activity.e_claim_transactions.length > 0 ){
-								$('.btn-receipts').attr( 'disabled', false );
+								
+								// $('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
 									// if( !value.claim_amount || Number(value.claim_amount) == 0 ){
 									// 	value.claim_amount = value.amount;
@@ -497,8 +502,10 @@
 										}
 									})
 								});
+								scope.filterTransactions(scope.filter_num);
 							}else{
-								$('.btn-receipts').attr( 'disabled', true );
+								scope.filterTransactions(scope.filter_num);
+								// $('.btn-receipts').attr( 'disabled', true );
 							}
 
 							scope.csv_dl = scope.csv_e_claim_transactions;
@@ -565,7 +572,8 @@
 							scope.csv_e_claim_transactions = scope.activity.e_claim_transactions;
 
 							if( scope.activity.e_claim_transactions.length > 0 ){
-								$('.btn-receipts').attr( 'disabled', false );
+								
+								// $('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
 									// if( !value.claim_amount || Number(value.claim_amount) == 0 ){
 									// 	value.claim_amount = value.amount;
@@ -594,8 +602,10 @@
 										}
 									})
 								});
+								scope.filterTransactions(scope.filter_num);
 							}else{
-								$('.btn-receipts').attr( 'disabled', true );
+								scope.filterTransactions(scope.filter_num);
+								// $('.btn-receipts').attr( 'disabled', true );
 							}
 							
 							scope.csv_dl = scope.csv_e_claim_transactions;
@@ -660,7 +670,8 @@
 							scope.eclaim_dates = [];
 							scope.activity = response.data;
 							if( scope.activity.e_claim_transactions.length > 0 ){
-								$('.btn-receipts').attr( 'disabled', false );
+								
+								// $('.btn-receipts').attr( 'disabled', false );
 								angular.forEach( scope.activity.e_claim_transactions, function( value, key ){
 									var temp_arr = [];
 									angular.forEach( value.files, function( value2, key2 ){
@@ -670,8 +681,10 @@
 										}
 									})
 								});
+								scope.filterTransactions(scope.filter_num);
 							}else{
-								$('.btn-receipts').attr( 'disabled', true );
+								scope.filterTransactions(scope.filter_num);
+								// $('.btn-receipts').attr( 'disabled', true );
 							}
 						}
 					});
