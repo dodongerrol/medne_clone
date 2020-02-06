@@ -2551,11 +2551,28 @@ class PlanHelper {
 			// return $users_allocation;
 	}
 
+	public static function getCorporateUserByEntitlementDates($corporate_id, $customer_id, $start) 
+	{
+		$users_medical = [];
+
+		$users_medical_temp = DB::table('corporate_members')
+									->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+									->join('employee_wallet_entitlement', 'employee_wallet_entitlement.member_id', '=', 'user.UserID')
+									->where('employee_wallet_entitlement.medical_usage_date', '>=', $start)
+									->where('corporate_members.corporate_id', $corporate_id)
+									->where('user.Active', 1)
+									->groupBy('user.UserID')
+									->get();
+
+		foreach ($users_medical_temp as $key => $medical) {
+			$users_medical[] = $medical->user_id;
+		}
+		return $users_medical;
+	}
+
 	public static function getUnlimitedCorporateUserByAllocated($corporate_id, $customer_id) 
 	{
 		$users_medical = [];
-		$users_wellness = [];
-
 		$users_medical_temp = DB::table('corporate_members')
 														->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 														->where('corporate_members.corporate_id', $corporate_id)
