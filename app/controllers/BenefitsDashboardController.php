@@ -2381,7 +2381,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		}
 
-		$user_allocated = PlanHelper::getUnlimitedCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = $spending_account_settings->medical_spending_start_date;
+		$user_allocated = PlanHelper::getCorporateUserByEntitlementDates($account_link->corporate_id, $customer_id, $start);
 		$get_allocation_spent = 0;
 		$get_allocation_spent_wellness = 0;
 
