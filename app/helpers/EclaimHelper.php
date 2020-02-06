@@ -258,7 +258,14 @@ class EclaimHelper
         $medical_balance = $balance;
       }
     } else {
-      $result = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet_id, $user_id, $start_date, $end_date);
+      if($spending_type == "medilca") {
+        $result = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet_id, $user_id, $start_date, $end_date);
+        return array('balance' => (float)$result['balance'], 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $result['allocation'], 'in_network_spent' => $result['in_network_spent'], 'e_claim_spent' => $result['e_claim_spent'], 'total_spent' => $result['get_allocation_spent'], 'currency_type' => strtoupper($wallet->currency_type));
+      } else {
+        $result = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet_id, $user_id, $start_date, $end_date);
+        return array('balance' => (float)$result['balance'], 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $result['allocation'], 'in_network_spent' => $result['in_network_spent'], 'e_claim_spent' => $result['e_claim_spent'], 'total_spent' => $result['get_allocation_spent'], 'currency_type' => strtoupper($wallet->currency_type));
+      }
+      
     }
 
     return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent, 'currency_type' => strtoupper($wallet->currency_type));

@@ -6599,10 +6599,6 @@ public function updateEclaimStatus( )
                               ->first();
     $date = null;
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-	    // check user balance
-			// recalculate balance
-			// PlanHelper::reCalculateEmployeeBalance($employee);
-
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 			$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
