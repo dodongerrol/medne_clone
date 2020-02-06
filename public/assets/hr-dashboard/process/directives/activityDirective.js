@@ -142,7 +142,7 @@ app.directive('activityPage', [
 						// }
 
 						
-						scope.applyDates();
+						// scope.applyDates();
 
 					} else {
 						scope.term_value = 1;
@@ -336,14 +336,14 @@ app.directive('activityPage', [
 					if (scope.search.user_id) {
 						data.user_id = scope.search.user_id;
 					}
-					scope.toggleLoading();
+					scope.showLoading();
 					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?type=both&token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 					if (data.user_id) {
 						api_url += ("&user_id=" + data.user_id);
 					}
 					// console.log( api_url );
 					window.open(api_url);
-					scope.toggleLoading();
+					scope.hideLoading();
 				}
 
 				scope.companyAccountType = function () {
@@ -368,14 +368,14 @@ app.directive('activityPage', [
 					if (scope.search.user_id) {
 						data.user_id = scope.search.user_id;
 					}
-					scope.toggleLoading();
+					scope.showLoading();
 					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 					if (data.user_id) {
 						api_url += ("&user_id=" + data.user_id);
 					}
 					// console.log( api_url );
 					window.open(api_url);
-					scope.toggleLoading();
+					scope.hideLoading();
 				}
 
 				scope.showPreview = function (img, ev) {
@@ -426,7 +426,7 @@ app.directive('activityPage', [
 				}
 
 				scope.downloadReceipt = function (res, all_data) {
-					scope.toggleLoading();
+					scope.showLoading();
 
 					if (res.length > 1) {
 						var zip = new JSZip();
@@ -454,7 +454,7 @@ app.directive('activityPage', [
 								zip.generateAsync({ type: "blob" }).then(function (content) {
 									saveAs(content, all_data.member + "_" + all_data.transaction_id + ".zip");
 								});
-								scope.toggleLoading();
+								scope.hideLoading();
 							}
 						})
 					} else {
@@ -478,7 +478,7 @@ app.directive('activityPage', [
 									window.URL.revokeObjectURL(url);
 
 									if (key == (res.length - 1)) {
-										scope.toggleLoading();
+										scope.hideLoading();
 									}
 								}
 							});
@@ -760,7 +760,7 @@ app.directive('activityPage', [
 				}
 
 				scope.searchActivity = function (data) {
-					scope.toggleLoading();
+					scope.showLoading();
 					scope.togglePointerEvents();
 					$("#fetching_text").show();
 					$("#done_fetching_text").hide();
@@ -783,7 +783,7 @@ app.directive('activityPage', [
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
 							// console.log(response);
-							// scope.toggleLoading();
+							scope.hideLoading();
 							if (response.status == 200) {
 								scope.activity = {};
 								scope.activity.total_lite_plan_consultation = 0;
@@ -1340,6 +1340,7 @@ app.directive('activityPage', [
 						end: moment(scope.rangePicker_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 						filter: term_status,
 					}
+					console.log('YAWA');
 					scope.showLoading();
 
 					console.log(scope.dateTerms, 'gawas');
