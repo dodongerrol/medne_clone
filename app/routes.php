@@ -18,7 +18,7 @@ Route::get('test_balance', 'testcontroller@testBalance');
 // Route::get('test_customer_reset_credits_dates', 'testcontroller@testCustomerResetDates');
 // Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
 // test wallet balance for reset credits
-// Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
+Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
 // test date format
 // Route::post('test_format_date', 'testcontroller@testFormatDate');
 // test upload e-claim
