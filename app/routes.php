@@ -11,10 +11,12 @@
 |
 */
 
+// test recalculate balance
+Route::get('test_balance', 'testcontroller@testBalance');
 // test member credit reset dates
-Route::get('test_get_member_reset_dates', 'testcontroller@getMemberResetDateTest');
-Route::get('test_customer_reset_credits_dates', 'testcontroller@testCustomerResetDates');
-Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
+// Route::get('test_get_member_reset_dates', 'testcontroller@getMemberResetDateTest');
+// Route::get('test_customer_reset_credits_dates', 'testcontroller@testCustomerResetDates');
+// Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
 // test wallet balance for reset credits
 // Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
 // test date format

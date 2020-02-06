@@ -659,4 +659,10 @@ class testcontroller extends BaseController {
 		$user_spending_dates = CustomerHelper::getCustomerCreditReset($user_id, $filter, $spending_type);
 		return $user_spending_dates;
 	}
+
+	public function testBalance( )
+	{
+		$input = Input::all();
+		return PlanHelper::reCalculateEmployeeBalance($input['member_id']);
+	}
 }
