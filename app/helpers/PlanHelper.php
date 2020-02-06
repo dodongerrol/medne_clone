@@ -2082,6 +2082,7 @@ class PlanHelper {
 		$deleted_employee_allocation = 0;
 		$total_deduction_credits = 0;
 
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet_id)->get();
 
@@ -2143,6 +2144,10 @@ class PlanHelper {
 			$allocation = $pro_allocation;
 		}
 
+		if($e_wallet->balance != $medical_balance) {
+				DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
+			}
+
 		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $in_network_spent, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
 	}
 
@@ -2160,6 +2165,7 @@ class PlanHelper {
 		$total_deduction_credits = 0;
 
 		$user = DB::table('user')->where('UserID', $user_id)->first();
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$wallet_history = DB::table('wallet_history')
 		->where('wallet_id', $wallet_id)
 		->where('created_at',  '>=', $start)
@@ -2224,6 +2230,10 @@ class PlanHelper {
 			$allocation = $pro_allocation;
 		}
 
+		if($e_wallet->balance != $medical_balance) {
+			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
+		}
+
 		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $in_network_spent, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent, 'get_allocation' => $get_allocation);
 	}
 
@@ -2238,6 +2248,7 @@ class PlanHelper {
 		$deleted_employee_allocation_wellness = 0;
 		$total_deduction_credits_wellness = 0;
 
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet_id)->get();
 
@@ -2297,6 +2308,10 @@ class PlanHelper {
 			$allocation_wellness = $pro_allocation;
 		}
 
+		if($e_wallet->wellness_balance != $wellness_balance) {
+			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
+		}
+
 		return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'total_spent' => $get_allocation_spent_wellness);
 	}
 
@@ -2311,6 +2326,7 @@ class PlanHelper {
 		$deleted_employee_allocation_wellness = 0;
 		$total_deduction_credits_wellness = 0;
 
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wellness_wallet_history')
 											->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
@@ -2373,6 +2389,10 @@ class PlanHelper {
 
 		if($pro_allocation > 0) {
 			$allocation_wellness = $pro_allocation;
+		}
+
+		if($e_wallet->wellness_balance != $wellness_balance) {
+			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
 		}
 
 		return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'total_spent' => $get_allocation_spent_wellness);
