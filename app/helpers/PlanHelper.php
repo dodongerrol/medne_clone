@@ -5389,6 +5389,23 @@ class PlanHelper {
 		}
 	}
 
+	public static function getUserFirstPlanByCreatedAt($user_id)
+	{
+		$plan_user = DB::table('user_plan_type')
+		->where('user_id', $user_id)
+		->first();
+
+		if($plan_user) {
+			if($plan_user->plan_start > $plan_user->created_at) {
+				return $plan_user->created_at;
+			} else {
+				return $plan_user->plan_start;
+			}
+		} else {
+			return false;
+		}
+	}
+
 	public static function memberMedicalAllocatedCreditsFilterByDate($wallet_id, $user_id, $start, $end)
 	{
 		
