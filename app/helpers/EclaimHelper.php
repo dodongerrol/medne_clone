@@ -170,6 +170,7 @@ class EclaimHelper
       $result = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $start_date, $end_date);
     }
     $result['back_date'] = $back_date;
+    $result['currency_type'] = strtoupper($wallet->currency_type);
     return $result;
     return ['start' => $start_date, 'end' => $end_date];
     $user = DB::table('user')->where('UserID', $user_id)->first();
