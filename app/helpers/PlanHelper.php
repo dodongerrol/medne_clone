@@ -5397,7 +5397,7 @@ class PlanHelper {
 
 		if($plan_user) {
 			if($plan_user->plan_start > $plan_user->created_at) {
-				return $plan_user->created_at;
+				return date('Y-m-d', strtotime($plan_user->created_at));
 			} else {
 				return $plan_user->plan_start;
 			}

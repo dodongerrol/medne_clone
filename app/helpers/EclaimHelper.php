@@ -124,7 +124,7 @@ class EclaimHelper
     $start_date = null;
     $end_date = null;
     $back_date = false;
-    $first_plan = PlanHelper::getUserFirstPlanStart($user_id);
+    $first_plan = PlanHelper::getUserFirstPlanByCreatedAt($user_id);
     $reset = DB::table('credit_reset')
                 ->where('id', $user_id)
                 ->where('spending_type', $spending_type)
@@ -133,34 +133,36 @@ class EclaimHelper
                 ->orderBy('created_at', 'asc')
                 ->get();
 
-
-    // $temp_start_date = $reset[0]->date_resetted;
-    $temp_end_date = date('Y-m-d');
-    $temp_end_date = PlanHelper::endDate($temp_end_date);
-    foreach ($reset as $key => $res) {
-      if( strtotime( $date ) > strtotime( $res->date_resetted ) ){
-        $start_date = $res->date_resetted;
-      }
-      if( strtotime( $date ) < strtotime( $res->date_resetted ) ){
-        $end_date = $end_date == null ? $res->date_resetted : $end_date;
-      }
-
-      $back_date = $end_date != null ? true : false;
-
-      // if( strtotime( $res->date_resetted ) > strtotime( $date ) ){
-      //   $end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $res->date_resetted ) ) ));
-      //   $end_date = PlanHelper::endDate($end_date);
-      // }
-
-      if( $key == (sizeof( $reset )-1) ){
-        if( $start_date == null ){
-          $start_date = $wallet->created_at;
+    $start_date = $first_plan;
+    $end_date = date('Y-m-d');
+    if(sizeof($reset) > 0) {
+      $temp_end_date = date('Y-m-d');
+      $temp_end_date = PlanHelper::endDate($temp_end_date);
+      foreach ($reset as $key => $res) {
+        if( strtotime( $date ) > strtotime( $res->date_resetted ) ){
+          $start_date = $res->date_resetted;
         }
-        if( $end_date == null ){
-          $end_date = $temp_end_date;
+        if( strtotime( $date ) < strtotime( $res->date_resetted ) ){
+          $end_date = $end_date == null ? $res->date_resetted : $end_date;
         }
-        $end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $end_date ) ) ));
-        $end_date = PlanHelper::endDate($end_date);
+
+        $back_date = $end_date != null ? true : false;
+
+        // if( strtotime( $res->date_resetted ) > strtotime( $date ) ){
+        //   $end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $res->date_resetted ) ) ));
+        //   $end_date = PlanHelper::endDate($end_date);
+        // }
+
+        if( $key == (sizeof( $reset )-1) ){
+          if( $start_date == null ){
+            $start_date = $wallet->created_at;
+          }
+          if( $end_date == null ){
+            $end_date = $temp_end_date;
+          }
+          $end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $end_date ) ) ));
+          $end_date = PlanHelper::endDate($end_date);
+        }
       }
     }
     
