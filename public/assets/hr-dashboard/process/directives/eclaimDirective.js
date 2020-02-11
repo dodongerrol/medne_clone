@@ -298,11 +298,12 @@
 					if( num == 1 ){
 						list.showReasonInput = false;
 						list.showRemarksInput = true;
+
 						if( !list.claim_amount || list.claim_amount == 0 ){
 							if( !list.cap_amount || list.cap_amount == 0 || list.amount < list.cap_amount ){
 								list.approve_claim_amount = list.amount;
 							}else{
-								list.approve_claim_amount = list.cap_amount;
+								list.approve_claim_amount = parseFloat(list.cap_amount ).toFixed(2);
 							}
 						}else{
 							list.approve_claim_amount = list.claim_amount;
