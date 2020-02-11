@@ -132,9 +132,7 @@ class EclaimHelper
                 // ->where('date_resetted', '<=', $date)
                 ->orderBy('created_at', 'asc')
                 ->get();
-
-    $start_date = $first_plan;
-    $end_date = date('Y-m-d');
+    
     if(sizeof($reset) > 0) {
       $temp_end_date = date('Y-m-d');
       $temp_end_date = PlanHelper::endDate($temp_end_date);
@@ -164,6 +162,9 @@ class EclaimHelper
           $end_date = PlanHelper::endDate($end_date);
         }
       }
+    }else{
+      $start_date = $first_plan;
+      $end_date = date('Y-m-d');
     }
     
     if($spending_type == "medical") {
