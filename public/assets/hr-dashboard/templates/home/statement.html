@@ -163,13 +163,14 @@
 					</div>
 					<div class="col-md-6 statement-buttons text-center">
 						<button class="btn-in-network" ng-class="{'active':net_active == 'inNetWorkTable'}" ng-click="toggleNetwork('inNetWorkTable')">
-							IN-NETWORK<br>
+							PANEL<br>
+							<!-- IN-NETWORK<br> -->
 							TRANSACTIONS
 						</button>
 
 						<button class="btn-out-network" ng-class="{'active':net_active == 'outNetWorkTable'}" ng-click="toggleNetwork('outNetWorkTable')">
 							E-CLAIM TRANSACTIONS<br>
-							(OUT-OF-NETWORK)
+							(NON-PANEL)
 						</button>
 					</div>
 					<div class="col-md-3 text-right">
@@ -296,7 +297,8 @@
 
 								<div class="col-md-12">
 									<div class="charges-row">
-										<p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right">
+										<!-- <p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right"> -->
+										<p class="color-black3 weight-700 no-margin">Panel Spending Account Usage <span class="pull-right">
 											<span ng-bind="overview.statement.currency_type" class="currency-type">SGD</span> 
 											<span ng-bind="overview.statement.statement_in_network_amount"></span></span></p>
 										<p class="font-12 color-black3 weight-700">Statement for <span ng-bind="monthStart"></span> - <span ng-bind="monthEnd"></span> <span ng-bind="year"></span></p>
@@ -528,7 +530,8 @@
 															<p><label>PAYMENT TYPE</label></p>
 														</div>
 														<div class="desc-wrapper">
-															<p><span class="color-gray2" ng-bind="list.type">In-Network</span></p>
+															<p><span class="color-gray2" ng-bind="list.type">Panel</span></p>
+															<!-- <p><span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
 														</div>
 													</div>
 													<!-- 
@@ -680,7 +683,7 @@
 													<p><label>CLAIM AMOUNT</label> <span class="color-gray2" >
 														<span ng-bind="list.currency_type" class="currency-type">SGD</span> 
 														<span ng-bind="list.amount">0.00</span></span></p>
-													<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
+													<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">Plan</span></p>
 													<!-- <p><label>TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
 													<!-- <p><label>MEMBER</label> <span class="color-gray2" ng-bind="list.member">Filbert Tan</span></p> -->
 												</div>

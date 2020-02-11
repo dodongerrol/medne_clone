@@ -2,7 +2,7 @@
 <html><head>
 		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Spendig Invoice Out-Of-Network Transactions</title>
+		<title>Spendig Invoice Non-Panel Transactions</title>
 		<style type="text/css">
 			@page { margin: 10px; }
 
