@@ -2273,7 +2273,7 @@ class BenefitsDashboardController extends \BaseController {
 		$currency_type = $company_credits->currency_type;
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
-		
+
 		if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
 			$user_spending_dates_medical = CustomerHelper::getCustomerCreditReset($customer_id, $filter, 'medical');
 			$user_spending_dates_wellness = CustomerHelper::getCustomerCreditReset($customer_id, $filter, 'wellness');
@@ -2286,7 +2286,6 @@ class BenefitsDashboardController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->first();
 
-			// if($customer_credit_reset_medical) {
 			if($user_spending_dates_medical['id']) {
 				$temp_total_allocation = DB::table('customer_credit_logs')
 				->where('customer_credits_id', $company_credits->customer_credits_id)
@@ -2318,21 +2317,7 @@ class BenefitsDashboardController extends \BaseController {
 				->where('created_at', '<=', $user_spending_dates_medical['end'])
 				->sum('credit');
 			}
-			// } else {
-			// 	$temp_total_allocation = DB::table('customer_credits')
-			// 	->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-			// 	->where('customer_credits.customer_id', $customer_id)
-			// 	->where('customer_credit_logs.logs', 'admin_added_credits')
-			// 	->sum('customer_credit_logs.credit');
-
-			// 	$temp_total_deduction = DB::table('customer_credits')
-			// 	->join('customer_credit_logs', 'customer_credit_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-			// 	->where('customer_credits.customer_id', $customer_id)
-			// 	->where('customer_credit_logs.logs', 'admin_deducted_credits')
-			// 	->sum('customer_credit_logs.credit');
-			// }
 			$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
-
 				// if($plan->account_type != "enterprise_plan") {
 				    // check if customer has a credit reset in medical
 			$customer_credit_reset_wellness = DB::table('credit_reset')
@@ -2396,7 +2381,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		}
 
-		$user_allocated = PlanHelper::getUnlimitedCorporateUserByAllocated($account_link->corporate_id, $customer_id);
+		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = $spending_account_settings->medical_spending_start_date;
+		$user_allocated = PlanHelper::getCorporateUserByEntitlementDates($account_link->corporate_id, $customer_id, $start);
 		$get_allocation_spent = 0;
 		$get_allocation_spent_wellness = 0;
 

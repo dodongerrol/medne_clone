@@ -657,7 +657,7 @@ class CronController extends \BaseController {
             if((int)$removed_employee->has_no_user == 0) {
                 $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
                 // set company members removed to 1
-                if($user_dat->Active == 1) {
+                if($user_dat && $user_dat->Active == 1) {
                     $active_plan = DB::table('user_plan_history')->where('user_id', $removed_employee->user_id)->orderBy('date', 'desc')->first();
                     $user_plan_history_data = array(
                         'user_id'       => $removed_employee->user_id,

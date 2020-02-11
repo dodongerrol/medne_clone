@@ -433,12 +433,12 @@ class PlanHelper {
 
 		if($wallet_reset) {
 			$wallet_history_id = $wallet_reset->wallet_history_id;
-                // get all medical credits transactions from transaction history
+      // get all medical credits transactions from transaction history
 			$e_claim_spent = DB::table('wallet_history')
 			->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
 			->where('wallet_history.wallet_id', $wallet->wallet_id)
 			->where('wallet_history.where_spend', 'e_claim_transaction')
-                            // ->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+      ->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
 			->where('wallet_history.created_at', '>=', $wallet_reset->date_resetted)
 			->sum('credit');
 
@@ -447,7 +447,7 @@ class PlanHelper {
 			->where('wallet_history.wallet_id', $wallet->wallet_id)
 			->where('wallet_history.wallet_id', $wallet->wallet_id)
 			->where('wallet_history.where_spend', 'in_network_transaction')
-							// ->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+			->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
 			->where('wallet_history.created_at', '>=', $wallet_reset->date_resetted)
 			->sum('credit');
 
@@ -455,7 +455,7 @@ class PlanHelper {
 			->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
 			->where('wallet_history.wallet_id', $wallet->wallet_id)
 			->where('wallet_history.where_spend', 'credits_back_from_in_network')
-							// ->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
+			->where('wallet_history.wallet_history_id', '>=', $wallet_history_id)
 			->where('wallet_history.created_at', '>=', $wallet_reset->date_resetted)
 			->sum('credit');
 			$in_network_spent = $in_network_temp_spent - $credits_back;
@@ -464,7 +464,7 @@ class PlanHelper {
 			->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
 			->where('e_wallet.UserID', $user_id)
 			->whereIn('wallet_history.logs', ['added_by_hr'])
-			// ->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
+			->where('wallet_history.wallet_history_id',  '>=', $wallet_history_id)
 			->where('wallet_history.created_at', '>=', $wallet_reset->date_resetted)
 			->sum('wallet_history.credit');
 
@@ -518,8 +518,6 @@ class PlanHelper {
 
 		$allocation = $temp_allocation - $deducted_allocation - $pro_allocation_deduction;
 		$current_spending = $in_network_spent + $e_claim_spent;
-
-		// $current_balance = $allocation - $current_spending;
 
 		$pro_allocation = DB::table('wallet_history')
 		->where('wallet_id', $wallet->wallet_id)
@@ -2082,6 +2080,7 @@ class PlanHelper {
 		$deleted_employee_allocation = 0;
 		$total_deduction_credits = 0;
 
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet_id)->get();
 
@@ -2143,6 +2142,10 @@ class PlanHelper {
 			$allocation = $pro_allocation;
 		}
 
+		if($e_wallet->balance != $medical_balance) {
+				DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
+			}
+
 		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $in_network_spent, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent);
 	}
 
@@ -2160,6 +2163,7 @@ class PlanHelper {
 		$total_deduction_credits = 0;
 
 		$user = DB::table('user')->where('UserID', $user_id)->first();
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$wallet_history = DB::table('wallet_history')
 		->where('wallet_id', $wallet_id)
 		->where('created_at',  '>=', $start)
@@ -2224,6 +2228,10 @@ class PlanHelper {
 			$allocation = $pro_allocation;
 		}
 
+		if($e_wallet->balance != $medical_balance) {
+			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
+		}
+
 		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $in_network_spent, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent, 'get_allocation' => $get_allocation);
 	}
 
@@ -2238,6 +2246,7 @@ class PlanHelper {
 		$deleted_employee_allocation_wellness = 0;
 		$total_deduction_credits_wellness = 0;
 
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wellness_wallet_history')->where('wallet_id', $wallet_id)->get();
 
@@ -2297,6 +2306,10 @@ class PlanHelper {
 			$allocation_wellness = $pro_allocation;
 		}
 
+		if($e_wallet->wellness_balance != $wellness_balance) {
+			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
+		}
+
 		return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'total_spent' => $get_allocation_spent_wellness);
 	}
 
@@ -2311,6 +2324,7 @@ class PlanHelper {
 		$deleted_employee_allocation_wellness = 0;
 		$total_deduction_credits_wellness = 0;
 
+		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wellness_wallet_history')
 											->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
@@ -2373,6 +2387,10 @@ class PlanHelper {
 
 		if($pro_allocation > 0) {
 			$allocation_wellness = $pro_allocation;
+		}
+
+		if($e_wallet->wellness_balance != $wellness_balance) {
+			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
 		}
 
 		return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'total_spent' => $get_allocation_spent_wellness);
@@ -2533,11 +2551,28 @@ class PlanHelper {
 			// return $users_allocation;
 	}
 
+	public static function getCorporateUserByEntitlementDates($corporate_id, $customer_id, $start) 
+	{
+		$users_medical = [];
+
+		$users_medical_temp = DB::table('corporate_members')
+									->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+									// ->join('employee_wallet_entitlement', 'employee_wallet_entitlement.member_id', '=', 'user.UserID')
+									// ->where('employee_wallet_entitlement.medical_usage_date', '>=', $start)
+									->where('corporate_members.corporate_id', $corporate_id)
+									->where('user.Active', 1)
+									->groupBy('user.UserID')
+									->get();
+
+		foreach ($users_medical_temp as $key => $medical) {
+			$users_medical[] = $medical->user_id;
+		}
+		return $users_medical;
+	}
+
 	public static function getUnlimitedCorporateUserByAllocated($corporate_id, $customer_id) 
 	{
 		$users_medical = [];
-		$users_wellness = [];
-
 		$users_medical_temp = DB::table('corporate_members')
 														->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 														->where('corporate_members.corporate_id', $corporate_id)
@@ -5349,6 +5384,23 @@ class PlanHelper {
 
 		if($plan_user) {
 			return $plan_user->plan_start;
+		} else {
+			return false;
+		}
+	}
+
+	public static function getUserFirstPlanByCreatedAt($user_id)
+	{
+		$plan_user = DB::table('user_plan_type')
+		->where('user_id', $user_id)
+		->first();
+
+		if($plan_user) {
+			if($plan_user->plan_start > $plan_user->created_at) {
+				return date('Y-m-d', strtotime($plan_user->created_at));
+			} else {
+				return $plan_user->plan_start;
+			}
 		} else {
 			return false;
 		}
