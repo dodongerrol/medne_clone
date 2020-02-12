@@ -9270,7 +9270,7 @@ public function downloadEclaimCsv( )
 					'SPENDING ACCOUNT'	=> ucwords($res->spending_type),
 					'CLAIM AMOUNT'			=> number_format($res->claim_amount, 2),
 					'TOTAL AMOUNT'			=> number_format($res->amount, 2),
-					'TYPE'							=> 'E-Claim',
+					'TYPE'							=> 'Non-Panel',
 					'STATUS'						=> $status_text,
 					'APPROVED DATE'			=> $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 					'REJECTED DATE'			=> $rejected_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
@@ -9607,7 +9607,7 @@ public function downloadEclaimCsv( )
 									'MEDICINE & TREATMENT' => number_format($procedure_cost, 2),
 									'CONSULTATION'		=> (int)$trans->lite_plan_enabled == 1 ?number_format($trans->consultation_fees, 2) : "0.00",
 									'TOTAL AMOUNT'		=> number_format($total_amount, 2),
-									'TYPE'						=> 'In-Network',
+									'TYPE'						=> 'Panel',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
 							} else {
@@ -9621,7 +9621,7 @@ public function downloadEclaimCsv( )
 									'MEDICINE & TREATMENT' => "",
 									'CONSULTATION'		=> "",
 									'TOTAL AMOUNT'		=> number_format($total_amount, 2),
-									'TYPE'						=> 'In-Network',
+									'TYPE'						=> 'Panel',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
 							}
@@ -9642,17 +9642,17 @@ public function downloadEclaimCsv( )
 	  	});
 
 	  	return \Excel::create('Transactions - '.$start.' - '.$input['end'], function($excel) use($in_network_transactions, $container) {
-	      $excel->sheet('In-Network', function($sheet) use($in_network_transactions) {
+	      $excel->sheet('Panel', function($sheet) use($in_network_transactions) {
 	          $sheet->fromArray( $in_network_transactions );
 	      });
 
-	      $excel->sheet('E-Claim', function($sheet) use($container) {
+	      $excel->sheet('Non-Panel', function($sheet) use($container) {
 	          $sheet->fromArray( $container );
 	      });
 	    })->export('xls');
     } else {
-    	return \Excel::create('E-Claim Transactions - '.$start.' - '.$input['end'], function($excel) use($container) {
-	      $excel->sheet('E-Claim', function($sheet) use($container) {
+    	return \Excel::create('Non-Panel Transactions - '.$start.' - '.$input['end'], function($excel) use($container) {
+	      $excel->sheet('Non-Panel', function($sheet) use($container) {
 	          $sheet->fromArray( $container );
 	      });
 	    })->export('xls');
