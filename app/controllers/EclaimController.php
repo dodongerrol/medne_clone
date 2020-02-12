@@ -6381,13 +6381,14 @@ public function hrEclaimActivity( )
 		->where('created_at', '<=', $end)
 		->where('status', 0)
 		->sum('amount');
-		$total_e_claim_approved +=  DB::table('e_claim')
-		->whereIn('user_id', $ids)
-		->where('spending_type', $spending_type)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
-		->where('status', 1)
-		->sum('amount');
+		$total_e_claim_approved = 0;
+		// $total_e_claim_approved +=  DB::table('e_claim')
+		// ->whereIn('user_id', $ids)
+		// ->where('spending_type', $spending_type)
+		// ->where('created_at', '>=', $start)
+		// ->where('created_at', '<=', $end)
+		// ->where('status', 1)
+		// ->sum('amount');
 		$total_e_claim_rejected +=  DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -6404,6 +6405,13 @@ public function hrEclaimActivity( )
 		->orderBy('created_at', 'desc')
 		->get();
 
+		if($spending_type == 'medical') {
+			$table_wallet_history = 'wallet_history';
+		} else {
+			$table_wallet_history = 'wellness_wallet_history';
+		}
+
+
 		foreach($e_claim_result as $key => $res) {
 			$approved_status = FALSE;
 			$rejected_status = FALSE;
@@ -6413,7 +6421,18 @@ public function hrEclaimActivity( )
 				$pending += $res->amount;
 			} else if($res->status == 1) {
 				$status_text = 'Approved';
-				$e_claim_spent += $res->amount;
+				$history = DB::table($table_wallet_history)
+							->where('logs', 'deducted_from_e_claim')
+							->where('where_spend', 'e_claim_transaction')
+							->where('id', $res->e_claim_id)
+							->first();
+
+				if($history) {
+					$e_claim_spent += $history->credit;
+					$total_e_claim_approved += $history->credit;
+				} else {
+					$e_claim_spent += $res->amount;
+				}
 			} else if($res->status == 2) {
 				$status_text = 'Rejected';
 				$rejected += $res->amount;
