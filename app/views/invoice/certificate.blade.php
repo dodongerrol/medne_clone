@@ -158,7 +158,7 @@
     	</table>
       
     	<div class="copyright text-center">
-    		<h5 style="color: #999;"><b>&copy; 2019 Mednefits. All rights reserved</b></h5>
+    		<h5 style="color: #999;"><b>&copy; 2020 Mednefits. All rights reserved</b></h5>
     	</div>
     	
     </div>

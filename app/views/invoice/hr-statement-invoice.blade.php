@@ -234,7 +234,7 @@
             <img class="stamp pull-right" style="margin-top: 10%" src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/Mednefits_Company_Stamp-01.png">
           </div>
           <div class="text-center col-md-12" style="margin-top: 50px;">
-            <h5 style="color: #999;"><b>&copy; 2019 Mednefits. All rights reserved</b></h5>
+            <h5 style="color: #999;"><b>&copy; 2020 Mednefits. All rights reserved</b></h5>
           </div>
         </div>
       </div>
