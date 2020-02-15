@@ -391,8 +391,14 @@ class DoctorWidgetController extends \BaseController {
         Session::forget('se_otp_code');
         Session::put('se_otp_code', $otp_code);
 
+        $new_message = $otp_code.' is your Mednefits verification code.';
         // try {
-        return StringHelper::TestSendOTPSMS($PhoneOnly,$otp_code);
+        $data = array(
+        	'phone' => $PhoneOnly,
+        	'message'	=> $new_message
+        );
+        return SmsHelper::sendCommzSms($data);
+        // return StringHelper::TestSendOTPSMS($PhoneOnly,$otp_code);
         // } catch (Exception $e) { 
         // 	return var_dump($e);
         // }
