@@ -1744,7 +1744,7 @@ class BenefitsDashboardController extends \BaseController {
 					$customer_active_plan_id = NULL;
 				}
 
-				if($data_enrollee->credits > $customer->balance) {
+				// if($data_enrollee->credits > $customer->balance) {
 					$customer_credits_result = DB::table('customer_credits')->where('customer_id', $result->customer_buy_start_id)->increment("balance", $credits);
 					if($customer_credits_result) {
 						// credit log for wellness
@@ -1760,7 +1760,7 @@ class BenefitsDashboardController extends \BaseController {
 						$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
 					}
 					$customer = DB::table('customer_credits')->where('customer_id', $result->customer_buy_start_id)->first();
-				}
+				// }
 				// medical credits
 				// give credits
 				$wallet_class = new Wallet();
@@ -1799,7 +1799,7 @@ class BenefitsDashboardController extends \BaseController {
 
 			if($data_enrollee->wellness_credits > 0) {
 				// wellness credits
-				if($customer->wellness_credits >= $data_enrollee->wellness_credits) {
+				// if($customer->wellness_credits >= $data_enrollee->wellness_credits) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($result->customer_buy_start_id, $data_enrollee->wellness_credits, "wellness");
 
 					if($result_customer_active_plan) {
@@ -1836,7 +1836,7 @@ class BenefitsDashboardController extends \BaseController {
 						$customer_credits_logs = new CustomerWellnessCreditLogs();
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 					}
-				}
+				// }
 			}
 
 
