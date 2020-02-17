@@ -235,5 +235,21 @@ public static function getClinicTypeImage($clinic_type)
     $dataArray['price'] = $service->Price;
     return $dataArray;
   }
+
+  public static function getServiceDetails($id)
+  {
+    $dataArray = array();
+    $service = DB::table('clinic_procedure')->where('ProcedureID', $id)->first();
+    if($service) {
+      $dataArray['procedureid'] = $service->ProcedureID;
+      $dataArray['name'] = $service->Name;
+      $dataArray['duration'] = $service->Duration.' '.$service->Duration_Format;
+      $dataArray['price'] = $service->Price;
+    } else {
+      return false;
+    }
+    
+    return $dataArray;
+  }
 }
 ?>
