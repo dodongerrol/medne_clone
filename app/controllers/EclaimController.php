@@ -4772,7 +4772,7 @@ public function getHrActivity( )
 				$total_allocation += 0;
 			}
 		}
-            // get e claim
+    // get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -4792,7 +4792,7 @@ public function getHrActivity( )
 		->orderBy('date_of_transaction', 'desc')
 		->get();
 
-        // in-network transactions
+    // in-network transactions
 		foreach ($transactions as $key => $trans) {
 			$consultation_cash = false;
 			$consultation_credits = false;
@@ -4801,8 +4801,7 @@ public function getHrActivity( )
 			$consultation = 0;
 
 			if($trans) {
-
-				if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
+				if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
 					if((int)$trans->deleted == 0) {
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
@@ -4812,21 +4811,19 @@ public function getHrActivity( )
 						$total_in_network_transactions++;
 
 						if($trans->lite_plan_enabled == 1) {
-
-
 							$logs_lite_plan = DB::table($table_wallet_history)
 							->where('logs', 'deducted_from_mobile_payment')
 							->where('lite_plan_enabled', 1)
 							->where('id', $trans->transaction_id)
 							->first();
 
-							if($logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === 0 || $logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
+							if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
 								$in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
 								$total_lite_plan_consultation += floatval($trans->consultation_fees);
 								$consultation = floatval($logs_lite_plan->credit);
-							} else if($logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 1 || $logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
+							} else if($logs_lite_plan && $trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits == 1){
 								$in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
@@ -4837,7 +4834,7 @@ public function getHrActivity( )
 									$total_lite_plan_consultation += floatval($trans->consultation_fees);
 									$consultation = floatval($logs_lite_plan->credit);
 								}
-							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0 || $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "0"){
+							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0){
 								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 									$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
 									$consultation = floatval($trans->consultation_fees) * $trans->currency_amount;;
@@ -4873,10 +4870,10 @@ public function getHrActivity( )
 					$procedure_temp = "";
 					$procedure = "";
 
-	                        // get services
+	         // get services
 					if((int)$trans->multiple_service_selection == 1)
 					{
-	                            // get multiple service
+	          // get multiple service
 						$service_lists = DB::table('transaction_services')
 						->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
 						->where('transaction_services.transaction_id', $trans->transaction_id)
@@ -4899,46 +4896,44 @@ public function getHrActivity( )
 							$procedure = ucwords($service_lists->Name);
 							$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
 						} else {
-	                                // $procedure = "";
 							$clinic_name = ucwords($clinic_type->Name);
 						}
 					}
 
-	                        // check if there is a receipt image
+	        // check if there is a receipt image
 					$receipts = DB::table('user_image_receipt')
 					->where('transaction_id', $trans->transaction_id)
 					->get();
 
 					$doc_files = [];
-					if(sizeof($receipts) > 0) {
-						foreach ($receipts as $key => $doc) {
-							if($doc->type == "pdf" || $doc->type == "xls") {
-								if(StringHelper::Deployment()==1){
-									$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
-								} else {
-									$fil = url('').'/receipts/'.$doc->file;
-								}
-							} else if($doc->type == "image") {
-								// $fil = FileHelper::formatImageAutoQuality($doc->file);
-								$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
-							}
+					// if(sizeof($receipts) > 0) {
+					// 	foreach ($receipts as $key => $doc) {
+					// 		if($doc->type == "pdf" || $doc->type == "xls") {
+					// 			if(StringHelper::Deployment()==1){
+					// 				$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
+					// 			} else {
+					// 				$fil = url('').'/receipts/'.$doc->file;
+					// 			}
+					// 		} else if($doc->type == "image") {
+					// 			// $fil = FileHelper::formatImageAutoQuality($doc->file);
+					// 			$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
+					// 		}
 
-							$temp_doc = array(
-								'tranasaction_doc_id'    => $doc->image_receipt_id,
-								'transaction_id'            => $doc->transaction_id,
-								'file'                      => $fil,
-								'file_type'             => $doc->type
-							);
+					// 		$temp_doc = array(
+					// 			'tranasaction_doc_id'    => $doc->image_receipt_id,
+					// 			'transaction_id'            => $doc->transaction_id,
+					// 			'file'                      => $fil,
+					// 			'file_type'             => $doc->type
+					// 		);
 
-							array_push($doc_files, $temp_doc);
-						}
-						$receipt_status = TRUE;
-					} else {
+					// 		array_push($doc_files, $temp_doc);
+					// 	}
+					// 	$receipt_status = TRUE;
+					// } else {
 						$receipt_status = FALSE;
-					}
+					// }
 
-					if($trans->health_provider_done == 1 || $trans->health_provider_done == "1") {
-	                            // $receipt_status = TRUE;
+					if((int)$trans->health_provider_done == 1) {
 						$health_provider_status = TRUE;
 					} else {
 						$health_provider_status = FALSE;
@@ -5256,20 +5251,8 @@ public function getHrActivity( )
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
-				// if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
-				// 	$e_claim_pending += $res->amount * $res->currency_value;
-				// } else {
-					$e_claim_pending += $res->amount;
-				// }
+				$e_claim_pending += $res->amount;
 			} else if($res->status == 1) {
-				$status_text = 'Approved';
-				// if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
-				// 	$e_claim_spent += $res->amount * $res->currency_value;
-				// 	$total_e_claim_spent += $res->amount * $res->currency_value;
-				// } else {
-					// $e_claim_spent += $res->amount;
-					// $total_e_claim_spent += $res->amount;
-				// }
 				$status_text = 'Approved';
 				$e_claim_data = DB::table($table_wallet_history)
 				->where('id', $res->e_claim_id)
@@ -5291,12 +5274,10 @@ public function getHrActivity( )
 				$status_text = 'Pending';
 			}
 
-			// if(date('Y-m-d', strtotime($res->created_at)) >= $start && date('Y-m-d', strtotime($res->created_at)) <= $end) {
 			if($res->status == 1) {
-
 				$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-                        // check user if it is spouse or dependent
+        // check user if it is spouse or dependent
 				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -5401,6 +5382,7 @@ public function getHrActivity( )
 		'in_network_spent'  => number_format($in_network_spent, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		'in_network_transactions' => $transaction_details,
+		'in_network_transactions_size' => sizeof($transaction_details),
 		'in_network_spending_format_number' => $in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		'e_claim_transactions'	=> $e_claim,

@@ -2114,7 +2114,11 @@ $default_service = null;
 if($clinic_type->Name == "GP" && sizeof($returnObject->data['clinic_procedures']) == 0) {
   $default_service = ClinicHelper::getDefaultService( );
 } else if($clinic_type->Name != "GP" && sizeof($returnObject->data['clinic_procedures']) == 0){
-  $service = DB::table('clinic_procedure')->where('ClinicID', $clinic->ClinicID)->orderBy('Position', 'asc')->first();
+  $service = DB::table('clinic_procedure')
+              ->where('ClinicID', $clinic->ClinicID)
+              ->where('Active', 1)
+              ->orderBy('Position', 'asc')
+              ->first();
 
   if($service) {
     $service_result = ClinicHelper::getServiceDetails($service->ProcedureID);
