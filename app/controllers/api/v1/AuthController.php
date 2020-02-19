@@ -2111,8 +2111,25 @@ $returnObject->data = $jsonArray;
 $returnObject->data['clinic_procedures'] = ArrayHelperMobile::ClinicProcedures($procedures);
 $default_service = null;
 
-if(sizeof($returnObject->data['clinic_procedures']) == 0) {
+if($clinic_type->Name == "GP" && sizeof($returnObject->data['clinic_procedures']) == 0) {
   $default_service = ClinicHelper::getDefaultService( );
+} else if($clinic_type->Name != "GP" && sizeof($returnObject->data['clinic_procedures']) == 0){
+  $service = DB::table('clinic_procedure')
+              ->where('ClinicID', $clinic->ClinicID)
+              ->where('Active', 1)
+              ->orderBy('Position', 'asc')
+              ->first();
+
+  if($service) {
+    $service_result = ClinicHelper::getServiceDetails($service->ProcedureID);
+    if($service_result) {
+      $default_service = $service_result;
+    } else {
+      $default_service = ClinicHelper::getDefaultService( );
+    }
+  } else {
+    $default_service = ClinicHelper::getDefaultService( );
+  }
 }
 // get transaction consultation
 $returnObject->data['default_service'] = $default_service;
