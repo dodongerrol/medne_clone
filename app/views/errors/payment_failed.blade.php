@@ -87,6 +87,7 @@
 											<h4 class="color-blue">We're here to help.</h4>
 											<p class="color-dark-grey no-margin-bottom">You may ring us</p>
 											<p class="color-gray no-margin">+65 6254 7889</p>
+											<p class="color-gray no-margin">+60 3789 01770</p>
 											<p class="color-gray no-margin">Mon - Fri 10:00 to 19:00</p>
 											<p class="color-dark-grey no-margin-bottom">Drop us a note, anytime</p>
 											<p class="color-gray no-margin">happiness@mednefits.com</p>
