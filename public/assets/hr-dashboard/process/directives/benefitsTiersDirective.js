@@ -212,12 +212,17 @@ app.directive('benefitsTiersDirective', [
 					// 	// $state.go('benefits-dashboard');
 					// } 
 					if (scope.isEnrollmentOptions == true) {
-						if (scope.spending_account_status.medical == false || scope.spending_account_status.wellness == false) {
-							// scope.isTierSummary = false;
-							scope.isEnrollmentOptions = false;
-							$state.go('benefits-dashboard');
-						} else {
-							$state.go('enrollment-options');
+						// if (scope.spending_account_status.medical == false || scope.spending_account_status.wellness == false) {
+						// 	// scope.isTierSummary = false;
+						// 	scope.isEnrollmentOptions = false;
+						// 	$state.go('benefits-dashboard');
+						// } else {
+						// 	$state.go('enrollment-options');
+						// }
+						if( localStorage.getItem('fromEmpOverview') == true || localStorage.getItem('fromEmpOverview') == 'true' ){
+							$state.go( 'employee-overview' );
+						}else{
+							$state.go( 'benefits-dashboard' );
 						}
 						// $state.go('benefits-dashboard');
 					} else if (scope.isExcel == true || scope.isWebInput == true) {
