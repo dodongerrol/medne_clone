@@ -33,22 +33,13 @@ class DependentController extends \BaseController {
 		set_time_limit(10000);
 		$input = Input::all();
 		$customer_id = PlanHelper::getCusomerIdToken();
-		// $customer_id = $input['customer_id'];
-		// $rules = array(
-		// 	// 'file' => 'required|mimes:xlsx,xls,vnd.openxmlformats-officedocument.spreadsheetml.sheet|max:200000'
-		// 	'file' => 'required|max:50000|mimes:application/csv,application/excel, application/vnd.ms-excel, application/vnd.msexcel, text/csv, text/anytext, text/plain, text/x-c, text/comma-separated-values, inode/x-empty,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-		// );
 
 		if(Input::hasFile('file'))
 		{
-			// return $file->getClientOriginalExtension();
-			// $validator = \Validator::make(Input::all(), $rules);
-			// if($validator->passes()){
 			$file = Input::file('file');
 
 			$extensions = array("xls","xlsx","xlm","xla","xlc","xlt","xlw");
 			$result = $file->getClientOriginalExtension();
-				// return array('res' => $result);
 			if(!in_array($result,$extensions)){
 				return array('status' => false, 'message' => 'Invalid File.');
 			}
@@ -63,7 +54,6 @@ class DependentController extends \BaseController {
 			$dependents_count = count($row_keys) / 5;
 
 			$fullname = false;
-				// $nric = false;
 			$dob = false;
 			$email = false;
 			$mobile = false;
@@ -99,7 +89,6 @@ class DependentController extends \BaseController {
 				);
 			}
 			
-				// return $data_array;
 			foreach ($data_array as $key => $row) {
 				$dependents = [];
 				$temp_dependents = [];
@@ -133,15 +122,11 @@ class DependentController extends \BaseController {
 					}
 
 					$row['dependents'] = $dependents;
-						// if($row->last_name == null) {
-						// 	$row['last_name'] = $row->first_name;
-						// }
 					array_push($temp_users, $row);
 				}
 			}
 			
-				// return $temp_users;
-		        // validate all first
+		  // validate all first
 			if(sizeof($temp_users) == 0) {
 				return array('satus' => false, 'message' => 'Employee/s is required.');
 			}
@@ -236,8 +221,7 @@ class DependentController extends \BaseController {
 					}
 				}
 			}
-				// return $temp_users;
-				// get active plan id for member
+			// get active plan id for member
 			$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 			$customer_active_plan = DB::table('customer_active_plan')
 			->where('customer_active_plan_id', $customer_active_plan_id)
@@ -247,14 +231,13 @@ class DependentController extends \BaseController {
 			$temp_enroll = new TempEnrollment();
 			$temp_dependent_enroll = new DependentTempEnrollment();
 
-		        // check employee and dependents validation
+		  // check employee and dependents validation
 			foreach ($temp_users as $key => $user) {
 				$credit = 0;
 				$user['email'] = isset($user['work_email']) ? trim($user['work_email']) : null;
 				$user['mobile'] = isset($user['mobile_number']) ? trim($user['mobile_number']) : trim($user['mobile']);
 				$user['job_title'] = 'Other';
 				$user['fullname'] = $user['full_name'];
-					// $user['nric'] = isset($user['nricfin']) ? trim($user['nricfin']) : null;
 				
 				if(isset($user['date_of_birth_ddmmyyyy'])) {
 					$dob = $user['date_of_birth_ddmmyyyy'];
@@ -263,10 +246,8 @@ class DependentController extends \BaseController {
 				}
 				$dob_format = PlanHelper::validateDate($dob, 'd/m/Y');
 				if($dob_format) {
-						// $user['dob'] = date('d/m/Y', strtotime($dob));
 					$user['dob'] = $dob;
 				} else {
-						// $user['dob'] = $dob;
 					$user['dob'] = date('d/m/Y', strtotime($dob));
 				}
 
@@ -278,15 +259,13 @@ class DependentController extends \BaseController {
 
 				$start_date_format = PlanHelper::validateDate($start_date, 'd/m/Y');
 				if($start_date_format) {
-						// $user['plan_start'] = date('d/m/Y', strtotime($start_date));
 					$user['plan_start'] = $start_date;
 				} else {
-						// $user['plan_start'] = $start_date;
 					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
 				}
 				
-				$user['medical_credits'] = !isset($user['medical_entitlementlimit']) ? 0 : $user['medical_entitlementlimit'];
-				$user['wellness_credits'] = !isset($user['wellness_entitlementlimit']) ? 0 : $user['wellness_entitlementlimit'];
+				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
+				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
@@ -301,10 +280,10 @@ class DependentController extends \BaseController {
 					'mobile'				=> trim($mobile),
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
-					'credits'				=> !isset($user['medical_entitlementlimit']) || $user['medical_entitlementlimit'] == null ? 0 : $user['medical_entitlementlimit'],
-					'medical_balance_entitlement'				=> !isset($user['medical_entitlement_balance']) || $user['medical_entitlement_balance'] == null ? 0 : $user['medical_entitlement_balance'],
-					'wellness_credits'		=> !isset($user['wellness_entitlementlimit']) || $user['wellness_entitlementlimit'] == null ? 0 : $user['wellness_entitlementlimit'],
-					'wellness_balance_entitlement'				=> !isset($user['wellness_entitlement_balance']) || $user['wellness_entitlement_balance'] == null ? 0 : $user['wellness_entitlement_balance'],
+					'credits'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
+					'medical_balance_entitlement'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
+					'wellness_credits'		=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
+					'wellness_balance_entitlement'				=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
 					'postal_code'			=> trim($user['postal_code']),
 					'start_date'			=> $user['plan_start'],
 					'error_logs'			=> serialize($error_member_logs)
@@ -318,7 +297,6 @@ class DependentController extends \BaseController {
 								$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
 								$dependent['plan_start'] = $plan_start->format('Y-m-d');
 								$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
-									// $dependent['nric'] = trim($dependent['nricfin']);
 								$dependent['relationship'] = strtolower($dependent['relationship']);
 								$dependent['fullname'] = $dependent['full_name'];
 								$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($dependent);
@@ -341,15 +319,11 @@ class DependentController extends \BaseController {
 									'dependent_plan_id'		=> $depedent_plan_id,
 									'plan_tier_id'			=> $plan_tier_id,
 									'first_name'			=> trim($dependent['fullname']),
-										// 'last_name'				=> trim($dependent['last_name']),
-										// 'nric'					=> $dependent['nric'],
 									'dob'					=> $dependent['dob'],
 									'plan_start'			=> $dependent['plan_start'],
 									'relationship'			=> trim($dependent['relationship']),
 									'error_logs'			=> serialize($error_dependent_logs)
 								);
-									// return $temp_enrollment_dependent;
-									// array($format, $temp_enrollment_dependent)
 								$temp_dependent_enroll->createEnrollment($temp_enrollment_dependent);
 							}
 						}
@@ -367,9 +341,6 @@ class DependentController extends \BaseController {
 			}
 
 			return array('status' => true);
-			// }
-
-			return array('status' => false , 'message' => "invalid file");
 		}
 
 		return array('status' => false, 'message' => 'Please provide the Excel File for Enrollment.');
