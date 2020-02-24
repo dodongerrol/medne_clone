@@ -679,15 +679,18 @@ app.directive("employeeOverviewDirective", [
 							console.log(response);
               var spending_account_status = response.data;
 
-              if(spending_account_status.medical == true || spending_account_status.wellness == true) {
-                $state.go('enrollment-options');
-                $('body').css('overflow', 'auto');
-              } else {
-                $state.go( 'create-team-benefits-tiers' );
-                $('body').css('overflow', 'auto');
-              }
+              // if(spending_account_status.medical == true || spending_account_status.wellness == true) {
+              //   $state.go('enrollment-options');
+              //   $('body').css('overflow', 'auto');
+              // } else {
+              //   $state.go( 'create-team-benefits-tiers' );
+              //   $('body').css('overflow', 'auto');
+              // }
               // $state.go('enrollment-options');
               // $('body').css('overflow', 'auto');
+              
+              $state.go( 'create-team-benefits-tiers' );
+              $('body').css('overflow', 'auto');
 						});
         }
 
