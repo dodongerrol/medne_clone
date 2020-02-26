@@ -396,6 +396,7 @@ class EclaimController extends \BaseController {
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($employee->UserID);
 		$date = date('Y-m-d', strtotime($input['date']));
+		$claim_amount = $input['claim_amount'];
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan is expired. You cannot submit an e-claim request.');
@@ -431,13 +432,17 @@ class EclaimController extends \BaseController {
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
+	        $claim_amount = $claim_amount / $currency;
 	      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
 	        $amount = $input['amount'] * $currency;
+	        $claim_amount = $claim_amount * $currency;
 	      } else {
 	        $amount = trim($input['amount']);
+	        $claim_amount = trim($claim_amount);
 	      }
 	    } else {
 	      $amount = trim($input['amount']);
+	      $claim_amount = trim($claim_amount);
 	    }
 	  }
 
@@ -447,26 +452,19 @@ class EclaimController extends \BaseController {
                               ->first();
 
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-			// recalculate employee balance
-			// PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-	        // check if e-claim can proceed
-			// $check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'wellness');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
-
 			if($spending['back_date'] == false) {
-				if($amount > $balance || $balance <= 0) {
+				if($claim_amount > $balance || $balance <= 0) {
 					return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 				}
 
 		    // check user pending e-claims amount
-				// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
 				$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'wellness', $date);
 
 				$total_claim_amount = $balance  - $claim_amounts;
-		    // return $total_claim_amount;
-				if(floatval($amount) > floatval($total_claim_amount)) {
+				if(floatval($claim_amount) > floatval($total_claim_amount)) {
 					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
 				}
 			}
@@ -482,6 +480,7 @@ class EclaimController extends \BaseController {
 			'service'   => $input['service'],
 			'merchant'  => $input['merchant'],
 			'amount'    => $amount,
+			'claim_amount'	=> $claim_amount,
 			'date'      => $date,
 			'time'      => $time,
 			'spending_type' => 'wellness',
@@ -546,7 +545,7 @@ class EclaimController extends \BaseController {
 				$customer_id = StringHelper::getCustomerId($employee->UserID);
 
 				if($customer_id) {
-                    // send notification
+          // send notification
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
 					Notification::sendNotificationToHR('Employee E-Claim Wellness', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
 					EclaimHelper::sendEclaimEmail($user_id, $id);
