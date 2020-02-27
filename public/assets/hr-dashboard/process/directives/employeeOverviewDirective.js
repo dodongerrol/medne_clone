@@ -1222,8 +1222,8 @@ app.directive("employeeOverviewDirective", [
             scope.plan_name = emp.plan_name;
             // console.log(scope.plan_name);
 
-            scope.medical_wallet = emp.medical_wallet;
-            scope.wellness_wallet = emp.wellness_wallet;
+            // scope.medical_wallet = emp.medical_wallet;
+            // scope.wellness_wallet = emp.wellness_wallet;
             // console.log(scope.medical_wallet);
             // console.log(scope.wellness_wallet);
             
