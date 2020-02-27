@@ -432,9 +432,13 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_member_new_entitlement_status', 'EmployeeController@entitlementStatus');
 	// create new entitlement
 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
+
 	// get hr date terms
 	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
 });
+
+// create new allocation
+	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
