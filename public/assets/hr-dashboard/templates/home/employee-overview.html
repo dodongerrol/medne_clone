@@ -281,7 +281,7 @@
 					</div>
 				</div>
 
-				<div class="medical-spending-account" ng-if="medical_wallet">
+				<div class="medical-spending-account" ng-if="selectedEmployee.medical_wallet">
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
@@ -331,7 +331,7 @@
 					</div>
 				</div>
 
-				<div class="wellness-spending-account" ng-if="wellness_wallet">
+				<div class="wellness-spending-account" ng-if="selectedEmployee.wellness_wallet">
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
@@ -398,8 +398,10 @@
 						Employee</div>
 					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
 						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
-						Entitlement</div>
+					<div ng-if="selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
+						Allocation</div>
+					<!-- <div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
+						Entitlement</div> -->
 					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">
 						Settings</div>
 				</div>
@@ -440,7 +442,7 @@
 									<strong class="font-helvetica-medium">Member ID</strong>
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
-								<div ng-if="medical_wallet" class="entitlementWithIcon">
+								<div ng-if="selectedEmployee.medical_wallet" class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Medical Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
@@ -460,7 +462,7 @@
 									</div>
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
 								</div>
-								<div ng-if="wellness_wallet" class="entitlementWithIcon">
+								<div ng-if="selectedEmployee.wellness_wallet" class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Wellness Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
@@ -605,7 +607,7 @@
 						</div>
 
 						<div class="entitlement-information-details">
-							<div ng-if="medical_wallet">
+							<div ng-if="selectedEmployee.medical_wallet">
 								<h4 class="weight-700 medical-entitlement">Medical Entitlement</h4>
 								<div class="col-md-12 medical-entitlement-container">
 									<div class="col-md-2">
@@ -689,7 +691,7 @@
 
 
 							<!-- class="weight-700 wellness-entitlement" -->
-							<div ng-if="wellness_wallet">
+							<div ng-if="selectedEmployee.wellness_wallet">
 								<h4 class="weight-700 wellness-entitlement">Wellness Entitlement</h4>
 								<div class="col-md-12 wellness-entitlement-container">
 									<div class="col-md-2">

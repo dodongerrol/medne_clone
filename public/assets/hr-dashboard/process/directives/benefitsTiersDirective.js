@@ -852,76 +852,46 @@ app.directive('benefitsTiersDirective', [
 					var well_spending_acct = scope.spending_account_status.wellness;
 					// var med_spending_acct = false;
 					// var well_spending_acct = true;
-					var medical_entitlement = localStorage.getItem('hasMedicalEntitlementBalance');
-					var wellness_entitlement = localStorage.getItem('hasWellnessEntitlementBalance');
+					// var medical_entitlement = localStorage.getItem('hasMedicalEntitlementBalance');
+					// var wellness_entitlement = localStorage.getItem('hasWellnessEntitlementBalance');
 
 
 
 					if (scope.downloadWithDependents != null) {
 						if (scope.downloadWithDependents == false) {
 							// window.location.href = '/excel/Employee Enrollment Listing.xlsx';
-							console.log('w/out dependents', med_spending_acct, well_spending_acct, medical_entitlement, wellness_entitlement);
+							console.log('w/out dependents', med_spending_acct, well_spending_acct);
 
-							if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == false && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+No+Wellness+Spending+Account.xlsx';
-								console.log('scenario 2');
-							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == false && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+No+Wellness+Spending+Account.xlsx';
-								console.log('scenario 3');
-							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
-								console.log('scenario 4');
-							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'true') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
-								console.log('scenario 5');
-							} else if (med_spending_acct == false && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
-								console.log('scenario 6');
-							} else if (med_spending_acct == false && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
-								console.log('scenario 7');
-							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
-								console.log('scenario 8 feedback 20');
-							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
-								console.log('scenario 9');
-							} else if (med_spending_acct == false || well_spending_acct == false) {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employee+Enrollment+Listing+-+No+Spending.xlsx';
+							if (med_spending_acct == true && well_spending_acct == true ) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Medical-With-Wellness.xlsx';
 								console.log('scenario 1');
+							} else if (med_spending_acct == true && well_spending_acct == false) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Medical.xlsx';
+								console.log('scenario 2');
+							} else if (med_spending_acct == false && well_spending_acct == true) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Wellness.xlsx';
+								console.log('scenario 3');
+							} else if (med_spending_acct == false || well_spending_acct == false) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing.xlsx';
+								console.log('scenario 4');
 							}
 						} else {
 							console.log('w/dependents');
 							// window.location.href = '/excel/Employees and Dependents.xlsx';
 							// window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents.xlsx';
 
-							if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == false && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+No+Wellness+Spending+Account.xlsx';
-								console.log('scenario 2');
-							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == false && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+No+Wellness+Spending+Account.xlsx';
-								console.log('scenario 3');
-							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balancexlsx.xlsx';
-								console.log('scenario 4');
-							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'true') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
-								console.log('scenario 5');
-							} else if (med_spending_acct == false && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
-								console.log('scenario 6');
-							} else if (med_spending_acct == false && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance+-+No+Medical+Spending+Account.xlsx';
-								console.log('scenario 7');
-							} else if (med_spending_acct == true && medical_entitlement == 'false' && well_spending_acct == true && wellness_entitlement == 'true') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+No+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+With+Wellness+Entitlement+Balance.xlsx';
-								console.log('scenario 8 feedback 20');
-							} else if (med_spending_acct == true && medical_entitlement == 'true' && well_spending_acct == true && wellness_entitlement == 'false') {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+With+Medical+Spending+Account+-+With+Medical+Entitlement+Balance+-+With+Wellness+Spending+Account+-+No+Wellness+Entitlement+Balance.xlsx';
-								console.log('scenario 9');
-							} else if (med_spending_acct == false || well_spending_acct == false) {
-								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents+-+No+Spending.xlsx';
+							if (med_spending_acct == true && well_spending_acct == true ) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Medical-With-Wellness.xlsx';
 								console.log('scenario 1');
+							} else if (med_spending_acct == true && well_spending_acct == false) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Medical.xlsx';
+								console.log('scenario 2');
+							} else if (med_spending_acct == false && well_spending_acct == true) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Wellness.xlsx';
+								console.log('scenario 3');
+							} else if (med_spending_acct == false || well_spending_acct == false) {
+								window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents.xlsx';
+								console.log('scenario 4');
 							}
 						}
 					} else {
@@ -1211,7 +1181,8 @@ app.directive('benefitsTiersDirective', [
 						scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
 						console.log(scope.employee_data.hasWellnessBalance, scope.employee_data.hasWellnessBalance);
 						$("#enrollee-details-tbl tbody").html('');
-						$("#enrollee-details-tbl thead tr").html($compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th ><th ng-if="spending_account_status.medical">Medical Entitlement</th><th ng-if="employee_data.hasMedicalBalance">Medical Entitlement Balance</th><th ng-if="spending_account_status.wellness">Wellness Entitlement</th><th ng-if="employee_data.hasWellnessBalance">Wellness Entitlement Balance</th>')(scope));
+						$("#enrollee-details-tbl thead tr").html($compile('<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th ><th ng-if="spending_account_status.medical">Medical Allocation</th><th ng-if="spending_account_status.wellness">Wellness Allocation</th>')(scope));
+						// <th ng-if="employee_data.hasMedicalBalance">Medical Entitlement Balance</th>	<th ng-if="employee_data.hasWellnessBalance">Wellness Entitlement Balance</th>
 						dependentsSettings.getTempEmployees()
 							.then(function (response) {
 								// console.log( response );
@@ -1229,7 +1200,9 @@ app.directive('benefitsTiersDirective', [
 											value.success = false;
 											value.fail = false;
 											scope.isTrError = (value.error_logs.error == true) ? 'has-error' : '';
-											var html_tr = '<tr class="dependent-hover-container ' + scope.isTrError + ' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.fullname + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal(' + key + ')">Edit</button></td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>+' + value.employee.mobile_area_code + '</td><td>' + value.employee.mobile + '</td><td ng-if="spending_account_status.medical">' + parseFloat(value.employee.credits).toLocaleString('en', option) + '</td><td ng-if="employee_data.hasMedicalBalance">' + value.employee.medical_balance_entitlement.toLocaleString('en', option) + '</td><td ng-if="spending_account_status.wellness">' + parseFloat(value.employee.wellness_credits).toLocaleString('en', option) + '</td><td ng-if="employee_data.hasWellnessBalance">' + value.employee.wellness_balance_entitlement.toLocaleString('en', option) + '</td>';
+											var html_tr = '<tr class="dependent-hover-container ' + scope.isTrError + ' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.fullname + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal(' + key + ')">Edit</button></td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>+' + value.employee.mobile_area_code + '</td><td>' + value.employee.mobile + '</td><td ng-if="spending_account_status.medical">' + parseFloat(value.employee.credits).toLocaleString('en', option) + '</td><td ng-if="spending_account_status.wellness">' + parseFloat(value.employee.wellness_credits).toLocaleString('en', option) + '</td>';
+											// <td ng-if="employee_data.hasMedicalBalance">' + value.employee.medical_balance_entitlement.toLocaleString('en', option) + '</td>
+											// <td ng-if="employee_data.hasWellnessBalance">' + value.employee.wellness_balance_entitlement.toLocaleString('en', option) + '</td>
 											var emp_ctr = 0;
 											while (emp_ctr != value.dependents.length) {
 												scope.isTrError = (value.dependents[emp_ctr].error_logs.error == true) ? 'has-error' : '';
