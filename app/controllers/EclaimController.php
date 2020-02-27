@@ -4803,9 +4803,9 @@ public function getHrActivity( )
 				if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
 					if((int)$trans->deleted == 0) {
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
-							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
+							$in_network_spent += (float)$trans->credit_cost * $trans->currency_amount;
 						} else {
-							$in_network_spent += $trans->credit_cost;
+							$in_network_spent += (float)$trans->credit_cost;
 						}
 						$total_in_network_transactions++;
 
@@ -4816,7 +4816,7 @@ public function getHrActivity( )
 							->where('id', $trans->transaction_id)
 							->first();
 
-							if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
+							if($logs_lite_plan && (float)$trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
 								// $in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
@@ -4852,7 +4852,7 @@ public function getHrActivity( )
 							->where('id', $trans->transaction_id)
 							->first();
 
-							if($logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === 0 || $logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
+							if($logs_lite_plan && (float)$trans->credit_cost > 0 && $trans->lite_plan_use_credits === 0 || $logs_lite_plan && (float)$trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
 								$consultation_credits = true;
 								$service_credits = true;
 							} else if($logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 1 || $logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
@@ -4918,35 +4918,35 @@ public function getHrActivity( )
 						if($clinic_type->Name == "General Practitioner") {
 							$type = "general_practitioner";
 							if($trans->deleted == 0) {
-								$general_practitioner_breakdown += $trans->credit_cost;
-								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
+								$general_practitioner_breakdown += (float)$trans->credit_cost;
+								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && (float)$trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
 									$general_practitioner_breakdown += $trans->consultation_fees;
 								}
 							}
 						} else if($clinic_type->Name == "Dental Care") {
 							$type = "dental_care";
 							if($trans->deleted == 0) {
-								$dental_care_breakdown += $trans->credit_cost;
+								$dental_care_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Traditional Chinese Medicine") {
 							$type = "tcm";
 							if($trans->deleted == 0) {
-								$tcm_breakdown += $trans->credit_cost;
+								$tcm_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Health Screening") {
 							$type = "health_screening";
 							if($trans->deleted == 0) {
-								$health_screening_breakdown += $trans->credit_cost;
+								$health_screening_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Wellness") {
 							$type = "wellness";
 							if($trans->deleted == 0) {
-								$wellness_breakdown += $trans->credit_cost;
+								$wellness_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Health Specialist") {
 							$type = "health_specialist";
 							if($trans->deleted == 0) {
-								$health_specialist_breakdown += $trans->credit_cost;
+								$health_specialist_breakdown += (float)$trans->credit_cost;
 							}
 						}
 					} else {
@@ -4956,35 +4956,35 @@ public function getHrActivity( )
 						if($find_head->Name == "General Practitioner") {
 							$type = "general_practitioner";
 							if($trans->deleted == 0) {
-								$general_practitioner_breakdown += $trans->credit_cost;
-								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
+								$general_practitioner_breakdown += (float)$trans->credit_cost;
+								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && (float)$trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
 									$general_practitioner_breakdown += $trans->consultation_fees;
 								}
 							}
 						} else if($find_head->Name == "Dental Care") {
 							$type = "dental_care";
 							if($trans->deleted == 0) {
-								$dental_care_breakdown += $trans->credit_cost;
+								$dental_care_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Traditional Chinese Medicine") {
 							$type = "tcm";
 							if($trans->deleted == 0) {
-								$tcm_breakdown += $trans->credit_cost;
+								$tcm_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Health Screening") {
 							$type = "health_screening";
 							if($trans->deleted == 0) {
-								$health_screening_breakdown += $trans->credit_cost;
+								$health_screening_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Wellness") {
 							$type = "wellness";
 							if($trans->deleted == 0) {
-								$wellness_breakdown += $trans->credit_cost;
+								$wellness_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Health Specialist") {
 							$type = "health_specialist";
 							if($trans->deleted == 0) {
-								$health_specialist_breakdown += $trans->credit_cost;
+								$health_specialist_breakdown += (float)$trans->credit_cost;
 							}
 						}
 					}
@@ -5024,7 +5024,7 @@ public function getHrActivity( )
 						$transaction_type = "cash";
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
-								$total_amount = $trans->credit_cost + $trans->consultation_fees;
+								$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
 								$cash = $transation->cash_cost;
 							} else {
 								$total_amount = $cost;
@@ -5039,7 +5039,7 @@ public function getHrActivity( )
 							}
 						}
 					} else {
-						if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+						if((float)$trans->credit_cost > 0 && $trans->cash_cost > 0) {
 							$payment_type = 'Mednefits Credits + Cash';
 							$half_credits = true;
 						} else {
@@ -5050,12 +5050,12 @@ public function getHrActivity( )
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
 	                // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-								$total_amount = $trans->credit_cost + $trans->cash_cost;
+								$total_amount = (float)$trans->credit_cost + $trans->cash_cost;
 								$cash = $trans->cash_cost;
 							} else {
-								$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+								$total_amount = (float)$trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 	                // $total_amount = $trans->procedure_cost;
-								if($trans->credit_cost > 0) {
+								if((float)$trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
 									$cash = $cost - $trans->consultation_fees;
@@ -5066,7 +5066,7 @@ public function getHrActivity( )
 							if((int)$trans->half_credits == 1) {
 								$cash = $trans->cash_cost;
 							} else {
-								if($trans->credit_cost > 0) {
+								if((float)$trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
 									$cash = $cost;
@@ -5094,7 +5094,7 @@ public function getHrActivity( )
 								if((int)$trans->health_provider_done == 1) {
 									$bill_amount = 	$cost;
 								} else {
-									$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
+									$bill_amount = 	(float)$trans->credit_cost + $trans->cash_cost;
 								}
 							}
 						} else {
@@ -5119,22 +5119,22 @@ public function getHrActivity( )
 								$total_in_network_spent += $cost;
 							}
 						}
-					} else if($trans->credit_cost > 0 && $trans->deleted == 0 || $trans->credit_cost > "0" && $trans->deleted == "0") {
+					} else if((float)$trans->credit_cost > 0 && $trans->deleted == 0) {
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += ($trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+								$total_in_network_spent += ((float)$trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
 							} else {
-								$total_in_network_spent += $trans->credit_cost * $trans->currency_amount;
+								$total_in_network_spent += (float)$trans->credit_cost * $trans->currency_amount;
 							}
 						} else {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
+								$total_in_network_spent += (float)$trans->credit_cost + $trans->consultation_fees;
 							} else {
-								$total_in_network_spent += $trans->credit_cost;
+								$total_in_network_spent += (float)$trans->credit_cost;
 							}
 						}
-						$total_search_credits += $trans->credit_cost;
-						$total_in_network_spent_credits_transaction = $trans->credit_cost;
+						$total_search_credits += (float)$trans->credit_cost;
+						$total_in_network_spent_credits_transaction = (float)$trans->credit_cost;
 						$total_credits_transactions++;
 					}
 
@@ -5150,7 +5150,7 @@ public function getHrActivity( )
 						$status_text = FALSE;
 					}
 
-					$paid_by_credits = $trans->credit_cost;
+					$paid_by_credits = (float)$trans->credit_cost;
 					if((int)$trans->lite_plan_enabled == 1) {
 						if($consultation_credits == true) {
 							$paid_by_credits += $consultation;
@@ -5159,7 +5159,7 @@ public function getHrActivity( )
 
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 						$total_amount = $total_amount * $trans->currency_amount;
-						$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+						$trans->credit_cost = (float)$trans->credit_cost * $trans->currency_amount;
 						$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
 						$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
 						$consultation_credits = $consultation_credits * $trans->currency_amount;
@@ -5173,7 +5173,7 @@ public function getHrActivity( )
 						'clinic_name'       => $clinic->Name,
 						'clinic_image'      => $clinic->image,
 						'amount'            => number_format($total_amount, 2),
-						'procedure_cost'    => number_format($trans->credit_cost, 2),
+						'procedure_cost'    => number_format((float)$trans->credit_cost, 2),
 						'clinic_type_and_service' => $clinic_name,
 						'procedure'         => $procedure,
 						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
