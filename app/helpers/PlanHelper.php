@@ -1512,7 +1512,7 @@ class PlanHelper {
 				}
 
 	      // medical credits
-				if($customer->balance >= $credits) {
+				// if($customer->balance >= $credits) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 
 					if($result_customer_active_plan) {
@@ -1554,7 +1554,7 @@ class PlanHelper {
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 					}
-				}
+				// }
 			}
 
 			// create medical entitlement
@@ -1597,7 +1597,7 @@ class PlanHelper {
 					$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 				}
 	      // wellness credits
-				if($customer->wellness_credits >= $credits) {
+				// if($customer->wellness_credits >= $credits) {
 	        // give credits
 					$wallet_class = new Wallet();
 					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
@@ -1628,7 +1628,7 @@ class PlanHelper {
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 					}
-				}
+				// }
 			}
 		}
 
