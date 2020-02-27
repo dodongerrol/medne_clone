@@ -4728,13 +4728,13 @@ public function getHrActivity( )
 	$total_lite_plan_consultation = 0;
 	$lite_plan = false;
 
-        // get all hr employees, spouse and dependents
+  // get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
 	$corporate_members = DB::table('corporate_members')
 													->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 													->where('corporate_members.corporate_id', $account->corporate_id)
-													->paginate(10);
+													->paginate(1000);
 
 	$paginate['current_page'] = $corporate_members->getCurrentPage();
 	$paginate['from'] = $corporate_members->getFrom();
@@ -4817,13 +4817,13 @@ public function getHrActivity( )
 							->first();
 
 							if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
-								$in_network_spent += floatval($logs_lite_plan->credit);
+								// $in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
 								$total_lite_plan_consultation += floatval($trans->consultation_fees);
 								$consultation = floatval($logs_lite_plan->credit);
 							} else if($logs_lite_plan && $trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits == 1){
-								$in_network_spent += floatval($logs_lite_plan->credit);
+								// $in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
 								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
@@ -4905,32 +4905,7 @@ public function getHrActivity( )
 					->get();
 
 					$doc_files = [];
-					// if(sizeof($receipts) > 0) {
-					// 	foreach ($receipts as $key => $doc) {
-					// 		if($doc->type == "pdf" || $doc->type == "xls") {
-					// 			if(StringHelper::Deployment()==1){
-					// 				$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
-					// 			} else {
-					// 				$fil = url('').'/receipts/'.$doc->file;
-					// 			}
-					// 		} else if($doc->type == "image") {
-					// 			// $fil = FileHelper::formatImageAutoQuality($doc->file);
-					// 			$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
-					// 		}
-
-					// 		$temp_doc = array(
-					// 			'tranasaction_doc_id'    => $doc->image_receipt_id,
-					// 			'transaction_id'            => $doc->transaction_id,
-					// 			'file'                      => $fil,
-					// 			'file_type'             => $doc->type
-					// 		);
-
-					// 		array_push($doc_files, $temp_doc);
-					// 	}
-					// 	$receipt_status = TRUE;
-					// } else {
-						$receipt_status = FALSE;
-					// }
+					$receipt_status = FALSE;
 
 					if((int)$trans->health_provider_done == 1) {
 						$health_provider_status = TRUE;
@@ -5366,9 +5341,9 @@ public function getHrActivity( )
 		}
 	}
 
-	$total_spent = $e_claim_spent + $in_network_spent;
+	$total_spent = $e_claim_spent + $in_network_spent + $total_lite_plan_consultation;
 
-    // sort in-network transaction
+  // sort in-network transaction
 	usort($transaction_details, function($a, $b) {
 		return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
 	});
@@ -5378,15 +5353,15 @@ public function getHrActivity( )
 		'total_balance'			=> $total_allocation - $total_spent,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
-		'in_network_spent'  => number_format($in_network_spent, 2),
+		'in_network_spent'  => number_format($in_network_spent + $total_lite_plan_consultation, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		'in_network_transactions' => $transaction_details,
 		'in_network_transactions_size' => sizeof($transaction_details),
-		'in_network_spending_format_number' => $in_network_spent,
+		'in_network_spending_format_number' => $in_network_spent + $total_lite_plan_consultation,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		'e_claim_transactions'	=> $e_claim,
-		'total_in_network_spent'    => number_format($total_in_network_spent, 2),
-		'total_in_network_spent_format_number'    => $total_in_network_spent,
+		'total_in_network_spent'    => number_format($in_network_spent + $total_lite_plan_consultation, 2),
+		'total_in_network_spent_format_number'    => $in_network_spent + $total_lite_plan_consultation,
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
