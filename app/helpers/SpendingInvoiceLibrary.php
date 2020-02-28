@@ -253,9 +253,9 @@ class SpendingInvoiceLibrary
 
 				if((int)$trans['deleted'] == 0) {
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
-						$in_network_transactions += $trans['credit_cost'] * $trans->currency_amount;
+						$in_network_transactions += (float)$trans['credit_cost'] * $trans->currency_amount;
 					} else {
-						$in_network_transactions += $trans['credit_cost'];
+						$in_network_transactions += (float)$trans['credit_cost'];
 					}
 
 					if($trans['spending_type'] == 'medical') {
@@ -296,7 +296,7 @@ class SpendingInvoiceLibrary
 
 
 					if($fields == true) {
-						if($trans['credit_cost'] > 0) {
+						if((float)$trans['credit_cost'] > 0) {
 							$mednefits_credits = (float)$trans['credit_cost'];
 							$cash = 0;
 						} else {
@@ -359,9 +359,9 @@ class SpendingInvoiceLibrary
 						}
 
 						$half_credits = false;
-						$total_amount = $trans['credit_cost'];
-						$procedure_cost =$trans['procedure_cost'];
-						$treatment = $trans->credit_cost;
+						$total_amount = (float)$trans['credit_cost'];
+						$procedure_cost = (float)$trans['procedure_cost'];
+						$treatment = (float)$trans->credit_cost;
 							// $consultation = 0;
 						if((int)$trans['health_provider_done'] == 1) {
 							$receipt_status = TRUE;
@@ -378,8 +378,8 @@ class SpendingInvoiceLibrary
 							  // $payment_type = "Mednefits Credits";
 							$transaction_type = "credits";
 							$health_provider_status = FALSE;
-							$procedure_cost = $trans->credit_cost;
-							if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+							$procedure_cost = (float)$trans->credit_cost;
+							if((float)$trans->credit_cost > 0 && (float)$trans->cash_cost > 0) {
 								$payment_type = 'Mednefits Credits + Cash';
 								$half_credits = true;
 							} else {
@@ -387,8 +387,8 @@ class SpendingInvoiceLibrary
 							}
 
 							if((int)$trans['lite_plan_enabled'] == 1) {
-								$total_amount = $trans['credit_cost'] + $trans['consultation_fees'];
-								$treatment = $trans->credit_cost;
+								$total_amount = (float)$trans['credit_cost'] + $trans['consultation_fees'];
+								$treatment = (float)$trans->credit_cost;
 							}
 						}
 
@@ -428,7 +428,7 @@ class SpendingInvoiceLibrary
 							// $consultation = $consultation * $trans->currency_amount;
 							$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
 							$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
-							$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+							$trans->credit_cost = (float)$trans->credit_cost * $trans->currency_amount;
 							$total_amount = $total_amount * $trans->currency_amount;
 							$cash = $cash * $trans->currency_amount;
 							$mednefits_credits = $mednefits_credits * $trans->currency_amount;
@@ -482,7 +482,7 @@ class SpendingInvoiceLibrary
 							'cap_transaction'   => $half_credits,
 							'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
 							'paid_by_cash'      => number_format($trans->cash_cost, 2),
-							'paid_by_credits'   => number_format($trans->credit_cost, 2),
+							'paid_by_credits'   => number_format((float)$trans->credit_cost, 2),
 							"currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
 							"currency_type" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD"
 						);
