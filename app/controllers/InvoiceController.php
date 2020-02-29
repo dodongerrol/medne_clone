@@ -2424,7 +2424,7 @@ class InvoiceController extends \BaseController {
 			$end_date = date('Y-m-t', strtotime('-1 month'));
 		}
 		
-		if(!empty($input['clinic_id']) || $input['clinic_id'] != null) {
+		if(!empty($input['clinic_id']) && $input['clinic_id'] != null) {
 			$clinics = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->where('Active', 1)->get();
 		} else {
 			$clinics = DB::table('clinic')->where('Active', 1)->get();
@@ -2584,17 +2584,17 @@ class InvoiceController extends \BaseController {
 					$procedure_temp = "";
 					$procedure = "";
 					$procedure_ids = [];
-					$mednefits_total_fee += $trans->credit_cost;
+					$mednefits_total_fee += (float)$trans->credit_cost;
 					if($trans->paid == 1 && $trans->deleted == 0 || $trans->paid == "1" && $trans->deleted == "0") {
-						$mednefits_total_credits += $trans->credit_cost;
+						$mednefits_total_credits += (float)$trans->credit_cost;
 					}
 					if($trans->co_paid_status == 0) {
 						if(strrpos($trans->clinic_discount, '%')) {
 							$percentage = chop($trans->clinic_discount, '%');
-							if($trans->credit_cost > 0) {
-								$amount = $trans->credit_cost;
+							if((float)$trans->credit_cost > 0) {
+								$amount = (float)$trans->credit_cost;
 							} else {
-								$amount = $trans->procedure_cost;
+								$amount = (float)$trans->procedure_cost;
 							}
 
 							$total_percentage = $percentage + $trans->medi_percent;
@@ -2614,10 +2614,10 @@ class InvoiceController extends \BaseController {
 					} else {
 						if(strrpos($trans->clinic_discount, '%')) {
 							$percentage = chop($trans->clinic_discount, '%');
-							if($trans->credit_cost > 0) {
+							if((float)$trans->credit_cost > 0) {
 								$amount = $trans->credit_cost;
 							} else {
-								$amount = $trans->procedure_cost;
+								$amount = (float)$trans->procedure_cost;
 							}
 
 							$total_percentage = $percentage + $trans->medi_percent;
@@ -2639,7 +2639,7 @@ class InvoiceController extends \BaseController {
 					$total_fees += $fee;
 
 					if($trans->credit_cost > 0) {
-						$mednefits_credits = $trans->credit_cost;
+						$mednefits_credits = (float)$trans->credit_cost;
 						$cash = 0.00;
 						$total_credits_transactions++;
 					} else {
@@ -2680,7 +2680,7 @@ class InvoiceController extends \BaseController {
 						'UserID'								=> $trans->UserID,
 						'date_of_transaction'		=> date('d F Y', strtotime($trans->date_of_transaction)),
 						'paid'									=> $trans->paid,
-						'procedure_cost'				=> $trans->procedure_cost,
+						'procedure_cost'				=> (float)$trans->procedure_cost,
 						'services'							=> $procedure,
 						'customer'							=> ucwords($trans->user_name),
 						'mednefits_fee'					=> number_format($fee, 2),
