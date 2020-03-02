@@ -14172,4 +14172,72 @@ class BenefitsDashboardController extends \BaseController {
 
 		})->export('csv');
 	}
+
+	public function getEmployeeListsBulk( )
+  {
+
+  	$input = Input::all();
+    $customer = StringHelper::getJwtHrSession();
+    $customer_id = $customer->customer_buy_start_id;
+    $spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
+    $account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
+    $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
+    $customer_wallet = DB::table('customer_credits')->where('customer_id', $spending->customer_id)->first();
+
+    $total_medical_allocation = 0;
+    $total_wellness_allocation = 0;
+    foreach ($members as $key => $member) {
+      $wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
+      $medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+      $wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+      $total_medical_allocation += $medical['allocation'];
+      $total_wellness_allocation += $wellness['allocation'];
+    }
+
+    $limit = !empty($input['per_page']) ? $input['per_page'] : 25;
+    $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->paginate($limit);
+
+    $paginate = [];
+    $final_user = [];
+		$paginate['last_page'] = $members->getLastPage();
+		$paginate['current_page'] = $members->getCurrentPage();
+		$paginate['total_data'] = $members->getTotal();
+		$paginate['from'] = $members->getFrom();
+		$paginate['to'] = $members->getTo();
+		$paginate['count'] = $members->count();
+
+    foreach ($members as $key => $member) {
+      $user = DB::table('user')->where('UserID', $member->user_id)->first();
+      $wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
+      $entitlment_allocation = DB::table('employee_wallet_entitlement')->where('member_id', $member->user_id)->orderBy('created_at', 'desc')->first();
+      $medical_schedule = DB::table('wallet_entitlement_schedule')
+                              ->where('member_id', $member->user_id)
+                              ->where('spending_type', 'medical')
+                              ->where('status', 0)
+                              ->orderBy('created_at', 'desc')
+                              ->first();
+
+      $wellness_schedule = DB::table('wallet_entitlement_schedule')
+                              ->where('member_id', $member->user_id)
+                              ->where('spending_type', 'wellness')
+                              ->where('status', 0)
+                              ->orderBy('created_at', 'desc')
+                              ->first();
+
+      $member->member_id = $member->user_id;
+      $member->fullname = $user->Name;
+      $member->medical['current_allocation'] = $entitlment_allocation->medical_entitlement;
+      $member->medical['new_allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : 0;
+      $member->medical['effective_date'] = date('d/m/Y');
+      $member->medical['allocation_schedule'] = $medical_schedule ? true : false;
+      $member->wellness['current_allocation'] = $entitlment_allocation->wellness_entitlement;
+      $member->wellness['new_allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : 0;
+      $member->wellness['effective_date'] = date('d/m/Y');
+      $member->wellness['allocation_schedule'] = $wellness_schedule ? true : false;
+      array_push($final_user, $member);
+    }
+
+    $paginate['data'] = $final_user;
+    return ['status' => true, 'customer_id' => $customer_id, 'currency_type' => strtoupper($customer_wallet->currency_type), 'medical_enable' => (int)$spending->medical_enable == 1 ? true : false, 'wellness_enable' => (int)$spending->wellness_enable == 1 ? true : false, 'total_medical_allocation' => $total_medical_allocation, 'total_wellness_allocation' => $total_wellness_allocation, 'members' => $paginate];
+  }
 }
