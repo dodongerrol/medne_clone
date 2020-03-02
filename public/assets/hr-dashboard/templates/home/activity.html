@@ -284,14 +284,14 @@
 												class="weight-500 color-blue-custom currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span>
 											<span class="weight-500 color-blue-custom"
-												ng-bind="activity.total_allocation">0.00</span>
+												ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
 											<!-- <span ng-if="activitySpendingType == 0" class="weight-500 color-blue-custom" ng-bind="credits.total_medical_employee_allocated">0.00</span>
 												<span ng-if="activitySpendingType == 1" class="weight-500 color-blue-custom" ng-bind="credits.total_wellness_employee_allocated">0.00</span> -->
 										</p>
 										<p class="color-black3 weight-500 font-16">Balance:
 											<span class="color-blue-custom2 weight-500 font-14 no-margin-top">
 												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
-												<span ng-bind="activity.total_balance">0.00</span>
+												<span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
 												<!-- <span ng-bind="credits.total_medical_employee_balance">0.00</span> -->
 											</span>
 											<!-- <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
