@@ -1430,6 +1430,7 @@ class EclaimController extends \BaseController {
 		if($active_plan->account_type == "enterprise_plan") {
 			$allocation = "N.A.";
 			$balance = "N.A.";
+			$final_allocation = "N.A.";
 		} else {
 			$final_allocation = number_format($allocation, 2);
 			$balance = number_format($balance, 2);

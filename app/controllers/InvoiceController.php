@@ -2484,6 +2484,7 @@ class InvoiceController extends \BaseController {
 				if($invoice_data) {
 					// send email for clinic invoice
 					try {
+						$total_success_generate++;
 						$email_to = "medicloud.finance@receiptbank.me";
 						// $email_to = "allan.alzula.work@gmail.com";
 						$email = [];
