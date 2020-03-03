@@ -8546,9 +8546,13 @@ span.dropdown-entitlement.disabled {
   
 } */
 
-.allocationEntitlementModal p , .allocationEntitlementSuccessModal p {
+.allocationEntitlementModal p {
   color: #000;
   text-align: left;
+}
+
+.allocationEntitlementSuccessModal p {
+  color: #000;
 }
 
 .allocationEntitlementSuccessModal .sa-button-container {

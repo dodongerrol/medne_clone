@@ -584,7 +584,7 @@
 						<div class="entitlement-btn-edit-wrapper">
 							<h3>Allocation Information</h3>
 							<!-- <h3>Entitlement Information</h3> -->
-							<button ng-class="{ 'calc-disabled' : updateDisable }" class="btn-update" ng-click="updateMedicalEntitlement()">Update</button>
+							<button ng-disabled="updateDisable" ng-class="{ 'calc-disabled' : updateDisable }" class="btn-update" ng-click="updateEntitlement()">Update</button>
 							<!-- ng-class="{'calc-disabled' : emp_entitlement.medical_new_entitlement == false || emp_entitlement.medical_new_entitlement == '' || emp_entitlement.wellness_new_entitlement == false || emp_entitlement.wellness_new_entitlement == '' }"  -->
 
 	            <!-- <button 
