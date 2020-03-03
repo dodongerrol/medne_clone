@@ -2527,4 +2527,67 @@ class EmployeeController extends \BaseController {
 
         return ['status' => true, 'current_term' => $current_term, 'last_term' => $last_term];
     }
+
+    public function downloadEmployeeBulkLists( )
+    {
+        $input = Input::all();
+        $result = StringHelper::getJwtHrToken($input['token']);
+        $customer_id = $result->customer_buy_start_id;
+        $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+        if(!$customer) {
+          return array('status' => false, 'message' => 'customer_id is required');
+        }
+
+        $spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
+        $account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
+        $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
+        $medical = (int)$spending->medical_enable == 1 ? true : false;
+        $wellness = (int)$spending->wellness_enable == 1 ? true : false;
+
+
+        $container = array();
+        foreach ($members as $key => $member) {
+          $user = DB::table('user')->where('UserID', $member->user_id)->first();
+          $entitlment_allocation = DB::table('employee_wallet_entitlement')->where('member_id', $member->user_id)->orderBy('created_at', 'desc')->first();
+          $medical_schedule = DB::table('wallet_entitlement_schedule')
+                                  ->where('member_id', $member->user_id)
+                                  ->where('spending_type', 'medical')
+                                  ->where('status', 0)
+                                  ->orderBy('created_at', 'desc')
+                                  ->first();
+
+          $wellness_schedule = DB::table('wallet_entitlement_schedule')
+                                  ->where('member_id', $member->user_id)
+                                  ->where('spending_type', 'wellness')
+                                  ->where('status', 0)
+                                  ->orderBy('created_at', 'desc')
+                                  ->first();
+
+          $temp = array(
+            'Member ID' => $user->UserID,
+            'Full Name' => $user->Name
+          );
+
+          if($medical) {
+            $temp['Current Medical Allocation'] = $entitlment_allocation->medical_entitlement;
+            $temp['New Medical Allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : 0;
+            $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = date('d/m/Y');
+          }
+
+          if($wellness) {
+            $temp['Current Wellness Allocation'] = $entitlment_allocation->wellness_entitlement;
+            $temp['New Wellness Allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : 0;
+            $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = date('d/m/Y');
+          }
+
+          $container[] = $temp;
+        }
+
+        return Excel::create('Bulk Allocation Employee Lists', function($excel) use($container) {
+          $excel->sheet('Employees', function($sheet) use($container) {
+            $sheet->fromArray( $container );
+          });
+        })->export('xls');
+    }
 }

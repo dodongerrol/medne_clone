@@ -436,10 +436,12 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
 	// route get employee lists for bulk allocation
 	Route::get('hr/get_employee_lists_bulk_allocation', 'BenefitsDashboardController@getEmployeeListsBulk');
+
 });
 
 // create new allocation
 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
+	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
