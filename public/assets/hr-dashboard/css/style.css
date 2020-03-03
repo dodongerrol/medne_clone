@@ -8539,3 +8539,28 @@ span.dropdown-entitlement.disabled {
   border-color: #88ccf1;
   pointer-events: none;
 }
+
+/* Allocation sweet alert custom style */
+
+/* .allocationEntitlementModal , .allocationEntitlementSuccessModal{
+  
+} */
+
+.allocationEntitlementModal p , .allocationEntitlementSuccessModal p {
+  color: #000;
+  text-align: left;
+}
+
+.allocationEntitlementSuccessModal .sa-button-container {
+  text-align: center;
+}
+
+.allocationEntitlementModal .sa-button-container {
+  text-align : right;
+}
+.allocationEntitlementModal .sa-button-container button, .allocationEntitlementSuccessModal .sa-button-container button {
+  background: #0392cf !important;
+  border-radius: 2px;
+  font-size: 14px;
+  padding: 5px 15px;
+}

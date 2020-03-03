@@ -584,9 +584,10 @@
 						<div class="entitlement-btn-edit-wrapper">
 							<h3>Allocation Information</h3>
 							<!-- <h3>Entitlement Information</h3> -->
-							<button ng-if="cal_one == false && cal_two == false" class="btn-update">Update</button>
+							<button ng-class="{ 'calc-disabled' : updateDisable }" class="btn-update" ng-click="updateMedicalEntitlement()">Update</button>
+							<!-- ng-class="{'calc-disabled' : emp_entitlement.medical_new_entitlement == false || emp_entitlement.medical_new_entitlement == '' || emp_entitlement.wellness_new_entitlement == false || emp_entitlement.wellness_new_entitlement == '' }"  -->
 
-	            <button 
+	            <!-- <button 
 	            ng-if="cal_one == true && cal_two == false" 
 
 	            ng-class="{'calc-disabled' : calc_update_med == false }" 
@@ -604,12 +605,12 @@
 
 	            ng-class="{'calc-disabled' : calc_update_med == false || calc_update_well == false }" 
 
-	            ng-click="updateAllEntitlement()" class="btn-update">Update</button>
+	            ng-click="updateAllEntitlement()" class="btn-update">Update</button> -->
 						</div>
 
 						<div class="entitlement-information-details">
 							<div ng-if="selectedEmployee.medical_wallet">
-								<h4 class="weight-700 medical-entitlement">Medical Allocation</h4>
+								<h4 class="weight-700 medical-entitlement">Medical Allocation | {{ '01/01/2020 - 01/01/2020 Static pani'}}</h4>
 								<div class="col-md-12 medical-entitlement-container">
 									<div class="col-md-4">
 										<div class="entitlement-input-container original">
@@ -632,7 +633,7 @@
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement">
+												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)">
 											</div>
 											<p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span></p>
 										</div>
@@ -693,7 +694,7 @@
 
 							<!-- class="weight-700 wellness-entitlement" -->
 							<div ng-if="selectedEmployee.wellness_wallet">
-								<h4 class="weight-700 wellness-entitlement">Wellness Allocation</h4>
+								<h4 class="weight-700 wellness-entitlement">Wellness Allocation | {{ '01/01/2020 - 01/01/2020 Static pani'}}</h4>
 								<!-- <h4 class="weight-700 wellness-entitlement">Wellness Entitlement</h4> -->
 								<div class="col-md-12 wellness-entitlement-container">
 									<div class="col-md-4">
@@ -716,7 +717,7 @@
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement">
+												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)">
 											</div>
 											<p ng-if="emp_entitlement.updated_wellness_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
 										</div>

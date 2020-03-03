@@ -83,7 +83,10 @@ app.directive("employeeOverviewDirective", [
           scope.emp_arr = [];
         });
 
-        scope.emp_entitlement = {};
+        scope.emp_entitlement = {
+          medical_new_entitlement: null,
+          wellness_new_entitlement: null
+        };
         scope.entitlement_status = {};
         scope.calc_entitlement_med = {};
         scope.calc_entitlement_well = {};
@@ -1397,30 +1400,70 @@ app.directive("employeeOverviewDirective", [
 
         scope.updateMedicalEntitlement = function () {
 
-            var medical_data = {
-              member_id : scope.emp_member_id,
-              new_entitlement_credits : scope.entitlement_credits.med_credits,
-              entitlement_usage_date : scope.effective_date.med_date,
-              proration_type : scope.proration.med_proration,
-              entitlement_spending_type : 'medical',
-            }
+          console.log(scope.emp_entitlement.medical_new_entitlement);
 
-            console.log('medical ni update');
-            hrActivity.updateEntitlement( medical_data ) 
-              .then(function(response) {
-                console.log(response);
-                console.log(medical_data);
-                console.log(response.data.status);
+          swal({
+            title: '',
+            text: `${scope.emp_entitlement.medical_new_entitlement}<span>Please note that the new Medical Allocation of SGD 1000 will overide the current amount of SGD 500. <br><br> Please confirm to proceed.</span>`,
+            html: true,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            reverseButtons: true,
+            customClass : 'allocationEntitlementModal'
+          }, function(result) {
+            console.log(result);
+            setTimeout(function(){
+              if(result) {
+                swal({
+                  title: '',
+                  text: '<span>The allocation amount has been successfully updated.</span>',
+                  html: true,
+                  showCancelButton: false,
+                  confirmButtonText: 'Close',
+                  customClass : 'allocationEntitlementSuccessModal'
+                });
+              }
+            }, 500)
+          })
 
-                if (response.data.status) {
-                  swal('Success!', response.message,'success');
-                  scope.hideLoading();
-                  scope.getMemberEntitlement( scope.emp_member_id )
-                } else {
-                  swal('Error!', response.data.message,'error');
-                }
+          
+
+            // var medical_data = {
+            //   member_id : scope.emp_member_id,
+            //   new_entitlement_credits : scope.entitlement_credits.med_credits,
+            //   entitlement_usage_date : scope.effective_date.med_date,
+            //   proration_type : scope.proration.med_proration,
+            //   entitlement_spending_type : 'medical',
+            // }
+
+            // console.log('medical ni update');
+            // hrActivity.updateEntitlement( medical_data ) 
+            //   .then(function(response) {
+            //     console.log(response);
+            //     console.log(medical_data);
+            //     console.log(response.data.status);
+
+            //     if (response.data.status) {
+            //       swal('Success!', response.message,'success');
+            //       scope.hideLoading();
+            //       scope.getMemberEntitlement( scope.emp_member_id )
+            //     } else {
+            //       swal('Error!', response.data.message,'error');
+            //     }
                 
-            });
+            // });
+        }
+        scope.updateDisable = true;
+        scope.checkNewAllocation =  function (data) {
+          if  (data.medical_new_entitlement == null && data.wellness_new_entitlement == null || data.medical_new_entitlement == '' && data.wellness_new_entitlement == '' || data.medical_new_entitlement == null && data.wellness_new_entitlement == '' || data.medical_new_entitlement == '' && data.wellness_new_entitlement == null)  {
+            scope.updateDisable = true;
+          } else  {
+            scope.updateDisable = false;
+          }
+        }
+
+        scope.updateMedicalEntitlementApi = function () {
+          
         }
 
 
@@ -2475,6 +2518,8 @@ app.directive("employeeOverviewDirective", [
           scope.showLoading();
           scope.getSession();
           scope.companyAccountType();
+
+          console.log(scope.emp_entitlement.medical_new_entitlement);
         };
 
         scope.onLoad();
