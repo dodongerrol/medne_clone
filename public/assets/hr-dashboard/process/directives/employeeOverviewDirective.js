@@ -1107,8 +1107,8 @@ app.directive("employeeOverviewDirective", [
           //   med_date : new Date( $('.medical-entitlement-date').val() ),
           //   well_date : new Date( $('.medical-entitlement-date').val() ),
           // }
-          scope.med_effective_date = '';
-          scope.well_effective_date = '';
+          scope.med_effective_date = moment().format('DD/MM/YYYY');
+          scope.well_effective_date = moment().format('DD/MM/YYYY');
           scope.cal_one = false;
           scope.cal_two = false;
           
@@ -1240,9 +1240,13 @@ app.directive("employeeOverviewDirective", [
             } else {
               scope.addActiveDependent_index = scope.dependents.occupied_seats + 1;
             }
-            // console.log( emp );
+
+            scope.selectedEmployee.start_date_dmy = moment(scope.selectedEmployee.start_date,['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
+            scope.selectedEmployee.end_date_dmy = moment(scope.selectedEmployee.expiry_date).format('DD/MM/YYYY');
+            console.log( emp );
 
             scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
+
             // console.log(scope.selectedEmployee.dob);
             scope.showLoading();
             scope.hideLoading();
@@ -1619,7 +1623,7 @@ app.directive("employeeOverviewDirective", [
                   value.start_date = moment(value.start_date).format("DD/MM/YYYY");
                   value.start_date_format = moment(value.start_date, 'DD/MM/YYYY').format("DD MMMM YYYY");
                   value.end_date_format = moment(value.expiry_date).format("DD MMMM YYYY");
-                  value.expiry_date = moment(value.expiry_date).format("MM/DD/YYYY");
+                  value.expiry_date = moment(value.expiry_date).format("DD/MM/YYYY");
                 });
                 $(".employee-overview-pagination").hide();
                 scope.hideLoading();

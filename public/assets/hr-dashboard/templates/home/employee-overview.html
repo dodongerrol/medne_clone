@@ -610,7 +610,7 @@
 
 						<div class="entitlement-information-details">
 							<div ng-if="selectedEmployee.medical_wallet">
-								<h4 class="weight-700 medical-entitlement">Medical Allocation | {{ '01/01/2020 - 01/01/2020 Static pani'}}</h4>
+								<h4 class="weight-700 medical-entitlement">Medical Allocation | {{ selectedEmployee.start_date_dmy}} - {{selectedEmployee.end_date_dmy}}</h4>
 								<div class="col-md-12 medical-entitlement-container">
 									<div class="col-md-4">
 										<div class="entitlement-input-container original">
@@ -694,7 +694,7 @@
 
 							<!-- class="weight-700 wellness-entitlement" -->
 							<div ng-if="selectedEmployee.wellness_wallet">
-								<h4 class="weight-700 wellness-entitlement">Wellness Allocation | {{ '01/01/2020 - 01/01/2020 Static pani'}}</h4>
+								<h4 class="weight-700 wellness-entitlement">Wellness Allocation | {{ selectedEmployee.start_date_dmy }} - {{selectedEmployee.end_date_dmy}}</h4>
 								<!-- <h4 class="weight-700 wellness-entitlement">Wellness Entitlement</h4> -->
 								<div class="col-md-12 wellness-entitlement-container">
 									<div class="col-md-4">
