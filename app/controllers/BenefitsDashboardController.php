@@ -14226,12 +14226,12 @@ class BenefitsDashboardController extends \BaseController {
 
       $member->member_id = $member->user_id;
       $member->fullname = $user->Name;
-      $member->medical['current_allocation'] = $entitlment_allocation->medical_entitlement;
-      $member->medical['new_allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : 0;
+      $member->medical['current_allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : $entitlment_allocation->medical_entitlement;
+      $member->medical['new_allocation'] = 0;
       $member->medical['effective_date'] = date('d/m/Y');
       $member->medical['allocation_schedule'] = $medical_schedule ? true : false;
-      $member->wellness['current_allocation'] = $entitlment_allocation->wellness_entitlement;
-      $member->wellness['new_allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : 0;
+      $member->wellness['current_allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : $entitlment_allocation->wellness_entitlement;
+      $member->wellness['new_allocation'] = 0;
       $member->wellness['effective_date'] = date('d/m/Y');
       $member->wellness['allocation_schedule'] = $wellness_schedule ? true : false;
       array_push($final_user, $member);
