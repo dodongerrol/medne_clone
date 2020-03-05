@@ -89,7 +89,9 @@
           @endif  
           
           
-          <p style="margin-bottom: 30px;">In-Network Partners:</p>
+          <!-- <p style="margin-bottom: 30px;">In-Network Partners:</p> -->
+          <p style="margin-bottom: 30px;">Panel Partners:</p>
+
 
           <a href="https://docs.google.com/spreadsheets/d/1YtsLDjgdHu6bKkZWRGtBIdeyWhwPTnDdQGFrUsBOZ9g/pubhtml" style="width:170px;margin: 0 30px 30px 0;padding: 14px 0px;border: none;border-radius: 4px;background: #3b84f1;color: #FFF;display: inline-block;font-size: 12px;text-decoration: none;text-align: center;">LOCATE PARTNERS</a>
 

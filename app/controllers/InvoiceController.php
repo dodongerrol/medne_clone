@@ -2412,10 +2412,25 @@ class InvoiceController extends \BaseController {
 
 	public function generateMonthlyInvoice( )
 	{
-		$clinics = DB::table('clinic')->where('Active', 1)->get();
+		
+		$input = Input::all();
 		$result_data = [];
-		$start_date = date('Y-m-01', strtotime('-1 month'));
-		$end_date = date('Y-m-t', strtotime('-1 month'));
+
+		if(!empty($input['start'])) {
+			$start_date = date('Y-m-01', strtotime($input['start']));
+			$end_date = date('Y-m-t', strtotime($input['start']));
+		} else {
+			$start_date = date('Y-m-01', strtotime('-1 month'));
+			$end_date = date('Y-m-t', strtotime('-1 month'));
+		}
+		
+		if(!empty($input['clinic_id']) && $input['clinic_id'] != null) {
+			$clinics = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->where('Active', 1)->get();
+		} else {
+			$clinics = DB::table('clinic')->where('Active', 1)->get();
+		}
+
+		// return $clinics;
 		$total_success_generate = 0;
 		$total_fail_generate = 0;
 		// return $start_date.' - '.$end_date;
@@ -2467,68 +2482,9 @@ class InvoiceController extends \BaseController {
 
 				$invoice_data = self::sendClinicIvoice($invoice_id);
 				if($invoice_data) {
-					// $total += $invoice_data['total'];
-					// $transactions = [];
-					// $details = [];
-					// $total = 0;
-					// $total_procedure = 0;
-					// $total_percentage = 0;
-					// $transaction_results = $invoice_record_detail->getTransaction($invoice_id);
-					// foreach ($transaction_results as $key => $value) {
-					// 	$trans['transaction'] = $transaction->getTransactionById($value->transaction_id);
-					// 	$procedure_name = $procedure->ClinicProcedureByID($trans['transaction']['ProcedureID']);
-					// 	$trans['procedure'] = $procedure_name ? $procedure_name->Name : '';
-					// 	$customer = $user->getUserProfile($trans['transaction']['UserID']);
-					// 	$trans['customer'] = $customer ? $customer->Name : 'Mednefits User';
-					// 	if($trans['transaction']['procedure_cost'] <= 500) {
-					// 		if($trans['transaction']['co_paid_status'] == 1) {
-					// 			if($trans['transaction']['co_paid_amount'] > 0) {
-					// 				$amount = $trans['transaction']['credit_cost'] + $trans['transaction']['co_paid_amount'];
-					// 			} else {
-					// 				$amount = $trans['transaction']['credit_cost'] + 13.91;
-					// 			}
-					// 			$trans['discount_value'] = '$13.91';
-					// 		} else {
-					// 			$clinic_cost = $trans['transaction']['procedure_cost'] * $trans['transaction']['medi_percent'];
-					// 			$amount = $trans['transaction']['credit_cost'] + $clinic_cost;
-					// 			$trans['discount_value'] = $trans['transaction']['medi_percent'] * 100 .'%';
-					// 		}
-
-					// 		$total += $amount;
-
-					// 		$total_percentage += $trans['transaction']['medi_percent'];
-					// 		$total_procedure += $trans['transaction']['procedure_cost'];
-					// 	} else {
-					// 		$amount = 0;
-					// 	}
-
-
-					// 	$trans['calculations'] = $amount;
-					// 	$transactions['items'][] = $trans;
-					// 	$amount = 0;
-					// }
-					// if($total > 0) {
-					// 	DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "true"]);
-					// 	$total_success_generate++;
-					// } else {
-					// 	$total_fail_generate++;
-					// 	DB::table('payment_record')->where('payment_record_id', $check_payment_record)->update(['has_total' => "false"]);
-					// }
-					// $get_payment_record = $payment_record->getPaymentRecord($check_payment_record);
-					// $get_payment_details = $bank->getBankDetails($clinic->ClinicID);
-					// $transactions['payment_record'] = $get_payment_record;
-					// $transactions['bank_details'] = $get_payment_details;
-					// $transactions['invoice_record'] = $invoice_data;
-					// $transactions['invoice_due'] = date('Y-m-d', strtotime('+1 month', strtotime($invoice_data['end_date'])));
-					// $transactions['total'] = $total;
-					// $transactions['clinic'] = $clinic;
-					// $transactions['billing_name'] = $clinic->billing_name ? ucwords($clinic->billing_name) : $clinic->Name;
-					// $transactions['billing_address'] = $clinic->billing_address ? ucwords($clinic->billing_address) : $clinic->Address;
-					
-					
-
 					// send email for clinic invoice
 					try {
+						$total_success_generate++;
 						$email_to = "medicloud.finance@receiptbank.me";
 						// $email_to = "allan.alzula.work@gmail.com";
 						$email = [];
@@ -2629,17 +2585,17 @@ class InvoiceController extends \BaseController {
 					$procedure_temp = "";
 					$procedure = "";
 					$procedure_ids = [];
-					$mednefits_total_fee += $trans->credit_cost;
+					$mednefits_total_fee += (float)$trans->credit_cost;
 					if($trans->paid == 1 && $trans->deleted == 0 || $trans->paid == "1" && $trans->deleted == "0") {
-						$mednefits_total_credits += $trans->credit_cost;
+						$mednefits_total_credits += (float)$trans->credit_cost;
 					}
 					if($trans->co_paid_status == 0) {
 						if(strrpos($trans->clinic_discount, '%')) {
 							$percentage = chop($trans->clinic_discount, '%');
-							if($trans->credit_cost > 0) {
-								$amount = $trans->credit_cost;
+							if((float)$trans->credit_cost > 0) {
+								$amount = (float)$trans->credit_cost;
 							} else {
-								$amount = $trans->procedure_cost;
+								$amount = (float)$trans->procedure_cost;
 							}
 
 							$total_percentage = $percentage + $trans->medi_percent;
@@ -2659,10 +2615,10 @@ class InvoiceController extends \BaseController {
 					} else {
 						if(strrpos($trans->clinic_discount, '%')) {
 							$percentage = chop($trans->clinic_discount, '%');
-							if($trans->credit_cost > 0) {
+							if((float)$trans->credit_cost > 0) {
 								$amount = $trans->credit_cost;
 							} else {
-								$amount = $trans->procedure_cost;
+								$amount = (float)$trans->procedure_cost;
 							}
 
 							$total_percentage = $percentage + $trans->medi_percent;
@@ -2684,7 +2640,7 @@ class InvoiceController extends \BaseController {
 					$total_fees += $fee;
 
 					if($trans->credit_cost > 0) {
-						$mednefits_credits = $trans->credit_cost;
+						$mednefits_credits = (float)$trans->credit_cost;
 						$cash = 0.00;
 						$total_credits_transactions++;
 					} else {
@@ -2725,7 +2681,7 @@ class InvoiceController extends \BaseController {
 						'UserID'								=> $trans->UserID,
 						'date_of_transaction'		=> date('d F Y', strtotime($trans->date_of_transaction)),
 						'paid'									=> $trans->paid,
-						'procedure_cost'				=> $trans->procedure_cost,
+						'procedure_cost'				=> (float)$trans->procedure_cost,
 						'services'							=> $procedure,
 						'customer'							=> ucwords($trans->user_name),
 						'mednefits_fee'					=> number_format($fee, 2),

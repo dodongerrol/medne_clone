@@ -137,7 +137,8 @@
 			<div class="header">
 				<div class="item">
           <p style="margin-top:30px;margin-bottom: 15px;font-weight: 700;color: #666;">Statement for {{ $statement_start_date }} - {{ $statement_end_date }}</p>
-					<p style="margin-bottom: 15px;font-weight: 700;width: 400px;color: #666;">Full Company Statement - In-Network Spending Account {{ $company }}</p>
+					<p style="margin-bottom: 15px;font-weight: 700;width: 400px;color: #666;">Full Company Statement - Panel Spending Account {{ $company }}</p>
+					<!-- <p style="margin-bottom: 15px;font-weight: 700;width: 400px;color: #666;">Full Company Statement - In-Network Spending Account {{ $company }}</p> -->
 					<p class="weight-300">{{ $statement_contact_name }}</p>
 					<p class="weight-300">{{ $statement_contact_number }}</p>
 					<p class="weight-300">{{ $statement_contact_email }}</p>
@@ -208,7 +209,7 @@
     	</table>
 
     	<div class="col-md-12 copyright text-center">
-    		<h5 style="color: #999;"><b>&copy; 2019 Mednefits. All rights reserved</b></h5>
+    		<h5 style="color: #999;"><b>&copy; 2020 Mednefits. All rights reserved</b></h5>
     	</div>
 
 		</div>

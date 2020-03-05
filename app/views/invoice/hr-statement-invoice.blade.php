@@ -198,7 +198,8 @@
           </div>
           <div class="col-md-12">
             <div class="charges-row">
-              <p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right">{{ strtoupper($currency_type) }} {{ $statement_in_network_amount }}</span></p>
+              <!-- <p class="color-black3 weight-700 no-margin">In-Network Spending Account Usage <span class="pull-right">{{ strtoupper($currency_type) }} {{ $statement_in_network_amount }}</span></p> -->
+              <p class="color-black3 weight-700 no-margin">Panel Spending Account Usage <span class="pull-right">{{ strtoupper($currency_type) }} {{ $statement_in_network_amount }}</span></p>
               <p class="weight-700 no-margin" style="color:#777;padding-bottom: 15px;font-size: 14px;">Statement for {{ $statement_start_date }} - {{ $statement_end_date }}</p>
               @if($lite_plan)
               <p class="color-black3 weight-700 no-margin" style="padding: 0 0 0 50px;">Consultation Spent - General Practitioner <span class="pull-right">{{ strtoupper($currency_type) }} {{ $total_consultation }}</span></p>
@@ -233,7 +234,7 @@
             <img class="stamp pull-right" style="margin-top: 10%" src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/Mednefits_Company_Stamp-01.png">
           </div>
           <div class="text-center col-md-12" style="margin-top: 50px;">
-            <h5 style="color: #999;"><b>&copy; 2019 Mednefits. All rights reserved</b></h5>
+            <h5 style="color: #999;"><b>&copy; 2020 Mednefits. All rights reserved</b></h5>
           </div>
         </div>
       </div>

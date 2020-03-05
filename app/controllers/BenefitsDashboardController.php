@@ -1744,7 +1744,7 @@ class BenefitsDashboardController extends \BaseController {
 					$customer_active_plan_id = NULL;
 				}
 
-				if($data_enrollee->credits > $customer->balance) {
+				// if($data_enrollee->credits > $customer->balance) {
 					$customer_credits_result = DB::table('customer_credits')->where('customer_id', $result->customer_buy_start_id)->increment("balance", $credits);
 					if($customer_credits_result) {
 						// credit log for wellness
@@ -1760,7 +1760,7 @@ class BenefitsDashboardController extends \BaseController {
 						$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
 					}
 					$customer = DB::table('customer_credits')->where('customer_id', $result->customer_buy_start_id)->first();
-				}
+				// }
 				// medical credits
 				// give credits
 				$wallet_class = new Wallet();
@@ -1799,7 +1799,7 @@ class BenefitsDashboardController extends \BaseController {
 
 			if($data_enrollee->wellness_credits > 0) {
 				// wellness credits
-				if($customer->wellness_credits >= $data_enrollee->wellness_credits) {
+				// if($customer->wellness_credits >= $data_enrollee->wellness_credits) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($result->customer_buy_start_id, $data_enrollee->wellness_credits, "wellness");
 
 					if($result_customer_active_plan) {
@@ -1836,7 +1836,7 @@ class BenefitsDashboardController extends \BaseController {
 						$customer_credits_logs = new CustomerWellnessCreditLogs();
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 					}
-				}
+				// }
 			}
 
 
@@ -8890,6 +8890,7 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$company_credits = DB::table('customer_credits')->where('customer_id', $result->customer_buy_start_id)->first();
+		$customer_id = $result->customer_buy_start_id;
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 		$wallet = new Wallet( );
 		$wallet_id = $wallet->getWalletId($input['user_id']);
@@ -8904,7 +8905,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($input['spending_type'] == "medical") {
 
 			if($input['allocation_type'] == "add") {
-				if($company_credits->balance >= $input['credits']) {
+				// if($company_credits->balance >= $input['credits']) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($result->customer_buy_start_id, $input['credits'], "medical");
 
 					if($result_customer_active_plan) {
@@ -8913,6 +8914,23 @@ class BenefitsDashboardController extends \BaseController {
 						$customer_active_plan_id = FALSE;
 					}
 
+					if($input['credits'] > $company_credits->balance) {
+						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("balance", $input['credits']);
+						if($customer_credits_result) {
+							// credit log for wellness
+							$customer_credits_logs = array(
+								'customer_credits_id'	=> $company_credits->customer_credits_id,
+								'credit'				=> $input['credits'],
+								'logs'					=> 'admin_added_credits',
+								'running_balance'		=> $company_credits->balance + $credits,
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'	=> $company_credits->currency_type
+							);
+
+							$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
+						}
+						$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+					}
 					$wallet_result = $wallet->addCredits($input['user_id'], $input['credits']);
 					// return $wallet_result;
 					$wallet_id = $wallet->getWalletId($input['user_id']);
@@ -8974,12 +8992,12 @@ class BenefitsDashboardController extends \BaseController {
 							);
 						}
 					}
-				} else {
-					return array(
-						'status'	=> FALSE,
-						'message'	=> 'Company medical credits is not enough to assign to employee.'
-					);
-				}
+				// } else {
+				// 	return array(
+				// 		'status'	=> FALSE,
+				// 		'message'	=> 'Company medical credits is not enough to assign to employee.'
+				// 	);
+				// }
 			} else {
 				if($input['credits'] > $employee_credits_left->balance) {
 					return array('status' => FALSE, 'message' => "Insufficient medical balance credits to deduct.");
@@ -9050,8 +9068,8 @@ class BenefitsDashboardController extends \BaseController {
 
 		} else if($input['spending_type'] == "wellness") {
 			if($input['allocation_type'] == "add") {
-				if($company_credits->wellness_credits >= $input['credits']) {
-					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($result->customer_buy_start_id, $input['credits'], "medical");
+				// if($company_credits->wellness_credits >= $input['credits']) {
+					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($result->customer_buy_start_id, $input['credits'], "wellness");
 
 					if($result_customer_active_plan) {
 						$customer_active_plan_id = $result_customer_active_plan;
@@ -9059,8 +9077,25 @@ class BenefitsDashboardController extends \BaseController {
 						$customer_active_plan_id = FALSE;
 					}
 
+					if($input['credits'] > $company_credits->wellness_credits) {
+						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $input['credits']);
+						if($customer_credits_result) {
+							// credit log for wellness
+							$customer_wellness_credits_logs = array(
+								'customer_credits_id'	=> $company_credits->customer_credits_id,
+								'credit'				=> $input['credits'],
+								'logs'					=> 'admin_added_credits',
+								'running_balance'		=> $company_credits->wellness_credits + $input['credits'],
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'	=> $company_credits->currency_type
+							);
+
+							$customer_credits_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
+						}
+						$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+					}
+
 					$wallet_result = $wallet->addWellnessCredits($input['user_id'], $input['credits']);
-					// return $wallet_result;
 					$wallet_id = $wallet->getWalletId($input['user_id']);
 					$employee_credits_left = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 
@@ -9117,12 +9152,12 @@ class BenefitsDashboardController extends \BaseController {
 							);
 						}
 					}
-				} else {
-					return array(
-						'status'	=> FALSE,
-						'message'	=> 'Company wellness credits is not enough to assign to employee.'
-					);
-				}
+				// } else {
+				// 	return array(
+				// 		'status'	=> FALSE,
+				// 		'message'	=> 'Company wellness credits is not enough to assign to employee.'
+				// 	);
+				// }
 			} else {
 				if($input['credits'] > $employee_credits_left->wellness_balance) {
 					return array('status' => FALSE, 'message' => "Insufficient wellness balance credits to deduct.");

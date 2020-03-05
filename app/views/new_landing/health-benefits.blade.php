@@ -261,7 +261,7 @@
 					<div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-6 no-padding text-right " >
 						<div class="copyright">
 							<p class="color-white">
-								© 2016 Mednefits. All rights reserved
+								© 2020 Mednefits. All rights reserved
 							</p>
 						</div>
 					</div>

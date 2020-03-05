@@ -420,8 +420,10 @@
 														<span ng-bind="list.claim_amount">22</span></span>
 												</span>
 											</p>
-											<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p>
-											<p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">In-Network</span></p>
+											<p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">Panel</span></p>
+											<!-- <p><label>PAYMENT TYPE</label> <span class="color-gray2" ng-bind="list.type">In-Network</span></p> -->
+											<p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">Panel</span></p>
+											<!-- <p><label>REMARKS</label> <span class="color-gray2" ng-bind="list.remarks">In-Network</span></p> -->
 											<div class="white-space-20"></div>
 											
 										</div>
@@ -524,7 +526,8 @@
       <div class="modal-content" style="border-radius: 0;">
         <div class="modal-header" style="background-color: #33a2d4;padding: 20px;">
           <img src="../assets/hr-dashboard/img/icons/close.svg" style="width: 20px;cursor: pointer;" class="pull-right" data-dismiss="modal">
-          <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Possible similar In-Network transactions with this E-Claim.</h4>
+          <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Possible similar Panel transactions with this E-Claim.</h4>
+          <!-- <h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Possible similar In-Network transactions with this E-Claim.</h4> -->
           <!-- <p>Please check and make sure it is not a duplicate claim entry.</p> -->
         </div>
         <div class="modal-body" style="padding: 0;">
@@ -542,7 +545,8 @@
           </div>
 
           <div class="duplicate-transaction-box">
-          	<p>Similar In-Network Transaction</p>
+          	<p>Similar Panel Transaction</p>
+          	<!-- <p>Similar In-Network Transaction</p> -->
 
           	<div class="trans-scroll">
 	          	<div ng-repeat="list in selected_duplicate_transactions" class="duplicate-transaction-details">
