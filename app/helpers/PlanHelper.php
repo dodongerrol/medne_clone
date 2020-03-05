@@ -1493,7 +1493,7 @@ class PlanHelper {
 					$credits = $data_enrollee->credits;
 				}
 
-				if($credits > $customer->balance) {
+				// if($credits > $customer->balance) {
 					$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("balance", $credits);
 					if($customer_credits_result) {
 						// credit log for wellness
@@ -1509,10 +1509,10 @@ class PlanHelper {
 						$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
 					}
 					$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
-				}
+				// }
 
 	      // medical credits
-				if($customer->balance >= $credits) {
+				// if($customer->balance >= $credits) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 
 					if($result_customer_active_plan) {
@@ -1554,7 +1554,7 @@ class PlanHelper {
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 					}
-				}
+				// }
 			}
 
 			// create medical entitlement
@@ -1579,7 +1579,7 @@ class PlanHelper {
 					$customer_active_plan_id = NULL;
 				}
 
-				if($credits > $customer->wellness_credits) {
+				// if($credits > $customer->wellness_credits) {
 					$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
 					if($customer_credits_result) {
 						// credit log for wellness
@@ -1595,9 +1595,9 @@ class PlanHelper {
 						$customer_credits_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
 					}
 					$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
-				}
+				// }
 	      // wellness credits
-				if($customer->wellness_credits >= $credits) {
+				// if($customer->wellness_credits >= $credits) {
 	        // give credits
 					$wallet_class = new Wallet();
 					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
@@ -1628,7 +1628,7 @@ class PlanHelper {
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 					}
-				}
+				// }
 			}
 		}
 

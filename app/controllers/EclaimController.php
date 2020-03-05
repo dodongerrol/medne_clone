@@ -396,6 +396,7 @@ class EclaimController extends \BaseController {
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($employee->UserID);
 		$date = date('Y-m-d', strtotime($input['date']));
+		$claim_amount = $input['claim_amount'];
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan is expired. You cannot submit an e-claim request.');
@@ -431,13 +432,17 @@ class EclaimController extends \BaseController {
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
+	        $claim_amount = $claim_amount / $currency;
 	      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
 	        $amount = $input['amount'] * $currency;
+	        $claim_amount = $claim_amount * $currency;
 	      } else {
 	        $amount = trim($input['amount']);
+	        $claim_amount = trim($claim_amount);
 	      }
 	    } else {
 	      $amount = trim($input['amount']);
+	      $claim_amount = trim($claim_amount);
 	    }
 	  }
 
@@ -447,26 +452,19 @@ class EclaimController extends \BaseController {
                               ->first();
 
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-			// recalculate employee balance
-			// PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-	        // check if e-claim can proceed
-			// $check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'wellness');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
-
 			if($spending['back_date'] == false) {
-				if($amount > $balance || $balance <= 0) {
+				if($claim_amount > $balance || $balance <= 0) {
 					return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 				}
 
 		    // check user pending e-claims amount
-				// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'wellness');
 				$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'wellness', $date);
 
 				$total_claim_amount = $balance  - $claim_amounts;
-		    // return $total_claim_amount;
-				if(floatval($amount) > floatval($total_claim_amount)) {
+				if(floatval($claim_amount) > floatval($total_claim_amount)) {
 					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
 				}
 			}
@@ -482,6 +480,7 @@ class EclaimController extends \BaseController {
 			'service'   => $input['service'],
 			'merchant'  => $input['merchant'],
 			'amount'    => $amount,
+			'claim_amount'	=> $claim_amount,
 			'date'      => $date,
 			'time'      => $time,
 			'spending_type' => 'wellness',
@@ -546,7 +545,7 @@ class EclaimController extends \BaseController {
 				$customer_id = StringHelper::getCustomerId($employee->UserID);
 
 				if($customer_id) {
-                    // send notification
+          // send notification
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
 					Notification::sendNotificationToHR('Employee E-Claim Wellness', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
 					EclaimHelper::sendEclaimEmail($user_id, $id);
@@ -1431,6 +1430,7 @@ class EclaimController extends \BaseController {
 		if($active_plan->account_type == "enterprise_plan") {
 			$allocation = "N.A.";
 			$balance = "N.A.";
+			$final_allocation = "N.A.";
 		} else {
 			$final_allocation = number_format($allocation, 2);
 			$balance = number_format($balance, 2);
@@ -4729,7 +4729,7 @@ public function getHrActivity( )
 	$total_lite_plan_consultation = 0;
 	$lite_plan = false;
 
-        // get all hr employees, spouse and dependents
+  // get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
 	$corporate_members = DB::table('corporate_members')
@@ -4804,9 +4804,9 @@ public function getHrActivity( )
 				if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
 					if((int)$trans->deleted == 0) {
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
-							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
+							$in_network_spent += (float)$trans->credit_cost * $trans->currency_amount;
 						} else {
-							$in_network_spent += $trans->credit_cost;
+							$in_network_spent += (float)$trans->credit_cost;
 						}
 						$total_in_network_transactions++;
 
@@ -4817,14 +4817,14 @@ public function getHrActivity( )
 							->where('id', $trans->transaction_id)
 							->first();
 
-							if($logs_lite_plan && $trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
-								$in_network_spent += floatval($logs_lite_plan->credit);
+							if($logs_lite_plan && (float)$trans->credit_cost > 0 && (int)$trans->lite_plan_use_credits == 0) {
+								// $in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
 								$total_lite_plan_consultation += floatval($trans->consultation_fees);
 								$consultation = floatval($logs_lite_plan->credit);
 							} else if($logs_lite_plan && $trans->procedure_cost >= 0 && (int)$trans->lite_plan_use_credits == 1){
-								$in_network_spent += floatval($logs_lite_plan->credit);
+								// $in_network_spent += floatval($logs_lite_plan->credit);
 								$consultation_credits = true;
 								$service_credits = true;
 								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
@@ -4853,7 +4853,7 @@ public function getHrActivity( )
 							->where('id', $trans->transaction_id)
 							->first();
 
-							if($logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === 0 || $logs_lite_plan && $trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
+							if($logs_lite_plan && (float)$trans->credit_cost > 0 && $trans->lite_plan_use_credits === 0 || $logs_lite_plan && (float)$trans->credit_cost > 0 && $trans->lite_plan_use_credits === "0") {
 								$consultation_credits = true;
 								$service_credits = true;
 							} else if($logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 1 || $logs_lite_plan && $trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === "1"){
@@ -4906,32 +4906,7 @@ public function getHrActivity( )
 					->get();
 
 					$doc_files = [];
-					// if(sizeof($receipts) > 0) {
-					// 	foreach ($receipts as $key => $doc) {
-					// 		if($doc->type == "pdf" || $doc->type == "xls") {
-					// 			if(StringHelper::Deployment()==1){
-					// 				$fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->file;
-					// 			} else {
-					// 				$fil = url('').'/receipts/'.$doc->file;
-					// 			}
-					// 		} else if($doc->type == "image") {
-					// 			// $fil = FileHelper::formatImageAutoQuality($doc->file);
-					// 			$fil = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
-					// 		}
-
-					// 		$temp_doc = array(
-					// 			'tranasaction_doc_id'    => $doc->image_receipt_id,
-					// 			'transaction_id'            => $doc->transaction_id,
-					// 			'file'                      => $fil,
-					// 			'file_type'             => $doc->type
-					// 		);
-
-					// 		array_push($doc_files, $temp_doc);
-					// 	}
-					// 	$receipt_status = TRUE;
-					// } else {
-						$receipt_status = FALSE;
-					// }
+					$receipt_status = FALSE;
 
 					if((int)$trans->health_provider_done == 1) {
 						$health_provider_status = TRUE;
@@ -4944,35 +4919,35 @@ public function getHrActivity( )
 						if($clinic_type->Name == "General Practitioner") {
 							$type = "general_practitioner";
 							if($trans->deleted == 0) {
-								$general_practitioner_breakdown += $trans->credit_cost;
-								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
+								$general_practitioner_breakdown += (float)$trans->credit_cost;
+								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && (float)$trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
 									$general_practitioner_breakdown += $trans->consultation_fees;
 								}
 							}
 						} else if($clinic_type->Name == "Dental Care") {
 							$type = "dental_care";
 							if($trans->deleted == 0) {
-								$dental_care_breakdown += $trans->credit_cost;
+								$dental_care_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Traditional Chinese Medicine") {
 							$type = "tcm";
 							if($trans->deleted == 0) {
-								$tcm_breakdown += $trans->credit_cost;
+								$tcm_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Health Screening") {
 							$type = "health_screening";
 							if($trans->deleted == 0) {
-								$health_screening_breakdown += $trans->credit_cost;
+								$health_screening_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Wellness") {
 							$type = "wellness";
 							if($trans->deleted == 0) {
-								$wellness_breakdown += $trans->credit_cost;
+								$wellness_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($clinic_type->Name == "Health Specialist") {
 							$type = "health_specialist";
 							if($trans->deleted == 0) {
-								$health_specialist_breakdown += $trans->credit_cost;
+								$health_specialist_breakdown += (float)$trans->credit_cost;
 							}
 						}
 					} else {
@@ -4982,35 +4957,35 @@ public function getHrActivity( )
 						if($find_head->Name == "General Practitioner") {
 							$type = "general_practitioner";
 							if($trans->deleted == 0) {
-								$general_practitioner_breakdown += $trans->credit_cost;
-								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
+								$general_practitioner_breakdown += (float)$trans->credit_cost;
+								if((int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && (float)$trans->credit_cost > 0 || (int)$trans->deleted == 0 && (int)$trans->lite_plan_enabled == 1 && $trans->procedure_cost > 0 && (int)$trans->lite_plan_use_credits == 1) {
 									$general_practitioner_breakdown += $trans->consultation_fees;
 								}
 							}
 						} else if($find_head->Name == "Dental Care") {
 							$type = "dental_care";
 							if($trans->deleted == 0) {
-								$dental_care_breakdown += $trans->credit_cost;
+								$dental_care_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Traditional Chinese Medicine") {
 							$type = "tcm";
 							if($trans->deleted == 0) {
-								$tcm_breakdown += $trans->credit_cost;
+								$tcm_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Health Screening") {
 							$type = "health_screening";
 							if($trans->deleted == 0) {
-								$health_screening_breakdown += $trans->credit_cost;
+								$health_screening_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Wellness") {
 							$type = "wellness";
 							if($trans->deleted == 0) {
-								$wellness_breakdown += $trans->credit_cost;
+								$wellness_breakdown += (float)$trans->credit_cost;
 							}
 						} else if($find_head->Name == "Health Specialist") {
 							$type = "health_specialist";
 							if($trans->deleted == 0) {
-								$health_specialist_breakdown += $trans->credit_cost;
+								$health_specialist_breakdown += (float)$trans->credit_cost;
 							}
 						}
 					}
@@ -5050,7 +5025,7 @@ public function getHrActivity( )
 						$transaction_type = "cash";
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
-								$total_amount = $trans->credit_cost + $trans->consultation_fees;
+								$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
 								$cash = $transation->cash_cost;
 							} else {
 								$total_amount = $cost;
@@ -5065,7 +5040,7 @@ public function getHrActivity( )
 							}
 						}
 					} else {
-						if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+						if((float)$trans->credit_cost > 0 && $trans->cash_cost > 0) {
 							$payment_type = 'Mednefits Credits + Cash';
 							$half_credits = true;
 						} else {
@@ -5076,12 +5051,12 @@ public function getHrActivity( )
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
 	                // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-								$total_amount = $trans->credit_cost + $trans->cash_cost;
+								$total_amount = (float)$trans->credit_cost + $trans->cash_cost;
 								$cash = $trans->cash_cost;
 							} else {
-								$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+								$total_amount = (float)$trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 	                // $total_amount = $trans->procedure_cost;
-								if($trans->credit_cost > 0) {
+								if((float)$trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
 									$cash = $cost - $trans->consultation_fees;
@@ -5092,7 +5067,7 @@ public function getHrActivity( )
 							if((int)$trans->half_credits == 1) {
 								$cash = $trans->cash_cost;
 							} else {
-								if($trans->credit_cost > 0) {
+								if((float)$trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
 									$cash = $cost;
@@ -5120,7 +5095,7 @@ public function getHrActivity( )
 								if((int)$trans->health_provider_done == 1) {
 									$bill_amount = 	$cost;
 								} else {
-									$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
+									$bill_amount = 	(float)$trans->credit_cost + $trans->cash_cost;
 								}
 							}
 						} else {
@@ -5145,22 +5120,22 @@ public function getHrActivity( )
 								$total_in_network_spent += $cost;
 							}
 						}
-					} else if($trans->credit_cost > 0 && $trans->deleted == 0 || $trans->credit_cost > "0" && $trans->deleted == "0") {
+					} else if((float)$trans->credit_cost > 0 && $trans->deleted == 0) {
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += ($trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+								$total_in_network_spent += ((float)$trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
 							} else {
-								$total_in_network_spent += $trans->credit_cost * $trans->currency_amount;
+								$total_in_network_spent += (float)$trans->credit_cost * $trans->currency_amount;
 							}
 						} else {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += $trans->credit_cost + $trans->consultation_fees;
+								$total_in_network_spent += (float)$trans->credit_cost + $trans->consultation_fees;
 							} else {
-								$total_in_network_spent += $trans->credit_cost;
+								$total_in_network_spent += (float)$trans->credit_cost;
 							}
 						}
-						$total_search_credits += $trans->credit_cost;
-						$total_in_network_spent_credits_transaction = $trans->credit_cost;
+						$total_search_credits += (float)$trans->credit_cost;
+						$total_in_network_spent_credits_transaction = (float)$trans->credit_cost;
 						$total_credits_transactions++;
 					}
 
@@ -5176,7 +5151,7 @@ public function getHrActivity( )
 						$status_text = FALSE;
 					}
 
-					$paid_by_credits = $trans->credit_cost;
+					$paid_by_credits = (float)$trans->credit_cost;
 					if((int)$trans->lite_plan_enabled == 1) {
 						if($consultation_credits == true) {
 							$paid_by_credits += $consultation;
@@ -5185,7 +5160,7 @@ public function getHrActivity( )
 
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 						$total_amount = $total_amount * $trans->currency_amount;
-						$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+						$trans->credit_cost = (float)$trans->credit_cost * $trans->currency_amount;
 						$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
 						$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
 						$consultation_credits = $consultation_credits * $trans->currency_amount;
@@ -5199,7 +5174,7 @@ public function getHrActivity( )
 						'clinic_name'       => $clinic->Name,
 						'clinic_image'      => $clinic->image,
 						'amount'            => number_format($total_amount, 2),
-						'procedure_cost'    => number_format($trans->credit_cost, 2),
+						'procedure_cost'    => number_format((float)$trans->credit_cost, 2),
 						'clinic_type_and_service' => $clinic_name,
 						'procedure'         => $procedure,
 						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
@@ -5367,9 +5342,9 @@ public function getHrActivity( )
 		}
 	}
 
-	$total_spent = $e_claim_spent + $in_network_spent;
+	$total_spent = $e_claim_spent + $in_network_spent + $total_lite_plan_consultation;
 
-    // sort in-network transaction
+  // sort in-network transaction
 	usort($transaction_details, function($a, $b) {
 		return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
 	});
@@ -5379,15 +5354,15 @@ public function getHrActivity( )
 		'total_balance'			=> $total_allocation - $total_spent,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
-		'in_network_spent'  => number_format($in_network_spent, 2),
+		'in_network_spent'  => number_format($in_network_spent + $total_lite_plan_consultation, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		'in_network_transactions' => $transaction_details,
 		'in_network_transactions_size' => sizeof($transaction_details),
-		'in_network_spending_format_number' => $in_network_spent,
+		'in_network_spending_format_number' => $in_network_spent + $total_lite_plan_consultation,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		'e_claim_transactions'	=> $e_claim,
-		'total_in_network_spent'    => number_format($total_in_network_spent, 2),
-		'total_in_network_spent_format_number'    => $total_in_network_spent,
+		'total_in_network_spent'    => number_format($in_network_spent + $total_lite_plan_consultation, 2),
+		'total_in_network_spent_format_number'    => $in_network_spent + $total_lite_plan_consultation,
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
@@ -6598,10 +6573,9 @@ public function updateEclaimStatus( )
     $customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
-    $date = null;
+    $date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-			$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
@@ -6617,8 +6591,8 @@ public function updateEclaimStatus( )
     } else {
     	$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
     }
-
-        // deduct credit and save logs
+    
+    // deduct credit and save logs
 		$wallet_class = new Wallet();
 		$history = new WalletHistory( );
     // check what type of spending wallet the e-claim is
