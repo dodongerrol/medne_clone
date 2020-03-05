@@ -2272,7 +2272,7 @@ class BenefitsDashboardController extends \BaseController {
 		$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 		$currency_type = $company_credits->currency_type;
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-		$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+		$filter = 'current_term';
 
 		if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
 			$user_spending_dates_medical = CustomerHelper::getCustomerCreditReset($customer_id, $filter, 'medical');
