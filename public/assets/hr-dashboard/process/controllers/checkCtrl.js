@@ -12,7 +12,8 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
       console.log( response.data.data.business_information.created_at );
       console.log( moment( response.data.data.business_information.created_at ).unix() );
       window.Appcues.identify(
-		    "57952", // unique, required
+				// "57952", // unique, required
+				response.data.data.business_information.customer_buy_start_id,
 		    {
 		    	created_at : moment( response.data.data.business_information.created_at ).unix()
 		    }
@@ -32,7 +33,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 			// console.log('no token');
 			$http.get(window.location.origin + '/get-hr-session')
 				.then(function(result){
-					// console.log(result);
+					console.log(result);
 					// get config for realtime notification
 					$http.get(window.location.origin + '/config/notification')
 					.then(function(response){

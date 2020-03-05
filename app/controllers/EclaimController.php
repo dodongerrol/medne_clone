@@ -6573,10 +6573,9 @@ public function updateEclaimStatus( )
     $customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
-    $date = null;
+    $date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
     if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-			$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
@@ -6592,8 +6591,8 @@ public function updateEclaimStatus( )
     } else {
     	$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
     }
-
-        // deduct credit and save logs
+    
+    // deduct credit and save logs
 		$wallet_class = new Wallet();
 		$history = new WalletHistory( );
     // check what type of spending wallet the e-claim is
