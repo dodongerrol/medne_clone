@@ -485,7 +485,8 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   };
 
   hrFactory.updateEntitlement = function( data  ) {
-    return $http.post( serverUrl.url + "/hr/create_member_new_entitlement", data  );
+    return $http.post( serverUrl.url + "/hr/create_member_credits_allocation", data  );
+    // return $http.post( serverUrl.url + "/hr/create_member_new_entitlement", data  );
   };
 
   return hrFactory;
