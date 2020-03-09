@@ -2362,14 +2362,12 @@ class EmployeeController extends \BaseController {
         $check_entitlement = DB::table('wallet_entitlement_schedule')
                                 ->where('member_id', $input['member_id'])
                                 ->where('spending_type', $input['spending_type'])
-                                ->whereIn('status', [0, 1])
+                                ->where('status', 0)
                                 ->orderBy('created_at', 'desc')
                                 ->first();
 
-        if($check_entitlement && (int)$check_entitlement->status == 0) {
+        if($check_entitlement) {
             return array('status' => false, 'message' => 'Member has still a schedule new entitlement');
-        } else if($check_entitlement && (int)$check_entitlement->status == 1) {
-            return array('status' => false, 'message' => 'Member has already have a '.strtoupper($input['spending_type']).' new entitlement');
         }
 
         $today = date('Y-m-d');
