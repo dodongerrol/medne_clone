@@ -1479,7 +1479,7 @@ app.directive("employeeOverviewDirective", [
           var medical_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.medical_new_entitlement,
-            effective_date: moment(scope.med_effective_date).format('YYYY-MM-DD'),
+            effective_date: moment(scope.med_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             spending_type:  'medical',
           }
           // var medical_data = {
@@ -1520,7 +1520,7 @@ app.directive("employeeOverviewDirective", [
           var wellness_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.wellness_new_entitlement,
-            effective_date: moment(scope.well_effective_date).format('YYYY-MM-DD'),
+            effective_date: moment(scope.well_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             spending_type : 'wellness',
           }
 
@@ -1567,14 +1567,14 @@ app.directive("employeeOverviewDirective", [
           var medical_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.medical_new_entitlement,
-            effective_date: moment(scope.med_effective_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+            effective_date: moment(scope.med_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             spending_type:  'medical',
           }
 
           var wellness_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.wellness_new_entitlement,
-            effective_date: moment(scope.well_effective_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+            effective_date: moment(scope.well_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             spending_type : 'wellness',
           }
 
