@@ -12836,11 +12836,11 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_e_claim_spent = 0;
 		$total_medical_in_network_spent = 0;
 
-		$medical_wallet_history = DB::table('wallet_history')
-		->where('wallet_id', $wallet->wallet_id)
-		->where('created_at', '>=', $minimum_date_medical)
-		->where('created_at', '<=', $plan_end_date)
-		->get();
+		// $medical_wallet_history = DB::table('wallet_history')
+		// ->where('wallet_id', $wallet->wallet_id)
+		// ->where('created_at', '>=', $minimum_date_medical)
+		// ->where('created_at', '<=', $plan_end_date)
+		// ->get();
 		// return $medical_wallet_history;
 		$pending_e_claim_medical = DB::table('e_claim')
 		->whereIn('user_id', $ids)
@@ -12869,8 +12869,7 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-		$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
-		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
+		$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $check_employee->UserID, $minimum_date_medical, $plan_end_date);
 		// foreach ($medical_wallet_history as $key => $history) {
 		// 	if($history->logs == "added_by_hr") {
 		// 		$total_allocation_medical_temp += $history->credit;
@@ -12969,11 +12968,11 @@ class BenefitsDashboardController extends \BaseController {
 		$total_wellness_in_network_spent = 0;
 		$has_wellness_allocation = false;
 
-		$wellness_wallet_history = DB::table('wellness_wallet_history')
-		->where('wallet_id', $wallet->wallet_id)
-		->where('created_at', '>=', $minimum_date_wellness)
-		->where('created_at', '<=', $plan_end_date)
-		->get();
+		// $wellness_wallet_history = DB::table('wellness_wallet_history')
+		// ->where('wallet_id', $wallet->wallet_id)
+		// ->where('created_at', '>=', $minimum_date_wellness)
+		// ->where('created_at', '<=', $plan_end_date)
+		// ->get();
 
 		$pending_e_claim_wellness = DB::table('e_claim')
 		->whereIn('user_id', $ids)
@@ -12981,6 +12980,7 @@ class BenefitsDashboardController extends \BaseController {
 		->where('status', 0)
 		->sum('amount');
 
+		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID, $minimum_date_wellness, $plan_end_date);
 		$total_allocation_wellness = $wellness_credit_data['allocation'];
 		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];;
 
