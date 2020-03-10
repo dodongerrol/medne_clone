@@ -1097,6 +1097,9 @@ app.directive("employeeOverviewDirective", [
           }
         };
 
+        scope.med_effective_date = moment().format('DD/MM/YYYY');
+        scope.well_effective_date = moment().format('DD/MM/YYYY');
+
         scope.toggleEmpTab = function (opt) {
       
           scope.emp_entitlement.medical_new_entitlement = '';
@@ -1312,7 +1315,7 @@ app.directive("employeeOverviewDirective", [
                 // console.log(response);
                 
                 scope.entitlement_status = response.data;
-                // console.log(scope.entitlement_status);
+                console.log(scope.entitlement_status);
 
                 if ( scope.entitlement_status.medical_entitlement != null && scope.entitlement_status.wellness_entitlement != null ) {
                   scope.entitlement_status.medical_entitlement.effective_date = moment( scope.entitlement_status.medical_entitlement.effective_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
@@ -1414,16 +1417,21 @@ app.directive("employeeOverviewDirective", [
           med_credits : scope.emp_entitlement.medical_new_entitlement,
           well_credits : scope.emp_entitlement.wellness_new_entitlement
         }
-        scope.effective_date = {
-          med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-          well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-          // med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-          // well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-        }
+        
+
+        console.log(scope.effective_date);
 
         scope.updateEntitlement = function () {
+          scope.effective_date = {
+            med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+            well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+            // med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+            // well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+          }
+
           console.log(scope.emp_entitlement.medical_new_entitlement, scope.emp_entitlement.wellness_new_entitlement);
 
+          console.log(scope.effective_date);
           var text;
 
           if (scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) {
@@ -1434,7 +1442,7 @@ app.directive("employeeOverviewDirective", [
             text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will overide the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           } else if (scope.emp_entitlement.wellness_new_entitlement > 0) {
             console.log('3 if');
-            text = ` <span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will overide the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+            text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will overide the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           }
 
           swal({
@@ -1479,7 +1487,7 @@ app.directive("employeeOverviewDirective", [
           var medical_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.medical_new_entitlement,
-            effective_date: moment(scope.med_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            effective_date: scope.effective_date.med_date,
             spending_type:  'medical',
           }
           // var medical_data = {
@@ -1507,7 +1515,8 @@ app.directive("employeeOverviewDirective", [
                   confirmButtonText: 'Close',
                   customClass : 'allocationEntitlementSuccessModal'
                 });
-                scope.getMemberEntitlement( scope.emp_member_id )
+                scope.getMemberEntitlement( scope.emp_member_id );
+                scope.getMemberNewEntitlementStatus();
               } else {
                 swal('Error!', response.data.message,'error');
               }
@@ -1520,7 +1529,7 @@ app.directive("employeeOverviewDirective", [
           var wellness_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.wellness_new_entitlement,
-            effective_date: moment(scope.well_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            effective_date: scope.effective_date.well_date,
             spending_type : 'wellness',
           }
 
@@ -1549,7 +1558,8 @@ app.directive("employeeOverviewDirective", [
                   confirmButtonText: 'Close',
                   customClass : 'allocationEntitlementSuccessModal'
                 });
-                scope.getMemberEntitlement( scope.emp_member_id )
+                scope.getMemberEntitlement( scope.emp_member_id );
+                scope.getMemberNewEntitlementStatus();
               } else {
                 swal('Error!', response.data.message,'error');
                 console.log( response.data.message );
@@ -1561,20 +1571,20 @@ app.directive("employeeOverviewDirective", [
 
 
         scope.updateAllEntitlement = function () {
-          console.log(scope.med_effective_date);
-          console.log(scope.well_effective_date);
+          console.log(scope.effective_date.med_date);
+          console.log(scope.effective_date.well_date);
 
           var medical_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.medical_new_entitlement,
-            effective_date: moment(scope.med_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            effective_date: scope.effective_date.med_date,
             spending_type:  'medical',
           }
 
           var wellness_data = {
             member_id:  scope.emp_member_id,
             new_allocation_credits: scope.emp_entitlement.wellness_new_entitlement,
-            effective_date: moment(scope.well_effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            effective_date: scope.effective_date.well_date,
             spending_type : 'wellness',
           }
 
@@ -1596,6 +1606,7 @@ app.directive("employeeOverviewDirective", [
               });
               res.map(function(value){
                 scope.getMemberEntitlement( scope.emp_member_id );
+                scope.getMemberNewEntitlementStatus();
                 console.log(value);
               });
             } else {
