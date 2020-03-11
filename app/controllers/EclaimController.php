@@ -3370,7 +3370,7 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
-                        // check user if it is spouse or dependent
+       	// check user if it is spouse or dependent
 				if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -3453,7 +3453,7 @@ public function getActivityInNetworkTransactions( )
 						if((int)$trans->health_provider_done == 1) {
 							$bill_amount = $trans->procedure_cost;
 						} else {
-							$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+							$bill_amount = $trans->credit_cost + $trans->cash_cost;
 						}
 					} else {
 						$bill_amount = 	$trans->procedure_cost;
