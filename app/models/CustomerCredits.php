@@ -26,8 +26,18 @@ class CustomerCredits extends Eloquent
     return CustomerCredits::where('customer_credits_id', $id)->decrement('balance', $credits);
   }
 
+  public function deductCustomerMedicalSuppCredits($id, $credits)
+  {
+    return CustomerCredits::where('customer_credits_id', $id)->decrement('medical_supp_credits', $credits);
+  }
+
   public function deductCustomerWellnessCredits($id, $credits)
   {
     return CustomerCredits::where('customer_credits_id', $id)->decrement('wellness_credits', $credits);
+  }
+
+   public function deductCustomerWellnessSuppCredits($id, $credits)
+  {
+    return CustomerCredits::where('customer_credits_id', $id)->decrement('wellness_supp_credits', $credits);
   }
 }

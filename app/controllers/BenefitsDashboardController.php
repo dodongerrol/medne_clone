@@ -2262,6 +2262,8 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_allocation = 0;
 		$temp_total_allocation_wellness = 0;
 		$temp_total_deduction_wellness = 0;
+		$total_medical_supp_credits = 0;
+		$total_wellness_supp_credits = 0;
 
 		// get plan
 		$plan = DB::table('customer_plan')
@@ -2432,6 +2434,10 @@ class BenefitsDashboardController extends \BaseController {
 		$total_wellnesss_allocated = $allocated_wellness - $deleted_employee_allocation_wellness;
 		$credits = $total_medical_allocation - $total_medical_allocated;
 		$credits_wellness = $total_allocation_wellness - $total_wellnesss_allocated;
+
+		$total_medical_supp_credits = $total_medical_allocated * $spending_account_settings->medical_supplementary_credits;
+		$total_wellness_supp_credits = $total_wellnesss_allocated * $spending_account_settings->wellness_supplementary_credits;
+
 		if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
 			$total_medical_allocation = 0;
 			$credits = 0;
@@ -2444,15 +2450,31 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		if($plan->account_type != "enterprise_plan" && $filter == "current_term") {
-			if($company_credits->balance != $credits) {
-					// update medical credits
-				\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
+			// if($company_credits->balance != $credits) {
+			// 		// update medical credits
+			// 	\CustomerCredits::where('customer_id', $customer_id)->update(['balance' => $credits]);
+			// }
+
+			// if($company_credits->wellness_credits != $credits_wellness) {
+			// 		// update wellness credits
+			// 	\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
+			// }
+
+			$credit_update = array(
+				'balance' => $credits,
+				// 'medical_supp_credits' => $total_medical_supp_credits,
+				'wellness_credits' => $credits_wellness,
+				// 'wellness_supp_credits' => $total_wellness_supp_credits
+			);
+
+			if($company_credits->medical_supp_credits == 0) {
+				$credit_update['medical_supp_credits'] = $total_medical_supp_credits;
 			}
 
-			if($company_credits->wellness_credits != $credits_wellness) {
-					// update wellness credits
-				\CustomerCredits::where('customer_id', $customer_id)->update(['wellness_credits' => $credits_wellness]);
+			if($company_credits->wellness_supp_credits == 0) {
+				$credit_update['wellness_supp_credits'] = $total_wellness_supp_credits;
 			}
+			\CustomerCredits::where('customer_id', $customer_id)->update($credit_update);
 		}
 		// }
 		
@@ -2469,6 +2491,8 @@ class BenefitsDashboardController extends \BaseController {
 			'total_wellness_employee_spent'		=> number_format($get_allocation_spent_wellness, 2),
 			'total_wellness_employee_balance' => number_format($total_wellness_balance, 2),
 			'total_wellness_employee_balance_number' => $total_wellness_balance,
+			'total_medical_supp_credits'		=> $total_medical_supp_credits,
+			'total_wellness_supp_credits'		=> $total_wellness_supp_credits,
 			'company_id' => $customer_id,
 			'currency' => $currency_type,
 			'unlimited_credits'			=> $plan->account_type == "enterprise_plan" ? true : false,
