@@ -673,6 +673,10 @@ app.directive("employeeOverviewDirective", [
             });
         }
 
+        scope.goToBulkAllocation = function () {
+          $state.go('bulk-cred-allocation');
+        }
+
         scope.enrollMoreEmployees = function () {
           // localStorage.setItem('fromEmpOverview', false);
           $state.go('create-team-benefits-tiers');
