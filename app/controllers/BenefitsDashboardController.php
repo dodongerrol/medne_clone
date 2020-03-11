@@ -10268,7 +10268,7 @@ class BenefitsDashboardController extends \BaseController {
 				if((int)$transaction->health_provider_done == 1) {
 					$bill_amount = $transaction->procedure_cost;
 				} else {
-					$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees;
+					$bill_amount = $transaction->credit_cost + $transaction->cash_cost;
 				}
 			} else {
 				$bill_amount = 	$transaction->procedure_cost;
