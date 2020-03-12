@@ -997,14 +997,14 @@ app.directive("employeeOverviewDirective", [
             swal('Error!', 'Start Date is required.', 'error');
             return false;
           }
-          if (data.medical_credits > scope.credit_status.total_medical_employee_balance_number) {
-            swal('Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
-            return false;
-          }
-          if (data.wellness_credits > scope.credit_status.total_wellness_employee_balance_number) {
-            swal('Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
-            return false;
-          }
+          // if (data.medical_credits > scope.credit_status.total_medical_employee_balance_number) {
+          //   swal('Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+          //   return false;
+          // }
+          // if (data.wellness_credits > scope.credit_status.total_wellness_employee_balance_number) {
+          //   swal('Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+          //   return false;
+          // }
 
           return true;
         }
@@ -2666,9 +2666,9 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.onLoad = function () {
-          scope.checkCompanyBalance();
+          // scope.checkCompanyBalance();
           scope.getPlanStatus();
-          scope.userCompanyCreditsAllocated();
+          // scope.userCompanyCreditsAllocated();
           scope.getTotalMembers();
           scope.checkDependentsStatus();
           scope.companyDependents();
