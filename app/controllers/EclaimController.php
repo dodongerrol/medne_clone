@@ -5021,7 +5021,7 @@ public function getHrActivity( )
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
 								$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
-								$cash = $transation->cash_cost;
+								$cash = $trans->cash_cost;
 							} else {
 								$total_amount = $cost;
 								$total_amount = $cost + $trans->consultation_fees;
