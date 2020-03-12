@@ -168,6 +168,8 @@ class EclaimController extends \BaseController {
 		$check_plan = PlanHelper::checkEmployeePlanStatus($user_id);
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
 		$date = date('Y-m-d', strtotime($input['date']));
+		$claim_amount = $input['claim_amount'];
+
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
@@ -197,13 +199,17 @@ class EclaimController extends \BaseController {
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
+	        $claim_amount = $claim_amount / $currency;
 	      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
 	        $amount = $input['amount'] * $currency;
+	        $claim_amount = $claim_amount * $currency;
 	      } else {
 	        $amount = trim($input['amount']);
+	        $claim_amount = trim($claim_amount);
 	      }
 	    } else {
 	      $amount = trim($input['amount']);
+	      $claim_amount = trim($claim_amount);
 	    }
 	  }
 
@@ -225,7 +231,7 @@ class EclaimController extends \BaseController {
       $balance = TransactionHelper::floatvalue($balance);
 
       if($spending['back_date'] == false) {
-				if($amount > $balance || $balance <= 0) {
+				if($claim_amount > $balance || $balance <= 0) {
 					return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
 				}
 		    // check user pending e-claims amount
@@ -235,7 +241,7 @@ class EclaimController extends \BaseController {
 				$amount = trim($amount);
 				$total_claim_amount = trim($total_claim_amount);
 
-				if($amount > $total_claim_amount) {
+				if($claim_amount > $total_claim_amount) {
 					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
 				}
       }
@@ -252,7 +258,7 @@ class EclaimController extends \BaseController {
 			'service'	=> $input['service'],
 			'merchant'	=> $input['merchant'],
 			'amount'	=> $amount,
-			'claim_amount'	=> trim($input['claim_amount']),
+			'claim_amount'	=> $claim_amount,
 			'date'		=> $date,
 			'approved_date' => null,
 			'time'		=> $time,
