@@ -2755,4 +2755,79 @@ class EmployeeController extends \BaseController {
           return array('status' => false, 'message' => 'Excel File is required.');
         }
     }
+
+    public function getMemberCreditDetails( )
+    {
+        $input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+
+        if(empty($input['member_id']) || $input['member_id'] == null) {
+            return array('status' => false, 'message' => 'member_id is required');
+        }
+
+        $member = DB::table('user')->where('UserID', $input['member_id'])->first();
+
+        if(!$member) {
+            return array('status' => false, 'message' => 'Member does not exist');
+        }
+
+        $ids = StringHelper::getSubAccountsID($input['member_id']);
+        $plan_user_history = DB::table('user_plan_history')
+                ->where('user_id', $input['member_id'])
+                ->where('type', 'started')
+                ->orderBy('created_at', 'desc')
+                ->first();
+        $active_plan = DB::table('customer_active_plan')
+                ->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
+                ->first();
+        $user_spending_dates = MemberHelper::getMemberCreditReset($input['member_id'], 'current_term', 'medical');
+        $wallet = DB::table('e_wallet')->where('UserID', $input['member_id'])->orderBy('created_at', 'desc')->first();
+        $wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $input['member_id'])->orderBy('created_at', 'desc')->first();
+
+        if($user_spending_dates) {
+            $medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $input['member_id'], $user_spending_dates['start'], $user_spending_dates['end']);
+            $wellness_credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $input['member_id'], $user_spending_dates['start'], $user_spending_dates['end']);
+        } else {
+            $medical_credit_data['allocation'] = 0;
+            $medical_credit_data['get_allocation_spent'] = 0;
+            $medical_credit_data['balance'] = 0;
+            $wellness_credit_data['allocation'] = 0;
+            $wellness_credit_data['get_allocation_spent'] = 0;
+        }
+
+        // get pending allocation for medical
+        $e_claim_amount_pending_medication = DB::table('e_claim')
+        ->whereIn('user_id', $ids)
+        ->where('spending_type', 'medical')
+        ->where('status', 0)
+        ->sum('amount');
+
+        // get pending allocation for wellness
+        $e_claim_amount_pending_wellness = DB::table('e_claim')
+        ->whereIn('user_id', $ids)
+        ->where('spending_type', 'wellness')
+        ->where('status', 0)
+        ->sum('amount');
+
+        $medical = array(
+            'entitlement' => $wallet_entitlement->medical_entitlement,
+            'credits_allocation' => $medical_credit_data['allocation'],
+            'credits_spent'     => $medical_credit_data['get_allocation_spent'],
+            'balance'           => $active_plan->account_type == 'super_pro_plan' || $active_plan->account_type == 'enterprise_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
+            'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+            'currency_type'  =>  $wallet->currency_type
+        );
+
+        $wellness = array(
+            'entitlement' => $wallet_entitlement->wellness_entitlement,
+            'credits_allocation_wellness'    => $wellness_credit_data['allocation'],
+            'credits_spent_wellness'        => $wellness_credit_data['get_allocation_spent'],
+            'balance'                       => $active_plan->account_type == 'super_pro_plan' || $active_plan->account_type == 'enterprise_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+            'e_claim_amount_pending_wellness'   => $e_claim_amount_pending_wellness,
+            'currency_type'  =>  $wallet->currency_type
+        );
+
+        return array('status' => true, 'medical' => $medical, 'wellness' => $wellness);
+    }
 }

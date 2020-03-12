@@ -438,7 +438,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_lists_bulk_allocation', 'BenefitsDashboardController@getEmployeeListsBulk');
 	// upload employee allocation bulk
 	Route::post('hr/upload_employee_bulk_allocation', 'EmployeeController@uploadEmployeeBulkAllocation');
-
+	// get member credits
+	Route::get('hr/member_credits', 'EmployeeController@getMemberCreditDetails');
 });
 
 // create new allocation
