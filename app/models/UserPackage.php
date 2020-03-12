@@ -217,19 +217,13 @@ class UserPackage extends Eloquent
                         }
 
                         $plan_user = DB::table('user_plan_type')->where('user_id', $id)->orderBy('created_at', 'desc')->first();
-
                         $active_plan = DB::table('customer_active_plan')
                                     ->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
                                     ->first();
-
-
                         $customer_active_plan_id = $active_plan->customer_active_plan_id;
-
-
                         $plan = DB::table('customer_plan')
                                 ->where('customer_plan_id', $active_plan->plan_id)
                                 ->first();
-
                         $active_plan_first = DB::table('customer_active_plan')
                                                 ->where('plan_id', $active_plan->plan_id)
                                                 ->first();
@@ -310,6 +304,7 @@ class UserPackage extends Eloquent
                         }
 
                         $data['cap_per_visit'] = $cap_per_visit;
+                        $data['currency_type'] = $wallet->currency_type;
                         return $data;
                     }
                 } else {

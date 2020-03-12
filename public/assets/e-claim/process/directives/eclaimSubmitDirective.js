@@ -431,8 +431,9 @@ app.directive('eclaimSubmitDirective', [
 					eclaimSettings.empDetails( )
 						.then(function( response ) {
 							scope.user_details = response.data.data;
+							scope.hideIntroLoader();
 							// console.log(scope.user_details);
-							scope.getCurrentActivity();
+							// scope.getCurrentActivity();
 						});
 				}
 
@@ -470,6 +471,10 @@ app.directive('eclaimSubmitDirective', [
 					.then(function(response){
 						console.log( response );
 						scope.user_status = response.data;
+						scope.currency_myr = response.data.currency_type;
+						if (scope.currency_myr === 'myr') {
+							scope.eclaim.selectedCurrencyType = scope.currency_myr;
+						}
 						scope.initializeDatepickers();
 					})
 				}
