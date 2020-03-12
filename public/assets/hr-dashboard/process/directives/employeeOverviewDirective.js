@@ -673,6 +673,10 @@ app.directive("employeeOverviewDirective", [
             });
         }
 
+        scope.goToBulkAllocation = function () {
+          $state.go('bulk-cred-allocation');
+        }
+
         scope.enrollMoreEmployees = function () {
           // localStorage.setItem('fromEmpOverview', false);
           $state.go('create-team-benefits-tiers');
@@ -1436,13 +1440,13 @@ app.directive("employeeOverviewDirective", [
 
           if (scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) {
             console.log('1 if');
-            text = `<span>Please note that</span> <br><br> <span>_ The new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will overide the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span><br><span>_ The new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will overide the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+            text = `<span>Please note that</span> <br><br> <span>_ The new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span><br><span>_ The new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           } else if (scope.emp_entitlement.medical_new_entitlement > 0) {
             console.log('2 if');
-            text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will overide the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+            text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           } else if (scope.emp_entitlement.wellness_new_entitlement > 0) {
             console.log('3 if');
-            text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will overide the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+            text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           }
 
           swal({
@@ -1468,6 +1472,7 @@ app.directive("employeeOverviewDirective", [
                   console.log('wellness');
                   scope.updateWellnessEntitlement();
                 }
+
 
                 // swal({
                 //   title: '',
@@ -1515,6 +1520,7 @@ app.directive("employeeOverviewDirective", [
                   confirmButtonText: 'Close',
                   customClass : 'allocationEntitlementSuccessModal'
                 });
+                scope.updateDisable = true;
                 scope.getMemberEntitlement( scope.emp_member_id );
                 scope.getMemberNewEntitlementStatus();
               } else {
@@ -1558,6 +1564,7 @@ app.directive("employeeOverviewDirective", [
                   confirmButtonText: 'Close',
                   customClass : 'allocationEntitlementSuccessModal'
                 });
+                scope.updateDisable = true;
                 scope.getMemberEntitlement( scope.emp_member_id );
                 scope.getMemberNewEntitlementStatus();
               } else {
@@ -1588,36 +1595,71 @@ app.directive("employeeOverviewDirective", [
             spending_type : 'wellness',
           }
 
-          Promise.all([ 
-            hrActivity.updateEntitlement( medical_data ),
-            hrActivity.updateEntitlement( wellness_data )
-          ]).then(function(res) {
-            console.log(res);
-            if (res[0].data.status && res[1].data.status) {
-              scope.hideLoading();
-              console.log(wellness_data);
-              swal({
-                title: '',
-                text: '<span>The allocation amount has been successfully updated.</span>',
-                html: true,
-                showCancelButton: false,
-                confirmButtonText: 'Close',
-                customClass : 'allocationEntitlementSuccessModal'
-              });
-              res.map(function(value){
-                scope.getMemberEntitlement( scope.emp_member_id );
-                scope.getMemberNewEntitlementStatus();
-                console.log(value);
-              });
-            } else {
-              scope.hideLoading();
-              if (!res[0].data.status) {
-                swal('Error!', res[0].data.message,'error');
+          hrActivity.updateEntitlement( medical_data )
+            .then(function(response1){
+              console.log(response1);
+              // scope.hideLoading();
+              console.log(response1.data.status);
+              if (response1.data.status) {
+                // scope.hideLoading();
+                hrActivity.updateEntitlement( wellness_data )
+                  .then(function(response2){
+                    console.log(response2);
+                    scope.hideLoading();
+                    console.log(response2.data.status);
+                    if (response2.data.status) {
+                      scope.hideLoading();
+                      swal({
+                        title: '',
+                        text: '<span>The allocation amount has been successfully updated.</span>',
+                        html: true,
+                        showCancelButton: false,
+                        confirmButtonText: 'Close',
+                        customClass : 'allocationEntitlementSuccessModal'
+                      });
+                      scope.updateDisable = true;
+                      scope.getMemberEntitlement( scope.emp_member_id );
+                      scope.getMemberNewEntitlementStatus();
+                    } else {
+                      swal('Error!', response.data.message,'error');
+                    }
+                });  
               } else {
-                swal('Error!', res[1].data.message,'error');
+                swal('Error!', response.data.message,'error');
               }
-            }
           });
+
+          // Promise.all([ 
+          //   hrActivity.updateEntitlement( medical_data ),
+          //   hrActivity.updateEntitlement( wellness_data )
+          // ]).then(function(res) {
+          //   console.log(res);
+          //   if (res[0].data.status && res[1].data.status) {
+          //     scope.hideLoading();
+          //     console.log(wellness_data);
+          //     swal({
+          //       title: '',
+          //       text: '<span>The allocation amount has been successfully updated.</span>',
+          //       html: true,
+          //       showCancelButton: false,
+          //       confirmButtonText: 'Close',
+          //       customClass : 'allocationEntitlementSuccessModal'
+          //     });
+          //     res.map(function(value){
+          //       scope.updateDisable = true;
+          //       scope.getMemberEntitlement( scope.emp_member_id );
+          //       scope.getMemberNewEntitlementStatus();
+          //       console.log(value);
+          //     });
+          //   } else {
+          //     scope.hideLoading();
+          //     if (!res[0].data.status) {
+          //       swal('Error!', res[0].data.message,'error');
+          //     } else {
+          //       swal('Error!', res[1].data.message,'error');
+          //     }
+          //   }
+          // });
 
           // var medical_data = {
           //   member_id : scope.emp_member_id,
