@@ -489,5 +489,9 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
     // return $http.post( serverUrl.url + "/hr/create_member_new_entitlement", data  );
   };
 
+  hrFactory.memberCredits = function( id  ) {
+    return $http.get( serverUrl.url + "/hr/member_credits?member_id=" + id );
+  };
+
   return hrFactory;
 });
