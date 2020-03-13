@@ -9868,13 +9868,8 @@ class BenefitsDashboardController extends \BaseController {
 			->where('customer_plan_id', $company_active_plan->plan_id)
 			->first();
 
-			// $plan_withdraw = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)
-							// ->orderBy('created_at', 'desc')->first();
-
 			$temp_end_date = date('Y-m-d', strtotime('+1 year', strtotime($company_plan->plan_start)));
-
 			$end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_end_date)));
-
 			$total_refund = 0;
 			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->whereIn('refund_status', [0,1])->get();
 			foreach ($withdraws as $key => $user) {
@@ -9887,7 +9882,8 @@ class BenefitsDashboardController extends \BaseController {
 					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 					$days = $diff->format('%a') + 1;
 
-					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					// $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
 					$remaining_days = $total_days - $days;
 
 					$cost_plan_and_days = ($invoice->individual_price/$total_days);
@@ -9914,8 +9910,8 @@ class BenefitsDashboardController extends \BaseController {
 						'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
 						'remaining_days' => $remaining_days,
 						'total_days'		=> $total_days,
-						'before_amount'	=> number_format($temp_total, 2),
-						'after_amount' => number_format($withdraw_data->amount, 2),
+						'before_amount'	=> \DecimalHelper::formatDecimal($temp_total),
+						'after_amount' => \DecimalHelper::formatDecimal($withdraw_data->amount),
 						'has_no_user'	=> false
 					);
 				} else {
@@ -9936,8 +9932,8 @@ class BenefitsDashboardController extends \BaseController {
 						'last_period_of_unused' => date('d/m/Y', strtotime($user->unused)),
 						'remaining_days' => $remaining_days,
 						'total_days'		=> $total_days,
-						'before_amount'	=> number_format($user->amount, 2),
-						'after_amount' => number_format($user->amount, 2),
+						'before_amount'	=> \DecimalHelper::formatDecimal($user->amount),
+						'after_amount' => \DecimalHelper::formatDecimal($user->amount),
 						'has_no_user'	=> true
 					);
 				}
@@ -9986,8 +9982,8 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$refund_data = array(
-				'total_refund' => number_format($total_refund, 2),
-				'amount_due'	=> number_format($amount_due, 2),
+				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
+				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
 				'date_refund' => $refund_payment->date_refund,
