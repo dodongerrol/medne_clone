@@ -2366,65 +2366,89 @@ class EmployeeController extends \BaseController {
                                 ->orderBy('created_at', 'desc')
                                 ->first();
 
-        if($check_entitlement) {
-            return array('status' => false, 'message' => 'Member has still a schedule new entitlement');
-        }
-
         $today = date('Y-m-d');
         $new_usage_date = date('Y-m-d', strtotime($input['effective_date']));
         $wallet = DB::table('e_wallet')->where('UserID', $input['member_id'])->first();
 
         $plan_dates = [];
         $spending_account_company = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-        if($input['spending_type'] == 'medical') {
-            if($new_usage_date > $spending_account_company->medical_spending_end_date) {
+        $id = null;
+
+        if($check_entitlement) {
+            if($input['spending_type'] == 'medical') {
+                if($new_usage_date > $spending_account_company->medical_spending_end_date) {
                 return array('status' => false, 'message' => 'New Medical Entitlement Usage Date exceeded the Spending End Date.');
-            }
-            $plan_dates['valid_date'] = $spending_account_company->medical_spending_end_date;
-            $credits  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->UserID);
-            $credits = $credits['allocation'];
-            $data = array(
-                'member_id'                 => $input['member_id'],
-                'new_usage_date'            => $new_usage_date,
-                'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->medical_usage_date)),
-                'proration'                 => 'months',
-                'new_allocation_credits'    => $input['new_allocation_credits'],
-                'new_entitlement_credits'   => $input['new_allocation_credits'],
-                'old_entitlement_credits'   => $credits,
-                'plan_end'                  => date('Y-m-d', strtotime($plan_dates['valid_date'])),
-                'effective_date'            => $new_usage_date,
-                'spending_type'             => $input['spending_type'],
-                'created_at'                => date('Y-m-d H:i:s'),
-                'updated_at'                => date('Y-m-d H:i:s')
-            );
-        } else {
-            if($new_usage_date > $spending_account_company->wellness_spending_end_date) {
+              }
+            } else {
+                if($new_usage_date > $spending_account_company->wellness_spending_end_date) {
                 return array('status' => false, 'message' => 'New Wellness Entitlement Usage Date exceeded the Spending End Date.');
+              }
             }
-            $plan_dates['valid_date'] = $spending_account_company->wellness_spending_end_date;
-            $credits  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->UserID);
-            $credits = $credits['allocation'];
+
             $data = array(
-                'member_id'                 => $input['member_id'],
                 'new_usage_date'            => $new_usage_date,
-                'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->wellness_usage_date)),
-                'proration'                 => 'months',
                 'new_allocation_credits'    => $input['new_allocation_credits'],
                 'new_entitlement_credits'   => $input['new_allocation_credits'],
-                'old_entitlement_credits'   => $credits,
-                'plan_end'                  => date('Y-m-d', strtotime($plan_dates['valid_date'])),
-                'effective_date'            => $new_usage_date,
-                'spending_type'             => $input['spending_type'],
-                'created_at'                => date('Y-m-d H:i:s'),
                 'updated_at'                => date('Y-m-d H:i:s')
             );
+
+            DB::table('wallet_entitlement_schedule')->where('wallet_entitlement_schedule_id', $check_entitlement->wallet_entitlement_schedule_id)->update($data);
+            $id = $check_entitlement->wallet_entitlement_schedule_id;
+            $result = $check_entitlement;
+        } else {
+            if($input['spending_type'] == 'medical') {
+                if($new_usage_date > $spending_account_company->medical_spending_end_date) {
+                    return array('status' => false, 'message' => 'New Medical Entitlement Usage Date exceeded the Spending End Date.');
+                }
+                $plan_dates['valid_date'] = $spending_account_company->medical_spending_end_date;
+                $credits  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->UserID);
+                $credits = $credits['allocation'];
+                $data = array(
+                    'member_id'                 => $input['member_id'],
+                    'new_usage_date'            => $new_usage_date,
+                    'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->medical_usage_date)),
+                    'proration'                 => 'months',
+                    'new_allocation_credits'    => $input['new_allocation_credits'],
+                    'new_entitlement_credits'   => $input['new_allocation_credits'],
+                    'old_entitlement_credits'   => $credits,
+                    'plan_end'                  => date('Y-m-d', strtotime($plan_dates['valid_date'])),
+                    'effective_date'            => $new_usage_date,
+                    'spending_type'             => $input['spending_type'],
+                    'created_at'                => date('Y-m-d H:i:s'),
+                    'updated_at'                => date('Y-m-d H:i:s')
+                );
+            } else {
+                if($new_usage_date > $spending_account_company->wellness_spending_end_date) {
+                    return array('status' => false, 'message' => 'New Wellness Entitlement Usage Date exceeded the Spending End Date.');
+                }
+                $plan_dates['valid_date'] = $spending_account_company->wellness_spending_end_date;
+                $credits  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->UserID);
+                $credits = $credits['allocation'];
+                $data = array(
+                    'member_id'                 => $input['member_id'],
+                    'new_usage_date'            => $new_usage_date,
+                    'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->wellness_usage_date)),
+                    'proration'                 => 'months',
+                    'new_allocation_credits'    => $input['new_allocation_credits'],
+                    'new_entitlement_credits'   => $input['new_allocation_credits'],
+                    'old_entitlement_credits'   => $credits,
+                    'plan_end'                  => date('Y-m-d', strtotime($plan_dates['valid_date'])),
+                    'effective_date'            => $new_usage_date,
+                    'spending_type'             => $input['spending_type'],
+                    'created_at'                => date('Y-m-d H:i:s'),
+                    'updated_at'                => date('Y-m-d H:i:s')
+                );
+            }
+            $new_entitlment = new NewEmployeeEntitlementSchedule();
+            $result = $new_entitlment->createData($data);
+            $id = $result->id;
         }
-        $new_entitlment = new NewEmployeeEntitlementSchedule();
-        $result = $new_entitlment->createData($data);
+        
+
         if($result) {
             if($today >= $new_usage_date) {
                 // activate now
-                MemberHelper::activateNewEntitlement($input['member_id'], $result->id);
+                MemberHelper::activateNewEntitlement($input['member_id'], $id);
             }
             if($admin_id) {
                 $admin_logs = array(
