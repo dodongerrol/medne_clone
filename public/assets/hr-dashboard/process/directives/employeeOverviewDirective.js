@@ -1440,13 +1440,13 @@ app.directive("employeeOverviewDirective", [
 
           if (scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) {
             console.log('1 if');
-            text = `<span>Please note that</span> <br><br> <span>_ The new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span><br><span>_ The new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+            text = `<span>Please note that</span> <br><br> <span>_ The new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span><br><span>_ The new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           } else if (scope.emp_entitlement.medical_new_entitlement > 0) {
             console.log('2 if');
-            text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+            text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           } else if (scope.emp_entitlement.wellness_new_entitlement > 0) {
             console.log('3 if');
-            text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will Override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+            text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           }
 
           swal({
@@ -1533,6 +1533,7 @@ app.directive("employeeOverviewDirective", [
                 scope.getMemberNewEntitlementStatus();
                 scope.memberCredits();
               } else {
+                scope.hideLoading();
                 swal('Error!', response.data.message,'error');
               }
               
@@ -1586,6 +1587,7 @@ app.directive("employeeOverviewDirective", [
                 scope.getMemberNewEntitlementStatus();
                 scope.memberCredits();
               } else {
+                scope.hideLoading();
                 swal('Error!', response.data.message,'error');
                 console.log( response.data.message );
               }
@@ -1654,11 +1656,13 @@ app.directive("employeeOverviewDirective", [
                       scope.getMemberNewEntitlementStatus();
                       scope.memberCredits();
                     } else {
-                      swal('Error!', response.data.message,'error');
+                      scope.hideLoading();
+                      swal('Error!', response2.data.message,'error');
                     }
                 });  
               } else {
-                swal('Error!', response.data.message,'error');
+                scope.hideLoading();
+                swal('Error!', response1.data.message,'error');
               }
           });
         }
