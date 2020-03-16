@@ -38,7 +38,13 @@
 	</div>
 	<div class="hrdb-body-container">
 
-		<h1>New Bulk Credit Allocation</h1>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="text-center"> Bulk Credit Allocation</h1>
+				</div>
+			</div>
+		</div>
 
 		<div class="container">
 			<div class="row">
@@ -47,28 +53,103 @@
 				</div>
 			</div>
 		</div>
+	
+		<section>
+			<div class="gp-cap-per-wrapper bulk-cred-wrapper">
+			
+        <div class="container bulk-cred-per-visit-wrapper">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="bulk-cred-options text-right">
+								<div>
+									<button>Download</button>
+									<button>Upload</button>
+									<button>Update</button>
+								</div>
+						</div>
+					</div>
+          
+          </div>  
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="bulk-cred-table-wrapper">
+								<div class="bulk-cred-table-info-wrapper">
+									<div class="bulk-cred-table-info-container">
+										<table>
+											<thead>
+												<tr>
+													<th rowspan="2" style="width: 150px;">Member ID</th>
+													<th rowspan="2" style="width: 350px;">Name</th>
+													<th ng-if="true" colspan="3" style="text-align: center;width: 600px;">Medical</th>
+													<th ng-if="false" colspan="3"	style="text-align: center;width: 600px;">Wellness</th>
+												</tr>
+												<tr>
+													<!-- medical span -->
+													<th ng-if="true" style="width: 200px;">Current Allocation</th>
+													<th ng-if="true" style="width: 200px;">New Allocation</th>
+													<th ng-if="true" style="width: 200px;">Effective Date of New Allocation</th>
+													<!-- wellness span -->
+													<th ng-if="false" style="width: 200px;">Current Allocation</th>
+													<th ng-if="false" style="width: 200px;">New Allocation</th>
+													<th ng-if="false" style="width: 200px;">Effective Date of New Allocation</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>4</td>
+													<td>Filbert Tan</td>
+													<!-- medical span -->
+													<td ng-if="true">SGD 500.00</td>
+													<td ng-if="true">SGD 500.00</td>
+													<td ng-if="true">SGD 500.00</td>
+													<!-- Wellness -->
+													<td ng-if="false" >SGD 300.00</td>
+													<td ng-if="false" >SGD 300.00</td>
+													<td ng-if="false" >SGD 300.00</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
 		
-		<div class="modal fade" id="input-pass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
-		  <div class="modal-dialog" role="document" style="width: 350px;margin-top: 200px;">
-		    <div class="modal-content">
-		    	<form ng-submit="passwordCredit(passCredit)">
-			      <div class="modal-header">
-			        <h5 class="modal-title" id="exampleModalLabel"><b>Input Password</b></h5>
-			      </div>
-			      <div class="modal-body">
-			        <div class="form-group">
-			            <input type="password" class="form-control" ng-model="passCredit">
-			            <p ng-if="show_error" class="text-error">{{err_mess}}</p>
-			        </div> 
-			      </div>
-			      <div class="modal-footer">
-			        
-			        <button type="button" class="btn btn-default" ng-click="closePass()" style="color: #333;background-color: #fff;">Cancel</button>
-			        <button id="password-submit" type="submit" class="btn btn-primary custom-btn">Submit</button>
-			      </div>
-		      </form>
-		    </div>
-		  </div>
-		</div>
+								<div class="health-pagination">
+									<div class="page-wrapper">
+										<div class="page-scroll-container page-opened">
+											<span>  
+												<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
+												<span class="prev-page-gp-cap" ng-click="prevPageGpCap()">Prev</span>
+											</span>
+											<div>
+												<span ng-repeat="list in range( gpCapPerVisitInfo_pagination.last_page )" ng-bind="$index + 1" ng-click="goToGpCap(list + 1)" class="health-page-num" ng-class="{'active' : list + 1 == selectCapPage}">1</span>
+											</div>
+											<span>  
+												<span ng-click="nextPageGpCap()">Next</span>
+												<i class="fa fa-angle-right" style="font-size: 14px;"></i> 
+											</span>
+										</div>
+									</div>
+									<div class="rows-page-wrapper">
+										<span><span ng-bind="gpCapPerVisitInfo_pagination.per_page"></span> per page</span>
+										<span>  
+											<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
+										</span>
+										<div class="opened-per-page-scroll page-scroll" style="display: none">
+											<span ng-click="changeGpPerPage(10)">10</span>
+											<span ng-click="changeGpPerPage(20)">20</span>
+											<span ng-click="changeGpPerPage(30)">30</span>
+											<span ng-click="changeGpPerPage(40)">40</span>
+											<span ng-click="changeGpPerPage(50)">50</span>
+											<span ng-click="changeGpPerPage(100)">100</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+         
+        </div>
+      </div>
+		</section>
 	</div>
 </div>

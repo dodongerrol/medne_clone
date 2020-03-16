@@ -7997,7 +7997,7 @@ span.dropdown-entitlement.disabled {
   width: 700px;
 }
 
-.gp-cap-table-wrapper table {
+.gp-cap-table-wrapper table, .bulk-cred-table-wrapper table {
 	font-size: 14px;
 	color: #333;
 	border: 1px solid #d0d0d0;
@@ -8011,7 +8011,14 @@ span.dropdown-entitlement.disabled {
 	padding: 15px 10px;
 }
 
-.gp-cap-table-wrapper table th {
+.bulk-cred-table-wrapper table th,
+.bulk-cred-table-wrapper table td {
+  border: 1px solid #d0d0d0;
+	padding: 5px 10px;
+}
+
+.gp-cap-table-wrapper table th,
+.bulk-cred-table-wrapper table th {
   background-color: #eff2f4;
 }
 
@@ -8019,19 +8026,27 @@ span.dropdown-entitlement.disabled {
   width: 15%;
 }
 
-.gp-cap-table-wrapper table th:nth-child(2) {
+
+.gp-cap-table-wrapper table th:nth-child(2){
   width: 60%;
 }
 
-.gp-cap-table-wrapper table td {
+/* .bulk-cred-table-wrapper table th:nth-child(2) {
+  width: 25%;
+} */
+
+.gp-cap-table-wrapper table td,
+.bulk-cred-table-wrapper table td {
   padding: 10px;
 }
 
-.gp-cap-table-wrapper .not-applicable-text {
+.gp-cap-table-wrapper .not-applicable-text,
+.bulk-cred-table-wrapper .not-applicable-text {
   color: rgba(0, 0, 0, 0.54);
 }
 
-.cap-per-visit-wrapper .health-pagination {
+.cap-per-visit-wrapper .health-pagination ,
+.bulk-cred-per-visit-wrapper .health-pagination {
   justify-content: inherit;
   right: initial;
   left: 20px;
@@ -8039,35 +8054,42 @@ span.dropdown-entitlement.disabled {
   position: initial;
 }
 
-.cap-per-visit-wrapper .page-wrapper {
+.cap-per-visit-wrapper .page-wrapper,
+.bulk-cred-per-visit-wrapper .page-wrapper {
 	display: inline-flex;
 	align-items: flex-end;
 	padding-bottom: 150px;
 }
 
-.cap-per-visit-wrapper .fa-angle-left {
+.cap-per-visit-wrapper .fa-angle-left,
+.bulk-cred-per-visit-wrapper .fa-angle-left {
   margin-right: 5px;
 }
 
-.cap-per-visit-wrapper .fa-angle-right {
+.cap-per-visit-wrapper .fa-angle-right,
+.bulk-cred-per-visit-wrapper .fa-angle-right {
   margin-left: 5px;
 }
 
-.cap-per-visit-wrapper .page-scroll-container {
+.cap-per-visit-wrapper .page-scroll-container,
+.bulk-cred-per-visit-wrapper .page-scroll-container {
 	display: flex;
 	align-items: center;
 }
 
-.cap-per-visit-wrapper .rows-page-wrapper {
+.cap-per-visit-wrapper .rows-page-wrapper,
+.bulk-cred-per-visit-wrapper .rows-page-wrapper {
   position: relative;
 }
 
-.cap-per-visit-wrapper .page-scroll-container > div {
+.cap-per-visit-wrapper .page-scroll-container > div ,
+.bulk-cred-per-visit-wrapper .page-scroll-container > div {
   display: inherit;
   margin: 0 10px;
 }
 
-.cap-per-visit-wrapper .page-scroll-container > div span {
+.cap-per-visit-wrapper .page-scroll-container > div span,
+.bulk-cred-per-visit-wrapper .page-scroll-container > div span {
   margin-right: 10px;
   cursor: pointer;
   padding: 0px 7px;
@@ -8081,19 +8103,23 @@ span.dropdown-entitlement.disabled {
   background-color: #e8e8e8;
 }
 
-.cap-per-visit-wrapper .page-scroll-container >div span {
+.cap-per-visit-wrapper .page-scroll-container >div span,
+.bulk-cred-per-visit-wrapper .page-scroll-container >div span {
 	cursor: pointer;
 }
 
-.cap-per-visit-wrapper .page-scroll-container > div span:last-child {
+.cap-per-visit-wrapper .page-scroll-container > div span:last-child ,
+.bulk-cred-per-visit-wrapper .page-scroll-container > div span:last-child {
   margin-right: 0px;
 }
 
-.cap-per-visit-wrapper .rows-page-wrapper > span:first-child {
+.cap-per-visit-wrapper .rows-page-wrapper > span:first-child ,
+.bulk-cred-per-visit-wrapper .rows-page-wrapper > span:first-child {
   margin-right: 5px;
 }
 
-.cap-per-visit-wrapper .rows-page-wrapper .fa-caret-down {
+.cap-per-visit-wrapper .rows-page-wrapper .fa-caret-down ,
+.bulk-cred-per-visit-wrapper .rows-page-wrapper .fa-caret-down {
   cursor: pointer;
 }
 
@@ -8220,7 +8246,11 @@ span.dropdown-entitlement.disabled {
   height: 500px;
 }
 
-.gp-cap-table-info-wrapper {
+.bulk-cred-table-info-container {
+  height: auto;
+}
+
+.gp-cap-table-info-wrapper, .bulk-cred-table-info-wrapper {
   overflow: auto;
   margin: 0 0 20px;
 }
@@ -8567,4 +8597,21 @@ span.dropdown-entitlement.disabled {
   border-radius: 2px;
   font-size: 14px;
   padding: 5px 15px;
+}
+
+/* New Bulk allocation */
+
+.bulk-cred-table-info-container {
+  /* width: 1134px; */
+  /* width: 1500px; */
+  /* overflow: auto; */
+  /* min-width: 1500px; */
+  /* max-width: 1000px; */
+  max-width: 900px;
+}
+
+.bulk-cred-table-info-container table {
+  max-width: 1750px;
+  width: max-content;
+  min-width: 1134px;
 }
