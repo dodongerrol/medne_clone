@@ -3358,7 +3358,9 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_type'				=> $plan_type,
 				'wallet_enabled' => (int)$user->wallet == 1 ? true : false,
 				'medical_wallet'		=> $medical_wallet,
-				'wellness_wallet'		=> $wellness_wallet
+				'wellness_wallet'		=> $wellness_wallet,
+				'medical_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->medical_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->medical_spending_end_date)),
+				'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
 			);
 			array_push($final_user, $temp);
 		}

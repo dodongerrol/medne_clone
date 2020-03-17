@@ -2387,6 +2387,7 @@ class EmployeeController extends \BaseController {
 
             $data = array(
                 'new_usage_date'            => $new_usage_date,
+                'effective_date'            => $new_usage_date,
                 'new_allocation_credits'    => $input['new_allocation_credits'],
                 'new_entitlement_credits'   => $input['new_allocation_credits'],
                 'updated_at'                => date('Y-m-d H:i:s')
