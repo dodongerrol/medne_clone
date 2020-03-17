@@ -129,7 +129,6 @@ class EclaimHelper
                 ->where('id', $user_id)
                 ->where('spending_type', $spending_type)
                 ->where('user_type', 'employee')
-                // ->where('date_resetted', '<=', $date)
                 ->orderBy('created_at', 'asc')
                 ->get();
     
@@ -145,12 +144,6 @@ class EclaimHelper
         }
 
         $back_date = $end_date != null ? true : false;
-
-        // if( strtotime( $res->date_resetted ) > strtotime( $date ) ){
-        //   $end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $res->date_resetted ) ) ));
-        //   $end_date = PlanHelper::endDate($end_date);
-        // }
-
         if( $key == (sizeof( $reset )-1) ){
           if( $start_date == null ){
             $start_date = $wallet->created_at;
@@ -164,7 +157,7 @@ class EclaimHelper
       }
     }else{
       $start_date = $first_plan;
-      $end_date = date('Y-m-d');
+      $end_date = date('Y-m-d H:i:s');
     }
     
     if($spending_type == "medical") {
