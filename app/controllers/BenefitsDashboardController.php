@@ -9871,6 +9871,7 @@ class BenefitsDashboardController extends \BaseController {
 			$temp_end_date = date('Y-m-d', strtotime('+1 year', strtotime($company_plan->plan_start)));
 			$end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_end_date)));
 			$total_refund = 0;
+			$individual_price = 0;
 			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->whereIn('refund_status', [0,1])->get();
 			foreach ($withdraws as $key => $user) {
 				if((int)$user->has_no_user == 0) {
@@ -9879,14 +9880,21 @@ class BenefitsDashboardController extends \BaseController {
 					$invoice = DB::table('corporate_invoice')
 						->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
 						->first();
+
+					if((int)$company_active_plan->new_head_count == 1) {
+						$calculated_prices_end_date = PlanHelper::getCompanyPlanDatesByPlan($company_active_plan->customer_start_buy_id, $company_active_plan->plan_id);
+						$individual_price = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $company_active_plan->plan_start, $calculated_prices_end_date['plan_end']);
+    				$individual_price = DecimalHelper::formatDecimal($individual_price);
+					} else {
+						$individual_price = $invoice->individual_price;
+					}
+
 					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 					$days = $diff->format('%a') + 1;
-
-					// $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 					$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
 					$remaining_days = $total_days - $days;
 
-					$cost_plan_and_days = ($invoice->individual_price/$total_days);
+					$cost_plan_and_days = ($individual_price/$total_days);
 					$temp_total = $cost_plan_and_days * $remaining_days;
 					$temp_sub_total = $temp_total * 0.70;
 
