@@ -674,7 +674,7 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.goToBulkAllocation = function () {
-          $state.go('bulk-cred-allocation');
+          $state.go('cred-allocation');
         }
 
         scope.enrollMoreEmployees = function () {

@@ -38,13 +38,13 @@
 	</div>
 	<div class="hrdb-body-container">
 
-		<div class="container">
+		<!-- <div class="container">
 			<div class="row">
 				<div class="col-md-12">
 					<h1 class="text-center"> Bulk Credit Allocation</h1>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 		<div class="container">
 			<div class="row">
@@ -62,9 +62,9 @@
 						<div class="col-md-12">
 							<div class="bulk-cred-options text-right">
 								<div>
-									<button>Download</button>
-									<button>Upload</button>
-									<button>Update</button>
+									<span class="actions"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/download.png" alt="download"></span>	
+									<span class="actions"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/upload.png" alt="upload"></span>	
+									<button class="actions btn-update">Update</button>
 								</div>
 						</div>
 					</div>
@@ -81,18 +81,18 @@
 												<tr>
 													<th rowspan="2" style="width: 150px;">Member ID</th>
 													<th rowspan="2" style="width: 350px;">Name</th>
-													<th ng-if="true" colspan="3" style="text-align: center;width: 600px;">Medical</th>
-													<th ng-if="false" colspan="3"	style="text-align: center;width: 600px;">Wellness</th>
+													<th ng-if="true" colspan="3" style="text-align: center; width: 600px;">Medical</th>
+													<th ng-if="false" colspan="3"	style="text-align: center; width: 600px;">Wellness</th>
 												</tr>
 												<tr>
 													<!-- medical span -->
-													<th ng-if="true" style="width: 200px;">Current Allocation</th>
-													<th ng-if="true" style="width: 200px;">New Allocation</th>
-													<th ng-if="true" style="width: 200px;">Effective Date of New Allocation</th>
+													<th ng-if="true">Current Allocation</th>
+													<th ng-if="true">New Allocation</th>
+													<th ng-if="true">Effective Date of New Allocation</th>
 													<!-- wellness span -->
-													<th ng-if="false" style="width: 200px;">Current Allocation</th>
-													<th ng-if="false" style="width: 200px;">New Allocation</th>
-													<th ng-if="false" style="width: 200px;">Effective Date of New Allocation</th>
+													<th ng-if="false">Current Allocation</th>
+													<th ng-if="false">New Allocation</th>
+													<th ng-if="false">Effective Date of New Allocation</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -101,12 +101,20 @@
 													<td>Filbert Tan</td>
 													<!-- medical span -->
 													<td ng-if="true">SGD 500.00</td>
-													<td ng-if="true">SGD 500.00</td>
-													<td ng-if="true">SGD 500.00</td>
+													<td ng-if="true">
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00">
+													</td>
+													<td ng-if="true">
+														<input class="bulk-cred-input form-control" type="date" name="date" placeholder="DD/MM/YYYY">
+													</td>
 													<!-- Wellness -->
 													<td ng-if="false" >SGD 300.00</td>
-													<td ng-if="false" >SGD 300.00</td>
-													<td ng-if="false" >SGD 300.00</td>
+													<td ng-if="false" >
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00">
+													</td>
+													<td ng-if="false" >
+														<input class="bulk-cred-input form-control" type="date" name="date" placeholder="DD/MM/YYYY">
+													</td>
 												</tr>
 											</tbody>
 										</table>
