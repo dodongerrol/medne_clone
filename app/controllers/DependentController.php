@@ -55,7 +55,7 @@ class DependentController extends \BaseController {
 
 			$temp_file = time().$file->getClientOriginalName();
 			$file->move('excel_upload', $temp_file);
-			$data_array = Excel::selectSheets('Sheet1')->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+			$data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
 			$headerRow = $data_array->first()->keys();
 			
 			$temp_users = [];
@@ -298,7 +298,7 @@ class DependentController extends \BaseController {
 					'first_name'			=> trim($user['fullname']),
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
-					'mobile'				=> trim($mobile),
+					'mobile'				=> (int)$mobile,
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
 					'credits'				=> !isset($user['medical_entitlementlimit']) || $user['medical_entitlementlimit'] == null ? 0 : $user['medical_entitlementlimit'],
@@ -359,8 +359,8 @@ class DependentController extends \BaseController {
 					$email['end_point'] = url('upload_excel_dependents', $parameter = array(), $secure = null);
 					$email['logs'] = 'Save Temp Enrollment Excel - '.$e;
 					$email['emailSubject'] = 'Error log.';
-					EmailHelper::sendErrorLogs($email);
-					return array('status' => FALSE, 'message' => 'Failed to create enrollment employee. Please contact Mednefits team.');
+					// EmailHelper::sendErrorLogs($email);
+					return array('status' => FALSE, 'message' => 'Failed to create enrollment employee. Please contact Mednefits team.', 'res' => $temp_enrollment_data, 'e' => $e->getMessage());
 				}
 
 				array_push($format, $temp_enrollment_data);
