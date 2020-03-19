@@ -120,38 +120,53 @@
 										</table>
 									</div>
 								</div>
-		
-								<div class="health-pagination">
-									<div class="page-wrapper">
-										<div class="page-scroll-container page-opened">
-											<span>  
-												<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
-												<span class="prev-page-gp-cap" ng-click="prevPageGpCap()">Prev</span>
-											</span>
-											<div>
-												<span ng-repeat="list in range( gpCapPerVisitInfo_pagination.last_page )" ng-bind="$index + 1" ng-click="goToGpCap(list + 1)" class="health-page-num" ng-class="{'active' : list + 1 == selectCapPage}">1</span>
+								<div class="bulk-cred-footer">
+									<div class="left health-pagination">
+											<div class="page-wrapper">
+												<div class="page-scroll-container page-opened">
+													<span>  
+														<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
+														<span class="prev-page-gp-cap" ng-click="prevPageGpCap()">Prev</span>
+													</span>
+													<div>
+														<span ng-repeat="list in range( gpCapPerVisitInfo_pagination.last_page )" ng-bind="$index + 1" ng-click="goToGpCap(list + 1)" class="health-page-num" ng-class="{'active' : list + 1 == selectCapPage}">1</span>
+													</div>
+													<span>  
+														<span ng-click="nextPageGpCap()">Next</span>
+														<i class="fa fa-angle-right" style="font-size: 14px;"></i> 
+													</span>
+												</div>
 											</div>
-											<span>  
-												<span ng-click="nextPageGpCap()">Next</span>
-												<i class="fa fa-angle-right" style="font-size: 14px;"></i> 
-											</span>
+											<div class="rows-page-wrapper">
+												<span><span ng-bind="gpCapPerVisitInfo_pagination.per_page"></span> per page</span>
+												<span>  
+													<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
+												</span>
+												<div class="opened-per-page-scroll page-scroll" style="display: none">
+													<span ng-click="changeGpPerPage(10)">10</span>
+													<span ng-click="changeGpPerPage(20)">20</span>
+													<span ng-click="changeGpPerPage(30)">30</span>
+													<span ng-click="changeGpPerPage(40)">40</span>
+													<span ng-click="changeGpPerPage(50)">50</span>
+													<span ng-click="changeGpPerPage(100)">100</span>
+												</div>
+											</div>
+									</div>
+									<div class="right">
+										<div class="total-number-container">
+											<span>Company Allocated Medical Credits</span>
+											<div class="total-number-box">
+												<span class="items">700.00</span>
+											</div>
+										</div>
+										<div class="total-number-container">
+											<span>Company Allocated Wellness Credits</span>
+											<div class="total-number-box">
+												<span class="items">1,100.00</span>
+											</div>
 										</div>
 									</div>
-									<div class="rows-page-wrapper">
-										<span><span ng-bind="gpCapPerVisitInfo_pagination.per_page"></span> per page</span>
-										<span>  
-											<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
-										</span>
-										<div class="opened-per-page-scroll page-scroll" style="display: none">
-											<span ng-click="changeGpPerPage(10)">10</span>
-											<span ng-click="changeGpPerPage(20)">20</span>
-											<span ng-click="changeGpPerPage(30)">30</span>
-											<span ng-click="changeGpPerPage(40)">40</span>
-											<span ng-click="changeGpPerPage(50)">50</span>
-											<span ng-click="changeGpPerPage(100)">100</span>
-										</div>
-									</div>
-								</div>
+								</div>	
 							</div>
 						</div>
 					</div>

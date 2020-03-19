@@ -8646,3 +8646,36 @@ span.dropdown-entitlement.disabled {
 .bulk-cred-input.new-allocation{
   width: 60%;
 }
+
+.bulk-cred-footer {
+  display: flex;
+}
+
+.bulk-cred-footer .right {
+  width:  70%;
+}
+
+.bulk-cred-footer .total-number-container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  margin: 0 0 20px;
+  color: #000;
+  
+}
+
+.bulk-cred-footer .total-number-box {
+  width: 25%;
+  height: 28px;
+  border: 0.5px solid #979797;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 5px;
+}
+
+.bulk-cred-footer .total-number-box .items {
+  width: max-content;
+  margin: 0 auto 0px 5px;;
+}
