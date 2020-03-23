@@ -24,7 +24,12 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         scope.employees_pagi;
         scope.emp_last_page;
         scope.no_result_err;
-        // -----------------
+				// -----------------
+				
+				// Modal trigger ---
+				scope.showUploadModal = false; // close
+				scope.bulkCreditFile = {};
+				// -----------------
         
         scope.company_properties = {};
         scope.company_properties.total_allocation = 0.00;
@@ -138,11 +143,29 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
           if ( $(e.target).parents(".per-page-pagination").length === 0) {
             $(".per_page").hide();
           }
-        });
+				});
+				
+				scope.fileUploadModal = function() {
+					console.log('click');
+					scope.showUploadModal = !scope.showUploadModal;
+				}
+
+				scope.uploadFile = function () {
+					scope.showUploadModal = false;
+					swal({
+						title: '',
+						text: `The allocation amount has been successfully updated.`,
+						html: true,
+						showCancelButton: false,
+						confirmButtonText: 'Close',
+						customClass : 'allocationEntitlementSuccessModal'
+					});
+
+				};
 
         scope.onLoad = function( ) {
         	scope.checkSession( );
-        	scope.getEmployeeList( );
+        	// scope.getEmployeeList( );
         	scope.companyAccountType ( );
         }
 

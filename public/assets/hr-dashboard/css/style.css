@@ -8679,3 +8679,127 @@ span.dropdown-entitlement.disabled {
   width: max-content;
   margin: 0 auto 0px 5px;;
 }
+
+/* modal bulk-credit allocation */
+
+#file-upload-bulk-cred {
+  color: #2E4057;
+
+  top: 37px;
+}
+
+.bulk-cred-modal-container, .modal-dialog {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.bulk-cred-modal-container {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 80;
+  overflow: hidden;
+  background: #00000014;
+}
+
+.modal-dialog {
+  opacity: 1;
+  min-width: 240px;
+  max-width: 80%;
+  max-height: 80%;
+  position: relative;
+  overflow: auto;
+  box-shadow: 0 7px 8px -4px rgba(0,0,0,.2), 0 13px 19px 2px rgba(0,0,0,.14), 0 5px 24px 4px rgba(0,0,0,.12);
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+
+  border-radius: 4px;
+  background-color: rgb(255,255,255);
+  color: rgba(0,0,0,0.87);
+}
+
+#file-upload-bulk-cred .bulk-cred-modal-header, #file-upload-bulk-cred .bulk-cred-modal-body, #file-upload-bulk-cred .bulk-cred-modal-footer {
+  border-bottom: 0;
+  border-top: 0;
+  padding: 15px 20px;
+}
+
+#file-upload-bulk-cred .bulk-cred-modal-header {
+  display: flex;
+}
+
+#file-upload-bulk-cred .bulk-cred-modal-header h4 {
+  flex: 1;
+  margin: 0;
+}
+
+.drop-box {
+  background: #F8F8F8;
+  border: 3px dashed #DDD;
+  width: 100%;
+  height: 200px;
+  text-align: center;
+  padding-top: 30px;
+  margin: 10px 25px;
+}
+
+#file-upload-bulk-cred .drop-box {
+  border: 2px dashed #408FCA;
+  width: initial;
+  height: 152px;
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+  position: relative;
+}
+
+#file-upload-bulk-cred .drop-box >div:nth-child(1) {
+  width: 100%;
+  padding: 30px 20px;
+}
+
+#file-upload-bulk-cred .drop-box .drop-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#file-upload-bulk-cred .drop-box >div:nth-child(1) p {
+  margin: 0 10px;
+}
+
+#file-upload-bulk-cred .file-btn {
+  background-color: #4154af;
+  border-radius: 3px;
+  width: 80px;
+  height: 38px;
+  color: #fff;
+  position: relative;
+  cursor: pointer;
+}
+
+#file-upload-bulk-cred .modal-footer {
+  text-align: left;
+}
+
+.modal-dialog.modal-transition-in, .modal-dialog.modal-transition-out {
+  -webkit-transition: all .4s cubic-bezier(.25,.8,.25,1);
+  transition: all .4s cubic-bezier(.25,.8,.25,1);
+}
+
+.modal-dialog.modal-transition-in {
+  opacity: 1;
+  -webkit-transform: translate(0,0) scale(1);
+  transform: translate(0,0) scale(1);
+}

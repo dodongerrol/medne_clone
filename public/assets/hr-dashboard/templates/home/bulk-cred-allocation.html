@@ -1,4 +1,4 @@
-<div credit-allocation-directive>
+<div bulk-credit-allocation-directive>
 	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
 		<div class="container">
 			<div class="welcome-container">
@@ -63,7 +63,7 @@
 							<div class="bulk-cred-options text-right">
 								<div>
 									<span class="actions"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/download.png" alt="download"></span>	
-									<span class="actions"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/upload.png" alt="upload"></span>	
+									<span class="actions" ng-click="fileUploadModal()"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/upload.png" alt="upload"></span>	
 									<button class="actions btn-update">Update</button>
 								</div>
 						</div>
@@ -174,5 +174,55 @@
         </div>
       </div>
 		</section>
+		
+	</div>
+
+	<div class="bulk-cred-modal-container" id="file-upload-bulk-cred" ng-if="showUploadModal">
+		<div class="modal-dialog" style="width: 580px;">
+			
+			<div class="bulk-cred-modal" role="document">
+				<div class="bulk-cred-modal-content">
+					<form>
+						<div class="bulk-cred-modal-header">
+							<h4>File Uploader</h4>
+							<i class="fa fa-times" aria-hidden="true" ng-click="fileUploadModal()"></i>
+							
+						</div>
+						<div class="bulk-cred-modal-body">
+							<div class="drop-box" ngf-drop="uploadGpCapChanged( bulkCreditFile )" ngf-select="uploadGpCapChanged( bulkCreditFile )" ng-model="bulkCreditFile"
+									ngf-drag-over-class="'dragover'">
+								<div>
+									<div class="drop-file-upload" >
+										<img style="width: 30px;" src="../../assets/hr-dashboard/img/bulk-cred-alloc/fileupload.png">
+										<p>Drop a file to upload, or </p>
+										<div class="file-btn" style="height: auto; padding: 10px 14px;"> 
+											Browse
+										</div>
+										<!-- <input ngf-drop="uploadGpCapPerVisit()" class="choose-file" type="file"> -->
+									</div>
+
+
+
+									<div ng-if="bulkCreditFile.name">
+										<div class="progress-wrapper">
+											<span>
+												<i class="fa fa-file-o"></i>
+												<span ng-bind="bulkCreditFile.name">Employee list.csv</span>
+											</span>
+											<div class="progress-bar" ng-class="{ 'error' : bulkCreditFile.error }" style="width: {{ bulkCreditFile.uploading }}%;"></div>
+										</div>
+										<span ng-if="bulkCreditFile.error" ng-bind="bulkCreditFile.error_text" style="font-size: 11px;"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bulk-cred-modal-footer">
+							<button class="file-btn" ng-click="uploadFile( bulkCreditFile )">Upload</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+		</div>
 	</div>
 </div>
