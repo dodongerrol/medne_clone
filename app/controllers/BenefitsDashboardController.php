@@ -5622,7 +5622,6 @@ class BenefitsDashboardController extends \BaseController {
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction', $data);
 		} else {
 			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
-			// return $data;
 			// return View::make('pdf-download.hr-accounts-transaction-new-head-count', $data);
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction-new-head-count', $data);
 		}
@@ -5641,7 +5640,7 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_active_plan_id', $invoice->customer_active_plan_id)
 		->first();
 
-		if($active_plan->new_head_count != "1" || $active_plan->new_head_count != 1) {
+		if((int)$active_plan->new_head_count != 1) {
 			return array('status' => FALSE, 'message' => 'Plan data is not an added head count to current active plan.');
 		}
 
@@ -5703,7 +5702,7 @@ class BenefitsDashboardController extends \BaseController {
 			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
 			$data['account_type'] = "Lite Plan";
 			$data['complimentary'] = FALSE;
-		} else if($get_active_plan->account_type == "enterprise_plan") {
+		} else if($active_plan->account_type == "enterprise_plan") {
 			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
 			$data['account_type'] = "Enterprise Plan";
 			$data['complimentary'] = FALSE;
