@@ -197,6 +197,8 @@ class SpendingInvoiceLibrary
 			'statement_due'             => date('Y-m-d', strtotime($statement_due)),
 			'statement_start_date'      => $start,
 			'statement_end_date'        => $end,
+			'statement_company_name' 		=> $company_details->company_name,
+    	'statement_company_address' => $company_details->company_address,
 			'statement_contact_name'    => $billing_contact->first_name.' '.$billing_contact->last_name,
 			'statement_contact_number'  => $billing_contact->phone,
 			'statement_contact_email'   => $billing_contact->billing_email,
@@ -689,8 +691,8 @@ class SpendingInvoiceLibrary
 		}
 
 		return array(
-			'company' => ucwords($company_details->company_name),
-			'company_address' => ucwords($company_details->company_address),
+			'company' => ucwords($data->statement_company_name),
+			'company_address' => ucwords($data->statement_company_address),
 			'statement_contact_email' => $data->statement_contact_email,
 			'statement_contact_name' => ucwords($data->statement_contact_name),
 			'statement_contact_number' => $data->statement_contact_number,
