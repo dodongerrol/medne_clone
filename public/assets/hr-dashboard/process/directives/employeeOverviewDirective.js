@@ -677,6 +677,15 @@ app.directive("employeeOverviewDirective", [
           $state.go('cred-allocation');
         }
 
+        scope.spending_account_status = {};
+        scope.getSpendingAcctStatus = function () {
+          hrSettings.getSpendingAccountStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
+        }
+
         scope.enrollMoreEmployees = function () {
           // localStorage.setItem('fromEmpOverview', false);
           $state.go('create-team-benefits-tiers');
@@ -2641,6 +2650,7 @@ app.directive("employeeOverviewDirective", [
           scope.showLoading();
           scope.getSession();
           scope.companyAccountType();
+          scope.getSpendingAcctStatus();
 
           console.log(scope.emp_entitlement.medical_new_entitlement);
         };

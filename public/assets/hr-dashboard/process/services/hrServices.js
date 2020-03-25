@@ -331,7 +331,11 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.getSpendingAccountStatus = function() {
     return $http.get( serverUrl.url + "/hr/get_spending_account_status");
   };
-  
+
+  hrFactory.downloadBulkAllocation = function( token  ) {
+    return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
+  };
+
   return hrFactory;
 });
 

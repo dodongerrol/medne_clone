@@ -163,6 +163,12 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 
 				};
 
+				scope.downloadFile = function () {
+
+					var token = localStorage.getItem("token");
+					hrSettings.downloadBulkAllocation( token );
+				};
+
         scope.onLoad = function( ) {
         	scope.checkSession( );
         	// scope.getEmployeeList( );
