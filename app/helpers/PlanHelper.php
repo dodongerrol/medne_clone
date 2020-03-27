@@ -1568,7 +1568,7 @@ class PlanHelper {
 				if($data_enrollee->wellness_balance_entitlement > 0) {
 					$credits = $data_enrollee->wellness_balance_entitlement;
 				} else {
-					$credits = $data_enrollee->credits;
+					$credits = $data_enrollee->wellness_credits;
 				}
 
 				$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "wellness");
