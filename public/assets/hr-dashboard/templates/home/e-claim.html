@@ -354,7 +354,7 @@
 									</span>
 								</td>
 								<td>
-									<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">	
+									<span ng-if="list.claim_amount != 0">	
 										<span ng-bind="list.currency_type" class="currency-type"></span> 
 										<span ng-bind="list.claim_amount"></span>
 									</span>
@@ -414,7 +414,7 @@
 												<span ng-bind="list.currency_type" class="currency-type"></span>  
 												<span ng-bind="list.amount">22</span></span></p>
 											<p><label>CLAIM AMOUNT</label> 
-												<span ng-if="list.claim_amount != 0 && list.status != 0 && list.status != 2">
+												<span ng-if="list.claim_amount != 0">
 													<span class="color-gray2" >
 														<span ng-bind="list.currency_type" class="currency-type"></span>  
 														<span ng-bind="list.claim_amount">22</span></span>
