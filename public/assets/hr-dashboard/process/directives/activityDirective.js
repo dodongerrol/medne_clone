@@ -292,7 +292,8 @@ app.directive('activityPage', [
 							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 						} else {
 							console.log('follow MTD 1st day');
-							scope.min_rangePicker_start = yearStart;
+							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+							// scope.min_rangePicker_start = yearStart;
 						}
 
 						scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
