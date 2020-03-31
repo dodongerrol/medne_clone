@@ -62,6 +62,7 @@
 						<div class="col-md-12">
 							<div class="bulk-cred-options text-right">
 								<div>
+									<input class="bulk-cred-input datepicker form-control" type="text" name="date" autocomplete="false" placeholder="DD/MM/YYYY">
 									<span class="actions" ng-click="downloadFile()"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/download.png" alt="download"></span>	
 									<span class="actions" ng-click="fileUploadModal()"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/upload.png" alt="upload"></span>	
 									<button class="actions btn-update">Update</button>
@@ -81,39 +82,39 @@
 												<tr>
 													<th rowspan="2" style="width: 150px;">Member ID</th>
 													<th rowspan="2" style="width: 350px;">Name</th>
-													<th ng-if="true" colspan="3" style="text-align: center; width: 600px;">Medical</th>
-													<th ng-if="false" colspan="3"	style="text-align: center; width: 600px;">Wellness</th>
+													<th ng-if="totalAllocation.medical_enable" colspan="3" style="text-align: center; width: 600px;">Medical</th>
+													<th ng-if="spending_account_status.wellness" colspan="3"	style="text-align: center; width: 600px;">Wellness</th>
 												</tr>
 												<tr>
 													<!-- medical span -->
-													<th ng-if="true">Current Allocation</th>
-													<th ng-if="true">New Allocation</th>
-													<th ng-if="true">Effective Date of New Allocation</th>
+													<th ng-if="totalAllocation.medical_enable">Current Allocation</th>
+													<th ng-if="totalAllocation.medical_enable">New Allocation</th>
+													<th ng-if="totalAllocation.medical_enable">Effective Date of New Allocation</th>
 													<!-- wellness span -->
-													<th ng-if="false">Current Allocation</th>
-													<th ng-if="false">New Allocation</th>
-													<th ng-if="false">Effective Date of New Allocation</th>
+													<th ng-if="totalAllocation.wellness_enable">Current Allocation</th>
+													<th ng-if="totalAllocation.wellness_enable">New Allocation</th>
+													<th ng-if="totalAllocation.wellness_enable">Effective Date of New Allocation</th>
 												</tr>
 											</thead>
 											<tbody>
-												<tr>
-													<td>4</td>
-													<td>Filbert Tan</td>
+												<tr ng-repeat="list in employees">
+													<td>{{list.member_id}}</td>
+													<td>{{list.fullname}}</td>
 													<!-- medical span -->
-													<td ng-if="true">SGD 500.00</td>
-													<td ng-if="true">
+													<td ng-if="totalAllocation.medical_enable"><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.medical.current_allocation | number: 2}}</td>
+													<td ng-if="totalAllocation.medical_enable">
 														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00">
 													</td>
-													<td ng-if="true">
-														<input class="bulk-cred-input form-control" type="date" name="date" placeholder="DD/MM/YYYY">
+													<td ng-if="totalAllocation.medical_enable">
+														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical.effective_date">
 													</td>
 													<!-- Wellness -->
-													<td ng-if="false" >SGD 300.00</td>
-													<td ng-if="false" >
+													<td ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
+													<td ng-if="totalAllocation.wellness_enable" >
 														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00">
 													</td>
-													<td ng-if="false" >
-														<input class="bulk-cred-input form-control" type="date" name="date" placeholder="DD/MM/YYYY">
+													<td ng-if="totalAllocation.wellness_enable" >
+														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.wellness.effective_date">
 													</td>
 												</tr>
 											</tbody>
@@ -156,13 +157,13 @@
 										<div class="total-number-container">
 											<span>Company Allocated Medical Credits</span>
 											<div class="total-number-box">
-												<span class="items">700.00</span>
+												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_medical_allocation | number: 2}}</span>
 											</div>
 										</div>
 										<div class="total-number-container">
 											<span>Company Allocated Wellness Credits</span>
 											<div class="total-number-box">
-												<span class="items">1,100.00</span>
+												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_wellness_allocation | number: 2}}</span>
 											</div>
 										</div>
 									</div>
@@ -226,3 +227,13 @@
 		</div>
 	</div>
 </div>
+
+<style type="text/css">
+	.datepicker-dropdown {
+	    z-index: 9999 !important;
+	}
+
+	.datepicker table tr td.disabled, .datepicker table tr td.disabled:hover{
+		color: #ddd !important;
+	}
+</style>

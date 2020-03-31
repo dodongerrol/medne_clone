@@ -2,8 +2,9 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 	'$state',
 	'hrSettings',
 	'$rootScope',
+	'$timeout',
 	'dashboardFactory',
-	function directive($state,hrSettings,$rootScope,dashboardFactory) {
+	function directive($state,hrSettings,$rootScope, $timeout,dashboardFactory) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -11,16 +12,18 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				console.log("bulkCreditAllocationDirective Runnning !");
 
         // Employee List ----
-        scope.employees = {};
+				scope.employees = {};
+				scope.totalAllocation = {};
         // ------------------
 
         // Check Session --
-        scope.options = {};
+				scope.options = {};
+				scope.spending_account_status = {};
         // ----------------
         
         // pagination -----
-        scope.page_ctr;
-        scope.page_active;
+				scope.page_ctr = 5;
+				scope.page_active = 1;
         scope.employees_pagi;
         scope.emp_last_page;
         scope.no_result_err;
@@ -108,6 +111,20 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						});
 				}
 
+				scope.getEmployeeBulkCredit = function() {
+
+					scope.showLoading();
+					hrSettings.getEmployeeBulkAllocation(scope.page_ctr, scope.page_active)
+						.then(function(response){
+							console.log(response);
+							scope.employees = response.data.members.data;
+							scope.employees_pagi = response.data.members;
+							scope.totalAllocation = response.data;
+							scope.hideLoading();
+							scope.inititalizeDatepicker();
+						});
+				}
+
 				scope.showLoading = function( ){
 					$( ".circle-loader" ).fadeIn();	
 					loading_trap = true;
@@ -169,10 +186,34 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					hrSettings.downloadBulkAllocation( token );
 				};
 
+				scope.getSpendingAcctStatus = function () {
+          hrSettings.getSpendingAccountStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
+				}
+				scope.testDate = '';
+				scope.inititalizeDatepicker = function () {
+					$timeout(function () {
+						console.log('initialize date');
+					
+						var dt = new Date();
+						dt.setFullYear(new Date().getFullYear() - 18);
+						$('.datepicker').datepicker({
+							format: 'dd/mm/yyyy',
+							// endDate : dt
+						});
+					}, 300);
+				}
+
         scope.onLoad = function( ) {
         	scope.checkSession( );
-        	// scope.getEmployeeList( );
-        	scope.companyAccountType ( );
+					// scope.getEmployeeList( );
+					scope.getSpendingAcctStatus();
+					scope.getEmployeeBulkCredit();
+					scope.inititalizeDatepicker();
+					// scope.companyAccountType ();
         }
 
 				// scope.checkCompanyBalance();
