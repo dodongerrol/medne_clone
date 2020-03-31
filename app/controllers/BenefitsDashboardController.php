@@ -2103,14 +2103,14 @@ class BenefitsDashboardController extends \BaseController {
 			->whereIn('user_id', $ids)
 			->where('spending_type', 'medical')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			// get pending allocation for wellness
 			$e_claim_amount_pending_wellness = DB::table('e_claim')
 			->whereIn('user_id', $ids)
 			->where('spending_type', 'wellness')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			$medical = array(
 				'entitlement' => $wallet_entitlement->medical_entitlement,
@@ -3245,7 +3245,7 @@ class BenefitsDashboardController extends \BaseController {
 			->whereIn('user_id', $ids)
 			->where('spending_type', 'medical')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			// get pending allocation for wellness
 			$e_claim_amount_pending_wellness = DB::table('e_claim')
@@ -3253,7 +3253,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('status', 0)
 			->where('spending_type', 'wellness')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			$medical = array(
 				'entitlement' => $wallet_entitlement->medical_entitlement,
