@@ -193,6 +193,143 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
               scope.spending_account_status = response.data;
 						});
 				}
+
+				scope.apiErrorResponse = [];
+				scope.updateBulkAllocation = function () {
+					console.log(scope.toUpdateAllocation);
+
+					swal({
+            title: '',
+            text: `<span>Please note that the new allocation(s) set will override the previous amount.</span> <br><br> <span>Please confirm to proceed.</span>`,
+            html: true,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            reverseButtons: true,
+            customClass : 'allocationEntitlementModal'
+          }, function(result) {
+            console.log(result);
+            setTimeout(function(){
+              if(result) {
+
+								scope.toUpdateAllocation.map((value,index) => {
+									console.log(value, index);
+									value.effective_date = moment(value.effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+									
+									hrSettings.updateAllocation(value)
+									.then(function (response) {
+										console.log(response);
+										if(response.data.status == false) {
+											scope.apiErrorResponse.push({
+												member_id: value.member_id,
+												message:response.data.message
+											});
+											console.log(scope.apiErrorResponse);
+										}
+										
+									});
+
+									if (index == scope.toUpdateAllocation.length-1) {
+
+										var text;
+										var today = new Date();
+										var effective_date = moment(value.effective_date,'YYYY/MM/DD').format('DD/MM/YYYY');
+
+										var dateToday= scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) <= today );
+										var dateFuture = scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) > today );
+										var dateAllEqual = scope.toUpdateAllocation.every( thing => thing.effective_date === scope.toUpdateAllocation[0].effective_date);
+
+										console.log('Every()',today,new Date(scope.toUpdateAllocation[0].effective_date ),dateToday,dateFuture,dateAllEqual);
+									
+
+
+										if (dateToday) {
+											text = `<span>The allocation amount has been successfully updated.</span>`;
+										} else if (dateFuture && dateAllEqual) {
+											text = `<span>The allocation amount will be updated on ${effective_date}.</span>`;
+										} else if (dateFuture && !dateAllEqual) {
+											text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
+										} else {
+											text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
+										}
+										
+										swal({
+											title: '',
+											text: text,
+											html: true,
+											showCancelButton: false,
+											confirmButtonText: 'Close',
+											customClass : 'allocationEntitlementSuccessModal'
+										}, function(result)	{
+											
+											if(result) {
+												console.log('get employee list again');
+												scope.toUpdateAllocation = [];
+												var errorLength = scope.apiErrorResponse.length;
+												var list_id = [];
+												scope.apiErrorResponse.map(value => {
+													list_id.push(value.member_id);
+												});
+												console.log(list_id);
+											
+												if (errorLength > 0) {
+													console.log(errorLength);
+													setTimeout(function(){
+														swal({
+															title: '',
+															text: `${errorLength} Employee with member id of ${list_id} has ${scope.apiErrorResponse[0].message}`,
+															html: true,
+															showCancelButton: false,
+															confirmButtonText: 'Close',
+															customClass : 'allocationEntitlementSuccessModal'
+														}, function(result) {
+															if	(result)	{
+																scope.getEmployeeBulkCredit();
+															}
+														});
+													},600);
+												} else {
+													scope.getEmployeeBulkCredit();
+												}
+												
+											}
+										});
+									}
+								});
+              
+                
+              }
+            }, 500)
+					});
+					
+				}
+
+				scope.toUpdateAllocation = [];
+				scope.pushToUpdateAllocation = function ( member_id, new_allocation , effective_date, spending_type ) {
+
+					if (new_allocation != null && effective_date != null) {
+
+						// var index = scope.toUpdateAllocation.findIndex(x => x.member_id === member_id);
+						var index2 = scope.toUpdateAllocation.findIndex(x => x.member_id === member_id && x.spending_type === spending_type);
+						console.log('index ni',index2);
+						if (index2 < 0 || index2 >= 0 && scope.toUpdateAllocation[index2].spending_type != spending_type){
+							scope.toUpdateAllocation.push({
+								member_id:	member_id,
+								new_allocation_credits:	new_allocation,
+								effective_date:	effective_date,
+								spending_type:	spending_type,
+							});
+							console.log('push',scope.toUpdateAllocation);
+						} else {
+							scope.toUpdateAllocation[index2].new_allocation_credits = new_allocation;
+							scope.toUpdateAllocation[index2].effective_date = effective_date;
+							
+							console.log('replace',scope.toUpdateAllocation);
+						}
+						
+					}
+					
+				}
+
 				scope.testDate = '';
 				scope.inititalizeDatepicker = function () {
 					$timeout(function () {
