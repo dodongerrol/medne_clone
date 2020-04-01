@@ -15,7 +15,13 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 				// "57952", // unique, required
 				response.data.data.business_information.customer_buy_start_id,
 		    {
-		    	created_at : moment( response.data.data.business_information.created_at ).unix()
+					created_at : moment( response.data.data.business_information.created_at ).unix(),
+					first_name : response.data.data.business_contact.first_name,
+					last_name : response.data.data.business_contact.last_name,
+					company_name : response.data.data.business_information.company_name,
+					company_address : response.data.data.business_information.company_address,
+					company_postal_code : response.data.data.business_information.postal_code,
+					company_email : response.data.data.business_contact.work_email,
 		    }
 		  );
     });
