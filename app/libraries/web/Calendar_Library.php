@@ -3074,7 +3074,18 @@ public static function getDoctorAvailablity()
 						$smsMessage = "Hello ".$findUserDetails->Name." your booking with ".$findDoctorDetails->Name." at ".$findClinicDetails->Name." is updated on ".$date." from ".date('h:i A',strtotime($stime))." to ".date('h:i A',strtotime($etime)).". Thank you for using Mednefits.";
 						//$smsMessage = "Hello ".$findUserDetails->Name." your booking with ".$findDoctorDetails->Name." at ".$findClinicDetails->Name." is confirmed on ".$allInputs['bookdate'].". Thank you for using medicloud.";
 						if(strlen($findUserDetails->PhoneNo) > 8) {
-							$sendSMS = StringHelper::SendOTPSMS($findUserDetails->PhoneNo,$smsMessage);
+							// $sendSMS = StringHelper::SendOTPSMS($findUserDetails->PhoneNo,$smsMessage);
+							$findPlusSign = substr($findUserDetails->PhoneNo, 0, 1);
+			        if($findPlusSign == 0){
+			            $PhoneOnly = $findUserDetails->PhoneCode.substr($findUserDetails->PhoneNo, 1);
+			        }else{
+			            $PhoneOnly = $findUserDetails->PhoneCode.$findUserDetails->PhoneNo;
+			        }
+							$data = array(
+			        	'phone' => $PhoneOnly,
+			        	'message'	=> $smsMessage
+			        );
+			        $sendSMS = SmsHelper::sendCommzSms($data);
 							$saveSMS = StringHelper::saveSMSMLogs($clinicdata->Ref_ID, $findUserDetails->Name, $findUserDetails->PhoneCode, $findUserDetails->PhoneNo, $smsMessage);
 						}
 					}

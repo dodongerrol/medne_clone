@@ -168,6 +168,8 @@ class EclaimController extends \BaseController {
 		$check_plan = PlanHelper::checkEmployeePlanStatus($user_id);
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
 		$date = date('Y-m-d', strtotime($input['date']));
+		$claim_amount = $input['claim_amount'];
+
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
@@ -197,13 +199,17 @@ class EclaimController extends \BaseController {
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
+	        $claim_amount = $claim_amount / $currency;
 	      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
 	        $amount = $input['amount'] * $currency;
+	        $claim_amount = $claim_amount * $currency;
 	      } else {
 	        $amount = trim($input['amount']);
+	        $claim_amount = trim($claim_amount);
 	      }
 	    } else {
 	      $amount = trim($input['amount']);
+	      $claim_amount = trim($claim_amount);
 	    }
 	  }
 
@@ -225,7 +231,7 @@ class EclaimController extends \BaseController {
       $balance = TransactionHelper::floatvalue($balance);
 
       if($spending['back_date'] == false) {
-				if($amount > $balance || $balance <= 0) {
+				if($claim_amount > $balance || $balance <= 0) {
 					return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
 				}
 		    // check user pending e-claims amount
@@ -235,7 +241,7 @@ class EclaimController extends \BaseController {
 				$amount = trim($amount);
 				$total_claim_amount = trim($total_claim_amount);
 
-				if($amount > $total_claim_amount) {
+				if($claim_amount > $total_claim_amount) {
 					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
 				}
       }
@@ -252,7 +258,7 @@ class EclaimController extends \BaseController {
 			'service'	=> $input['service'],
 			'merchant'	=> $input['merchant'],
 			'amount'	=> $amount,
-			'claim_amount'	=> trim($input['claim_amount']),
+			'claim_amount'	=> $claim_amount,
 			'date'		=> $date,
 			'approved_date' => null,
 			'time'		=> $time,
@@ -418,17 +424,6 @@ class EclaimController extends \BaseController {
 		if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
 	    $amount = trim($input['amount']);
 	  } else {
-	    // if(Input::has('currency_type') && $input['currency_type'] != null) {
-	    //   if(strtolower($input['currency_type']) == "myr") {
-	    //     $amount = $input['amount'] / $currency;
-	    //   } else if ($check_user_balance->currency_type == "myr" && strtolower($input['currency_type']) == "sgd") {
-     //    	$amount = $input['amount'] * $currency;
-     //  	}	else {
-	    //     $amount = trim($input['amount']);
-	    //   }
-	    // } else {
-	    //   $amount = trim($input['amount']);
-	    // }
 	    if(Input::has('currency_type') && $input['currency_type'] != null) {
 	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
 	        $amount = $input['amount'] / $currency;
@@ -3370,7 +3365,7 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
-                        // check user if it is spouse or dependent
+       	// check user if it is spouse or dependent
 				if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -3395,7 +3390,7 @@ public function getActivityInNetworkTransactions( )
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$cash = $transation->cash_cost;
+							$cash = $trans->cash_cost;
 						} else {
 							$total_amount = $trans->procedure_cost;
 							$total_amount = $trans->procedure_cost + $trans->consultation_fees;
@@ -3453,7 +3448,7 @@ public function getActivityInNetworkTransactions( )
 						if((int)$trans->health_provider_done == 1) {
 							$bill_amount = $trans->procedure_cost;
 						} else {
-							$bill_amount = $trans->procedure_cost - $trans->consultation_fees;
+							$bill_amount = $trans->credit_cost + $trans->cash_cost;
 						}
 					} else {
 						$bill_amount = 	$trans->procedure_cost;
@@ -5026,7 +5021,7 @@ public function getHrActivity( )
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
 								$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
-								$cash = $transation->cash_cost;
+								$cash = $trans->cash_cost;
 							} else {
 								$total_amount = $cost;
 								$total_amount = $cost + $trans->consultation_fees;

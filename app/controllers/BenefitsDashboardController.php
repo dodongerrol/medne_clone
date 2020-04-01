@@ -2104,14 +2104,14 @@ class BenefitsDashboardController extends \BaseController {
 			->whereIn('user_id', $ids)
 			->where('spending_type', 'medical')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			// get pending allocation for wellness
 			$e_claim_amount_pending_wellness = DB::table('e_claim')
 			->whereIn('user_id', $ids)
 			->where('spending_type', 'wellness')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			$medical = array(
 				'entitlement' => $wallet_entitlement->medical_entitlement,
@@ -3274,7 +3274,7 @@ class BenefitsDashboardController extends \BaseController {
 			->whereIn('user_id', $ids)
 			->where('spending_type', 'medical')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			// get pending allocation for wellness
 			$e_claim_amount_pending_wellness = DB::table('e_claim')
@@ -3282,7 +3282,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('status', 0)
 			->where('spending_type', 'wellness')
 			->where('status', 0)
-			->sum('amount');
+			->sum('claim_amount');
 
 			$medical = array(
 				'entitlement' => $wallet_entitlement->medical_entitlement,
@@ -5653,7 +5653,6 @@ class BenefitsDashboardController extends \BaseController {
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction', $data);
 		} else {
 			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
-			// return $data;
 			// return View::make('pdf-download.hr-accounts-transaction-new-head-count', $data);
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction-new-head-count', $data);
 		}
@@ -5672,7 +5671,7 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_active_plan_id', $invoice->customer_active_plan_id)
 		->first();
 
-		if($active_plan->new_head_count != "1" || $active_plan->new_head_count != 1) {
+		if((int)$active_plan->new_head_count != 1) {
 			return array('status' => FALSE, 'message' => 'Plan data is not an added head count to current active plan.');
 		}
 
@@ -5734,7 +5733,7 @@ class BenefitsDashboardController extends \BaseController {
 			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
 			$data['account_type'] = "Lite Plan";
 			$data['complimentary'] = FALSE;
-		} else if($get_active_plan->account_type == "enterprise_plan") {
+		} else if($active_plan->account_type == "enterprise_plan") {
 			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
 			$data['account_type'] = "Enterprise Plan";
 			$data['complimentary'] = FALSE;
@@ -9899,14 +9898,10 @@ class BenefitsDashboardController extends \BaseController {
 			->where('customer_plan_id', $company_active_plan->plan_id)
 			->first();
 
-			// $plan_withdraw = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)
-							// ->orderBy('created_at', 'desc')->first();
-
 			$temp_end_date = date('Y-m-d', strtotime('+1 year', strtotime($company_plan->plan_start)));
-
 			$end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_end_date)));
-
 			$total_refund = 0;
+			$individual_price = 0;
 			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->whereIn('refund_status', [0,1])->get();
 			foreach ($withdraws as $key => $user) {
 				if((int)$user->has_no_user == 0) {
@@ -9915,13 +9910,21 @@ class BenefitsDashboardController extends \BaseController {
 					$invoice = DB::table('corporate_invoice')
 						->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
 						->first();
+
+					if((int)$company_active_plan->new_head_count == 1) {
+						$calculated_prices_end_date = PlanHelper::getCompanyPlanDatesByPlan($company_active_plan->customer_start_buy_id, $company_active_plan->plan_id);
+						$individual_price = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $company_active_plan->plan_start, $calculated_prices_end_date['plan_end']);
+    				$individual_price = DecimalHelper::formatDecimal($individual_price);
+					} else {
+						$individual_price = $invoice->individual_price;
+					}
+
 					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 					$days = $diff->format('%a') + 1;
-
-					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
 					$remaining_days = $total_days - $days;
 
-					$cost_plan_and_days = ($invoice->individual_price/$total_days);
+					$cost_plan_and_days = ($individual_price/$total_days);
 					$temp_total = $cost_plan_and_days * $remaining_days;
 					$temp_sub_total = $temp_total * 0.70;
 
@@ -9945,8 +9948,8 @@ class BenefitsDashboardController extends \BaseController {
 						'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
 						'remaining_days' => $remaining_days,
 						'total_days'		=> $total_days,
-						'before_amount'	=> number_format($temp_total, 2),
-						'after_amount' => number_format($withdraw_data->amount, 2),
+						'before_amount'	=> \DecimalHelper::formatDecimal($temp_total),
+						'after_amount' => \DecimalHelper::formatDecimal($withdraw_data->amount),
 						'has_no_user'	=> false
 					);
 				} else {
@@ -9967,8 +9970,8 @@ class BenefitsDashboardController extends \BaseController {
 						'last_period_of_unused' => date('d/m/Y', strtotime($user->unused)),
 						'remaining_days' => $remaining_days,
 						'total_days'		=> $total_days,
-						'before_amount'	=> number_format($user->amount, 2),
-						'after_amount' => number_format($user->amount, 2),
+						'before_amount'	=> \DecimalHelper::formatDecimal($user->amount),
+						'after_amount' => \DecimalHelper::formatDecimal($user->amount),
 						'has_no_user'	=> true
 					);
 				}
@@ -10017,8 +10020,8 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$refund_data = array(
-				'total_refund' => number_format($total_refund, 2),
-				'amount_due'	=> number_format($amount_due, 2),
+				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
+				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
 				'date_refund' => $refund_payment->date_refund,
@@ -10299,7 +10302,7 @@ class BenefitsDashboardController extends \BaseController {
 				if((int)$transaction->health_provider_done == 1) {
 					$bill_amount = $transaction->procedure_cost;
 				} else {
-					$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees;
+					$bill_amount = $transaction->credit_cost + $transaction->cash_cost;
 				}
 			} else {
 				$bill_amount = 	$transaction->procedure_cost;
@@ -12867,11 +12870,11 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_e_claim_spent = 0;
 		$total_medical_in_network_spent = 0;
 
-		$medical_wallet_history = DB::table('wallet_history')
-		->where('wallet_id', $wallet->wallet_id)
-		->where('created_at', '>=', $minimum_date_medical)
-		->where('created_at', '<=', $plan_end_date)
-		->get();
+		// $medical_wallet_history = DB::table('wallet_history')
+		// ->where('wallet_id', $wallet->wallet_id)
+		// ->where('created_at', '>=', $minimum_date_medical)
+		// ->where('created_at', '<=', $plan_end_date)
+		// ->get();
 		// return $medical_wallet_history;
 		$pending_e_claim_medical = DB::table('e_claim')
 		->whereIn('user_id', $ids)
@@ -12900,8 +12903,7 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
-		$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
-		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID);
+		$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $check_employee->UserID, $minimum_date_medical, $plan_end_date);
 		// foreach ($medical_wallet_history as $key => $history) {
 		// 	if($history->logs == "added_by_hr") {
 		// 		$total_allocation_medical_temp += $history->credit;
@@ -13000,11 +13002,11 @@ class BenefitsDashboardController extends \BaseController {
 		$total_wellness_in_network_spent = 0;
 		$has_wellness_allocation = false;
 
-		$wellness_wallet_history = DB::table('wellness_wallet_history')
-		->where('wallet_id', $wallet->wallet_id)
-		->where('created_at', '>=', $minimum_date_wellness)
-		->where('created_at', '<=', $plan_end_date)
-		->get();
+		// $wellness_wallet_history = DB::table('wellness_wallet_history')
+		// ->where('wallet_id', $wallet->wallet_id)
+		// ->where('created_at', '>=', $minimum_date_wellness)
+		// ->where('created_at', '<=', $plan_end_date)
+		// ->get();
 
 		$pending_e_claim_wellness = DB::table('e_claim')
 		->whereIn('user_id', $ids)
@@ -13012,6 +13014,7 @@ class BenefitsDashboardController extends \BaseController {
 		->where('status', 0)
 		->sum('amount');
 
+		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID, $minimum_date_wellness, $plan_end_date);
 		$total_allocation_wellness = $wellness_credit_data['allocation'];
 		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];;
 

@@ -1571,7 +1571,7 @@ class PlanHelper {
 				if($data_enrollee->wellness_balance_entitlement > 0) {
 					$credits = $data_enrollee->wellness_balance_entitlement;
 				} else {
-					$credits = $data_enrollee->credits;
+					$credits = $data_enrollee->wellness_credits;
 				}
 
 				$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "wellness");
@@ -2561,11 +2561,9 @@ class PlanHelper {
 		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$wallet_history = DB::table('wellness_wallet_history')
-											->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
-											->where('wellness_wallet_history.wallet_id', $wallet_id)
-											->where('e_wallet.UserID', $user_id)
-											->where('wellness_wallet_history.created_at',  '>=', $start)
-											->where('wellness_wallet_history.created_at',  '<=', $end)
+											->where('wallet_id', $wallet_id)
+											->where('created_at',  '>=', $start)
+											->where('created_at',  '<=', $end)
 											->get();
 
 		foreach ($wallet_history as $key => $history) {

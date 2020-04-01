@@ -159,8 +159,8 @@ class CorporateController extends BaseController {
     $input = Input::all();
     $result = StringHelper::getJwtHrSession();
     $user_id = $result->customer_buy_start_id;
-    $current_term = CustomerHelper::getCustomerCreditReset($user_id, 'current_term', 'medical');
-    $last_term = CustomerHelper::getCustomerCreditReset($user_id, 'last_term', 'medical');
+    $current_term = CustomerHelper::getCustomerDateTerms($user_id, 'current_term', 'medical');
+    $last_term = CustomerHelper::getCustomerDateTerms($user_id, 'last_term', 'medical');
 
     return ['status' => true, 'current_term' => $current_term, 'last_term' => $last_term];
 	}

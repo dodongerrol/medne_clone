@@ -3,7 +3,7 @@ class DecimalHelper
 {
 	public static function formatDecimal($value)
 	{
-		return floor($value * 100) / 100;
+		return number_format(floor($value * 100) / 100, 2);
 	}
 }
 ?>

@@ -599,5 +599,11 @@ class MemberHelper
     }
     // return ['current_term' => $current_term, 'last_term' => $last_term];
 	}
+
+	public static function getMemberTotalDaysSubscription($plan_start, $plan_end)	
+	{
+		$total_days = date_diff(new \DateTime(date('Y-m-d', strtotime($plan_start))), new \DateTime(date('Y-m-d', strtotime($plan_end))));
+		return $total_days->format('%a') + 1;
+	}
 }
 ?>
