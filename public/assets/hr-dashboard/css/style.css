@@ -8539,3 +8539,32 @@ span.dropdown-entitlement.disabled {
   border-color: #88ccf1;
   pointer-events: none;
 }
+
+.spending-tab-container{
+  height: 40px;
+  display: flex;
+  /* padding-left: 10px; */
+}
+.spending-tab-container .tab-box{
+  /* width: 120px; */
+  padding: 0 20px;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  font-size: 13px;
+  color: #999;
+  font-weight: 600;
+  border: 1px solid #e1e1e1;
+  border-width: 1px 1px 0 1px;
+  border-radius: 3px 3px 0 0;
+  margin-right: 5px;
+  background: #fafafa;
+  cursor: pointer;
+}
+.spending-tab-container .tab-box.active{
+  height: 102%;
+  border-color: #d0d0d0;
+  background: #f4f7f9;
+  color: #444;
+}

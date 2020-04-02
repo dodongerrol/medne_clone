@@ -30,10 +30,16 @@ app.directive("companyContactsDirective", [
         scope.spending_deposit_page = 1;
         scope.statementHide = true;
         // scope.empStatementShow = false;
+        scope.selectedSpendingTab = 0;
 
         scope.$on("informationRefresh", function(evt, data){
           scope.onLoad();
         });
+
+        
+        scope.selectSpendingTab = function(opt){
+          scope.selectedSpendingTab = opt;
+        }
 
         scope.companyAccountType = function () {
           scope.account_type = localStorage.getItem('company_account_type');
