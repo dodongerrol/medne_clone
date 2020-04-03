@@ -285,10 +285,9 @@ class DependentController extends \BaseController {
 					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
 				}
 				
-				$user['medical_credits'] = !isset($user['medical_entitlementlimit']) ? 0 : $user['medical_entitlementlimit'];
-				$user['wellness_credits'] = !isset($user['wellness_entitlementlimit']) ? 0 : $user['wellness_entitlementlimit'];
+				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
+				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
-
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
 				$temp_enrollment_data = array(
@@ -301,9 +300,9 @@ class DependentController extends \BaseController {
 					'mobile'				=> (int)$mobile,
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
-					'credits'				=> !isset($user['medical_entitlementlimit']) || $user['medical_entitlementlimit'] == null ? 0 : $user['medical_entitlementlimit'],
+					'credits'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
 					'medical_balance_entitlement'				=> !isset($user['medical_entitlement_balance']) || $user['medical_entitlement_balance'] == null ? 0 : $user['medical_entitlement_balance'],
-					'wellness_credits'		=> !isset($user['wellness_entitlementlimit']) || $user['wellness_entitlementlimit'] == null ? 0 : $user['wellness_entitlementlimit'],
+					'wellness_credits'		=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
 					'wellness_balance_entitlement'				=> !isset($user['wellness_entitlement_balance']) || $user['wellness_entitlement_balance'] == null ? 0 : $user['wellness_entitlement_balance'],
 					'postal_code'			=> trim($user['postal_code']),
 					'start_date'			=> $user['plan_start'],

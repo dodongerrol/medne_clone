@@ -261,5 +261,19 @@ class CustomerHelper
 		$total_wellness_allocation = $temp_total_wellness_allocation - $temp_total_wellness_deduction;
 		return $total_wellness_allocation;
 	}
+
+	public static function getAccountSpendingStatus($customer_id)	
+	{
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$activePlan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->first();
+
+		return array(
+			'customer_id'		=> $customer_id,
+			'account_type'		=> $activePlan->account_type,
+			'medical_method'	=> $spending->medical_plan_method,
+			'wellness_method'	=> $spending->wellness_plan_method,
+			'paid_status'		=> $activePlan->paid == 'true' ? true : false
+		);
+	}
 }
 ?>

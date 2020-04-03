@@ -1072,6 +1072,8 @@ class PlanHelper {
 	{
 		$customer_id = self::getCusomerIdToken();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+		// get spending account settings
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 		$mobile_error = false;
 		$mobile_message = '';
 		$mobile_area_error = false;
@@ -1193,18 +1195,33 @@ class PlanHelper {
 			$credits_medical_error = false;
 			$credits_medical_message = '';
 		} else {
-			if(is_numeric($user['medical_credits'])) {
-				// check
-				// if($user['medical_credits'] > $customer_wallet->balance) {
-				// 	$credits_medical_error = true;
-				// 	$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
-				// } else {
-					$credits_medical_error = false;
-					$credits_medical_message = '';
-				// }
+			if($spending['account_type'] == "lite_plan")	{
+				if($spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false)	{
+					$credits_medical_error = true;
+					$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
+				} else if($spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+					if($user['medical_credits'] > $customer_wallet->balance) {
+						$credits_medical_error = true;
+						$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
+					} else {
+						$credits_medical_error = false;
+						$credits_medical_message = '';
+					}
+				}
 			} else {
-				$credits_medical_error = true;
-				$credits_medical_message = '*Credits is not a number.';                
+				if(is_numeric($user['medical_credits'])) {
+					// check
+					// if($user['medical_credits'] > $customer_wallet->balance) {
+					// 	$credits_medical_error = true;
+					// 	$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
+					// } else {
+						$credits_medical_error = false;
+						$credits_medical_message = '';
+					// }
+				} else {
+					$credits_medical_error = true;
+					$credits_medical_message = '*Credits is not a number.';                
+				}
 			}
 		}
 
@@ -1212,17 +1229,32 @@ class PlanHelper {
 			$credits_wellness_error = false;
 			$credits_wellnes_message = '';
 		} else {
-			if(is_numeric($user['wellness_credits'])) {
-				// if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
-				// 	$credits_wellness_error = true;
-				// 	$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
-				// } else {
-					$credits_wellness_error = false;
-					$credits_wellnes_message = '';
-				// }
+			if($spending['account_type'] == "lite_plan")	{
+				if($spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false)	{
+					$credits_wellness_error = true;
+					$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
+				} else if($spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+					if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
+						$credits_wellness_error = true;
+						$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
+					} else {
+						$credits_wellness_error = false;
+						$credits_wellnes_message = '';
+					}
+				}
 			} else {
-				$credits_wellness_error = true;
-				$credits_wellnes_message = '*Credits is not a number.';
+				if(is_numeric($user['wellness_credits'])) {
+					// if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
+					// 	$credits_wellness_error = true;
+					// 	$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
+					// } else {
+						$credits_wellness_error = false;
+						$credits_wellnes_message = '';
+					// }
+				} else {
+					$credits_wellness_error = true;
+					$credits_wellnes_message = '*Credits is not a number.';
+				}
 			}
 		}
 
