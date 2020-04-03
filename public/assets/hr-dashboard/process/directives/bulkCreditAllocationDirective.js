@@ -326,7 +326,13 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							console.log('replace',scope.toUpdateAllocation);
 						}
 						
-					}
+					} else {
+            var index2 = scope.toUpdateAllocation.findIndex(x => x.member_id === member_id && x.spending_type === spending_type);
+
+            scope.toUpdateAllocation.splice(index2, 1);
+            console.log('splice',scope.toUpdateAllocation);
+
+          }
 					
 				}
 
