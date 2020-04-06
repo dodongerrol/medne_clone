@@ -340,6 +340,18 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
   };
 
+  hrFactory.updateAllocation = function( data  ) {
+    return $http.post( serverUrl.url + "/hr/create_member_credits_allocation", data  );
+    // return $http.post( serverUrl.url + "/hr/create_member_new_entitlement", data  );
+  };
+
+  hrFactory.uploadAllocation = function(file) {
+    return Upload.upload({
+      url: serverUrl.url + '/hr/upload_employee_bulk_allocation',
+      data: {file: file}
+    });
+  };
+
   return hrFactory;
 });
 
