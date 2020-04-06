@@ -1080,6 +1080,10 @@ class PlanHelper {
 		$mobile_area_message = '';
 		$email_error = false;
 		$email_message = '';
+		$credits_medical_error = false;
+		$credits_medical_message = '';
+		$credits_wellness_error = false;
+		$credits_wellnes_message = '';
 
 		if(is_null($user['mobile'])) {
 			$mobile_error = true;
@@ -1196,10 +1200,10 @@ class PlanHelper {
 			$credits_medical_message = '';
 		} else {
 			if($spending['account_type'] == "lite_plan")	{
-				if($spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false)	{
+				if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false)	{
 					$credits_medical_error = true;
 					$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
-				} else if($spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+				} else if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
 					if($user['medical_credits'] > $customer_wallet->balance) {
 						$credits_medical_error = true;
 						$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
@@ -1230,10 +1234,10 @@ class PlanHelper {
 			$credits_wellnes_message = '';
 		} else {
 			if($spending['account_type'] == "lite_plan")	{
-				if($spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false)	{
+				if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false)	{
 					$credits_wellness_error = true;
 					$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
-				} else if($spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+				} else if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
 					if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
 						$credits_wellness_error = true;
 						$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
