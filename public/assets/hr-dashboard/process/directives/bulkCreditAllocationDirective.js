@@ -4,7 +4,8 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 	'$rootScope',
 	'$timeout',
 	'dashboardFactory',
-	function directive($state,hrSettings,$rootScope, $timeout,dashboardFactory) {
+	'Upload',
+	function directive($state,hrSettings,$rootScope, $timeout,dashboardFactory,Upload) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -21,10 +22,11 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				scope.spending_account_status = {};
         // ----------------
         
-        // pagination -----
-				scope.page_ctr = 5;
+				// pagination -----
+				scope.page_scroll = false;
+				scope.page_ctr = 10;
 				scope.page_active = 1;
-        scope.employees_pagi;
+        scope.employees_pagi = {};
         scope.emp_last_page;
         scope.no_result_err;
 				// -----------------
@@ -111,6 +113,35 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						});
 				}
 
+
+				scope.prevPageBulkCred = function () {
+          scope.page_active -= 1;
+          scope.getEmployeeBulkCredit();
+
+          if (scope.page_active == 0) {
+            $('.prev-page-gp-cap').addClass('prev-disabled');
+          }
+        }
+
+        scope.nextPageBulkCred = function () {
+          scope.page_active += 1;
+          scope.getEmployeeBulkCredit();
+          $('.prev-page-gp-cap').removeClass('prev-disabled');
+        }
+
+        scope.goToBulkCred = function (num) {
+          scope.page_active = num;
+          scope.getEmployeeBulkCredit();
+        }
+
+        scope.changeBulkCred = function (num) {
+          scope.page_ctr = num;
+          scope.page_active = 1;
+					// $('.opened-per-page-scroll').toggle();
+					scope.page_scroll = false;
+          scope.getEmployeeBulkCredit();
+        }
+
 				scope.getEmployeeBulkCredit = function() {
 
 					scope.showLoading();
@@ -122,6 +153,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							scope.totalAllocation = response.data;
 							scope.hideLoading();
 							scope.inititalizeDatepicker();
+							console.log(scope.employees_pagi);
 						});
 				}
 
@@ -167,16 +199,45 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					scope.showUploadModal = !scope.showUploadModal;
 				}
 
-				scope.uploadFile = function () {
-					scope.showUploadModal = false;
-					swal({
-						title: '',
-						text: `The allocation amount has been successfully updated.`,
-						html: true,
-						showCancelButton: false,
-						confirmButtonText: 'Close',
-						customClass : 'allocationEntitlementSuccessModal'
-					});
+				scope.uploadFile = function (file) {
+					// scope.showUploadModal = false;
+					console.log(file);
+					hrSettings.uploadAllocation(file)
+            .then(function (response) {
+              console.log(response);
+              if (response.data.status == true) {
+								file.uploading = 100;
+								scope.showUploadModal = false;
+                setTimeout(function () {
+									// $mdDialog.hide();
+									swal({
+										title: '',
+										text: `The allocation amount has been successfully updated.`,
+										html: true,
+										showCancelButton: false,
+										confirmButtonText: 'Close',
+										customClass : 'allocationEntitlementSuccessModal'
+									}, function(response) {
+										if (response) {
+											scope.getEmployeeBulkCredit();
+										}
+									});
+                }, 2000);
+                // $("button").removeClass("save-continue-disabled");
+								// scope.getGpCapPerVisit();
+              } else {
+                file.uploading = 10;
+                file.error = true;
+                file.error_text = response.data.message;
+              }
+              // scope.hideLoading();
+            }, function (response) {
+              // console.log(response);
+            }, function (evt) {
+              console.log(evt);
+              var progressPercentage = parseInt(100.0 * evt.loaded / evt.total) - 20;
+              file.uploading = progressPercentage;
+            });
 
 				};
 
@@ -349,6 +410,14 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						});
 					}, 300);
 				}
+
+				scope.range = function (num) {
+          var arr = [];
+          for (var i = 0; i < num; i++) {
+            arr.push(i);
+          }
+          return arr;
+        };
 
         scope.onLoad = function( ) {
         	scope.checkSession( );

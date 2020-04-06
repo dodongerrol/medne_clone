@@ -345,6 +345,13 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     // return $http.post( serverUrl.url + "/hr/create_member_new_entitlement", data  );
   };
 
+  hrFactory.uploadAllocation = function(file) {
+    return Upload.upload({
+      url: serverUrl.url + '/hr/upload_employee_bulk_allocation',
+      data: {file: file}
+    });
+  };
+
   return hrFactory;
 });
 
