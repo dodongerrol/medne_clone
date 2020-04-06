@@ -97,10 +97,10 @@
 											</thead>
 											<tbody>
 												<tr ng-repeat="list in employees">
-													<td>{{list.member_id}}</td>
-													<td>{{list.fullname}}</td>
+													<td class="grayed-out">{{list.member_id}}</td>
+													<td class="grayed-out">{{list.fullname}}</td>
 													<!-- medical span -->
-													<td ng-if="totalAllocation.medical_enable"><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.medical.current_allocation | number: 2}}</td>
+													<td class="grayed-out" ng-if="totalAllocation.medical_enable"><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.medical.current_allocation | number: 2}}</td>
 													<td ng-if="totalAllocation.medical_enable">
 														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.medical.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}">
 													</td>
@@ -108,7 +108,7 @@
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}">
 													</td>
 													<!-- Wellness -->
-													<td ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
+													<td class="grayed-out" ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
 													<td ng-if="totalAllocation.wellness_enable" >
 														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}">
 													</td>
@@ -157,13 +157,13 @@
 									<div class="right">
 										<div class="total-number-container">
 											<span>Company Allocated Medical Credits</span>
-											<div class="total-number-box">
+											<div class="total-number-box grayed-out">
 												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_medical_allocation | number: 2}}</span>
 											</div>
 										</div>
 										<div class="total-number-container">
 											<span>Company Allocated Wellness Credits</span>
-											<div class="total-number-box">
+											<div class="total-number-box grayed-out">
 												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_wellness_allocation | number: 2}}</span>
 											</div>
 										</div>

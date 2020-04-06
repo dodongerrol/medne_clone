@@ -8822,6 +8822,10 @@ span.dropdown-entitlement.disabled {
   text-align: left;
 }
 
+.grayed-out {
+  background: #F6F6F6;
+}
+
 .modal-dialog.modal-transition-in, .modal-dialog.modal-transition-out {
   -webkit-transition: all .4s cubic-bezier(.25,.8,.25,1);
   transition: all .4s cubic-bezier(.25,.8,.25,1);
