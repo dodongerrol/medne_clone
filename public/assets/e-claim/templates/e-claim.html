@@ -58,7 +58,7 @@
 							<label>Provider<span>*</span></label>
 							<div class="input-wrapper">
 								<input type="text" class="form-control provider-input" style="width: 100%"
-									placeholder="Mednefits Pte Ltd" ng-model="eclaim.merchant">
+									placeholder="Mednefits Pte Ltd" ng-model="eclaim.merchant" autocomplete="off">
 							</div>
 						</div>
 						<div class="form-group col-md-12 visit-date-form">
@@ -66,7 +66,7 @@
 							<div class="input-wrapper">
 								<div class="input-group date" style="width: 100%;">
 									<input id="visitDateInput" type="text" class="form-control eclaim-date-picker" placeholder="Date"
-										aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.visit_date">
+										aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.visit_date" autocomplete="off">
 									<span class="input-group-addon" id="sizing-addon2">
 										<img src="../assets/e-claim/img/new-assets/Submit-E-Claim---Visit-Date.png" style="width: 18px;">
 									</span>
@@ -84,7 +84,7 @@
 									<input valid-time id="visitTimeInput" ng-disabled="!eclaim.visit_date" type="text"
 										class="form-control eclaim-date-picker" aria-describedby="sizing-addon2"
 										style="border-right: none;padding: 6px 8px;" ng-model="eclaim.visit_time"
-										ng-blur="visitTimeChanged( eclaim.visit_time )" ng-focus="showVisitTime()">
+										ng-blur="visitTimeChanged( eclaim.visit_time )" ng-focus="showVisitTime()" autocomplete="off">
 
 									<span class="input-group-addon visit-time-drop-btn" ng-click="showVisitTime( )">
 										<i class="fa fa-caret-down"></i>
@@ -143,7 +143,7 @@
 							<div class="input-wrapper claim-amount-input-wrapper">
 								<div class="input-group date" style="width: 100%">
 									<input id="claimAmountInput" valid-number type="text" class="form-control" placeholder="Price"
-										aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.claim_amount">
+										aria-describedby="sizing-addon2" style="border-right: none;" ng-model="eclaim.claim_amount" autocomplete="off">
 									<span ng-click="showCurrencyDropdown()" class="input-group-addon" id="sizing-addon2"
 										style="color: #0086D3;font-weight: 700;">
 										<span ng-bind="eclaim.selectedCurrencyType" class="currency-type"></span>
