@@ -434,6 +434,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
 	// get hr date terms
 	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
+	// get customer spending account status
+	Route::get('hr/spending_account_status', 'BenefitsDashboardController@spendingAccountStatus');
+	// get excel link
+	Route::get('hr/get_excel_link', 'BenefitsDashboardController@getExcelLink');
 });
 
 // download employee cap per visit

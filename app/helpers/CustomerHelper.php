@@ -275,5 +275,62 @@ class CustomerHelper
 			'paid_status'		=> $activePlan->paid == 'true' ? true : false
 		);
 	}
+
+	public static function getExcelLinkBasicPlan($status)
+	{
+		if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == true)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == true)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == true)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Pending-Medical-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Pending-Medical-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == false)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Pending-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Pending-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Pending-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Pending-Wellness.xlsx'
+			);
+		} else {
+			return array('status' => false);
+		}
+	}
+
+	public static function getAccountSpendingBasicPlanStatus($customer_id)	
+	{
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$activePlan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->first();
+
+		return array(
+			'customer_id'		=> $customer_id,
+			'account_type'		=> $activePlan->account_type,
+			'medical_method'	=> $spending->medical_plan_method,
+			'wellness_method'	=> $spending->wellness_plan_method,
+			'paid_status'		=> $activePlan->paid == 'true' ? true : false
+		);
+	}
 }
 ?>

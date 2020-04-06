@@ -14210,4 +14210,28 @@ class BenefitsDashboardController extends \BaseController {
 
 		})->export('csv');
 	}
+	
+	public function spendingAccountStatus( )
+	{
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(!$customer_id) {
+			return array('status' => false, 'message' => 'customer_id is required');
+		}
+	  
+		return CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+	}
+
+	public function getExcelLink( )
+	{
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(!$customer_id) {
+			return array('status' => false, 'message' => 'customer_id is required');
+		}
+
+		$status = CustomerHelper::getAccountSpendingStatus($customer_id);
+		$link = CustomerHelper::getExcelLinkBasicPlan($status);
+		return $link;
+	}
 }
