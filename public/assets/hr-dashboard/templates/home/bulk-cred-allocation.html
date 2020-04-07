@@ -13,7 +13,7 @@
 				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
 				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
 				    <!-- <li><a href="javascript:void(0)" ui-sref="bulk-cred-allocation">Credit Allocation</a></li> -->
-				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				    <!-- <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li> -->
 				  </ul>
 				</div>
 				<div class="arrow-up-2" style="visibility: visible;"></div>
@@ -155,14 +155,14 @@
 											</div>
 									</div>
 									<div class="right">
-										<div class="total-number-container">
-											<span>Company Allocated Medical Credits</span>
+										<div class="total-number-container" ng-if="totalAllocation.medical_enable">
+											<span>Company Medical Allocation</span>
 											<div class="total-number-box grayed-out">
 												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_medical_allocation | number: 2}}</span>
 											</div>
 										</div>
-										<div class="total-number-container">
-											<span>Company Allocated Wellness Credits</span>
+										<div class="total-number-container" ng-if="totalAllocation.wellness_enable">
+											<span>Company Wellness Allocation</span>
 											<div class="total-number-box grayed-out">
 												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_wellness_allocation | number: 2}}</span>
 											</div>

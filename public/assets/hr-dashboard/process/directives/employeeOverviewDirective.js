@@ -84,6 +84,8 @@ app.directive("employeeOverviewDirective", [
         });
 
         scope.emp_entitlement = {
+          original_medical_entitlement: null,
+          original_wellness_entitlement: null,
           medical_new_entitlement: null,
           wellness_new_entitlement: null
         };
@@ -1303,7 +1305,7 @@ app.directive("employeeOverviewDirective", [
           scope.emp_member_id = emp;
           hrActivity.fetchMemberEntitlement( scope.emp_member_id ) 
               .then(function(response) {
-                console.log(response);
+                console.log('member Entitlement',response);
                 scope.emp_entitlement = response.data;
 
                 scope.med_effective_date = scope.emp_entitlement.medical_entitlement_date;
