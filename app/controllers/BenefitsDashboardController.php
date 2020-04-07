@@ -14278,7 +14278,9 @@ class BenefitsDashboardController extends \BaseController {
     foreach ($members as $key => $member) {
       $user = DB::table('user')->where('UserID', $member->user_id)->first();
       $wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
-      $entitlment_allocation = DB::table('employee_wallet_entitlement')->where('member_id', $member->user_id)->orderBy('created_at', 'desc')->first();
+	//   $entitlment_allocation = DB::table('employee_wallet_entitlement')->where('member_id', $member->user_id)->orderBy('created_at', 'desc')->first();
+	  $medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+      $wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
       $medical_schedule = DB::table('wallet_entitlement_schedule')
                               ->where('member_id', $member->user_id)
                               ->where('spending_type', 'medical')
@@ -14295,11 +14297,13 @@ class BenefitsDashboardController extends \BaseController {
 
       $member->member_id = $member->user_id;
       $member->fullname = $user->Name;
-      $member->medical['current_allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : $entitlment_allocation->medical_entitlement;
+    //   $member->medical['current_allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : $entitlment_allocation->medical_entitlement;
+      $member->medical['current_allocation'] = $medical['allocation'];
       $member->medical['new_allocation'] = 0;
       $member->medical['effective_date'] = date('d/m/Y');
       $member->medical['allocation_schedule'] = $medical_schedule ? true : false;
-      $member->wellness['current_allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : $entitlment_allocation->wellness_entitlement;
+    //   $member->wellness['current_allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : $entitlment_allocation->wellness_entitlement;
+      $member->wellness['current_allocation'] = $wellness['allocation'];
       $member->wellness['new_allocation'] = 0;
       $member->wellness['effective_date'] = date('d/m/Y');
       $member->wellness['allocation_schedule'] = $wellness_schedule ? true : false;

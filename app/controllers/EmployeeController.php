@@ -2644,7 +2644,7 @@ class EmployeeController extends \BaseController {
             $file->move('excel_upload', $temp_file);
             $data_array = Excel::selectSheets('Employees')->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
             $headerRow = $data_array->first()->keys();
-            // return $headerRow;
+            // return $data_array;
             $member_id = false;
             $fullname = false;
 
@@ -2701,78 +2701,105 @@ class EmployeeController extends \BaseController {
               $wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $allocation['member_id'])->orderBy('created_at', 'desc')->first();
               $wallet = DB::table('e_wallet')->where('UserID', $allocation['member_id'])->first();
 
-              if(isset($allocation['current_medical_allocation'])) {
-                // check for existing medical entitlement schedule
-                $check_medical_entitlement = DB::table('wallet_entitlement_schedule')
-                                        ->where('member_id', $allocation['member_id'])
-                                        ->where('spending_type', 'medical')
-                                        ->where('status', 0)
-                                        ->orderBy('created_at', 'desc')
-                                        ->first();
-                if(!$check_medical_entitlement) {
-                  $credits  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $allocation['member_id']);
-                  $credits = $credits['allocation'];
-                  $temp = array(
-                    'member_id'                 => $allocation['member_id'],
-                    'new_usage_date'            =>  date('Y-m-d', strtotime($allocation['effective_date_of_new_medical_allocation_ddmmyyyy'])),
-                    'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->medical_usage_date)),
-                    'proration'                 => 'months',
-                    'new_allocation_credits'    => isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] ? $allocation['new_medical_allocation'] : 0,
-                    'new_entitlement_credits'   => isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] ? $allocation['new_medical_allocation'] : 0,
-                    'old_entitlement_credits'   => $credits,
-                    'plan_end'                  => $spending_account_company->medical_spending_end_date,
-                    'effective_date'            => date('Y-m-d', strtotime($allocation['effective_date_of_new_medical_allocation_ddmmyyyy'])),
-                    'spending_type'             => 'medical',
-                    'status'                    => 0,
-                    'created_at'                => date('Y-m-d H:i:s'),
-                    'updated_at'                => date('Y-m-d H:i:s')
-                  );
-                  $format[] = $temp;
-                }
+              if(isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] != null) {
+                $credits  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $allocation['member_id']);
+                $credits = $credits['allocation'];
+                $new_date = DateTime::createFromFormat('d/m/Y', $allocation['effective_date_of_new_medical_allocation_ddmmyyyy']);
+                $temp = array(
+                  'member_id'                 => $allocation['member_id'],
+                  'new_usage_date'            => $new_date->format('Y-m-d'),
+                  'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->medical_usage_date)),
+                  'proration'                 => 'months',
+                  'new_allocation_credits'    => isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] ? $allocation['new_medical_allocation'] : 0,
+                  'new_entitlement_credits'   => isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] ? $allocation['new_medical_allocation'] : 0,
+                  'old_entitlement_credits'   => $credits,
+                  'plan_end'                  => $spending_account_company->medical_spending_end_date,
+                  'effective_date'            => date('Y-m-d', strtotime($allocation['effective_date_of_new_medical_allocation_ddmmyyyy'])),
+                  'spending_type'             => 'medical',
+                  'status'                    => 0,
+                  'created_at'                => date('Y-m-d H:i:s'),
+                  'updated_at'                => date('Y-m-d H:i:s')
+                );
+                $format[] = $temp;
               }
 
-              if(isset($allocation['current_wellness_allocation'])) {
-                // check for existing medical entitlement schedule
-                $check_wellness_entitlement = DB::table('wallet_entitlement_schedule')
-                                        ->where('member_id', $allocation['member_id'])
-                                        ->where('spending_type', 'wellness')
-                                        ->where('status', 0)
-                                        ->orderBy('created_at', 'desc')
-                                        ->first();
-                if(!$check_wellness_entitlement) {
-                  $credits  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $allocation['member_id']);
-                  $credits = $credits['allocation'];
-                  $temp = array(
-                    'member_id'                 => $allocation['member_id'],
-                    'new_usage_date'            =>  date('Y-m-d', strtotime($allocation['effective_date_of_new_wellness_allocation_ddmmyyyy'])),
-                    'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->medical_usage_date)),
-                    'proration'                 => 'months',
-                    'new_allocation_credits'    => isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] ? $allocation['new_wellness_allocation'] : 0,
-                    'new_entitlement_credits'   => isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] ? $allocation['new_wellness_allocation'] : 0,
-                    'old_entitlement_credits'   => $credits,
-                    'plan_end'                  => $spending_account_company->wellness_spending_end_date,
-                    'effective_date'            => date('Y-m-d', strtotime($allocation['effective_date_of_new_wellness_allocation_ddmmyyyy'])),
-                    'spending_type'             => 'wellness',
-                    'status'                    => 0,
-                    'created_at'                => date('Y-m-d H:i:s'),
-                    'updated_at'                => date('Y-m-d H:i:s')
-                  );
-                  $format[] = $temp;
-                }
+              if(isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] != null) {
+                $credits  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $allocation['member_id']);
+                $credits = $credits['allocation'];
+                $new_date = DateTime::createFromFormat('d/m/Y', $allocation['effective_date_of_new_wellness_allocation_ddmmyyyy']);
+                $temp = array(
+                  'member_id'                 => $allocation['member_id'],
+                  'new_usage_date'            => $new_date->format('Y-m-d'),
+                  'old_usage_date'            => date('Y-m-d', strtotime($wallet_entitlement->medical_usage_date)),
+                  'proration'                 => 'months',
+                  'new_allocation_credits'    => isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] ? $allocation['new_wellness_allocation'] : 0,
+                  'new_entitlement_credits'   => isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] ? $allocation['new_wellness_allocation'] : 0,
+                  'old_entitlement_credits'   => $credits,
+                  'plan_end'                  => $spending_account_company->wellness_spending_end_date,
+                  'effective_date'            => date('Y-m-d', strtotime($allocation['effective_date_of_new_wellness_allocation_ddmmyyyy'])),
+                  'spending_type'             => 'wellness',
+                  'status'                    => 0,
+                  'created_at'                => date('Y-m-d H:i:s'),
+                  'updated_at'                => date('Y-m-d H:i:s')
+                );
+                $format[] = $temp;
               }
             }
 
             $new_entitlment = new NewEmployeeEntitlementSchedule();
+            $future_dates = false;
             foreach ($format as $key => $new) {
-              $result = $new_entitlment->createData($new);
-              $result_data[] = $result;
+              $id = null;
+              if($new['spending_type'] == "medical") {
+                $check_medical_entitlement = DB::table('wallet_entitlement_schedule')
+                                        ->where('member_id', $new['member_id'])
+                                        ->where('spending_type', 'medical')
+                                        ->where('status', 0)
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+                if($check_medical_entitlement) {
+                  // update
+                  $new['created_at'] = $check_medical_entitlement->created_at;
+                  $result = $new_entitlment->updateData($check_medical_entitlement->wallet_entitlement_schedule_id, $new);
+                  $id = $check_medical_entitlement->wallet_entitlement_schedule_id;
+                } else {
+                  // create
+                  $result = $new_entitlment->createData($new);
+                  $id = $result->id;
+                }
+              } else {
+                $check_wellness_entitlement = DB::table('wallet_entitlement_schedule')
+                                        ->where('member_id', $new['member_id'])
+                                        ->where('spending_type', 'wellness')
+                                        ->where('status', 0)
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+                if($check_wellness_entitlement) {
+                  // update
+                  $new['created_at'] = $check_wellness_entitlement->created_at;
+                  $result = $new_entitlment->updateData($check_wellness_entitlement->wallet_entitlement_schedule_id, $new);
+                  $id = $check_wellness_entitlement->wallet_entitlement_schedule_id;
+                } else {
+                  // create
+                  $result = $new_entitlment->createData($new);
+                  $id = $result->id;
+                }
+              }
+              
+              $result_data[] = $new['new_usage_date'];
               if($today >= $new['new_usage_date']) {
                 // activate now
-                MemberHelper::newActivateNewEntitlement($new['member_id'], $result->id);
+                MemberHelper::newActivateNewEntitlement($new['member_id'], $id);
+              } else {
+                $future_dates = true;
               }
             }
 
-            return array('status' => true, 'data' => $result_data);
+            if($future_dates) {
+              return array('status' => true, 'message' => 'The allocation amount will be updated on scheduled dates');
+            } else {
+              return array('status' => true, 'message' => 'The allocation amount has been successfully updated');
+            }
           } else {
             return array('status' => false, 'message' => 'Invalid File.');
           }

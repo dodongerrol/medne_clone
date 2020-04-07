@@ -440,10 +440,11 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/upload_employee_bulk_allocation', 'EmployeeController@uploadEmployeeBulkAllocation');
 	// get member credits
 	Route::get('hr/member_credits', 'EmployeeController@getMemberCreditDetails');
+	// create new allocation
+	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
 });
 
-// create new allocation
-	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
+
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 
 // download employee cap per visit
