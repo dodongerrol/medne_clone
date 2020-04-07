@@ -438,7 +438,17 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/spending_account_status', 'BenefitsDashboardController@spendingAccountStatus');
 	// get excel link
 	Route::get('hr/get_excel_link', 'BenefitsDashboardController@getExcelLink');
+	// route get employee lists for bulk allocation
+	Route::get('hr/get_employee_lists_bulk_allocation', 'BenefitsDashboardController@getEmployeeListsBulk');
+	// upload employee allocation bulk
+	Route::post('hr/upload_employee_bulk_allocation', 'EmployeeController@uploadEmployeeBulkAllocation');
+	// get member credits
+	Route::get('hr/member_credits', 'EmployeeController@getMemberCreditDetails');
 });
+
+// create new allocation
+	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
+	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');

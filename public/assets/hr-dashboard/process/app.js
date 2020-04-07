@@ -346,6 +346,18 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       },
     })
 
+    .state('bulk-cred-allocation', {
+      url: '/bulk-cred-allocation',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/bulk-cred-allocation.html'
+        },
+      },
+    })
+
     .state('cred-allocation', {
       url: '/cred-allocation',
       views: {
@@ -353,8 +365,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
         },
         'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/cred-allocation.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/bulk-cred-allocation.html'
         },
+        // 'main': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/cred-allocation.html'
+        // },
         'modal': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-modal.html'
         },
