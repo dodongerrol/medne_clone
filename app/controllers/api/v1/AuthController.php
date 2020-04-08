@@ -1876,7 +1876,7 @@ public function getNewClinicDetails($id)
     $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
     if($getAccessToken){
      $findUserID = $authSession->findUserID($getAccessToken->session_id);
-                        // return $findUserID;
+      // return $findUserID;
      if($findUserID){
       $returnObject->status = TRUE;
       $returnObject->message = "Success.";
@@ -1888,8 +1888,17 @@ public function getNewClinicDetails($id)
      }
      $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
      $owner_id = StringHelper::getUserId($findUserID);
+     $customer_id = PlanHelper::getCustomerId($owner_id);
+     $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+     
+     if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+      $returnObject->status = FALSE;
+      $returnObject->status_type = 'zero_balance';
+      $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+      return Response::json($returnObject);
+     }
 
-                            // check block access
+     // check block access
      $block = PlanHelper::checkCompanyBlockAccess($owner_id, $id);
 
      if($block) {
@@ -1898,7 +1907,7 @@ public function getNewClinicDetails($id)
        return Response::json($returnObject);
      }
 
-           // check if employee/user is still coverge
+      // check if employee/user is still coverge
      $user_type = PlanHelper::getUserAccountType($findUserID);
      $user_plan_history = DB::table('user_plan_history')
      ->where('user_id', $owner_id)
@@ -1909,9 +1918,8 @@ public function getNewClinicDetails($id)
      $customer_active_plan = DB::table('customer_active_plan')
      ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
      ->first();
-
-
-     if($user_type == "employee") {
+    
+    if($user_type == "employee") {
       $plan_coverage = PlanHelper::checkEmployeePlanStatus($findUserID);
     } else {
       $plan_coverage = PlanHelper::getDependentPlanCoverage($findUserID);
@@ -1933,7 +1941,22 @@ public function getNewClinicDetails($id)
      return Response::json($returnObject);
    }
 
-           // return $plan_coverage;
+   $current_balance = 0;
+   if($customer_active_plan->account_type != "super_pro_plan") {
+    //  check if lite plan user
+     $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+
+     if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+        
+        if($current_balance <= 0) {
+          $returnObject->status = FALSE;
+          $returnObject->status_type = 'zero_balance';
+          $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+          return Response::json($returnObject);
+        }
+      }
+   }
+
    $user = DB::table('user')->where('UserID', $findUserID)->first();
    $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
 
@@ -1955,13 +1978,9 @@ public function getNewClinicDetails($id)
    ->where('scan_pay_show', 1)
    ->where('Active', 1)
    ->get();
-           // if(!$procedures) {
-           //     $returnObject->status = FALSE;
-           //     $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
-           //     return Response::json($returnObject);
-           // }
 
-                                // format clinic data
+
+   // format clinic data
    ($clinic->Email) ? $email = $clinic->Email : $email = null;
    ($clinic->Description) ? $descr = $clinic->Description : $descr = null;
    ($clinic->Website) ? $website = $clinic->Website : $website = null;
@@ -1990,18 +2009,12 @@ $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLSt
 $jsonArray['image_url'] = $clinic->CLImage;
 $jsonArray['member'] = ucwords($user->Name);
 $jsonArray['nric'] = $user->NRIC;
-
-$current_balance = 0;
-if($customer_active_plan->account_type != "super_pro_plan") {
-  $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
-}
 $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
 $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
 $jsonArray['plan_type'] = $plan_coverage['plan_type'];
-$current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+// $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
-        // check if employee has plan tier cap
-$customer_id = PlanHelper::getCustomerId($owner_id);
+// check if employee has plan tier cap
 $plan_tier = null;
 
 if($customer_id) {
@@ -6322,6 +6335,65 @@ public function payCreditsNew( )
           $data = MemberHelper::getMemberSpendingCoverageDate($user_id);
           $returnObject->status = true;
           $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['end_date'])), 'today' => $data['today'], 'grace_period' => $data['grace_period']];
+          return Response::json($returnObject);
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+     }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
+  }
+
+  public function getMemberAccountSpendingStatus( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+         if($findUserID){
+          $user_id = StringHelper::getUserId($findUserID);
+          $customer_id = PlanHelper::getCustomerId($user_id);
+          $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+          $returnObject->status = true;
+          if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+            $returnObject->status = FALSE;
+            $returnObject->status_type = 'zero_balance';
+            $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+            return Response::json($returnObject);
+          }
+            
+          if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+            $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
+
+            $returnObject->status = FALSE;
+            $returnObject->status_type = 'zero_balance';
+            $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+            
+            if($current_balance <= 0) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+              return Response::json($returnObject);
+            }
+          }
+
+          $returnObject->status = TRUE;
+          $returnObject->status_type = 'with_balance';
+          $returnObject->message = 'You have access this feature at the moment.';
           return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;
