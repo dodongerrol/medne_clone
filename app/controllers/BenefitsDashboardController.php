@@ -12559,6 +12559,7 @@ class BenefitsDashboardController extends \BaseController {
 			$spending = MemberHelper::getMemberSpendingCoverageDate($id);
 			$result['valid_start_claim'] = $spending['start_date'];
 			$result['valid_end_claim'] = $spending['end_date'];
+			$result['spending_feature_status_type'] = true;
 			// $first_plan = PlanHelper::getUserFirstPlanStart($id);
 			// if($first_plan) {
 			// 	$result['valid_start_claim'] = $first_plan;
@@ -12566,6 +12567,21 @@ class BenefitsDashboardController extends \BaseController {
 			// 	$result['valid_start_claim'] = date('Y-m-d', strtotime($result['start_date']));
 			// }
 			// $result['valid_end_claim'] = date('Y-m-d', strtotime($result['valid_date']));
+			// check for spending feature
+			$customer_id = PlanHelper::getCustomerId($id);
+			$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+			
+			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+				$result['spending_feature_status'] = false;
+			}
+
+			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+				$current_balance = PlanHelper::reCalculateEmployeeBalance($id);
+				if($current_balance <= 0) {
+					$result['spending_feature_status'] = false;
+				}
+			}
+
 			return $result;
 		} else {
 			$returnObject->status = FALSE;
