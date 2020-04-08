@@ -13,7 +13,7 @@
 				</h4>
 				<ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
 					<li><a href="javascript:void(0)" ng-click="gotToOverview()" ui-sref="employee-overview">Overview</a></li>
-					<li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+					<!-- <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li> -->
 				</ul>
 			</div>
 			<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
@@ -621,7 +621,7 @@
 											<!-- <h5 class="weight-700">Original Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" readonly="readonly"
+												<input class="entitlement-input form-control" type="text" readonly="readonly"
 													placeholder="0.00" ng-model="emp_entitlement.original_medical_entitlement">
 											</div>
 											<p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated from 
@@ -705,7 +705,7 @@
 											<!-- <h5 class="weight-700">Original Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" readonly="readonly"
+												<input class="entitlement-input form-control" type="text" readonly="readonly"
 													placeholder="0.00" ng-model="emp_entitlement.original_wellness_entitlement">
 											</div>
 											<p ng-if="emp_entitlement.updated_wellness_entitlement == true" class="small">*Updated from 

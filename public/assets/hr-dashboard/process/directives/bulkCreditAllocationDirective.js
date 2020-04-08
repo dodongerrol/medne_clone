@@ -324,7 +324,6 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 											
 											if(result) {
 												console.log('get employee list again');
-												scope.toUpdateAllocation = [];
 												var errorLength = scope.apiErrorResponse.length;
 												var list_id = [];
 												scope.apiErrorResponse.map(value => {
@@ -344,11 +343,14 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 															customClass : 'allocationEntitlementSuccessModal'
 														}, function(result) {
 															if	(result)	{
+																scope.toUpdateAllocation = [];
+																scope.apiErrorResponse = [];
 																scope.getEmployeeBulkCredit();
 															}
 														});
 													},600);
 												} else {
+													scope.toUpdateAllocation = [];
 													scope.getEmployeeBulkCredit();
 												}
 												
