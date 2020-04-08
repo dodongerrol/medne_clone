@@ -1873,140 +1873,60 @@ class EmployeeController extends \BaseController {
                                 ->where('status', 1)
                                 ->orderBy('created_at', 'desc')
                                 ->first();
+        $wallet = DB::table('e_wallet')->where('UserID', $input['member_id'])->first();
+        $medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $input['member_id']);
+        $wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $input['member_id']);
+
         if($check_entitlement_medical || $check_entitlement_wellness) {
             $medical_calculation = array();
             $wellness_calculation = array();
             if($check_entitlement_medical && $check_entitlement_wellness) {
-                // medical calculation
-                $plan_duration = new DateTime($check_entitlement_medical->old_usage_date);
-                $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
-                
-                $medical_duration_start = new DateTime($check_entitlement_medical->old_usage_date);
-                $medical_months = $medical_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->new_usage_date))));
-
-                $entitlement_duration = new DateTime($check_entitlement_medical->new_usage_date);
-                $entitlement_duration = $entitlement_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
-
-
-                if($check_entitlement_medical->proration == "months") {
-                    $medical_calculation['plan_month_duration'] = $medical_months->m + 1;
-                    $medical_calculation['entitlement_duration'] = $entitlement_duration->m;
-                    $medical_calculation['plan_duration'] = $plan_duration->m + 1;
-                } else {
-                    $medical_calculation['plan_month_duration'] = $medical_months->days + 1;
-                    $medical_calculation['entitlement_duration'] = $entitlement_duration->days + 1;
-                    $medical_calculation['plan_duration'] = $plan_duration->days + 1;
-                }
-
-                $plan_duration_wellness = new DateTime($check_entitlement_wellness->old_usage_date);
-                $plan_duration_wellness = $plan_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
-                
-                $wellness_duration_start = new DateTime($check_entitlement_wellness->old_usage_date);
-                $wellness_months = $wellness_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->new_usage_date))));
-
-                $entitlement_duration_wellness = new DateTime($check_entitlement_wellness->new_usage_date);
-                $entitlement_duration_wellness = $entitlement_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
-
-                if($check_entitlement_wellness->proration == "months") {
-                    $wellness_calculation['plan_month_duration'] = $wellness_months->m + 1;
-                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->m;
-                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->m + 1;
-                } else {
-                    $wellness_calculation['plan_month_duration'] = $wellness_months->days + 1;
-                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->days + 1;
-                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->days + 1;
-                }
-
                 $data = array(
                     'status' => true,
                     'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
                     'member_id' => $input['member_id'],
-                    'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                    'original_medical_entitlement' => DecimalHelper::formatDecimal($medical['allocation']),
                     'old_medical_entitlement' => DecimalHelper::formatDecimal($check_entitlement_medical->old_entitlement_credits),
                     'medical_entitlement_date' => $entitlement->medical_usage_date,
                     'medical_proration'        => $entitlement->medical_proration,
-                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($wellness['allocation']),
                     'old_wellness_entitlement' => DecimalHelper::formatDecimal($check_entitlement_wellness->old_entitlement_credits),
                     'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => true,
                     'updated_wellness_entitlement' => true,
-                    'medical_calculation'          => $medical_calculation,
-                    'wellness_calculation'          => $wellness_calculation,
                     'currency_type'                => strtoupper($entitlement->currency_type)
                 );
             } else if($check_entitlement_medical) {
-                // medical calculation
-                $plan_duration = new DateTime($check_entitlement_medical->old_usage_date);
-                $plan_duration = $plan_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
-                
-                $medical_duration_start = new DateTime($check_entitlement_medical->old_usage_date);
-                $medical_months = $medical_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->new_usage_date))));
-
-                $entitlement_duration = new DateTime($check_entitlement_medical->new_usage_date);
-                $entitlement_duration = $entitlement_duration->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_medical->plan_end))));
-
-
-                if($check_entitlement_medical->proration == "months") {
-                    $medical_calculation['plan_month_duration'] = $medical_months->m + 1;
-                    $medical_calculation['entitlement_duration'] = $entitlement_duration->m;
-                    $medical_calculation['plan_duration'] = $plan_duration->m + 1;
-                } else {
-                    $medical_calculation['plan_month_duration'] = $medical_months->days;
-                    $medical_calculation['entitlement_duration'] = $entitlement_duration->days + 1;
-                    $medical_calculation['plan_duration'] = $plan_duration->days + 1;
-                }
-
                 $data = array(
                     'status' => true,
                     'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
                     'member_id' => $input['member_id'],
-                    'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                    'original_medical_entitlement' => DecimalHelper::formatDecimal($medical['allocation']),
                     'old_medical_entitlement' => DecimalHelper::formatDecimal($check_entitlement_medical->old_entitlement_credits),
                     'medical_entitlement_date' => $entitlement->medical_usage_date,
                     'medical_proration'        => $entitlement->medical_proration,
-                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($wellness['allocation']),
                     'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => true,
                     'updated_wellness_entitlement' => false,
-                    'medical_calculation'          => $medical_calculation,
                     'currency_type'                => strtoupper($entitlement->currency_type)
                 );
             } else {
-                $plan_duration_wellness = new DateTime($check_entitlement_wellness->old_usage_date);
-                $plan_duration_wellness = $plan_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
-                
-                $wellness_duration_start = new DateTime($check_entitlement_wellness->old_usage_date);
-                $wellness_months = $wellness_duration_start->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->new_usage_date))));
-
-                $entitlement_duration_wellness = new DateTime($check_entitlement_wellness->new_usage_date);
-                $entitlement_duration_wellness = $entitlement_duration_wellness->diff(new DateTime(date('Y-m-d', strtotime($check_entitlement_wellness->plan_end))));
-
-                if($check_entitlement_wellness->proration == "months") {
-                    $wellness_calculation['plan_month_duration'] = $wellness_months->m + 1;
-                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->m;
-                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->m + 1;
-                } else {
-                    $wellness_calculation['plan_month_duration'] = $wellness_months->days;
-                    $wellness_calculation['entitlement_duration'] = $entitlement_duration_wellness->days + 1;
-                    $wellness_calculation['plan_duration'] = $plan_duration_wellness->days + 1;
-                }
-
                 $data = array(
                     'status' => true,
                     'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
                     'member_id' => $input['member_id'],
-                    'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                    'original_medical_entitlement' => DecimalHelper::formatDecimal($medical['allocation']),
                     'medical_entitlement_date' => $entitlement->medical_usage_date,
                     'medical_proration'        => $entitlement->medical_proration,
-                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                    'original_wellness_entitlement' => DecimalHelper::formatDecimal($wellness['allocation']),
                     'old_wellness_entitlement' => DecimalHelper::formatDecimal($check_entitlement_wellness->old_entitlement_credits),
                     'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                     'wellness_proration'        => $entitlement->wellness_proration,
                     'updated_medical_entitlement' => false,
                     'updated_wellness_entitlement' => true,
-                    'wellness_calculation'          => $wellness_calculation,
                     'currency_type'                => strtoupper($entitlement->currency_type)
                 );
             }
@@ -2015,11 +1935,11 @@ class EmployeeController extends \BaseController {
                 'status' => true,
                 'employee_wallet_entitlement_id' => $entitlement->employee_wallet_entitlement_id,
                 'member_id' => $input['member_id'],
-                'original_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
+                'original_medical_entitlement' => DecimalHelper::formatDecimal($medical['allocation']),
                 'old_medical_entitlement' => DecimalHelper::formatDecimal($entitlement->medical_entitlement),
                 'medical_entitlement_date' => $entitlement->medical_usage_date,
                 'medical_proration'        => $entitlement->medical_proration,
-                'original_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
+                'original_wellness_entitlement' => DecimalHelper::formatDecimal($wellness['allocation']),
                 'old_wellness_entitlement' => DecimalHelper::formatDecimal($entitlement->wellness_entitlement),
                 'wellness_entitlement_date' => $entitlement->wellness_usage_date,
                 'wellness_proration'        => $entitlement->wellness_proration,
