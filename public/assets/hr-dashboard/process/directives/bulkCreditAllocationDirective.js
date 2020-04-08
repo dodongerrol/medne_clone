@@ -38,7 +38,31 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         
         scope.company_properties = {};
         scope.company_properties.total_allocation = 0.00;
-        scope.company_properties.allocated = 0.00;
+				scope.company_properties.allocated = 0.00;
+				
+				scope.isTotalCreditsShow = false;
+				scope.isPurchasedCreditsShow = false;
+				scope.isBonusCreditsShow = false;
+				scope.isTotalAllocatedCreditsShow = false;
+				scope.isAvailableCreditsShow = false;
+
+				scope.toggleTooltipDropdown	=	function(opt){
+					if( opt == 'total_credits' ){
+						scope.isTotalCreditsShow = scope.isTotalCreditsShow ? false : true;
+					}
+					if( opt == 'purchased_credits' ){
+						scope.isPurchasedCreditsShow = scope.isPurchasedCreditsShow ? false : true;;
+					}
+					if( opt == 'bonus_credits' ){
+						scope.isBonusCreditsShow = scope.isBonusCreditsShow ? false : true;;
+					}
+					if( opt == 'total_allocated_credits' ){
+						scope.isTotalAllocatedCreditsShow = scope.isTotalAllocatedCreditsShow ? false : true;;
+					}
+					if( opt == 'available_credits' ){
+						scope.isAvailableCreditsShow = scope.isAvailableCreditsShow ? false : true;;
+					}
+				}
         
 				scope.$on( 'refresh', function( evt, data ){
 					scope.onLoad();

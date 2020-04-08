@@ -1,55 +1,67 @@
 <div prepare-directive>
-	<div class="hrdb-body-container" style="padding-top: 200px;">
+	<div class="hrdb-body-container">
 		<div class="container">
-			<h1 class="dl-template-title text-center weight-700" style="color: #5b5b5b;">Let us help you with the review before upload</h1>
-			<div class="white-space-20"></div>
-			<div class="white-space-20"></div>
-			<div class="tick-container">
-				<p class="tick-title">Review your file type</p>
-				<p>
-			     	<input type="checkbox" class="prepare-template filled-in" id="first-box" ng-model="isFormat" ng-value="true">
-		      		<label for="first-box">The file is in Excel Format</label>
-		      		<br>
-		      		<label class="prepare-template-subtext">Save the file in .xlsx or .xls format</label>
-			    </p>
-			    <p class="tick-title">Review the data in your file</p>
-				<p>
-			     	<input type="checkbox" class="prepare-template filled-in" id="second-box" ng-model="isNameGood" ng-value="true">
-		      		<label for="second-box">Employee's first name and last name are separated</label>
-		      		<br>
-		      		<label class="prepare-template-subtext">Separate the full name to first name as givern name; last name as family name.</label>
-			    </p>
-			    <p>
-			     	<input type="checkbox" class="prepare-template filled-in" id="third-box" ng-model="isDateFormat" ng-value="true">
-		      		<label for="third-box">Input employee's date of birth according to the format (dd/mm/yyyy)</label>
-		      		<br>
-		      		<label class="prepare-template-subtext">Our system will only pick and capture date in the stated format.</label>
-			    </p>
-			    <p>
-			     	<input type="checkbox" class="prepare-template filled-in" id="fourth-box" ng-model="isMobileGood" ng-value="true">
-		      		<label for="fourth-box">Only input employee's 8 digit Singapore verified mobile number.</label>
-		      		<br>
-		      		<label class="prepare-template-subtext">Omit country code +65 before the 8 digital mobile number.</label>
-			    </p>
-			    <!-- <p>
-			     	<input type="checkbox" class="prepare-template filled-in" id="fifth-box" ng-model="isDropDown" ng-value="true">
-		      		<label for="fifth-box">Select only pre-filled employee's job title in the drop down field.</label>
-			    </p> -->
+			<div class="col-lg-12">
+				<div class="benefits-tiers-container center-block"> 
+	
+					<div class="review-no-dependents tier-feature-item item-fade">
+						<h1 class="weight-700 font-25 download-template-title" style="color: #2c3e50;">Let us help you with the review before upload.</h1>
+						<div class="white-space-20"></div>
+						<div class="review-tick-container">
+							<p class="review-tick-title">Review your file type:</p>
+							<label class="review-container">
+								<input type="checkbox" ng-model="reviewExcelData.format">
+								<span class="review-prepare-template-text">Save the file .xlsx or .xls format. </span>
+								<span class="review-checkmark"></span>
+							</label>
+							<p class="review-tick-title">Review the data in your file:</p>
+							<label class="review-container">
+								<input type="checkbox" ng-model="reviewExcelData.dob">
+								<span ng-if="isWithDependents" class="review-prepare-template-text">
+									Input employee, dependent/s date of birth according to the format (dd/mm/yyyy).
+								</span>
+								<span ng-if="!isWithDependents" class="review-prepare-template-text">
+									Input employee's date of birth according to the format (dd/mm/yyyy).
+								</span>
+								<span class="review-prepare-template-subtext">Our system will only pick and capture date in the stated format.</span>
+								<span class="review-checkmark"></span>
+							</label>
+							<label class="review-container">
+								<input type="checkbox" ng-model="reviewExcelData.plan_start">
+								<span class="review-prepare-template-text">Input employee's plan start date according to the format (dd/mm/yyyy).</span>
+								<span class="review-prepare-template-subtext">Our system will only pick and capture date in the stated format.</span>
+								<span class="review-checkmark"></span>
+							</label>
+							<label class="review-container">
+								<input type="checkbox" ng-model="reviewExcelData.email">
+								<span class="review-prepare-template-text">A valid employee's email address.</span>
+								<span class="review-prepare-template-subtext">Login credential will be sent to this email address once account is set up.</span>
+								<span class="review-checkmark"></span>
+							</label>
+							<label class="review-container">
+								<input type="checkbox" ng-model="reviewExcelData.postcode">
+								<span class="review-prepare-template-text">Input employee's 6 digit postal code</span>
+								<span class="review-prepare-template-subtext">It should be the local residential postal code where the employee reside.</span>
+								<span class="review-checkmark"></span>
+							</label>	
+							<label ng-if="isWithDependents" class="review-container">
+								<input type="checkbox"  ng-model="reviewExcelData.relationship">
+								<span class="review-prepare-template-text">Under dependent/s relationship column only select from drop down list.</span>
+								<span class="review-checkmark"></span>
+							</label>
+						</div>
+					</div>
+					
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="prev-next-buttons-container">
 		<div class="container">
-			<button ui-sref="download-template" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: solid 2px #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button>
-			<button ui-sref="enrollment-method" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
-			<button ui-sref="upload" class="pull-right btn btn-info next-wizard-button" ng-disabled="!isFormat || !isNameGood || !isDateFormat || !isMobileGood">NEXT</button>
-
-			<!--
-				this button can be clicked if the the ticks are all checked.
-				Uncomment Below
-			-->
-
-			<!-- <button ui-sref="download-template" class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
+			<button ng-click="backBtn()" class="pull-left btn btn-info back-btn">
+				<span>BACK</span>
+			</button>
+			<button class="pull-right btn btn-info next-wizard-button" ng-click="nextBtn( )">NEXT</button>
 		</div>
 	</div>
 </div>
