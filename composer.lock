@@ -273,21 +273,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cloudinary/cloudinary_php.git",
-<<<<<<< HEAD
-                "reference": "aa0cef2fb1aff0695f3a880800cf343f1080557f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/aa0cef2fb1aff0695f3a880800cf343f1080557f",
-                "reference": "aa0cef2fb1aff0695f3a880800cf343f1080557f",
-=======
                 "reference": "54db8e7e97fb36438845c529ca1f97013279cefb"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/54db8e7e97fb36438845c529ca1f97013279cefb",
                 "reference": "54db8e7e97fb36438845c529ca1f97013279cefb",
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
                 "shasum": ""
             },
             "require": {
@@ -327,11 +318,7 @@
                 "image management",
                 "sdk"
             ],
-<<<<<<< HEAD
-            "time": "2019-12-15T17:17:22+00:00"
-=======
             "time": "2020-01-05T16:06:11+00:00"
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
         },
         {
             "name": "coreproc/laravel-db-backup",
@@ -1310,21 +1297,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-<<<<<<< HEAD
-                "reference": "b928039c232d09ecfea30950760790179aebe4ed"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/b928039c232d09ecfea30950760790179aebe4ed",
-                "reference": "b928039c232d09ecfea30950760790179aebe4ed",
-=======
                 "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/Seldaek/monolog/zipball/fa82921994db851a8becaf3787a9e73c5976b6f1",
                 "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1",
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
                 "shasum": ""
             },
             "require": {
@@ -1533,18 +1511,6 @@
         },
         {
             "name": "paragonie/sodium_compat",
-<<<<<<< HEAD
-            "version": "v1.12.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "063cae9b3a7323579063e7037720f5b52b56c178"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/063cae9b3a7323579063e7037720f5b52b56c178",
-                "reference": "063cae9b3a7323579063e7037720f5b52b56c178",
-=======
             "version": "v1.12.2",
             "source": {
                 "type": "git",
@@ -1555,7 +1521,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/3b953109fdfc821c1979bc829c8b7421721fef82",
                 "reference": "3b953109fdfc821c1979bc829c8b7421721fef82",
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
                 "shasum": ""
             },
             "require": {
@@ -1624,11 +1589,7 @@
                 "secret-key cryptography",
                 "side-channel resistant"
             ],
-<<<<<<< HEAD
-            "time": "2019-11-07T17:07:24+00:00"
-=======
             "time": "2019-12-30T03:11:08+00:00"
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
         },
         {
             "name": "patchwork/utf8",
