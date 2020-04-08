@@ -9,16 +9,15 @@ app.directive('enrollmentMethodDirective', [
 			link: function link( scope, element, attributeSet ) {
 				console.log("enrollmentMethodDirective Runnning !");
 
-				scope.excelMethod = false;
-				scope.inputMethod = false;
+				scope.optionSelected = null;
 				scope.no_select = false;
 
 				scope.submitMethod = function( ){
-					if( scope.excelMethod == true ){
+					if( scope.optionSelected == 'excel' ){
 						localStorage.setItem('method','excel');
-						$state.go('download-template');
+						$state.go('excel-enrollment.download-template');
 						scope.no_select = false;
-					}else if( scope.inputMethod == true ){
+					}else if( scope.optionSelected == 'web_input' ){
 						localStorage.setItem('method','input');
 						$state.go('web-input');
 						scope.no_select = false;
@@ -27,44 +26,12 @@ app.directive('enrollmentMethodDirective', [
 					}
 				}
 
-				var loading_trap = false;
-
-        scope.toggleLoading = function( ){
-					if ( loading_trap == false ) {
-						$( ".circle-loader" ).fadeIn();	
-						loading_trap = true;
-					}else{
-						setTimeout(function() {
-							$( ".circle-loader" ).fadeOut();
-							loading_trap = false;
-						},100)
-					}
+				scope.selectEnrollmentMethod	=	function(opt){
+					scope.optionSelected = opt;
 				}
-
-				scope.showLoading = function( ){
-					$( ".circle-loader" ).fadeIn();	
-					loading_trap = true;
-				}
-
-				scope.hideLoading = function( ){
-					setTimeout(function() {
-						$( ".circle-loader" ).fadeOut();
-						loading_trap = false;
-					},100)
-				}
-
-				scope.showGlobalModal = function( message ){
-			    $( "#global_modal" ).modal('show');
-			    $( "#global_message" ).text(message);
-			  }
 
         scope.onLoad = function( ){
-        	scope.toggleLoading();
 
-        	setTimeout(function() {
-        		scope.toggleLoading();
-        	}, 100);
-        	console.log( dashboardFactory.getHeadCountStatus() );
         }
 
         scope.onLoad();

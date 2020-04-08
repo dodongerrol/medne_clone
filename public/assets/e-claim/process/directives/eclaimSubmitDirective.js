@@ -149,6 +149,8 @@ app.directive('eclaimSubmitDirective', [
 					scope.step_active++;
 
 					scope.checkEclaimVisit_data = {};
+					scope.eclaim = storageFactory.getEclaim();
+					console.log(scope.eclaim);
 					if(scope.step_active == 3) {
 						var data = {
 							visit_date: moment(scope.eclaim.visit_date).format('YYYY-MM-DD'),
@@ -159,7 +161,8 @@ app.directive('eclaimSubmitDirective', [
 						eclaimSettings.getCheckEclaimVisit(data)
 						.then(function(response){
 							scope.checkEclaimVisit_data = response.data;
-							
+							scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance.replace(',','') ).toFixed(2) );
+							scope.eclaim.claim_amount = Number( parseFloat( scope.eclaim.claim_amount.replace(',','') ).toFixed(2) );
 							// claim_amount = receipt & new_claim_amount = claim_amount
 							if (scope.checkEclaimVisit_data.balance >= scope.eclaim.claim_amount ) {
 								scope.eclaim.new_claim_amount = scope.eclaim.claim_amount;
@@ -171,11 +174,9 @@ app.directive('eclaimSubmitDirective', [
 								scope.summ_reminder = true;
 							}
 							console.log('new api 8-9', scope.checkEclaimVisit_data);
+							console.log(scope.eclaim);
 						});
 					}
-
-					scope.eclaim = storageFactory.getEclaim();
-					console.log(scope.eclaim);
 				}
 
 				scope.backStep = function( ) {
@@ -262,7 +263,7 @@ app.directive('eclaimSubmitDirective', [
 					}else{
 						if( moment(info.visit_date).isBefore( moment( scope.user_status.valid_start_claim ).subtract( 1, 'days' ) ) 
 							|| moment(info.visit_date).isAfter( moment( ).add( 1, 'days' ) ) ){
-							scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( ).format("MM/DD/YYYY") );
+							scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( scope.user_status.valid_end_claim ).format("MM/DD/YYYY") );
 							return false;
 						}
 					}
@@ -485,7 +486,7 @@ app.directive('eclaimSubmitDirective', [
 				    	format : 'DD MMMM, YYYY',
 				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
-				    	maxDate : new Date( moment( ) ),
+				    	maxDate : new Date( moment( scope.user_status.valid_end_claim ) ),
 				    	useCurrent : false,
 				    });
 

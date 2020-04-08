@@ -690,7 +690,8 @@ app.directive("employeeOverviewDirective", [
 
         scope.enrollMoreEmployees = function () {
           // localStorage.setItem('fromEmpOverview', false);
-          $state.go('create-team-benefits-tiers');
+          // $state.go('create-team-benefits-tiers');
+          $state.go('enrollment-options');
           localStorage.setItem('fromEmpOverview', true);
           hrSettings.getSpendingAccountStatus()
 						.then(function (response) {
@@ -1025,6 +1026,8 @@ app.directive("employeeOverviewDirective", [
             scope.showLoading();
             scope.hideLoading();
             data.done = true;
+            data.dob = moment(data.dob, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            data.start_date = moment(data.start_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
             scope.addDependents_arr.push(data);
             scope.dependents_ctr += 1;
             scope.addActiveDependent_index += 1;
@@ -2312,6 +2315,8 @@ app.directive("employeeOverviewDirective", [
             if (scope.checkDependentForm(scope.dependent_data) == true) {
               if (!scope.addDependents_arr[scope.dependents_ctr]) {
                 scope.addActiveDependent_index += 1;
+                scope.dependent_data.dob = moment(scope.dependent_data.dob, 'DD/MM/YYYY').format('YYYY-MM-DD');
+                scope.dependent_data.start_date = moment(scope.dependent_data.start_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
                 scope.addDependents_arr.push(scope.dependent_data);
               } else {
 
