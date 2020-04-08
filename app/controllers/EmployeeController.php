@@ -2593,13 +2593,13 @@ class EmployeeController extends \BaseController {
           );
 
           if($medical) {
-            $temp['Current Medical Allocation'] = $entitlment_allocation->medical_entitlement;
+            $temp['Current Medical Allocation'] = (string)$entitlment_allocation->medical_entitlement;
             $temp['New Medical Allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : 0;
             $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = date('d/m/Y');
           }
 
           if($wellness) {
-            $temp['Current Wellness Allocation'] = $entitlment_allocation->wellness_entitlement;
+            $temp['Current Wellness Allocation'] = (string)$entitlment_allocation->wellness_entitlement;
             $temp['New Wellness Allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : 0;
             $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = date('d/m/Y');
           }
