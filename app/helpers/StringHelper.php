@@ -20,12 +20,25 @@ class StringHelper{
 
         public static function requestHeader()
 	{
-            // $getRequestHeader = getallheaders();
-            // return $getRequestHeader;
+            /*
+                Description: 
+                    For Third Party API
+                Developer: 
+                    Stephen
+                Date of refactor:
+                    April 9, 2020
+            */ 
+            $thirdPartyAuthorization = '';
             $getRequestHeader = getallheaders();
-            if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
-                $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
+
+            if (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID'])) {
+                $getRequestHeader['Authorization'] = self::verifyXAccessKey();
+            } else {
+                if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
+                    $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
+                }
             }
+            
             return $getRequestHeader;
 	}
         public static function errorMessage($type)
@@ -218,17 +231,17 @@ class StringHelper{
 
         public static function getToken( )
         {
-            $getRequestHeader = getallheaders();
-            $getRequestHeader = getallheaders();
-            if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
-                $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
-            }
-            // return $getRequestHeader;
-            if(isset($getRequestHeader['Authorization'])) {
-                return $getRequestHeader['Authorization'];
-            } else {
-                return FALSE;
-            }
+            // $getRequestHeader = getallheaders();
+            // $getRequestHeader = getallheaders();
+            // if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
+            //     $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
+            // }
+            // // return $getRequestHeader;
+            // if(isset($getRequestHeader['Authorization'])) {
+            //     return $getRequestHeader['Authorization'];
+            // } else {
+            //     return FALSE;
+            // }
 
 
             // if(isset($getRequestHeader['Authorization'])) {
@@ -236,6 +249,8 @@ class StringHelper{
             // } else {
             //     return FALSE;
             // }
+
+            return self::requestHeader();
 
         }
 
@@ -1362,4 +1377,148 @@ public static function get_random_password($length)
 
       return $num;
     }
+
+    public static function verifyXAccessKey () {
+        
+        $getRequestHeader = getallheaders();
+        $returnObject = new stdClass();
+        $todate =  date("Y-m-d H:i:s");
+
+        // Confirmed X-Access Key
+        if (!isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID'])) {
+            $returnObject->error = TRUE;
+            $returnObject->message = 'X-ACCESS-KEY not defined.';
+            return $returnObject;
+        } else if (isset($getRequestHeader['X-ACCESS-KEY']) && !isset($getRequestHeader['X-MEMBER-ID'])) {
+            $returnObject->error = TRUE;
+            $returnObject->message = 'X-MEMBER-ID not defined.';
+            return $returnObject;
+        } else if (isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID'])) {
+
+            $xAccessKey = $getRequestHeader['X-ACCESS-KEY'];
+            $user_id = $getRequestHeader['X-MEMBER-ID'];
+            // check X-ACCESS-KEY details
+            $accessKeyDetails = DB::table('customer_accessKey')->where('accessKey', $xAccessKey)->first();
+            
+            // Verify Access Key given
+            if ($accessKeyDetails) {
+                // Check access key expiration
+                $accessKeyExpiryDate =  $accessKeyDetails->expiry_date;
+
+                if ($todate == $accessKeyExpiryDate) {
+                    // Create new access key
+                    $newAccessKey = md5($accessKeyDetails->customer_id,$todate);
+                    $expiraryDate = date("Y-m-d H:i:s",strtotime('+30 days',strtotime(date("Y-m-d H:i:s"))));
+
+                    $newAccessKeyData =  array(
+                        'accessKey' => $newAccessKey, 
+                        'customer_id' => $accessKeyDetails->customer_id, 
+                        'expiry_date' => $expiraryDate, 
+                    );
+
+                    DB::table('customer_accessKey')->insert($newAccessKeyData);
+                    // Send access to the third party database.
+
+                    // Return message to refresh key
+                    $returnObject->error = TRUE;
+                    $returnObject->message = 'Access key already expired.';
+                    return $returnObject;
+                } else {
+                     $member = DB::table('customer_link_customer_buy')
+                        ->join('corporate', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
+                        ->join('corporate_members', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+                        ->where('customer_link_customer_buy.customer_buy_start_id', $accessKeyDetails->customer_id)
+                        ->where('corporate_members.user_id', $user_id)
+                        ->where('corporate_members.removed_status', 0)
+                        ->select("*")
+                        ->get();
+                        
+                    // Return Error message if member id not found/deleted.
+                    if (count($member) <= 0) {
+                        $returnObject->error = TRUE;
+                        $returnObject->message = 'Unathorize Access. Member does not exist/Member record has already been deleted.';
+                        return $returnObject;
+                    } else {
+                        
+                        // Check if there are existing session
+                        $sessionHistory = DB::table('oauth_sessions')
+                        ->where("owner_id", $user_id)
+                        ->orderBy("created_at", "desc")
+                        ->first();
+
+                        if (count((array)$sessionHistory) > 0) {
+                            // check session expiration
+                            $tokenDetails = DB::table('oauth_access_tokens')
+                            ->where("session_id", $sessionHistory->id)
+                            ->first();
+                            
+                            // Convert time to datetime format
+                            $tokenExpirationDateTime = date("Y-m-d H:i:s", $tokenDetails->expire_time);
+
+                            if ($tokenExpirationDateTime == $todate) {
+                                $authorization = "Authorization: ".self::getAlgorithm()->generate(40);
+                                header($authorization);
+                                // Create oauth session
+                                $oauth = array(
+                                    "client_id" => "cfcd208495d565ef66e7dff9f98764da",
+                                    "owner_type" => "user",
+                                    "owner_id" => $user_id,
+                                    "client_redirect_uri" => null,
+                                    "created_at" => $todate,
+                                    "updated_at" => $todate
+                                );
+                                DB::table('oauth_sessions')->insert($oauth);
+                                $session_id = DB::getPdo()->lastInsertId();
+                                
+                                // Create oauth session token
+                                $oauthToken = array(
+                                    "id" => self::getAlgorithm()->generate(40),
+                                    "session_id" => $session_id,
+                                    "expire_time" => time() + 72000,
+                                    "created_at" => $todate,
+                                    "updated_at" => $todate
+                                );
+                                DB::table('oauth_access_tokens')->insert($oauthToken);   
+                                return $oauthToken['id'];
+                            } else {
+                                $authorization = "Authorization: ".$tokenDetails->id;
+                                return $tokenDetails->id;
+                            }
+                        } else {
+                            $authorization = "Authorization: ".self::getAlgorithm()->generate(40);
+                            header($authorization);
+                            // Create oauth session
+                            $oauth = array(
+                                "client_id" => "cfcd208495d565ef66e7dff9f98764da",
+                                "owner_type" => "user",
+                                "owner_id" => $user_id,
+                                "client_redirect_uri" => null,
+                                "created_at" => $todate,
+                                "updated_at" => $todate
+                            );
+                            DB::table('oauth_sessions')->insert($oauth);
+                            $session_id = DB::getPdo()->lastInsertId();
+                            
+                            // Create oauth session token
+                            $oauthToken = array(
+                                "id" => self::getAlgorithm()->generate(40),
+                                "session_id" => $session_id,
+                                "expire_time" => time() + 72000,
+                                "created_at" => $todate,
+                                "updated_at" => $todate
+                            );
+                            
+                            DB::table('oauth_access_tokens')->insert($oauthToken); 
+                            return $oauthToken['id'];
+                        }
+                    }
+                }
+            } else {
+                $returnObject->error = TRUE;
+                $returnObject->message = 'Unathorize Access. Access Key not registered.';
+                return $returnObject;
+            }
+        }
+        
+    } 
 }

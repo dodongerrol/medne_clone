@@ -253,10 +253,25 @@ class ArrayHelper{
     }
     public static function requestHeader()
     {
+        /*
+            Description: 
+                For Third Party API
+            Developer: 
+                Stephen
+            Date of refactor:
+                April 9, 2020
+        */ 
+        $thirdPartyAuthorization = '';
         $getRequestHeader = getallheaders();
-        if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
-            $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
+
+        if (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID'])) {
+            $getRequestHeader['Authorization'] = self::verifyXAccessKey();
+        } else {
+            if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
+                $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
+            }
         }
+        
         return $getRequestHeader;
     }
     
