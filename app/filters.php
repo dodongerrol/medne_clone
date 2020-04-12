@@ -174,14 +174,35 @@ Route::filter('auth.v2', function($request, $response)
     header('Content-Type', 'application/json');
     header('Accept', 'application/json');
     header('Access-Control-Allow-Credentials: true');
-
+    // return StringHelper::requestHeader();
     if(!StringHelper::requestHeader()){
         return Response::json($returnObject, 200);
     } else {
+        /*
+            Description: 
+                - Accessing API as Third Party Condition.
+                - This one line code will verify if X-Access Key found under header. If X-Access Key found
+                it will automatically check member Key in database, hence if nothing found in the database it will automatically
+                create Key for the specific member.
+                
+            Developer: 
+                Stephen
+            Date: 
+                April 9 2020
+        */
+        
+        $return_data = StringHelper::verifyXAccessKey();
+        
+        if (is_object($return_data)) {
+            return Response::json($return_data, 200);
+        }
+        /*  
+            End here.
+        */
+
         // return StringHelper::requestHeader();
         // check if there is a header authorization
         $token = StringHelper::getToken();
-        // return $token;
         if(!$token) {
             $returnObject->expired = true;
           return Response::json($returnObject, 200);

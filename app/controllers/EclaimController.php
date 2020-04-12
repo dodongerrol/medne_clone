@@ -2879,14 +2879,20 @@ public function getActivityOutNetworkTransactions( )
 		->paginate($input['per_page']);
 	} else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);
-		$e_claim_result = DB::table('e_claim')
-		->where('spending_type', $spending_type)
-		->whereIn('user_id', $user_ids)
-		->where('status', 1)
-		->where('date', '>=', $start)
-		->where('date', '<=', $end)
-		->orderBy('date', 'desc')
-		->paginate($input['per_page']);
+		if(sizeof($user_ids) > 0) {
+			$e_claim_result = DB::table('e_claim')
+			->where('spending_type', $spending_type)
+			->whereIn('user_id', $user_ids)
+			->where('status', 1)
+			->where('date', '>=', $start)
+			->where('date', '<=', $end)
+			->orderBy('date', 'desc')
+			->paginate($input['per_page']);
+		} else {
+			$paginate['data'] = $e_claim;
+			$paginate['status'] = true;
+			return $paginate;
+		}
 	}
 
 	$paginate['current_page'] = $e_claim_result->getCurrentPage();
