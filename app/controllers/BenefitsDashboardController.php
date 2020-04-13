@@ -9075,7 +9075,7 @@ class BenefitsDashboardController extends \BaseController {
 					} else {
 						$customer_active_plan_id = FALSE;
 					}
-
+					$customer_credit_logs = new CustomerWellnessCreditLogs( );
 					if($input['credits'] > $company_credits->wellness_credits) {
 						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $input['credits']);
 						if($customer_credits_result) {
@@ -9089,7 +9089,7 @@ class BenefitsDashboardController extends \BaseController {
 								'currency_type'	=> $company_credits->currency_type
 							);
 
-							$customer_credits_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
+							$customer_credit_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
 						}
 						$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 					}
@@ -9114,8 +9114,6 @@ class BenefitsDashboardController extends \BaseController {
 								'customer_active_plan_id' => $customer_active_plan_id,
 								'currency_type'	=> $customer->currency_type
 							);
-
-							$customer_credit_logs = new CustomerWellnessCreditLogs( );
 							$customer_credit_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 
 							$employee_credits_logs = array(
