@@ -5,19 +5,23 @@
 				<h4>Overview</h4>
 				<div class="arrow-up"></div>
 			</div>
-			<div class="welcome-container" ng-if="statementHide">
-				<div class="dropdown" ng-if="options.accessibility == 1">
+			<div class="welcome-container">
+				<h4 ui-sref="employee-overview">Employee</h4>
+				<div class="arrow-up" style="visibility: hidden;"></div>
+			</div>
+			<!-- <div class="welcome-container">
+				<div class="dropdown">
 				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 				    Employee
 				  </h4>
-				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
+				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
 				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
-				    <!-- <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li> -->
+				    <li><a href="javascript:void(0)" ui-sref="bulk-cred-allocation">Credit Allocation</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
 				  </ul>
 				</div>
-				<h4 ui-sref="employee-overview" ng-if="options.accessibility != 1">Employee</h4>
-				<div class="arrow-up-2"></div>
-			</div>
+				<div class="arrow-up-2" style="visibility: visible;"></div>
+			</div> -->
 			<div class="welcome-container" ng-if="empStatementShow">
 				<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
 				<div id="arrow-up-statement"></div>
