@@ -2492,7 +2492,11 @@ class EmployeeController extends \BaseController {
         $container = array();
         foreach ($members as $key => $member) {
           $user = DB::table('user')->where('UserID', $member->user_id)->first();
-          $entitlment_allocation = DB::table('employee_wallet_entitlement')->where('member_id', $member->user_id)->orderBy('created_at', 'desc')->first();
+          // $entitlment_allocation = DB::table('employee_wallet_entitlement')->where('member_id', $member->user_id)->orderBy('created_at', 'desc')->first();
+          $wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
+          $medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+          $wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+
           $medical_schedule = DB::table('wallet_entitlement_schedule')
                                   ->where('member_id', $member->user_id)
                                   ->where('spending_type', 'medical')
@@ -2515,13 +2519,13 @@ class EmployeeController extends \BaseController {
           if($medical) {
             $temp['Current Medical Allocation'] = (string)$entitlment_allocation->medical_entitlement;
             $temp['New Medical Allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : 0;
-            $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = date('d/m/Y');
+            $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = $medical_schedule ? date('d/m/Y', strtotime($medical_schedule->new_usage_date)) : date('d/m/Y');
           }
 
           if($wellness) {
             $temp['Current Wellness Allocation'] = (string)$entitlment_allocation->wellness_entitlement;
             $temp['New Wellness Allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : 0;
-            $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = date('d/m/Y');
+            $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = $wellness_schedule ? date('d/m/Y', strtotime($wellness_schedule->new_usage_date)) : date('d/m/Y');
           }
 
           $container[] = $temp;
