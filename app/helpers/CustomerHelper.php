@@ -322,7 +322,7 @@ class CustomerHelper
 	public static function getAccountSpendingBasicPlanStatus($customer_id)	
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$activePlan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->first();
+		$activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->first();
 
 		return array(
 			'customer_id'		=> $customer_id,
