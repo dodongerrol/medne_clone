@@ -2670,7 +2670,7 @@ class EmployeeController extends \BaseController {
 
             $spending_account_company = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
             $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
-            $customer_credits = CustomerCredits::where("customer_id", $customer_id)->first();
+            $customer_credits = DB::table('customer_credits')->where("customer_id", $customer_id)->first();
             $format = [];
             $today = date('Y-m-d');
 

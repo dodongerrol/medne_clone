@@ -3938,17 +3938,6 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$replace_id = $input['replace_id'];
-
-		// if(!empty($input['email'])) {
-		// 	// check existing user email
-		// 	$check = DB::table('user')
-		// 	->where('Email', $input['email'])
-		// 	->where('UserType', 5)
-		// 	->where('Active', 1)
-		// 	->count();
-
-		// }
-
 		if(empty($input['fullname']) || $input['fullname'] == null) {
 			return array('status' => false, 'message' => 'Full Name is required.');
 		}
@@ -3979,8 +3968,6 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Last Day of Coverage of must be a date.');
 		}
 
-    // $input['plan_start'] = date('Y-m-d', strtotime($input['plan_start']));
-    // return $input['plan_start'];
 		$validate_plan_start = PlanHelper::validateStartDate($input['plan_start']);
 
 		if(!$validate_plan_start) {
@@ -3999,13 +3986,34 @@ class BenefitsDashboardController extends \BaseController {
 		$medical = 0;
 		$wellness = 0;
 
-		// if(!empty($input['medical'])) {
-		$medical = $input['medical_credits'];
-		// }
+		$medical = (float)$input['medical_credits'];
+		$wellness = (float)$input['wellness_credits'];
 
-		// if(!empty($input['wellness'])) {
-		$wellness = $input['wellness_credits'];
-		// }
+		if($medical > 0 || $wellness > 0)	{
+			$customer_id = PlanHelper::getCustomerId($replace_id);
+			$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+			$customer_credits = DB::table('customer_credits')->where("customer_id", $customer_id)->first();
+
+			if($medical > 0)	{
+				if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.'];
+				}
+
+				if($medical > $customer_credits->balance) {
+					return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member'];
+				}
+			}
+
+			if($wellness > 0)	{
+				if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.'];
+				}
+
+				if($wellness > $customer_credits->wellness_credits) {
+					return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
+				}
+			}
+		}
 
 		// check if employee exit
 		$employee = DB::table('user')
