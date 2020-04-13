@@ -8699,9 +8699,11 @@ span.dropdown-entitlement.disabled {
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
-  margin: 0 0 20px;
+  /* margin: 0 0 20px; */
   color: #000;
-  
+  margin-left: auto;
+  width: max-content;
+  margin-left: auto;
 }
 
 .bulk-cred-footer .total-number-box {
@@ -8712,6 +8714,7 @@ span.dropdown-entitlement.disabled {
   display: flex;
   align-items: center;
   padding: 0 5px;
+  margin-right: 10px;
 }
 
 .bulk-cred-footer .total-number-box .items {
