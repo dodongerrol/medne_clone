@@ -2720,7 +2720,11 @@ class EmployeeController extends \BaseController {
             }
 
             if($future_dates) {
-              return array('status' => true, 'message' => 'The allocation amount will be updated on scheduled dates');
+              if(count(array_count_values($result_data)) == 1) {
+                return array('status' => true, 'message' => 'The allocation amount will be updated on '.date('d/m/Y', strtotime($result_data[0])).'.');
+              } else {
+                return array('status' => true, 'message' => 'The allocation amount will be updated on scheduled dates');
+              }
             } else {
               return array('status' => true, 'message' => 'The allocation amount has been successfully updated');
             }

@@ -151,6 +151,11 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							scope.employees = response.data.members.data;
 							scope.employees_pagi = response.data.members;
 							scope.totalAllocation = response.data;
+
+							scope.employees.map((value, index) => {
+								value.medical.new_allocation = null;
+								value.wellness.new_allocation = null;
+							})
 							scope.hideLoading();
 							scope.inititalizeDatepicker();
 							console.log(scope.employees_pagi);
@@ -212,7 +217,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 									// $mdDialog.hide();
 									swal({
 										title: '',
-										text: `The allocation amount has been successfully updated.`,
+										text: `${response.data.message}`,
 										html: true,
 										showCancelButton: false,
 										confirmButtonText: 'Close',
