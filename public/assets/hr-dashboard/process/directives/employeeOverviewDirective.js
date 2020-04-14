@@ -1423,9 +1423,11 @@ app.directive("employeeOverviewDirective", [
         scope.checkNewAllocation =  function (data) {
           if  (data.medical_new_entitlement == null && data.wellness_new_entitlement == null || data.medical_new_entitlement == '' && data.wellness_new_entitlement == '' || data.medical_new_entitlement == null && data.wellness_new_entitlement == '' || data.medical_new_entitlement == '' && data.wellness_new_entitlement == null)  {
             scope.updateDisable = true;
-          } else  {
+          } else {
             scope.updateDisable = false;
           }
+
+          console.log(data);
         }
 
         scope.entitlement_credits = {
