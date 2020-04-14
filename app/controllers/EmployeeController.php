@@ -2082,9 +2082,9 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'member_id is required');
         }
 
-        if(empty($input['new_entitlement_credits']) || $input['new_entitlement_credits'] == null) {
-            return array('status' => false, 'message' => 'new_entitlement_credits is required');
-        }
+        // if(empty($input['new_entitlement_credits']) || $input['new_entitlement_credits'] == null) {
+        //     return array('status' => false, 'message' => 'new_entitlement_credits is required');
+        // }
 
         if(empty($input['entitlement_usage_date']) || $input['entitlement_usage_date'] == null) {
             return array('status' => false, 'message' => 'entitlement_usage_date is required');
@@ -2249,9 +2249,9 @@ class EmployeeController extends \BaseController {
             return array('status' => false, 'message' => 'member_id is required');
         }
 
-        if(empty($input['new_allocation_credits']) || $input['new_allocation_credits'] == null) {
-            return array('status' => false, 'message' => 'new_allocation_credits is required');
-        }
+        // if(empty($input['new_allocation_credits']) || $input['new_allocation_credits'] == null) {
+        //     return array('status' => false, 'message' => 'new_allocation_credits is required');
+        // }
 
         if(empty($input['effective_date']) || $input['effective_date'] == null) {
             return array('status' => false, 'message' => 'effective_date is required');
@@ -2517,15 +2517,15 @@ class EmployeeController extends \BaseController {
           );
 
           if($medical) {
-            $temp['Current Medical Allocation'] = (string)$entitlment_allocation->medical_entitlement;
-            $temp['New Medical Allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : 0;
-            $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = $medical_schedule ? date('d/m/Y', strtotime($medical_schedule->new_usage_date)) : date('d/m/Y');
+            $temp['Current Medical Allocation'] = (string)$medical['allocation'];
+            $temp['New Medical Allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : null;
+            $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = $medical_schedule ? date('d/m/Y', strtotime($medical_schedule->effective_date)) : date('d/m/Y');
           }
 
           if($wellness) {
-            $temp['Current Wellness Allocation'] = (string)$entitlment_allocation->wellness_entitlement;
-            $temp['New Wellness Allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : 0;
-            $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = $wellness_schedule ? date('d/m/Y', strtotime($wellness_schedule->new_usage_date)) : date('d/m/Y');
+            $temp['Current Wellness Allocation'] = (string)$wellness['allocation'];
+            $temp['New Wellness Allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : null;
+            $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = $wellness_schedule ? date('d/m/Y', strtotime($wellness_schedule->effective_date)) : date('d/m/Y');
           }
 
           $container[] = $temp;
@@ -2638,7 +2638,7 @@ class EmployeeController extends \BaseController {
                   'new_entitlement_credits'   => isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] ? $allocation['new_medical_allocation'] : 0,
                   'old_entitlement_credits'   => $credits,
                   'plan_end'                  => $spending_account_company->medical_spending_end_date,
-                  'effective_date'            => date('Y-m-d', strtotime($allocation['effective_date_of_new_medical_allocation_ddmmyyyy'])),
+                  'effective_date'            => $new_date->format('Y-m-d'),
                   'spending_type'             => 'medical',
                   'status'                    => 0,
                   'created_at'                => date('Y-m-d H:i:s'),
@@ -2660,7 +2660,7 @@ class EmployeeController extends \BaseController {
                   'new_entitlement_credits'   => isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] ? $allocation['new_wellness_allocation'] : 0,
                   'old_entitlement_credits'   => $credits,
                   'plan_end'                  => $spending_account_company->wellness_spending_end_date,
-                  'effective_date'            => date('Y-m-d', strtotime($allocation['effective_date_of_new_wellness_allocation_ddmmyyyy'])),
+                  'effective_date'            => $new_date->format('Y-m-d'),
                   'spending_type'             => 'wellness',
                   'status'                    => 0,
                   'created_at'                => date('Y-m-d H:i:s'),
