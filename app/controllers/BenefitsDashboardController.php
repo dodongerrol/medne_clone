@@ -14336,13 +14336,13 @@ class BenefitsDashboardController extends \BaseController {
       $member->fullname = $user->Name;
     //   $member->medical['current_allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : $entitlment_allocation->medical_entitlement;
       $member->medical['current_allocation'] = $medical['allocation'];
-      $member->medical['new_allocation'] = 0;
-      $member->medical['effective_date'] = date('d/m/Y');
+      $member->medical['new_allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : 0;
+      $member->medical['effective_date'] = $medical_schedule ? date('d/m/Y', strtotime($medical_schedule->effective_date)) : date('d/m/Y');
       $member->medical['allocation_schedule'] = $medical_schedule ? true : false;
     //   $member->wellness['current_allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : $entitlment_allocation->wellness_entitlement;
       $member->wellness['current_allocation'] = $wellness['allocation'];
-      $member->wellness['new_allocation'] = 0;
-      $member->wellness['effective_date'] = date('d/m/Y');
+      $member->wellness['new_allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : 0;
+      $member->wellness['effective_date'] = $wellness_schedule ? date('d/m/Y', strtotime($wellness_schedule->effective_date)) : date('d/m/Y');
       $member->wellness['allocation_schedule'] = $wellness_schedule ? true : false;
       array_push($final_user, $member);
     }
