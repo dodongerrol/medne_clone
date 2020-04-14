@@ -49,12 +49,14 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				scope.isAvailableCreditsShow = false;
 
 				scope.selectSpendingTab	=	function(opt){
-					scope.spendingTypeTabSelected = opt;
-					// scope.page_ctr = 10;
-					scope.page_active = 1;
-					scope.employees = {};
-					scope.employees_pagi = {};
-					scope.getEmployeeBulkCredit();
+					if( scope.spendingTypeTabSelected != opt ){
+						scope.spendingTypeTabSelected = opt;
+						// scope.page_ctr = 10;
+						scope.page_active = 1;
+						scope.employees = {};
+						scope.employees_pagi = {};
+						scope.getEmployeeBulkCredit();
+					}
 				}
 
 				scope.toggleTooltipDropdown	=	function(opt){
