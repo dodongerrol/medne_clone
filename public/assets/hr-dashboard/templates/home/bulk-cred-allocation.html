@@ -51,11 +51,11 @@
 		</div> -->
 
 		
-		<div class="bulk-credit-tab-container">
-			<div class="tab-box active">
+		<div ng-if="spending_account_status.medical == true && spending_account_status.wellness == true" class="bulk-credit-tab-container">
+			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'medical'}" ng-click="selectSpendingTab('medical')">
 				Medical Spending Account
 			</div>
-			<div class="tab-box">
+			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'wellness'}" ng-click="selectSpendingTab('wellness')">
 				Wellness Spending Account
 			</div>
 		</div>
@@ -67,7 +67,7 @@
 					<div class="row" style="margin-bottom: 8px;margin-left: -15px;margin-right: -15px;">
 						<div class="col-md-8 spending-account-header-values">
 							<p>
-								<span class="bold-font">Medical Spending Account</span>	
+								<span class="bold-font">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} Spending Account</span>	
 								<!-- <span>Wellness Spending Account</span>	 -->
 							</p>
 							<p>
@@ -226,7 +226,7 @@
 												<tr>
 													<th rowspan="2" style="width: 150px;">Member ID</th>
 													<th rowspan="2" style="width: 305px;">Name</th>
-													<th ng-if="totalAllocation.medical_enable" colspan="3" style="text-align: center; width: 666px;">Medical</th>
+													<th ng-if="totalAllocation.medical_enable" colspan="3" style="text-align: center; width: 666px;">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }}</th>
 													<!-- <th ng-if="spending_account_status.wellness" colspan="3"	style="text-align: center; width: 600px;">Wellness</th> -->
 												</tr>
 												<tr>
