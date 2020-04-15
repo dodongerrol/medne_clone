@@ -2533,6 +2533,10 @@ class EmployeeController extends \BaseController {
 
         return Excel::create('Bulk Allocation Employee Lists', function($excel) use($container) {
           $excel->sheet('Employees', function($sheet) use($container) {
+            $sheet->setColumnFormat(array(
+              'E' => 'dd/mm/yyyy',
+              'H' => 'dd/mm/yyyy'
+            ));
             $sheet->fromArray( $container );
           });
         })->export('xls');
@@ -2626,6 +2630,11 @@ class EmployeeController extends \BaseController {
               $wallet = DB::table('e_wallet')->where('UserID', $allocation['member_id'])->first();
 
               if(isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] != null) {
+                // validate date
+                $validateDate = StringHelper::validateFormatDate($allocation['effective_date_of_new_medical_allocation_ddmmyyyy'], "d/m/Y", "d/n/Y");
+                if(!$validateDate) {
+                  return array('status' => false, 'message' => 'Invalid date format for Medical Allocation. Date should be d/m/Y format');
+                }
                 $credits  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $allocation['member_id']);
                 $credits = $credits['allocation'];
                 $new_date = DateTime::createFromFormat('d/m/Y', $allocation['effective_date_of_new_medical_allocation_ddmmyyyy']);
@@ -2648,6 +2657,10 @@ class EmployeeController extends \BaseController {
               }
 
               if(isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] != null) {
+                $validateDate = StringHelper::validateFormatDate($allocation['effective_date_of_new_wellness_allocation_ddmmyyyy'], "d/m/Y", "d/n/Y");
+                if(!$validateDate) {
+                  return array('status' => false, 'message' => 'Invalid date format for Wellness Allocation. Date should be d/m/Y format');
+                }
                 $credits  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $allocation['member_id']);
                 $credits = $credits['allocation'];
                 $new_date = DateTime::createFromFormat('d/m/Y', $allocation['effective_date_of_new_wellness_allocation_ddmmyyyy']);
@@ -2669,7 +2682,7 @@ class EmployeeController extends \BaseController {
                 $format[] = $temp;
               }
             }
-
+            
             $new_entitlment = new NewEmployeeEntitlementSchedule();
             $future_dates = false;
             foreach ($format as $key => $new) {
