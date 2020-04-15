@@ -3839,7 +3839,6 @@ class BenefitsDashboardController extends \BaseController {
 		// return array('res' => $plan_start, 'calculate' => $calculate);
 		$plan = DB::table('user_plan_type')->where('user_id', $id)->orderBy('created_at', 'desc')->first();
 
-
 		if($calculate) {
 			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
 			$days = $diff->format('%a') + 1;
@@ -3913,6 +3912,11 @@ class BenefitsDashboardController extends \BaseController {
 			// } else {
 			// 	self::updateCustomerPlanStatusDeleteUser($id);
 			// }
+			if($plan_active->account_type == "lite_plan" && $plan_active->plan_method == "pre_paid") {
+				// return member medical and wellness balance
+				PlanHelper::returnMemberMedicalBalance($id);
+				PlanHelper::returnMemberWellnessBalance($id);
+			}
 			return TRUE;
 		} catch(Exception $e) {
 			$email = [];
