@@ -190,8 +190,15 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							scope.totalAllocation = response.data;
 
 							scope.employees.map((value, index) => {
-								value.medical.new_allocation = null;
-								value.wellness.new_allocation = null;
+
+								if (value.medical.new_allocation == 0) {
+									value.medical.new_allocation = null;
+								}
+
+								if (value.wellness.new_allocation == 0) {
+									value.wellness.new_allocation = null;
+								}
+
 							})
 							scope.hideLoading();
 							scope.inititalizeDatepicker();
