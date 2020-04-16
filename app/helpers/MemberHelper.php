@@ -243,6 +243,8 @@ class MemberHelper
 			$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			// get membder credits allocation
 			$wallet = DB::table('e_wallet')->where('UserID', $member_id)->orderBy('created_at', 'desc')->first();
+			$customer_credit_logs = new CustomerCreditLogs( );
+			$customer_wellness_credit_logs = new CustomerWellnessCreditLogs( );
 
 			if($spending_type == "medical") {
 				$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member_id);
@@ -281,6 +283,17 @@ class MemberHelper
 						DB::table('wallet_history')->insert($employee_credit_logs);
 						$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
 						DB::table('wallet_history')->insert($employee_credit_logs);
+
+						$customer_credits_logs = array(
+							'customer_credits_id'	=> $customer_wallet->customer_credits_id,
+							'credit'				=> $new_medical_allocation,
+							'logs'					=> 'admin_added_credits',
+							'running_balance'		=> $customer_wallet->balance + $new_medical_allocation,
+							'customer_active_plan_id' => $last_customer_active_plan_id_medical,
+							'currency_type'	=> $customer_wallet->currency_type
+						);
+						$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
+
 						$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('balance', $new_medical_allocation);
 						$company_credit_logs = array(
 							'customer_credits_id' => $customer_wallet->customer_credits_id,
@@ -345,6 +358,17 @@ class MemberHelper
 						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
 						$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
 						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
+
+						$customer_wellness_credits_logs = array(
+							'customer_credits_id'	=> $company_credits->customer_credits_id,
+							'credit'				=> $input['credits'],
+							'logs'					=> 'admin_added_credits',
+							'running_balance'		=> $company_credits->wellness_credits + $input['credits'],
+							'customer_active_plan_id' => $last_customer_active_plan_id_wellness,
+							'currency_type'	=> $company_credits->currency_type
+						);
+
+						$customer_wellness_credit_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
 						$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('wellness_credits', $new_wellness_allocation);
 						$company_credit_logs = array(
 							'customer_credits_id' => $customer_wallet->customer_credits_id,
@@ -435,6 +459,8 @@ class MemberHelper
 		}
 		
 		if($data) {
+			$customer_credit_logs = new CustomerCreditLogs( );
+			$customer_wellness_credit_logs = new CustomerWellnessCreditLogs( );
 			$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 			// get membder credits allocation
 			$wallet = DB::table('e_wallet')->where('UserID', $member_id)->orderBy('created_at', 'desc')->first();
@@ -476,6 +502,17 @@ class MemberHelper
 						DB::table('wallet_history')->insert($employee_credit_logs);
 						$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
 						DB::table('wallet_history')->insert($employee_credit_logs);
+
+						$customer_credits_logs = array(
+							'customer_credits_id'	=> $customer_wallet->customer_credits_id,
+							'credit'				=> $new_medical_allocation,
+							'logs'					=> 'admin_added_credits',
+							'running_balance'		=> $customer_wallet->balance + $new_medical_allocation,
+							'customer_active_plan_id' => $last_customer_active_plan_id_medical,
+							'currency_type'	=> $customer_wallet->currency_type
+						);
+
+						$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
 						$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('balance', $new_medical_allocation);
 						$company_credit_logs = array(
 							'customer_credits_id' => $customer_wallet->customer_credits_id,
@@ -540,6 +577,16 @@ class MemberHelper
 						$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
 						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
 
+						$customer_wellness_credits_logs = array(
+							'customer_credits_id'	=> $company_credits->customer_credits_id,
+							'credit'				=> $input['credits'],
+							'logs'					=> 'admin_added_credits',
+							'running_balance'		=> $company_credits->wellness_credits + $input['credits'],
+							'customer_active_plan_id' => $last_customer_active_plan_id_wellness,
+							'currency_type'	=> $company_credits->currency_type
+						);
+
+						$customer_wellness_credit_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
 						$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('wellness_credits', $new_wellness_allocation);
 						$company_credit_logs = array(
 							'customer_credits_id' => $customer_wallet->customer_credits_id,
