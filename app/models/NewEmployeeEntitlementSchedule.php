@@ -10,4 +10,9 @@ class NewEmployeeEntitlementSchedule extends Eloquent
   {
   	return NewEmployeeEntitlementSchedule::create($data);
   }
+
+  public function updateData($id, $data)
+  {
+  	return NewEmployeeEntitlementSchedule::where('wallet_entitlement_schedule_id', $id)->update($data);
+  }
 }

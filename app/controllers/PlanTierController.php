@@ -510,8 +510,8 @@ class PlanTierController extends \BaseController {
 				'credits'				=> $user['medical_credits'],
 				'wellness_credits'		=> $user['wellness_credits'],
 				'start_date'			=> $user['plan_start'],
-				'medical_balance_entitlement'			=> !empty($user['medical_entitlement_balance']) ? $user['medical_entitlement_balance'] : 0,
-				'wellness_balance_entitlement'			=> !empty($user['wellness_entitlement_balance']) ? $user['wellness_entitlement_balance'] : 0,
+				'medical_balance_entitlement'			=> $user['medical_credits'],
+				'wellness_balance_entitlement'			=> $user['wellness_credits'],
 				'postal_code'			=> $postal_code,
 				'error_logs'			=> serialize($error_member_logs)
 			);
