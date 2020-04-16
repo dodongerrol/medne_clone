@@ -8935,6 +8935,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($input['spending_type'] == "medical") {
 
 			if($input['allocation_type'] == "add") {
+				$customer_credit_logs = new CustomerCreditLogs( );
 				// if($company_credits->balance >= $input['credits']) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($result->customer_buy_start_id, $input['credits'], "medical");
 
@@ -8983,7 +8984,7 @@ class BenefitsDashboardController extends \BaseController {
 								'currency_type'	=> $customer->currency_type
 							);
 
-							$customer_credit_logs = new CustomerCreditLogs( );
+							
 							$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 
 							$employee_credits_logs = array(
@@ -9098,6 +9099,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		} else if($input['spending_type'] == "wellness") {
 			if($input['allocation_type'] == "add") {
+				$customer_credit_logs = new CustomerWellnessCreditLogs( );
 				// if($company_credits->wellness_credits >= $input['credits']) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($result->customer_buy_start_id, $input['credits'], "wellness");
 
@@ -9120,7 +9122,7 @@ class BenefitsDashboardController extends \BaseController {
 								'currency_type'	=> $company_credits->currency_type
 							);
 
-							$customer_credits_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
+							$customer_credit_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
 						}
 						$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 					}
@@ -9146,7 +9148,7 @@ class BenefitsDashboardController extends \BaseController {
 								'currency_type'	=> $customer->currency_type
 							);
 
-							$customer_credit_logs = new CustomerWellnessCreditLogs( );
+							
 							$customer_credit_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 
 							$employee_credits_logs = array(
