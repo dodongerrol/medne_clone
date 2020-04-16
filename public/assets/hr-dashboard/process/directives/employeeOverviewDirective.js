@@ -690,7 +690,8 @@ app.directive("employeeOverviewDirective", [
 
         scope.enrollMoreEmployees = function () {
           // localStorage.setItem('fromEmpOverview', false);
-          $state.go('create-team-benefits-tiers');
+          // $state.go('create-team-benefits-tiers');
+          $state.go('enrollment-options');
           localStorage.setItem('fromEmpOverview', true);
           hrSettings.getSpendingAccountStatus()
 						.then(function (response) {

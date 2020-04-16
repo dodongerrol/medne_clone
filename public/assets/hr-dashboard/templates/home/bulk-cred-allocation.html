@@ -1,4 +1,4 @@
-<div bulk-credit-allocation-directive>
+<div class="bulk-credit-allocation-container" bulk-credit-allocation-directive>
 	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
 		<div class="container">
 			<div class="welcome-container">
@@ -50,20 +50,32 @@
 			</div>
 		</div> -->
 
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<div class="white-space-50"></div>
-				</div>
+		
+		<div ng-if="spending_account_status.medical == true && spending_account_status.wellness == true" class="bulk-credit-tab-container">
+			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'medical'}" ng-click="selectSpendingTab('medical')">
+				Medical Spending Account
+			</div>
+			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'wellness'}" ng-click="selectSpendingTab('wellness')">
+				Wellness Spending Account
 			</div>
 		</div>
 	
 		<section>
 			<div class="gp-cap-per-wrapper bulk-cred-wrapper">
 			
-        <div class="container bulk-cred-per-visit-wrapper">
-					<div class="row">
-						<div class="col-md-12">
+        <div class="bulk-cred-per-visit-wrapper">
+					<div class="row" style="margin-bottom: 8px;margin-left: -15px;margin-right: -15px;">
+						<div class="col-md-8 spending-account-header-values">
+							<p>
+								<span class="bold-font">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} Spending Account</span>	
+								<!-- <span>Wellness Spending Account</span>	 -->
+							</p>
+							<p>
+								<span class="duration-value">12 month term</span>
+								<span>01/01/2020 - 31/12/2020</span>
+							</p>
+						</div>
+						<div class="col-md-4">
 							<div class="bulk-cred-options text-right">
 								<div>
 									<span class="actions" ng-click="downloadFile()"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/download.png" alt="download"></span>	
@@ -75,8 +87,137 @@
           
           </div>  
 
-					<div class="row">
-						<div class="col-md-12">
+					<div class="row" style="margin-left: -15px;margin-right: -15px;">
+						<div class="col-md-3">
+							<div class="credit-values-box-container">
+								
+								<div class="total-credits">
+									<div class="p-label p-gray">	
+										<span class="p-label-value">Total Credits :</span>
+										<span class="p-tooltip">
+											<img ng-click="toggleTooltipDropdown('total_credits')" src="../../assets/hr-dashboard/img/info-tooltip.png">
+
+											<div ng-if="isTotalCreditsShow" class="dropdown-tooltip-container">
+												<p class="tooltip-title">
+													Total Credits
+												</p>
+												<p>
+													The amount of credits is given to your company’s wallet.<br>(The sum of Purchased Credits and Bonus Credits)
+												</p>
+												<div class="btn-container">
+													<button ng-click="toggleTooltipDropdown('total_credits')">Got it</button>
+												</div>
+											</div>
+										</span>
+									</div>
+									<p class="p-value p-gray p-bold">
+										<span>SGD</span>
+										200,000.00
+									</p>
+									<p class="p-note">*Amount is blocked due to Pending Payment</p>
+									<div class="white-space-20"></div>
+
+									<div class="p-label">	
+										<span class="p-label-value">Purchased Credits :</span>
+										<span class="p-tooltip">
+											<img ng-click="toggleTooltipDropdown('purchased_credits')" src="../../assets/hr-dashboard/img/info-tooltip.png">
+
+											<div ng-if="isPurchasedCreditsShow" class="dropdown-tooltip-container">
+												<p class="tooltip-title">
+													Purchased Credits
+												</p>
+												<p>
+													The amount of credits that your company agreed to purchase.
+												</p>
+												<div class="btn-container">
+													<button ng-click="toggleTooltipDropdown('purchased_credits')">Got it</button>
+												</div>
+											</div>
+										</span>
+									</div>
+									<p class="p-value p-bold">
+										<span>SGD</span>
+										200,000.00
+									</p>
+									<div class="white-space-20"></div>
+
+									<div class="p-label">	
+										<span class="p-label-value">Bonus Credits :</span>
+										<span class="p-tooltip">
+											<img ng-click="toggleTooltipDropdown('bonus_credits')" src="../../assets/hr-dashboard/img/info-tooltip.png">
+
+											<div ng-if="isBonusCreditsShow" class="dropdown-tooltip-container">
+												<p class="tooltip-title">
+													Bonus Credits
+												</p>
+												<p>
+													Free-of-charge credits from Mednefits as an addition to your Purchased Credits.
+												</p>
+												<div class="btn-container">
+													<button ng-click="toggleTooltipDropdown('bonus_credits')">Got it</button>
+												</div>
+											</div>
+										</span>
+									</div>
+									<p class="p-value p-bold">
+										<span>SGD</span>
+										200,000.00
+									</p>
+								</div>
+
+								<div class="total-allocation-credits">
+									<div class="p-label">	
+										<span class="p-label-value">Total Allocated Credits :</span>
+										<span class="p-tooltip">
+											<img ng-click="toggleTooltipDropdown('total_allocated_credits')" src="../../assets/hr-dashboard/img/info-tooltip.png">
+
+											<div ng-if="isTotalAllocatedCreditsShow" class="dropdown-tooltip-container">
+												<p class="tooltip-title">
+													Total Allocated Credits
+												</p>
+												<p>
+													The amount of Total Credits that have already been distributed/allocated to members.
+												</p>
+												<div class="btn-container">
+													<button ng-click="toggleTooltipDropdown('total_allocated_credits')">Got it</button>
+												</div>
+											</div>
+										</span>
+									</div>
+									<p class="p-value p-bold">
+										<span>SGD</span>
+										200,000.00
+									</p>
+									<div class="white-space-20"></div>
+
+									<div class="p-label p-gray">	
+										<span class="p-label-value">Available Credits :</span>
+										<span class="p-tooltip">
+											<img ng-click="toggleTooltipDropdown('available_credits')" src="../../assets/hr-dashboard/img/info-tooltip.png">
+
+											<div ng-if="isAvailableCreditsShow" class="dropdown-tooltip-container">
+												<p class="tooltip-title">
+													Available Credits
+												</p>
+												<p>
+													The amount of undistributed/unallocated Total Credits.<br>(Total Credits minus Total Allocated Credits)
+												</p>
+												<div class="btn-container">
+													<button ng-click="toggleTooltipDropdown('available_credits')">Got it</button>
+												</div>
+											</div>
+										</span>
+									</div>
+									<p class="p-value p-bold p-gray">
+										<span>SGD</span>
+										200,000.00
+									</p>
+									<p class="p-note">*Amount is blocked due to Pending Payment</p>
+								</div>
+
+							</div>
+						</div>
+						<div class="col-md-9" style="padding-left: 0;">
 							<div class="bulk-cred-table-wrapper">
 								<div class="bulk-cred-table-info-wrapper">
 									<div class="bulk-cred-table-info-container">
@@ -84,19 +225,19 @@
 											<thead>
 												<tr>
 													<th rowspan="2" style="width: 150px;">Member ID</th>
-													<th rowspan="2" style="width: 350px;">Name</th>
-													<th ng-if="totalAllocation.medical_enable" colspan="3" style="text-align: center; width: 600px;">Medical</th>
-													<th ng-if="spending_account_status.wellness" colspan="3"	style="text-align: center; width: 600px;">Wellness</th>
+													<th rowspan="2" style="width: 305px;">Name</th>
+													<th ng-if="totalAllocation.medical_enable" colspan="3" style="text-align: center; width: 666px;">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }}</th>
+													<!-- <th ng-if="spending_account_status.wellness" colspan="3"	style="text-align: center; width: 600px;">Wellness</th> -->
 												</tr>
 												<tr>
 													<!-- medical span -->
-													<th ng-if="totalAllocation.medical_enable">Current Allocation</th>
-													<th ng-if="totalAllocation.medical_enable">New Allocation</th>
-													<th ng-if="totalAllocation.medical_enable">Effective Date of New Allocation</th>
+													<th style="width: 227px;" ng-if="totalAllocation.medical_enable">Current Allocated<br>Credits</th>
+													<th style="width: 223px;" ng-if="totalAllocation.medical_enable">New Allocated<br>Credits</th>
+													<th style="width: 215px;" ng-if="totalAllocation.medical_enable">Effective Date of<br>New Allocated Credits</th>
 													<!-- wellness span -->
-													<th ng-if="totalAllocation.wellness_enable">Current Allocation</th>
+													<!-- <th ng-if="totalAllocation.wellness_enable">Current Allocation</th>
 													<th ng-if="totalAllocation.wellness_enable">New Allocation</th>
-													<th ng-if="totalAllocation.wellness_enable">Effective Date of New Allocation</th>
+													<th ng-if="totalAllocation.wellness_enable">Effective Date of New Allocation</th> -->
 												</tr>
 											</thead>
 											<tbody>
@@ -112,20 +253,20 @@
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<!-- Wellness -->
-													<td class="grayed-out" ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
+													<!-- <td class="grayed-out" ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
 													<td ng-if="totalAllocation.wellness_enable" >
 														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<td ng-if="totalAllocation.wellness_enable" >
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.wellness.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
-													</td>
+													</td>-->
 												</tr>
 											</tbody>
 										</table>
 									</div>
 								</div>
 								<div class="bulk-cred-footer">
-									<div class="left health-pagination">
+									<div class="bulk-cred-footer-left health-pagination">
 											<div class="page-wrapper">
 												<div class="page-scroll-container page-opened">
 													<span>  
@@ -158,19 +299,20 @@
 												</div>
 											</div>
 									</div>
-									<div class="right">
-										<div class="total-number-container" ng-if="totalAllocation.medical_enable">
-											<span>Company Medical Allocation</span>
+									<div class="bulk-cred-footer-right">
+										<div class="total-number-container">
+											<span style="margin-right: 10px;">Total Medical Allocated Credits</span>
 											<div class="total-number-box grayed-out">
-												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_medical_allocation | number: 2}}</span>
+												<span class="items">{{totalAllocation.total_medical_allocation | number: 2}}</span>
 											</div>
+											<div>/ <span class="p-gray">20,000.00</span></div>
 										</div>
-										<div class="total-number-container" ng-if="totalAllocation.wellness_enable">
-											<span>Company Wellness Allocation</span>
+										<!-- <div class="total-number-container">
+											<span>Company Allocated Wellness Credits</span>
 											<div class="total-number-box grayed-out">
 												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_wellness_allocation | number: 2}}</span>
 											</div>
-										</div>
+										</div> -->
 									</div>
 								</div>	
 							</div>

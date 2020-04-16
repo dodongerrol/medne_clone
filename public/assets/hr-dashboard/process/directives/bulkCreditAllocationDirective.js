@@ -38,7 +38,44 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         
         scope.company_properties = {};
         scope.company_properties.total_allocation = 0.00;
-        scope.company_properties.allocated = 0.00;
+				scope.company_properties.allocated = 0.00;
+
+				scope.spendingTypeTabSelected = 'medical';
+				
+				scope.isTotalCreditsShow = false;
+				scope.isPurchasedCreditsShow = false;
+				scope.isBonusCreditsShow = false;
+				scope.isTotalAllocatedCreditsShow = false;
+				scope.isAvailableCreditsShow = false;
+
+				scope.selectSpendingTab	=	function(opt){
+					if( scope.spendingTypeTabSelected != opt ){
+						scope.spendingTypeTabSelected = opt;
+						// scope.page_ctr = 10;
+						scope.page_active = 1;
+						scope.employees = {};
+						scope.employees_pagi = {};
+						scope.getEmployeeBulkCredit();
+					}
+				}
+
+				scope.toggleTooltipDropdown	=	function(opt){
+					if( opt == 'total_credits' ){
+						scope.isTotalCreditsShow = scope.isTotalCreditsShow ? false : true;
+					}
+					if( opt == 'purchased_credits' ){
+						scope.isPurchasedCreditsShow = scope.isPurchasedCreditsShow ? false : true;;
+					}
+					if( opt == 'bonus_credits' ){
+						scope.isBonusCreditsShow = scope.isBonusCreditsShow ? false : true;;
+					}
+					if( opt == 'total_allocated_credits' ){
+						scope.isTotalAllocatedCreditsShow = scope.isTotalAllocatedCreditsShow ? false : true;;
+					}
+					if( opt == 'available_credits' ){
+						scope.isAvailableCreditsShow = scope.isAvailableCreditsShow ? false : true;;
+					}
+				}
         
 				scope.$on( 'refresh', function( evt, data ){
 					scope.onLoad();
@@ -263,7 +300,13 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
           hrSettings.getSpendingAccountStatus()
 						.then(function (response) {
 							console.log(response);
-              scope.spending_account_status = response.data;
+							scope.spending_account_status = response.data;
+							if( scope.spending_account_status.medical == false){
+								scope.spendingTypeTabSelected = 'wellness';
+							}
+							if( scope.spending_account_status.wellness == false){
+								scope.spendingTypeTabSelected = 'medical';
+							}
 						});
 				}
 

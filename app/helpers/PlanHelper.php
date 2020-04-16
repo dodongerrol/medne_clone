@@ -1072,12 +1072,18 @@ class PlanHelper {
 	{
 		$customer_id = self::getCusomerIdToken();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+		// get spending account settings
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 		$mobile_error = false;
 		$mobile_message = '';
 		$mobile_area_error = false;
 		$mobile_area_message = '';
 		$email_error = false;
 		$email_message = '';
+		$credits_medical_error = false;
+		$credits_medical_message = '';
+		$credits_wellness_error = false;
+		$credits_wellnes_message = '';
 
 		if(is_null($user['mobile'])) {
 			$mobile_error = true;
@@ -1193,18 +1199,33 @@ class PlanHelper {
 			$credits_medical_error = false;
 			$credits_medical_message = '';
 		} else {
-			if(is_numeric($user['medical_credits'])) {
-				// check
-				// if($user['medical_credits'] > $customer_wallet->balance) {
-				// 	$credits_medical_error = true;
-				// 	$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
-				// } else {
-					$credits_medical_error = false;
-					$credits_medical_message = '';
-				// }
+			if($spending['account_type'] == "lite_plan")	{
+				if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false)	{
+					$credits_medical_error = true;
+					$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
+				} else if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+					if($user['medical_credits'] > $customer_wallet->balance) {
+						$credits_medical_error = true;
+						$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
+					} else {
+						$credits_medical_error = false;
+						$credits_medical_message = '';
+					}
+				}
 			} else {
-				$credits_medical_error = true;
-				$credits_medical_message = '*Credits is not a number.';                
+				if(is_numeric($user['medical_credits'])) {
+					// check
+					// if($user['medical_credits'] > $customer_wallet->balance) {
+					// 	$credits_medical_error = true;
+					// 	$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
+					// } else {
+						$credits_medical_error = false;
+						$credits_medical_message = '';
+					// }
+				} else {
+					$credits_medical_error = true;
+					$credits_medical_message = '*Credits is not a number.';                
+				}
 			}
 		}
 
@@ -1212,17 +1233,32 @@ class PlanHelper {
 			$credits_wellness_error = false;
 			$credits_wellnes_message = '';
 		} else {
-			if(is_numeric($user['wellness_credits'])) {
-				// if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
-				// 	$credits_wellness_error = true;
-				// 	$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
-				// } else {
-					$credits_wellness_error = false;
-					$credits_wellnes_message = '';
-				// }
+			if($spending['account_type'] == "lite_plan")	{
+				if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false)	{
+					$credits_wellness_error = true;
+					$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
+				} else if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+					if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
+						$credits_wellness_error = true;
+						$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
+					} else {
+						$credits_wellness_error = false;
+						$credits_wellnes_message = '';
+					}
+				}
 			} else {
-				$credits_wellness_error = true;
-				$credits_wellnes_message = '*Credits is not a number.';
+				if(is_numeric($user['wellness_credits'])) {
+					// if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
+					// 	$credits_wellness_error = true;
+					// 	$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
+					// } else {
+						$credits_wellness_error = false;
+						$credits_wellnes_message = '';
+					// }
+				} else {
+					$credits_wellness_error = true;
+					$credits_wellnes_message = '*Credits is not a number.';
+				}
 			}
 		}
 
@@ -2276,6 +2312,110 @@ class PlanHelper {
 		}
 	}
 
+	public static function returnMemberMedicalBalance($user_id)
+	{
+		
+		$get_allocation = 0;
+		$deducted_credits = 0;
+		$credits_back = 0;
+		$deducted_by_hr_medical = 0;
+		$in_network_temp_spent = 0;
+		$e_claim_spent = 0;
+		$deleted_employee_allocation = 0;
+		$total_deduction_credits = 0;
+		$allocation = 0;
+		$medical_balance = 0;
+		$balance = 0;
+
+        // check if employee has reset credits
+		$employee_credit_reset_medical = DB::table('credit_reset')
+		->where('id', $user_id)
+		->where('spending_type', 'medical')
+		->where('user_type', 'employee')
+		->orderBy('created_at', 'desc')
+		->first();
+		$user = DB::table('user')->where('UserID', $user_id)->first();
+		$e_wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+		$user_plan_history = DB::table('user_plan_history')
+								->where('user_id', $user_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->first();
+		if($user_plan_history) {
+			$customer_active_plan = DB::table('customer_active_plan')
+										->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+										->first();
+
+
+			if($employee_credit_reset_medical) {
+				$start = $employee_credit_reset_medical->date_resetted;
+				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
+				$wallet_history = DB::table('wallet_history')
+								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+									->where('wallet_history.wallet_id', $e_wallet->wallet_id)
+									->where('e_wallet.UserID', $user_id)
+									->where('wallet_history.created_at',  '>=', $start)
+								->get();
+			} else {
+				$wallet_history = DB::table('wallet_history')->where('wallet_id', $e_wallet->wallet_id)->get();
+			}
+
+			foreach ($wallet_history as $key => $history) {
+				if($history->logs == "added_by_hr") {
+					$get_allocation += (float)$history->credit;
+				}
+
+				if($history->logs == "deducted_by_hr") {
+					$deducted_credits += $history->credit;
+				}
+
+				if($history->where_spend == "e_claim_transaction") {
+					$e_claim_spent += $history->credit;
+				}
+
+				if($history->where_spend == "in_network_transaction") {
+					$in_network_temp_spent += $history->credit;
+				}
+
+				if($history->where_spend == "credits_back_from_in_network") {
+					$credits_back += $history->credit;
+				}
+			}
+
+			$pro_allocation = DB::table('wallet_history')
+			->where('wallet_id', $e_wallet->wallet_id)
+			->where('logs', 'pro_allocation')
+			->sum('credit');
+			
+			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
+			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
+
+			$allocation = $get_allocation - $deducted_credits;
+			$balance = $allocation - $get_allocation_spent;
+			$total_deduction_credits += $deducted_credits;
+
+			if($balance > 0) {
+				// deduct credit logic
+				$employee_logs = new WalletHistory();
+				$employee_credits_logs = array(
+					'wallet_id'	=> $e_wallet->wallet_id,
+					'credit'		=> $balance,
+					'logs'			=> 'deducted_by_hr',
+					'running_balance' => $balance,
+					'customer_active_plan_id' => $user_plan_history->customer_active_plan_id,
+					'currency_type'	=> $e_wallet->currency_type
+				);
+
+				$deduct_history = $employee_logs->createWalletHistory($employee_credits_logs);
+			}
+
+			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'plan_start' => $user_plan_history->date);
+
+		} else {
+			return false;
+		}
+	}
+
 	public static function memberMedicalAllocatedCreditsByDates($wallet_id, $user_id, $start, $end)
 	{
 
@@ -2452,7 +2592,7 @@ class PlanHelper {
 		$total_deduction_credits_wellness = 0;
 		$allocation_wellness = 0;
 		$balance = 0;
-    // get all user wallet logs wellness
+    	// get all user wallet logs wellness
 		$employee_credit_reset_wellness = DB::table('credit_reset')
 		->where('id', $user_id)
 		->where('spending_type', 'wellness')
@@ -2537,6 +2677,103 @@ class PlanHelper {
 
 			if($e_wallet->wellness_balance != $wellness_balance) {
 				DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
+			}
+
+
+			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'plan_start' => $user_plan_history->date);
+		} else {
+			return false;
+		}
+		
+	}
+
+	public static function returnMemberWellnessBalance($user_id)
+	{
+		$get_wellness_allocation = 0;
+		$deducted_by_hr_wellness = 0;
+		$e_claim_wellness_spent = 0;
+		$credits_back_wellness = 0;
+		$in_network_wellness_temp_spent = 0;
+		$deducted_wellness_credits = 0;
+		$deleted_employee_allocation_wellness = 0;
+		$total_deduction_credits_wellness = 0;
+		$allocation_wellness = 0;
+		$balance = 0;
+    	// get all user wallet logs wellness
+		$employee_credit_reset_wellness = DB::table('credit_reset')
+		->where('id', $user_id)
+		->where('spending_type', 'wellness')
+		->where('user_type', 'employee')
+		->orderBy('created_at', 'desc')
+		->first();
+		$user = DB::table('user')->where('UserID', $user_id)->first();
+		$e_wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+		$user_plan_history = DB::table('user_plan_history')
+								->where('user_id', $user_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->first();
+		if($user_plan_history) {
+			$customer_active_plan = DB::table('customer_active_plan')
+									->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+									->first();
+
+			if($employee_credit_reset_wellness) {
+				$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
+				$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;
+				$wallet_history = DB::table('wellness_wallet_history')
+				->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+				->where('wellness_wallet_history.wallet_id', $e_wallet->wallet_id)
+				->where('e_wallet.UserID', $user_id)
+				->where('wellness_wallet_history.created_at',  '>=', $start)
+				->get();
+			} else {
+				$wallet_history = DB::table('wellness_wallet_history')->where('wallet_id', $e_wallet->wallet_id)->get();
+			}
+
+			foreach ($wallet_history as $key => $history) {
+				if($history->logs == "added_by_hr") {
+					$get_wellness_allocation += $history->credit;
+				}
+
+				if($history->logs == "deducted_by_hr") {
+					$deducted_wellness_credits += $history->credit;
+					$deducted_by_hr_wellness = $history->credit;
+				}
+
+				if($history->where_spend == "e_claim_transaction") {
+					$e_claim_wellness_spent += $history->credit;
+				}
+
+				if($history->where_spend == "in_network_transaction") {
+					$in_network_wellness_temp_spent += $history->credit;
+				}
+
+				if($history->where_spend == "credits_back_from_in_network") {
+					$credits_back_wellness += $history->credit;
+				}
+			}
+
+			$get_allocation_spent_temp_wellness = $in_network_wellness_temp_spent - $credits_back_wellness;
+			$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
+			$wellness_balance = 0;
+
+			$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+			$total_deduction_credits_wellness = $deducted_wellness_credits;
+			$balance = $allocation_wellness - $get_allocation_spent_wellness;
+
+			if($balance > 0)	{
+				// deduct credit logic
+				$employee_credits_logs = array(
+					'wallet_id'	=> $e_wallet->wallet_id,
+					'credit'		=> $balance,
+					'logs'			=> 'deducted_by_hr',
+					'running_balance' => $balance,
+					'customer_active_plan_id' => $user_plan_history->customer_active_plan_id,
+					'currency_type'	=> $e_wallet->currency_type
+				);
+
+				$deduct_history = \WellnessWalletHistory::create($employee_credits_logs);
 			}
 
 

@@ -665,4 +665,10 @@ class testcontroller extends BaseController {
 		$input = Input::all();
 		return PlanHelper::reCalculateEmployeeBalance($input['member_id']);
 	}
+
+	public function testReturnBalance( )
+	{
+		$input = Input::all();
+		return PlanHelper::returnMemberMedicalBalance($input['member_id']);
+	}
 }

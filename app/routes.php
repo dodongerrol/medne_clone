@@ -11,6 +11,7 @@
 |
 */
 
+// Route::get('test_return_balance', 'testcontroller@testReturnBalance');
 // test recalculate balance
 Route::get('test_balance', 'testcontroller@testBalance');
 // test member credit reset dates
@@ -434,6 +435,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
 	// get hr date terms
 	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
+	// get customer spending account status
+	Route::get('hr/spending_account_status', 'BenefitsDashboardController@spendingAccountStatus');
+	// get excel link
+	Route::get('hr/get_excel_link', 'BenefitsDashboardController@getExcelLink');
 	// route get employee lists for bulk allocation
 	Route::get('hr/get_employee_lists_bulk_allocation', 'BenefitsDashboardController@getEmployeeListsBulk');
 	// upload employee allocation bulk
@@ -1093,21 +1098,23 @@ Route::group(array('prefix' => 'v2'), function()
 		    // get member list for employee
 		    Route::get("user/member_lists", 'Api_V1_AuthController@getFamilCoverageAccounts');
 		    // save device token
-				Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
-				// get currency lists
-				Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
-				// get app notification message
-				Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
-				// update notification to read
-				Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
-				// remove check in data
-				Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
-				// get check_in_id data
-				Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
-				// check e-claim member visit date spending
-				Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
-				// get member dates coverage
-				Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
+			Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
+			// get currency lists
+			Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
+			// get app notification message
+			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
+			// update notification to read
+			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
+			// remove check in data
+			Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
+			// get check_in_id data
+			Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
+			// check e-claim member visit date spending
+			Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
+			// get member dates coverage
+			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
+			// get member spending account status feature
+			Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 	 	});
 	});
 });

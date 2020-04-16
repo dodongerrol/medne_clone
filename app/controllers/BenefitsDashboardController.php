@@ -1938,27 +1938,15 @@ class BenefitsDashboardController extends \BaseController {
 		$wellness_wallet = (int)$spending_account->wellness_enable == 1 ? true : false;
 
 		// return $users;
-    $filter = 'current_term';
+    	$filter = 'current_term';
 		foreach ($users as $key => $user) {
 			$ids = StringHelper::getSubAccountsID($user->UserID);
-			// $user_spending_dates = MemberHelper::getMemberCreditReset($user->UserID, $filter, 'medical');
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
-
-			// if($user_spending_dates) {
-			// 	$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// 	$wellness_credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// } else {
-			// 	$medical_credit_data['allocation'] = 0;
-			// 	$medical_credit_data['get_allocation_spent'] = 0;
-			//  	$medical_credit_data['balance'] = 0;
-			//  	$wellness_credit_data['allocation'] = 0;
-			//  	$wellness_credit_data['get_allocation_spent'] = 0;
-			// }
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 			// get medical entitlement
 			$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $user->UserID)->orderBy('created_at', 'desc')->first();
-		  // check if account is schedule for deletion
+		  	// check if account is schedule for deletion
 			$deletion = DB::table('customer_plan_withdraw')->where('user_id', $user->UserID)->first();
 			$dependets = DB::table('employee_family_coverage_sub_accounts')
 			->where('owner_id', $user->UserID)
@@ -2197,7 +2185,8 @@ class BenefitsDashboardController extends \BaseController {
 
 
 		$paginate['data'] = $final_user;
-		
+		$paginate['medical_wallet'] = $medical_wallet;
+		$paginate['wellness_wallet'] = $wellness_wallet;
 		return $paginate;
 	}
 
@@ -3850,7 +3839,6 @@ class BenefitsDashboardController extends \BaseController {
 		// return array('res' => $plan_start, 'calculate' => $calculate);
 		$plan = DB::table('user_plan_type')->where('user_id', $id)->orderBy('created_at', 'desc')->first();
 
-
 		if($calculate) {
 			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
 			$days = $diff->format('%a') + 1;
@@ -3924,6 +3912,11 @@ class BenefitsDashboardController extends \BaseController {
 			// } else {
 			// 	self::updateCustomerPlanStatusDeleteUser($id);
 			// }
+			if($plan_active->account_type == "lite_plan" && $plan_active->plan_method == "pre_paid") {
+				// return member medical and wellness balance
+				PlanHelper::returnMemberMedicalBalance($id);
+				PlanHelper::returnMemberWellnessBalance($id);
+			}
 			return TRUE;
 		} catch(Exception $e) {
 			$email = [];
@@ -3949,17 +3942,6 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$replace_id = $input['replace_id'];
-
-		// if(!empty($input['email'])) {
-		// 	// check existing user email
-		// 	$check = DB::table('user')
-		// 	->where('Email', $input['email'])
-		// 	->where('UserType', 5)
-		// 	->where('Active', 1)
-		// 	->count();
-
-		// }
-
 		if(empty($input['fullname']) || $input['fullname'] == null) {
 			return array('status' => false, 'message' => 'Full Name is required.');
 		}
@@ -3990,8 +3972,6 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Last Day of Coverage of must be a date.');
 		}
 
-    // $input['plan_start'] = date('Y-m-d', strtotime($input['plan_start']));
-    // return $input['plan_start'];
 		$validate_plan_start = PlanHelper::validateStartDate($input['plan_start']);
 
 		if(!$validate_plan_start) {
@@ -4010,13 +3990,34 @@ class BenefitsDashboardController extends \BaseController {
 		$medical = 0;
 		$wellness = 0;
 
-		// if(!empty($input['medical'])) {
-		$medical = $input['medical_credits'];
-		// }
+		$medical = (float)$input['medical_credits'];
+		$wellness = (float)$input['wellness_credits'];
 
-		// if(!empty($input['wellness'])) {
-		$wellness = $input['wellness_credits'];
-		// }
+		if($medical > 0 || $wellness > 0)	{
+			$customer_id = PlanHelper::getCustomerId($replace_id);
+			$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+			$customer_credits = DB::table('customer_credits')->where("customer_id", $customer_id)->first();
+
+			if($medical > 0)	{
+				if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.'];
+				}
+
+				if($medical > $customer_credits->balance) {
+					return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member'];
+				}
+			}
+
+			if($wellness > 0)	{
+				if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.'];
+				}
+
+				if($wellness > $customer_credits->wellness_credits) {
+					return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
+				}
+			}
+		}
 
 		// check if employee exit
 		$employee = DB::table('user')
@@ -12570,6 +12571,7 @@ class BenefitsDashboardController extends \BaseController {
 			$spending = MemberHelper::getMemberSpendingCoverageDate($id);
 			$result['valid_start_claim'] = $spending['start_date'];
 			$result['valid_end_claim'] = $spending['end_date'];
+			$result['spending_feature_status_type'] = true;
 			// $first_plan = PlanHelper::getUserFirstPlanStart($id);
 			// if($first_plan) {
 			// 	$result['valid_start_claim'] = $first_plan;
@@ -12577,6 +12579,21 @@ class BenefitsDashboardController extends \BaseController {
 			// 	$result['valid_start_claim'] = date('Y-m-d', strtotime($result['start_date']));
 			// }
 			// $result['valid_end_claim'] = date('Y-m-d', strtotime($result['valid_date']));
+			// check for spending feature
+			$customer_id = PlanHelper::getCustomerId($id);
+			$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+			
+			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+				$result['spending_feature_status'] = false;
+			}
+
+			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+				$current_balance = PlanHelper::reCalculateEmployeeBalance($id);
+				if($current_balance <= 0) {
+					$result['spending_feature_status'] = false;
+				}
+			}
+
 			return $result;
 		} else {
 			$returnObject->status = FALSE;
@@ -14240,6 +14257,30 @@ class BenefitsDashboardController extends \BaseController {
 			});
 
 		})->export('csv');
+	}
+	
+	public function spendingAccountStatus( )
+	{
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(!$customer_id) {
+			return array('status' => false, 'message' => 'customer_id is required');
+		}
+	  
+		return CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+	}
+
+	public function getExcelLink( )
+	{
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(!$customer_id) {
+			return array('status' => false, 'message' => 'customer_id is required');
+		}
+
+		$status = CustomerHelper::getAccountSpendingStatus($customer_id);
+		$link = CustomerHelper::getExcelLinkBasicPlan($status);
+		return $link;
 	}
 
 	public function getEmployeeListsBulk( )
