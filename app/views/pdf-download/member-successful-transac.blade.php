@@ -34,18 +34,10 @@
       }
 
       .top-content{
-        height: 300px;
+        /*height: 300px;*/
         width: 100%;
         position: relative;
         overflow: hidden;
-      }
-
-      .top-content img{
-        position: relative;
-        left: 0;
-        top: -280px;
-        z-index: 1;
-        width: 100%;
       }
 
       .top-content .header-content{
@@ -67,7 +59,7 @@
         /*border-left: 1px solid #ccc;*/
         /*border-right: 1px solid #ccc;*/
         /*border-bottom: 1px solid #ccc;*/
-        min-height: 700px;
+        min-height: 725px;
         background: #FFF;
       }
 
@@ -109,7 +101,8 @@
       }
 
       .body-content .receipt-details{
-        padding: 10px 40px 0px 40px;
+        /*padding: 10px 40px 0px 40px;*/
+        padding: 20px 40px 0px 40px;
         min-height: 100px;
         overflow: hidden;
         width: 100%;
@@ -123,7 +116,7 @@
       }
 
       .body-content .receipt-details .row .item{
-        width: 45%;
+        width: 200px;
         display: inline-block;
         vertical-align: top;
       }
@@ -133,7 +126,7 @@
         width: 100%;
         border-left: 1px solid #ccc;
         border-right: 1px solid #ccc;
-        padding: 0 5px;
+        padding: 0 40px;
       }
 
       .body-content .item_service{
@@ -212,7 +205,8 @@
       .contact-content .item{
         width: 60%;
         display: inline-block;
-        vertical-align: middle;
+        /*vertical-align: middle;*/
+        vertical-align: top;
       }
 
       .contact-content .item .social-img{
@@ -221,22 +215,80 @@
         vertical-align: middle;
         margin-right: 20px;
       }
+      .billing-details-header {
+        display: flex;
+        align-items: center;
+      }
+      .billing-details-header span {
+        color: #595959;
+        flex: 1;
+      }
+      .billing-details-header .custom-border{
+        border: 1px solid #ddd;
+        content: "";
+        display: block;
+        width: 80%;
+      }
+      .body-content .receipt-details .row-grid,
+      .billing-details-body-container .row-grid {
+        display: grid;
+        grid-template-columns: 50% 50%;
+      }
+      .billing-details-body-container .row-grid {
+        padding: 0 0 20px;
+      }
+      .billing-details-body-container .row-grid:last-child {
+        border-bottom: 1px solid #ddd;
+      }
+      .billing-details-body-container .row-grid .title {
+        font-size: 15px;
+        color: #999;
+      }
+      .billing-details-body-container .row-grid .amount {
+        color: #333;
+        font-size: 15px;
+        font-weight: 700;
+      }
+      .billing-details-paid {
+        margin: 20px 0 0;
+      }
+      .receipt-details .row-grid >.item >div {
+        margin: 0 0 10px;
+      }
+      .body-content .receipt-details .row-grid >.item {
+        width: auto;
+      }
+      .contact-img {
+        width: 25px;
+      }
+      .contact-support-item {
+        display: flex;
+        align-items: center;
+        color: #848484;
+      }
+      .contact-support-item >span:first-child {
+        margin: 0 20px 0 0;
+      }
     </style>
   </head><body>
     <div id="main-template-wrapper" style="background-image: url('https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/email-pdf-logo.png');background-size: 100%;">
       <div class="top-content">
         <div class="header-content">
-          <p style="font-size: 24px;margin-top: 10px;">
-            Hello, <span>{{ $member }}</span>
+          <p style="font-size: 16px;margin: 30px 0 10px;letter-spacing:1.1px;">
+            <!-- Hello, <span>{{ $member }}</span> -->
+            Here's the payment receipt for your visit at <span style="font-weight: 700">Medicloud Family Clinic</span>.
           </p>
-          <p style="font-size: 22px;">
+          <!-- <p style="font-size: 22px;">
             Hope you had a great healthcare experience
-          </p>
-          <p style="margin-top: 20px;margin-bottom: 5px;font-size: 18px;">
+          </p> -->
+          <!-- <p style="margin-top: 20px;margin-bottom: 5px;font-size: 18px;">
             Your Receipt
+          </p> -->
+          <p style="font-size: 15px; width: 390px; margin: 0 auto;">
+            You can also view your receipts under the History section in Mednefits app.
           </p>
-          <p style="font-size: 44px;font-weight: 700;margin-top: 0;">
-            {{ $currency_symbol }} <span>{{ $total_amount }}</span>
+          <p style="font-size: 23px;font-weight: 700;margin: 20px 0;">
+            Total: <span>SGD</span> <span>{{ $credits }}</span>
           </p>
 
         </div>
@@ -270,17 +322,49 @@
         </div>
 
         <div class="receipt-details">
-          <div class="row">
+          <div class="row row-grid">
             <div class="item">
-              <div style="font-size: 15px;color: #999;">
+              <!-- <div style="font-size: 15px;color: #999;">
                 Payment Type
               </div>
               <p style="color: #333;font-size: 17px;font-weight: 700;margin-top: 0;">
                 {{ $transaction_type }}
+              </p> -->
+              <div style="font-size: 15px;color: #999;">
+                Health Provider
+              </div>
+              <p style="color: #333;font-size: 15px;font-weight: 700;margin-top: 0;">
+                <div class="health-provider-name" style="margin: 0 0 10px">{{ $health_provider_name }}</div> 
+                {{ $health_provider_address }} {{ $health_provider_city }}, {{ $health_provider_country }}
+                <br>
+                {{ $health_provider_phone }}
               </p>
             </div>
 
             <div class="item">
+              <!-- <div style="font-size: 15px;color: #999;">
+                Member
+              </div>
+              <p style="color: #333;font-size: 17px;font-weight: 700;margin-top: 0;">
+                {{ $member }}
+              </p> -->
+              <div style="font-size: 15px;color: #999;">
+                Service
+              </div>
+              <p style="color: #333;font-size: 15px;font-weight: 700;margin-top: 0;">
+                {{ $health_provider_name }} <br>
+              </p>
+            </div>
+          </div>
+
+          <div class="row row-grid">
+            <div class="item">
+              <!-- <div style="font-size: 15px;color: #999;">
+                Health Provider
+              </div>
+              <p style="color: #333;font-size: 17px;font-weight: 700;margin: 0;">
+                {{ $health_provider_name }}
+              </p> -->
               <div style="font-size: 15px;color: #999;">
                 Member
               </div>
@@ -288,37 +372,34 @@
                 {{ $member }}
               </p>
             </div>
-          </div>
-
-          <div class="row">
-            <div class="item">
-              <div style="font-size: 15px;color: #999;">
-                Health Provider
-              </div>
-              <p style="color: #333;font-size: 17px;font-weight: 700;margin: 0;">
-                {{ $health_provider_name }}
-              </p>
-            </div>
 
             <div class="item">
-              <div style="font-size: 15px;color: #999;">
+              <!-- <div style="font-size: 15px;color: #999;">
                 Health Provider Contact
               </div>
               <p style="color: #333;font-size: 17px;font-weight: 700;margin: 0;">
                 {{ $health_provider_address }} {{ $health_provider_city }}, {{ $health_provider_country }}
                 <br>
                 {{ $health_provider_phone }}
+              </p> -->
+              <div style="font-size: 15px;color: #999;">
+                Cap Per Visit
+              </div>
+              <p style="color: #333;font-size: 17px;font-weight: 700;margin-top: 0;">
+                {{ $member }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="item-img">
-          <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/email-item-header.png" style="width: 100%;"/>
+        <div class="item-img billing-details-header">
+          <!-- <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/email-item-header.png" style="width: 100%;"/> -->
+          <span style="color:#595959">Billing details</span>
+          <div class="custom-border"></div>
         </div>
 
         <div class="item_service">
-          <div class="item-clinic-img">
+          <!-- <div class="item-clinic-img">
             <div class="clinic-type-img">
               <img src="{{ $clinic_type_image }}" style="width: 50px;" />
             </div>
@@ -326,11 +407,11 @@
               {{ $service }}
             </div>
             <div class="clinic-type-credits">
-              {{ $currency_symbol }} <span>{{ $credits }}</span>
+              S$ <span>{{ $credits }}</span>
             </div>
-          </div>
+          </div> -->
 
-          @if($lite_plan_status && $lite_plan_enabled == 1)
+          <!-- @if($lite_plan_status && $lite_plan_enabled == 1)
           <div style="margin-bottom: 30px;min-height: 54px;">
             <div class="clinic-type-img">
             </div>
@@ -338,17 +419,62 @@
               Consultation
             </div>
             <div class="clinic-type-credits">
-              {{ $currency_symbol }} <span>{{ $consultation }}</span>
+              S$ <span>{{ $consultation }}</span>
             </div>
           </div>
-          @endif
+          @endif -->
 
-          <div class="clinic-type-total" style="">
+          <!-- <div class="clinic-type-total" style="">
             <div class="one">
               Total
             </div>
             <div class="two">
-              {{ $currency_symbol }} <span>{{ $total_amount }}</span>
+              S$ <span>{{ $total_amount }}</span>
+            </div>
+          </div> -->
+          <div class="billing-details-body-container">
+            <div class="row-grid">
+              <div class="item title">
+                Bill Amount
+              </div>
+              <div class="item amount">
+                <span>SGD</span> <span>{{ $credits }}</span>
+              </div>
+            </div>
+            <div class="row-grid">
+              <div class="item title">
+                Consultation Fee
+              </div>
+              <div class="item amount">
+                <span>SGD</span> <span>{{ $consultation }}</span>
+              </div>
+            </div>
+            <div class="row-grid">
+              <div class="item title">
+                Total Amount
+              </div>
+              <div class="item amount">
+                <span>SGD</span> <span>{{ $total_amount }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="billing-details-body-container billing-details-paid">
+            <div class="row-grid">
+              <div class="item title">
+                Paid by Credits
+              </div>
+              <div class="item amount">
+                <span>SGD</span> <span>50.00</span>
+              </div>
+            </div>
+            <div class="row-grid">
+              <div class="item title">
+                Paid by Cash
+              </div>
+              <div class="item amount">
+                <span>SGD</span> <span>50.00</span>
+              </div>
             </div>
           </div>
 
@@ -357,10 +483,20 @@
               <div style="font-size: 15px;color: #777;font-weight: 700;margin-top: 15px;margin-bottom: 20px;">
                 Contact support
               </div>
-              <p style="color: #999;font-size: 13px;">
-                +65 6254 7889
+              <p style="color: #999;font-size: 15px;">
+                <div class="contact-support-item">
+                  <span>
+                    <a href=""><img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/telephone.png"></a>
+                  </span>
+                  <span style="text-decoration: underline;">+65 6254 7889 </span> <span> <span style="margin: 0 0 0 5px;">or</span> <span style="text-decoration: underline;">+603 7890 1770</span></span>
+                </div>
                 <br>
-                <span style="text-decoration: underline;">happiness@mednefits.com</span>
+                <div class="contact-support-item">
+                  <span>
+                    <a href=""><img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/envelope.png"></a>
+                  </span>
+                  <span style="text-decoration: none; font-size: 15px;">happiness@mednefits.com</span>
+                </div>
               </p>
             </div>
 
@@ -369,18 +505,18 @@
                 Connect with us at
               </div>
               <div class="social-img">
-                <a href="https://www.facebook.com/Mednefits/" style="text-decoration: none;">
-                  <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/facebook-2.png" style="width: 40px;margin-right: 20px;" />
+                <a href="https://www.linkedin.com/company/mednefits/" style="text-decoration: none;">
+                  <img src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/linkedin.png" style="width: 40px;margin-right: 20px;" />
                 </a>
               </div>
               <div class="social-img">
                 <a href="https://www.instagram.com/mednefits/" style="text-decoration: none;">
-                  <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/instagram-2.png" style="width: 40px;margin-right: 20px;" />
+                  <img src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/instagram.png" style="width: 40px;margin-right: 20px;" />
                 </a>
               </div>
               <div class="social-img">
-                <a href="https://www.linkedin.com/company/mednefits/" style="text-decoration: none;">
-                  <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/linkedin-2.png" style="width: 40px;margin-right: 20px;" />
+                <a href="https://www.facebook.com/Mednefits/" style="text-decoration: none;">
+                  <img src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/facebook.png" style="width: 40px;margin-right: 20px;" />
                 </a>
               </div>
             </div>

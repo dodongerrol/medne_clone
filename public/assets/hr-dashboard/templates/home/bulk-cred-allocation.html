@@ -1,0 +1,244 @@
+<div bulk-credit-allocation-directive>
+	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+		<div class="container">
+			<div class="welcome-container">
+				<h4 ui-sref="benefits-dashboard">Overview</h4>
+				<div class="arrow-up" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="employee-overview">Employee</h4>
+				<div class="arrow-up" style="visibility: hidden;"></div>
+			</div>
+			<!-- <div class="welcome-container">
+				<div class="dropdown">
+				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Employee
+				  </h4>
+				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
+				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="bulk-cred-allocation">Credit Allocation</a></li>
+				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				  </ul>
+				</div>
+				<div class="arrow-up-2" style="visibility: visible;"></div>
+			</div> -->
+			<div class="welcome-container">
+				<h4 ui-sref="activity">Activity</h4>
+				<div class="arrow-up-3" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container" ng-if="options.accessibility == 1">
+				<h4 ui-sref="e-claim">Claim</h4>
+				<div class="arrow-up-4" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container statement-hide">
+				<h4 ui-sref="statement">Statement</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+			<div class="welcome-container">
+				<h4 ui-sref="account-and-payment">Account</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="hrdb-body-container">
+
+		<!-- <div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="text-center"> Bulk Credit Allocation</h1>
+				</div>
+			</div>
+		</div> -->
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="white-space-50"></div>
+				</div>
+			</div>
+		</div>
+	
+		<section>
+			<div class="gp-cap-per-wrapper bulk-cred-wrapper">
+			
+        <div class="container bulk-cred-per-visit-wrapper">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="bulk-cred-options text-right">
+								<div>
+									<span class="actions" ng-click="downloadFile()"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/download.png" alt="download"></span>	
+									<span class="actions" ng-click="fileUploadModal()"><img src="../../assets/hr-dashboard/img/bulk-cred-alloc/upload.png" alt="upload"></span>	
+									<button class="actions btn-update" ng-click="updateBulkAllocation()" ng-disabled="toUpdateAllocation.length <= 0" ng-class="{'btn-disabled':toUpdateAllocation.length <= 0}">Update</button>
+								</div>
+						</div>
+					</div>
+          
+          </div>  
+
+					<div class="row">
+						<div class="col-md-12">
+							<div class="bulk-cred-table-wrapper">
+								<div class="bulk-cred-table-info-wrapper">
+									<div class="bulk-cred-table-info-container">
+										<table>
+											<thead>
+												<tr>
+													<th rowspan="2" style="width: 150px;">Member ID</th>
+													<th rowspan="2" style="width: 350px;">Name</th>
+													<th ng-if="totalAllocation.medical_enable" colspan="3" style="text-align: center; width: 600px;">Medical</th>
+													<th ng-if="spending_account_status.wellness" colspan="3"	style="text-align: center; width: 600px;">Wellness</th>
+												</tr>
+												<tr>
+													<!-- medical span -->
+													<th ng-if="totalAllocation.medical_enable">Current Allocation</th>
+													<th ng-if="totalAllocation.medical_enable">New Allocation</th>
+													<th ng-if="totalAllocation.medical_enable">Effective Date of New Allocation</th>
+													<!-- wellness span -->
+													<th ng-if="totalAllocation.wellness_enable">Current Allocation</th>
+													<th ng-if="totalAllocation.wellness_enable">New Allocation</th>
+													<th ng-if="totalAllocation.wellness_enable">Effective Date of New Allocation</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="list in employees">
+													<td class="grayed-out">{{list.member_id}}</td>
+													<td class="grayed-out">{{list.fullname}}</td>
+													<!-- medical span -->
+													<td class="grayed-out" ng-if="totalAllocation.medical_enable"><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.medical.current_allocation | number: 2}}</td>
+													<td ng-if="totalAllocation.medical_enable">
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.medical.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
+													</td>
+													<td ng-if="totalAllocation.medical_enable">
+														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
+													</td>
+													<!-- Wellness -->
+													<td class="grayed-out" ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
+													<td ng-if="totalAllocation.wellness_enable" >
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
+													</td>
+													<td ng-if="totalAllocation.wellness_enable" >
+														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.wellness.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="bulk-cred-footer">
+									<div class="left health-pagination">
+											<div class="page-wrapper">
+												<div class="page-scroll-container page-opened">
+													<span>  
+														<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
+														<span class="prev-page-gp-cap" ng-click="prevPageBulkCred()">Prev</span>
+													</span>
+													<div>
+														<span ng-repeat="list in range( employees_pagi.last_page )" ng-bind="$index + 1" ng-click="goToBulkCred(list + 1)" class="health-page-num" ng-class="{'active' : list + 1 == page_active}">1</span>
+
+														<!-- <span ng-repeat="list in employees_pagi.last_page" ng-bind="$index + 1" ng-click="goToBulkCred(list + 1)" class="health-page-num" ng-class="{'active' : list + 1 == page_active}">1</span> -->
+													</div>
+													<span>  
+														<span ng-click="nextPageBulkCred()">Next</span>
+														<i class="fa fa-angle-right" style="font-size: 14px;"></i> 
+													</span>
+												</div>
+											</div>
+											<div class="rows-page-wrapper">
+												<span><span ng-bind="page_ctr"></span> per page</span>
+												<span>  
+													<i ng-click="page_scroll = true" class="fa fa-caret-down"></i>
+												</span>
+												<div class="opened-per-page-scroll page-scroll" ng-if="page_scroll">
+													<span ng-click="changeBulkCred(10)">10</span>
+													<span ng-click="changeBulkCred(20)">20</span>
+													<span ng-click="changeBulkCred(30)">30</span>
+													<span ng-click="changeBulkCred(40)">40</span>
+													<span ng-click="changeBulkCred(50)">50</span>
+													<span ng-click="changeBulkCred(100)">100</span>
+												</div>
+											</div>
+									</div>
+									<div class="right">
+										<div class="total-number-container" ng-if="totalAllocation.medical_enable">
+											<span>Company Medical Allocation</span>
+											<div class="total-number-box grayed-out">
+												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_medical_allocation | number: 2}}</span>
+											</div>
+										</div>
+										<div class="total-number-container" ng-if="totalAllocation.wellness_enable">
+											<span>Company Wellness Allocation</span>
+											<div class="total-number-box grayed-out">
+												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_wellness_allocation | number: 2}}</span>
+											</div>
+										</div>
+									</div>
+								</div>	
+							</div>
+						</div>
+					</div>
+         
+        </div>
+      </div>
+		</section>
+		
+	</div>
+
+	<div class="bulk-cred-modal-container" id="file-upload-bulk-cred" ng-if="showUploadModal">
+		<div class="modal-dialog" style="width: 580px;">
+			
+			<div class="bulk-cred-modal" role="document">
+				<div class="bulk-cred-modal-content">
+					<form>
+						<div class="bulk-cred-modal-header">
+							<h4>File Uploader</h4>
+							<i class="fa fa-times" aria-hidden="true" ng-click="fileUploadModal()"></i>
+							
+						</div>
+						<div class="bulk-cred-modal-body">
+							<div class="drop-box" ngf-drop="uploadGpCapChanged( bulkCreditFile )" ngf-select="uploadGpCapChanged( bulkCreditFile )" ng-model="bulkCreditFile"
+									ngf-drag-over-class="'dragover'">
+								<div>
+									<div class="drop-file-upload" >
+										<img style="width: 30px;" src="../../assets/hr-dashboard/img/bulk-cred-alloc/fileupload.png">
+										<p>Drop a file to upload, or </p>
+										<div class="file-btn" style="height: auto; padding: 10px 14px;"> 
+											Browse
+										</div>
+										<!-- <input ngf-drop="uploadGpCapPerVisit()" class="choose-file" type="file"> -->
+									</div>
+
+
+
+									<div ng-if="bulkCreditFile.name">
+										<div class="progress-wrapper">
+											<span>
+												<i class="fa fa-file-o"></i>
+												<span ng-bind="bulkCreditFile.name">Employee list.csv</span>
+											</span>
+											<div class="progress-bar" ng-class="{ 'error' : bulkCreditFile.error }" style="width: {{ bulkCreditFile.uploading }}%;"></div>
+										</div>
+										<span ng-if="bulkCreditFile.error" ng-bind="bulkCreditFile.error_text" style="font-size: 11px;"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="bulk-cred-modal-footer">
+							<button class="file-btn" ng-click="uploadFile( bulkCreditFile )">Upload</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+<style type="text/css">
+	.datepicker-dropdown {
+	    z-index: 9999 !important;
+	}
+
+	.datepicker table tr td.disabled, .datepicker table tr td.disabled:hover{
+		color: #ddd !important;
+	}
+</style>
