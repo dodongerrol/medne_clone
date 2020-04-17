@@ -328,7 +328,9 @@ class CustomerHelper
 			'customer_id'		=> $customer_id,
 			'account_type'		=> $activePlan->account_type,
 			'medical_method'	=> $spending->medical_plan_method,
+			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
 			'wellness_method'	=> $spending->wellness_plan_method,
+			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
 			'paid_status'		=> $activePlan->paid == 'true' ? true : false
 		);
 	}
