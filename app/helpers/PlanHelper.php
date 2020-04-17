@@ -6203,5 +6203,22 @@ class PlanHelper {
 			return false;
 		}
 	}
+
+	public static function getAccountType($data)
+	{
+		if($data == "stand_alone_plan") {
+			$account_type = "Pro Plan";
+		} else if($data == "insurance_bundle") {
+			$account_type = "Insurance Bundle";
+		} else if($data == "trial_plan") {
+			$account_type = "Trial Plan";
+		} else if($data == "lite_plan") {
+			$account_type = "Lite Plan";
+		} else if($data == "enterprise_plan") {
+			$account_type = "Enterprise Plan";
+		}
+
+		return $account_type;
+	}
 }
 ?>
