@@ -447,10 +447,14 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/member_credits', 'EmployeeController@getMemberCreditDetails');
 	// create new allocation
 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
+	// get spending invoice purchse
+	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
 });
 
 
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
+	// download spending invoice details
+	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');

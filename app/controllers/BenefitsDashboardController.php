@@ -14354,4 +14354,141 @@ class BenefitsDashboardController extends \BaseController {
     $paginate['data'] = $final_user;
     return ['status' => true, 'customer_id' => $customer_id, 'currency_type' => strtoupper($customer_wallet->currency_type), 'medical_enable' => (int)$spending->medical_enable == 1 ? true : false, 'wellness_enable' => (int)$spending->wellness_enable == 1 ? true : false, 'total_medical_allocation' => $total_medical_allocation, 'total_wellness_allocation' => $total_wellness_allocation, 'members' => $paginate];
   }
+
+  	public function downloadSpendingInvoice( )
+    {
+
+		$input = Input::all();
+
+        if(empty($input['id']) || $input['id'] == null) {
+            return ['status' => false, 'message' => 'id is required'];
+        }
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		$customer_id = $result->customer_buy_start_id;
+		
+		if(!$customer_id) {
+			return ['status' => false, 'message' => 'Invalid access token'];
+		}
+
+		$spendingPurchase = DB::table('spending_purchase_invoice')
+								->where('spending_purchase_invoice_id', $input['id'])
+								->where('customer_id', $customer_id)
+								->first();
+        if(!$spendingPurchase) {
+            return ['status' => false, 'message' => 'Spending Purchase does not exists'];
+        }
+
+        $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
+        $customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
+        
+        $data = array();
+        $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
+        $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
+        $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
+        $data['invoice_number'] = $spendingPurchase->invoice_number;
+        $total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+        $data['total']  = number_format($total, 2);
+        $data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
+        $data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
+        $data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
+        $data['remarks']    = $spendingPurchase->remarks;
+        $data['company_name']   = $spendingPurchase->company_name;
+        $data['company_address']   = $spendingPurchase->company_address;
+        $data['postal']   = $spendingPurchase->postal;
+        $data['contact_name']   = $spendingPurchase->contact_name;
+        $data['contact_number']   = $spendingPurchase->contact_number;
+        $data['contact_email']   = $spendingPurchase->contact_email;
+        $data['plan_start']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+        $data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_end));
+        $data['duration']   = $spendingPurchase->duration;
+        $data['account_type'] = PlanHelper::getAccountType($active_plan->account_type);
+        $data['plan_type'] = 'Pre-paid Credits Plan Mednefits Care (Corporate)';
+        $data['currency_type']   = strtoupper($customer_wallet->currency_type);
+        // medical spending account
+        $data['medical_spending_account'] = (float)$spendingPurchase->medical_purchase_credits > 0 ? true : false;
+        $data['medical_credits_purchase'] = number_format($spendingPurchase->medical_purchase_credits, 2);
+        $data['medical_credit_bonus'] = number_format($spendingPurchase->medical_credit_bonus, 2);
+        $data['medical_total_credits']  = number_format($spendingPurchase->medical_purchase_credits + $spendingPurchase->medical_credit_bonus, 2);
+
+        // wellness spending account
+        $data['wellness_spending_account'] = (float)$spendingPurchase->wellness_purchase_credits > 0 ? true : false;
+        $data['wellness_credits_purchase'] = number_format($spendingPurchase->wellness_purchase_credits, 2);
+        $data['wellness_credit_bonus'] = number_format($spendingPurchase->wellness_credit_bonus, 2);
+        $data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
+		
+		// return View::make('invoice.spending-purchase-invoice', $data);
+		$pdf = PDF::loadView('invoice.spending-purchase-invoice', $data);
+		$pdf->getDomPDF()->get_option('enable_html5_parser');
+		$pdf->setPaper('A4', 'portrait');
+		return $pdf->stream($data['invoice_number'].' - '.time().'.pdf');
+	}
+	
+	public function getSpendingInvoicePurchaseLists( )
+    {
+		$input = Input::all();
+
+		$result = self::checkSession();
+		$customer_id = $result->customer_buy_start_id;
+		if(!$customer_id) {
+			return ['status' => false, 'message' => 'Invalid access token'];
+		}
+
+        $limit = !empty($input['limit']) ? $input['limit'] : 10;
+        $pagination = [];
+
+        $invoices = DB::table('spending_purchase_invoice')->where('customer_id', $customer_id)->paginate($limit);
+        $format = [];
+
+        $pagination['last_page'] = $invoices->getLastPage();
+		$pagination['current_page'] = $invoices->getCurrentPage();
+		$pagination['total_data'] = $invoices->getTotal();
+		$pagination['from'] = $invoices->getFrom();
+		$pagination['to'] = $invoices->getTo();
+		$pagination['count'] = $invoices->count();
+        
+        foreach($invoices as $key => $spendingPurchase) {
+            $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
+            $customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
+            
+            $data = array();
+            $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
+            $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
+            $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
+            $data['invoice_number'] = $spendingPurchase->invoice_number;
+            $total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+            $data['total']  = number_format($total, 2);
+            $data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
+            $data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
+            $data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
+            $data['remarks']    = $spendingPurchase->remarks;
+            $data['company_name']   = $spendingPurchase->company_name;
+            $data['company_address']   = $spendingPurchase->company_address;
+            $data['postal']   = $spendingPurchase->postal;
+            $data['contact_name']   = $spendingPurchase->contact_name;
+            $data['contact_number']   = $spendingPurchase->contact_number;
+            $data['contact_email']   = $spendingPurchase->contact_email;
+            $data['plan_start']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+            $data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+            $data['duration']   = $spendingPurchase->duration;
+            $data['account_type'] = \PlanHelper::getAccountType($active_plan->account_type);
+            $data['plan_type'] = 'Pre-paid Credits Plan Mednefits Care (Corporate)';
+            $data['currency_type']   = strtoupper($customer_wallet->currency_type);
+            // medical spending account
+            $data['medical_spending_account'] = (float)$spendingPurchase->medical_purchase_credits > 0 ? true : false;
+            $data['medical_credits_purchase'] = number_format($spendingPurchase->medical_purchase_credits, 2);
+            $data['medical_credit_bonus'] = number_format($spendingPurchase->medical_credit_bonus, 2);
+            $data['medical_total_credits']  = number_format($spendingPurchase->medical_purchase_credits + $spendingPurchase->medical_credit_bonus, 2);
+
+            // wellness spending account
+            $data['wellness_spending_account'] = (float)$spendingPurchase->wellness_purchase_credits > 0 ? true : false;
+            $data['wellness_credits_purchase'] = number_format($spendingPurchase->wellness_purchase_credits, 2);
+            $data['wellness_credit_bonus'] = number_format($spendingPurchase->wellness_credit_bonus, 2);
+            $data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
+            $format[] = $data;
+        }
+
+        $pagination['data'] = $format;
+		return $pagination;
+    }
 }

@@ -164,9 +164,6 @@
       @if($paid)
         <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/paid-text.png" style="position: absolute;left: 25%;top: 2%;z-index: 1;width: 350px;">
       @endif
-      @if($complimentary)
-        <p style="position: absolute;font-size: 18px;top: 53%;left: 26%;color: #44a1ce;font-weight: 700;">COMPLIMENTARY BY MEDNEFITS FOR 1 YEAR</p>
-      @endif
       <div class="header">
         <div class="item">
           <img src="https://mednefits.s3-ap-southeast-1.amazonaws.com/images/mobile-logo-blue-latest.png" style="width: 250px;margin-top: 65px;">
@@ -187,11 +184,11 @@
       <div class="bill-to">
         <div class="item left-wrapper" >
           <p style="color: #aaa;margin: 0;"><b>BILL TO</b></p>
-          <p>{{ $company }}</p>
-        <p>{{ $name }}</p>
-        <p>{{ $address }}, {{ $postal }}</p>
-        <p style="margin-top: 10px;">{{ $phone }}</p>
-        <p>{{ $email }}</p>
+          <p>{{ $company_name }}</p>
+        <p>{{ $contact_name }}</p>
+        <p>{{ $company_address }}, {{ $postal }}</p>
+        <p style="margin-top: 10px;">{{ $contact_number }}</p>
+        <p>{{ $contact_email }}</p>
         </div>
         <div class="item right-wrapper" >
           <p><label>Invoice Number: </label> {{ $invoice_number }}</p>
@@ -222,26 +219,29 @@
           <td></td>
         </tr>
 
+        @if($medical_spending_account)
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
             <p>Medical Spending Account</p>
             <p class="left-space-20">Purchased Credits</p>
-            <p class="left-space-20">Bonus Credits: {{ $currency_type }} 20,000.00</p>
-            <p class="left-space-20">Total Credits: {{ $currency_type }} 20,000.00</p>
+            <p class="left-space-20">Bonus Credits: {{ $currency_type }} {{$medical_credit_bonus}}</p>
+            <p class="left-space-20">Total Credits: {{ $currency_type }} {{$medical_total_credits}}</p>
           </td>
-          <td style="vertical-align: top;"><b>{{ $currency_type }} {{ $amount }}</b></td>
+          <td style="vertical-align: top;"><b>{{ $currency_type }} {{ $medical_credits_purchase }}</b></td>
         </tr>
-
+        @endif
+        
+        @if($wellness_spending_account)
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
             <p>Wellness Spending Account</p>
             <p class="left-space-20">Purchased Credits</p>
-            <p class="left-space-20">Bonus Credits: {{ $currency_type }} 20,000.00</p>
-            <p class="left-space-20">Total Credits: {{ $currency_type }} 20,000.00</p>
+            <p class="left-space-20">Bonus Credits: {{ $currency_type }} {{$wellness_credit_bonus}}</p>
+            <p class="left-space-20">Total Credits: {{ $currency_type }} {{$wellness_total_credits}}</p>
           </td>
-          <td style="vertical-align: top;"><b>{{ $currency_type }} {{ $amount }}</b></td>
+          <td style="vertical-align: top;"><b>{{ $currency_type }} {{ $wellness_credits_purchase }}</b></td>
         </tr>
-
+        @endif
 
       </table>
 
@@ -289,9 +289,9 @@
           <p class="bank-info-text font-medium2 no-margin">Swift Code: UOVBSGSG - UNITED OVERSEAS BANK LIMITED</p>
           <p class="bank-info-text font-medium2 color-black2 no-margin">Bank Address: 3 Temasek Boulevard #02-735/736 Suntec City Mall Singapore 038987</p>
 
-          @if(isset($notes))
-            @if($notes && $notes != 'NULL')
-            <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $notes }}</p>
+          @if(isset($remarks))
+            @if($remarks && $remarks != 'NULL')
+            <p style="margin: 10px 0 0 0;font-size: 11px;">Note: {{ $remarks }}</p>
             @endif
           @endif
 
