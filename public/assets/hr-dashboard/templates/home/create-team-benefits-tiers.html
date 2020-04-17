@@ -424,11 +424,11 @@
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
 							</div> -->
-							<div ng-if="spending_account_status.medical" class="employee-input-wrapper">
+							<div ng-if="spending_account_status.medical && spendingPlan_status.medical_method != 'pre_paid' " class="employee-input-wrapper">
 								<label for="fname">Medical Allocation</label>
   							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
 							</div>
-							<div ng-if="spending_account_status.wellness" class="employee-input-wrapper">
+							<div ng-if="spending_account_status.wellness && spendingPlan_status.wellness_method != 'pre_paid'" class="employee-input-wrapper">
 								<label for="fname">Wellness Allocation</label>
 								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
 							</div>
@@ -670,13 +670,13 @@
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_message"></span>
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_area_code_message"></span>
                     </div>
-                    <div class="form-group">
+                    <div ng-if="spending_account_status.medical && spendingPlan_status.medical_method != 'pre_paid' " class="form-group">
                         <label>Medical Allocation</label>
                         <!-- <label>Medical Credits</label> -->
                         <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.credits_medical_error == true}" ng-model="selected_edit_details_data.employee.credits">
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.credits_medical_message"></span>
                     </div>
-                    <div class="form-group">
+                    <div ng-if="spending_account_status.wellness && spendingPlan_status.wellness_method != 'pre_paid'" class="form-group">
                         <label>Wellness Allocation</label>
                         <!-- <label>Wellness Credits</label> -->
                         <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.credits_wellness_error == true}" ng-model="selected_edit_details_data.employee.wellness_credits">

@@ -889,7 +889,7 @@
             "time": "2014-07-19T05:53:13+00:00"
         },
         {
-            "name": "jeremeamia/superclosure",
+            "name": "jeremeamia/SuperClosure",
             "version": "1.0.x-dev",
             "source": {
                 "type": "git",
@@ -1366,16 +1366,6 @@
                 "log",
                 "logging",
                 "psr-3"
-            ],
-            "funding": [
-                {
-                    "url": "https://github.com/Seldaek",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/monolog/monolog",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-03-13T16:46:09+00:00"
         },
@@ -1950,12 +1940,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "c010de563b18c9aa7dd6cd4468ea539a838c263c"
+                "reference": "e75e5715e3b651ec20dee5844095aadefab81acb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/c010de563b18c9aa7dd6cd4468ea539a838c263c",
-                "reference": "c010de563b18c9aa7dd6cd4468ea539a838c263c",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/e75e5715e3b651ec20dee5844095aadefab81acb",
+                "reference": "e75e5715e3b651ec20dee5844095aadefab81acb",
                 "shasum": ""
             },
             "require": {
@@ -1996,7 +1986,7 @@
                 "rest",
                 "trigger"
             ],
-            "time": "2020-04-01T14:30:45+00:00"
+            "time": "2020-04-14T15:20:04+00:00"
         },
         {
             "name": "stack/builder",
@@ -3115,6 +3105,5 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }
