@@ -1894,7 +1894,8 @@ public function getNewClinicDetails($id)
      if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
       $returnObject->status = FALSE;
       $returnObject->status_type = 'zero_balance';
-      $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+      $returnObject->message = 'You have not credit access this feature at the moment.';
+      $returnObject->sub_message = 'Kindly contact HR.';
       return Response::json($returnObject);
      }
 
@@ -6372,7 +6373,8 @@ public function payCreditsNew( )
           if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
             $returnObject->status = FALSE;
             $returnObject->status_type = 'zero_balance';
-            $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+            $returnObject->message = 'You have not credit access this feature at the moment.';
+            $returnObject->sub_message = 'Kindly contact HR.';
             return Response::json($returnObject);
           }
             
@@ -6381,12 +6383,14 @@ public function payCreditsNew( )
 
             $returnObject->status = FALSE;
             $returnObject->status_type = 'zero_balance';
-            $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
-            
+            $returnObject->message = 'You have not credit access this feature at the moment.';
+            $returnObject->sub_message = 'Kindly contact HR.';
+
             if($current_balance <= 0) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'zero_balance';
-              $returnObject->message = 'You have not credit access this feature at the moment. Kindly contact HR';
+              $returnObject->message = 'You have not credit access this feature at the moment.';
+              $returnObject->sub_message = 'Kindly contact HR.';
               return Response::json($returnObject);
             }
           }
