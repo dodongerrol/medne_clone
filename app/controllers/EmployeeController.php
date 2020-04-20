@@ -2318,7 +2318,7 @@ class EmployeeController extends \BaseController {
                   $new_allocation = $input['new_allocation_credits'] - $medical_credit_data['allocation'];
                   // check medical balance
                   if($new_allocation > $customer_credits->balance) {
-                    return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member'];
+                    return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                   }
                 }
               }
@@ -2333,7 +2333,7 @@ class EmployeeController extends \BaseController {
                   $new_allocation = $input['new_allocation_credits'] - $wellness_credit_data['allocation'];
                   // check medical balance
                   if($new_allocation > $customer_credits->wellness_credits) {
-                    return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
+                    return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                   }
                 }
               }
