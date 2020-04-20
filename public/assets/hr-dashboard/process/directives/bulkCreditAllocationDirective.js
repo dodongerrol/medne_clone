@@ -188,6 +188,8 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							scope.employees = response.data.members.data;
 							scope.employees_pagi = response.data.members;
 							scope.totalAllocation = response.data;
+							scope.spending_account_status.medical = response.data.medical_enable;
+							scope.spending_account_status.wellness = response.data.wellness_enable;
 
 							scope.employees.map((value, index) => {
 
@@ -479,7 +481,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         scope.onLoad = function( ) {
         	scope.checkSession( );
 					// scope.getEmployeeList( );
-					scope.getSpendingAcctStatus();
+					// scope.getSpendingAcctStatus();
 					scope.getEmployeeBulkCredit();
 					scope.inititalizeDatepicker();
 					// scope.companyAccountType ();
