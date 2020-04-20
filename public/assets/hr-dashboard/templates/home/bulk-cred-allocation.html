@@ -226,14 +226,14 @@
 												<tr>
 													<th rowspan="2" style="width: 150px;">Member ID</th>
 													<th rowspan="2" style="width: 305px;">Name</th>
-													<th ng-if="totalAllocation.medical_enable" colspan="3" style="text-align: center; width: 666px;">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }}</th>
+													<th colspan="3" style="text-align: center; width: 666px;">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }}</th>
 													<!-- <th ng-if="spending_account_status.wellness" colspan="3"	style="text-align: center; width: 600px;">Wellness</th> -->
 												</tr>
 												<tr>
 													<!-- medical span -->
-													<th style="width: 227px;" ng-if="totalAllocation.medical_enable">Current Allocated<br>Credits</th>
-													<th style="width: 223px;" ng-if="totalAllocation.medical_enable">New Allocated<br>Credits</th>
-													<th style="width: 215px;" ng-if="totalAllocation.medical_enable">Effective Date of<br>New Allocated Credits</th>
+													<th style="width: 227px;">Current Allocated<br>Credits</th>
+													<th style="width: 223px;">New Allocated<br>Credits</th>
+													<th style="width: 215px;">Effective Date of<br>New Allocated Credits</th>
 													<!-- wellness span -->
 													<!-- <th ng-if="totalAllocation.wellness_enable">Current Allocation</th>
 													<th ng-if="totalAllocation.wellness_enable">New Allocation</th>
@@ -245,12 +245,18 @@
 													<td class="grayed-out">{{list.member_id}}</td>
 													<td class="grayed-out">{{list.fullname}}</td>
 													<!-- medical span -->
-													<td class="grayed-out" ng-if="totalAllocation.medical_enable"><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.medical.current_allocation | number: 2}}</td>
-													<td ng-if="totalAllocation.medical_enable">
-														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.medical.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
+													<td class="grayed-out" >
+														<span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> 
+														<span ng-if="spendingTypeTabSelected == 'medical'">{{list.medical.current_allocation | number: 2}}</span>
+														<span ng-if="spendingTypeTabSelected == 'wellness'">{{list.wellness.current_allocation | number: 2}}</span>
 													</td>
-													<td ng-if="totalAllocation.medical_enable">
-														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
+													<td>
+														<input ng-if="spendingTypeTabSelected == 'medical'" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.medical.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input ng-if="spendingTypeTabSelected == 'wellness'" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
+													</td>
+													<td>
+														<input ng-if="spendingTypeTabSelected == 'medical'" class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input ng-if="spendingTypeTabSelected == 'wellness'" class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.wellness.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<!-- Wellness -->
 													<!-- <td class="grayed-out" ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
@@ -301,9 +307,10 @@
 									</div>
 									<div class="bulk-cred-footer-right">
 										<div class="total-number-container">
-											<span style="margin-right: 10px;">Total Medical Allocated Credits</span>
+											<span style="margin-right: 10px;">Total {{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} Allocated Credits</span>
 											<div class="total-number-box grayed-out">
-												<span class="items">{{totalAllocation.total_medical_allocation | number: 2}}</span>
+												<span ng-if="spendingTypeTabSelected == 'medical'" class="items">{{totalAllocation.total_medical_allocation | number: 2}}</span>
+												<span ng-if="spendingTypeTabSelected == 'wellness'" class="items">{{totalAllocation.total_wellness_allocation | number: 2}}</span>
 											</div>
 											<div>/ <span class="p-gray">20,000.00</span></div>
 										</div>
