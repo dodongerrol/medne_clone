@@ -306,6 +306,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							if( scope.spending_account_status.wellness_enabled == false){
 								scope.spendingTypeTabSelected = 'medical';
 							}
+							scope.getEmployeeBulkCredit();
 						});
 				}
 
@@ -480,7 +481,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					// scope.getEmployeeList( );
 					// scope.userCompanyCreditsAllocated();
 					scope.getSpendingAcctStatus();
-					scope.getEmployeeBulkCredit();
+					// scope.getEmployeeBulkCredit();
 					scope.inititalizeDatepicker();
 					// scope.companyAccountType ();
         }
