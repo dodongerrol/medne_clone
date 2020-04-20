@@ -481,7 +481,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         scope.onLoad = function( ) {
         	scope.checkSession( );
 					// scope.getEmployeeList( );
-					// scope.getSpendingAcctStatus();
+					scope.getSpendingAcctStatus();
 					scope.getEmployeeBulkCredit();
 					scope.inititalizeDatepicker();
 					// scope.companyAccountType ();
