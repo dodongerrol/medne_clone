@@ -875,7 +875,6 @@ class TransactionController extends BaseController {
 								$email['service'] = ucwords($clinic_type->Name).' - '.$service;
 								$email['emailSubject'] = 'Member - Refunded Transaction';
 								$email['emailTo'] = $user->Email;
-								// $email['emailTo'] = 'allan.alzula.work@gmail.com';
 								$email['emailName'] = ucwords($user->Name);
 								$email['clinic_type_image'] = $image;
 								$email['emailPage'] = 'email-templates.member-refunded-transaction';

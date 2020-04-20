@@ -562,7 +562,7 @@ class Api_V1_TransactionController extends \BaseController
 												PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
 											}
 										}
-										// return $transaction_results;
+										
 										// send email
 										$email['member'] = ucwords($user->Name);
 										$email['credits'] = $clinic->currency_type == "myr" ? number_format($total_credits_cost * $currency, 2) : number_format($total_credits_cost, 2);
@@ -587,25 +587,14 @@ class Api_V1_TransactionController extends \BaseController
 										$email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
 										$email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE;
 										$email['total_amount'] = number_format($total_amount, 2);
+										$email['paid_by_credits'] = number_format($transaction_results['paid_by_credits'], 2);
+										$email['paid_by_cash'] = number_format($transaction_results['paid_by_cash'], 2);
 										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * $currency, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
 										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
 
 										try {
 											EmailHelper::sendPaymentAttachment($email);
-											// send to clinic
-											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
-
-											// if($clinic_email) {
-											//  $email['emailSubject'] = 'Health Partner - Successful Transaction By Mednefits Credits';
-											//  $email['nric'] = $user->NRIC;
-											//  $email['emailTo'] = $clinic_email->Email;
-											//  // $email['emailTo'] = 'allan.alzula.work@gmail.com';
-											//  $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
-											//  $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
-											//  $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
-											//  EmailHelper::sendPaymentAttachment($email);
-											// }
 											$returnObject->status = TRUE;
 											$returnObject->message = 'Payment Successfull';
 											$returnObject->data = $transaction_results;
