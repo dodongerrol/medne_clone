@@ -877,10 +877,12 @@ class TransactionController extends BaseController {
 								$email['emailTo'] = $user->Email;
 								$email['emailName'] = ucwords($user->Name);
 								$email['clinic_type_image'] = $image;
-								$email['emailPage'] = 'email-templates.member-refunded-transaction';
+								$email['emailPage'] = 'email-templates.email-member-refunded-transaction';
 								$email['lite_plan_status'] = $lite_plan_status;
 								$email['consultation'] = number_format($transaction->consultation_fees, 2);
 								$email['total_credits'] = number_format($total_credits, 2);
+								$email['paid_by_credits'] = number_format($transaction->credit_cost, 2);
+								$email['paid_by_cash'] = number_format($transaction->cash_cost, 2);
 								$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
 								$email['currency_type'] = strtoupper($transaction->currency_type);
 								EmailHelper::sendEmailRefundWithAttachment($email);

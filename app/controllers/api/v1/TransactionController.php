@@ -582,7 +582,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['url'] = 'http://staging.medicloud.sg';
 										$email['clinic_type_image'] = $image;
 										$email['transaction_type'] = 'Mednefits Credits';
-										$email['emailPage'] = 'email-templates.member-successful-transaction-v2';
+										$email['emailPage'] = 'email-templates.email-member-successful-transaction';
 										$email['dl_url'] = url();
 										$email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
 										$email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE;
@@ -591,7 +591,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['paid_by_cash'] = number_format($transaction_results['paid_by_cash'], 2);
 										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * $currency, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
-										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
+										$email['pdf_file'] = 'pdf-download.pdf-member-successful-transaction';
 
 										try {
 											EmailHelper::sendPaymentAttachment($email);
