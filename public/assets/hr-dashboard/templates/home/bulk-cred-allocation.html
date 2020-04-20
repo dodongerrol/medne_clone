@@ -51,7 +51,7 @@
 		</div> -->
 
 		
-		<div ng-if="spending_account_status.medical_enable == true && spending_account_status.wellness_enable == true" class="bulk-credit-tab-container">
+		<div ng-if="spending_account_status.medical_enabled == true && spending_account_status.wellness_enabled == true" class="bulk-credit-tab-container">
 			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'medical'}" ng-click="selectSpendingTab('medical')">
 				Medical Spending Account
 			</div>
@@ -91,7 +91,7 @@
 							<div class="credit-values-box-container">
 								
 								<div class="total-credits">
-									<div class="p-label p-gray">	
+									<div class="p-label" ng-class="{'p-gray' : !spending_account_status.paid_status}">	
 										<span class="p-label-value">Total Credits :</span>
 										<span class="p-tooltip">
 											<img ng-click="toggleTooltipDropdown('total_credits')" src="../../assets/hr-dashboard/img/info-tooltip.png">
@@ -109,11 +109,11 @@
 											</div>
 										</span>
 									</div>
-									<p class="p-value p-gray p-bold">
+									<p class="p-value p-bold" ng-class="{'p-gray' : !spending_account_status.paid_status}">
 										<span ng-bind="bulk_credit_values.currency_type">SGD</span>
 										<span ng-bind="bulk_credit_values.total_credits | number: 2"></span>
 									</p>
-									<p class="p-note">*Amount is blocked due to Pending Payment</p>
+									<p ng-if="!spending_account_status.paid_status" class="p-note">*Amount is blocked due to Pending Payment</p>
 									<div class="white-space-20"></div>
 
 									<div class="p-label">	
@@ -189,7 +189,7 @@
 									</p>
 									<div class="white-space-20"></div>
 
-									<div class="p-label p-gray">	
+									<div class="p-label" ng-class="{'p-gray' : !spending_account_status.paid_status}">	
 										<span class="p-label-value">Available Credits :</span>
 										<span class="p-tooltip">
 											<img ng-click="toggleTooltipDropdown('available_credits')" src="../../assets/hr-dashboard/img/info-tooltip.png">
@@ -207,11 +207,11 @@
 											</div>
 										</span>
 									</div>
-									<p class="p-value p-bold p-gray">
+									<p class="p-value p-bold" ng-class="{'p-gray' : !spending_account_status.paid_status}">
 										<span ng-bind="bulk_credit_values.currency_type">SGD</span>
 										<span ng-bind="bulk_credit_values.total_credits - bulk_credit_values.total_allocated_credits | number: 2"></span>
 									</p>
-									<p class="p-note">*Amount is blocked due to Pending Payment</p>
+									<p ng-if="!spending_account_status.paid_status" class="p-note">*Amount is blocked due to Pending Payment</p>
 								</div>
 
 							</div>
@@ -242,7 +242,7 @@
 														<span>{{list.allocation.current_allocation | number: 2}}</span>
 													</td>
 													<td>
-														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input ng-disabled="!bulk_credit_values.payment_status" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<td>
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.allocation.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
