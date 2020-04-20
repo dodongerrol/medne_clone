@@ -182,7 +182,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				scope.getEmployeeBulkCredit = function() {
 
 					scope.showLoading();
-					hrSettings.getEmployeeBulkAllocation(scope.page_ctr, scope.page_active)
+					hrSettings.getEmployeeBulkAllocation(scope.page_ctr, scope.page_active, scope.spendingTypeTabSelected)
 						.then(function(response){
 							console.log(response);
 							scope.employees = response.data.members.data;
@@ -193,13 +193,13 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 
 							scope.employees.map((value, index) => {
 
-								if (value.medical.new_allocation == 0) {
-									value.medical.new_allocation = null;
-								}
+								// if (value.medical.new_allocation == 0) {
+								// 	value.medical.new_allocation = null;
+								// }
 
-								if (value.wellness.new_allocation == 0) {
-									value.wellness.new_allocation = null;
-								}
+								// if (value.wellness.new_allocation == 0) {
+								// 	value.wellness.new_allocation = null;
+								// }
 
 							})
 							scope.hideLoading();
@@ -481,7 +481,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         scope.onLoad = function( ) {
         	scope.checkSession( );
 					// scope.getEmployeeList( );
-					scope.userCompanyCreditsAllocated();
+					// scope.userCompanyCreditsAllocated();
 					scope.getSpendingAcctStatus();
 					scope.getEmployeeBulkCredit();
 					// scope.inititalizeDatepicker();

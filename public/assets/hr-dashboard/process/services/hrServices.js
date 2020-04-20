@@ -336,8 +336,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/spending_account_status");
   };
 
-  hrFactory.getEmployeeBulkAllocation = function( per_page, page  ) {
-    return $http.get( serverUrl.url + "/hr/get_employee_lists_bulk_allocation?per_page="+ per_page +"&page=" + page );
+  hrFactory.getEmployeeBulkAllocation = function( per_page, page, type  ) {
+    return $http.get( serverUrl.url + "/hr/get_employee_lists_bulk_allocation?per_page="+ per_page +"&page=" + page + "&spending_type=" + type );
   };
 
   hrFactory.downloadBulkAllocation = function( token  ) {
