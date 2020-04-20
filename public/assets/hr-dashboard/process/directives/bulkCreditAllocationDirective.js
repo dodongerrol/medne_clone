@@ -79,7 +79,11 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         
 				scope.$on( 'refresh', function( evt, data ){
 					scope.onLoad();
-	    	});
+				});
+				
+				scope.formatDate	=	function(date, from, to){
+					return moment(date, from).format(to);
+				}
 
 	    	scope.passwordCredit = function( pass ){
 					if( !pass || pass == '' ){
@@ -187,20 +191,12 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							console.log(response);
 							scope.employees = response.data.members.data;
 							scope.employees_pagi = response.data.members;
-							scope.totalAllocation = response.data;
-							scope.spending_account_status.medical = response.data.medical_enable;
-							scope.spending_account_status.wellness = response.data.wellness_enable;
+							scope.bulk_credit_values = response.data;
 
 							scope.employees.map((value, index) => {
-
-								// if (value.medical.new_allocation == 0) {
-								// 	value.medical.new_allocation = null;
-								// }
-
-								// if (value.wellness.new_allocation == 0) {
-								// 	value.wellness.new_allocation = null;
-								// }
-
+								if (value.allocation.new_allocation == 0) {
+									value.allocation.new_allocation = null;
+								}
 							})
 							scope.hideLoading();
 							scope.inititalizeDatepicker();
@@ -299,14 +295,15 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				};
 				
 				scope.getSpendingAcctStatus = function () {
-          hrSettings.getSpendingAccountStatus()
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
 						.then(function (response) {
 							console.log(response);
 							scope.spending_account_status = response.data;
-							if( scope.spending_account_status.medical == false){
+							if( scope.spending_account_status.medical_enabled == false){
 								scope.spendingTypeTabSelected = 'wellness';
 							}
-							if( scope.spending_account_status.wellness == false){
+							if( scope.spending_account_status.wellness_enabled == false){
 								scope.spendingTypeTabSelected = 'medical';
 							}
 						});
@@ -484,7 +481,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					// scope.userCompanyCreditsAllocated();
 					scope.getSpendingAcctStatus();
 					scope.getEmployeeBulkCredit();
-					// scope.inititalizeDatepicker();
+					scope.inititalizeDatepicker();
 					// scope.companyAccountType ();
         }
 
