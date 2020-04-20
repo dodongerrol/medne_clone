@@ -399,39 +399,6 @@
         </div>
 
         <div class="item_service">
-          <!-- <div class="item-clinic-img">
-            <div class="clinic-type-img">
-              <img src="{{ $clinic_type_image }}" style="width: 50px;" />
-            </div>
-            <div class="clinic-type-service">
-              {{ $service }}
-            </div>
-            <div class="clinic-type-credits">
-              S$ <span>{{ $credits }}</span>
-            </div>
-          </div> -->
-
-          <!-- @if($lite_plan_status && $lite_plan_enabled == 1)
-          <div style="margin-bottom: 30px;min-height: 54px;">
-            <div class="clinic-type-img">
-            </div>
-            <div class="clinic-type-service" style="text-align: right;">
-              Consultation
-            </div>
-            <div class="clinic-type-credits">
-              S$ <span>{{ $consultation }}</span>
-            </div>
-          </div>
-          @endif -->
-
-          <!-- <div class="clinic-type-total" style="">
-            <div class="one">
-              Total
-            </div>
-            <div class="two">
-              S$ <span>{{ $total_amount }}</span>
-            </div>
-          </div> -->
           <div class="billing-details-body-container">
             <div class="row-grid">
               <div class="item title">
@@ -465,7 +432,7 @@
                 Paid by Credits
               </div>
               <div class="item amount">
-                <span>SGD</span> <span>50.00</span>
+                <span>SGD</span> <span>{{$paid_by_credits}}</span>
               </div>
             </div>
             <div class="row-grid">
@@ -473,7 +440,7 @@
                 Paid by Cash
               </div>
               <div class="item amount">
-                <span>SGD</span> <span>50.00</span>
+                <span>SGD</span> <span>{{$paid_by_cash}}</span>
               </div>
             </div>
           </div>
