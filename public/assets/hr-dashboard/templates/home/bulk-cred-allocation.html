@@ -68,11 +68,10 @@
 						<div class="col-md-8 spending-account-header-values">
 							<p>
 								<span class="bold-font">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} Spending Account</span>	
-								<!-- <span>Wellness Spending Account</span>	 -->
 							</p>
 							<p>
-								<span class="duration-value">12 month term</span>
-								<span>01/01/2020 - 31/12/2020</span>
+								<span class="duration-value" ng-bind="bulk_credit_values.term_duration + ' month term'"></span>
+								<span ng-bind="formatDate(bulk_credit_values.term_start, null, 'DD/MM/YYYY') + ' - ' + formatDate(bulk_credit_values.term_end, null, 'DD/MM/YYYY')"></span>
 							</p>
 						</div>
 						<div class="col-md-4">
@@ -111,8 +110,8 @@
 										</span>
 									</div>
 									<p class="p-value p-gray p-bold">
-										<span>SGD</span>
-										200,000.00
+										<span ng-bind="bulk_credit_values.currency_type">SGD</span>
+										<span ng-bind="bulk_credit_values.total_credits | number: 2"></span>
 									</p>
 									<p class="p-note">*Amount is blocked due to Pending Payment</p>
 									<div class="white-space-20"></div>
@@ -136,8 +135,8 @@
 										</span>
 									</div>
 									<p class="p-value p-bold">
-										<span>SGD</span>
-										200,000.00
+										<span ng-bind="bulk_credit_values.currency_type">SGD</span>
+										<span ng-bind="bulk_credit_values.total_purchase_credits | number: 2"></span>
 									</p>
 									<div class="white-space-20"></div>
 
@@ -160,8 +159,8 @@
 										</span>
 									</div>
 									<p class="p-value p-bold">
-										<span>SGD</span>
-										200,000.00
+										<span ng-bind="bulk_credit_values.currency_type">SGD</span>
+										<span ng-bind="bulk_credit_values.total_bonus_credits | number: 2"></span>
 									</p>
 								</div>
 
@@ -185,8 +184,8 @@
 										</span>
 									</div>
 									<p class="p-value p-bold">
-										<span>SGD</span>
-										200,000.00
+										<span ng-bind="bulk_credit_values.currency_type">SGD</span>
+										<span ng-bind="bulk_credit_values.total_allocated_credits | number: 2"></span>
 									</p>
 									<div class="white-space-20"></div>
 
@@ -209,8 +208,8 @@
 										</span>
 									</div>
 									<p class="p-value p-bold p-gray">
-										<span>SGD</span>
-										200,000.00
+										<span ng-bind="bulk_credit_values.currency_type">SGD</span>
+										<span ng-bind="bulk_credit_values.total_credits - bulk_credit_values.total_allocated_credits | number: 2"></span>
 									</p>
 									<p class="p-note">*Amount is blocked due to Pending Payment</p>
 								</div>
@@ -229,42 +228,25 @@
 													<th colspan="3" style="text-align: center; width: 666px;">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }}</th>
 												</tr>
 												<tr>
-													<!-- medical span -->
 													<th style="width: 227px;">Current Allocated<br>Credits</th>
 													<th style="width: 223px;">New Allocated<br>Credits</th>
 													<th style="width: 215px;">Effective Date of<br>New Allocated Credits</th>
-													<!-- wellness span -->
-													<!-- <th ng-if="totalAllocation.wellness_enable">Current Allocation</th>
-													<th ng-if="totalAllocation.wellness_enable">New Allocation</th>
-													<th ng-if="totalAllocation.wellness_enable">Effective Date of New Allocation</th> -->
 												</tr>
 											</thead>
 											<tbody>
 												<tr ng-repeat="list in employees">
 													<td class="grayed-out">{{list.member_id}}</td>
 													<td class="grayed-out">{{list.fullname}}</td>
-													<!-- medical span -->
 													<td class="grayed-out" >
 														<span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> 
-														<span ng-if="spendingTypeTabSelected == 'medical'">{{list.medical.current_allocation | number: 2}}</span>
-														<span ng-if="spendingTypeTabSelected == 'wellness'">{{list.wellness.current_allocation | number: 2}}</span>
+														<span>{{list.allocation.current_allocation | number: 2}}</span>
 													</td>
 													<td>
-														<input ng-if="spendingTypeTabSelected == 'medical'" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.medical.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
-														<input ng-if="spendingTypeTabSelected == 'wellness'" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<td>
-														<input ng-if="spendingTypeTabSelected == 'medical'" class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.medical.new_allocation, list.medical.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
-														<input ng-if="spendingTypeTabSelected == 'wellness'" class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.wellness.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.allocation.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
-													<!-- Wellness -->
-													<!-- <td class="grayed-out" ng-if="totalAllocation.wellness_enable" ><span style="text-transform: uppercase">{{totalAllocation.currency_type}}</span> {{list.wellness.current_allocation | number: 2}}</td>
-													<td ng-if="totalAllocation.wellness_enable" >
-														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
-													</td>
-													<td ng-if="totalAllocation.wellness_enable" >
-														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.wellness.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.wellness.new_allocation, list.wellness.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
-													</td>-->
 												</tr>
 											</tbody>
 										</table>
@@ -308,17 +290,10 @@
 										<div class="total-number-container">
 											<span style="margin-right: 10px;">Total {{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} Allocated Credits</span>
 											<div class="total-number-box grayed-out">
-												<span ng-if="spendingTypeTabSelected == 'medical'" class="items">{{totalAllocation.total_medical_allocation | number: 2}}</span>
-												<span ng-if="spendingTypeTabSelected == 'wellness'" class="items">{{totalAllocation.total_wellness_allocation | number: 2}}</span>
+												<span class="items" ng-bind="bulk_credit_values.total_allocated_credits | number: 2"></span>
 											</div>
-											<div>/ <span class="p-gray">20,000.00</span></div>
+											<div>/ <span class="p-gray" ng-bind="bulk_credit_values.total_credits | number: 2">20,000.00</span></div>
 										</div>
-										<!-- <div class="total-number-container">
-											<span>Company Allocated Wellness Credits</span>
-											<div class="total-number-box grayed-out">
-												<span class="items">{{totalAllocation.currency_type}} {{totalAllocation.total_wellness_allocation | number: 2}}</span>
-											</div>
-										</div> -->
 									</div>
 								</div>	
 							</div>
