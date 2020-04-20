@@ -79,7 +79,11 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         
 				scope.$on( 'refresh', function( evt, data ){
 					scope.onLoad();
-	    	});
+				});
+				
+				scope.formatDate	=	function(date, from, to){
+					return moment(date, from).format(to);
+				}
 
 	    	scope.passwordCredit = function( pass ){
 					if( !pass || pass == '' ){
@@ -182,23 +186,17 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				scope.getEmployeeBulkCredit = function() {
 
 					scope.showLoading();
-					hrSettings.getEmployeeBulkAllocation(scope.page_ctr, scope.page_active)
+					hrSettings.getEmployeeBulkAllocation(scope.page_ctr, scope.page_active, scope.spendingTypeTabSelected)
 						.then(function(response){
 							console.log(response);
 							scope.employees = response.data.members.data;
 							scope.employees_pagi = response.data.members;
-							scope.totalAllocation = response.data;
+							scope.bulk_credit_values = response.data;
 
 							scope.employees.map((value, index) => {
-
-								if (value.medical.new_allocation == 0) {
-									value.medical.new_allocation = null;
+								if (value.allocation.new_allocation == 0) {
+									value.allocation.new_allocation = null;
 								}
-
-								if (value.wellness.new_allocation == 0) {
-									value.wellness.new_allocation = null;
-								}
-
 							})
 							scope.hideLoading();
 							scope.inititalizeDatepicker();
@@ -295,16 +293,17 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					var token = localStorage.getItem("token");
 					hrSettings.downloadBulkAllocation( token );
 				};
-
+				
 				scope.getSpendingAcctStatus = function () {
-          hrSettings.getSpendingAccountStatus()
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
 						.then(function (response) {
 							console.log(response);
 							scope.spending_account_status = response.data;
-							if( scope.spending_account_status.medical == false){
+							if( scope.spending_account_status.medical_enabled == false){
 								scope.spendingTypeTabSelected = 'wellness';
 							}
-							if( scope.spending_account_status.wellness == false){
+							if( scope.spending_account_status.wellness_enabled == false){
 								scope.spendingTypeTabSelected = 'medical';
 							}
 						});
@@ -479,6 +478,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         scope.onLoad = function( ) {
         	scope.checkSession( );
 					// scope.getEmployeeList( );
+					// scope.userCompanyCreditsAllocated();
 					scope.getSpendingAcctStatus();
 					scope.getEmployeeBulkCredit();
 					scope.inititalizeDatepicker();
@@ -486,7 +486,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         }
 
 				// scope.checkCompanyBalance();
-				scope.userCompanyCreditsAllocated();
+				
 	      scope.onLoad();
 				}
 

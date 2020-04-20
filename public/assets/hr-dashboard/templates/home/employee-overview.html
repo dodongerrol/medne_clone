@@ -60,7 +60,7 @@
 						<img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()">
 					</label>
 				</form>
-				<button class="btn-export-member" ng-if="spending_account_status.medical == true && spending_account_status.wellness == true || spending_account_status.medical == true || spending_account_status.wellness == true" ng-click="goToBulkAllocation()">Bulk Credits Allocation</button>
+				<button class="btn-export-member" ng-if="(spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)" ng-click="goToBulkAllocation()">Bulk Credits Allocation</button>
 				<button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button>
 				<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
 				<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
