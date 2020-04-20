@@ -14299,7 +14299,8 @@ class BenefitsDashboardController extends \BaseController {
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
 		$members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $spending->customer_id)->first();
-
+		$pending = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where('paid', 'false')->count();
+		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		$total_allocation = 0;
 		$term_start = null;
 		$term_end = null;
@@ -14308,9 +14309,13 @@ class BenefitsDashboardController extends \BaseController {
 		if($spending_type == 'medical') {
 			$term_start = $spending->medical_spending_start_date;
 			$term_end = $spending->medical_spending_end_date;
+			$account_type = $plan->account_type;
+			$plan_method = $spending->medical_plan_method;
 		} else {
 			$term_start = $spending->wellness_spending_start_date;
 			$term_end = $spending->wellness_spending_end_date;
+			$account_type = $plan->account_type;
+			$plan_method = $spending->wellness_plan_method;
 		}
 
 		$date1 = new DateTime($term_start);
@@ -14393,6 +14398,7 @@ class BenefitsDashboardController extends \BaseController {
 			'term_end'	=> $term_end,
 			'term_duration'	=> $term_duration,
 			'spending_type'	=> $spending_type,
+			'payment_status' => $account_type == "lite_plan" && $plan_method == "pre_paid" && $pending > 0 ? false : true,
 			'members' => $paginate
 		];
   }
