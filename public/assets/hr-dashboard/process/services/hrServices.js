@@ -329,8 +329,7 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   };
 
   hrFactory.getSpendingAccountStatus = function() {
-    return $http.get( serverUrl.url + "/hr/spending_account_status");
-    // return $http.get( serverUrl.url + "/hr/get_spending_account_status");
+    return $http.get( serverUrl.url + "/hr/get_spending_account_status");
   };
   hrFactory.getPrePostStatus = function() {
     return $http.get( serverUrl.url + "/hr/spending_account_status");

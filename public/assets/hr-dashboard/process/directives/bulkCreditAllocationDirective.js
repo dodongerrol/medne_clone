@@ -295,14 +295,15 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				};
 				
 				scope.getSpendingAcctStatus = function () {
-          hrSettings.getSpendingAccountStatus()
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
 						.then(function (response) {
 							console.log(response);
 							scope.spending_account_status = response.data;
-							if( scope.spending_account_status.medical == false){
+							if( scope.spending_account_status.medical_enabled == false){
 								scope.spendingTypeTabSelected = 'wellness';
 							}
-							if( scope.spending_account_status.wellness == false){
+							if( scope.spending_account_status.wellness_enabled == false){
 								scope.spendingTypeTabSelected = 'medical';
 							}
 						});

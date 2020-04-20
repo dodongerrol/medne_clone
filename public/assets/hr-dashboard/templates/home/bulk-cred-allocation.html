@@ -51,7 +51,7 @@
 		</div> -->
 
 		
-		<div ng-if="spending_account_status.medical == true && spending_account_status.wellness == true" class="bulk-credit-tab-container">
+		<div ng-if="spending_account_status.medical_enable == true && spending_account_status.wellness_enable == true" class="bulk-credit-tab-container">
 			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'medical'}" ng-click="selectSpendingTab('medical')">
 				Medical Spending Account
 			</div>
