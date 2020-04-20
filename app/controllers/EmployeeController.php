@@ -2356,9 +2356,10 @@ class EmployeeController extends \BaseController {
                     return array('status' => false, 'message' => 'New Medical Entitlement Usage Date exceeded the Spending End Date.');
                 }
                 $plan_dates['valid_date'] = $spending_account_company->medical_spending_end_date;
+                $medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $input['member_id']);
+                $credits = $medical_credit_data['allocation'];
                 if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {
-                  $medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $input['member_id']);
-                  if((float)$input['new_allocation_credits'] > $medical_credit_data['allocation']) {
+                  if((float)$input['new_allocation_credits'] > $credits) {
                     $new_allocation = $input['new_allocation_credits'] - $medical_credit_data['allocation'];
                     // check medical balance
                     if($new_allocation > $customer_credits->balance) {
@@ -2385,11 +2386,11 @@ class EmployeeController extends \BaseController {
                     return array('status' => false, 'message' => 'New Wellness Entitlement Usage Date exceeded the Spending End Date.');
                 }
                 $plan_dates['valid_date'] = $spending_account_company->wellness_spending_end_date;
-                
+                $wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $input['member_id']);
+                $credits = $wellness_credit_data['allocation'];
                 if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
-                  $wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $input['member_id']);
-                  if((float)$input['new_allocation_credits'] > $wellness_credit_data['allocation']) {
-                    $new_allocation = $input['new_allocation_credits'] - $wellness_credit_data['allocation'];
+                  if((float)$input['new_allocation_credits'] > $credits) {
+                    $new_allocation = $input['new_allocation_credits'] - $credits;
                     // check medical balance
                     if($new_allocation > $customer_credits->wellness_credits) {
                       return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
