@@ -297,7 +297,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					var token = localStorage.getItem("token");
 					hrSettings.downloadBulkAllocation( token );
 				};
-
+				
 				scope.getSpendingAcctStatus = function () {
           hrSettings.getSpendingAccountStatus()
 						.then(function (response) {
@@ -481,14 +481,15 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         scope.onLoad = function( ) {
         	scope.checkSession( );
 					// scope.getEmployeeList( );
+					scope.userCompanyCreditsAllocated();
 					scope.getSpendingAcctStatus();
 					scope.getEmployeeBulkCredit();
-					scope.inititalizeDatepicker();
+					// scope.inititalizeDatepicker();
 					// scope.companyAccountType ();
         }
 
 				// scope.checkCompanyBalance();
-				scope.userCompanyCreditsAllocated();
+				
 	      scope.onLoad();
 				}
 
