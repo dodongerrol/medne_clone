@@ -52,10 +52,10 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					if( scope.spendingTypeTabSelected != opt ){
 						scope.spendingTypeTabSelected = opt;
 						// scope.page_ctr = 10;
-						// scope.page_active = 1;
-						// scope.employees = {};
-						// scope.employees_pagi = {};
-						// scope.getEmployeeBulkCredit();
+						scope.page_active = 1;
+						scope.employees = {};
+						scope.employees_pagi = {};
+						scope.getEmployeeBulkCredit();
 					}
 				}
 
