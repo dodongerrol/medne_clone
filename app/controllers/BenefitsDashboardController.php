@@ -10421,8 +10421,8 @@ class BenefitsDashboardController extends \BaseController {
 				);
 
 				// array_push($transaction_details, $format);
-				return View::make('pdf-download.member-successful-transac', $format);
-				$pdf = PDF::loadView('pdf-download.member-successful-transac', $format);
+				// return View::make('pdf-download.pdf-member-successful-transaction', $format);
+				$pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $format);
 				return $pdf->stream();
 			}
 		}
