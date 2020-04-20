@@ -113,7 +113,7 @@ class TransactionHelper
        	$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
        	$consultation_fees = $consult_paid_amount;
        } else {
-       	$consultation_fees = $peak_amount;
+       	$consultation_fees = $clinic->consultation_fees;
        }
      }
     } else {
@@ -135,7 +135,7 @@ class TransactionHelper
       }
     }
 
-    return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => $consultation_fees, 'clinic_peak_status' => $clinic_peak_status);
+    return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => (float)$consultation_fees, 'clinic_peak_status' => $clinic_peak_status);
 	}
 
 
