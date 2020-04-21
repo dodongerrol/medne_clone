@@ -27,19 +27,21 @@
       }
 
       .top-content{
-        width: 100%;
+        /* width: 100%; */
         position: relative;
         /* overflow: hidden; */
         border-left: 1px solid #ccc;
         border-right: 1px solid #ccc;
         border-top: 1px solid #ccc;
-        min-height: 382px;
+        /* min-height: 382px; */
+        box-sizing: border-box;
       }
 
       .top-content .logo-container{
         text-align: center;
         position: relative;
         height: 77px;
+        max-height: 77px;
         z-index: 9;
         padding-top: 12px;
         padding-left:70px;
@@ -48,6 +50,7 @@
       
       .top-content .logo-container img{
         height: 130px;
+        max-height: 130px;
         width: 130px;
         padding: 12px;
         border-radius: 50%;
@@ -57,13 +60,16 @@
       .top-content .header-content{
         text-align: center;
         color: #FFF !important;
-        width: 100%;
+        /* width: 100%; */
         overflow: hidden;
         position: relative;
         z-index: 5;
         background-color: #3E91C8;
         padding-top: 80px;
-        min-height: 305px;
+        padding-left: 60px;
+        padding-right: 60px;
+        /* min-height: 305px; */
+        box-sizing: border-box;
       }
 
       .top-content .header-content p{
@@ -77,21 +83,23 @@
         /*border-bottom: 1px solid #ccc;*/
         min-height: 725px;
         background: #FFF;
+        box-sizing: border-box;
       }
 
       .body-content .trans-content{
         background: #F7F7F7;
         padding: 0px 70px;
-        width:  100%;
+        /* width:  100%; */
         border-left: 1px solid #ccc;
         border-right: 1px solid #ccc;
-        height: 140px;
+        /* height: 140px; */
+        box-sizing: border-box;
       }
 
       .trans-content .item{
         display: inline-block;
         width: 100%;
-        height: 70px;
+        /* height: 70px; */
         /* margin: 10px 0 !important; */
         padding: 20px 0;
       }
@@ -125,9 +133,10 @@
       .body-content .receipt-details{
         padding: 30px 70px 10px 70px;
         min-height: 100px;
-        width: 100%;
+        /* width: 100%; */
         border-left: 1px solid #ccc;
         border-right: 1px solid #ccc;
+        box-sizing: border-box;
       }
 
       .body-content .receipt-details .row{
@@ -149,10 +158,11 @@
         padding: 30px 70px;
         min-height: 100px;
         overflow: hidden;
-        width: 100%;
+        /* width: 100%; */
         border-left: 1px solid #ccc;
         border-right: 1px solid #ccc;
         border-bottom: 1px solid #ccc;
+        box-sizing: border-box;
       }
 
       .billing-details-header {
@@ -160,6 +170,8 @@
         padding: 0 70px;
         border-left: 1px solid #ccc;
         border-right: 1px solid #ccc;
+        min-height: 30px;
+        box-sizing: border-box;
       }
 
       .billing-details-header span {
@@ -220,7 +232,7 @@
         width: 285px;
       }
       
-      .contact-content .item.one{
+      .contact-content .one{
         width: 445px;
       }
       
