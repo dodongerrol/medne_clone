@@ -681,6 +681,7 @@ app.directive("employeeOverviewDirective", [
 
         scope.spending_account_status = {};
         scope.getSpendingAcctStatus = function () {
+          // hrSettings.getSpendingAccountStatus()
           hrSettings.getPrePostStatus()
 						.then(function (response) {
 							console.log(response);
