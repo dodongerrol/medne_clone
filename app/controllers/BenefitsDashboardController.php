@@ -14628,6 +14628,7 @@ class BenefitsDashboardController extends \BaseController {
 		$pending = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where('paid', 'false')->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		$total_allocation = 0;
+		$total_supp = 0;
 		$term_start = null;
 		$term_end = null;
 		$term_duration = null;
@@ -14657,7 +14658,7 @@ class BenefitsDashboardController extends \BaseController {
 				$allocation  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
 			}
 			
-			
+			$total_supp += $allocation['total_supp'];
 			$total_allocation += $allocation['allocation'];
 		}
 
@@ -14719,7 +14720,7 @@ class BenefitsDashboardController extends \BaseController {
 			'total_purchase_credits' => $company_credits['total_purchase_credits'],
 			'total_bonus_credits' => $company_credits['total_bonus_credits'],
 			'total_allocated_credits' => $total_allocation,
-			'total_credits'		=> $company_credits['total_purchase_credits'] + $company_credits['total_bonus_credits'],
+			'total_credits'		=> $company_credits['total_purchase_credits'] + $company_credits['total_bonus_credits'] + $total_supp,
 			'term_start'	=> $term_start,
 			'term_end'	=> $term_end,
 			'term_duration'	=> $term_duration,

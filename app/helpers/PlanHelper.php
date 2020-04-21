@@ -2206,6 +2206,7 @@ class PlanHelper {
 		$allocation = 0;
 		$medical_balance = 0;
 		$balance = 0;
+		$total_supp = 0;
 
         // check if employee has reset credits
 		$employee_credit_reset_medical = DB::table('credit_reset')
@@ -2260,6 +2261,10 @@ class PlanHelper {
 				if($history->where_spend == "credits_back_from_in_network") {
 					$credits_back += $history->credit;
 				}
+
+				if($history->logs == "added_by_hr_supplementary") {
+					$total_supp += $history->credit;
+				}
 			}
 
 			$pro_allocation = DB::table('wallet_history')
@@ -2305,7 +2310,7 @@ class PlanHelper {
 				DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
 			}
 
-			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'plan_start' => $user_plan_history->date);
+			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'plan_start' => $user_plan_history->date, 'total_supp' => $total_supp);
 
 		} else {
 			return false;
@@ -2592,6 +2597,7 @@ class PlanHelper {
 		$total_deduction_credits_wellness = 0;
 		$allocation_wellness = 0;
 		$balance = 0;
+		$total_supp = 0;
     	// get all user wallet logs wellness
 		$employee_credit_reset_wellness = DB::table('credit_reset')
 		->where('id', $user_id)
@@ -2645,6 +2651,10 @@ class PlanHelper {
 				if($history->where_spend == "credits_back_from_in_network") {
 					$credits_back_wellness += $history->credit;
 				}
+
+				if($history->logs == "added_by_hr_supplementary") {
+					$total_supp += $history->credit;
+				}
 			}
 
 			$get_allocation_spent_temp_wellness = $in_network_wellness_temp_spent - $credits_back_wellness;
@@ -2680,7 +2690,7 @@ class PlanHelper {
 			}
 
 
-			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'plan_start' => $user_plan_history->date);
+			return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'plan_start' => $user_plan_history->date, 'total_supp' => $total_supp);
 		} else {
 			return false;
 		}
