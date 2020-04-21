@@ -316,8 +316,6 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
-
-					// return $data;
 					
 					try {
 						$result = $transaction->createTransaction($data);
@@ -589,6 +587,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['total_amount'] = number_format($total_amount, 2);
 										$email['paid_by_credits'] = number_format($transaction_results['paid_by_credits'], 2);
 										$email['paid_by_cash'] = number_format($transaction_results['paid_by_cash'], 2);
+										$email['cap_per_visit'] = number_format($result->cap_per_visit, 2);
 										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * $currency, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
 										$email['pdf_file'] = 'pdf-download.pdf-member-successful-transaction';
