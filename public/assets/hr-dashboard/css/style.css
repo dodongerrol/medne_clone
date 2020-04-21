@@ -8619,14 +8619,19 @@ span.dropdown-entitlement.disabled {
   color: #000;
 }
 
-.allocationEntitlementSuccessModal .sa-button-container {
+.allocationEntitlementErrorModal p {
+  color: #232323e8;
+  text-align: left;
+}
+
+.allocationEntitlementSuccessModal .sa-button-container, .allocationEntitlementErrorModal .sa-button-container{
   text-align: center;
 }
 
 .allocationEntitlementModal .sa-button-container {
   text-align : right;
 }
-.allocationEntitlementModal .sa-button-container button, .allocationEntitlementSuccessModal .sa-button-container button {
+.allocationEntitlementModal .sa-button-container button, .allocationEntitlementSuccessModal .sa-button-container button, .allocationEntitlementErrorModal .sa-button-container button {
   background: #0392cf !important;
   border-radius: 2px;
   font-size: 14px;
