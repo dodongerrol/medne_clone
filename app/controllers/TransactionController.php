@@ -883,6 +883,7 @@ class TransactionController extends BaseController {
 								$email['total_credits'] = number_format($total_credits, 2);
 								$email['paid_by_credits'] = number_format($transaction->credit_cost, 2);
 								$email['paid_by_cash'] = number_format($transaction->cash_cost, 2);
+								$email['cap_per_visit'] = number_format($transaction->cap_per_visit, 2);
 								$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
 								$email['currency_type'] = strtoupper($transaction->currency_type);
 								EmailHelper::sendEmailRefundWithAttachment($email);

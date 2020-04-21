@@ -341,7 +341,7 @@
                 Cap Per Visit
               </div>
               <p style="color: #333;font-size: 22px;font-weight: 700;margin-top: 0;">
-                {{ $currency_symbol }} {{ $member }}
+                {{ $currency_symbol }} {{ $cap_per_visit }}
               </p>
             </div>
           </div>
