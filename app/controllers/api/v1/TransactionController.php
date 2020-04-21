@@ -563,7 +563,8 @@ class Api_V1_TransactionController extends \BaseController
 										
 										// send email
 										$email['member'] = ucwords($user->Name);
-										$email['credits'] = $clinic->currency_type == "myr" ? number_format($total_credits_cost * $currency, 2) : number_format($total_credits_cost, 2);
+										$email['credits'] = number_format($transaction_results['total_amount'], 2);
+										$email['bill_amount'] = number_format($transaction_results['bill_amount'], 2);
 										$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
 										$email['trans_id'] = $transaction_id;
 										$email['transaction_date'] = date('d F Y, h:ia', strtotime($date_of_transaction));
@@ -572,10 +573,11 @@ class Api_V1_TransactionController extends \BaseController
 										$email['health_provider_city'] = $clinic->City;
 										$email['health_provider_country'] = $clinic->Country;
 										$email['health_provider_phone'] = $clinic->Phone;
-										$email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
-										$email['emailSubject'] = 'Member - Successful Transaction';
+										$email['health_provider_postal'] = $clinic->Postal;
+										$email['service'] = $procedure;
+										$email['emailSubject'] = 'Your Mednefits E-Receipt - '.$email['transaction_id'];
 										$email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
-										// $email['emailTo'] = 'allan.alzula.work@gmail.com';
+										// $email['emailTo'] = 'allan.alzula.work@gmail.com'; 
 										$email['emailName'] = ucwords($user->Name);
 										$email['url'] = 'http://staging.medicloud.sg';
 										$email['clinic_type_image'] = $image;
@@ -587,7 +589,8 @@ class Api_V1_TransactionController extends \BaseController
 										$email['total_amount'] = number_format($total_amount, 2);
 										$email['paid_by_credits'] = number_format($transaction_results['paid_by_credits'], 2);
 										$email['paid_by_cash'] = number_format($transaction_results['paid_by_cash'], 2);
-										$email['cap_per_visit'] = number_format($result->cap_per_visit, 2);
+										$email['cap_per_visit'] = $result->cap_per_visi > 0 ? number_format($result->cap_per_visit, 2) : 'Not Applicable';
+										$email['cap_per_visit_status'] = $result->cap_per_visi > 0 ? true : false;
 										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * $currency, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
 										$email['pdf_file'] = 'pdf-download.pdf-member-successful-transaction';
