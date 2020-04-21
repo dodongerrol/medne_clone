@@ -322,7 +322,8 @@
               <p style="color: #333;font-size: 19px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
                 <span class="health-provider-name" style="margin: 0 0 20px">{{ $health_provider_name }}</span> 
                 <br>
-                {{ $health_provider_address }} {{ $health_provider_city }}, {{ $health_provider_country }}
+                {{ $health_provider_address }} {{ $health_provider_city }}, 
+                {{ $health_provider_country }} {{ $health_provider_postal }}
                 <br>
                 {{ $health_provider_phone }}
               </p>
@@ -333,7 +334,7 @@
                 Service
               </div>
               <p style="color: #333;font-size: 19px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
-                {{ $health_provider_name }} <br>
+                {{ $service }} <br>
               </p>
             </div>
           </div>
@@ -352,8 +353,13 @@
               <div style="font-size: 19px;color: #999;margin-bottom: 5px;">
                 Cap Per Visit
               </div>
+              
               <p style="color: #333;font-size: 19px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
-                {{ $currency_symbol }} {{ $cap_per_visit }}
+                @if($cap_per_visit_status)
+                  {{ $currency_symbol }}
+                @endif
+
+                {{ $cap_per_visit }}
               </p>
             </div>
           </div>
@@ -421,9 +427,13 @@
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/telephone.png">
                 </div>
                 <div class="child-two">
+                @if($currency_symbol == "SGD")
                   <span style="text-decoration: underline;">+65 6254 7889</span>
                   <span style="margin: 0 0 0 5px;">or</span> 
                   <span style="text-decoration: underline;">+603 7890 1770</span>
+                @else
+                  <span style="text-decoration: underline;">+603 7890 1770</span>
+                @endif
                 </div>
               </div>
               <div class="contact-support-item">
