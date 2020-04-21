@@ -8682,6 +8682,10 @@ span.dropdown-entitlement.disabled {
   width: 60%;
 }
 
+.bulk-cred-input.new-allocation:disabled{
+  opacity: .5;
+}
+
 .bulk-cred-footer {
   display: flex;
 }
