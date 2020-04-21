@@ -33,7 +33,9 @@ class HomeController extends BaseController {
  public function testEmailSend( )
  {
 
-  $data['to'] = 'jeamar1234@gmail.com';
+  // $data['to'] = 'jeamar1234@gmail.com';
+  $data['to'] = 'info@medicloud.sg';
+  // $data['to'] = 'shielamaealvarez@ymail.com';
   $data['subject'] = "Email Test";
   $data['credits'] = 1;
   $data['transaction_id'] = 1;
@@ -56,23 +58,32 @@ class HomeController extends BaseController {
   $data['transaction_type'] = 1;
   $data['currency_symbol'] = 'SGD';
   $data['total_credits'] = 1;
+  $data['health_provider_postal'] = 1;
+  $data['cap_per_visit_status'] = true;
+  $data['cap_per_visit'] = 1;
+  $data['paid_by_credits'] = 1;
+  $data['paid_by_cash'] = 1;
 
   // return View::make('pdf-download/pdf-member-successful-transaction', $data);
   // return View::make('email-templates/email-member-successful-transaction', $data);
 
-  $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
-  $pdf->getDomPDF()->get_option('enable_html5_parser');
-  $pdf->setPaper('A4', 'portrait');
-  return $pdf->stream();
+  // $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
+  // $pdf->getDomPDF()->get_option('enable_html5_parser');
+  // $pdf->setPaper('A4', 'portrait');
+  // return $pdf->stream();
   
   // return $pdf->render();
   // return $pdf->download('sample.pdf');
 
-  // return Mail::send('pdf-download.pdf-member-successful-transaction', $data, function($message) use ($data){
-  //   $message->from('noreply@medicloud.sg', 'MediCloud');
-  //   $message->to($data['to'], 'MediCloud');
-  //   $message->subject($data['subject']);
-  // });
+  return Mail::send('pdf-download.pdf-member-successful-transaction', $data, function($message) use ($data){
+    $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
+    $pdf->getDomPDF()->get_option('enable_html5_parser');
+    $pdf->setPaper('A4', 'portrait');
+    $message->from('noreply@medicloud.sg', 'MediCloud');
+    $message->to($data['to'], 'MediCloud');
+    $message->subject($data['subject']);
+    $message->attachData($pdf->output(), 'sample-attach.pdf');
+  });
 }
 
 public function testEmailClinicPeak( )
