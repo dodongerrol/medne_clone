@@ -391,7 +391,7 @@ app.directive("claimDirective", [
             scope.showLoading();
             $http.post(base_url + "clinic/search_by_nric_transactions", data)
               .success(function(response) {
-                scope.backdate_list = response;
+                scope.backdate_list = response.data;
                 scope.hideLoading();
               });
           };
@@ -617,7 +617,7 @@ app.directive("claimDirective", [
                 console.log( response );
                 // scope.hideLoading();
                 scope.backdate_list = response;
-                localStorage.setItem("currency_type",scope.backdate_list.data.data.currency_type);
+                // localStorage.setItem("currency_type",scope.backdate_list.data.data.currency_type);
               });
           };
         // ================ //
