@@ -10432,6 +10432,7 @@ class BenefitsDashboardController extends \BaseController {
 		}
 	
 	}
+	
 	public function downloadTransactionReceiptOld($transaction_id)
 	{
 
