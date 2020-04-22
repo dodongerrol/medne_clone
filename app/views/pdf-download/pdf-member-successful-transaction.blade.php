@@ -138,7 +138,9 @@
       }
 
       .body-content .receipt-details .row .one{
-        width: 370px;
+        /* width: 370px; */
+        width: 350px;
+        margin-right: 20px;
       }
 
       .body-content .item_service{
