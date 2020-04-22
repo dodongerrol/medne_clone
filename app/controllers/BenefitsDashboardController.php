@@ -2085,7 +2085,7 @@ class BenefitsDashboardController extends \BaseController {
 			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d')) {
 				$emp_status = 'pending';
 			}
-
+			
 			$credit_balance = self::floatvalue($wallet->balance);
 			// get pending allocation for medical
 			$e_claim_amount_pending_medication = DB::table('e_claim')
@@ -2141,6 +2141,8 @@ class BenefitsDashboardController extends \BaseController {
 					'wellness'	=> $wellness,
 					'currency_type' => $wallet->currency_type
 				),
+				'account_type'	=>	$active_plan->account_type,
+				'plan_method_type'	=>	$active_plan->plan_method,
 				'medical_wallet'		=> $medical_wallet,
 				'wellness_wallet'		=> $wellness_wallet,
 				'dependents'	  		=> $dependets,
@@ -3312,6 +3314,8 @@ class BenefitsDashboardController extends \BaseController {
 					'wellness'	=> $wellness,
 					'currency_type' => $wallet->currency_type
 				),
+				'account_type'	=>	$active_plan->account_type,
+				'plan_method_type'	=>	$active_plan->plan_method,
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
 				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
