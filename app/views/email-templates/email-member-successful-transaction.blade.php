@@ -65,7 +65,7 @@
         position: relative;
         z-index: 5;
         background-color: #3E91C8;
-        padding-top: 80px;
+        padding-top: 90px;
         padding-left: 60px;
         padding-right: 60px;
         /* min-height: 305px; */
@@ -151,7 +151,9 @@
       }
 
       .body-content .receipt-details .row .one{
-        width: 445px;
+        /* width: 445px; */
+        width: 380px;
+        margin-right: 65px;
       }
 
       .body-content .item_service{
@@ -262,9 +264,10 @@
         vertical-align: middle;
       }
       
-      .contact-support-item >span:first-child {
+      .contact-support-item .child-one {
         margin: 0 20px 0 0;
         height: 45px;
+        max-height: 45px;
       }
     </style>
   </head><body>
@@ -280,7 +283,7 @@
           <p style="font-size: 19px; width: 537px; margin: 0 auto 23px auto;">
             You can also view your receipts under the History section in Mednefits app.
           </p>
-          <p style="font-size: 45px;font-weight: 700;">
+          <p style="font-size: 45px;font-weight: 700;margin-bottom: 20px;">
             Total: <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
           </p>
 
@@ -322,6 +325,7 @@
               </div>
               <p style="color: #333;font-size: 22px;font-weight: 700;margin-top: 0;">
                 <span class="health-provider-name" style="margin: 0 0 13px">{{ $health_provider_name }}</span> 
+                <br>
                 {{ $health_provider_address }} {{ $health_provider_city }},
                 {{ $health_provider_country }} {{ $health_provider_postal }}
                 <br>
@@ -422,7 +426,7 @@
                 Contact support
               </div>
               <div class="contact-support-item">
-                <span>
+                <span class="child-one">
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/telephone.png">
                 </span>
                 @if($currency_symbol == "SGD")
@@ -433,7 +437,7 @@
               </div>
               <br>
               <div class="contact-support-item">
-                <span>
+                <span class="child-one">
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/envelope.png">
                 </span>
                 <span style="text-decoration: none;">happiness@mednefits.com</span>
