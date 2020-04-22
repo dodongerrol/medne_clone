@@ -365,7 +365,7 @@
                 Bill Amount
               </div>
               <div class="item amount">
-                <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
+                <span>{{ $currency_symbol }}</span> <span>{{ $bill_amount }}</span>
               </div>
             </div>
             <div class="row-grid">
@@ -417,9 +417,9 @@
                 <div class="child-two">
                 @if($currency_symbol == "SGD")
                   <span style="text-decoration: underline;">+65 6254 7889</span>
-                  <span style="margin: 0 0 0 5px;">or</span> 
-                  <span style="text-decoration: underline;">+603 7890 1770</span>
                 @else
+                  <span style="text-decoration: underline;">+65 6254 7889</span>
+                  <span style="margin: 0 0 0 5px;">or</span> 
                   <span style="text-decoration: underline;">+603 7890 1770</span>
                 @endif
                 </div>
