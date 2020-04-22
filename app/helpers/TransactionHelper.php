@@ -396,7 +396,7 @@ class TransactionHelper
 				}
 
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
-				if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
+				if($trans->currency_type == "myr" && $trans->default_currency == "sgd") {
 					$total_amount = $total_amount * $trans->currency_amount;
 					$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
 					$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
@@ -405,9 +405,10 @@ class TransactionHelper
 					$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					$trans->currency_type = "myr";
+					$bill_amount = $bill_amount * $trans->currency_amount;
 				} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
 					$trans->currency_type = "sgd";
-        }
+        		}
         
 				return array(
 					'clinic_name'       => $clinic->Name,

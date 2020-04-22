@@ -539,7 +539,8 @@ class Api_V1_TransactionController extends \BaseController
 											'half_credits_payment' => $half_payment,
 											'user_id'						=> $customer_id,
 											'convert_option'		=> $result->currency_type != $result->default_currency ? true : false,
-											'currency'					=> $currency
+											'currency'					=> $currency,
+											'cap_per_visit'		=> $clinic->currency_type == "myr" ? $result->cap_per_visit * $currency : $result->cap_per_visit
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
@@ -589,7 +590,7 @@ class Api_V1_TransactionController extends \BaseController
 										$email['total_amount'] = number_format($total_amount, 2);
 										$email['paid_by_credits'] = number_format($transaction_results['paid_by_credits'], 2);
 										$email['paid_by_cash'] = number_format($transaction_results['paid_by_cash'], 2);
-										$email['cap_per_visit'] = $result->cap_per_visit > 0 ? number_format($result->cap_per_visit, 2) : 'Not Applicable';
+										$email['cap_per_visit'] = $result->cap_per_visit > 0 ? number_format($transaction_results['cap_per_visit'], 2) : 'Not Applicable';
 										$email['cap_per_visit_status'] = $result->cap_per_visit > 0 ? true : false;
 										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * $currency, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
