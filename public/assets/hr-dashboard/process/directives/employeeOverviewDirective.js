@@ -1252,9 +1252,12 @@ app.directive("employeeOverviewDirective", [
             // console.log(scope.medical_wallet);
             // console.log(scope.wellness_wallet);
             
-            if (scope.plan_name === 'Lite Plan') {
+            if (scope.plan_name === 'Lite Plan' && emp.plan_method_type == 'pre_paid') {
               scope.hideLitePlanCheckbox = false;
               scope.litePlanCheckbox = true;
+            }else{
+              scope.hideLitePlanCheckbox = true;
+              scope.litePlanCheckbox = false;
             }
 
             if (scope.selectedEmployee.plan_tier != null || scope.selectedEmployee.plan_tier) {
@@ -1937,13 +1940,18 @@ app.directive("employeeOverviewDirective", [
                 if (scope.isDeleteDependent == true) {
                   scope.reserveDependent();
                 } else {
-                  scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
-                  $('.employee-standalone-pro-wrapper').hide();
-                  $(".account-summary-wrapper").fadeIn();
+                  if(scope.litePlanCheckbox){
+                    scope.removeEmployeeRequests();
+                  }else{
+                    scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
+                    $('.employee-standalone-pro-wrapper').hide();
+                    $(".account-summary-wrapper").fadeIn();
 
-                  scope.reset();
-                  scope.isHealthSpendingAccountSummaryShow = true;
-                  scope.getSession();
+                    scope.reset();
+                    scope.isHealthSpendingAccountSummaryShow = true;
+                    scope.getSession();
+                  }
+                  
                 }
               }
             } else {
@@ -1963,13 +1971,18 @@ app.directive("employeeOverviewDirective", [
                 },
                   function (isConfirm) {
                     if (isConfirm) {
-                      scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
-                      $('.employee-standalone-pro-wrapper').hide();
-                      $(".account-summary-wrapper").fadeIn();
 
-                      scope.reset();
-                      scope.isHealthSpendingAccountSummaryShow = true;
-                      scope.getSession();
+                      if(scope.litePlanCheckbox){
+                        scope.removeEmployeeRequests();
+                      }else{
+                        scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
+                        $('.employee-standalone-pro-wrapper').hide();
+                        $(".account-summary-wrapper").fadeIn();
+
+                        scope.reset();
+                        scope.isHealthSpendingAccountSummaryShow = true;
+                        scope.getSession();
+                      }
                     }
                   });
               }
@@ -1994,13 +2007,17 @@ app.directive("employeeOverviewDirective", [
                 // },
                 // function(isConfirm){
                 //   if(isConfirm){
-                scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
-                $('.employee-replacement-wrapper').hide();
-                $(".account-summary-wrapper").fadeIn();
+                  if(scope.litePlanCheckbox){
+                    scope.removeEmployeeRequests();
+                  }else{
+                    scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
+                    $('.employee-replacement-wrapper').hide();
+                    $(".account-summary-wrapper").fadeIn();
 
-                scope.reset();
-                scope.isHealthSpendingAccountSummaryShow = true;
-                scope.getSession();
+                    scope.reset();
+                    scope.isHealthSpendingAccountSummaryShow = true;
+                    scope.getSession();
+                  }
                 //   }
                 // });
               }
@@ -2010,13 +2027,17 @@ app.directive("employeeOverviewDirective", [
               scope.reserveDependent();
             } else {
               // scope.reserveEmployee( );
-              scope.getSpendingAccountSummary();
-              $('.hold-seat-wrapper').hide();
-              $(".account-summary-wrapper").fadeIn();
+              if(scope.litePlanCheckbox){
+                scope.removeEmployeeRequests();
+              }else{
+                scope.getSpendingAccountSummary();
+                $('.hold-seat-wrapper').hide();
+                $(".account-summary-wrapper").fadeIn();
 
-              scope.reset();
-              scope.isHealthSpendingAccountSummaryShow = true;
-              scope.getSession();
+                scope.reset();
+                scope.isHealthSpendingAccountSummaryShow = true;
+                scope.getSession();
+              }
             }
           } else if (scope.isHealthSpendingAccountSummaryShow == true) {
             if (scope.isCalculateBtnActive == false) {
@@ -2065,6 +2086,10 @@ app.directive("employeeOverviewDirective", [
             scope.isEmployeeShow = true;
           }
 
+          scope.removeEmployeeRequests();
+        }
+
+        scope.removeEmployeeRequests  = function(){
           console.log(scope.remove_employee_data);
           if (scope.remove_employee_data.remove == true) {
             scope.deleteEmployee();
