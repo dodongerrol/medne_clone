@@ -5478,7 +5478,7 @@ try {
 
   if($result_doc) {
     if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
-                                          //   aws
+     //   aws
      $s3 = AWS::get('s3');
      $s3->putObject(array(
       'Bucket'     => 'mednefits',
@@ -5486,6 +5486,20 @@ try {
       'SourceFile' => public_path().'/receipts/'.$file_name,
     ));
    }
+
+   try {
+    //  logs
+    $admin_logs = array(
+      'admin_id'  => $input['user_id'],
+      'admin_type' => 'member',
+      'type'      => 'admin_employee_create_e_claim_details',
+      'data'      => SystemLogLibrary::serializeData($result)
+    );
+    SystemLogLibrary::createAdminLog($admin_logs);
+   } catch(Exeption $e) {
+    
+   }
+    
  } else {
   $email = [];
   $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
