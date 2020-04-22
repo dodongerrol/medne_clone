@@ -412,7 +412,7 @@ class TransactionHelper
         
 				return array(
 					'clinic_name'       => $clinic->Name,
-					'clinic_image'      => $clinic->image,
+					'health_provider_name'      => $clinic->image,
 					'health_provider_address'	=> $clinic->Address,
 					'health_provider_city'	=> $clinic->City,
 					'health_provider_country'	=> $clinic->Country,
