@@ -255,6 +255,7 @@
         vertical-align: middle;
         margin-left: 10px;
         border: 1px solid;
+        width: 50px;
       }
       
       .contact-content .item .social-img a img{
