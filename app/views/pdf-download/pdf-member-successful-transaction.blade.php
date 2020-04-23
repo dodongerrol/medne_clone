@@ -217,6 +217,7 @@
         display: inline-block;
         vertical-align: top;
         width: 175px;
+        border: 1px solid;
       }
       
       .contact-content .item.one{
