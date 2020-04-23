@@ -155,6 +155,7 @@
       .billing-details-header {
         align-items: center;
         padding: 0 60px;
+        display: inline-block;
       }
 
       .billing-details-header span {
