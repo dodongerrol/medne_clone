@@ -255,12 +255,13 @@
         vertical-align: middle;
         margin-left: 10px;
         width: 50px;
-        border: 1px solid:
+        border: 1px solid;
       }
       
       .contact-content .item .social-img a img{
         width: 45px;
-        border: 1px solid:
+        border: 1px solid;
+        display: inline-block;
       }
 
       
