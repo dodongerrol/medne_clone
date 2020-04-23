@@ -156,7 +156,6 @@
         align-items: center;
         padding: 0 60px;
         display: inline-block;
-        border: 1px solid;
       }
 
       .billing-details-header span {
