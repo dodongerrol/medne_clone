@@ -174,7 +174,7 @@
         width: 505px;
         display: inline-block;
         vertical-align: middle;
-        
+        margin: 15px 0;
       }
 
       .billing-details-body-container .row-grid {
@@ -259,7 +259,6 @@
       
       .contact-content .item .social-img a img{
         width: 45px;
-        border: 1px solid;
         display: inline-block;
       }
 
