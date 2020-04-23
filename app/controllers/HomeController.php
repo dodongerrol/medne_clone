@@ -68,10 +68,10 @@ class HomeController extends BaseController {
   // return View::make('pdf-download/pdf-member-successful-transaction', $data);
   // return View::make('email-templates/email-member-successful-transaction', $data);
 
-  // $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
-  // $pdf->getDomPDF()->get_option('enable_html5_parser');
-  // $pdf->setPaper('A4', 'portrait');
-  // return $pdf->stream();
+  $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
+  $pdf->getDomPDF()->get_option('enable_html5_parser');
+  $pdf->setPaper('A4', 'portrait');
+  return $pdf->stream();
   
   // return $pdf->render();
   // return $pdf->download('sample.pdf');
