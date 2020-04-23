@@ -170,11 +170,12 @@
       }
 
       .billing-details-header .custom-border{
-        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
         width: 505px;
         display: inline-block;
         vertical-align: middle;
         margin: 15px 0;
+        height: 15px;
       }
 
       .billing-details-body-container .row-grid {
