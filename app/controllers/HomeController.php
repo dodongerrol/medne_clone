@@ -63,6 +63,7 @@ class HomeController extends BaseController {
   $data['cap_per_visit'] = 1;
   $data['paid_by_credits'] = 1;
   $data['paid_by_cash'] = 1;
+  $data['bill_amount'] = 1;
 
   // return View::make('pdf-download/pdf-member-successful-transaction', $data);
   // return View::make('email-templates/email-member-successful-transaction', $data);
