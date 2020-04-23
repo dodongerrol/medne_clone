@@ -1993,7 +1993,10 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Lite Plan";
+				$plan_name = "Basic Plan (Post-paid)";
+				if($active_plan->plan_method == "pre_paid")	{
+					$plan_name = "Basic Plan (Pre-paid)";
+				}
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
 			}
@@ -3168,7 +3171,10 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Lite Plan";
+				$plan_name = "Basic Plan (Post-paid)";
+				if($active_plan->plan_method == "pre_paid")	{
+					$plan_name = "Basic Plan (Pre-paid)";
+				}
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -14067,7 +14073,7 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 		$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)->first();
-		$plan_name[] = array('plan_type' => PlanHelper::getPlanNameType($active_plan->account_type), 'user_type' => 'Employee'); 
+		$plan_name[] = array('plan_type' => PlanHelper::getPlanNameType($active_plan->account_type, $active_plan->plan_method), 'user_type' => 'Employee'); 
 
 
         // get dependents
@@ -14087,7 +14093,7 @@ class BenefitsDashboardController extends \BaseController {
 				->where('dependent_plan_id', $dependent_history->dependent_plan_id)
 				->first();
 				if($dependent_plan) {
-					$dependent_plan_data[] = PlanHelper::getPlanNameType($dependent_plan->account_type);
+					$dependent_plan_data[] = PlanHelper::getPlanNameType($dependent_plan->account_type, $dependent_plan->plan_method);
 				}
 			}
 		}
