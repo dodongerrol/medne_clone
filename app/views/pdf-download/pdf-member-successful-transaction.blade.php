@@ -63,6 +63,7 @@
         background-color: #3E91C8;
         padding: 55px 60px 5px 60px;
         min-height: 230px;
+        box-sizing: border-box;
       }
 
       .top-content .header-content p{
@@ -73,6 +74,7 @@
       .body-content{
         min-height: 725px;
         background: #FFF;
+        width: 100%;
       }
 
       .body-content .trans-content{
@@ -341,7 +343,6 @@
               <div style="font-size: 18px;color: #999;margin-bottom: 5px;">
                 Cap Per Visit
               </div>
-              
               <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
                 @if($cap_per_visit_status)
                   {{ $currency_symbol }}
