@@ -165,6 +165,7 @@
         font-size: 18px;
         /* margin-right: 34px; */
         vertical-align: middle;
+        height: 30px;
       }
 
       .billing-details-header .custom-border{
