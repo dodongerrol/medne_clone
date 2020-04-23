@@ -1993,7 +1993,10 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Lite Plan";
+				$plan_name = "Basic Plan (Post-paid)";
+				if($active_plan->plan_method == "pre_paid")	{
+					$plan_name = "Basic Plan (Pre-paid)";
+				}
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
 			}
@@ -2085,7 +2088,7 @@ class BenefitsDashboardController extends \BaseController {
 			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d')) {
 				$emp_status = 'pending';
 			}
-
+			
 			$credit_balance = self::floatvalue($wallet->balance);
 			// get pending allocation for medical
 			$e_claim_amount_pending_medication = DB::table('e_claim')
@@ -2141,6 +2144,8 @@ class BenefitsDashboardController extends \BaseController {
 					'wellness'	=> $wellness,
 					'currency_type' => $wallet->currency_type
 				),
+				'account_type'	=>	$active_plan->account_type,
+				'plan_method_type'	=>	$active_plan->plan_method,
 				'medical_wallet'		=> $medical_wallet,
 				'wellness_wallet'		=> $wellness_wallet,
 				'dependents'	  		=> $dependets,
@@ -3166,7 +3171,10 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Lite Plan";
+				$plan_name = "Basic Plan (Post-paid)";
+				if($active_plan->plan_method == "pre_paid")	{
+					$plan_name = "Basic Plan (Pre-paid)";
+				}
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -3312,6 +3320,8 @@ class BenefitsDashboardController extends \BaseController {
 					'wellness'	=> $wellness,
 					'currency_type' => $wallet->currency_type
 				),
+				'account_type'	=>	$active_plan->account_type,
+				'plan_method_type'	=>	$active_plan->plan_method,
 				'dependents'	  		=> $dependets,
 				'plan_tier'				=> $plan_tier,
 				'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
@@ -14397,7 +14407,7 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 		$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)->first();
-		$plan_name[] = array('plan_type' => PlanHelper::getPlanNameType($active_plan->account_type), 'user_type' => 'Employee'); 
+		$plan_name[] = array('plan_type' => PlanHelper::getPlanNameType($active_plan->account_type, $active_plan->plan_method), 'user_type' => 'Employee'); 
 
 
         // get dependents
@@ -14417,7 +14427,7 @@ class BenefitsDashboardController extends \BaseController {
 				->where('dependent_plan_id', $dependent_history->dependent_plan_id)
 				->first();
 				if($dependent_plan) {
-					$dependent_plan_data[] = PlanHelper::getPlanNameType($dependent_plan->account_type);
+					$dependent_plan_data[] = PlanHelper::getPlanNameType($dependent_plan->account_type, $dependent_plan->plan_method);
 				}
 			}
 		}

@@ -93,7 +93,10 @@ class PlanHelper {
 		} else if($dependent_plan->account_type == "stand_alone_plan") {
 			$plan_name = "Pro Plan";
 		} else if($dependent_plan->account_type == "lite_plan") {
-			$plan_name = "Lite Plan";
+			$plan_name = "Basic Plan (Post-paid)";
+			if($dependent_plan->plan_method == "pre_paid")	{
+				$plan_name = "Basic Plan (Pre-paid)";
+			}
 		} else if($dependent_plan->account_type == "enterprise_plan") {
 			$plan_name = "Enterprise Plan";
 		}
@@ -129,7 +132,10 @@ class PlanHelper {
 		} else if($active->account_type == "stand_alone_plan") {
 			$plan_name = "Pro Plan";
 		} else if($active->account_type == "lite_plan") {
-			$plan_name = "Lite Plan";
+			$plan_name = "Basic Plan (Post-paid)";
+			if($active->plan_method == "pre_paid")	{
+				$plan_name = "Basic Plan (Pre-paid)";
+			}
 		} else if($active->account_type == "enterprise_plan") {
 			$plan_name = "Enterprise Plan";
 		}
@@ -1516,8 +1522,9 @@ class PlanHelper {
 
 		$user_plan_history->createUserPlanHistory($user_plan_history_data);
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-    // check company credits
+    	// check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
 		if($customer_spending['medical'] == true) {
 			if($data_enrollee->credits > 0) {
@@ -1529,7 +1536,7 @@ class PlanHelper {
 					$credits = $data_enrollee->credits;
 				}
 
-				if($customer->medical_supp_credits >= $credits) {
+				if($customer->medical_supp_credits >= $credits && $spending['account_type'] != "lite_plan" && $spending['medical_method'] != "pre_paid" || $customer->medical_supp_credits >= $credits && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "post_paid") {
 					// if($credits > $customer->balance) {
 						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("balance", $credits);
 						if($customer_credits_result) {
@@ -1549,7 +1556,7 @@ class PlanHelper {
 						// $customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 					// }
 
-		      // medical credits
+		      		// medical credits
 					// if($customer->balance >= $credits) {
 						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 
@@ -1559,7 +1566,7 @@ class PlanHelper {
 							$customer_active_plan_id = NULL;
 						}
 
-		        // give credits
+		        		// give credits
 						$wallet_class = new Wallet();
 						$update_wallet = $wallet_class->addCredits($user_id, $credits);
 						$employee_logs = new WalletHistory();
@@ -1593,11 +1600,49 @@ class PlanHelper {
 							$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 						}
 					// }
+				} else if($customer->balance >= $credits && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {
+					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
+					if($result_customer_active_plan) {
+						$customer_active_plan_id = $result_customer_active_plan;
+					} else {
+						$customer_active_plan_id = NULL;
+					}
+
+					// give credits
+					$wallet_class = new Wallet();
+					$update_wallet = $wallet_class->addCredits($user_id, $credits);
+					$employee_logs = new WalletHistory();
+
+					$wallet_history = array(
+						'wallet_id'     => $wallet->wallet_id,
+						'credit'            => $credits,
+						'logs'              => 'added_by_hr',
+						'running_balance'   => $credits,
+						'customer_active_plan_id' => $customer_active_plan_id,
+						'currency_type'		=> $customer_data->currency_type
+					);
+
+					$employee_logs->createWalletHistory($wallet_history);
+					$customer_credits = new CustomerCredits();
+
+					$customer_credits_result = $customer_credits->deductCustomerMedicalSuppCredits($customer->customer_credits_id, $credits);
+					$customer_credits_left = DB::table('customer_credits')->where('customer_credits_id', $customer->customer_credits_id)->first();
+					$data['medical_credit_history'] = $wallet_history;
+					if($customer_credits_result) {
+						$company_deduct_logs = array(
+							'customer_credits_id'   => $customer->customer_credits_id,
+							'credit'                => $credits,
+							'logs'                  => 'added_employee_credits',
+							'user_id'               => $user_id,
+							'running_balance'       => 0,
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'		=> $customer_data->currency_type
+						);
+
+						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+					}
 				}
 			}
-
-			// create medical entitlement
-			
 		}
 		
 		if($customer_spending['wellness'] == true) {
@@ -1618,8 +1663,7 @@ class PlanHelper {
 					$customer_active_plan_id = NULL;
 				}
 
-
-				if($customer->wellness_supp_credits >= $credits) {
+				if($customer->wellness_supp_credits >= $credits && $spending['account_type'] != "lite_plan" && $spending['wellness_method'] != "pre_paid" || $customer->wellness_supp_credits >= $credits && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "post_paid") {
 					// if($credits > $customer->wellness_credits) {
 						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
 						if($customer_credits_result) {
@@ -1638,9 +1682,9 @@ class PlanHelper {
 						}
 						// $customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 					// }
-		      // wellness credits
+		      		// wellness credits
 					// if($customer->wellness_credits >= $credits) {
-		        // give credits
+		        		// give credits
 						$wallet_class = new Wallet();
 						$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
 
@@ -1671,6 +1715,36 @@ class PlanHelper {
 							$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 						}
 					// }
+				} else if($customer->balance >= $credits && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
+					$wallet_class = new Wallet();
+					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
+
+					$wallet_history = array(
+						'wallet_id'     => $wallet->wallet_id,
+						'credit'        => $credits,
+						'logs'          => 'added_by_hr',
+						'running_balance'   => $credits,
+						'customer_active_plan_id' => $customer_active_plan_id,
+						'currency_type'		=> $customer_data->currency_type
+					);
+
+					\WellnessWalletHistory::create($wallet_history);
+					$customer_credits = new CustomerCredits();
+					$customer_credits_result = $customer_credits->deductCustomerWellnessSuppCredits($customer->customer_credits_id, $credits);
+					$data['wellness_credit_history'] = $wallet_history;
+					if($customer_credits_result) {
+						$company_deduct_logs = array(
+							'customer_credits_id'   => $customer->customer_credits_id,
+							'credit'                => $credits,
+							'logs'                  => 'added_employee_credits',
+							'user_id'               => $user_id,
+							'running_balance'       => 0,
+							'customer_active_plan_id' => $customer_active_plan_id,
+							'currency_type'		=> $customer_data->currency_type
+						);
+						
+						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+					}
 				}
 			}
 		}
@@ -5097,7 +5171,7 @@ class PlanHelper {
 		}
 	}
 
-	public static function getPlanNameType($account_type)
+	public static function getPlanNameType($account_type, $plan_method)
 	{
 		if($account_type == "stand_alone_plan") {
 			return "Pro Plan";
@@ -5107,7 +5181,11 @@ class PlanHelper {
 		} else if($account_type == "trial_plan") {
 			return "Trial Plan";
 		} else if($account_type == "lite_plan") {
-			return "Lite Plan";
+			if($plan_method == "pre_paid")	{
+				return "Basic Plan (Pre-paid)";
+			} else {
+				return "Basic Plan (Post-paid)";
+			}
 		} else if($account_type == "enterprise_plan") {
 			return "Enterprise Plan";
 		}
