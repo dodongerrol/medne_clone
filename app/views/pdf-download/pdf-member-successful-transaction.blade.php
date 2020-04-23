@@ -254,8 +254,7 @@
         display: inline-block;
         vertical-align: middle;
         margin-left: 10px;
-        width: 50px;
-        border: 1px solid;
+        width: 45px;
       }
       
       .contact-content .item .social-img a img{
