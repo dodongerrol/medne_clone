@@ -12605,13 +12605,13 @@ class BenefitsDashboardController extends \BaseController {
 			$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 			
 			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-				$result['spending_feature_status'] = false;
+				$result['spending_feature_status_type'] = false;
 			}
 
 			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
 				$current_balance = PlanHelper::reCalculateEmployeeBalance($id);
 				if($current_balance <= 0) {
-					$result['spending_feature_status'] = false;
+					$result['spending_feature_status_type'] = false;
 				}
 			}
 
