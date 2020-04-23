@@ -33,9 +33,9 @@ class HomeController extends BaseController {
  public function testEmailSend( )
  {
 
-  // $data['to'] = 'jeamar1234@gmail.com';
+  $data['to'] = 'jeamar1234@gmail.com';
   // $data['to'] = 'info@medicloud.sg';
-  $data['to'] = 'shielamaealvarez@ymail.com';
+  // $data['to'] = 'shielamaealvarez@ymail.com';
   $data['subject'] = "Email Test";
   $data['credits'] = 1;
   $data['transaction_id'] = 1;
@@ -68,10 +68,10 @@ class HomeController extends BaseController {
   // return View::make('pdf-download/pdf-member-successful-transaction', $data);
   // return View::make('email-templates/email-member-successful-transaction', $data);
 
-  $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
-  $pdf->getDomPDF()->get_option('enable_html5_parser');
-  $pdf->setPaper('A4', 'portrait');
-  return $pdf->stream();
+  // $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
+  // $pdf->getDomPDF()->get_option('enable_html5_parser');
+  // $pdf->setPaper('A4', 'portrait');
+  // return $pdf->stream();
   
   // return $pdf->render();
   // return $pdf->download('sample.pdf');
