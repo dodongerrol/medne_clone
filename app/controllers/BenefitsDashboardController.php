@@ -5660,7 +5660,7 @@ class BenefitsDashboardController extends \BaseController {
 		if((int)$get_active_plan->new_head_count == 0) {
 			$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
 			// return $data;
-			// return View::make('pdf-download/hr-accounts-transaction', $data);
+			// return View::make('pdf-download.hr-accounts-transaction', $data);
 			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction', $data);
 		} else {
 			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
@@ -5742,7 +5742,11 @@ class BenefitsDashboardController extends \BaseController {
 			$data['account_type'] = "Trial Plan";
 		} else if($active_plan->account_type == 'lite_plan') {
 			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
-			$data['account_type'] = "Lite Plan";
+			if($get_active_plan->plan_method == "pre_paid") {
+				$data['account_type'] = "Basic Plan (Pre-paid)";
+			} else {
+				$data['account_type'] = "Basic Plan (Post-paid)";
+			}
 			$data['complimentary'] = FALSE;
 		} else if($active_plan->account_type == "enterprise_plan") {
 			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
@@ -5875,7 +5879,11 @@ class BenefitsDashboardController extends \BaseController {
 			$data['complimentary'] = FALSE;
 		} else if($get_active_plan->account_type == "lite_plan") {
 			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
-			$data['account_type'] = "Lite Plan";
+			if($get_active_plan->plan_method == "pre_paid") {
+				$data['account_type'] = "Basic Plan (Pre-paid)";
+			} else {
+				$data['account_type'] = "Basic Plan (Post-paid)";
+			}
 			$data['complimentary'] = FALSE;
 		} else if($get_active_plan->account_type == "enterprise_plan") {
 			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
@@ -5922,8 +5930,8 @@ class BenefitsDashboardController extends \BaseController {
 						$data['account_type'] = "Trial Plan";
 						$data['complimentary'] = FALSE;
 					} else if($extension->account_type == "lite_plan") {
-						$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
-						$data['account_type'] = "Lite Plan";
+						$data['plan_type'] = "Basic Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Basic Plan";
 						$data['complimentary'] = FALSE;
 					} else if($extension->account_type == "enterprise_plan") {
 						$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
@@ -6089,8 +6097,8 @@ class BenefitsDashboardController extends \BaseController {
 						$data['account_type'] = "Trial Plan";
 						$data['complimentary'] = FALSE;
 					} else if($extension->account_type == "lite_plan") {
-						$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
-						$data['account_type'] = "Lite Plan";
+						$data['plan_type'] = "Basic Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Basic Plan";
 						$data['complimentary'] = FALSE;
 					} else if($extension->account_type == "enterprise_plan") {
 						$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
@@ -6207,7 +6215,10 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($dependent->account_type == "trial_plan") {
 				$account_type = "Trial Plan";
 			} else if($dependent->account_type == "lite_plan") {
-				$account_type = "Lite Plan";
+				$account_type = "Basic Plan (Post-paid)";
+				if($dependent->plan_method == "pre_paid") {
+					$account_type = "Basic Plan (Pre-paid)";
+				}
 			} else if($dependent->account_type == "enterprise_plan") {
 				$account_type = "Enterprise Plan";
 			}
