@@ -76,7 +76,7 @@ class HomeController extends BaseController {
   // return $pdf->render();
   // return $pdf->download('sample.pdf');
 
-  return Mail::send('pdf-download.pdf-member-successful-transaction', $data, function($message) use ($data){
+  return Mail::send('email-templates.email-member-successful-transaction', $data, function($message) use ($data){
     $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
     $pdf->getDomPDF()->get_option('enable_html5_parser');
     $pdf->setPaper('A4', 'portrait');
