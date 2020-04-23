@@ -156,6 +156,7 @@
         align-items: center;
         padding: 0 60px;
         display: inline-block;
+        border: 1px solid;
       }
 
       .billing-details-header span {
@@ -165,6 +166,7 @@
         font-size: 18px;
         /* margin-right: 34px; */
         vertical-align: middle;
+        border: 1px solid;
       }
 
       .billing-details-header .custom-border{
@@ -172,6 +174,7 @@
         width: 505px;
         display: inline-block;
         vertical-align: middle;
+        
       }
 
       .billing-details-body-container .row-grid {
