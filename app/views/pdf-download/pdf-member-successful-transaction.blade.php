@@ -217,7 +217,7 @@
         display: inline-block;
         vertical-align: top;
         width: 175px;
-        border: 1px solid;
+        
       }
       
       .contact-content .item.one{
@@ -254,6 +254,7 @@
         display: inline-block;
         vertical-align: middle;
         margin-left: 10px;
+        border: 1px solid;
       }
       
       .contact-content .item .social-img a img{
