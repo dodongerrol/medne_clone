@@ -602,6 +602,17 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
           }
 					
 				}
+				scope.account_plan_status = {}
+				scope.checkAccountStatus = function () {
+          hrSettings.getMethodType()
+            .then(function (response) {
+              console.log(response);
+              scope.account_plan_status = {
+                plan_method: response.data.data.plan.plan_method,
+                account_type: response.data.data.plan.account_type
+              }
+            });
+        }
 
 				scope.testDate = '';
 				scope.inititalizeDatepicker = function () {
@@ -632,6 +643,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					scope.getSpendingAcctStatus();
 					// scope.getEmployeeBulkCredit();
 					scope.inititalizeDatepicker();
+					scope.checkAccountStatus();
 					// scope.companyAccountType ();
         }
 

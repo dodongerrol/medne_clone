@@ -289,7 +289,7 @@
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
-							<strong class="font-helvetica-medium">Allocated Credits</strong>
+							<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 									ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
 						</div>
@@ -297,7 +297,7 @@
 							<span ng-bind="entitlement_status.medical_entitlement.currency_type" class="currency-type"></span> <span ng-bind="entitlement_status.medical_entitlement.new_allocation_credits">833.33</span> will be updated on <span ng-bind="entitlement_status.medical_entitlement.effective_date">01/05/2019</span>.</p>
 					</div>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.medical.credits_allocation == 'UNLIMITED'">
-						<strong class="font-helvetica-medium">Allocated Credits</strong>
+						<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 						<span><span ng-bind="selectedEmployee.spending_account.medical.credits_allocation"></span></span>
 					</div>
 					<div class="usage-container-wrapper">
@@ -339,7 +339,7 @@
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
-							<strong class="font-helvetica-medium">Allocated Credits</strong>
+							<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 									ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
 						</div>
@@ -347,7 +347,7 @@
 							<span ng-bind="entitlement_status.wellness_entitlement.currency_type" class="currency-type"></span> <span ng-bind="entitlement_status.wellness_entitlement.new_allocation_credits">833.33</span> will be updated on <span ng-bind="entitlement_status.wellness_entitlement.effective_date">01/05/2019</span>.</p>
 					</div>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.wellness.credits_allocation_wellness == 'UNLIMITED'">
-						<strong class="font-helvetica-medium">Allocated Credits</strong>
+						<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 						<span><span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness">500.00</span></span>
 					</div>
 					<div class="usage-container-wrapper">
@@ -402,8 +402,7 @@
 						Employee</div>
 					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
 						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div ng-if="selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
-						Credits</div>
+					<div ng-if="selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)"> {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} </div>
 					<!-- <div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
 						Entitlement</div> -->
 					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">
@@ -447,7 +446,7 @@
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
 								<div ng-if="selectedEmployee.medical_wallet" class="entitlementWithIcon">
-									<strong class="font-helvetica-medium">Medical Allocated Credits</strong>
+									<strong class="font-helvetica-medium">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 									<!-- <strong class="font-helvetica-medium">Medical Entitlement</strong> -->
 									<span>
 										<span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
@@ -468,7 +467,7 @@
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
 								</div>
 								<div ng-if="selectedEmployee.wellness_wallet" class="entitlementWithIcon">
-									<strong class="font-helvetica-medium">Wellness Allocated Credits</strong>
+									<strong class="font-helvetica-medium">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 									<!-- <strong class="font-helvetica-medium">Wellness Entitlement</strong> -->
 									<span>
 										<span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
@@ -588,7 +587,7 @@
 					</div>
 					<div ng-if="empTabSelected == 2" class="entitlement-information">
 						<div class="entitlement-btn-edit-wrapper">
-							<h3>Allocation Information</h3>
+							<h3>{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} Information</h3>
 							<!-- <h3>Entitlement Information</h3> -->
 							<button ng-disabled="updateDisable" ng-class="{ 'calc-disabled' : updateDisable }" class="btn-update" ng-click="updateEntitlement()">Update</button>
 							<!-- ng-class="{'calc-disabled' : emp_entitlement.medical_new_entitlement == false || emp_entitlement.medical_new_entitlement == '' || emp_entitlement.wellness_new_entitlement == false || emp_entitlement.wellness_new_entitlement == '' }"  -->
@@ -616,11 +615,11 @@
 
 						<div class="entitlement-information-details">
 							<div ng-if="selectedEmployee.medical_wallet">
-								<h4 class="weight-700 medical-entitlement">Medical Allocated Credits | {{ selectedEmployee.medical_spending_account_validity}}</h4>
+								<h4 class="weight-700 medical-entitlement">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }} | {{ selectedEmployee.medical_spending_account_validity}}</h4>
 								<div class="col-md-12 medical-entitlement-container">
 									<div class="col-md-4">
 										<div class="entitlement-input-container original">
-											<h5 class="weight-700">Current Allocated Credits</h5>
+											<h5 class="weight-700">Current {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Original Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
@@ -635,7 +634,7 @@
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container new">
-											<h5 class="weight-700">New Allocated Credits</h5>
+											<h5 class="weight-700">New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
@@ -646,7 +645,7 @@
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container usage">
-											<h5 class="weight-700">Effective Date of New Allocated Credits</h5>
+											<h5 class="weight-700">Effective Date of New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Effective Date of New Entitlement</h5> -->
 											<div class="entitlement-input-label withIcon">
 												<!-- <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label> -->
@@ -699,12 +698,12 @@
 
 							<!-- class="weight-700 wellness-entitlement" -->
 							<div ng-if="selectedEmployee.wellness_wallet">
-								<h4 class="weight-700 wellness-entitlement">Wellness Allocated Credits | {{ selectedEmployee.wellness_spending_account_validity}}</h4>
+								<h4 class="weight-700 wellness-entitlement">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }} | {{ selectedEmployee.wellness_spending_account_validity}}</h4>
 								<!-- <h4 class="weight-700 wellness-entitlement">Wellness Entitlement</h4> -->
 								<div class="col-md-12 wellness-entitlement-container">
 									<div class="col-md-4">
 										<div class="entitlement-input-container original">
-											<h5 class="weight-700">Current Allocated Credits</h5>
+											<h5 class="weight-700">Current {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Original Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
@@ -718,7 +717,7 @@
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container new">
-											<h5 class="weight-700">New Allocated Credits</h5>
+											<h5 class="weight-700">New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
@@ -729,7 +728,7 @@
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container usage">
-											<h5 class="weight-700">Effective Date of New Allocated Credits</h5>
+											<h5 class="weight-700">Effective Date of New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Effective Date of New Entitlement</h5> -->
 											<div class="entitlement-input-label withIcon">
 												<!-- <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label> -->
