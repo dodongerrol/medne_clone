@@ -14323,6 +14323,10 @@ class BenefitsDashboardController extends \BaseController {
 		$pending = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where('paid', 'false')->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		$total_allocation = 0;
+		$total_company_medical_allocation = 0;
+		$total_company_medical_supp = 0;
+		$total_company_wellness_allocation = 0;
+		$total_company_wellness_supp = 0;
 		$total_supp = 0;
 		$term_start = null;
 		$term_end = null;
@@ -14349,12 +14353,28 @@ class BenefitsDashboardController extends \BaseController {
 			$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
 			if($spending_type == 'medical') {
 				$allocation  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
-			} else {
+				$total_supp += $allocation['total_supp'];
+				$total_allocation += $allocation['allocation'];
+				$total_company_medical_allocation += $allocation_medical['allocation'];
+				$total_company_medical_supp += $allocation_medical['total_supp'];
+			} else if($spending_type == 'wellness'){
 				$allocation  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$total_supp += $allocation['total_supp'];
+				$total_allocation += $allocation['allocation'];
+				$total_company_wellness_allocation += $allocation_wellness['allocation'];
+				$total_company_wellness_supp += $allocation_wellness['total_supp'];
+			} else {
+				$allocation_medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$allocation_wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$temp_allocation = $allocation_medical['allocation'] + $allocation_wellness['allocation'];
+				$temp_supp = $allocation_medical['total_supp'] + $allocation_wellness['total_supp'];
+				$total_company_medical_allocation += $allocation_medical['allocation'];
+				$total_company_wellness_allocation += $allocation_wellness['allocation'];
+				$total_company_medical_supp += $allocation_medical['total_supp'];
+				$total_company_wellness_supp += $allocation_wellness['total_supp'];
+				$total_supp += $temp_allocation;
+				$total_allocation += $temp_supp;
 			}
-			
-			$total_supp += $allocation['total_supp'];
-			$total_allocation += $allocation['allocation'];
 		}
 
 		$limit = !empty($input['per_page']) ? $input['per_page'] : 25;
@@ -14443,7 +14463,11 @@ class BenefitsDashboardController extends \BaseController {
 			'customer_id' => $customer_id, 
 			'currency_type' => strtoupper($customer_wallet->currency_type), 
 			'medical_enable' => (int)$spending->medical_enable == 1 ? true : false, 
-			'wellness_enable' => (int)$spending->wellness_enable == 1 ? true : false, 
+			'wellness_enable' => (int)$spending->wellness_enable == 1 ? true : false,
+			'total_company_medical_allocation'	=> $total_company_medical_allocation,
+			'total_company_medical_supp'		=> $total_company_medical_supp,
+			'total_company_wellness_supp'		=> $total_company_wellness_supp,
+			'total_company_wellness_allocation'	=> $total_company_wellness_allocation,
 			'total_purchase_credits' => $company_credits['total_purchase_credits'],
 			'total_bonus_credits' => $company_credits['total_bonus_credits'],
 			'total_allocated_credits' => $total_allocation,
