@@ -420,7 +420,15 @@ class PlanHelper {
 		}
 	}
 
-	public static function reCalculateEmployeeBalance($user_id)
+	public function reCalculateEmployeeBalance($user_id)
+	{
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
+		$medical = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
+		PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
+		return $medical['balance'];
+	}
+
+	public static function reCalculateEmployeeBalanceOld($user_id)
 	{
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 
