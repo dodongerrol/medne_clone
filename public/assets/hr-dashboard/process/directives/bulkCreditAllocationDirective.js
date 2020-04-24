@@ -194,9 +194,19 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							scope.bulk_credit_values = response.data;
 
 							scope.employees.map((value, index) => {
-								if (value.allocation.new_allocation == 0) {
-									value.allocation.new_allocation = null;
+								if( scope.account_plan_status.plan_method == 'pre_paid' ){
+									if (value.allocation.new_allocation == 0) {
+										value.allocation.new_allocation = null;
+									}
+								}else{
+									if (value.medical_allocation.new_allocation == 0) {
+										value.medical_allocation.new_allocation = null;
+									}
+									if (value.wellness_allocation.new_allocation == 0) {
+										value.wellness_allocation.new_allocation = null;
+									}
 								}
+								
 							})
 							scope.hideLoading();
 							scope.inititalizeDatepicker();
@@ -300,13 +310,14 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						.then(function (response) {
 							console.log(response);
 							scope.spending_account_status = response.data;
-							if( scope.spending_account_status.medical_enabled == false){
-								scope.spendingTypeTabSelected = 'wellness';
+							if( scope.account_plan_status.plan_method == 'pre_paid' ){
+								if( scope.spending_account_status.medical_enabled == false){
+									scope.spendingTypeTabSelected = 'wellness';
+								}
+								if( scope.spending_account_status.wellness_enabled == false){
+									scope.spendingTypeTabSelected = 'medical';
+								}
 							}
-							if( scope.spending_account_status.wellness_enabled == false){
-								scope.spendingTypeTabSelected = 'medical';
-							}
-							scope.getEmployeeBulkCredit();
 						});
 				}
 
@@ -610,7 +621,11 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
               scope.account_plan_status = {
                 plan_method: response.data.data.plan.plan_method,
                 account_type: response.data.data.plan.account_type
-              }
+							}
+							if( scope.account_plan_status.plan_method != 'pre_paid' ){
+								scope.spendingTypeTabSelected = 'all';
+							}
+							scope.getEmployeeBulkCredit();
             });
         }
 
