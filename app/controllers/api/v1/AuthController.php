@@ -1992,14 +1992,13 @@ $jsonArray['member'] = ucwords($user->Name);
 $jsonArray['nric'] = $user->NRIC;
 
 $current_balance = 0;
-if($customer_active_plan->account_type != "super_pro_plan") {
-  $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
-}
+// if($customer_active_plan->account_type != "super_pro_plan") {
+//   $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+// }
 $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
 $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
 $jsonArray['plan_type'] = $plan_coverage['plan_type'];
 $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
-
         // check if employee has plan tier cap
 $customer_id = PlanHelper::getCustomerId($owner_id);
 $plan_tier = null;
