@@ -14381,7 +14381,12 @@ class BenefitsDashboardController extends \BaseController {
 									->where('status', 0)
 									->orderBy('created_at', 'desc')
 									->first();
-			} else {
+
+				$member->allocation['current_allocation'] = $allocation['allocation'];
+				$member->allocation['new_allocation'] = $schedule ? $schedule->new_allocation_credits : 0;
+				$member->allocation['effective_date'] = $schedule ? date('d/m/Y', strtotime($schedule->effective_date)) : date('d/m/Y');
+				$member->allocation['allocation_schedule'] = $schedule ? true : false;
+			} else if($spending_type == 'wellneess'){
 				$allocation  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
 				$schedule = DB::table('wallet_entitlement_schedule')
 									->where('member_id', $member->user_id)
@@ -14389,15 +14394,42 @@ class BenefitsDashboardController extends \BaseController {
 									->where('status', 0)
 									->orderBy('created_at', 'desc')
 									->first();
+				
+				$member->allocation['current_allocation'] = $allocation['allocation'];
+				$member->allocation['new_allocation'] = $schedule ? $schedule->new_allocation_credits : 0;
+				$member->allocation['effective_date'] = $schedule ? date('d/m/Y', strtotime($schedule->effective_date)) : date('d/m/Y');
+				$member->allocation['allocation_schedule'] = $schedule ? true : false;
+			} else {
+				$allocation_medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$schedule_medical = DB::table('wallet_entitlement_schedule')
+									->where('member_id', $member->user_id)
+									->where('spending_type', 'medical')
+									->where('status', 0)
+									->orderBy('created_at', 'desc')
+									->first();
+				
+				$allocation_wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$schedule_wellness = DB::table('wallet_entitlement_schedule')
+									->where('member_id', $member->user_id)
+									->where('spending_type', 'wellness')
+									->where('status', 0)
+									->orderBy('created_at', 'desc')
+									->first();
+
+				$member->medical_allocation['current_allocation'] = $allocation_medical['allocation'];
+				$member->medical_allocation['new_allocation'] = $schedule_medical ? $schedule_medical->new_allocation_credits : 0;
+				$member->medical_allocation['effective_date'] = $schedule_medical ? date('d/m/Y', strtotime($schedule_medical->effective_date)) : date('d/m/Y');
+				$member->medical_allocation['allocation_schedule'] = $schedule_medical ? true : false;
+
+				$member->wellness_allocation['current_allocation'] = $allocation_wellness['allocation'];
+				$member->wellness_allocation['new_allocation'] = $schedule_wellness ? $schedule_wellness->new_allocation_credits : 0;
+				$member->wellness_allocation['effective_date'] = $schedule_wellness ? date('d/m/Y', strtotime($schedule_wellness->effective_date)) : date('d/m/Y');
+				$member->wellness_allocation['allocation_schedule'] = $schedule_wellness ? true : false;
 			}
 			
 			
 			$member->member_id = $member->user_id;
 			$member->fullname = $user->Name;
-			$member->allocation['current_allocation'] = $allocation['allocation'];
-			$member->allocation['new_allocation'] = $schedule ? $schedule->new_allocation_credits : 0;
-			$member->allocation['effective_date'] = $schedule ? date('d/m/Y', strtotime($schedule->effective_date)) : date('d/m/Y');
-			$member->allocation['allocation_schedule'] = $schedule ? true : false;
 			array_push($final_user, $member);
 		}
 
