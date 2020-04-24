@@ -187,7 +187,7 @@
 
       .billing-details-header .custom-border{
         border-top: 1px solid #ddd;
-        width: 561px;
+        width: 555px;
         display: inline-block;
         vertical-align: middle;
       }
