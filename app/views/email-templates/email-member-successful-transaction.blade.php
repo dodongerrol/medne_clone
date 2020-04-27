@@ -231,17 +231,13 @@
     text-align: center;
   }
 
-  .custom-border{
-    width: 70%;
-  }
-
   @media only screen and (max-width: 768px) {
     #main-template-wrapper{
       width: 99% !important;
       margin: 0.5% auto !important;
     }
     .billing-details-header .custom-border {
-      width: 50% !important;
+      width: 40% !important;
     }
     .contact-support-item span{
       display: block !important;
