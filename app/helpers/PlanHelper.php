@@ -2334,7 +2334,7 @@ class PlanHelper {
 		->sum('credit');
 
 		$get_allocation_spent_temp = $in_network_temp_spent + $e_claim_spent;
-		$in_network_spent = $get_allocation_spent_temp - $credits_back;
+		$in_network_spent = $in_network_spent - $credits_back;
 		$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
 		$medical_balance = 0;
 
