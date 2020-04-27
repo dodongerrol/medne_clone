@@ -13,7 +13,7 @@
       }
 
       .billing-details-header .custom-border {
-        width: 70%;
+        width: 72%;
       }
 
       @media only screen and (max-width: 768px) {
@@ -22,7 +22,7 @@
           margin: 0.5% auto !important;
         }
         .billing-details-header .custom-border {
-          width: 40% !important;
+          width: 55% !important;
         }
         .contact-support-item span{
           display: block !important;
