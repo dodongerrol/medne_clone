@@ -22,7 +22,7 @@
           margin: 0.5% auto !important;
         }
         .billing-details-header .custom-border {
-          width: 55% !important;
+          width: 65% !important;
         }
         .contact-support-item span{
           display: block !important;
