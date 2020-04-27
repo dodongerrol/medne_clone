@@ -1877,7 +1877,7 @@ class EclaimController extends \BaseController {
 		} else {
 			$credit_data = null;
 		}
-		// return $credit_data;
+		
 		if($credit_data) {
 			$allocation = $credit_data['allocation'];
 			$current_spending = $credit_data['get_allocation_spent'];

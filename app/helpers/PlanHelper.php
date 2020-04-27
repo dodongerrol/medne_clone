@@ -2319,13 +2319,24 @@ class PlanHelper {
 			}
 
 			if($history->where_spend == "in_network_transaction") {
-				$in_network_temp_spent += $history->credit;
-				$in_network_spent += $history->credit;
+				if($history->lite_plan_enabled == 1) {
+					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
+					if($transaction) {
+						$in_network_temp_spent += (float)$transaction->consultation_fees;
+						$in_network_spent += (float)$transaction->consultation_fees;
+					}
+				} else {
+					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
+					if($transaction) {
+						$in_network_temp_spent += (float)$transaction->credit_cost;
+						$in_network_spent += (float)$transaction->credit_cost;
+					}
+				}
 			}
 
-			if($history->where_spend == "credits_back_from_in_network") {
-				$credits_back += $history->credit;
-			}
+			// if($history->where_spend == "credits_back_from_in_network") {
+			// 	$credits_back += $history->credit;
+			// }
 		}
 		// return $wallet_history;
 		$pro_allocation = DB::table('wallet_history')
@@ -2333,6 +2344,7 @@ class PlanHelper {
 		->where('logs', 'pro_allocation')
 		->sum('credit');
 
+		$in_network_spent_temp = $in_network_spent;
 		$get_allocation_spent_temp = $in_network_temp_spent + $e_claim_spent;
 		$in_network_spent = $in_network_spent - $credits_back;
 		$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
@@ -2372,7 +2384,8 @@ class PlanHelper {
 			'get_allocation_spent' => $get_allocation_spent, 
 			'balance' => $balance >= 0 ? $balance : 0, 
 			'e_claim_spent' => $e_claim_spent, 
-			'in_network_spent' => $in_network_spent, 
+			'in_network_spent' => $in_network_spent,
+			'in_network_spent_temp' => $in_network_spent_temp,
 			'deleted_employee_allocation' => $deleted_employee_allocation, 
 			'total_deduction_credits' => $total_deduction_credits, 
 			'medical_balance' => $medical_balance, 
