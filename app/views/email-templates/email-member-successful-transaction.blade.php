@@ -73,7 +73,7 @@
 
         <div class="receipt-details" style="padding: 30px 70px 10px 70px;min-height: 100px;border: 1px solid #ccc;border-width: 0 1px;box-sizing: border-box;">
           <div class="row" style="width: 100%;display: block;">
-            <div class="item one" style="width: 60%;display: inline-block;vertical-align: top;">
+            <div class="item one" style="width: 55%;margin-right: 5%;display: inline-block;vertical-align: top;">
               <div style="font-size: 22px;color: #999;margin-bottom: 13px;">
                 Health Provider
               </div>
@@ -98,7 +98,7 @@
           </div>
 
           <div class="row">
-            <div class="item one" style="width: 60%;display: inline-block;vertical-align: top;">
+            <div class="item one" style="width: 55%;margin-right: 5%;display: inline-block;vertical-align: top;">
               <div style="font-size: 22px;color: #999;margin-bottom: 13px;">
                 Member
               </div>
