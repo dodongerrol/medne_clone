@@ -162,7 +162,8 @@
 						<label>Plan Type: </label>
 						<span ng-if="list.account_type == 'insurance_bundle'">Insurance Bundle</span>
 						<span ng-if="list.account_type == 'stand_alone_plan'">Standalone Plan</span>
-						<span ng-if="list.account_type == 'lite_plan'">Lite Plan</span>
+						<span ng-if="list.account_type == 'lite_plan' && list.plan_method == 'post_paid'">Basic Plan (Post-paid)</span>
+						<span ng-if="list.account_type == 'lite_plan' && list.plan_method == 'pre_paid'">Basic Plan (Pre-paid)</span>
 						<span ng-if="list.account_type == 'trial_plan'">Trial Plan</span>
 						<span ng-if="list.account_type == 'enterprise_plan'">Enterprise Plan</span>
 					</p>
@@ -189,7 +190,7 @@
 								<label>Plan Account Type: </label>
 								<span ng-if="dep.account_type == 'insurance_bundle'">Insurance Bundle</span>
 								<span ng-if="dep.account_type == 'stand_alone_plan'">Standalone Plan</span>
-								<span ng-if="dep.account_type == 'lite_plan'">Lite Plan</span>
+								<span ng-if="dep.account_type == 'lite_plan' && dep.plan_method == 'pre_paid'">Basic Plan</span>
 								<span ng-if="dep.account_type == 'trial_plan'">Trial Plan</span>
 							</p>
 							<!-- <p><label>Date:</label> <span ng-bind="dep.plan_start">28-06-2017</span></p> -->
@@ -214,7 +215,7 @@
 					<label>Account Type:</label> 
 					<span ng-if="list.plan_extension.account_type == 'insurance_bundle'">Insurance Bundle</span>
 					<span ng-if="list.plan_extension.account_type == 'stand_alone_plan'">Standalone Plan</span>
-					<span ng-if="list.plan_extension.account_type == 'lite_plan'">Lite Plan</span>
+					<span ng-if="list.plan_extension.account_type == 'lite_plan'">Basic Plan</span>
 					<span ng-if="list.plan_extension.account_type == 'trial_plan'">Trial Plan</span>
 					<p ng-if="list.plan_extension"><label>Date:</label> <span ng-bind="list.plan_extension.plan_start">28-06-2017</span></p>
 					<p ng-if="list.plan_extension"><label>Plan Duration:</label> <span ng-bind="list.plan_extension.duration">365 Days</span></p>
@@ -280,7 +281,8 @@
             		<p>Plan Account Type: 
             			<span ng-if="selected_active_plan_details.active_plan.account_type == 'stand_alone_plan'">Standalone Plan</span>
             			<span ng-if="selected_active_plan_details.active_plan.account_type == 'insurance_bundle'">Insurance Bundle</span>
-            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'lite_plan'">Lite Plan</span>
+            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'lite_plan' && selected_active_plan_details.active_plan.plan_method == 'post_paid'">Basic Plan (Post-paid)</span>
+            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'lite_plan' && selected_active_plan_details.active_plan.plan_method == 'pre_paid'">Basic Plan (Pre-paid)</span>
             			<span ng-if="selected_active_plan_details.active_plan.account_type == 'trial_plan'">Trial Plan</span>
             		</p>
             		<p>Invoice: <span ng-bind="selected_active_plan_details.invoice.invoice_number">0MCCC0037</span></p>
@@ -313,7 +315,7 @@
 	            	<p>Dependent Plan Account Type: 
 	        			<span ng-if="list.account_type == 'stand_alone_plan'">Standalone Plan</span>
 	        			<span ng-if="list.account_type == 'insurance_bundle'">Insurance Bundle</span>
-	        			<span ng-if="list.account_type == 'lite_plan'">Lite Plan</span>
+	        			<span ng-if="list.account_type == 'lite_plan'">Basic Plan</span>
 	        			<span ng-if="list.account_type == 'trial_plan'">Trial Plan</span>
 	        		</p>
 	        		<p>Active Plan Type: 
@@ -342,7 +344,7 @@
             	<p>Account Type: 
         			<span ng-if="selected_active_plan_details.extension.account_type == 'stand_alone_plan'">Standalone Plan</span>
         			<span ng-if="selected_active_plan_details.extension.account_type == 'insurance_bundle'">Insurance Bundle</span>
-        			<span ng-if="selected_active_plan_details.extension.account_type == 'lite_plan'">Lite Plan</span>
+        			<span ng-if="selected_active_plan_details.extension.account_type == 'lite_plan'">Basic Plan</span>
         			<span ng-if="selected_active_plan_details.extension.account_type == 'trial_plan'">Trial Plan</span>
         		</p>
         		<p>Invoice: <span ng-bind="selected_active_plan_details.extension.invoice.invoice_number">0MCCC0037</span></p>

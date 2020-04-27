@@ -50,14 +50,14 @@ class SpendingInvoiceController extends \BaseController {
 
 
         $plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+        if($plan->account_type == "lite_plan" && $plan->plan_method == "pre_paid")  {
+            return array('status' => FALSE, 'message' => 'Pre-paid account does not require spending transaction invoice.');
+        }
+
         $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end);
 
         if(!$check_company_transactions) {
             return array('status' => FALSE, 'message' => 'No Transactions for this Month.');
-        }
-
-        if($plan->account_type == "lite_plan" && $plan->plan_method == "pre_paid")  {
-            return array('status' => FALSE, 'message' => 'Pre-paid account does not require spending transaction invoice.');
         }
 
         $statement_check = DB::table('company_credits_statement')
