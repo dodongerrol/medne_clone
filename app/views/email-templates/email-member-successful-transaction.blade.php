@@ -63,7 +63,8 @@
               <p style="color: #333;font-size: 22px;font-weight: 700;margin-top: 0;">
                 <span class="health-provider-name" style="margin: 0 0 13px">{{ $health_provider_name }}</span> 
                 <br>
-                {{ $health_provider_address }} {{ $health_provider_city }}, {{ $health_provider_country }}
+                {{ $health_provider_address }} {{ $health_provider_city }}, 
+                {{ $health_provider_country }} {{ $health_provider_postal }}
                 <br>
                 {{ $health_provider_phone }}
               </p>
@@ -74,7 +75,7 @@
                 Service
               </div>
               <p style="color: #333;font-size: 22px;font-weight: 700;margin-top: 0;">
-                {{ $health_provider_name }} <br>
+                {{ $service }} <br>
               </p>
             </div>
           </div>
@@ -94,7 +95,11 @@
                 Cap Per Visit
               </div>
               <p style="color: #333;font-size: 22px;font-weight: 700;margin-top: 0;">
-                {{ $currency_symbol }} {{ $cap_per_visit }}
+                @if($cap_per_visit_status)
+                  {{ $currency_symbol }}
+                @endif
+
+                {{ $cap_per_visit }}
               </p>
             </div>
           </div>
@@ -102,7 +107,7 @@
 
         <div class="billing-details-header" style="align-items: center;padding: 0 70px;border-left: 1px solid #ccc;border-right: 1px solid #ccc;min-height: 30px;box-sizing: border-box;">
           <span style="color: #595959;width: 160px;display: inline-block;font-size: 22px;vertical-align: middle;">Billing details</span>
-          <div class="custom-border" style="border-top: 1px solid #ddd;width: -webkit-fill-available;width: 72%;display: inline-block;vertical-align: middle;"></div>
+          <div class="custom-border" style="border-top: 1px solid #ddd;display: inline-block;vertical-align: middle;"></div>
         </div>
 
         <div class="item_service" style="padding: 30px 70px;min-height: 100px;overflow: hidden;border: 1px solid #ccc;border-width: 0 1px 1px 1px;box-sizing: border-box;">
@@ -112,7 +117,7 @@
                 Bill Amount
               </div>
               <div class="item amount" style="width: 36%;color: #333;font-size: 22px;font-weight: 700;display: inline-block;">
-                <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
+                <span>{{ $currency_symbol }}</span> <span>{{ $bill_amount }}</span>
               </div>
             </div>
             <div class="row-grid" style="width: 100%;padding: 0 0 30px;">
@@ -220,6 +225,10 @@
   }
   .text-center {
     text-align: center;
+  }
+
+  .custom-border{
+    width: 70%;
   }
 
   @media only screen and (max-width: 768px) {
