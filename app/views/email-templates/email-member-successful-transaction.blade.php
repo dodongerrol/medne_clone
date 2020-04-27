@@ -12,8 +12,21 @@
         box-sizing: border-box;
       }
 
-      .custom-border{
+      .billing-details-header .custom-border {
         width: 70%;
+      }
+
+      @media only screen and (max-width: 768px) {
+        #main-template-wrapper{
+          width: 99% !important;
+          margin: 0.5% auto !important;
+        }
+        .billing-details-header .custom-border {
+          width: 40% !important;
+        }
+        .contact-support-item span{
+          display: block !important;
+        }
       }
     </style>
   </head><body style="margin: 0;font-family: 'Helvetica Light',sans-serif;font-size: 16px;line-height: 1.42857143;">
@@ -231,16 +244,5 @@
     text-align: center;
   }
 
-  @media only screen and (max-width: 768px) {
-    #main-template-wrapper{
-      width: 99% !important;
-      margin: 0.5% auto !important;
-    }
-    .billing-details-header .custom-border {
-      width: 40% !important;
-    }
-    .contact-support-item span{
-      display: block !important;
-    }
-  }
+  
 </style>
