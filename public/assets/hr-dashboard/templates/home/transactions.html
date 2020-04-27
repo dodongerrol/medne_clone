@@ -90,7 +90,7 @@
 						<td class="v-align" ng-if="transac.paid == true">Paid</td>
 						<td class="v-align" ng-if="transac.paid == false">Not Paid</td>
 						<td class="v-align">
-							<a ng-if="transac.type_invoice == 'employee'" href="{{transac.link}}" target="_blank" class="edit-button-in-table" style="display: block;text-align: center;">Download</a>
+							<a ng-if="transac.type_invoice == 'employee'" href="{{transac.link}}&token={{token}}" target="_blank" class="edit-button-in-table" style="display: block;text-align: center;">Download</a>
 							<a ng-if="transac.type_invoice == 'dependent'" href="javascript:void(0)" class="edit-button-in-table" style="display: block;text-align: center;" ng-click="downDepedentInvoice(transac.invoice_id)">Download</a>
 							<a href="{{transac.receipt_link}}" ng-if="transac.paid == true && transac.type_invoice == 'employee'" target="_blank" class="edit-button-in-table" style="display: block;text-align: center;margin-top: 10px;">Receipt</a>
 						</td>

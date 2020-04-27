@@ -22,7 +22,7 @@ app.directive("companyContactsDirective", [
         scope.spending_deposits = {};
         scope.options = {};
         scope.download_token = {};
-
+        scope.token = window.localStorage.getItem('token');
         scope.wdraw_dl = false;
 
         scope.plan_transactions_page = 1;
@@ -140,7 +140,7 @@ app.directive("companyContactsDirective", [
         }
 
         scope.activePlanDownloadInvoice = function(){
-          window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + scope.selected_active_plan_details.invoice.corporate_invoice_id);
+          window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + scope.selected_active_plan_details.invoice.corporate_invoice_id + '&token='+window.localStorage.getItem('token'));
         }
 
         scope.activePlanDownloadReceipt = function(){

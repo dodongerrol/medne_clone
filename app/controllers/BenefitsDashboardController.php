@@ -5642,10 +5642,15 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 
-		if(empty($input['invoice_id'])) {
+		if(empty($input['token'])) {
 			return View::make('errors.503');
 		}
 
+		$result = self::checkToken($input['token']);
+		
+		if(empty($input['invoice_id'])) {
+			return View::make('errors.503');
+		}
 		$invoice = DB::table('corporate_invoice')->where('corporate_invoice_id', $input['invoice_id'])->first();
 
 		if(!$invoice) {
@@ -5656,7 +5661,7 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_active_plan_id', $invoice->customer_active_plan_id)
 		->first();
 
-	// check if head count or not
+		// check if head count or not
 		if((int)$get_active_plan->new_head_count == 0) {
 			$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
 			// return $data;
@@ -5671,7 +5676,7 @@ class BenefitsDashboardController extends \BaseController {
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream();
-	// return $pdf->download($data['invoice_number'].' - '.time().'.pdf');
+		// return $pdf->download($data['invoice_number'].' - '.time().'.pdf');
 	}
 
 	public function getAddedHeadCountInvoice($id) 
