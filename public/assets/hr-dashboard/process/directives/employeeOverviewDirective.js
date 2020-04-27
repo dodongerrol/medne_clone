@@ -2582,8 +2582,13 @@ app.directive("employeeOverviewDirective", [
         scope.checkDependentsStatus = function () {
           hrSettings.getMethodType()
             .then(function (response) {
-              // console.log(response);
+              console.log(response);
               scope.dependents_status = response.data.data;
+
+              scope.account_plan_status = {
+                plan_method: response.data.data.plan.plan_method,
+                account_type: response.data.data.plan.account_type
+              }
             });
         }
 
@@ -2681,7 +2686,7 @@ app.directive("employeeOverviewDirective", [
             });
           }, 300);
         }
-
+        
         scope.onLoad = function () {
           // scope.checkCompanyBalance();
           scope.getPlanStatus();

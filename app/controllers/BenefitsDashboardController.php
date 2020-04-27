@@ -12939,13 +12939,13 @@ class BenefitsDashboardController extends \BaseController {
 			$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 			
 			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-				$result['spending_feature_status'] = false;
+				$result['spending_feature_status_type'] = false;
 			}
 
 			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
 				$current_balance = PlanHelper::reCalculateEmployeeBalance($id);
 				if($current_balance <= 0) {
-					$result['spending_feature_status'] = false;
+					$result['spending_feature_status_type'] = false;
 				}
 			}
 
@@ -14657,6 +14657,10 @@ class BenefitsDashboardController extends \BaseController {
 		$pending = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where('paid', 'false')->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		$total_allocation = 0;
+		$total_company_medical_allocation = 0;
+		$total_company_medical_supp = 0;
+		$total_company_wellness_allocation = 0;
+		$total_company_wellness_supp = 0;
 		$total_supp = 0;
 		$term_start = null;
 		$term_end = null;
@@ -14683,12 +14687,28 @@ class BenefitsDashboardController extends \BaseController {
 			$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
 			if($spending_type == 'medical') {
 				$allocation  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
-			} else {
+				$total_supp += $allocation['total_supp'];
+				$total_allocation += $allocation['allocation'];
+				$total_company_medical_allocation += $allocation['allocation'];
+				$total_company_medical_supp += $allocation['total_supp'];
+			} else if($spending_type == 'wellness'){
 				$allocation  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$total_supp += $allocation['total_supp'];
+				$total_allocation += $allocation['allocation'];
+				$total_company_wellness_allocation += $allocation['allocation'];
+				$total_company_wellness_supp += $allocation['total_supp'];
+			} else {
+				$allocation_medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$allocation_wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$temp_allocation = $allocation_medical['allocation'] + $allocation_wellness['allocation'];
+				$temp_supp = $allocation_medical['total_supp'] + $allocation_wellness['total_supp'];
+				$total_company_medical_allocation += $allocation_medical['allocation'];
+				$total_company_wellness_allocation += $allocation_wellness['allocation'];
+				$total_company_medical_supp += $allocation_medical['total_supp'];
+				$total_company_wellness_supp += $allocation_wellness['total_supp'];
+				$total_supp += $temp_allocation;
+				$total_allocation += $temp_supp;
 			}
-			
-			$total_supp += $allocation['total_supp'];
-			$total_allocation += $allocation['allocation'];
 		}
 
 		$limit = !empty($input['per_page']) ? $input['per_page'] : 25;
@@ -14715,7 +14735,12 @@ class BenefitsDashboardController extends \BaseController {
 									->where('status', 0)
 									->orderBy('created_at', 'desc')
 									->first();
-			} else {
+
+				$member->allocation['current_allocation'] = $allocation['allocation'];
+				$member->allocation['new_allocation'] = $schedule ? $schedule->new_allocation_credits : 0;
+				$member->allocation['effective_date'] = $schedule ? date('d/m/Y', strtotime($schedule->effective_date)) : date('d/m/Y');
+				$member->allocation['allocation_schedule'] = $schedule ? true : false;
+			} else if($spending_type == 'wellness'){
 				$allocation  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
 				$schedule = DB::table('wallet_entitlement_schedule')
 									->where('member_id', $member->user_id)
@@ -14723,15 +14748,42 @@ class BenefitsDashboardController extends \BaseController {
 									->where('status', 0)
 									->orderBy('created_at', 'desc')
 									->first();
+				
+				$member->allocation['current_allocation'] = $allocation['allocation'];
+				$member->allocation['new_allocation'] = $schedule ? $schedule->new_allocation_credits : 0;
+				$member->allocation['effective_date'] = $schedule ? date('d/m/Y', strtotime($schedule->effective_date)) : date('d/m/Y');
+				$member->allocation['allocation_schedule'] = $schedule ? true : false;
+			} else {
+				$allocation_medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$schedule_medical = DB::table('wallet_entitlement_schedule')
+									->where('member_id', $member->user_id)
+									->where('spending_type', 'medical')
+									->where('status', 0)
+									->orderBy('created_at', 'desc')
+									->first();
+				
+				$allocation_wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$schedule_wellness = DB::table('wallet_entitlement_schedule')
+									->where('member_id', $member->user_id)
+									->where('spending_type', 'wellness')
+									->where('status', 0)
+									->orderBy('created_at', 'desc')
+									->first();
+
+				$member->medical_allocation['current_allocation'] = $allocation_medical['allocation'];
+				$member->medical_allocation['new_allocation'] = $schedule_medical ? $schedule_medical->new_allocation_credits : 0;
+				$member->medical_allocation['effective_date'] = $schedule_medical ? date('d/m/Y', strtotime($schedule_medical->effective_date)) : date('d/m/Y');
+				$member->medical_allocation['allocation_schedule'] = $schedule_medical ? true : false;
+
+				$member->wellness_allocation['current_allocation'] = $allocation_wellness['allocation'];
+				$member->wellness_allocation['new_allocation'] = $schedule_wellness ? $schedule_wellness->new_allocation_credits : 0;
+				$member->wellness_allocation['effective_date'] = $schedule_wellness ? date('d/m/Y', strtotime($schedule_wellness->effective_date)) : date('d/m/Y');
+				$member->wellness_allocation['allocation_schedule'] = $schedule_wellness ? true : false;
 			}
 			
 			
 			$member->member_id = $member->user_id;
 			$member->fullname = $user->Name;
-			$member->allocation['current_allocation'] = $allocation['allocation'];
-			$member->allocation['new_allocation'] = $schedule ? $schedule->new_allocation_credits : 0;
-			$member->allocation['effective_date'] = $schedule ? date('d/m/Y', strtotime($schedule->effective_date)) : date('d/m/Y');
-			$member->allocation['allocation_schedule'] = $schedule ? true : false;
 			array_push($final_user, $member);
 		}
 
@@ -14745,7 +14797,11 @@ class BenefitsDashboardController extends \BaseController {
 			'customer_id' => $customer_id, 
 			'currency_type' => strtoupper($customer_wallet->currency_type), 
 			'medical_enable' => (int)$spending->medical_enable == 1 ? true : false, 
-			'wellness_enable' => (int)$spending->wellness_enable == 1 ? true : false, 
+			'wellness_enable' => (int)$spending->wellness_enable == 1 ? true : false,
+			'total_company_medical_allocation'	=> $total_company_medical_allocation,
+			'total_company_medical_supp'		=> $total_company_medical_supp,
+			'total_company_wellness_supp'		=> $total_company_wellness_supp,
+			'total_company_wellness_allocation'	=> $total_company_wellness_allocation,
 			'total_purchase_credits' => $company_credits['total_purchase_credits'],
 			'total_bonus_credits' => $company_credits['total_bonus_credits'],
 			'total_allocated_credits' => $total_allocation,
