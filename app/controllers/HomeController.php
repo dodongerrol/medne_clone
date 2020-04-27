@@ -40,11 +40,11 @@ class HomeController extends BaseController {
   $data['credits'] = 1;
   $data['transaction_id'] = 1;
   $data['transaction_date'] = '10 April 2020, 11:11am ';
-  $data['health_provider_name'] = 'Medicloud Family Clinic';
-  $data['health_provider_address'] = 1;
-  $data['health_provider_city'] = 1;
-  $data['health_provider_country'] = 1;
-  $data['health_provider_phone'] = 1;
+  $data['health_provider_name'] = 'Medicloud Family Clinic Medicloud Family Clinic';
+  $data['health_provider_address'] = '7 Temasek Boulevard #18-02';
+  $data['health_provider_city'] = 'Suntec Tower One,';
+  $data['health_provider_country'] = 'SG 038987 ';
+  $data['health_provider_phone'] = '+65 6254 7889';
   $data['member'] = 1;
   $data['consultation'] = 1;
   $data['total_amount'] = 1;
