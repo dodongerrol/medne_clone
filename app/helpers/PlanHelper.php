@@ -2334,7 +2334,7 @@ class PlanHelper {
 		->sum('credit');
 
 		$get_allocation_spent_temp = $in_network_temp_spent + $e_claim_spent;
-		$in_network_spent = $in_network_spent - $credits_back;
+		$in_network_spent = $get_allocation_spent_temp - $credits_back;
 		$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
 		$medical_balance = 0;
 
@@ -2367,7 +2367,19 @@ class PlanHelper {
 			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
 		}
 
-		return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $in_network_spent, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'total_spent' => $get_allocation_spent, 'get_allocation' => $get_allocation);
+		return array(
+			'allocation' => $allocation, 
+			'get_allocation_spent' => $get_allocation_spent, 
+			'balance' => $balance >= 0 ? $balance : 0, 
+			'e_claim_spent' => $e_claim_spent, 
+			'in_network_spent' => $in_network_spent, 
+			'deleted_employee_allocation' => $deleted_employee_allocation, 
+			'total_deduction_credits' => $total_deduction_credits, 
+			'medical_balance' => $medical_balance, 
+			'total_spent' => $get_allocation_spent, 
+			'get_allocation' => $get_allocation,
+			'returned_credits'	=> $credits_back
+		);
 	}
 
 	public static function memberWellnessAllocatedCreditsOld2($wallet_id, $user_id)
