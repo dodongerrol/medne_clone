@@ -13,7 +13,7 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
-
+        
       body{
         margin: 0;
         font-family: 'Helvetica Light',sans-serif;
@@ -26,7 +26,7 @@
         border: 1px solid #ccc;
         width: 774px;
         background: #fff;
-        height: 1080px;
+        /* height: 1090px; */
       }
 
       .top-content{
@@ -155,6 +155,7 @@
       .billing-details-header {
         align-items: center;
         padding: 0 60px;
+        display: inline-block;
       }
 
       .billing-details-header span {
@@ -163,14 +164,13 @@
         display: inline-block;
         font-size: 18px;
         /* margin-right: 34px; */
-        vertical-align: middle;
       }
 
       .billing-details-header .custom-border{
-        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
         width: 505px;
         display: inline-block;
-        vertical-align: middle;
+        height: 15px;
       }
 
       .billing-details-body-container .row-grid {
@@ -213,6 +213,7 @@
         display: inline-block;
         vertical-align: top;
         width: 175px;
+        
       }
       
       .contact-content .item.one{
@@ -249,10 +250,12 @@
         display: inline-block;
         vertical-align: middle;
         margin-left: 10px;
+        width: 45px;
       }
       
       .contact-content .item .social-img a img{
         width: 45px;
+        display: inline-block;
       }
 
       
@@ -270,7 +273,7 @@
           <p style="font-size: 18px; width: 490px; margin: 0 auto 20px auto;">
             You can also view your receipts under the History section in Mednefits app.
           </p>
-          <p style="font-size: 40px;font-weight: 700;line-height: 1;margin-bottom: 20px;">
+          <p style="font-size: 40px;font-weight: 700;line-height: 1;margin-bottom: 10px;">
             Total: <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
           </p>
 
