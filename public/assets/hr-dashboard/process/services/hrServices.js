@@ -75,6 +75,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
       serverUrl.url + "/hr/benefits_spending_invoice_transactions?page=" + page
     );
   };
+  
+  hrFactory.getPrePaidSpendingPurchaseTransac = function(page) {
+    return $http.get(
+      serverUrl.url + "/hr/get_spending_invoice_purchase_lists?page=" + page
+    );
+  };
 
   hrFactory.getRefunds = function() {
     return $http.get(serverUrl.url + "/hr/get_refunds");

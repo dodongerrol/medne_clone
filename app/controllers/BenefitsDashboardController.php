@@ -14917,6 +14917,7 @@ class BenefitsDashboardController extends \BaseController {
             $customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
             
             $data = array();
+            $data['spending_purchase_invoice_id'] = $spendingPurchase->spending_purchase_invoice_id;
             $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
             $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
             $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
