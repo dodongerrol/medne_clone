@@ -11,6 +11,10 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
+
+      .custom-border{
+        width: 70%;
+      }
     </style>
   </head><body style="margin: 0;font-family: 'Helvetica Light',sans-serif;font-size: 16px;line-height: 1.42857143;">
     <div id="main-template-wrapper" style="margin: 10px auto 20px auto;max-width: 881px;background: #fff;min-height: 1000px;">
