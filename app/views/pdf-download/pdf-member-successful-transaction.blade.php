@@ -249,10 +249,12 @@
         display: inline-block;
         vertical-align: middle;
         margin-left: 10px;
+        width: 45px;
       }
       
       .contact-content .item .social-img a img{
         width: 45px;
+        display: inline-block;
       }
 
       
