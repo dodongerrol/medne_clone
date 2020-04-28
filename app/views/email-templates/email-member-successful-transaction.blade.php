@@ -184,12 +184,12 @@
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/telephone.png" style="width: 45px;">
                 </span>
                 @if($currency_symbol == "SGD")
-                <span style="text-decoration: underline;display: inline-block;vertical-align: middle;">+65 6254 7889 </span>
+                <span style="text-decoration: underline;display: inline-block;vertical-align: middle;"><a href="tel:+6562547889">+65 6254 7889</a> </span>
                 @else
-                <span style="text-decoration: underline;display: inline-block;vertical-align: middle;">+65 6254 7889 </span> 
+                <span style="text-decoration: underline;display: inline-block;vertical-align: middle;"><a href="tel:+6562547889">+65 6254 7889</a></span> 
                 <span style="display: inline-block;vertical-align: middle;"> 
                   <span style="margin: 0 0 0 5px;">or</span> 
-                  <span style="text-decoration: underline;">+603 7890 1770</span>
+                  <span style="text-decoration: underline;"><a href="tel:+60378901770">+603 7890 1770</a></span>
                 </span>
                 @endif
                 
