@@ -6358,7 +6358,7 @@ span.dropdown-entitlement.disabled {
 .entitlement-input-container.original,
 .entitlement-input-container.new,
 .entitlement-input-container.proration {
-  width: 130px;
+  width: 50%;
 }
 
 .entitlement-input-container.allocation {
