@@ -1993,10 +1993,7 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Basic Plan (Post-paid)";
-				if($active_plan->plan_method == "pre_paid")	{
-					$plan_name = "Basic Plan (Pre-paid)";
-				}
+				$plan_name = "Basic Plan";
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
 			}
@@ -3171,10 +3168,7 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Basic Plan (Post-paid)";
-				if($active_plan->plan_method == "pre_paid")	{
-					$plan_name = "Basic Plan (Pre-paid)";
-				}
+				$plan_name = "Basic Plan";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -5746,12 +5740,8 @@ class BenefitsDashboardController extends \BaseController {
 			$data['complimentary'] = FALSE;
 			$data['account_type'] = "Trial Plan";
 		} else if($active_plan->account_type == 'lite_plan') {
-			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
-			if($get_active_plan->plan_method == "pre_paid") {
-				$data['account_type'] = "Basic Plan (Pre-paid)";
-			} else {
-				$data['account_type'] = "Basic Plan (Post-paid)";
-			}
+			$data['plan_type'] = "Basic Plan Mednefits Care (Corporate)";
+			$data['account_type'] = "Basic Plan";
 			$data['complimentary'] = FALSE;
 		} else if($active_plan->account_type == "enterprise_plan") {
 			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
@@ -5883,12 +5873,8 @@ class BenefitsDashboardController extends \BaseController {
 			$data['account_type'] = "Trial Plan";
 			$data['complimentary'] = FALSE;
 		} else if($get_active_plan->account_type == "lite_plan") {
-			$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
-			if($get_active_plan->plan_method == "pre_paid") {
-				$data['account_type'] = "Basic Plan (Pre-paid)";
-			} else {
-				$data['account_type'] = "Basic Plan (Post-paid)";
-			}
+			$data['plan_type'] = "Basic Plan Mednefits Care (Corporate)";
+			$data['account_type'] = "Basic Plan";
 			$data['complimentary'] = FALSE;
 		} else if($get_active_plan->account_type == "enterprise_plan") {
 			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
@@ -6220,10 +6206,7 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($dependent->account_type == "trial_plan") {
 				$account_type = "Trial Plan";
 			} else if($dependent->account_type == "lite_plan") {
-				$account_type = "Basic Plan (Post-paid)";
-				if($dependent->plan_method == "pre_paid") {
-					$account_type = "Basic Plan (Pre-paid)";
-				}
+				$account_type = "Basic Plan";
 			} else if($dependent->account_type == "enterprise_plan") {
 				$account_type = "Enterprise Plan";
 			}
@@ -14683,6 +14666,8 @@ class BenefitsDashboardController extends \BaseController {
 			$plan_method = $spending->wellness_plan_method;
 		}
 
+		
+
 		$date1 = new DateTime($term_start);
 		$date2 = new DateTime($term_end);
 		$interval = $date1->diff($date2);
@@ -14795,8 +14780,13 @@ class BenefitsDashboardController extends \BaseController {
 		$paginate['data'] = $final_user;
 		
 		$user_spending_dates = CustomerHelper::getCustomerCreditReset($spending->customer_id, 'current_term', $spending_type);
-		$company_credits = \CustomerHelper::getCustomerMedicalTotalCredits($spending->customer_id, $user_spending_dates);
 
+		if($spending_type == "medical")	{
+			$company_credits = \CustomerHelper::getCustomerMedicalTotalCredits($spending->customer_id, $user_spending_dates);
+		} else {
+			$company_credits = \CustomerHelper::getCustomerWellnessTotalCredits($spending->customer_id, $user_spending_dates);
+		}
+		
 		return [
 			'status' => true, 
 			'customer_id' => $customer_id, 
@@ -14868,7 +14858,7 @@ class BenefitsDashboardController extends \BaseController {
         $data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_end));
         $data['duration']   = $spendingPurchase->duration;
         $data['account_type'] = PlanHelper::getAccountType($active_plan->account_type);
-        $data['plan_type'] = 'Pre-paid Credits Plan Mednefits Care (Corporate)';
+        $data['plan_type'] = 'Basic Plan Mednefits Care (Corporate)';
         $data['currency_type']   = strtoupper($customer_wallet->currency_type);
         // medical spending account
         $data['medical_spending_account'] = (float)$spendingPurchase->medical_purchase_credits > 0 ? true : false;

@@ -222,7 +222,7 @@
         @if($medical_spending_account)
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
-            <p>Medical Spending Account</p>
+            <p>Medical Spending Account (Pre-paid):</p>
             <p class="left-space-20">Purchased Credits</p>
             <p class="left-space-20">Bonus Credits: {{ $currency_type }} {{$medical_credit_bonus}}</p>
             <p class="left-space-20">Total Credits: {{ $currency_type }} {{$medical_total_credits}}</p>
@@ -234,7 +234,7 @@
         @if($wellness_spending_account)
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
-            <p>Wellness Spending Account</p>
+            <p>Wellness Spending Account (Pre-paid):</p>
             <p class="left-space-20">Purchased Credits</p>
             <p class="left-space-20">Bonus Credits: {{ $currency_type }} {{$wellness_credit_bonus}}</p>
             <p class="left-space-20">Total Credits: {{ $currency_type }} {{$wellness_total_credits}}</p>
