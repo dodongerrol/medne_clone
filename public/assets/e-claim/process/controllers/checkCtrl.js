@@ -27,7 +27,9 @@ checkCtrl.controller('checkController', function( $scope, $http, eclaimSettings,
 		.then(function(response){
 			if(response.data) {
 				vm.isAllowSubmitEclaim = response.data.spending_feature_status_type;
-				vm.goToEclaim();
+				if($state.current.name == 'e-claim'){
+					vm.goToEclaim();
+				}
 			}
 		})
 	}
