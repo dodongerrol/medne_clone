@@ -93,10 +93,7 @@ class PlanHelper {
 		} else if($dependent_plan->account_type == "stand_alone_plan") {
 			$plan_name = "Pro Plan";
 		} else if($dependent_plan->account_type == "lite_plan") {
-			$plan_name = "Basic Plan (Post-paid)";
-			if($dependent_plan->plan_method == "pre_paid")	{
-				$plan_name = "Basic Plan (Pre-paid)";
-			}
+			$plan_name = "Basic Plan";
 		} else if($dependent_plan->account_type == "enterprise_plan") {
 			$plan_name = "Enterprise Plan";
 		}
@@ -132,10 +129,7 @@ class PlanHelper {
 		} else if($active->account_type == "stand_alone_plan") {
 			$plan_name = "Pro Plan";
 		} else if($active->account_type == "lite_plan") {
-			$plan_name = "Basic Plan (Post-paid)";
-			if($active->plan_method == "pre_paid")	{
-				$plan_name = "Basic Plan (Pre-paid)";
-			}
+			$plan_name = "Basic Plan";
 		} else if($active->account_type == "enterprise_plan") {
 			$plan_name = "Enterprise Plan";
 		}
@@ -146,7 +140,6 @@ class PlanHelper {
 	public static function getEmployeePlanTypeExtenstion($customer_active_plan_id, $active_plan_data)
 	{
 		$plan_name = "Mednefits Care Plan (Corporate)";
-
 		$active = DB::table('customer_active_plan')->where('customer_active_plan_id', $customer_active_plan_id)->first();
 
 		if(!$active) {
@@ -171,7 +164,7 @@ class PlanHelper {
 		} else if($active_plan_data->account_type == "stand_alone_plan") {
 			$plan_name = "Pro Plan";
 		} else if($active_plan_data->account_type == "lite_plan") {
-			$plan_name = "Lite Plan";
+			$plan_name = "Basic Plan";
 		} else if($active_plan_data->account_type == "enterprise_plan") {
 			$plan_name = "Enterprise Plan";
 		}
@@ -1536,7 +1529,7 @@ class PlanHelper {
 					$credits = $data_enrollee->credits;
 				}
 
-				if($customer->medical_supp_credits >= $credits && $spending['account_type'] != "lite_plan" && $spending['medical_method'] != "pre_paid" || $customer->medical_supp_credits >= $credits && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "post_paid") {
+				if($credits > 0 && $spending['account_type'] != "lite_plan" && $spending['medical_method'] != "pre_paid" || $credits > 0 && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "post_paid") {
 					// if($credits > $customer->balance) {
 						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("balance", $credits);
 						if($customer_credits_result) {
@@ -1663,7 +1656,7 @@ class PlanHelper {
 					$customer_active_plan_id = NULL;
 				}
 
-				if($customer->wellness_supp_credits >= $credits && $spending['account_type'] != "lite_plan" && $spending['wellness_method'] != "pre_paid" || $customer->wellness_supp_credits >= $credits && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "post_paid") {
+				if($credits > 0 && $spending['account_type'] != "lite_plan" && $spending['wellness_method'] != "pre_paid" || $credits > 0 && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "post_paid") {
 					// if($credits > $customer->wellness_credits) {
 						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
 						if($customer_credits_result) {
@@ -5181,11 +5174,7 @@ class PlanHelper {
 		} else if($account_type == "trial_plan") {
 			return "Trial Plan";
 		} else if($account_type == "lite_plan") {
-			if($plan_method == "pre_paid")	{
-				return "Basic Plan (Pre-paid)";
-			} else {
-				return "Basic Plan (Post-paid)";
-			}
+			return "Basic Plan";
 		} else if($account_type == "enterprise_plan") {
 			return "Enterprise Plan";
 		}
@@ -6262,9 +6251,9 @@ class PlanHelper {
 		if($medical && $wellness) {
 			// check
 			$member_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)
-																											->where('medical_usage_date', $medical['plan_start'])
-																											->where('wellness_usage_date', $wellness['plan_start'])
-																											->first();
+									->where('medical_usage_date', $medical['plan_start'])
+									->where('wellness_usage_date', $wellness['plan_start'])
+									->first();
 			if(!$member_entitlement) {
 				// create entitlement
 				$data = array(
@@ -6283,7 +6272,7 @@ class PlanHelper {
 					'created_at'					=> date('Y-m-d H:i:s'),
 					'updated_at'					=> date('Y-m-d H:i:s')
 				);
-				return DB::table('employee_wallet_entitlement')->create($data);
+				return DB::table('employee_wallet_entitlement')->insert($data);
 			} else {
 				return $member_entitlement;
 			}

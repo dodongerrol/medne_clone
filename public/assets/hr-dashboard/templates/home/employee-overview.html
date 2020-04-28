@@ -638,7 +638,7 @@
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="!spending_account_status.paid_status">
+												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="(!spending_account_status.paid_status && spending_account_status.medical_method == 'pre_paid')">
 											</div>
 											<!-- <p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span></p> -->
 										</div>
@@ -721,7 +721,7 @@
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="!spending_account_status.paid_status">
+												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="(!spending_account_status.paid_status && spending_account_status.wellness_method == 'pre_paid')">
 											</div>
 											<!-- <p ng-if="emp_entitlement.updated_wellness_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p> -->
 										</div>
