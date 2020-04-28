@@ -5319,6 +5319,7 @@ public function createEclaim( )
     }
   }
 
+  
 
   $returnObject->status = TRUE;
   $returnObject->message = 'Success.';
@@ -5327,7 +5328,6 @@ public function createEclaim( )
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
   
   $customer_id = PlanHelper::getCustomerId($user_id);
-
   $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
   if($customer && (int)$customer->access_e_claim == 0) {
@@ -5336,8 +5336,33 @@ public function createEclaim( )
     return Response::json($returnObject);
   }
 
-  $input_amount = 0;
+  $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+  $customer_active_plan = DB::table('customer_active_plan')
+  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+  ->first();
 
+  if($customer_active_plan->account_type == "enterprise_plan")	{
+    $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+
+    if($limit <= 0) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'Maximum of 14 visit already reach.';
+      return Response::json($returnObject);
+    }
+
+    // check if A&E already get for 2 times
+    $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
+
+    if($claim_status && $input['service'] == "Accident & Emergency") {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
+      return Response::json($returnObject);
+    }
+  }
+
+  
+
+  $input_amount = 0;
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
     $input_amount = trim($input['amount']);
   } else {
@@ -5355,19 +5380,7 @@ public function createEclaim( )
   }
 
   $date = date('Y-m-d', strtotime($input['date']));
-
-  $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-  $customer_active_plan = DB::table('customer_active_plan')
-  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-  ->first();
-
   if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-    // if($input['spending_type'] == "medical") {
-    //     // recalculate employee balance
-    //   PlanHelper::reCalculateEmployeeBalance($user_id);
-    // } else {
-    //   PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-    // }
     $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
     $balance = number_format($spending['balance'], 2);
     $amount = trim($input_amount);
@@ -5422,6 +5435,10 @@ $data = array(
  'spending_type' => $input['spending_type'],
  'default_currency' => $check_user_balance->currency_type
 );
+
+if($customer_active_plan->account_type == "enterprise_plan")  {
+  $data['spending_type'] = "medical";
+}
 
 if(Input::has('currency_type') && $input['currency_type'] != null) {
   $data['currency_type'] = strtolower($input['currency_type']);

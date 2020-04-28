@@ -1424,7 +1424,6 @@ class PlanHelper {
 		}
 
 		$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-
 		if($data_enrollee->start_date != NULL) {
 			$temp_start_date = \DateTime::createFromFormat('d/m/Y', $data_enrollee->start_date);
 			$start_date = $temp_start_date->format('Y-m-d');
@@ -1512,6 +1511,10 @@ class PlanHelper {
 			'date'          => $start_date,
 			'customer_active_plan_id' => $active_plan->customer_active_plan_id
 		);
+
+		if($active_plan->account_type == "enterprise_plan")	{
+			$user_plan_history_data['total_visit_limit'] = 14;
+		}
 
 		$user_plan_history->createUserPlanHistory($user_plan_history_data);
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();

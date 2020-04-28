@@ -220,7 +220,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// Route::post('upload/excel_enrollment', 'BenefitsDashboardController@uploadExcel');
 	Route::post('upload/excel_enrollment', 'DependentController@uploadExcel');
 	// finish employee enrollements
-	Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
+	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 	// employee list
 	Route::get('hr/employee/list/{per_page}', 'BenefitsDashboardController@employeeLists');
 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');

@@ -213,41 +213,53 @@ class EclaimController extends \BaseController {
 	    }
 	  }
 
-		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-    $customer_active_plan = DB::table('customer_active_plan')
+		$user_plan_history = DB::table('user_plan_history')
+								->where('user_id', $user_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->first();
+    	$customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
+		  
+	  	if($customer_active_plan->account_type == "enterprise_plan")	{
+			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
-    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-	    // recalculate employee balance
-			// PlanHelper::reCalculateEmployeeBalance($user_id);
+			if($limit <= 0) {
+				return ['status' => false, 'message' => 'Maximum of 14 visit already reach.'];
+			}
 
-	    // check if e-claim can proceed
-			// $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
-      // return $check_user_balance->balance;
-      // $balance = number_format($check_user_balance->balance, 2);
-      $spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
+			// check if A&E already get for 2 times
+			$claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
+
+			if($claim_status) {
+				return ['status' => false, 'message' => 'Maximum of 2 approved Accident & Emergency already consumed.'];
+			}
+		}
+
+    	if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
 			$balance = number_format($spending['balance'], 2);
-      $balance = TransactionHelper::floatvalue($balance);
+			$balance = TransactionHelper::floatvalue($balance);
 
-      if($spending['back_date'] == false) {
-				if($claim_amount > $balance || $balance <= 0) {
-					return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
-				}
-		    // check user pending e-claims amount
-				// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
-				$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'medical', $date);
-				$total_claim_amount = $balance - $claim_amounts;
-				$amount = trim($amount);
-				$total_claim_amount = trim($total_claim_amount);
+			if($spending['back_date'] == false) {
+						if($claim_amount > $balance || $balance <= 0) {
+							return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
+						}
+					// check user pending e-claims amount
+						// $claim_amounts = EclaimHelper::checkPendingEclaims($ids, 'medical');
+						$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'medical', $date);
+						$total_claim_amount = $balance - $claim_amounts;
+						$amount = trim($amount);
+						$total_claim_amount = trim($total_claim_amount);
 
-				if($claim_amount > $total_claim_amount) {
-					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
-				}
-      }
-    } else {
-    	$amount = trim($amount);
-    }
+						if($claim_amount > $total_claim_amount) {
+							return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.', 'amount' => floatval($input['amount']), 'remaining_credits' => floatval($total_claim_amount));
+						}
+			}
+		} else {
+			$amount = trim($amount);
+		}
 
     // get customer id
     $customer_id = PlanHelper::getCustomerId($user_id);
@@ -442,11 +454,26 @@ class EclaimController extends \BaseController {
 	  }
 
 		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-    $customer_active_plan = DB::table('customer_active_plan')
+    	$customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                               ->first();
+		  
+		if($customer_active_plan->account_type == "enterprise_plan")	{
+			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
-    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+			if($limit <= 0) {
+				return ['status' => false, 'message' => 'Maximum of 14 visit already reach.'];
+			}
+
+			// check if A&E already get for 2 times
+			$claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
+
+			if($claim_status) {
+				return ['status' => false, 'message' => 'Maximum of 2 approved Accident & Emergency already consumed.'];
+			}
+		}					  
+		
+		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'wellness');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
@@ -455,7 +482,7 @@ class EclaimController extends \BaseController {
 					return array('status' => FALSE, 'message' => 'You have insufficient Wellness Benefits Credits for this transaction. Please check with your company HR for more details.');
 				}
 
-		    // check user pending e-claims amount
+			// check user pending e-claims amount
 				$claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, 'wellness', $date);
 
 				$total_claim_amount = $balance  - $claim_amounts;
@@ -463,7 +490,7 @@ class EclaimController extends \BaseController {
 					return array('status' => FALSE, 'message' => 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.');
 				}
 			}
-    }
+		}
 
     // get customer id
     $customer_id = PlanHelper::getCustomerId($user_id);
@@ -6571,27 +6598,40 @@ public function updateEclaimStatus( )
 		$employee = StringHelper::getUserId($e_claim_details->user_id);
 
 		$user_plan_history = DB::table('user_plan_history')->where('user_id', $employee)->orderBy('created_at', 'desc')->first();
-    $customer_active_plan = DB::table('customer_active_plan')
-                              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                              ->first();
-    $date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
-    if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
-			if($check->spending_type == "medical") {
-				$balance_medical = round($balance['balance'], 2);
-				if($amount > $balance_medical) {
-					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
-				}
-			} else {
-				$balance_wellness = round($balance['balance'], 2);
-				if($amount > $balance_wellness) {
-					return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
-				}
+		$customer_active_plan = DB::table('customer_active_plan')
+								->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+								->first();
+		
+		if($customer_active_plan->account_type == "enterprise_plan")	{
+			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+
+			if($limit <= 0) {
+				return ['status' => false, 'message' => 'Maximum of 14 visit already reach.'];
 			}
-    } else {
-    	$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
-    }
+
+			if($claim_status && $check->service == "Accident & Emergency") {
+				return ['status' => false, 'message' => 'Maximum of 2 approved Accident & Emergency already consumed.'];
+			}
+		}
+		
+		$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
+		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+				$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
+				$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
+				if($check->spending_type == "medical") {
+					$balance_medical = round($balance['balance'], 2);
+					if($amount > $balance_medical) {
+						return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee medical credits is not enough.');
+					}
+				} else {
+					$balance_wellness = round($balance['balance'], 2);
+					if($amount > $balance_wellness) {
+						return array('status' => FALSE, 'message' => 'Cannot approve e-claim request. Employee wellness credits is not enough.');
+					}
+				}
+		} else {
+			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
+		}
     
     // deduct credit and save logs
 		$wallet_class = new Wallet();

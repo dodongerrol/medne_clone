@@ -309,5 +309,26 @@ class EclaimHelper
 
     return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent, 'currency_type' => strtoupper($wallet->currency_type));
   }
+
+  public function checkMemberClaimAEstatus($memer_id)
+  {
+    $plan_status = PlanHelper::checkEmployeePlanStatus($memer_id);
+    $start = date('Y-m-d', strtotime($plan_status['start_date']));
+    $end = date('Y-m-d', strtotime($plan_status['valid_date']));
+    $end = PlanHelper::endDate($end);
+
+    $claim = DB::table('e_claim')
+                ->where('service', 'Accident & Emergency')
+                ->where('status', 1)
+                ->where('created_at', '>=', $start)
+                ->where('created_at', '<=', $end)
+                ->get();
+
+    if(sizeof($claim) > 2)  {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 ?>
