@@ -1501,7 +1501,8 @@ class PlanHelper {
 					$credits = $data_enrollee->credits;
 				}
 
-				if($customer->medical_supp_credits >= $credits) {
+				// $customer->medical_supp_credits >= 
+				if($credits > 0) {
 					// if($credits > $customer->balance) {
 						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("balance", $credits);
 						if($customer_credits_result) {
@@ -1521,7 +1522,7 @@ class PlanHelper {
 						// $customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 					// }
 
-		      // medical credits
+		      		// medical credits
 					// if($customer->balance >= $credits) {
 						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 
@@ -1531,7 +1532,7 @@ class PlanHelper {
 							$customer_active_plan_id = NULL;
 						}
 
-		        // give credits
+		        		// give credits
 						$wallet_class = new Wallet();
 						$update_wallet = $wallet_class->addCredits($user_id, $credits);
 						$employee_logs = new WalletHistory();
@@ -1590,8 +1591,8 @@ class PlanHelper {
 					$customer_active_plan_id = NULL;
 				}
 
-
-				if($customer->wellness_supp_credits >= $credits) {
+				// $customer->wellness_supp_credits >= 
+				if($credits > 0) {
 					// if($credits > $customer->wellness_credits) {
 						$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
 						if($customer_credits_result) {
