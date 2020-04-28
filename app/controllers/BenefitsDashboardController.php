@@ -1993,10 +1993,7 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Basic Plan (Post-paid)";
-				if($active_plan->plan_method == "pre_paid")	{
-					$plan_name = "Basic Plan (Pre-paid)";
-				}
+				$plan_name = "Basic Plan";
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
 			}
@@ -3171,10 +3168,7 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Basic Plan (Post-paid)";
-				if($active_plan->plan_method == "pre_paid")	{
-					$plan_name = "Basic Plan (Pre-paid)";
-				}
+				$plan_name = "Basic Plan";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -14349,6 +14343,8 @@ class BenefitsDashboardController extends \BaseController {
 			$plan_method = $spending->wellness_plan_method;
 		}
 
+		
+
 		$date1 = new DateTime($term_start);
 		$date2 = new DateTime($term_end);
 		$interval = $date1->diff($date2);
@@ -14461,8 +14457,13 @@ class BenefitsDashboardController extends \BaseController {
 		$paginate['data'] = $final_user;
 		
 		$user_spending_dates = CustomerHelper::getCustomerCreditReset($spending->customer_id, 'current_term', $spending_type);
-		$company_credits = \CustomerHelper::getCustomerMedicalTotalCredits($spending->customer_id, $user_spending_dates);
 
+		if($spending_type == "medical")	{
+			$company_credits = \CustomerHelper::getCustomerMedicalTotalCredits($spending->customer_id, $user_spending_dates);
+		} else {
+			$company_credits = \CustomerHelper::getCustomerWellnessTotalCredits($spending->customer_id, $user_spending_dates);
+		}
+		
 		return [
 			'status' => true, 
 			'customer_id' => $customer_id, 

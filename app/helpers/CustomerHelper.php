@@ -394,5 +394,64 @@ class CustomerHelper
 	$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
 	return ['total_purchase_credits' => $total_medical_allocation, 'total_bonus_credits' => (float)$total_bonus];
   }
+
+  public static function getCustomerWellnessTotalCredits($customer_id, $user_spending_dates)
+  {
+	
+	$total_bonus = 0;
+	$temp_total_allocation = 0;
+	$temp_total_deduction = 0;
+	$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+	// admin_added_bonus_credits
+	if($user_spending_dates['id']) {
+		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$total_bonus = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_bonus_credits')
+		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+	} else {
+		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$total_bonus = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_bonus_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$temp_total_deduction = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_deducted_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+	}
+
+	$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
+	return ['total_purchase_credits' => $total_medical_allocation, 'total_bonus_credits' => (float)$total_bonus];
+  }
 }
 ?>
