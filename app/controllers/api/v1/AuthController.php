@@ -5146,29 +5146,38 @@ public function getHealthLists( )
     $returnObject->status = TRUE;
     $returnObject->message = 'Success.';
 
-    if(empty($input['spending_type']) || $input['spending_type'] == null) {
-     $returnObject->status = FALSE;
-     $returnObject->message = 'Spending Type is required. Please choose either medical or wellness type';
-     return Response::json($returnObject);
-   }
-
    $user_id = StringHelper::getUserId($findUserID);
    $customer_id = PlanHelper::getCustomerId($user_id);
-   if($customer_id) {
-      // get claim type service cap
-    $get_company_e_claim_services = DB::table('company_e_claim_service_types')
-    ->where('customer_id', $customer_id)
-    ->where('type', $input['spending_type'])
-    ->where('active', 1)
-    ->get();
-    if(sizeof($get_company_e_claim_services) > 0) {
-      $spending_types = $get_company_e_claim_services;
-    } else { 
+    if($customer_id) {
+      // check if user is an enterprise plan
+        $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+        $customer_active_plan = DB::table('customer_active_plan')
+                                ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+                                ->first();
+        
+        if($customer_active_plan->account_type == "enterprise_plan")  {
+          $spending_types = DB::table('health_types')->where('account_type', $customer_active_plan->account_type)->where('active', 1)->get();
+        } else {
+          if(empty($input['spending_type']) || $input['spending_type'] == null) {
+            $returnObject->status = FALSE;
+            $returnObject->message = 'Spending Type is required. Please choose either medical or wellness type';
+            return Response::json($returnObject);
+          }
+          // get claim type service cap
+          $get_company_e_claim_services = DB::table('company_e_claim_service_types')
+          ->where('customer_id', $customer_id)
+          ->where('type', $input['spending_type'])
+          ->where('active', 1)
+          ->get();
+          if(sizeof($get_company_e_claim_services) > 0) {
+            $spending_types = $get_company_e_claim_services;
+          } else { 
+            $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
+          }
+        }
+    } else {
       $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
     }
-  } else {
-    $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
-  }
 
   $returnObject->data = $spending_types;
   return Response::json($returnObject);
@@ -5360,7 +5369,14 @@ public function createEclaim( )
     }
   }
 
-  
+  // check if enable to access feature
+  $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+  if($transaction_access)	{
+    $returnObject->status = FALSE;
+    $returnObject->message = 'Non-Panel function is disabled for your company.';
+    return Response::json($returnObject);
+  }
 
   $input_amount = 0;
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
@@ -5465,6 +5481,12 @@ try {
  $id = $result->id;
 
  if($result) {
+
+  // deduct visit for enterprise plan user
+  if($customer_active_plan->account_type == "enterprise_plan")	{
+    MemberHelper::deductPlanHistoryVisit($user_id);
+  }
+  
   $e_claim_docs = new EclaimDocs( );
     // loop ang process
   foreach (Input::file('files') as $key => $file) {

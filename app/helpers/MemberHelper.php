@@ -658,5 +658,30 @@ class MemberHelper
 		$total_days = date_diff(new \DateTime(date('Y-m-d', strtotime($plan_start))), new \DateTime(date('Y-m-d', strtotime($plan_end))));
 		return $total_days->format('%a') + 1;
 	}
+
+	public static function checkMemberAccessTransactionStatus($member_id)
+	{
+		$status = DB::table('member_block_transaction')->where('member_id', $member_id)->where('status', 1)->first();
+
+		if($status) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function deductPlanHistoryVisit($member_id)
+	{
+		$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if($plan_history)
+		{
+			// increase visit created
+			DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->increment('total_visit_created', 1);
+			return true;
+		}
+
+		return false;
+	}
 }
 ?>

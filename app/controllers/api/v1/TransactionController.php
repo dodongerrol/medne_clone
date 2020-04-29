@@ -90,6 +90,15 @@ class Api_V1_TransactionController extends \BaseController
 						}
 					}
 
+					// check if enable to access feature
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+					if($transaction_access)	{
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Panel function is disabled for your company.';
+						return Response::json($returnObject);
+					}
+
 					// check block access
 					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 					if($block) {
@@ -574,6 +583,10 @@ class Api_V1_TransactionController extends \BaseController
 											}
 										}
 										
+										// deduct visit for enterprise plan user
+										if($customer_active_plan->account_type == "enterprise_plan")	{
+											MemberHelper::deductPlanHistoryVisit($user_id);
+										}
 										// send email
 										$email['member'] = ucwords($user->Name);
 										$email['credits'] = number_format($transaction_results['total_amount'], 2);
