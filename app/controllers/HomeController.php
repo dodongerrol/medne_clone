@@ -33,8 +33,8 @@ class HomeController extends BaseController {
  public function testEmailSend( )
  {
 
-  // $data['to'] = 'jeamar1234@gmail.com';
-  $data['to'] = 'info@medicloud.sg';
+  $data['to'] = 'jeamar1234@gmail.com';
+  // $data['to'] = 'info@medicloud.sg';
   // $data['to'] = 'shielamaealvarez@ymail.com';
   $data['subject'] = "Email Test";
   $data['credits'] = 1;
