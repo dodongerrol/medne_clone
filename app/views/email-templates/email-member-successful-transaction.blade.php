@@ -25,8 +25,124 @@
         .billing-details-header .custom-border {
           width: 65% !important;
         }
-        .contact-support-item span{
+      }
+
+      @media only screen and (max-width: 650px) {
+        .header-content{
+          padding: 65px 30px 0 30px !important;
+        }
+        .trans-content{
+          padding: 0px 30px !important;
+        }
+        .receipt-details{
+          padding: 30px 30px 10px 30px !important; 
+        }
+        .billing-details-header{
+          padding: 0 30px !important;
+        }
+        .item_service{
+          padding: 20px 30px !important;
+        }
+        .billing-details-header .custom-border {
+          width: 72% !important;
+        }
+      }
+
+      @media only screen and (max-width: 600px) {
+        .trans-content .item{
+          padding: 10px 0 !important;
+        }
+        .trans-content .item .one,
+        .trans-content .item .two{
+          font-size: 14px !important;
+        }
+      }
+      
+      @media only screen and (max-width: 550px) {
+        .billing-details-header span{
+          font-size: 14px !important;
+          width: 105px !important;
+        }
+        .billing-details-header .custom-border {
+          width: 65% !important;
+        }
+        .logo-container img{
+          height: 100px !important;
+          max-height: 100px !important;
+          width: 100px !important;
+        }
+        .trans-content .item img{
+          margin-right: 12px !important;
+          width: 18px !important;
+        }
+        .header-content {
+          padding: 50px 20px 0 20px !important;
+        }
+        .trans-content{
+          padding: 0px 20px !important;
+        }
+        .receipt-details{
+          padding: 30px 20px 10px 20px !important; 
+        }
+        .billing-details-header{
+          padding: 0 20px !important;
+        }
+        .item_service{
+          padding: 20px 20px !important;
+        }
+        .trans-content .item .one{
+          width: 55% !important;
+        }
+        .trans-content .item .two{
+          width: 42% !important;
+        }
+        .receipt-details .item.one{
+          width: 50% !important;
+        }
+        .receipt-details .item div,
+        .receipt-details .item p{
+          font-size: 14px !important;
+        }
+        .billing-details-body-container .title{
+          width: 55% !important;
+          font-size: 14px !important;
+        }
+        .billing-details-body-container .amount{
+          font-size: 14px !important;
+        }
+        .contact-content .item div{
+          font-size: 14px !important;
+        }
+      }
+      @media only screen and (max-width: 480px) {
+        .billing-details-header .custom-border {
+          width: 60% !important;
+        }
+      }
+      @media only screen and (max-width: 450px) {
+
+        .contact-content .item{
           display: block !important;
+          margin-bottom: 20px !important;
+          width: 100% !important;
+          text-align: left !important;
+        }
+        .contact-content br{
+          display: none !important;
+        }
+        .contact-content .social-img{
+          margin-left: 0 !important;
+          margin-right: 5px !important;
+        }
+      }
+      @media only screen and (max-width: 400px) {
+        .billing-details-header .custom-border {
+          width: 55% !important;
+        }
+      }
+      @media only screen and (max-width: 350px) {
+        .billing-details-header .custom-border {
+          width: 48% !important;
         }
       }
     </style>
@@ -37,13 +153,13 @@
           <img style="height: 110px;max-height: 110px;width: 110px;padding: 12px;border-radius: 50%;background-color: #FFF;" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/new_logo_icon.png">
         </div>
         <div class="header-content" style="text-align: center;color: #FFF !important;overflow: hidden;position: relative;z-index: 5;background-color: #3E91C8;padding: 65px 60px 0 60px;box-sizing: border-box;">
-          <p style="font-size: 18px;line-height: 29px;margin: 0 0 15px 0;color: #FFF !important;">
+          <p style="font-size: 18px;line-height: 29px;margin: 0 0 15px 0;color: #FFF !important;word-break: break-word;">
             Here's the payment receipt for your visit at <span style="font-weight: 700">{{ $health_provider_name }}</span>.
           </p>
-          <p style="font-size: 15px; width: 450px;margin: 0 auto 10px auto;color: #FFF !important;">
+          <p style="font-size: 15px; max-width: 450px;margin: 0 auto 10px auto;color: #FFF !important;word-break: break-word;">
             You can also view your receipts under the History section in Mednefits app.
           </p>
-          <p style="font-size: 35px;font-weight: 700;margin: 0 0 15px 0;color: #FFF !important;">
+          <p style="font-size: 35px;font-weight: 700;margin: 0 0 15px 0;color: #FFF !important;word-break: break-word;">
             Total: <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
           </p>
 
@@ -53,20 +169,20 @@
       <div class="body-content" style="min-height: 725px;background: #FFF;box-sizing: border-box;">
         <div class="trans-content" style="background: #F7F7F7;padding: 0px 60px;border: 1px solid #ccc;border-width: 0 1px;box-sizing: border-box;">
           <div class="item" style="border-bottom: 1px solid #ddd;display: inline-block;width: 100%;padding: 15px 0;">
-            <div class="one" style="width: 60%;display:inline-block;vertical-align: top;color: #777;font-size: 18px;">
+            <div class="one" style="width: 60%;display:inline-block;vertical-align: middle;color: #777;font-size: 18px;">
               <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/Trans-ID---Mednefits-Credits-Email.png" style="width: 26px;margin-right: 30px;vertical-align: middle;"/>
               <span style="display: inline-block;vertical-align: middle;">Transaction ID</span>
             </div>
-            <div class="two" style="width: 37%;display: inline-block;color: #333;font-weight: 700;font-size: 18px;">
+            <div class="two" style="width: 37%;display: inline-block;vertical-align: middle;color: #333;font-weight: 700;font-size: 18px;">
               {{ $transaction_id }}
             </div>
           </div>
           <div class="item" style="display: inline-block;width: 100%;padding: 15px 0;">
-            <div class="one" style="width: 60%;display:inline-block;vertical-align: top;color: #777;font-size: 18px;">
+            <div class="one" style="width: 60%;display:inline-block;vertical-align: middle;color: #777;font-size: 18px;">
               <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/clock.png" style="width: 26px;margin-right: 30px;vertical-align: middle;"/>
               <span style="display: inline-block;vertical-align: middle;">Transaction Date</span>
             </div>
-            <div class="two" style="width: 37%;display: inline-block;color: #333;font-weight: 700;font-size: 18px;">
+            <div class="two" style="width: 37%;display: inline-block;vertical-align: middle;color: #333;font-weight: 700;font-size: 18px;">
               {{ $transaction_date }}
             </div>
           </div>
@@ -177,7 +293,7 @@
 
           <div class="contact-content" style="width: 100%;padding: 20px 0;">
             <div class="item one" style="width: 58%;display: inline-block;vertical-align: top;">
-              <div style="font-size: 22px;color: #777;margin-bottom: 20px;">
+              <div style="font-size: 18px;color: #777;margin-bottom: 20px;">
                 Contact support
               </div>
               <div class="contact-support-item" style="align-items: center;color: #848484;font-size: 18px;">
