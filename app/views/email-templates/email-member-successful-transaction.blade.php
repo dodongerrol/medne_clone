@@ -181,7 +181,7 @@
                 Contact support
               </div>
               <div class="contact-support-item" style="align-items: center;color: #848484;font-size: 18px;">
-                <span class="child-one" style="display: inline-block;vertical-align: middle;margin: 0 20px 0 0;height: 40px;max-height: 40px;">
+                <span class="child-one" style="display: inline-block;vertical-align: middle;margin: 0 10px 0 0;height: 40px;max-height: 40px;">
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/telephone.png" style="width: 40px;">
                 </span>
                 @if($currency_symbol == "SGD")
