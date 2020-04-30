@@ -323,7 +323,8 @@ class CustomerHelper
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
-		$activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
+		// $activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
 
 		return array(
 			'customer_id'		=> $customer_id,
@@ -332,7 +333,7 @@ class CustomerHelper
 			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
 			'wellness_method'	=> $spending->wellness_plan_method,
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
-			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $activePlan > 0 ? false : true,
+			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
 		);
 	}
 
