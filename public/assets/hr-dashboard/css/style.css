@@ -1818,6 +1818,19 @@ p.number-of-enrollees.inactive-enroll-text {
   width: 15%;
   float: left;
 }
+
+.employee-overview-table .spending-account-visits-title,
+.employee-overview-table .visits-details-container {
+  width: 11%;
+  float: left;
+}
+
+.employee-overview-table .spending-account-spending-title,
+.employee-overview-table .spending-details-container {
+  width: 20%;
+  float: left;
+}
+
 .status-details-container {
   align-items: center;
   display: flex;
@@ -5880,7 +5893,8 @@ ul.typeahead li a.dropdown-item {
 .plan-details strong,
 .family-coverage-details strong,
 .medical-details strong,
-.wellness-details strong {
+.wellness-details strong,
+.enterprise-details strong{
   font-family: "Helvetica Medium";
 }
 

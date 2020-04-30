@@ -88,8 +88,10 @@
 						<!-- <th class="nric-fin-title">NRIC/FIN</th> -->
 						<th class="plan-details-title">Plan details</th>
 						<th class="family-coverage-title">Family coverage</th>
-						<th class="spending-account-medical-title">Spending account <span>(medical)</span></th>
-						<th class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
+						<th ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="spending-account-medical-title">Spending account <span>(medical)</span></th>
+						<th ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
+						<th ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-account-visits-title">Visits</th>
+						<th ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-account-spending-title">Spendings</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -136,7 +138,7 @@
 								<span ng-bind="emp.dependents">2</span>
 							</div>
 						</td>
-						<td class="medical-details-container">
+						<td ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="medical-details-container">
 							<div class="medical-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
@@ -148,7 +150,7 @@
 										ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
 							</div>
 						</td>
-						<td class="wellness-details-container">
+						<td ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="wellness-details-container">
 							<div class="wellness-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
@@ -158,6 +160,34 @@
 								<strong>Balance:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
 										ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
+							</div>
+						</td>
+
+						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="visits-details-container">
+							<div class="enterprise-details">
+								<strong>Utilised:</strong>
+								<span ng-bind="emp.spending_account.wellness.credits_allocation_wellness">11</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Balance:</strong>
+								<span ng-bind="emp.spending_account.wellness.credits_allocation_wellness">11</span>
+							</div>
+						</td>
+
+						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-details-container">
+							<div class="enterprise-details">
+								<strong>In-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span>
+								</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Out-of-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span>
+								</span>
 							</div>
 						</td>
 					</tr>
