@@ -2010,12 +2010,19 @@ $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLSt
 $jsonArray['image_url'] = $clinic->CLImage;
 $jsonArray['member'] = ucwords($user->Name);
 $jsonArray['nric'] = $user->NRIC;
+
+
+$current_balance = 0;
+// if($customer_active_plan->account_type != "super_pro_plan") {
+//   $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+// }
 $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
 $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
 $jsonArray['plan_type'] = $plan_coverage['plan_type'];
-// $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+$current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+        // check if employee has plan tier cap
+$customer_id = PlanHelper::getCustomerId($owner_id);
 
-// check if employee has plan tier cap
 $plan_tier = null;
 
 if($customer_id) {
@@ -5531,7 +5538,7 @@ try {
 
   if($result_doc) {
     if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
-                                          //   aws
+     //   aws
      $s3 = AWS::get('s3');
      $s3->putObject(array(
       'Bucket'     => 'mednefits',
@@ -5539,6 +5546,20 @@ try {
       'SourceFile' => public_path().'/receipts/'.$file_name,
     ));
    }
+
+   try {
+    //  logs
+    $admin_logs = array(
+      'admin_id'  => $input['user_id'],
+      'admin_type' => 'member',
+      'type'      => 'admin_employee_create_e_claim_details',
+      'data'      => SystemLogLibrary::serializeData($result)
+    );
+    SystemLogLibrary::createAdminLog($admin_logs);
+   } catch(Exeption $e) {
+    
+   }
+    
  } else {
   $email = [];
   $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);

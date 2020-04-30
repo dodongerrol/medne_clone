@@ -8900,3 +8900,175 @@ span.dropdown-entitlement.disabled {
   -webkit-transform: translate(0,0) scale(1);
   transform: translate(0,0) scale(1);
 }
+
+
+/* ---------------------- ACTIVITY PAGE ---------------------- */
+  .activity-hr-wrapper .container-fluid {
+    padding: 0;
+  }
+
+  .team-benefits-cost-title {
+    font-family: 'Helvetica Medium';
+    color: #2E4057;
+  }
+
+  .col-md-6.col-first {
+    margin: 20px 0;
+    padding: 0;
+  }
+
+  .team-benefits-new-wrapper {
+    padding: 0;
+    display: grid;
+    grid-template-columns: 50% 50%;
+  }
+
+  .team-benefits-new-wrapper .eclaim-border-bottom {
+    border-right: 1px solid #ccc;
+    border-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .team-benefits-new-wrapper .new_spent .benefit-box {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    text-align: inherit;
+  }
+
+  .team-benefits-new-wrapper .new_breakDown .benefit-box {
+    width: auto;
+    margin:0;
+    padding: 20px 20px 20px 120px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .team-benefits-new-wrapper .new_breakDown >div:last-child .benefit-box {
+    border-bottom: 0;
+  }
+
+  .new-activity-header-calendar .range-date {
+  color: #2E4057;
+  }
+
+  .new-activity-header-calendar .row {
+    margin: 0;
+  }
+
+  @media ( max-width: 1430px ) {
+    .new-body-container .custom-select .select {
+      /*margin: 0*/
+    }
+    .new-body-container .col-md-7 {
+      width: 55%;
+      padding: 0;
+    }
+    .new-body-container .col-md-5 {
+      width: 45%;
+      padding: 0;
+    }
+    .activity-hr-wrapper .date-selection-container.left-input,
+    .activity-hr-wrapper .date-selection-container.right-input {
+      margin: 0 0 20px;
+    }
+  }
+
+  @media ( max-width: 1400px ) {
+    .new-body-container .col-md-7,
+    .new-body-container .col-md-5 {
+      width: 100%;
+    }
+
+    .new-body-container .date-selection-container.right-input {
+      text-align: left;
+    }
+  }
+
+  @media ( max-width: 992px ) {
+    .team-benefits-new-wrapper .new_breakDown .benefit-box {
+      padding: 20px 20px 20px 40px;
+    }
+
+    .new-activity-header-calendar >div {
+      display: grid;
+      grid-template-columns: 100%;
+    }
+
+    .new-activity-header-calendar >div >div:last-child {
+      grid-row: 1;
+      padding: 0;
+    }
+
+    .new-activity-header-calendar .search-wrapper .input-group {
+      float: left;
+    }
+
+    .transaction-header-container {
+      padding: 0;
+    }
+
+    .transaction-header-container .transactions-header {
+      display: grid;
+    }
+    .transaction-header-container .transactions-header >div:last-child {
+      grid-row: 1;
+    }
+  }
+
+  @media ( max-width: 820px ) {
+    .date-selection-container.left-input {
+      display: grid;
+    }
+
+    .new-body-container .input-label .radio {
+      margin: 10px 5px 0px 0px;
+    }
+  }
+
+  @media ( max-width: 800px ) {
+    .team-benefits-new-wrapper {
+      grid-template-columns: 100%;
+    }
+    .team-benefits-new-wrapper .eclaim-border-bottom {
+      display: block;
+      border-right: 0;
+      border-bottom: 1px solid #ccc;
+      padding: 20px 20px 20px 40px;
+    }
+  }
+
+  @media ( max-width: 767px ) {
+    .activity-hr-wrapper .body-container {
+      padding: 0;
+    }
+
+    .new-body-container .custom-date-selector.btn-custom-date {
+      display: grid;
+    }
+    .new-body-container .custom-date-selector.btn-custom-date >button {
+      margin: 10px 0 0;
+    }
+    .new-body-container .custom-date-selector.btn-custom-date >span {
+      display: none;
+    }
+    .date-selection-container .custom-date-selector .btn-apply {
+      margin: 0;
+    }
+
+    .transactions-btn-container {
+      display: grid;
+    }
+    .transactions-btn-container button {
+      width: 100%;
+      margin: 0 0 20px;
+    }
+  }
+
+/* ----------------------------------------------------------- */
+
+
+
+
+
