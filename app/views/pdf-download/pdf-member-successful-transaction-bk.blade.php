@@ -13,7 +13,7 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
-
+        
       body{
         margin: 0;
         font-family: 'Helvetica Light',sans-serif;
@@ -26,7 +26,7 @@
         border: 1px solid #ccc;
         width: 774px;
         background: #fff;
-        height: 1080px;
+        /* height: 1090px; */
       }
 
       .top-content{
@@ -213,6 +213,7 @@
         display: inline-block;
         vertical-align: top;
         width: 175px;
+        
       }
       
       .contact-content .item.one{
@@ -272,7 +273,7 @@
           <p style="font-size: 18px; width: 490px; margin: 0 auto 20px auto;">
             You can also view your receipts under the History section in Mednefits app.
           </p>
-          <p style="font-size: 40px;font-weight: 700;line-height: 1;margin-bottom: 20px;">
+          <p style="font-size: 40px;font-weight: 700;line-height: 1;margin-bottom: 10px;">
             Total: <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
           </p>
 
@@ -419,11 +420,11 @@
                 </div>
                 <div class="child-two">
                 @if($currency_symbol == "SGD")
-                  <span style="text-decoration: underline;"><a href="tel:+65-6254-7889">+65 6254 7889</a></span>
+                  <span style="text-decoration: underline;">+65 6254 7889</span>
                 @else
-                  <span style="text-decoration: underline;"><a href="tel:+65-6254-7889">+65 6254 7889</a></span>
+                  <span style="text-decoration: underline;">+65 6254 7889</span>
                   <span style="margin: 0 0 0 5px;">or</span> 
-                  <span style="text-decoration: underline;"><a href="tel:+603-7890-1770">+603 7890 1770</a></span>
+                  <span style="text-decoration: underline;">+603 7890 1770</span>
                 @endif
                 </div>
               </div>
