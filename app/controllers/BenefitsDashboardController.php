@@ -2461,11 +2461,11 @@ class BenefitsDashboardController extends \BaseController {
 				// 'wellness_supp_credits' => $total_wellness_supp_credits
 			);
 
-			if($company_credits->medical_supp_credits == 0) {
+			if($company_credits->medical_supp_credits <= 0) {
 				$credit_update['medical_supp_credits'] = $total_medical_supp_credits;
 			}
 
-			if($company_credits->wellness_supp_credits == 0) {
+			if($company_credits->wellness_supp_credits <= 0) {
 				$credit_update['wellness_supp_credits'] = $total_wellness_supp_credits;
 			}
 			\CustomerCredits::where('customer_id', $customer_id)->update($credit_update);
@@ -14642,7 +14642,7 @@ class BenefitsDashboardController extends \BaseController {
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
 		$members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $spending->customer_id)->first();
-		$pending = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where('paid', 'false')->count();
+		$pending = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where('payment_status', 0)->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		$total_allocation = 0;
 		$total_company_medical_allocation = 0;

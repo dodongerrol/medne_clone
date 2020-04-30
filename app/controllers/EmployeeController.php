@@ -2322,7 +2322,7 @@ class EmployeeController extends \BaseController {
                   }
                 }
               } else {
-                if($new_allocation > $customer_credits->balance) {
+                if($new_allocation > $customer_credits->medical_supp_credits) {
                   return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                 }
               }
@@ -2341,7 +2341,7 @@ class EmployeeController extends \BaseController {
                   }
                 }
               } else {
-                if($new_allocation > $customer_credits->wellness_credits) {
+                if($new_allocation > $customer_credits->wellness_supp_credits) {
                   return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                 }
               }
@@ -2374,7 +2374,7 @@ class EmployeeController extends \BaseController {
                     }
                   }
                 } else {
-                  if($new_allocation > $customer_credits->balance) {
+                  if($new_allocation > $customer_credits->medical_supp_credits) {
                     return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                   }
                 }
@@ -2409,7 +2409,7 @@ class EmployeeController extends \BaseController {
                     }
                   }
                 } else {
-                  if($new_allocation > $customer_credits->wellness_credits) {
+                  if($new_allocation > $customer_credits->wellness_supp_credits) {
                     return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                   }
                 }

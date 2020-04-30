@@ -354,222 +354,15 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 											console.log('fail');
 											if (index == scope.toUpdateAllocation.length-1) {
 												console.log('index check equal');
-												if(success_ctr > 0) {
-													console.log('if success > 0');
-													var text;
-													var today = new Date();
-													var effective_date = moment(value.effective_date,'YYYY/MM/DD').format('DD/MM/YYYY');
-		
-													var dateToday= scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) <= today );
-													var dateFuture = scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) > today );
-													var dateAllEqual = scope.toUpdateAllocation.every( thing => thing.effective_date === scope.toUpdateAllocation[0].effective_date);
-		
-													console.log('Every()',today,new Date(scope.toUpdateAllocation[0].effective_date ),dateToday,dateFuture,dateAllEqual);
-												
-													if (dateToday) {
-														text = `<span>The allocation amount has been successfully updated.</span>`;
-													} else if (dateFuture && dateAllEqual) {
-														text = `<span>The allocation amount will be updated on ${effective_date}.</span>`;
-													} else if (dateFuture && !dateAllEqual) {
-														text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
-													} else {
-														text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
-													}
-													setTimeout(function() {
-														swal({
-															title: '',
-															text: text,
-															html: true,
-															showCancelButton: false,
-															confirmButtonText: 'Close',
-															customClass : 'allocationEntitlementSuccessModal'
-														}, function(result)	{
-															
-															if(result) {
-																setTimeout(function(){
-															
-																	var errorLength = scope.apiErrorResponse.length;
-																	var list_id = [];
-																	scope.apiErrorResponse.map(value => {
-																		list_id.push(value.member_id);
-																	});
-																	console.log(list_id);
-																
-																	if (errorLength > 0) {
-																		console.log(errorLength);
-																		setTimeout(function(){
-																			swal({
-																				title: '',
-																				text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
-																				html: true,
-																				showCancelButton: false,
-																				confirmButtonText: 'Close',
-																				customClass : 'allocationEntitlementErrorModal'
-																			}, function(result) {
-																				if	(result)	{
-																					scope.toUpdateAllocation = [];
-																					scope.apiErrorResponse = [];
-																					scope.getEmployeeBulkCredit();
-																				}
-																			});
-																		},600);
-																	} else {
-																		scope.toUpdateAllocation = [];
-																		scope.getEmployeeBulkCredit();
-																	}
-																},1500);
-															}
-														});
-													},600);
-											} else {
-													console.log('else error drtso');
-													setTimeout(function(){
-														
-														var errorLength = scope.apiErrorResponse.length;
-														var list_id = [];
-														scope.apiErrorResponse.map(value => {
-															list_id.push(value.member_id);
-														});
-														console.log(list_id);
-													
-														if (errorLength > 0) {
-															console.log(errorLength);
-															setTimeout(function(){
-																swal({
-																	title: '',
-																	text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
-																	html: true,
-																	showCancelButton: false,
-																	confirmButtonText: 'Close',
-																	customClass : 'allocationEntitlementErrorModal'
-																}, function(result) {
-																	if	(result)	{
-																		scope.toUpdateAllocation = [];
-																		scope.apiErrorResponse = [];
-																		scope.getEmployeeBulkCredit();
-																	}
-																});
-															},600);
-														} else {
-															scope.toUpdateAllocation = [];
-															scope.getEmployeeBulkCredit();
-														}
-													},1500);
-												}
-												
+												scope.successModal(success_ctr, value);
 											}
 											console.log(scope.apiErrorResponse);
 										} else {
 											success_ctr++;
 											console.log('success ctr', success_ctr)
-
 											if (index == scope.toUpdateAllocation.length-1) {
 												console.log('index check equal');
-												if(success_ctr > 0) {
-													console.log('if success > 0');
-													var text;
-													var today = new Date();
-													var effective_date = moment(value.effective_date,'YYYY/MM/DD').format('DD/MM/YYYY');
-		
-													var dateToday= scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) <= today );
-													var dateFuture = scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) > today );
-													var dateAllEqual = scope.toUpdateAllocation.every( thing => thing.effective_date === scope.toUpdateAllocation[0].effective_date);
-		
-													console.log('Every()',today,new Date(scope.toUpdateAllocation[0].effective_date ),dateToday,dateFuture,dateAllEqual);
-												
-		
-		
-													if (dateToday) {
-														text = `<span>The allocation amount has been successfully updated.</span>`;
-													} else if (dateFuture && dateAllEqual) {
-														text = `<span>The allocation amount will be updated on ${effective_date}.</span>`;
-													} else if (dateFuture && !dateAllEqual) {
-														text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
-													} else {
-														text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
-													}
-													setTimeout(function() {
-														swal({
-															title: '',
-															text: text,
-															html: true,
-															showCancelButton: false,
-															confirmButtonText: 'Close',
-															customClass : 'allocationEntitlementSuccessModal'
-														}, function(result)	{
-															
-															if(result) {
-																setTimeout(function(){
-															
-																	var errorLength = scope.apiErrorResponse.length;
-																	var list_id = [];
-																	scope.apiErrorResponse.map(value => {
-																		list_id.push(value.member_id);
-																	});
-																	console.log(list_id);
-																
-																	if (errorLength > 0) {
-																		console.log(errorLength);
-																		setTimeout(function(){
-																			swal({
-																				title: '',
-																				text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
-																				html: true,
-																				showCancelButton: false,
-																				confirmButtonText: 'Close',
-																				customClass : 'allocationEntitlementErrorModal'
-																			}, function(result) {
-																				if	(result)	{
-																					scope.toUpdateAllocation = [];
-																					scope.apiErrorResponse = [];
-																					scope.getEmployeeBulkCredit();
-																				}
-																			});
-																		},600);
-																	} else {
-																		scope.toUpdateAllocation = [];
-																		scope.getEmployeeBulkCredit();
-																	}
-																},1500);
-															}
-														});
-													},600);
-											} else {
-													console.log('else error drtso');
-													setTimeout(function(){
-														
-														var errorLength = scope.apiErrorResponse.length;
-														var list_id = [];
-														scope.apiErrorResponse.map(value => {
-															list_id.push(value.member_id);
-														});
-														console.log(list_id);
-													
-														if (errorLength > 0) {
-															console.log(errorLength);
-															setTimeout(function(){
-																swal({
-																	title: '',
-																	text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
-																	html: true,
-																	showCancelButton: false,
-																	confirmButtonText: 'Close',
-																	customClass : 'allocationEntitlementErrorModal'
-																}, function(result) {
-																	if	(result)	{
-																		scope.toUpdateAllocation = [];
-																		scope.apiErrorResponse = [];
-																		scope.getEmployeeBulkCredit();
-																	}
-																});
-															},600);
-														} else {
-															scope.toUpdateAllocation = [];
-															scope.getEmployeeBulkCredit();
-														}
-													},1500);
-												}
-												
+												scope.successModal(success_ctr, value);
 											}
 										}
 										
@@ -578,7 +371,111 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
               }
             }, 500)
 					});
+				}
+
+				scope.successModal = function(success_ctr, value) { //success and error modal
+					if(success_ctr > 0) {
+						console.log('if success > 0');
+						var text;
+						var today = new Date();
+						var effective_date = moment(value.effective_date,'YYYY/MM/DD').format('DD/MM/YYYY');
+
+						var dateToday= scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) <= today );
+						var dateFuture = scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) > today );
+						var dateAllEqual = scope.toUpdateAllocation.every( thing => thing.effective_date === scope.toUpdateAllocation[0].effective_date);
+
+						console.log('Every()',today,new Date(scope.toUpdateAllocation[0].effective_date ),dateToday,dateFuture,dateAllEqual);
 					
+						if (dateToday) {
+							text = `<span>The allocation amount has been successfully updated.</span>`;
+						} else if (dateFuture && dateAllEqual) {
+							text = `<span>The allocation amount will be updated on ${effective_date}.</span>`;
+						} else if (dateFuture && !dateAllEqual) {
+							text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
+						} else {
+							text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
+						}
+						setTimeout(function() {
+							swal({
+								title: '',
+								text: text,
+								html: true,
+								showCancelButton: false,
+								confirmButtonText: 'Close',
+								customClass : 'allocationEntitlementSuccessModal'
+							}, function(result)	{
+								
+								if(result) {
+									setTimeout(function(){
+								
+										var errorLength = scope.apiErrorResponse.length;
+										var list_id = [];
+										scope.apiErrorResponse.map(value => {
+											list_id.push(value.member_id);
+										});
+										console.log(list_id);
+									
+										if (errorLength > 0) {
+											console.log(errorLength);
+											setTimeout(function(){
+												swal({
+													title: '',
+													text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
+													html: true,
+													showCancelButton: false,
+													confirmButtonText: 'Close',
+													customClass : 'allocationEntitlementErrorModal'
+												}, function(result) {
+													if	(result)	{
+														scope.toUpdateAllocation = [];
+														scope.apiErrorResponse = [];
+														scope.getEmployeeBulkCredit();
+													}
+												});
+											},600);
+										} else {
+											scope.toUpdateAllocation = [];
+											scope.getEmployeeBulkCredit();
+										}
+									},600);
+								}
+							});
+						},600);
+				} else {
+						console.log('else error drtso');
+						setTimeout(function(){
+							
+							var errorLength = scope.apiErrorResponse.length;
+							var list_id = [];
+							scope.apiErrorResponse.map(value => {
+								list_id.push(value.member_id);
+							});
+							console.log(list_id);
+						
+							if (errorLength > 0) {
+								console.log(errorLength);
+								setTimeout(function(){
+									swal({
+										title: '',
+										text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
+										html: true,
+										showCancelButton: false,
+										confirmButtonText: 'Close',
+										customClass : 'allocationEntitlementErrorModal'
+									}, function(result) {
+										if	(result)	{
+											scope.toUpdateAllocation = [];
+											scope.apiErrorResponse = [];
+											scope.getEmployeeBulkCredit();
+										}
+									});
+								},600);
+							} else {
+								scope.toUpdateAllocation = [];
+								scope.getEmployeeBulkCredit();
+							}
+						},1500);
+					}
 				}
 
 				scope.toUpdateAllocation = [];
