@@ -534,6 +534,16 @@ app.directive("companyContactsDirective", [
           });
         }
 
+        scope.spending_account_status = {};
+        scope.getSpendingAcctStatus = function () {
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
+        }
+
         scope.onLoad = function(){
           scope.getDownloadToken();
           
@@ -552,6 +562,7 @@ app.directive("companyContactsDirective", [
             scope.getRefundList();
           }
           if( $state.current.name == "account-and-payment" ){
+            scope.getSpendingAcctStatus();
             scope.getCompanyContacts();
             scope.getBillingList();
             scope.getPlanSubscriptions();
