@@ -229,6 +229,8 @@
 				<br>
 				<div class="medical-spending-container">
 					<p><label class="medical-spending-title">Medical Spending Account:</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.medical_method == 'post_paid'">(Post-paid)</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.medical_method == 'pre_paid'">(Pre-paid)</label></p>
 					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p> -->
 					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_medical">0.00</span></p> -->
 					<p><label>Total:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p>
@@ -236,6 +238,8 @@
 				</div>
 				<div class="wellness-spending-container">
 					<p><label class="wellness-spending-title">Wellness Spending Account:</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.wellness_method == 'post_paid'">(Post-paid)</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.wellness_method == 'pre_paid'">(Pre-paid)</label></p>
 					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p> -->
 					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_wellness">0.00</span></p> -->
 					<p><label>Total:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p>
