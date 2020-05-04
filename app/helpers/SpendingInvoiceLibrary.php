@@ -371,9 +371,9 @@ class SpendingInvoiceLibrary
 							$payment_type = "Cash";
 							$transaction_type = "cash";
 							if((int)$trans['lite_plan_enabled'] == 1) {
-								$total_amount = $trans['consultation_fees'];
+								$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
 								$procedure_cost = "0.00";
-								$treatment = 0;
+								$treatment = $trans->credit_cost + $trans->cash_cost;
                       				// $consultation = number_format($trans['co_paid_amount'], 2);
 							}
 						} else {
