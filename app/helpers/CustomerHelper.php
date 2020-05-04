@@ -261,5 +261,24 @@ class CustomerHelper
 		$total_wellness_allocation = $temp_total_wellness_allocation - $temp_total_wellness_deduction;
 		return $total_wellness_allocation;
 	}
+
+	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
+	{
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+		if($spending) {
+			if($spending_type == "medical") {
+				// update and increment medical wallet
+				$total = $credits * $spending->medical_supplementary_credits;
+				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('medical_supp_credits', $total);
+			}
+
+			if($spending_type == "wellness")	{
+				// update and increment medical wallet
+				$total = $credits * $spending->wellness_supplementary_credits;
+				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('wellness_supp_credits', $total);
+			}
+		}
+	}
 }
 ?>

@@ -4214,7 +4214,7 @@ class BenefitsDashboardController extends \BaseController {
 				\WalletHistory::create($data_create_history);
 				if($medical > 0) {
                     // medical credits
-					if($customer->balance >= $medical) {
+					// if($customer->balance >= $medical) {
 
 						$result_customer_active_plan = PlanHelper::allocateCreditBaseInActivePlan($id, $medical, "medical");
 
@@ -4258,13 +4258,14 @@ class BenefitsDashboardController extends \BaseController {
 
 							$customer_credit_logs = new CustomerCreditLogs( );
 							$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+							\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'medical', $medical);
 						}
-					}
+					// }
 				}
 
 				if($wellness > 0) {
                     // wellness credits
-					if($customer->wellness_credits >= $wellness) {
+					// if($customer->wellness_credits >= $wellness) {
 						$result_customer_active_plan = PlanHelper::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
 
 						if($result_customer_active_plan) {
@@ -4302,8 +4303,9 @@ class BenefitsDashboardController extends \BaseController {
 							);
 							$customer_credits_logs = new CustomerWellnessCreditLogs();
 							$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+							\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'wellness', $medical);
 						}
-					}
+					// }
 				}
 				$replace_status = 1;
 
