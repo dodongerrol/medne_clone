@@ -316,8 +316,6 @@ class Api_V1_TransactionController extends \BaseController
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
 					}
-
-					// return $data;
 					
 					try {
 						$result = $transaction->createTransaction($data);
@@ -541,7 +539,8 @@ class Api_V1_TransactionController extends \BaseController
 											'half_credits_payment' => $half_payment,
 											'user_id'						=> $customer_id,
 											'convert_option'		=> $result->currency_type != $result->default_currency ? true : false,
-											'currency'					=> $currency
+											'currency'					=> $currency,
+											'cap_per_visit'		=> $clinic->currency_type == "myr" ? $result->cap_per_visit * $currency : $result->cap_per_visit
 										);
 
 										$clinic_type_properties = TransactionHelper::getClinicImageType($clinic_type);
@@ -562,10 +561,11 @@ class Api_V1_TransactionController extends \BaseController
 												PusherHelper::sendClinicCheckInRemoveNotification($input['check_in_id'], $check_in->clinic_id);
 											}
 										}
-										// return $transaction_results;
+										
 										// send email
 										$email['member'] = ucwords($user->Name);
-										$email['credits'] = $clinic->currency_type == "myr" ? number_format($total_credits_cost * $currency, 2) : number_format($total_credits_cost, 2);
+										$email['credits'] = number_format($transaction_results['total_amount'], 2);
+										$email['bill_amount'] = number_format($transaction_results['bill_amount'], 2);
 										$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$trans_id;
 										$email['trans_id'] = $transaction_id;
 										$email['transaction_date'] = date('d F Y, h:ia', strtotime($date_of_transaction));
@@ -574,38 +574,30 @@ class Api_V1_TransactionController extends \BaseController
 										$email['health_provider_city'] = $clinic->City;
 										$email['health_provider_country'] = $clinic->Country;
 										$email['health_provider_phone'] = $clinic->Phone;
-										$email['service'] = ucwords($clinic_type->Name).' - '.$procedure;
-										$email['emailSubject'] = 'Member - Successful Transaction';
+										$email['health_provider_postal'] = $clinic->Postal;
+										$email['service'] = $procedure;
+										$email['emailSubject'] = 'Your Mednefits E-Receipt - '.$email['transaction_id'];
 										$email['emailTo'] = $email_address ? $email_address : 'info@medicloud.sg';
-										// $email['emailTo'] = 'allan.alzula.work@gmail.com';
+										// $email['emailTo'] = 'allan.alzula.work@gmail.com'; 
 										$email['emailName'] = ucwords($user->Name);
 										$email['url'] = 'http://staging.medicloud.sg';
 										$email['clinic_type_image'] = $image;
 										$email['transaction_type'] = 'Mednefits Credits';
-										$email['emailPage'] = 'email-templates.member-successful-transaction-v2';
+										$email['emailPage'] = 'email-templates.email-member-successful-transaction';
 										$email['dl_url'] = url();
 										$email['lite_plan_enabled'] = $clinic_type->lite_plan_enabled;
 										$email['lite_plan_status'] = $lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 ? TRUE : FAlSE;
 										$email['total_amount'] = number_format($total_amount, 2);
+										$email['paid_by_credits'] = number_format($transaction_results['paid_by_credits'], 2);
+										$email['paid_by_cash'] = number_format($transaction_results['paid_by_cash'], 2);
+										$email['cap_per_visit'] = $result->cap_per_visit > 0 ? number_format($transaction_results['cap_per_visit'], 2) : 'Not Applicable';
+										$email['cap_per_visit_status'] = $result->cap_per_visit > 0 ? true : false;
 										$email['consultation'] = $clinic->currency_type == "myr" ? number_format($consultation_fees * $currency, 2) : number_format($consultation_fees, 2);
 										$email['currency_symbol'] = $email_currency_symbol;
-										$email['pdf_file'] = 'pdf-download.member-successful-transac-v2';
+										$email['pdf_file'] = 'pdf-download.pdf-member-successful-transaction';
 
 										try {
 											EmailHelper::sendPaymentAttachment($email);
-											// send to clinic
-											// $clinic_email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $input['clinic_id'])->first();
-
-											// if($clinic_email) {
-											//  $email['emailSubject'] = 'Health Partner - Successful Transaction By Mednefits Credits';
-											//  $email['nric'] = $user->NRIC;
-											//  $email['emailTo'] = $clinic_email->Email;
-											//  // $email['emailTo'] = 'allan.alzula.work@gmail.com';
-											//  $email['emailPage'] = 'email-templates.health-partner-successful-transaction-v2';
-											//  $api = "https://admin.medicloud.sg/send_clinic_transaction_email";
-											//  $email['pdf_file'] = 'pdf-download.health-partner-successful-transac-v2';
-											//  EmailHelper::sendPaymentAttachment($email);
-											// }
 											$returnObject->status = TRUE;
 											$returnObject->message = 'Payment Successfull';
 											$returnObject->data = $transaction_results;

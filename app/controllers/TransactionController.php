@@ -807,83 +807,39 @@ class TransactionController extends BaseController {
 							);
 
 							\Transaction::where('transaction_id', $new_id)->update($delete_data);
-
-							// send email
 							$user = DB::table('user')->where('UserID', $user_id)->first();
-							$clinic = DB::table('clinic')->where('ClinicID', $transaction->ClinicID)->first();
-							$transaction_id = str_pad($transaction->transaction_id, 6, "0", STR_PAD_LEFT);
-							$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
-							$procedure_temp = "";
-
-									 // get services
-							if($transaction->multiple_service_selection == 1 || $transaction->multiple_service_selection == "1")
-							{
-							    // get multiple service
-								$service_lists = DB::table('transaction_services')
-								->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
-								->where('transaction_services.transaction_id', $transaction->transaction_id)
-								->get();
-
-								foreach ($service_lists as $key => $service) {
-									$procedure_temp .= ucwords($service->Name).',';
-									$procedure = rtrim($procedure_temp, ',');
-								}
-								$service = $procedure;
-							} else {
-								$service_lists = DB::table('clinic_procedure')
-								->where('ProcedureID', $transaction->ProcedureID)
-								->first();
-								if($service_lists) {
-									$procedure = ucwords($service_lists->Name);
-									$service = $procedure;
-								} else {
-									$service = ucwords($clinic_type->Name);
-								}
-							}
-
-							$type = "";
-							$image = "";
-							$clinic_type_data = ClinicHelper::getClinicTypeImage($clinic_type);
-							$type = $clinic_type_data['type'];
-							$image = $clinic_type_data['image'];
-
-							if($transaction->currency_type == $transaction->default_currency && $transaction->default_currency == "myr") {
-								$total_credits = $transaction->credit_cost * $transaction->currency_amount;
-								$transaction->consultation_fees = $transaction->consultation_fees * $transaction->currency_amount;
-								$transaction->credit_cost = $transaction->credit_cost * $transaction->currency_amount;
-
-								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-									$total_credits = $transaction->credit_cost + $transaction->consultation_fees;
-								}
-							} else {
-								$total_credits = $transaction->credit_cost;
-								if($lite_plan_status && $transaction->lite_plan_enabled == 1) {
-									$total_credits = $transaction->credit_cost + $transaction->consultation_fees;
-								}
-							}
+							// get transaction details
+							$transaction = \TransactionHelper::getTransactionDetails($new_id);
+							// send email
 
 							if($user->Email) {
 								$email['member'] = ucwords($user->Name);
-								$email['credits'] = number_format($transaction->credit_cost, 2);
-								$email['transaction_id'] = strtoupper(substr($clinic->Name, 0, 3)).$transaction_id;
-								$email['transaction_date'] = date('d F Y, h:ia', strtotime($transaction->date_of_transaction));
-								$email['health_provider_name'] = ucwords($clinic->Name);
-								$email['health_provider_address'] = $clinic->Address;
-								$email['health_provider_city'] = $clinic->City;
-								$email['health_provider_country'] = $clinic->Country;
-								$email['health_provider_phone'] = $clinic->Phone;
-								$email['service'] = ucwords($clinic_type->Name).' - '.$service;
+								$email['credits'] = $transaction['total_amount'];
+								$email['total_amount'] = $transaction['total_amount'];
+								$email['bill_amount'] = $transaction['bill_amount'];
+								$email['transaction_id'] = $transaction['transaction_id'];
+								$email['transaction_date'] = $transaction['transaction_date'];
+								$email['health_provider_name'] = $transaction['health_provider_name'];
+								$email['health_provider_address'] = $transaction['health_provider_address'];
+								$email['health_provider_city'] = $transaction['health_provider_city'];
+								$email['health_provider_country'] = $transaction['health_provider_country'];
+								$email['health_provider_phone'] = $transaction['health_provider_phone'];
+								$email['health_provider_postal'] = $transaction['health_provider_postal'];
+								$email['service'] = $transaction['service'];
 								$email['emailSubject'] = 'Member - Refunded Transaction';
 								$email['emailTo'] = $user->Email;
-								// $email['emailTo'] = 'allan.alzula.work@gmail.com';
 								$email['emailName'] = ucwords($user->Name);
-								$email['clinic_type_image'] = $image;
-								$email['emailPage'] = 'email-templates.member-refunded-transaction';
-								$email['lite_plan_status'] = $lite_plan_status;
-								$email['consultation'] = number_format($transaction->consultation_fees, 2);
-								$email['total_credits'] = number_format($total_credits, 2);
-								$email['lite_plan_enabled'] = $transaction->lite_plan_enabled;
-								$email['currency_type'] = strtoupper($transaction->currency_type);
+								$email['clinic_type_image'] = $transaction['clinic_type'];
+								$email['emailPage'] = 'email-templates.email-member-refunded-transaction';
+								$email['lite_plan_status'] = $transaction['lite_plan'];
+								$email['consultation'] = $transaction['consultation'];
+								$email['total_credits'] = $transaction['credits'];
+								$email['paid_by_credits'] = $transaction['paid_by_credits'];
+								$email['paid_by_cash'] = $transaction['paid_by_cash'];
+								$email['cap_per_visit'] = $transaction['cap_per_visit'];
+								$email['cap_per_visit_status'] = $transaction['cap_per_visit_status'];
+								$email['lite_plan_enabled'] = $transaction['lite_plan'];
+								$email['currency_symbol'] = $transaction['currency_symbol'];
 								EmailHelper::sendEmailRefundWithAttachment($email);
 							}
 						} catch(Exception $e) {
@@ -2026,7 +1982,7 @@ class TransactionController extends BaseController {
 			array_push($format, $temp);
 		}
 
-		return $format;
+		return ['status' => true, 'data' => $format];
 	}
 
 	public function getHealthProviderTransactions( )

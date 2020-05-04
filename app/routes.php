@@ -12,6 +12,8 @@
 */
 
 // Route::get('test_return_balance', 'testcontroller@testReturnBalance');
+Route::get('test/email_send', 'HomeController@testEmailSend');
+
 // test recalculate balance
 Route::get('test_balance', 'testcontroller@testBalance');
 // test member credit reset dates
