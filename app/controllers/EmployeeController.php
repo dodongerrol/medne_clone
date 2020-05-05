@@ -2400,9 +2400,9 @@ class EmployeeController extends \BaseController {
                 $plan_dates['valid_date'] = $spending_account_company->wellness_spending_end_date;
                 $wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $input['member_id']);
                 $credits = $wellness_credit_data['allocation'];
+                $new_allocation = $input['new_allocation_credits'] - $credits;
                 if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
                   if((float)$input['new_allocation_credits'] > $credits) {
-                    $new_allocation = $input['new_allocation_credits'] - $credits;
                     // check medical balance
                     if($new_allocation > $customer_credits->wellness_credits) {
                       return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
