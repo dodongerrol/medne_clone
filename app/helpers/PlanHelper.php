@@ -65,6 +65,7 @@ class PlanHelper {
 			'end_date'  => $end_date,
 			'plan_days_to_expire' => $diff >= 0 ? $diff : 0,
 			'expire'         => date('Y-m-d') >= $end_date ? TRUE : FALSE,
+			'account_type'   => $plan->account_type
 		);
 	}
 
