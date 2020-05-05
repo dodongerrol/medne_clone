@@ -1345,25 +1345,23 @@ return Response::json($returnObject);
                 ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                 ->first();
 
-                if($spending_type == 'medical') {
-                  $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
-                } else {
-                  $credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
-                }
-
-                $balance = $credit_data ? $credit_data['balance'] : 0;
                 if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-                  $currency_symbol = "";
-                  $balance = "N.A.";
+                  $returnObject->data = ['visits' => $user_plan_history->total_visit_limit, 'account_type' => $customer_active_plan->account_type];
                 } else {
+                  if($spending_type == 'medical') {
+                    $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
+                  } else {
+                    $credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
+                  }
+
+                  $balance = $credit_data ? $credit_data['balance'] : 0;
                   $currency_symbol = strtoupper($wallet->currency_type);
                   $balance = number_format($balance, 2);
+                  $returnObject->data = ['balance' => $balance, 'currency_symbol' => $currency_symbol, 'account_type' => $customer_active_plan->account_type];
                 }
-
+                
                 $returnObject->status = true;
                 $returnObject->message = "Success";
-                $returnObject->data = ['balance' => $balance, 'currency_symbol' => $currency_symbol];
-
                 return Response::json($returnObject);
               } else {
                 $returnObject->status = FALSE;
