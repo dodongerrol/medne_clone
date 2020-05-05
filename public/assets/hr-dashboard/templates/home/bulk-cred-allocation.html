@@ -357,9 +357,9 @@
 													<th colspan="3" style="text-align: center; width: 666px;">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }}</th>
 												</tr>
 												<tr>
-													<th style="width: 227px;">Current {{ (account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
-													<th style="width: 223px;">New {{ (account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
-													<th style="width: 215px;">Effective Date of<br>New {{ (account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
+													<th style="width: 227px;">Current {{ (spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
+													<th style="width: 223px;">New {{ (spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
+													<th style="width: 215px;">Effective Date of<br>New {{ (spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -419,7 +419,7 @@
 									<div class="bulk-cred-footer-right">
 										<div class="total-number-container">
 											<span style="margin-right: 10px;">
-												Total {{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} {{ (account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}
+												Total {{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} {{ (spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}
 												<br>
 												<span ng-if="spendingTypeTabSelected == 'medical'">{{ (spending_account_status.medical_method == 'pre_paid') ? '(Pre-paid)' : '(Post-paid)' }}</span>
 												<span ng-if="spendingTypeTabSelected == 'wellness'">{{ (spending_account_status.wellness_method == 'pre_paid') ? '(Pre-paid)' : '(Post-paid)' }}</span>
@@ -427,7 +427,7 @@
 											<div class="total-number-box grayed-out">
 												<span class="items" ng-bind="bulk_credit_values.total_allocated_credits | number: 2"></span>
 											</div>
-											<div>/ <span class="p-gray" ng-bind="bulk_credit_values.total_credits | number: 2">20,000.00</span></div>
+											<div ng-if="(spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid')">/ <span class="p-gray" ng-bind="bulk_credit_values.total_credits | number: 2">20,000.00</span></div>
 										</div>
 									</div>
 								</div>	
