@@ -194,7 +194,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 							scope.bulk_credit_values = response.data;
 
 							scope.employees.map((value, index) => {
-								if( scope.account_plan_status.plan_method == 'pre_paid' ){
+								if( scope.spendingTypeTabSelected != 'all' ){
 									if (value.allocation.new_allocation == 0) {
 										value.allocation.new_allocation = null;
 									}
