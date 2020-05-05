@@ -8641,10 +8641,10 @@ span.dropdown-entitlement.disabled {
 /* New Bulk allocation */
 
 .bulk-cred-table-info-container {
-  max-width: 900px;
+  /* max-width: 900px; */
 }
-.bulk-cred-table-info-container.no-max-width {
-  max-width: unset;
+.bulk-cred-table-info-container.max-width-900 {
+  max-width: 900px;
 }
 
 .bulk-cred-table-info-container table {
@@ -8662,6 +8662,12 @@ span.dropdown-entitlement.disabled {
 
 .bulk-cred-table-info-container table.width-auto{
   width: auto;
+}
+.bulk-cred-table-info-container table.width-100{
+  width: 100%;
+}
+.col-md-9.ifPrepaid{
+  padding-left: 0;
 }
 
 .bulk-cred-options .btn-update {
@@ -8712,7 +8718,7 @@ span.dropdown-entitlement.disabled {
 
 .bulk-cred-footer .total-number-container{
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: space-between;
   font-size: 14px;
   /* margin: 0 0 20px; */

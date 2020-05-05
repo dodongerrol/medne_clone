@@ -310,14 +310,21 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						.then(function (response) {
 							console.log(response);
 							scope.spending_account_status = response.data;
-							if( scope.account_plan_status.plan_method == 'pre_paid' ){
+							// scope.spending_account_status.medical_method = 'post_paid';
+							// scope.spending_account_status.medical_enabled = false;
+							// scope.spending_account_status.wellness_enabled = false;
+							// scope.spending_account_status.wellness_method = 'post_paid';
+							// if( scope.account_plan_status.plan_method == 'pre_paid' ){
+							if( scope.spending_account_status.account_type == 'lite_plan' ){
 								if( scope.spending_account_status.medical_enabled == false){
 									scope.spendingTypeTabSelected = 'wellness';
 								}
-								if( scope.spending_account_status.wellness_enabled == false){
-									scope.spendingTypeTabSelected = 'medical';
-								}
+							}else{
+								scope.spendingTypeTabSelected = 'all';
 							}
+							console.log(scope.spending_account_status);
+							console.log(scope.spendingTypeTabSelected);
+							scope.getEmployeeBulkCredit();
 						});
 				}
 
@@ -519,10 +526,7 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
                 plan_method: response.data.data.plan.plan_method,
                 account_type: response.data.data.plan.account_type
 							}
-							if( scope.account_plan_status.plan_method != 'pre_paid' ){
-								scope.spendingTypeTabSelected = 'all';
-							}
-							scope.getEmployeeBulkCredit();
+							// scope.getEmployeeBulkCredit();
             });
         }
 
