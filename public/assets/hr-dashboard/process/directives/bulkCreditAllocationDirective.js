@@ -310,10 +310,10 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						.then(function (response) {
 							console.log(response);
 							scope.spending_account_status = response.data;
-							// scope.spending_account_status.medical_method = 'post_paid';
+							// scope.spending_account_status.medical_method = 'pre_paid';
 							// scope.spending_account_status.medical_enabled = false;
 							// scope.spending_account_status.wellness_enabled = false;
-							// scope.spending_account_status.wellness_method = 'post_paid';
+							// scope.spending_account_status.wellness_method = 'pre_paid';
 							// if( scope.account_plan_status.plan_method == 'pre_paid' ){
 							if( scope.spending_account_status.account_type == 'lite_plan' ){
 								if( scope.spending_account_status.medical_enabled == false){

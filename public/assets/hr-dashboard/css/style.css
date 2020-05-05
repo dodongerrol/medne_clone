@@ -8664,7 +8664,7 @@ span.dropdown-entitlement.disabled {
   width: auto;
 }
 .bulk-cred-table-info-container table.width-100{
-  width: 100%;
+  width: 100% !important;
 }
 .col-md-9.ifPrepaid{
   padding-left: 0;
