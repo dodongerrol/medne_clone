@@ -282,12 +282,12 @@ class MemberHelper
 							'updated_at'			=> date('Y-m-d H:i:s')
 						);
 						DB::table('wallet_history')->insert($employee_credit_logs);
-						if($spending['account_type'] != "lite_plan" && $spending['medical_method'] != "pre_paid" && $spending['paid_status'] == true) {
+						if($spending['medical_method'] != "pre_paid") {
 							$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
 							DB::table('wallet_history')->insert($employee_credit_logs);
-							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('balance', $new_medical_allocation);
+							// $company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('medical_supp_credits', $new_medical_allocation);
 						} else {
-							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('medical_supp_credits', $new_medical_allocation);
+							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('balance', $new_medical_allocation);
 						}
 						
 						$company_credit_logs = array(
@@ -353,10 +353,10 @@ class MemberHelper
 
 						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
 						
-						if($spending['account_type'] != "lite_plan" && $spending['wellness_method'] != "pre_paid" && $spending['paid_status'] == true) {
+						if($spending['wellness_method'] == "post_paid") {
 							$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
 							DB::table('wellness_wallet_history')->insert($employee_credit_logs);
-							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('wellness_supp_credits', $new_wellness_allocation);
+							// $company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('wellness_supp_credits', $new_wellness_allocation);
 						} else {
 							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('wellness_credits', $new_wellness_allocation);
 						}
