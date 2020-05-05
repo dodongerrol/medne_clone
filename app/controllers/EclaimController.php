@@ -3393,13 +3393,18 @@ public function getActivityInNetworkTransactions( )
 				if((int)$trans->health_provider_done == 1) {
 					$payment_type = "Cash";
 					$transaction_type = "cash";
+					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+						$payment_type = 'Mednefits Credits + Cash';
+						$transaction_type = "credit_cash";
+					}
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
 							$cash = $trans->cash_cost;
 						} else {
-							$total_amount = $trans->procedure_cost;
-							$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+							
+							$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+							// $total_amount = $trans->procedure_cost + $trans->consultation_fees;
 							$cash = $trans->procedure_cost;
 						}
 					} else {
@@ -3413,21 +3418,23 @@ public function getActivityInNetworkTransactions( )
 					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 						$payment_type = 'Mednefits Credits + Cash';
 						$half_credits = true;
+						$transaction_type = "credit_cash";
 					} else {
 						$payment_type = 'Mednefits Credits';
+						$transaction_type = "credits";
 					}
-					$transaction_type = "credits";
+					
 					// $cash = number_format($trans->credit_cost, 2);
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 							$procedure_cost = $trans->credit_cost + $trans->consultation_fees;
 							$transaction_type = "credit_cash";
-                // $total_amount = $trans->credit_cost + $trans->cash_cost;
+                			// $total_amount = $trans->credit_cost + $trans->cash_cost;
 							$cash = $trans->cash_cost;
 						} else {
 							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-                // $total_amount = $trans->procedure_cost;
+                			// $total_amount = $trans->procedure_cost;
 							if($trans->credit_cost > 0) {
 								$cash = 0;
 							} else {
@@ -3463,15 +3470,28 @@ public function getActivityInNetworkTransactions( )
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->lite_plan_use_credits == 1) {
 							$bill_amount = 	$trans->procedure_cost;
+							if($trans->credit_cost > 0 && $trans->cash_cost)	{
+								$bill_amount = $trans->credit_cost + $trans->cash_cost;
+							}
 						} else {
 							if((int)$trans->health_provider_done == 1) {
 								$bill_amount = 	$trans->procedure_cost;
+								if($trans->credit_cost > 0 && $trans->cash_cost)	{
+									$bill_amount = $trans->credit_cost + $trans->cash_cost;
+								}
 							} else {
 								$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
+								if($trans->credit_cost > 0 && $trans->cash_cost)	{
+									$bill_amount = $trans->credit_cost + $trans->cash_cost;
+								}
 							}
 						}
 					} else {
-						$bill_amount = 	$trans->procedure_cost;
+						if($trans->credit_cost > 0 && $trans->cash_cost)	{
+							$bill_amount = $trans->credit_cost + $trans->consultation_fees;
+						} else {
+							$bill_amount = 	$trans->procedure_cost;
+						}	
 					}
 				}
 
