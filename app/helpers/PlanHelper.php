@@ -1627,7 +1627,7 @@ class PlanHelper {
 					$employee_logs->createWalletHistory($wallet_history);
 					$customer_credits = new CustomerCredits();
 
-					$customer_credits_result = $customer_credits->deductCustomerMedicalSuppCredits($customer->customer_credits_id, $credits);
+					$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $credits);
 					$customer_credits_left = DB::table('customer_credits')->where('customer_credits_id', $customer->customer_credits_id)->first();
 					$data['medical_credit_history'] = $wallet_history;
 					if($customer_credits_result) {
@@ -1733,7 +1733,7 @@ class PlanHelper {
 
 					\WellnessWalletHistory::create($wallet_history);
 					$customer_credits = new CustomerCredits();
-					$customer_credits_result = $customer_credits->deductCustomerWellnessSuppCredits($customer->customer_credits_id, $credits);
+					$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $credits);
 					$data['wellness_credit_history'] = $wallet_history;
 					if($customer_credits_result) {
 						$company_deduct_logs = array(
