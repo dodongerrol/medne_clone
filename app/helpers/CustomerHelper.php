@@ -412,7 +412,7 @@ class CustomerHelper
 		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
 		->where('customer_credits_id', $company_credits->customer_credits_id)
 		->where('logs', 'admin_added_credits')
-		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
 		->where('created_at', '>=', $user_spending_dates['start'])
 		->where('created_at', '<=', $user_spending_dates['end'])
 		->sum('credit');
@@ -420,7 +420,7 @@ class CustomerHelper
 		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
 		->where('customer_credits_id', $company_credits->customer_credits_id)
 		->where('logs', 'admin_added_credits')
-		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
 		->where('created_at', '>=', $user_spending_dates['start'])
 		->where('created_at', '<=', $user_spending_dates['end'])
 		->sum('credit');
@@ -428,7 +428,7 @@ class CustomerHelper
 		$total_bonus = DB::table('customer_wellness_credits_logs')
 		->where('customer_credits_id', $company_credits->customer_credits_id)
 		->where('logs', 'admin_added_bonus_credits')
-		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
 		->where('created_at', '>=', $user_spending_dates['start'])
 		->where('created_at', '<=', $user_spending_dates['end'])
 		->sum('credit');
