@@ -1466,13 +1466,13 @@ app.directive("employeeOverviewDirective", [
           console.log(scope.effective_date);
           var text;
 
-          if (scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) {
+          if ((scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0)|| (scope.emp_entitlement.medical_new_entitlement === 0 && scope.emp_entitlement.wellness_new_entitlement === 0)) {
             console.log('1 if');
             text = `<span>Please note that</span> <br><br> <span>_ The new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span><br><span>_ The new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
-          } else if (scope.emp_entitlement.medical_new_entitlement > 0) {
+          } else if ((scope.emp_entitlement.medical_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0)) {
             console.log('2 if');
             text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
-          } else if (scope.emp_entitlement.wellness_new_entitlement > 0) {
+          } else if ((scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.wellness_new_entitlement === 0)) {
             console.log('3 if');
             text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
           }
@@ -1490,13 +1490,13 @@ app.directive("employeeOverviewDirective", [
             setTimeout(function(){
               if(result) {
                 
-                if (scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) {
+                if ((scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0 && scope.emp_entitlement.wellness_new_entitlement === 0)) {
                   console.log('both');
                   scope.updateAllEntitlement();
-                } else if (scope.emp_entitlement.medical_new_entitlement > 0) {
+                } else if ((scope.emp_entitlement.medical_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0)) {
                   console.log('medical');
                   scope.updateMedicalEntitlement();
-                } else if (scope.emp_entitlement.wellness_new_entitlement > 0) {
+                } else if ((scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.wellness_new_entitlement === 0)) {
                   console.log('wellness');
                   scope.updateWellnessEntitlement();
                 }
