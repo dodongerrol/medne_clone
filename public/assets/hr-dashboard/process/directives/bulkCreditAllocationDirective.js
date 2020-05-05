@@ -318,6 +318,8 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 									scope.spendingTypeTabSelected = 'medical';
 								}
 							}
+							console.log(scope.spending_account_status);
+							console.log(scope.spendingTypeTabSelected);
 						});
 				}
 
