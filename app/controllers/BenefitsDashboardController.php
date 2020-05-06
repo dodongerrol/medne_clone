@@ -14802,7 +14802,7 @@ class BenefitsDashboardController extends \BaseController {
 			'total_purchase_credits' => $company_credits['total_purchase_credits'],
 			'total_bonus_credits' => $company_credits['total_bonus_credits'],
 			'total_allocated_credits' => $total_allocation,
-			'total_credits'		=> $company_credits['total_purchase_credits'] + $company_credits['total_bonus_credits'] + $total_supp,
+			'total_credits'		=> $account_type == "lite_plan" && $plan_method == "pre_paid" ? $company_credits['total_purchase_credits'] + $company_credits['total_bonus_credits'] : $company_credits['total_purchase_credits'] + $company_credits['total_bonus_credits'] + $total_supp,
 			'term_start'	=> $term_start,
 			'term_end'	=> $term_end,
 			'term_duration'	=> $term_duration,

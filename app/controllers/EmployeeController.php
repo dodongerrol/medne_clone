@@ -2322,9 +2322,9 @@ class EmployeeController extends \BaseController {
                   }
                 }
               } else {
-                if($new_allocation > $customer_credits->medical_supp_credits) {
-                  return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                }
+                // if($new_allocation > $customer_credits->medical_supp_credits) {
+                //   return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                // }
               }
             } else {
               if($new_usage_date > $spending_account_company->wellness_spending_end_date) {
@@ -2341,9 +2341,9 @@ class EmployeeController extends \BaseController {
                   }
                 }
               } else {
-                if($new_allocation > $customer_credits->wellness_supp_credits) {
-                  return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                }
+                // if($new_allocation > $customer_credits->wellness_supp_credits) {
+                //   return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                // }
               }
             }
 
@@ -2374,9 +2374,9 @@ class EmployeeController extends \BaseController {
                     }
                   }
                 } else {
-                  if($new_allocation > $customer_credits->medical_supp_credits) {
-                    return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                  }
+                  // if($new_allocation > $customer_credits->medical_supp_credits) {
+                  //   return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                  // }
                 }
                 $data = array(
                     'member_id'                 => $input['member_id'],
@@ -2409,9 +2409,9 @@ class EmployeeController extends \BaseController {
                     }
                   }
                 } else {
-                  if($new_allocation > $customer_credits->wellness_supp_credits) {
-                    return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                  }
+                  // if($new_allocation > $customer_credits->wellness_supp_credits) {
+                  //   return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                  // }
                 }
 
                 $data = array(
