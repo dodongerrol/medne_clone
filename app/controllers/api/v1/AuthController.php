@@ -1894,8 +1894,9 @@ public function getNewClinicDetails($id)
      if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
       $returnObject->status = FALSE;
       $returnObject->status_type = 'zero_balance';
-      $returnObject->message = 'You have no credit to access this feature at the moment.';
-      $returnObject->sub_message = 'Kindly contact HR.';
+      $returnObject->head_message = 'Registration on Hold';
+      $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+      $returnObject->sub_message = '';
       return Response::json($returnObject);
      }
 
@@ -5215,6 +5216,7 @@ public function createEclaim( )
 
     if(sizeof(Input::file('files')) == 0) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please input a file.';
      return Response::json($returnObject);
    }
@@ -5223,42 +5225,49 @@ public function createEclaim( )
 
    if(empty($input['amount']) || $input['amount'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please indicate the amount.';
      return Response::json($returnObject);
    }
 
    if(empty($input['merchant']) || $input['merchant'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please indicate the Provider.';
      return Response::json($returnObject);
    }
 
    if(empty($input['service']) || $input['service'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please choose a claim type.';
      return Response::json($returnObject);
    }
 
    if(empty($input['spending_type']) || $input['spending_type'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please choose a spending wallet.';
      return Response::json($returnObject);
    }
 
    if(empty($input['date']) || $input['date'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Date of Visit is required.';
      return Response::json($returnObject);
    }
 
    if(empty($input['time']) || $input['time'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Time of Visit is required.';
      return Response::json($returnObject);
    }
 
    if(empty($input['spending_type']) || $input['spending_type'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Spending Account is required (Medical or Wellness)';
      return Response::json($returnObject);
    }
@@ -5268,6 +5277,7 @@ public function createEclaim( )
 
    if(!in_array($input['spending_type'], $spending)) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Spending Account should be medical or wellness only.';
      return Response::json($returnObject);
    }
@@ -5276,6 +5286,7 @@ public function createEclaim( )
 
    if(!$validate_date) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Date of Visit must be a date.';
      return Response::json($returnObject);
    }
@@ -5284,6 +5295,7 @@ public function createEclaim( )
 
    if(!$validate_time) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Time of Visit must be a time (00:00 AM/PM).';
      return Response::json($returnObject);
    }
@@ -5294,6 +5306,7 @@ public function createEclaim( )
         // return var_dump($file);
      if(!$file) {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'E-Claim Submission Error';
       $returnObject->message = 'Please input a file.';
       return Response::json($returnObject);
     }
@@ -5314,6 +5327,7 @@ public function createEclaim( )
       }
     } else {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'E-Claim Submission Error';
       $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
       return Response::json($returnObject);
     }
@@ -5332,7 +5346,8 @@ public function createEclaim( )
 
   if($customer && (int)$customer->access_e_claim == 0) {
     $returnObject->status = FALSE;
-    $returnObject->message = 'The E-claim function is disabled for your company.';
+    $returnObject->head_message = 'E-Claim Disabled';
+    $returnObject->message = 'The E-claim function has been disabled for your company.';
     return Response::json($returnObject);
   }
 
@@ -5376,6 +5391,7 @@ public function createEclaim( )
     $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     if(!$check_user_balance) {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'E-Claim Submission Error';
       $returnObject->message = 'User does not have a wallet data.';
       return Response::json($returnObject);
     }
@@ -5383,7 +5399,9 @@ public function createEclaim( )
     if($spending['back_date'] == false) {
       if($amount > $balance) {
         $returnObject->status = FALSE;
-        $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        // $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        $returnObject->head_message = 'E-Claim Submission Error';
+        $returnObject->message = 'Your E-Claim exceeds the amount of credits you have in your wallet. Please revise the receipt amount and resubmit.';
         return Response::json($returnObject);
       }
 
@@ -6387,8 +6405,9 @@ public function payCreditsNew( )
           if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
             $returnObject->status = FALSE;
             $returnObject->status_type = 'zero_balance';
-            $returnObject->message = 'You have no credit to access this feature at the moment.';
-            $returnObject->sub_message = 'Kindly contact HR.';
+            $returnObject->head_message = 'Registration on Hold';
+            $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+            $returnObject->sub_message = '';
             return Response::json($returnObject);
           }
             
@@ -6397,14 +6416,16 @@ public function payCreditsNew( )
 
             $returnObject->status = FALSE;
             $returnObject->status_type = 'zero_balance';
-            $returnObject->message = 'You have no credit to access this feature at the moment.';
-            $returnObject->sub_message = 'Kindly contact HR.';
+            $returnObject->head_message = 'Registration on Hold';
+            $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+            $returnObject->sub_message = '';
 
             if($current_balance <= 0) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'zero_balance';
-              $returnObject->message = 'You have no credit to access this feature at the moment.';
-              $returnObject->sub_message = 'Kindly contact HR.';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+              $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
           }
