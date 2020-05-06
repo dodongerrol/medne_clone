@@ -662,8 +662,20 @@ return Response::json($returnObject);
             $returnArray->status = TRUE;
             $returnArray->login_status = TRUE;
             $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+            $user_plan_history = DB::table('user_plan_history')
+                ->where('user_id', $user_id)
+                ->where('type', 'started')
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            $customer_active_plan = DB::table('customer_active_plan')
+              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+              ->first();
+
+
             $returnArray->data['profile']['user_id'] = $findUserProfile->UserID;
             $returnArray->data['profile']['email'] = $findUserProfile->Email;
+            $returnArray->data['profile']['account_type'] = $customer_active_plan->account_type;
             $returnArray->data['profile']['full_name'] = $findUserProfile->Name;
             $returnArray->data['profile']['nric'] = $findUserProfile->NRIC;
             $returnArray->data['profile']['fin'] = $findUserProfile->FIN;
@@ -1137,7 +1149,6 @@ return Response::json($returnObject);
                     'converted_amount'      => number_format($res->amount, 2),
                     'member'      => ucwords($member->Name),
                     'type'        => 'E-Claim',
-                    // 'receipt_status' => $doc_files,
                     'transaction_id' => $res->e_claim_id,
                     'visit_date'  => date('d F Y', strtotime($res->date)).', '.$res->time,
                     'spending_type' => $res->spending_type,
@@ -1156,17 +1167,17 @@ return Response::json($returnObject);
                     $procedure_temp = "";
                     $procedure = "";
 
-                    $company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
+                    // $company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
 
-                    if($company_wallet_status) {
-                     if($company_wallet_status == "Health Wallet") {
-                      $wallet_status = true;
-                    }
-                  }
+                    // if($company_wallet_status) {
+                    //  if($company_wallet_status == "Health Wallet") {
+                    //   $wallet_status = true;
+                    // }
+                  // }
                   // get services
-                  if($trans->multiple_service_selection == 1 || $trans->multiple_service_selection == "1")
+                  if((int)$trans->multiple_service_selection == 1)
                   {
-                                // get multiple service
+                    // get multiple service
                     $service_lists = DB::table('transaction_services')
                     ->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
                     ->where('transaction_services.transaction_id', $trans->transaction_id)
@@ -1189,7 +1200,6 @@ return Response::json($returnObject);
                       $procedure = ucwords($service_lists->Name);
                       $clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
                     } else {
-                                        // $procedure = "";
                       $clinic_name = ucwords($clinic_type->Name);
                     }
                   }
@@ -1272,16 +1282,30 @@ return Response::json($returnObject);
             $in_network_spent = $credit_data ? $credit_data['in_network_spent'] : 0;
             $balance = $credit_data ? $credit_data['balance'] : 0;
 
-            PlanHelper::reCalculateEmployeeBalance($user_id);
-            $user = DB::table('user')->where('UserID', $user_id)->first();
-
-            $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-            $customer_active_plan = DB::table('customer_active_plan')
-            ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-            ->first();
+            if($customer_active_plan->account_type != "enterprise_plan")  {
+              PlanHelper::reCalculateEmployeeBalance($user_id);
+            }
+            
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
               $currency_symbol = "";
-              $balance = "N.A.";
+              $balance = 0;
+
+              $total_visit_limit = 0;
+              $total_vist_created = 0;
+              $total_visit_balance = 0;
+              if($filter == "current_term") {
+                $total_visit_limit = $user_plan_history->total_visit_limit;
+                $total_vist_created = $user_plan_history->total_visit_created;
+                $total_visit_limit = $total_visit_limit - $total_vist_created;
+              } else {
+                $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
+                if($plan_history) {
+                  $total_visit_limit = $plan_history->total_visit_limit;
+                  $total_vist_created = $plan_history->total_visit_created;
+                  $total_visit_limit = $total_visit_limit - $total_vist_created;
+                }
+              }
+              
             } else {
               $currency_symbol = strtoupper($wallet->currency_type);
               $balance = number_format($balance, 2);
@@ -1294,7 +1318,11 @@ return Response::json($returnObject);
               'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
               'e_claim_transactions'      => $e_claim,
               'in_network_transactions'   => $transaction_details,
-              'currency_symbol'           => $currency_symbol
+              'currency_symbol'           => $currency_symbol,
+              'account_type'              => $customer_active_plan->account_type,
+              'total_visit'               => $total_visit_limit,
+              'total_utilised'            => $total_vist_created,
+              'total_visit_balance'       => $total_visit_limit
             );
 
             $returnObject->status = true;
