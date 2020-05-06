@@ -4807,7 +4807,7 @@ class BenefitsDashboardController extends \BaseController {
 				} else {
 					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
 				}
-				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
+				// $calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
 				// $duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
 				$data['price']          = number_format($calculated_prices, 2);
 				$data['amount']					= number_format($get_invoice->employees * $calculated_prices, 2);
