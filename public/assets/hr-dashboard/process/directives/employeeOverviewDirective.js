@@ -1252,7 +1252,7 @@ app.directive("employeeOverviewDirective", [
             // console.log(scope.medical_wallet);
             // console.log(scope.wellness_wallet);
             
-            if (scope.plan_name === 'Lite Plan' && emp.plan_method_type == 'pre_paid') {
+            if (emp.account_type === 'lite_plan' && emp.plan_method_type == 'pre_paid') {
               scope.hideLitePlanCheckbox = false;
               scope.litePlanCheckbox = true;
             }else{
