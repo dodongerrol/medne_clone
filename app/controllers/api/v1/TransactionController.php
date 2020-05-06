@@ -22,28 +22,33 @@ class Api_V1_TransactionController extends \BaseController
 					// check if there is services ids
 					if(!isset($input['services'])) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Please choose a service.';
 						return Response::json($returnObject);
 					} else if(sizeof($input['services']) == 0) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Please choose a service.';
 						return Response::json($returnObject);
 					}
 					// check if clinic_id is present
 					if(!isset($input['clinic_id'])) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Please choose a clinic.';
 						return Response::json($returnObject);
 					}
 					// check if input amount is present
 					if(is_numeric($input['input_amount']) == false) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Amount should be a number.';
 						return Response::json($returnObject);
 					}
 
 					if($input['input_amount'] < 0) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Amount should not be below 0.';
 						return Response::json($returnObject);
 					}
@@ -78,6 +83,7 @@ class Api_V1_TransactionController extends \BaseController
 					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 					if($block) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
 						return Response::json($returnObject);
 					}
@@ -113,8 +119,9 @@ class Api_V1_TransactionController extends \BaseController
 
 						if($user_credits == 0) {
 							$returnObject->status = FALSE;
-							$returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
-							$returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+							$returnObject->head_message = 'Insufficient Credits';
+							$returnObject->message = "Sorry, it seems you don't have enought credits to complete the transaction.";
+							$returnObject->sub_mesage = 'Not to worry - you can still pay the health provider directly via Cash/Nets/Credit Card.';
 							return Response::json($returnObject);
 						}
 					}
@@ -631,6 +638,7 @@ class Api_V1_TransactionController extends \BaseController
 										// 	$wallet->addWellnessCredits($user_id, $credits);
 										// }
 										$returnObject->status = FALSE;
+										$returnObject->head_message = 'Panel Submission Error';
 										$returnObject->message = 'Payment unsuccessfull. Please try again later';
 										EmailHelper::sendErrorLogs($email);
 										return Response::json($returnObject);
@@ -673,6 +681,7 @@ class Api_V1_TransactionController extends \BaseController
 									$wallet->addWellnessCredits($user_id, $credits);
 								}
 								$returnObject->status = FALSE;
+								$returnObject->head_message = 'Panel Submission Error';
 								$returnObject->message = 'Payment unsuccessfull. Please try again later';
 								EmailHelper::sendErrorLogs($email);
 								return Response::json($returnObject);
@@ -680,6 +689,7 @@ class Api_V1_TransactionController extends \BaseController
 
 						} else {
 							$returnObject->status = FALSE;
+							$returnObject->head_message = 'Panel Submission Error';
 							$returnObject->message = 'Cannot process payment credits. Please try again.';
 							// send email logs
 							$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
