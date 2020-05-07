@@ -120,7 +120,7 @@ class Api_V1_TransactionController extends \BaseController
 						if($user_credits == 0) {
 							$returnObject->status = FALSE;
 							$returnObject->head_message = 'Insufficient Credits';
-							$returnObject->message = "Sorry, it seems you don't have enought credits to complete the transaction.";
+							$returnObject->message = "Sorry, it seems you don't have enough credits to complete the transaction.";
 							$returnObject->sub_mesage = 'Not to worry - you can still pay the health provider directly via Cash/Nets/Credit Card.';
 							return Response::json($returnObject);
 						}
