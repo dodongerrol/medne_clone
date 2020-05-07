@@ -6398,29 +6398,15 @@ public function payCreditsNew( )
       if($getAccessToken){
          $findUserID = $authSession->findUserID($getAccessToken->session_id);
          if($findUserID){
+          $input = Input::all();
           $user_id = StringHelper::getUserId($findUserID);
           $customer_id = PlanHelper::getCustomerId($user_id);
-          $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
-          $returnObject->status = true;
-          if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-            $returnObject->status = FALSE;
-            $returnObject->status_type = 'zero_balance';
-            $returnObject->head_message = 'Registration on Hold';
-            $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-            $returnObject->sub_message = '';
-            return Response::json($returnObject);
-          }
-            
-          if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
-            $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
-
-            $returnObject->status = FALSE;
-            $returnObject->status_type = 'zero_balance';
-            $returnObject->head_message = 'Registration on Hold';
-            $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-            $returnObject->sub_message = '';
-
-            if($current_balance <= 0) {
+          $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
+          
+          if($type == "spending") {
+            $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+            $returnObject->status = true;
+            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'zero_balance';
               $returnObject->head_message = 'Registration on Hold';
@@ -6428,12 +6414,47 @@ public function payCreditsNew( )
               $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
-          }
+              
+            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+              $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
 
-          $returnObject->status = TRUE;
-          $returnObject->status_type = 'with_balance';
-          $returnObject->message = 'You have access this feature at the moment.';
-          return Response::json($returnObject);
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+              $returnObject->sub_message = '';
+
+              if($current_balance <= 0) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'zero_balance';
+                $returnObject->head_message = 'Registration on Hold';
+                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                $returnObject->sub_message = '';
+                return Response::json($returnObject);
+              }
+            }
+
+            $returnObject->status = TRUE;
+            $returnObject->status_type = 'with_balance';
+            $returnObject->message = 'You have access this feature at the moment.';
+            return Response::json($returnObject);
+          } else {
+            // check if e-claim platform is enable
+            $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+            if($customer && (int)$customer->access_e_claim == 0) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Disabled';
+              $returnObject->message = 'The E-claim function has been disabled for your company.';
+              return Response::json($returnObject);
+            }
+
+            $returnObject->status = TRUE;
+            $returnObject->status_type = 'with_e_claim';
+            $returnObject->message = 'You have access this feature at the moment.';
+            return Response::json($returnObject);
+          }
         } else {
           $returnObject->status = FALSE;
           $returnObject->message = StringHelper::errorMessage("Token");
