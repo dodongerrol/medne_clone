@@ -57,15 +57,14 @@ return array(
 			'driver'    => 'mysql',
 		'read' => array(
             // Return a random host
-            'host' => 'medicloud-db-replica-2.ceszful8sael.ap-southeast-1.rds.amazonaws.com',
-            'host' => 'medicloud-db-read-replica.ceszful8sael.ap-southeast-1.rds.amazonaws.com'
+            'host' => 'root',
     ),
     'write' => array(
-            'host' => 'medicloud-db.ceszful8sael.ap-southeast-1.rds.amazonaws.com'
+            'host' => 'root'
     ),
-    'database'  => 'medicloud_v3',
-    'username'  => 'medicloud',
-    'password'  => 'medi657cloud',
+    'database'  => 'root',
+    'username'  => 'root',
+    'password'  => 'root',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => 'medi_',
