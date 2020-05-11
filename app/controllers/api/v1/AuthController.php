@@ -6325,7 +6325,7 @@ public function payCreditsNew( )
           }
 
           $data = array(
-            'balance' => DecimalHelper::formatDecimal($balance), 
+            'balance' => round($balance, 2),
             'term_status' => $term_status, 
             'currency_type' => $spending['currency_type'],
             'last_term' => $spending['back_date'],
