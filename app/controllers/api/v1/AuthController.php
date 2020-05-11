@@ -5347,7 +5347,7 @@ public function createEclaim( )
   if($customer && (int)$customer->access_e_claim == 0) {
     $returnObject->status = FALSE;
     $returnObject->head_message = 'E-Claim Disabled';
-    $returnObject->message = 'The E-claim function has been disabled for your company.';
+    $returnObject->message = 'The E-Claim function has been disabled for your company.';
     return Response::json($returnObject);
   }
 
@@ -6446,7 +6446,7 @@ public function payCreditsNew( )
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
               $returnObject->head_message = 'E-Claim Disabled';
-              $returnObject->message = 'The E-claim function has been disabled for your company.';
+              $returnObject->message = 'The E-Claim function has been disabled for your company.';
               return Response::json($returnObject);
             }
 
