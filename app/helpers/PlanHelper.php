@@ -2379,9 +2379,9 @@ class PlanHelper {
 				}
 			}
 
-			if($pro_allocation > 0) {
-				$allocation = 0;
-			}
+			// if($pro_allocation > 0) {
+			// 	$allocation = 0;
+			// }
 
 			if($e_wallet->balance != $medical_balance) {
 				DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
