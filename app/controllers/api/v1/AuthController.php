@@ -1889,22 +1889,23 @@ public function getNewClinicDetails($id)
      $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
      $owner_id = StringHelper::getUserId($findUserID);
      $customer_id = PlanHelper::getCustomerId($owner_id);
-     $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+    //  $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
      
-     if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-      $returnObject->status = FALSE;
-      $returnObject->status_type = 'zero_balance';
-      $returnObject->head_message = 'Registration on Hold';
-      $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-      $returnObject->sub_message = '';
-      return Response::json($returnObject);
-     }
+    //  if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+    //   $returnObject->status = FALSE;
+    //   $returnObject->status_type = 'zero_balance';
+    //   $returnObject->head_message = 'Registration on Hold';
+    //   $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+    //   $returnObject->sub_message = '';
+    //   return Response::json($returnObject);
+    //  }
 
      // check block access
      $block = PlanHelper::checkCompanyBlockAccess($owner_id, $id);
 
      if($block) {
        $returnObject->status = FALSE;
+       $returnObject->head_message = 'Registration on Hold';
        $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
        return Response::json($returnObject);
      }
