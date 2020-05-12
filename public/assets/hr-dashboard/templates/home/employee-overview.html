@@ -1635,6 +1635,49 @@
 		<img ng-click="removeBackBtn()" src="../assets/hr-dashboard/img/icons/cancel.png">
 	</div>
 
+	<div ng-if="isRefundSummaryShow" id="refund-summary" class="refund-summary-wrapper">
+		<div class="refund-container"> 
+			<div class="refund-header">
+				<h1 class="font-25">Refund Summary</h1>
+			</div>
+			<div class="refund-sub-header">
+				<p class="font-16">
+					Please check and confirm details. Once successfully confirmed, <br>
+					the total refund amount show here will be refunded to your company account.
+				</p>
+			</div>
+			<div class="refund-main">
+				<div class="main-item font-16">
+					<div class="main-section-1">
+						<label class="font-20">Details</label>
+						<div>Plan type: Enterprise Plan</div>
+						<div>Unutilised period - 01/07/2020 to 31/12/2020</div>
+					</div>
+					<div class="main-section-2">
+						<div class="section-2-left">
+							<div>Total refund</div>
+						</div>
+						<div class="section-2-right">
+							<div>SGD 105.00</div>
+							<small class="font-12">See calculation <i class="fa fa-chevron-down font-10" aria-hidden="true"></i></small>
+							<div class="see-calculation font-12">
+								<div>Refund = 70% of unutilised period</div>
+								<div>70/100 x [183/365 x SGD 300.00]</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="refund-side-main">
+				<div class="side-main-item">
+					<label for="" class="font-20">Total Refund</label>
+					<label for="" class="font-25">SGD 105.00</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="health-spending-account-wrapper" style="display: none;">
 		<span class="weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
 		<h1 class="text-center weight-700">Health Spending Account</h1>

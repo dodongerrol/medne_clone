@@ -55,6 +55,7 @@ app.directive("employeeOverviewDirective", [
         scope.isRemoveEmployeeShow = false;
         scope.isRemoveEmployeeOptionsShow = false;
         scope.isHealthSpendingAccountSummaryShow = false;
+        scope.isRefundSummaryShow = false;
         scope.isHealthSpendingAccountShow = false;
         scope.isReplaceEmpShow = false;
         scope.isReserveEmpShow = false;
@@ -1977,11 +1978,32 @@ app.directive("employeeOverviewDirective", [
                       }else{
                         scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
                         $('.employee-standalone-pro-wrapper').hide();
-                        $(".account-summary-wrapper").fadeIn();
+                        
+                        // let account_type = scope.account_plan_status.account_type;
+                        let account_type = 'enterprise_plan';
+                        console.log('account_type', account_type);
+                        
+                        if (account_type =='lite_plan') {
 
-                        scope.reset();
-                        scope.isHealthSpendingAccountSummaryShow = true;
-                        scope.getSession();
+                          $(".account-summary-wrapper").fadeIn(); // Show Health Spending Acct Summary
+                          scope.reset();
+                          // scope.isHealthSpendingAccountSummaryShow = true;  // Show Health Spending Acct Summary
+                          scope.getSession();
+
+                        } else if (account_type == 'enterprise_plan') {
+                          // Enterprise only ------------
+                          scope.reset();
+                          scope.isRefundSummaryShow = true; // show refund summary 
+                          scope.getSession();
+                          // end of Enterprise only -----
+                          
+                        } else {
+                          $(".account-summary-wrapper").fadeIn(); // Show Health Spending Acct Summary
+                          scope.reset();
+                          // scope.isHealthSpendingAccountSummaryShow = true;  // Show Health Spending Acct Summary
+                          scope.getSession();
+                        }
+                        
                       }
                     }
                   });
