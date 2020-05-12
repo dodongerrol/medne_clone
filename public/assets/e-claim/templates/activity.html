@@ -177,16 +177,16 @@
 			<div class="visits-activity-container col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left" ng-if="activity_results.account_type == 'enterprise_plan'">
 				<p class="color-black3 weight-500 font-16 visit-text">Visits</p>
 				<p class="color-blue-custom" style="font-size: 23px;">
-					<span>99</span>
+					<span ng-bind="activity_results.total_balance_visit">99</span>
 				</p>
 				<p class="color-gray font-12">BALANCE</p>
 
 				<div class="visits-bottom-values">
 					<div>
-						<p class="color-gray font-12" style="border-right: 0.5px solid #bbb;">UTILISED	:	<span style="color:#00B2E1;">11</span></p>
+						<p class="color-gray font-12" style="border-right: 0.5px solid #bbb;">UTILISED	:	<span ng-bind="activity_results.total_visit_created" style="color:#00B2E1;">11</span></p>
 					</div>
 					<div>
-						<p class="color-gray font-12">TOTAL	:	<span style="color:#00B2E1">14</span></p>
+						<p class="color-gray font-12">TOTAL	:	<span ng-bind="activity_results.total_visit_limit" style="color:#00B2E1">14</span></p>
 					</div>
 				</div>
 			</div>
