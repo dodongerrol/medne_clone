@@ -2289,15 +2289,11 @@ class PlanHelper {
 		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user_plan_history = DB::table('user_plan_history')
 								->where('user_id', $user_id)
-								->where('type', 'started')
+								// ->where('type', 'started') 
 								->orderBy('created_at', 'desc')
 								->first();
+								
 		if($user_plan_history ) {
-			$customer_active_plan = DB::table('customer_active_plan')
-										->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-										->first();
-
-
 			if($employee_credit_reset_medical) {
 				$start = $employee_credit_reset_medical->date_resetted;
 				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
@@ -2336,7 +2332,7 @@ class PlanHelper {
 					$total_supp += $history->credit;
 				}
 			}
-
+			
 			$pro_allocation = DB::table('wallet_history')
 			->where('wallet_id', $wallet_id)
 			->where('logs', 'pro_allocation')
@@ -2345,12 +2341,7 @@ class PlanHelper {
 			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 			$medical_balance = 0;
-
-			$pro_allocation = DB::table('wallet_history')
-			->where('wallet_id', $wallet_id)
-			->where('logs', 'pro_allocation')
-			->sum('credit');
-
+			
 			if($pro_allocation > 0 && (int)$user->Active == 0) {
 				$allocation = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent;
@@ -2704,14 +2695,10 @@ class PlanHelper {
 		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
 		$user_plan_history = DB::table('user_plan_history')
 								->where('user_id', $user_id)
-								->where('type', 'started')
+								// ->where('type', 'started')
 								->orderBy('created_at', 'desc')
 								->first();
 		if($user_plan_history) {
-			$customer_active_plan = DB::table('customer_active_plan')
-									->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-									->first();
-
 			if($employee_credit_reset_wellness) {
 				$start = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
 				$wallet_history_id = $employee_credit_reset_wellness->wallet_history_id;

@@ -100,12 +100,13 @@
         background: #0392CF;
         color: #FFF;
         border-color: #0392CF;
-        padding: 8px;
+        padding: 8px 0;
       }
 
       .invoice-content table .tbody td {
         /* padding: 12px 8px; */
-        padding: 0px 8px 0 8px;
+        /* padding: 0px 8px 0 8px; */
+        padding-bottom: 30px;
       }
 
       .invoice-content table .tbody td p{
@@ -121,7 +122,8 @@
       }
 
       .total p label {
-        width: 180px;
+        /* width: 180px; */
+        text-align: right;
         display: inline-block;
         margin-right: 15px;
       }
@@ -201,57 +203,104 @@
         </div>
       </div>
 
-      <table class="table table-responsive text-center" style="width: 100%;">
+      <table class="table table-responsive text-center" style="width: 100%;border-collapse: collapse;border: none;" cellspacing="0" cellpadding="0">
         <tr class="thead">
-          <th style="width: 65%;text-align: left !important;padding-left: 30px;">Items</th>
-          <th>Amount</th>
+          <th style="text-align: left !important;padding-left: 30px;width: 350px;">Description</th>
+          <th style="text-align: right;">Quantity</th>
+          <th style="text-align: right;">Unit Price</th>
+          <th style="text-align: right;padding-right: 40px;">Amount({{ $currency_type }})</th>
         </tr>
 
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;padding-top: 20px;">
-            <p><b>{{ $plan_type }}</b></p>
-            <p>Billing Frequency: Annual</p>
+            <p style="margin-bottom: 10px;"><b>{{ $plan_type }}</b></p>
+            <p>Account Type: {{ $account_type }}</p>
+            <p>Date of Credit Purchase: {{ $plan_start }}</p>
+            <!-- <p>Billing Frequency: Annual</p>
             <p>Start Date: {{ $plan_start }}</p>
             <p>End Date: {{ $plan_end }}</p>
             <p>Plan Duration: {{ $duration }}</p>
-            <p>Active Type: {{ $account_type }}</p>
+            <p>Active Type: {{ $account_type }}</p> -->
           </td>
+          <td></td>
+          <td></td>
           <td></td>
         </tr>
 
-        @if($medical_spending_account)
+      @if($medical_spending_account)
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
-            <p>Medical Spending Account (Pre-paid):</p>
-            <p class="left-space-20">Purchased Credits</p>
-            <p class="left-space-20">Bonus Credits: {{ $currency_type }} {{$medical_credit_bonus}}</p>
-            <p class="left-space-20">Total Credits: {{ $currency_type }} {{$medical_total_credits}}</p>
+            <p><b>Medical Spending Account (Pre-paid):</b></p>
+            <p>Date of Credit Expiry: {{ $plan_end }}</p>
+            <p>Purchased Credits</p>
+            <p>Bonus Credits: {{ $currency_type }} {{$medical_credit_bonus}}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Total Credits: {{ $currency_type }} {{$medical_total_credits}}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Discounts</p>
           </td>
-          <td style="vertical-align: top;"><b>{{ $currency_type }} {{ $medical_credits_purchase }}</b></td>
+          <td style="text-align: right;">
+            <p style="height: 91px;"></p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">1.00</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">1.00</p>
+          </td>
+          <td style="text-align: right;">
+            <p style="height: 91px;"></p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credit_bonus }})</p>
+          </td>
+          <td style="vertical-align: top;text-align: right;padding-right: 40px;">
+            <p style="height: 91px;"></p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credit_bonus }})</p>
+          </td>
         </tr>
-        @endif
-        
-        @if($wellness_spending_account)
+      @endif
+      
+      @if($wellness_spending_account)
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
-            <p>Wellness Spending Account (Pre-paid):</p>
-            <p class="left-space-20">Purchased Credits</p>
-            <p class="left-space-20">Bonus Credits: {{ $currency_type }} {{$wellness_credit_bonus}}</p>
-            <p class="left-space-20">Total Credits: {{ $currency_type }} {{$wellness_total_credits}}</p>
+            <p><b>Wellness Spending Account (Pre-paid):</b></p>
+            <p>Date of Credit Expiry: {{ $plan_end }}</p>
+            <p>Purchased Credits</p>
+            <p>Bonus Credits: {{ $currency_type }} {{$wellness_credit_bonus}}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Total Credits: {{ $currency_type }} {{$wellness_total_credits}}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Discounts</p>
           </td>
-          <td style="vertical-align: top;"><b>{{ $currency_type }} {{ $wellness_credits_purchase }}</b></td>
+          <td style="text-align: right;">
+            <p style="height: 91px;"></p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">1.00</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">1.00</p>
+          </td>
+          <td style="text-align: right;">
+            <p style="height: 91px;"></p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credit_bonus }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $wellness_credits_purchase }})</p>
+          </td>
+          <td style="vertical-align: top;text-align: right;padding-right: 40px;">
+            <p style="height: 91px;"></p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credit_bonus }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $wellness_credits_purchase }})</p>
+          </td>
         </tr>
-        @endif
+      @endif
 
       </table>
 
-      <div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative;height: 80px;">
-        <div style="width: 300px;display: inline-block;position: absolute;right: -30px;">
-          <p style="margin-bottom: 5px;margin-top: 10px;"><label>Total:</label> {{ $currency_type }} {{ $total }}</p>
+      <div class="col-md-12 total" style="width: 100%;position: relative;height: 80px;padding: 0;">
+        <div style="width: 64%;display: inline-block;"></div> 
+        <div style="width: 35%;display: inline-block;">
+          <div style="display: inline-block;width: 100%;padding-right: 20px;">
+            <p style="margin-bottom: 5px;margin-top: 10px;text-align: right;padding-right: 15px;">
+              <span style="margin-right: 10px;vertical-align: middle;">Subtotal:</span> 
+              <span style="vertical-align: middle;width: 120px;">{{ $currency_type }} {{ $total }}</span>
+            </p>
 
-          <div style="border-bottom: 1px solid #aaa;display: inline-block;width: 100%;padding-bottom: 10px;"></div>
+            <div style="border-bottom: 1px solid #bbb;display: inline-block;width: 100%;padding-bottom: 5px;height: 1px"></div>
 
-          <p style="margin-top: 5px;"><label>Amount Due:</label> <b>{{ $currency_type }} {{ $amount_due }}</b></p>
+            <p style="margin-top: 5px;text-align: right;padding-right: 15px;">
+              <span style="margin-right: 10px;vertical-align: middle;">Amount Due:</span> 
+              <span style="vertical-align: middle;width: 120px;"><b>{{ $currency_type }} {{ $amount_due }}</b></span>
+            </p>
+          </div>
         </div>
       </div>
 
