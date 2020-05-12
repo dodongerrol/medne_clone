@@ -1948,15 +1948,15 @@ public function getNewClinicDetails($id)
     //  check if lite plan user
      $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
-     if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+    //  if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
         
-        if($current_balance <= 0) {
-          $returnObject->status = FALSE;
-          $returnObject->status_type = 'zero_balance';
-          $returnObject->message = 'You have no credit to access this feature at the moment. Kindly contact HR';
-          return Response::json($returnObject);
-        }
-      }
+    //     if($current_balance <= 0) {
+    //       $returnObject->status = FALSE;
+    //       $returnObject->status_type = 'zero_balance';
+    //       $returnObject->message = 'You have no credit to access this feature at the moment. Kindly contact HR';
+    //       return Response::json($returnObject);
+    //     }
+    //   }
    }
 
    $user = DB::table('user')->where('UserID', $findUserID)->first();
