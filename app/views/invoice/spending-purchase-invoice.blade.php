@@ -245,12 +245,12 @@
           <td style="text-align: right;">
             <p style="height: 91px;"></p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_credits_purchase }}</p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credits_purchase }})</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credit_bonus }})</p>
           </td>
           <td style="vertical-align: top;text-align: right;padding-right: 40px;">
             <p style="height: 91px;"></p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_credits_purchase }}</p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credits_purchase }})</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credit_bonus }})</p>
           </td>
         </tr>
       @endif
@@ -272,12 +272,12 @@
           </td>
           <td style="text-align: right;">
             <p style="height: 91px;"></p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credit_bonus }}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $wellness_credits_purchase }})</p>
           </td>
           <td style="vertical-align: top;text-align: right;padding-right: 40px;">
             <p style="height: 91px;"></p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credit_bonus }}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $wellness_credits_purchase }})</p>
           </td>
         </tr>

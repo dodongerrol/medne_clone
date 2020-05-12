@@ -14950,7 +14950,7 @@ class BenefitsDashboardController extends \BaseController {
         $data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
         $data['wellness_discount_credits']  = number_format($spendingPurchase->wellness_credit_bonus, 2);
 		// return $data;
-		return View::make('invoice.spending-purchase-invoice', $data);
+		// return View::make('invoice.spending-purchase-invoice', $data);
 		$pdf = PDF::loadView('invoice.spending-purchase-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
