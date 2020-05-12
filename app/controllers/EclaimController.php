@@ -1500,7 +1500,10 @@ class EclaimController extends \BaseController {
 			'lite_plan'             => $lite_plan_status,
 			'wallet_status'        => $wallet_status,
 			'currency_type'					=> $wallet->currency_type,
-			'account_type'				=> $active_plan->account_type
+			'account_type'				=> $active_plan->account_type,
+			'total_visit_limit'          => $user_plan_history->total_visit_limit,
+            'total_visit_created'       => $user_plan_history->total_visit_created,
+            'total_balance_visit'       => count($transactions) - count($e_claim_result)
 		);
 	}
 
@@ -2214,7 +2217,10 @@ class EclaimController extends \BaseController {
 			'currency_type'			=> $wallet->currency_type,
 			'balance'           => $balance,
 			'spending_type'	=> $spending_type,
-			'account_type'		=> $active_plan->account_type
+			'account_type'		=> $active_plan->account_type,
+			'total_visit_limit'          => $user_plan_history->total_visit_limit,
+            'total_visit_created'       => $user_plan_history->total_visit_created,
+            'total_balance_visit'       => count($transactions) - count($e_claim_result)
 		);
 	}
 
