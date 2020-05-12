@@ -791,7 +791,7 @@ app.directive('activityPage', [
 								// scope.activity_dates = [];
 								// scope.eclaim_dates = [];
 								scope.activity = response.data.data;
-
+								console.log(scope.activity);
 								scope.fetching_data = {
 									from: response.data.from,
 									to: response.data.total
