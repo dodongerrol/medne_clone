@@ -24,7 +24,7 @@ class MemberHelper
 		}
 	}
 
-	public function getMemberResetCreditWallet($user_id, $wallet_id, $filter)
+	public static function getMemberResetCreditWallet($user_id, $wallet_id, $filter)
 	{
 
 		if($filter == "current_term") {
@@ -630,27 +630,27 @@ class MemberHelper
 		}
 	}
 
-	public function getMemberSpendingCoverageDate($member_id)
+	public static function getMemberSpendingCoverageDate($member_id)
 	{
 		// $customer_id = PlanHelper::getCustomerId($member_id);
 		// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
 		// return ['start_date' => $spending_accounts->medical_spending_start_date, 'end_date' => date('Y-m-d', strtotime('+3 months', strtotime($spending_accounts->medical_spending_end_date)))];
-    $current_term = MemberHelper::getMemberCreditReset($member_id, 'current_term', 'medical');
-    $last_term = MemberHelper::getMemberCreditReset($member_id, 'last_term', 'medical');
-    $today = date('Y-m-d');
-    $grace_period = null;
-    if($last_term) {
-    	$grace_period = date('Y-m-d', strtotime('+3 months', strtotime($current_term['start'])));
-    	if($grace_period <= $today) {
-    		return ['start_date' => $current_term['start'], 'end_date' => $current_term['end'], 'today' => $today, 'grace_period' => $grace_period];
-    	} else {
-    		return ['start_date' => $last_term['start'], 'end_date' => $current_term['end'], 'today' => $today, 'grace_period' => $grace_period];
-    	}
-    } else {
-    	return ['start_date' => $current_term['start'], 'end_date' => $current_term['end'], 'today' => $today, 'grace_period' => $grace_period];
-    }
-    // return ['current_term' => $current_term, 'last_term' => $last_term];
+		$current_term = MemberHelper::getMemberCreditReset($member_id, 'current_term', 'medical');
+		$last_term = MemberHelper::getMemberCreditReset($member_id, 'last_term', 'medical');
+		$today = date('Y-m-d');
+		$grace_period = null;
+		if($last_term) {
+			$grace_period = date('Y-m-d', strtotime('+3 months', strtotime($current_term['start'])));
+			if($grace_period <= $today) {
+				return ['start_date' => $current_term['start'], 'end_date' => $current_term['end'], 'today' => $today, 'grace_period' => $grace_period];
+			} else {
+				return ['start_date' => $last_term['start'], 'end_date' => $current_term['end'], 'today' => $today, 'grace_period' => $grace_period];
+			}
+		} else {
+			return ['start_date' => $current_term['start'], 'end_date' => $current_term['end'], 'today' => $today, 'grace_period' => $grace_period];
+		}
+		// return ['current_term' => $current_term, 'last_term' => $last_term];
 	}
 
 	public static function getMemberTotalDaysSubscription($plan_start, $plan_end)	
@@ -670,7 +670,7 @@ class MemberHelper
 		}
 	}
 
-	public function deductPlanHistoryVisit($member_id)
+	public static function deductPlanHistoryVisit($member_id)
 	{
 		$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
 
@@ -682,6 +682,19 @@ class MemberHelper
 		}
 
 		return false;
+	}
+
+	public static function getMemberPreviousPlanHistory($member_id)
+	{
+		$plan_history = DB::table('user_plan_history')
+								->where('user_id', $member_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->skip(1)
+								->take(1)
+								->first();
+
+		return $plan_history  ? $plan_history  : false;
 	}
 }
 ?>
