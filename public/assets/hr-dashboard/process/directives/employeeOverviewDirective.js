@@ -1979,8 +1979,8 @@ app.directive("employeeOverviewDirective", [
                         scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
                         $('.employee-standalone-pro-wrapper').hide();
                         
-                        // let account_type = scope.account_plan_status.account_type;
-                        let account_type = 'enterprise_plan';
+                        let account_type = scope.account_plan_status.account_type;
+                        // let account_type = 'enterprise_plan';
                         console.log('account_type', account_type);
                         
                         if (account_type =='lite_plan') {
