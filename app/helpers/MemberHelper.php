@@ -676,5 +676,69 @@ class MemberHelper
 		$total_days = date_diff(new \DateTime(date('Y-m-d', strtotime($plan_start))), new \DateTime(date('Y-m-d', strtotime($plan_end))));
 		return $total_days->format('%a') + 1;
 	}
+
+	public static function memberReturnCreditBalance($member_id)
+	{
+		$wallet = DB::table('e_wallet')
+		->where('UserID', $member_id)
+		->orderBy('created_at', 'desc')
+		->first();
+
+		$medical = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member_id);
+		$wellness = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member_id);
+
+
+		if($medical['balance'] > 0) {
+			// return credits to company
+			$calibrate_medical_deduction_by_hr = array(
+				'wallet_id'         => $wallet->wallet_id,
+				'credit'            => $medical['balance'],
+				'logs'              => 'deducted_by_hr',
+				'running_balance'   => $medical['balance'],
+				'spending_type'     => 'medical',
+				'created_at'        => date('Y-m-d H:i:s'),
+				'updated_at'        => date('Y-m-d H:i:s'),
+				'currency_type'		=> $wallet->currency_type
+			);
+
+			DB::table('wallet_history')->insert($calibrate_medical_deduction_by_hr);
+		}
+
+		if($wellness['balance'] > 0) {
+			// return credits to company
+			$calibrate_wellness_deduction_by_hr = array(
+				'wallet_id'         => $wallet->wallet_id,
+				'credit'            => $wellness['balance'],
+				'logs'              => 'deducted_by_hr',
+				'running_balance'   => $wellness['balance'],
+				'spending_type'     => 'wellness',
+				'created_at'        => date('Y-m-d H:i:s'),
+				'updated_at'        => date('Y-m-d H:i:s'),
+				'currency_type'		=> $wallet->currency_type
+			);
+			DB::table('wellness_wallet_history')->insert($calibrate_wellness_deduction_by_hr);
+		}
+
+		return ['medical' => $medical, 'wellness' => $wellness];
+	}
+
+	public static function createWallet($member_id)
+	{
+		$wallet = DB::table('e_wallet')
+		->where('UserID', $member_id)
+		->orderBy('created_at', 'desc')
+		->first();
+
+		if(!$wallet) {
+			$data = array(
+				'UserID'	=> $member_id,
+				'balance'	=> 0,
+				'wellness_balance' => 0,
+				'created_at'	=> date('Y-m-d H:i:s'),	
+				'updated_at'	=> date('Y-m-d H:i:s'),	
+			);
+			DB::table('e_wallet')->insert($data);
+		}
+	}
 }
 ?>

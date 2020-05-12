@@ -13428,12 +13428,14 @@ class BenefitsDashboardController extends \BaseController {
 				
 				if(date('Y-m-d', strtotime($check_wallet_status->medical_return_credits_date)) < date('Y-m-d')) {
 					$medical['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->medical_return_credits_date)));
+					$medical['balance'] = "0.00";
 				} else {
 					$medical['balance_credits_date'] = date('d/m/Y');
+					// get lates balance
+					$medical_balance = $check_wallet_status->medical_pro_allocation - $total_medical_spent;
+					
 				}
-				// get lates balance
-				$medical_balance = $check_wallet_status->medical_pro_allocation - $total_medical_spent;
-				$medical['balance'] = $medical_balance ? $medical_balance >= number_format($medical_balance, 2) : "0.00";
+				
 			}
 		}
 
@@ -13519,13 +13521,13 @@ class BenefitsDashboardController extends \BaseController {
 				
 				if(date('Y-m-d', strtotime($check_wallet_status->wellness_return_credits_date)) < date('Y-m-d')) {
 					$wellness['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->wellness_return_credits_date)));
+					$wellness['balance'] = "0.00";
 				} else {
 					$wellness['balance_credits_date'] = date('d/m/Y');
+					// get lates balance
+					$wellness_balance = $check_wallet_status->wellness_pro_allocation - $total_wellness_spent;
+					$wellness['balance'] = $wellness_balance >= 0 ? number_format($wellness_balance, 2) : "0.00";
 				}
-				
-				// get lates balance
-				$wellness_balance = $check_wallet_status->wellness_pro_allocation - $total_wellness_spent;
-				$wellness['balance'] = $wellness_balance >= 0 ? number_format($wellness_balance, 2) : "0.00";
 			}
 		}
 
@@ -13708,7 +13710,7 @@ class BenefitsDashboardController extends \BaseController {
 						'updated_at'        => date('Y-m-d H:i:s'),
 						'currency_type'	=> $wallet->currency_type
 					);
-					// return $calibrate_wellness_deduction_by_hr;
+
 					if($new_balance < 0) {
 						$new_balance = 0;
 					}
