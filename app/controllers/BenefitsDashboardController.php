@@ -2081,41 +2081,60 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 			}
-
+			
 			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d')) {
 				$emp_status = 'pending';
 			}
-			
-			$credit_balance = self::floatvalue($wallet->balance);
-			// get pending allocation for medical
-			$e_claim_amount_pending_medication = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', 'medical')
-			->where('status', 0)
-			->sum('claim_amount');
 
-			// get pending allocation for wellness
-			$e_claim_amount_pending_wellness = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', 'wellness')
-			->where('status', 0)
-			->sum('claim_amount');
+			$medical = null;
+			$wellness = null;
+			if($active_plan->account_type == 'enterprise_plan') {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$medical = array(
-				'entitlement' => $wallet_entitlement->medical_entitlement,
-				'credits_allocation' => $medical_credit_data['allocation'],
-				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
-				'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
-				'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
-			);
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+					'balance'			=> $user_active_plan_history->total_visit_created,
+					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created
+				);
+			} else {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$wellness = array(
-				'entitlement' => $wallet_entitlement->wellness_entitlement,
-				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
-				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
-				'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
-				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
-			);
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
+
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
+				);
+
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+				);
+			}
 
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
@@ -2154,8 +2173,6 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_name'				=> $plan_name,
 				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
 				'expiry_date'			=> $expiry_date,
-				'wallet_id'				=> $wallet->wallet_id,
-				'credits'				=> number_format($credit_balance, 2),
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
 				'nric'					=> $user->NRIC,
@@ -3259,37 +3276,55 @@ class BenefitsDashboardController extends \BaseController {
 				$emp_status = 'pending';
 			}
 
-			$credit_balance = self::floatvalue($wallet->balance);
-			// get pending allocation for medical
-			$e_claim_amount_pending_medication = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', 'medical')
-			->where('status', 0)
-			->sum('claim_amount');
+			$medical = null;
+			$wellness = null;
+			if($active_plan->account_type == 'enterprise_plan') {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			// get pending allocation for wellness
-			$e_claim_amount_pending_wellness = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('status', 0)
-			->where('spending_type', 'wellness')
-			->where('status', 0)
-			->sum('claim_amount');
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+					'balance'			=> $user_active_plan_history->total_visit_created,
+					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created
+				);
+			} else {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$medical = array(
-				'entitlement' => $wallet_entitlement->medical_entitlement,
-				'credits_allocation' => $medical_credit_data['allocation'],
-				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
-				'balance'			=> $medical_credit_data['balance'],
-				'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
-			);
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$wellness = array(
-				'entitlement' => $wallet_entitlement->wellness_entitlement,
-				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
-				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
-				'balance'						=> $wellness_credit_data['balance'],
-				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
-			);
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
+				);
+
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+				);
+			}
 
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
@@ -3325,11 +3360,8 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_name'				=> $plan_name,
 				'start_date'			=> $get_employee_plan->plan_start,
 				'expiry_date'			=> $expiry_date,
-				'wallet_id'				=> $wallet->wallet_id,
-				'credits'				=> number_format($credit_balance, 2),
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
-				'nric'					=> $user->NRIC,
 				'mobile_no'				=> $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
 				'country_code'			=> $country_code,
