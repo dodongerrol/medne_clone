@@ -1,0 +1,149 @@
+e.health-spending-dpicker .input-icon {
+  border-radius: 5px;
+}
+.account-summary-pro-rated{
+  margin-bottom: 15px;
+}
+.medical-wellness-container ,
+.medical-spending-account-container{
+  margin-top: 30px;
+  color: #2E4057;
+  border: 2px solid #BFBFBF;
+  max-width: 1070px;
+  width: 100% !important;
+}
+.medical-spending-account-container{
+  max-width: 500px;
+}
+.medical-wellness-container h4,
+.medical-spending-account-container h4 {
+  margin: 20px 0;
+}
+.medical-spending-account-container .spending-details-separator,
+.medical-wellness-container .spending-details-separator{
+  margin: 22px 0;
+  width: 100%;
+  border-bottom: 2px solid #BFBFBF;
+}
+.medical-wellness-container .separator {
+  text-align: center;
+  display: inline-block;
+  border: 2px solid #bfbfbf;
+  border-width: 0 0 0 2px;
+  margin: -20px 45px !important;
+  height: inherit !important;
+  transform: none;
+}
+.medical-wellness-container .medical-container,
+.medical-wellness-container .wellness-container{
+  flex: 1;
+}
+.inital-allocation-container, 
+.pro-rated-container,
+.pending-claim-container, 
+.balance-summary-container,
+.spending-account-status,
+.balance-container{
+  margin-bottom: 22px;
+  padding: 0;
+  border: none;
+  grid-template-columns: 1.5fr 1fr;
+}
+.spending-account-status {
+  font-size: 18px;
+}
+.balance-summary-container.grid-width-100,
+.balance-container.grid-width-100{
+  grid-template-columns: 1fr;
+}
+.medical-spending-account-container .p-tooltip,
+.medical-wellness-container .p-tooltip{
+  position: relative;
+  margin-left: 5px;
+}
+.medical-spending-account-container .p-tooltip img,
+.medical-wellness-container .p-tooltip img{
+  height: 12px;
+  width: 12px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  right: auto;
+}
+.balance-summary-container p,
+.balance-container p{
+  margin: 0;
+  font-family: 'Helvetica Light';
+}
+
+.medical-spending-account-container .p-tooltip .dropdown-tooltip-container::before,
+.medical-wellness-container .p-tooltip .dropdown-tooltip-container::before{
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 33px;
+  height: 14px;
+  width: 14px;
+  background: #FFFFFF;
+  border: 1px solid #DBDBDB;
+  border-width: 1px 0 0 1px;
+  transform: rotate(45deg);
+}
+.medical-spending-account-container .p-tooltip .dropdown-tooltip-container,
+.medical-wellness-container .p-tooltip .dropdown-tooltip-container{
+  /* display: none; */
+  position: absolute;
+  top: 28px;
+  left: -35px;
+  background: #FFFFFF;
+  border: 1px solid #DBDBDB;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 2px;
+  padding: 12px 15px;
+  width: 368px;
+  z-index: 0;
+  color: #000;
+  font-size: 14px;
+  font-weight: 300;
+  text-align: left;
+}
+
+.medical-spending-account-container .p-tooltip .dropdown-tooltip-container p,
+.medical-wellness-container .p-tooltip .dropdown-tooltip-container p{
+  line-height: 18px;
+  margin-bottom: 0;
+}
+.medical-spending-account-container .p-tooltip .dropdown-tooltip-container p b,
+.medical-wellness-container .p-tooltip .dropdown-tooltip-container p b{
+  font-family: 'Helvetica Medium';
+  font-weight: 300;
+}
+
+.medical-spending-account-container .p-tooltip .dropdown-tooltip-container .tooltip-title,
+.medical-wellness-container .p-tooltip .dropdown-tooltip-container .tooltip-title{
+  font-size: 15px;
+  border-bottom: 2px solid #aaa;
+  padding: 0px 0 10px 0;
+  margin-bottom: 15px;
+  font-family: 'Helvetica Medium';
+  margin-top: 0;
+}
+
+.medical-spending-account-container .p-tooltip .dropdown-tooltip-container .btn-container,
+.medical-wellness-container .p-tooltip .dropdown-tooltip-container .btn-container{
+  text-align: center;
+  padding-bottom: 5px;
+  padding-top: 15px;
+}
+
+.medical-spending-account-container .p-tooltip .dropdown-tooltip-container .btn-container button,
+.medical-wellness-container .p-tooltip .dropdown-tooltip-container .btn-container button{
+  width: 85px;
+  height: 35px;
+  background: #0392CF;
+  border-radius: 3px;
+  font-size: 15px;
+  color: #FFF;
+  line-height: 1;
+  font-weight: 700;
+}

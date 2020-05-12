@@ -1,0 +1,8 @@
+.employee-input-wrapper md-select-value{
+  font-size: 14px;
+  height: 29px;
+  padding: 0;
+}
+.employee-input-wrapper md-select-value span:first-child{
+  width: 100%;
+}
