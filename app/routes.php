@@ -944,6 +944,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
 		
 		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
+		Route::post('auth/send-otp-mobile', 'Api_V1_AuthController@sendOtpMobile');
 		
 	 	Route::group(array('before' => 'auth.v2'),function(){
 	 		// test one tap login
