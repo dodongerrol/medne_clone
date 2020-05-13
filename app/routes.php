@@ -941,8 +941,10 @@ Route::group(array('prefix' => 'v2'), function()
 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
-	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
-
+		Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
+		
+		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
+		
 	 	Route::group(array('before' => 'auth.v2'),function(){
 	 		// test one tap login
 		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');

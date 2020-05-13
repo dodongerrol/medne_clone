@@ -193,6 +193,23 @@ class Api_V1_AuthController extends \BaseController {
             	return Response::json($returnObject);
             }
 
+          public function checkMemberExist( )
+          {
+              $input = Input::all();
+
+              if(empty($input['mobile']) || $input['mobile'] == null) {
+                  return array('status' => false, 'message' => 'Mobile Number is required.');
+              }
+
+              $checker = DB::table('user')
+              ->select('Name as name', 'member_activated')
+              ->where('PhoneNo', $input['mobile'])->first();
+
+              if(!$checker) {
+                  return array('status' => false, 'message' => 'This phone number has not been signed up with Mednefits');
+              }
+              return array('status' => true, 'message' => 'Member is already registered', 'data' => $checker);
+          }
 
         // user pin
             public function pin(){
