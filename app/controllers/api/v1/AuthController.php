@@ -264,6 +264,49 @@ class Api_V1_AuthController extends \BaseController {
               // return $otp_code;
           }
 
+          public function validateOtpMobile( )
+          {
+              $input = Input::all();
+              $returnObject = new stdClass();
+
+              if(empty($input['otp_code']) || $input['otp_code'] == null) {
+                $returnObject->status = false;
+                $returnObject->message = 'OTP Code is required.';
+                return Response::json($returnObject);
+              }
+
+              if(empty($input['mobile']) || $input['mobile'] == null) {
+                $returnObject->status = false;
+                $returnObject->message = 'Mobile Number is required.';
+                return Response::json($returnObject);
+              }
+
+              $checker = DB::table('user')
+              ->select('UserID', 'Name as name', 'member_activated')
+              ->where('PhoneNo', $input['mobile'])->first();
+
+              if(!$checker) {
+                $returnObject->status = false;
+                $returnObject->message = 'User not found!';
+                return Response::json($returnObject);
+              }
+    
+              // $member_id = $result->user_id;
+              $member_id = $checker->UserID;
+              $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
+              if(!$result) {
+                  $returnObject->status = false;
+                  $returnObject->message = 'Invalid OTP Code.';
+                  return Response::json($returnObject);
+              }
+
+              DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
+              $returnObject->status = true;
+              $returnObject->message = 'OTP Code is valid';
+              $returnObject->data = $checker;
+              return Response::json($returnObject);
+          }
+
         // user pin
             public function pin(){
             	$returnObject = new stdClass();
