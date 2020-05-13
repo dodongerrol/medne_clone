@@ -211,6 +211,42 @@ class Api_V1_AuthController extends \BaseController {
               return array('status' => true, 'message' => 'Member is already registered', 'data' => $checker);
           }
 
+          public function sendOtpMobile( )
+          {
+              $input = Input::all();
+
+              if(empty($input['mobile']) || $input['mobile'] == null) {
+                  return array('status' => false, 'message' => 'Mobile Number is required.');
+              }
+
+              if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+                  return array('status' => false, 'message' => 'Mobile Country Code is required.');
+              }
+
+              $checker = DB::table('user')->where('PhoneNo', $input['mobile'])->first();
+
+              if(!$checker) {
+                return array('status' => false, 'message' => 'User not found!');
+              }
+
+              // $member_id = $checker->user_id;
+              $member_id = $checker->UserID;
+              $mobile_number = (int)$input['mobile'];
+              $code = $input['mobile_country_code'];
+              $phone = $code.$mobile_number;
+
+              $otp_code = StringHelper::OTPChallenge();
+              // StringHelper::TestSendOTPSMS($phone, $otp_code);
+              $data = array();
+              $data['phone'] = $phone;
+              $data['message'] = 'Your Mednefits OTP is '.$otp_code;
+              $data['sms_type'] = "LA";
+              SmsHelper::sendSms($data);
+              DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
+              return array('status' => true, 'message' => 'OTP SMS sent');
+              return $otp_code;
+          }
+
         // user pin
             public function pin(){
             	$returnObject = new stdClass();
