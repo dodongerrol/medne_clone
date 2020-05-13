@@ -38,6 +38,7 @@
 			<span> <strong class="font-helvetica-medium">Current</strong> - <span class="account-summary-date"
 					ng-bind="health_spending_summary.date.usage_end">01/12/2018</span></span>
 		</div>
+
 		<div
 			ng-if="(health_spending_summary.medical && !health_spending_summary.wellness) || (!health_spending_summary.medical && health_spending_summary.wellness)"
 			class="medical-spending-account-container">
@@ -122,13 +123,13 @@
 				class="spending-account-status exceed weight-700">Exceed</span>
 
 
-			<div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid' || spending_account_status.wellness_method == 'pre_paid'" class="spending-details-separator"></div>
+			<div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid' || health_spending_summary.wellness.plan_method == 'pre_paid'" class="spending-details-separator"></div>
 
-			<div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid' || spending_account_status.wellness_method == 'pre_paid'" class="balance-container grid-width-100 weight-700 font-helvetica-medium" style="margin-top: 10px;">
+			<div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid' || health_spending_summary.wellness.plan_method == 'pre_paid'" class="balance-container grid-width-100 weight-700 font-helvetica-medium" style="margin-top: 10px;">
 				<strong class="font-helvetica-medium">Return to Company {{ health_spending_summary.medical ? 'Medical' : 'Wellness' }} Available Credits: </strong>
 			</div>
 
-			<div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid' || spending_account_status.wellness_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
+			<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.wellness.pro_allocation_status == false}" ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid' || health_spending_summary.wellness.plan_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
 				<strong class="font-helvetica-medium">
 					<span class="p-label-value">Remaining Allocated Credits</span>
 					<span class="p-tooltip">
@@ -147,16 +148,19 @@
 							</div>
 						</div>
 					</span>
-					<p>(as of 06/05/020)</p>
+					<p ng-if="health_spending_summary.medical && health_spending_summary.medical.remaining_credits_date">(returned on {{ health_spending_summary.medical.remaining_credits_date }})</p>
+					<p ng-if="health_spending_summary.wellness && health_spending_summary.wellness.remaining_credits_date">(returned on {{ health_spending_summary.wellness.remaining_credits_date }})</p>
 
 				</strong>
 				<span>
-					<span ng-bind="health_spending_summary.wellness.currency_type" class="currency-type"></span> 
-					<span ng-bind="health_spending_summary.wellness.balance">84.62</span>
+					<span ng-bind="health_spending_summary.medical && health_spending_summary.medical.currency_type" class="currency-type"></span> 
+					<span ng-bind="health_spending_summary.medical &&  health_spending_summary.medical.remaining_allocated_credits">84.62</span>
+					<span ng-bind="health_spending_summary.wellness &&  health_spending_summary.wellness.currency_type" class="currency-type"></span>
+					<span ng-bind="health_spending_summary.wellness &&  health_spending_summary.wellness.remaining_allocated_credits">84.62</span>
 				</span>
 			</div>
 
-			<div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid' || spending_account_status.wellness_method == 'pre_paid' && (selected_employee_details.deletion == true || selected_employee_details.scheduled == true || selected_employee_details.member.Active == 0)" class="balance-container weight-700" style="margin-top: 10px;">
+			<div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid' || health_spending_summary.wellness.plan_method == 'pre_paid' && (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)" class="balance-container weight-700" style="margin-top: 10px;">
 				<strong class="font-helvetica-medium">
 					<span class="p-label-value">Balance</span>
 					<span class="p-tooltip">
@@ -174,14 +178,20 @@
 							</div>
 						</div>
 					</span>
-					<p>(as of 06/05/020)</p>
+					<p ng-if="health_spending_summary.medical && health_spending_summary.medical.balance_credits_date">(as of {{ health_spending_summary.medical.balance_credits_date }})</p>
+					<p ng-if="health_spending_summary.wellness && health_spending_summary.wellness.balance_credits_date">(as of {{ health_spending_summary.wellness.balance_credits_date }})</p>
 				</strong>
 				<span>
-					<span ng-bind="health_spending_summary.medical.currency_type" class="currency-type"></span> 
-					<span ng-bind="health_spending_summary.medical.balance">84.62</span>
+					<span ng-bind="health_spending_summary.medical && health_spending_summary.medical.currency_type" class="currency-type"></span> 
+					<span ng-bind="health_spending_summary.medical && health_spending_summary.medical.balance">84.62</span>
+					<span ng-bind="health_spending_summary.wellness && health_spending_summary.wellness.currency_type" class="currency-type"></span> 
+					<span ng-bind="health_spending_summary.wellness && health_spending_summary.wellness.balance">84.62</span>
 				</span>
 			</div>
 		</div>
+
+
+		
 
 		<div ng-if="health_spending_summary.medical && health_spending_summary.wellness "
 			class="medical-wellness-container">
@@ -234,13 +244,13 @@
 				<span ng-if="health_spending_summary.medical.exceed == true"
           class="spending-account-status exceed weight-700">Exceed</span>
           
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid'" class="spending-details-separator"></div>
+        <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="spending-details-separator"></div>
 
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid'" class="balance-container grid-width-100 weight-700 font-helvetica-medium" style="margin-top: 10px;">
+        <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="balance-container grid-width-100 weight-700 font-helvetica-medium" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">Return to Company Medical Available Credits: </strong>
         </div>
 
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
+        <div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.medical.pro_allocation_status == false}" ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">
             <span class="p-label-value">Remaining Allocated Credits</span>
             <span class="p-tooltip">
@@ -259,16 +269,16 @@
                 </div>
               </div>
             </span>
-            <p>(as of 06/05/020)</p>
+						<p ng-if="health_spending_summary.medical.remaining_credits_date">(returned on {{ health_spending_summary.medical.remaining_credits_date }})</p>
 
           </strong>
           <span>
             <span ng-bind="health_spending_summary.medical.currency_type" class="currency-type"></span> 
-            <span ng-bind="health_spending_summary.medical.balance">84.62</span>
+            <span ng-bind="health_spending_summary.medical.remaining_allocated_credits">84.62</span>
           </span>
         </div>
 
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.medical_method == 'pre_paid' && (selected_employee_details.deletion == true || selected_employee_details.scheduled == true || selected_employee_details.member.Active == 0)" class="balance-container weight-700" style="margin-top: 10px;">
+        <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid' && (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">
             <span class="p-label-value">Balance</span>
             <span class="p-tooltip">
@@ -286,7 +296,7 @@
                 </div>
               </div>
             </span>
-            <p>(as of 06/05/020)</p>
+						<p ng-if="health_spending_summary.medical.balance_credits_date">(as of {{ health_spending_summary.medical.balance_credits_date }})</p>
           </strong>
           <span>
             <span ng-bind="health_spending_summary.medical.currency_type" class="currency-type"></span> 
@@ -303,14 +313,14 @@
 				<h4 class="font-helvetica-medium text-center">Wellness Spending Account</h4>
 				<div class="spending-account-details">
 					<div class="inital-allocation-container weight-700">
-            <strong ng-if="spending_account_status.account_type != 'lite_plan' || ( spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method != 'pre_paid')" class="font-helvetica-medium">Initial Allocation</strong>
-              <strong ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method == 'pre_paid'" class="font-helvetica-medium">Initial Allocated Credits</strong>
+            <strong ng-if="emp_details.account_type != 'lite_plan' || ( emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method != 'pre_paid')" class="font-helvetica-medium">Initial Allocation</strong>
+              <strong ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="font-helvetica-medium">Initial Allocated Credits</strong>
 						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 								ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
 					</div>
 					<div class="pro-rated-container weight-700">
-            <strong ng-if="spending_account_status.account_type != 'lite_plan' || ( spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method != 'pre_paid')" class="font-helvetica-medium">Pro-rated Allocation</strong>
-						<strong ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method == 'pre_paid'" class="font-helvetica-medium">Pro-rated Allocated Credits</strong>
+            <strong ng-if="emp_details.account_type != 'lite_plan' || ( emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method != 'pre_paid')" class="font-helvetica-medium">Pro-rated Allocation</strong>
+						<strong ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="font-helvetica-medium">Pro-rated Allocated Credits</strong>
 						<span class="font-helvetica-medium"><span class="currency-type"
 								ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 								ng-bind="health_spending_summary.wellness.pro_allocation">169.86</span></span>
@@ -348,13 +358,13 @@
 				<span ng-if="health_spending_summary.wellness.exceed == true"
           class="spending-account-status exceed weight-700">Exceed</span>
           
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method == 'pre_paid'" class="spending-details-separator"></div>
+        <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="spending-details-separator"></div>
 
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method == 'pre_paid'" class="balance-container grid-width-100 weight-700 font-helvetica-medium" style="margin-top: 10px;">
+        <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="balance-container grid-width-100 weight-700 font-helvetica-medium" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">Return to Company wellness Available Credits: </strong>
         </div>
 
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
+        <div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.wellness.pro_allocation_status == false}" ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">
             <span class="p-label-value">Remaining Allocated Credits</span>
             <span class="p-tooltip">
@@ -373,16 +383,16 @@
                 </div>
               </div>
             </span>
-            <p>(as of 06/05/020)</p>
+						<p ng-if="health_spending_summary.wellness.remaining_credits_date">(returned on {{ health_spending_summary.wellness.remaining_credits_date }})</p>
 
           </strong>
           <span>
             <span ng-bind="health_spending_summary.wellness.currency_type" class="currency-type"></span> 
-            <span ng-bind="health_spending_summary.wellness.balance">84.62</span>
+            <span ng-bind="health_spending_summary.wellness.remaining_allocated_credits">84.62</span>
           </span>
         </div>
 
-        <div ng-if="spending_account_status.account_type == 'lite_plan' && spending_account_status.wellness_method == 'pre_paid' && (selected_employee_details.deletion == true || selected_employee_details.scheduled == true || selected_employee_details.member.Active == 0)" class="balance-container weight-700" style="margin-top: 10px;">
+        <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid' && (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">
             <span class="p-label-value">Balance</span>
             <span class="p-tooltip">
@@ -400,7 +410,7 @@
                 </div>
               </div>
             </span>
-            <p>(as of 06/05/020)</p>
+						<p ng-if="health_spending_summary.wellness.balance_credits_date">(as of {{ health_spending_summary.wellness.balance_credits_date }})</p>
           </strong>
           <span>
             <span ng-bind="health_spending_summary.wellness.currency_type" class="currency-type"></span> 

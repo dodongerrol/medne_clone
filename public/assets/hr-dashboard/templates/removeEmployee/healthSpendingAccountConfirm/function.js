@@ -36,22 +36,18 @@ app.directive('healthSpendingAccountConfirmDirective', [
           }
         }
         scope.confirmRemoveEmployee = function(){
-          if( scope.emp_details.wallet_opt == true ){
-            var dates = {
-              start: moment(scope.emp_details.summary.date.pro_rated_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-              end: moment(scope.emp_details.summary.date.pro_rated_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-            }
-            dependentsSettings.updateWalletMember(scope.emp_details.user_id, scope.selected_customer_id, scope.emp_details.summary.medical.exceed, scope.emp_details.summary.wellness.exceed, moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'), dates)
-              .then(function (response) {
-                if (response.data.status) {
-                  scope.removeEmployeeRequests();
-                } else {
-                  swal('Error!', response.data.message, 'error');
-                }
-              });
-          }else{
-            scope.removeEmployeeRequests();
+          var dates = {
+            start: moment(scope.emp_details.summary.date.pro_rated_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            end: moment(scope.emp_details.summary.date.pro_rated_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
           }
+          dependentsSettings.updateWalletMember(scope.emp_details.user_id, scope.selected_customer_id, scope.emp_details.summary.medical.exceed, scope.emp_details.summary.wellness.exceed, moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'), dates, scope.emp_details.wallet_opt)
+            .then(function (response) {
+              if (response.data.status) {
+                scope.removeEmployeeRequests();
+              } else {
+                swal('Error!', response.data.message, 'error');
+              }
+            });
         }
 				scope.removeEmployeeRequests  = function(){
           if (scope.emp_details.remove_option == 'remove') {

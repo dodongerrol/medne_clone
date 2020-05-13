@@ -13511,7 +13511,7 @@ class BenefitsDashboardController extends \BaseController {
 			'remaining_allocated_credits' => number_format($remaining_allocated_wellness_credits, 2),
 			'currency_type'	=> $wallet->currency_type,
 			'plan_method'			=> $spending['wellness_method'],
-			'pro_allocation_staus'		=> false
+			'pro_allocation_status'		=> false
 		);
 
 		if($check_wallet_status && (int)$check_wallet_status->wellness_pro_allocation_status == 1) {

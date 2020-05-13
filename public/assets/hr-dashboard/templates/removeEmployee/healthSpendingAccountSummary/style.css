@@ -56,6 +56,9 @@ e.health-spending-dpicker .input-icon {
 .balance-container.grid-width-100{
   grid-template-columns: 1fr;
 }
+.balance-container.isHide{
+  display: none;
+}
 .medical-spending-account-container .p-tooltip,
 .medical-wellness-container .p-tooltip{
   position: relative;

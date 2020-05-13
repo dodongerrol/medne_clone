@@ -12,6 +12,7 @@ app.directive('healthSpendingAccountSummaryDirective', [
 				scope.emp_details = removeEmployeeFactory.getEmployeeDetails();
 				if(scope.emp_details == null){
 					scope.emp_details = scope.selectedEmployee;
+					scope.emp_details.last_day_coverage = moment( scope.emp_details.expiry_date, 'MM/DD/YYYY' ).format('DD/MM/YYYY');
 				}
 				scope.isCalculated = false;
 				scope.isMedicalDropShow = false;
@@ -38,7 +39,6 @@ app.directive('healthSpendingAccountSummaryDirective', [
             .then(function (response) {
               console.log(response);
 							scope.health_spending_summary = response.data;
-							scope.health_spending_summary.medical = false;
 							scope.emp_details.summary = response.data;
 							scope.emp_details.summary.date.pro_rated_start = new Date(moment(scope.emp_details.summary.date.pro_rated_start, 'DD/MM/YYYY'));
 							scope.emp_details.summary.date.pro_rated_end = new Date(moment(scope.emp_details.summary.date.pro_rated_end, 'DD/MM/YYYY'));
