@@ -13510,7 +13510,7 @@ class BenefitsDashboardController extends \BaseController {
 			'balance'				=> number_format($wellness_balance, 2),
 			'remaining_allocated_credits' => number_format($remaining_allocated_wellness_credits, 2),
 			'currency_type'	=> $wallet->currency_type,
-			'plan_method'			=> $spending['medical_method'],
+			'plan_method'			=> $spending['wellness_method'],
 			'pro_allocation_staus'		=> false
 		);
 
