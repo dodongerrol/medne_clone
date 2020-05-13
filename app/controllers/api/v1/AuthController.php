@@ -196,9 +196,12 @@ class Api_V1_AuthController extends \BaseController {
           public function checkMemberExist( )
           {
               $input = Input::all();
+              $returnObject = new stdClass();
 
               if(empty($input['mobile']) || $input['mobile'] == null) {
-                  return array('status' => false, 'message' => 'Mobile Number is required.');
+                  $returnObject->status = false;
+                  $returnObject->message = 'Mobile Number is required.';
+                  return Response::json($returnObject);
               }
 
               $checker = DB::table('user')
@@ -206,27 +209,39 @@ class Api_V1_AuthController extends \BaseController {
               ->where('PhoneNo', $input['mobile'])->first();
 
               if(!$checker) {
-                  return array('status' => false, 'message' => 'This phone number has not been signed up with Mednefits');
+                  $returnObject->status = false;
+                  $returnObject->message = 'This phone number has not been signed up with Mednefits';
+                  return Response::json($returnObject);
               }
-              return array('status' => true, 'message' => 'Member is already registered', 'data' => $checker);
+              $returnObject->status = true;
+              $returnObject->message = 'Member is already registered';
+              $returnObject->data = $checker;
+              return Response::json($returnObject);
           }
 
           public function sendOtpMobile( )
           {
               $input = Input::all();
+              $returnObject = new stdClass();
 
               if(empty($input['mobile']) || $input['mobile'] == null) {
-                  return array('status' => false, 'message' => 'Mobile Number is required.');
+                  $returnObject->status = false;
+                  $returnObject->message = 'Mobile Number is required.';
+                  return Response::json($returnObject);
               }
 
               if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
-                  return array('status' => false, 'message' => 'Mobile Country Code is required.');
+                  $returnObject->status = false;
+                  $returnObject->message = 'Mobile Country Code is required.';
+                  return Response::json($returnObject);
               }
 
               $checker = DB::table('user')->where('PhoneNo', $input['mobile'])->first();
 
               if(!$checker) {
-                return array('status' => false, 'message' => 'User not found!');
+                $returnObject->status = false;
+                $returnObject->message = 'User not found!';
+                return Response::json($returnObject);
               }
 
               // $member_id = $checker->user_id;
@@ -243,8 +258,10 @@ class Api_V1_AuthController extends \BaseController {
               $data['sms_type'] = "LA";
               SmsHelper::sendSms($data);
               DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
-              return array('status' => true, 'message' => 'OTP SMS sent');
-              return $otp_code;
+              $returnObject->status = true;
+              $returnObject->message = 'OTP SMS sent';
+              return Response::json($returnObject);
+              // return $otp_code;
           }
 
         // user pin
