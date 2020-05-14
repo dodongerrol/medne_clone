@@ -1038,7 +1038,7 @@
 				</div>
 
 				<div ng-if="healthSpendingAccountTabIsShow" class="health-spending-account-information">
-					<div class="account-summary-wrapper">
+					<!-- <div class="account-summary-wrapper">
 						<span class="account-summary-name weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
 						<h1 class="text-center weight-700">Health Spending Account Summary</h1>
 						<div class="account-summary-pro-rated weight-700 text-center">Pro-rated allocation from
@@ -1147,7 +1147,9 @@
 									class="spending-account-status exceed weight-700">Exceed</span>
 							</div>
 						</div>
-					</div>
+					</div> -->
+				
+					<div ui-view="remove-emp-content"></div>
 				</div>
 
 			</div>
@@ -1229,6 +1231,8 @@
 		</div>
 	</div>
 
+	<div ng-if="!healthSpendingAccountTabIsShow" ui-view="remove-emp-content"></div>
+
 	<div class="remove-employee-wrapper" style="display: none;">
 		<h1 class="text-center weight-700">Remove employee</h1>
 		<form>
@@ -1274,15 +1278,8 @@
 					removed, the occupied seat will move to a vacant seat.</span>
 				<span class="review-checkmark"></span>
 			</label>
-			<!-- 	<label ng-if="refund_status == true" class="review-container">
-				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
-				<span class="review-prepare-template-text">Please remove the seat completely.</span>
-				<span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
-				<span class="review-checkmark"></span>
-			</label> -->
 			<label ng-if="refund_status == true && hideLitePlanCheckbox" class="review-container">
 				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
-				<!-- <span class="review-prepare-template-text">Please remove the seat completely.</span> -->
 				<span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
 				<span class="review-checkmark"></span>
 			</label>
@@ -1645,6 +1642,8 @@
 
 		</div>
 	</div>
+
+
 
 	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-employee-modal" tabindex="-1"
 		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

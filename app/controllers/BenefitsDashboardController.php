@@ -13415,12 +13415,14 @@ class BenefitsDashboardController extends \BaseController {
 			'balance'				=> number_format($medical_balance, 2),
 			'remaining_allocated_credits'	=> number_format($remaining_allocated_medical_credits, 2),
 			'currency_type'	=> $wallet->currency_type,
-			'plan_method'			=> $spending['medical_method']
+			'plan_method'			=> $spending['medical_method'],
+			'pro_allocation_status'		=> false
 		);
 
 		if($check_wallet_status && (int)$check_wallet_status->medical_pro_allocation_status == 1) {
 			$medical['initial_allocation'] = number_format($check_wallet_status->medical_initial_allocation, 2);
 			$medical['pro_allocation'] = number_format($check_wallet_status->medical_pro_allocation, 2);
+			$medical['pro_allocation_status'] = $check_wallet_status->medical_pro_allocation == 1 ? true : false;
 
 			if($spending['medical_method'] == "pre_paid")	{
 				$medical['remaining_allocated_credits'] = number_format($check_wallet_status->medical_initial_allocation - $check_wallet_status->medical_pro_allocation, 2);
@@ -13508,12 +13510,14 @@ class BenefitsDashboardController extends \BaseController {
 			'balance'				=> number_format($wellness_balance, 2),
 			'remaining_allocated_credits' => number_format($remaining_allocated_wellness_credits, 2),
 			'currency_type'	=> $wallet->currency_type,
-			'plan_method'			=> $spending['medical_method']
+			'plan_method'			=> $spending['wellness_method'],
+			'pro_allocation_status'		=> false
 		);
 
 		if($check_wallet_status && (int)$check_wallet_status->wellness_pro_allocation_status == 1) {
 			$wellness['initial_allocation'] = number_format($check_wallet_status->wellness_initial_allocation, 2);
 			$wellness['pro_allocation'] = number_format($check_wallet_status->wellness_pro_allocation, 2);
+			$wellness['pro_allocation_status'] = $check_wallet_status->wellness_pro_allocation == 1 ? true : false;
 
 			if($spending['wellness_method'] == "pre_paid")	{
 				$wellness['remaining_allocated_credits'] = number_format($check_wallet_status->wellness_initial_allocation - $check_wallet_status->wellness_pro_allocation, 2);

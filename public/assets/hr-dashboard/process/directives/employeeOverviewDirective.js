@@ -716,11 +716,13 @@ app.directive("employeeOverviewDirective", [
 
         scope.removeBtn = function () {
           $('.employee-information-wrapper').hide();
-          $('.prev-next-buttons-container').fadeIn();
-          $('.remove-employee-wrapper').fadeIn();
+          // $('.prev-next-buttons-container').fadeIn();
+          // $('.remove-employee-wrapper').fadeIn();
+          scope.selectedEmployee.last_day_coverage = moment().add('days', 1).format('DD/MM/YYYY');
           scope.reset();
           scope.isRemoveEmployeeShow = true;
           scope.isDeleteDependent = false;
+          $state.go('employee-overview.remove-emp-inputs');
         }
 
         scope.removeDependentBtn = function (data) {
@@ -2640,10 +2642,11 @@ app.directive("employeeOverviewDirective", [
         scope.healthSpendingAccountTabIsShow = false;
         scope.viewEmployeeSpendingSummary = function () {
           if (scope.healthSpendingAccountTabIsShow == false) {
-            scope.getSpendingAccountSummary(scope.selectedEmployee.expiry_date);
+            // scope.getSpendingAccountSummary(scope.selectedEmployee.expiry_date);
             scope.empTabSelected = 99;
             scope.healthSpendingAccountTabIsShow = true;
             $('body').scrollTop(0);
+            $state.go('employee-overview.health-spending-account-summary');
           } else {
             scope.empTabSelected = 0;
             scope.healthSpendingAccountTabIsShow = false;
@@ -2688,6 +2691,10 @@ app.directive("employeeOverviewDirective", [
         }
         
         scope.onLoad = function () {
+          console.log($state.current);
+          if( $state.current.name != 'employee-overview' && $state.current.name.indexOf('employee-overview') > -1 ){
+            $state.go('employee-overview');
+          }
           // scope.checkCompanyBalance();
           scope.getPlanStatus();
           // scope.userCompanyCreditsAllocated();
