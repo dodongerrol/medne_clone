@@ -307,6 +307,62 @@ class Api_V1_AuthController extends \BaseController {
               return Response::json($returnObject);
           }
 
+          public function createNewPasswordByMember()
+          {
+            $input = Input::all();
+            $returnObject = new stdClass();
+
+            if(empty($input['password']) || $input['password'] == null) {
+                $returnObject->status = false;
+                $returnObject->message = 'Password is required.';
+                return Response::json($returnObject);
+            }
+
+            if(empty($input['password_confirm']) || $input['password_confirm'] == null) {
+                $returnObject->status = false;
+                $returnObject->message = 'Confirm Password is required.';
+                return Response::json($returnObject);
+            }
+
+            if(empty($input['mobile']) || $input['mobile'] == null) {
+                $returnObject->status = false;
+                $returnObject->message = 'Mobile Number is required.';
+                return Response::json($returnObject);
+            }
+
+            $checker = DB::table('user')
+              ->select('UserID', 'Name as name', 'member_activated')
+              ->where('PhoneNo', $input['mobile'])->first();
+
+              if(!$checker) {
+                $returnObject->status = false;
+                $returnObject->message = 'User not found!';
+                return Response::json($returnObject);
+              }
+
+              if($checker->member_activated) {
+                $returnObject->status = false;
+                $returnObject->message = 'User was active, please sign in!';
+                return Response::json($returnObject);
+              }
+
+              if($input['password'] !== $input['password_confirm']) {
+                $returnObject->status = false;
+                $returnObject->message = 'Your password is not match!';
+                return Response::json($returnObject);
+              }
+
+              $newPassword = [
+                'Password' => StringHelper::encode($input['password_confirm']),
+                'member_activated' => 1
+              ];
+
+              DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
+                $returnObject->status = true;
+                $returnObject->message = 'Your Password has been created, Account was active!';
+                return Response::json($returnObject);
+          }
+
         // user pin
             public function pin(){
             	$returnObject = new stdClass();
