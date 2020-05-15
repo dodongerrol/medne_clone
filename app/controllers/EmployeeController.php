@@ -2629,7 +2629,7 @@ class EmployeeController extends \BaseController {
               $wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $allocation['member_id'])->orderBy('created_at', 'desc')->first();
               $wallet = DB::table('e_wallet')->where('UserID', $allocation['member_id'])->first();
 
-              if(isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] != null) {
+              if(isset($allocation['new_medical_allocation']) && $allocation['new_medical_allocation'] !== null) {
                 // validate date
                 $validateDate = StringHelper::validateFormatDate($allocation['effective_date_of_new_medical_allocation_ddmmyyyy'], "d/m/Y", "d/n/Y");
                 if(!$validateDate) {
@@ -2656,7 +2656,7 @@ class EmployeeController extends \BaseController {
                 $format[] = $temp;
               }
 
-              if(isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] != null) {
+              if(isset($allocation['new_wellness_allocation']) && $allocation['new_wellness_allocation'] !== null) {
                 $validateDate = StringHelper::validateFormatDate($allocation['effective_date_of_new_wellness_allocation_ddmmyyyy'], "d/m/Y", "d/n/Y");
                 if(!$validateDate) {
                   return array('status' => false, 'message' => 'Invalid date format for Wellness Allocation. Date should be d/m/Y format');
