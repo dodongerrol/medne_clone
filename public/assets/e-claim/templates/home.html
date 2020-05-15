@@ -138,16 +138,16 @@
 							<div class="white-space-20"></div>
 							<p class="font-medium2 weight-700 visit-text">Visits</p>
 							<p class="font-30 weight-700 no-margin" style="color:#00B2E1">
-								<span>99</span>
+								<span ng-bind="current_spending.total_balance_visit">99</span>
 							</p>
 							<p class="font-medium2 weight-700 balance-text">Balance</p>
 
 							<div class="visits-bottom-values">
 								<div>
-									<p style="border-right: 0.5px solid #bbb;">Utilised	:	<span style="color:#00B2E1;">11</span></p>
+									<p style="border-right: 0.5px solid #bbb;">Utilised	:	<span ng-bind="current_spending.total_visit_created" style="color:#00B2E1;">11</span></p>
 								</div>
 								<div>
-									<p>Total	:	<span style="color:#00B2E1">14</span></p>
+									<p>Total	:	<span ng-bind="current_spending.total_visit_limit" style="color:#00B2E1">14</span></p>
 								</div>
 							</div>
 						</div>

@@ -2102,7 +2102,9 @@ class BenefitsDashboardController extends \BaseController {
 					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
 					'balance'			=> $user_active_plan_history->total_visit_created,
-					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created
+					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'in_network' 	=> $medical_credit_data['in_network'],
+					'out_network' 	=> $medical_credit_data['out_network']
 				);
 			} else {
 				// get pending allocation for medical
@@ -3186,6 +3188,8 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
 				$plan_name = "Basic Plan";
+			} else if($active_plan->account_type == 'enterprise_plan') {
+				$plan_name = "Enterprise Plan";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -3252,6 +3256,8 @@ class BenefitsDashboardController extends \BaseController {
 						$plan_name = "Trial Plan";
 					} else if($active_plan_extension->account_type == 'lite_plan') {
 						$plan_name = "Lite Plan";
+					} else if($active_plan_extension->account_type == 'enterprise_plan') {
+						$plan_name = "Enterprise Plan";
 					}
 				} else {
 					$plan_user = DB::table('user_plan_type')
@@ -3292,7 +3298,9 @@ class BenefitsDashboardController extends \BaseController {
 					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
 					'balance'			=> $user_active_plan_history->total_visit_created,
-					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created
+					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'in_network' 	=> $medical_credit_data['in_network'],
+					'out_network' 	=> $medical_credit_data['out_network']
 				);
 			} else {
 				// get pending allocation for medical
