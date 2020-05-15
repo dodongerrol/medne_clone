@@ -4750,6 +4750,7 @@ public function getHrActivity( )
 {
 	$input = Input::all();
 	$start = date('Y-m-d', strtotime($input['start']));
+	$user_id = $data->UserID;
 	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
@@ -4837,6 +4838,12 @@ public function getHrActivity( )
 				$total_allocation += 0;
 			}
 		}
+
+		$user_plan_history = DB::table('user_plan_history')
+		->where('user_id', $user_id)
+		->orderBy('created_at', 'desc')
+		->where('type', 'started')
+		->first();
     // get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
@@ -5431,9 +5438,7 @@ public function getHrActivity( )
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
-		'lite_plan'     => $lite_plan,
-		'total_visit_created' 	=> $user_plan_history->total_visit_created,
-		'total_balance_visit'	=> count($transactions) - count($e_claim_result)
+		'lite_plan'     => $lite_plan
 	);
 
 
