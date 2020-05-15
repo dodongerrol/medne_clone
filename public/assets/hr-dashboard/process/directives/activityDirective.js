@@ -783,7 +783,7 @@ app.directive('activityPage', [
 					// if (scope.term_value == 0 && scope.dateTerms.last_term != false) {
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
-							// console.log(response);
+							console.log(response);
 							scope.hideLoading();
 							if (response.status == 200) {
 								scope.activity = {};

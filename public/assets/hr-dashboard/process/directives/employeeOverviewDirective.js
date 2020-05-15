@@ -2298,7 +2298,7 @@ app.directive("employeeOverviewDirective", [
           scope.showLoading();
           hrSettings.getEmployees(scope.page_ctr, page)
             .then(function (response) {
-              // console.log(response);
+              console.log(response);
               scope.employees = response.data;
               scope.employees.total_allocation = response.data.total_allocation;
               scope.employees.allocated = response.data.allocated;
