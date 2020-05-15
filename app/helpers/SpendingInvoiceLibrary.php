@@ -39,13 +39,12 @@ class SpendingInvoiceLibrary
 	public static function checkCompanyTransactions($customer_id, $start, $end)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
 
 		$transactions_data = [];
 		$array_of_users = [];
 		$lite_plan = false;
-		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
+		// $lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 		$transactions = 0;
 		foreach ($corporate_members as $key => $member) {
 			$ids = StringHelper::getSubAccountsID($member->user_id);
@@ -58,15 +57,15 @@ class SpendingInvoiceLibrary
                     ->where('created_at', '<=', $end)
                     ->count();
 
-    	$temp_trans = DB::table('transaction_history')
-                    ->whereIn('UserID', $ids)
-                    ->where('credit_cost', '>', 0)
-                    ->where('deleted', 0)
-                    ->where('paid', 1)
-                    ->where('created_at', '>=', $start)
-                    ->where('created_at', '<=', $end)
-                    ->count();
-      $transactions += $temp_trans_lite_plan + $temp_trans;
+			$temp_trans = DB::table('transaction_history')
+						->whereIn('UserID', $ids)
+						->where('credit_cost', '>', 0)
+						->where('deleted', 0)
+						->where('paid', 1)
+						->where('created_at', '>=', $start)
+						->where('created_at', '<=', $end)
+						->count();
+			$transactions += $temp_trans_lite_plan + $temp_trans;
 		}
 
 		if($transactions == 0) {
