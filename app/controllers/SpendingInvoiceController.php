@@ -49,10 +49,10 @@ class SpendingInvoiceController extends \BaseController {
         $statement_e_claim_amount = 0;
 
 
-        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-        if($plan->account_type == "lite_plan" && $plan->plan_method == "pre_paid")  {
-            return array('status' => FALSE, 'message' => 'Pre-paid account does not require spending transaction invoice.');
-        }
+        // $plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+        // if($plan->account_type == "lite_plan" && $plan->plan_method == "pre_paid")  {
+        //     return array('status' => FALSE, 'message' => 'Pre-paid account does not require spending transaction invoice.');
+        // }
 
         $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end);
 

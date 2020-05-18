@@ -766,8 +766,8 @@ class Api_V1_TransactionController extends \BaseController
 					if(isset($input['input_amount'])) {
 						$input_amount = trim($input['input_amount']);
 					}
-
-        				// check block access
+					
+					// check block access
 					$block = PlanHelper::checkCompanyBlockAccess($findUserID, $input['clinic_id']);
 
 					if($block) {
@@ -797,6 +797,8 @@ class Api_V1_TransactionController extends \BaseController
 						$customer_id = $findUserID;
 					}
 
+					// $customerID = PlanHelper::getCustomerId($user_id);
+					// $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 					$transaction = new Transaction();
 					$wallet = new Wallet( );
 					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
@@ -898,85 +900,85 @@ class Api_V1_TransactionController extends \BaseController
 							$ts = new TransctionServices( );
 							$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
 
-							if($lite_plan_enabled == 1) {
-								$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();
+							// if($lite_plan_enabled == 1) {
+							// 	$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
-								if($data['spending_type'] == "medical") {
-									$balance = $wallet_data->balance;
-								} else {
-									$balance = $wallet_data->wellness_balance;
-								}
-										// check user credits and deduct
+							// 	if($data['spending_type'] == "medical") {
+							// 		$balance = $wallet_data->balance;
+							// 	} else {
+							// 		$balance = $wallet_data->wellness_balance;
+							// 	}
+								
+							// 	// check user credits and deduct
+							// 	if($balance >= $consultation_fees || $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $balance < $consultation_fee) {
+							// 		$wallet = new Wallet( );
+							// 		// deduct wallet
+							// 		$lite_plan_credits_log = array(
+							// 			'wallet_id'     => $wallet_data->wallet_id,
+							// 			'credit'        => $consultation_fees,
+							// 			'logs'          => 'deducted_from_mobile_payment',
+							// 			'running_balance' => $balance - $consultation_fees,
+							// 			'where_spend'   => 'in_network_transaction',
+							// 			'id'            => $transaction_id,
+							// 			'lite_plan_enabled' => 1,
+							// 		);
 
-								if($balance >= $consultation_fees) {
-									$wallet = new Wallet( );
-											// deduct wallet
-									$lite_plan_credits_log = array(
-										'wallet_id'     => $wallet_data->wallet_id,
-										'credit'        => $consultation_fees,
-										'logs'          => 'deducted_from_mobile_payment',
-										'running_balance' => $balance - $consultation_fees,
-										'where_spend'   => 'in_network_transaction',
-										'id'            => $transaction_id,
-										'lite_plan_enabled' => 1,
-									);
+							// 		try {
+							// 			// create logs
+							// 			if($data['spending_type'] == "medical") {
+							// 				$deduct_history = \WalletHistory::create($lite_plan_credits_log);
+							// 				$wallet_history_id = $deduct_history->id;
+							// 			} else {
+							// 				$deduct_history = \WellnessWalletHistory::create($lite_plan_credits_log);
+							// 				$wallet_history_id = $deduct_history->id;
+							// 			}
 
-									try {
-												// create logs
-										if($data['spending_type'] == "medical") {
-											$deduct_history = \WalletHistory::create($lite_plan_credits_log);
-											$wallet_history_id = $deduct_history->id;
-										} else {
-											$deduct_history = \WellnessWalletHistory::create($lite_plan_credits_log);
-											$wallet_history_id = $deduct_history->id;
-										}
+							// 			if($data['spending_type'] == "medical") {
+							// 				$wallet->deductCredits($user_id, $data['co_paid_amount']);
+							// 			} else {
+							// 				$wallet->deductWellnessCredits($user_id, $data['co_paid_amount']);
+							// 			}
 
-										if($data['spending_type'] == "medical") {
-											$wallet->deductCredits($user_id, $data['co_paid_amount']);
-										} else {
-											$wallet->deductWellnessCredits($user_id, $data['co_paid_amount']);
-										}
+							// 			// update transaction
+							// 			$update_trans = array(
+							// 				'lite_plan_use_credits' => 1
+							// 			);
 
-												// update transaction
-										$update_trans = array(
-											'lite_plan_use_credits' => 1
-										);
+							// 			$transaction->updateTransaction($transaction_id, $update_trans);
 
-										$transaction->updateTransaction($transaction_id, $update_trans);
+							// 		} catch(Exception $e) {
 
-									} catch(Exception $e) {
+							// 			if($data['spending_type'] == "medical") {
+							// 				$history = new WalletHistory( );
+							// 				$history->deleteFailedWalletHistory($wallet_history_id);
+							// 			} else {
+							// 				\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
+							// 			}
 
-										if($data['spending_type'] == "medical") {
-											$history = new WalletHistory( );
-											$history->deleteFailedWalletHistory($wallet_history_id);
-										} else {
-											\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
-										}
-
-										$email = [];
-										$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
-										$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e;
-										$email['emailSubject'] = 'Error log.';
-										EmailHelper::sendErrorLogs($email);
-										return array('status' => FALSE, 'message' => 'Failed to save transaction.');
-									}
-								}
-							}
+							// 			$email = [];
+							// 			$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
+							// 			$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e;
+							// 			$email['emailSubject'] = 'Error log.';
+							// 			EmailHelper::sendErrorLogs($email);
+							// 			return array('status' => FALSE, 'message' => 'Failed to save transaction.');
+							// 		}
+							// 	}
+							// }
 
                             // send notification to browser
 							Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
 
                             // send realtime update to claim clinic admin
-                  // PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
+                  			// PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
 
-                  // check if check_in_id exist
+                  			// check if check_in_id exist
 							if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
-                  // check check_in_id data
+                  			// check check_in_id data
 								$check_in = DB::table('user_check_in_clinic')
 								->where('check_in_id', $input['check_in_id'])
 								->first();
 								if($check_in) {
-                  // update check in date
+                  				// update check in date
 									DB::table('user_check_in_clinic')
 									->where('check_in_id', $input['check_in_id'])
 									->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);
