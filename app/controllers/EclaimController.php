@@ -5438,7 +5438,10 @@ public function getHrActivity( )
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
-		'lite_plan'     => $lite_plan
+		'lite_plan'     => $lite_plan,
+		'total_visit_created' => $user_plan_history->total_visit_created,
+		'total_balance_visit' => count($transactions) - count($e_claim_result)
+
 	);
 
 
