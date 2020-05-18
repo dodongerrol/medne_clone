@@ -13210,6 +13210,18 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Employee does not exist.');
 		}
 
+		$user_plan_history = DB::table('user_plan_history')
+		->where('user_id', $input['employee_id'])
+		->where('type', 'started')
+		->orderBy('date', 'desc')
+		->first();
+
+		$plan_active = DB::table('customer_active_plan')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
+
+		if($plan_active->account_type == "enterprise_plan") {
+			return array('status' => false, 'message' => 'Enterprise Plan account cannot access employee credits summary');
+		}
+
 		$coverage = PlanHelper::getEmployeePlanCoverageDate($input['employee_id'], $customer_id);
 		$last_day_coverage = PlanHelper::endDate($input['last_date_of_coverage']);
 		$ids = StringHelper::getSubAccountsID($check_employee->UserID);
