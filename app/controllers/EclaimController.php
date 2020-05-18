@@ -4821,6 +4821,8 @@ public function getHrActivity( )
 	foreach ($corporate_members as $key => $member) {
 		$ids = StringHelper::getSubAccountsID($member->user_id);
 		$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
+		
+		
 		if($spending_type == "medical") {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'medical');
 			if($member_spending_dates_medical) {
