@@ -2921,3 +2921,14 @@ class EmployeeController extends \BaseController {
         return array('status' => true, 'medical' => $medical, 'wellness' => $wellness);
     }
 }
+
+public function checkValidateEmail ()
+{
+  $input = Input::all();
+
+  $email = DB::table('customer_hr_dashboard')->where('email', $input['email'])->first();
+
+  if(!$email) {
+    return array('status' => FALSE, 'message' => 'Your email has not been signed up with mednefits.');
+  }
+}
