@@ -14979,11 +14979,10 @@ class BenefitsDashboardController extends \BaseController {
 
         $pagination['last_page'] = $invoices->getLastPage();
 		$pagination['current_page'] = $invoices->getCurrentPage();
-		$pagination['total_data'] = $invoices->getTotal();
 		$pagination['from'] = $invoices->getFrom();
-		$pagination['to'] = $invoices->getTo();
 		$pagination['count'] = $invoices->count();
-        
+		
+
         foreach($invoices as $key => $spendingPurchase) {
             $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
             $customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
@@ -14992,13 +14991,13 @@ class BenefitsDashboardController extends \BaseController {
             $data['spending_purchase_invoice_id'] = $spendingPurchase->spending_purchase_invoice_id;
             $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
             $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
-            $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
+            $data['invoice_date'] = date('d/m/Y', strtotime($spendingPurchase->invoice_date));
             $data['invoice_number'] = $spendingPurchase->invoice_number;
             $total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
             $data['total']  = number_format($total, 2);
             $data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
-            $data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
-            $data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
+            $data['invoice_due'] = date('d/m/Y', strtotime($spendingPurchase->invoice_due));
+            $data['payment_date'] = $spendingPurchase->payment_date ? date('d/m/Y', strtotime($spendingPurchase->payment_date)) : null;
             $data['remarks']    = $spendingPurchase->remarks;
             $data['company_name']   = $spendingPurchase->company_name;
             $data['company_address']   = $spendingPurchase->company_address;
@@ -15006,8 +15005,8 @@ class BenefitsDashboardController extends \BaseController {
             $data['contact_name']   = $spendingPurchase->contact_name;
             $data['contact_number']   = $spendingPurchase->contact_number;
             $data['contact_email']   = $spendingPurchase->contact_email;
-            $data['plan_start']   = date('d F Y', strtotime($spendingPurchase->plan_start));
-            $data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+            $data['plan_start']   = date('d/m/Y', strtotime($spendingPurchase->plan_start));
+            $data['plan_end']   = date('d/m/Y', strtotime($spendingPurchase->plan_start));
             $data['duration']   = $spendingPurchase->duration;
             $data['account_type'] = \PlanHelper::getAccountType($active_plan->account_type);
             $data['plan_type'] = 'Pre-paid Credits Plan Mednefits Care (Corporate)';
@@ -15022,10 +15021,37 @@ class BenefitsDashboardController extends \BaseController {
             $data['wellness_spending_account'] = (float)$spendingPurchase->wellness_purchase_credits > 0 ? true : false;
             $data['wellness_credits_purchase'] = number_format($spendingPurchase->wellness_purchase_credits, 2);
             $data['wellness_credit_bonus'] = number_format($spendingPurchase->wellness_credit_bonus, 2);
-            $data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
+			$data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
+			$data['spending_type'] = "purchase";
             $format[] = $data;
         }
 
+		// check if there is a spending transaction invoice
+		$credits_statements = DB::table('company_credits_statement')
+                                ->where('statement_customer_id', $customer_id)
+								->paginate($limit);
+		$total_spending_transaction_count = $credits_statements->count();
+		foreach ($credits_statements as $key => $data) {
+			$statement = SpendingInvoiceLibrary::getInvoiceSpending($data->statement_id, false);
+			$statement['total_due'] = $statement['statement_amount_due'];
+		
+			$temp = array(
+				'invoice_number'    => $data->statement_number,
+				'invoice_date'        => date('d/m/Y', strtotime($data->statement_date)),
+				'type'              => 'Invoice',
+				'total'            => 'S$'.$statement['statement_total_amount'],
+				'status'            => (int)$data->statement_status,
+				'statement_id'      => $data->statement_id,
+				'currency_type'     => $statement['currency_type'],
+				'spending_type'		=> 'transaction'
+			);
+
+			array_push($format, $temp);
+		}
+
+		$pagination['count'] = $invoices->count() + $total_spending_transaction_count;
+		$pagination['to'] = $invoices->getTo() + $total_spending_transaction_count;
+		$pagination['total_data'] = $invoices->getTotal() + $total_spending_transaction_count;
         $pagination['data'] = $format;
 		return $pagination;
     }

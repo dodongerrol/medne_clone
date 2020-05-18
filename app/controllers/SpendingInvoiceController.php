@@ -55,7 +55,6 @@ class SpendingInvoiceController extends \BaseController {
         // }
 
         $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end);
-
         if(!$check_company_transactions) {
             return array('status' => FALSE, 'message' => 'No Transactions for this Month.');
         }
@@ -65,7 +64,7 @@ class SpendingInvoiceController extends \BaseController {
                             ->where('statement_start_date', $start)
                             ->count();
         if($statement_check == 0) {
-            $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end, $plan);
+            $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end);
             if($statement) {
                 $statement_id = $statement->id;
             } else {

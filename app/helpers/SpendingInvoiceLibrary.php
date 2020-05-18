@@ -41,16 +41,13 @@ class SpendingInvoiceLibrary
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
 		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
-		$transactions_data = [];
-		$array_of_users = [];
-		$lite_plan = false;
 		// $lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 		$transactions = 0;
 
 		if($spending['medical_method'] == "pre_paid") {
 			foreach ($corporate_members as $key => $member) {
 				$ids = StringHelper::getSubAccountsID($member->user_id);
-				$transactions += DB::table('transaction_history')
+				$transactions_temp = DB::table('transaction_history')
 						->whereIn('UserID', $ids)
 						->where('lite_plan_enabled', 1)
 						->where('credit_cost', 0)
@@ -58,7 +55,26 @@ class SpendingInvoiceLibrary
 						->where('paid', 1)
 						->where('created_at', '>=', $start)
 						->where('created_at', '<=', $end)
-						->count();
+						->get();
+				
+				if(sizeof($transactions_temp) > 0)	{
+					foreach($transactions_temp as $key => $trans)	{
+						if($trans->spending_type == 'medical') {
+							$table_wallet_history = 'wallet_history';
+						} else {
+							$table_wallet_history = 'wellness_wallet_history';
+						}
+						$logs_lite_plan = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_mobile_payment')
+						->where('lite_plan_enabled', 1)
+						->where('id', $trans->transaction_id)
+						->first();
+
+						if(!$logs_lite_plan)	{
+							$transactions++;
+						}
+					}
+				}
 			}
 		} else {
 			foreach ($corporate_members as $key => $member) {
@@ -84,8 +100,6 @@ class SpendingInvoiceLibrary
 			}
 		}
 
-		
-
 		if($transactions == 0) {
 			return FALSE;
 		} else {
@@ -108,7 +122,6 @@ class SpendingInvoiceLibrary
 		$total_e_claim_amount = 0;
 		$total_in_network_amount = 0;
 		$transactions = [];
-
 
 		if($spending['medical_method'] == "pre_paid") {
 			foreach ($corporate_members as $key => $member) {
@@ -138,8 +151,21 @@ class SpendingInvoiceLibrary
 				}
 	
 				foreach ($in_network as $key => $trans) {
-					$total_in_network_amount += $trans->credit_cost;
-					array_push($transactions, $trans->transaction_id);
+					if($trans->spending_type == 'medical') {
+						$table_wallet_history = 'wallet_history';
+					} else {
+						$table_wallet_history = 'wellness_wallet_history';
+					}
+					$logs_lite_plan = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_mobile_payment')
+						->where('lite_plan_enabled', 1)
+						->where('id', $trans->transaction_id)
+						->first();
+
+					if(!$logs_lite_plan)	{
+						$total_in_network_amount += $trans->credit_cost;
+						array_push($transactions, $trans->transaction_id);
+					}
 				}
 			}
 		} else {
@@ -188,11 +214,8 @@ class SpendingInvoiceLibrary
 			}
 		}
 
-		
-
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
 		$number = InvoiceLibrary::getInvoiceNuber('company_credits_statement', 3);
-
 		$spending_invoice_day = $customer->spending_default_invoice_day;
 		$day = date('t', strtotime('+1 month', strtotime($start)));
 	  
@@ -247,12 +270,12 @@ class SpendingInvoiceLibrary
 		$statement_class = new CompanyCreditsStatement( );
 		$statement_result = $statement_class->createCompanyCreditsStatement($statement_data);
 		$statement_id = $statement_result->id;
-	        // return $statement_id
+
 		foreach ($transactions as $key => $trans) {
 			$check_transaction = \SpendingInvoiceTransactions::where('transaction_id',  $trans)->first();
 
 			if(!$check_transaction) {
-        			// insert to spending invoice transaction
+        		// insert to spending invoice transaction
 				\SpendingInvoiceTransactions::create(['invoice_id' => $statement_id, 'transaction_id' => $trans]);
 			}
 		}
@@ -779,7 +802,15 @@ class SpendingInvoiceLibrary
 				->get();
 	
 				foreach ($in_network as $key => $trans) {
-					array_push($transactions, $trans->transaction_id);
+					$logs_lite_plan = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_mobile_payment')
+						->where('lite_plan_enabled', 1)
+						->where('id', $trans->transaction_id)
+						->first();
+
+					if(!$logs_lite_plan)	{
+						array_push($transactions, $trans->transaction_id);
+					}
 				}
 			}
 		} else {
