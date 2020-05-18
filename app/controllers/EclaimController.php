@@ -4750,7 +4750,7 @@ public function getHrActivity( )
 {
 	$input = Input::all();
 	$start = date('Y-m-d', strtotime($input['start']));
-	$user_id = $data->UserID;
+	// $user_id = $data->UserID;
 	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
@@ -4821,6 +4821,11 @@ public function getHrActivity( )
 	foreach ($corporate_members as $key => $member) {
 		$ids = StringHelper::getSubAccountsID($member->user_id);
 		$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
+		$user_plan_history = DB::table('user_plan_history')
+    ->where('user_id', $ids)
+    ->where('type', 'started')
+    ->orderBy('created_at', 'desc')
+    ->first();
 		if($spending_type == "medical") {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'medical');
 			if($member_spending_dates_medical) {
@@ -4839,11 +4844,11 @@ public function getHrActivity( )
 			}
 		}
 
-		$user_plan_history = DB::table('user_plan_history')
-		->where('user_id', $user_id)
-		->orderBy('created_at', 'desc')
-		->where('type', 'started')
-		->first();
+		// $user_plan_history = DB::table('user_plan_history')
+		// ->where('user_id', $user_id)
+		// ->orderBy('created_at', 'desc')
+		// ->where('type', 'started')
+		// ->first();
     // get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
