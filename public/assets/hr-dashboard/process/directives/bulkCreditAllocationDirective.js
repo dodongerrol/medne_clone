@@ -328,6 +328,50 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						});
 				}
 
+				var bulkUpdateCtr = 0;
+				var success_ctr = 0;
+				scope.updateEachBulkAllocation	=	function(){
+						var value = scope.toUpdateAllocation[bulkUpdateCtr];
+						var index = bulkUpdateCtr;
+						console.log(value, index);
+						value.effective_date = moment(value.effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+						
+						hrSettings.updateAllocation(value)
+						.then(function (response) {
+							console.log(response);
+							if(response.data.credit_balance_exceed == true) {
+								scope.apiErrorResponse.push({
+									member_id: value.member_id,
+									message:response.data.message,
+									credit_balance_exceed: response.data.credit_balance_exceed
+								});
+								console.log('fail');
+								if (index == scope.toUpdateAllocation.length-1) {
+									console.log('index check equal');
+									bulkUpdateCtr = 0;
+									scope.hideLoading();
+									scope.successModal(success_ctr, value);
+								}else{
+									bulkUpdateCtr += 1;
+									scope.updateEachBulkAllocation();
+								}
+								console.log(scope.apiErrorResponse);
+							} else {
+								success_ctr++;
+								console.log('success ctr', success_ctr)
+								if (index == scope.toUpdateAllocation.length-1) {
+									console.log('index check equal');
+									bulkUpdateCtr = 0;
+									scope.hideLoading();
+									scope.successModal(success_ctr, value);
+								}else{
+									bulkUpdateCtr += 1;
+									scope.updateEachBulkAllocation();
+								}
+							}
+						});
+				}
+
 				scope.apiErrorResponse = [];
 				scope.updateBulkAllocation = function () {
 					console.log(scope.toUpdateAllocation);
@@ -344,41 +388,45 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
             console.log(result);
             setTimeout(function(){
               if(result) {
-								var success_ctr = 0;
-								scope.toUpdateAllocation.map((value,index) => {
-									console.log(value, index);
-									value.effective_date = moment(value.effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+								
+								scope.showLoading();
+                scope.updateEachBulkAllocation();
+								// scope.toUpdateAllocation.map((value,index) => {
+								// 	console.log(value, index);
+								// 	value.effective_date = moment(value.effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
 									
-									hrSettings.updateAllocation(value)
-									.then(function (response) {
-										console.log(response);
-										if(response.data.credit_balance_exceed == true) {
-											scope.apiErrorResponse.push({
-												member_id: value.member_id,
-												message:response.data.message,
-												credit_balance_exceed: response.data.credit_balance_exceed
-											});
-											console.log('fail');
-											if (index == scope.toUpdateAllocation.length-1) {
-												console.log('index check equal');
-												scope.successModal(success_ctr, value);
-											}
-											console.log(scope.apiErrorResponse);
-										} else {
-											success_ctr++;
-											console.log('success ctr', success_ctr)
-											if (index == scope.toUpdateAllocation.length-1) {
-												console.log('index check equal');
-												scope.successModal(success_ctr, value);
-											}
-										}
+								// 	hrSettings.updateAllocation(value)
+								// 	.then(function (response) {
+								// 		console.log(response);
+								// 		if(response.data.credit_balance_exceed == true) {
+								// 			scope.apiErrorResponse.push({
+								// 				member_id: value.member_id,
+								// 				message:response.data.message,
+								// 				credit_balance_exceed: response.data.credit_balance_exceed
+								// 			});
+								// 			console.log('fail');
+								// 			if (index == scope.toUpdateAllocation.length-1) {
+								// 				console.log('index check equal');
+								// 				scope.successModal(success_ctr, value);
+								// 			}
+								// 			console.log(scope.apiErrorResponse);
+								// 		} else {
+								// 			success_ctr++;
+								// 			console.log('success ctr', success_ctr)
+								// 			if (index == scope.toUpdateAllocation.length-1) {
+								// 				console.log('index check equal');
+								// 				scope.successModal(success_ctr, value);
+								// 			}
+								// 		}
 										
-									});
-								});
+								// 	});
+								// });
               }
             }, 500)
 					});
 				}
+
+				
 
 				scope.successModal = function(success_ctr, value) { //success and error modal
 					if(success_ctr > 0) {
