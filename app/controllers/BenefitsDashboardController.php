@@ -13216,11 +13216,11 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('date', 'desc')
 		->first();
 
-		$plan_active = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
+		// $plan_active = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
 
-		if($plan_active->account_type == "enterprise_plan") {
-			return array('status' => false, 'message' => 'Enterprise Plan account cannot access employee credits summary');
-		}
+		// if($plan_active->account_type == "enterprise_plan") {
+		// 	return array('status' => false, 'message' => 'Enterprise Plan account cannot access employee credits summary');
+		// }
 
 		$coverage = PlanHelper::getEmployeePlanCoverageDate($input['employee_id'], $customer_id);
 		$last_day_coverage = PlanHelper::endDate($input['last_date_of_coverage']);
