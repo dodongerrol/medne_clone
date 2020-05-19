@@ -596,12 +596,12 @@ class MemberHelper
 						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
 
 						$customer_wellness_credits_logs = array(
-							'customer_credits_id'	=> $company_credits->customer_credits_id,
+							'customer_credits_id'	=> $customer_wallet->customer_credits_id,
 							'credit'				=> $input['credits'],
 							'logs'					=> 'admin_added_credits',
-							'running_balance'		=> $company_credits->wellness_credits + $input['credits'],
+							'running_balance'		=> $customer_wallet->wellness_credits + $input['credits'],
 							'customer_active_plan_id' => $last_customer_active_plan_id_wellness,
-							'currency_type'	=> $company_credits->currency_type
+							'currency_type'	=> $customer_wallet->currency_type
 						);
 
 						$customer_wellness_credit_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);

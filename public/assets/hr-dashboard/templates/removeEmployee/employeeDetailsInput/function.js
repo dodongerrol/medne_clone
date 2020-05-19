@@ -16,6 +16,7 @@ app.directive('employeeDetailsInputDirective', [
 					scope.removeBackBtn();
 				}
 				scope.nextBtn	=	function(){
+					scope.showLoading();
 					removeEmployeeFactory.setEmployeeDetails( scope.selectedEmployee );
 					$state.go('employee-overview.remove-emp-checkboxes');
 				}
@@ -32,6 +33,11 @@ app.directive('employeeDetailsInputDirective', [
 						}
 					})
 				}, 500);
+
+				scope.onLoad	=	function(){
+					scope.hideLoading();
+				}
+				scope.onLoad();
 			}
 		}
 	}

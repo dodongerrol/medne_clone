@@ -714,7 +714,14 @@ app.directive("employeeOverviewDirective", [
 						});
         }
 
+        scope.resetRemoveBtn  = function(){
+          scope.reset();
+          scope.isEmployeeShow = true;
+          scope.getSession();
+        }
+
         scope.removeBtn = function () {
+          scope.showLoading();
           $('.employee-information-wrapper').hide();
           // $('.prev-next-buttons-container').fadeIn();
           // $('.remove-employee-wrapper').fadeIn();
@@ -1239,7 +1246,7 @@ app.directive("employeeOverviewDirective", [
         scope.toggleEmployee = function (emp, index) {
           // console.log(emp);
           
-
+          console.log(scope.isEmployeeShow);
           if (scope.isEmployeeShow == false) {
             scope.isEmployeeShow = true;
             scope.empTabSelected = 0;
@@ -2094,7 +2101,7 @@ app.directive("employeeOverviewDirective", [
         scope.removeEmployeeRequests  = function(){
           console.log(scope.remove_employee_data);
           if (scope.remove_employee_data.remove == true) {
-            scope.deleteEmployee();
+            scope.confirmWalletUpdateBtn();
           }
           if (scope.remove_employee_data.reserve == true) {
             scope.reserveEmployee();
@@ -2481,7 +2488,7 @@ app.directive("employeeOverviewDirective", [
             });
         }
 
-        scope.deleteEmployee = function () {
+        scope.confirmWalletUpdateBtn = function () {
           scope.showLoading();
           var users = [{
             expiry_date: moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),

@@ -4727,8 +4727,7 @@ public function getHrActivity( )
 	$paginate['per_page'] = $corporate_members->getPerPage();
 	$paginate['to'] = $corporate_members->getTo();
 	$paginate['total'] = $corporate_members->getTotal();
-
-  $total_allocation = 0;
+  	$total_allocation = 0;
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
@@ -4820,10 +4819,10 @@ public function getHrActivity( )
 								}
 							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0){
 								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
-									$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+									// $total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
 									$consultation = floatval($trans->consultation_fees) * $trans->currency_amount;;
 								} else {
-									$total_lite_plan_consultation += floatval($trans->consultation_fees);
+									// $total_lite_plan_consultation += floatval($trans->consultation_fees);
 									$consultation = floatval($trans->consultation_fees);
 								}
 							}

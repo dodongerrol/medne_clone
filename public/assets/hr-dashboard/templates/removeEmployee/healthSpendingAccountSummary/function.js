@@ -52,6 +52,7 @@ app.directive('healthSpendingAccountSummaryDirective', [
 					$state.go('employee-overview.remove-emp-checkboxes');
 				}
 				scope.nextBtn	=	function(){
+					scope.showLoading();
 					$state.go('employee-overview.health-spending-account-confirm');
 				}
 				scope.toggleSumamryTooltipDrop	=	function(opt){

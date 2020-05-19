@@ -591,7 +591,7 @@ class CronController extends \BaseController {
     {
         $input = Input::all();
 
-        if(!empty($input['date']) || $input['date'] != null) {
+        if(!empty($input['date']) && $input['date'] != null) {
             $date = date('Y-m-d', strtotime($input['date']));
         } else {
             $date = date('Y-m-d', strtotime('-1 day'));
@@ -662,7 +662,7 @@ class CronController extends \BaseController {
         }
 
         // remove refunded = 2
-        if(!empty($input['member_id']) || $input['member_id'] != null) {
+        if(!empty($input['member_id']) && $input['member_id'] != null) {
             $removes = DB::table('customer_plan_withdraw')->where('user_id', $input['member_id'])->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
         } else {
             $removes = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
