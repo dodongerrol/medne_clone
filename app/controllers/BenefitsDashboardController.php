@@ -3916,7 +3916,7 @@ class BenefitsDashboardController extends \BaseController {
 			// } else {
 			// 	self::updateCustomerPlanStatusDeleteUser($id);
 			// }
-			if($plan_active->account_type == "lite_plan" && $plan_active->plan_method == "pre_paid") {
+			if($plan_active->account_type == "lite_plan" && $expiry_date < date('Y-m-d')) {
 				// return member medical and wellness balance
 				PlanHelper::returnMemberMedicalBalance($id);
 				PlanHelper::returnMemberWellnessBalance($id);
