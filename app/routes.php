@@ -11,16 +11,16 @@
 |
 */
 
-Route::get('test/email_send', 'HomeController@testEmailSend');
+// Route::get('test/email_send', 'HomeController@testEmailSend');
 
 // test recalculate balance
-Route::get('test_balance', 'testcontroller@testBalance');
+// Route::get('test_balance', 'testcontroller@testBalance');
 // test member credit reset dates
 // Route::get('test_get_member_reset_dates', 'testcontroller@getMemberResetDateTest');
 // Route::get('test_customer_reset_credits_dates', 'testcontroller@testCustomerResetDates');
 // Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
 // test wallet balance for reset credits
-Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
+// Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
 // test date format
 // Route::post('test_format_date', 'testcontroller@testFormatDate');
 // test upload e-claim
@@ -28,9 +28,9 @@ Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate
 // test send e-claim emial
 // Route::post('test_send_e_claim', 'testcontroller@testEclaimSendEmail');
 // get currencies
-Route::get('get/currency_lists', 'testcontroller@getCurrencyLists');
+// Route::get('get/currency_lists', 'testcontroller@getCurrencyLists');
 // Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
-Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
+// Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 // Route::post('upload_image', 'testcontroller@uploadImage');
 // Route::get('update_clinic_default_image', 'testcontroller@updateClinicDefaultImage');
 
@@ -46,60 +46,60 @@ Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 
 // cron jobs
 // care plan expiration
-Route::get('cron/get_customer_expire_plan', 'BenefitsDashboardController@getCompanyExpirePlan');
-// cron for activate user
-Route::get('activate/care_plan_user', 'CarePlanPurchaseController@activateCarePlanUser');
-// cron for generate invoice
-Route::get('generate/clinic/invoice', 'InvoiceController@generateMonthlyInvoice');
-// Cron jobs for statement of account
-Route::get('app/cron/statement_of_account', 'CronController@generateStatementOfAccount');
-// cron job for corporate monthly invoice
-// Route::get('app/cron/company_invoice', 'EclaimController@generateMonthlyCompanyInvoice');
-Route::get('app/cron/company_invoice', 'SpendingInvoiceController@generateMonthlyCompanyInvoice');
-// generate invoice
+// Route::get('cron/get_customer_expire_plan', 'BenefitsDashboardController@getCompanyExpirePlan');
+// // cron for activate user
+// Route::get('activate/care_plan_user', 'CarePlanPurchaseController@activateCarePlanUser');
+// // cron for generate invoice
 // Route::get('generate/clinic/invoice', 'InvoiceController@generateMonthlyInvoice');
-// crom for withdrawal deletion account
-Route::get('app/cron/withdrawal_deletion_account', 'CronController@createAutomaticDeletion');
-// cron for activate replace new employee
-Route::get('app/cron/replace_new_employee', 'CronController@activateReplaceNewEmployee');
-// cron for activate remove employee
-Route::get('app/cron/activate_remove_employee', 'CronController@activateRemoveReplaceEmployee');
-// cron for deactive employee seat
-Route::get('app/cron/remove_employee_seat', 'CronController@removeEmployeeSeat');
-// Route::get('app/cron/withdrawal_deletion_account', 'BenefitsDashboardController@createAutomaticDeletion');
+// // Cron jobs for statement of account
+// Route::get('app/cron/statement_of_account', 'CronController@generateStatementOfAccount');
+// // cron job for corporate monthly invoice
+// // Route::get('app/cron/company_invoice', 'EclaimController@generateMonthlyCompanyInvoice');
+// Route::get('app/cron/company_invoice', 'SpendingInvoiceController@generateMonthlyCompanyInvoice');
+// // generate invoice
+// // Route::get('generate/clinic/invoice', 'InvoiceController@generateMonthlyInvoice');
+// // crom for withdrawal deletion account
+// Route::get('app/cron/withdrawal_deletion_account', 'CronController@createAutomaticDeletion');
+// // cron for activate replace new employee
+// Route::get('app/cron/replace_new_employee', 'CronController@activateReplaceNewEmployee');
+// // cron for activate remove employee
+// Route::get('app/cron/activate_remove_employee', 'CronController@activateRemoveReplaceEmployee');
+// // cron for deactive employee seat
+// Route::get('app/cron/remove_employee_seat', 'CronController@removeEmployeeSeat');
+// // Route::get('app/cron/withdrawal_deletion_account', 'BenefitsDashboardController@createAutomaticDeletion');
 
-// remove dependents from employee deletion
-Route::get('app/cron/remove_dependent_from_employee', 'CronController@removeDepdentsEmployeeAccounts');
+// // remove dependents from employee deletion
+// Route::get('app/cron/remove_dependent_from_employee', 'CronController@removeDepdentsEmployeeAccounts');
 
-// test api for deactivate user
-Route::get('test_deactivate_user', 'HomeController@testDeactivateUser');
-// pdf for members coverage
-Route::get('pdf/Members', 'HomeController@getMembersPdf');
+// // test api for deactivate user
+// Route::get('test_deactivate_user', 'HomeController@testDeactivateUser');
+// // pdf for members coverage
+// Route::get('pdf/Members', 'HomeController@getMembersPdf');
 
-// get notification config
-Route::get('config/notification', 'HomeController@getNotificationConfig');
+// // get notification config
+// Route::get('config/notification', 'HomeController@getNotificationConfig');
 
-// test get file as json
-// Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
-
-
-// EMPLOYEE UPDATE EXERCISES
-Route::group(array('prefix' => 'exercise'), function()
-{
-	Route::post('validate_member', 'EmployeeController@validateMember');
-	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
-	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
-	Route::post('validate_mobile_number', 'EmployeeController@checkMobileExistence');
-	Route::post('send_sms_otp', 'EmployeeController@sendMemberSmsOtp');
-	Route::post('validate_otp_code', 'EmployeeController@validateOpt');
-});
+// // test get file as json
+// // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
-Route::get('app/e_claim', 'HomeController@oldeClaim');
-Route::get('member-portal-login', 'HomeController@eClaimLogin');
-Route::get('member-portal', 'HomeController@eClaimHome');
-// LOGIN FOR ECLAIM EMPLOYEES
-Route::post('app/e_claim/login', 'EclaimController@loginEmployee');
+// // EMPLOYEE UPDATE EXERCISES
+// Route::group(array('prefix' => 'exercise'), function()
+// {
+// 	Route::post('validate_member', 'EmployeeController@validateMember');
+// 	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
+// 	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
+// 	Route::post('validate_mobile_number', 'EmployeeController@checkMobileExistence');
+// 	Route::post('send_sms_otp', 'EmployeeController@sendMemberSmsOtp');
+// 	Route::post('validate_otp_code', 'EmployeeController@validateOpt');
+// });
+
+
+// Route::get('app/e_claim', 'HomeController@oldeClaim');
+// Route::get('member-portal-login', 'HomeController@eClaimLogin');
+// Route::get('member-portal', 'HomeController@eClaimHome');
+// // LOGIN FOR ECLAIM EMPLOYEES
+// Route::post('app/e_claim/login', 'EclaimController@loginEmployee');
 // Route::get('app/e_claim/logout', 'EclaimController@logoutEmployee');
 
 
@@ -110,49 +110,49 @@ Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordVie
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 
 // authentications for eclaim
-Route::group(array('before' => 'auth.jwt_employee'), function( ){
-	Route::get('employee/get/user_details', 'EclaimController@getUserData');
-	// Route::post('app/create_e_claim', 'EclaimController@createEclaimMedical');
-	Route::get('app/get_e_claims', 'EclaimController@getEclaims');
-	Route::get('app/get_e_claim_details/{id}', 'EclaimController@getEclaimDetails');
-	// upload image
-	Route::post('app/image_upload', 'EclaimController@uploadImage');
-	// logout
-	Route::get('app/e_claim/logout', 'EclaimController@logout');
-	// get user coverage
-	Route::get('app/e_claim/user_coverage', 'EclaimController@getUserCoverage');
-	// update profile
-	Route::post('app/e_claim/update_profile', 'EclaimController@updateProfile');
-	// get employee current spending for medical
-	Route::get('employee/get_current_spending', 'EclaimController@currentSpending');
-	// get employee current spending for wellness
-	Route::get('employee/get_current_wellness_spending', 'EclaimController@currentSpendingWellness');
-	// get employee members
-	Route::get('employee/get_members', 'EclaimController@getEmployeeMembers');
-	// get employee medical activity
-	Route::post('employee/search_eclaim_activity', 'EclaimController@getActivity');
-	// create e claim
-	Route::post('employee/create/e_claim', 'EclaimController@createEclaimMedical');
-	Route::post('employee/save/e_claim_receipt', 'EclaimController@createEclaimReceipt');
-	Route::post('employee/create/e_claim_receipt', 'EclaimController@saveEclaim');
-	Route::post('employee/create/transaction_receipt', 'EclaimController@createInNetworkReceipt');
-	// change password
-	Route::post('employee/change_password', 'EclaimController@updateEmployeePassword');
-	// create e-claim wellness
-	Route::post('employee/create/e_claim_wellness', 'EclaimController@createEclaimWellness');
-	// get employee wellness activity
-	Route::post('employee/search_eclaim_wellness_activity', 'EclaimController@getWellnessActivity');
-	// get health partner lists
-	Route::get('employee/get_health_partner_lists', 'EclaimController@getHealthPartnerLists');
-	// get user care package
-	Route::get('employee_care_package', 'BenefitsDashboardController@employeePackages');
-	// get doc presigned url
-	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
-	// check Employee e-claim submission visit date
-	Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
-	// get date terms
-	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
-});
+// Route::group(array('before' => 'auth.jwt_employee'), function( ){
+// 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
+// 	// Route::post('app/create_e_claim', 'EclaimController@createEclaimMedical');
+// 	Route::get('app/get_e_claims', 'EclaimController@getEclaims');
+// 	Route::get('app/get_e_claim_details/{id}', 'EclaimController@getEclaimDetails');
+// 	// upload image
+// 	Route::post('app/image_upload', 'EclaimController@uploadImage');
+// 	// logout
+// 	Route::get('app/e_claim/logout', 'EclaimController@logout');
+// 	// get user coverage
+// 	Route::get('app/e_claim/user_coverage', 'EclaimController@getUserCoverage');
+// 	// update profile
+// 	Route::post('app/e_claim/update_profile', 'EclaimController@updateProfile');
+// 	// get employee current spending for medical
+// 	Route::get('employee/get_current_spending', 'EclaimController@currentSpending');
+// 	// get employee current spending for wellness
+// 	Route::get('employee/get_current_wellness_spending', 'EclaimController@currentSpendingWellness');
+// 	// get employee members
+// 	Route::get('employee/get_members', 'EclaimController@getEmployeeMembers');
+// 	// get employee medical activity
+// 	Route::post('employee/search_eclaim_activity', 'EclaimController@getActivity');
+// 	// create e claim
+// 	Route::post('employee/create/e_claim', 'EclaimController@createEclaimMedical');
+// 	Route::post('employee/save/e_claim_receipt', 'EclaimController@createEclaimReceipt');
+// 	Route::post('employee/create/e_claim_receipt', 'EclaimController@saveEclaim');
+// 	Route::post('employee/create/transaction_receipt', 'EclaimController@createInNetworkReceipt');
+// 	// change password
+// 	Route::post('employee/change_password', 'EclaimController@updateEmployeePassword');
+// 	// create e-claim wellness
+// 	Route::post('employee/create/e_claim_wellness', 'EclaimController@createEclaimWellness');
+// 	// get employee wellness activity
+// 	Route::post('employee/search_eclaim_wellness_activity', 'EclaimController@getWellnessActivity');
+// 	// get health partner lists
+// 	Route::get('employee/get_health_partner_lists', 'EclaimController@getHealthPartnerLists');
+// 	// get user care package
+// 	Route::get('employee_care_package', 'BenefitsDashboardController@employeePackages');
+// 	// get doc presigned url
+// 	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
+// 	// check Employee e-claim submission visit date
+// 	Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
+// 	// get date terms
+// 	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
+// });
 
 
 
@@ -453,80 +453,80 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
 Route::get('hr/download_employee_cap_per_visit', 'EmployeeController@downloadCaperPervisitCSV');
 
-// intro login for clinic
-Route::get('provider-portal-login', 'HomeController@clinicLogin');
-Route::get('app/clinic/login', 'HomeController@clinicLogin');
-// main login pagef
-Route::get('app/login', 'HomeController@introPageLogin');
+// // intro login for clinic
+// Route::get('provider-portal-login', 'HomeController@clinicLogin');
+// Route::get('app/clinic/login', 'HomeController@clinicLogin');
+// // main login pagef
+// Route::get('app/login', 'HomeController@introPageLogin');
 
 
 
-// welcome pack
-Route::get('get/welcome-pack-corporate', 'HomeController@welcomePackCorporate');
-Route::get('get/welcome-pack-individual/{id}', 'HomeController@welcomePackIndividual');
-Route::get('get/contract/{id}', 'HomeController@getContract');
+// // welcome pack
+// Route::get('get/welcome-pack-corporate', 'HomeController@welcomePackCorporate');
+// Route::get('get/welcome-pack-individual/{id}', 'HomeController@welcomePackIndividual');
+// Route::get('get/contract/{id}', 'HomeController@getContract');
 
-// invoice for corporate
-Route::get('get/invoice/{id}', 'InvoiceController@corporateInvoice');
-Route::get('get/certificate/{id}', 'InvoiceController@getCertificate');
-Route::get('get/receipt', 'InvoiceController@getReceipt');
-Route::get('get/statement/{id}', 'InvoiceController@getHrStatement');
-// get stripe token
-Route::get('app/get/token', 'CarePlanPurchaseController@getToken');
+// // invoice for corporate
+// Route::get('get/invoice/{id}', 'InvoiceController@corporateInvoice');
+// Route::get('get/certificate/{id}', 'InvoiceController@getCertificate');
+// Route::get('get/receipt', 'InvoiceController@getReceipt');
+// Route::get('get/statement/{id}', 'InvoiceController@getHrStatement');
+// // get stripe token
+// Route::get('app/get/token', 'CarePlanPurchaseController@getToken');
 
-// Route::get('test/payout', 'PaymentsController@testPayout');
-Route::get('conclude/page/{id}', 'HomeController@concludePage');
+// // Route::get('test/payout', 'PaymentsController@testPayout');
+// Route::get('conclude/page/{id}', 'HomeController@concludePage');
 
-// send try-three-months
-Route::post('send/try-three-months', 'HomeController@sendTryThreeMonths');
+// // send try-three-months
+// Route::post('send/try-three-months', 'HomeController@sendTryThreeMonths');
 
-Route::get('conclude/page/{id}/{rate}', 'HomeController@concludePage');
+// Route::get('conclude/page/{id}/{rate}', 'HomeController@concludePage');
 
-Route::post('app/save/clinic/rating', 'HomeController@saveClinicRating');
+// Route::post('app/save/clinic/rating', 'HomeController@saveClinicRating');
 
-Route::get('get_previous_bookings', 'UserWebController@getPreviousBookings');
+// Route::get('get_previous_bookings', 'UserWebController@getPreviousBookings');
 
-// care plan purchase route
-Route::get('get/resume/purchase', 'CarePlanPurchaseController@resumeCarePlanPurchase');
-Route::get('get/purchase/data/{id}', 'CarePlanPurchaseController@getCarePlanPurchase');
-Route::post('insert/purchase', 'CarePlanPurchaseController@insertCarePlanBusiness');
-Route::post('insert/corporate_business_information', 'CarePlanPurchaseController@insertCarePlanBusinessInformation');
-Route::post('insert/corporate_plan', 'CarePlanPurchaseController@insertCorporatePlan');
-Route::post('insert/corporate_business_contact', 'CarePlanPurchaseController@insertCorporateBusinessContact');
-Route::post('insert/hr_dashboard_account', 'CarePlanPurchaseController@createHRDashboardAccount');
-Route::post('insert/corporate_choose_payment', 'CarePlanPurchaseController@insertPayment');
-Route::post('payment/insert/corporate_credit_payment', 'CarePlanPurchaseController@payCreditCardPlan');
-Route::post('insert/corporate_promo_code', 'CarePlanPurchaseController@corporateMatchCode');
+// // care plan purchase route
+// Route::get('get/resume/purchase', 'CarePlanPurchaseController@resumeCarePlanPurchase');
+// Route::get('get/purchase/data/{id}', 'CarePlanPurchaseController@getCarePlanPurchase');
+// Route::post('insert/purchase', 'CarePlanPurchaseController@insertCarePlanBusiness');
+// Route::post('insert/corporate_business_information', 'CarePlanPurchaseController@insertCarePlanBusinessInformation');
+// Route::post('insert/corporate_plan', 'CarePlanPurchaseController@insertCorporatePlan');
+// Route::post('insert/corporate_business_contact', 'CarePlanPurchaseController@insertCorporateBusinessContact');
+// Route::post('insert/hr_dashboard_account', 'CarePlanPurchaseController@createHRDashboardAccount');
+// Route::post('insert/corporate_choose_payment', 'CarePlanPurchaseController@insertPayment');
+// Route::post('payment/insert/corporate_credit_payment', 'CarePlanPurchaseController@payCreditCardPlan');
+// Route::post('insert/corporate_promo_code', 'CarePlanPurchaseController@corporateMatchCode');
 
-// individual
-Route::post('insert/customer/personal_details','CarePlanPurchaseController@insertCustomerPersonalDetails');
+// // individual
+// Route::post('insert/customer/personal_details','CarePlanPurchaseController@insertCustomerPersonalDetails');
 
-// update endpoints for care plan purchases
-Route::post('update/purchase_corporate_start', 'CarePlanPurchaseController@updateCorporateBuyStart');
-Route::post('update/purchase_corporate_plan', 'CarePlanPurchaseController@updateCorporatePlan');
-Route::post('update/purchase_corporate_business_information', 'CarePlanPurchaseController@updateBusinessInformation');
+// // update endpoints for care plan purchases
+// Route::post('update/purchase_corporate_start', 'CarePlanPurchaseController@updateCorporateBuyStart');
+// Route::post('update/purchase_corporate_plan', 'CarePlanPurchaseController@updateCorporatePlan');
+// Route::post('update/purchase_corporate_business_information', 'CarePlanPurchaseController@updateBusinessInformation');
 
-Route::get('/uat/care-plan', 'CarePlanController@index');
-Route::get('app/get_existing_appointments/{id}', 'CalendarController@getExistingAppointments');
+// Route::get('/uat/care-plan', 'CarePlanController@index');
+// Route::get('app/get_existing_appointments/{id}', 'CalendarController@getExistingAppointments');
 
-// statement of account
-Route::get('app/clinic/statement/{id}', 'InvoiceController@getClinicStatement');
-Route::get('app/clinic/print_statement/{id}', 'InvoiceController@downloadClinicStatementPDF');
-Route::post('app/clinic/statement_list', 'InvoiceController@getClinicStatementList');
+// // statement of account
+// Route::get('app/clinic/statement/{id}', 'InvoiceController@getClinicStatement');
+// Route::get('app/clinic/print_statement/{id}', 'InvoiceController@downloadClinicStatementPDF');
+// Route::post('app/clinic/statement_list', 'InvoiceController@getClinicStatementList');
 
 
-// for corporate booking
-Route::get('app/corporate/get-doctor/{id}', 'DoctorWidgetController@getDoctorList');
-Route::post('app/corporate/load-end-time','DoctorWidgetController@loadEndTime');
-Route::post('app/corporate/load-procedure-data','DoctorWidgetController@loadProcedureData');
-Route::post('app/corporate/book','DoctorWidgetController@newBooking');
-Route::post('app/corporate/enable-dates','DoctorWidgetController@enableDates');
-Route::post('app/corporate/disable-times','DoctorWidgetController@disableTimes');
+// // for corporate booking
+// Route::get('app/corporate/get-doctor/{id}', 'DoctorWidgetController@getDoctorList');
+// Route::post('app/corporate/load-end-time','DoctorWidgetController@loadEndTime');
+// Route::post('app/corporate/load-procedure-data','DoctorWidgetController@loadProcedureData');
+// Route::post('app/corporate/book','DoctorWidgetController@newBooking');
+// Route::post('app/corporate/enable-dates','DoctorWidgetController@enableDates');
+// Route::post('app/corporate/disable-times','DoctorWidgetController@disableTimes');
 
-Route::get('app/corporate/get_corporate/{id}', 'CorporateController@getCorporateById');
-Route::post('app/corporate/search', 'CorporateController@searchCoporate');
-Route::get('app/corporate/get_doctors', 'CorporateController@getDoctors');
-Route::get('app/corporate/get_doctor_procedures/{id}', 'CorporateController@getDoctorProcedure');
+// Route::get('app/corporate/get_corporate/{id}', 'CorporateController@getCorporateById');
+// Route::post('app/corporate/search', 'CorporateController@searchCoporate');
+// Route::get('app/corporate/get_doctors', 'CorporateController@getDoctors');
+// Route::get('app/corporate/get_doctor_procedures/{id}', 'CorporateController@getDoctorProcedure');
 
 // landing page
 
@@ -541,7 +541,7 @@ Route::get('app/corporate/get_doctor_procedures/{id}', 'CorporateController@getD
 
 
 // Route::get('/', 'HomeController@temp_index');
-Route::get('/', 'HomeController@introPageLogin');
+// Route::get('/', 'HomeController@introPageLogin');
 // Route::get('/employers', 'HomeController@temp_index');
 // Route::get('/individuals', 'HomeController@individual');
 // Route::get('/health-partner', 'HomeController@health_partner');
@@ -567,552 +567,552 @@ Route::get('/', 'HomeController@introPageLogin');
 // Route::get('/mednefits-employer', 'HomeController@mednefits_employer');
 // Route::get('/mednefits-care-bundle-corporate-insurance', 'HomeController@mednefits_care_bundle_corporate');
 
-Route::post('app/contact','HomeController@contactMedicloud');
-Route::post('app/subscribe','HomeController@subscribeMedicloud');
-Route::get('/user','HomeController@userView');
-
-// activate corporate account
-Route::get('app/corporate/activate/{id}', 'CorporateController@activateAccount');
-
-// activate user wallet account
-Route::get('app/activate/user/{id}', 'TopUpPassController@activateUserAccount');
-Route::post('app/update/user/account/activate', 'TopUpPassController@updateUserAccountActive');
-
-Route::get('test','testcontroller@index');
-Route::get('gcal/insertEvent','GoogleCalenderController@insertEvent');
-Route::get('app/gcal/sendOAuthRequest','GoogleCalenderController@sendOAuthRequest');
-Route::get('app/gcal/getClientToken','GoogleCalenderController@getClientToken');
-Route::get('app/gcal/google_calendar_sync/{code}','GoogleCalenderController@getGoogleCodeLink');
-
-
-Route::post('app/gcal/sendOAuthRequest','GoogleCalenderController@sendOAuthRequest');
-Route::post('app/gcal/revokeToken','GoogleCalenderController@revokeToken');
-Route::post('app/gcal/loadTokendGmail','GoogleCalenderController@loadTokendGmail');
-Route::post('app/gcal/checkUniqueGmail','GoogleCalenderController@checkUniqueGmail');
-
-////////// nhr   2016-2-16  for widget
-// widget for multiple clinic view
-Route::get('app/widget/multiple/{clinic_name}','DoctorWidgetController@loadClinicData');
-
-Route::get('app/widget/{id}','DoctorWidgetController@index');
-Route::post('app/widget/check_nric','DoctorWidgetController@checkNric');
-Route::post('app/widget/load-doctor-procedure','DoctorWidgetController@loadDoctorProcedure');
-Route::post('app/widget/load-procedure-doctor','DoctorWidgetController@loadProcedureDoctor');
-Route::post('app/widget/load-end-time','DoctorWidgetController@loadEndTime');
-Route::post('app/widget/load-procedure-data','DoctorWidgetController@loadProcedureData');
-Route::post('app/widget/new-widget-booking','DoctorWidgetController@newBooking');
-Route::post('app/widget/enable-dates','DoctorWidgetController@enableDates');
-Route::post('app/widget/disable-times','DoctorWidgetController@disableTimes');
-Route::post('app/widget/send-otp-sms','DoctorWidgetController@sendOtpSms');
-Route::post('app/widget/validate-otp','DoctorWidgetController@validateOtp');
+// Route::post('app/contact','HomeController@contactMedicloud');
+// Route::post('app/subscribe','HomeController@subscribeMedicloud');
+// Route::get('/user','HomeController@userView');
+
+// // activate corporate account
+// Route::get('app/corporate/activate/{id}', 'CorporateController@activateAccount');
+
+// // activate user wallet account
+// Route::get('app/activate/user/{id}', 'TopUpPassController@activateUserAccount');
+// Route::post('app/update/user/account/activate', 'TopUpPassController@updateUserAccountActive');
+
+// Route::get('test','testcontroller@index');
+// Route::get('gcal/insertEvent','GoogleCalenderController@insertEvent');
+// Route::get('app/gcal/sendOAuthRequest','GoogleCalenderController@sendOAuthRequest');
+// Route::get('app/gcal/getClientToken','GoogleCalenderController@getClientToken');
+// Route::get('app/gcal/google_calendar_sync/{code}','GoogleCalenderController@getGoogleCodeLink');
+
+
+// Route::post('app/gcal/sendOAuthRequest','GoogleCalenderController@sendOAuthRequest');
+// Route::post('app/gcal/revokeToken','GoogleCalenderController@revokeToken');
+// Route::post('app/gcal/loadTokendGmail','GoogleCalenderController@loadTokendGmail');
+// Route::post('app/gcal/checkUniqueGmail','GoogleCalenderController@checkUniqueGmail');
+
+// ////////// nhr   2016-2-16  for widget
+// // widget for multiple clinic view
+// Route::get('app/widget/multiple/{clinic_name}','DoctorWidgetController@loadClinicData');
+
+// Route::get('app/widget/{id}','DoctorWidgetController@index');
+// Route::post('app/widget/check_nric','DoctorWidgetController@checkNric');
+// Route::post('app/widget/load-doctor-procedure','DoctorWidgetController@loadDoctorProcedure');
+// Route::post('app/widget/load-procedure-doctor','DoctorWidgetController@loadProcedureDoctor');
+// Route::post('app/widget/load-end-time','DoctorWidgetController@loadEndTime');
+// Route::post('app/widget/load-procedure-data','DoctorWidgetController@loadProcedureData');
+// Route::post('app/widget/new-widget-booking','DoctorWidgetController@newBooking');
+// Route::post('app/widget/enable-dates','DoctorWidgetController@enableDates');
+// Route::post('app/widget/disable-times','DoctorWidgetController@disableTimes');
+// Route::post('app/widget/send-otp-sms','DoctorWidgetController@sendOtpSms');
+// Route::post('app/widget/validate-otp','DoctorWidgetController@validateOtp');
 
 
-// get all schdules from doctors clinic
-Route::post('app/calendar/clinic/doctor/schdules','CalendarController@getDoctorsSchedEvents');
+// // get all schdules from doctors clinic
+// Route::post('app/calendar/clinic/doctor/schdules','CalendarController@getDoctorsSchedEvents');
 
 
-////////////////calender    nhr     2016-3-14////////////
+// ////////////////calender    nhr     2016-3-14////////////
 
-Route::post('app/calendar/getdoctorListWithData','CalendarController@getdoctorListWithData');
-Route::post('app/calendar/getevent','CalendarController@getEvents');
-Route::post('app/calendar/getGoogleEvent','CalendarController@getGoogleEvents');
-Route::post('app/calendar/getDoctorProcedure','CalendarController@getDoctorProcedure');
-Route::post('app/calendar/load-procedure-details','CalendarController@getProcedureDetails');
-Route::post('app/calendar/saveAppointment','CalendarController@saveAppointment');
-Route::post('app/calendar/updateAppointment','CalendarController@updateAppointment');
-Route::post('app/calendar/updateOnDrag','CalendarController@updateOnDrag');
-Route::post('app/calendar/updateOnBlockerDrag','CalendarController@updateOnBlockerDrag');
-Route::post('app/calendar/saveBlocker','CalendarController@saveBlocker');
-Route::post('app/calendar/blockUnavailable','CalendarController@blockUnavailable');
-Route::post('app/calendar/load-users','CalendarController@getAllUsers');
-Route::post('app/calendar/getAppointmentDetails','CalendarController@getAppointmentDetails');
-Route::post('app/calendar/getExtraEventDetails','CalendarController@getExtraEventDetails');
-Route::post('app/calendar/deleteBlockerDetails','CalendarController@deleteBlockerDetails');
-Route::post('app/calendar/deleteAppointmentDetails','CalendarController@deleteAppointmentDetails');
-Route::post('app/calendar/concludedAppointment','CalendarController@concludedAppointment');
-Route::post('app/calendar/No-ShowAppointment','CalendarController@NoShowAppointment');
+// Route::post('app/calendar/getdoctorListWithData','CalendarController@getdoctorListWithData');
+// Route::post('app/calendar/getevent','CalendarController@getEvents');
+// Route::post('app/calendar/getGoogleEvent','CalendarController@getGoogleEvents');
+// Route::post('app/calendar/getDoctorProcedure','CalendarController@getDoctorProcedure');
+// Route::post('app/calendar/load-procedure-details','CalendarController@getProcedureDetails');
+// Route::post('app/calendar/saveAppointment','CalendarController@saveAppointment');
+// Route::post('app/calendar/updateAppointment','CalendarController@updateAppointment');
+// Route::post('app/calendar/updateOnDrag','CalendarController@updateOnDrag');
+// Route::post('app/calendar/updateOnBlockerDrag','CalendarController@updateOnBlockerDrag');
+// Route::post('app/calendar/saveBlocker','CalendarController@saveBlocker');
+// Route::post('app/calendar/blockUnavailable','CalendarController@blockUnavailable');
+// Route::post('app/calendar/load-users','CalendarController@getAllUsers');
+// Route::post('app/calendar/getAppointmentDetails','CalendarController@getAppointmentDetails');
+// Route::post('app/calendar/getExtraEventDetails','CalendarController@getExtraEventDetails');
+// Route::post('app/calendar/deleteBlockerDetails','CalendarController@deleteBlockerDetails');
+// Route::post('app/calendar/deleteAppointmentDetails','CalendarController@deleteAppointmentDetails');
+// Route::post('app/calendar/concludedAppointment','CalendarController@concludedAppointment');
+// Route::post('app/calendar/No-ShowAppointment','CalendarController@NoShowAppointment');
 
 
 
-Route::post('app/calendar/getClinicDetails','CalendarController@getClinicDetails');
-Route::post('app/calendar/validatePin','CalendarController@validatePin');
-Route::post('app/calendar/getClinicPinStatus','CalendarController@getClinicPinStatus');
-Route::post('app/calendar/loadAppointmentCount','CalendarController@loadAppointmentCount');
+// Route::post('app/calendar/getClinicDetails','CalendarController@getClinicDetails');
+// Route::post('app/calendar/validatePin','CalendarController@validatePin');
+// Route::post('app/calendar/getClinicPinStatus','CalendarController@getClinicPinStatus');
+// Route::post('app/calendar/loadAppointmentCount','CalendarController@loadAppointmentCount');
 
-// Mobile Exercise
-Route::get('app/update_user_id_web','HomeController@getMobileExercise');
+// // Mobile Exercise
+// Route::get('app/update_user_id_web','HomeController@getMobileExercise');
 
-// ----------------------------------- Settings pages ----------------------------------- //
+// // ----------------------------------- Settings pages ----------------------------------- //
 
-Route::get('app/setting/main-setting','HomeController@MainSettingsPage');
-Route::get('app/setting/claim-report','HomeController@claimReportPage');
-Route::post('app/setting/claim-report/api','HomeController@claimReportPageApi');
-Route::post('app/setting/service/saveServices','serviceController@saveServices');
-Route::post('app/setting/service/deleteServices','serviceController@deleteServices');
+// Route::get('app/setting/main-setting','HomeController@MainSettingsPage');
+// Route::get('app/setting/claim-report','HomeController@claimReportPage');
+// Route::post('app/setting/claim-report/api','HomeController@claimReportPageApi');
+// Route::post('app/setting/service/saveServices','serviceController@saveServices');
+// Route::post('app/setting/service/deleteServices','serviceController@deleteServices');
 
-Route::post('app/setting/service/update-service-Alldoctor','serviceController@UpdateDoctorAllService');
+// Route::post('app/setting/service/update-service-Alldoctor','serviceController@UpdateDoctorAllService');
 
 
 
-// .............load ajax pages nhr 22/4/2016
-Route::get('app/setting/ajaxGetAccountPage','HomeController@ajaxGetAccountPage');
-Route::get('app/setting/ajaxGetStaffPage','HomeController@ajaxGetStaffPage');
-Route::get('app/setting/ajaxGetServicPage','HomeController@ajaxGetServicPage');
-Route::get('app/setting/ajaxGetNotifyPage','HomeController@ajaxGetNotifyPage');
-Route::get('app/setting/ajaxGetProfilePage','HomeController@ajaxGetProfilePage');
-Route::get('app/setting/ajaxGetPaymentPage','HomeController@ajaxGetPaymentPage');
-Route::post('app/setting/service/ajaxGetEditPage','serviceController@ajaxGetEditPage');
+// // .............load ajax pages nhr 22/4/2016
+// Route::get('app/setting/ajaxGetAccountPage','HomeController@ajaxGetAccountPage');
+// Route::get('app/setting/ajaxGetStaffPage','HomeController@ajaxGetStaffPage');
+// Route::get('app/setting/ajaxGetServicPage','HomeController@ajaxGetServicPage');
+// Route::get('app/setting/ajaxGetNotifyPage','HomeController@ajaxGetNotifyPage');
+// Route::get('app/setting/ajaxGetProfilePage','HomeController@ajaxGetProfilePage');
+// Route::get('app/setting/ajaxGetPaymentPage','HomeController@ajaxGetPaymentPage');
+// Route::post('app/setting/service/ajaxGetEditPage','serviceController@ajaxGetEditPage');
 
-// update service position from sortable process
-Route::post('app/setting/service/saveServicePosition','serviceController@saveServicePosition');
+// // update service position from sortable process
+// Route::post('app/setting/service/saveServicePosition','serviceController@saveServicePosition');
 
-Route::get('app/setting/staff/ajaxGetDoctorDetailtabPanel','staffController@ajaxGetDoctorSettingTab');
-Route::post('app/setting/staff/ajaxGetStaffDetailtabPanel','staffController@ajaxGetStaffSettingTab');
+// Route::get('app/setting/staff/ajaxGetDoctorDetailtabPanel','staffController@ajaxGetDoctorSettingTab');
+// Route::post('app/setting/staff/ajaxGetStaffDetailtabPanel','staffController@ajaxGetStaffSettingTab');
 
-Route::post('app/setting/staff/ajaxGetStaffDetailsTab','staffController@ajaxGetStaffDetailsTab');
-Route::post('app/setting/staff/ajaxGetStaffServicesTab','staffController@ajaxGetStaffServicesTab');
-Route::post('app/setting/staff/ajaxGetStaffWorkingHoursTab','staffController@ajaxGetStaffWorkingHoursTab');
-Route::post('app/setting/staff/ajaxGetStaffBreaksTab','staffController@ajaxGetStaffBreaksTab');
-Route::post('app/setting/staff/ajaxGetStaffTimeOffTab','staffController@ajaxGetStaffTimeOffTab');
+// Route::post('app/setting/staff/ajaxGetStaffDetailsTab','staffController@ajaxGetStaffDetailsTab');
+// Route::post('app/setting/staff/ajaxGetStaffServicesTab','staffController@ajaxGetStaffServicesTab');
+// Route::post('app/setting/staff/ajaxGetStaffWorkingHoursTab','staffController@ajaxGetStaffWorkingHoursTab');
+// Route::post('app/setting/staff/ajaxGetStaffBreaksTab','staffController@ajaxGetStaffBreaksTab');
+// Route::post('app/setting/staff/ajaxGetStaffTimeOffTab','staffController@ajaxGetStaffTimeOffTab');
 
-Route::post('app/setting/staff/addStaff','staffController@addStaff');
-Route::post('app/setting/staff/addDoctor','staffController@addDoctor');
-Route::post('app/setting/staff/updateDoctor','staffController@updateDoctor');
-Route::post('app/setting/staff/updateStaff','staffController@updateStaff');
+// Route::post('app/setting/staff/addStaff','staffController@addStaff');
+// Route::post('app/setting/staff/addDoctor','staffController@addDoctor');
+// Route::post('app/setting/staff/updateDoctor','staffController@updateDoctor');
+// Route::post('app/setting/staff/updateStaff','staffController@updateStaff');
 
-Route::post('app/setting/staff/addBreak','staffController@addBreak');
-Route::post('app/setting/staff/removeBreak','staffController@removeBreak');
-Route::post('app/setting/staff/updateBreak','staffController@updateBreak');
+// Route::post('app/setting/staff/addBreak','staffController@addBreak');
+// Route::post('app/setting/staff/removeBreak','staffController@removeBreak');
+// Route::post('app/setting/staff/updateBreak','staffController@updateBreak');
 
-Route::post('app/setting/staff/update-Staff-Doctor-Services','staffController@UpdateDoctorService');
-Route::post('app/setting/staff/update-Staff-Doctor-AllServices','staffController@UpdateDoctorAllService');
+// Route::post('app/setting/staff/update-Staff-Doctor-Services','staffController@UpdateDoctorService');
+// Route::post('app/setting/staff/update-Staff-Doctor-AllServices','staffController@UpdateDoctorAllService');
 
-Route::post('app/setting/staff/updateWorkingHours','staffController@UpdateWorkingHours');
-Route::post('app/setting/staff/updateWorkingHoursStatus','staffController@updateWorkingHoursStatus');
+// Route::post('app/setting/staff/updateWorkingHours','staffController@UpdateWorkingHours');
+// Route::post('app/setting/staff/updateWorkingHoursStatus','staffController@updateWorkingHoursStatus');
 
-Route::post('app/setting/staff/Add-doctor-time-off','staffController@AddDoctorTimeOff');
-Route::post('app/setting/staff/get-doctor-time-off','staffController@GetDoctorTimeOff');
-Route::post('app/setting/staff/Update-doctor-time-off','staffController@UpdateDoctorTimeOff');
-Route::post('app/setting/staff/Delete-doctor-time-off','staffController@DeleteDoctorTimeOff');
+// Route::post('app/setting/staff/Add-doctor-time-off','staffController@AddDoctorTimeOff');
+// Route::post('app/setting/staff/get-doctor-time-off','staffController@GetDoctorTimeOff');
+// Route::post('app/setting/staff/Update-doctor-time-off','staffController@UpdateDoctorTimeOff');
+// Route::post('app/setting/staff/Delete-doctor-time-off','staffController@DeleteDoctorTimeOff');
 
-Route::post('app/setting/staff/Update-doctor-detail-toggal','staffController@UpdateDetailToggal');
-Route::post('app/setting/staff/Update-staff-detail-toggal','staffController@UpdateStaffToggal');
+// Route::post('app/setting/staff/Update-doctor-detail-toggal','staffController@UpdateDetailToggal');
+// Route::post('app/setting/staff/Update-staff-detail-toggal','staffController@UpdateStaffToggal');
 
-Route::post('app/setting/staff/Delete-doctor','staffController@DeleteDoctorDetail');
-Route::post('app/setting/staff/Delete-staff','staffController@DeleteStaffDetail');
+// Route::post('app/setting/staff/Delete-doctor','staffController@DeleteDoctorDetail');
+// Route::post('app/setting/staff/Delete-staff','staffController@DeleteStaffDetail');
 
 
 
-Route::post('app/setting/profile/ajaxGetClinicDetailPanel','ProfileController@ajaxGetClinicDetailPanel');
-Route::post('app/setting/profile/ajaxGetBusinessHoursPanel','ProfileController@ajaxGetBusinessHoursPanel');
-Route::post('app/setting/profile/ajaxGetclinicPasswordPanel','ProfileController@ajaxGetclinicPasswordPanel');
+// Route::post('app/setting/profile/ajaxGetClinicDetailPanel','ProfileController@ajaxGetClinicDetailPanel');
+// Route::post('app/setting/profile/ajaxGetBusinessHoursPanel','ProfileController@ajaxGetBusinessHoursPanel');
+// Route::post('app/setting/profile/ajaxGetclinicPasswordPanel','ProfileController@ajaxGetclinicPasswordPanel');
 
-Route::post('app/setting/profile/ajaxGetPaymentDetails','ProfileController@ajaxGetPaymentDetails');
+// Route::post('app/setting/profile/ajaxGetPaymentDetails','ProfileController@ajaxGetPaymentDetails');
 
-Route::post('app/setting/profile/ajaxGetWebsitePanel','ProfileController@ajaxGetWebsitePanel');
-Route::post('app/setting/profile/ajaxGetSocialPlugPanel','ProfileController@ajaxGetSocialPlugPanel');
+// Route::post('app/setting/profile/ajaxGetWebsitePanel','ProfileController@ajaxGetWebsitePanel');
+// Route::post('app/setting/profile/ajaxGetSocialPlugPanel','ProfileController@ajaxGetSocialPlugPanel');
 
-Route::post('app/setting/profile/ajaxGetClinicHoursTab','ProfileController@ajaxGetClinicHoursTab');
-Route::post('app/setting/profile/ajaxGetClinicBreaksTab','ProfileController@ajaxGetClinicBreaksTab');
-Route::post('app/setting/profile/ajaxGetClinicTimeOffTab','ProfileController@ajaxGetClinicTimeOffTab');
+// Route::post('app/setting/profile/ajaxGetClinicHoursTab','ProfileController@ajaxGetClinicHoursTab');
+// Route::post('app/setting/profile/ajaxGetClinicBreaksTab','ProfileController@ajaxGetClinicBreaksTab');
+// Route::post('app/setting/profile/ajaxGetClinicTimeOffTab','ProfileController@ajaxGetClinicTimeOffTab');
 
-Route::post('app/setting/profile/Update-Clinic-Details','ProfileController@UpdateClinicDetails');
+// Route::post('app/setting/profile/Update-Clinic-Details','ProfileController@UpdateClinicDetails');
 
-Route::post('app/setting/profile/Add-Clinic-Breaks','ProfileController@addClinicBreak');
-Route::post('app/setting/profile/Update-Clinic-Breaks','ProfileController@updateClinicBreak');
-Route::post('app/setting/profile/Remove-Clinic-Breaks','ProfileController@removeClinicBreak');
+// Route::post('app/setting/profile/Add-Clinic-Breaks','ProfileController@addClinicBreak');
+// Route::post('app/setting/profile/Update-Clinic-Breaks','ProfileController@updateClinicBreak');
+// Route::post('app/setting/profile/Remove-Clinic-Breaks','ProfileController@removeClinicBreak');
 
-Route::post('app/setting/profile/Add-Clinic-Time-Off','ProfileController@AddClinicTimeOff');
+// Route::post('app/setting/profile/Add-Clinic-Time-Off','ProfileController@AddClinicTimeOff');
 
-Route::post('app/setting/profile/Update-Clinic-Password','ProfileController@UpdateClinicPassword');
+// Route::post('app/setting/profile/Update-Clinic-Password','ProfileController@UpdateClinicPassword');
 
 
-Route::post('app/setting/payments/history','PaymentsController@getPaymentHistory');
-Route::post('app/setting/payments/invoice','PaymentsController@getPaymentInvoice');
-Route::post('app/setting/payments/statement','PaymentsController@getPaymentStatement');
+// Route::post('app/setting/payments/history','PaymentsController@getPaymentHistory');
+// Route::post('app/setting/payments/invoice','PaymentsController@getPaymentInvoice');
+// Route::post('app/setting/payments/statement','PaymentsController@getPaymentStatement');
 
 
-// ----------------------- config window functions --------------------
+// // ----------------------- config window functions --------------------
 
-Route::post('app/calendar/load-clinic-details','HomeController@loadClinicDetails');
-Route::post('app/calendar/save-clinic-details','HomeController@saveClinicDetails');
-Route::post('app/calendar/updateClinicWorkingHours','HomeController@updateClinicWorkingHours');
-Route::post('app/calendar/load-clinic-doctor-details','HomeController@loadDoctorDetails');
-Route::post('app/calendar/Add-clinic-doctor-details','HomeController@addDoctorDetails');
-Route::post('app/calendar/load-clinic-service-details','HomeController@loadServiceDetails');
-Route::post('app/calendar/save-clinic-services','HomeController@saveClinicService');
-Route::post('app/calendar/delete-clinic-services','HomeController@DeleteClinicService');
+// Route::post('app/calendar/load-clinic-details','HomeController@loadClinicDetails');
+// Route::post('app/calendar/save-clinic-details','HomeController@saveClinicDetails');
+// Route::post('app/calendar/updateClinicWorkingHours','HomeController@updateClinicWorkingHours');
+// Route::post('app/calendar/load-clinic-doctor-details','HomeController@loadDoctorDetails');
+// Route::post('app/calendar/Add-clinic-doctor-details','HomeController@addDoctorDetails');
+// Route::post('app/calendar/load-clinic-service-details','HomeController@loadServiceDetails');
+// Route::post('app/calendar/save-clinic-services','HomeController@saveClinicService');
+// Route::post('app/calendar/delete-clinic-services','HomeController@DeleteClinicService');
 
 
-// -----------------------------------------------------------------------
+// // -----------------------------------------------------------------------
 
 
-Route::post('app/setting/account/update-calendar-config','HomeController@updateClinicDetails');
-Route::post('app/send_custom_sms','HomeController@sendCustomSms');
+// Route::post('app/setting/account/update-calendar-config','HomeController@updateClinicDetails');
+// Route::post('app/send_custom_sms','HomeController@sendCustomSms');
 
-Route::group(array('prefix' => 'v1'), function()
-{
+// Route::group(array('prefix' => 'v1'), function()
+// {
 
-	Route::group(array('after' => 'auth.headers'),function(){
-		// Route::post('auth/signup', 'Api_V1_AuthController@Signup');
-	  	Route::post('auth/login','Api_V1_AuthController@Login');
-	    //Route::post('auth/login','Api_V1_AuthController@login');
-	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_Password');
-	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
-	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
-	    Route::post('auth/reset-process', 'Api_V1_AuthController@ProcessResetPassword');
+// 	Route::group(array('after' => 'auth.headers'),function(){
+// 		// Route::post('auth/signup', 'Api_V1_AuthController@Signup');
+// 	  	Route::post('auth/login','Api_V1_AuthController@Login');
+// 	    //Route::post('auth/login','Api_V1_AuthController@login');
+// 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_Password');
+// 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
+// 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
+// 	    Route::post('auth/reset-process', 'Api_V1_AuthController@ProcessResetPassword');
 
-	 	Route::group(array('before' => 'auth.v1'),function(){
-	 		// test one tap login
-		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');
-		    // reset details
+// 	 	Route::group(array('before' => 'auth.v1'),function(){
+// 	 		// test one tap login
+// 		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');
+// 		    // reset details
 
-		    Route::post('auth/newallergy','Api_V1_AuthController@AddNewAllergy');
-		    Route::post('auth/newcondition','Api_V1_AuthController@AddNewMedicalCondition');
-		    Route::post('auth/newmedication','Api_V1_AuthController@AddNewUserMedication');
-		    Route::post('auth/newhistory','Api_V1_AuthController@AddNewMedicalHistory');
-		    Route::post('auth/update','Api_V1_AuthController@UpdateUserProfile');
-		    Route::post('auth/updatehistory','Api_V1_AuthController@UpdateMedicalHistory');
-		    Route::post('auth/change-password','Api_V1_AuthController@ChangePassword');
-		    Route::post('auth/device-token','Api_V1_AuthController@AddDeviceToken');
-		    Route::post('auth/disable-profile','Api_V1_AuthController@DisableProfile');
-		    Route::post('auth/otpupdate','Api_V1_AuthController@OTPProfileUpdate');
-		    Route::post('auth/otpvalidation','Api_V1_AuthController@OTPCodeValidation');
-		    Route::post('auth/otpresend','Api_V1_AuthController@OTPCodeResend');
+// 		    Route::post('auth/newallergy','Api_V1_AuthController@AddNewAllergy');
+// 		    Route::post('auth/newcondition','Api_V1_AuthController@AddNewMedicalCondition');
+// 		    Route::post('auth/newmedication','Api_V1_AuthController@AddNewUserMedication');
+// 		    Route::post('auth/newhistory','Api_V1_AuthController@AddNewMedicalHistory');
+// 		    Route::post('auth/update','Api_V1_AuthController@UpdateUserProfile');
+// 		    Route::post('auth/updatehistory','Api_V1_AuthController@UpdateMedicalHistory');
+// 		    Route::post('auth/change-password','Api_V1_AuthController@ChangePassword');
+// 		    Route::post('auth/device-token','Api_V1_AuthController@AddDeviceToken');
+// 		    Route::post('auth/disable-profile','Api_V1_AuthController@DisableProfile');
+// 		    Route::post('auth/otpupdate','Api_V1_AuthController@OTPProfileUpdate');
+// 		    Route::post('auth/otpvalidation','Api_V1_AuthController@OTPCodeValidation');
+// 		    Route::post('auth/otpresend','Api_V1_AuthController@OTPCodeResend');
 
-		    // create or update pin
-		    Route::post('auth/pin', 'Api_V1_AuthController@pin');
-		    Route::post('auth/update_pin', 'Api_V1_AuthController@updatePin');
+// 		    // create or update pin
+// 		    Route::post('auth/pin', 'Api_V1_AuthController@pin');
+// 		    Route::post('auth/update_pin', 'Api_V1_AuthController@updatePin');
 
-		    //for get
-		    Route::get('auth/logout','Api_V1_AuthController@LogOut');
-		    Route::get('auth/coordinate','Api_V1_AuthController@FindCoordinate');
-		    Route::get('auth/userprofile','Api_V1_AuthController@UserProfile');
-		    Route::get('auth/e_card_details','Api_V1_AuthController@getEcardDetails');
-		    Route::get('auth/deleteallergy','Api_V1_AuthController@DeleteUserAllergy');
-		    Route::get('auth/deletecondition','Api_V1_AuthController@DeleteUserCondition');
-		    Route::get('auth/deletemedication','Api_V1_AuthController@DeleteUserMedication');
-		    Route::get('auth/deletehistory','Api_V1_AuthController@DeleteMedicalHistory');
+// 		    //for get
+// 		    Route::get('auth/logout','Api_V1_AuthController@LogOut');
+// 		    Route::get('auth/coordinate','Api_V1_AuthController@FindCoordinate');
+// 		    Route::get('auth/userprofile','Api_V1_AuthController@UserProfile');
+// 		    Route::get('auth/e_card_details','Api_V1_AuthController@getEcardDetails');
+// 		    Route::get('auth/deleteallergy','Api_V1_AuthController@DeleteUserAllergy');
+// 		    Route::get('auth/deletecondition','Api_V1_AuthController@DeleteUserCondition');
+// 		    Route::get('auth/deletemedication','Api_V1_AuthController@DeleteUserMedication');
+// 		    Route::get('auth/deletehistory','Api_V1_AuthController@DeleteMedicalHistory');
 
 
-		    //Route::get('auth/create','Api_V1_AuthController@create');
-		    //        array('names' => array('create' => 'photo.build')));
+// 		    //Route::get('auth/create','Api_V1_AuthController@create');
+// 		    //        array('names' => array('create' => 'photo.build')));
 
 
-		    //clinic
-		    Route::get('clinic/search','Api_V1_ClinicController@Search');
-		    //Route::get('clinic/clinicdetails','Api_V1_ClinicController@ClinicDetails');
-		    Route::get('clinic/clinicdetails/{id}','Api_V1_ClinicController@ClinicDetails');
-		  	Route::get('clinic/nearby','Api_V1_ClinicController@Nearby');
+// 		    //clinic
+// 		    Route::get('clinic/search','Api_V1_ClinicController@Search');
+// 		    //Route::get('clinic/clinicdetails','Api_V1_ClinicController@ClinicDetails');
+// 		    Route::get('clinic/clinicdetails/{id}','Api_V1_ClinicController@ClinicDetails');
+// 		  	Route::get('clinic/nearby','Api_V1_ClinicController@Nearby');
 
-		  	Route::get('clinic/new_nearby','Api_V1_ClinicController@NewNearby');
+// 		  	Route::get('clinic/new_nearby','Api_V1_ClinicController@NewNearby');
 
-		    Route::get('clinic/booking-history','Api_V1_ClinicController@AppointmentHistory');
-		    //Route::get('clinic/booking-detail','Api_V1_ClinicController@AppointmentDetails');
-		    Route::get('clinic/booking-detail/{id}','Api_V1_ClinicController@AppointmentDetails');
-		    Route::get('clinic/booking-delete','Api_V1_ClinicController@AppointmentDelete');
-		    Route::get('clinic/panel-nearby','Api_V1_ClinicController@PanelClinicNearby');
-		    Route::get('clinic/appointment','Api_V1_ClinicController@UserAppointmentValidation');
-		    Route::get('clinic/procedure_details/{id}','Api_V1_ClinicController@ProcedureDetails');
-		    Route::get('clinic/doctor_procedure/{id}','Api_V1_ClinicController@ClinicDoctorProcedures');
+// 		    Route::get('clinic/booking-history','Api_V1_ClinicController@AppointmentHistory');
+// 		    //Route::get('clinic/booking-detail','Api_V1_ClinicController@AppointmentDetails');
+// 		    Route::get('clinic/booking-detail/{id}','Api_V1_ClinicController@AppointmentDetails');
+// 		    Route::get('clinic/booking-delete','Api_V1_ClinicController@AppointmentDelete');
+// 		    Route::get('clinic/panel-nearby','Api_V1_ClinicController@PanelClinicNearby');
+// 		    Route::get('clinic/appointment','Api_V1_ClinicController@UserAppointmentValidation');
+// 		    Route::get('clinic/procedure_details/{id}','Api_V1_ClinicController@ProcedureDetails');
+// 		    Route::get('clinic/doctor_procedure/{id}','Api_V1_ClinicController@ClinicDoctorProcedures');
 
-		    //Post - Clinics
-
+// 		    //Post - Clinics
+
 
 
 
-		    Route::get('clinic/see','Api_V1_ClinicController@see');
-		    Route::post('clinic/post','Api_V1_ClinicController@post');
+// 		    Route::get('clinic/see','Api_V1_ClinicController@see');
+// 		    Route::post('clinic/post','Api_V1_ClinicController@post');
 
-		    //Route::get('doctor/doctordetails','Api_V1_DoctorController@DoctorDetails');
-		    //Route::get('doctor/doctor_details/{clinicid}/{doctorid}/{procedureid}','Api_V1_DoctorController@FullDoctorDetails');
-		    Route::post('doctor/doctor_details','Api_V1_DoctorController@FullDoctorDetails');
-		    Route::post('doctor/slots-refresh','Api_V1_DoctorController@AccessMoreSlots');
-		    Route::get('doctor/availability','Api_V1_DoctorController@getDoctorAvailableSlots');
-
-		    Route::get('doctor/test','Api_V1_DoctorController@test');
-
-
-		    //For doctor
-		    Route::post('doctor/booking-queue','Api_V1_DoctorController@QueueBooking');
-		    Route::post('doctor/booking-slot','Api_V1_DoctorController@SlotsBooking');
-		    //Route::post('doctor/refresh-queue','Api_V1_DoctorController@QueueRefresh');
-		    //Route::post('doctor/refresh-slot','Api_V1_DoctorController@SlotRefresh');
-		    Route::post('doctor/moreslots','Api_V1_DoctorController@DoctorSlotsForDate');
-		    Route::post('doctor/morequeues','Api_V1_DoctorController@DoctorQueueForDate');
-
-		    Route::post('doctor/confirm-queue','Api_V1_DoctorController@ConfirmQueueBooking');
-		    Route::post('doctor/confirm-slot','Api_V1_DoctorController@ConfirmSlotBooking');
-		    Route::post('doctor/booking-delete','Api_V1_DoctorController@BookingDelete');
-
-
-		//Route::resource('auth', 'Api_V1_AuthController');
-
-		    //For insurance company
-		    //GET
-		    Route::get('insurance/company','Api_V1_InsuranceController@getAllInsuranceCompany');
-		    Route::get('insurance/policy','Api_V1_InsuranceController@AllUserInsurancePolicy');
-		    Route::get('insurance/delete','Api_V1_InsuranceController@DeleteInsurancePolicy');
-		    Route::get('insurance/change-primary','Api_V1_InsuranceController@ChangePrimaryPolicy');
-
-		    //POST
-		    Route::post('insurance/add_policy','Api_V1_InsuranceController@AddUserInsurancePolicy');
-
-
-
-		    // nhr/////////////////////////////////////////////////////////////
-
-		    Route::get('clinic/clinic_type', 'Api_V1_ClinicController@getClnicType');
-		    Route::get('new/clinic/clinic_type', 'Api_V1_ClinicController@NewClnicType');
-
-		    Route::get('clinic/clinic_type/sub', 'Api_V1_ClinicController@getClnicTypeSub');
-		    Route::get('clinic/clinic_by_type/{id}', 'Api_V1_ClinicController@getClinicByType');
-		    Route::get('clinic/main_search','Api_V1_ClinicController@mainSearch');
-		    Route::get('clinic/sub_search','Api_V1_ClinicController@subSearch');
-		    Route::get('clinic/get_favourite_clinics','Api_V1_ClinicController@getFavouriteClinics');
-		    Route::get('clinic/get_promo_message','Api_V1_ClinicController@getpromoMessage');
-
-		    Route::post('clinic/favourite', 'Api_V1_ClinicController@favourite');
-
-
-		    // get credit details
-		    Route::get('user/credits', 'Api_V1_AuthController@GetCredits');
-		    Route::post('user/match/promo', 'Api_V1_AuthController@getPromoCredit');
-
-		    // backup email
-		    Route::post('user/create/backup/email', 'Api_V1_AuthController@createBackUpEmail');
-		    // get clinic details from qr code
-		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
-		    // check user pin
-		    Route::post('clinic/send_payment', 'Api_V1_AuthController@checkUserPin');
-		    // send notification to clinic when customer will pay directly to clinic
-		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
-		    // save photo receipt
-		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
-		    // save photo bulk
-		    Route::post('user/save_receipt_bulk', 'Api_V1_AuthController@saveImageReceiptBulk');
-		    // get family coverage sub accounts
-		    Route::get('user/family_coverage_user_lists', 'Api_V1_AuthController@getFamilCoverageAccounts');
-		    // get wallet settings
-		    Route::get('user/wallet_settings', 'Api_V1_AuthController@getWalletSettings');
-		    // update or insert wallet setting
-		    Route::post('user/set_wallet_settings', 'Api_V1_AuthController@setWalletSettings');
-		    // get in-network transaction lists
-		    Route::get('user/in_network_transactions', 'Api_V1_AuthController@getNetworkTransactions');
-		    // get specific in-network transaction
-		    Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
-		    // upload receipt e-claim
-		    // Route::post('user/upload_out_of_network_receipt', 'Api_V1_AuthController@uploadReceipt');
-		    // upload receipt in-network
-		    Route::post('user/upload_in_network_receipt', 'Api_V1_AuthController@uploadInNetworkReceipt');
-		    // get e-claim transactions
-		    Route::get('user/e_claim_transactions', 'Api_V1_AuthController@getEclaimTransactions');
-		    Route::get('user/specific_e_claim_transaction/{id}', 'Api_V1_AuthController@getEclaimDetails');
-		    // upload out-of-network(e-claim receipt)
-		    Route::post("user/save_out_of_network_receipt", 'Api_V1_AuthController@saveEclaimReceipt');
-		    // get lists of spending type
-		    Route::get("user/health_type_lists", 'Api_V1_AuthController@getHealthLists');
-		    // create e-claim transaction
-		    Route::post("user/create_e_claim", 'Api_V1_AuthController@createEclaim');
-	 	});
-	});
-});
-
-
-// version 2 mobile api
-Route::group(array('prefix' => 'v2'), function()
-{
-
-	Route::group(array('after' => 'auth.headers'),function(){
-		// Route::post('auth/signup', 'Api_V1_AuthController@Signup');
-	  	Route::post('auth/login','Api_V1_AuthController@Login');
-	  	// new login method 
-	  	Route::post('auth/new_login','Api_V1_AuthController@newLogin');
-	    //Route::post('auth/login','Api_V1_AuthController@login');
-	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
-	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
-	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
-	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
+// 		    //Route::get('doctor/doctordetails','Api_V1_DoctorController@DoctorDetails');
+// 		    //Route::get('doctor/doctor_details/{clinicid}/{doctorid}/{procedureid}','Api_V1_DoctorController@FullDoctorDetails');
+// 		    Route::post('doctor/doctor_details','Api_V1_DoctorController@FullDoctorDetails');
+// 		    Route::post('doctor/slots-refresh','Api_V1_DoctorController@AccessMoreSlots');
+// 		    Route::get('doctor/availability','Api_V1_DoctorController@getDoctorAvailableSlots');
+
+// 		    Route::get('doctor/test','Api_V1_DoctorController@test');
+
+
+// 		    //For doctor
+// 		    Route::post('doctor/booking-queue','Api_V1_DoctorController@QueueBooking');
+// 		    Route::post('doctor/booking-slot','Api_V1_DoctorController@SlotsBooking');
+// 		    //Route::post('doctor/refresh-queue','Api_V1_DoctorController@QueueRefresh');
+// 		    //Route::post('doctor/refresh-slot','Api_V1_DoctorController@SlotRefresh');
+// 		    Route::post('doctor/moreslots','Api_V1_DoctorController@DoctorSlotsForDate');
+// 		    Route::post('doctor/morequeues','Api_V1_DoctorController@DoctorQueueForDate');
+
+// 		    Route::post('doctor/confirm-queue','Api_V1_DoctorController@ConfirmQueueBooking');
+// 		    Route::post('doctor/confirm-slot','Api_V1_DoctorController@ConfirmSlotBooking');
+// 		    Route::post('doctor/booking-delete','Api_V1_DoctorController@BookingDelete');
+
+
+// 		//Route::resource('auth', 'Api_V1_AuthController');
+
+// 		    //For insurance company
+// 		    //GET
+// 		    Route::get('insurance/company','Api_V1_InsuranceController@getAllInsuranceCompany');
+// 		    Route::get('insurance/policy','Api_V1_InsuranceController@AllUserInsurancePolicy');
+// 		    Route::get('insurance/delete','Api_V1_InsuranceController@DeleteInsurancePolicy');
+// 		    Route::get('insurance/change-primary','Api_V1_InsuranceController@ChangePrimaryPolicy');
+
+// 		    //POST
+// 		    Route::post('insurance/add_policy','Api_V1_InsuranceController@AddUserInsurancePolicy');
+
+
+
+// 		    // nhr/////////////////////////////////////////////////////////////
+
+// 		    Route::get('clinic/clinic_type', 'Api_V1_ClinicController@getClnicType');
+// 		    Route::get('new/clinic/clinic_type', 'Api_V1_ClinicController@NewClnicType');
+
+// 		    Route::get('clinic/clinic_type/sub', 'Api_V1_ClinicController@getClnicTypeSub');
+// 		    Route::get('clinic/clinic_by_type/{id}', 'Api_V1_ClinicController@getClinicByType');
+// 		    Route::get('clinic/main_search','Api_V1_ClinicController@mainSearch');
+// 		    Route::get('clinic/sub_search','Api_V1_ClinicController@subSearch');
+// 		    Route::get('clinic/get_favourite_clinics','Api_V1_ClinicController@getFavouriteClinics');
+// 		    Route::get('clinic/get_promo_message','Api_V1_ClinicController@getpromoMessage');
+
+// 		    Route::post('clinic/favourite', 'Api_V1_ClinicController@favourite');
+
+
+// 		    // get credit details
+// 		    Route::get('user/credits', 'Api_V1_AuthController@GetCredits');
+// 		    Route::post('user/match/promo', 'Api_V1_AuthController@getPromoCredit');
+
+// 		    // backup email
+// 		    Route::post('user/create/backup/email', 'Api_V1_AuthController@createBackUpEmail');
+// 		    // get clinic details from qr code
+// 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
+// 		    // check user pin
+// 		    Route::post('clinic/send_payment', 'Api_V1_AuthController@checkUserPin');
+// 		    // send notification to clinic when customer will pay directly to clinic
+// 		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+// 		    // save photo receipt
+// 		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
+// 		    // save photo bulk
+// 		    Route::post('user/save_receipt_bulk', 'Api_V1_AuthController@saveImageReceiptBulk');
+// 		    // get family coverage sub accounts
+// 		    Route::get('user/family_coverage_user_lists', 'Api_V1_AuthController@getFamilCoverageAccounts');
+// 		    // get wallet settings
+// 		    Route::get('user/wallet_settings', 'Api_V1_AuthController@getWalletSettings');
+// 		    // update or insert wallet setting
+// 		    Route::post('user/set_wallet_settings', 'Api_V1_AuthController@setWalletSettings');
+// 		    // get in-network transaction lists
+// 		    Route::get('user/in_network_transactions', 'Api_V1_AuthController@getNetworkTransactions');
+// 		    // get specific in-network transaction
+// 		    Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
+// 		    // upload receipt e-claim
+// 		    // Route::post('user/upload_out_of_network_receipt', 'Api_V1_AuthController@uploadReceipt');
+// 		    // upload receipt in-network
+// 		    Route::post('user/upload_in_network_receipt', 'Api_V1_AuthController@uploadInNetworkReceipt');
+// 		    // get e-claim transactions
+// 		    Route::get('user/e_claim_transactions', 'Api_V1_AuthController@getEclaimTransactions');
+// 		    Route::get('user/specific_e_claim_transaction/{id}', 'Api_V1_AuthController@getEclaimDetails');
+// 		    // upload out-of-network(e-claim receipt)
+// 		    Route::post("user/save_out_of_network_receipt", 'Api_V1_AuthController@saveEclaimReceipt');
+// 		    // get lists of spending type
+// 		    Route::get("user/health_type_lists", 'Api_V1_AuthController@getHealthLists');
+// 		    // create e-claim transaction
+// 		    Route::post("user/create_e_claim", 'Api_V1_AuthController@createEclaim');
+// 	 	});
+// 	});
+// });
+
+
+// // version 2 mobile api
+// Route::group(array('prefix' => 'v2'), function()
+// {
+
+// 	Route::group(array('after' => 'auth.headers'),function(){
+// 		// Route::post('auth/signup', 'Api_V1_AuthController@Signup');
+// 	  	Route::post('auth/login','Api_V1_AuthController@Login');
+// 	  	// new login method 
+// 	  	Route::post('auth/new_login','Api_V1_AuthController@newLogin');
+// 	    //Route::post('auth/login','Api_V1_AuthController@login');
+// 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
+// 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
+// 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
+// 	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
 
-	 	Route::group(array('before' => 'auth.v2'),function(){
-	 		// test one tap login
-		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');
-		    // reset details
+// 	 	Route::group(array('before' => 'auth.v2'),function(){
+// 	 		// test one tap login
+// 		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');
+// 		    // reset details
 
-		    Route::post('auth/newallergy','Api_V1_AuthController@AddNewAllergy');
-		    Route::post('auth/newcondition','Api_V1_AuthController@AddNewMedicalCondition');
-		    Route::post('auth/newmedication','Api_V1_AuthController@AddNewUserMedication');
-		    Route::post('auth/newhistory','Api_V1_AuthController@AddNewMedicalHistory');
-		    Route::post('auth/update','Api_V1_AuthController@newUpdateUserProfile');
-		    Route::post('auth/updatehistory','Api_V1_AuthController@UpdateMedicalHistory');
-		    Route::post('auth/change-password','Api_V1_AuthController@ChangePassword');
-		    Route::post('auth/device-token','Api_V1_AuthController@AddDeviceToken');
-		    Route::post('auth/disable-profile','Api_V1_AuthController@DisableProfile');
-		    Route::post('auth/otpupdate','Api_V1_AuthController@OTPProfileUpdate');
-		    Route::post('auth/otpvalidation','Api_V1_AuthController@OTPCodeValidation');
-		    Route::post('auth/otpresend','Api_V1_AuthController@OTPCodeResend');
+// 		    Route::post('auth/newallergy','Api_V1_AuthController@AddNewAllergy');
+// 		    Route::post('auth/newcondition','Api_V1_AuthController@AddNewMedicalCondition');
+// 		    Route::post('auth/newmedication','Api_V1_AuthController@AddNewUserMedication');
+// 		    Route::post('auth/newhistory','Api_V1_AuthController@AddNewMedicalHistory');
+// 		    Route::post('auth/update','Api_V1_AuthController@newUpdateUserProfile');
+// 		    Route::post('auth/updatehistory','Api_V1_AuthController@UpdateMedicalHistory');
+// 		    Route::post('auth/change-password','Api_V1_AuthController@ChangePassword');
+// 		    Route::post('auth/device-token','Api_V1_AuthController@AddDeviceToken');
+// 		    Route::post('auth/disable-profile','Api_V1_AuthController@DisableProfile');
+// 		    Route::post('auth/otpupdate','Api_V1_AuthController@OTPProfileUpdate');
+// 		    Route::post('auth/otpvalidation','Api_V1_AuthController@OTPCodeValidation');
+// 		    Route::post('auth/otpresend','Api_V1_AuthController@OTPCodeResend');
 
-		    // create or update pin
-		    Route::post('auth/pin', 'Api_V1_AuthController@pin');
-		    Route::post('auth/update_pin', 'Api_V1_AuthController@updatePin');
+// 		    // create or update pin
+// 		    Route::post('auth/pin', 'Api_V1_AuthController@pin');
+// 		    Route::post('auth/update_pin', 'Api_V1_AuthController@updatePin');
 
-		    //for get
-		    Route::get('auth/logout','Api_V1_AuthController@LogOut');
-		    Route::get('auth/coordinate','Api_V1_AuthController@FindCoordinate');
-		    Route::get('auth/userprofile','Api_V1_AuthController@UserProfile');
-		    Route::get('auth/e_card_details','Api_V1_AuthController@getEcardDetails');
-		    Route::get('auth/deleteallergy','Api_V1_AuthController@DeleteUserAllergy');
-		    Route::get('auth/deletecondition','Api_V1_AuthController@DeleteUserCondition');
-		    Route::get('auth/deletemedication','Api_V1_AuthController@DeleteUserMedication');
-		    Route::get('auth/deletehistory','Api_V1_AuthController@DeleteMedicalHistory');
-
-
-		    //Route::get('auth/create','Api_V1_AuthController@create');
-		    //        array('names' => array('create' => 'photo.build')));
-
-
-		    //clinic
-		    Route::get('clinic/search','Api_V1_ClinicController@Search');
-		    //Route::get('clinic/clinicdetails','Api_V1_ClinicController@ClinicDetails');
-		    Route::get('clinic/clinicdetails/{id}','Api_V1_ClinicController@ClinicDetails');
-		  	Route::get('clinic/all_nearby','Api_V1_ClinicController@Nearby');
-
-		  	Route::get('clinic/paginate_nearby','Api_V1_ClinicController@NewNearby');
-
-		    Route::get('clinic/booking-history','Api_V1_ClinicController@AppointmentHistory');
-		    //Route::get('clinic/booking-detail','Api_V1_ClinicController@AppointmentDetails');
-		    Route::get('clinic/booking-detail/{id}','Api_V1_ClinicController@AppointmentDetails');
-		    Route::get('clinic/booking-delete','Api_V1_ClinicController@AppointmentDelete');
-		    Route::get('clinic/panel-nearby','Api_V1_ClinicController@PanelClinicNearby');
-		    Route::get('clinic/appointment','Api_V1_ClinicController@UserAppointmentValidation');
-		    Route::get('clinic/procedure_details/{id}','Api_V1_ClinicController@ProcedureDetails');
-		    Route::get('clinic/doctor_procedure/{id}','Api_V1_ClinicController@ClinicDoctorProcedures');
-
-		    //Post - Clinics
-
-
-
-
-		    Route::get('clinic/see','Api_V1_ClinicController@see');
-		    Route::post('clinic/post','Api_V1_ClinicController@post');
-
-		    //Route::get('doctor/doctordetails','Api_V1_DoctorController@DoctorDetails');
-		    //Route::get('doctor/doctor_details/{clinicid}/{doctorid}/{procedureid}','Api_V1_DoctorController@FullDoctorDetails');
-		    Route::post('doctor/doctor_details','Api_V1_DoctorController@FullDoctorDetails');
-		    Route::post('doctor/slots-refresh','Api_V1_DoctorController@AccessMoreSlots');
-		    Route::get('doctor/availability','Api_V1_DoctorController@getDoctorAvailableSlots');
-
-		    Route::get('doctor/test','Api_V1_DoctorController@test');
-
-
-		    //For doctor
-		    Route::post('doctor/booking-queue','Api_V1_DoctorController@QueueBooking');
-		    Route::post('doctor/booking-slot','Api_V1_DoctorController@SlotsBooking');
-		    //Route::post('doctor/refresh-queue','Api_V1_DoctorController@QueueRefresh');
-		    //Route::post('doctor/refresh-slot','Api_V1_DoctorController@SlotRefresh');
-		    Route::post('doctor/moreslots','Api_V1_DoctorController@DoctorSlotsForDate');
-		    Route::post('doctor/morequeues','Api_V1_DoctorController@DoctorQueueForDate');
-
-		    Route::post('doctor/confirm-queue','Api_V1_DoctorController@ConfirmQueueBooking');
-		    Route::post('doctor/confirm-slot','Api_V1_DoctorController@ConfirmSlotBooking');
-		    Route::post('doctor/booking-delete','Api_V1_DoctorController@BookingDelete');
-
-
-		//Route::resource('auth', 'Api_V1_AuthController');
-
-		    //For insurance company
-		    //GET
-		    Route::get('insurance/company','Api_V1_InsuranceController@getAllInsuranceCompany');
-		    Route::get('insurance/policy','Api_V1_InsuranceController@AllUserInsurancePolicy');
-		    Route::get('insurance/delete','Api_V1_InsuranceController@DeleteInsurancePolicy');
-		    Route::get('insurance/change-primary','Api_V1_InsuranceController@ChangePrimaryPolicy');
-
-		    //POST
-		    Route::post('insurance/add_policy','Api_V1_InsuranceController@AddUserInsurancePolicy');
-
-
-
-		    // nhr/////////////////////////////////////////////////////////////
-
-		    Route::get('clinic/clinic_type', 'Api_V1_ClinicController@getClnicType');
-		    Route::get('new/clinic/clinic_type', 'Api_V1_ClinicController@NewClnicType');
-
-		    Route::get('clinic/clinic_type/sub', 'Api_V1_ClinicController@getClnicTypeSub');
-		    Route::get('clinic/clinic_by_type/{id}', 'Api_V1_ClinicController@getClinicByType');
-		    Route::get('clinic/main_search','Api_V1_ClinicController@mainSearch');
-		    Route::get('clinic/sub_search','Api_V1_ClinicController@subSearch');
-		    Route::get('clinic/get_favourite_clinics','Api_V1_ClinicController@getFavouriteClinics');
-		    Route::get('clinic/get_promo_message','Api_V1_ClinicController@getpromoMessage');
-
-		    Route::post('clinic/favourite', 'Api_V1_ClinicController@favourite');
-
-
-		    // get credit details
-		    Route::get('user/credits', 'Api_V1_AuthController@getUserWallet');
-		    Route::get('member/wallet_details', 'Api_V1_AuthController@getMemberPartialWallet');
-		    Route::post('user/match/promo', 'Api_V1_AuthController@getPromoCredit');
-
-		    // backup email
-		    Route::post('user/create/backup/email', 'Api_V1_AuthController@createBackUpEmail');
-		    // get clinic details from qr code
-		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
-		    // check user pin
-		    Route::post('clinic/send_payment', 'Api_V1_TransactionController@payCredits');
-		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
-		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
-		    // send notification to clinic when customer will pay directly to clinic
-		    // Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
-		    Route::post('clinic/payment_direct', 'Api_V1_TransactionController@notifyClinicDirectPayment');
-		    // save photo receipt
-		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
-		    // save photo bulk
-		    Route::post('user/save_receipt_bulk', 'Api_V1_AuthController@saveImageReceiptBulk');
-		    // get family coverage sub accounts
-		    Route::get('user/family_coverage_user_lists', 'Api_V1_AuthController@getFamilCoverageAccounts');
-		    // get wallet settings
-		    Route::get('user/wallet_settings', 'Api_V1_AuthController@getWalletSettings');
-		    // update or insert wallet setting
-		    Route::post('user/set_wallet_settings', 'Api_V1_AuthController@setWalletSettings');
-		    // get in-network transaction lists
-		    Route::get('user/in_network_transactions', 'Api_V1_TransactionController@getNetworkTransactions');
-		    // get specific in-network transaction
-		    // Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
-		    Route::get('user/specific_in_network/{id}', 'Api_V1_TransactionController@getInNetworkDetails');
-		    // upload receipt e-claim
-		    // Route::post('user/upload_out_of_network_receipt', 'Api_V1_AuthController@uploadReceipt');
-		    // upload receipt in-network
-		    Route::post('user/upload_in_network_receipt', 'Api_V1_AuthController@uploadInNetworkReceipt');
-		    Route::post('user/upload_in_network_receipt_bulk', 'Api_V1_TransactionController@uploadInNetworkReceiptBulk');
-		    // get e-claim transactions
-		    Route::get('user/e_claim_transactions', 'Api_V1_AuthController@getEclaimTransactions');
-		    Route::get('user/specific_e_claim_transaction/{id}', 'Api_V1_AuthController@getEclaimDetails');
-		    // upload out-of-network(e-claim receipt)
-		    Route::post("user/save_out_of_network_receipt", 'Api_V1_AuthController@saveEclaimReceipt');
-		    // get lists of spending type
-		    Route::get("user/health_type_lists", 'Api_V1_AuthController@getHealthLists');
-		    // create e-claim transaction
-		    Route::post("user/create_e_claim", 'Api_V1_AuthController@createEclaim');
-		    // get member list for employee
-		    Route::get("user/member_lists", 'Api_V1_AuthController@getFamilCoverageAccounts');
-		    // save device token
-			Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
-			// get currency lists
-			Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
-			// get app notification message
-			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
-			// update notification to read
-			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
-			// remove check in data
-			Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
-			// get check_in_id data
-			Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
-			// check e-claim member visit date spending
-			Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
-			// get member dates coverage
-			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
-	 	});
-	});
-});
+// 		    //for get
+// 		    Route::get('auth/logout','Api_V1_AuthController@LogOut');
+// 		    Route::get('auth/coordinate','Api_V1_AuthController@FindCoordinate');
+// 		    Route::get('auth/userprofile','Api_V1_AuthController@UserProfile');
+// 		    Route::get('auth/e_card_details','Api_V1_AuthController@getEcardDetails');
+// 		    Route::get('auth/deleteallergy','Api_V1_AuthController@DeleteUserAllergy');
+// 		    Route::get('auth/deletecondition','Api_V1_AuthController@DeleteUserCondition');
+// 		    Route::get('auth/deletemedication','Api_V1_AuthController@DeleteUserMedication');
+// 		    Route::get('auth/deletehistory','Api_V1_AuthController@DeleteMedicalHistory');
+
+
+// 		    //Route::get('auth/create','Api_V1_AuthController@create');
+// 		    //        array('names' => array('create' => 'photo.build')));
+
+
+// 		    //clinic
+// 		    Route::get('clinic/search','Api_V1_ClinicController@Search');
+// 		    //Route::get('clinic/clinicdetails','Api_V1_ClinicController@ClinicDetails');
+// 		    Route::get('clinic/clinicdetails/{id}','Api_V1_ClinicController@ClinicDetails');
+// 		  	Route::get('clinic/all_nearby','Api_V1_ClinicController@Nearby');
+
+// 		  	Route::get('clinic/paginate_nearby','Api_V1_ClinicController@NewNearby');
+
+// 		    Route::get('clinic/booking-history','Api_V1_ClinicController@AppointmentHistory');
+// 		    //Route::get('clinic/booking-detail','Api_V1_ClinicController@AppointmentDetails');
+// 		    Route::get('clinic/booking-detail/{id}','Api_V1_ClinicController@AppointmentDetails');
+// 		    Route::get('clinic/booking-delete','Api_V1_ClinicController@AppointmentDelete');
+// 		    Route::get('clinic/panel-nearby','Api_V1_ClinicController@PanelClinicNearby');
+// 		    Route::get('clinic/appointment','Api_V1_ClinicController@UserAppointmentValidation');
+// 		    Route::get('clinic/procedure_details/{id}','Api_V1_ClinicController@ProcedureDetails');
+// 		    Route::get('clinic/doctor_procedure/{id}','Api_V1_ClinicController@ClinicDoctorProcedures');
+
+// 		    //Post - Clinics
+
+
+
+
+// 		    Route::get('clinic/see','Api_V1_ClinicController@see');
+// 		    Route::post('clinic/post','Api_V1_ClinicController@post');
+
+// 		    //Route::get('doctor/doctordetails','Api_V1_DoctorController@DoctorDetails');
+// 		    //Route::get('doctor/doctor_details/{clinicid}/{doctorid}/{procedureid}','Api_V1_DoctorController@FullDoctorDetails');
+// 		    Route::post('doctor/doctor_details','Api_V1_DoctorController@FullDoctorDetails');
+// 		    Route::post('doctor/slots-refresh','Api_V1_DoctorController@AccessMoreSlots');
+// 		    Route::get('doctor/availability','Api_V1_DoctorController@getDoctorAvailableSlots');
+
+// 		    Route::get('doctor/test','Api_V1_DoctorController@test');
+
+
+// 		    //For doctor
+// 		    Route::post('doctor/booking-queue','Api_V1_DoctorController@QueueBooking');
+// 		    Route::post('doctor/booking-slot','Api_V1_DoctorController@SlotsBooking');
+// 		    //Route::post('doctor/refresh-queue','Api_V1_DoctorController@QueueRefresh');
+// 		    //Route::post('doctor/refresh-slot','Api_V1_DoctorController@SlotRefresh');
+// 		    Route::post('doctor/moreslots','Api_V1_DoctorController@DoctorSlotsForDate');
+// 		    Route::post('doctor/morequeues','Api_V1_DoctorController@DoctorQueueForDate');
+
+// 		    Route::post('doctor/confirm-queue','Api_V1_DoctorController@ConfirmQueueBooking');
+// 		    Route::post('doctor/confirm-slot','Api_V1_DoctorController@ConfirmSlotBooking');
+// 		    Route::post('doctor/booking-delete','Api_V1_DoctorController@BookingDelete');
+
+
+// 		//Route::resource('auth', 'Api_V1_AuthController');
+
+// 		    //For insurance company
+// 		    //GET
+// 		    Route::get('insurance/company','Api_V1_InsuranceController@getAllInsuranceCompany');
+// 		    Route::get('insurance/policy','Api_V1_InsuranceController@AllUserInsurancePolicy');
+// 		    Route::get('insurance/delete','Api_V1_InsuranceController@DeleteInsurancePolicy');
+// 		    Route::get('insurance/change-primary','Api_V1_InsuranceController@ChangePrimaryPolicy');
+
+// 		    //POST
+// 		    Route::post('insurance/add_policy','Api_V1_InsuranceController@AddUserInsurancePolicy');
+
+
+
+// 		    // nhr/////////////////////////////////////////////////////////////
+
+// 		    Route::get('clinic/clinic_type', 'Api_V1_ClinicController@getClnicType');
+// 		    Route::get('new/clinic/clinic_type', 'Api_V1_ClinicController@NewClnicType');
+
+// 		    Route::get('clinic/clinic_type/sub', 'Api_V1_ClinicController@getClnicTypeSub');
+// 		    Route::get('clinic/clinic_by_type/{id}', 'Api_V1_ClinicController@getClinicByType');
+// 		    Route::get('clinic/main_search','Api_V1_ClinicController@mainSearch');
+// 		    Route::get('clinic/sub_search','Api_V1_ClinicController@subSearch');
+// 		    Route::get('clinic/get_favourite_clinics','Api_V1_ClinicController@getFavouriteClinics');
+// 		    Route::get('clinic/get_promo_message','Api_V1_ClinicController@getpromoMessage');
+
+// 		    Route::post('clinic/favourite', 'Api_V1_ClinicController@favourite');
+
+
+// 		    // get credit details
+// 		    Route::get('user/credits', 'Api_V1_AuthController@getUserWallet');
+// 		    Route::get('member/wallet_details', 'Api_V1_AuthController@getMemberPartialWallet');
+// 		    Route::post('user/match/promo', 'Api_V1_AuthController@getPromoCredit');
+
+// 		    // backup email
+// 		    Route::post('user/create/backup/email', 'Api_V1_AuthController@createBackUpEmail');
+// 		    // get clinic details from qr code
+// 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
+// 		    // check user pin
+// 		    Route::post('clinic/send_payment', 'Api_V1_TransactionController@payCredits');
+// 		    // Route::post('clinic/create_payment', 'Api_V1_AuthController@payCreditsNew');
+// 		    Route::post('clinic/create_payment', 'Api_V1_TransactionController@payCredits');
+// 		    // send notification to clinic when customer will pay directly to clinic
+// 		    // Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
+// 		    Route::post('clinic/payment_direct', 'Api_V1_TransactionController@notifyClinicDirectPayment');
+// 		    // save photo receipt
+// 		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
+// 		    // save photo bulk
+// 		    Route::post('user/save_receipt_bulk', 'Api_V1_AuthController@saveImageReceiptBulk');
+// 		    // get family coverage sub accounts
+// 		    Route::get('user/family_coverage_user_lists', 'Api_V1_AuthController@getFamilCoverageAccounts');
+// 		    // get wallet settings
+// 		    Route::get('user/wallet_settings', 'Api_V1_AuthController@getWalletSettings');
+// 		    // update or insert wallet setting
+// 		    Route::post('user/set_wallet_settings', 'Api_V1_AuthController@setWalletSettings');
+// 		    // get in-network transaction lists
+// 		    Route::get('user/in_network_transactions', 'Api_V1_TransactionController@getNetworkTransactions');
+// 		    // get specific in-network transaction
+// 		    // Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
+// 		    Route::get('user/specific_in_network/{id}', 'Api_V1_TransactionController@getInNetworkDetails');
+// 		    // upload receipt e-claim
+// 		    // Route::post('user/upload_out_of_network_receipt', 'Api_V1_AuthController@uploadReceipt');
+// 		    // upload receipt in-network
+// 		    Route::post('user/upload_in_network_receipt', 'Api_V1_AuthController@uploadInNetworkReceipt');
+// 		    Route::post('user/upload_in_network_receipt_bulk', 'Api_V1_TransactionController@uploadInNetworkReceiptBulk');
+// 		    // get e-claim transactions
+// 		    Route::get('user/e_claim_transactions', 'Api_V1_AuthController@getEclaimTransactions');
+// 		    Route::get('user/specific_e_claim_transaction/{id}', 'Api_V1_AuthController@getEclaimDetails');
+// 		    // upload out-of-network(e-claim receipt)
+// 		    Route::post("user/save_out_of_network_receipt", 'Api_V1_AuthController@saveEclaimReceipt');
+// 		    // get lists of spending type
+// 		    Route::get("user/health_type_lists", 'Api_V1_AuthController@getHealthLists');
+// 		    // create e-claim transaction
+// 		    Route::post("user/create_e_claim", 'Api_V1_AuthController@createEclaim');
+// 		    // get member list for employee
+// 		    Route::get("user/member_lists", 'Api_V1_AuthController@getFamilCoverageAccounts');
+// 		    // save device token
+// 			Route::post('user/save_device_token', 'PushNotificationController@saveDeviceToken');
+// 			// get currency lists
+// 			Route::get("get/currency_lists", 'Api_V1_AuthController@getCurrencyLists');
+// 			// get app notification message
+// 			Route::get("get/app_update_notification", 'Api_V1_AuthController@getAppUpdateNotification');
+// 			// update notification to read
+// 			Route::post("update/user_notification_read", 'Api_V1_AuthController@updateUserNotification');
+// 			// remove check in data
+// 			Route::post('clinic/cancel_visit', 'Api_V1_AuthController@removeCheckIn');
+// 			// get check_in_id data
+// 			Route::get('get/check_in_data', 'Api_V1_TransactionController@getCheckInData');
+// 			// check e-claim member visit date spending
+// 			Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
+// 			// get member dates coverage
+// 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
+// 	 	});
+// 	});
+// });
 
 // check in view layout
 // Route::get('app/check_in/view/{id}', 'QRCodeController@checkInView');
@@ -1123,314 +1123,314 @@ Route::group(array('prefix' => 'v2'), function()
 // Route::post('app/save/payment', 'UserCheckInController@saveCheckInPayment');
 
 //Route::group(array('domain' => 'www.tag.loc','prefix' => ''), function()
-Route::group(array('prefix' => 'app'), function()
-{
-    Route::get('auth/getme','App_AuthController@getmenow');
-    //xxxxxxxxxxxxx     For Authentication  xxxxxxxxxxxx
-    //Auth : GET
-    Route::get('auth/register','App_AuthController@CompleteDoctorRegistration');
-    Route::get('auth/login','App_AuthController@MainLogin');
-    Route::get('auth/logout','App_AuthController@LogOutNow');
-    Route::get('auth/forgot','App_AuthController@ForgotPassword');
-    Route::get('auth/password-reset','App_AuthController@ResetPassword');
-    Route::get('auth/newClinic','App_AuthController@newClinic');
+// Route::group(array('prefix' => 'app'), function()
+// {
+//     Route::get('auth/getme','App_AuthController@getmenow');
+//     //xxxxxxxxxxxxx     For Authentication  xxxxxxxxxxxx
+//     //Auth : GET
+//     Route::get('auth/register','App_AuthController@CompleteDoctorRegistration');
+//     Route::get('auth/login','App_AuthController@MainLogin');
+//     Route::get('auth/logout','App_AuthController@LogOutNow');
+//     Route::get('auth/forgot','App_AuthController@ForgotPassword');
+//     Route::get('auth/password-reset','App_AuthController@ResetPassword');
+//     Route::get('auth/newClinic','App_AuthController@newClinic');
 
 
 
-        //Test Route for werb Here
-        //Route::get('auth/file-upload','App_AuthController@FileUpload');
-        //Route::any('auth/upload','App_AuthController@Upload');
-        //Route::get('auth/push','App_AuthController@PushNotification');
+//         //Test Route for werb Here
+//         //Route::get('auth/file-upload','App_AuthController@FileUpload');
+//         //Route::any('auth/upload','App_AuthController@Upload');
+//         //Route::get('auth/push','App_AuthController@PushNotification');
 
-        //Route::get('auth/testshow_upload','App_AuthController@TestShowFileUpload');
-        //Route::post('auth/test_upload','App_AuthController@TestUpload');
-
-
-    //Auth : POST
-    Route::POST('auth/signup','App_AuthController@MainSignUp');
-    Route::POST('auth/loginnow','App_AuthController@ProcessLogin');
-    Route::POST('auth/forgot-password','App_AuthController@ProcessForgotPassword');
-    Route::POST('auth/resetpassword','App_AuthController@ProcessResetPassword');
-    Route::POST('auth/find-user','App_AuthController@FindNricUser');
-
-    // add new clinic nhr
-    Route::post('auth/newClinic','Admin_ClinicController@newClinic');
-
-    //This is for testing purpose
-    //Route::get('auth/emailtest','App_AuthController@sendEmail');
-    Route::get('auth/otptest','App_AuthController@sendOTP');
-    Route::get('auth/report','App_AuthController@GetReports');
-
-    //Cron Jobs Implementation
-    //Route::get('cron/test','CronController@CronTest');
-    Route::get('cron/reminder-today','CronController@RemindAppointment');
-    Route::get('cron/reminder-hours','CronController@RemindAppointmentInHours');
-    Route::get('cron/reminder-minutes','CronController@RemindAppointmentInMinutes');
-    Route::get('cron/diactivate_booking','CronController@DiactivateBookings');
-
-    Route::get('cron/reminder-tomorrow','CronController@SMSAppointmentBeforeDay');
-    Route::get('cron/reminder-hour','CronController@SMSAppointmentBeforeHour');
-    Route::get('cron/delete-google-event','CronController@deleteGoogleEvent');
-
-    Route::group(array('before' => 'auth.clinic'), function( ){
-        //xxxxxxxxxxxxxx    For Clinic Areas    xxxxxxxxxxxxxx
-        //Clinic : GET
-        //Route::get('clinic/clinic-settings','App_ClinicController@ClinicSettings');
-        Route::get('clinic/manage-doctors','App_ClinicController@ManageDoctors');
-        Route::get('clinic/new-doctor','App_ClinicController@AddDoctorToClinic');
-        Route::get('clinic/dashboard','App_ClinicController@ClinicDashboard');
-        Route::get('clinic/booking','App_ClinicController@BookingPage');
-
-        Route::get('clinic/appointment','App_ClinicController@BookNewAppointment');
-        Route::get('clinic/settings','App_ClinicController@ClinicSettings');
-
-        Route::get('clinic/settings-dashboard','App_ClinicController@ClinicSettingDashboard');
-        Route::get('clinic/dashboard-booking/{id}','App_ClinicController@ClinicDashboardBooking');
-
-        // get clinic details
-        Route::get('clinic/clinic_details/{id}','App_ClinicController@ClinicDetails');
-        // get clicni details from Session
-        Route::get('clinic/details','App_ClinicController@ClinicDetailsFromSession');
-        Route::get('clinic/calendar-integration','App_ClinicController@CalendarIntegrationViewPage');
-        Route::get('clinic/clinic-details','App_ClinicController@ClinicDetailsPage');
-        Route::get('clinic/clinic-procedure','App_ClinicController@ClinicAddProcedurePage');
-        Route::get('clinic/clinic-doctor','App_ClinicController@ClinicAddDoctorPage');
-        Route::get('clinic/clinic-doctors-view','App_ClinicController@ClinicDoctorsViewPage');
-        Route::get('clinic/clinic-doctors-home','App_ClinicController@ClinicDoctorsHomePage');
-        Route::get('clinic/update-password-home','App_ClinicController@ClinicUpdatePasswordPage');
-
-        Route::get('clinic/calendar-integration','App_ClinicController@CalendarIntegrationViewPage');
-        Route::get('clinic/button-integration','App_ClinicController@buttonIntegrationViewPage');
-
-        Route::get('clinic/opening-times-home','App_ClinicController@ClinicOpeningTimesPage');
-        Route::get('clinic/doctor-availability','App_ClinicController@ClinicDoctorAvailabilityPage');
-        Route::get('clinic/appointment-home-view','HomeController@showCalender'); //boom
-        Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
-        Route::get('clinic/appointment-doctor-view/{id}','App_ClinicController@SingleDoctorAppointmentPage');
-
-        Route::get('clinic/calendar-view-single','HomeController@showMainCalendarSingleView'); //boom
-        Route::get('clinic/calendar-view-group','HomeController@showMainCalendarGroupView'); //boom
-
-        Route::get('clinic/dashboard-summary','HomeController@summaryDashboard'); //boom
-        Route::get('clinic/mednefits-tutorials','HomeController@needHelpPage'); //boom
+//         //Route::get('auth/testshow_upload','App_AuthController@TestShowFileUpload');
+//         //Route::post('auth/test_upload','App_AuthController@TestUpload');
 
 
-        Route::get('clinic/test','App_ClinicController@test');
-        Route::get('clinic/ajax','App_ClinicController@ajax');
+//     //Auth : POST
+//     Route::POST('auth/signup','App_AuthController@MainSignUp');
+//     Route::POST('auth/loginnow','App_AuthController@ProcessLogin');
+//     Route::POST('auth/forgot-password','App_AuthController@ProcessForgotPassword');
+//     Route::POST('auth/resetpassword','App_AuthController@ProcessResetPassword');
+//     Route::POST('auth/find-user','App_AuthController@FindNricUser');
 
-        //Clinic : POST
-        Route::post('clinic/ajaxpost','App_ClinicController@ajaxpost');
-        Route::post('clinic/clinicdata','App_ClinicController@ClinicData');
-        Route::post('clinic/load-booking','App_ClinicController@AjaxBookingPage');
+//     // add new clinic nhr
+//     Route::post('auth/newClinic','Admin_ClinicController@newClinic');
 
-        Route::post('clinic/ajax-settings-dashboard','App_ClinicController@ClinicSettingDashboardAJAX');
-        Route::post('clinic/ajax-dashboard-booking','App_ClinicController@ClinicDashboardBookingAJAX');
+//     //This is for testing purpose
+//     //Route::get('auth/emailtest','App_AuthController@sendEmail');
+//     Route::get('auth/otptest','App_AuthController@sendOTP');
+//     Route::get('auth/report','App_AuthController@GetReports');
 
-        Route::post('clinic/clinic-image-upload','App_ClinicController@ClinicProfileImageUpload');
-        Route::post('clinic/clinic-profile-update','App_ClinicController@ClinicDetailsPageUpdate');
+//     //Cron Jobs Implementation
+//     //Route::get('cron/test','CronController@CronTest');
+//     Route::get('cron/reminder-today','CronController@RemindAppointment');
+//     Route::get('cron/reminder-hours','CronController@RemindAppointmentInHours');
+//     Route::get('cron/reminder-minutes','CronController@RemindAppointmentInMinutes');
+//     Route::get('cron/diactivate_booking','CronController@DiactivateBookings');
 
-        Route::post('clinic/add-procedure','App_ClinicController@ClinicAddProcedure');
-        Route::post('clinic/delete-procedure','App_ClinicController@ClinicDeleteProcedure');
-        Route::post('clinic/add-doctor','App_ClinicController@ClinicAddDoctors');
-        Route::post('clinic/delete-doctor','App_ClinicController@ClinicDoctorsDelete');
-        Route::post('clinic/update-password','App_ClinicController@ClinicPasswordUpdate');
-        Route::post('clinic/opening-times','App_ClinicController@ClinicOpeningTimes');
-        Route::post('clinic/delete-opening-times','App_ClinicController@ClinicDeleteOpeningTimes');
-        Route::post('clinic/clinic-holidays','App_ClinicController@AddClinicHolidays');
-        Route::post('clinic/delete-clinic-holiday','App_ClinicController@DeleteClinicHolidays');
-        Route::post('clinic/load-doctor-availability','App_ClinicController@LoadClinicDoctorAvailabilityPage');
-        Route::post('clinic/availability-times','App_ClinicController@AddDoctorAvailabilityTimes');
-        Route::post('clinic/repeat-action','App_ClinicController@RepeatTimeActions');
-        Route::post('clinic/open-booking-page','App_ClinicController@OpenBookingPage');
-        Route::post('clinic/open-booking-update','App_ClinicController@OpenBookingUpdate');
-        Route::post('clinic/load-booking-popup','App_ClinicController@LoadBookingPopup');
+//     Route::get('cron/reminder-tomorrow','CronController@SMSAppointmentBeforeDay');
+//     Route::get('cron/reminder-hour','CronController@SMSAppointmentBeforeHour');
+//     Route::get('cron/delete-google-event','CronController@deleteGoogleEvent');
 
-        Route::post('clinic/doctor-procedures','App_ClinicController@LoadDoctorProcedures');
-        Route::post('clinic/new-appointment','App_ClinicController@NewClinicAppointment');
-        Route::post('clinic/update-appointment','App_ClinicController@UpdateClinicAppointment');
-        Route::post('clinic/delete-appointment','App_ClinicController@DeleteClinicAppointment');
-        Route::post('clinic/conclude-appointment','App_ClinicController@ConcludeClinicAppointment');
-        Route::post('clinic/load-appointment-view','App_ClinicController@LoadDoctorsAppointmentView');
-        // save appointment from reserve blocker
-        Route::post('clinic/save-appointment-reserver', 'App_ClinicController@saveAppointmentFromReserve');
-        Route::post('clinic/load-doctors-view','App_ClinicController@LoadDoctorsSelectionView');
-        Route::post('clinic/load-singledoctor-view','App_ClinicController@LoadSingleDoctorView');
-        Route::post('clinic/change-procedure','App_ClinicController@ChangeProcedures');
-        Route::post('clinic/change-startdate','App_ClinicController@ChangeStartDate');
-        Route::get('clinic/doctor-update-page/{id}','App_ClinicController@UpdateDoctorPage');
-        Route::post('clinic/update-doctor','App_ClinicController@UpdateDoctorDetails');
-        Route::post('clinic/channel_update','App_ClinicController@UpdateBookingChannel');
+//     Route::group(array('before' => 'auth.clinic'), function( ){
+//         //xxxxxxxxxxxxxx    For Clinic Areas    xxxxxxxxxxxxxx
+//         //Clinic : GET
+//         //Route::get('clinic/clinic-settings','App_ClinicController@ClinicSettings');
+//         Route::get('clinic/manage-doctors','App_ClinicController@ManageDoctors');
+//         Route::get('clinic/new-doctor','App_ClinicController@AddDoctorToClinic');
+//         Route::get('clinic/dashboard','App_ClinicController@ClinicDashboard');
+//         Route::get('clinic/booking','App_ClinicController@BookingPage');
 
-        //Route::get('clinic/','App_ClinicController@index');
-        //Route::get('auth/create', 'App_AuthController@create');
-    		Route::resource('auth', 'App_AuthController');
+//         Route::get('clinic/appointment','App_ClinicController@BookNewAppointment');
+//         Route::get('clinic/settings','App_ClinicController@ClinicSettings');
 
-        //xxxxxxxxxxx       For Doctor Area         xxxxxxxxxxxxxxxx
-        //Doctor    :   POST
-        Route::post('doctor/manageslots','App_DoctorController@ManageDoctorSlots');
-        Route::post('doctor/newdoctor','App_DoctorController@AddNewDoctor');
-        Route::post('doctor/updatedoctor','App_DoctorController@UpdateDoctor');
-        Route::post('doctor/manage-slotdetail','App_DoctorController@ManageSlotDetails');
-        Route::post('doctor/manage-slotdate','App_DoctorController@ManageSlotsForDate');
+//         Route::get('clinic/settings-dashboard','App_ClinicController@ClinicSettingDashboard');
+//         Route::get('clinic/dashboard-booking/{id}','App_ClinicController@ClinicDashboardBooking');
 
-        Route::post('doctor/booking-queue','App_DoctorController@QueueSlotBooking');
-        Route::post('doctor/delete-appointment','App_DoctorController@DeleteUserAppointment');
-        Route::post('doctor/delete-popup','App_DoctorController@OpenDeleteAppointment');
-        Route::post('doctor/manage-queue','App_DoctorController@StoppedDoctorQueue');
-        Route::post('doctor/start-queue','App_DoctorController@StartedDoctorQueue');
-        Route::post('doctor/booking','App_DoctorController@DoctorBooking');
-        Route::post('doctor/ajax-booking','App_DoctorController@AjaxDoctorBooking');
-        Route::post('doctor/diagnosis','App_DoctorController@DoctorDiagnosis');
+//         // get clinic details
+//         Route::get('clinic/clinic_details/{id}','App_ClinicController@ClinicDetails');
+//         // get clicni details from Session
+//         Route::get('clinic/details','App_ClinicController@ClinicDetailsFromSession');
+//         Route::get('clinic/calendar-integration','App_ClinicController@CalendarIntegrationViewPage');
+//         Route::get('clinic/clinic-details','App_ClinicController@ClinicDetailsPage');
+//         Route::get('clinic/clinic-procedure','App_ClinicController@ClinicAddProcedurePage');
+//         Route::get('clinic/clinic-doctor','App_ClinicController@ClinicAddDoctorPage');
+//         Route::get('clinic/clinic-doctors-view','App_ClinicController@ClinicDoctorsViewPage');
+//         Route::get('clinic/clinic-doctors-home','App_ClinicController@ClinicDoctorsHomePage');
+//         Route::get('clinic/update-password-home','App_ClinicController@ClinicUpdatePasswordPage');
+
+//         Route::get('clinic/calendar-integration','App_ClinicController@CalendarIntegrationViewPage');
+//         Route::get('clinic/button-integration','App_ClinicController@buttonIntegrationViewPage');
+
+//         Route::get('clinic/opening-times-home','App_ClinicController@ClinicOpeningTimesPage');
+//         Route::get('clinic/doctor-availability','App_ClinicController@ClinicDoctorAvailabilityPage');
+//         Route::get('clinic/appointment-home-view','HomeController@showCalender'); //boom
+//         Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
+//         Route::get('clinic/appointment-doctor-view/{id}','App_ClinicController@SingleDoctorAppointmentPage');
+
+//         Route::get('clinic/calendar-view-single','HomeController@showMainCalendarSingleView'); //boom
+//         Route::get('clinic/calendar-view-group','HomeController@showMainCalendarGroupView'); //boom
+
+//         Route::get('clinic/dashboard-summary','HomeController@summaryDashboard'); //boom
+//         Route::get('clinic/mednefits-tutorials','HomeController@needHelpPage'); //boom
 
 
+//         Route::get('clinic/test','App_ClinicController@test');
+//         Route::get('clinic/ajax','App_ClinicController@ajax');
+
+//         //Clinic : POST
+//         Route::post('clinic/ajaxpost','App_ClinicController@ajaxpost');
+//         Route::post('clinic/clinicdata','App_ClinicController@ClinicData');
+//         Route::post('clinic/load-booking','App_ClinicController@AjaxBookingPage');
+
+//         Route::post('clinic/ajax-settings-dashboard','App_ClinicController@ClinicSettingDashboardAJAX');
+//         Route::post('clinic/ajax-dashboard-booking','App_ClinicController@ClinicDashboardBookingAJAX');
+
+//         Route::post('clinic/clinic-image-upload','App_ClinicController@ClinicProfileImageUpload');
+//         Route::post('clinic/clinic-profile-update','App_ClinicController@ClinicDetailsPageUpdate');
+
+//         Route::post('clinic/add-procedure','App_ClinicController@ClinicAddProcedure');
+//         Route::post('clinic/delete-procedure','App_ClinicController@ClinicDeleteProcedure');
+//         Route::post('clinic/add-doctor','App_ClinicController@ClinicAddDoctors');
+//         Route::post('clinic/delete-doctor','App_ClinicController@ClinicDoctorsDelete');
+//         Route::post('clinic/update-password','App_ClinicController@ClinicPasswordUpdate');
+//         Route::post('clinic/opening-times','App_ClinicController@ClinicOpeningTimes');
+//         Route::post('clinic/delete-opening-times','App_ClinicController@ClinicDeleteOpeningTimes');
+//         Route::post('clinic/clinic-holidays','App_ClinicController@AddClinicHolidays');
+//         Route::post('clinic/delete-clinic-holiday','App_ClinicController@DeleteClinicHolidays');
+//         Route::post('clinic/load-doctor-availability','App_ClinicController@LoadClinicDoctorAvailabilityPage');
+//         Route::post('clinic/availability-times','App_ClinicController@AddDoctorAvailabilityTimes');
+//         Route::post('clinic/repeat-action','App_ClinicController@RepeatTimeActions');
+//         Route::post('clinic/open-booking-page','App_ClinicController@OpenBookingPage');
+//         Route::post('clinic/open-booking-update','App_ClinicController@OpenBookingUpdate');
+//         Route::post('clinic/load-booking-popup','App_ClinicController@LoadBookingPopup');
+
+//         Route::post('clinic/doctor-procedures','App_ClinicController@LoadDoctorProcedures');
+//         Route::post('clinic/new-appointment','App_ClinicController@NewClinicAppointment');
+//         Route::post('clinic/update-appointment','App_ClinicController@UpdateClinicAppointment');
+//         Route::post('clinic/delete-appointment','App_ClinicController@DeleteClinicAppointment');
+//         Route::post('clinic/conclude-appointment','App_ClinicController@ConcludeClinicAppointment');
+//         Route::post('clinic/load-appointment-view','App_ClinicController@LoadDoctorsAppointmentView');
+//         // save appointment from reserve blocker
+//         Route::post('clinic/save-appointment-reserver', 'App_ClinicController@saveAppointmentFromReserve');
+//         Route::post('clinic/load-doctors-view','App_ClinicController@LoadDoctorsSelectionView');
+//         Route::post('clinic/load-singledoctor-view','App_ClinicController@LoadSingleDoctorView');
+//         Route::post('clinic/change-procedure','App_ClinicController@ChangeProcedures');
+//         Route::post('clinic/change-startdate','App_ClinicController@ChangeStartDate');
+//         Route::get('clinic/doctor-update-page/{id}','App_ClinicController@UpdateDoctorPage');
+//         Route::post('clinic/update-doctor','App_ClinicController@UpdateDoctorDetails');
+//         Route::post('clinic/channel_update','App_ClinicController@UpdateBookingChannel');
+
+//         //Route::get('clinic/','App_ClinicController@index');
+//         //Route::get('auth/create', 'App_AuthController@create');
+//     		Route::resource('auth', 'App_AuthController');
+
+//         //xxxxxxxxxxx       For Doctor Area         xxxxxxxxxxxxxxxx
+//         //Doctor    :   POST
+//         Route::post('doctor/manageslots','App_DoctorController@ManageDoctorSlots');
+//         Route::post('doctor/newdoctor','App_DoctorController@AddNewDoctor');
+//         Route::post('doctor/updatedoctor','App_DoctorController@UpdateDoctor');
+//         Route::post('doctor/manage-slotdetail','App_DoctorController@ManageSlotDetails');
+//         Route::post('doctor/manage-slotdate','App_DoctorController@ManageSlotsForDate');
+
+//         Route::post('doctor/booking-queue','App_DoctorController@QueueSlotBooking');
+//         Route::post('doctor/delete-appointment','App_DoctorController@DeleteUserAppointment');
+//         Route::post('doctor/delete-popup','App_DoctorController@OpenDeleteAppointment');
+//         Route::post('doctor/manage-queue','App_DoctorController@StoppedDoctorQueue');
+//         Route::post('doctor/start-queue','App_DoctorController@StartedDoctorQueue');
+//         Route::post('doctor/booking','App_DoctorController@DoctorBooking');
+//         Route::post('doctor/ajax-booking','App_DoctorController@AjaxDoctorBooking');
+//         Route::post('doctor/diagnosis','App_DoctorController@DoctorDiagnosis');
 
 
 
 
-        //Doctor    :   GET
-        Route::get('doctor/settings','App_DoctorController@DoctorSettings');
-        Route::get('doctor/dashboard','App_DoctorController@doctorDashboard');
-        Route::get('doctor/home','App_DoctorController@DoctorHome');
+
+
+//         //Doctor    :   GET
+//         Route::get('doctor/settings','App_DoctorController@DoctorSettings');
+//         Route::get('doctor/dashboard','App_DoctorController@doctorDashboard');
+//         Route::get('doctor/home','App_DoctorController@DoctorHome');
 
 
 
-            //Route::get('doctor/file-upload','App_DoctorController@DoctorUpload');
-            //Route::any('doctor/upload','App_DoctorController@Upload');
+//             //Route::get('doctor/file-upload','App_DoctorController@DoctorUpload');
+//             //Route::any('doctor/upload','App_DoctorController@Upload');
 
-        // transaction
-        Route::post('clinic/appointment/transaction', 'TransactionController@checkAppointmentTransaction');
-        // transaction tests
-        Route::post('clinic/transaction/calculate', 'TransactionController@newCalculateTransaction');
-        Route::post('clinic/transaction_co_paid/calculate', 'TransactionController@CalculateCoPaidTransaction');
-        Route::post('clinic/transaction/finish', 'TransactionController@finishTransaction');
+//         // transaction
+//         Route::post('clinic/appointment/transaction', 'TransactionController@checkAppointmentTransaction');
+//         // transaction tests
+//         Route::post('clinic/transaction/calculate', 'TransactionController@newCalculateTransaction');
+//         Route::post('clinic/transaction_co_paid/calculate', 'TransactionController@CalculateCoPaidTransaction');
+//         Route::post('clinic/transaction/finish', 'TransactionController@finishTransaction');
 
-        // dashboard routes
-        Route::post('clinic/appointments/count', 'DashboardController@countAppointments');
-        Route::get('clinic/appointments/list', 'DashboardController@listAppointments');
-        Route::post('clinic/total/revenue', 'DashboardController@getClinicTotalRevenue');
-        Route::post('clinic/credits/revenue', 'DashboardController@getClinicCredits');
-        Route::post('clinic/collected/revenue', 'DashboardController@getClinicCollected');
-        Route::get('clinic/view/appointment/{id}', 'DashboardController@viewAppointment');
-        Route::get('clinic/view/transaction/history/limit', 'DashboardController@viewTransactionHistoryLimitView');
-        Route::post('clinic/view/schedule/byDate', 'DashboardController@viewScheduleByDate');
-        Route::post('clinic/view/transaction/byDate', 'DashboardController@viewTransactionByDate');
-        Route::post('clinic/view/payment/transaction/byDate', 'DashboardController@paymentTransactionHistory');
-        Route::get('clinic/transaction/payment/download/{start}/{end}', 'DashboardController@paymentDownloadTransactionHistory');
-        Route::get('clinic/transaction/payment/search/download/{search}', 'DashboardController@paymentSearchDownloadTransactionHistory');
-        Route::get('clinic/get/minimum/date', 'DashboardController@getMinimumDate');
+//         // dashboard routes
+//         Route::post('clinic/appointments/count', 'DashboardController@countAppointments');
+//         Route::get('clinic/appointments/list', 'DashboardController@listAppointments');
+//         Route::post('clinic/total/revenue', 'DashboardController@getClinicTotalRevenue');
+//         Route::post('clinic/credits/revenue', 'DashboardController@getClinicCredits');
+//         Route::post('clinic/collected/revenue', 'DashboardController@getClinicCollected');
+//         Route::get('clinic/view/appointment/{id}', 'DashboardController@viewAppointment');
+//         Route::get('clinic/view/transaction/history/limit', 'DashboardController@viewTransactionHistoryLimitView');
+//         Route::post('clinic/view/schedule/byDate', 'DashboardController@viewScheduleByDate');
+//         Route::post('clinic/view/transaction/byDate', 'DashboardController@viewTransactionByDate');
+//         Route::post('clinic/view/payment/transaction/byDate', 'DashboardController@paymentTransactionHistory');
+//         Route::get('clinic/transaction/payment/download/{start}/{end}', 'DashboardController@paymentDownloadTransactionHistory');
+//         Route::get('clinic/transaction/payment/search/download/{search}', 'DashboardController@paymentSearchDownloadTransactionHistory');
+//         Route::get('clinic/get/minimum/date', 'DashboardController@getMinimumDate');
 
-        // invoice
-        // payment_bank_details
-        Route::post('clinic/update/bank_details', 'UserWebController@createBankDetails');
-        Route::get('clinic/bank_details', 'UserWebController@getBankDetails');
+//         // invoice
+//         // payment_bank_details
+//         Route::post('clinic/update/bank_details', 'UserWebController@createBankDetails');
+//         Route::get('clinic/bank_details', 'UserWebController@getBankDetails');
 
-        Route::post('clinic/invoice', 'InvoiceController@createInvoice');
-        // download invoice
-        Route::get('clinic/invoice_download/{id}', 'InvoiceController@downloadInvoice');
-        Route::post('clinic/invoice_list_by_date', 'InvoiceController@invoiceListsByDate');
-        Route::post('clinic/invoice_list', 'InvoiceController@invoiceLists');
-        Route::get('corporate/get_corporate/{id}', 'CorporateController@getCorporateById');
-        // Route::post('clinic/newtransaction/calculate', 'TransactionController@newCalculateTransaction');
+//         Route::post('clinic/invoice', 'InvoiceController@createInvoice');
+//         // download invoice
+//         Route::get('clinic/invoice_download/{id}', 'InvoiceController@downloadInvoice');
+//         Route::post('clinic/invoice_list_by_date', 'InvoiceController@invoiceListsByDate');
+//         Route::post('clinic/invoice_list', 'InvoiceController@invoiceLists');
+//         Route::get('corporate/get_corporate/{id}', 'CorporateController@getCorporateById');
+//         // Route::post('clinic/newtransaction/calculate', 'TransactionController@newCalculateTransaction');
 
-        // admin
-        // Route::get('admin/invoice_list', 'InvoiceController@getAdminInvoice');
-        // Route::post('admin/update_payment', 'PaymentsController@updatePaymentRecordPaid');
+//         // admin
+//         // Route::get('admin/invoice_list', 'InvoiceController@getAdminInvoice');
+//         // Route::post('admin/update_payment', 'PaymentsController@updatePaymentRecordPaid');
 
-        // statement of account
-        Route::get('clinic/statement/{id}', 'InvoiceController@getClinicStatement');
-        Route::post('clinic/statement_list', 'InvoiceController@getClinicStatementList');
+//         // statement of account
+//         Route::get('clinic/statement/{id}', 'InvoiceController@getClinicStatement');
+//         Route::post('clinic/statement_list', 'InvoiceController@getClinicStatementList');
 
-        // group events
-        Route::post('get/group_events', 'CalendarController@getGroupEvents');
-        Route::post('get/group_resources', 'CalendarController@getGroupResource');
-        Route::post('check/book_date_resource', 'CalendarController@checkBookDateResource');
-        Route::post('reschedule_check/resource', 'CalendarController@rescheduleAppointmentCheck');
-        // Route::post('app/reschedule/resource', 'CalendarController@rescheduleAppointment');
+//         // group events
+//         Route::post('get/group_events', 'CalendarController@getGroupEvents');
+//         Route::post('get/group_resources', 'CalendarController@getGroupResource');
+//         Route::post('check/book_date_resource', 'CalendarController@checkBookDateResource');
+//         Route::post('reschedule_check/resource', 'CalendarController@rescheduleAppointmentCheck');
+//         // Route::post('app/reschedule/resource', 'CalendarController@rescheduleAppointment');
 
 
-        // Route::post('clinic/invoice', 'InvoiceController@createInvoice');
-        // Route::post('clinic/invoice_list_by_date', 'InvoiceController@invoiceListsByDate');
-        Route::post('clinic/invoice_list', 'InvoiceController@invoiceLists');
-        Route::post('corporate/search', 'CorporateController@searchCoporate');
-        Route::get('corporate/get_corporate/{id}', 'CorporateController@getCorporateById');
-        Route::get('corporate/get_identification_numbers', 'CorporateController@allCorporate');
-        Route::post('corporate/add_members', 'CorporateController@addCorporateMembers');
+//         // Route::post('clinic/invoice', 'InvoiceController@createInvoice');
+//         // Route::post('clinic/invoice_list_by_date', 'InvoiceController@invoiceListsByDate');
+//         Route::post('clinic/invoice_list', 'InvoiceController@invoiceLists');
+//         Route::post('corporate/search', 'CorporateController@searchCoporate');
+//         Route::get('corporate/get_corporate/{id}', 'CorporateController@getCorporateById');
+//         Route::get('corporate/get_identification_numbers', 'CorporateController@allCorporate');
+//         Route::post('corporate/add_members', 'CorporateController@addCorporateMembers');
 
-        Route::post('clinic/save/bulk/transaction', 'TransactionController@saveBulkTransaction');
-        Route::post('clinic/save/claim/transaction', 'TransactionController@submitClaim');
-        Route::get('clinic/get/health_provider/transaction', 'TransactionController@getHealthProviderTransactions');
-        Route::get('clinic/get/services', 'HomeController@getServices');
+//         Route::post('clinic/save/bulk/transaction', 'TransactionController@saveBulkTransaction');
+//         Route::post('clinic/save/claim/transaction', 'TransactionController@submitClaim');
+//         Route::get('clinic/get/health_provider/transaction', 'TransactionController@getHealthProviderTransactions');
+//         Route::get('clinic/get/services', 'HomeController@getServices');
 
-        Route::get('clinic/get/all/users', 'HomeController@getAllUsers');
-        Route::get('clinic/search_all_users', 'HomeController@searchUser');
-        Route::get('clinic/get/all/special/users', 'HomeController@getAllSpecialUsers');
-        Route::get('clinic/get/service/details/{id}', 'HomeController@gerServiceDetails');
-        Route::get('clinic/get/user/details/{id}', 'HomeController@gerUserDetails');
-        Route::get('clinic/get/corporate/name/{id}', 'HomeController@getCorporateName');
-        Route::post('clinic/get/nric_user', 'App_ClinicController@getNRICUser');
-        Route::get('clinic/get/special_user/details/{id}', 'App_ClinicController@getUserCareDetails');
+//         Route::get('clinic/get/all/users', 'HomeController@getAllUsers');
+//         Route::get('clinic/search_all_users', 'HomeController@searchUser');
+//         Route::get('clinic/get/all/special/users', 'HomeController@getAllSpecialUsers');
+//         Route::get('clinic/get/service/details/{id}', 'HomeController@gerServiceDetails');
+//         Route::get('clinic/get/user/details/{id}', 'HomeController@gerUserDetails');
+//         Route::get('clinic/get/corporate/name/{id}', 'HomeController@getCorporateName');
+//         Route::post('clinic/get/nric_user', 'App_ClinicController@getNRICUser');
+//         Route::get('clinic/get/special_user/details/{id}', 'App_ClinicController@getUserCareDetails');
 
-        // send email confirmation
-        Route::get('clinic/send/book/confirmation/{id}', 'App_ClinicController@sendEmailConfirmation');
+//         // send email confirmation
+//         Route::get('clinic/send/book/confirmation/{id}', 'App_ClinicController@sendEmailConfirmation');
 
-        // get backdated claim transactions
-        Route::get('clinic/all_transactions', 'TransactionController@getAllTransactions');
-        Route::post('clinic/search_by_nric_transactions', 'TransactionController@searchByNricTransactions');
-        // Route::get('clinic/remove/backdate_claim_transactions/{id}', 'TransactionController@removeTransactionBackDate');
-        Route::get('clinic/remove/transaction', 'TransactionController@removeTransaction');
-        Route::post('clinic/update_transaction', 'TransactionController@updateTransactionDetails');
+//         // get backdated claim transactions
+//         Route::get('clinic/all_transactions', 'TransactionController@getAllTransactions');
+//         Route::post('clinic/search_by_nric_transactions', 'TransactionController@searchByNricTransactions');
+//         // Route::get('clinic/remove/backdate_claim_transactions/{id}', 'TransactionController@removeTransactionBackDate');
+//         Route::get('clinic/remove/transaction', 'TransactionController@removeTransaction');
+//         Route::post('clinic/update_transaction', 'TransactionController@updateTransactionDetails');
 
-        // qr code
-        Route::post('setting/profile/ajaxGetQRPage', 'QRCodeController@viewQRcodes');
-        // view check in
-        Route::get('clinic/full_screen/check_in/view', 'QRCodeController@viewBigCheckInQR');
-        // view payment
-        Route::get('clinic/full_screen/payment/view', 'QRCodeController@viewBigPaymentQR');
-        // preview mobile claim
-        // Route::get('clinic/preview/{id}', 'HomeController@viewPreviewMobileClaim');
-        // get transaction details
-        Route::post('clinic/mobile/transaction/preview', 'TransactionController@getMobileTransactionDetailsView');
+//         // qr code
+//         Route::post('setting/profile/ajaxGetQRPage', 'QRCodeController@viewQRcodes');
+//         // view check in
+//         Route::get('clinic/full_screen/check_in/view', 'QRCodeController@viewBigCheckInQR');
+//         // view payment
+//         Route::get('clinic/full_screen/payment/view', 'QRCodeController@viewBigPaymentQR');
+//         // preview mobile claim
+//         // Route::get('clinic/preview/{id}', 'HomeController@viewPreviewMobileClaim');
+//         // get transaction details
+//         Route::post('clinic/mobile/transaction/preview', 'TransactionController@getMobileTransactionDetailsView');
 
-        Route::get('clinic/mobile/all_transaction/preview', 'TransactionController@getMobileAllTransactionDetails');
-        Route::get('clinic/mobile/transaction/details/{id}', 'TransactionController@getMobileTransactionDetails');
+//         Route::get('clinic/mobile/all_transaction/preview', 'TransactionController@getMobileAllTransactionDetails');
+//         Route::get('clinic/mobile/transaction/details/{id}', 'TransactionController@getMobileTransactionDetails');
 
-        // get pusher config and channel
-        Route::get('pusher/config', 'HomeController@getPusherConfig');
-        // get specific transaction details
-        Route::get('clinic/transaction_specific', 'TransactionController@getSpecificTransactionDetails');
-        // delete transaction
-        Route::post('clinic/delete_transaction', 'TransactionController@deleteTransaction');
-        // transaction dashboard
-        Route::get('clinic/transaction_dashboard_view', 'HomeController@transactionDashboardView');
-        // transaction page view
-        Route::get('clinic/transaction_page_view', 'HomeController@transactionView');
-        // get transaction lists by date
-        Route::post('clinic/transaction_lists', 'TransactionController@searchTransaction');
-        Route::post('clinic/search_transaction_lists', 'TransactionController@searchSpecificTransaction');
-        // download clinic transaction lists
-        Route::get('clinic/download_transaction_lists', 'TransactionController@downloadTransactions');
-        // update scan pay status show
-        Route::post('clinic/update_procedure_scan_pay_status', 'App_ClinicController@scanPayStatus');
-        // get clinic socket connection
-        Route::get('clinic_socket_connection', 'HomeController@getClinicSocketDetails');
-		// api for check transaction duplication
-		Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
-		// get check in transactions
-		Route::get('clinic/get_check_in_lists', 'UserCheckInController@getClinicCheckInLists');
-		// get specific check in data
-		Route::get('clinic/get_specific_check_in','UserCheckInController@getSpecificCheckIn');
-		// remove specific check in data
-		Route::post('clinic/remove_specific_check_in', 'UserCheckInController@deleteSpecificCheckIn');
-		// remove specific check in data
-		Route::get('clinic/auto_remove_check_in', 'UserCheckInController@checkCheckInAutoDelete');
-    });
+//         // get pusher config and channel
+//         Route::get('pusher/config', 'HomeController@getPusherConfig');
+//         // get specific transaction details
+//         Route::get('clinic/transaction_specific', 'TransactionController@getSpecificTransactionDetails');
+//         // delete transaction
+//         Route::post('clinic/delete_transaction', 'TransactionController@deleteTransaction');
+//         // transaction dashboard
+//         Route::get('clinic/transaction_dashboard_view', 'HomeController@transactionDashboardView');
+//         // transaction page view
+//         Route::get('clinic/transaction_page_view', 'HomeController@transactionView');
+//         // get transaction lists by date
+//         Route::post('clinic/transaction_lists', 'TransactionController@searchTransaction');
+//         Route::post('clinic/search_transaction_lists', 'TransactionController@searchSpecificTransaction');
+//         // download clinic transaction lists
+//         Route::get('clinic/download_transaction_lists', 'TransactionController@downloadTransactions');
+//         // update scan pay status show
+//         Route::post('clinic/update_procedure_scan_pay_status', 'App_ClinicController@scanPayStatus');
+//         // get clinic socket connection
+//         Route::get('clinic_socket_connection', 'HomeController@getClinicSocketDetails');
+// 		// api for check transaction duplication
+// 		Route::post("check_duplicate_transaction", 'TransactionController@checkDuplicateTransaction');
+// 		// get check in transactions
+// 		Route::get('clinic/get_check_in_lists', 'UserCheckInController@getClinicCheckInLists');
+// 		// get specific check in data
+// 		Route::get('clinic/get_specific_check_in','UserCheckInController@getSpecificCheckIn');
+// 		// remove specific check in data
+// 		Route::post('clinic/remove_specific_check_in', 'UserCheckInController@deleteSpecificCheckIn');
+// 		// remove specific check in data
+// 		Route::get('clinic/auto_remove_check_in', 'UserCheckInController@checkCheckInAutoDelete');
+//     });
 
-});
+// });
 
-// admin login for all platforms
-Route::get('app/login_clininic_from_admin','App_AuthController@loginClinicAdmin');
-Route::get('app/login_hr_from_admin', 'BenefitsDashboardController@hrLoginAdmin');
-Route::get('app/login_empoyee_from_admin', 'EclaimController@loginEmployeeAdmin');
+// // admin login for all platforms
+// Route::get('app/login_clininic_from_admin','App_AuthController@loginClinicAdmin');
+// Route::get('app/login_hr_from_admin', 'BenefitsDashboardController@hrLoginAdmin');
+// Route::get('app/login_empoyee_from_admin', 'EclaimController@loginEmployeeAdmin');
 
 Route::any('{path?}', function()
 {
