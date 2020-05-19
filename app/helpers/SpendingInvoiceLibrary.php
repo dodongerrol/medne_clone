@@ -39,34 +39,65 @@ class SpendingInvoiceLibrary
 	public static function checkCompanyTransactions($customer_id, $start, $end)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
-
-		$transactions_data = [];
-		$array_of_users = [];
-		$lite_plan = false;
-		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
+		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+		// $lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 		$transactions = 0;
-		foreach ($corporate_members as $key => $member) {
-			$ids = StringHelper::getSubAccountsID($member->user_id);
-			$temp_trans_lite_plan = DB::table('transaction_history')
-                    ->whereIn('UserID', $ids)
-                    ->where('lite_plan_enabled', 1)
-                    ->where('deleted', 0)
-                    ->where('paid', 1)
-                    ->where('created_at', '>=', $start)
-                    ->where('created_at', '<=', $end)
-                    ->count();
 
-    	$temp_trans = DB::table('transaction_history')
-                    ->whereIn('UserID', $ids)
-                    ->where('credit_cost', '>', 0)
-                    ->where('deleted', 0)
-                    ->where('paid', 1)
-                    ->where('created_at', '>=', $start)
-                    ->where('created_at', '<=', $end)
-                    ->count();
-      $transactions += $temp_trans_lite_plan + $temp_trans;
+		if($spending['medical_method'] == "pre_paid") {
+			foreach ($corporate_members as $key => $member) {
+				$ids = StringHelper::getSubAccountsID($member->user_id);
+				$transactions_temp = DB::table('transaction_history')
+						->whereIn('UserID', $ids)
+						->where('lite_plan_enabled', 1)
+						->where('credit_cost', 0)
+						->where('deleted', 0)
+						->where('paid', 1)
+						->where('created_at', '>=', $start)
+						->where('created_at', '<=', $end)
+						->get();
+				
+				if(sizeof($transactions_temp) > 0)	{
+					foreach($transactions_temp as $key => $trans)	{
+						if($trans->spending_type == 'medical') {
+							$table_wallet_history = 'wallet_history';
+						} else {
+							$table_wallet_history = 'wellness_wallet_history';
+						}
+						$logs_lite_plan = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_mobile_payment')
+						->where('lite_plan_enabled', 1)
+						->where('id', $trans->transaction_id)
+						->first();
+
+						if(!$logs_lite_plan)	{
+							$transactions++;
+						}
+					}
+				}
+			}
+		} else {
+			foreach ($corporate_members as $key => $member) {
+				$ids = StringHelper::getSubAccountsID($member->user_id);
+				$temp_trans_lite_plan = DB::table('transaction_history')
+						->whereIn('UserID', $ids)
+						->where('lite_plan_enabled', 1)
+						->where('deleted', 0)
+						->where('paid', 1)
+						->where('created_at', '>=', $start)
+						->where('created_at', '<=', $end)
+						->count();
+	
+				$temp_trans = DB::table('transaction_history')
+							->whereIn('UserID', $ids)
+							->where('credit_cost', '>', 0)
+							->where('deleted', 0)
+							->where('paid', 1)
+							->where('created_at', '>=', $start)
+							->where('created_at', '<=', $end)
+							->count();
+				$transactions += $temp_trans_lite_plan + $temp_trans;
+			}
 		}
 
 		if($transactions == 0) {
@@ -81,7 +112,7 @@ class SpendingInvoiceLibrary
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
-
+		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 		$lite_plan = false;
 		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 
@@ -92,102 +123,125 @@ class SpendingInvoiceLibrary
 		$total_in_network_amount = 0;
 		$transactions = [];
 
-		foreach ($corporate_members as $key => $member) {
-			$ids = StringHelper::getSubAccountsID($member->user_id);
+		if($spending['medical_method'] == "pre_paid") {
+			foreach ($corporate_members as $key => $member) {
+				$ids = StringHelper::getSubAccountsID($member->user_id);
+	
+				$in_network = DB::table('transaction_history')
+				->whereIn('UserID', $ids)
+				->where('lite_plan_enabled', 1)
+				->where('credit_cost', 0)
+				->where('deleted', 0)
+				->where('paid', 1)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+		
+				$e_claim = DB::table('e_claim')
+				->where('status', 1)
+				->whereIn('user_id', $ids)
+				->where('date', '>=', $start)
+				->where('date', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+	
+				foreach($e_claim as $key => $res) {
+					$total_e_claim_amount += $res->amount;
+				}
+	
+				foreach ($in_network as $key => $trans) {
+					if($trans->spending_type == 'medical') {
+						$table_wallet_history = 'wallet_history';
+					} else {
+						$table_wallet_history = 'wellness_wallet_history';
+					}
+					$logs_lite_plan = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_mobile_payment')
+						->where('lite_plan_enabled', 1)
+						->where('id', $trans->transaction_id)
+						->first();
 
-	            // if($lite_plan) {
-			$temp_trans_lite_plan = DB::table('transaction_history')
-			->whereIn('UserID', $ids)
-	                                // ->where('mobile', 1)
-	                                // ->where('in_network', 1)
-			->where('lite_plan_enabled', 1)
-	                                // ->where('health_provider_done', 0)
-			->where('deleted', 0)
-			->where('paid', 1)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->orderBy('created_at', 'desc')
-			->get();
-
-			$temp_trans = DB::table('transaction_history')
-			->whereIn('UserID', $ids)
-	                                // ->where('mobile', 1)
-	                                // ->where('in_network', 1)
-	                                // ->where('health_provider_done', 0)
-			->where('lite_plan_enabled', 0)
-			->where('credit_cost', '>', 0)
-			->where('deleted', 0)
-			->where('paid', 1)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->orderBy('created_at', 'desc')
-			->get();
-			$transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
-			$in_network = self::my_array_unique($transactions_temp);
-	            // } else {
-	            //     $in_network = DB::table('transaction_history')
-	            //                     ->whereIn('UserID', $ids)
-	            //                     ->where('mobile', 1)
-	            //                     ->where('in_network', 1)
-	            //                     ->where('health_provider_done', 0)
-	            //                     ->where('deleted', 0)
-	            //                     ->where('paid', 1)
-	            //                     ->where('date_of_transaction', '>=', $start)
-	            //                     ->where('date_of_transaction', '<=', $end)
-	            //                     ->orderBy('created_at', 'desc')
-	            //                     ->get();
-
-	            // }
-
-			$e_claim = DB::table('e_claim')
-			->where('status', 1)
-			->whereIn('user_id', $ids)
-			->where('date', '>=', $start)
-			->where('date', '<=', $end)
-			->orderBy('created_at', 'desc')
-			->get();
-
-			foreach($e_claim as $key => $res) {
-				$total_e_claim_amount += $res->amount;
+					if(!$logs_lite_plan)	{
+						$total_in_network_amount += $trans->credit_cost;
+						array_push($transactions, $trans->transaction_id);
+					}
+				}
 			}
-
-			foreach ($in_network as $key => $trans) {
-				$total_in_network_amount += $trans->credit_cost;
-				array_push($transactions, $trans->transaction_id);
+		} else {
+			foreach ($corporate_members as $key => $member) {
+				$ids = StringHelper::getSubAccountsID($member->user_id);
+	
+				$temp_trans_lite_plan = DB::table('transaction_history')
+				->whereIn('UserID', $ids)
+				->where('lite_plan_enabled', 1)
+				->where('deleted', 0)
+				->where('paid', 1)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+	
+				$temp_trans = DB::table('transaction_history')
+				->whereIn('UserID', $ids)
+				->where('lite_plan_enabled', 0)
+				->where('credit_cost', '>', 0)
+				->where('deleted', 0)
+				->where('paid', 1)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+				$transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
+				$in_network = self::my_array_unique($transactions_temp);
+	
+				$e_claim = DB::table('e_claim')
+				->where('status', 1)
+				->whereIn('user_id', $ids)
+				->where('date', '>=', $start)
+				->where('date', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+	
+				foreach($e_claim as $key => $res) {
+					$total_e_claim_amount += $res->amount;
+				}
+	
+				foreach ($in_network as $key => $trans) {
+					$total_in_network_amount += $trans->credit_cost;
+					array_push($transactions, $trans->transaction_id);
+				}
 			}
 		}
 
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
-		// $statement = DB::table('company_credits_statement')->count();
-		// $number = str_pad($statement + 1, 8, "0", STR_PAD_LEFT);
 		$number = InvoiceLibrary::getInvoiceNuber('company_credits_statement', 3);
-
 		$spending_invoice_day = $customer->spending_default_invoice_day;
 		$day = date('t', strtotime('+1 month', strtotime($start)));
 	  
-	  if($currency_data) {
-	  	$currency = $currency_data->currency_value;
-	  } else {
-	  	$currency = 3.00;
-	  }
+		if($currency_data) {
+			$currency = $currency_data->currency_value;
+		} else {
+			$currency = 3.00;
+		}
 		
 		if((int)$spending_invoice_day == 31) {
-    	if($customer->invoice_step == "before") {
-    		if((int)$spending_invoice_day > (int)$day) {
-      		$statement_date = date('Y-m-'.$day, strtotime('-1 month', strtotime($start)));
-      	} else {
-      		$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('-1 month', strtotime($start)));
-      	}
-    	} else {
-      	if((int)$spending_invoice_day > (int)$day) {
-      		$statement_date = date('Y-m-'.$day, strtotime('+1 month', strtotime($start)));
-      	} else {
-      		$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
-      	}
-    	}
-    } else {
-      $statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
-    }
+			if($customer->invoice_step == "before") {
+				if((int)$spending_invoice_day > (int)$day) {
+					$statement_date = date('Y-m-'.$day, strtotime('-1 month', strtotime($start)));
+				} else {
+					$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('-1 month', strtotime($start)));
+				}
+			} else {
+				if((int)$spending_invoice_day > (int)$day) {
+					$statement_date = date('Y-m-'.$day, strtotime('+1 month', strtotime($start)));
+				} else {
+					$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+				}
+			}
+		} else {
+			$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+		}
 
 		$statement_due = date('Y-m-d', strtotime('+15 days', strtotime($statement_date)));
 		$statement_data = array(
@@ -198,7 +252,7 @@ class SpendingInvoiceLibrary
 			'statement_start_date'      => $start,
 			'statement_end_date'        => $end,
 			'statement_company_name' 		=> $company_details->company_name,
-    	'statement_company_address' => $company_details->company_address,
+    		'statement_company_address' => $company_details->company_address,
 			'statement_contact_name'    => $billing_contact->first_name.' '.$billing_contact->last_name,
 			'statement_contact_number'  => $billing_contact->phone,
 			'statement_contact_email'   => $billing_contact->billing_email,
@@ -216,12 +270,12 @@ class SpendingInvoiceLibrary
 		$statement_class = new CompanyCreditsStatement( );
 		$statement_result = $statement_class->createCompanyCreditsStatement($statement_data);
 		$statement_id = $statement_result->id;
-	        // return $statement_id
+
 		foreach ($transactions as $key => $trans) {
 			$check_transaction = \SpendingInvoiceTransactions::where('transaction_id',  $trans)->first();
 
 			if(!$check_transaction) {
-        			// insert to spending invoice transaction
+        		// insert to spending invoice transaction
 				\SpendingInvoiceTransactions::create(['invoice_id' => $statement_id, 'transaction_id' => $trans]);
 			}
 		}
@@ -725,88 +779,68 @@ class SpendingInvoiceLibrary
 	public static function checkSpendingInvoiceNewTransactions($customer_id, $start, $end, $invoice_id)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
-
+		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 		$transactions_data = [];
 		$array_of_users = [];
 		$lite_plan = false;
 		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
-
 		$transactions = [];
 
-		foreach ($corporate_members as $key => $member) {
-			$ids = StringHelper::getSubAccountsID($member->user_id);
+		if($spending['medical_method'] == "pre_paid")	{
+			foreach ($corporate_members as $key => $member) {
+				$ids = StringHelper::getSubAccountsID($member->user_id);
+				$in_network = DB::table('transaction_history')
+				->whereIn('UserID', $ids)
+				->where('lite_plan_enabled', 1)
+				->where('credit_cost', 0)
+				->where('deleted', 0)
+				->where('paid', 1)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+	
+				foreach ($in_network as $key => $trans) {
+					$logs_lite_plan = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_mobile_payment')
+						->where('lite_plan_enabled', 1)
+						->where('id', $trans->transaction_id)
+						->first();
 
-	            // if($lite_plan) {
-	                // $temp_trans_lite_plan = DB::table('transaction_history')
-	                //                 ->whereIn('UserID', $ids)
-	                //                 // ->where('mobile', 1)
-	                //                 // ->where('in_network', 1)
-	                //                 ->where('lite_plan_enabled', 1)
-	                //                 // ->where('health_provider_done', 0)
-	                //                 ->where('deleted', 0)
-	                //                 ->where('paid', 1)
-	                //                 ->where('created_at', '>=', $start)
-	                //                 ->where('created_at', '<=', $end)
-	                //                 ->orderBy('created_at', 'desc')
-	                //                 ->get();
-
-	                // $temp_trans = DB::table('transaction_history')
-	                //                 ->whereIn('UserID', $ids)
-	                //                 // ->where('mobile', 1)
-	                //                 // ->where('in_network', 1)
-	                //                 // ->where('health_provider_done', 0)
-	                //                 ->where('credit_cost', '>', 0)
-	                //                 ->where('lite_plan_enabled', 0)
-	                //                 ->where('deleted', 0)
-	                //                 ->where('paid', 1)
-	                //                 ->where('created_at', '>=', $start)
-	                //                 ->where('created_at', '<=', $end)
-	                //                 ->orderBy('created_at', 'desc')
-	                //                 ->get();
-	                // $in_network = array_merge($temp_trans, $temp_trans_lite_plan);
-	            // } else {
-	            //     $in_network = DB::table('transaction_history')
-	            //                     ->whereIn('UserID', $ids)
-	            //                     ->where('mobile', 1)
-	            //                     ->where('in_network', 1)
-	            //                     ->where('health_provider_done', 0)
-	            //                     ->where('deleted', 0)
-	            //                     ->where('paid', 1)
-	            //                     ->where('date_of_transaction', '>=', $start)
-	            //                     ->where('date_of_transaction', '<=', $end)
-	            //                     ->orderBy('created_at', 'desc')
-	            //                     ->get();
-
-	            // }
-
-			$temp_trans_lite_plan = DB::table('transaction_history')
-			->whereIn('UserID', $ids)
-	                                // ->where('in_network', 1)
-			->where('lite_plan_enabled', 1)
-			->where('deleted', 0)
-			->where('paid', 1)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->orderBy('created_at', 'desc')
-			->get();
-
-			$temp_trans = DB::table('transaction_history')
-			->whereIn('UserID', $ids)
-	                            // ->where('in_network', 1)
-			->where('credit_cost', '>', 0)
-			->where('deleted', 0)
-			->where('paid', 1)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->orderBy('created_at', 'desc')
-			->get();
-			$transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
-			$in_network = self::my_array_unique($transactions_temp);
-
-			foreach ($in_network as $key => $trans) {
-				array_push($transactions, $trans->transaction_id);
+					if(!$logs_lite_plan)	{
+						array_push($transactions, $trans->transaction_id);
+					}
+				}
+			}
+		} else {
+			foreach ($corporate_members as $key => $member) {
+				$ids = StringHelper::getSubAccountsID($member->user_id);
+				$temp_trans_lite_plan = DB::table('transaction_history')
+				->whereIn('UserID', $ids)
+				->where('lite_plan_enabled', 1)
+				->where('deleted', 0)
+				->where('paid', 1)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+	
+				$temp_trans = DB::table('transaction_history')
+				->whereIn('UserID', $ids)
+				->where('credit_cost', '>', 0)
+				->where('deleted', 0)
+				->where('paid', 1)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
+				$transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
+				$in_network = self::my_array_unique($transactions_temp);
+	
+				foreach ($in_network as $key => $trans) {
+					array_push($transactions, $trans->transaction_id);
+				}
 			}
 		}
 
@@ -814,7 +848,7 @@ class SpendingInvoiceLibrary
 			$check_transaction = \SpendingInvoiceTransactions::where('transaction_id',  $trans)->first();
 
 			if(!$check_transaction) {
-        			// insert to spending invoice transaction
+        		// insert to spending invoice transaction
 				\SpendingInvoiceTransactions::create(['invoice_id' => $invoice_id, 'transaction_id' => $trans]);
 			}
 		}
