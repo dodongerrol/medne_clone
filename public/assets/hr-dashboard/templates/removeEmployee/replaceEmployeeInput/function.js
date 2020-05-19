@@ -76,6 +76,7 @@ app.directive('replaceEmployeeInputDirective', [
 				}
 				scope.nextBtn	=	function(){
 					if( scope.checkReplaceEmpForm(scope.replace_emp_details) == true ){
+            scope.showLoading();
             removeEmployeeFactory.setReplaceEmployeeDetails(scope.replace_emp_details);
 						$state.go('employee-overview.health-spending-account-summary');
 					}
@@ -119,7 +120,12 @@ app.directive('replaceEmployeeInputDirective', [
             scope.replace_emp_details.mobile_area_code = iti2.getSelectedCountryData().dialCode;
             scope.replace_emp_details.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
           });
-				}, 500);
+        }, 500);
+        
+        scope.onLoad	=	function(){
+					scope.hideLoading();
+				}
+				scope.onLoad();
 			}
 		}
 	}

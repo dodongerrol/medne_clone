@@ -9,6 +9,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
 			link: function link( scope, element, attributeSet ) {
 				console.log( 'healthSpendingAccountConfirmDirective running!' );
         scope.emp_details = removeEmployeeFactory.getEmployeeDetails();
+        scope.emp_details.return_credits_date = moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').add(1,'days').format('DD/MM/YYYY');
         scope.remove_emp_details = removeEmployeeFactory.getReplaceEmployeeDetails();
         scope.emp_details.wallet_opt = null;
         scope.isRemoveSuccess = false;
@@ -17,12 +18,13 @@ app.directive('healthSpendingAccountConfirmDirective', [
 
         scope.closeConfirm = function(){
           $("#remove-employee-confirm-modal").modal('hide');
+          $('.modal-backdrop').hide();
         }
         scope.selectOption  = function(opt){
           scope.emp_details.wallet_opt = opt;
         }
 				scope.backBtn	=	function(){
-					$state.go('corporates.health-spending-account-summary');
+					$state.go('employee-overview.health-spending-account-summary');
 				}
 				scope.nextBtn	=	function(evt){
 					if(scope.emp_details.wallet_opt == null){
@@ -40,13 +42,14 @@ app.directive('healthSpendingAccountConfirmDirective', [
             start: moment(scope.emp_details.summary.date.pro_rated_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             end: moment(scope.emp_details.summary.date.pro_rated_end, 'DD/MM/YYYY').format('YYYY-MM-DD'),
           }
+          scope.showLoading();
           dependentsSettings.updateWalletMember(scope.emp_details.user_id, scope.selected_customer_id, scope.emp_details.summary.medical.exceed, scope.emp_details.summary.wellness.exceed, moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'), dates, scope.emp_details.wallet_opt)
             .then(function (response) {
-              if (response.data.status) {
+              // if (response.data.status) {
                 scope.removeEmployeeRequests();
-              } else {
-                swal('Error!', response.data.message, 'error');
-              }
+              // } else {
+                // swal('Error!', response.data.message, 'error');
+              // }
             });
         }
 				scope.removeEmployeeRequests  = function(){
@@ -72,8 +75,24 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // console.log( response );
               scope.hideLoading();
               if (response.data.status) {
-                scope.isRemoveSuccess = true;
-                swal('Success!', response.data.message, 'success');
+                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
+                  scope.isRemoveSuccess = true;
+                }else{
+                  swal({
+                    title: "Success!",
+                    text: response.data.message,
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#0392CF",
+                    closeOnConfirm: true,
+                  },
+                  function (isConfirm) {
+                    if (isConfirm) {
+                      scope.resetEmpData();
+                    }
+                  });
+                }
               } else {
                 swal('Error!', response.data.message, 'error');
               }
@@ -96,8 +115,24 @@ app.directive('healthSpendingAccountConfirmDirective', [
               scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                scope.isRemoveSuccess = true;
-                swal('Success!', response.data.message, 'success');
+                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
+                  scope.isRemoveSuccess = true;
+                }else{
+                  swal({
+                    title: "Success!",
+                    text: response.data.message,
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#0392CF",
+                    closeOnConfirm: true,
+                  },
+                  function (isConfirm) {
+                    if (isConfirm) {
+                      scope.resetEmpData();
+                    }
+                  });
+                }
               } else {
                 swal('Error!', response.data.message, 'error');
               }
@@ -115,8 +150,24 @@ app.directive('healthSpendingAccountConfirmDirective', [
               scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                scope.isRemoveSuccess = true;
-                swal('Success!', response.data.message, 'success');
+                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
+                  scope.isRemoveSuccess = true;
+                }else{
+                  swal({
+                    title: "Success!",
+                    text: response.data.message,
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#0392CF",
+                    closeOnConfirm: true,
+                  },
+                  function (isConfirm) {
+                    if (isConfirm) {
+                      scope.resetEmpData();
+                    }
+                  });
+                }
               } else {
                 swal('Error!', response.data.message, 'error');
               }
@@ -124,12 +175,19 @@ app.directive('healthSpendingAccountConfirmDirective', [
         }
 
         scope.resetEmpData  = function(){
-          scope.getSession();
+          $state.go('employee-overview');
+          scope.resetRemoveBtn();
+          scope.closeConfirm();
+          $('.employee-information-wrapper').fadeIn();
         }
         scope.doneConfirmModal  = function(){
-          scope.closeConfirm();
+          
           scope.resetEmpData();
         }
+        scope.onLoad	=	function(){
+					scope.hideLoading();
+				}
+				scope.onLoad();
 			}
 		}
 	}

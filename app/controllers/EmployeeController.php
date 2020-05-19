@@ -2823,7 +2823,7 @@ class EmployeeController extends \BaseController {
               $result_data[] = $new['new_usage_date'];
               if($today >= $new['new_usage_date']) {
                 // activate now
-                MemberHelper::newActivateNewEntitlement($new['member_id'], $id);
+                MemberHelper::activateNewEntitlement($new['member_id'], $id);
               } else {
                 $future_dates = true;
               }

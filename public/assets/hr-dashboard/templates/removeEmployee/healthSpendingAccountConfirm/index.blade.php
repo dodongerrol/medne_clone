@@ -35,8 +35,8 @@
             </div>
 
             <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == true">
-              <p>The <b>(Medical) Remaining Allocated Credits</b> of <b>SGD 290.40</b> & the <b>(Wellness) Remaining Allocated Credits</b> of <b>SGD 174.25</b> will be returned to respective <b>Company Available Credits</b> immediately after clicking “Confirm”.</p>
-              <p>Any unused credits will be return to <b>Company Available Credits</b> on <b>02/06/2020</b>.</p>
+              <p>The <b>(Medical) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.medical.currency_type }}</span> {{ emp_details.summary.medical.remaining_allocated_credits }}</b> & the <b>(Wellness) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.wellness.currency_type }}</span> {{ emp_details.summary.wellness.remaining_allocated_credits }}</b> will be returned to respective <b>Company Available Credits</b> immediately after clicking “Confirm”.</p>
+              <p>Any unused credits will be return to <b>Company Available Credits</b> on <b>{{ emp_details.return_credits_date }}</b>.</p>
               <p>Please confirm to proceed.</p>
             </div>
 
@@ -49,7 +49,7 @@
           <div class="btn-container">
             <button ng-if="!isRemoveSuccess" class="btn-modal-cancel" ng-click="closeConfirm()">Cancel</button>
             <button ng-if="!isRemoveSuccess" class="btn-modal-confirm" ng-click="confirmRemoveEmployee()">Confirm</button>
-            <button ng-if="isRemoveSuccess" class="btn-modal-close" ng-click="doneConfirmModal()">Close</button>
+            <button ng-if="isRemoveSuccess" type="button" class="btn-modal-close" data-dismiss="modal" ng-click="doneConfirmModal()">Close</button>
           </div>
         </div>
 			</div>

@@ -36,6 +36,7 @@ app.directive('removeCheckboxOptionsDirective', [
 					if( !scope.checkboxes_options.replace && !scope.checkboxes_options.reserve && !scope.checkboxes_options.remove ){
 						swal('Error!', 'Please select an option.', 'error');
 					}
+					scope.showLoading();
 					if( scope.checkboxes_options.replace == true ){
 						scope.emp_details.remove_option = 'replace';
 						removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
@@ -52,6 +53,10 @@ app.directive('removeCheckboxOptionsDirective', [
 						$state.go('employee-overview.health-spending-account-summary');
 					}
 				}
+				scope.onLoad	=	function(){
+					scope.hideLoading();
+				}
+				scope.onLoad();
 			}
 		}
 	}
