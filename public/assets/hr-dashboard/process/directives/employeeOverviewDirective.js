@@ -1912,7 +1912,14 @@ app.directive("employeeOverviewDirective", [
             scope.reset();
             scope.isCalculateBtnActive = false;
             scope.isEmployeeShow = true;
-          }
+          } else if (scope.isRefundSummaryShow == true ) {
+						scope.isRefundSummaryShow = false;
+						$('.employee-information-wrapper').fadeIn();
+            $('.prev-next-buttons-container').hide();
+						$('.remove-employee-wrapper').hide();
+            scope.reset();
+            scope.isEmployeeShow = true;
+					}
         }
 
         scope.removeNextBtn = function () {
@@ -1939,15 +1946,24 @@ app.directive("employeeOverviewDirective", [
                 // $('.hold-seat-wrapper').fadeIn();
                 scope.isReserveEmpShow = true;
                 if (scope.isDeleteDependent == true) {
+									console.log('1');
                   scope.reserveDependent();
                 } else {
                   if(scope.litePlanCheckbox){
+										console.log('2');
                     scope.removeEmployeeRequests();
                   }else{
-                    scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
-                    $('.employee-standalone-pro-wrapper').hide();
-                    $(".account-summary-wrapper").fadeIn();
+										console.log('3');
+										let account_type = scope.account_plan_status.account_type;
 
+										if ( account_type == 'enterprise_plan' && scope.selectedEmployee.wellness_wallet == false) {
+											scope.removeEmployeeRequests();
+										} else {
+											scope.getSpendingAccountSummary(moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('MM/DD/YYYY'));
+											$('.employee-standalone-pro-wrapper').hide();
+											$(".account-summary-wrapper").fadeIn();
+										}
+                    
                     scope.reset();
                     scope.isHealthSpendingAccountSummaryShow = true;
                     scope.getSession();
@@ -1991,7 +2007,13 @@ app.directive("employeeOverviewDirective", [
                           scope.getSession();
 
                         } else if (account_type == 'enterprise_plan') {
-                          // Enterprise only ------------
+													// Enterprise only ------------
+													scope.removeEmployeeRequests();
+													var data = {
+														member_id : scope.selectedEmployee.user_id,
+														refund_date: moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('YYYY/MM/DD'),
+													}
+													scope.get_member_refund(data);
                           scope.reset();
                           scope.isRefundSummaryShow = true; // show refund summary 
                           scope.getSession();
@@ -2707,7 +2729,19 @@ app.directive("employeeOverviewDirective", [
               scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
             });
           }, 300);
-        }
+				}
+				
+				scope.member_refund_details = {};
+				scope.get_member_refund = function (data) {
+					hrSettings.get_member_refund(data)
+					.then(function (response) {
+						console.log('refund ni',response);
+						scope.member_refund_details = response.data.data;
+						scope.member_refund_details.unutilised_start_date = moment(scope.member_refund_details.unutilised_start_date).format('DD/MM/YYYY');
+						scope.member_refund_details.unutilised_end_date = moment(scope.member_refund_details.unutilised_end_date).format('DD/MM/YYYY');
+
+					});
+				}
         
         scope.onLoad = function () {
           // scope.checkCompanyBalance();

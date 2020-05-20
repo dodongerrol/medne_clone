@@ -1650,19 +1650,19 @@
 				<div class="main-item font-16">
 					<div class="main-section-1">
 						<label class="font-20">Details</label>
-						<div>Plan type: Enterprise Plan</div>
-						<div>Unutilised period - 01/07/2020 to 31/12/2020</div>
+						<div>Plan type: {{member_refund_details.account_type}}</div>
+						<div>Unutilised period - {{member_refund_details.unutilised_start_date}} to {{member_refund_details.unutilised_end_date}}</div>
 					</div>
 					<div class="main-section-2">
 						<div class="section-2-left">
 							<div>Total refund</div>
 						</div>
 						<div class="section-2-right">
-							<div>SGD 105.00</div>
+							<div style="text-transform: uppercase">{{member_refund_details.currency_type}} {{member_refund_details.amount}}</div>
 							<small class="font-12">See calculation <i class="fa fa-chevron-down font-10" aria-hidden="true"></i></small>
 							<div class="see-calculation font-12">
-								<div>Refund = 70% of unutilised period</div>
-								<div>70/100 x [183/365 x SGD 300.00]</div>
+								<div>Refund = {{member_refund_details.calculations.pro_rated_refund}}% of unutilised period</div>
+								<div>{{member_refund_details.calculations.pro_rated_refund}}/100 x [{{member_refund_details.calculations.days_used}}/{{member_refund_details.calculations.total_days}} x <span style="text-transform: uppercase">{{member_refund_details.currency_type}}</span> {{member_refund_details.calculations.price_per_employee}}]</div>
 							</div>
 						</div>
 					</div>
@@ -1672,7 +1672,7 @@
 			<div class="refund-side-main">
 				<div class="side-main-item">
 					<label for="" class="font-20">Total Refund</label>
-					<label for="" class="font-25">SGD 105.00</label>
+					<label for="" class="font-25" style="text-transform: uppercase">{{member_refund_details.currency_type}} {{member_refund_details.amount}}</label>
 				</div>
 			</div>
 		</div>
