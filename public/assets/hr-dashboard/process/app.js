@@ -615,6 +615,28 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
         }
       }
+    })
+    .state('expired-link', {
+      url: '/expired-link',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/expired-link/expired-link.html'
+        }
+      }
+    })
+    .state('T&C', {
+      url: '/T&C',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/t&c/t&c.html'
+        }
+      }
     });
 
     
