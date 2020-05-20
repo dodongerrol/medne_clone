@@ -1659,8 +1659,8 @@
 						</div>
 						<div class="section-2-right">
 							<div style="text-transform: uppercase">{{member_refund_details.currency_type}} {{member_refund_details.amount}}</div>
-							<small class="font-12">See calculation <i class="fa fa-chevron-down font-10" aria-hidden="true"></i></small>
-							<div class="see-calculation font-12">
+							<small ng-click="showCalculation = !showCalculation" class="font-12">See calculation <i class="fa font-10" ng-class="[{'fa-chevron-down': showCalculation == true}, {'fa-chevron-right' : showCalculation == false}]" aria-hidden="true"></i></small>
+							<div ng-if="showCalculation" class="see-calculation font-12">
 								<div>Refund = {{member_refund_details.calculations.pro_rated_refund}}% of unutilised period</div>
 								<div>{{member_refund_details.calculations.pro_rated_refund}}/100 x [{{member_refund_details.calculations.days_used}}/{{member_refund_details.calculations.total_days}} x <span style="text-transform: uppercase">{{member_refund_details.currency_type}}</span> {{member_refund_details.calculations.price_per_employee}}]</div>
 							</div>

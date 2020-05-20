@@ -1922,6 +1922,7 @@ app.directive("employeeOverviewDirective", [
 					}
         }
 
+        scope.showCalculation = false;
         scope.removeNextBtn = function () {
           if (scope.isRemoveEmployeeShow == true) {
             $('.employee-standalone-pro-wrapper').fadeIn();
