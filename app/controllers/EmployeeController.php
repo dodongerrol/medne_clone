@@ -2920,4 +2920,26 @@ class EmployeeController extends \BaseController {
 
         return array('status' => true, 'medical' => $medical, 'wellness' => $wellness);
     }
+
+
+  public function checkEmailValidation( )
+  {
+    $input = Input::all();
+    $email = DB::table('customer_hr_dashboard')->where('email', $input['email'])->first();
+    $token = StringHelper::getToken();
+
+    if(!$email) {
+      return array('status' => FALSE, 'message' => 'Your email has not been signed up with Mednefits.');
+    }
+    if($email && (int)$email->account_activated == 0) {
+      return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+    } else if($email && (int)$email->account_activated == 1) {
+      return array('status' => FALSE, 'Activated');
+    }
+    if($email) {
+      return $token;
+  } else {
+    return FALSE;
+    }
+  }
 }
