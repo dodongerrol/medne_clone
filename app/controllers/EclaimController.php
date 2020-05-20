@@ -4822,10 +4822,10 @@ public function getHrActivity( )
 		$ids = StringHelper::getSubAccountsID($member->user_id);
 		$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
 		$user_plan_history = DB::table('user_plan_history')
-    ->where('user_id', $ids)
-    ->where('type', 'started')
-    ->orderBy('created_at', 'desc')
-    ->first();
+			->where('user_id', $ids)
+			->where('type', 'started')
+			->orderBy('created_at', 'desc')
+			->first();
 		if($spending_type == "medical") {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'medical');
 			if($member_spending_dates_medical) {
