@@ -110,6 +110,7 @@ Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordVie
 
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 
+Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 // authentications for eclaim
 Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
