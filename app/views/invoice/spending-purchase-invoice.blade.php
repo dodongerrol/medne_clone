@@ -231,8 +231,8 @@
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
             <p><b>Medical Spending Account (Pre-paid):</b></p>
-            <p>Date of Credit Expiry: {{ $plan_end }}</p>
-            <p>Purchased Credits</p>
+            <p>Date of Credist Expiry: {{ $plan_end }}</p>
+            <p>Purchased Credits: {{ $currency_type }} {{$medical_credits_purchase}}</p>
             <p>Bonus Credits: {{ $currency_type }} {{$medical_credit_bonus}}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Total Credits: {{ $currency_type }} {{$medical_total_credits}}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Discounts</p>
@@ -244,12 +244,12 @@
           </td>
           <td style="text-align: right;">
             <p style="height: 91px;"></p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_total_credits }}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credit_bonus }})</p>
           </td>
           <td style="vertical-align: top;text-align: right;padding-right: 40px;">
             <p style="height: 91px;"></p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $medical_total_credits }}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $medical_credit_bonus }})</p>
           </td>
         </tr>
@@ -259,8 +259,8 @@
         <tr class="tbody">
           <td style="text-align: left !important;padding-left: 30px;">
             <p><b>Wellness Spending Account (Pre-paid):</b></p>
-            <p>Date of Credit Expiry: {{ $plan_end }}</p>
-            <p>Purchased Credits</p>
+            <p>Date of Credits Expiry: {{ $plan_end }}</p>
+            <p>Purchased Credits: {{ $currency_type }} {{$wellness_credits_purchase}}</p>
             <p>Bonus Credits: {{ $currency_type }} {{$wellness_credit_bonus}}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Total Credits: {{ $currency_type }} {{$wellness_total_credits}}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">Discounts</p>
@@ -272,12 +272,12 @@
           </td>
           <td style="text-align: right;">
             <p style="height: 91px;"></p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_total_credits }}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $wellness_credit_bonus }})</p>
           </td>
           <td style="vertical-align: top;text-align: right;padding-right: 40px;">
             <p style="height: 91px;"></p>
-            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_credits_purchase }}</p>
+            <p style="border-bottom: 1px solid #bbb;padding-bottom: 4px;">{{ $wellness_total_credits }}</p>
             <p style="border-bottom: 1px solid #bbb;padding-bottom: 5px;">({{ $wellness_credit_bonus }})</p>
           </td>
         </tr>

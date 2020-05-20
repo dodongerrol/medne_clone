@@ -685,8 +685,8 @@ class MemberHelper
 		->first();
 
 		$medical = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member_id);
+		
 		$wellness = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member_id);
-
 
 		if($medical['balance'] > 0) {
 			// return credits to company

@@ -802,6 +802,11 @@ class SpendingInvoiceLibrary
 				->get();
 	
 				foreach ($in_network as $key => $trans) {
+					if($trans->spending_type == 'medical') {
+						$table_wallet_history = 'wallet_history';
+					} else {
+						$table_wallet_history = 'wellness_wallet_history';
+					}
 					$logs_lite_plan = DB::table($table_wallet_history)
 						->where('logs', 'deducted_from_mobile_payment')
 						->where('lite_plan_enabled', 1)
