@@ -236,7 +236,9 @@ class Api_V1_AuthController extends \BaseController {
                   return Response::json($returnObject);
               }
 
-              $checker = DB::table('user')->where('PhoneNo', $input['mobile'])->first();
+              $checker = DB::table('user')
+              ->select('UserID as user_id', 'Name as name', 'PhoneNo as mobile_number')
+              ->where('PhoneNo', $input['mobile'])->first();
 
               if(!$checker) {
                 $returnObject->status = false;
@@ -244,8 +246,7 @@ class Api_V1_AuthController extends \BaseController {
                 return Response::json($returnObject);
               }
 
-              // $member_id = $checker->user_id;
-              $member_id = $checker->UserID;
+              $member_id = $checker->user_id;
               $mobile_number = (int)$input['mobile'];
               $code = $input['mobile_country_code'];
               $phone = $code.$mobile_number;
@@ -260,6 +261,7 @@ class Api_V1_AuthController extends \BaseController {
               DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
               $returnObject->status = true;
               $returnObject->message = 'OTP SMS sent';
+              $returnObject->data = $checker;
               return Response::json($returnObject);
               // return $otp_code;
           }
@@ -275,15 +277,15 @@ class Api_V1_AuthController extends \BaseController {
                 return Response::json($returnObject);
               }
 
-              if(empty($input['mobile']) || $input['mobile'] == null) {
+              if(empty($input['user_id']) || $input['user_id'] == null) {
                 $returnObject->status = false;
-                $returnObject->message = 'Mobile Number is required.';
+                $returnObject->message = 'User ID is required.';
                 return Response::json($returnObject);
               }
 
               $checker = DB::table('user')
-              ->select('UserID', 'Name as name', 'member_activated')
-              ->where('PhoneNo', $input['mobile'])->first();
+              ->select('UserID as user_id', 'Name as name', 'member_activated')
+              ->where('UserID', $input['user_id'])->first();
 
               if(!$checker) {
                 $returnObject->status = false;
@@ -291,8 +293,7 @@ class Api_V1_AuthController extends \BaseController {
                 return Response::json($returnObject);
               }
     
-              // $member_id = $result->user_id;
-              $member_id = $checker->UserID;
+              $member_id = $checker->user_id;
               $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
               if(!$result) {
                   $returnObject->status = false;
@@ -324,15 +325,15 @@ class Api_V1_AuthController extends \BaseController {
                 return Response::json($returnObject);
             }
 
-            if(empty($input['mobile']) || $input['mobile'] == null) {
+            if(empty($input['user_id']) || $input['user_id'] == null) {
                 $returnObject->status = false;
-                $returnObject->message = 'Mobile Number is required.';
+                $returnObject->message = 'User ID is required.';
                 return Response::json($returnObject);
             }
 
             $checker = DB::table('user')
               ->select('UserID', 'Name as name', 'member_activated')
-              ->where('PhoneNo', $input['mobile'])->first();
+              ->where('UserID', $input['user_id'])->first();
 
               if(!$checker) {
                 $returnObject->status = false;
