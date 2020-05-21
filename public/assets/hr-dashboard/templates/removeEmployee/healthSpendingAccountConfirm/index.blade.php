@@ -60,7 +60,7 @@
 
           <div class="btn-container">
             <button ng-if="!isRemoveSuccess" class="btn-modal-cancel" ng-click="closeConfirm()">Cancel</button>
-            <button ng-if="!isRemoveSuccess" class="btn-modal-confirm" ng-click="confirmRemoveEmployee()">Confirm</button>
+            <button ng-if="!isRemoveSuccess" class="btn-modal-confirm" ng-click="removeEmployeeRequests()">Confirm</button>
             <button ng-if="isRemoveSuccess" type="button" class="btn-modal-close" data-dismiss="modal" ng-click="doneConfirmModal()">Close</button>
           </div>
         </div>
