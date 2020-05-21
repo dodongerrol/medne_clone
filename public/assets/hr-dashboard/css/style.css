@@ -9243,18 +9243,21 @@ span.dropdown-entitlement.disabled {
   margin: 0 auto;
 }
 .privacy-wrapper {
+  width: 950px;
+  margin: 0 auto;
+}
+.privacy-container {
   border: 4px solid #f4f4f4;
   padding: 40px 60px;
   border-radius: 4px;
-  width: 950px;
   height: 400px;
-  margin: 0 auto;
   overflow: auto;
 }
-.privacy-wrapper h1 {
+.privacy-container h1 {
   margin: 0 0 40px;
+  color: #5a5a5a;
 }
-.privacy-wrapper >div:nth-child(1) {
+.privacy-container >div:nth-child(1) {
   text-align: center;
 }
 .privacy-policy-wrapper >div:nth-child(1) {
@@ -9265,14 +9268,25 @@ span.dropdown-entitlement.disabled {
   padding: 20px;
   font-size: 14px;
 }
-.privacy-wrapper .btn-scroll {
-  border-radius: 2px;
+.privacy-wrapper .btn-blue {
+  border-radius: 4px;
   color: #fff;
   background-color: #3591CF;
   border: 0;
+  font-size: 14px;
+}
+.privacy-wrapper .btn-scroll {
+  margin: 20px 0 0;
+  padding: 4px 32px;
 }
 .btn-footer {
   text-align: right;
+}
+.privacy-policy-wrapper >div:nth-child(2) p:nth-child(2) {
+  margin: 0 0 40px;
+}
+.mednefits-privacy-link {
+  color: #3592cd;
 }
 
 /* --------------------------------------------------------- */
