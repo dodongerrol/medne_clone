@@ -13360,14 +13360,15 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 
-		if($pro_allocation_medical_date) {
-			$usage_date = date('d/m/Y', strtotime($pro_allocation_medical_date->created_at));
-		} else {
-			$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
+		$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
 			->where('wallet_id', $wallet->wallet_id)
 			->where('logs', 'pro_allocation')
 			->orderBy('created_at', 'desc')
 			->first();
+
+		if($pro_allocation_medical_date) {
+			$usage_date = date('d/m/Y', strtotime($pro_allocation_medical_date->created_at));
+		} else {
 			if($pro_allocation_wellness_date) {
 				$usage_date = date('d/m/Y', strtotime($pro_allocation_wellness_date->created_at));
 			}
@@ -13380,7 +13381,12 @@ class BenefitsDashboardController extends \BaseController {
 		$pro_temp = $coverage_diff / $plan_duration;
 
 		$total_current_usage = $total_medical_spent + $pending_e_claim_medical;
-		$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
+		if($pro_allocation_medical_date) {
+			$total_pro_medical_allocation = $pro_allocation_medical_date->credit;
+		} else {
+			$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
+		}
+		
 		
 		if($total_allocation_medical > 0) {
 			$has_medical_allocation = true;
@@ -13392,10 +13398,9 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
-
-		if($medical_balance < 0) {
-			$medical_balance = 0;
-		}
+		// if($medical_balance < 0) {
+		// 	$medical_balance = 0;
+		// }
 
 		$remaining_allocated_medical_credits = 0;
 
@@ -13425,19 +13430,26 @@ class BenefitsDashboardController extends \BaseController {
 			$medical['pro_allocation_status'] = $check_wallet_status->medical_pro_allocation == 1 ? true : false;
 
 			if($spending['medical_method'] == "pre_paid")	{
+				$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 				$medical['remaining_allocated_credits'] = number_format($check_wallet_status->medical_initial_allocation - $check_wallet_status->medical_pro_allocation, 2);
 				$medical['remaining_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->medical_return_credits_date)));
-				
+				$medical['returned_credit_status'] = false;
 				if(date('Y-m-d', strtotime($check_wallet_status->medical_return_credits_date)) < date('Y-m-d')) {
 					$medical['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->medical_return_credits_date)));
-					$medical['balance'] = "0.00";
+					// $medical['balance'] = "0.00";
 				} else {
 					$medical['balance_credits_date'] = date('d/m/Y');
 					// get lates balance
 					$medical_balance = $check_wallet_status->medical_pro_allocation - $total_medical_spent;
-					
 				}
-				
+
+				if($employee_status['status'] == true) {
+					$return_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_date) {
+						$medical['returned_credit_status'] = true;
+						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+					}
+				}
 			}
 		}
 
@@ -13474,11 +13486,18 @@ class BenefitsDashboardController extends \BaseController {
 
 		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID, $minimum_date_wellness, $plan_end_date);
 		$total_allocation_wellness = $wellness_credit_data['allocation'];
-		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];;
-
+		$total_wellness_in_network_spent = $wellness_credit_data['in_network_spent'];
+		$total_wellness_e_claim_spent_wellness = $wellness_credit_data['e_claim_spent'];
+		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];
 		$exceed_wellness = false;
 		$total_current_usage_wellness = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness + $pending_e_claim_wellness;
-		$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
+		
+		if($pro_allocation_wellness_date) {
+			$total_pro_wellness_allocation = $pro_allocation_wellness_date->credit;
+		} else {
+			$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
+		}
+		
 		if($total_current_usage_wellness > $total_pro_wellness_allocation) {
 			$exceed_wellness = true;
 		}
@@ -13488,9 +13507,9 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
-		if($wellness_balance < 0) {
-			$wellness_balance = 0;
-		}
+		// if($wellness_balance < 0) {
+		// 	$wellness_balance = 0;
+		// }
 		
 		$remaining_allocated_wellness_credits = 0;
 
@@ -13518,6 +13537,8 @@ class BenefitsDashboardController extends \BaseController {
 			$wellness['initial_allocation'] = number_format($check_wallet_status->wellness_initial_allocation, 2);
 			$wellness['pro_allocation'] = number_format($check_wallet_status->wellness_pro_allocation, 2);
 			$wellness['pro_allocation_status'] = $check_wallet_status->wellness_pro_allocation == 1 ? true : false;
+			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
+			$wellness['returned_credit_status'] = false;
 
 			if($spending['wellness_method'] == "pre_paid")	{
 				$wellness['remaining_allocated_credits'] = number_format($check_wallet_status->wellness_initial_allocation - $check_wallet_status->wellness_pro_allocation, 2);
@@ -13525,12 +13546,19 @@ class BenefitsDashboardController extends \BaseController {
 				
 				if(date('Y-m-d', strtotime($check_wallet_status->wellness_return_credits_date)) < date('Y-m-d')) {
 					$wellness['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->wellness_return_credits_date)));
-					$wellness['balance'] = "0.00";
 				} else {
 					$wellness['balance_credits_date'] = date('d/m/Y');
 					// get lates balance
 					$wellness_balance = $check_wallet_status->wellness_pro_allocation - $total_wellness_spent;
-					$wellness['balance'] = $wellness_balance >= 0 ? number_format($wellness_balance, 2) : "0.00";
+				}
+
+				if($employee_status['status'] == true) {
+					$return_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_date) {
+						$wellness['returned_credit_status'] = true;
+						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+					}
+					
 				}
 			}
 		}
@@ -14953,7 +14981,7 @@ class BenefitsDashboardController extends \BaseController {
         $data['wellness_credit_bonus'] = number_format($spendingPurchase->wellness_credit_bonus, 2);
         $data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
         $data['wellness_discount_credits']  = number_format($spendingPurchase->wellness_credit_bonus, 2);
-		// return $data;
+		
 		// return View::make('invoice.spending-purchase-invoice', $data);
 		$pdf = PDF::loadView('invoice.spending-purchase-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
