@@ -3958,9 +3958,9 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Mobile No. is required.');
 		}
 
-		if(empty($input['postal_code']) || $input['postal_code'] == null) {
-			return array('status' => false, 'message' => 'Postal Code is required.');
-		}
+		// if(empty($input['postal_code']) || $input['postal_code'] == null) {
+		// 	return array('status' => false, 'message' => 'Postal Code is required.');
+		// }
 
 		if(empty($input['last_day_coverage']) || $input['last_day_coverage'] == null) {
 			return array('status' => false, 'message' => 'Last Day of Coverage of Employee is required.');
@@ -4060,7 +4060,7 @@ class BenefitsDashboardController extends \BaseController {
 		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
 		// check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $id)->first();
-
+		$input['postal_code'] = !empty($input['postal_code']) ? $input['postal_code'] : null;
 		if($last_day_of_coverage == $plan_start) {
 			// return "yeah";
 			$result = PlanHelper::createReplacementEmployee($replace_id, $input, $id, false, $medical, $wellness);

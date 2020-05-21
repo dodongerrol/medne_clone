@@ -26,19 +26,23 @@ app.directive('replaceEmployeeInputDirective', [
             swal('Error!', 'Date of Birth is required.', 'error');
             return false;
           }
-          if (!formData.email) {
-            swal('Error!', 'Email is required.', 'error');
+          if (!formData.mobile && !formData.email) {
+            swal('Error!', 'Phone Number or Email Address is required.', 'error');
             return false;
-          } else {
+          }
+          if (formData.email) {
+          //   swal('Error!', 'Email is required.', 'error');
+          //   return false;
+          // } else {
             if (scope.checkEmail(formData.email) == false) {
               swal('Error!', 'Email is invalid.', 'error');
               return false;
             }
           }
-          if (!formData.mobile) {
-            swal('Error!', 'Mobile Number is required.', 'error');
-            return false;
-          } else {
+          if (formData.mobile) {
+          //   swal('Error!', 'Mobile Number is required.', 'error');
+          //   return false;
+          // } else {
             // console.log( iti.getSelectedCountryData().iso2 );
             if (iti2.getSelectedCountryData().iso2 == 'sg' && formData.mobile.length < 8) {
               swal('Error!', 'Mobile Number for your country code should be 8 digits.', 'error');
@@ -57,36 +61,6 @@ app.directive('replaceEmployeeInputDirective', [
             swal('Error!', 'Start Date is required.', 'error');
             return false;
           }
-          // if ( formData.medical_credits && formData.medical_credits != '' && formData.medical_credits > parseFloat(scope.credit_status.total_medical_employee_balance_number) ) {
-          //   // swal('Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
-          //   swal({
-          //     title: "Error:",
-          //     text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
-          //     type: "error",
-          //     html: true,
-          //     showCancelButton: false,
-          //     confirmButtonText: "Close",
-          //     confirmButtonColor: "#0392CF",
-          //     closeOnConfirm: true,
-          //     customClass: "errorCreditsModal",
-          //   })
-          //   return false;
-          // }
-          // if ( formData.wellness_credits && formData.wellness_credits != '' && formData.wellness_credits > parseFloat(scope.credit_status.total_wellness_employee_balance_number) ) {
-          //   // swal('Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
-          //   swal({
-          //     title: "Error:",
-          //     text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
-          //     type: "error",
-          //     showCancelButton: false,
-          //     confirmButtonText: "Close",
-          //     confirmButtonColor: "#0392CF",
-          //     closeOnConfirm: true,
-          //     customClass: "errorCreditsModal",
-          //   })
-          //   return false;
-          // }
-
           return true;
         }
         scope.checkEmail = function (email) {

@@ -178,8 +178,8 @@
 							</div>
 						</div>
 					</span>
-					<p ng-if="health_spending_summary.medical && health_spending_summary.medical.balance_credits_date">(as of {{ health_spending_summary.medical.balance_credits_date }})</p>
-					<p ng-if="health_spending_summary.wellness && health_spending_summary.wellness.balance_credits_date">(as of {{ health_spending_summary.wellness.balance_credits_date }})</p>
+					<p ng-if="health_spending_summary.medical && health_spending_summary.medical.balance_credits_date">({{ health_spending_summary.medical.returned_credit_status ? 'returned on' : 'as of' }} {{ health_spending_summary.medical.balance_credits_date }})</p>
+					<p ng-if="health_spending_summary.wellness && health_spending_summary.wellness.balance_credits_date">({{ health_spending_summary.wellness.returned_credit_status ? 'returned on' : 'as of' }} {{ health_spending_summary.wellness.balance_credits_date }})</p>
 				</strong>
 				<span>
 					<span ng-bind="health_spending_summary.medical && health_spending_summary.medical.currency_type" class="currency-type"></span> 
@@ -296,7 +296,7 @@
                 </div>
               </div>
             </span>
-						<p ng-if="health_spending_summary.medical.balance_credits_date">(as of {{ health_spending_summary.medical.balance_credits_date }})</p>
+						<p ng-if="health_spending_summary.medical.balance_credits_date">({{ health_spending_summary.medical.returned_credit_status ? 'returned on' : 'as of' }} {{ health_spending_summary.medical.balance_credits_date }})</p>
           </strong>
           <span>
             <span ng-bind="health_spending_summary.medical.currency_type" class="currency-type"></span> 
@@ -410,7 +410,7 @@
                 </div>
               </div>
             </span>
-						<p ng-if="health_spending_summary.wellness.balance_credits_date">(as of {{ health_spending_summary.wellness.balance_credits_date }})</p>
+						<p ng-if="health_spending_summary.wellness.balance_credits_date">({{ health_spending_summary.wellness.returned_credit_status ? 'returned on' : 'as of' }} {{ health_spending_summary.wellness.balance_credits_date }})</p>
           </strong>
           <span>
             <span ng-bind="health_spending_summary.wellness.currency_type" class="currency-type"></span> 
