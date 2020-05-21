@@ -1,7 +1,8 @@
 app.directive('replaceEmployeeInputDirective', [
 	'$state',
 	'removeEmployeeFactory',
-	function directive( $state, removeEmployeeFactory ) {
+	'hrSettings',
+	function directive( $state, removeEmployeeFactory, hrSettings ) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -56,36 +57,35 @@ app.directive('replaceEmployeeInputDirective', [
             swal('Error!', 'Start Date is required.', 'error');
             return false;
           }
-          console.log(scope.credit_status);
-          if ( formData.medical_credits && formData.medical_credits != '' && formData.medical_credits > parseFloat(scope.credit_status.total_medical_employee_balance_number) ) {
-            // swal('Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
-            swal({
-              title: "Error:",
-              text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
-              type: "error",
-              html: true,
-              showCancelButton: false,
-              confirmButtonText: "Close",
-              confirmButtonColor: "#0392CF",
-              closeOnConfirm: true,
-              customClass: "errorCreditsModal",
-            })
-            return false;
-          }
-          if ( formData.wellness_credits && formData.wellness_credits != '' && formData.wellness_credits > parseFloat(scope.credit_status.total_wellness_employee_balance_number) ) {
-            // swal('Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
-            swal({
-              title: "Error:",
-              text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
-              type: "error",
-              showCancelButton: false,
-              confirmButtonText: "Close",
-              confirmButtonColor: "#0392CF",
-              closeOnConfirm: true,
-              customClass: "errorCreditsModal",
-            })
-            return false;
-          }
+          // if ( formData.medical_credits && formData.medical_credits != '' && formData.medical_credits > parseFloat(scope.credit_status.total_medical_employee_balance_number) ) {
+          //   // swal('Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+          //   swal({
+          //     title: "Error:",
+          //     text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
+          //     type: "error",
+          //     html: true,
+          //     showCancelButton: false,
+          //     confirmButtonText: "Close",
+          //     confirmButtonColor: "#0392CF",
+          //     closeOnConfirm: true,
+          //     customClass: "errorCreditsModal",
+          //   })
+          //   return false;
+          // }
+          // if ( formData.wellness_credits && formData.wellness_credits != '' && formData.wellness_credits > parseFloat(scope.credit_status.total_wellness_employee_balance_number) ) {
+          //   // swal('Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+          //   swal({
+          //     title: "Error:",
+          //     text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
+          //     type: "error",
+          //     showCancelButton: false,
+          //     confirmButtonText: "Close",
+          //     confirmButtonColor: "#0392CF",
+          //     closeOnConfirm: true,
+          //     customClass: "errorCreditsModal",
+          //   })
+          //   return false;
+          // }
 
           return true;
         }
@@ -98,9 +98,39 @@ app.directive('replaceEmployeeInputDirective', [
 				}
 				scope.nextBtn	=	function(){
 					if( scope.checkReplaceEmpForm(scope.replace_emp_details) == true ){
+            var data  = {
+              email: scope.replace_emp_details.email,
+              mobile: scope.replace_emp_details.mobile,
+              medical: scope.replace_emp_details.medical_credits,
+              wellness: scope.replace_emp_details.wellness_credits,
+            }
             scope.showLoading();
-            removeEmployeeFactory.setReplaceEmployeeDetails(scope.replace_emp_details);
-						$state.go('employee-overview.health-spending-account-summary');
+            hrSettings.checkReplaceEmpForm(data)
+              .then(function(response){
+                console.log(response);
+                if(response.data.status == false){
+                  scope.hideLoading();
+                  if(response.data.credit_balance_exceed == true){
+                    swal({
+                      title: "Error:",
+                      text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
+                      type: "error",
+                      html: true,
+                      showCancelButton: false,
+                      confirmButtonText: "Close",
+                      confirmButtonColor: "#0392CF",
+                      closeOnConfirm: true,
+                      customClass: "errorCreditsModal",
+                    });
+                  }else{
+                    swal('Error!', response.data.message, 'error');
+                  }
+                }else{
+                  scope.showLoading();
+                  removeEmployeeFactory.setReplaceEmployeeDetails(scope.replace_emp_details);
+                  $state.go('employee-overview.health-spending-account-summary');
+                }
+              });
 					}
         }
         
