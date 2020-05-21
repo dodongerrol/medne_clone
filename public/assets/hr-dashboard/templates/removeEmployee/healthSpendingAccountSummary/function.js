@@ -10,7 +10,7 @@ app.directive('healthSpendingAccountSummaryDirective', [
 				console.log( 'healthSpendingAccountSummaryDirective running!' );
 
 				scope.emp_details = removeEmployeeFactory.getEmployeeDetails();
-				if(scope.emp_details == null){
+				if(scope.emp_details == null || scope.healthSpendingAccountTabIsShow){
 					scope.emp_details = scope.selectedEmployee;
 					scope.emp_details.last_day_coverage = moment( scope.emp_details.expiry_date, 'MM/DD/YYYY' ).format('DD/MM/YYYY');
 				}
