@@ -97,6 +97,7 @@ app.directive("employeeOverviewDirective", [
         scope.wellnessCalculatedInfo = false;
         scope.effectiveMedDateError = false;
         scope.effectiveWellDateError = false;
+        scope.credit_status = {};
 
         scope.pagesToDisplay = 5;
         scope.startIndex = function () {
@@ -2564,7 +2565,7 @@ app.directive("employeeOverviewDirective", [
         scope.getPlanStatus = function () {
           hrSettings.getPlanStatus()
             .then(function (response) {
-              // console.log(response);
+              console.log(response);
               scope.plan_status = response.data;
             });
         }

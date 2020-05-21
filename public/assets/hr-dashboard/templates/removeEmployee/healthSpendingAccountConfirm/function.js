@@ -14,7 +14,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
         scope.emp_details.wallet_opt = null;
         scope.isRemoveSuccess = false;
         console.log(scope.emp_details);
-        console.log(scope.spendingPlan_status);
+        console.log(scope.remove_emp_details);
 
         scope.closeConfirm = function(){
           $("#remove-employee-confirm-modal").modal('hide');
@@ -33,7 +33,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
             if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
               $("#remove-employee-confirm-modal").modal('show');
             }else{
-              scope.confirmRemoveEmployee();
+              // scope.confirmRemoveEmployee();
+              scope.removeEmployeeRequests();
             }
           }
         }
@@ -45,11 +46,30 @@ app.directive('healthSpendingAccountConfirmDirective', [
           scope.showLoading();
           dependentsSettings.updateWalletMember(scope.emp_details.user_id, scope.selected_customer_id, scope.emp_details.summary.medical.exceed, scope.emp_details.summary.wellness.exceed, moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'), dates, scope.emp_details.wallet_opt)
             .then(function (response) {
-              // if (response.data.status) {
-                scope.removeEmployeeRequests();
-              // } else {
-                // swal('Error!', response.data.message, 'error');
-              // }
+              scope.hideLoading();
+              if (response.data.status) {
+                // scope.removeEmployeeRequests();
+                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
+                  scope.isRemoveSuccess = true;
+                }else{
+                  swal({
+                    title: "Success!",
+                    text: response.data.message,
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#0392CF",
+                    closeOnConfirm: true,
+                  },
+                  function (isConfirm) {
+                    if (isConfirm) {
+                      scope.resetEmpData();
+                    }
+                  });
+                }
+              } else {
+                swal('Error!', response.data.message, 'error');
+              }
             });
         }
 				scope.removeEmployeeRequests  = function(){
@@ -73,35 +93,19 @@ app.directive('healthSpendingAccountConfirmDirective', [
           dependentsSettings.reserveEmployee(data)
             .then(function (response) {
               // console.log( response );
-              scope.hideLoading();
+              // scope.hideLoading();
               if (response.data.status) {
-                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
-                  scope.isRemoveSuccess = true;
-                }else{
-                  swal({
-                    title: "Success!",
-                    text: response.data.message,
-                    type: "success",
-                    showCancelButton: false,
-                    confirmButtonText: "Ok",
-                    confirmButtonColor: "#0392CF",
-                    closeOnConfirm: true,
-                  },
-                  function (isConfirm) {
-                    if (isConfirm) {
-                      scope.resetEmpData();
-                    }
-                  });
-                }
+                scope.confirmRemoveEmployee();
               } else {
+                scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
               }
             });
         }
         scope.submitReplaceEmployee = function (data) {
           scope.showLoading();
-          scope.remove_emp_details.dob = moment(scope.remove_emp_details.dob).format('YYYY-MM-DD');
-          scope.emp_details.last_day_coverage = moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD');
+          scope.remove_emp_details.dob = moment(scope.remove_emp_details.dob, 'DD/MM/YYYY').format('YYYY-MM-DD');
+          scope.remove_emp_details.last_day_coverage = moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD');
           scope.remove_emp_details.replace_id = scope.emp_details.user_id;
           scope.remove_emp_details.plan_start = moment(scope.remove_emp_details.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
           if (!scope.remove_emp_details.medical_credits) {
@@ -112,28 +116,12 @@ app.directive('healthSpendingAccountConfirmDirective', [
           }
           dependentsSettings.replaceEmployee(scope.remove_emp_details)
             .then(function (response) {
-              scope.hideLoading();
+              // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
-                  scope.isRemoveSuccess = true;
-                }else{
-                  swal({
-                    title: "Success!",
-                    text: response.data.message,
-                    type: "success",
-                    showCancelButton: false,
-                    confirmButtonText: "Ok",
-                    confirmButtonColor: "#0392CF",
-                    closeOnConfirm: true,
-                  },
-                  function (isConfirm) {
-                    if (isConfirm) {
-                      scope.resetEmpData();
-                    }
-                  });
-                }
+                scope.confirmRemoveEmployee();
               } else {
+                scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
               }
             });
@@ -147,28 +135,12 @@ app.directive('healthSpendingAccountConfirmDirective', [
           }];
           dependentsSettings.removeEmployee(users)
             .then(function (response) {
-              scope.hideLoading();
+              // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
-                  scope.isRemoveSuccess = true;
-                }else{
-                  swal({
-                    title: "Success!",
-                    text: response.data.message,
-                    type: "success",
-                    showCancelButton: false,
-                    confirmButtonText: "Ok",
-                    confirmButtonColor: "#0392CF",
-                    closeOnConfirm: true,
-                  },
-                  function (isConfirm) {
-                    if (isConfirm) {
-                      scope.resetEmpData();
-                    }
-                  });
-                }
+                scope.confirmRemoveEmployee();
               } else {
+                scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
               }
             });

@@ -364,6 +364,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.get_excel_link = function (id) {
     return $http.get( serverUrl.url + "/hr/get_excel_link?customer_id=" + id );
   }
+
+  hrFactory.checkReplaceEmpForm = function (data) {
+    return $http.post( serverUrl.url + "/hr/check_user_field_replacement", data);
+  }
   
 
   return hrFactory;

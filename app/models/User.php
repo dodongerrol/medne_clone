@@ -394,7 +394,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             $users = DB::table('user')
                     ->join('e_wallet', 'user.UserID', '=', 'e_wallet.UserID')
                     ->where('user.UserType', '=', 1)
-                    ->where('user.Active', '=', 1)
+                    // ->where('user.Active', '=', 1)
                     ->orderBy('user.UserID', 'desc')
                     ->paginate(10);
 
@@ -410,7 +410,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         public function getUserProfileMobile($profileid){
             $findUser = DB::table('user')
                     ->where('UserID', '=', $profileid)
-                    ->where('Active', '=', 1)
+                    // ->where('Active', '=', 1)
                     ->where('UserType', '=', 5)
                     ->first();
 
@@ -445,7 +445,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
        public function UserProfileByRef($refid){
             $findUser = DB::table('user')
                     ->where('Ref_ID', '=', $refid)
-                    ->where('Active', '=', 1)
+                    // ->where('Active', '=', 1)
                     ->first();
 
             if($findUser){
