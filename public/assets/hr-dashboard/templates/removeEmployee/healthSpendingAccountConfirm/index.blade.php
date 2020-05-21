@@ -30,15 +30,27 @@
 
           <div class="body-content">
             <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == false">
-              <p>Member’s wallet will not reflect the pro-rated amount, and will continue reflecting the initial allocated amount. Any unused credits will be returned to Company Available Credits on <b>02/06/2020</b>.</p>
+              <p>Member’s wallet will not reflect the pro-rated amount, and will continue reflecting the initial allocated amount. Any unused credits will be returned to Company Available Credits on <b>{{ emp_details.return_credits_date }}</b>.</p>
               <p> Please confirm to proceed.</p>
             </div>
 
             <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == true">
-              <p>The <b>(Medical) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.medical.currency_type }}</span> {{ emp_details.summary.medical.remaining_allocated_credits }}</b> & the <b>(Wellness) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.wellness.currency_type }}</span> {{ emp_details.summary.wellness.remaining_allocated_credits }}</b> will be returned to respective <b>Company Available Credits</b> immediately after clicking “Confirm”.</p>
-              <p>Any unused credits will be return to <b>Company Available Credits</b> on <b>{{ emp_details.return_credits_date }}</b>.</p>
+              <p>
+                The 
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid'">
+                  <b>(Medical) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.medical.currency_type }}</span> {{ emp_details.summary.medical.remaining_allocated_credits }}</b> 
+                </span>
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'"> & the</span>
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.wellness.plan_method == 'pre_paid'">
+                   <b>(Wellness) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.wellness.currency_type }}</span> {{ emp_details.summary.wellness.remaining_allocated_credits }}</b> 
+                </span>
+                  will be returned to respective <b>Company Available Credits</b> immediately after clicking “Confirm”.
+              </p>
+              <p>Any unused credits will be returned to <b>Company Available Credits</b> on <b>{{ emp_details.return_credits_date }}</b>.</p>
               <p>Please confirm to proceed.</p>
             </div>
+
+            
 
             <div ng-if="isRemoveSuccess" class="remove-success-div">
               <img src="../assets/hr-dashboard/img/remove-employee-success.png">  

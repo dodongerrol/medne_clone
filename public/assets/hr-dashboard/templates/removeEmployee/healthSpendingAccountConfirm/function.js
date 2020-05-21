@@ -14,7 +14,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
         scope.emp_details.wallet_opt = null;
         scope.isRemoveSuccess = false;
         console.log(scope.emp_details);
-        console.log(scope.spendingPlan_status);
+        console.log(scope.remove_emp_details);
 
         scope.closeConfirm = function(){
           $("#remove-employee-confirm-modal").modal('hide');
@@ -100,8 +100,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
         }
         scope.submitReplaceEmployee = function (data) {
           scope.showLoading();
-          scope.remove_emp_details.dob = moment(scope.remove_emp_details.dob).format('YYYY-MM-DD');
-          scope.emp_details.last_day_coverage = moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD');
+          scope.remove_emp_details.dob = moment(scope.remove_emp_details.dob, 'DD/MM/YYYY').format('YYYY-MM-DD');
+          scope.remove_emp_details.last_day_coverage = moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD');
           scope.remove_emp_details.replace_id = scope.emp_details.user_id;
           scope.remove_emp_details.plan_start = moment(scope.remove_emp_details.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
           if (!scope.remove_emp_details.medical_credits) {

@@ -13,6 +13,7 @@ app.directive('replaceEmployeeInputDirective', [
 					dob : moment().format('DD/MM/YYYY')
         }
         var iti2 = null;
+        console.log(scope.credit_status);
 
 				scope.checkReplaceEmpForm	=	function( formData ){
 					console.log(formData);
@@ -57,11 +58,32 @@ app.directive('replaceEmployeeInputDirective', [
           }
           console.log(scope.credit_status);
           if ( formData.medical_credits && formData.medical_credits != '' && formData.medical_credits > parseFloat(scope.credit_status.total_medical_employee_balance_number) ) {
-            swal('Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+            // swal('Error!', 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+            swal({
+              title: "Error:",
+              text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
+              type: "error",
+              html: true,
+              showCancelButton: false,
+              confirmButtonText: "Close",
+              confirmButtonColor: "#0392CF",
+              closeOnConfirm: true,
+              customClass: "errorCreditsModal",
+            })
             return false;
           }
           if ( formData.wellness_credits && formData.wellness_credits != '' && formData.wellness_credits > parseFloat(scope.credit_status.total_wellness_employee_balance_number) ) {
-            swal('Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+            // swal('Error!', 'We realised your Company Wellness Spending Account has insufficient credits. Please contact our support team to increase the credit limit.', 'error');
+            swal({
+              title: "Error:",
+              text: "You have reached your limit of <b>Available Credits.</b><br>Please contact us if you wish to allocate more credits.",
+              type: "error",
+              showCancelButton: false,
+              confirmButtonText: "Close",
+              confirmButtonColor: "#0392CF",
+              closeOnConfirm: true,
+              customClass: "errorCreditsModal",
+            })
             return false;
           }
 
