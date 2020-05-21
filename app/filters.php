@@ -164,6 +164,7 @@ Route::filter('auth.v1', function($request, $response)
 
 Route::filter('auth.v2', function($request, $response)
 {
+    $today = date('Y-m-d H:i:s');
     $returnObject = new stdClass();
     $returnObject->error = TRUE;
     $returnObject->message = 'You have an invalid token. Please login again';
@@ -196,7 +197,20 @@ Route::filter('auth.v2', function($request, $response)
           return Response::json($returnObject, 200);
         }
 
-        $user = DB::table('user')->where('UserID', $findUserID)->where('Active', 1)->first();
+        // check if user is still valid on the last day of the deletion
+        $member_id = StringHelper::getUserId($findUserID);
+        $employee_status = PlanHelper::getEmployeeStatus($member_id);
+        if($employee_status['status'] == true)  {
+            $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+            $expiry = PlanHelper::endDate($expiry);
+            if($today > $expiry) {
+                $user = false;
+            } else {
+                $user = DB::table('user')->where('UserID', $findUserID)->first();
+            }
+        } else {
+            $user = DB::table('user')->where('UserID', $findUserID)->where('Active', 1)->first();
+        }
 
         if(!$user) {
           $returnObject->status = FALSE;
@@ -343,6 +357,7 @@ Route::filter('auth.jwt_employee', function($request, $response)
         // return Redirect::to('company-benefits-dashboard-login');
         return Response::json('You have an invalid token. Please login again', 403, $headers);
     } else {
+        $today = date('Y-m-d H:i:s');
         $headers[]['error'] = true;
         // check if there is a header authorization
         $token = StringHelper::getToken();
@@ -367,7 +382,26 @@ Route::filter('auth.jwt_employee', function($request, $response)
             }
         // }
 
-        $user = DB::table('user')->where('UserID', $value->UserID)->where('Active', 1)->first();
+        // check if user is still valid on the last day of the deletion
+        $member_id = StringHelper::getUserId($value->UserID);
+        $employee_status = PlanHelper::getEmployeeStatus($member_id);
+
+        if($employee_status['status'] == true)  {
+            $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+            $expiry = PlanHelper::endDate($expiry);
+             if($today > $expiry) {
+                $user = false;
+            } else {
+                $user = DB::table('user')->where('UserID', $value->UserID)->first();
+            }
+        } else {
+            $user = DB::table('user')->where('UserID', $value->UserID)->where('Active', 1)->first();
+        }
+
+        if(!$user) {
+            return Response::json('You account was deactivated. Please contact Mednefits Team.', 401,  $headers);
+        }
+
         if((int)$user->account_update_status == 0) {
           return Response::json('You need to update you profile settings for new login method.', 401, $headers);
         }
