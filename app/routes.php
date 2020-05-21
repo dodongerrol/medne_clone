@@ -450,6 +450,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
 	// get spending invoice purchse
 	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
+	// check fields for replacement
+	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
 });
 
 
