@@ -2952,6 +2952,10 @@ class EmployeeController extends \BaseController {
       $customer_credits = DB::table('customer_credits')->where("customer_id", $customer_id)->first();
       
       if($medical > 0) {
+        if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.'];
+        }
+        
         if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {  
           if($medical > 0) {
             // check medical balance
@@ -2962,8 +2966,12 @@ class EmployeeController extends \BaseController {
         }
       }
 
-      if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
-        if($wellness > 0) {
+      if($wellness > 0) {
+        if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.'];
+        }
+        
+        if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
           // check medical balance
           if($wellness > (float)$customer_credits->wellness_credits) {
             return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
