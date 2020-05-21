@@ -61,7 +61,11 @@ class EclaimController extends \BaseController {
 				return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
 			}
 
-
+		if($check && (int)$check->member_activated == 0) {
+			return array('status' => FALSE, 'message' => 'Account is not active.');
+		} else if($check && (int)$check->member_activated == 1) {
+			return array ('status' => TRUE, 'message' => 'Account is active.');
+		}
 			// Session::put('employee-session', $check->UserID);
 			$jwt = new JWT();
 			$secret = Config::get('config.secret_key');
