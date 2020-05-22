@@ -340,21 +340,39 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						.then(function (response) {
 							console.log(response);
 							if(response.data.credit_balance_exceed == true) {
-								scope.apiErrorResponse.push({
-									member_id: value.member_id,
-									message:response.data.message,
-									credit_balance_exceed: response.data.credit_balance_exceed
-								});
-								console.log('fail');
-								if (index == scope.toUpdateAllocation.length-1) {
-									console.log('index check equal');
-									bulkUpdateCtr = 0;
-									scope.hideLoading();
-									scope.successModal(success_ctr, value);
-								}else{
-									bulkUpdateCtr += 1;
-									scope.updateEachBulkAllocation();
-								}
+								// scope.apiErrorResponse.push({
+								// 	member_id: value.member_id,
+								// 	message:response.data.message,
+								// 	credit_balance_exceed: response.data.credit_balance_exceed
+								// });
+								// console.log('fail');
+								// if (index == scope.toUpdateAllocation.length-1) {
+								// 	console.log('index check equal');
+								// 	bulkUpdateCtr = 0;
+								// 	scope.hideLoading();
+								// 	scope.successModal(success_ctr, value);
+								// }else{
+								// 	bulkUpdateCtr += 1;
+								// 	scope.updateEachBulkAllocation();
+								// }
+								setTimeout(function(){
+									swal({
+										title: '',
+										text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
+										html: true,
+										showCancelButton: false,
+										confirmButtonText: 'Close',
+										customClass : 'allocationEntitlementErrorModal'
+									}, function(result) {
+										if	(result)	{
+											bulkUpdateCtr = 0;
+											success_ctr = 0;
+											scope.toUpdateAllocation = [];
+											scope.apiErrorResponse = [];
+											scope.getEmployeeBulkCredit();
+										}
+									});
+								},600);
 								console.log(scope.apiErrorResponse);
 							} else {
 								success_ctr++;
