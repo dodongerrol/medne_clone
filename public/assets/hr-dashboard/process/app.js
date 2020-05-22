@@ -636,6 +636,14 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           },
         },
       })
+      .state('employee-overview.refund-summary', {
+        url: '/refund-summary',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/refundSummary/index.blade.php'
+          },
+        },
+      })
       .state('employee-overview.remove-replace-emp', {
         url: '/remove-replace-emp',
         views: {

@@ -47,6 +47,7 @@
 		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/style.css?_={{ $date->format('U') }}">
 		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/style.css?_={{ $date->format('U') }}">
 		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/style.css?_={{ $date->format('U') }}">
+		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/refundSummary/style.css?_={{ $date->format('U') }}">
 		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/style.css?_={{ $date->format('U') }}">
 		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/style.css?_={{ $date->format('U') }}">
 	<!---------------------------->
@@ -221,6 +222,7 @@
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/function.js?_={{ $date->format('U') }}"></script>
+		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/refundSummary/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeEmployeeFactory.js?_={{ $date->format('U') }}"></script>
