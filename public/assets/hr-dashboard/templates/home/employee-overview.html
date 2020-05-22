@@ -22,10 +22,10 @@
 			</div>
 			<div class="arrow-up-2" style="visibility: visible;"></div>
 		</div> -->
-		<div class="welcome-container" ng-if="empStatementShow">
+		<!-- <div class="welcome-container" ng-if="empStatementShow">
 			<h4 ui-sref="employee-overview" ui-sref="employee-overview" ng-if="options.accessibility == 1">Employee</h4>
 			<div class="arrow-up-statement" ng-if="arrowStatement"></div>
-		</div>
+		</div> -->
 		<div class="welcome-container">
 			<h4 ui-sref="activity">Activity</h4>
 			<div class="arrow-up-3" style="visibility: hidden;"></div>
@@ -88,8 +88,10 @@
 						<!-- <th class="nric-fin-title">NRIC/FIN</th> -->
 						<th class="plan-details-title">Plan details</th>
 						<th class="family-coverage-title">Family coverage</th>
-						<th class="spending-account-medical-title">Spending account <span>(medical)</span></th>
-						<th class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
+						<th ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="spending-account-medical-title">Spending account <span>(medical)</span></th>
+						<th ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
+						<th ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-account-visits-title">Visits</th>
+						<th ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-account-spending-title">Spendings</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -136,7 +138,7 @@
 								<span ng-bind="emp.dependents">2</span>
 							</div>
 						</td>
-						<td class="medical-details-container">
+						<td ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="medical-details-container">
 							<div class="medical-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
@@ -148,7 +150,7 @@
 										ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
 							</div>
 						</td>
-						<td class="wellness-details-container">
+						<td ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="wellness-details-container">
 							<div class="wellness-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
@@ -158,6 +160,34 @@
 								<strong>Balance:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
 										ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
+							</div>
+						</td>
+
+						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="visits-details-container">
+							<div class="enterprise-details">
+								<strong>Utilised:</strong>
+								<span ng-bind="emp.spending_account.medical.utilised">11</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Balance:</strong>
+								<span ng-bind="emp.spending_account.medical.balance">11</span>
+							</div>
+						</td>
+
+						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-details-container">
+							<div class="enterprise-details">
+								<strong>In-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.in_network | number: 2">1,000.00</span>
+								</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Out-of-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
+								</span>
 							</div>
 						</td>
 					</tr>
@@ -1603,6 +1633,49 @@
 			</div>
 		</div>
 		<img ng-click="removeBackBtn()" src="../assets/hr-dashboard/img/icons/cancel.png">
+	</div>
+
+	<div ng-if="isRefundSummaryShow" id="refund-summary" class="refund-summary-wrapper">
+		<div class="refund-container"> 
+			<div class="refund-header">
+				<h1 class="font-25">Refund Summary</h1>
+			</div>
+			<div class="refund-sub-header">
+				<p class="font-16">
+					Please check and confirm details. Once successfully confirmed, <br>
+					the total refund amount show here will be refunded to your company account.
+				</p>
+			</div>
+			<div class="refund-main">
+				<div class="main-item font-16">
+					<div class="main-section-1">
+						<label class="font-20">Details</label>
+						<div>Plan type: {{member_refund_details.account_type}}</div>
+						<div>Unutilised period - {{member_refund_details.unutilised_start_date}} to {{member_refund_details.unutilised_end_date}}</div>
+					</div>
+					<div class="main-section-2">
+						<div class="section-2-left">
+							<div>Total refund</div>
+						</div>
+						<div class="section-2-right">
+							<div style="text-transform: uppercase">{{member_refund_details.currency_type}} {{member_refund_details.amount}}</div>
+							<small ng-click="showCalculation = !showCalculation" class="font-12">See calculation <i class="fa font-10" ng-class="[{'fa-chevron-down': showCalculation == true}, {'fa-chevron-right' : showCalculation == false}]" aria-hidden="true"></i></small>
+							<div ng-if="showCalculation" class="see-calculation font-12">
+								<div>Refund = {{member_refund_details.calculations.pro_rated_refund}}% of unutilised period</div>
+								<div>{{member_refund_details.calculations.pro_rated_refund}}/100 x [{{member_refund_details.calculations.days_used}}/{{member_refund_details.calculations.total_days}} x <span style="text-transform: uppercase">{{member_refund_details.currency_type}}</span> {{member_refund_details.calculations.price_per_employee}}]</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="refund-side-main">
+				<div class="side-main-item">
+					<label for="" class="font-20">Total Refund</label>
+					<label for="" class="font-25" style="text-transform: uppercase">{{member_refund_details.currency_type}} {{member_refund_details.amount}}</label>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="health-spending-account-wrapper" style="display: none;">

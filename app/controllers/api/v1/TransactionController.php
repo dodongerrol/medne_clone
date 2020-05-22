@@ -79,6 +79,31 @@ class Api_V1_TransactionController extends \BaseController
 						$dependent_user = true;
 					}
 
+
+					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
+
+					if($customer_active_plan->account_type == "enterprise_plan")	{
+						$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+			
+						if($limit <= 0) {
+							$returnObject->status = FALSE;
+							$returnObject->message = 'Maximum of 14 visit already reach.';
+							return Response::json($returnObject);
+						}
+					}
+
+					// check if enable to access feature
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+					if($transaction_access)	{
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Panel function is disabled for your company.';
+						return Response::json($returnObject);
+					}
+
 					// check block access
 					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 					if($block) {
@@ -93,10 +118,6 @@ class Api_V1_TransactionController extends \BaseController
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 					$consultation_fees = 0;
 
-					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-					$customer_active_plan = DB::table('customer_active_plan')
-					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-					->first();
 
 					if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
 						$spending_type = $clinic_type->spending_type;
@@ -569,6 +590,10 @@ class Api_V1_TransactionController extends \BaseController
 											}
 										}
 										
+										// deduct visit for enterprise plan user
+										if($customer_active_plan->account_type == "enterprise_plan")	{
+											MemberHelper::deductPlanHistoryVisit($user_id);
+										}
 										// send email
 										$email['member'] = ucwords($user->Name);
 										$email['credits'] = number_format($transaction_results['total_amount'], 2);

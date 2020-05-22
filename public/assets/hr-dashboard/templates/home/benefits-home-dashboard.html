@@ -22,10 +22,10 @@
 				</div>
 				<div class="arrow-up-2" style="visibility: visible;"></div>
 			</div> -->
-			<div class="welcome-container" ng-if="empStatementShow">
+			<!-- <div class="welcome-container" ng-if="empStatementShow">
 				<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
 				<div id="arrow-up-statement"></div>
-			</div>
+			</div> -->
 			<div class="welcome-container">
 				<h4 ui-sref="activity">Activity</h4>
 				<div class="arrow-up-3" style="visibility: hidden;"></div>
@@ -165,7 +165,7 @@
 				</div>
 
 				<div class="col-lg-4 no-padding">
-					<div class="col-lg-12 statement-hide" ng-if="options.accessibility == 1">
+					<div class="col-lg-12 statement-hide" ng-if="options.accessibility == 1 && progress.active_plans[0].account_type != 'enterprise_plan'">
 						<div id="tolal-company-container" class="mednefits-box total-company-credits" 
 						style="background-color: #fff; margin-bottom: 20px; height: auto;">
 							<div class="mednefits-header-box"> 
@@ -254,7 +254,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-12" ng-if="options.accessibility != 1" style="display: none;">
+					<div class="col-lg-12" ng-if="options.accessibility != 1 && progress.active_plans[0].account_type != 'enterprise_plan'" style="display: none;">
 						<div class="mednefits-box" style="background-color: #fff;margin-bottom: 20px;">
 							<div class="mednefits-header-box">
 								<h5 class="mednefits-header-title weight-700">Employee Enrollment Status</h5>
@@ -275,6 +275,28 @@
 										<p class="pull-right cirle-legend-text" ng-bind="progress.in_progress">0</p>
 										<p class="pull-left" style="font-size: 13px;margin-left: -25px;margin-bottom: 0;font-size: 11px;">*Employee enrollment ends<br><span ng-bind="progress.plan_end_date">DD/MM/YYYY</span></p>
 									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-12 statement-hide" ng-if="progress.active_plans[0].account_type == 'enterprise_plan'">
+						<div id="tolal-company-container" class="mednefits-box total-company-credits" 
+						style="background-color: #fff; margin-bottom: 20px; height: auto;">
+							<div class="mednefits-header-box"> 
+								<h5 class="mednefits-header-title weight-700">Company Spendings</h5>
+							</div>
+							<div class="mednefits-body-box credit-box" hidden>
+								<div class="row" style="margin-bottom: 0;">
+									<div class="col-md-12 credit-allocated-container">
+										<h1 class="no-margin credit-amount">
+											<span>
+												<span class="currency-type" ng-bind="credits.currency">SGD</span> <span ng-bind="credits.total_medical_employee_spent"></span>
+											</span>
+										</h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">Total Spent</p>
+									</div>
+
 								</div>
 							</div>
 						</div>

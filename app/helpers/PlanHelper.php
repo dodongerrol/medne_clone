@@ -65,6 +65,7 @@ class PlanHelper {
 			'end_date'  => $end_date,
 			'plan_days_to_expire' => $diff >= 0 ? $diff : 0,
 			'expire'         => date('Y-m-d') >= $end_date ? TRUE : FALSE,
+			'account_type'   => $plan->account_type
 		);
 	}
 
@@ -1432,7 +1433,6 @@ class PlanHelper {
 		}
 
 		$corporate = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-
 		if($data_enrollee->start_date != NULL) {
 			$temp_start_date = \DateTime::createFromFormat('d/m/Y', $data_enrollee->start_date);
 			$start_date = $temp_start_date->format('Y-m-d');
@@ -1520,6 +1520,10 @@ class PlanHelper {
 			'date'          => $start_date,
 			'customer_active_plan_id' => $active_plan->customer_active_plan_id
 		);
+
+		if($active_plan->account_type == "enterprise_plan")	{
+			$user_plan_history_data['total_visit_limit'] = 14;
+		}
 
 		$user_plan_history->createUserPlanHistory($user_plan_history_data);
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
@@ -2284,6 +2288,8 @@ class PlanHelper {
 		$medical_balance = 0;
 		$balance = 0;
 		$total_supp = 0;
+		$in_network = 0;
+		$out_network = 0;
 
         // check if employee has reset credits
 		$employee_credit_reset_medical = DB::table('credit_reset')
@@ -2333,6 +2339,11 @@ class PlanHelper {
 
 				if($history->where_spend == "in_network_transaction") {
 					$in_network_temp_spent += $history->credit;
+					if($history->spending_type == "medical")	{
+						$in_network += $history->credit;
+					} else {
+						$out_network += $history->credit;
+					}
 				}
 
 				if($history->where_spend == "credits_back_from_in_network") {
@@ -2387,7 +2398,19 @@ class PlanHelper {
 				DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
 			}
 
-			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_spent, 'in_network_spent' => $get_allocation_spent_temp, 'deleted_employee_allocation' => $deleted_employee_allocation, 'total_deduction_credits' => $total_deduction_credits, 'medical_balance' => $medical_balance, 'plan_start' => $user_plan_history->date, 'total_supp' => $total_supp);
+			return array('allocation' => $allocation, 
+				'get_allocation_spent' => $get_allocation_spent, 
+				'balance' => $balance >= 0 ? $balance : 0, 
+				'e_claim_spent' => $e_claim_spent, 
+				'in_network_spent' => $get_allocation_spent_temp, 
+				'deleted_employee_allocation' => $deleted_employee_allocation, 
+				'total_deduction_credits' => $total_deduction_credits, 
+				'medical_balance' => $medical_balance, 
+				'plan_start' => $user_plan_history->date, 
+				'total_supp' => $total_supp,
+				'in_network'	=> $in_network,
+				'out_network'	=> $out_network
+			);
 
 		} else {
 			return false;

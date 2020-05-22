@@ -2223,3 +2223,37 @@ body::-webkit-scrollbar-thumb {
   margin-bottom: 28px;
   color: #FFF;
 }
+
+
+.visits-home-container .visits-text{ 
+  color: #555;
+  font-size: 16px;
+  font-family: 'Helvetica Medium';
+  margin-bottom: 5px;
+}
+.visits-home-container .balance-text{ 
+  color: #555;
+}
+.visits-home-container .visits-bottom-values{ 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.enterprise-activity .enterprise-dates{
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: 'Helvetica Thin';
+}
+
+.visits-activity-container{
+  border-right: 1px solid #ccc;
+  text-align: center;
+  padding-bottom: 20px;
+  padding-top: 15px;
+}
+.visits-activity-container .visits-bottom-values{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 20px;
+}

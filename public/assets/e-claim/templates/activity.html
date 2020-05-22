@@ -127,7 +127,7 @@
 
 	<div class="col-xs-12 col-sm-12 col-md-12">
 		<div class="benefit-dollars-container">
-			<div class="col-md-12 border-bottom no-padding text-center " style="margin: 10px 0 20px 0;">
+			<div ng-if="activity_results.account_type != 'enterprise_plan'" class="col-md-12 border-bottom no-padding text-center " style="margin: 15px 0 30px 0;">
 				<h5 class="color-black3 weight-500 font-20 no-margin spend-text">Spending Account</h5>
 				<span class="date-range-view font-16">{{rangePicker_start}} - {{rangePicker_end}}</span>
 
@@ -138,9 +138,18 @@
 						ng-click="spendingType( 1 )">Wellness</button>
 				</div>
 			</div>
+			
+			<div ng-if="activity_results.account_type == 'enterprise_plan'" class="col-md-12 border-bottom no-padding text-center enterprise-activity" style="margin: 10px 0 20px 0;">
+				<p class="color-black3 weight-500" style="font-size: 20px;">Your Activity</p>
+				<p class="enterprise-dates">
+					<span>02/02/2020</span>
+					-
+					<span>02/02/2020</span>
+				</p>
+			</div>
 			<!-- <h5 class="color-black3 weight-700 font-16 border-bottom">Benefit Dollars</h5> -->
 			<div class="white-space-10"></div>
-			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left">
+			<div ng-if="activity_results.account_type != 'enterprise_plan'" class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left">
 				<h4 class="font-medium2 font-18 no-wrap color-blue-custom margin-bottom-6">
 					<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 					<span
@@ -157,7 +166,7 @@
 				<!-- <span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span><span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span> -->
 			</div>
 
-			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left" ng-if="activity_results.total_allocation == 'UNLIMITED'">
+			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left" ng-if="activity_results.total_allocation == 'UNLIMITED' && activity_results.account_type != 'enterprise_plan'">
 				<h4 class="font-medium2 no-wrap color-blue-custom weight-700 margin-bottom-6"><span ng-bind="activity_results.total_allocation"></span></h4>
 				<p class="color-gray font-12 weight-700">TOTAL ALLOCATION</p>
 				<div class="white-space-10"></div>
@@ -165,8 +174,37 @@
 				<p class="color-gray font-12 weight-700">BALANCE</p>
 			</div>
 
-			<div class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 xs-no-padding text-center">
+			<div class="visits-activity-container col-xxs-12 col-xs-6 col-sm-2 col-md-2 no-padding-left" ng-if="activity_results.account_type == 'enterprise_plan'">
+				<p class="color-black3 weight-500 font-16 visit-text">Visits</p>
+				<p class="color-blue-custom" style="font-size: 23px;">
+					<span ng-bind="activity_results.total_balance_visit">99</span>
+				</p>
+				<p class="color-gray font-12">BALANCE</p>
+
+				<div class="visits-bottom-values">
+					<div>
+						<p class="color-gray font-12" style="border-right: 0.5px solid #bbb;">UTILISED	:	<span ng-bind="activity_results.total_visit_created" style="color:#00B2E1;">11</span></p>
+					</div>
+					<div>
+						<p class="color-gray font-12">TOTAL	:	<span ng-bind="activity_results.total_visit_limit" style="color:#00B2E1">14</span></p>
+					</div>
+				</div>
+			</div>
+
+			<div ng-if="activity_results.account_type != 'enterprise_plan'" class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 xs-no-padding text-center">
 				<div class="spent-box text-left">
+					<!-- <div class="white-space-30 xxs-hide"></div>
+					<div class="white-space-5 "></div> -->
+					<h4 class="no-wrap color-blue-custom margin-bottom-6">
+						<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
+						<span ng-bind="(activity_results.total_spent) ? activity_results.total_spent : '0.00'"></span></h4>
+					<p class="color-gray font-12">SPENT</p>
+				</div>
+			</div>
+			
+			<div ng-if="activity_results.account_type == 'enterprise_plan'" class="col-xxs-12 col-xs-6 col-sm-2 col-md-2 xs-no-padding text-center">
+				<div class="white-space-50"></div>
+				<div class="spent-box text-left" style="width: auto;display: inline-block;">
 					<!-- <div class="white-space-30 xxs-hide"></div>
 					<div class="white-space-5 "></div> -->
 					<h4 class="no-wrap color-blue-custom margin-bottom-6">
