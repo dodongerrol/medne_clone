@@ -59,7 +59,7 @@
 							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 							ng-bind="health_spending_summary.wellness.initial_allocation | number : 2">1,000.00</span></span>
 				</div>
-				<div class="pro-rated-container weight-700">
+				<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && ( (health_spending_summary.medical && health_spending_summary.medical.pro_allocation_status == false) || (health_spending_summary.wellness && health_spending_summary.wellness.pro_allocation_status == false) )}" class="pro-rated-container weight-700">
 					<strong ng-if="health_spending_summary.medical && emp_details.account_type != 'lite_plan' || ( emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method != 'pre_paid')" class="font-helvetica-medium">Pro-rated Allocation</strong>
 					<strong ng-if="health_spending_summary.medical &&  emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="font-helvetica-medium">Pro-rated Allocated Credits</strong>
 
@@ -204,7 +204,7 @@
 						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 								ng-bind="health_spending_summary.medical.initial_allocation">1,000.00</span></span>
 					</div>
-					<div class="pro-rated-container weight-700">
+					<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.medical.pro_allocation_status == false}" class="pro-rated-container weight-700">
 						<strong ng-if="emp_details.account_type != 'lite_plan' || ( emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method != 'pre_paid')" class="font-helvetica-medium">Pro-rated Allocation</strong>
 						<strong ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="font-helvetica-medium">Pro-rated Allocated Credits</strong>
 						<span class="font-helvetica-medium"><span class="currency-type"
@@ -318,7 +318,7 @@
 						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 								ng-bind="health_spending_summary.wellness.initial_allocation">1,000.00</span></span>
 					</div>
-					<div class="pro-rated-container weight-700">
+					<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.wellness.pro_allocation_status == false}" class="pro-rated-container weight-700">
             <strong ng-if="emp_details.account_type != 'lite_plan' || ( emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method != 'pre_paid')" class="font-helvetica-medium">Pro-rated Allocation</strong>
 						<strong ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="font-helvetica-medium">Pro-rated Allocated Credits</strong>
 						<span class="font-helvetica-medium"><span class="currency-type"

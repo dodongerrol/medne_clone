@@ -30,7 +30,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
 					if(scope.emp_details.wallet_opt == null){
             swal('Error!', 'Please select an option first.', 'error');
           }else{
-            if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
+            if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
               $("#remove-employee-confirm-modal").modal('show');
             }else{
               // scope.confirmRemoveEmployee();
@@ -46,6 +46,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
           scope.showLoading();
           dependentsSettings.updateWalletMember(scope.emp_details.user_id, scope.selected_customer_id, scope.emp_details.summary.medical.exceed, scope.emp_details.summary.wellness.exceed, moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'), dates, scope.emp_details.wallet_opt)
             .then(function (response) {
+              console.log(response);
               scope.hideLoading();
               if (response.data.status) {
                 // scope.removeEmployeeRequests();
@@ -54,7 +55,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
                 }else{
                   swal({
                     title: "Success!",
-                    text: response.data.message,
+                    // text: response.data.message,
+                    text: "The employee has been successfully removed",
                     type: "success",
                     showCancelButton: false,
                     confirmButtonText: "Ok",

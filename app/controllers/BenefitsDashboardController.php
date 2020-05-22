@@ -13427,7 +13427,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($check_wallet_status && (int)$check_wallet_status->medical_pro_allocation_status == 1) {
 			$medical['initial_allocation'] = number_format($check_wallet_status->medical_initial_allocation, 2);
 			$medical['pro_allocation'] = number_format($check_wallet_status->medical_pro_allocation, 2);
-			$medical['pro_allocation_status'] = $check_wallet_status->medical_pro_allocation == 1 ? true : false;
+			$medical['pro_allocation_status'] = $check_wallet_status->medical_pro_allocation_status == 1 ? true : false;
 
 			if($spending['medical_method'] == "pre_paid")	{
 				$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
@@ -13536,7 +13536,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($check_wallet_status && (int)$check_wallet_status->wellness_pro_allocation_status == 1) {
 			$wellness['initial_allocation'] = number_format($check_wallet_status->wellness_initial_allocation, 2);
 			$wellness['pro_allocation'] = number_format($check_wallet_status->wellness_pro_allocation, 2);
-			$wellness['pro_allocation_status'] = $check_wallet_status->wellness_pro_allocation == 1 ? true : false;
+			$wellness['pro_allocation_status'] = $check_wallet_status->wellness_pro_allocation_status == 1 ? true : false;
 			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 			$wellness['returned_credit_status'] = false;
 
