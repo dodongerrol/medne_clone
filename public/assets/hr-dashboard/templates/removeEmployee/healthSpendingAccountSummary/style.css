@@ -59,6 +59,7 @@
 .balance-container.grid-width-100{
   grid-template-columns: 1fr;
 }
+.pro-rated-container.isHide,
 .balance-container.isHide{
   display: none;
 }

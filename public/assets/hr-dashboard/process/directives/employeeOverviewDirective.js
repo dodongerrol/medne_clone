@@ -67,6 +67,7 @@ app.directive("employeeOverviewDirective", [
         scope.arrowStatement = false;
         scope.litePlanCheckbox = false;
         scope.hideLitePlanCheckbox = true;
+        scope.isBasicPlan = false;
         scope.showBlockHealthProviders = false;
         scope.entitlement_data = {};
         scope.dropdownEntitlement = {
@@ -1261,7 +1262,11 @@ app.directive("employeeOverviewDirective", [
             // scope.wellness_wallet = emp.wellness_wallet;
             // console.log(scope.medical_wallet);
             // console.log(scope.wellness_wallet);
-            
+            if (emp.account_type === 'lite_plan'){
+              scope.isBasicPlan = true;
+            }else{
+              scope.isBasicPlan = false;
+            }
             if (emp.account_type === 'lite_plan' && emp.plan_method_type == 'pre_paid') {
               scope.hideLitePlanCheckbox = false;
               scope.litePlanCheckbox = true;

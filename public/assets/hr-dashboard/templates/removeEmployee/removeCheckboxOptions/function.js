@@ -36,13 +36,15 @@ app.directive('removeCheckboxOptionsDirective', [
 					if( !scope.checkboxes_options.replace && !scope.checkboxes_options.reserve && !scope.checkboxes_options.remove ){
 						swal('Error!', 'Please select an option.', 'error');
 					}
-					scope.showLoading();
+					
 					if( scope.checkboxes_options.replace == true ){
+						scope.showLoading();
 						scope.emp_details.remove_option = 'replace';
 						removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
 						$state.go('employee-overview.remove-replace-emp');
 					}
 					if( scope.checkboxes_options.reserve == true ){
+						scope.showLoading();
 						scope.emp_details.remove_option = 'reserve';
 						removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
 						$state.go('employee-overview.health-spending-account-summary');
@@ -50,7 +52,29 @@ app.directive('removeCheckboxOptionsDirective', [
 					if( scope.checkboxes_options.remove == true ){
 						scope.emp_details.remove_option = 'remove';
 						removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
-						$state.go('employee-overview.health-spending-account-summary');
+
+						// if (scope.emp_details.account_type == 'enterprise_plan') {
+						// 	swal({
+						// 		title: "Confirm",
+						// 		text: "Are you sure you want to remove this employee completely?",
+						// 		type: "warning",
+						// 		showCancelButton: true,
+						// 		confirmButtonColor: "#ff6864",
+						// 		confirmButtonText: "Remove",
+						// 		cancelButtonText: "No",
+						// 		closeOnConfirm: true,
+						// 		customClass: "removeEmp"
+						// 	},
+						// 	function (isConfirm) {
+						// 		if(isConfirm){
+						// 			scope.showLoading();
+						// 			$state.go('employee-overview.refund-summary');
+						// 		}
+						// 	});
+						// }else{
+							scope.showLoading();
+							$state.go('employee-overview.health-spending-account-summary');
+						// }
 					}
 				}
 				scope.onLoad	=	function(){
