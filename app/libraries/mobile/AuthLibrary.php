@@ -57,7 +57,7 @@ class AuthLibrary{
     if($token->status){
       $findUserID = self::FindUserFromToken($token->data['access_token']);
       $activePromoCode = General_Library::ActivePromoCode();
-      $user = DB::table('user')->where('UserID', $findUserID)->where('Active', 1)->first();
+      $user = DB::table('user')->where('UserID', $findUserID)->first();
 
       if(!$user) {
         $returnObject->status = FALSE;

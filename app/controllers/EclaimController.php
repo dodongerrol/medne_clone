@@ -27,33 +27,11 @@ class EclaimController extends \BaseController {
 		$email = (int)($email);
 		$password = $input['password'];
 
-		// $check = DB::table('user')
-		// ->where(function($query) use ($email, $password) {
-		// 	$query->where('UserType', 5)
-		// 	->where('Email', $email)
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-		// })
-  //   ->orWhere(function($query) use ($email, $password){
-  //   	$query->where('UserType', 5)
-		// 	->where('NRIC', 'like', '%'.$email.'%')
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-  //   })
-  //   ->orWhere(function($query) use ($email, $password){
-  //   	$email = (int)($email);
-  //   	$query->where('UserType', 5)
-		// 	->where('PhoneNo', (string)$email)
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-  //   })
-		// ->first();
-
 		$check = DB::table('user')
 		->where('UserType', 5)
 		->where('PhoneNo', (int)$email)
 		->where('password', md5($password))
-		->where('Active', 1)
+		// ->where('Active', 1)
 		->first();
 
 		if($check) {
@@ -61,6 +39,16 @@ class EclaimController extends \BaseController {
 				return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
 			}
 
+			// check employee status
+			$employee_status = PlanHelper::getEmployeeStatus($check->UserID);
+			$today = date('Y-m-d H:i:s');
+			if($employee_status['status'] == true)  {
+				$expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+				$expiry = PlanHelper::endDate($expiry);
+				 if($today > $expiry) {
+					return array('status' => FALSE, 'message' => 'Invalid Credentials or Please update your user ID by clicking on the link above.');
+				}
+			}
 
 			// Session::put('employee-session', $check->UserID);
 			$jwt = new JWT();

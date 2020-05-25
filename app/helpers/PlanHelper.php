@@ -2452,6 +2452,8 @@ class PlanHelper {
 	public static function memberMedicalAllocatedCreditsByDates($wallet_id, $user_id, $start, $end)
 	{
 
+		$customer_id = self::getCustomerId($user_id);
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$get_allocation = 0;
 		$deducted_credits = 0;
 		$credits_back = 0;
@@ -2498,11 +2500,8 @@ class PlanHelper {
 					}
 				}
 			}
-
-			// if($history->where_spend == "credits_back_from_in_network") {
-			// 	$credits_back += $history->credit;
-			// }
 		}
+		
 		// return $wallet_history;
 		$pro_allocation = DB::table('wallet_history')
 		->where('wallet_id', $wallet_id)
@@ -2515,30 +2514,38 @@ class PlanHelper {
 		$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
 		$medical_balance = 0;
 
-		if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
-			$allocation = $pro_allocation;
-			$balance = $pro_allocation - $get_allocation_spent;
-			$medical_balance = $balance;
 
-			if($balance < 0) {
-				$balance = 0;
-				$medical_balance = $balance;
-			}
-		} else {
+		if($spending['medical_method'] == "pre_paid")	{
 			$allocation = $get_allocation - $deducted_credits;
 			$balance = $allocation - $get_allocation_spent;
 			$medical_balance = $balance;
 			$total_deduction_credits += $deducted_credits;
-
-			if($user->Active == 0) {
-				$deleted_employee_allocation = $get_allocation - $deducted_credits;
-				$medical_balance = 0;
+		} else {
+			if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
+				$allocation = $pro_allocation;
+				$balance = $pro_allocation - $get_allocation_spent;
+				$medical_balance = $balance;
+	
+				if($balance < 0) {
+					$balance = 0;
+					$medical_balance = $balance;
+				}
+			} else {
+				$allocation = $get_allocation - $deducted_credits;
+				$balance = $allocation - $get_allocation_spent;
+				$medical_balance = $balance;
+				$total_deduction_credits += $deducted_credits;
+	
+				if($user->Active == 0) {
+					$deleted_employee_allocation = $get_allocation - $deducted_credits;
+					$medical_balance = 0;
+				}
 			}
 		}
 
-		if($pro_allocation > 0) {
-			$allocation = $pro_allocation;
-		}
+		// if($pro_allocation > 0) {
+		// 	$allocation = $pro_allocation;
+		// }
 
 		if($e_wallet->balance != $medical_balance) {
 			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
@@ -2845,6 +2852,9 @@ class PlanHelper {
 
 	public static function memberWellnessAllocatedCreditsByDates($wallet_id, $user_id, $start, $end)
 	{
+
+		$customer_id = self::getCustomerId($user_id);
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$get_wellness_allocation = 0;
 		$deducted_by_hr_wellness = 0;
 		$e_claim_wellness_spent = 0;
@@ -2894,28 +2904,35 @@ class PlanHelper {
 		$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
 		$wellness_balance = 0;
 
-		if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
-			$allocation_wellness = $pro_allocation;
-			$balance = $pro_allocation - $get_allocation_spent_wellness;
-			$wellness_balance = $balance;
-			if($balance < 0) {
-				$balance = 0;
-				$wellness_balance = $balance;
-			}
-		} else {
+		if($spending['wellness_method'] == "pre_paid")	{
 			$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
 			$total_deduction_credits_wellness = $deducted_wellness_credits;
 			$balance = $allocation_wellness - $get_allocation_spent_wellness;
 			$wellness_balance = $balance;
-			if($user->Active == 0) {
-				$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
-				$wellness_balance = 0;
+		} else {
+			if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
+				$allocation_wellness = $pro_allocation;
+				$balance = $pro_allocation - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
+				if($balance < 0) {
+					$balance = 0;
+					$wellness_balance = $balance;
+				}
+			} else {
+				$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+				$total_deduction_credits_wellness = $deducted_wellness_credits;
+				$balance = $allocation_wellness - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
+				if($user->Active == 0) {
+					$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+					$wellness_balance = 0;
+				}
 			}
 		}
 
-		if($pro_allocation > 0) {
-			$allocation_wellness = $pro_allocation;
-		}
+		// if($pro_allocation > 0) {
+		// 	$allocation_wellness = $pro_allocation;
+		// }
 
 		if($e_wallet->wellness_balance != $wellness_balance) {
 			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
@@ -3079,16 +3096,36 @@ class PlanHelper {
 			// return $users_allocation;
 	}
 
+	public static function getActivePlanUsers($customer_id)
+	{
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
+		$active_plan_ids = [];
+
+		foreach($customer_active_plans as $key => $customer_active_plan)	{
+			$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
+		}
+		
+		// get users base on the customer active plan ids
+		$ids = DB::table('user_plan_history')
+					->whereIn('customer_active_plan_id', $active_plan_ids)
+					->where('type', 'started')
+					->get();
+		$user_ids = [];
+		foreach($ids as $key => $id)	{
+			$user_ids[] = $id->user_id;
+		}
+		return $user_ids;
+	}
+
 	public static function getCorporateUserByEntitlementDates($corporate_id, $customer_id, $start) 
 	{
 		$users_medical = [];
 
 		$users_medical_temp = DB::table('corporate_members')
 									->join('user', 'user.UserID', '=', 'corporate_members.user_id')
-									// ->join('employee_wallet_entitlement', 'employee_wallet_entitlement.member_id', '=', 'user.UserID')
-									// ->where('employee_wallet_entitlement.medical_usage_date', '>=', $start)
 									->where('corporate_members.corporate_id', $corporate_id)
-									->where('user.Active', 1)
+									// ->where('user.Active', 1)
 									->groupBy('user.UserID')
 									->get();
 
