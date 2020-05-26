@@ -64,11 +64,21 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                      ->select('UserID')
                     ->where('PhoneNo', (string)$email)
                     ->where('Password', StringHelper::encode($password))
-                    ->where('Active', 1)
+                    // ->where('Active', 1)
                     ->where('UserType', 5)
                      ->first();
 
             if($users){
+                // check employee status
+                $employee_status = PlanHelper::getEmployeeStatus($users->UserID);
+                $today = date('Y-m-d H:i:s');
+                if($employee_status['status'] == true)  {
+                    $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+                    $expiry = PlanHelper::endDate($expiry);
+                    if($today > $expiry) {
+                        return false;
+                    }
+                }
                 return $users->UserID;
             }else{
                 return false;

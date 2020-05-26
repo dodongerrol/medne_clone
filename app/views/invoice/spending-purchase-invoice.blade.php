@@ -215,7 +215,7 @@
           <td style="text-align: left !important;padding-left: 30px;padding-top: 20px;">
             <p style="margin-bottom: 10px;"><b>{{ $plan_type }}</b></p>
             <p>Account Type: {{ $account_type }}</p>
-            <p>Date of Credit Purchase: {{ $plan_start }}</p>
+            <p>Date of Credits Purchase: {{ $plan_start }}</p>
             <!-- <p>Billing Frequency: Annual</p>
             <p>Start Date: {{ $plan_start }}</p>
             <p>End Date: {{ $plan_end }}</p>

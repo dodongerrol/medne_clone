@@ -41,12 +41,12 @@
 .medical-wellness-container .wellness-container{
   flex: 1;
 }
-.inital-allocation-container, 
-.pro-rated-container,
-.pending-claim-container, 
-.balance-summary-container,
-.spending-account-status,
-.balance-container{
+.account-summary-wrapper .inital-allocation-container, 
+.account-summary-wrapper .pro-rated-container,
+.account-summary-wrapper .pending-claim-container, 
+.account-summary-wrapper .balance-summary-container,
+.account-summary-wrapper .spending-account-status,
+.account-summary-wrapper .balance-container{
   margin-bottom: 22px;
   padding: 0;
   border: none;
@@ -59,6 +59,7 @@
 .balance-container.grid-width-100{
   grid-template-columns: 1fr;
 }
+.pro-rated-container.isHide,
 .balance-container.isHide{
   display: none;
 }
