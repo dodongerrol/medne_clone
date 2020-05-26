@@ -6502,6 +6502,8 @@ public function payCreditsNew( )
     }
   }
 }
+<<<<<<< HEAD
+=======
 =======
 <?php
 
@@ -13147,3 +13149,4 @@ public function payCreditsNew( )
     }
   }
 }
+>>>>>>> 1f20894031e7cae53a65ffa0e0e889d28ce43024

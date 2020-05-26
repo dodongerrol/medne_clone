@@ -34,19 +34,30 @@
 				</div>
 			</a>
 		</div>
-		<div class="col-sm-12 col-md-12 col-lg-12">
+		<div class="col-sm-12 col-md-12 col-lg-12 new-account" id="forgot-password">
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
 			<form class="med-form" ng-submit="loginHr()" id="form-forgot">
 				<div class="form-group">
-					<input type="email" name="email" class="form-control med-input" placeholder="Email Address" ng-model="login_details.email" required>
+					<label for="email">Email</label>
+					<input type="email" name="email" class="form-control med-input" placeholder="Enter HR Admin's work email address" ng-model="login_details.email" required>
 				</div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">Reset Password</button>
 				</div>
 			</form>
-			<div class="form-group" id="success-message" style="display: none;">
-				<button type="button" class="btn btn-info btn-block med-button">Password Reset Details sent to your Email Account</button>
+			<div class="form-group new-account" id="success-message" style="display: none;">
+				
+				<div class="success-container">
+					<img src="assets/hr-dashboard/img/new-account/envelope.svg"  class="center-block">
+
+					<div class="success-item">
+						We’ve sent an email to <b><span ng-bind="login_details.email"></span></b>. <br>
+						Click the link in that email to reset your password. <br>
+						Didn’t receive an email from us? <span><a href="#">Resend email.</a></span>
+					</div>
+				</div>
+				<!-- <button type="button" class="btn btn-info btn-block med-button">Password Reset Details sent to your Email Account</button> -->
 			</div>
 		</div>
 	</div>

@@ -676,7 +676,7 @@ button {
 .login-logo {
   margin-top: 60px;
   /*margin-top: 90px;*/
-  /*height: 60px;*/
+  height: 60px;
   height: 50px;
 }
 
@@ -685,15 +685,6 @@ button {
   font-family: "Open Sans";
   margin-top: 10px;
   font-size: 23px;
-}
-
-.med-form {
-  max-width: 390px;
-  margin: 0 auto;
-}
-
-.form-group .med-input {
-  margin: 35px 0;
 }
 
 .form-group .med-button {
@@ -712,6 +703,16 @@ button {
   font-size: 18px;
 }
 
+.med-form {
+  max-width: 390px;
+  margin: 0 auto;
+}
+
+/* .form-group .med-input {
+  margin: 35px 0;
+} */
+
+
 .forgot-password {
   color: #777777;
   text-decoration: underline;
@@ -726,6 +727,86 @@ button {
   color: #909090;
   outline: none;
 }
+
+/* New Account Feature */
+
+.new-account label {
+  margin-bottom: 9px;
+  font-weight: normal;
+  color: #000;
+}
+
+.new-account .no-account a {
+  color: #18A4E0;
+}
+
+.new-account .no-account {
+  display: block;
+  text-align: center;
+  font-size: 15px;
+  color: #000;
+  padding-bottom: 22px;
+}
+
+.new-account .login-logo { 
+  margin-top: 60px;
+  /* margin-top: 90px; */
+  /* height: 60px; */
+  height: 38px;
+  width: 208.9px;
+}
+
+.new-account .text-below-image {
+  color: #777777;
+  font-family: "Open Sans";
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.new-account .form-group .med-button {
+  padding: 10px 0;
+  background-color: #0392cf;
+  font-size: 16px;
+}
+
+.new-account .med-input {
+  height: 45px;
+  padding: 0 25px;
+  font-size: 13px;
+}
+
+.new-account .med-input::placeholder {
+  font-size: 13px;
+}
+
+.new-account .form-group .med-input {
+  margin-bottom: 24px;
+}
+
+.new-account .forgot-password {
+  color: #000;
+  text-decoration: underline;
+  font-size: 13px;
+}
+
+#forgot-password .med-form {
+  max-width: 390px;
+  margin: 50px auto;
+}
+
+.new-account .success-container {
+  margin: 70px auto;
+  text-align: center;
+  color: #000;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 3;
+}
+
+.new-account .success-item {
+  padding: 33px 0;
+}
+/* End New Account Feature */
 
 /*
 	Download Template

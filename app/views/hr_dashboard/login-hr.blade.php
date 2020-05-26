@@ -56,7 +56,7 @@
 				</div>
 			</a>
 		</div>
-		<div class="col-sm-12 col-md-12 col-lg-12">
+		<!-- <div class="col-sm-12 col-md-12 col-lg-12">
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
 			<form class="med-form" ng-submit="loginHr()">
@@ -81,7 +81,39 @@
 				<a href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
 					password?</a>
 			</form>
+		</div> -->
+		<!-- New Account Feature -->
+		<div class="col-sm-12 col-md-12 col-lg-12 new-account">
+			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
+			<h2 class="text-center text-below-image">for business</h2>
+			<span class="no-account">Don't have an account? <a href="#">Sign up</a>.</span>
+			<form class="med-form" ng-submit="loginHr()">
+				<div ng-if="true" class="form-group">
+					<label for="email">Email</label>
+					<input type="email" name="email" class="form-control med-input" placeholder="Enter Email Address"
+						ng-model="login_details.email" required>
+				</div>
+				<div ng-if="false" class="form-group">
+					<label for="password">Password</label>
+					<input type="password" class="form-control med-input" placeholder="Enter password"
+						ng-model="login_details.password" required style="margin-bottom: 15px">
+				</div>
+				<div ng-if="false" class="checkbox">
+					<label style="color: #000;font-size: 15px;">
+						<input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed
+						in
+					</label>
+				</div>
+				<div class="form-group">
+					<button ng-if="true" type="submit" class="btn btn-info btn-block med-button" id="login-btn">Continue</button>
+					<button ng-if='false' type="submit" class="btn btn-info btn-block med-button" id="login-btn">Sign in</button>
+				</div>
+				<span ng-if="ng_fail">*Please check your login credentials</span>
+				<a ng-if="false" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
+					password?</a>
+			</form>
 		</div>
+		<!-- End New Account Feature -->
 	</div>
 
 </body>
