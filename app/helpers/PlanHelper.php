@@ -5580,6 +5580,7 @@ class PlanHelper {
 		$plan_withdraw = false;
 		$status = null;
 		$emp_status = null;
+		$today = date('Y-m-d', strtotime('-1 day'));
 
 		if($replacement) {
 			if((int)$replacement->deactive_employee_status == 1 && (int)$replacement->status == 1 && (int)$replacement->replace_status == 1) {
@@ -5609,7 +5610,7 @@ class PlanHelper {
 				}
 			}
 
-			if(date('Y-m-d') > $replacement->expired_and_activate) {
+			if($today > $replacement->expired_and_activate) {
 				$emp_status = 'pending_deletion';
 			} else {
 				$emp_status = 'shedule';
@@ -5627,7 +5628,7 @@ class PlanHelper {
 				$schedule_status = true;
 				$schedule = "Last Day of Coverage/End Date ".date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
 
-				if(date('Y-m-d') > $deleted_accounts->date_withdraw) {
+				if($today > $deleted_accounts->date_withdraw) {
 					$emp_status = 'pending_deletion';
 				} else {
 					$emp_status = 'shedule';
@@ -5638,15 +5639,17 @@ class PlanHelper {
 				$schedule_status = false;
 				$schedule = 'Removed on '.date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
 
-				if($deleted_accounts->refund_status == 2 && $deleted_accounts->date_withdraw > date('Y-m-d')) {
+				if($deleted_accounts->refund_status == 2 && $deleted_accounts->date_withdraw > $today) {
 						// schedule
 					$schedule_status = true;
 					$schedule = 'Last Day of Coverage/End Date '.date('d/m/Y', strtotime($deleted_accounts->date_withdraw));
 				}
 
-				if(date('Y-m-d') > $deleted_accounts->date_withdraw) {
+				if($today > $deleted_accounts->date_withdraw) {
+					$schedule_status = true;
 					$emp_status = 'pending_deletion';
 				} else {
+					$schedule_status = true;
 					$emp_status = 'shedule';
 				}
 
