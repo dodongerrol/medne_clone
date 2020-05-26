@@ -30,7 +30,16 @@
 
           <div class="body-content">
             <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == false">
-              <p>Member’s wallet will not reflect the pro-rated amount, and will continue reflecting the initial allocated amount. Any unused credits will be returned to Company Available Credits on <b>{{ emp_details.return_credits_date }}</b>.</p>
+              <p>
+                Member’s wallet will not reflect the pro-rated amount, and will continue reflecting the initial allocated amount. Any unused 
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">credits</span> 
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method != 'pre_paid'">medical credits</span> 
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method != 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">wellness credits</span> 
+                will be returned to 
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Available Credits</span> 
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method != 'pre_paid'">Company Medical Available Credits</span>
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method != 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Wellness Available Credits</span>
+                on <b>{{ emp_details.return_credits_date }}</b>.</p>
               <p> Please confirm to proceed.</p>
             </div>
 
@@ -44,9 +53,19 @@
                 <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.wellness.plan_method == 'pre_paid'">
                    <b>(Wellness) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.wellness.currency_type }}</span> {{ emp_details.summary.wellness.remaining_allocated_credits }}</b> 
                 </span>
-                  will be returned to respective <b>Company Available Credits</b> immediately after clicking “Confirm”.
+                will be returned to 
+                <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">respective</span>
+                <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Available Credits</b> 
+                <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method != 'pre_paid'">Company Medical Available Credits</b>
+                <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method != 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Wellness Available Credits</b>
+                immediately after clicking “Confirm”.
               </p>
-              <p>Any unused credits will be returned to <b>Company Available Credits</b> on <b>{{ emp_details.return_credits_date }}</b>.</p>
+              <p>
+                Any unused credits will be returned to 
+                <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Available Credits</b> 
+                <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method != 'pre_paid'">Company Medical Available Credits</b>
+                <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method != 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Wellness Available Credits</b>
+                on <b>{{ emp_details.return_credits_date }}</b>.</p>
               <p>Please confirm to proceed.</p>
             </div>
 
