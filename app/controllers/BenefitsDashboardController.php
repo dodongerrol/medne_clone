@@ -3516,9 +3516,11 @@ class BenefitsDashboardController extends \BaseController {
 		foreach ($input['users'] as $key => $user) {
 			$check_withdraw = DB::table('customer_plan_withdraw')->where('user_id', $user['user_id'])->count();
 			$expiry = date('Y-m-d', strtotime($user['expiry_date']));
-			// return $date.' - '.$expiry;
+			$expired_date = date('Y-m-d', strtotime('+1 day', strtotime($user['expiry_date'])));
+			// return $date.' - '.$expired_date;
+			// return $check_withdraw;
 			if($check_withdraw == 0) {
-				if($date >= $expiry) {
+				if($date >= $expired_date) {
 					// create refund and delete now
 					try {
 						$result = self::removeEmployee($user['user_id'], $expiry, true);
@@ -13298,6 +13300,23 @@ class BenefitsDashboardController extends \BaseController {
 	public function getEmployeeSpendingAccountSummaryNew( )
 	{
 		$input = Input::all();
+
+		if(isset($input['calibrate_medical'])) {
+			if($input['calibrate_medical'] == "true") {
+				$input['calibrate_medical'] = true;
+			} else {
+				$input['calibrate_medical'] = false;
+			}
+		}
+
+		if(isset($input['calibrate_wellness'])) {
+			if($input['calibrate_wellness'] == "true") {
+				$input['calibrate_wellness'] = true;
+			} else {
+				$input['calibrate_wellness'] = false;
+			}
+		}
+		
 		$customer_id = PlanHelper::getCusomerIdToken();
 
 		if(empty($input['employee_id']) || $input['employee_id'] == null) {
@@ -13626,9 +13645,9 @@ class BenefitsDashboardController extends \BaseController {
 		if($has_medical_allocation) {
 			// start calibration for medical
 			if(isset($input['calibrate_medical'])) {
-				$calibrate_medical = json_decode($input['calibrate_medical']);
 				$calibrate_medical = false;
-
+				$calibrate_medical = json_decode($input['calibrate_medical']);
+				
 				if($input['calibrate_medical'] == true && $total_allocation_medical > 0 && $exceed == false) {
 					$new_allocation = $total_pro_medical_allocation;
 					$to_return_to_company = $total_allocation_medical - $total_pro_medical_allocation;
@@ -13714,7 +13733,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 		}
-
+		
 		if($has_wellness_allocation) {
 			// start calibration for medical
 			if(isset($input['calibrate_wellness'])) {
@@ -13790,7 +13809,6 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 		}
-
 
 		if(!$check_wallet_status && $has_medical_allocation && $calibrate_medical || !$check_wallet_status && $has_wellness_allocation && $calibrate_wellness) {
 			DB::table('member_wallet_status')->insert($wallet_status);
