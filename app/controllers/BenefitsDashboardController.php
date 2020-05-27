@@ -4405,7 +4405,7 @@ class BenefitsDashboardController extends \BaseController {
 								$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 								\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'wellness', $credits);
 							}
-						} else if($customer->balance >= $credits && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
+						} else if((float)$customer->wellness_credits >= (float)$credits && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
 							$wallet_class = new Wallet();
 							$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
 		
