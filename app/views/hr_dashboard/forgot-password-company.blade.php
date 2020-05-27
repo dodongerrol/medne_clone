@@ -56,6 +56,27 @@
 					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">CHANGE PASSWORD</button>
 				</div>
 			</form>
+
+			<!-- new account login -->
+
+			<p ng-if="false" class="text-center" style="font-size: 20px;color: #222;margin: 40px 0;">We received your reset password request.<br>Please enter your new password!</p>
+			<form ng-if="false" class="med-form" ng-submit="changePassword( forgot_password_data )" id="form-forgot" style="margin-bottom: 100px;">
+				<div class="form-group" style="align-items: center; display: flex;">
+					<input type="hidden" id="hr-id" value="">
+					<label for="password"  style="padding-right: 20px;">Password</label>
+					<input type="password" name="" class="form-control med-input" placeholder="Enter Your Password" ng-model="forgot_password_data.new_password" required>
+				</div>
+				<div class="form-group" style="align-items: center; display: flex;">
+					<label for="confirm" style="padding-right: 34px;">Confirm</label>
+					<input type="password" name="" class="form-control med-input" placeholder="Confirm Your Password" ng-model="forgot_password_data.new_password2" required>
+				</div>
+				<p ng-if="new_password_error" class="text-center" style="color: #e61111">Password did not match!</p>
+				<div class="form-group">
+					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">Create</button>
+				</div>
+			</form>
+
+			<!-- end new account login -->
 			
 			<div ng-if="password_success" class="success-content">
 				<img src="../assets/hr-dashboard/img/verified.png" class="center-block login-logo" style="height: 80px;">
