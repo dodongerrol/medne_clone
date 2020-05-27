@@ -86,8 +86,8 @@
 		<div class="col-sm-12 col-md-12 col-lg-12 new-account">
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
-			<span class="no-account">Don't have an account? <a href="#">Sign up</a>.</span>
-			<form class="med-form" ng-submit="loginHr()">
+			<span ng-if="true" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span>
+			<form ng-if="true" class="med-form" ng-submit="loginHr()">
 				<div ng-if="true" class="form-group">
 					<label for="email">Email</label>
 					<input type="email" name="email" class="form-control med-input" placeholder="Enter Email Address"
