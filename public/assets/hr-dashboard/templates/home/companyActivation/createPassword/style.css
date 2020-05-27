@@ -3,6 +3,8 @@
   padding: 20px 40px;
   height: 100vh;
   text-align: center;
+
+  font-family: 'Greycliff';
 }
 .company-create-password-container .mednefits-logo{
   width: 250px;
@@ -16,7 +18,9 @@
   font-size: 20px;
   line-height: 24px;
   color: #000000;
-  font-family: 'Helvetica Medium';
+  /* font-family: 'Helvetica Medium'; */
+  font-family: 'Greycliff';
+  font-weight: 700;
 }
 .company-create-password-container .lock-img img{
   margin: 35px auto;
