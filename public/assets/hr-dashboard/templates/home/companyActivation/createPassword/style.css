@@ -5,16 +5,18 @@
   text-align: center;
 }
 .company-create-password-container .mednefits-logo{
-  width: 200px;
+  width: 250px;
+  margin: 40px 0 80px;
 }
 .company-create-password-container .create-password-form-wrapper{
-  width: 500px;
+  width: 420px;
   margin: 0 auto;
 }
 .company-create-password-container .header-text{
   font-size: 20px;
   line-height: 24px;
   color: #000000;
+  font-family: 'Helvetica Medium';
 }
 .company-create-password-container .lock-img img{
   margin: 35px auto;
@@ -24,6 +26,8 @@
 .create-password-form-wrapper .input-row{
   text-align: left;
   display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 }
 .create-password-form-wrapper .input-row label{
   width: 100px;
@@ -41,17 +45,23 @@
   border: 1px solid #BFBFBF;
   border-radius: 3px;
   padding: 10px;
+  outline: none;
 }
 .create-password-form-wrapper .input-with-clickable{
   flex: 1;
+  position: relative;
 }
 .create-password-form-wrapper .input-with-clickable input{
   width: 100%;
 }
 .create-password-form-wrapper .input-with-clickable .clickable{
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+}
+.create-password-form-wrapper .clickable img{
+  width: 20px;
 }
 
 .create-password-form-wrapper .create-password-btn{
@@ -60,8 +70,10 @@
   background: #DBDBDB;
   border-radius: 4px;
   font-size: 15px;
-  line-height: 18px;
+  line-height: 34px;
   color: #FFFFFF;
+  margin-top: 15px;
+  border: none;
 }
 
 /* --------------------------------------------------------- */

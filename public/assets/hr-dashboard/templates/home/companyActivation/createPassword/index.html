@@ -1,4 +1,4 @@
-<div class="company-create-password-container">
+<div class="company-create-password-container" create-company-password-directive>
   <div class="link-header-container">
 		<a href="#" class="pull-right need-help-text tooltips">
 			<span>Need Help?</span>
@@ -30,19 +30,19 @@
       <div class="input-row">
         <label>Password</label>
         <div class="input-with-clickable">
-          <input type="text" placeholder="Enter Your Password">
-          <div class="clickable">
-            <img src="../../assets/images/showhidepassword.png" alt="">
+          <input type="{{ inputType }}" placeholder="Enter Your Password">
+          <div class="clickable" ng-click="togglePassword()">
+            <img src="../../assets/images/showhidepass.png" alt="">
           </div>
         </div>
       </div>
 
       <div class="input-row">
         <label>Confirm</label>
-        <input type="text" placeholder="Confirm Your Password">
+        <input type="{{ inputType }}" placeholder="Confirm Your Password">
       </div>
 
-      <div class="create-password-btn">Create</div>
+      <button class="create-password-btn">Create</button>
     </form>
   </div>
 </div>
