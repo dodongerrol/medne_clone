@@ -637,6 +637,14 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/t&c/t&c.html'
         }
       }
+    })
+    .state('company-create-password', {
+      url: '/company-create-password',
+      views: {
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyActivation/createPassword/index.html'
+        }
+      }
     });
 
     
