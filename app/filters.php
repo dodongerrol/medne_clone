@@ -164,7 +164,7 @@ Route::filter('auth.v1', function($request, $response)
 
 Route::filter('auth.v2', function($request, $response)
 {
-    $today = date('Y-m-d H:i:s');
+    $today =  PlanHelper::endDate(date('Y-m-d'));
     $returnObject = new stdClass();
     $returnObject->error = TRUE;
     $returnObject->message = 'You have an invalid token. Please login again';
@@ -378,7 +378,7 @@ Route::filter('auth.jwt_employee', function($request, $response)
         // return Redirect::to('company-benefits-dashboard-login');
         return Response::json('You have an invalid token. Please login again', 403, $headers);
     } else {
-        $today = date('Y-m-d H:i:s');
+        $today =  PlanHelper::endDate(date('Y-m-d'));
         $headers[]['error'] = true;
         // check if there is a header authorization
         $token = StringHelper::getToken();

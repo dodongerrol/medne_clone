@@ -340,21 +340,6 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 						.then(function (response) {
 							console.log(response);
 							if(response.data.credit_balance_exceed == true) {
-								// scope.apiErrorResponse.push({
-								// 	member_id: value.member_id,
-								// 	message:response.data.message,
-								// 	credit_balance_exceed: response.data.credit_balance_exceed
-								// });
-								// console.log('fail');
-								// if (index == scope.toUpdateAllocation.length-1) {
-								// 	console.log('index check equal');
-								// 	bulkUpdateCtr = 0;
-								// 	scope.hideLoading();
-								// 	scope.successModal(success_ctr, value);
-								// }else{
-								// 	bulkUpdateCtr += 1;
-								// 	scope.updateEachBulkAllocation();
-								// }
 								setTimeout(function(){
 									swal({
 										title: '',

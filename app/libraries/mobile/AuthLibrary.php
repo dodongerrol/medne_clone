@@ -56,7 +56,7 @@ class AuthLibrary{
     $token = StringHelper::newCustomLoginToken($input);
     if($token->status){
       $findUserID = self::FindUserFromToken($token->data['access_token']);
-      $activePromoCode = General_Library::ActivePromoCode();
+      // $activePromoCode = General_Library::ActivePromoCode();
       $user = DB::table('user')->where('UserID', $findUserID)->first();
 
       if(!$user) {
