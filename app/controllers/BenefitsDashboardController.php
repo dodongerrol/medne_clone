@@ -13411,12 +13411,6 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 
-		$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('logs', 'pro_allocation')
-			->orderBy('created_at', 'desc')
-			->first();
-
 		if($pro_allocation_medical_date) {
 			$usage_date = date('d/m/Y', strtotime($pro_allocation_medical_date->created_at));
 		} else {
@@ -13434,8 +13428,10 @@ class BenefitsDashboardController extends \BaseController {
 		$total_current_usage = $total_medical_spent + $pending_e_claim_medical;
 		if($pro_allocation_medical_date) {
 			$total_pro_medical_allocation = $pro_allocation_medical_date->credit;
+			$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
 		} else {
 			$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
+			$medical_balance = $total_allocation_medical - $total_medical_spent;
 		}
 		
 		
@@ -13448,10 +13444,7 @@ class BenefitsDashboardController extends \BaseController {
 			$exceed = true;
 		}
 
-		$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
-		// if($medical_balance < 0) {
-		// 	$medical_balance = 0;
-		// }
+	
 
 		$remaining_allocated_medical_credits = 0;
 
@@ -13483,11 +13476,10 @@ class BenefitsDashboardController extends \BaseController {
 			if($spending['medical_method'] == "pre_paid")	{
 				$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 				$medical['remaining_allocated_credits'] = number_format($check_wallet_status->medical_initial_allocation - $check_wallet_status->medical_pro_allocation, 2);
-				$medical['remaining_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->medical_return_credits_date)));
+				$medical['remaining_credits_date'] = date('d/m/Y', strtotime($check_wallet_status->medical_return_credits_date));
 				$medical['returned_credit_status'] = false;
 				if(date('Y-m-d', strtotime($check_wallet_status->medical_return_credits_date)) < date('Y-m-d')) {
 					$medical['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->medical_return_credits_date)));
-					// $medical['balance'] = "0.00";
 				} else {
 					$medical['balance_credits_date'] = date('d/m/Y');
 					// get lates balance
@@ -13495,11 +13487,21 @@ class BenefitsDashboardController extends \BaseController {
 				}
 
 				if($employee_status['status'] == true) {
-					$return_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
 					if(date('Y-m-d') >= $return_date) {
 						$medical['returned_credit_status'] = true;
 						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
 					}
+				}
+			}
+		} else {
+			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
+			if($employee_status['status'] == true) {
+				$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
+				if(date('Y-m-d') >= $return_date) {
+					$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+				} else {
+					$medical['balance_credits_date'] = date('d/m/Y');
 				}
 			}
 		}
@@ -13545,8 +13547,10 @@ class BenefitsDashboardController extends \BaseController {
 		
 		if($pro_allocation_wellness_date) {
 			$total_pro_wellness_allocation = $pro_allocation_wellness_date->credit;
+			$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
 		} else {
 			$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
+			$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
 		}
 		
 		if($total_current_usage_wellness > $total_pro_wellness_allocation) {
@@ -13556,14 +13560,8 @@ class BenefitsDashboardController extends \BaseController {
 		if($total_allocation_wellness > 0) {
 			$has_wellness_allocation = true;
 		}
-
-		$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
-		// if($wellness_balance < 0) {
-		// 	$wellness_balance = 0;
-		// }
 		
 		$remaining_allocated_wellness_credits = 0;
-
 		if($spending['wellness_method'] == "pre_paid")	{
 			$remaining_allocated_wellness_credits = $total_allocation_wellness - $total_pro_wellness_allocation;
 		}
@@ -13593,7 +13591,7 @@ class BenefitsDashboardController extends \BaseController {
 
 			if($spending['wellness_method'] == "pre_paid")	{
 				$wellness['remaining_allocated_credits'] = number_format($check_wallet_status->wellness_initial_allocation - $check_wallet_status->wellness_pro_allocation, 2);
-				$wellness['remaining_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->wellness_return_credits_date)));
+				$wellness['remaining_credits_date'] = date('d/m/Y', strtotime($check_wallet_status->wellness_return_credits_date));
 				
 				if(date('Y-m-d', strtotime($check_wallet_status->wellness_return_credits_date)) < date('Y-m-d')) {
 					$wellness['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->wellness_return_credits_date)));
@@ -13604,12 +13602,21 @@ class BenefitsDashboardController extends \BaseController {
 				}
 
 				if($employee_status['status'] == true) {
-					$return_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
 					if(date('Y-m-d') >= $return_date) {
 						$wellness['returned_credit_status'] = true;
 						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
 					}
-					
+				}
+			}
+		} else {
+			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
+			if($employee_status['status'] == true) {
+				$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
+				if(date('Y-m-d') >= $return_date) {
+					$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+				} else {
+					$wellness['balance_credits_date'] = date('d/m/Y');
 				}
 			}
 		}

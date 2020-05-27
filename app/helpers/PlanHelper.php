@@ -1424,8 +1424,11 @@ class PlanHelper {
 		}
 
 		$user = new User();
-		$customer_spending = CustomerHelper::getCustomerWalletStatus($customer_id);
-		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+		// $customer_spending = CustomerHelper::getCustomerWalletStatus($customer_id);
+		$customer_spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+		// check company credits
+		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+		// $customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 		if(!$customer_active_plan_id) {
 			$active_plan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -1468,7 +1471,7 @@ class PlanHelper {
 			'account_update_date' => date('Y-m-d H:i:s'),
 			'account_already_update'	=> 1,
 			'communication_type'	=> $communication_type,
-			'currency_type'		=> $customer_data->currency_type
+			'currency_type'		=> $customer->currency_type
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
@@ -1525,16 +1528,13 @@ class PlanHelper {
 
 		$user_plan_history->createUserPlanHistory($user_plan_history_data);
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-    	// check company credits
-		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
-		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-		if($customer_spending['medical'] == true) {
+		if($customer_spending['medical_enabled'] == true) {
 			if($data_enrollee->credits > 0) {
 				$customer_credit_logs = new CustomerCreditLogs( );
 				$credits = $data_enrollee->credits;
 
-				if($credits > 0 && $spending['account_type'] != "lite_plan" && $spending['medical_method'] != "pre_paid" || $credits > 0 && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "post_paid") {
+				if($credits > 0 && $customer_spending['account_type'] != "lite_plan" && $customer_spending['medical_method'] != "pre_paid" || $credits > 0 && $customer_spending['account_type'] == "lite_plan" && $customer_spending['medical_method'] == "post_paid") {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 
 					if($result_customer_active_plan) {
@@ -1569,7 +1569,7 @@ class PlanHelper {
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer_data->currency_type
+						'currency_type'		=> $customer->currency_type
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1586,13 +1586,13 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer_data->currency_type
+							'currency_type'		=> $customer->currency_type
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 						\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'medical', $credits);
 					}
-				} else if($customer->balance >= $credits && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {
+				} else if($customer->balance >= $credits && $customer_spending['account_type'] == "lite_plan" && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 					if($result_customer_active_plan) {
 						$customer_active_plan_id = $result_customer_active_plan;
@@ -1611,7 +1611,7 @@ class PlanHelper {
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer_data->currency_type
+						'currency_type'		=> $customer->currency_type
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1628,7 +1628,7 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer_data->currency_type
+							'currency_type'		=> $customer->currency_type
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
@@ -1637,7 +1637,7 @@ class PlanHelper {
 			}
 		}
 		
-		if($customer_spending['wellness'] == true) {
+		if($customer_spending['wellness_enabled'] == true) {
 			if($data_enrollee->wellness_credits > 0) {
 				$customer_credits_logs = new CustomerWellnessCreditLogs();
 				$credits = $data_enrollee->wellness_credits;
@@ -1650,7 +1650,7 @@ class PlanHelper {
 					$customer_active_plan_id = NULL;
 				}
 
-				if($credits > 0 && $spending['account_type'] != "lite_plan" && $spending['wellness_method'] != "pre_paid" || $credits > 0 && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "post_paid") {
+				if($credits > 0 &&  $customer_spending['wellness_method'] != "pre_paid" || $credits > 0 && $customer_spending['account_type'] == "lite_plan" && $customer_spending['wellness_method'] == "post_paid") {
 					$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
 					if($customer_credits_result) {
 						// credit log for wellness
@@ -1677,7 +1677,7 @@ class PlanHelper {
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer_data->currency_type
+						'currency_type'		=> $customer->currency_type
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1691,13 +1691,13 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer_data->currency_type
+							'currency_type'		=> $customer->currency_type
 						);
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 						\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'wellness', $credits);
 					}
-				} else if($customer->balance >= $credits && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
+				} else if($customer->wellness_credits >= $credits && $customer_spending['account_type'] == "lite_plan" && $customer_spending['wellness_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
 					$wallet_class = new Wallet();
 					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
 
@@ -1707,7 +1707,7 @@ class PlanHelper {
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer_data->currency_type
+						'currency_type'		=> $customer->currency_type
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1722,7 +1722,7 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer_data->currency_type
+							'currency_type'		=> $customer->currency_type
 						);
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);

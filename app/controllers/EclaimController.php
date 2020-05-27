@@ -41,11 +41,12 @@ class EclaimController extends \BaseController {
 
 			// check employee status
 			$employee_status = PlanHelper::getEmployeeStatus($check->UserID);
-			$today = date('Y-m-d H:i:s');
+			$today =  PlanHelper::endDate(date('Y-m-d'));
 			if($employee_status['status'] == true)  {
-				$expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+				// $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+				$expiry = date('Y-m-d H:i:s', strtotime($employee_status['expiry_date']));
 				$expiry = PlanHelper::endDate($expiry);
-				 if($today > $expiry) {
+				if($today > $expiry) {
 					return array('status' => FALSE, 'message' => 'Invalid Credentials or Please update your user ID by clicking on the link above.');
 				}
 			}
