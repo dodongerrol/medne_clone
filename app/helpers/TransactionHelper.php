@@ -474,6 +474,7 @@ class TransactionHelper
 
 			if($customer_id) {
 				$start = date('Y-m-01', strtotime($transaction->created_at));
+				$end = date('Y-m-t', strtotime($transaction->created_at));
 				$statement = DB::table('company_credits_statement')
 						->where('statement_customer_id', $customer_id)
 						->where('statement_start_date', $start)
@@ -488,6 +489,9 @@ class TransactionHelper
 					);
 
 					DB::table('spending_invoice_transactions')->insert($data);
+				} else {
+					// create new spending invoice
+					SpendingInvoiceLibrary::createStatement($customer_id, $start, $end);
 				}
 			}
 		}
