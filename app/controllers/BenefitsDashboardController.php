@@ -13362,7 +13362,7 @@ class BenefitsDashboardController extends \BaseController {
 		// get empployee plan coverage from last day of employee
 		$diff_coverage = $start->diff($coverage_end);
 		$coverage_diff = $diff_coverage->days + 1;
-		
+		$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 		// get total allocation of employee from plan start and plan end
 		$employee_credit_reset_medical = DB::table('credit_reset')
 		->where('id', $check_employee->UserID)
@@ -13431,27 +13431,44 @@ class BenefitsDashboardController extends \BaseController {
 			$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
 		} else {
 			$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
-			$medical_balance = $total_allocation_medical - $total_medical_spent;
+			$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
 		}
 		
 		
 		if($total_allocation_medical > 0) {
 			$has_medical_allocation = true;
-		} 
-		$exceed = false;
+		}
 
-		if($total_current_usage > $total_pro_medical_allocation) {
+		$exceed = false;
+		if($medical_balance < 0) {
 			$exceed = true;
 		}
 
-	
+		if($employee_status['status'] == false) {
+			if($total_current_usage > $total_pro_medical_allocation) {
+				$exceed = true;
+			}
+		} else {
+			if($pro_allocation_medical_date) {
+				$total_pro_medical_allocation = $pro_allocation_medical_date->credit;
+				$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
+			} else {
+				$medical_balance = $total_allocation_medical - $total_medical_spent;
+			}
+
+			if($medical_balance < 0) {
+				$exceed = true;
+			} else {
+				$exceed = false;
+			}
+		}
 
 		$remaining_allocated_medical_credits = 0;
 
 		if($spending['medical_method'] == "pre_paid")	{
 			$remaining_allocated_medical_credits = $total_allocation_medical - $total_pro_medical_allocation;
 		}
-
+		
 		$medical = array(
 			'status' => true,
 			'initial_allocation' 	=> number_format($total_allocation_medical, 2),
@@ -13466,7 +13483,8 @@ class BenefitsDashboardController extends \BaseController {
 			'currency_type'	=> $wallet->currency_type,
 			'plan_method'			=> $spending['medical_method'],
 			'pro_allocation_status'		=> false,
-			'balance_credits_date'	=> date('d/m/Y')
+			'balance_credits_date'	=> date('d/m/Y'),
+			'returned_balance_status'	=> false
 		);
 
 		if($check_wallet_status && (int)$check_wallet_status->medical_pro_allocation_status == 1) {
@@ -13475,7 +13493,6 @@ class BenefitsDashboardController extends \BaseController {
 			$medical['pro_allocation_status'] = $check_wallet_status->medical_pro_allocation_status == 1 ? true : false;
 
 			if($spending['medical_method'] == "pre_paid")	{
-				$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 				$medical['remaining_allocated_credits'] = number_format($check_wallet_status->medical_initial_allocation - $check_wallet_status->medical_pro_allocation, 2);
 				$medical['remaining_credits_date'] = date('d/m/Y', strtotime($check_wallet_status->medical_return_credits_date));
 				$medical['returned_credit_status'] = false;
@@ -13491,26 +13508,34 @@ class BenefitsDashboardController extends \BaseController {
 					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
 					if(date('Y-m-d') >= $return_date) {
 						$medical['returned_credit_status'] = true;
-						$medical['returned_balance_status'] = true;
 						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+					}
+
+					$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_balance_date) {
+						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+						$medical['returned_balance_status'] = true;
+					} else {
+						$medical['balance_credits_date'] = date('d/m/Y');
 					}
 				}
 			} else {
-				$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 				if($employee_status['status'] == true) {
-					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
-					if(date('Y-m-d') >= $return_date) {
+					$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_balance_date) {
+						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
 						$medical['returned_balance_status'] = true;
-						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+					} else {
+						$medical['balance_credits_date'] = date('d/m/Y');
 					}
 				}
 			}
 		} else {
-			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
+			
 			if($employee_status['status'] == true) {
-				$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
-				if(date('Y-m-d') >= $return_date) {
-					$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+				$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+				if(date('Y-m-d') >= $return_balance_date) {
+					$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
 					$medical['returned_balance_status'] = true;
 				} else {
 					$medical['balance_credits_date'] = date('d/m/Y');
@@ -13562,13 +13587,31 @@ class BenefitsDashboardController extends \BaseController {
 			$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
 		} else {
 			$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
-			$wellness_balance = $total_allocation_wellness - $total_wellness_spent;
+			$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
 		}
 		
-		if($total_current_usage_wellness > $total_pro_wellness_allocation) {
+		if($wellness_balance < 0) {
 			$exceed_wellness = true;
 		}
 
+		if($employee_status['status'] == false) {
+			if($total_current_usage_wellness > $total_pro_wellness_allocation) {
+				$exceed_wellness = true;
+			}	
+		} else {
+			if($pro_allocation_wellness_date) {
+				$total_pro_wellness_allocation = $pro_allocation_wellness_date->credit;
+				$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
+			} else {
+				$wellness_balance = $total_allocation_wellness - $total_wellness_spent;
+				if($wellness_balance < 0) {
+					$exceed_wellness = true;
+				} else {
+					$exceed_wellness = false;
+				}
+			}
+		}
+		
 		if($total_allocation_wellness > 0) {
 			$has_wellness_allocation = true;
 		}
@@ -13599,7 +13642,6 @@ class BenefitsDashboardController extends \BaseController {
 			$wellness['initial_allocation'] = number_format($check_wallet_status->wellness_initial_allocation, 2);
 			$wellness['pro_allocation'] = number_format($check_wallet_status->wellness_pro_allocation, 2);
 			$wellness['pro_allocation_status'] = $check_wallet_status->wellness_pro_allocation_status == 1 ? true : false;
-			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 			$wellness['returned_credit_status'] = false;
 			if($spending['wellness_method'] == "pre_paid")	{
 				$wellness['remaining_allocated_credits'] = number_format($check_wallet_status->wellness_initial_allocation - $check_wallet_status->wellness_pro_allocation, 2);
@@ -13617,25 +13659,31 @@ class BenefitsDashboardController extends \BaseController {
 					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
 					if(date('Y-m-d') >= $return_date) {
 						$wellness['returned_credit_status'] = true;
-						$wellness['returned_balance_status'] = true;
 						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+					}
+
+					$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_balance_date) {
+						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+						$wellness['returned_balance_status'] = true;
+					} else {
+						$wellness['balance_credits_date'] = date('d/m/Y');
 					}
 				}
 			} else {
 				if($employee_status['status'] == true) {
-					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
-					if(date('Y-m-d') >= $return_date) {
+					$return_balance_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
+					if(date('Y-m-d') >= $return_balance_date) {
 						$wellness['returned_balance_status'] = true;
-						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
 					}
 				}
 			}
 		} else {
-			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 			if($employee_status['status'] == true) {
-				$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
-				if(date('Y-m-d') >= $return_date) {
-					$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+				$return_balance_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
+				if(date('Y-m-d') >= $return_balance_date) {
+					$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
 					$wellness['returned_balance_status'] = true;
 				} else {
 					$wellness['balance_credits_date'] = date('d/m/Y');
@@ -15137,23 +15185,26 @@ class BenefitsDashboardController extends \BaseController {
 		$credits_statements = DB::table('company_credits_statement')
                                 ->where('statement_customer_id', $customer_id)
 								->paginate($limit);
-		$total_spending_transaction_count = $credits_statements->count();
+		$total_spending_transaction_count = 0;
 		foreach ($credits_statements as $key => $data) {
-			$statement = SpendingInvoiceLibrary::getInvoiceSpending($data->statement_id, false);
-			$statement['total_due'] = $statement['statement_amount_due'];
-		
-			$temp = array(
-				'invoice_number'    => $data->statement_number,
-				'invoice_date'        => date('d/m/Y', strtotime($data->statement_date)),
-				'type'              => 'Invoice',
-				'total'            => 'S$'.$statement['statement_total_amount'],
-				'status'            => (int)$data->statement_status,
-				'statement_id'      => $data->statement_id,
-				'currency_type'     => $statement['currency_type'],
-				'spending_type'		=> 'transaction'
-			);
-
-			array_push($format, $temp);
+			if(date('Y-m-d') >= date('Y-m-d', strtotime($data->statement_date))) {
+				$statement = SpendingInvoiceLibrary::getInvoiceSpending($data->statement_id, false);
+				$statement['total_due'] = $statement['statement_amount_due'];
+			
+				$temp = array(
+					'invoice_number'    => $data->statement_number,
+					'invoice_date'        => date('d/m/Y', strtotime($data->statement_date)),
+					'type'              => 'Invoice',
+					'total'            => 'S$'.$statement['statement_total_amount'],
+					'status'            => (int)$data->statement_status,
+					'statement_id'      => $data->statement_id,
+					'currency_type'     => $statement['currency_type'],
+					'spending_type'		=> 'transaction'
+				);
+				// $total_spending_transaction_count = $credits_statements->count();
+				$total_spending_transaction_count++;
+				array_push($format, $temp);
+			}
 		}
 
 		$pagination['count'] = $invoices->count() + $total_spending_transaction_count;

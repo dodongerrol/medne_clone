@@ -95,19 +95,19 @@
 					Pending claim
 					<span ng-if="health_spending_summary.medical"><span class="currency-type"
 							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-							ng-bind="health_spending_summary.medical.pending_e_claim | number : 2">50.00</span></span>
+							ng-bind="health_spending_summary.medical.pending_e_claim">50.00</span></span>
 					<span ng-if="health_spending_summary.wellness"><span class="currency-type"
 							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-							ng-bind="health_spending_summary.wellness.pending_e_claim | number : 2">50.00</span></span>
+							ng-bind="health_spending_summary.wellness.pending_e_claim">50.00</span></span>
 				</div>
 				<div class="balance-container weight-700 font-helvetica-medium" style="margin-top: 10px;">
 					<strong class="font-helvetica-medium">Balance</strong>
 					<span ng-if="health_spending_summary.medical"><span class="currency-type"
 							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-							ng-bind="health_spending_summary.medical.balance | number : 2">700.00</span></span>
+							ng-bind="health_spending_summary.medical.balance">700.00</span></span>
 					<span ng-if="health_spending_summary.wellness"><span class="currency-type"
 							ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-							ng-bind="health_spending_summary.wellness.balance | number : 2">700.00</span></span>
+							ng-bind="health_spending_summary.wellness.balance">700.00</span></span>
 				</div>
 			</div>
 

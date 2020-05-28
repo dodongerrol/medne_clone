@@ -50,7 +50,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
               scope.hideLoading();
               if (response.data.status) {
                 // scope.removeEmployeeRequests();
-                if(scope.emp_details.account_type == 'lite_plan' && scope.emp_details.plan_method_type == 'pre_paid'){
+                if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
                   scope.isRemoveSuccess = true;
                 }else{
                   swal({
