@@ -13562,7 +13562,7 @@ class BenefitsDashboardController extends \BaseController {
 			$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
 		} else {
 			$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
-			$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
+			$wellness_balance = $total_allocation_wellness - $total_wellness_spent;
 		}
 		
 		if($total_current_usage_wellness > $total_pro_wellness_allocation) {
@@ -13601,7 +13601,6 @@ class BenefitsDashboardController extends \BaseController {
 			$wellness['pro_allocation_status'] = $check_wallet_status->wellness_pro_allocation_status == 1 ? true : false;
 			$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 			$wellness['returned_credit_status'] = false;
-			return $employee_status;
 			if($spending['wellness_method'] == "pre_paid")	{
 				$wellness['remaining_allocated_credits'] = number_format($check_wallet_status->wellness_initial_allocation - $check_wallet_status->wellness_pro_allocation, 2);
 				$wellness['remaining_credits_date'] = date('d/m/Y', strtotime($check_wallet_status->wellness_return_credits_date));
