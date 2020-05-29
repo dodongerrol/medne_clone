@@ -1330,8 +1330,10 @@ app.directive("employeeOverviewDirective", [
                 console.log('member Entitlement',response);
                 scope.emp_entitlement = response.data;
 
-                scope.med_effective_date = scope.emp_entitlement.medical_entitlement_date;
-                scope.well_effective_date = scope.emp_entitlement.wellness_entitlement_date;
+                // Gicomment nako kay issue is after update gaka invalid date ang medical and wellness dates - Jeamar
+                
+                // scope.med_effective_date = scope.emp_entitlement.medical_entitlement_date;
+                // scope.well_effective_date = scope.emp_entitlement.wellness_entitlement_date;
 
                 console.log(scope.emp_entitlement.updated_medical_entitlement);
                 console.log(scope.emp_entitlement.updated_wellness_entitlement);
@@ -1341,8 +1343,11 @@ app.directive("employeeOverviewDirective", [
 
                 scope.emp_entitlement.medical_new_entitlement = '';
                 scope.emp_entitlement.wellness_new_entitlement = '';
-                scope.med_effective_date = '';
-                scope.well_effective_date = '';
+                // scope.med_effective_date = '';
+                // scope.well_effective_date = '';
+
+                scope.med_effective_date = moment().format('DD/MM/YYYY');
+                scope.well_effective_date = moment().format('DD/MM/YYYY');
           });
         }
         
