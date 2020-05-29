@@ -5352,37 +5352,29 @@ public function createEclaim( )
   }
 
   $input_amount = 0;
-
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
-    $input_amount = trim($input['amount']);
+    $input_amount = trim($input['claim_amount']);
   } else {
     if(Input::has('currency_type') && $input['currency_type'] != null) {
       if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
-        $input_amount = $input['amount'] / $input['currency_exchange_rate'];
+        $input_amount = $input['claim_amount'] / $input['currency_exchange_rate'];
       } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
-        $input_amount = $input['amount'] * $input['currency_exchange_rate'];
+        $input_amount = $input['claim_amount'] * $input['currency_exchange_rate'];
       } else {
-        $input_amount = trim($input['amount']);
+        $input_amount = trim($input['claim_amount']);
       }
     } else {
-      $input_amount = trim($input['amount']);
+      $input_amount = trim($input['claim_amount']);
     }
   }
 
   $date = date('Y-m-d', strtotime($input['date']));
-
   $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
   $customer_active_plan = DB::table('customer_active_plan')
   ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
   ->first();
 
   if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-    // if($input['spending_type'] == "medical") {
-    //     // recalculate employee balance
-    //   PlanHelper::reCalculateEmployeeBalance($user_id);
-    // } else {
-    //   PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-    // }
     $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
     $balance = number_format($spending['balance'], 2);
     $amount = trim($input_amount);
@@ -5422,7 +5414,7 @@ public function createEclaim( )
      }
     }
  } else {
-  $amount = trim($input_amount);
+  $amount =  trim($input['amount']);
 }
   // get customer id
 $customer_id = PlanHelper::getCustomerId($user_id);
