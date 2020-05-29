@@ -2313,16 +2313,16 @@ class PlanHelper {
 			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 			$medical_balance = 0;
 			
-			// if($pro_allocation > 0 && (int)$user->Active == 0) {
-			// 	$allocation = $pro_allocation;
-			// 	$balance = $pro_allocation - $get_allocation_spent;
-			// 	$medical_balance = $balance;
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
+				$allocation = $pro_allocation;
+				$balance = $pro_allocation - $get_allocation_spent;
+				$medical_balance = $balance;
 
-			// 	if($balance < 0) {
-			// 		$balance = 0;
-			// 		$medical_balance = $balance;
-			// 	}
-			// } else {
+				if($balance < 0) {
+					$balance = 0;
+					$medical_balance = $balance;
+				}
+			} else {
 				$allocation = $get_allocation - $deducted_credits;
 				$balance = $allocation - $get_allocation_spent;
 				$medical_balance = $balance;
@@ -2332,7 +2332,7 @@ class PlanHelper {
 			// 		$deleted_employee_allocation = $get_allocation - $deducted_credits;
 			// 		$medical_balance = 0;
 			// 	}
-			// }
+			}
 
 			// if($e_wallet->balance != $medical_balance) {
 			// 	DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
@@ -2722,15 +2722,15 @@ class PlanHelper {
 			->where('logs', 'pro_allocation')
 			->sum('credit');
 
-			// if($pro_allocation > 0 && (int)$user->Active == 0) {
-			// 	$allocation_wellness = $pro_allocation;
-			// 	$balance = $pro_allocation - $get_allocation_spent_wellness;
-			// 	$wellness_balance = $balance;
-			// 	if($balance < 0) {
-			// 		$balance = 0;
-			// 		$wellness_balance = $balance;
-			// 	}
-			// } else {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
+				$allocation_wellness = $pro_allocation;
+				$balance = $pro_allocation - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
+				if($balance < 0) {
+					$balance = 0;
+					$wellness_balance = $balance;
+				}
+			} else {
 				$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
 				$total_deduction_credits_wellness = $deducted_wellness_credits;
 				$balance = $allocation_wellness - $get_allocation_spent_wellness;
@@ -2739,7 +2739,7 @@ class PlanHelper {
 				// 	$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
 				// 	$wellness_balance = 0;
 				// }
-			// }
+			}
 
 			// if($e_wallet->wellness_balance != $wellness_balance) {
 			// 	DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);

@@ -570,7 +570,12 @@ class Api_V1_TransactionController extends \BaseController
 										}
 										
 										try {
-											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $customer_id);
+											$customer_id = PlanHelper::getCustomerId($input['member_id']);
+											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+											
+											if($spending['medical_method'] == "post_paid") {
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $customer_id);
+											}
 										} catch(Exception $e) {
 
 										}

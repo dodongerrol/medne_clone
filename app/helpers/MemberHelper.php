@@ -328,6 +328,7 @@ class MemberHelper
 							'created_at'			=> date('Y-m-d H:i:s'),
 							'updated_at'			=> date('Y-m-d H:i:s')
 						);
+						DB::table('customer_credits')->where('customer_id', $customer_id)->increment('balance', $new_medical_allocation);
 						DB::table('wallet_history')->insert($employee_credit_logs);
 					}
 
@@ -412,6 +413,7 @@ class MemberHelper
 							'created_at'			=> date('Y-m-d H:i:s'),
 							'updated_at'			=> date('Y-m-d H:i:s')
 						);
+						DB::table('customer_credits')->where('customer_id', $customer_id)->increment('wellness_credits', $new_wellness_allocation);
 						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
 					}
 			}
