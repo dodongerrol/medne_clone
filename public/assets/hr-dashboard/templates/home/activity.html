@@ -186,7 +186,7 @@
 							<div class="col-md-6 col-first">
 								<h4 class="team-benefits-cost-title font-22 weight-700" ng-bind="activity_title">
 								</h4>
-								<div ng-if="true" class="range-date">
+								<div ng-if="false" class="range-date">
 									<span ng-bind="rangePicker_start">01/01/2019</span> - <span ng-bind="rangePicker_end">28/11/2019</span>
 								</div>
 								<div class="preloader-container searchActivityLoader">
@@ -205,7 +205,7 @@
 									</div>
 								</div>
 
-								<div ng-if="false" class="eclaim-spending-type-container">
+								<div ng-if="true" class="eclaim-spending-type-container">
 									<button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
 										ng-click="setSpendType(0)">Medical</button>
 									<button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
@@ -249,7 +249,7 @@
 			<div class="col-md-12 disable-cursor-off">
 				<!-- <div class="white-space-30"></div> -->
 				<div class="body-container">
-					<div ng-if="false" class="team-benefits-wrapper">
+					<div ng-if="true" class="team-benefits-wrapper">
 
 						<div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
 							<div class=" benefit-box">
@@ -314,6 +314,26 @@
 											as Year-to-Date.</small>
 										<!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
 									</div>
+								</div>
+							</div>
+
+							<div class="activity-spending-not-activated-blur">
+								<div class="spending-col-left col-1">
+									<div class="box-1"></div>
+									<div class="box-2"></div>
+									<div class="box-3"></div>
+								</div>
+								<div class="col-2"></div>
+								<div class="spending-col-right col-1">
+									<div class="box-1"></div>
+									<div class="box-2"></div>
+									<div class="box-3"></div>
+								</div>
+							</div>
+							<div class="activity-spending-not-activated-box">
+								<div class="spending-border-box">
+									<p>Spending Account for your<br>company has not been activated.</p>
+									<a href="#">Learn more >></a>
 								</div>
 							</div>
 						</div>
@@ -681,7 +701,7 @@
 					</div>
 
 
-					<div ng-if="true" class="team-benefits-wrapper team-benefits-new-wrapper">
+					<div ng-if="false" class="team-benefits-wrapper team-benefits-new-wrapper">
 
 						<div class="eclaim-border-bottom new_spent">
 							<div class=" benefit-box">

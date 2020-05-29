@@ -3005,7 +3005,6 @@ class EmployeeController extends \BaseController {
       return ['status' => true, 'data' => $data];
     }
 
-
   public function checkEmailValidation( )
   {
     $input = Input::all();
