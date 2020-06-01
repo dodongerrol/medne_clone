@@ -31,7 +31,10 @@ class StringHelper{
             $thirdPartyAuthorization = '';
             $getRequestHeader = getallheaders();
 
-            if (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID'])) {
+            if (
+                (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
+                || (!empty($getRequestHeader['x-access-key']) && !empty($getRequestHeader['x-member-id']))
+            ) {
                 $getRequestHeader['Authorization'] = self::verifyXAccessKey();
             } else {
                 if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
@@ -1385,18 +1388,27 @@ public static function get_random_password($length)
         $todate =  date("Y-m-d H:i:s");
 
         // Confirmed X-Access Key
-        if (!isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID'])) {
+        if (
+            (!isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID']))
+            ||(!isset($getRequestHeader['x-access-key']) && isset($getRequestHeader['x-member-id']))
+        ) {
             $returnObject->error = TRUE;
             $returnObject->message = 'X-ACCESS-KEY not defined.';
             return $returnObject;
-        } else if (isset($getRequestHeader['X-ACCESS-KEY']) && !isset($getRequestHeader['X-MEMBER-ID'])) {
+        } else if (
+            (isset($getRequestHeader['X-ACCESS-KEY']) && !isset($getRequestHeader['X-MEMBER-ID']))
+            || (isset($getRequestHeader['x-access-key']) && !isset($getRequestHeader['x-member-id']))
+        ) {
             $returnObject->error = TRUE;
             $returnObject->message = 'X-MEMBER-ID not defined.';
             return $returnObject;
-        } else if (isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID'])) {
+        } else if (
+            (isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID']))
+            || (isset($getRequestHeader['x-access-key']) && isset($getRequestHeader['x-member-id']))
+        ) {
 
-            $xAccessKey = $getRequestHeader['X-ACCESS-KEY'];
-            $user_id = $getRequestHeader['X-MEMBER-ID'];
+            $xAccessKey = isset($getRequestHeader['X-ACCESS-KEY']) ? $getRequestHeader['X-ACCESS-KEY']: $getRequestHeader['x-access-key'];
+            $user_id = isset($getRequestHeader['X-MEMBER-ID'])? $getRequestHeader['X-MEMBER-ID']: $getRequestHeader['x-member-id'];
             // check X-ACCESS-KEY details
             $accessKeyDetails = DB::table('customer_accessKey')->where('accessKey', $xAccessKey)->first();
             
