@@ -472,6 +472,12 @@ Route::get('app/login', 'HomeController@introPageLogin');
 
 
 
+// SPENDING ACCOUNT LANDING PAGE
+Route::get('/sa-landing', 'HomeController@getSALandingPageView');
+Route::get('/enquiry-form', 'HomeController@getEnquiryFormView');
+
+
+
 // welcome pack
 Route::get('get/welcome-pack-corporate', 'HomeController@welcomePackCorporate');
 Route::get('get/welcome-pack-individual/{id}', 'HomeController@welcomePackIndividual');

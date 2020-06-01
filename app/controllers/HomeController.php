@@ -1461,6 +1461,25 @@ public function eClaimHome( )
   return View::make('Eclaim.index', $data);
 }
 
+public function getSALandingPageView( )
+{
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new DateTime;
+  $data['path'] = app_path();
+  return View::make('spendingAccountLandingPage.index', $data);
+}
+public function getEnquiryFormView( )
+{
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new DateTime;
+  $data['path'] = app_path();
+  return View::make('spendingAccountLandingPage.enquiryform', $data);
+}
+
 
 public function getClinicSocketDetails( )
 {
