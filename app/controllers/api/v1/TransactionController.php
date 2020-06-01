@@ -957,7 +957,10 @@ class Api_V1_TransactionController extends \BaseController
 										);
 
 										$transaction->updateTransaction($transaction_id, $update_trans);
-
+										// insert transaction
+										if($spending['medical_method'] == "post_paid") {
+											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
+										}
 									} catch(Exception $e) {
 
 										if($data['spending_type'] == "medical") {
