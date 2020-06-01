@@ -222,7 +222,7 @@ Route::filter('auth.v2', function($request, $response)
         $member_id = StringHelper::getUserId($findUserID);
         $employee_status = PlanHelper::getEmployeeStatus($member_id);
         if($employee_status['status'] == true)  {
-            $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+            $expiry = date('Y-m-d', strtotime($employee_status['expiry_date']));
             $expiry = PlanHelper::endDate($expiry);
             if($today > $expiry) {
                 $user = false;
@@ -408,7 +408,7 @@ Route::filter('auth.jwt_employee', function($request, $response)
         $employee_status = PlanHelper::getEmployeeStatus($member_id);
 
         if($employee_status['status'] == true)  {
-            $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+            $expiry = date('Y-m-d', strtotime($employee_status['expiry_date']));
             $expiry = PlanHelper::endDate($expiry);
              if($today > $expiry) {
                 $user = false;
