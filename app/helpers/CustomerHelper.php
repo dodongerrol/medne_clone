@@ -261,5 +261,21 @@ class CustomerHelper
 		$total_wellness_allocation = $temp_total_wellness_allocation - $temp_total_wellness_deduction;
 		return $total_wellness_allocation;
 	}
+
+	public static function getCustomerIdFromToken($xAccessKey)
+	{
+		$todate =  date("Y-m-d H:i:s");
+		$accessKeyDetails = DB::table('customer_accessKey')->where('accessKey', $xAccessKey)->first();
+
+		if($accessKeyDetails) {
+			$accessKeyExpiryDate = $accessKeyDetails->expiry_date;
+			if($todate == $accessKeyExpiryDate) {
+				return ['status' => false, 'message' => 'Access key already expired.'];
+			}
+			return ['status' => true, 'customer_id' => $accessKeyDetails->customer_id];
+		} else {
+			return ['status' => false, 'message' => 'key does not exist.'];
+		}
+	}
 }
 ?>
