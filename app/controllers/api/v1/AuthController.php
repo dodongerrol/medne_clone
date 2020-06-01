@@ -6345,7 +6345,8 @@ public function payCreditsNew( )
     $returnObject = new stdClass();
     $getRequestHeader = StringHelper::requestHeader();
 
-    if(!empty($getRequestHeader['X-ACCESS-KEY'])){
+    if(!empty($getRequestHeader['X-ACCESS-KEY']) || $getRequestHeader['x-access-key']){
+      $getRequestHeader['X-ACCESS-KEY'] = !empty($getRequestHeader['X-ACCESS-KEY']) ? $getRequestHeader['X-ACCESS-KEY'] : $getRequestHeader['x-access-key'];
       $customer = CustomerHelper::getCustomerIdFromToken($getRequestHeader['X-ACCESS-KEY']);
       if($customer['status'] == false) {
         $returnObject->status = FALSE;
