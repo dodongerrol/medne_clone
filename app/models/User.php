@@ -73,7 +73,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $employee_status = PlanHelper::getEmployeeStatus($users->UserID);
                 $today =  PlanHelper::endDate(date('Y-m-d'));
                 if($employee_status['status'] == true)  {
-                    $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+                    $expiry = date('Y-m-d', strtotime($employee_status['expiry_date']));
                     $expiry = PlanHelper::endDate($expiry);
                     if($today > $expiry) {
                         return false;

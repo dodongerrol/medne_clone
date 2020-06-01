@@ -2102,20 +2102,32 @@ class BenefitsDashboardController extends \BaseController {
 			->sum('claim_amount');
 
 			$medical = array(
-				'entitlement' => $wallet_entitlement->medical_entitlement,
-				'credits_allocation' => $medical_credit_data['allocation'],
-				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
-				'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
-				'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
+				'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
+				'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
+				'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
+				'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  number_format($medical_credit_data['balance'], 2),
+				'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
 			);
 
 			$wellness = array(
-				'entitlement' => $wallet_entitlement->wellness_entitlement,
-				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
-				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
-				'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
-				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+				'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
+				'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
+				'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
+				'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+				'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
 			);
+
+			if($employee_status['status'] == true) {
+				$expiry_date = $employee_status['expiry_date'];
+				$today = PlanHelper::endDate(date('Y-m-d'));
+				$expiry_date = PlanHelper::endDate($expiry_date);
+				if($today > $expiry_date) {
+					$medical['credits_allocation'] = "0.00";
+					$medical['balance'] = "0.00";
+					$wellness['credits_allocation'] = "0.00";
+					$wellness['balance'] = "0.00";
+				}
+			}
 
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
@@ -3511,13 +3523,12 @@ class BenefitsDashboardController extends \BaseController {
 		$hr_data = StringHelper::getJwtHrSession();
 		$hr_id = $hr_data->hr_dashboard_id;
 		$input = Input::all();
-		$date = date('Y-m-d');
+		$date = PlanHelper::endDate(date('Y-m-d'));
 
 		foreach ($input['users'] as $key => $user) {
 			$check_withdraw = DB::table('customer_plan_withdraw')->where('user_id', $user['user_id'])->count();
 			$expiry = date('Y-m-d', strtotime($user['expiry_date']));
 			$expired_date = date('Y-m-d', strtotime('+1 day', strtotime($user['expiry_date'])));
-			// return $date.' - '.$expired_date;
 			// return $check_withdraw;
 			if($check_withdraw == 0) {
 				if($date >= $expired_date) {
@@ -14268,13 +14279,14 @@ class BenefitsDashboardController extends \BaseController {
 		$customer_id = PlanHelper::getCusomerIdToken();
 		$check_withdraw = DB::table('customer_plan_withdraw')->where('user_id', $input['employee_id'])->count();
 		$expiry = date('Y-m-d', strtotime($input['last_date_of_coverage']));
-		$date = date('Y-m-d');
+		$expired_date = date('Y-m-d', strtotime('+1 day', strtotime($input['last_date_of_coverage'])));
+		$date = PlanHelper::endDate(date('Y-m-d'));
 
 		if($check_withdraw == 0) {
-			if($date >= $expiry) {
+			if($date >= $expired_date) {
 				// create refund and delete now
 				try {
-					$result = self::removeEmployee($input['employee_id'], $expiry, false);
+					$result = self::removeEmployee($input['employee_id'], $expiry, true);
 					if(!$result) {
 						return array('status' => FALSE, 'message' => 'Failed to create withdraw employee. Please contact Mednefits and report the issue.');
 					}
@@ -14288,10 +14300,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			} else {
 				try {
-					$result = self::createWithDrawEmployees($input['employee_id'], $expiry, true, false, true);
-					// if($result) {
-					// 	self::updateCustomerPlanStatusDeleteUser($user['user_id']);
-					// }
+					$result = self::createWithDrawEmployees($input['employee_id'], $expiry, true, true, true);
 				} catch(Exception $e) {
 					$email = [];
 					$email['end_point'] = url('hr/employees/withdraw', $parameter = array(), $secure = null);

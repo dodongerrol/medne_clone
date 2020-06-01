@@ -130,6 +130,11 @@ class CronController extends \BaseController {
                             ->get();
 
         foreach ($replacements as $key => $replace) {
+            $user_dat = DB::table('user')->where('UserID', $replace->old_id)->first();
+                // set company members removed to 1
+            if($user_dat) {
+                MemberHelper::memberReturnCreditBalance($replace->old_id);
+            }
             $active_plan = DB::table('customer_active_plan')
                             ->where('customer_active_plan_id', $replace->active_plan_id)
                             ->first();
@@ -667,12 +672,12 @@ class CronController extends \BaseController {
         } else {
             $removes = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
         }
-        // return $removes;
+        
         foreach ($removes as $key => $removed_employee) {
             if((int)$removed_employee->has_no_user == 0) {
                 $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
                 // set company members removed to 1
-                if($user_dat && $user_dat->Active == 0) {
+                if($user_dat) {
                     // MemberHelper::createWallet($removed_employee->user_id);
                     $wallets = MemberHelper::memberReturnCreditBalance($removed_employee->user_id);
                 }
