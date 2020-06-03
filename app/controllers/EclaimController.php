@@ -1232,7 +1232,10 @@ class EclaimController extends \BaseController {
 					}
 				}
 
-
+				if($consultation_credits)	{
+					$transaction_type = "credit";
+					$payment_type = "Mednefits Credits";
+				}
                 // get clinic type
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$type = "";
@@ -2023,21 +2026,21 @@ class EclaimController extends \BaseController {
 					$credit_status = FALSE;
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$cash_cost = $transation->cash_cost;
+							$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
+							$cash_cost = (float)$transation->cash_cost;
 						} else {
 							if($trans->credit_cost > 0) {
 								$total_amount = $trans->procedure_cost;
 							} else {
-								$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+								$total_amount = (float)$trans->procedure_cost + (float)$trans->consultation_fees;
 							}
-							$cash_cost = $trans->procedure_cost;
+							$cash_cost = (float)$trans->procedure_cost;
 						}
 					} else {
 						if((int)$trans->half_credits == 1) {
-							$cash_cost = $trans->cash_cost;
+							$cash_cost = (float)$trans->cash_cost;
 						} else {
-							$cash_cost = $trans->procedure_cost;
+							$cash_cost = (float)$trans->procedure_cost;
 						}
 					}
 				} else {
@@ -2046,11 +2049,11 @@ class EclaimController extends \BaseController {
 
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-							$cash_cost = $trans->cash_cost;
+							$total_amount = (float)$trans->credit_cost + (float)$trans->cash_cost + (float)$trans->consultation_fees;
+							$cash_cost = (float)$trans->cash_cost;
 						} else {
                       // $total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+							$total_amount = (float)$trans->credit_cost + (float)$trans->cash_cost + (float)$trans->consultation_fees;
 							if($trans->credit_cost > 0) {
 								$cash_cost = 0;
 							} else {
