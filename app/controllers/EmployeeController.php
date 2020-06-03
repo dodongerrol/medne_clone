@@ -3017,7 +3017,7 @@ class EmployeeController extends \BaseController {
     if($email && (int)$email->account_activated == 0) {
       return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
     } else if($email && (int)$email->account_activated == 1) {
-      return array('status' => FALSE, 'Activated');
+      return array('status' => TRUE, 'Activated');
     }
     if($email) {
       return $token;
