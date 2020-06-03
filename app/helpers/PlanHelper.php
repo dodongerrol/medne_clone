@@ -2520,8 +2520,18 @@ class PlanHelper {
 			$balance = $allocation - $get_allocation_spent;
 			$medical_balance = $balance;
 			$total_deduction_credits += $deducted_credits;
+			if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {
+				$allocation = 0;
+				$balance = $pro_allocation - $get_allocation_spent;
+				$medical_balance = $balance;
+	
+				if($balance < 0) {
+					$balance = 0;
+					$medical_balance = $balance;
+				}
+			}
 		} else {
-			if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
+			if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {
 				$allocation = $pro_allocation;
 				$balance = $pro_allocation - $get_allocation_spent;
 				$medical_balance = $balance;
@@ -2530,6 +2540,11 @@ class PlanHelper {
 					$balance = 0;
 					$medical_balance = $balance;
 				}
+			} else if($pro_allocation >=0 && (int)$user->Active == 0) {
+				$allocation = 0;
+				$balance = $allocation - $get_allocation_spent;
+				$medical_balance = $balance;
+				$total_deduction_credits += $deducted_credits;
 			} else {
 				$allocation = $get_allocation - $deducted_credits;
 				$balance = $allocation - $get_allocation_spent;
@@ -2909,6 +2924,22 @@ class PlanHelper {
 			$total_deduction_credits_wellness = $deducted_wellness_credits;
 			$balance = $allocation_wellness - $get_allocation_spent_wellness;
 			$wellness_balance = $balance;
+
+			if($pro_allocation > 0 && (int)$user->Active == 0 || $user->Active == 0) {
+				$allocation_wellness = 0;
+				$balance = $pro_allocation - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
+				if($balance < 0) {
+					$balance = 0;
+					$wellness_balance = $balance;
+				}
+			}
+
+		} else if($pro_allocation == 0 && (int)$user->Active == 0) {
+			$allocation_wellness = 0;
+			$total_deduction_credits_wellness = $deducted_wellness_credits;
+			$balance = 0;
+			$wellness_balance = 0;
 		} else {
 			if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
 				$allocation_wellness = $pro_allocation;
