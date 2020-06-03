@@ -775,7 +775,7 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					if(isset($input['input_amount'])) {
-						$input_amount = trim($input['input_amount']);
+						$input_amount = TransactionHelper::floatvalue($input['input_amount']);
 					}
 					
 					// check block access
@@ -808,8 +808,8 @@ class Api_V1_TransactionController extends \BaseController
 						$customer_id = $findUserID;
 					}
 
-					// $customerID = PlanHelper::getCustomerId($user_id);
-					// $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+					$customerID = PlanHelper::getCustomerId($user_id);
+					$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 					$transaction = new Transaction();
 					$wallet = new Wallet( );
 					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
@@ -881,10 +881,10 @@ class Api_V1_TransactionController extends \BaseController
 						'multiple_service_selection' => $multiple_service_selection,
 						'spending_type'         => $clinic_type->spending_type,
 						'lite_plan_enabled'     => $lite_plan_enabled,
-						'currency_type'				 => $clinic_data->currency_type,
-						'consultation_fees'		 => $consultation_fees,
-						'created_at'						 => $date_of_transaction,
-						'updated_at'						 => $date_of_transaction
+						'currency_type'			=> $clinic_data->currency_type,
+						'consultation_fees'		=> $consultation_fees,
+						'created_at'			=> $date_of_transaction,
+						'updated_at'			 => $date_of_transaction
 					);
 
 					if($clinic_peak_status) {
@@ -902,7 +902,6 @@ class Api_V1_TransactionController extends \BaseController
 					}
 					
 					try {
-
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;
 
@@ -971,7 +970,7 @@ class Api_V1_TransactionController extends \BaseController
 										}
 
 										$email = [];
-										$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
+										$email['end_point'] = url('v2/clinic/payment_direct', $parameter = array(), $secure = null);
 										$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e;
 										$email['emailSubject'] = 'Error log.';
 										EmailHelper::sendErrorLogs($email);
