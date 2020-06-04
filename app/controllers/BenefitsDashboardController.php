@@ -13490,7 +13490,9 @@ class BenefitsDashboardController extends \BaseController {
 			'exceed'				=> $exceed,
 			'exceeded_by'			=> number_format($total_medical_spent - $total_pro_medical_allocation, 2),
 			'balance'				=> number_format($medical_balance, 2),
+			'exceed_balance'				=> $exceed == true ? number_format(abs($medical_balance), 2) : "0.00",
 			'remaining_allocated_credits'	=> number_format($remaining_allocated_medical_credits, 2),
+			'credits_to_be_returned'	=> $exceed == true ? number_format($remaining_allocated_medical_credits - abs($medical_balance), 2) : "0.00",
 			'currency_type'	=> $wallet->currency_type,
 			'plan_method'			=> $spending['medical_method'],
 			'pro_allocation_status'		=> false,
@@ -13655,7 +13657,9 @@ class BenefitsDashboardController extends \BaseController {
 			'exceed'				=> $exceed_wellness,
 			'exceeded_by'			=> number_format($total_wellness_spent - $total_pro_wellness_allocation, 2),
 			'balance'				=> number_format($wellness_balance, 2),
+			'exceed_balance'		=> $exceed == true ? number_format(abs($wellness_balance), 2) : "0.00",
 			'remaining_allocated_credits' => number_format($remaining_allocated_wellness_credits, 2),
+			'credits_to_be_returned'	=> $exceed == true ? number_format($remaining_allocated_wellness_credits - abs($wellness_balance), 2) : "0.00",
 			'currency_type'	=> $wallet->currency_type,
 			'plan_method'			=> $spending['wellness_method'],
 			'pro_allocation_status'		=> false,
@@ -13768,8 +13772,8 @@ class BenefitsDashboardController extends \BaseController {
 					$to_return_to_company = $total_allocation_medical - $total_pro_medical_allocation;
 				} else if($input['calibrate_medical'] == true && $exceed == true && $total_allocation_medical > 0) {
 					$new_allocation = $total_pro_medical_allocation;
-					$to_return_to_company = $total_allocation_medical - $total_medical_spent;
-
+					$balance = abs($medical_balance);
+					$to_return_to_company = $remaining_allocated_medical_credits - $balance;
 				}
 
 				if($input['calibrate_medical'] == true && $total_allocation_medical > 0) {
@@ -13810,26 +13814,15 @@ class BenefitsDashboardController extends \BaseController {
 
 					$calibrate_medical_deduction_by_hr = array(
 						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_allocation_medical - $total_pro_medical_allocation,
+						'credit'            => $to_return_to_company,
 						'logs'              => 'deducted_by_hr',
-						'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
+						'running_balance'   => $to_return_to_company,
 						'spending_type'     => 'medical',
 						'created_at'        => date('Y-m-d H:i:s'),
 						'updated_at'        => date('Y-m-d H:i:s'),
 						'currency_type'	=> $wallet->currency_type
 					);
 
-					$calibrate_medical_deduction_by_hr = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_allocation_medical - $total_pro_medical_allocation,
-						'logs'              => 'deducted_by_hr',
-						'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
-						'spending_type'     => 'medical',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s'),
-						'currency_type'	=> $wallet->currency_type
-					);
-					
 					$new_balance = $total_pro_medical_allocation - $total_medical_spent;
 
 					if($new_balance < 0) {
@@ -13857,7 +13850,10 @@ class BenefitsDashboardController extends \BaseController {
 					$to_return_to_company = $total_allocation_wellness - $total_pro_wellness_allocation;
 				} else if($input['calibrate_wellness'] == true && $exceed == true && $total_allocation_wellness > 0) {
 					$new_allocation = $total_pro_wellness_allocation;
-					$to_return_to_company = $total_allocation_wellness - $total_wellness_spent;
+					// $to_return_to_company = $total_allocation_wellness - $total_wellness_spent;
+
+					$balance = abs($wellness_balance);
+					$to_return_to_company = $remaining_allocated_wellness_credits - $balance;
 				}
 
 				if($input['calibrate_wellness'] == true && $total_allocation_wellness > 0 ) {
@@ -13900,15 +13896,15 @@ class BenefitsDashboardController extends \BaseController {
 
 					$calibrate_wellness_deduction_by_hr = array(
 						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_allocation_wellness - $total_pro_wellness_allocation,
+						'credit'            => $to_return_to_company,
 						'logs'              => 'deducted_by_hr',
-						'running_balance'   => $total_allocation_wellness - $total_pro_wellness_allocation,
+						'running_balance'   => $to_return_to_company,
 						'spending_type'     => 'wellness',
 						'created_at'        => date('Y-m-d H:i:s'),
 						'updated_at'        => date('Y-m-d H:i:s'),
 						'currency_type'	=> $wallet->currency_type
 					);
-
+					
 					if($new_balance < 0) {
 						$new_balance = 0;
 					}
@@ -13924,7 +13920,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 		}
-
+		
 		if(!$check_wallet_status && $has_medical_allocation && $calibrate_medical || !$check_wallet_status && $has_wellness_allocation && $calibrate_wellness) {
 			DB::table('member_wallet_status')->insert($wallet_status);
 		}
