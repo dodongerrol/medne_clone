@@ -60,7 +60,7 @@
                 <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method != 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Wellness Available Credits</b>
                 immediately after clicking “Confirm”.
               </p>
-              <p>
+              <p ng-if="emp_details.summary.medical.exceed != true && emp_details.summary.wellness.exceed != true">
                 Any unused credits will be returned to 
                 <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">Company Available Credits</b> 
                 <b ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method != 'pre_paid'">Company Medical Available Credits</b>

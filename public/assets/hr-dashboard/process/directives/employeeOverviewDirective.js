@@ -1247,9 +1247,20 @@ app.directive("employeeOverviewDirective", [
 
         scope.toggleEmployee = function (emp, index) {
           // console.log(emp);
+          if( scope.isRemoveEmployeeShow ){
+            scope.isEmployeeShow = true;
+            scope.isRemoveEmployeeShow = false;
+            $('.employee-information-wrapper').show();
+          }
           
           console.log(scope.isEmployeeShow);
           if (scope.isEmployeeShow == false) {
+            scope.isRemoveEmployeeShow = false;
+            $('.employee-information-wrapper').fadeIn();
+            $('.prev-next-buttons-container').hide();
+            $('.remove-employee-wrapper').hide();
+
+            
             scope.isEmployeeShow = true;
             scope.empTabSelected = 0;
             scope.healthSpendingAccountTabIsShow = false;

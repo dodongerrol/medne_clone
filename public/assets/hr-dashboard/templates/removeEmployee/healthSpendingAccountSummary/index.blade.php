@@ -252,7 +252,10 @@
 
         <div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.medical.pro_allocation_status == false}" ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">
-            <span class="p-label-value">Remaining Allocated Credits</span>
+						<span class="p-label-value">
+							{{ (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.wellness.exceed == true ? 'Returned' : 'Remaining' }}
+							Allocated Credits
+						</span>
             <span class="p-tooltip">
               <img ng-click="toggleSumamryTooltipDrop('medical')" src="../assets/hr-dashboard/img/summary-info-tooltip.png">
 
@@ -276,7 +279,33 @@
             <span ng-bind="health_spending_summary.medical.currency_type" class="currency-type"></span> 
             <span ng-bind="health_spending_summary.medical.remaining_allocated_credits">84.62</span>
           </span>
-        </div>
+				</div>
+
+				<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)}" ng-if="health_spending_summary.medical.exceed == true && emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;margin-bottom: 10px;">
+          <strong class="font-helvetica-medium">
+            <span class="p-label-value">Deduct: Exceeded Credits</span>
+          </strong>
+          <span>
+						<div class="exceed-credit-border">
+							(
+							<span ng-bind="health_spending_summary.medical.currency_type" class="currency-type"></span> 
+							<span ng-bind="health_spending_summary.medical.remaining_allocated_credits">84.62</span>
+							)
+						</div>
+          </span>
+				</div>
+
+				<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)}" ng-if="health_spending_summary.medical.exceed == true && emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid'" class="balance-container weight-700 font-helvetica-medium" style="margin-top: 0px;">
+          <strong class="font-helvetica-medium">
+            <span class="p-label-value">Credits to be returned</span>
+          </strong>
+          <span>
+						<span ng-bind="health_spending_summary.medical.currency_type" class="currency-type"></span> 
+						<span ng-bind="health_spending_summary.medical.remaining_allocated_credits">84.62</span>
+          </span>
+				</div>
+				
+
 
         <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.medical.plan_method == 'pre_paid' && (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">
@@ -366,7 +395,10 @@
 
         <div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.wellness.pro_allocation_status == false}" ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">
-            <span class="p-label-value">Remaining Allocated Credits</span>
+            <span class="p-label-value">
+							{{ (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true) && health_spending_summary.wellness.exceed == true ? 'Returned' : 'Remaining' }}
+							Allocated Credits
+						</span>
             <span class="p-tooltip">
               <img ng-click="toggleSumamryTooltipDrop('wellness')" src="../assets/hr-dashboard/img/summary-info-tooltip.png">
 
@@ -390,7 +422,31 @@
             <span ng-bind="health_spending_summary.wellness.currency_type" class="currency-type"></span> 
             <span ng-bind="health_spending_summary.wellness.remaining_allocated_credits">84.62</span>
           </span>
-        </div>
+				</div>
+				
+				<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)}" ng-if="health_spending_summary.wellness.exceed == true && emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="balance-container weight-700" style="margin-top: 10px;margin-bottom: 10px;">
+          <strong class="font-helvetica-medium">
+            <span class="p-label-value">Deduct: Exceeded Credits</span>
+          </strong>
+          <span>
+						<div class="exceed-credit-border">
+							(
+							<span ng-bind="health_spending_summary.wellness.currency_type" class="currency-type"></span> 
+							<span ng-bind="health_spending_summary.wellness.remaining_allocated_credits">84.62</span>
+							)
+						</div>
+          </span>
+				</div>
+
+				<div ng-class="{'isHide' : (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)}" ng-if="health_spending_summary.wellness.exceed == true && emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid'" class="balance-container weight-700 font-helvetica-medium" style="margin-top: 0px;">
+          <strong class="font-helvetica-medium">
+            <span class="p-label-value">Credits to be returned</span>
+          </strong>
+          <span>
+						<span ng-bind="health_spending_summary.wellness.currency_type" class="currency-type"></span> 
+						<span ng-bind="health_spending_summary.wellness.remaining_allocated_credits">84.62</span>
+          </span>
+				</div>
 
         <div ng-if="emp_details.account_type == 'lite_plan' && health_spending_summary.wellness.plan_method == 'pre_paid' && (selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true)" class="balance-container weight-700" style="margin-top: 10px;">
           <strong class="font-helvetica-medium">

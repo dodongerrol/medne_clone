@@ -154,3 +154,9 @@
   line-height: 1;
   font-weight: 700;
 }
+.balance-container .exceed-credit-border{
+  padding-bottom: 10px;
+  padding-left: 30px;
+  border-bottom: 2px solid #BFBFBF;
+  display: inline-block;
+}
