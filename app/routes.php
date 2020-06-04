@@ -452,7 +452,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get spending invoice purchse
 	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
 	// update company HR details / employee enrollment
-	Route::post('hr/create_member_credits_allocation', 'CorporateController@updateCompanyHrDetails');
+	Route::post('hr/update_company_hr_details', 'CorporateController@updateCompanyHrDetails');
 });
 
 
