@@ -4813,8 +4813,9 @@ public function getHrActivity( )
 	$paginate['per_page'] = $corporate_members->getPerPage();
 	$paginate['to'] = $corporate_members->getTo();
 	$paginate['total'] = $corporate_members->getTotal();
-
-  $total_allocation = 0;
+	$total_allocation = 0;
+	$total_visit_limit = 0;
+	$total_visit_created = 0;  
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
@@ -4830,6 +4831,11 @@ public function getHrActivity( )
 			->where('type', 'started')
 			->orderBy('created_at', 'desc')
 			->first();
+		if($user_plan_history) {
+			$total_visit_limit += $user_plan_history->total_visit_limit;
+			$total_visit_created += $user_plan_history->total_visit_created;
+		}
+		
 		if($spending_type == "medical") {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'medical');
 			if($member_spending_dates_medical) {
@@ -4853,7 +4859,7 @@ public function getHrActivity( )
 		// ->orderBy('created_at', 'desc')
 		// ->where('type', 'started')
 		// ->first();
-    // get e claim
+    	// get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -4873,7 +4879,7 @@ public function getHrActivity( )
 		->orderBy('date_of_transaction', 'desc')
 		->get();
 
-    // in-network transactions
+    	// in-network transactions
 		foreach ($transactions as $key => $trans) {
 			$consultation_cash = false;
 			$consultation_credits = false;
@@ -5303,7 +5309,7 @@ public function getHrActivity( )
 
 		}
 
-    // e-claim transactions
+    	// e-claim transactions
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
@@ -5448,7 +5454,7 @@ public function getHrActivity( )
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
 		'lite_plan'     => $lite_plan,
-		'total_visit_created' => $user_plan_history->total_visit_created,
+		'total_visit_created' => $total_visit_created,
 		'total_balance_visit' => count($transactions) - count($e_claim_result)
 
 	);
