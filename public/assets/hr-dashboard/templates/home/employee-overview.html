@@ -304,7 +304,7 @@
 						<div ng-click="toggleMedicalUsage()" class="usage-container">
 							<strong class="font-helvetica-medium">Usage</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-									ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication )">700.00</span></span>
+									ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication ) | number: 2">700.00</span></span>
 						</div>
 						<i ng-if="!isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-right"
 							aria-hidden="true"></i>

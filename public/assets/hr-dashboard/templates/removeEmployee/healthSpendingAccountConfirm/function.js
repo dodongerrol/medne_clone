@@ -89,7 +89,9 @@ app.directive('healthSpendingAccountConfirmDirective', [
           var data = {
             employee_id: scope.emp_details.user_id,
             last_date_of_coverage: moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-            customer_id: scope.selected_customer_id
+            customer_id: scope.selected_customer_id,
+            calibrate_medical: scope.emp_details.wallet_opt,
+            calibrate_wellness: scope.emp_details.wallet_opt,
           }
           scope.showLoading();
           dependentsSettings.reserveEmployee(data)
@@ -97,7 +99,9 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // console.log( response );
               // scope.hideLoading();
               if (response.data.status) {
-                scope.confirmRemoveEmployee();
+                // scope.confirmRemoveEmployee();
+                scope.isRemoveSuccess = true;
+                scope.hideLoading();
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
@@ -107,7 +111,12 @@ app.directive('healthSpendingAccountConfirmDirective', [
         scope.submitReplaceEmployee = function (data) {
           scope.showLoading();
           scope.remove_emp_details.dob = moment(scope.remove_emp_details.dob, 'DD/MM/YYYY').format('YYYY-MM-DD');
+          scope.remove_emp_details.employee_id = scope.emp_details.user_id;
+          scope.remove_emp_details.customer_id = scope.selected_customer_id;
           scope.remove_emp_details.last_day_coverage = moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD');
+          scope.remove_emp_details.last_date_of_coverage = moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD');
+          scope.remove_emp_details.calibrate_medical = scope.emp_details.wallet_opt;
+          scope.remove_emp_details.calibrate_wellness = scope.emp_details.wallet_opt;
           scope.remove_emp_details.replace_id = scope.emp_details.user_id;
           scope.remove_emp_details.plan_start = moment(scope.remove_emp_details.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD');
           if (!scope.remove_emp_details.medical_credits) {
@@ -121,7 +130,9 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                scope.confirmRemoveEmployee();
+                // scope.confirmRemoveEmployee();
+                scope.isRemoveSuccess = true;
+                scope.hideLoading();
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
@@ -133,14 +144,21 @@ app.directive('healthSpendingAccountConfirmDirective', [
           scope.showLoading();
           var users = [{
             expiry_date: moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-            user_id: scope.emp_details.user_id
+            user_id: scope.emp_details.user_id,
+            employee_id: scope.emp_details.user_id,
+            last_date_of_coverage: moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            customer_id: scope.selected_customer_id,
+            calibrate_medical: scope.emp_details.wallet_opt,
+            calibrate_wellness: scope.emp_details.wallet_opt,
           }];
           dependentsSettings.removeEmployee(users)
             .then(function (response) {
               // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                scope.confirmRemoveEmployee();
+                // scope.confirmRemoveEmployee();
+                scope.isRemoveSuccess = true;
+                scope.hideLoading();
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
