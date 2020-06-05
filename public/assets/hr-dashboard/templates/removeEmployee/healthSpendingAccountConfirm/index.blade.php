@@ -47,11 +47,11 @@
               <p>
                 The 
                 <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid'">
-                  <b>(Medical) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.medical.currency_type }}</span> {{ emp_details.summary.medical.exceed != true ? emp_details.summary.medical.credits_to_be_returned : emp_details.summary.medical.remaining_allocated_credits }}</b> 
+                  <b>(Medical) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.medical.currency_type }}</span> {{ emp_details.summary.medical.exceed ? emp_details.summary.medical.credits_to_be_returned : emp_details.summary.medical.remaining_allocated_credits }}</b> 
                 </span>
                 <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'"> & the</span>
                 <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.wellness.plan_method == 'pre_paid'">
-                   <b>(Wellness) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.wellness.currency_type }}</span> {{ emp_details.summary.medical.exceed != true ? emp_details.summary.wellness.credits_to_be_returned : emp_details.summary.wellness.remaining_allocated_credits }}</b> 
+                   <b>(Wellness) Remaining Allocated Credits</b> of <b><span class="text-uppercase">{{ emp_details.summary.wellness.currency_type }}</span> {{ emp_details.summary.medical.exceed ? emp_details.summary.wellness.credits_to_be_returned : emp_details.summary.wellness.remaining_allocated_credits }}</b> 
                 </span>
                 will be returned to 
                 <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">respective</span>
