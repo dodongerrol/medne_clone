@@ -100,21 +100,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // scope.hideLoading();
               if (response.data.status) {
                 // scope.confirmRemoveEmployee();
-                swal({
-                  title: "Success!",
-                  // text: response.data.message,
-                  text: "The employee has been successfully removed",
-                  type: "success",
-                  showCancelButton: false,
-                  confirmButtonText: "Ok",
-                  confirmButtonColor: "#0392CF",
-                  closeOnConfirm: true,
-                },
-                function (isConfirm) {
-                  if (isConfirm) {
-                    scope.resetEmpData();
-                  }
-                });
+                scope.isRemoveSuccess = true;
+                scope.hideLoading();
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
@@ -144,21 +131,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // console.log(response);
               if (response.data.status) {
                 // scope.confirmRemoveEmployee();
-                swal({
-                  title: "Success!",
-                  // text: response.data.message,
-                  text: "The employee has been successfully removed",
-                  type: "success",
-                  showCancelButton: false,
-                  confirmButtonText: "Ok",
-                  confirmButtonColor: "#0392CF",
-                  closeOnConfirm: true,
-                },
-                function (isConfirm) {
-                  if (isConfirm) {
-                    scope.resetEmpData();
-                  }
-                });
+                scope.isRemoveSuccess = true;
+                scope.hideLoading();
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
@@ -183,21 +157,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // console.log(response);
               if (response.data.status) {
                 // scope.confirmRemoveEmployee();
-                swal({
-                  title: "Success!",
-                  // text: response.data.message,
-                  text: "The employee has been successfully removed",
-                  type: "success",
-                  showCancelButton: false,
-                  confirmButtonText: "Ok",
-                  confirmButtonColor: "#0392CF",
-                  closeOnConfirm: true,
-                },
-                function (isConfirm) {
-                  if (isConfirm) {
-                    scope.resetEmpData();
-                  }
-                });
+                scope.isRemoveSuccess = true;
+                scope.hideLoading();
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
