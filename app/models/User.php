@@ -140,6 +140,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->account_update_status = 1;
                 $this->account_update_date = date('Y-m-d H:i:s');
                 $this->account_already_update = 1;
+                $this->group_number = !empty($data['group_number']) && $data['group_number'] ? $data['group_number'] : 1;
                 if($this->save()){
                     $insertedId = $this->id;
                     $wallet = new Wallet( );

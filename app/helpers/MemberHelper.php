@@ -696,5 +696,25 @@ class MemberHelper
 
 		return $plan_history  ? $plan_history  : false;
 	}
+
+	public static function createMemberTransactionAccessBlock($member_id)
+	{
+		$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_history->customer_active_plan_id)->first();
+
+		if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan")	{
+			// create block transaction
+			$customer_id = \PlanHelper::getCustomerId($member_id);
+			$data = array(
+				'member_id'		=> $member_id,
+				'customer_id'	=> $customer_id,
+				'status'		=> 1,
+				'type'			=> 'all',
+				'created_at'	=> date('Y-m-d H:i:s'),
+				'updated_at'	=> date('Y-m-d H:i:s')
+			);
+			DB::table('member_block_transaction')->insert($data);
+		}
+	}
 }
 ?>
