@@ -166,6 +166,7 @@ Route::get('list/local_network_partners/{id}', 'NetworkPatnerController@getLocal
 
 // hr dashboard
 Route::get('business-portal-login', 'HomeController@hrDashboardLogin');
+Route::get('company-activation', 'HomeController@getCompanyActivationView');
 Route::get('company-benefits-dashboard-login', 'HomeController@oldhrDashboardLogin');
 Route::get('company-benefits-dashboard-logout', 'BenefitsDashboardController@logOutHr');
 Route::post('company-benefits-dashboard-login', 'BenefitsDashboardController@hrLogin');
