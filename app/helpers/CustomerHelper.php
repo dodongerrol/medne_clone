@@ -477,5 +477,12 @@ class CustomerHelper
 			}
 		}
 	}
+
+	public static function getActiveMembers($customer_id)
+	{
+		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
+		return $members;
+	}
 }
 ?>
