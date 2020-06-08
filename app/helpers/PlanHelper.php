@@ -3072,7 +3072,7 @@ class PlanHelper {
 					if($balance < 0) {
 						// $balance = 0;
 						// $medical_balance = $balance;
-						$allocation = $pro_allocation + abs($medical_balance);
+						$allocation = $get_allocation - $deducted_credits;
 					}
 				}
 			} else {
@@ -3084,7 +3084,7 @@ class PlanHelper {
 					if($balance < 0) {
 						$balance = 0;
 						$medical_balance = $balance;
-						$allocation = $pro_allocation + abs($medical_balance);
+						$allocation = $get_allocation - $deducted_credits;
 					}
 				} else if($pro_allocation == 0 && (int)$user->Active == 0){
 					$allocation = 0;
@@ -3206,7 +3206,7 @@ class PlanHelper {
 					$balance = $pro_allocation - $get_allocation_spent_wellness;
 					$wellness_balance = $balance;
 					if($balance < 0) {
-						$allocation_wellness = $pro_allocation + abs($wellness_balance);
+						$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
 					}
 				}
 			} else {
@@ -3217,7 +3217,7 @@ class PlanHelper {
 					if($balance < 0) {
 						$balance = 0;
 						$wellness_balance = $balance;
-						$allocation_wellness = $pro_allocation + abs($wellness_balance);
+						$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
 					}
 				} else if($pro_allocation == 0 && (int)$user->Active == 0) {
 					$allocation_wellness = 0;

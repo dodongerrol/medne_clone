@@ -570,14 +570,17 @@ class Api_V1_TransactionController extends \BaseController
 										}
 										
 										try {
-											$customer_id = PlanHelper::getCustomerId($input['member_id']);
+											$customer_id = PlanHelper::getCustomerId($user_id);
 											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 											
 											if($spending['medical_method'] == "post_paid") {
-												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $customer_id);
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
 											}
 										} catch(Exception $e) {
-
+											$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
+											$email['logs'] = 'Mobile Payment Credits Save Transaction Invoice - '.$e;
+											$email['emailSubject'] = 'Error log.';
+											EmailHelper::sendErrorLogs($email);
 										}
 
 										// send email
@@ -809,7 +812,7 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					$customerID = PlanHelper::getCustomerId($user_id);
-					$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+					$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customerID);
 					$transaction = new Transaction();
 					$wallet = new Wallet( );
 					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
