@@ -3025,4 +3025,37 @@ class EmployeeController extends \BaseController {
         return FALSE;
     }
   }
+
+  public function getEmployeeEnrollmentStatus( )
+  {
+    $result = StringHelper::getJwtHrSession();
+    $customer_id = $result->customer_buy_start_id;
+
+    // get pending users
+    $pending = 0;
+    $login = 0;
+    $active = 0;
+    $members = CustomerHelper::getActiveMembers($customer_id);
+
+    foreach($members as $key => $member)  {
+      // check if member already login base on admin logs
+      $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
+      if(!$check_active_state)  {
+        $pending++;
+      } else {
+        // check if already create a transaction
+        $panel = DB::table('transaction_history')->where('UserID', $member->user_id)->first();
+        $non_panel = DB::table('e_claim')->where('user_id', $member->user_id)->first();
+
+        if($panel || $non_panel) {
+          $active++;
+        } else {
+          $login++;
+        }
+      }
+    }
+    $data = ['pending' => $pending, 'login' => $login, 'active' => $active];
+
+    return ['status' => false, 'data' => $data];
+  }
 }
