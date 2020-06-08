@@ -164,4 +164,12 @@ class CorporateController extends BaseController {
 
     return ['status' => true, 'current_term' => $current_term, 'last_term' => $last_term];
 	}
+
+	public function createCompanyPasswordActivated ( )
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		
+
+	}
 }
