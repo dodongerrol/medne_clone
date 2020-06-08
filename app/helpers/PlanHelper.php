@@ -1466,6 +1466,7 @@ class PlanHelper {
 			'account_update_date' => date('Y-m-d H:i:s'),
 			'account_already_update'	=> 1,
 			'communication_type'	=> $communication_type,
+			'group_number'			=> $data_enrollee->group_number,
 			'currency_type'		=> $customer_data->currency_type
 		);
 
@@ -1814,9 +1815,11 @@ class PlanHelper {
 				$plan_tier_class->increamentMemberEnrolledHeadCount($data_enrollee->plan_tier_id);
 			}
 		}
-
+		
     // enrolle dependent if any
 		self::enrollDependents($temp_enrollment_id, $customer_id, $user_id, $planned->customer_plan_id);
+		// create transaction block
+		MemberHelper::createMemberTransactionAccessBlock($user_id);
     // send email to new employee
 		$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
 		$total_dependents_count = DB::table('dependent_temp_enrollment')
