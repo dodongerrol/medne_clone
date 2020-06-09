@@ -678,13 +678,10 @@ class CronController extends \BaseController {
                 $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
                 // set company members removed to 1
                 if($user_dat) {
-                    // MemberHelper::createWallet($removed_employee->user_id);
-                    $wallets = MemberHelper::memberReturnCreditBalance($removed_employee->user_id);
+                    MemberHelper::memberReturnCreditBalance($removed_employee->user_id);
                 }
 
                 if($user_dat && $user_dat->Active == 1) {
-                    MemberHelper::createWallet($removed_employee->user_id);
-                    $wallets = MemberHelper::memberReturnCreditBalance($removed_employee->user_id);
                     $active_plan = DB::table('user_plan_history')->where('user_id', $removed_employee->user_id)->orderBy('date', 'desc')->first();
                     $user_plan_history_data = array(
                         'user_id'       => $removed_employee->user_id,

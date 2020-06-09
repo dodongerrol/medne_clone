@@ -2314,24 +2314,21 @@ class PlanHelper {
 			$medical_balance = 0;
 			
 			if($pro_allocation > 0 && (int)$user->Active == 0) {
-				$allocation = $pro_allocation;
-				$balance = $pro_allocation - $get_allocation_spent;
+				$allocation = $get_allocation - $deducted_credits;
+				
+				$balance = $allocation - $get_allocation_spent;
 				$medical_balance = $balance;
-
+				// return ['balance' => $balance, 'pro_allocation' => $pro_allocation, 'get_allocation_spent' => $get_allocation_spent];
 				if($balance < 0) {
 					$balance = 0;
 					$medical_balance = $balance;
 				}
+				$allocation = $pro_allocation;
 			} else {
 				$allocation = $get_allocation - $deducted_credits;
 				$balance = $allocation - $get_allocation_spent;
 				$medical_balance = $balance;
 				$total_deduction_credits += $deducted_credits;
-
-			// 	if($user->Active == 0) {
-			// 		$deleted_employee_allocation = $get_allocation - $deducted_credits;
-			// 		$medical_balance = 0;
-			// 	}
 			}
 
 			// if($e_wallet->balance != $medical_balance) {
@@ -2584,6 +2581,9 @@ class PlanHelper {
 
 	public static function memberWellnessAllocatedCreditsOld2($wallet_id, $user_id)
 	{
+		$customer_id = \PlanHelper::getCustomerId($user_id);
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+
 		$get_wellness_allocation = 0;
 		$deducted_by_hr_wellness = 0;
 		$e_claim_wellness_spent = 0;
@@ -2630,38 +2630,81 @@ class PlanHelper {
 		$get_allocation_spent_wellness = $get_allocation_spent_temp_wellness + $e_claim_wellness_spent;
 		$wellness_balance = 0;
 
-		if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
-			$allocation_wellness = $pro_allocation;
-			$balance = $pro_allocation - $get_allocation_spent_wellness;
-			$wellness_balance = $balance;
-			if($balance < 0) {
-				$balance = 0;
-				$wellness_balance = $balance;
-			}
-		} else {
+		if($spending['wellness_method'] == "pre_paid")	{
 			$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
 			$total_deduction_credits_wellness = $deducted_wellness_credits;
 			$balance = $allocation_wellness - $get_allocation_spent_wellness;
 			$wellness_balance = $balance;
-			if($user->Active == 0) {
-				$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+
+			if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {
+				$allocation_wellness = 0;
+				$balance = $pro_allocation - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
+				if($balance < 0) {
+					$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+				}
+			}
+		} else {
+			if($pro_allocation > 0 && (int)$user->Active == 0) {
+				$allocation_wellness = $pro_allocation;
+				$balance = $pro_allocation - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
+				if($balance < 0) {
+					$balance = 0;
+					$wellness_balance = $balance;
+					$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+				}
+			} else if($pro_allocation == 0 && (int)$user->Active == 0) {
+				$allocation_wellness = 0;
+				$total_deduction_credits_wellness = $deducted_wellness_credits;
+				$balance = 0;
 				$wellness_balance = 0;
+			} else {
+				$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+				$total_deduction_credits_wellness = $deducted_wellness_credits;
+				$balance = $allocation_wellness - $get_allocation_spent_wellness;
+				$wellness_balance = $balance;
+				if($user->Active == 0) {
+					$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+					$wellness_balance = 0;
+				}
 			}
 		}
+		
+		// if($pro_allocation > 0 && (int)$user->Active == 0 || $pro_allocation > 0 && (int)$user->Active == 1) {
+		// 	$allocation_wellness = $pro_allocation;
+		// 	$balance = $pro_allocation - $get_allocation_spent_wellness;
+		// 	$wellness_balance = $balance;
+		// 	if($balance < 0) {
+		// 		$balance = 0;
+		// 		$wellness_balance = $balance;
+		// 	}
+		// } else {
+		// 	$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+		// 	$total_deduction_credits_wellness = $deducted_wellness_credits;
+		// 	$balance = $allocation_wellness - $get_allocation_spent_wellness;
+		// 	$wellness_balance = $balance;
+		// 	if($user->Active == 0) {
+		// 		$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+		// 		$wellness_balance = 0;
+		// 	}
+		// }
 
-		if($pro_allocation > 0) {
-			$allocation_wellness = $pro_allocation;
-		}
+		// if($pro_allocation > 0) {
+		// 	$allocation_wellness = $pro_allocation;
+		// }
 
-		if($e_wallet->wellness_balance != $wellness_balance) {
-			DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
-		}
+		// if($e_wallet->wellness_balance != $wellness_balance) {
+		// 	DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
+		// }
 
 		return array('allocation' => $allocation_wellness, 'get_allocation_spent' => $get_allocation_spent_wellness, 'balance' => $balance >= 0 ? $balance : 0, 'e_claim_spent' => $e_claim_wellness_spent, 'in_network_spent' => $get_allocation_spent_temp_wellness, 'deleted_employee_allocation_wellness' => $deleted_employee_allocation_wellness, 'total_deduction_credits_wellness' => $total_deduction_credits_wellness, 'wellness_balance' => $wellness_balance, 'total_spent' => $get_allocation_spent_wellness);
 	}
 
 	public static function memberWellnessAllocatedCredits($wallet_id, $user_id)
 	{
+		$customer_id = \PlanHelper::getCustomerId($user_id);
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 		$get_wellness_allocation = 0;
 		$deducted_by_hr_wellness = 0;
 		$e_claim_wellness_spent = 0;
@@ -2737,24 +2780,65 @@ class PlanHelper {
 			->where('logs', 'pro_allocation')
 			->sum('credit');
 
-			if($pro_allocation > 0 && (int)$user->Active == 0) {
-				$allocation_wellness = $pro_allocation;
-				$balance = $pro_allocation - $get_allocation_spent_wellness;
-				$wellness_balance = $balance;
-				if($balance < 0) {
-					$balance = 0;
-					$wellness_balance = $balance;
-				}
-			} else {
+			if($spending['wellness_method'] == "pre_paid")	{
 				$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
 				$total_deduction_credits_wellness = $deducted_wellness_credits;
 				$balance = $allocation_wellness - $get_allocation_spent_wellness;
 				$wellness_balance = $balance;
-				// if($user->Active == 0) {
-				// 	$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
-				// 	$wellness_balance = 0;
-				// }
+	
+				if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {			
+					$balance = $allocation_wellness - $get_allocation_spent_wellness;
+					$wellness_balance = $balance;
+					$allocation_wellness = 0;
+					if($balance < 0) {
+						$balance = 0;
+						$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+					}
+				}
+			} else {
+				if($pro_allocation > 0 && (int)$user->Active == 1) {
+					$allocation_wellness = $pro_allocation;
+					$balance = $pro_allocation - $get_allocation_spent_wellness;
+					$wellness_balance = $balance;
+					if($balance < 0) {
+						$balance = 0;
+						$wellness_balance = $balance;
+						$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+					}
+				} else if($pro_allocation == 0 && (int)$user->Active == 0) {
+					$allocation_wellness = 0;
+					$total_deduction_credits_wellness = $deducted_wellness_credits;
+					$balance = 0;
+					$wellness_balance = 0;
+				} else {
+					$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+					$total_deduction_credits_wellness = $deducted_wellness_credits;
+					$balance = $allocation_wellness - $get_allocation_spent_wellness;
+					$wellness_balance = $balance;
+					if($user->Active == 0) {
+						$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+						$wellness_balance = 0;
+					}
+				}
 			}
+			// if($pro_allocation > 0 && (int)$user->Active == 0) {
+			// 	$allocation_wellness = $pro_allocation;
+			// 	$balance = $pro_allocation - $get_allocation_spent_wellness;
+			// 	$wellness_balance = $balance;
+			// 	if($balance < 0) {
+			// 		$balance = 0;
+			// 		$wellness_balance = $balance;
+			// 	}
+			// } else {
+			// 	$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+			// 	$total_deduction_credits_wellness = $deducted_wellness_credits;
+			// 	$balance = $allocation_wellness - $get_allocation_spent_wellness;
+			// 	$wellness_balance = $balance;
+			// 	// if($user->Active == 0) {
+			// 	// 	$deleted_employee_allocation_wellness = $allocation_wellness - $deducted_by_hr_wellness;
+			// 	// 	$wellness_balance = 0;
+			// 	// }
+			// }
 
 			// if($e_wallet->wellness_balance != $wellness_balance) {
 			// 	DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['wellness_balance' => $wellness_balance]);
@@ -6463,7 +6547,6 @@ class PlanHelper {
 				$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
 				$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
 				$medical_balance = 0;
-
 
 				if($spending['medical_method'] == "pre_paid")	{
 					$allocation = $get_allocation - $deducted_credits;
