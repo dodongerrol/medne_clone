@@ -2454,7 +2454,7 @@ class BenefitsDashboardController extends \BaseController {
 
 			if($member_spending_dates_wellness) {
 				$wellness_wallet = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $user, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
-				$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
+				$get_allocation_spent_wellness += $wellness_wallet['get_allocation_spent'];
 				$allocated_wellness += $wellness_wallet['allocation'];
 				$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
 				// $deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];

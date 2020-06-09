@@ -687,7 +687,6 @@ class MemberHelper
 		->first();
 
 		$medical = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member_id);
-		
 		$wellness = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member_id);
 
 		if($medical['balance'] > 0) {
@@ -1452,6 +1451,7 @@ class MemberHelper
 		);
 
 		try {
+			self::getEmployeeSpendingAccountSummaryNew($input);
 			$user_plan_history->createUserPlanHistory($user_plan_history_data);
 			// check if active plan and date refund is exist
 			$refund = DB::table('payment_refund')
@@ -1482,7 +1482,6 @@ class MemberHelper
 				$data['refund_status'] = $refund_status == true ? 0 : 2;
 			}
 
-			self::getEmployeeSpendingAccountSummaryNew($input);
 			$withdraw->createPlanWithdraw($data);
 			$user = DB::table('user')->where('UserID', $id)->first();
 			$user_data = array(
