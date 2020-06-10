@@ -99,6 +99,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // console.log( response );
               // scope.hideLoading();
               if (response.data.status) {
+                scope.hideLoading();
                 if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
                   scope.isRemoveSuccess = true;
                 }else{
@@ -146,6 +147,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
+                scope.hideLoading();
                 if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
                   scope.isRemoveSuccess = true;
                 }else{
@@ -188,6 +190,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
+                scope.hideLoading();
                 if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
                   scope.isRemoveSuccess = true;
                 }else{
