@@ -1,79 +1,46 @@
-
-<style type="text/css">
-	.dragover {
-	    border: 2px dashed #6aaae0;
-	}
-</style>
 <div upload-excel-directive>
-	<div class="hrdb-body-container" style="padding-top: 200px;">
+	<div class="hrdb-body-container">
 		<div class="container">
-			<h1 class="dl-template-title text-center weight-700" style="color: #5b5b5b;">Upload your file</h1>
-			<div class="white-space-20"></div>
-			<div class="white-space-20"></div>
-			<div style="margin-right: 100px;margin-left: 100px;">
-
-				<div ngf-drop="runUpload($file)" ngf-select="runUpload($file)" ng-model="file" class="upload-box main-box" 
-                ngf-drag-over-class="'dragover'" accept="xlxs">
-
-          <label ng-if="!isInvalid && !isValid" class="fileupload-text ">
-						<img src="../../assets/hr-dashboard/img/icons/upload.svg" class="upload-icon center-block">
-						<span class="weight-700">
-							Drag and drop an Excel file here to upload
-							<br>
-							or
-							<br>
-						</span>
-						<span class="weight-700">Select file</span>
-					</label>
-
-					<label ng-if="isInvalid" class="fileupload-text invalid">
-						<img src="../../assets/hr-dashboard/img/icons/invalid.svg" class="upload-icon center-block">
-						<span>
-							<span class="status-message weight-700" ng-bind="message"></span>
-							<br>
-						</span>
-						<span class="weight-700">Change file</span>
-					</label>
-
-					<label ng-if="isValid" class="fileupload-text valid">
-						<img src="../../assets/hr-dashboard/img/icons/valid.svg" class="upload-icon center-block">
-						<span>
-							<span class="status-message weight-700" ng-bind="message"></span>
-							<br>
-						</span>
-						<span class="weight-700">Change file</span>
-					</label>
-        </div>
-				<div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
-				<div class="loader-container upload-load" style="height: 250px;padding-top: 75px;" hidden>
-					<div class="preloader-wrapper big active">
-					    <div class="spinner-layer spinner-blue-only">
-					      <div class="circle-clipper left">
-					        <div class="circle"></div>
-					      </div><div class="gap-patch">
-					        <div class="circle"></div>
-					      </div><div class="circle-clipper right">
-					        <div class="circle"></div>
-					      </div>
-					    </div>
-					  </div>
+			<div class="col-lg-12">
+				<div class="benefits-tiers-container center-block"> 
+	
+					<div class="upload-file tier-feature-item item-fade" style="padding: 50px 0;">
+						<h1 class="text-center weight-700 font-25 download-template-title" style="color: #2c3e50;">Upload your file</h1>
+						<div class="white-space-20"></div>
+						<div class="white-space-20"></div>
+						<div class="upload-box" ngf-drop="runUpload($file)" ngf-select="runUpload($file)" ng-model="uploadFile" ngf-drag-over-class="'dragover'" accept="xlxs">
+							<label ng-if="!isValid && !isInvalid" class="fileupload-text ng-scope">
+								<img src="../../assets/hr-dashboard/img/icons/upload.svg" class="upload-icon center-block">
+								<span class="weight-700">
+									Drag and drop an Excel file here to upload
+									<br>
+									or
+									<br>
+								</span>
+								<span class="weight-700">Select file</span>
+							</label>
+							<label ng-if="isValid || isInvalid" class="fileupload-text ng-scope">
+								<img src="../../assets/hr-dashboard/img/icons/upload.svg" class="upload-icon center-block">
+								<span class="status-message weight-700" ng-bind="message"></span>
+								<br>
+								<span class="weight-700">Change file</span>
+							</label>
+						</div>
+					</div>		
+					
 				</div>
-				
 			</div>
 		</div>
 	</div>
 	<div class="prev-next-buttons-container">
 		<div class="container">
-			<button ui-sref="prepare" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: solid 2px #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button>
-			<button ui-sref="enrollment-method" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
-			<button ng-click="goToPreview()" class="pull-right btn btn-info next-wizard-button" id="disableBtn" disabled>NEXT</button>
-
-			<!--
-				this button can be clicked if the the ticks are all checked.
-				Uncomment Below
-			-->
-
-			<!-- <button ui-sref="download-template" class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
+	
+			<button ng-click="backBtn()" class="pull-left btn btn-info back-btn">
+				<span>BACK</span>
+			</button>
+	
+			<button class="pull-right btn btn-info next-wizard-button" ng-disabled="isNextBtnDisabled" ng-click="nextBtn( )">NEXT</button>
+			
 		</div>
 	</div>
 </div>

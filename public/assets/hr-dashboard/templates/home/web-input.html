@@ -1,194 +1,241 @@
-<div web-input-directive>
-    <div class="hrdb-body-container" style="padding-top: 200px;">
-        <div class="container">
-        	<h5 class="text-center" style="color: #c1c7cc;">EMPLOYEE <span ng-bind="active_employeeCtr + 1">1</span> OF <span ng-bind="total_emps">0</span></h5>
-            <h1 class="dl-template-title text-center" style="color: #5b5b5b;">Employee Details</h1><br><br>
+<div benefits-tiers-directive id="tier-create-container">
+	<div class="navbar-blue-bg webinput-header-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+		<div class="container">
+			<div class="welcome-container enrollment-nav">
+				<h4 class="container-title web-input-title" >WEB INPUT</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+		<div ng-if="employee_data.dependents.length > 0 && !isAddDependentsShow" class="employee-dependent-header">
+			<span ng-class="{ 'active' : selected_emp_dep_tab == 1 }" ng-click="selectEmpDepTab(1)">Employee</span>
+			<span ng-class="{ 'active' : selected_emp_dep_tab == 2 }" ng-click="selectEmpDepTab(2)">Dependent</span>
+		</div>
+	</div>
 
-            <button ng-click="openSummary()" class="summary-right-button pull-right">
-            	SUMMARY
-            </button>
+	<div class="hrdb-body-container">
+		<div class="container">
+			<div class="col-lg-12">
+				<div class="benefits-tiers-container center-block"> 
 
-            <div class="list-of-employee">
-    	        <h4 style="padding-left: 24px; font-size: 13px;color: #737373;font-weight: bold;">Employee Summary</h4>
-            	<ul style="padding: 0;margin-bottom: 30px;">
+					<div ng-if="isWebInput" class="employee-details tier-feature-item item-fade">
+						<span ng-if="isTiering" class="employee-tier-title">TIER <span ng-bind="tierSelected.index + 1">2</span>: EMPLOYEE <span ng-bind="employee_enroll_count">1</span> OF <span ng-bind="tierSelected.member_head_count">2</span></span>
 
-                    <li ng-repeat="input in range(progress.in_progress) track by $index">
-                        <p><span><span ng-bind="$index + 1"></span>. </span><span ng-bind="employee_arr[$index].first_name"></span> <span ng-bind="employee_arr[$index].last_name"></span> <button ng-if="employee_arr[$index]" ng-click="removeEmpArr($index)" class="web-list-of-employee-remove-button pull-right">Remove</button><button ng-if="employee_arr[$index]" ng-click="editEmpArr($index)" class="web-list-of-employee-edit-button pull-right">Edit</button></p>
-                    </li>
+						<span ng-if="!isTiering" class="employee-tier-title">EMPLOYEE <span ng-bind="overall_emp_count">1</span> OF <span ng-bind="progress.total_employees">2</span></span>
 
-            	</ul>
-            </div>
 
-            <div style="margin-right: 200px;margin-left: 200px;">
-            	<form class="form">
-            		<div class="col-lg-6">
-            			<div class="form-group">
-            				<label>First / Given Name</label>
-            				<input type="text" class="form-control web-input-field" ng-model="input_data.first_name">
-    	        		</div>
-            		</div>
-            		<div class="col-lg-6">
-            			<div class="form-group">
-            				<label>Last / Family Name</label>
-            				<input type="text" class="form-control web-input-field" ng-model="input_data.last_name">
-    	        		</div>
-            		</div>
-            		<div class="col-lg-6">
-            			<div class="form-group">
-            				<label>
-                                <input type="radio" ng-value="true" name="id_status" ng-model="input_data.nric_status" ng-change="toggleNRIC(input_data.nric_status,'nric')" style="position: relative;top: 2px;left: 0;opacity: 1;">
-                                NRIC
-                            </label>
-                            <label>
-                                <input type="radio" ng-value="true" name="id_status" ng-model="input_data.fin_status" ng-change="toggleNRIC(input_data.fin_status,'fin')" style="position: relative;top: 2px;left: 0;opacity: 1;">
-                                FIN
-                            </label>
-                            <input type="text" class="form-control web-input-field" ng-model="input_data.nric">
-    	        		</div>
-            		</div>
-            		<div class="col-lg-6">
-            			<div id="input-dob" class="form-group ">
-            				<label>Date of Birth</label>
-            				<input type="text" class="form-control web-input-field datepicker" ng-model="input_data.dob">
-    	        		</div>
-            		</div>
-            		<div class="col-lg-6">
-            			<div class="form-group">
-            				<label>Work Email</label>
-            				<input type="text" class="form-control web-input-field" ng-model="input_data.email">
-    	        		</div>
-            		</div>
-            		<div class="col-lg-6">
-            			<div class="form-group">
-            				<label>Mobile</label>
-            				<input type="text" class="form-control web-input-field" ng-model="input_data.mobile">
-    	        		</div>
-            		</div>
-            		<div class="col-lg-6">
-            			<div class="form-group">
-            				<label>Job Title</label>
-            				<select class="form-control web-input-field" ng-model="input_data.job_title" style="margin-left: -5px">
-            					<!-- For Current Job Title -->
-                                <!-- !!!!!! -->
-                                <option ng-repeat="job in job_list">{{job.job_title}}</option>
-                                <!-- <option>Administration Support</option>
-                                <option>Arts/Culture/Heritage</option>
-                                <option>Building and Estate Management</option>
-                                <option>Corporate Strategy/Top Management</option> -->
-            				</select>
-    	        		</div>
-            		</div>
-            		<div class="col-lg-6">
-                        <div class="form-group">
-                            <label>Start Date</label>
-                            <input type="text" class="form-control web-input-field web-input-field-date start-date-datepicker" ng-model="input_data.plan_start" >
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="form-group">
-                            <label style="line-height: 1;margin-top: 5px;">Medical Credits<br><span class="" style="font-size: 9px;">*If there are no credits to allocate, please input 0 in the respective field/s.</span></label>
-                            <input type="number" class="form-control web-input-field" min="0" ng-model="input_data.medical_credit">
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-            			<div class="form-group">
-            				<label style="line-height: 1;margin-top: 5px;">Wellness Credits<br><span class="" style="font-size: 9px;">*If there are no credits to allocate, please input 0 in the respective field/s.</span></label>
-            				<input type="number" class="form-control web-input-field" min="0" ng-model="input_data.wellness_credit">
-    	        		</div>
-            		</div>
+						<div class="employee-details-header">
+							<h1 class="text-center download-template-title" style="color: #2c3e50;">Employee Details</h1>
+							<div class="white-space-20"></div>
+							<div ng-hide="( dependents_enroll_count > tierSelected.dependent_head_count) || ( overall_dep_count > dependents.total_number_of_seats )" class="add-dependent-btn">
+								<h4>Add a Dependent?</h4>
+								<button ng-click="toggleAddDependents( )"><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add</button>
+							</div>
+						</div>
+						<form>
+							<div class="employee-input-wrapper">
+								<label for="fname">Full Name</label>
+  							<input disabled-specific-characters type="text" name="fname" ng-model="employee_data.fullname">
+							</div>
+							<!-- <div class="employee-input-wrapper">
+								<label for="fname">Last / Family Name</label>
+  							<input disabled-specific-characters type="text" name="lname" ng-model="employee_data.last_name">
+							</div> -->
+							<!-- <div class="employee-input-wrapper nric">
+								<label>
+                    <input type="radio" ng-value="true" name="id_status" ng-model="nric_status" style="position: relative;top: 2px;left: 0;opacity: 1;">
+                    NRIC
+                </label>
+                <label>
+                    <input type="radio" ng-value="true" name="id_status" ng-model="fin_status" style="position: relative;top: 2px;left: 0;opacity: 1;">
+                    FIN
+                </label>
+  							<input type="text" name="nric-fin" ng-model="employee_data.nric">
+							</div> -->
+							<div class="employee-input-wrapper">
+								<label for="fname">Date of Birth</label>
+  							<input type="text" name="datebirth" class="datepicker" ng-model="employee_data.dob" placeholder="DD/MM/YYYY">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Work Email</label>
+  							<input type="text" name="work-email" ng-model="employee_data.email">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Mobile</label>
+  							<input valid-number type="text" id="area_code" ng-model="employee_data.mobile">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Postal Code</label>
+  							<input type="text" name="postal-code" ng-model="employee_data.postal_code">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Start Date</label>
+  							<input type="text" name="start-date" class="start-date-datepicker" ng-model="employee_data.plan_start">
+							</div>
+							<!-- <div class="employee-input-wrapper">
+								<label for="fname" style="line-height: 1;margin-top: 5px;">Medical Credits</label>
+								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
+  							<input type="number" min="0" value="0" name="medical-credits" ng-model="employee_data.medical_credits">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname" style="line-height: 1;margin-top: 5px;">Wellness Credits</label>
+								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
+  							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
+							</div> -->
+							<div ng-if="spending_account_status.medical" class="employee-input-wrapper">
+								<label for="fname">Medical Entitlement</label>
+  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
+							</div>
+							<div ng-if="spending_account_status.wellness" class="employee-input-wrapper">
+								<label for="fname">Wellness Entitlement</label>
+								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
+							</div>
+							<div class="employee-input-wrapper">
+								<div ng-if="employee_data.hasMedicalBalance">
+									<label for="fname">Medical Entitlement Balance</label>
+	  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement_balance">
+  							</div>
+							</div>
+							<div class="employee-input-wrapper">
+								<div ng-if="employee_data.hasWellnessBalance">
+									<label for="fname">Wellness Entitlement Balance</label>
+	  							<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement_balance">
+	  						</div>
+							</div>
+						</form>
+					</div>
 
-                    <div class="col-lg-12">
-                        <p ng-if="nric_error" class="text-error text-center">Invalid NRIC</p>
-                        <p ng-if="number_emp_error" class="text-error text-center">Number of employees already exceeded.</p>
-                        <p ng-if="inputs_error" class="text-error text-center">Please Input all fields.</p>
-                        <p ng-if="email_error" class="text-error text-center">Invalid email format.</p>
-                    </div>
-            		<div class="col-lg-12">
-            			<div class="form-group">
-                            <button class="pull-right next-employee-button" ng-click="nextEmployee()" ng-disabled="!input_data.first_name || !input_data.last_name || !input_data.nric || !input_data.dob || !input_data.email || !input_data.mobile || !input_data.job_title || !input_data.plan_start || disable_btn">
-            					NEXT EMPLOYEE
-            				</button>
-            				<button ng-if="active_employeeCtr > 0" class="pull-right previous-employee-button" ng-click="prevEmployee()" style="margin-right: 20px;">
-            					PREVIOUS EMPLOYEE
-            				</button>
-            			</div>
-            		</div>
-            	</form>
-            </div>
-        </div>
-    </div>
-    <div class="prev-next-buttons-container">
-    	<div class="container">
-    		<!-- <button ui-sref="download-template" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: solid 2px #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button> -->
-    		<button ui-sref="enrollment-method" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
+					<div ng-if="isAddDependentsShow" class="dependent-details tier-feature-item item-fade">
+						<span ng-if="isTiering" class="employee-tier-title">TIER <span ng-bind="tierSelected.index + 1">2</span>: DEPENDENT <span ng-bind="dependents_enroll_count">1</span> OF <span ng-bind="tierSelected.dependent_head_count">2</span></span>
 
-    		<button ng-click="createBtn()" ng-disabled="(!input_data.first_name || !input_data.last_name || !input_data.nric || !input_data.dob || !input_data.email || !input_data.mobile || !input_data.job_title || !input_data.plan_start) && employee_arr.length == 0" ng-disabled="" id="create-btn" class="pull-right btn btn-info next-wizard-button"><p class="pull-left enroll-text">ENROLL</p> <p class="number-of-enrollees pull-right" ng-if="employee_arr.length > 0" ng-bind="employee_arr.length">0</p></button>
+						<span ng-if="!isTiering" class="employee-tier-title">DEPENDENT <span ng-bind="overall_dep_count">1</span> OF <span ng-bind="dependents.total_number_of_seats">2</span></span>
 
-    		<!--
-    			this button can be clicked if the the ticks are all checked.
-    			Uncomment Below
-    		-->
+						<div class="employee-details-header">
+							<h1 class="text-center download-template-title" style="color: #2c3e50;">Dependent details</h1>
+							<div class="white-space-20"></div>
+						</div>
+						<form>
+							<div class="employee-input-wrapper">
+								<label for="fname">Full Name</label>
+  								<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.fullname">
+							</div>
+							<!-- <div class="employee-input-wrapper">
+								<label for="fname">Last / Family Name</label>
+  								<input disabled-specific-characters type="text" name="lname" ng-model="dependent_data.last_name">
+							</div>
+							<div class="employee-input-wrapper">
+								<label>NRIC/FIN</label>
+								<input type="text" name="nric-fin" ng-model="dependent_data.nric">
+							</div> -->
+							<div class="employee-input-wrapper">
+								<label for="fname">Date of Birth</label>
+  								<input type="text" name="datebirth" class="datepicker" ng-model="dependent_data.dob" placeholder="DD/MM/YYYY">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Relationship</label>
+  								<select ng-model="dependent_data.relationship">
+  									<option value="spouse">Spouse</option>
+  									<option value="child">Child</option>
+  									<option value="parent">Parent</option>
+  									<option value="sibling">Sibling</option>
+  									<option value="family">Family</option>
+  								</select>
+  								<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Start Date</label>
+  								<input type="text" name="start-date" class="start-date-datepicker-dependent" ng-model="dependent_data.plan_start">
+							</div>
+						</form>
+						<div ng-if="dependent_arr.length > 0 && isTiering" class="summary-left-right-button">
+							<img ng-if="dependents_enroll_count != 1" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png" ng-click="prevDependentActive()">
+							<img ng-if="dependent_arr.length < dependents_enroll_count && dependents_enroll_count < tierSelected.dependent_head_count" class="summary-right-btn" src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextDependentActive()">
+						</div>
+						<div ng-if="dependent_arr.length > 0 && !isTiering" class="summary-left-right-button">
+							<img ng-if="dependent_ctr != 0" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png" ng-click="prevDependentActive()">
+							<img ng-if="dependent_arr.length != dependent_ctr && overall_dep_count < dependents.total_number_of_seats" class="summary-right-btn" src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextDependentActive()">
+						</div>
+						<div class="dependent-details-btn">
+							<button class="btn-cancel" ng-click="toggleAddDependents( )">CANCEL</button>
+							<button ng-if="!showDependentsAdded" class="btn-save-continue pull-right" ng-click="saveActiveDependents(  )">SAVE & CONTINUE</button>
+							<button ng-if="dependent_arr[dependents_enroll_count-1].done != true && !showDependentsAdded" class="btn-add pull-right" ng-click="pushActiveDependent( dependent_data )">ADD</button>
+						</div>
+					</div>	
 
-    		<!-- <button ui-sref="download-template" class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
-    	</div>
-    </div>
+					<div ng-if="isDependentListShow" class="dependent-details tier-feature-item item-fade">
+						<span class="employee-tier-title">DEPENDENTS <span ng-bind="added_dependent_ctr + 1">1</span> OF <span ng-bind="employee_data.dependents.length">2</span></span>
+
+						<div class="employee-details-header">
+							<h1 class="text-center download-template-title" style="color: #2c3e50;">Dependent details</h1>
+							<button ng-click="removeDependent( added_dependent_ctr )" class="btn-remove"><img src="../assets/hr-dashboard/img/icons/dustbin.png"> Remove</button>
+							<div class="white-space-20"></div>
+						</div>
+						<form>
+							<div class="employee-input-wrapper">
+								<label for="fname">Full Name</label>
+  								<input disabled-specific-characters type="text" name="fname" ng-model="added_dependent_data.fullname">
+							</div>
+							<!-- <div class="employee-input-wrapper">
+								<label for="fname">First / Given Name</label>
+  								<input disabled-specific-characters type="text" name="fname" ng-model="added_dependent_data.first_name">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Last / Family Name</label>
+  								<input disabled-specific-characters type="text" name="lname" ng-model="added_dependent_data.last_name">
+							</div>
+							<div class="employee-input-wrapper">
+								<label>NRIC/FIN</label>
+								<input type="text" name="nric-fin" ng-model="added_dependent_data.nric">
+							</div> -->
+							<div class="employee-input-wrapper">
+								<label for="fname">Date of Birth</label>
+  								<input type="text" name="datebirth" class="datepicker" ng-model="added_dependent_data.dob" placeholder="DD/MM/YYYY">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Relationship</label>
+  								<select ng-model="added_dependent_data.relationship">
+  									<option value="spouse">Spouse</option>
+										<option value="child">Child</option>
+										<option value="parent">Parent</option>
+  									<option value="sibling">Sibling</option>
+  									<option value="family">Family</option>
+  								</select>
+  								<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
+							</div>
+							<div class="employee-input-wrapper">
+								<label for="fname">Start Date</label>
+  								<input type="text" name="start-date" class="start-date-datepicker-dependent" ng-model="added_dependent_data.plan_start">
+							</div>
+						</form>
+						<div class="summary-left-right-button">
+							<img ng-if="added_dependent_ctr != 0" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png" ng-click="prevAddedDependent()">
+							<img ng-if="added_dependent_ctr < (employee_data.dependents.length-1)" class="summary-right-btn" src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextAddedDependent()">
+						</div>
+					</div>		
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="prev-next-buttons-container">
+		<div class="container">
+			<div class="pull-right btn-employee-enroll">
+				<button ng-if="isEmpDataNotEmpty()" class="btn-next-employee" ng-click="deleteActiveDependents( )">DELETE</button>
+				<button ng-if="employee_ctr > 0" class="btn-next-employee" ng-click="prevActiveEmployee( )">PREVIOUS EMPLOYEE</button>
+				<button ng-if="isTiering && employee_ctr != tierSelected.member_head_count" class="btn-next-employee" ng-click="nextActiveEmployee()">NEXT EMPLOYEE</button>
+				<button ng-if="!isTiering && employee_ctr != progress.total_employees" class="btn-next-employee" ng-click="nextActiveEmployee()">NEXT EMPLOYEE</button>
+				<button class="btn-enroll" ng-click="enrollEmployees()">ENROLL</button>
+			</div>
+		</div>
+	</div>
+
 </div>
 
 <style type="text/css">
-    .datepicker-dropdown {
-        z-index: 99 !important;
-    }
+	.datepicker-dropdown {
+	    z-index: 9999 !important;
+	}
 
-    .picker__box{
-        height: 370px;  
-    }
-    .picker__frame {
-      margin: 0 auto;
-      max-width: 565px;
-      width: 30%;
-    }
-
-    .picker__date-display {
-      text-align: center;
-      background-color: #F4F4F4;
-      color: #0392CF;
-      padding-bottom: 15px;
-      font-weight: 300;
-      float: left;
-      /*width: 50%;*/
-      width: 35%;
-      height: 370px;    
-    }
-
-    .picker__calendar-container {
-      padding: 0 1rem;
-      float: left;
-      width: 65%;
-    }
-
-    .picker__footer {
-      text-align: right;
-      padding: 5px 10px;
-      clear: both;
-      width: 65%;
-      position: absolute;
-        bottom: 0px;
-        right: 0;
-    }
-
-    .picker__month-display {
-      text-transform: uppercase;
-      font-size: 2rem;
-      margin-top: 55px;
-    }
-
-    .picker__weekday-display{
-        background-color: #F4F4F4;
-        color: #0392CF;
-    }
-
-    .picker__year-display{
-        background-color: #F4F4F4;
-        color: #0392CF;
-    }
+	.datepicker table tr td.disabled, .datepicker table tr td.disabled:hover{
+		color: #ddd !important;
+	}
 </style>

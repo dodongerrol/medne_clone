@@ -38,11 +38,52 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         
         scope.company_properties = {};
         scope.company_properties.total_allocation = 0.00;
-        scope.company_properties.allocated = 0.00;
+				scope.company_properties.allocated = 0.00;
+
+				scope.spendingTypeTabSelected = 'medical';
+				
+				scope.isTotalCreditsShow = false;
+				scope.isPurchasedCreditsShow = false;
+				scope.isBonusCreditsShow = false;
+				scope.isTotalAllocatedCreditsShow = false;
+				scope.isAvailableCreditsShow = false;
+
+				scope.selectSpendingTab	=	function(opt){
+					if( scope.spendingTypeTabSelected != opt ){
+						scope.spendingTypeTabSelected = opt;
+						// scope.page_ctr = 10;
+						scope.page_active = 1;
+						scope.employees = {};
+						scope.employees_pagi = {};
+						scope.getEmployeeBulkCredit();
+					}
+				}
+
+				scope.toggleTooltipDropdown	=	function(opt){
+					if( opt == 'total_credits' ){
+						scope.isTotalCreditsShow = scope.isTotalCreditsShow ? false : true;
+					}
+					if( opt == 'purchased_credits' ){
+						scope.isPurchasedCreditsShow = scope.isPurchasedCreditsShow ? false : true;;
+					}
+					if( opt == 'bonus_credits' ){
+						scope.isBonusCreditsShow = scope.isBonusCreditsShow ? false : true;;
+					}
+					if( opt == 'total_allocated_credits' ){
+						scope.isTotalAllocatedCreditsShow = scope.isTotalAllocatedCreditsShow ? false : true;;
+					}
+					if( opt == 'available_credits' ){
+						scope.isAvailableCreditsShow = scope.isAvailableCreditsShow ? false : true;;
+					}
+				}
         
 				scope.$on( 'refresh', function( evt, data ){
 					scope.onLoad();
-	    	});
+				});
+				
+				scope.formatDate	=	function(date, from, to){
+					return moment(date, from).format(to);
+				}
 
 	    	scope.passwordCredit = function( pass ){
 					if( !pass || pass == '' ){
@@ -145,23 +186,27 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 				scope.getEmployeeBulkCredit = function() {
 
 					scope.showLoading();
-					hrSettings.getEmployeeBulkAllocation(scope.page_ctr, scope.page_active)
+					hrSettings.getEmployeeBulkAllocation(scope.page_ctr, scope.page_active, scope.spendingTypeTabSelected)
 						.then(function(response){
 							console.log(response);
 							scope.employees = response.data.members.data;
 							scope.employees_pagi = response.data.members;
-							scope.totalAllocation = response.data;
+							scope.bulk_credit_values = response.data;
 
 							scope.employees.map((value, index) => {
-
-								if (value.medical.new_allocation == 0) {
-									value.medical.new_allocation = null;
+								if( scope.spendingTypeTabSelected != 'all' ){
+									if (value.allocation.new_allocation == 0) {
+										value.allocation.new_allocation = null;
+									}
+								}else{
+									if (value.medical_allocation.new_allocation == 0) {
+										value.medical_allocation.new_allocation = null;
+									}
+									if (value.wellness_allocation.new_allocation == 0) {
+										value.wellness_allocation.new_allocation = null;
+									}
 								}
-
-								if (value.wellness.new_allocation == 0) {
-									value.wellness.new_allocation = null;
-								}
-
+								
 							})
 							scope.hideLoading();
 							scope.inititalizeDatepicker();
@@ -258,12 +303,75 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 					var token = localStorage.getItem("token");
 					hrSettings.downloadBulkAllocation( token );
 				};
-
+				
 				scope.getSpendingAcctStatus = function () {
-          hrSettings.getSpendingAccountStatus()
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
 						.then(function (response) {
 							console.log(response);
-              scope.spending_account_status = response.data;
+							scope.spending_account_status = response.data;
+							// scope.spending_account_status.medical_method = 'pre_paid';
+							// scope.spending_account_status.medical_enabled = false;
+							// scope.spending_account_status.wellness_enabled = false;
+							// scope.spending_account_status.wellness_method = 'pre_paid';
+							// if( scope.account_plan_status.plan_method == 'pre_paid' ){
+							if( scope.spending_account_status.account_type == 'lite_plan' ){
+								if( scope.spending_account_status.medical_enabled == false){
+									scope.spendingTypeTabSelected = 'wellness';
+								}
+							}else{
+								scope.spendingTypeTabSelected = 'all';
+							}
+							console.log(scope.spending_account_status);
+							console.log(scope.spendingTypeTabSelected);
+							scope.getEmployeeBulkCredit();
+						});
+				}
+
+				var bulkUpdateCtr = 0;
+				var success_ctr = 0;
+				scope.updateEachBulkAllocation	=	function(){
+						var value = scope.toUpdateAllocation[bulkUpdateCtr];
+						var index = bulkUpdateCtr;
+						console.log(value, index);
+						value.effective_date = moment(value.effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+						
+						hrSettings.updateAllocation(value)
+						.then(function (response) {
+							console.log(response);
+							if(response.data.credit_balance_exceed == true) {
+								setTimeout(function(){
+									swal({
+										title: '',
+										text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
+										html: true,
+										showCancelButton: false,
+										confirmButtonText: 'Close',
+										customClass : 'allocationEntitlementErrorModal'
+									}, function(result) {
+										if	(result)	{
+											bulkUpdateCtr = 0;
+											success_ctr = 0;
+											scope.toUpdateAllocation = [];
+											scope.apiErrorResponse = [];
+											scope.getEmployeeBulkCredit();
+										}
+									});
+								},600);
+								console.log(scope.apiErrorResponse);
+							} else {
+								success_ctr++;
+								console.log('success ctr', success_ctr)
+								if (index == scope.toUpdateAllocation.length-1) {
+									console.log('index check equal');
+									bulkUpdateCtr = 0;
+									scope.hideLoading();
+									scope.successModal(success_ctr, value);
+								}else{
+									bulkUpdateCtr += 1;
+									scope.updateEachBulkAllocation();
+								}
+							}
 						});
 				}
 
@@ -283,99 +391,149 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
             console.log(result);
             setTimeout(function(){
               if(result) {
-
-								scope.toUpdateAllocation.map((value,index) => {
-									console.log(value, index);
-									value.effective_date = moment(value.effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+								
+								scope.showLoading();
+                scope.updateEachBulkAllocation();
+								// scope.toUpdateAllocation.map((value,index) => {
+								// 	console.log(value, index);
+								// 	value.effective_date = moment(value.effective_date, 'DD/MM/YYYY').format('YYYY-MM-DD');
 									
-									hrSettings.updateAllocation(value)
-									.then(function (response) {
-										console.log(response);
-										if(response.data.status == false) {
-											scope.apiErrorResponse.push({
-												member_id: value.member_id,
-												message:response.data.message
-											});
-											console.log(scope.apiErrorResponse);
-										}
+								// 	hrSettings.updateAllocation(value)
+								// 	.then(function (response) {
+								// 		console.log(response);
+								// 		if(response.data.credit_balance_exceed == true) {
+								// 			scope.apiErrorResponse.push({
+								// 				member_id: value.member_id,
+								// 				message:response.data.message,
+								// 				credit_balance_exceed: response.data.credit_balance_exceed
+								// 			});
+								// 			console.log('fail');
+								// 			if (index == scope.toUpdateAllocation.length-1) {
+								// 				console.log('index check equal');
+								// 				scope.successModal(success_ctr, value);
+								// 			}
+								// 			console.log(scope.apiErrorResponse);
+								// 		} else {
+								// 			success_ctr++;
+								// 			console.log('success ctr', success_ctr)
+								// 			if (index == scope.toUpdateAllocation.length-1) {
+								// 				console.log('index check equal');
+								// 				scope.successModal(success_ctr, value);
+								// 			}
+								// 		}
 										
-									});
-
-									if (index == scope.toUpdateAllocation.length-1) {
-
-										var text;
-										var today = new Date();
-										var effective_date = moment(value.effective_date,'YYYY/MM/DD').format('DD/MM/YYYY');
-
-										var dateToday= scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) <= today );
-										var dateFuture = scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) > today );
-										var dateAllEqual = scope.toUpdateAllocation.every( thing => thing.effective_date === scope.toUpdateAllocation[0].effective_date);
-
-										console.log('Every()',today,new Date(scope.toUpdateAllocation[0].effective_date ),dateToday,dateFuture,dateAllEqual);
-									
-
-
-										if (dateToday) {
-											text = `<span>The allocation amount has been successfully updated.</span>`;
-										} else if (dateFuture && dateAllEqual) {
-											text = `<span>The allocation amount will be updated on ${effective_date}.</span>`;
-										} else if (dateFuture && !dateAllEqual) {
-											text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
-										} else {
-											text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
-										}
-										
-										swal({
-											title: '',
-											text: text,
-											html: true,
-											showCancelButton: false,
-											confirmButtonText: 'Close',
-											customClass : 'allocationEntitlementSuccessModal'
-										}, function(result)	{
-											
-											if(result) {
-												console.log('get employee list again');
-												var errorLength = scope.apiErrorResponse.length;
-												var list_id = [];
-												scope.apiErrorResponse.map(value => {
-													list_id.push(value.member_id);
-												});
-												console.log(list_id);
-											
-												if (errorLength > 0) {
-													console.log(errorLength);
-													setTimeout(function(){
-														swal({
-															title: '',
-															text: `${errorLength} Employee with member id of ${list_id} has ${scope.apiErrorResponse[0].message}`,
-															html: true,
-															showCancelButton: false,
-															confirmButtonText: 'Close',
-															customClass : 'allocationEntitlementSuccessModal'
-														}, function(result) {
-															if	(result)	{
-																scope.toUpdateAllocation = [];
-																scope.apiErrorResponse = [];
-																scope.getEmployeeBulkCredit();
-															}
-														});
-													},600);
-												} else {
-													scope.toUpdateAllocation = [];
-													scope.getEmployeeBulkCredit();
-												}
-												
-											}
-										});
-									}
-								});
-              
-                
+								// 	});
+								// });
               }
             }, 500)
 					});
+				}
+
+				
+
+				scope.successModal = function(success_ctr, value) { //success and error modal
+					if(success_ctr > 0) {
+						console.log('if success > 0');
+						var text;
+						var today = new Date();
+						var effective_date = moment(value.effective_date,'YYYY/MM/DD').format('DD/MM/YYYY');
+
+						var dateToday= scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) <= today );
+						var dateFuture = scope.toUpdateAllocation.every( thing => new Date(thing.effective_date) > today );
+						var dateAllEqual = scope.toUpdateAllocation.every( thing => thing.effective_date === scope.toUpdateAllocation[0].effective_date);
+
+						console.log('Every()',today,new Date(scope.toUpdateAllocation[0].effective_date ),dateToday,dateFuture,dateAllEqual);
 					
+						if (dateToday) {
+							text = `<span>The allocation amount has been successfully updated.</span>`;
+						} else if (dateFuture && dateAllEqual) {
+							text = `<span>The allocation amount will be updated on ${effective_date}.</span>`;
+						} else if (dateFuture && !dateAllEqual) {
+							text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
+						} else {
+							text = `<span>The allocation amount will be updated on scheduled dates.</span>`;
+						}
+						setTimeout(function() {
+							swal({
+								title: '',
+								text: text,
+								html: true,
+								showCancelButton: false,
+								confirmButtonText: 'Close',
+								customClass : 'allocationEntitlementSuccessModal'
+							}, function(result)	{
+								
+								if(result) {
+									setTimeout(function(){
+								
+										var errorLength = scope.apiErrorResponse.length;
+										var list_id = [];
+										scope.apiErrorResponse.map(value => {
+											list_id.push(value.member_id);
+										});
+										console.log(list_id);
+									
+										if (errorLength > 0) {
+											console.log(errorLength);
+											setTimeout(function(){
+												swal({
+													title: '',
+													text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
+													html: true,
+													showCancelButton: false,
+													confirmButtonText: 'Close',
+													customClass : 'allocationEntitlementErrorModal'
+												}, function(result) {
+													if	(result)	{
+														scope.toUpdateAllocation = [];
+														scope.apiErrorResponse = [];
+														scope.getEmployeeBulkCredit();
+													}
+												});
+											},600);
+										} else {
+											scope.toUpdateAllocation = [];
+											scope.getEmployeeBulkCredit();
+										}
+									},600);
+								}
+							});
+						},600);
+				} else {
+						console.log('else error drtso');
+						setTimeout(function(){
+							
+							var errorLength = scope.apiErrorResponse.length;
+							var list_id = [];
+							scope.apiErrorResponse.map(value => {
+								list_id.push(value.member_id);
+							});
+							console.log(list_id);
+						
+							if (errorLength > 0) {
+								console.log(errorLength);
+								setTimeout(function(){
+									swal({
+										title: '',
+										text: `<span style="color:red;">Error:</span><br>You have reached your limit of <span style="color:#000; font-weight:bold;">Available Credits</span>.<br>Please contact us if you wish to allocate more credits.`,
+										html: true,
+										showCancelButton: false,
+										confirmButtonText: 'Close',
+										customClass : 'allocationEntitlementErrorModal'
+									}, function(result) {
+										if	(result)	{
+											scope.toUpdateAllocation = [];
+											scope.apiErrorResponse = [];
+											scope.getEmployeeBulkCredit();
+										}
+									});
+								},600);
+							} else {
+								scope.toUpdateAllocation = [];
+								scope.getEmployeeBulkCredit();
+							}
+						},1500);
+					}
 				}
 
 				scope.toUpdateAllocation = [];
@@ -410,6 +568,18 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
           }
 					
 				}
+				scope.account_plan_status = {}
+				scope.checkAccountStatus = function () {
+          hrSettings.getMethodType()
+            .then(function (response) {
+              console.log(response);
+              scope.account_plan_status = {
+                plan_method: response.data.data.plan.plan_method,
+                account_type: response.data.data.plan.account_type
+							}
+							// scope.getEmployeeBulkCredit();
+            });
+        }
 
 				scope.testDate = '';
 				scope.inititalizeDatepicker = function () {
@@ -436,14 +606,16 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
         scope.onLoad = function( ) {
         	scope.checkSession( );
 					// scope.getEmployeeList( );
+					// scope.userCompanyCreditsAllocated();
 					scope.getSpendingAcctStatus();
-					scope.getEmployeeBulkCredit();
+					// scope.getEmployeeBulkCredit();
 					scope.inititalizeDatepicker();
+					scope.checkAccountStatus();
 					// scope.companyAccountType ();
         }
 
 				// scope.checkCompanyBalance();
-				scope.userCompanyCreditsAllocated();
+				
 	      scope.onLoad();
 				}
 

@@ -2,11 +2,36 @@ var checkCtrl = angular.module('checkCtrl', [])
 
 checkCtrl.controller('checkController', function( $scope, $http, eclaimSettings, $state ){
 	var vm = this;
+	vm.isAllowSubmitEclaim = false;
 
 	vm.updatePassData = {
 		curr_password : "",
 		new_password : "",
 		retype_password : "",
+	}
+
+	vm.goToEclaim	=	function(){
+		console.log(vm.isAllowSubmitEclaim);
+		if(vm.isAllowSubmitEclaim){
+			$state.go('e-claim');
+		}else{
+			$('#disable-access-modal').modal('show');
+			if($state.current.name == 'e-claim'){
+				$state.go('home');
+			}
+		}
+	}
+
+	vm.getPackages = function( ) {
+		eclaimSettings.getPackages( )
+		.then(function(response){
+			if(response.data) {
+				vm.isAllowSubmitEclaim = response.data.spending_feature_status_type;
+				if($state.current.name == 'e-claim'){
+					vm.goToEclaim();
+				}
+			}
+		})
 	}
 
 	vm.logout = function(){
@@ -49,6 +74,7 @@ checkCtrl.controller('checkController', function( $scope, $http, eclaimSettings,
 		// 	.then(function(response){
 		// 		console.log(response);
 		// 	});
+		vm.getPackages();
 	};
 
 	vm.onLoad();

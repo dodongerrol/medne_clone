@@ -8,51 +8,41 @@ app.directive('prepareDirective', [
 			link: function link( scope, element, attributeSet ) {
 				console.log("prepareDirective Runnning !");
 
-				scope.isFormat = false;
-				scope.isNameGood = false;
-				scope.isDateFormat = false;
-				scope.isMobileGood = false;
-				scope.isDropDown = false;
+				scope.isWithDependents = localStorage.getItem('enrollmentIsWithDependents') == 'true' ? true : false;
+				console.log('scope.isWithDependents', scope.isWithDependents);
+				scope.reviewExcelData = {
+					format: false,
+					name: false,
+					dob: false,
+					email: false,
+					postcode: false,
+					relationship: false,
+					plan_start: false,
+				}
 
-				var loading_trap = false;
+				scope.backBtn = function(){
+					$state.go('excel-enrollment.download-template');
+				}
 
-        scope.toggleLoading = function( ){
-					if ( loading_trap == false ) {
-						$( ".circle-loader" ).fadeIn();	
-						loading_trap = true;
-					}else{
-						setTimeout(function() {
-							$( ".circle-loader" ).fadeOut();
-							loading_trap = false;
-						},100)
+				scope.nextBtn	=	function(){
+					if (scope.reviewExcelData.format && scope.reviewExcelData.dob && scope.reviewExcelData.email && 
+						scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start) {
+						if (scope.isWithDependents == true) {
+							if (scope.reviewExcelData.relationship) {
+								$state.go('excel-enrollment.upload');
+							} else {
+								swal('Error!', 'please review your downloaded file and check the boxes.', 'error');
+							}
+						} else {
+							$state.go('excel-enrollment.upload');
+						}
+					} else {
+						swal('Error!', 'please review your downloaded file and check the boxes.', 'error');
 					}
 				}
 
-				scope.showLoading = function( ){
-					$( ".circle-loader" ).fadeIn();	
-					loading_trap = true;
-				}
-
-				scope.hideLoading = function( ){
-					setTimeout(function() {
-						$( ".circle-loader" ).fadeOut();
-						loading_trap = false;
-					},100)
-				}
-
-				scope.showGlobalModal = function( message ){
-			    $( "#global_modal" ).modal('show');
-			    $( "#global_message" ).text(message);
-			  }
-
         scope.onLoad = function( ) {
-        	scope.toggleLoading();
-
-        	setTimeout(function() {
-        		scope.toggleLoading();
-        	}, 100);
-
-        	$('body').scrollTop(0);
+        	
         }
 
         scope.onLoad();

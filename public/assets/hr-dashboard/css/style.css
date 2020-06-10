@@ -469,7 +469,7 @@ button {
   padding-top: 150px;
   padding-bottom: 50px;
   /*background-color: #f5f5f5;*/
-  /*min-height: 100vh;*/
+  min-height: calc( 100vh - 180px );;
   height: 100%;
 }
 
@@ -4402,6 +4402,9 @@ ul.typeahead li a.dropdown-item {
 }
 
 /* CREATE TEAM BENEFITS CONTENTS */
+#tier-create-container{
+  heigh: 100vh;
+}
 #tier-create-container .hrdb-body-container,
 #enroll-option-wrapper .hrdb-body-container {
   padding-bottom: 100px;
@@ -4956,7 +4959,7 @@ ul.typeahead li a.dropdown-item {
 
 .details-enroll .start-date-header {
   background-color: #e2e7e8;
-  text-align: center;
+  /* text-align: center; */
   padding: 0 15px;
 }
 
@@ -4969,10 +4972,12 @@ ul.typeahead li a.dropdown-item {
   font-weight: 700;
   color: #888;
   min-width: 130px;
+  vertical-align: middle !important;
 }
 
 .details-enroll th:nth-child(2) {
-  min-width: 160px;
+  /* min-width: 160px; */
+  min-width: 250px;
 }
 
 .details-enroll td:first-child,
@@ -6161,6 +6166,7 @@ ul.typeahead li a.dropdown-item {
 .balance-container {
   display: grid;
   grid-template-columns: 1.5fr 1.5fr;
+  font-size: 16px;
 }
 
 .plan-information h4 {
@@ -6347,13 +6353,13 @@ span.dropdown-entitlement.disabled {
 
 .medical-entitlement-container,
 .wellness-entitlement-container {
-  padding: 50px 0 0 0;
+  padding: 50px 0 30px 0;
 }
 
 .entitlement-input-container.original,
 .entitlement-input-container.new,
 .entitlement-input-container.proration {
-  width: 130px;
+  width: 50%;
 }
 
 .entitlement-input-container.allocation {
@@ -7020,7 +7026,7 @@ span.dropdown-entitlement.disabled {
   margin-bottom: 110px;
   margin-left: auto;
   margin-right: auto;
-  padding: 20px 128px;
+  padding: 20px 40px;
 }
 
 .medical-spending-account-container h4 {
@@ -7040,7 +7046,7 @@ span.dropdown-entitlement.disabled {
 .spent-container,
 .pending-claim-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
 }
 
 .inital-allocation-container > span,
@@ -7050,7 +7056,8 @@ span.dropdown-entitlement.disabled {
 .pending-claim-container > span {
   text-align: right;
   display: block;
-  padding-right: 20px;
+  /* padding-right: 20px; */
+  font-size: 16px;
 }
 
 .spending-account-status {
@@ -7100,13 +7107,15 @@ span.dropdown-entitlement.disabled {
 .inital-allocation-container strong,
 .pro-rated-container strong,
 .current-usage-container strong {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .spent-container,
 .pending-claim-container,
 .current-usage-container {
   grid-template-rows: 18px;
+  margin-bottom: 10px;
+  font-size: 16px;
 }
 
 .spent-container strong,
@@ -7151,6 +7160,7 @@ span.dropdown-entitlement.disabled {
   text-align: right;
   display: block;
   padding-right: 0px;
+  font-size: 16px;
 }
 
 .medical-wellness-container .separator {
@@ -8253,6 +8263,7 @@ span.dropdown-entitlement.disabled {
 .gp-cap-table-info-wrapper, .bulk-cred-table-info-wrapper {
   overflow: auto;
   margin: 0 0 20px;
+  max-height: 600px;
 }
 
 /*@media screen and (max-width: 1440px) { 
@@ -8570,6 +8581,34 @@ span.dropdown-entitlement.disabled {
   pointer-events: none;
 }
 
+.spending-tab-container{
+  height: 40px;
+  display: flex;
+  /* padding-left: 10px; */
+}
+.spending-tab-container .tab-box{
+  /* width: 120px; */
+  padding: 0 20px;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  font-size: 13px;
+  color: #999;
+  font-weight: 600;
+  border: 1px solid #e1e1e1;
+  border-width: 1px 1px 0 1px;
+  border-radius: 3px 3px 0 0;
+  margin-right: 5px;
+  background: #fafafa;
+  cursor: pointer;
+}
+.spending-tab-container .tab-box.active{
+  height: 102%;
+  border-color: #d0d0d0;
+  background: #f4f7f9;
+  color: #444;
+}
 /* Allocation sweet alert custom style */
 
 /* .allocationEntitlementModal , .allocationEntitlementSuccessModal{
@@ -8585,14 +8624,19 @@ span.dropdown-entitlement.disabled {
   color: #000;
 }
 
-.allocationEntitlementSuccessModal .sa-button-container {
+.allocationEntitlementErrorModal p {
+  color: #232323e8;
+  text-align: left;
+}
+
+.allocationEntitlementSuccessModal .sa-button-container, .allocationEntitlementErrorModal .sa-button-container{
   text-align: center;
 }
 
 .allocationEntitlementModal .sa-button-container {
   text-align : right;
 }
-.allocationEntitlementModal .sa-button-container button, .allocationEntitlementSuccessModal .sa-button-container button {
+.allocationEntitlementModal .sa-button-container button, .allocationEntitlementSuccessModal .sa-button-container button, .allocationEntitlementErrorModal .sa-button-container button {
   background: #0392cf !important;
   border-radius: 2px;
   font-size: 14px;
@@ -8602,19 +8646,33 @@ span.dropdown-entitlement.disabled {
 /* New Bulk allocation */
 
 .bulk-cred-table-info-container {
+  /* max-width: 900px; */
+}
+.bulk-cred-table-info-container.max-width-900 {
   max-width: 900px;
 }
 
 .bulk-cred-table-info-container table {
-  max-width: 1750px;
+  /* max-width: 1750px;
   width: max-content;
-  min-width: 1134px;
+  min-width: 1134px; */
+  width: 1145px;
 
   font-family: Helvetica Neue;
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 22px;
+}
+
+.bulk-cred-table-info-container table.width-auto{
+  width: auto;
+}
+.bulk-cred-table-info-container table.width-100{
+  width: 100% !important;
+}
+.col-md-9.ifPrepaid{
+  padding-left: 0;
 }
 
 .bulk-cred-options .btn-update {
@@ -8647,32 +8705,45 @@ span.dropdown-entitlement.disabled {
   width: 60%;
 }
 
+.bulk-cred-input.new-allocation:disabled{
+  opacity: .5;
+}
+
 .bulk-cred-footer {
   display: flex;
 }
 
-.bulk-cred-footer .right {
-  width:  70%;
+.bulk-cred-footer .bulk-cred-footer-left{
+  flex: 1;
+}
+
+.bulk-cred-footer .bulk-cred-footer-right {
+  flex: 1;
 }
 
 .bulk-cred-footer .total-number-container{
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: space-between;
   font-size: 14px;
-  margin: 0 0 20px;
+  /* margin: 0 0 20px; */
   color: #000;
-  
+  margin-left: auto;
+  width: max-content;
+  margin-left: auto;
+  margin-bottom: 10px;
 }
 
 .bulk-cred-footer .total-number-box {
-  width: 30%;
+  /* width: 30%; */
   height: 28px;
   border: 0.5px solid #979797;
   border-radius: 3px;
   display: flex;
   align-items: center;
-  padding: 0 0 0 5px;
+  padding: 0 5px;
+  margin-right: 10px;
+  
 }
 
 .bulk-cred-footer .total-number-box .items {
@@ -8824,6 +8895,10 @@ span.dropdown-entitlement.disabled {
 
 .grayed-out {
   background: #F6F6F6;
+}
+
+.p-gray{
+  color: #777879;
 }
 
 .modal-dialog.modal-transition-in, .modal-dialog.modal-transition-out {

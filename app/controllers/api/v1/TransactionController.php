@@ -22,28 +22,33 @@ class Api_V1_TransactionController extends \BaseController
 					// check if there is services ids
 					if(!isset($input['services'])) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Please choose a service.';
 						return Response::json($returnObject);
 					} else if(sizeof($input['services']) == 0) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Please choose a service.';
 						return Response::json($returnObject);
 					}
 					// check if clinic_id is present
 					if(!isset($input['clinic_id'])) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Please choose a clinic.';
 						return Response::json($returnObject);
 					}
 					// check if input amount is present
 					if(is_numeric($input['input_amount']) == false) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Amount should be a number.';
 						return Response::json($returnObject);
 					}
 
 					if($input['input_amount'] < 0) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Amount should not be below 0.';
 						return Response::json($returnObject);
 					}
@@ -78,6 +83,7 @@ class Api_V1_TransactionController extends \BaseController
 					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 					if($block) {
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
 						return Response::json($returnObject);
 					}
@@ -113,8 +119,9 @@ class Api_V1_TransactionController extends \BaseController
 
 						if($user_credits == 0) {
 							$returnObject->status = FALSE;
-							$returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
-							$returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
+							$returnObject->head_message = 'Insufficient Credits';
+							$returnObject->message = "Sorry, it seems you don't have enough credits to complete the transaction.";
+							$returnObject->sub_mesage = 'Not to worry - you can still pay the health provider directly via Cash/Nets/Credit Card.';
 							return Response::json($returnObject);
 						}
 					}
@@ -562,6 +569,20 @@ class Api_V1_TransactionController extends \BaseController
 											}
 										}
 										
+										try {
+											$customer_id = PlanHelper::getCustomerId($user_id);
+											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+											
+											if($spending['medical_method'] == "post_paid") {
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
+											}
+										} catch(Exception $e) {
+											$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
+											$email['logs'] = 'Mobile Payment Credits Save Transaction Invoice - '.$e;
+											$email['emailSubject'] = 'Error log.';
+											EmailHelper::sendErrorLogs($email);
+										}
+
 										// send email
 										$email['member'] = ucwords($user->Name);
 										$email['credits'] = number_format($transaction_results['total_amount'], 2);
@@ -631,6 +652,7 @@ class Api_V1_TransactionController extends \BaseController
 										// 	$wallet->addWellnessCredits($user_id, $credits);
 										// }
 										$returnObject->status = FALSE;
+										$returnObject->head_message = 'Panel Submission Error';
 										$returnObject->message = 'Payment unsuccessfull. Please try again later';
 										EmailHelper::sendErrorLogs($email);
 										return Response::json($returnObject);
@@ -673,6 +695,7 @@ class Api_V1_TransactionController extends \BaseController
 									$wallet->addWellnessCredits($user_id, $credits);
 								}
 								$returnObject->status = FALSE;
+								$returnObject->head_message = 'Panel Submission Error';
 								$returnObject->message = 'Payment unsuccessfull. Please try again later';
 								EmailHelper::sendErrorLogs($email);
 								return Response::json($returnObject);
@@ -680,6 +703,7 @@ class Api_V1_TransactionController extends \BaseController
 
 						} else {
 							$returnObject->status = FALSE;
+							$returnObject->head_message = 'Panel Submission Error';
 							$returnObject->message = 'Cannot process payment credits. Please try again.';
 							// send email logs
 							$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
@@ -754,10 +778,10 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					if(isset($input['input_amount'])) {
-						$input_amount = trim($input['input_amount']);
+						$input_amount = TransactionHelper::floatvalue($input['input_amount']);
 					}
-
-        				// check block access
+					
+					// check block access
 					$block = PlanHelper::checkCompanyBlockAccess($findUserID, $input['clinic_id']);
 
 					if($block) {
@@ -787,6 +811,8 @@ class Api_V1_TransactionController extends \BaseController
 						$customer_id = $findUserID;
 					}
 
+					$customerID = PlanHelper::getCustomerId($user_id);
+					$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customerID);
 					$transaction = new Transaction();
 					$wallet = new Wallet( );
 					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
@@ -858,10 +884,10 @@ class Api_V1_TransactionController extends \BaseController
 						'multiple_service_selection' => $multiple_service_selection,
 						'spending_type'         => $clinic_type->spending_type,
 						'lite_plan_enabled'     => $lite_plan_enabled,
-						'currency_type'				 => $clinic_data->currency_type,
-						'consultation_fees'		 => $consultation_fees,
-						'created_at'						 => $date_of_transaction,
-						'updated_at'						 => $date_of_transaction
+						'currency_type'			=> $clinic_data->currency_type,
+						'consultation_fees'		=> $consultation_fees,
+						'created_at'			=> $date_of_transaction,
+						'updated_at'			 => $date_of_transaction
 					);
 
 					if($clinic_peak_status) {
@@ -879,7 +905,6 @@ class Api_V1_TransactionController extends \BaseController
 					}
 					
 					try {
-
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;
 
@@ -896,11 +921,12 @@ class Api_V1_TransactionController extends \BaseController
 								} else {
 									$balance = $wallet_data->wellness_balance;
 								}
-										// check user credits and deduct
-
+								
+								// check user credits and deduct
+								//  || $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $balance < $consultation_fee
 								if($balance >= $consultation_fees) {
 									$wallet = new Wallet( );
-											// deduct wallet
+									// deduct wallet
 									$lite_plan_credits_log = array(
 										'wallet_id'     => $wallet_data->wallet_id,
 										'credit'        => $consultation_fees,
@@ -912,7 +938,7 @@ class Api_V1_TransactionController extends \BaseController
 									);
 
 									try {
-												// create logs
+										// create logs
 										if($data['spending_type'] == "medical") {
 											$deduct_history = \WalletHistory::create($lite_plan_credits_log);
 											$wallet_history_id = $deduct_history->id;
@@ -927,13 +953,16 @@ class Api_V1_TransactionController extends \BaseController
 											$wallet->deductWellnessCredits($user_id, $data['co_paid_amount']);
 										}
 
-												// update transaction
+										// update transaction
 										$update_trans = array(
 											'lite_plan_use_credits' => 1
 										);
 
 										$transaction->updateTransaction($transaction_id, $update_trans);
-
+										// insert transaction
+										if($spending['medical_method'] == "post_paid") {
+											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
+										}
 									} catch(Exception $e) {
 
 										if($data['spending_type'] == "medical") {
@@ -944,29 +973,32 @@ class Api_V1_TransactionController extends \BaseController
 										}
 
 										$email = [];
-										$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
+										$email['end_point'] = url('v2/clinic/payment_direct', $parameter = array(), $secure = null);
 										$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e;
 										$email['emailSubject'] = 'Error log.';
 										EmailHelper::sendErrorLogs($email);
 										return array('status' => FALSE, 'message' => 'Failed to save transaction.');
 									}
+								} else {
+									// insert to spending invoice
+									TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
 								}
 							}
 
                             // send notification to browser
-							Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
+							// Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
 
                             // send realtime update to claim clinic admin
-                  // PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
+                  			// PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
 
-                  // check if check_in_id exist
+                  			// check if check_in_id exist
 							if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
-                  // check check_in_id data
+                  			// check check_in_id data
 								$check_in = DB::table('user_check_in_clinic')
 								->where('check_in_id', $input['check_in_id'])
 								->first();
 								if($check_in) {
-                  // update check in date
+                  				// update check in date
 									DB::table('user_check_in_clinic')
 									->where('check_in_id', $input['check_in_id'])
 									->update(['check_out_time' => date('Y-m-d H:i:s'), 'id' => $transaction_id, 'status' => 1]);

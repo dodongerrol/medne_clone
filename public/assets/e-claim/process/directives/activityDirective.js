@@ -153,7 +153,9 @@ app.directive('activityDirective', [
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
 						// scope.initializeNewCustomDatePicker();
-						scope.applyDates();
+
+						// gicomment nako kay kaduha gatawagon ang api
+						// scope.applyDates();
 					} else {
 						scope.term_value = 1;
 						scope.select_to_date = false;
@@ -196,7 +198,8 @@ app.directive('activityDirective', [
 						// 	// scope.activity_dates = {};
 						// 	console.log(scope.dateTerms,'else');
 						// }
-						scope.applyDates();
+						// gicomment nako kay kaduha gatawagon ang api
+						// scope.applyDates();
 					}
 
 					if (scope.select_to_date == 'wtd') {

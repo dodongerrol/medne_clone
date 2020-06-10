@@ -1,0 +1,32 @@
+<div excel-enrollment-directive id="tier-create-container">
+	<div class="navbar-blue-bg download-header-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+		<div class="container">
+			<div class="welcome-container enrollment-nav">
+				<div class="template-menu-accordion-wrapper">
+					<h4>EXCEL IMPORT</h4>
+					<div class="template-menu-accordion">
+						<div class="menu-accordion-list">
+							<span class="number " ng-class="{'step' : download_step >= 1, 'done-step' : download_step > 1}">1</span>
+							<span class="menu-accordion-label step" ng-class="{'step' : download_step >= 1}">Download</span>
+						</div>
+						<div class="menu-accordion-list">
+							<span class="number" ng-class="{'step' : download_step >= 2, 'done-step' : download_step > 2}">2</span>
+							<span class="menu-accordion-label" ng-class="{'step' : download_step >= 2}">Prepare</span>
+						</div>
+						<div class="menu-accordion-list">
+							<span class="number" ng-class="{'step' : download_step >= 3, 'done-step' : download_step > 3}">3</span>
+							<span class="menu-accordion-label" ng-class="{'step' : download_step >= 3}">Upload</span>
+						</div>
+						<div class="menu-accordion-list">
+							<span class="number" ng-class="{'step' : download_step >= 4, 'done-step' : download_step > 4}">4</span>
+							<span class="menu-accordion-label" ng-class="{'step' : download_step >= 4}">Preview</span>
+						</div>
+					</div>
+				</div>	
+			</div>
+		</div>
+	</div>
+
+  <div ui-view="child-content"></div>
+
+</div>

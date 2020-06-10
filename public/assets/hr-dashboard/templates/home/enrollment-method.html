@@ -1,0 +1,54 @@
+<div enrollment-method-directive id="tier-create-container">
+	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+		<div class="container">
+			<div class="welcome-container enrollment-nav">
+				<h4 class="container-title" >Enrollment</h4>
+				<div class="arrow-up-5" style="visibility: hidden;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="hrdb-body-container">
+		<div class="container">
+			<div class="col-lg-12">
+        <div class="enrollment-container tier-feature-item">
+          <div class="col-lg-12">
+            <h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Pick your preferred enrollment method.</h1>
+            <div class="white-space-20"></div>
+            <div class="enrollment-method-container center-block">
+              <div class="col-md-12">
+                <button class="enrollment-method-box enrollment-box" ng-class="{'active': optionSelected == 'excel'}" style="margin-right: 10px;padding-bottom: 10px;" ng-click="selectEnrollmentMethod('excel')">
+                  <img src="../../assets/hr-dashboard/img/excel.png" class="center-block">
+                  <h4 class="text-center weight-700" style="color: #727272;">EXCEL IMPORT</h4>
+                </button>
+                <button class="enrollment-method-box enrollment-box" ng-class="{'active': optionSelected == 'web_input'}" style="margin-left: 10px;padding-bottom: 10px;" ng-click="selectEnrollmentMethod('web_input')">
+                  <img src="../../assets/hr-dashboard/img/web-input.png" class="center-block">
+                  <h4 class="text-center weight-700" style="color: #727272;">WEB INPUT</h4>
+                </button>
+              </div>
+
+              <div class="col-md-12 display-flex" style="width: 490px;float: none;margin: 0 auto;">
+                <div class="enrollment-method-box-text" style="border: 0;padding: 20px 0px;">
+                  <p class="text-center below-text download-below-text">Upload employee details in a<br>excel file using the template<br>provided by us in the next step</p>
+                </div>
+                <div class="enrollment-method-box-text" style="border: 0;padding: 20px 0px;">
+                  <p class="text-center below-text download-below-text">Input employee details<br>using our web enrollment form.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12">
+            <h4 ng-if="no_select" class="text-center text-error">Please select an option</h4>
+          </div>
+        </div>
+			</div>
+		</div>
+	</div>
+	<div class="prev-next-buttons-container">
+		<div class="container">
+      <button ng-click="backBtn()" class="pull-left btn btn-info back-btn" ng-disabled="isBackBtnDisabled">BACK</button>
+      <button class="pull-right btn btn-info next-wizard-button" ng-click="submitMethod( )">NEXT</button>
+    </div>
+	</div>
+</div>

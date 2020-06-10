@@ -11,6 +11,7 @@
 |
 */
 
+// Route::get('test_return_balance', 'testcontroller@testReturnBalance');
 Route::get('test/email_send', 'HomeController@testEmailSend');
 
 // test recalculate balance
@@ -396,7 +397,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
-	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// update cap per visit of employee
 	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 	// get pre signed e-claim doc
@@ -436,6 +436,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
 	// get hr date terms
 	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
+	// get customer spending account status
+	Route::get('hr/spending_account_status', 'BenefitsDashboardController@spendingAccountStatus');
+	// get excel link
+	Route::get('hr/get_excel_link', 'BenefitsDashboardController@getExcelLink');
 	// route get employee lists for bulk allocation
 	Route::get('hr/get_employee_lists_bulk_allocation', 'BenefitsDashboardController@getEmployeeListsBulk');
 	// upload employee allocation bulk
@@ -444,10 +448,16 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/member_credits', 'EmployeeController@getMemberCreditDetails');
 	// create new allocation
 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
+	// get spending invoice purchse
+	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
+	// check fields for replacement
+	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
 });
 
 
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
+	// download spending invoice details
+	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
@@ -1110,6 +1120,8 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
 			// get member dates coverage
 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
+			// get member spending account status feature
+			Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 	 	});
 	});
 });

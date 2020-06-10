@@ -64,11 +64,21 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                      ->select('UserID')
                     ->where('PhoneNo', (string)$email)
                     ->where('Password', StringHelper::encode($password))
-                    ->where('Active', 1)
+                    // ->where('Active', 1)
                     ->where('UserType', 5)
                      ->first();
 
             if($users){
+                // check employee status
+                $employee_status = PlanHelper::getEmployeeStatus($users->UserID);
+                $today =  PlanHelper::endDate(date('Y-m-d'));
+                if($employee_status['status'] == true)  {
+                    $expiry = date('Y-m-d', strtotime($employee_status['expiry_date']));
+                    $expiry = PlanHelper::endDate($expiry);
+                    if($today > $expiry) {
+                        return false;
+                    }
+                }
                 return $users->UserID;
             }else{
                 return false;
@@ -394,7 +404,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             $users = DB::table('user')
                     ->join('e_wallet', 'user.UserID', '=', 'e_wallet.UserID')
                     ->where('user.UserType', '=', 1)
-                    ->where('user.Active', '=', 1)
+                    // ->where('user.Active', '=', 1)
                     ->orderBy('user.UserID', 'desc')
                     ->paginate(10);
 
@@ -410,7 +420,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         public function getUserProfileMobile($profileid){
             $findUser = DB::table('user')
                     ->where('UserID', '=', $profileid)
-                    ->where('Active', '=', 1)
+                    // ->where('Active', '=', 1)
                     ->where('UserType', '=', 5)
                     ->first();
 
@@ -445,7 +455,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
        public function UserProfileByRef($refid){
             $findUser = DB::table('user')
                     ->where('Ref_ID', '=', $refid)
-                    ->where('Active', '=', 1)
+                    // ->where('Active', '=', 1)
                     ->first();
 
             if($findUser){
