@@ -4955,7 +4955,7 @@ class BenefitsDashboardController extends \BaseController {
 				} else {
 					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
 				}
-				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
+				// $calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
 				// $duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
 				$data['price']          = number_format($calculated_prices, 2);
 				$data['amount']					= number_format($get_invoice->employees * $calculated_prices, 2);
@@ -14256,7 +14256,9 @@ class BenefitsDashboardController extends \BaseController {
 	public function createEmployeeReplacementSeat( )
 	{
 		$input = Input::all();
-		// $customer_id = $input['customer_id'];
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 		$customer_id = PlanHelper::getCusomerIdToken();
 		$check_withdraw = DB::table('customer_plan_withdraw')->where('user_id', $input['employee_id'])->count();
 		$expiry = date('Y-m-d', strtotime($input['last_date_of_coverage']));
@@ -14290,6 +14292,24 @@ class BenefitsDashboardController extends \BaseController {
 					EmailHelper::sendErrorLogs($email);
 					return array('status' => FALSE, 'message' => 'Failed to create withdraw employee. Please contact Mednefits and report the issue.');
 				}
+			}
+
+			if($admin_id) {
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_removed_employee',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_removed_employee',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 		} else {
 			return array('status' => false, 'message' => 'Employee already deleted.');

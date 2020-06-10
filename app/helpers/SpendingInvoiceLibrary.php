@@ -425,9 +425,9 @@ class SpendingInvoiceLibrary
 							$payment_type = "Cash";
 							$transaction_type = "cash";
 							if((int)$trans['lite_plan_enabled'] == 1) {
-								$total_amount = $trans['consultation_fees'];
+								$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
 								$procedure_cost = "0.00";
-								$treatment = 0;
+								$treatment = $trans->credit_cost + $trans->cash_cost;
                       				// $consultation = number_format($trans['co_paid_amount'], 2);
 							}
 						} else {
@@ -589,11 +589,28 @@ class SpendingInvoiceLibrary
 	           	 // e-claim transactions
 			foreach($e_claim_result as $key => $res) {
 				$status_text = 'Approved';
-				$total_e_claim_spent += $res->amount;
+				if($res->spending_type == 'medical') {
+					$table_wallet_history = 'wallet_history';
+				} else {
+					$table_wallet_history = 'wellness_wallet_history';
+				}
+				$history = DB::table($table_wallet_history)
+								->where('logs', 'deducted_from_e_claim')
+								->where('where_spend', 'e_claim_transaction')
+								->where('id', $res->e_claim_id)
+								->first();
+
+				if($history) {
+					$total_e_claim_spent += $history->credit;
+					$res->amount = $history->credit;
+				} else {
+					$total_e_claim_spent += $res->amount;
+					$res->amount = $history->credit;
+				}
 
 				$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-	      // check user if it is spouse or dependent
+	      		// check user if it is spouse or dependent
 				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -654,13 +671,13 @@ class SpendingInvoiceLibrary
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 
 				if($res->currency_type == "myr" && $res->default_currency == "myr") {
-		      $res->default_currency = "MYR";
-		    } else if($res->default_currency == "myr"){
-		      $res->default_currency = "MYR";
-		      $res->amount = $res->amount;
-		    } else {
-		      $res->default_currency = "SGD";
-		    }
+					$res->default_currency = "MYR";
+				} else if($res->default_currency == "myr"){
+					$res->default_currency = "MYR";
+					// $res->amount = $res->amount;
+				} else {
+					$res->default_currency = "SGD";
+				}
 
 				$temp = array(
 					'status'            => $res->status,
