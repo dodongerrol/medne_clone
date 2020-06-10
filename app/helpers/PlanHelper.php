@@ -3148,17 +3148,20 @@ class PlanHelper {
 				$medical_balance = $balance;
 				$total_deduction_credits += $deducted_credits;
 
-				if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {
-					$allocation = 0;
-					$balance = $pro_allocation - $get_allocation_spent;
-					$medical_balance = $balance;
-
 					if($balance < 0) {
-						// $balance = 0;
-						// $medical_balance = $balance;
-						$allocation = $get_allocation - $deducted_credits;
+						$allocation = $get_allocation_spent;
 					}
-				}
+				// if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {
+				// 	$allocation = 0;
+				// 	$balance = $pro_allocation - $get_allocation_spent;
+				// 	$medical_balance = $balance;
+
+				// 	if($balance < 0) {
+				// 		// $balance = 0;
+				// 		// $medical_balance = $balance;
+				// 		$allocation = $get_allocation - $deducted_credits;
+				// 	}
+				// }
 			} else {
 				if($pro_allocation > 0 && (int)$user->Active == 0) {
 					$allocation = $pro_allocation;
@@ -3285,14 +3288,17 @@ class PlanHelper {
 				$balance = $allocation_wellness - $get_allocation_spent_wellness;
 				$wellness_balance = $balance;
 
-				if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {
-					$allocation_wellness = 0;
-					$balance = $pro_allocation - $get_allocation_spent_wellness;
-					$wellness_balance = $balance;
-					if($balance < 0) {
-						$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
-					}
+				if($balance < 0) {
+					$allocation_wellness = $get_allocation_spent_wellness;
 				}
+				// if($pro_allocation > 0 && (int)$user->Active == 0 || (int)$user->Active == 0) {
+				// 	$allocation_wellness = 0;
+				// 	$balance = $pro_allocation - $get_allocation_spent_wellness;
+				// 	$wellness_balance = $balance;
+				// 	if($balance < 0) {
+				// 		$allocation_wellness = $get_wellness_allocation - $deducted_wellness_credits;
+				// 	}
+				// }
 			} else {
 				if($pro_allocation > 0 && (int)$user->Active == 0) {
 					$allocation_wellness = $pro_allocation;

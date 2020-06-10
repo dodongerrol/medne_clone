@@ -1478,6 +1478,8 @@ class MemberHelper
 
 			if($plan_active->account_type == "lite_plan") {
 				$data['refund_status'] = 2;
+				$data['keep_seat']	= 1;
+				$data['vacate_seat']	= 1;
 			} else {
 				$data['refund_status'] = $refund_status == true ? 0 : 2;
 			}
@@ -1600,6 +1602,8 @@ class MemberHelper
 
 		if($plan_active->account_type == "lite_plan") {
 			$data['refund_status'] = 2;
+			$data['keep_seat']	= 1;
+			$data['vacate_seat']	= 1;
 		} else {
 			$data['refund_status'] = $refund_status == true ? 0 : 2;
 			$data['vacate_seat'] = 1;
