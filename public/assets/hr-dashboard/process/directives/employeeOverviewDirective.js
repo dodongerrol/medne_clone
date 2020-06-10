@@ -746,8 +746,9 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.getUsage = function (x, y) {
-
-          return (parseFloat(x) + parseFloat(y));
+          var a = x.replace(',','');
+          var b = y.replace(',','');
+          return (parseFloat(a) + parseFloat(b));
         }
 
         scope.range = function (range) {
