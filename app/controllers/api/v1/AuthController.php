@@ -1286,13 +1286,13 @@ return Response::json($returnObject);
               PlanHelper::reCalculateEmployeeBalance($user_id);
             }
             
+            $total_visit_limit = 0;
+            $total_vist_created = 0;
+            $total_visit_balance = 0;
+
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
               $currency_symbol = "";
               $balance = 0;
-
-              $total_visit_limit = 0;
-              $total_vist_created = 0;
-              $total_visit_balance = 0;
               if($filter == "current_term") {
                 $total_visit_limit = $user_plan_history->total_visit_limit;
                 $total_vist_created = $user_plan_history->total_visit_created;
@@ -1311,6 +1311,7 @@ return Response::json($returnObject);
               $balance = number_format($balance, 2);
             }
 
+            $customer_id = PlanHelper::getCustomerId($user_id);
             $wallet_data = array(
               'spending_type'             => $spending_type,
               'balance'                   => $balance,
@@ -1323,6 +1324,12 @@ return Response::json($returnObject);
               'total_visit'               => $total_visit_limit,
               'total_utilised'            => $total_vist_created,
               'total_visit_balance'       => $total_visit_limit
+            );
+
+            $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+            $wallet_data['spending_status'] = array(
+              'medical' => $spending['medical_enabled'],
+              'wellness'  => $spending['wellness_enabled']
             );
 
             $returnObject->status = true;
