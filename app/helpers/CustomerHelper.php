@@ -265,14 +265,18 @@ class CustomerHelper
 	public static function getAccountSpendingStatus($customer_id)	
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$activePlan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->first();
+		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
+		// $activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
 
 		return array(
 			'customer_id'		=> $customer_id,
-			'account_type'		=> $activePlan->account_type,
+			'account_type'		=> $planData->account_type,
 			'medical_method'	=> $spending->medical_plan_method,
+			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
 			'wellness_method'	=> $spending->wellness_plan_method,
-			'paid_status'		=> $activePlan->paid == 'true' ? true : false
+			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
+			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
 		);
 	}
 
@@ -323,7 +327,8 @@ class CustomerHelper
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
-		$activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
+		// $activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
 
 		return array(
 			'customer_id'		=> $customer_id,
@@ -332,7 +337,7 @@ class CustomerHelper
 			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
 			'wellness_method'	=> $spending->wellness_plan_method,
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
-			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $activePlan > 0 ? false : true,
+			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
 		);
 	}
 
@@ -407,7 +412,7 @@ class CustomerHelper
 		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
 		->where('customer_credits_id', $company_credits->customer_credits_id)
 		->where('logs', 'admin_added_credits')
-		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
 		->where('created_at', '>=', $user_spending_dates['start'])
 		->where('created_at', '<=', $user_spending_dates['end'])
 		->sum('credit');
@@ -415,7 +420,7 @@ class CustomerHelper
 		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
 		->where('customer_credits_id', $company_credits->customer_credits_id)
 		->where('logs', 'admin_added_credits')
-		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
 		->where('created_at', '>=', $user_spending_dates['start'])
 		->where('created_at', '<=', $user_spending_dates['end'])
 		->sum('credit');
@@ -423,7 +428,7 @@ class CustomerHelper
 		$total_bonus = DB::table('customer_wellness_credits_logs')
 		->where('customer_credits_id', $company_credits->customer_credits_id)
 		->where('logs', 'admin_added_bonus_credits')
-		->where('customer_wellness_credits_logs_id', '>=', $user_spending_dates['id'])
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
 		->where('created_at', '>=', $user_spending_dates['start'])
 		->where('created_at', '<=', $user_spending_dates['end'])
 		->sum('credit');
@@ -472,5 +477,24 @@ class CustomerHelper
 		return 1;
 	}
   }
+  
+	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
+	{
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+		if($spending) {
+			if($spending_type == "medical") {
+				// update and increment medical wallet
+				$total = $credits * $spending->medical_supplementary_credits;
+				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('medical_supp_credits', $total);
+			}
+
+			if($spending_type == "wellness")	{
+				// update and increment medical wallet
+				$total = $credits * $spending->wellness_supplementary_credits;
+				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('wellness_supp_credits', $total);
+			}
+		}
+	}
 }
 ?>

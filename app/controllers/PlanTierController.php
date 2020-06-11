@@ -676,40 +676,25 @@ class PlanTierController extends \BaseController {
 			return array('status' => false, 'message' => 'Employee Full Name is required.');
 		}
 
-		// if(empty($input['last_name']) || $input['last_name'] == null) {
-		// 	return array('status' => false, 'message' => 'Employee Last Name is required.');
-		// }
-
-		// if(empty($input['nric']) || $input['nric'] == null) {
-		// 	return array('status' => false, 'message' => 'Employee Enrollee NRIC/FIN is required.');
-		// }
-
-		// if(empty($input['email']) || $input['email'] == null) {
-		// 	return array('status' => false, 'message' => 'Employee Enrollee Email Address is required.');
-		// }
-
-		// if(empty($input['mobile']) || $input['mobile'] == null) {
-		// 	return array('status' => false, 'message' => 'Employee Enrollee Mobile is required.');
-		// }
-
-		// if(empty($input['job_title']) || $input['job_title'] == null) {
-		// 	return array('status' => false, 'message' => 'Employee Enrollee Job Title is required.');
-		// }
-
 		$postal_code = null;
 
 		if(!empty($input['postal_code']) && $input['postal_code'] != null) {
 			$postal_code = $input['postal_code'];
 		}
 		
+		$data = array(
+			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
+			'credits'					=> $input['medical_credits'],
+			'wellness_credits'			=> $input['wellness_credits']
+		);
+
+		$temp_enroll->updateEnrollee($data);
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
 		$mobile = preg_replace('/\s+/', '', $input['mobile']);
 
 		$data = array(
 			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
 			'first_name'				=> $input['fullname'],
-			// 'last_name'					=> $input['last_name'],
-			// 'nric'						=> $input['nric'],
 			'dob'						=> $input['dob'],
 			'email'						=> $input['email'],
 			'mobile'					=> $mobile,
@@ -722,13 +707,6 @@ class PlanTierController extends \BaseController {
 			'error_logs'				=> serialize($error_logs)
 		);
 
-		if(isset($input['medical_balance_entitlement']) && !empty($input['medical_balance_entitlement'])) {
-			$data['medical_balance_entitlement'] = $input['medical_balance_entitlement'];
-		}
-
-		if(isset($input['wellness_balance_entitlement']) && !empty($input['wellness_balance_entitlement'])) {
-			$data['wellness_balance_entitlement'] = $input['wellness_balance_entitlement'];
-		}
 		
 		$result = $temp_enroll->updateEnrollee($data);
 

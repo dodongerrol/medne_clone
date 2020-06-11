@@ -13,7 +13,7 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
-        
+
       body{
         margin: 0;
         font-family: 'Helvetica Light',sans-serif;
@@ -26,7 +26,7 @@
         border: 1px solid #ccc;
         width: 774px;
         background: #fff;
-        /* height: 1090px; */
+        height: 1080px;
       }
 
       .top-content{
@@ -63,6 +63,7 @@
         background-color: #3E91C8;
         padding: 55px 60px 5px 60px;
         min-height: 230px;
+        box-sizing: border-box;
       }
 
       .top-content .header-content p{
@@ -73,6 +74,7 @@
       .body-content{
         min-height: 725px;
         background: #FFF;
+        width: 100%;
       }
 
       .body-content .trans-content{
@@ -153,6 +155,7 @@
       .billing-details-header {
         align-items: center;
         padding: 0 60px;
+        display: inline-block;
       }
 
       .billing-details-header span {
@@ -161,14 +164,13 @@
         display: inline-block;
         font-size: 18px;
         /* margin-right: 34px; */
-        vertical-align: middle;
       }
 
       .billing-details-header .custom-border{
-        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
         width: 505px;
         display: inline-block;
-        vertical-align: middle;
+        height: 15px;
       }
 
       .billing-details-body-container .row-grid {
@@ -204,7 +206,7 @@
       .contact-content{
         /* height: 150px; */
         width: 100%;
-        padding: 10px 0 30px 0;
+        padding: 10px 0;
       }
 
       .contact-content .item{
@@ -247,10 +249,12 @@
         display: inline-block;
         vertical-align: middle;
         margin-left: 10px;
+        width: 45px;
       }
       
       .contact-content .item .social-img a img{
         width: 45px;
+        display: inline-block;
       }
 
       
@@ -265,10 +269,10 @@
           <p style="font-size: 20px;line-height: 29px;margin-bottom: 15px;">
             Here's the payment receipt for your visit at <span style="font-weight: 700">{{ $health_provider_name }}</span>.
           </p>
-          <p style="font-size: 18px; width: 490px; margin: 0 auto 10px auto;">
+          <p style="font-size: 18px; width: 490px; margin: 0 auto 20px auto;">
             You can also view your receipts under the History section in Mednefits app.
           </p>
-          <p style="font-size: 40px;font-weight: 700;line-height: 1;margin-bottom: 10px;">
+          <p style="font-size: 40px;font-weight: 700;line-height: 1;margin-bottom: 20px;">
             Total: <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
           </p>
 
@@ -307,7 +311,7 @@
               <div style="font-size: 18px;color: #999;margin-bottom: 5px;">
                 Health Provider
               </div>
-              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
+              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 10px;">
                 <span class="health-provider-name" style="margin: 0 0 20px">{{ $health_provider_name }}</span> 
                 <br>
                 {{ $health_provider_address }} {{ $health_provider_city }}, 
@@ -321,7 +325,7 @@
               <div style="font-size: 18px;color: #999;margin-bottom: 5px;">
                 Service
               </div>
-              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
+              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 10px;">
                 {{ $service }} <br>
               </p>
             </div>
@@ -332,7 +336,7 @@
               <div style="font-size: 18px;color: #999;margin-bottom: 5px;">
                 Member
               </div>
-              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
+              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 10px;">
                 {{ $member }}
               </p>
             </div>
@@ -341,8 +345,7 @@
               <div style="font-size: 18px;color: #999;margin-bottom: 5px;">
                 Cap Per Visit
               </div>
-              
-              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
+              <p style="color: #333;font-size: 18px;font-weight: 700;margin-top: 0;margin-bottom: 10px;">
                 @if($cap_per_visit_status)
                   {{ $currency_symbol }}
                 @endif
@@ -416,11 +419,11 @@
                 </div>
                 <div class="child-two">
                 @if($currency_symbol == "SGD")
-                  <span style="text-decoration: underline;">+65 6254 7889</span>
+                  <span style="text-decoration: underline;"><a href="tel:+65-6254-7889">+65 6254 7889</a></span>
                 @else
-                  <span style="text-decoration: underline;">+65 6254 7889</span>
+                  <span style="text-decoration: underline;"><a href="tel:+65-6254-7889">+65 6254 7889</a></span>
                   <span style="margin: 0 0 0 5px;">or</span> 
-                  <span style="text-decoration: underline;">+603 7890 1770</span>
+                  <span style="text-decoration: underline;"><a href="tel:+603-7890-1770">+603 7890 1770</a></span>
                 @endif
                 </div>
               </div>
