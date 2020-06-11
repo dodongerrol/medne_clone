@@ -9025,15 +9025,32 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function getHrPasswordTokenDetails($token)
+	public function getHrPasswordTokenDetails( )
 	{
-		$check = DB::table('customer_hr_dashboard')->where('remember_token', $token)->first();
+		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'token required.');
+		}
+		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 		if($check) {
-			return array('status' => TRUE, 'data' => $check->hr_dashboard_id);
+			if($check->active == 1)	{
+				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true]);
+			}
+
+			// check if token is still valid
+			$today = strtotime(date('Y-m-d H:i:s'));
+			$expiry = strtotime($check->expiration_time);
+
+			if($today > $expiry) {
+				return array('status' => false, 'message' => 'token is expired');
+			}
+
+			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
 		}
 
-		return array('status' => FALSE, 'message' => 'Token expired.');
+		return array('status' => false, 'message' => 'Token expired.');
 	}
 
 	public function resetPasswordData( )
