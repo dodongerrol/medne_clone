@@ -9025,7 +9025,18 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function getHrPasswordTokenDetails( )
+	public function getHrPasswordTokenDetails($token)
+	{
+		$check = DB::table('customer_hr_dashboard')->where('reset_link', $token)->first();
+
+		if($check) {
+			return array('status' => TRUE, 'data' => $check->hr_dashboard_id);
+		}
+
+		return array('status' => FALSE, 'message' => 'Token expired.');
+	}
+
+	public function getTokenDetails( )
 	{
 		$input = Input::all();
 
