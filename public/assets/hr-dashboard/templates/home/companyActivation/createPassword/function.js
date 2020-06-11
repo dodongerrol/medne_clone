@@ -1,8 +1,6 @@
 app.directive('createCompanyPasswordDirective', [
 	'$state',
-	'hrSettings',
-	'dashboardFactory',
-	function directive($state,hrSettings,dashboardFactory) {
+	function directive($state) {
 		return {
 			restrict: "A",
 			scope: true,

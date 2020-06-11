@@ -5,65 +5,65 @@ class TransactionHelper
 	public static function getClinicImageType($clinic_type)
 	{
 		$type = "";
-    $image = "";
-    $clinic_type_name = "";
+		$image = "";
+		$clinic_type_name = "";
 
-    if((int)$clinic_type->head == 1 || $clinic_type->head == "1") {
-     if($clinic_type->Name == "GP") {
-       $type = "general_practitioner";
-       $clinic_type_name = "GP";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-     } else if($clinic_type->Name == "Dental") {
-       $type = "dental_care";
-       $clinic_type_name = "Dental";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-     } else if($clinic_type->Name == "TCM") {
-       $type = "tcm";
-       $clinic_type_name = "TCM";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-     } else if($clinic_type->Name == "Screening") {
-       $type = "health_screening";
-       $clinic_type_name = "Screening";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-     } else if($clinic_type->Name == "Wellness") {
-       $type = "wellness";
-       $clinic_type_name = "Wellness";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-     } else if($clinic_type->Name == "Specialist") {
-       $type = "health_specialist";
-       $clinic_type_name = "Specialist";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
-     }
-    } else {
-     $find_head = DB::table('clinic_types')
-     ->where('ClinicTypeID', $clinic_type->sub_id)
-     ->first();
-     if($find_head->Name == "GP") {
-       $type = "general_practitioner";
-       $clinic_type_name = "GP";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
-     } else if($find_head->Name == "Dental") {
-       $type = "dental_care";
-       $clinic_type_name = "Dental";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-     } else if($find_head->Name == "TCM") {
-       $type = "tcm";
-       $clinic_type_name = "TCM";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-     } else if($find_head->Name == "Screening") {
-       $type = "health_screening";
-       $clinic_type_name = "Screening";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
-     } else if($find_head->Name == "Wellness") {
-       $type = "wellness";
-       $clinic_type_name = "Wellness";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
-     } else if($find_head->Name == "Specialist") {
-       $type = "health_specialist";
-       $clinic_type_name = "Specialist";
-       $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
-     }
-    }
+		if((int)$clinic_type->head == 1 || $clinic_type->head == "1") {
+		if($clinic_type->Name == "GP") {
+		$type = "general_practitioner";
+		$clinic_type_name = "GP";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
+		} else if($clinic_type->Name == "Dental") {
+		$type = "dental_care";
+		$clinic_type_name = "Dental";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+		} else if($clinic_type->Name == "TCM") {
+		$type = "tcm";
+		$clinic_type_name = "TCM";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+		} else if($clinic_type->Name == "Screening") {
+		$type = "health_screening";
+		$clinic_type_name = "Screening";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
+		} else if($clinic_type->Name == "Wellness") {
+		$type = "wellness";
+		$clinic_type_name = "Wellness";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
+		} else if($clinic_type->Name == "Specialist") {
+		$type = "health_specialist";
+		$clinic_type_name = "Specialist";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
+		}
+		} else {
+		$find_head = DB::table('clinic_types')
+		->where('ClinicTypeID', $clinic_type->sub_id)
+		->first();
+		if($find_head->Name == "GP") {
+		$type = "general_practitioner";
+		$clinic_type_name = "GP";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515238/tidzdguqbafiq4pavekj.png";
+		} else if($find_head->Name == "Dental") {
+		$type = "dental_care";
+		$clinic_type_name = "Dental";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+		} else if($find_head->Name == "TCM") {
+		$type = "tcm";
+		$clinic_type_name = "TCM";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+		} else if($find_head->Name == "Screening") {
+		$type = "health_screening";
+		$clinic_type_name = "Screening";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515243/v9fcbbdzr6jdhhlba23k.png";
+		} else if($find_head->Name == "Wellness") {
+		$type = "wellness";
+		$clinic_type_name = "Wellness";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515261/phvap8vk0suwhh2grovj.png";
+		} else if($find_head->Name == "Specialist") {
+		$type = "health_specialist";
+		$clinic_type_name = "Specialist";
+		$image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515247/toj22uow68w9yf4xnn41.png";
+		}
+		}
 
 	    return array('type' => $type, 'image' => $image, 'clinic_type_name' => $clinic_type_name);
 	}
@@ -72,70 +72,70 @@ class TransactionHelper
 	{
 		$peak_amount = 0;
 		$consultation_fees = 0;
-    $clinic_peak_status = false;
+    	$clinic_peak_status = false;
 
-      // check clinic peak hours
-      $result = ClinicHelper::getCheckClinicPeakHour($clinic, $date);
-      if($result['status']) {
-         $peak_amount = $result['amount'];
-         $clinic_peak_status = true;
-        // check user company peak status
-         $user_peak = PlanHelper::getUserCompanyPeakStatus($user_id);
-         if($user_peak) {
-          if((int)$clinic->co_paid_status == 1) {
-           $gst = $peak_amount * $clinic->gst_percent;
-           $co_paid_amount = $peak_amount + $gst;
-           $co_paid_status = $clinic->co_paid_status;
-         } else {
-           $co_paid_amount = $peak_amount;
-           $co_paid_status = $clinic->co_paid_status;
-         }
+		// check clinic peak hours
+		$result = ClinicHelper::getCheckClinicPeakHour($clinic, $date);
+		if($result['status']) {
+			$peak_amount = $result['amount'];
+			$clinic_peak_status = true;
+			// check user company peak status
+			$user_peak = PlanHelper::getUserCompanyPeakStatus($user_id);
+			if($user_peak) {
+			if((int)$clinic->co_paid_status == 1) {
+			$gst = $peak_amount * $clinic->gst_percent;
+			$co_paid_amount = $peak_amount + $gst;
+			$co_paid_status = $clinic->co_paid_status;
+			} else {
+			$co_paid_amount = $peak_amount;
+			$co_paid_status = $clinic->co_paid_status;
+			}
 
-         if((int)$clinic->consultation_gst_status == 1) {
-         	$consult_gst = $peak_amount * $clinic->gst_percent;
-         	$consult_paid_amount = $peak_amount + $consult_gst;
-         	$consultation_fees = $consult_paid_amount;
-         } else {
-         	$consultation_fees = $peak_amount;
-         }
-       } else {
-        if((int)$clinic->co_paid_status == 1) {
-         $gst = $peak_amount * $clinic->gst_percent;
-         $co_paid_amount = $peak_amount + $gst;
-         $co_paid_status = $clinic->co_paid_status;
-       } else {
-         $co_paid_amount = $peak_amount;
-         $co_paid_status = $clinic->co_paid_status;
-       }
+			if((int)$clinic->consultation_gst_status == 1) {
+				$consult_gst = $peak_amount * $clinic->gst_percent;
+				$consult_paid_amount = $peak_amount + $consult_gst;
+				$consultation_fees = $consult_paid_amount;
+			} else {
+				$consultation_fees = $peak_amount;
+			}
+		} else {
+			if((int)$clinic->co_paid_status == 1) {
+			$gst = $peak_amount * $clinic->gst_percent;
+			$co_paid_amount = $peak_amount + $gst;
+			$co_paid_status = $clinic->co_paid_status;
+		} else {
+			$co_paid_amount = $peak_amount;
+			$co_paid_status = $clinic->co_paid_status;
+		}
 
-       if((int)$clinic->consultation_gst_status == 1) {
-       	$consult_gst = $clinic->consultation_fees * $clinic->gst_percent;
-       	$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
-       	$consultation_fees = $consult_paid_amount;
-       } else {
-       	$consultation_fees = $clinic->consultation_fees;
-       }
-     }
-    } else {
-      if((int)$clinic->co_paid_status == 1) {
-        $gst = $clinic->co_paid_amount * $clinic->gst_percent;
-        $co_paid_amount = $clinic->co_paid_amount + $gst;
-        $co_paid_status = $clinic->co_paid_status;
-      } else {
-        $co_paid_amount = $clinic->co_paid_amount;
-        $co_paid_status = $clinic->co_paid_status;
-      }
+		if((int)$clinic->consultation_gst_status == 1) {
+			$consult_gst = $clinic->consultation_fees * $clinic->gst_percent;
+			$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
+			$consultation_fees = $consult_paid_amount;
+		} else {
+			$consultation_fees = $clinic->consultation_fees;
+		}
+		}
+		} else {
+		if((int)$clinic->co_paid_status == 1) {
+			$gst = $clinic->co_paid_amount * $clinic->gst_percent;
+			$co_paid_amount = $clinic->co_paid_amount + $gst;
+			$co_paid_status = $clinic->co_paid_status;
+		} else {
+			$co_paid_amount = $clinic->co_paid_amount;
+			$co_paid_status = $clinic->co_paid_status;
+		}
 
-      if((int)$clinic->consultation_gst_status == 1) {
-      	$consult_gst = $clinic->consultation_fees * $clinic->gst_percent;
-      	$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
-      	$consultation_fees = $consult_paid_amount;
-      } else {
-      	$consultation_fees = $clinic->consultation_fees;
-      }
-    }
+		if((int)$clinic->consultation_gst_status == 1) {
+			$consult_gst = $clinic->consultation_fees * $clinic->gst_percent;
+			$consult_paid_amount = $clinic->consultation_fees + $consult_gst;
+			$consultation_fees = $consult_paid_amount;
+		} else {
+			$consultation_fees = $clinic->consultation_fees;
+		}
+		}
 
-    return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => (float)$consultation_fees, 'clinic_peak_status' => $clinic_peak_status);
+    	return array('co_paid_amount' => $co_paid_amount, 'co_paid_status' => $co_paid_status, 'peak_amount' => $peak_amount, 'consultation_fees' => (float)$consultation_fees, 'clinic_peak_status' => $clinic_peak_status);
 	}
 
 
@@ -178,7 +178,7 @@ class TransactionHelper
     return array('in_network_spent' => $in_network_spent, 'e_claim_spent' => $e_claim_spent, 'current_spending' => $current_spending);
   }
 
-  public static function getTransactionDetails($transaction_id)
+  	public static function getTransactionDetails($transaction_id)
 	{
 		$consultation_cash = false;
 		$consultation_credits = false;
@@ -460,6 +460,39 @@ class TransactionHelper
 					"currency_type" 		=> $trans->currency_type == "myr" ? "MYR" : "SGD",
 					'files'							=> $doc_files
 				);
+			}
+		}
+	}
+
+	public static function insertTransactionToCompanyInvoice($transaction_id, $member_id)
+	{
+		$transaction = DB::table('transaction_history')->where('transaction_id', $transaction_id)->first();
+
+		if($transaction) {
+			$member_id = StringHelper::getUserId($member_id);
+			$customer_id = PlanHelper::getCustomerId($member_id);
+
+			if($customer_id) {
+				$start = date('Y-m-01', strtotime($transaction->created_at));
+				$end = date('Y-m-t', strtotime($transaction->created_at));
+				$statement = DB::table('company_credits_statement')
+						->where('statement_customer_id', $customer_id)
+						->where('statement_start_date', $start)
+						->first();
+
+				if($statement) {
+					$data = array(
+						'invoice_id' => $statement->statement_id,
+						'transaction_id'	=> $transaction_id,
+						'created_at'	=> date('Y-m-d H:i:s'),
+						'updated_at'	=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('spending_invoice_transactions')->insert($data);
+				} else {
+					// create new spending invoice
+					SpendingInvoiceLibrary::createStatement($customer_id, $start, $end);
+				}
 			}
 		}
 	}

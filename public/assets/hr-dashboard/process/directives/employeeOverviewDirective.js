@@ -68,6 +68,7 @@ app.directive("employeeOverviewDirective", [
         scope.arrowStatement = false;
         scope.litePlanCheckbox = false;
         scope.hideLitePlanCheckbox = true;
+        scope.isBasicPlan = false;
         scope.showBlockHealthProviders = false;
         scope.entitlement_data = {};
         scope.dropdownEntitlement = {
@@ -98,6 +99,7 @@ app.directive("employeeOverviewDirective", [
         scope.wellnessCalculatedInfo = false;
         scope.effectiveMedDateError = false;
         scope.effectiveWellDateError = false;
+        scope.credit_status = {};
 
         scope.pagesToDisplay = 5;
         scope.startIndex = function () {
@@ -715,13 +717,22 @@ app.directive("employeeOverviewDirective", [
 						});
         }
 
+        scope.resetRemoveBtn  = function(){
+          scope.reset();
+          scope.isEmployeeShow = true;
+          scope.getSession();
+        }
+
         scope.removeBtn = function () {
+          scope.showLoading();
           $('.employee-information-wrapper').hide();
-          $('.prev-next-buttons-container').fadeIn();
-          $('.remove-employee-wrapper').fadeIn();
+          // $('.prev-next-buttons-container').fadeIn();
+          // $('.remove-employee-wrapper').fadeIn();
+          scope.selectedEmployee.last_day_coverage = moment().add('days', 1).format('DD/MM/YYYY');
           scope.reset();
           scope.isRemoveEmployeeShow = true;
           scope.isDeleteDependent = false;
+          $state.go('employee-overview.remove-emp-inputs');
         }
 
         scope.removeDependentBtn = function (data) {
@@ -736,8 +747,9 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.getUsage = function (x, y) {
-
-          return (parseFloat(x) + parseFloat(y));
+          var a = x.replace(',','');
+          var b = y.replace(',','');
+          return (parseFloat(a) + parseFloat(b));
         }
 
         scope.range = function (range) {
@@ -1237,9 +1249,20 @@ app.directive("employeeOverviewDirective", [
 
         scope.toggleEmployee = function (emp, index) {
           // console.log(emp);
+          if( scope.isRemoveEmployeeShow ){
+            scope.isEmployeeShow = true;
+            scope.isRemoveEmployeeShow = false;
+            $('.employee-information-wrapper').show();
+          }
           
-
+          console.log(scope.isEmployeeShow);
           if (scope.isEmployeeShow == false) {
+            scope.isRemoveEmployeeShow = false;
+            $('.employee-information-wrapper').fadeIn();
+            $('.prev-next-buttons-container').hide();
+            $('.remove-employee-wrapper').hide();
+
+            
             scope.isEmployeeShow = true;
             scope.empTabSelected = 0;
             scope.healthSpendingAccountTabIsShow = false;
@@ -1252,7 +1275,11 @@ app.directive("employeeOverviewDirective", [
             // scope.wellness_wallet = emp.wellness_wallet;
             // console.log(scope.medical_wallet);
             // console.log(scope.wellness_wallet);
-            
+            if (emp.account_type === 'lite_plan'){
+              scope.isBasicPlan = true;
+            }else{
+              scope.isBasicPlan = false;
+            }
             if (emp.account_type === 'lite_plan' && emp.plan_method_type == 'pre_paid') {
               scope.hideLitePlanCheckbox = false;
               scope.litePlanCheckbox = true;
@@ -1316,8 +1343,10 @@ app.directive("employeeOverviewDirective", [
                 console.log('member Entitlement',response);
                 scope.emp_entitlement = response.data;
 
-                scope.med_effective_date = scope.emp_entitlement.medical_entitlement_date;
-                scope.well_effective_date = scope.emp_entitlement.wellness_entitlement_date;
+                // Gicomment nako kay issue is after update gaka invalid date ang medical and wellness dates - Jeamar
+                
+                // scope.med_effective_date = scope.emp_entitlement.medical_entitlement_date;
+                // scope.well_effective_date = scope.emp_entitlement.wellness_entitlement_date;
 
                 console.log(scope.emp_entitlement.updated_medical_entitlement);
                 console.log(scope.emp_entitlement.updated_wellness_entitlement);
@@ -1327,8 +1356,11 @@ app.directive("employeeOverviewDirective", [
 
                 scope.emp_entitlement.medical_new_entitlement = '';
                 scope.emp_entitlement.wellness_new_entitlement = '';
-                scope.med_effective_date = '';
-                scope.well_effective_date = '';
+                // scope.med_effective_date = '';
+                // scope.well_effective_date = '';
+
+                scope.med_effective_date = moment().format('DD/MM/YYYY');
+                scope.well_effective_date = moment().format('DD/MM/YYYY');
           });
         }
         
@@ -2137,7 +2169,7 @@ app.directive("employeeOverviewDirective", [
         scope.removeEmployeeRequests  = function(){
           console.log(scope.remove_employee_data);
           if (scope.remove_employee_data.remove == true) {
-            scope.deleteEmployee();
+            scope.confirmWalletUpdateBtn();
           }
           if (scope.remove_employee_data.reserve == true) {
             scope.reserveEmployee();
@@ -2524,7 +2556,7 @@ app.directive("employeeOverviewDirective", [
             });
         }
 
-        scope.deleteEmployee = function () {
+        scope.confirmWalletUpdateBtn = function () {
           scope.showLoading();
           var users = [{
             expiry_date: moment(scope.remove_employee_data.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),
@@ -2600,7 +2632,7 @@ app.directive("employeeOverviewDirective", [
         scope.getPlanStatus = function () {
           hrSettings.getPlanStatus()
             .then(function (response) {
-              // console.log(response);
+              console.log(response);
               scope.plan_status = response.data;
             });
         }
@@ -2685,10 +2717,11 @@ app.directive("employeeOverviewDirective", [
         scope.healthSpendingAccountTabIsShow = false;
         scope.viewEmployeeSpendingSummary = function () {
           if (scope.healthSpendingAccountTabIsShow == false) {
-            scope.getSpendingAccountSummary(scope.selectedEmployee.expiry_date);
+            // scope.getSpendingAccountSummary(scope.selectedEmployee.expiry_date);
             scope.empTabSelected = 99;
             scope.healthSpendingAccountTabIsShow = true;
             $('body').scrollTop(0);
+            $state.go('employee-overview.health-spending-account-summary');
           } else {
             scope.empTabSelected = 0;
             scope.healthSpendingAccountTabIsShow = false;
@@ -2745,6 +2778,10 @@ app.directive("employeeOverviewDirective", [
 				}
         
         scope.onLoad = function () {
+          console.log($state.current);
+          if( $state.current.name != 'employee-overview' && $state.current.name.indexOf('employee-overview') > -1 ){
+            $state.go('employee-overview');
+          }
           // scope.checkCompanyBalance();
           scope.getPlanStatus();
           // scope.userCompanyCreditsAllocated();

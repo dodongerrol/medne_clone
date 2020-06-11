@@ -27,33 +27,11 @@ class EclaimController extends \BaseController {
 		$email = (int)($email);
 		$password = $input['password'];
 
-		// $check = DB::table('user')
-		// ->where(function($query) use ($email, $password) {
-		// 	$query->where('UserType', 5)
-		// 	->where('Email', $email)
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-		// })
-  //   ->orWhere(function($query) use ($email, $password){
-  //   	$query->where('UserType', 5)
-		// 	->where('NRIC', 'like', '%'.$email.'%')
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-  //   })
-  //   ->orWhere(function($query) use ($email, $password){
-  //   	$email = (int)($email);
-  //   	$query->where('UserType', 5)
-		// 	->where('PhoneNo', (string)$email)
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-  //   })
-		// ->first();
-
 		$check = DB::table('user')
 		->where('UserType', 5)
 		->where('PhoneNo', (int)$email)
 		->where('password', md5($password))
-		->where('Active', 1)
+		// ->where('Active', 1)
 		->first();
 
 		if($check) {
@@ -66,6 +44,18 @@ class EclaimController extends \BaseController {
 		} else if($check && (int)$check->member_activated == 1) {
 			return array ('status' => TRUE, 'message' => 'Account is active.');
 		}
+			// check employee status
+			$employee_status = PlanHelper::getEmployeeStatus($check->UserID);
+			$today =  PlanHelper::endDate(date('Y-m-d'));
+			if($employee_status['status'] == true)  {
+				// $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+				$expiry = date('Y-m-d H:i:s', strtotime($employee_status['expiry_date']));
+				$expiry = PlanHelper::endDate($expiry);
+				if($today > $expiry) {
+					return array('status' => FALSE, 'message' => 'Invalid Credentials or Please update your user ID by clicking on the link above.');
+				}
+			}
+
 			// Session::put('employee-session', $check->UserID);
 			$jwt = new JWT();
 			$secret = Config::get('config.secret_key');
@@ -927,6 +917,7 @@ class EclaimController extends \BaseController {
 	public function getActivity( )
 	{
 		$input = Input::all();
+		// return $input;
 		$data = StringHelper::getEmployeeSession( );
 		$user_id = $data->UserID;
 		$start = date('Y-m-d', strtotime($input['start']));
@@ -951,15 +942,6 @@ class EclaimController extends \BaseController {
 		$total_employee_lite_plan_spent = 0;
 		$wallet_status = false;
 		$lite_plan_status = StringHelper::litePlanStatus($user_id);
-		$user_plan_history = DB::table('user_plan_history')
-                  ->where('user_id', $user_id)
-                  ->where('type', 'started')
-                  ->orderBy('created_at', 'desc')
-                  ->first();
-
-        $customer_active_plan = DB::table('customer_active_plan')
-                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                  ->first();
 
 		$company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
 		if($company_wallet_status) {
@@ -976,7 +958,6 @@ class EclaimController extends \BaseController {
 			$history_column_id = "wellness_wallet_history_id";
 		}
 
-
 		$user_plan_history = DB::table('user_plan_history')
 		->where('user_id', $user_id)
 		->orderBy('created_at', 'desc')
@@ -989,22 +970,22 @@ class EclaimController extends \BaseController {
 							->first();
 		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
 		if($user_spending_dates) {
-      if($spending_type == 'medical') {
-        $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
-      } else {
-        $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
-      }
-    } else {
-      $credit_data = null;
-    }
+			if($spending_type == 'medical') {
+				$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+			} else {
+				$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+			}
+		} else {
+			$credit_data = null;
+		}
 
-    // return $credit_data;
+    	// return $credit_data;
 		$spending_end_date = PlanHelper::endDate($input['end']);
 		$allocation = $credit_data ? $credit_data['allocation'] : 0;
 		$balance = $credit_data ? $credit_data['balance'] : 0;
 		$ids = StringHelper::getSubAccountsID($user_id);
     
-    // get e claim
+    	// get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -1168,13 +1149,6 @@ class EclaimController extends \BaseController {
 
 				$total_amount = number_format((float)$trans->procedure_cost, 2);
 				$treatment = 0;
-				// if(strripos($trans->procedure_cost, '$') !== false) {
-				// 	$temp_cost = explode('$', $trans->procedure_cost);
-				// 	$total_amount = number_format($temp_cost[1]);
-				// } else {
-				// 	$total_amount = number_format($trans->procedure_cost, 2);
-				// }
-
 				if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 						if((int)$trans->lite_plan_enabled == 1) {
@@ -1224,9 +1198,9 @@ class EclaimController extends \BaseController {
 							$treatment = $trans->credit_cost + $trans->cash_cost;
 						} else {
 							$total_amount = (float)$trans->procedure_cost + $trans->consultation_fees;
-              // $total_amount = $trans->procedure_cost;
+              				// $total_amount = $trans->procedure_cost;
 							$cash = (float)$trans->procedure_cost;
-							$treatment = $trans->credit_cost;
+							$treatment = (float)$trans->procedure_cost;
 						}
 					} else {
 						if((int)$trans->half_credits == 1) {
@@ -1253,7 +1227,7 @@ class EclaimController extends \BaseController {
 					// }
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
-	            $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	            			$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 							// $total_amount = $trans->credit_cost + $trans->cash_cost;
 							$cash = $trans->cash_cost;
 							$payment_type = 'Mednefits Credits + Cash';
@@ -1261,7 +1235,7 @@ class EclaimController extends \BaseController {
 						} else {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
 							$treatment = $trans->credit_cost;
-	              // $total_amount = $trans->procedure_cost;
+	              			// $total_amount = $trans->procedure_cost;
 								$payment_type = 'Mednefits Credits';
 							if($trans->credit_cost > 0) {
 								$cash = 0;
@@ -1290,7 +1264,7 @@ class EclaimController extends \BaseController {
 					if((int)$trans->lite_plan_enabled == 1) {
 						$bill_amount = (float)$trans->procedure_cost - $trans->consultation_fees;
 					} else {
-						$bill_amount = (float)$trans->procedure_cost;
+						$bill_amount = (float)$trans->procedure_cost + $trans->cash_cost;
 					}
 				} else {
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -1304,7 +1278,6 @@ class EclaimController extends \BaseController {
 							if((int)$trans->lite_plan_use_credits == 1) {
 								$bill_amount = 	(float)$trans->procedure_cost;
 							} else {
-								// $cost_temp = $trans->credit_cost + $trans->cash_cost;
 								$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
 							}
 						}
@@ -1313,7 +1286,10 @@ class EclaimController extends \BaseController {
 					}
 				}
 
-
+				if($consultation_credits)	{
+					$transaction_type = "credit";
+					$payment_type = "Mednefits Credits";
+				}
                 // get clinic type
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$type = "";
@@ -2116,21 +2092,21 @@ class EclaimController extends \BaseController {
 					$credit_status = FALSE;
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$cash_cost = $transation->cash_cost;
+							$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
+							$cash_cost = (float)$transation->cash_cost;
 						} else {
 							if($trans->credit_cost > 0) {
 								$total_amount = $trans->procedure_cost;
 							} else {
-								$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+								$total_amount = (float)$trans->procedure_cost + (float)$trans->consultation_fees;
 							}
-							$cash_cost = $trans->procedure_cost;
+							$cash_cost = (float)$trans->procedure_cost;
 						}
 					} else {
 						if((int)$trans->half_credits == 1) {
-							$cash_cost = $trans->cash_cost;
+							$cash_cost = (float)$trans->cash_cost;
 						} else {
-							$cash_cost = $trans->procedure_cost;
+							$cash_cost = (float)$trans->procedure_cost;
 						}
 					}
 				} else {
@@ -2139,11 +2115,11 @@ class EclaimController extends \BaseController {
 
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-							$cash_cost = $trans->cash_cost;
+							$total_amount = (float)$trans->credit_cost + (float)$trans->cash_cost + (float)$trans->consultation_fees;
+							$cash_cost = (float)$trans->cash_cost;
 						} else {
                       // $total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+							$total_amount = (float)$trans->credit_cost + (float)$trans->cash_cost + (float)$trans->consultation_fees;
 							if($trans->credit_cost > 0) {
 								$cash_cost = 0;
 							} else {
@@ -3461,13 +3437,18 @@ public function getActivityInNetworkTransactions( )
 				if((int)$trans->health_provider_done == 1) {
 					$payment_type = "Cash";
 					$transaction_type = "cash";
+					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
+						$payment_type = 'Mednefits Credits + Cash';
+						$transaction_type = "credit_cash";
+					}
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
 							$cash = $trans->cash_cost;
 						} else {
-							$total_amount = $trans->procedure_cost;
-							$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+							
+							$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+							// $total_amount = $trans->procedure_cost + $trans->consultation_fees;
 							$cash = $trans->procedure_cost;
 						}
 					} else {
@@ -3481,21 +3462,23 @@ public function getActivityInNetworkTransactions( )
 					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 						$payment_type = 'Mednefits Credits + Cash';
 						$half_credits = true;
+						$transaction_type = "credit_cash";
 					} else {
 						$payment_type = 'Mednefits Credits';
+						$transaction_type = "credits";
 					}
-					$transaction_type = "credits";
+					
 					// $cash = number_format($trans->credit_cost, 2);
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 							$procedure_cost = $trans->credit_cost + $trans->consultation_fees;
 							$transaction_type = "credit_cash";
-                // $total_amount = $trans->credit_cost + $trans->cash_cost;
+                			// $total_amount = $trans->credit_cost + $trans->cash_cost;
 							$cash = $trans->cash_cost;
 						} else {
 							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-                // $total_amount = $trans->procedure_cost;
+                			// $total_amount = $trans->procedure_cost;
 							if($trans->credit_cost > 0) {
 								$cash = 0;
 							} else {
@@ -3531,15 +3514,28 @@ public function getActivityInNetworkTransactions( )
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->lite_plan_use_credits == 1) {
 							$bill_amount = 	$trans->procedure_cost;
+							if($trans->credit_cost > 0 && $trans->cash_cost)	{
+								$bill_amount = $trans->credit_cost + $trans->cash_cost;
+							}
 						} else {
 							if((int)$trans->health_provider_done == 1) {
 								$bill_amount = 	$trans->procedure_cost;
+								if($trans->credit_cost > 0 && $trans->cash_cost)	{
+									$bill_amount = $trans->credit_cost + $trans->cash_cost;
+								}
 							} else {
 								$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
+								if($trans->credit_cost > 0 && $trans->cash_cost)	{
+									$bill_amount = $trans->credit_cost + $trans->cash_cost;
+								}
 							}
 						}
 					} else {
-						$bill_amount = 	$trans->procedure_cost;
+						if($trans->credit_cost > 0 && $trans->cash_cost)	{
+							$bill_amount = $trans->credit_cost + $trans->consultation_fees;
+						} else {
+							$bill_amount = 	$trans->procedure_cost;
+						}	
 					}
 				}
 
@@ -4859,7 +4855,7 @@ public function getHrActivity( )
 		// ->orderBy('created_at', 'desc')
 		// ->where('type', 'started')
 		// ->first();
-    	// get e claim
+    // get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -4923,10 +4919,10 @@ public function getHrActivity( )
 								}
 							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0){
 								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
-									$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+									// $total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
 									$consultation = floatval($trans->consultation_fees) * $trans->currency_amount;;
 								} else {
-									$total_lite_plan_consultation += floatval($trans->consultation_fees);
+									// $total_lite_plan_consultation += floatval($trans->consultation_fees);
 									$consultation = floatval($trans->consultation_fees);
 								}
 							}
@@ -6309,13 +6305,17 @@ public function searchEmployeeEclaimActivity( )
 		}
 
 		if($res->currency_type == "myr" && $res->default_currency == "myr") {
-      $res->default_currency = "MYR";
-    } else if($res->default_currency == "myr"){
-      $res->default_currency = "MYR";
-      $res->amount = $res->amount;
-    } else {
-      $res->default_currency = "SGD";
-    }
+			$res->default_currency = "MYR";
+		} else if($res->default_currency == "myr"){
+			$res->default_currency = "MYR";
+			$res->amount = $res->amount;
+		} else {
+			$res->default_currency = "SGD";
+		}
+
+		if($res->cap_amount > 0) {
+			$res->claim_amount = $res->cap_amount;
+		}
 
 		$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 		$temp = array(
@@ -6413,154 +6413,157 @@ public function hrEclaimActivity( )
         // get total e-claim spend
 
 	foreach ($corporate_members as $key => $member) {
+			$ids = StringHelper::getSubAccountsID($member->user_id);
+			$total_e_claim_submitted +=  DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', $spending_type)
+			->where('created_at', '>=', $start)
+			->where('created_at', '<=', $end)
+			->sum('amount');
+			$total_e_claim_pending +=  DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', $spending_type)
+			->where('created_at', '>=', $start)
+			->where('created_at', '<=', $end)
+			->where('status', 0)
+			->sum('amount');
+			$total_e_claim_approved = 0;
+			// $total_e_claim_approved +=  DB::table('e_claim')
+			// ->whereIn('user_id', $ids)
+			// ->where('spending_type', $spending_type)
+			// ->where('created_at', '>=', $start)
+			// ->where('created_at', '<=', $end)
+			// ->where('status', 1)
+			// ->sum('amount');
+			$total_e_claim_rejected +=  DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', $spending_type)
+			->where('created_at', '>=', $start)
+			->where('created_at', '<=', $end)
+			->where('status', 2)
+			->sum('amount');
 
-		$ids = StringHelper::getSubAccountsID($member->user_id);
-		$total_e_claim_submitted +=  DB::table('e_claim')
-		->whereIn('user_id', $ids)
-		->where('spending_type', $spending_type)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
-		->sum('amount');
-		$total_e_claim_pending +=  DB::table('e_claim')
-		->whereIn('user_id', $ids)
-		->where('spending_type', $spending_type)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
-		->where('status', 0)
-		->sum('amount');
-		$total_e_claim_approved = 0;
-		// $total_e_claim_approved +=  DB::table('e_claim')
-		// ->whereIn('user_id', $ids)
-		// ->where('spending_type', $spending_type)
-		// ->where('created_at', '>=', $start)
-		// ->where('created_at', '<=', $end)
-		// ->where('status', 1)
-		// ->sum('amount');
-		$total_e_claim_rejected +=  DB::table('e_claim')
-		->whereIn('user_id', $ids)
-		->where('spending_type', $spending_type)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
-		->where('status', 2)
-		->sum('amount');
+			$e_claim_result = DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', $spending_type)
+			->where('created_at', '>=', $start)
+			->where('created_at', '<=', $end)
+			->orderBy('created_at', 'desc')
+			->get();
 
-		$e_claim_result = DB::table('e_claim')
-		->whereIn('user_id', $ids)
-		->where('spending_type', $spending_type)
-		->where('created_at', '>=', $start)
-		->where('created_at', '<=', $end)
-		->orderBy('created_at', 'desc')
-		->get();
-
-		if($spending_type == 'medical') {
-			$table_wallet_history = 'wallet_history';
-		} else {
-			$table_wallet_history = 'wellness_wallet_history';
-		}
-
-
-		foreach($e_claim_result as $key => $res) {
-			$approved_status = FALSE;
-			$rejected_status = FALSE;
-
-			if($res->status == 0) {
-				$status_text = 'Pending';
-				$pending += $res->amount;
-			} else if($res->status == 1) {
-				$status_text = 'Approved';
-				$history = DB::table($table_wallet_history)
-							->where('logs', 'deducted_from_e_claim')
-							->where('where_spend', 'e_claim_transaction')
-							->where('id', $res->e_claim_id)
-							->first();
-
-				if($history) {
-					$e_claim_spent += $history->credit;
-					$total_e_claim_approved += $history->credit;
-				} else {
-					$e_claim_spent += $res->amount;
-				}
-			} else if($res->status == 2) {
-				$status_text = 'Rejected';
-				$rejected += $res->amount;
-				$rejected_status = TRUE;
+			if($spending_type == 'medical') {
+				$table_wallet_history = 'wallet_history';
 			} else {
-				$status_text = 'Pending';
-				$pending += $res->amount;
+				$table_wallet_history = 'wellness_wallet_history';
 			}
 
 
-                // get docs
-			$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
+			foreach($e_claim_result as $key => $res) {
+				$approved_status = FALSE;
+				$rejected_status = FALSE;
 
-			if(sizeof($docs) > 0) {
-				$e_claim_receipt_status = TRUE;
-				$doc_files = [];
-				foreach ($docs as $key => $doc) {
-					if($doc->file_type == "pdf" || $doc->file_type == "xls") {
-						// if(StringHelper::Deployment()==1){
-							// $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
-						$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
-						// } else {
-						// 	$fil = url('').'/receipts/'.$doc->doc_file;
-						// }
-						$image_link = null;
-					} else if($doc->file_type == "image") {
-						$image_link = FileHelper::formatImageAutoQualityCustomer($doc->doc_file, 40);
-						$fil = $image_link;
+				if($res->status == 0) {
+					$status_text = 'Pending';
+					$pending += $res->amount;
+				} else if($res->status == 1) {
+					$status_text = 'Approved';
+					$history = DB::table($table_wallet_history)
+								->where('logs', 'deducted_from_e_claim')
+								->where('where_spend', 'e_claim_transaction')
+								->where('id', $res->e_claim_id)
+								->first();
+
+					if($history) {
+						$e_claim_spent += $history->credit;
+						$total_e_claim_approved += $history->credit;
+					} else {
+						$e_claim_spent += $res->amount;
 					}
-
-					$temp_doc = array(
-						'e_claim_doc_id'    => $doc->e_claim_doc_id,
-						'e_claim_id'            => $doc->e_claim_id,
-						'file'                      => $fil,
-						'file_type'             => $doc->file_type,
-						'image_link'		=> $image_link
-					);
-
-					array_push($doc_files, $temp_doc);
+				} else if($res->status == 2) {
+					$status_text = 'Rejected';
+					$rejected += $res->amount;
+					$rejected_status = TRUE;
+				} else {
+					$status_text = 'Pending';
+					$pending += $res->amount;
 				}
-			} else {
-				$e_claim_receipt_status = FALSE;
-				$doc_files = FALSE;
-			}
 
-			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-			if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
-				$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
-				$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
-				$sub_account = ucwords($temp_account->Name);
-				$sub_account_type = $temp_sub->user_type;
-				$owner_id = $temp_sub->owner_id;
-				$relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-				$bank_account_number = $temp_account->bank_account;
-				$bank_name = $temp_account->bank_name;
-				$bank_code = $temp_account->bank_code;
-				$bank_brh = $temp_account->bank_brh;
-			} else {
-				$sub_account = FALSE;
-				$sub_account_type = FALSE;
-				$owner_id = $member->UserID;
-				$relationship = false;
-				$bank_account_number = $member->bank_account;
-				$bank_name = $member->bank_name;
-				$bank_code = $member->bank_code;
-				$bank_brh = $member->bank_brh;
-			}
+					// get docs
+				$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
 
-			if($res->status == 1) {
-				$approved_status = true;
-			}
+				if(sizeof($docs) > 0) {
+					$e_claim_receipt_status = TRUE;
+					$doc_files = [];
+					foreach ($docs as $key => $doc) {
+						if($doc->file_type == "pdf" || $doc->file_type == "xls") {
+							// if(StringHelper::Deployment()==1){
+								// $fil = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+							$fil = EclaimHelper::createPreSignedUrl($doc->doc_file);
+							// } else {
+							// 	$fil = url('').'/receipts/'.$doc->doc_file;
+							// }
+							$image_link = null;
+						} else if($doc->file_type == "image") {
+							$image_link = FileHelper::formatImageAutoQualityCustomer($doc->doc_file, 40);
+							$fil = $image_link;
+						}
+
+						$temp_doc = array(
+							'e_claim_doc_id'    => $doc->e_claim_doc_id,
+							'e_claim_id'            => $doc->e_claim_id,
+							'file'                      => $fil,
+							'file_type'             => $doc->file_type,
+							'image_link'		=> $image_link
+						);
+
+						array_push($doc_files, $temp_doc);
+					}
+				} else {
+					$e_claim_receipt_status = FALSE;
+					$doc_files = FALSE;
+				}
+
+				$member = DB::table('user')->where('UserID', $res->user_id)->first();
+
+				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
+					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+					$sub_account = ucwords($temp_account->Name);
+					$sub_account_type = $temp_sub->user_type;
+					$owner_id = $temp_sub->owner_id;
+					$relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+					$bank_account_number = $temp_account->bank_account;
+					$bank_name = $temp_account->bank_name;
+					$bank_code = $temp_account->bank_code;
+					$bank_brh = $temp_account->bank_brh;
+				} else {
+					$sub_account = FALSE;
+					$sub_account_type = FALSE;
+					$owner_id = $member->UserID;
+					$relationship = false;
+					$bank_account_number = $member->bank_account;
+					$bank_name = $member->bank_name;
+					$bank_code = $member->bank_code;
+					$bank_brh = $member->bank_brh;
+				}
+
+				if($res->status == 1) {
+					$approved_status = true;
+				}
 
 			if($res->currency_type == "myr" && $res->default_currency == "myr") {
-	      $res->default_currency = "MYR";
-	    } else if($res->default_currency == "myr"){
-	      $res->default_currency = "MYR";
-	      $res->amount = $res->amount;
-	    } else {
-	      $res->default_currency = "SGD";
-	    }
+				$res->default_currency = "MYR";
+			} else if($res->default_currency == "myr"){
+				$res->default_currency = "MYR";
+				$res->amount = $res->amount;
+			} else {
+				$res->default_currency = "SGD";
+			}
+
+			if($res->cap_amount > 0) {
+				$res->claim_amount = $res->cap_amount;
+			}
 
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(

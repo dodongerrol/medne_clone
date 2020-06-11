@@ -2138,6 +2138,18 @@ class BenefitsDashboardController extends \BaseController {
 				);
 			}
 
+			if($employee_status['status'] == true) {
+				$expiry_date = $employee_status['expiry_date'];
+				$today = PlanHelper::endDate(date('Y-m-d'));
+				$expiry_date = PlanHelper::endDate($expiry_date);
+				if($today > $expiry_date) {
+					$medical['credits_allocation'] = "0.00";
+					$medical['balance'] = "0.00";
+					$wellness['credits_allocation'] = "0.00";
+					$wellness['balance'] = "0.00";
+				}
+			}
+
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
 			$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
@@ -2244,7 +2256,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		return $users_allocation;
 	}
-
+	
 	public function userCompanyCreditsAllocated( )
 	{
 
@@ -2277,7 +2289,8 @@ class BenefitsDashboardController extends \BaseController {
 		$temp_total_deduction_wellness = 0;
 		$total_medical_supp_credits = 0;
 		$total_wellness_supp_credits = 0;
-
+		$total_wellness_bonus = 0;
+		$total_medical_bonus = 0;
 		// get plan
 		$plan = DB::table('customer_plan')
 		->where('customer_buy_start_id', $customer_id)
@@ -2317,6 +2330,14 @@ class BenefitsDashboardController extends \BaseController {
 				->where('created_at', '>=', $user_spending_dates_medical['start'])
 				->where('created_at', '<=', $user_spending_dates_medical['end'])
 				->sum('credit');
+
+				$total_medical_bonus = DB::table('customer_credit_logs')
+				->where('customer_credits_id', $company_credits->customer_credits_id)
+				->where('logs', 'admin_added_bonus_credits')
+				->where('customer_credit_logs_id', '>=', $user_spending_dates_medical['id'])
+				->where('created_at', '>=', $user_spending_dates_medical['start'])
+				->where('created_at', '<=', $user_spending_dates_medical['end'])
+				->sum('credit');
 			} else {
 				$temp_total_allocation = DB::table('customer_credit_logs')
 				->where('customer_credits_id', $company_credits->customer_credits_id)
@@ -2331,8 +2352,15 @@ class BenefitsDashboardController extends \BaseController {
 				->where('created_at', '>=', $user_spending_dates_medical['start'])
 				->where('created_at', '<=', $user_spending_dates_medical['end'])
 				->sum('credit');
+
+				$total_medical_bonus = DB::table('customer_credit_logs')
+				->where('customer_credits_id', $company_credits->customer_credits_id)
+				->where('logs', 'admin_added_bonus_credits')
+				->where('created_at', '>=', $user_spending_dates_medical['start'])
+				->where('created_at', '<=', $user_spending_dates_medical['end'])
+				->sum('credit');
 			}
-			$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
+			$total_medical_allocation = $temp_total_allocation + $total_medical_bonus - $temp_total_deduction;
 				// if($plan->account_type != "enterprise_plan") {
 				    // check if customer has a credit reset in medical
 			$customer_credit_reset_wellness = DB::table('credit_reset')
@@ -2348,7 +2376,7 @@ class BenefitsDashboardController extends \BaseController {
 				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
 				->where('customer_credits.customer_id', $customer_id)
 				->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
-						->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $user_spending_dates_wellness['id'])
+				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $user_spending_dates_wellness['id'])
 				->where('customer_wellness_credits_logs.created_at', '>=', $user_spending_dates_wellness['start'])
 				->where('customer_wellness_credits_logs.created_at', '<=', $user_spending_dates_wellness['end'])
 				->sum('customer_wellness_credits_logs.credit');
@@ -2357,10 +2385,18 @@ class BenefitsDashboardController extends \BaseController {
 				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
 				->where('customer_credits.customer_id', $customer_id)
 				->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
-						->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $user_spending_dates_wellness['id'])
+				->where('customer_wellness_credits_logs.customer_wellness_credits_history_id', '>=', $user_spending_dates_wellness['id'])
 				->where('customer_wellness_credits_logs.created_at', '>=', $user_spending_dates_wellness['start'])
 				->where('customer_wellness_credits_logs.created_at', '<=', $user_spending_dates_wellness['end'])
 				->sum('customer_wellness_credits_logs.credit');
+
+				$total_wellness_bonus = DB::table('customer_wellness_credits_logs')
+				->where('customer_credits_id', $company_credits->customer_credits_id)
+				->where('logs', 'admin_added_bonus_credits')
+				->where('customer_wellness_credits_history_id', '>=', $user_spending_dates_wellness['id'])
+				->where('created_at', '>=', $user_spending_dates_wellness['start'])
+				->where('created_at', '<=', $user_spending_dates_wellness['end'])
+				->sum('credit');
 			} else {
 				$temp_total_allocation_wellness = DB::table('customer_credits')
 				->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
@@ -2377,6 +2413,13 @@ class BenefitsDashboardController extends \BaseController {
 				->where('customer_wellness_credits_logs.created_at', '>=', $user_spending_dates_wellness['start'])
 				->where('customer_wellness_credits_logs.created_at', '<=', $user_spending_dates_wellness['end'])
 				->sum('customer_wellness_credits_logs.credit');
+
+				$total_wellness_bonus = DB::table('customer_wellness_credits_logs')
+				->where('customer_credits_id', $company_credits->customer_credits_id)
+				->where('logs', 'admin_added_bonus_credits')
+				->where('created_at', '>=', $user_spending_dates_wellness['start'])
+				->where('created_at', '<=', $user_spending_dates_wellness['end'])
+				->sum('credit');
 			}
 			// } else {
 			// 	$temp_total_allocation_wellness = DB::table('customer_credits')
@@ -2391,14 +2434,15 @@ class BenefitsDashboardController extends \BaseController {
 			// 	->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
 			// 	->sum('customer_wellness_credits_logs.credit');
 			// }
-			$total_allocation_wellness = $temp_total_allocation_wellness - $temp_total_deduction_wellness;
+			$total_allocation_wellness = $temp_total_allocation_wellness + $total_wellness_bonus - $temp_total_deduction_wellness;
 				// }
 
 		}
 
 		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$start = $spending_account_settings->medical_spending_start_date;
-		$user_allocated = PlanHelper::getCorporateUserByEntitlementDates($account_link->corporate_id, $customer_id, $start);
+		$user_allocated = PlanHelper::getActivePlanUsers($customer_id);
+		// $user_allocated = PlanHelper::getCorporateUserByEntitlementDates($account_link->corporate_id, $customer_id, $start);
 		$get_allocation_spent = 0;
 		$get_allocation_spent_wellness = 0;
 
@@ -2411,11 +2455,11 @@ class BenefitsDashboardController extends \BaseController {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($user, $filter, 'medical');
 
 			if($member_spending_dates_medical) {
-				$medical_wallet = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+				$medical_wallet = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $user, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
 				$get_allocation_spent += $medical_wallet['get_allocation_spent'];
 				$allocated += $medical_wallet['allocation'];
 				$total_deduction_credits += $medical_wallet['total_deduction_credits'];
-				$deleted_employee_allocation += $medical_wallet['deleted_employee_allocation'];
+				// $deleted_employee_allocation += $medical_wallet['deleted_employee_allocation'];
 				$total_medical_balance += $medical_wallet['balance'];
 			} else {
 				$get_allocation_spent += 0;
@@ -2428,11 +2472,11 @@ class BenefitsDashboardController extends \BaseController {
 			$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($user, $filter, 'wellness');
 
 			if($member_spending_dates_wellness) {
-				$wellness_wallet = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
-				$get_allocation_spent_wellness =+ $wellness_wallet['get_allocation_spent'];
+				$wellness_wallet = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $user, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+				$get_allocation_spent_wellness += $wellness_wallet['get_allocation_spent'];
 				$allocated_wellness += $wellness_wallet['allocation'];
 				$total_deduction_credits_wellness += $wellness_wallet['total_deduction_credits_wellness'];
-				$deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
+				// $deleted_employee_allocation_wellness += $wellness_wallet['deleted_employee_allocation_wellness'];
 				$total_wellness_balance += $wellness_wallet['balance'];
 			} else {
 				$get_allocation_spent_wellness =+ 0;
@@ -3519,17 +3563,18 @@ class BenefitsDashboardController extends \BaseController {
 		$hr_data = StringHelper::getJwtHrSession();
 		$hr_id = $hr_data->hr_dashboard_id;
 		$input = Input::all();
-		$date = date('Y-m-d');
+		$date = PlanHelper::endDate(date('Y-m-d'));
 
 		foreach ($input['users'] as $key => $user) {
 			$check_withdraw = DB::table('customer_plan_withdraw')->where('user_id', $user['user_id'])->count();
 			$expiry = date('Y-m-d', strtotime($user['expiry_date']));
-			// return $date.' - '.$expiry;
+			$expired_date = date('Y-m-d', strtotime('+1 day', strtotime($user['expiry_date'])));
+			// return $check_withdraw;
 			if($check_withdraw == 0) {
-				if($date >= $expiry) {
+				if($date >= $expired_date) {
 					// create refund and delete now
 					try {
-						$result = self::removeEmployee($user['user_id'], $expiry, true);
+						$result = MemberHelper::removeEmployee($user['user_id'], $expiry, true, $user);
 						if(!$result) {
 							return array('status' => FALSE, 'message' => 'Failed to create withdraw employee. Please contact Mednefits and report the issue.');
 						}
@@ -3543,10 +3588,7 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				} else {
 					try {
-						$result = self::createWithDrawEmployees($user['user_id'], $expiry, true, true, false);
-						// if($result) {
-						// 	self::updateCustomerPlanStatusDeleteUser($user['user_id']);
-						// }
+						$result = MemberHelper::createWithDrawEmployees($user['user_id'], $expiry, true, true, false, $user);
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('hr/employees/withdraw', $parameter = array(), $secure = null);
@@ -3956,10 +3998,10 @@ class BenefitsDashboardController extends \BaseController {
 			// } else {
 			// 	self::updateCustomerPlanStatusDeleteUser($id);
 			// }
-			if($plan_active->account_type == "lite_plan" && $plan_active->plan_method == "pre_paid") {
+			if($plan_active->account_type == "lite_plan" && $expiry_date < date('Y-m-d')) {
 				// return member medical and wellness balance
-				PlanHelper::returnMemberMedicalBalance($id);
-				PlanHelper::returnMemberWellnessBalance($id);
+				// PlanHelper::returnMemberMedicalBalance($id);
+				// PlanHelper::returnMemberWellnessBalance($id);
 			}
 			return TRUE;
 		} catch(Exception $e) {
@@ -3980,7 +4022,7 @@ class BenefitsDashboardController extends \BaseController {
 		$user = new User();
 		
 		$id = PlanHelper::getCusomerIdToken();
-
+		$customer_id = $id;
 		if(empty($input['replace_id']) || $input['replace_id'] == null) {
 			return array('status' => false, 'message' => 'Employee ID is required.');
 		}
@@ -3998,9 +4040,9 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Mobile No. is required.');
 		}
 
-		if(empty($input['postal_code']) || $input['postal_code'] == null) {
-			return array('status' => false, 'message' => 'Postal Code is required.');
-		}
+		// if(empty($input['postal_code']) || $input['postal_code'] == null) {
+		// 	return array('status' => false, 'message' => 'Postal Code is required.');
+		// }
 
 		if(empty($input['last_day_coverage']) || $input['last_day_coverage'] == null) {
 			return array('status' => false, 'message' => 'Last Day of Coverage of Employee is required.');
@@ -4047,8 +4089,10 @@ class BenefitsDashboardController extends \BaseController {
 					return ['status' => FALSE, 'message' => 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.'];
 				}
 
-				if($medical > $customer_credits->balance) {
-					return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member'];
+				if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {
+					if($medical > $customer_credits->balance) {
+						return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member'];
+					}
 				}
 			}
 
@@ -4057,8 +4101,10 @@ class BenefitsDashboardController extends \BaseController {
 					return ['status' => FALSE, 'message' => 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.'];
 				}
 
-				if($wellness > $customer_credits->wellness_credits) {
-					return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
+				if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
+					if($wellness > $customer_credits->wellness_credits) {
+						return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
+					}
 				}
 			}
 		}
@@ -4073,21 +4119,9 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Employee does not exist.');
 		}
 
-
-		// check existing user email
-		// $check = DB::table('user')
-		// ->where('Email', $input['email'])
-		// ->where('UserType', 5)
-		// ->where('Active', 1)
-		// ->count();
-
-		// if($check > 0) {
-		// 	return array(
-		// 		'status'	=> FALSE,
-		// 		'message'	=> 'Email Address already taken.'
-		// 	);
-		// }
-
+		$customer_spending = CustomerHelper::getCustomerWalletStatus($customer_id);
+		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+		
 		// check last day of coverage and plan start
 		$last_day_of_coverage = date('Y-m-d', strtotime($input['last_day_coverage']));
 		$plan_start = date('Y-m-d', strtotime($input['plan_start']));
@@ -4095,23 +4129,7 @@ class BenefitsDashboardController extends \BaseController {
 		$customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
 		// check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $id)->first();
-
-
-		// check credits
-		// if($medical > 0) {
-		// 	if($medical > $customer->balance) {
-		// 		return array('status' => false, 'message' => 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.');
-		// 	}
-		// }
-
-		// if($wellness > 0) {
-		// 	if($medical > $customer->wellness_credits) {
-		// 		return array('status' => false, 'message' => 'We realised your Company Medical Spending Account has insufficient credits. Please contact our support team to increase the credit limit.');
-		// 	}
-		// }
-
-		// return "yeah";
-
+		$input['postal_code'] = !empty($input['postal_code']) ? $input['postal_code'] : null;
 		if($last_day_of_coverage == $plan_start) {
 			// return "yeah";
 			$result = PlanHelper::createReplacementEmployee($replace_id, $input, $id, false, $medical, $wellness);
@@ -4143,8 +4161,10 @@ class BenefitsDashboardController extends \BaseController {
 
 			$deactive_employee_status = 0;
 			$replace_status = 0;
+			MemberHelper::getEmployeeSpendingAccountSummaryNew($input);
 
 			if(date('Y-m-d') >= $last_day_of_coverage) {
+				
 				$user_data = array(
 					'Active'	=> 0,
 					'updated_at' => date('Y-m-d')
@@ -4257,101 +4277,224 @@ class BenefitsDashboardController extends \BaseController {
 					'currency_type'		=> $customer_data->currency_type
 				);
 				\WalletHistory::create($data_create_history);
-				if($medical > 0) {
-                    // medical credits
-					// if($customer->balance >= $medical) {
 
-						$result_customer_active_plan = PlanHelper::allocateCreditBaseInActivePlan($id, $medical, "medical");
+				if($customer_spending['medical'] == true) {
+					if($medical > 0) {
+						$customer_credit_logs = new CustomerCreditLogs( );
+						$credits = $medical;
+		
+						if($credits > 0 && $spending['account_type'] != "lite_plan" && $spending['medical_method'] != "pre_paid" || $credits > 0 && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "post_paid") {
+							$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
+		
+							if($result_customer_active_plan) {
+								$customer_active_plan_id = $result_customer_active_plan;
+							} else {
+								$customer_active_plan_id = NULL;
+							}
+							$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("balance", $credits);
+							if($customer_credits_result) {
+								// credit log for wellness
+								$customer_credits_logs = array(
+									'customer_credits_id'	=> $customer->customer_credits_id,
+									'credit'				=> $credits,
+									'logs'					=> 'admin_added_credits',
+									'running_balance'		=> $customer->balance + $credits,
+									'customer_active_plan_id' => $customer_active_plan_id,
+									'currency_type'	=> $customer->currency_type,
+									'user_id'               => null
+								);
+		
+								$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
+							}
+		
+							// give credits
+							$wallet_class = new Wallet();
+							$update_wallet = $wallet_class->addCredits($user_id, $credits);
+							$employee_logs = new WalletHistory();
+		
+							$wallet_history = array(
+								'wallet_id'     => $wallet->wallet_id,
+								'credit'            => $credits,
+								'logs'              => 'added_by_hr',
+								'running_balance'   => $credits,
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'		=> $customer_data->currency_type
+							);
+		
+							$employee_logs->createWalletHistory($wallet_history);
+							$customer_credits = new CustomerCredits();
 
+							$customer_credits_left = DB::table('customer_credits')->where('customer_credits_id', $customer->customer_credits_id)->first();
+							$data['medical_credit_history'] = $wallet_history;
+							if($customer_credits_result) {
+								$company_deduct_logs = array(
+									'customer_credits_id'   => $customer->customer_credits_id,
+									'credit'                => $credits,
+									'logs'                  => 'added_employee_credits',
+									'user_id'               => $user_id,
+									'running_balance'       => 0,
+									'customer_active_plan_id' => $customer_active_plan_id,
+									'currency_type'		=> $customer_data->currency_type
+								);
+		
+								$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+								\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'medical', $credits);
+							}
+						} else if($customer->balance >= $credits && $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {
+							$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
+							if($result_customer_active_plan) {
+								$customer_active_plan_id = $result_customer_active_plan;
+							} else {
+								$customer_active_plan_id = NULL;
+							}
+		
+							// give credits
+							$wallet_class = new Wallet();
+							$update_wallet = $wallet_class->addCredits($user_id, $credits);
+							$employee_logs = new WalletHistory();
+		
+							$wallet_history = array(
+								'wallet_id'     => $wallet->wallet_id,
+								'credit'            => $credits,
+								'logs'              => 'added_by_hr',
+								'running_balance'   => $credits,
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'		=> $customer_data->currency_type
+							);
+		
+							$employee_logs->createWalletHistory($wallet_history);
+							$customer_credits = new CustomerCredits();
+		
+							$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $credits);
+							$customer_credits_left = DB::table('customer_credits')->where('customer_credits_id', $customer->customer_credits_id)->first();
+							$data['medical_credit_history'] = $wallet_history;
+							if($customer_credits_result) {
+								$company_deduct_logs = array(
+									'customer_credits_id'   => $customer->customer_credits_id,
+									'credit'                => $credits,
+									'logs'                  => 'added_employee_credits',
+									'user_id'               => $user_id,
+									'running_balance'       => 0,
+									'customer_active_plan_id' => $customer_active_plan_id,
+									'currency_type'		=> $customer_data->currency_type
+								);
+		
+								$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+							}
+						}
+					}
+				}
+				
+				if($customer_spending['wellness'] == true) {
+					if($wellness > 0) {
+						$credits = $wellness;
+						$customer_credits_logs = new CustomerWellnessCreditLogs();
+						$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "wellness");
+		
 						if($result_customer_active_plan) {
 							$customer_active_plan_id = $result_customer_active_plan;
 						} else {
 							$customer_active_plan_id = NULL;
 						}
-
-                        // give credits
-						$wallet_class = new Wallet();
-						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-						$update_wallet = $wallet_class->addCredits($user_id, $medical);
-
-						$employee_logs = new WalletHistory();
-
-						$wallet_history = array(
-							'wallet_id'     => $wallet->wallet_id,
-							'credit'            => $medical,
-							'logs'              => 'added_by_hr',
-							'running_balance'   => $medical,
-							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'	=> $customer_data->currency_type
-						);
-
-						$employee_logs->createWalletHistory($wallet_history);
-						$customer_credits = new CustomerCredits();
-
-						$customer_credits_result = $customer_credits->deductCustomerCredits($customer->customer_credits_id, $medical);
-						
-						if($customer_credits_result) {
-							$company_deduct_logs = array(
-								'customer_credits_id'   => $customer->customer_credits_id,
-								'credit'                => $medical,
-								'logs'                  => 'added_employee_credits',
-								'user_id'               => $user_id,
-								'running_balance'       => $customer->balance - $medical,
+		
+						if($credits > 0 && $spending['account_type'] != "lite_plan" && $spending['wellness_method'] != "pre_paid" || $credits > 0 && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "post_paid") {
+							$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
+							if($customer_credits_result) {
+								// credit log for wellness
+								$customer_wellness_credits_logs = array(
+									'customer_credits_id'	=> $customer->customer_credits_id,
+									'credit'				=> $credits,
+									'logs'					=> 'admin_added_credits',
+									'running_balance'		=> $customer->wellness_credits + $credits,
+									'customer_active_plan_id' => $customer_active_plan_id,
+									'currency_type'	=> $customer->currency_type,
+									'user_id'               => null
+								);
+	
+								$customer_credits_logs->createCustomerWellnessCreditLogs($customer_wellness_credits_logs);
+							}
+							$wallet_class = new Wallet();
+							$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
+	
+							$wallet_history = array(
+								'wallet_id'     => $wallet->wallet_id,
+								'credit'        => $credits,
+								'logs'          => 'added_by_hr',
+								'running_balance'   => $credits,
 								'customer_active_plan_id' => $customer_active_plan_id,
-								'currency_type'					=> $customer_data->currency_type
+								'currency_type'		=> $customer_data->currency_type
 							);
-
-							$customer_credit_logs = new CustomerCreditLogs( );
-							$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
-							\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'medical', $medical);
+	
+							\WellnessWalletHistory::create($wallet_history);
+							$customer_credits = new CustomerCredits();
+							$data['wellness_credit_history'] = $wallet_history;
+							if($customer_credits_result) {
+								$company_deduct_logs = array(
+									'customer_credits_id'   => $customer->customer_credits_id,
+									'credit'                => $credits,
+									'logs'                  => 'added_employee_credits',
+									'user_id'               => $user_id,
+									'running_balance'       => 0,
+									'customer_active_plan_id' => $customer_active_plan_id,
+									'currency_type'		=> $customer_data->currency_type
+								);
+								
+								$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+								\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'wellness', $credits);
+							}
+						} else if((float)$customer->wellness_credits >= (float)$credits && $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
+							$wallet_class = new Wallet();
+							$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
+		
+							$wallet_history = array(
+								'wallet_id'     => $wallet->wallet_id,
+								'credit'        => $credits,
+								'logs'          => 'added_by_hr',
+								'running_balance'   => $credits,
+								'customer_active_plan_id' => $customer_active_plan_id,
+								'currency_type'		=> $customer_data->currency_type
+							);
+		
+							\WellnessWalletHistory::create($wallet_history);
+							$customer_credits = new CustomerCredits();
+							$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $credits);
+							$data['wellness_credit_history'] = $wallet_history;
+							if($customer_credits_result) {
+								$company_deduct_logs = array(
+									'customer_credits_id'   => $customer->customer_credits_id,
+									'credit'                => $credits,
+									'logs'                  => 'added_employee_credits',
+									'user_id'               => $user_id,
+									'running_balance'       => 0,
+									'customer_active_plan_id' => $customer_active_plan_id,
+									'currency_type'		=> $customer_data->currency_type
+								);
+								
+								$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+							}
 						}
-					// }
+					}
 				}
 
-				if($wellness > 0) {
-                    // wellness credits
-					// if($customer->wellness_credits >= $wellness) {
-						$result_customer_active_plan = PlanHelper::allocateCreditBaseInActivePlan($id, $wellness, "wellness");
+				$data_entitlement = array(
+					'member_id'								=> $user_id,
+					'medical_usage_date'					=> date('Y-m-d', strtotime($input['plan_start'])),
+					'medical_proration'						=> 'months',
+					'medical_entitlement'					=> $medical,
+					'medical_allocation'					=> $medical,
+					'medical_entitlement_balance'			=> $medical,
+					'wellness_usage_date'					=> date('Y-m-d', strtotime($input['plan_start'])),
+					'wellness_proration'					=> 'months',
+					'wellness_entitlement'					=>  $wellness,
+					'wellness_allocation'					=>  $wellness,
+					'wellness_entitlement_balance'			=>  $wellness,
+					'currency_type'							=> $customer_data->currency_type,
+					'created_at'							=> date('Y-m-d H:i:s'),
+					'updated_at'							=> date('Y-m-d H:i:s'),
+				);
+				
+				DB::table('employee_wallet_entitlement')->insert($data_entitlement);
 
-						if($result_customer_active_plan) {
-							$customer_active_plan_id = $result_customer_active_plan;
-						} else {
-							$customer_active_plan_id = NULL;
-						}
-                        // give credits
-						$wallet_class = new Wallet();
-						$wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
-						$update_wallet = $wallet_class->addWellnessCredits($user_id, $wellness);
-
-						$wallet_history = array(
-							'wallet_id'     => $wallet->wallet_id,
-							'credit'        => $wellness,
-							'logs'          => 'added_by_hr',
-							'running_balance'   => $wellness,
-							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'					=> $customer_data->currency_type
-						);
-
-						\WellnessWalletHistory::create($wallet_history);
-						$customer_credits = new CustomerCredits();
-						$customer_credits_result = $customer_credits->deductCustomerWellnessCredits($customer->customer_credits_id, $wellness);
-						
-						if($customer_credits_result) {
-							$company_deduct_logs = array(
-								'customer_credits_id'   => $customer->customer_credits_id,
-								'credit'                => $wellness,
-								'logs'                  => 'added_employee_credits',
-								'user_id'               => $user_id,
-								'running_balance'       => $customer->wellness_credits - $wellness,
-								'customer_active_plan_id' => $customer_active_plan_id,
-								'currency_type'					=> $customer_data->currency_type
-							);
-							$customer_credits_logs = new CustomerWellnessCreditLogs();
-							$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
-							\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'wellness', $medical);
-						}
-					// }
-				}
 				$replace_status = 1;
 
 				$user = DB::table('user')->where('UserID', $user_id)->first();
@@ -4852,7 +4995,7 @@ class BenefitsDashboardController extends \BaseController {
 				} else {
 					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
 				}
-				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
+				// $calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
 				// $duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
 				$data['price']          = number_format($calculated_prices, 2);
 				$data['amount']					= number_format($get_invoice->employees * $calculated_prices, 2);
@@ -8882,15 +9025,32 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function getHrPasswordTokenDetails($token)
+	public function getHrPasswordTokenDetails( )
 	{
-		$check = DB::table('customer_hr_dashboard')->where('remember_token', $token)->first();
+		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'token required.');
+		}
+		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 		if($check) {
-			return array('status' => TRUE, 'data' => $check->hr_dashboard_id);
+			if($check->active == 1)	{
+				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true]);
+			}
+
+			// check if token is still valid
+			$today = strtotime(date('Y-m-d H:i:s'));
+			$expiry = strtotime($check->expiration_time);
+
+			if($today > $expiry) {
+				return array('status' => false, 'message' => 'token is expired');
+			}
+
+			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
 		}
 
-		return array('status' => FALSE, 'message' => 'Token expired.');
+		return array('status' => false, 'message' => 'Token expired.');
 	}
 
 	public function resetPasswordData( )
@@ -13193,10 +13353,24 @@ class BenefitsDashboardController extends \BaseController {
 
 	public function getEmployeeSpendingAccountSummaryNew( )
 	{
-		// return PlanHelper::reCalculateCompanyBalance();
 		$input = Input::all();
-		// return $input;
-		// $customer_id = $input['customer_id'];
+		return MemberHelper::getEmployeeSpendingAccountSummaryNew($input);
+		if(isset($input['calibrate_medical'])) {
+			if($input['calibrate_medical'] == "true") {
+				$input['calibrate_medical'] = true;
+			} else {
+				$input['calibrate_medical'] = false;
+			}
+		}
+
+		if(isset($input['calibrate_wellness'])) {
+			if($input['calibrate_wellness'] == "true") {
+				$input['calibrate_wellness'] = true;
+			} else {
+				$input['calibrate_wellness'] = false;
+			}
+		}
+		
 		$customer_id = PlanHelper::getCusomerIdToken();
 
 		if(empty($input['employee_id']) || $input['employee_id'] == null) {
@@ -13227,12 +13401,12 @@ class BenefitsDashboardController extends \BaseController {
 		$coverage = PlanHelper::getEmployeePlanCoverageDate($input['employee_id'], $customer_id);
 		$last_day_coverage = PlanHelper::endDate($input['last_date_of_coverage']);
 		$ids = StringHelper::getSubAccountsID($check_employee->UserID);
+		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 
 		$wallet = DB::table('e_wallet')
 		->where('UserID', $check_employee->UserID)
 		->orderBy('created_at', 'desc')
 		->first();
-
 
 		// get employee plan duration
 		if(!empty($input['pro_allocation_start_date']) && !empty($input['pro_allocation_end_date'])) {
@@ -13254,9 +13428,7 @@ class BenefitsDashboardController extends \BaseController {
 		// get empployee plan coverage from last day of employee
 		$diff_coverage = $start->diff($coverage_end);
 		$coverage_diff = $diff_coverage->days + 1;
-		
-		// return array('coverage_diff' => $coverage_diff, 'plan_duration' => $plan_duration);
-		// return $coverage_diff;
+		$employee_status = PlanHelper::getEmployeeStatus($input['employee_id']);
 		// get total allocation of employee from plan start and plan end
 		$employee_credit_reset_medical = DB::table('credit_reset')
 		->where('id', $check_employee->UserID)
@@ -13264,6 +13436,8 @@ class BenefitsDashboardController extends \BaseController {
 		->where('user_type', 'employee')
 		->orderBy('created_at', 'desc')
 		->first();
+
+		$check_wallet_status = DB::table('member_wallet_status')->where('member_id', $input['employee_id'])->first();
 
 		if($employee_credit_reset_medical) {
 			$minimum_date_medical = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
@@ -13277,19 +13451,12 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$plan_end_date = PlanHelper::endDate($coverage['plan_end']);
-
 		$total_allocation_medical_temp = 0;
 		$total_allocation_medical_deducted = 0;
 		$total_allocation_medical_credits_back = 0;
 		$total_medical_e_claim_spent = 0;
 		$total_medical_in_network_spent = 0;
 
-		// $medical_wallet_history = DB::table('wallet_history')
-		// ->where('wallet_id', $wallet->wallet_id)
-		// ->where('created_at', '>=', $minimum_date_medical)
-		// ->where('created_at', '<=', $plan_end_date)
-		// ->get();
-		// return $medical_wallet_history;
 		$pending_e_claim_medical = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', 'medical')
@@ -13304,79 +13471,70 @@ class BenefitsDashboardController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 
+		$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
+		->where('wallet_id', $wallet->wallet_id)
+		->where('logs', 'pro_allocation')
+		->orderBy('created_at', 'desc')
+		->first();
+
 		if($pro_allocation_medical_date) {
 			$usage_date = date('d/m/Y', strtotime($pro_allocation_medical_date->created_at));
 		} else {
-			$pro_allocation_wellness_date = DB::table('wellness_wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->where('logs', 'pro_allocation')
-			->orderBy('created_at', 'desc')
-			->first();
 			if($pro_allocation_wellness_date) {
 				$usage_date = date('d/m/Y', strtotime($pro_allocation_wellness_date->created_at));
 			}
 		}
 
 		$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $check_employee->UserID, $minimum_date_medical, $plan_end_date);
-		// foreach ($medical_wallet_history as $key => $history) {
-		// 	if($history->logs == "added_by_hr") {
-		// 		$total_allocation_medical_temp += $history->credit;
-		// 	}
-
-		// 	if($history->logs == "deducted_by_hr" && (int)$history->from_pro_allocation == 0) {
-		// 		$total_allocation_medical_deducted += $history->credit;
-		// 	}
-
-		// 	if($history->where_spend == "e_claim_transaction") {
-		// 		$total_medical_e_claim_spent += $history->credit;
-		// 	}
-
-		// 	if($history->where_spend == "in_network_transaction") {
-		// 		$total_medical_in_network_spent += $history->credit;
-		// 	}
-
-		// 	if($history->where_spend == "credits_back_from_in_network") {
-		// 		$total_allocation_medical_credits_back += $history->credit;
-		// 	}
-		// }
-
-		// $total_allocation_medical_temp = $total_allocation_medical_temp - $total_allocation_medical_deducted;
-		// $total_allocation_medical = $total_allocation_medical_temp;
-		// $total_medical_spent_temp = $total_medical_in_network_spent + $total_medical_e_claim_spent;
-		// $total_medical_spent = $total_medical_spent_temp - $total_allocation_medical_credits_back;
-
 		$total_allocation_medical = $medical_credit_data['allocation'];
 		$total_medical_spent = $medical_credit_data['get_allocation_spent'];
-
 		$has_medical_allocation = false;
-
 		$pro_temp = $coverage_diff / $plan_duration;
 
 		$total_current_usage = $total_medical_spent + $pending_e_claim_medical;
-		$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
-		// $total_pro_medical_allocation = ($total_allocation_medical / $plan_duration) * $coverage_diff;
+		if($pro_allocation_medical_date) {
+			$total_pro_medical_allocation = $pro_allocation_medical_date->credit;
+			$medical_balance = $total_pro_medical_allocation - $total_current_usage;
+		} else {
+			$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
+			$medical_balance = $total_pro_medical_allocation - $total_current_usage;
+		}
+		
+		
 		if($total_allocation_medical > 0) {
 			$has_medical_allocation = true;
-		} 
-		// else {
-		// 	$total_current_usage = 0;
-		// 	$total_medical_spent = 0;
-		// 	$total_pro_medical_allocation = 0;
-		// }
+		}
 
 		$exceed = false;
-
-		// if($has_medical_allocation) {
-		if($total_current_usage > $total_pro_medical_allocation) {
+		if($medical_balance < 0) {
 			$exceed = true;
 		}
 
-		$medical_balance = $total_pro_medical_allocation - $total_medical_spent;
+		if($employee_status['status'] == false) {
+			if($total_current_usage > $total_pro_medical_allocation) {
+				$exceed = true;
+			}
+		} else {
+			if($pro_allocation_medical_date) {
+				$total_pro_medical_allocation = $pro_allocation_medical_date->credit;
+				$medical_balance = $total_pro_medical_allocation - $total_current_usage;
+			} else {
+				$medical_balance = $total_allocation_medical - $total_current_usage;
+			}
 
-		if($medical_balance < 0) {
-			$medical_balance = 0;
+			if($medical_balance < 0) {
+				$exceed = true;
+			} else {
+				$exceed = false;
+			}
 		}
 
+		$remaining_allocated_medical_credits = 0;
+
+		if($spending['medical_method'] == "pre_paid")	{
+			$remaining_allocated_medical_credits = $total_allocation_medical - $total_pro_medical_allocation;
+		}
+		
 		$medical = array(
 			'status' => true,
 			'initial_allocation' 	=> number_format($total_allocation_medical, 2),
@@ -13387,9 +13545,84 @@ class BenefitsDashboardController extends \BaseController {
 			'exceed'				=> $exceed,
 			'exceeded_by'			=> number_format($total_medical_spent - $total_pro_medical_allocation, 2),
 			'balance'				=> number_format($medical_balance, 2),
-			'currency_type'	=> $wallet->currency_type
+			'exceed_balance'				=> $exceed == true ? number_format(abs($medical_balance), 2) : "0.00",
+			'remaining_allocated_credits'	=> number_format($remaining_allocated_medical_credits, 2),
+			'credits_to_be_returned'	=> $exceed == true ? number_format($remaining_allocated_medical_credits - abs($medical_balance), 2) : "0.00",
+			'currency_type'	=> $wallet->currency_type,
+			'plan_method'			=> $spending['medical_method'],
+			'pro_allocation_status'		=> false,
+			'balance_credits_date'	=> date('d/m/Y'),
+			'returned_balance_status'	=> false
 		);
-		// }
+
+		if($check_wallet_status && (int)$check_wallet_status->medical_pro_allocation_status == 1) {
+			$medical['initial_allocation'] = number_format($check_wallet_status->medical_initial_allocation, 2);
+			$medical['pro_allocation'] = number_format($check_wallet_status->medical_pro_allocation, 2);
+			$medical['pro_allocation_status'] = $check_wallet_status->medical_pro_allocation_status == 1 ? true : false;
+
+			if($spending['medical_method'] == "pre_paid")	{
+				$medical['remaining_allocated_credits'] = number_format($check_wallet_status->medical_initial_allocation - $check_wallet_status->medical_pro_allocation, 2);
+				$medical['remaining_credits_date'] = date('d/m/Y', strtotime($check_wallet_status->medical_return_credits_date));
+				$medical['returned_credit_status'] = false;
+				if(date('Y-m-d', strtotime($check_wallet_status->medical_return_credits_date)) < date('Y-m-d')) {
+					$medical['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->medical_return_credits_date)));
+				} else {
+					$medical['balance_credits_date'] = date('d/m/Y');
+					// get lates balance
+					$medical_balance = $check_wallet_status->medical_pro_allocation - $total_current_usage;
+				}
+
+				if($employee_status['status'] == true) {
+					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
+					if(date('Y-m-d') >= $return_date) {
+						$medical['returned_credit_status'] = true;
+						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+					}
+
+					$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_balance_date) {
+						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+						$medical['returned_balance_status'] = true;
+					} else {
+						$medical['balance_credits_date'] = date('d/m/Y');
+					}
+				}
+			} else {
+				if($employee_status['status'] == true) {
+					$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_balance_date) {
+						$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+						$medical['returned_balance_status'] = true;
+					} else {
+						$medical['balance_credits_date'] = date('d/m/Y');
+					}
+				}
+			}
+		} else {
+			if($employee_status['status'] == true) {
+				$med_allocate = DB::table('employee_wallet_entitlement')->where('member_id', $input['employee_id'])->orderBy('created_at', 'desc')->first();
+				$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+				$medical['initial_allocation'] = number_format($med_allocate->medical_entitlement, 2);
+				
+				if(date('Y-m-d') >= $return_balance_date) {
+					$medical['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+					$medical['returned_balance_status'] = true;
+					if($medical_balance < 0) {
+						$medical['balance'] = "0.00";
+					}
+				} else {
+					$medical['balance_credits_date'] = date('d/m/Y');
+				}
+				$medical['balance'] = number_format($med_allocate->medical_entitlement - $total_current_usage, 2);
+				$medical_balance = $med_allocate->medical_entitlement - $total_current_usage;
+
+				if($medical_balance < 0) {
+					$medical['exceed'] = true;
+				} else {
+					$medical['exceed'] = false;
+				}
+			}
+		}
 
 		$employee_credit_reset_wellness = DB::table('credit_reset')
 		->where('id', $check_employee->UserID)
@@ -13416,12 +13649,6 @@ class BenefitsDashboardController extends \BaseController {
 		$total_wellness_in_network_spent = 0;
 		$has_wellness_allocation = false;
 
-		// $wellness_wallet_history = DB::table('wellness_wallet_history')
-		// ->where('wallet_id', $wallet->wallet_id)
-		// ->where('created_at', '>=', $minimum_date_wellness)
-		// ->where('created_at', '<=', $plan_end_date)
-		// ->get();
-
 		$pending_e_claim_wellness = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', 'wellness')
@@ -13430,31 +13657,51 @@ class BenefitsDashboardController extends \BaseController {
 
 		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $check_employee->UserID, $minimum_date_wellness, $plan_end_date);
 		$total_allocation_wellness = $wellness_credit_data['allocation'];
-		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];;
-
+		$total_wellness_in_network_spent = $wellness_credit_data['in_network_spent'];
+		$total_wellness_e_claim_spent_wellness = $wellness_credit_data['e_claim_spent'];
+		$total_wellness_spent = $wellness_credit_data['get_allocation_spent'];
 		$exceed_wellness = false;
 		$total_current_usage_wellness = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness + $pending_e_claim_wellness;
-		$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
-		if($total_current_usage_wellness > $total_pro_wellness_allocation) {
+		
+		if($pro_allocation_wellness_date) {
+			$total_pro_wellness_allocation = $pro_allocation_wellness_date->credit;
+			$wellness_balance = $total_pro_wellness_allocation - $total_current_usage_wellness;
+		} else {
+			$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
+			$wellness_balance = $total_pro_wellness_allocation - $total_current_usage_wellness;
+		}
+		
+		if($wellness_balance < 0) {
 			$exceed_wellness = true;
 		}
 
+		if($employee_status['status'] == false) {
+			if($total_current_usage_wellness > $total_pro_wellness_allocation) {
+				$exceed_wellness = true;
+			}	
+		} else {
+			if($pro_allocation_wellness_date) {
+				$total_pro_wellness_allocation = $pro_allocation_wellness_date->credit;
+				$wellness_balance = $total_pro_wellness_allocation - $total_current_usage_wellness;
+			} else {
+				$wellness_balance = $total_allocation_wellness - $total_current_usage_wellness;
+				if($wellness_balance < 0) {
+					$exceed_wellness = true;
+				} else {
+					$exceed_wellness = false;
+				}
+			}
+		}
+		
 		if($total_allocation_wellness > 0) {
 			$has_wellness_allocation = true;
 		}
-
-		// return array('has_wellness_allocation' => $has_wellness_allocation);
-			// else {
-		// 	$total_current_usage_wellness = 0;
-		// 	$total_pro_wellness_allocation = 0;
-		// 	$total_wellness_spent = 0;
-		// }
-
-		// if($has_wellness_allocation) {
-		$wellness_balance = $total_pro_wellness_allocation - $total_wellness_spent;
-		if($wellness_balance < 0) {
-			$wellness_balance = 0;
+		
+		$remaining_allocated_wellness_credits = 0;
+		if($spending['wellness_method'] == "pre_paid")	{
+			$remaining_allocated_wellness_credits = $total_allocation_wellness - $total_pro_wellness_allocation;
 		}
+
 		$wellness = array(
 			'status' => true,
 			'initial_allocation' 	=> number_format($total_allocation_wellness, 2),
@@ -13465,12 +13712,81 @@ class BenefitsDashboardController extends \BaseController {
 			'exceed'				=> $exceed_wellness,
 			'exceeded_by'			=> number_format($total_wellness_spent - $total_pro_wellness_allocation, 2),
 			'balance'				=> number_format($wellness_balance, 2),
-			'currency_type'	=> $wallet->currency_type
+			'exceed_balance'		=> $exceed == true ? number_format(abs($wellness_balance), 2) : "0.00",
+			'remaining_allocated_credits' => number_format($remaining_allocated_wellness_credits, 2),
+			'credits_to_be_returned'	=> $exceed == true ? number_format($remaining_allocated_wellness_credits - abs($wellness_balance), 2) : "0.00",
+			'currency_type'	=> $wallet->currency_type,
+			'plan_method'			=> $spending['wellness_method'],
+			'pro_allocation_status'		=> false,
+			'balance_credits_date'	=> date('d/m/Y')
 		);
-		// } else {
-		// 	$wellness = false;
-		// }
 
+		if($check_wallet_status && (int)$check_wallet_status->wellness_pro_allocation_status == 1) {
+			$wellness['initial_allocation'] = number_format($check_wallet_status->wellness_initial_allocation, 2);
+			$wellness['pro_allocation'] = number_format($check_wallet_status->wellness_pro_allocation, 2);
+			$wellness['pro_allocation_status'] = $check_wallet_status->wellness_pro_allocation_status == 1 ? true : false;
+			$wellness['returned_credit_status'] = false;
+			if($spending['wellness_method'] == "pre_paid")	{
+				$wellness['remaining_allocated_credits'] = number_format($check_wallet_status->wellness_initial_allocation - $check_wallet_status->wellness_pro_allocation, 2);
+				$wellness['remaining_credits_date'] = date('d/m/Y', strtotime($check_wallet_status->wellness_return_credits_date));
+				
+				if(date('Y-m-d', strtotime($check_wallet_status->wellness_return_credits_date)) < date('Y-m-d')) {
+					$wellness['balance_credits_date'] = date('d/m/Y', strtotime("+1 day", strtotime($check_wallet_status->wellness_return_credits_date)));
+				} else {
+					$wellness['balance_credits_date'] = date('d/m/Y');
+					// get lates balance
+					$wellness_balance = $check_wallet_status->wellness_pro_allocation - $total_wellness_spent;
+				}
+
+				if($employee_status['status'] == true) {
+					$return_date = date('Y-m-d', strtotime($employee_status['expiry_date']));
+					if(date('Y-m-d') >= $return_date) {
+						$wellness['returned_credit_status'] = true;
+						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_date));
+					}
+
+					$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_balance_date) {
+						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+						$wellness['returned_balance_status'] = true;
+					} else {
+						$wellness['balance_credits_date'] = date('d/m/Y');
+					}
+				}
+			} else {
+				if($employee_status['status'] == true) {
+					$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+					if(date('Y-m-d') >= $return_balance_date) {
+						$wellness['returned_balance_status'] = true;
+						$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+					}
+				}
+			}
+		} else {
+			if($employee_status['status'] == true) {
+				$well_allocate = DB::table('employee_wallet_entitlement')->where('member_id', $input['employee_id'])->orderBy('created_at', 'desc')->first();
+				$wellness['initial_allocation'] = number_format($well_allocate->wellness_entitlement, 2);
+				$return_balance_date = date('Y-m-d', strtotime('+1 day', strtotime($employee_status['expiry_date'])));
+				if(date('Y-m-d') >= $return_balance_date) {
+					$wellness['balance_credits_date'] = date('d/m/Y', strtotime($return_balance_date));
+					$wellness['returned_balance_status'] = true;
+					if($wellness_balance < 0) {
+						$medical['balance'] = "0.00";
+					}
+				} else {
+					$wellness['balance_credits_date'] = date('d/m/Y');
+				}
+
+				$wellness['balance'] = number_format($well_allocate->wellness_entitlement - $total_current_usage_wellness, 2);
+				$wellness_balance = $well_allocate->wellness_entitlement - $total_current_usage_wellness;
+
+				if($wellness_balance < 0) {
+					$wellness['exceed'] = true;
+				} else {
+					$wellness['exceed'] = false;
+				}
+			}
+		}
 
 		if($pro_allocation_medical_date) {
 			$date = array(
@@ -13490,25 +13806,32 @@ class BenefitsDashboardController extends \BaseController {
 				'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? $input['pro_allocation_end_date'] : null,
 				'currency_type'	=> $wallet->currency_type
 			);
-			// return $date;
 		}
 
+		$wallet_status = array(
+			'member_id'		=> $input['employee_id'],
+			'created_at'	=> date('Y-m-d H:i:s'),
+			'updated_at'	=> date('Y-m-d H:i:s')
+		);
+		
+		$calibrate_medical = false;
+		$calibrate_wellness = false;
 		if($has_medical_allocation) {
 			// start calibration for medical
 			if(isset($input['calibrate_medical'])) {
+				$calibrate_medical = false;
 				$calibrate_medical = json_decode($input['calibrate_medical']);
-
-					// return $input['calibrate_medical'];
 				if($input['calibrate_medical'] == true && $total_allocation_medical > 0 && $exceed == false) {
 					$new_allocation = $total_pro_medical_allocation;
 					$to_return_to_company = $total_allocation_medical - $total_pro_medical_allocation;
 				} else if($input['calibrate_medical'] == true && $exceed == true && $total_allocation_medical > 0) {
 					$new_allocation = $total_pro_medical_allocation;
-					$to_return_to_company = $total_allocation_medical - $total_medical_spent;
-
+					$balance = abs($medical_balance);
+					$to_return_to_company = $remaining_allocated_medical_credits - $balance;
 				}
 
 				if($input['calibrate_medical'] == true && $total_allocation_medical > 0) {
+					$calibrate_medical = true;
 					$calibrated_medical = DB::table('wallet_history')
 					->where('wallet_id', $wallet->wallet_id)
 					->where('logs', 'pro_allocation')
@@ -13543,33 +13866,36 @@ class BenefitsDashboardController extends \BaseController {
 						'currency_type'	=> $wallet->currency_type
 					);
 
-					// return credits to company
-					// $to_return = array(
-					// 	'wallet_id'         => $wallet->wallet_id,
-					// 	'credit'            => $to_return_to_company,
-					// 	'logs'              => 'deducted_by_hr',
-					// 	'from_pro_allocation'	=> 1,
-					// 	'running_balance'   => $to_return_to_company,
-					// 	'spending_type'     => 'medical',
-					// 	'created_at'        => date('Y-m-d H:i:s'),
-					// 	'updated_at'        => date('Y-m-d H:i:s')
-					// );
+					$calibrate_medical_deduction_by_hr = array(
+						'wallet_id'         => $wallet->wallet_id,
+						'credit'            => $to_return_to_company,
+						'logs'              => 'deducted_by_hr',
+						'running_balance'   => $to_return_to_company,
+						'spending_type'     => 'medical',
+						'created_at'        => date('Y-m-d H:i:s'),
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
+					);
 
 					$new_balance = $total_pro_medical_allocation - $total_medical_spent;
 
 					if($new_balance < 0) {
 						$new_balance = 0;
 					}
-					DB::table('wallet_history')->insert($calibrate_medical_data);
-					DB::table('wallet_history')->insert($calibrate_medical_deduction_parameter);
-					// DB::table('wallet_history')->insert($to_return);
-					DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $new_balance]);
-					
-					// return array('status' => true, 'message' => 'Medical Spending Account successfully updated to Pro Allocation credits.');
+
+					// DB::table('wallet_history')->insert($calibrate_medical_data);
+					// DB::table('wallet_history')->insert($calibrate_medical_deduction_parameter);
+					// DB::table('wallet_history')->insert($calibrate_medical_deduction_by_hr);
+					// DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $new_balance]);
+
+					$wallet_status['medical_return_credits_date'] = date('Y-m-d', strtotime($input['last_date_of_coverage']));
+					$wallet_status['medical_pro_allocation_status'] = 1;
+					$wallet_status['medical_initial_allocation'] = $total_allocation_medical;
+					$wallet_status['medical_pro_allocation'] = $total_pro_medical_allocation;
 				}
 			}
 		}
-
+		
 		if($has_wellness_allocation) {
 			// start calibration for medical
 			if(isset($input['calibrate_wellness'])) {
@@ -13578,12 +13904,14 @@ class BenefitsDashboardController extends \BaseController {
 					$to_return_to_company = $total_allocation_wellness - $total_pro_wellness_allocation;
 				} else if($input['calibrate_wellness'] == true && $exceed == true && $total_allocation_wellness > 0) {
 					$new_allocation = $total_pro_wellness_allocation;
-					$to_return_to_company = $total_allocation_wellness - $total_wellness_spent;
+					// $to_return_to_company = $total_allocation_wellness - $total_wellness_spent;
+
+					$balance = abs($wellness_balance);
+					$to_return_to_company = $remaining_allocated_wellness_credits - $balance;
 				}
 
-				// return array('new_allocation' => $new_allocation, 'to_return_to_company' => $to_return_to_company);
-
 				if($input['calibrate_wellness'] == true && $total_allocation_wellness > 0 ) {
+					$calibrate_wellness = true;
 					$calibrated_wellness = DB::table('wellness_wallet_history')
 					->where('wallet_id', $wallet->wallet_id)
 					->where('logs', 'pro_allocation')
@@ -13620,36 +13948,39 @@ class BenefitsDashboardController extends \BaseController {
 						'currency_type'	=> $wallet->currency_type
 					);
 
-					// return credits to company
-					// $to_return = array(
-					// 	'wallet_id'         => $wallet->wallet_id,
-					// 	'credit'            => $to_return_to_company,
-					// 	'logs'              => 'deducted_by_hr',
-					// 	'from_pro_allocation'	=> 1,
-					// 	'running_balance'   => $to_return_to_company,
-					// 	'spending_type'     => 'wellness',
-					// 	'created_at'        => date('Y-m-d H:i:s'),
-					// 	'updated_at'        => date('Y-m-d H:i:s')
-					// );
-
+					$calibrate_wellness_deduction_by_hr = array(
+						'wallet_id'         => $wallet->wallet_id,
+						'credit'            => $to_return_to_company,
+						'logs'              => 'deducted_by_hr',
+						'running_balance'   => $to_return_to_company,
+						'spending_type'     => 'wellness',
+						'created_at'        => date('Y-m-d H:i:s'),
+						'updated_at'        => date('Y-m-d H:i:s'),
+						'currency_type'	=> $wallet->currency_type
+					);
 					
-
 					if($new_balance < 0) {
 						$new_balance = 0;
 					}
 					DB::table('wellness_wallet_history')->insert($calibrate_wellness_data);
 					DB::table('wellness_wallet_history')->insert($calibrate_wellness_deduction_parameter);
-					// DB::table('wellness_wallet_history')->insert($to_return);
+					DB::table('wellness_wallet_history')->insert($calibrate_wellness_deduction_by_hr);
 					DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['wellness_balance' => $new_balance]);
 					
-					// return array('status' => true, 'message' => 'Wellness Spending Account successfully updated to Pro Allocation credits.');
+					$wallet_status['wellness_return_credits_date'] = date('Y-m-d', strtotime($input['last_date_of_coverage']));
+					$wallet_status['wellness_pro_allocation_status'] = 1;
+					$wallet_status['wellness_initial_allocation'] = $total_allocation_wellness;
+					$wallet_status['wellness_pro_allocation'] = $total_pro_wellness_allocation;
 				}
 			}
+		}
+		
+		if(!$check_wallet_status && $has_medical_allocation && $calibrate_medical || !$check_wallet_status && $has_wellness_allocation && $calibrate_wellness) {
+			DB::table('member_wallet_status')->insert($wallet_status);
 		}
 
 		if($has_medical_allocation || $has_wellness_allocation) {
 			if(isset($input['calibrate_welless']) || isset($input['calibrate_medical'])) {
-				PlanHelper::reCalculateCompanyBalance();
 				return array('status' => true, 'message' => 'Spending Account successfully updated to Pro Allocation credits.');
 			}
 		}
@@ -13657,416 +13988,357 @@ class BenefitsDashboardController extends \BaseController {
 		return array('status' => true, 'medical' => $medical, 'wellness' => $wellness, 'date' => $date);
 	}
 
-	public function getEmployeeSpendingAccountSummary( )
-	{
-		$input = Input::all();
-		$customer_id = $input['customer_id'];
-		// $customer_id = PlanHelper::getCusomerIdToken();
+	// public function getEmployeeSpendingAccountSummary( )
+	// {
+	// 	$input = Input::all();
+	// 	$customer_id = $input['customer_id'];
 
-		if(empty($input['employee_id']) || $input['employee_id'] == null) {
-			return array('status' => false, 'message' => 'Employee ID is required.');
-		}
+	// 	if(empty($input['employee_id']) || $input['employee_id'] == null) {
+	// 		return array('status' => false, 'message' => 'Employee ID is required.');
+	// 	}
 
-		$check_employee = DB::table('user')
-		->where('UserID', $input['employee_id'])
-		->where('UserType', 5)
-		->first();
+	// 	$check_employee = DB::table('user')
+	// 	->where('UserID', $input['employee_id'])
+	// 	->where('UserType', 5)
+	// 	->first();
 
-		if(!$check_employee) {
-			return array('status' => false, 'message' => 'Employee does not exist.');
-		}
+	// 	if(!$check_employee) {
+	// 		return array('status' => false, 'message' => 'Employee does not exist.');
+	// 	}
 
-		$ids = StringHelper::getSubAccountsID($check_employee->UserID);
-		$coverage = PlanHelper::getEmployeePlanDetails($check_employee->UserID, $customer_id);
-		$plan_end_date = PlanHelper::getEmployeePlanEndDate($check_employee->UserID);
+	// 	$ids = StringHelper::getSubAccountsID($check_employee->UserID);
+	// 	$coverage = PlanHelper::getEmployeePlanDetails($check_employee->UserID, $customer_id);
+	// 	$plan_end_date = PlanHelper::getEmployeePlanEndDate($check_employee->UserID);
 
-		$start = new DateTime($coverage['plan_start']);
-		$end = new DateTime(date('Y-m-d', strtotime('+1 day', strtotime($plan_end_date))));
-		$diff = $start->diff($end);
-		$plan_duration = $diff->days;
+	// 	$start = new DateTime($coverage['plan_start']);
+	// 	$end = new DateTime(date('Y-m-d', strtotime('+1 day', strtotime($plan_end_date))));
+	// 	$diff = $start->diff($end);
+	// 	$plan_duration = $diff->days;
 
-		$coverage_end = new DateTime($coverage['end_date']);
-		$diff_coverage = $start->diff($coverage_end);
-		$coverage_diff = $diff_coverage->days;
-    // return array('result' => $coverage_diff);
+	// 	$coverage_end = new DateTime($coverage['end_date']);
+	// 	$diff_coverage = $start->diff($coverage_end);
+	// 	$coverage_diff = $diff_coverage->days;
 
-		$plan_end_date = PlanHelper::endDate($plan_end_date);
-		// return $coverage;
-		$wallet = DB::table('e_wallet')
-		->where('UserID', $check_employee->UserID)
-		->orderBy('created_at', 'desc')
-		->first();
+	// 	$plan_end_date = PlanHelper::endDate($plan_end_date);
+	// 	$wallet = DB::table('e_wallet')
+	// 	->where('UserID', $check_employee->UserID)
+	// 	->orderBy('created_at', 'desc')
+	// 	->first();
 
-		$last_day_coverage = PlanHelper::getEmployeeLastDayCoverage($check_employee->UserID);
-		if($last_day_coverage) {
-			$last_day_coverage = PlanHelper::endDate($last_day_coverage);
-		} else {
-			$last_day_coverage = PlanHelper::endDate($coverage['end_date']);
-		}
-		// $last_day_coverage = PlanHelper::endDate($input['last_date_of_coverage']);
+	// 	$last_day_coverage = PlanHelper::getEmployeeLastDayCoverage($check_employee->UserID);
+	// 	if($last_day_coverage) {
+	// 		$last_day_coverage = PlanHelper::endDate($last_day_coverage);
+	// 	} else {
+	// 		$last_day_coverage = PlanHelper::endDate($coverage['end_date']);
+	// 	}
 
-		// return $last_day_coverage;
+	// 	$employee_credit_reset_medical = DB::table('credit_reset')
+	// 	->where('id', $check_employee->UserID)
+	// 	->where('spending_type', 'medical')
+	// 	->where('user_type', 'employee')
+	// 	->orderBy('created_at', 'desc')
+	// 	->first();
 
-		$employee_credit_reset_medical = DB::table('credit_reset')
-		->where('id', $check_employee->UserID)
-		->where('spending_type', 'medical')
-		->where('user_type', 'employee')
-		->orderBy('created_at', 'desc')
-		->first();
+	// 	if($employee_credit_reset_medical) {
+	// 		$minimum_date_medical = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
+	// 	} else {
+	// 		$minimum_date_medical = DB::table('wallet_history')
+	// 		->where('wallet_id', $wallet->wallet_id)
+	// 		->min('created_at');
+	// 		if(!$minimum_date_medical) {
+	// 			$minimum_date_medical = $wallet->created_at;
+	// 		}
+	// 	}
 
-		if($employee_credit_reset_medical) {
-			$minimum_date_medical = date('Y-m-d', strtotime($employee_credit_reset_medical->date_resetted));
-		} else {
-			$minimum_date_medical = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->min('created_at');
-			if(!$minimum_date_medical) {
-				$minimum_date_medical = $wallet->created_at;
-			}
-		}
+	// 	$total_allocation_medical_temp = 0;
+	// 	$total_allocation_medical_deducted = 0;
+	// 	$total_allocation_medical_credits_back = 0;
+	// 	$total_medical_e_claim_spent = 0;
+	// 	$total_medical_in_network_spent = 0;
 
-		$total_allocation_medical_temp = 0;
-		$total_allocation_medical_deducted = 0;
-		$total_allocation_medical_credits_back = 0;
-		$total_medical_e_claim_spent = 0;
-		$total_medical_in_network_spent = 0;
-
-		$medical_wallet_history = DB::table('wallet_history')
-		->where('wallet_id', $wallet->wallet_id)
-		->where('created_at', '>=', $minimum_date_medical)
-		->where('created_at', '<=', $plan_end_date)
-		->get();
-		// return $medical_wallet_history;
-		$pending_e_claim_medical = DB::table('e_claim')
-		->whereIn('user_id', $ids)
-		->where('spending_type', 'medical')
-		->where('status', 0)
-		->sum('amount');
+	// 	$medical_wallet_history = DB::table('wallet_history')
+	// 	->where('wallet_id', $wallet->wallet_id)
+	// 	->where('created_at', '>=', $minimum_date_medical)
+	// 	->where('created_at', '<=', $plan_end_date)
+	// 	->get();
+	// 	// return $medical_wallet_history;
+	// 	$pending_e_claim_medical = DB::table('e_claim')
+	// 	->whereIn('user_id', $ids)
+	// 	->where('spending_type', 'medical')
+	// 	->where('status', 0)
+	// 	->sum('amount');
 
 		
-		foreach ($medical_wallet_history as $key => $history) {
-			if($history->logs == "added_by_hr") {
-				$total_allocation_medical_temp += $history->credit;
-			}
+	// 	foreach ($medical_wallet_history as $key => $history) {
+	// 		if($history->logs == "added_by_hr") {
+	// 			$total_allocation_medical_temp += $history->credit;
+	// 		}
 
-			if($history->logs == "deducted_by_hr") {
-				$total_allocation_medical_deducted += $history->credit;
-			}
+	// 		if($history->logs == "deducted_by_hr") {
+	// 			$total_allocation_medical_deducted += $history->credit;
+	// 		}
 
-			if($history->where_spend == "e_claim_transaction") {
-				$total_medical_e_claim_spent += $history->credit;
-			}
+	// 		if($history->where_spend == "e_claim_transaction") {
+	// 			$total_medical_e_claim_spent += $history->credit;
+	// 		}
 
-			if($history->where_spend == "in_network_transaction") {
-				$total_medical_in_network_spent += $history->credit;
-			}
+	// 		if($history->where_spend == "in_network_transaction") {
+	// 			$total_medical_in_network_spent += $history->credit;
+	// 		}
 
-			if($history->where_spend == "credits_back_from_in_network") {
-				$total_allocation_medical_credits_back += $history->credit;
-			}
-		}
+	// 		if($history->where_spend == "credits_back_from_in_network") {
+	// 			$total_allocation_medical_credits_back += $history->credit;
+	// 		}
+	// 	}
 
-		$total_allocation_medical_temp = $total_allocation_medical_temp - $total_allocation_medical_deducted;
-		$total_allocation_medical = $total_allocation_medical_temp;
-		$total_medical_spent_temp = $total_medical_in_network_spent + $total_medical_e_claim_spent;
-		$total_medical_spent = $total_medical_spent_temp - $total_allocation_medical_credits_back;
-		$has_medical_allocation = false;
+	// 	$total_allocation_medical_temp = $total_allocation_medical_temp - $total_allocation_medical_deducted;
+	// 	$total_allocation_medical = $total_allocation_medical_temp;
+	// 	$total_medical_spent_temp = $total_medical_in_network_spent + $total_medical_e_claim_spent;
+	// 	$total_medical_spent = $total_medical_spent_temp - $total_allocation_medical_credits_back;
+	// 	$has_medical_allocation = false;
+	// 	$pro_temp = $coverage_diff / $plan_duration;
 
-		$pro_temp = $coverage_diff / $plan_duration;
-    // $pro_allocation_medical = 
+	// 	if($total_allocation_medical > 0) {
+	// 		$total_current_usage = $total_medical_spent + $pending_e_claim_medical;
+	// 		$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
+	// 		$has_medical_allocation = true;
+	// 	} else {
+	// 		$total_current_usage = 0;
+	// 		$total_medical_spent = 0;
+	// 		$total_pro_medical_allocation = 0;
+	// 	}
 
-    // return $pro_allocation;
+	// 	$exceed = false;
 
-		// return $total_medical_spent;
+	// 	if($has_medical_allocation) {
+	// 		if($total_current_usage > $total_pro_medical_allocation) {
+	// 			$exceed = true;
+	// 		}
 
-		if($total_allocation_medical > 0) {
-			$total_current_usage = $total_medical_spent + $pending_e_claim_medical;
+	// 		$medical = array(
+	// 			'status' => true,
+	// 			'initial_allocation' 	=> $total_allocation_medical,
+	// 			'pro_allocation'		=> $total_pro_medical_allocation,
+	// 			'current_usage'			=> $total_current_usage,
+	// 			'pending_e_claim'		=> $pending_e_claim_medical,
+	// 			'spent'					=> $total_medical_spent,
+	// 			'exceed'				=> $exceed
+	// 		);
 
-			// // get pro allocation
-			// $total_pro_medical_allocation_temp = DB::table('wallet_history')
-			// ->where('wallet_id', $wallet->wallet_id)
-			// ->where('logs', 'added_by_hr')
-			// ->where('created_at', '>=', $minimum_date_medical)
-			// ->where('created_at', '<=', $last_day_coverage)
-			// ->sum('credit');
+	// 		$calibrate_medical = false;
 
-			// $total_pro_medical_allocation_deducted = DB::table('wallet_history')
-			// ->where('wallet_id', $wallet->wallet_id)
-			// ->where('logs', 'deducted_by_hr')
-			// ->where('created_at', '>=', $minimum_date_medical)
-			// ->where('created_at', '<=', $last_day_coverage)
-			// ->sum('credit');
+	// 		if(!empty($input['calibrate_medical'])) {
+	// 			$calibrate_medical = json_decode($input['calibrate_medical']);
 
-			// $total_pro_medical_allocation_spent = DB::table('wallet_history')
-			// ->where('wallet_id', $wallet->wallet_id)
-			// ->whereIn('where_spend', ['in_network_transaction', 'in_network_transaction'])
-			// ->where('created_at', '>=', $minimum_date_medical)
-			// ->where('created_at', '<=', $last_day_coverage)
-			// ->sum('credit');
+	// 			if($calibrate_medical == true && $exceed == true) {
+    //      			 // check if wallet is alredy calibrated
+	// 				$calibrated_medical = DB::table('wallet_history')
+	// 				->where('wallet_id', $wallet->wallet_id)
+	// 				->where('logs', 'pro_allocation')
+	// 				->first();
+	// 				if($calibrated_medical) {
+	// 					return array('status' => false, 'message' => 'Medical Spending Account Pro Allocation is already updated.');
+	// 				}
+    //       			// begin medical callibration
+	// 				$calibrate_medical_data = array(
+	// 					'wallet_id'         => $wallet->wallet_id,
+	// 					'credit'            => $total_pro_medical_allocation,
+	// 					'logs'              => 'pro_allocation',
+	// 					'running_balance'   => $total_pro_medical_allocation,
+	// 					'spending_type'     => 'medical',
+	// 					'created_at'        => date('Y-m-d H:i:s'),
+	// 					'updated_at'        => date('Y-m-d H:i:s')
+	// 				);
 
-			// $total_pro_medical_allocation_credits_back = DB::table('wallet_history')
-			// ->where('wallet_id', $wallet->wallet_id)
-			// ->where('logs', 'credits_back_from_in_network')
-			// ->where('created_at', '>=', $minimum_date_medical)
-			// ->where('created_at', '<=', $last_day_coverage)
-			// ->sum('credit');
+    //       			// begin medical callibration
+	// 				$calibrate_medical_deduction_parameter = array(
+	// 					'wallet_id'         => $wallet->wallet_id,
+	// 					'credit'            => $total_allocation_medical - $total_pro_medical_allocation,
+	// 					'logs'              => 'pro_allocation_deduction',
+	// 					'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
+	// 					'spending_type'     => 'medical',
+	// 					'created_at'        => date('Y-m-d H:i:s'),
+	// 					'updated_at'        => date('Y-m-d H:i:s')
+	// 				);
 
-			// $total_pro_medical_allocation = $total_pro_medical_allocation_temp - $total_pro_medical_allocation_deducted;
-			// + $total_pro_medical_allocation_credits_back
-			$total_pro_medical_allocation = $pro_temp * $total_allocation_medical;
-			$has_medical_allocation = true;
-		} else {
-			$total_current_usage = 0;
-			$total_medical_spent = 0;
-			$total_pro_medical_allocation = 0;
-		}
+	// 				$new_balance = $total_pro_medical_allocation - $total_medical_spent;
 
-		$exceed = false;
+	// 				DB::table('wallet_history')->insert($calibrate_medical_data);
+	// 				DB::table('wallet_history')->insert($calibrate_medical_deduction_parameter);
+	// 				DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $new_balance]);
 
-		if($has_medical_allocation) {
-			if($total_current_usage > $total_pro_medical_allocation) {
-				$exceed = true;
-			}
+	// 			} else if($calibrate_medical == true && $exceed == false) {
+	// 				return array('status' => false, 'message' => 'Medical Spending Account is on Track.');
+	// 			}
+	// 		}
+	// 	} else {
+	// 		$medical = false;
+	// 	}
 
-			$medical = array(
-				'status' => true,
-				'initial_allocation' 	=> $total_allocation_medical,
-				'pro_allocation'		=> $total_pro_medical_allocation,
-				'current_usage'			=> $total_current_usage,
-				'pending_e_claim'		=> $pending_e_claim_medical,
-				'spent'					=> $total_medical_spent,
-				'exceed'				=> $exceed
-			);
+	// 	$employee_credit_reset_wellness = DB::table('credit_reset')
+	// 	->where('id', $check_employee->UserID)
+	// 	->where('spending_type', 'wellness')
+	// 	->where('user_type', 'employee')
+	// 	->orderBy('created_at', 'desc')
+	// 	->first();
 
-			$calibrate_medical = false;
+	// 	if($employee_credit_reset_wellness) {
+	// 		$minimum_date_wellness = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
+	// 	} else {
+	// 		$minimum_date_wellness = DB::table('wallet_history')
+	// 		->where('wallet_id', $wallet->wallet_id)
+	// 		->min('created_at');
+	// 		if(!$minimum_date_wellness) {
+	// 			$minimum_date_wellness = $wallet->created_at;
+	// 		}
+	// 	}
 
-			if(!empty($input['calibrate_medical'])) {
-				$calibrate_medical = json_decode($input['calibrate_medical']);
+	// 	$total_allocation_wellness_temp = 0;
+	// 	$total_allocation_wellness_deducted = 0;
+	// 	$total_allocation_wellness_credits_back = 0;
+	// 	$total_wellness_e_claim_spent_wellness = 0;
+	// 	$total_wellness_in_network_spent = 0;
+	// 	$has_wellness_allocation = false;
 
-				if($calibrate_medical == true && $exceed == true) {
-          // check if wallet is alredy calibrated
-					$calibrated_medical = DB::table('wallet_history')
-					->where('wallet_id', $wallet->wallet_id)
-					->where('logs', 'pro_allocation')
-					->first();
-					if($calibrated_medical) {
-						return array('status' => false, 'message' => 'Medical Spending Account Pro Allication is already updated.');
-					}
-          // begin medical callibration
-					$calibrate_medical_data = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_pro_medical_allocation,
-						'logs'              => 'pro_allocation',
-						'running_balance'   => $total_pro_medical_allocation,
-						'spending_type'     => 'medical',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
-					);
+	// 	$wellness_wallet_history = DB::table('wellness_wallet_history')
+	// 	->where('wallet_id', $wallet->wallet_id)
+	// 	->where('created_at', '>=', $minimum_date_wellness)
+	// 	->where('created_at', '<=', $plan_end_date)
+	// 	->get();
 
-          // begin medical callibration
-					$calibrate_medical_deduction_parameter = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_allocation_medical - $total_pro_medical_allocation,
-						'logs'              => 'pro_allocation_deduction',
-						'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
-						'spending_type'     => 'medical',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
-					);
+	// 	$pending_e_claim_wellness = DB::table('e_claim')
+	// 	->whereIn('user_id', $ids)
+	// 	->where('spending_type', 'wellness')
+	// 	->where('status', 0)
+	// 	->sum('amount');
 
-					$new_balance = $total_pro_medical_allocation - $total_medical_spent;
+	// 	foreach ($wellness_wallet_history as $key => $history) {
+	// 		if($history->logs == "added_by_hr") {
+	// 			$total_allocation_wellness_temp += $history->credit;
+	// 		}
 
-					DB::table('wallet_history')->insert($calibrate_medical_data);
-					DB::table('wallet_history')->insert($calibrate_medical_deduction_parameter);
-					DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $new_balance]);
+	// 		if($history->logs == "deducted_by_hr") {
+	// 			$total_allocation_wellness_deducted += $history->credit;
+	// 		}
 
-					return array('status' => true, 'message' => 'Medical Spending Account successfully updated to Pro Allocation credits.');
-				} else if($calibrate_medical == true && $exceed == false) {
-					return array('status' => false, 'message' => 'Medical Spending Account is on Track.');
-				}
-			}
-		} else {
-			$medical = false;
-		}
+	// 		if($history->where_spend == "e_claim_transaction") {
+	// 			$total_wellness_e_claim_spent_wellness += $history->credit;
+	// 		}
 
-		$employee_credit_reset_wellness = DB::table('credit_reset')
-		->where('id', $check_employee->UserID)
-		->where('spending_type', 'wellness')
-		->where('user_type', 'employee')
-		->orderBy('created_at', 'desc')
-		->first();
+	// 		if($history->where_spend == "in_network_transaction") {
+	// 			$total_wellness_in_network_spent += $history->credit;
+	// 		}
 
-		if($employee_credit_reset_wellness) {
-			$minimum_date_wellness = date('Y-m-d', strtotime($employee_credit_reset_wellness->date_resetted));
-		} else {
-			$minimum_date_wellness = DB::table('wallet_history')
-			->where('wallet_id', $wallet->wallet_id)
-			->min('created_at');
-			if(!$minimum_date_wellness) {
-				$minimum_date_wellness = $wallet->created_at;
-			}
-		}
+	// 		if($history->where_spend == "credits_back_from_in_network") {
+	// 			$total_allocation_wellness_credits_back += $history->credit;
+	// 		}
+	// 	}
 
-		$total_allocation_wellness_temp = 0;
-		$total_allocation_wellness_deducted = 0;
-		$total_allocation_wellness_credits_back = 0;
-		$total_wellness_e_claim_spent_wellness = 0;
-		$total_wellness_in_network_spent = 0;
-		$has_wellness_allocation = false;
+	// 	$total_allocation_wellness = $total_allocation_wellness_temp - $total_allocation_wellness_deducted;
+	// 	$total_wellness_spent_temp = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness;
+	// 	$total_wellness_spent = $total_wellness_spent_temp - $total_allocation_wellness_credits_back;
+	// 	// return $total_allocation_wellness;
+	// 	$exceed_wellness = false;
+	// 	if($total_allocation_wellness > 0) {
+	// 		$has_wellness_allocation = true;
+	// 		$total_current_usage_wellness = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness + $pending_e_claim_wellness;
+	// 		$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
+	// 		if($total_current_usage_wellness > $total_pro_wellness_allocation) {
+	// 			$exceed_wellness = true;
+	// 		}
+	// 	} else {
+	// 		$total_current_usage_wellness = 0;
+	// 		$total_pro_wellness_allocation = 0;
+	// 		$total_wellness_spent = 0;
+	// 	}
 
-		$wellness_wallet_history = DB::table('wellness_wallet_history')
-		->where('wallet_id', $wallet->wallet_id)
-		->where('created_at', '>=', $minimum_date_wellness)
-		->where('created_at', '<=', $plan_end_date)
-		->get();
+	// 	if($has_wellness_allocation) {
+	// 		$wellness = array(
+	// 			'status' => true,
+	// 			'initial_allocation' 	=> $total_allocation_wellness,
+	// 			'pro_allocation'		=> $total_pro_wellness_allocation,
+	// 			'current_usage'			=> $total_current_usage_wellness,
+	// 			'spent'					=> $total_wellness_spent,
+	// 			'pending_e_claim'		=> $pending_e_claim_wellness,
+	// 			'exceed'				=> $exceed_wellness
+	// 		);
 
-		$pending_e_claim_wellness = DB::table('e_claim')
-		->whereIn('user_id', $ids)
-		->where('spending_type', 'wellness')
-		->where('status', 0)
-		->sum('amount');
+	// 		$calibrate_wellness = false;
+	// 		if(!empty($input['calibrate_wellness'])) {
+	// 			$calibrate_wellness = json_decode($input['calibrate_wellness']);
 
-		foreach ($wellness_wallet_history as $key => $history) {
-			if($history->logs == "added_by_hr") {
-				$total_allocation_wellness_temp += $history->credit;
-			}
+	// 			if($calibrate_wellness == true && $exceed_wellness == true) {
+    //       			// check if wallet is alredy calibrated
+	// 				$calibrated_wellness = DB::table('wellness_wallet_history')
+	// 				->where('wallet_id', $wallet->wallet_id)
+	// 				->where('logs', 'pro_allocation')
+	// 				->first();
+	// 				if($calibrated_wellness) {
+	// 					return array('status' => false, 'message' => 'Wellness Spending Account Pro Allication is already updated.');
+	// 				}
+    //       			// begin medical callibration
+	// 				$calibrate_wellness_data = array(
+	// 					'wallet_id'         => $wallet->wallet_id,
+	// 					'credit'            => $total_pro_wellness_allocation,
+	// 					'logs'              => 'pro_allocation',
+	// 					'running_balance'   => $total_pro_wellness_allocation,
+	// 					'spending_type'     => 'wellnessl',
+	// 					'created_at'        => date('Y-m-d H:i:s'),
+	// 					'updated_at'        => date('Y-m-d H:i:s')
+	// 				);
 
-			if($history->logs == "deducted_by_hr") {
-				$total_allocation_wellness_deducted += $history->credit;
-			}
+    //       			// begin medical callibration
+	// 				$calibrate_wellness_deduction_parameter = array(
+	// 					'wallet_id'         => $wallet->wallet_id,
+	// 					'credit'            => $total_allocation_wellness - $total_pro_wellness_allocation,
+	// 					'logs'              => 'pro_allocation_deduction',
+	// 					'running_balance'   => $total_allocation_wellness - $total_pro_wellness_allocation,
+	// 					'spending_type'     => 'wellness',
+	// 					'created_at'        => date('Y-m-d H:i:s'),
+	// 					'updated_at'        => date('Y-m-d H:i:s')
+	// 				);
 
-			if($history->where_spend == "e_claim_transaction") {
-				$total_wellness_e_claim_spent_wellness += $history->credit;
-			}
+	// 				$balance = $total_pro_wellness_allocation - $$total_wellness_spent;
 
-			if($history->where_spend == "in_network_transaction") {
-				$total_wellness_in_network_spent += $history->credit;
-			}
+	// 				DB::table('wallet_history')->insert($calibrate_wellness_data);
+	// 				DB::table('wallet_history')->insert($calibrate_wellness_deduction_parameter);
+	// 				DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $balance]);
 
-			if($history->where_spend == "credits_back_from_in_network") {
-				$total_allocation_wellness_credits_back += $history->credit;
-			}
-		}
+	// 			} else if($calibrate_wellness == true && $exceed_wellness == false) {
+	// 				return array('status' => false, 'message' => 'Wellness Spending Account is on Track.');
+	// 			}
+	// 		}
+	// 	} else {
+	// 		$wellness = false;
+	// 	}
 
-		$total_allocation_wellness = $total_allocation_wellness_temp - $total_allocation_wellness_deducted;
-		$total_wellness_spent_temp = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness;
-		$total_wellness_spent = $total_wellness_spent_temp - $total_allocation_wellness_credits_back;
-		// return $total_allocation_wellness;
-		$exceed_wellness = false;
-		if($total_allocation_wellness > 0) {
-			$has_wellness_allocation = true;
-			$total_current_usage_wellness = $total_wellness_in_network_spent + $total_wellness_e_claim_spent_wellness + $pending_e_claim_wellness;
-			// get pro allocation
-			// $total_pro_wellness_allocation_temp = DB::table('wellness_wallet_history')
-			// ->where('wallet_id', $wallet->wallet_id)
-			// ->where('logs', 'added_by_hr')
-			// ->where('created_at', '>=', $minimum_date_wellness)
-			// ->where('created_at', '<=', $last_day_coverage)
-			// ->sum('credit');
+	// 	$date = array(
+	// 		'pro_rated_start' => date('d/m/Y', strtotime($coverage['plan_start'])),
+	// 		'pro_rated_end' => date('d/m/Y', strtotime($last_day_coverage)),
+	// 		'usage_start'	=> date('d/m/Y', strtotime($minimum_date_medical)),
+	// 		'usage_end'		=> date('d/m/Y', strtotime($last_day_coverage))
+	// 	);
 
-			// $total_pro_wellness_allocation_deducted = DB::table('wellness_wallet_history')
-			// ->where('wallet_id', $wallet->wallet_id)
-			// ->where('logs', 'deducted_by_hr')
-			// ->where('created_at', '>=', $minimum_date_wellness)
-			// ->where('created_at', '<=', $last_day_coverage)
-			// ->sum('credit');
-
-			// $total_pro_wellness_allocation = $total_pro_wellness_allocation_temp - $total_pro_wellness_allocation_deducted;
-			$total_pro_wellness_allocation = $pro_temp * $total_allocation_wellness;
-			if($total_current_usage_wellness > $total_pro_wellness_allocation) {
-				$exceed_wellness = true;
-			}
-		} else {
-			$total_current_usage_wellness = 0;
-			$total_pro_wellness_allocation = 0;
-			$total_wellness_spent = 0;
-		}
-
-		if($has_wellness_allocation) {
-			$wellness = array(
-				'status' => true,
-				'initial_allocation' 	=> $total_allocation_wellness,
-				'pro_allocation'		=> $total_pro_wellness_allocation,
-				'current_usage'			=> $total_current_usage_wellness,
-				'spent'					=> $total_wellness_spent,
-				'pending_e_claim'		=> $pending_e_claim_wellness,
-				'exceed'				=> $exceed_wellness
-			);
-
-			$calibrate_wellness = false;
-			if(!empty($input['calibrate_wellness'])) {
-				$calibrate_wellness = json_decode($input['calibrate_wellness']);
-
-				if($calibrate_wellness == true && $exceed_wellness == true) {
-          // check if wallet is alredy calibrated
-					$calibrated_wellness = DB::table('wellness_wallet_history')
-					->where('wallet_id', $wallet->wallet_id)
-					->where('logs', 'pro_allocation')
-					->first();
-					if($calibrated_wellness) {
-						return array('status' => false, 'message' => 'Wellness Spending Account Pro Allication is already updated.');
-					}
-          // begin medical callibration
-					$calibrate_wellness_data = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_pro_wellness_allocation,
-						'logs'              => 'pro_allocation',
-						'running_balance'   => $total_pro_wellness_allocation,
-						'spending_type'     => 'wellnessl',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
-					);
-
-          // begin medical callibration
-					$calibrate_wellness_deduction_parameter = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_allocation_wellness - $total_pro_wellness_allocation,
-						'logs'              => 'pro_allocation_deduction',
-						'running_balance'   => $total_allocation_wellness - $total_pro_wellness_allocation,
-						'spending_type'     => 'wellness',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s')
-					);
-
-					$balance = $total_pro_wellness_allocation - $$total_wellness_spent;
-
-					DB::table('wallet_history')->insert($calibrate_wellness_data);
-					DB::table('wallet_history')->insert($calibrate_wellness_deduction_parameter);
-					DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $balance]);
-
-					return array('status' => true, 'message' => 'Wellness Spending Account successfully updated to Pro Allocation credits.');
-				} else if($calibrate_wellness == true && $exceed_wellness == false) {
-					return array('status' => false, 'message' => 'Wellness Spending Account is on Track.');
-				}
-			}
-		} else {
-			$wellness = false;
-		}
-
-		$date = array(
-			'pro_rated_start' => date('d/m/Y', strtotime($coverage['plan_start'])),
-			'pro_rated_end' => date('d/m/Y', strtotime($last_day_coverage)),
-			'usage_start'	=> date('d/m/Y', strtotime($minimum_date_medical)),
-			'usage_end'		=> date('d/m/Y', strtotime($last_day_coverage))
-		);
-
-		return array('status' => true, 'medical' => $medical, 'wellness' => $wellness, 'date' => $date);
-	}
+	// 	return array('status' => true, 'medical' => $medical, 'wellness' => $wellness, 'date' => $date);
+	// }
 
 	public function createEmployeeReplacementSeat( )
 	{
 		$input = Input::all();
-		// $customer_id = $input['customer_id'];
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
 		$customer_id = PlanHelper::getCusomerIdToken();
 		$check_withdraw = DB::table('customer_plan_withdraw')->where('user_id', $input['employee_id'])->count();
 		$expiry = date('Y-m-d', strtotime($input['last_date_of_coverage']));
-		$date = date('Y-m-d');
+		$expired_date = date('Y-m-d', strtotime('+1 day', strtotime($input['last_date_of_coverage'])));
+		$date = PlanHelper::endDate(date('Y-m-d'));
 
 		if($check_withdraw == 0) {
-			if($date >= $expiry) {
+			if($date >= $expired_date) {
 				// create refund and delete now
 				try {
-					$result = self::removeEmployee($input['employee_id'], $expiry, false);
+					$result = MemberHelper::removeEmployee($input['employee_id'], $expiry, true, $input);
 					if(!$result) {
 						return array('status' => FALSE, 'message' => 'Failed to create withdraw employee. Please contact Mednefits and report the issue.');
 					}
@@ -14080,10 +14352,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			} else {
 				try {
-					$result = self::createWithDrawEmployees($input['employee_id'], $expiry, true, false, true);
-					// if($result) {
-					// 	self::updateCustomerPlanStatusDeleteUser($user['user_id']);
-					// }
+					$result = MemberHelper::createWithDrawEmployees($input['employee_id'], $expiry, true, true, true, $input);
 				} catch(Exception $e) {
 					$email = [];
 					$email['end_point'] = url('hr/employees/withdraw', $parameter = array(), $secure = null);
@@ -14092,6 +14361,24 @@ class BenefitsDashboardController extends \BaseController {
 					EmailHelper::sendErrorLogs($email);
 					return array('status' => FALSE, 'message' => 'Failed to create withdraw employee. Please contact Mednefits and report the issue.');
 				}
+			}
+
+			if($admin_id) {
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_removed_employee',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_removed_employee',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 		} else {
 			return array('status' => false, 'message' => 'Employee already deleted.');
@@ -14681,7 +14968,7 @@ class BenefitsDashboardController extends \BaseController {
 	}
 
 	public function getEmployeeListsBulk( )
-  {
+  	{
 
 	  	$input = Input::all();
 	  
@@ -14694,7 +14981,7 @@ class BenefitsDashboardController extends \BaseController {
 		$customer_id = $customer->customer_buy_start_id;
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
-		$members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
+		$members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $spending->customer_id)->first();
 		$pending = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where('payment_status', 0)->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
@@ -14730,20 +15017,24 @@ class BenefitsDashboardController extends \BaseController {
 		foreach ($members as $key => $member) {
 			$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
 			if($spending_type == 'medical') {
-				$allocation  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'medical');
+				$allocation  = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
 				$total_supp += $allocation['total_supp'];
 				$total_allocation += $allocation['allocation'];
 				$total_company_medical_allocation += $allocation['allocation'];
 				$total_company_medical_supp += $allocation['total_supp'];
 			} else if($spending_type == 'wellness'){
-				$allocation  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'wellness');
+				$allocation  = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
 				$total_supp += $allocation['total_supp'];
 				$total_allocation += $allocation['allocation'];
 				$total_company_wellness_allocation += $allocation['allocation'];
 				$total_company_wellness_supp += $allocation['total_supp'];
 			} else {
-				$allocation_medical  = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member->user_id);
-				$allocation_wellness  = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member->user_id);
+				$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'medical');
+				$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'wellness');
+				$allocation_medical  = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+				$allocation_wellness  = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
 				$temp_allocation = $allocation_medical['allocation'] + $allocation_wellness['allocation'];
 				$temp_supp = $allocation_medical['total_supp'] + $allocation_wellness['total_supp'];
 				$total_company_medical_allocation += $allocation_medical['allocation'];
@@ -14919,12 +15210,14 @@ class BenefitsDashboardController extends \BaseController {
         $data['medical_credits_purchase'] = number_format($spendingPurchase->medical_purchase_credits, 2);
         $data['medical_credit_bonus'] = number_format($spendingPurchase->medical_credit_bonus, 2);
         $data['medical_total_credits']  = number_format($spendingPurchase->medical_purchase_credits + $spendingPurchase->medical_credit_bonus, 2);
+        $data['medical_discount_credits']  = number_format($spendingPurchase->medical_credit_bonus, 2);
 
         // wellness spending account
         $data['wellness_spending_account'] = (float)$spendingPurchase->wellness_purchase_credits > 0 ? true : false;
         $data['wellness_credits_purchase'] = number_format($spendingPurchase->wellness_purchase_credits, 2);
         $data['wellness_credit_bonus'] = number_format($spendingPurchase->wellness_credit_bonus, 2);
         $data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
+        $data['wellness_discount_credits']  = number_format($spendingPurchase->wellness_credit_bonus, 2);
 		
 		// return View::make('invoice.spending-purchase-invoice', $data);
 		$pdf = PDF::loadView('invoice.spending-purchase-invoice', $data);
@@ -14951,11 +15244,10 @@ class BenefitsDashboardController extends \BaseController {
 
         $pagination['last_page'] = $invoices->getLastPage();
 		$pagination['current_page'] = $invoices->getCurrentPage();
-		$pagination['total_data'] = $invoices->getTotal();
 		$pagination['from'] = $invoices->getFrom();
-		$pagination['to'] = $invoices->getTo();
 		$pagination['count'] = $invoices->count();
-        
+		
+
         foreach($invoices as $key => $spendingPurchase) {
             $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
             $customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
@@ -14964,13 +15256,13 @@ class BenefitsDashboardController extends \BaseController {
             $data['spending_purchase_invoice_id'] = $spendingPurchase->spending_purchase_invoice_id;
             $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
             $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
-            $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
+            $data['invoice_date'] = date('d/m/Y', strtotime($spendingPurchase->invoice_date));
             $data['invoice_number'] = $spendingPurchase->invoice_number;
             $total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
             $data['total']  = number_format($total, 2);
             $data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
-            $data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
-            $data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
+            $data['invoice_due'] = date('d/m/Y', strtotime($spendingPurchase->invoice_due));
+            $data['payment_date'] = $spendingPurchase->payment_date ? date('d/m/Y', strtotime($spendingPurchase->payment_date)) : null;
             $data['remarks']    = $spendingPurchase->remarks;
             $data['company_name']   = $spendingPurchase->company_name;
             $data['company_address']   = $spendingPurchase->company_address;
@@ -14978,8 +15270,8 @@ class BenefitsDashboardController extends \BaseController {
             $data['contact_name']   = $spendingPurchase->contact_name;
             $data['contact_number']   = $spendingPurchase->contact_number;
             $data['contact_email']   = $spendingPurchase->contact_email;
-            $data['plan_start']   = date('d F Y', strtotime($spendingPurchase->plan_start));
-            $data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+            $data['plan_start']   = date('d/m/Y', strtotime($spendingPurchase->plan_start));
+            $data['plan_end']   = date('d/m/Y', strtotime($spendingPurchase->plan_start));
             $data['duration']   = $spendingPurchase->duration;
             $data['account_type'] = \PlanHelper::getAccountType($active_plan->account_type);
             $data['plan_type'] = 'Pre-paid Credits Plan Mednefits Care (Corporate)';
@@ -14994,10 +15286,40 @@ class BenefitsDashboardController extends \BaseController {
             $data['wellness_spending_account'] = (float)$spendingPurchase->wellness_purchase_credits > 0 ? true : false;
             $data['wellness_credits_purchase'] = number_format($spendingPurchase->wellness_purchase_credits, 2);
             $data['wellness_credit_bonus'] = number_format($spendingPurchase->wellness_credit_bonus, 2);
-            $data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
+			$data['wellness_total_credits']  = number_format($spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus, 2);
+			$data['spending_type'] = "purchase";
             $format[] = $data;
         }
 
+		// check if there is a spending transaction invoice
+		$credits_statements = DB::table('company_credits_statement')
+                                ->where('statement_customer_id', $customer_id)
+								->paginate($limit);
+		$total_spending_transaction_count = 0;
+		foreach ($credits_statements as $key => $data) {
+			if(date('Y-m-d') >= date('Y-m-d', strtotime($data->statement_date))) {
+				$statement = SpendingInvoiceLibrary::getInvoiceSpending($data->statement_id, false);
+				$statement['total_due'] = $statement['statement_amount_due'];
+			
+				$temp = array(
+					'invoice_number'    => $data->statement_number,
+					'invoice_date'        => date('d/m/Y', strtotime($data->statement_date)),
+					'type'              => 'Invoice',
+					'total'            => 'S$'.$statement['statement_total_amount'],
+					'status'            => (int)$data->statement_status,
+					'statement_id'      => $data->statement_id,
+					'currency_type'     => $statement['currency_type'],
+					'spending_type'		=> 'transaction'
+				);
+				// $total_spending_transaction_count = $credits_statements->count();
+				$total_spending_transaction_count++;
+				array_push($format, $temp);
+			}
+		}
+
+		$pagination['count'] = $invoices->count() + $total_spending_transaction_count;
+		$pagination['to'] = $invoices->getTo() + $total_spending_transaction_count;
+		$pagination['total_data'] = $invoices->getTotal() + $total_spending_transaction_count;
         $pagination['data'] = $format;
 		return $pagination;
     }

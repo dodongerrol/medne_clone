@@ -346,7 +346,15 @@ app.directive("companyContactsDirective", [
         scope.downloadSpendingInvoice = function(data) {
           // console.log(data);
           if(scope.account_plan.plan_method == 'pre_paid'){
-            window.open(serverUrl.url + "/hr/download_spending_purchase_invoice?id=" + data.spending_purchase_invoice_id + "&token=" + window.localStorage.getItem('token'));
+            if(data.spending_type == "purchase")  {
+              window.open(serverUrl.url + "/hr/download_spending_purchase_invoice?id=" + data.spending_purchase_invoice_id + "&token=" + window.localStorage.getItem('token'));
+            } else {
+              if(scope.download_token.live == true) {
+                window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + data.statement_id + '&token=' + scope.download_token.token);
+              } else {
+                window.open(serverUrl.url + '/hr/statement_download?id=' + data.statement_id + '&token=' + window.localStorage.getItem('token'));
+              }
+            }
           }else{
             if(scope.download_token.live == true) {
               window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + data.statement_id + '&token=' + scope.download_token.token);

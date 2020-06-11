@@ -458,6 +458,25 @@ class CustomerHelper
 	$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
 	return ['total_purchase_credits' => $total_medical_allocation, 'total_bonus_credits' => (float)$total_bonus];
   }
+
+  public static function getMemberLastGroupNumber($customer_id)
+  {
+	$link_account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+
+	$member = DB::table('corporate_members')
+				->where('corporate_id', $link_account->corporate_id)
+				->orderBy('user_id', 'desc')
+				->first();
+	$group_number = DB::table('user')
+						->where('UserID', $member->user_id)
+						->orderBy('group_number', 'desc')
+						->first();
+	if($group_number) {
+		return $group_number->group_number + 1;
+	} else {
+		return 1;
+	}
+  }
   
 	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
 	{
@@ -476,6 +495,13 @@ class CustomerHelper
 				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('wellness_supp_credits', $total);
 			}
 		}
+	}
+
+	public static function getActiveMembers($customer_id)
+	{
+		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
+		return $members;
 	}
 }
 ?>

@@ -638,14 +638,60 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         }
       }
     })
-    .state('company-create-password', {
-      url: '/company-create-password',
-      views: {
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyActivation/createPassword/index.html'
-        }
-      }
-    });
+    
+    
+    // ============== REMOVE EMPLOYEE STATES ================== //
+    
+      .state('employee-overview.remove-emp-inputs', {
+        url: '/remove-emp-inputs',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.remove-emp-checkboxes', {
+        url: '/remove-emp-checkboxes',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.refund-summary', {
+        url: '/refund-summary',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/refundSummary/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.remove-replace-emp', {
+        url: '/remove-replace-emp',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.health-spending-account-summary', {
+        url: '/health-spending-account-summary',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.health-spending-account-confirm', {
+        url: '/health-spending-account-confirm',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/index.blade.php'
+          },
+        },
+      });
+
+    // ======================================================== //
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');

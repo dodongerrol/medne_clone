@@ -166,10 +166,12 @@ Route::get('list/local_network_partners/{id}', 'NetworkPatnerController@getLocal
 
 // hr dashboard
 Route::get('business-portal-login', 'HomeController@hrDashboardLogin');
+Route::get('company-activation', 'HomeController@getCompanyActivationView');
 Route::get('company-benefits-dashboard-login', 'HomeController@oldhrDashboardLogin');
 Route::get('company-benefits-dashboard-logout', 'BenefitsDashboardController@logOutHr');
 Route::post('company-benefits-dashboard-login', 'BenefitsDashboardController@hrLogin');
-Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
+// Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
+Route::get('hr/validate_token', 'BenefitsDashboardController@getHrPasswordTokenDetails');
 Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
 
 // secure route on hr page, need authenticated to get access on this routes
@@ -398,7 +400,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
-	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// update cap per visit of employee
 	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 	// get pre signed e-claim doc
@@ -452,6 +453,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
 	// get spending invoice purchse
 	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
+	// get employee enrollment status
+	Route::get('hr/get_employee_enrollment_status', 'EmployeeController@getEmployeeEnrollmentStatus');
+	// check fields for replacement
+	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
 });
 
 	// get employee refund details
@@ -954,6 +959,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
 		Route::post('auth/send-otp-mobile', 'Api_V1_AuthController@sendOtpMobile');
 		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
+		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
 		
 	 	Route::group(array('before' => 'auth.v2'),function(){
