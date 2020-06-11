@@ -109,7 +109,7 @@ Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordVie
 Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordView');
 
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
-
+Route::post('hr/create-password-activated', 'BenefitsDashboardController@createCompanyPasswordActivated');
 Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 // authentications for eclaim
 Route::group(array('before' => 'auth.jwt_employee'), function( ){
@@ -330,6 +330,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get company employees and credits left
 	// Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
 	Route::get('hr/details', 'BenefitsDashboardController@getCompanyDetails');
+
 
 	// plan tier and dependents api
 	
