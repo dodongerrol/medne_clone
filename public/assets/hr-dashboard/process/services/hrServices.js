@@ -75,6 +75,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
       serverUrl.url + "/hr/benefits_spending_invoice_transactions?page=" + page
     );
   };
+  
+  hrFactory.getPrePaidSpendingPurchaseTransac = function(page) {
+    return $http.get(
+      serverUrl.url + "/hr/get_spending_invoice_purchase_lists?page=" + page
+    );
+  };
 
   hrFactory.getRefunds = function() {
     return $http.get(serverUrl.url + "/hr/get_refunds");
@@ -331,9 +337,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.getSpendingAccountStatus = function() {
     return $http.get( serverUrl.url + "/hr/get_spending_account_status");
   };
+  hrFactory.getPrePostStatus = function() {
+    return $http.get( serverUrl.url + "/hr/spending_account_status");
+  };
 
-  hrFactory.getEmployeeBulkAllocation = function( per_page, page  ) {
-    return $http.get( serverUrl.url + "/hr/get_employee_lists_bulk_allocation?per_page="+ per_page +"&page=" + page );
+  hrFactory.getEmployeeBulkAllocation = function( per_page, page, type  ) {
+    return $http.get( serverUrl.url + "/hr/get_employee_lists_bulk_allocation?per_page="+ per_page +"&page=" + page + "&spending_type=" + type );
   };
 
   hrFactory.downloadBulkAllocation = function( token  ) {
@@ -351,6 +360,18 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
       data: {file: file}
     });
   };
+
+  hrFactory.get_excel_link = function (id) {
+    return $http.get( serverUrl.url + "/hr/get_excel_link?customer_id=" + id );
+  }
+
+  hrFactory.checkReplaceEmpForm = function (data) {
+    return $http.post( serverUrl.url + "/hr/check_user_field_replacement", data);
+  }
+  
+  hrFactory.get_member_refund = function (data) {
+    return $http.post( serverUrl.url + "/hr/get_member_refund_calculation", data  );
+  }
 
   return hrFactory;
 });

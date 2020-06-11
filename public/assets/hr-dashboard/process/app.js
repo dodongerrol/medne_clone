@@ -22,7 +22,7 @@ function ($rootScope, $state, $stateParams, $templateCache, $window) {
 
 
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-    console.log( toState );
+    // console.log( toState );
     if( toState.url != '/e-claim' ){
       $('.download-receipt-message').hide();
     }
@@ -210,65 +210,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
         },
         'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/enrollment-method-dashboard.html'
-        }
-      },
-    })
-    .state('download-template', {
-      url: '/download-template',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/emn.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/download-template.html'
-        }
-      },
-    })
-    .state('prepare', {
-      url: '/prepare',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/emn-2.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/prepare.html'
-        }
-      },
-    })
-    .state('upload', {
-      url: '/upload',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/emn-3.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/upload.html'
-        }
-      },
-    })
-    .state('preview', {
-      url: '/preview',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/emn.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/preview.html'
-        },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-details.html'
-        }
-      },
-    })
-    .state('successful', {
-      url: '/successful',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/emn.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/successful.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/enrollment-method.html'
         }
       },
     })
@@ -276,13 +218,58 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/web-input',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/web.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/web-input.html'
         }
       },
     })
+    .state('excel-enrollment', {
+      url: '/excel-enrollment',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/excel-enrollment.html'
+        }
+      },
+    })
+      .state('excel-enrollment.download-template', {
+        url: '/download-template',
+        views: {
+          'child-content@excel-enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/download-template.html'
+          }
+        }
+      })
+      .state('excel-enrollment.prepare', {
+        url: '/prepare',
+        views: {
+          'child-content@excel-enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/prepare.html'
+          }
+        }
+      })
+      .state('excel-enrollment.upload', {
+        url: '/upload',
+        views: {
+          'child-content@excel-enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/upload.html'
+          }
+        }
+      })
+      .state('excel-enrollment.web-preview', {
+        url: '/web-preview',
+        views: {
+          'child-content@excel-enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/web-preview.html'
+          },
+        },
+      })
+    
+    
     .state('vacant-seat-enrollment', {
       url: '/vacant-seat-enrollment?vacant_id&type',
       views: {
@@ -294,31 +281,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         }
       },
     })
-    .state('web-preview', {
-      url: '/web-preview',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/web.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/web-preview.html'
-        },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-details.html'
-        }
-      },
-    })
-    .state('web-successful', {
-      url: '/web-successful',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/web.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/web-successful.html'
-        }
-      },
-    })
+
     .state('employee-overview', {
       url: '/employee-overview',
       views: {
@@ -652,7 +615,61 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
         }
       }
-    });
+    })
+    
+    
+    // ============== REMOVE EMPLOYEE STATES ================== //
+    
+      .state('employee-overview.remove-emp-inputs', {
+        url: '/remove-emp-inputs',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.remove-emp-checkboxes', {
+        url: '/remove-emp-checkboxes',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.refund-summary', {
+        url: '/refund-summary',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/refundSummary/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.remove-replace-emp', {
+        url: '/remove-replace-emp',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.health-spending-account-summary', {
+        url: '/health-spending-account-summary',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.health-spending-account-confirm', {
+        url: '/health-spending-account-confirm',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/index.blade.php'
+          },
+        },
+      });
+
+    // ======================================================== //
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');

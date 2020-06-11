@@ -9,8 +9,8 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	vm.getCompanyContacts = function() {
     hrSettings.getContacts().then(function(response) {
       console.log(response);
-      console.log( response.data.data.business_information.created_at );
-      console.log( moment( response.data.data.business_information.created_at ).unix() );
+      // console.log( response.data.data.business_information.created_at );
+      // console.log( moment( response.data.data.business_information.created_at ).unix() );
       window.Appcues.identify(
 				// "57952", // unique, required
 				response.data.data.business_information.customer_buy_start_id,
@@ -39,11 +39,11 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 			// console.log('no token');
 			$http.get(window.location.origin + '/get-hr-session')
 				.then(function(result){
-					console.log(result);
+					// console.log(result);
 					// get config for realtime notification
 					$http.get(window.location.origin + '/config/notification')
 					.then(function(response){
-						console.log(response);
+						// console.log(response);
 						OneSignal.push(["init", {
 					      appId: response.data,
 					      autoRegister: true, // Set to true to automatically prompt visitors 
@@ -65,7 +65,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	vm.accountType = function(){
 		$http.get(window.location.origin + '/hr/get_company_account_type' )
 		.success(function(response){
-			console.log(response);
+			// console.log(response);
 
 			vm.account_type = response.account_type;
 			
@@ -94,7 +94,7 @@ checkCtrl.controller('resetCtrl', function( $scope, $http, $stateParams){
 	vm.onLoad = function(){
 		$http.get(window.location.origin + '/hr/reset-password-details/' + $stateParams.token)
 		.success(function(response){
-			console.log(response);
+			// console.log(response);
 			if(response.status == false) {
 				$('#token-expired').fadeIn();
 			} else if(response.status == true) {
@@ -105,7 +105,7 @@ checkCtrl.controller('resetCtrl', function( $scope, $http, $stateParams){
 	};
 
 	vm.resetHr = function( ) {
-		console.log(vm.reset_pass);
+		// console.log(vm.reset_pass);
 		if(vm.reset_pass.password != vm.reset_pass.confirm_password) {
 			alert('Password and Confirm Password did not match.');
 			return false;
