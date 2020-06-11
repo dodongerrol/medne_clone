@@ -45,7 +45,7 @@ class OauthAccessTokens extends Eloquent implements UserInterface, RemindableInt
                     ->join('user', 'oauth_sessions.owner_id', '=', 'user.UserID')
                     ->select('user.UserID')
                     ->where('oauth_access_tokens.id','=',$token)
-                    ->where('user.Active', 1)
+                    // ->where('user.Active', 1)
                     // ->where('user.UserType','=',1)
                     ->where('user.UserType',5)
                     ->first();

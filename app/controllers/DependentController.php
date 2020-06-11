@@ -231,7 +231,8 @@ class DependentController extends \BaseController {
 			$temp_enroll = new TempEnrollment();
 			$temp_dependent_enroll = new DependentTempEnrollment();
 
-		  // check employee and dependents validation
+			$group_number = CustomerHelper::getMemberLastGroupNumber($customer_id);
+		  	// check employee and dependents validation
 			foreach ($temp_users as $key => $user) {
 				$credit = 0;
 				$user['email'] = isset($user['work_email']) ? trim($user['work_email']) : null;
@@ -285,6 +286,7 @@ class DependentController extends \BaseController {
 					'wellness_balance_entitlement'				=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
 					'postal_code'			=> trim($user['postal_code']),
 					'start_date'			=> $user['plan_start'],
+					'group_number'			=> $group_number,
 					'error_logs'			=> serialize($error_member_logs)
 				);
 

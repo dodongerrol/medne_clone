@@ -399,7 +399,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
-	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// update cap per visit of employee
 	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 	// get pre signed e-claim doc
@@ -455,6 +454,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
 	// get employee enrollment status
 	Route::get('hr/get_employee_enrollment_status', 'EmployeeController@getEmployeeEnrollmentStatus');
+	// check fields for replacement
+	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
 });
 
 	// get employee refund details

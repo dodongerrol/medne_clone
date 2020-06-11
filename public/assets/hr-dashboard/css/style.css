@@ -6292,6 +6292,7 @@ ul.typeahead li a.dropdown-item {
 .balance-container {
   display: grid;
   grid-template-columns: 1.5fr 1.5fr;
+  font-size: 16px;
 }
 
 .plan-information h4 {
@@ -7151,7 +7152,7 @@ span.dropdown-entitlement.disabled {
   margin-bottom: 110px;
   margin-left: auto;
   margin-right: auto;
-  padding: 20px 128px;
+  padding: 20px 40px;
 }
 
 .medical-spending-account-container h4 {
@@ -7171,7 +7172,7 @@ span.dropdown-entitlement.disabled {
 .spent-container,
 .pending-claim-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
 }
 
 .inital-allocation-container > span,
@@ -7181,7 +7182,8 @@ span.dropdown-entitlement.disabled {
 .pending-claim-container > span {
   text-align: right;
   display: block;
-  padding-right: 20px;
+  /* padding-right: 20px; */
+  font-size: 16px;
 }
 
 .spending-account-status {
@@ -7231,13 +7233,15 @@ span.dropdown-entitlement.disabled {
 .inital-allocation-container strong,
 .pro-rated-container strong,
 .current-usage-container strong {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .spent-container,
 .pending-claim-container,
 .current-usage-container {
   grid-template-rows: 18px;
+  margin-bottom: 10px;
+  font-size: 16px;
 }
 
 .spent-container strong,
@@ -7282,6 +7286,7 @@ span.dropdown-entitlement.disabled {
   text-align: right;
   display: block;
   padding-right: 0px;
+  font-size: 16px;
 }
 
 .medical-wellness-container .separator {

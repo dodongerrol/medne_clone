@@ -130,6 +130,11 @@ class CronController extends \BaseController {
                             ->get();
 
         foreach ($replacements as $key => $replace) {
+            $user_dat = DB::table('user')->where('UserID', $replace->old_id)->first();
+                // set company members removed to 1
+            if($user_dat) {
+                MemberHelper::memberReturnCreditBalance($replace->old_id);
+            }
             $active_plan = DB::table('customer_active_plan')
                             ->where('customer_active_plan_id', $replace->active_plan_id)
                             ->first();
@@ -152,6 +157,7 @@ class CronController extends \BaseController {
             $result = PlanHelper::createReplacementEmployeeSchedule($replace_id, $input, $id, true, $medical, $wellness);
             $employees++;
             try {
+                
                 $admin_logs = array(
                     'admin_id'  => null,
                     'type'      => 'activate_replace_employee_schedule_system_generate',
@@ -422,9 +428,9 @@ class CronController extends \BaseController {
             }
 
             $user_data = array(
-                    'Active'    => 0,
-                    'updated_at' => date('Y-m-d')
-                );
+                'Active'    => 0,
+                'updated_at' => date('Y-m-d')
+            );
             // update user and set to inactive
             DB::table('user')->where('UserID', $remove->old_id)->update($user_data);
             // set company members removed to 1
@@ -443,6 +449,8 @@ class CronController extends \BaseController {
                 'deactive_employee_status'        => 1
             );              
             $replace->updateCustomerReplace($remove->customer_replace_employee_id, $replace_data);
+            $wallets = MemberHelper::memberReturnCreditBalance($remove->old_id);
+
             PlanHelper::removeDependentAccounts($remove->old_id, $remove->expired_and_activate, false, true);
             try {
                 $admin_logs = array(
@@ -586,12 +594,19 @@ class CronController extends \BaseController {
 
     public function createAutomaticDeletion( )
     {
-        $date = date('Y-m-d', strtotime('-1 day'));
+        $input = Input::all();
+
+        if(!empty($input['date']) && $input['date'] != null) {
+            $date = date('Y-m-d', strtotime($input['date']));
+        } else {
+            $date = date('Y-m-d', strtotime('-1 day'));
+        }
+        
         $employee = 0;
         $dependents = 0;
         $withdraw = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 0)->get();
         $user_plan_history = new UserPlanHistory();
-        // return $withdraw;
+        
 
         foreach ($withdraw as $key => $user) {
             if((int)$user->has_no_user == 0) {
@@ -652,11 +667,20 @@ class CronController extends \BaseController {
         }
 
         // remove refunded = 2
-        $removes = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
+        if(!empty($input['member_id']) && $input['member_id'] != null) {
+            $removes = DB::table('customer_plan_withdraw')->where('user_id', $input['member_id'])->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
+        } else {
+            $removes = DB::table('customer_plan_withdraw')->where('date_withdraw', '<=', $date)->where('refund_status', 2)->get();
+        }
+        
         foreach ($removes as $key => $removed_employee) {
             if((int)$removed_employee->has_no_user == 0) {
                 $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
                 // set company members removed to 1
+                if($user_dat) {
+                    MemberHelper::memberReturnCreditBalance($removed_employee->user_id);
+                }
+
                 if($user_dat && $user_dat->Active == 1) {
                     $active_plan = DB::table('user_plan_history')->where('user_id', $removed_employee->user_id)->orderBy('date', 'desc')->first();
                     $user_plan_history_data = array(
@@ -685,7 +709,7 @@ class CronController extends \BaseController {
                 }
             }
         }
-
+      
         // remove dependent status = 0
         $dependent_withdraws = DB::table('dependent_plan_withdraw')
                                 ->where('date_withdraw', '<=', $date)

@@ -615,7 +615,83 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
         }
       }
-    });
+    })
+    .state('expired-link', {
+      url: '/expired-link',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/expired-link/expired-link.html'
+        }
+      }
+    })
+    .state('T&C', {
+      url: '/T&C',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/t&c/t&c.html'
+        }
+      }
+    })
+    
+    
+    // ============== REMOVE EMPLOYEE STATES ================== //
+    
+      .state('employee-overview.remove-emp-inputs', {
+        url: '/remove-emp-inputs',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.remove-emp-checkboxes', {
+        url: '/remove-emp-checkboxes',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.refund-summary', {
+        url: '/refund-summary',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/refundSummary/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.remove-replace-emp', {
+        url: '/remove-replace-emp',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.health-spending-account-summary', {
+        url: '/health-spending-account-summary',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/index.blade.php'
+          },
+        },
+      })
+      .state('employee-overview.health-spending-account-confirm', {
+        url: '/health-spending-account-confirm',
+        views: {
+          'remove-emp-content@employee-overview': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/index.blade.php'
+          },
+        },
+      });
+
+    // ======================================================== //
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');
