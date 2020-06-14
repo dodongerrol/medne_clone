@@ -164,28 +164,4 @@ class CorporateController extends BaseController {
 
     return ['status' => true, 'current_term' => $current_term, 'last_term' => $last_term];
 	}
-
-	public function createCompanyPasswordActivated ( )
-	{
-		$input = Input::all();
-		$hr_data = StringHelper::getJwtHrSession();
-		$hr_id = $hr_data->hr_dashboard_id;
-
-		$hr = DB::table('customer_hr_dashboard')
-		->where('customer_buy_start_id', $$hr->hr_dashboard_id)
-		->first();
-
-		if($hr->active == "1") {
-			$data = array(
-				'password'	=> md5($input['new_password']),
-				'confirm_password' => md5($input['confirm_password']),
-				'reset_link' => NULL
-			);
-		return array ('status' => TRUE, 'message' => 'Successfully created company password.', $hr_data);
-		} else {
-			return array ('status' => FALSE, 'message' => 'Member not yet activated.');
-		}
-
-
-	}
 }

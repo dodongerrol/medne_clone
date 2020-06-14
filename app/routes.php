@@ -170,9 +170,10 @@ Route::get('company-activation', 'HomeController@getCompanyActivationView');
 Route::get('company-benefits-dashboard-login', 'HomeController@oldhrDashboardLogin');
 Route::get('company-benefits-dashboard-logout', 'BenefitsDashboardController@logOutHr');
 Route::post('company-benefits-dashboard-login', 'BenefitsDashboardController@hrLogin');
-// Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
-Route::get('hr/validate_token', 'BenefitsDashboardController@getHrPasswordTokenDetails');
+Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
+Route::get('hr/validate_token', 'BenefitsDashboardController@getTokenDetails');
 Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
+Route::post('hr/create-company-password', 'BenefitsDashboardController@createCompanyPassword');
 
 // secure route on hr page, need authenticated to get access on this routes
 

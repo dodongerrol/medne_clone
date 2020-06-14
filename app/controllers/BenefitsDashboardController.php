@@ -9025,7 +9025,18 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function getHrPasswordTokenDetails( )
+	public function getHrPasswordTokenDetails($token)
+	{
+		$check = DB::table('customer_hr_dashboard')->where('reset_link', $token)->first();
+
+		if($check) {
+			return array('status' => TRUE, 'data' => $check->hr_dashboard_id);
+		}
+
+		return array('status' => FALSE, 'message' => 'Token expired.');
+	}
+
+	public function getTokenDetails( )
 	{
 		$input = Input::all();
 
@@ -15322,5 +15333,47 @@ class BenefitsDashboardController extends \BaseController {
 		$pagination['total_data'] = $invoices->getTotal() + $total_spending_transaction_count;
         $pagination['data'] = $format;
 		return $pagination;
-    }
+	}
+	
+	public function createCompanyPassword ( )
+	{
+		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'token required.');
+		}
+		if(empty($input['hr_dashboard_id']) || $input['hr_dashboard_id'] == null) {
+			return array('status' => false, 'message' => 'HR is required.');
+		}
+		$hr  = new HRDashboard();
+		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
+
+		if($check) {
+			
+			if($check->active == 1)	{
+				$new_password = array(
+					'password'	=> md5($input['new_password']),
+					'confirm_password' => md5($input['confirm_password']),
+					'reset_link' => NULL
+				);
+				$result = $hr->updateCorporateHrDashboard($input['hr_id'], $new_password);
+			
+			// // check if token is still valid
+			// $today = strtotime(date('Y-m-d H:i:s'));
+			// $expiry = strtotime($check->expiration_time);
+
+			// if($today > $expiry) {
+			// 	return array('status' => false, 'message' => 'token is expired');
+			// }
+				
+			// 	// return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true]);
+			// }
+
+			
+		}
+		return array ('status' => TRUE, 'message' => 'Successfully created password.');
+		// return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
+		
+
+	}
 }
