@@ -32,6 +32,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
           }else{
             if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
               $("#remove-employee-confirm-modal").modal('show');
+            }else if(scope.emp_details.account_type == 'enterprise_plan'){
+              $state.go('employee-overview.refund-summary');
             }else{
               // scope.confirmRemoveEmployee();
               scope.removeEmployeeRequests();
