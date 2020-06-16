@@ -15374,6 +15374,6 @@ class BenefitsDashboardController extends \BaseController {
 		return array ('status' => TRUE, 'message' => 'Successfully created password.');
 		// return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
 		
-
+	}
 	}
 }
