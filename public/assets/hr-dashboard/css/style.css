@@ -9403,6 +9403,11 @@ span.dropdown-entitlement.disabled {
   margin: 20px 0 0;
   padding: 4px 32px;
 }
+.privacy-wrapper .btn-blue[disabled],
+.privacy-wrapper .btn-scroll.disable {
+  background-color: #DBDBDB;
+  pointer-events: none;
+}
 .btn-footer {
   text-align: right;
 }

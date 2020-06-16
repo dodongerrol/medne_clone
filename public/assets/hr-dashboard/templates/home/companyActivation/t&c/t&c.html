@@ -1,4 +1,4 @@
-<div class="t-and-c-wrapper">
+<div class="t-and-c-wrapper" t-and-c-directive>
 	<div>
 		<a href="#" class="pull-right need-help-text tooltips">
 			<span>Need Help?</span>
@@ -18,7 +18,7 @@
 		<img class="mednefits-logo" src="../../assets/images/Mednefits Logo_Blue.png">
 	</div>
 	<div class="privacy-wrapper">
-		<div class="privacy-container">
+		<div class="privacy-container" id="privacy-policy-container">
 			<div>
 				<h1>Privacy Policy</h1>
 			</div>
@@ -41,17 +41,17 @@
 				<div class="custom-radiobox-container">
           <label class="radiobox-input">
             <span>I have read and agree to the above agreement</span>
-            <input value="true" type="radio" ng-model="global_agreementSelector"/>
+            <input ng-change="enableAgreement( global_agreementSelector )" value="true" type="checkbox" ng-model="global_agreementSelector"/>
             <span class="radiobox-mark"></span>
           </label>
         </div> 
 				<div>
-					<button class="btn-blue">Proceed</button>
+					<button ng-click="proceedPrivacy()" ng-disabled="global_agreementSelector == false" class="btn-blue">Proceed</button>
 				</div>
 			</div>
 		</div>
 		<div class="btn-footer">
-			<button class="btn-blue btn-scroll">Scoll to bottom</button>
+			<button ng-click="scrollBottom()" class="btn-blue btn-scroll">Scoll to bottom</button>
 		</div>
 	</div>
 </div>

@@ -62,7 +62,12 @@
   <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/angular-ui-router.min.js?_={{ $date->format('U') }}"></script>
   <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/activation.js?_={{ $date->format('U') }}"></script>
 
+
   <!-- Company activation -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/function.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/t&c/function.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/activationService.js?_={{ $date->format('U') }}"></script>
 
 </html>
