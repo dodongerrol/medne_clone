@@ -110,6 +110,7 @@ Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordVie
 
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 
+Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 // authentications for eclaim
 Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
@@ -221,7 +222,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// Route::post('upload/excel_enrollment', 'BenefitsDashboardController@uploadExcel');
 	Route::post('upload/excel_enrollment', 'DependentController@uploadExcel');
 	// finish employee enrollements
-	Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
+	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 	// employee list
 	Route::get('hr/employee/list/{per_page}', 'BenefitsDashboardController@employeeLists');
 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');
@@ -455,7 +456,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update_company_hr_details', 'CorporateController@updateCompanyHrDetails');
 });
 
-
+	// get employee refund details
+	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
 	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');

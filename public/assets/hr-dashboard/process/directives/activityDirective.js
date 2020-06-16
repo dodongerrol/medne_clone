@@ -783,7 +783,7 @@ app.directive('activityPage', [
 					// if (scope.term_value == 0 && scope.dateTerms.last_term != false) {
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
-							// console.log(response);
+							console.log(response);
 							scope.hideLoading();
 							if (response.status == 200) {
 								scope.activity = {};
@@ -791,7 +791,7 @@ app.directive('activityPage', [
 								// scope.activity_dates = [];
 								// scope.eclaim_dates = [];
 								scope.activity = response.data.data;
-
+								console.log(scope.activity);
 								scope.fetching_data = {
 									from: response.data.from,
 									to: response.data.total

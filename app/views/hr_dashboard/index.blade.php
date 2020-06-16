@@ -42,7 +42,19 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/fonts.css?_={{ $date->format('U') }}">
 
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bulk-credit-allocation.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/new-account-payment.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/style.css?_={{ $date->format('U') }}">
 
+
+	<!-- EMPLOYEE ENROLLMENT -->
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/employeeEnrollment.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/container/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/selectAccountType/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/inputTableEnrollment/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/excelEnrollment/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/previewTable/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/sendEmployeeActivation/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/enterpriseSummary/style.css?_={{ $date->format('U') }}">
 
 	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async="async"></script>
 
@@ -209,6 +221,22 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/uploadExcelDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/webInputDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/webPreviewDirective.js?_={{ $date->format('U') }}"></script>
+
+
+
+	<!-- NEW EMPLOYEE ENROLLMENT -->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/enrollmentFactory.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/container/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/selectAccountType/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/inputTableEnrollment/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/excelEnrollment/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/previewTable/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/sendEmployeeActivation/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/enterpriseSummary/function.js?_={{ $date->format('U') }}"></script>
+
+
+	<!-- Company activation -->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/function.js?_={{ $date->format('U') }}"></script>
 
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>

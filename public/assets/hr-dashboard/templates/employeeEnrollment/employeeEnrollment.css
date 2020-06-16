@@ -1,0 +1,350 @@
+/* ----------- CUSTOM RADIO ------------- */
+.enrollment-radiobox-container .radiobox-input {
+  display: block;
+  position: relative;
+  margin-bottom: 0px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-top: 0px;
+  padding: 0 0 0 25px;
+  font-size: 16px;
+}
+.enrollment-radiobox-container .radiobox-input input {
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.enrollment-radiobox-container .radiobox-input input:checked ~ .radiobox-mark { 
+  background-color: #fff;
+  border: 2px solid #0392CF;
+}
+
+.enrollment-radiobox-container .radiobox-input input:checked ~ .radiobox-mark:after {
+  display: block;
+}
+
+.enrollment-radiobox-container .radiobox-input .radiobox-mark {
+  position: absolute;
+  top: 2px;
+  left: 0px;
+  height: 20px;
+  width: 20px;
+  /* border: 1px solid #e4e4e4; */
+  border: 2px solid #BFBFBF;
+  border-radius: 50%;
+}
+
+.enrollment-radiobox-container .radiobox-input .radiobox-mark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 3px;
+  bottom: 3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  /* background: #C4C4C4; */
+  background: #0392CF;
+}
+/* -------------------------------------- */
+
+
+
+
+/* ------------- INPUT TABLE -------------------- */
+  .input-table-container{
+    position: relative;
+  }
+
+  /* ----------------- TABLE HEADER ----------------- */
+    .input-table-container .tbl-header-wrapper{
+      display: grid;
+      grid-template-columns: 335px auto;
+      /* border-right: 1px solid #E0E0E0; */
+      border-bottom: 1px solid #E0E0E0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+    .input-table-container .head-h-fixed .header-row{
+      display: grid;
+      grid-template-columns: auto auto auto;
+    }
+    .input-table-container .head-h-scroll-wrapper{
+      overflow-x: auto;
+      max-width: 5000px;
+    }
+    .input-table-container .head-h-scroll-wrapper .header-row{
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+    }
+    .header-row .head-col{
+      background: #F7F9FA;
+      font-size: 15px;
+      line-height: 18px;
+      color: #000000;
+      padding: 15px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-weight: 700;
+      border: 2px solid #E0E0E0;
+      border-width: 2px 0 0 2px;
+      height: 60px;
+    }
+    .head-col .required{
+      color: red;
+      font-size: 18px;
+    }
+    .header-row .head-col.option{
+      background: #FFF;
+      border: none;
+    }
+    .header-row .head-col.option,
+    .header-row .head-col.number{
+      min-width: 40px;
+    }
+    .header-row .head-col.fullname{
+      min-width: 255px;
+      border-width: 2px 2px 0 2px;
+    }
+    .header-row .head-col.dob{
+      min-width: 183px;
+      border-width: 2px 0 0 0;
+    }
+    .header-row .head-col.email{
+      min-width: 255px;
+    }
+    .header-row .head-col.country-code{
+      min-width: 130px;
+    }
+    .header-row .head-col.mobile{
+      min-width: 185px;
+    }
+    .header-row .head-col.start-date{
+      min-width: 160px;
+    }
+    .header-row .head-col.med-alloc{
+      min-width: 175px;
+    }
+    .header-row .head-col.wel-alloc{
+      min-width: 175px;
+    }
+    .header-row .head-col.bank-name{
+      min-width: 200px;
+    }
+    .header-row .head-col.bank-num{
+      min-width: 200px;
+    }
+    .header-row .head-col.dep-name{
+      min-width: 255px;
+    }
+    .header-row .head-col.dep-dob{
+      min-width: 220px;
+    }
+    .header-row .head-col.dep-rel{
+      min-width: 255px;
+    }
+    .input-table-container *::-webkit-scrollbar {
+      width: 0px;
+      height: 0px;
+    }
+    /* .input-table-container *::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+    .input-table-container *::-webkit-scrollbar-thumb {
+      border-radius: 6px;
+      background-color: #8b8b8b;
+    } */
+
+    .input-table-container .body-h-scroll-wrapper::-webkit-scrollbar{
+      height: 10px;
+      width: 10px;
+      background: rgba(196, 196, 196, 0.18);
+    }
+    .input-table-container .body-h-scroll-wrapper::-webkit-scrollbar-thumb {
+      border-radius: 6px;
+      background-color: #e2e2e2;
+      border: 2px solid #f4f4f4;
+      /* visibility: hidden; */
+    }
+    .input-table-container:hover .body-h-scroll-wrapper::-webkit-scrollbar-thumb{
+      /* visibility: visible; */
+    }
+  /* --------------------------------------------- */
+
+
+  /* ----------------- TABLE BODY ----------------- */
+    .tbl-body-wrapper{
+      border-top: 1px solid transparent;
+      border-right: 1px solid #E0E0E0;
+      border-bottom: 1px solid #E0E0E0;
+    }
+    .input-table-container .body-v-scroll-wrapper{
+      /* overflow-y: auto; */
+      /* max-height: calc(100vh - 550px); */
+      /* display: grid; */
+      /* grid-template-columns: 335px auto; */
+    }
+    .input-table-container .body-h-fixed{
+      max-height: calc(100vh - 484px);
+      overflow-y: auto;
+      padding-top: 60px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 335px;
+    }
+    .input-table-container .body-h-fixed .body-row{
+      display: grid;
+      grid-template-columns: auto auto auto;
+    }
+    .input-table-container .body-h-scroll-wrapper{
+      overflow-x: auto;
+      overflow-y: auto;
+      max-width: 5000px;
+      max-height: calc(100vh - 475px);
+      margin: 0 -11px -11px 0;
+      padding-top: 59px;
+      padding-left: 335px;
+    }
+    .input-table-container .body-h-scroll-wrapper .body-row{
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+    }
+    .body-row .body-col{
+      background: #FFF;
+      font-size: 15px;
+      line-height: 18px;
+      color: #000000;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-weight: 700;
+      border: 2px solid #E0E0E0;
+      border-width: 1px 0 1px 2px;
+      height: 60px;
+    }
+    .body-row .body-col.option{
+      background: #FFF;
+    }
+    .body-row .body-col.option img{
+      width: 5px;
+      height: 18px;
+      margin: 0 auto;
+    }
+    .body-row .body-col.option,
+    .body-row .body-col.number{
+      min-width: 40px;
+    }
+    .body-row .body-col.fullname{
+      min-width: 255px;
+      border-width: 1px 2px 1px 2px;
+    }
+    .body-row .body-col.dob{
+      min-width: 183px;
+      border-width: 1px 0 1px 0;
+    }
+    .body-row .body-col.email{
+      min-width: 255px;
+    }
+    .body-row .body-col.country-code{
+      min-width: 130px;
+    }
+    .body-row .body-col.mobile{
+      min-width: 185px;
+    }
+    .body-row .body-col.start-date{
+      min-width: 160px;
+    }
+    .body-row .body-col.med-alloc{
+      min-width: 175px;
+    }
+    .body-row .body-col.wel-alloc{
+      min-width: 175px;
+    }
+    .body-row .body-col.bank-name{
+      min-width: 200px;
+    }
+    .body-row .body-col.bank-num{
+      min-width: 200px;
+    }
+    .body-row .body-col.dep-name{
+      min-width: 255px;
+    }
+    .body-row .body-col.dep-dob{
+      min-width: 220px;
+    }
+    .body-row .body-col.dep-rel{
+      min-width: 255px;
+    }
+
+  /* ---------------------------------------------- */
+
+/* ---------------------------------------------- */
+
+
+
+
+
+
+
+/* ----------- BOTTOM BUTTONS ------------- */
+.bottom-btns-wrapper{
+  display: flex;
+  background-color: #f5f8fa;
+  border-top: solid 1px #d0d1d1;
+  border-bottom: solid 1px #d0d1d1;
+  height: 80px;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 0 50px;
+}
+.bottom-btns-wrapper .left-wrapper,
+.bottom-btns-wrapper .right-wrapper{
+  flex: 1;
+}
+.bottom-btns-wrapper .right-wrapper{
+  text-align: right;
+}
+.bottom-btns-wrapper .btn-back{
+  border: 2px solid #d6d6d6 !important;
+  color: #2c3e50 !important;
+  font-size: 16px !important;
+  background-color: transparent;
+  box-shadow: none;
+  padding: 11px 39px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.bottom-btns-wrapper .btn-cancel{
+  font-size: 16px;
+  line-height: 21px;
+  text-decoration-line: underline;
+  color: #2E4057;
+  text-transform: uppercase;
+  margin-left: 20px;
+  border-radius: 4px;
+}
+.bottom-btns-wrapper .btn-next{
+  background-color: #0392cf;
+  color: #fff;
+  border: 0;
+  box-shadow: none;
+  padding: 11px 39px;
+  font-weight: 700;
+  font-size: 18px !important;
+  text-transform: uppercase;
+  border-radius: 4px;
+}

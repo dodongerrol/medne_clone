@@ -12,5 +12,5 @@ return array(
     'secret_key' => 'w2c5M]=JSE/tpj#4;X',
     'environment' => 'staging',
     'enable_auto_logout' => false,
-    'sms_provider' => 'twilio'
+    'sms_provider' => 'commzgate'
 );

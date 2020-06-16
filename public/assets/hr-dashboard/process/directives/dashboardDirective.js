@@ -231,6 +231,24 @@ app.directive('dashboardDirective', [
 						});
 				}
 
+				scope._toggleInfo_ = function ( type ) {
+					if ( type == 'pending' ) {
+						$('.status-tooltip-wrapper.pending').toggle();
+						$('.status-tooltip-wrapper.active').hide();
+						$('.status-tooltip-wrapper.activated').hide();
+					}
+					if ( type == 'active' ) {
+						$('.status-tooltip-wrapper.active').toggle();
+						$('.status-tooltip-wrapper.pending').hide();
+						$('.status-tooltip-wrapper.activated').hide();
+					}
+					if ( type == 'activated' ) {
+						$('.status-tooltip-wrapper.activated').toggle();
+						$('.status-tooltip-wrapper.active').hide();
+						$('.status-tooltip-wrapper.pending').hide();
+					}
+				}
+
 				scope.onLoad = function () {
 					scope.showLoading();
 					hrSettings.getSession()

@@ -22,10 +22,10 @@
 			</div>
 			<div class="arrow-up-2" style="visibility: visible;"></div>
 		</div> -->
-		<div class="welcome-container" ng-if="empStatementShow">
+		<!-- <div class="welcome-container" ng-if="empStatementShow">
 			<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
 			<div id="arrow-up-statement"></div>
-		</div>
+		</div> -->
 		<div class="welcome-container">
 			<h4 ui-sref="activity">Activity</h4>
 			<div class="arrow-up-3" style="visibility: hidden;"></div>
@@ -60,7 +60,7 @@
 					<a ui-sref="document-center">Document Center</a>
 				</li>
 				<li class="active-link">
-					<a href="">Account & Payment</a>
+					<a href="">Account & Payments</a>
 				</li>
 				<!-- <li>
 					<a ui-sref="benefits-tier">Team Benefits Tier</a>
@@ -69,7 +69,10 @@
 		</div>
 		<div class="col-lg-10 info-container" hidden>
 			<!-- Plan Subscription -->
-			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Plan Subscription</h3>
+
+			<!-- OLD ACCOUNT & PAYMENT  -->
+
+			<!-- <h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Plan Subscription</h3>
 			<table class="table table-bordered account-and-payment-table">
 				<tbody>
 					<tr>
@@ -99,7 +102,9 @@
 						</td>
 					</tr>
 				</tbody>
-			</table>
+			</table> -->
+
+			<!---------------------------->
 
 			<!-- <h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Plan Subscription</h3>
 			<table class="table table-bordered account-and-payment-table">
@@ -127,7 +132,9 @@
 				</tbody>
 			</table> -->
 
-			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;"></h3>
+			<!-- OLD ACCOUNT & PAYMENT  -->
+
+			<!-- <h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;"></h3>
 			<table class="table table-bordered account-and-payment-table">
 				<thead>
 					<tr>
@@ -143,11 +150,11 @@
 						</td>
 					</tr>
 				</tbody>
-			</table>
+			</table> -->
 			
-			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 35px;margin-bottom: 20px;">Current Active Plans:</h3>
+			<!-- <h3 class="table-box-title" style="font-weight: bolder;margin-top: 35px;margin-bottom: 20px;">Current Active Plans:</h3> -->
 
-			<div class="active-plan" ng-repeat="list in comp_active_plans">
+			<div class="active-plan" ng-repeat="list in comp_active_plans" style="display: none;">
 				<p><label>Active Plan #<span ng-bind="$index + 1"></span></label></p>
 				<p><label>Active Plan ID #<span ng-bind="list.customer_active_plan_id">138</span></label></p>
 
@@ -250,6 +257,361 @@
 				</div>
 			</div>
 
+			<!---------------------------->
+
+			<div class="new-account-payment-wrapper">
+				<div class="hr-admin-container">
+					<h4>HR Adminstrator Contact (Primary Admin)</h4>
+					<div>
+						<div class="account-card-container">
+							<div class="account-card-row-info">
+								<div>Full name: </div> 
+								<span> Filbert Tan</span>
+							</div>
+							<div class="account-card-row-info">
+								<div>Email address: </div> 
+								<span> filbert@mednefits.com</span>
+							</div>
+							<div class="account-card-row-info">
+								<div>Mobile number: </div> 
+								<span> +6587671541</span>
+							</div>
+							<div class="btn-edit-container">
+								<button data-toggle="modal" data-target="#edit_details" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+							</div>
+						</div>
+						<div>
+							<button data-toggle="modal" data-target="#update_password" class="btn-update-password">Update Password</button>
+						</div>
+					</div>
+				</div>
+				<div class="plan-details-container">
+					<h4>Plan Details</h4>
+					<div>
+						<div class="account-card-container">
+							<div class="plan-account-sub-title">
+								<div>Employee Account</div>
+								<span>12 month account subscription term</span>
+							</div>
+							<div class="account-card-row-info">
+								<div>Plan Type: </div> 
+								<span> Basic Plan</span>
+							</div>
+							<div class="account-card-row-info">
+								<div>Total Enrolled Employees: </div> 
+								<span> 03</span>
+							</div>
+						</div>
+						<div class="account-card-container">
+							<div class="plan-account-sub-title">
+								<div>Dependent Account</div>
+								<span>12 month account subscription term</span>
+							</div>
+							<div class="account-card-row-info">
+								<div>Plan Type: </div> 
+								<span> Basic Plan</span>
+							</div>
+							<div class="account-card-row-info">
+								<div>Total Enrolled Dependents: </div> 
+								<span> 0</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="enrollment-history-container">
+					<h4>Enrollment History</h4>
+					<div class="enrollment-history-tbl-wrapper">
+						<div class="enrollment-history-tbl-container">
+							<table>
+								<thead>
+									<tr>
+										<th>
+											Date <br><span>of edit</span>
+										</th>
+										<th>Plan Type</th>
+										<th>Plan Start Date</th>
+										<th>Total <br> Enrolled Employees</th>
+										<th>Total <br> Enrolled Dependents</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>18 Feb 2020</td>
+										<td>Basic Plan</td>
+										<td>20 Feb 2020</td>
+										<td>03</td>
+										<td>0</td>
+										<td>
+											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+										</td>
+									</tr>
+									<tr>
+										<td>18 Feb 2020</td>
+										<td>Basic Plan</td>
+										<td>20 Feb 2020</td>
+										<td>03</td>
+										<td>0</td>
+										<td>
+											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+										</td>
+									</tr>
+									<tr>
+										<td>18 Feb 2020</td>
+										<td>Basic Plan</td>
+										<td>20 Feb 2020</td>
+										<td>03</td>
+										<td>0</td>
+										<td>
+											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="custom-pagination-container flex-1">
+						<div class="custom-pagination">
+							<div class="page-wrapper">
+								<div class="page-scroll-container">
+									<span ng-click="_prevPageList_('open')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+										<i class="fa fa-angle-left"></i> 
+										<span>Prev</span>
+									</span>
+									<div class="pages-list">
+											
+										<span class="page-num active">1</span>	
+										<!-- <span ng-repeat="list in range( global_memberOpenedPagination.last_page ) | limitTo:openPagesToDisplay:startIndex('open') track by $index" ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('open',list + 1)" ng-class="{'active' : list + 1 == open_page_active}">1</span> -->
+
+										 <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+										
+									</div>
+									<span ng-click="_nextPageList_('open')" class="prev-next-container">  
+										<span>Next</span>
+										<i class="fa fa-angle-right"></i> 
+									</span>
+								</div>
+							</div>
+							<div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
+							<!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+								<span><span>10</span> per page</span>
+								<span>  
+									<i class="fa fa-caret-down"></i>
+								</span>
+								<div ng-if="false" class="opened-per-page-scroll open-per-page-container">
+									<span ng-click="_setPageLimit_( 'open',10 )">10 per page</span>
+									<span ng-click="_setPageLimit_( 'open',25 )">20 per page</span>
+									<span ng-click="_setPageLimit_( 'open',50 )">50 per page</span>
+									<span ng-click="_setPageLimit_( 'open',100 )">100 per page</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="invoice-history-container">
+					<h4>Invoice History</h4>
+					<div class="invoice-history-tbl-wrapper">
+						<div class="invoice-history-tbl-container">
+							<table>
+								<thead>
+									<tr>
+										<th>Status</th>
+										<th>Invoice Date</th>
+										<th>Number</th>
+										<th>Total</th>
+										<th>Amount Due</th>
+										<th>Payment Due</th>
+										<th>Payment Amount</th>
+										<th>Payment Date</th>
+										<th>Payment <br>Remarks</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<div class="status pending">Pending</div>
+										</td>
+										<td>
+											<span>18 Feb 2020</span>
+										</td>
+										<td>
+											<span>MC00000238283</span>
+										</td>
+										<td>
+											<span>SGD 300.00</span>
+										</td>
+										<td>
+											<span>SGD 600.00</span>
+										</td>
+										<td>
+											<span>18 Feb 2020</span>
+										</td>
+										<td>
+											<span>SGD 0.00</span>
+										</td>
+										<td>
+											<span>Not Paid</span>
+										</td>
+										<td></td>
+										<td>
+											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div class="status paid">Paid</div>
+										</td>
+										<td>
+											<span>18 Feb 2020</span>
+										</td>
+										<td>
+											<span>MC00000238283</span>
+										</td>
+										<td>
+											<span>SGD 300.00</span>
+										</td>
+										<td>
+											<span>SGD 600.00</span>
+										</td>
+										<td>
+											<span>18 Feb 2020</span>
+										</td>
+										<td>
+											<span>SGD 0.00</span>
+										</td>
+										<td>
+											<span>Not Paid</span>
+										</td>
+										<td></td>
+										<td>
+											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="custom-pagination-container flex-1">
+						<div class="custom-pagination">
+							<div class="page-wrapper">
+								<div class="page-scroll-container">
+									<span ng-click="_prevPageList_('open')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+										<i class="fa fa-angle-left"></i> 
+										<span>Prev</span>
+									</span>
+									<div class="pages-list">
+											
+										<span class="page-num active">1</span>	
+										<!-- <span ng-repeat="list in range( global_memberOpenedPagination.last_page ) | limitTo:openPagesToDisplay:startIndex('open') track by $index" ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('open',list + 1)" ng-class="{'active' : list + 1 == open_page_active}">1</span> -->
+
+										 <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+										
+									</div>
+									<span ng-click="_nextPageList_('open')" class="prev-next-container">  
+										<span>Next</span>
+										<i class="fa fa-angle-right"></i> 
+									</span>
+								</div>
+							</div>
+							<div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
+							<!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+								<span><span>10</span> per page</span>
+								<span>  
+									<i class="fa fa-caret-down"></i>
+								</span>
+								<div ng-if="false" class="opened-per-page-scroll open-per-page-container">
+									<span ng-click="_setPageLimit_( 'open',10 )">10 per page</span>
+									<span ng-click="_setPageLimit_( 'open',25 )">20 per page</span>
+									<span ng-click="_setPageLimit_( 'open',50 )">50 per page</span>
+									<span ng-click="_setPageLimit_( 'open',100 )">100 per page</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade new-account-modal" id="edit_details" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+			    <div class="modal-content">
+			    	<form>
+				      <div class="modal-header">
+				        <h4>Edit HR Administrator Details</h4>
+				      </div>
+				      <div class="modal-body">
+				        <div class="company-account-input-wrapper">
+				        	<label>Full Name</label>
+				        	<div class="custom-input-wrapper">
+				        		<input type="text">
+				        	</div>
+				        </div>
+				        <div class="company-account-input-wrapper">
+				        	<label>Email</label>
+				        	<div class="custom-input-wrapper">
+				        		<input type="text">
+				        	</div>
+				        </div>
+				        <div class="company-account-input-wrapper number">
+									<label></span>Phone Number</label>
+									<div>
+										<div class="custom-input-wrapper">
+											<input ng-model="company_account_details.bill_tel_number" type="tel" id="phone_number">
+											<i class="fa fa-angle-down"></i>
+										</div>
+										<div class="custom-input-wrapper">
+											<input ng-model="company_account_details.bill_phone_number" type="text">
+										</div>
+									</div>
+								</div>
+				      </div>
+				      <div class="modal-footer">
+				        <button class="btn-edit-cancel">Cancel</button>
+				        <button class="btn-update">Update</button>
+				      </div>
+			      </form>
+			    </div>
+			  </div>
+			</div>
+
+			<div class="modal fade new-account-modal" id="update_password" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+			    <div class="modal-content">
+			    	<form>
+				      <div class="modal-header">
+				        <h4>Update Password</h4>
+				      </div>
+				      <div class="modal-body">
+				      	<div ng-if="false">
+					        <div class="company-account-input-wrapper">
+					        	<label>New Password</label>
+					        	<div class="custom-input-wrapper">
+					        		<input type="text" placeholder="Enter new password">
+					        	</div>
+					        </div>
+					        <div class="company-account-input-wrapper">
+					        	<label>Confirm Password</label>
+					        	<div class="custom-input-wrapper">
+					        		<input type="text" placeholder="Re-type new password">
+					        	</div>
+					        </div>
+				        </div>
+				        <div ng-if="true" class="succesfully-updated">
+				        	<div>
+				        		<img src="../assets/images/success-circle.png">
+				        	</div>
+				        	<span>Password has been succesfully updated.</span>
+				        </div>
+				      </div>
+				      <div class="modal-footer">
+				        <button ng-if="false" class="btn-edit-cancel">Cancel</button>
+				        <button ng-if="false" class="btn-update">Update</button>
+				        <button class="btn-edit-cancel btn-close">Close</button>
+				      </div>
+			      </form>
+			    </div>
+			  </div>
+			</div>
 		</div>
 
 		<div class="col-lg-8">

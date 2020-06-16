@@ -1,0 +1,50 @@
+.select-account-type-wrapper .title{
+  font-size: 20px;
+  line-height: 24px;
+  color: #000000;
+  margin: 70px 0 50px 0;
+  text-align: center;
+}
+.account-types-wrapper{
+  text-align: center;
+  width: 100%;
+}
+.account-types-wrapper .account-type-box{
+  border: 2px solid #BFBFBF;
+  border-radius: 8px;
+  width: 216px;
+  height: 224px;
+  display: inline-block;
+  margin: 0 12px;
+  padding: 20px;
+  cursor: pointer;
+}
+.account-types-wrapper .account-type-box.active{
+  border: 2px solid #0392CF;
+}
+.account-type-box .enrollment-radiobox-container{
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  height: 23px;
+  margin-bottom: 60px;
+}
+.account-type-box .type-name{
+  font-size: 18px;
+  line-height: 21px;
+  text-align: center;
+  color: #2E4057;
+  font-weight: 700;
+  height: 42px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+} 
+.account-type-box .text-desc{
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #848484;
+  font-weight: 700;
+}

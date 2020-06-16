@@ -615,7 +615,101 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
         }
       }
-    });
+    })
+    .state('expired-link', {
+      url: '/expired-link',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/expired-link/expired-link.html'
+        }
+      }
+    })
+    .state('T&C', {
+      url: '/T&C',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/t&c/t&c.html'
+        }
+      }
+    })
+    .state('company-create-password', {
+      url: '/company-create-password',
+      views: {
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyActivation/createPassword/index.html'
+        }
+      }
+    })
+    
+    // ------------------------  NEW EMPLOYEE ENROLLMENT STATES  --------------------------- //
+    
+      .state('enrollment', {
+        url: '/enrollment',
+        views: {
+          'navigation': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          },
+          'main': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/container/index.html'
+          }
+        }
+      })
+      .state('enrollment.select-account-type', {
+        url: '/select-account-type',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/selectAccountType/index.html'
+          }
+        }
+      })
+      .state('enrollment.input-table', {
+        url: '/input-table',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/inputTableEnrollment/index.html'
+          }
+        }
+      })
+      .state('enrollment.excel-upload', {
+        url: '/excel-upload',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/excelEnrollment/index.html'
+          }
+        }
+      })
+      .state('enrollment.preview-table', {
+        url: '/preview-table',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/previewTable/index.html'
+          }
+        }
+      })
+      .state('enrollment.send-employee-activation', {
+        url: '/send-employee-activation',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/sendEmployeeActivation/index.html'
+          }
+        }
+      })
+      .state('enrollment.enterprise-summary', {
+        url: '/enterprise-summary',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/enterpriseSummary/index.html'
+          }
+        }
+      });
+
+    // -----------------------  END OF NEW EMPLOYEE ENROLLMENT STATES  -------------------- //
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');

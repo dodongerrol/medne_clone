@@ -36,7 +36,24 @@ app.directive("companyContactsDirective", [
           scope.onLoad();
         });
 
-        
+        scope.inititalizeGeoCode = function () { 
+          var settings = {
+            preferredCountries: [],
+            separateDialCode: true,
+            initialCountry: "SG",
+            autoPlaceholder: "off",
+            utilsScript: "../assets/hr-dashboard/js/utils.js",
+            onlyCountries: ["sg","my"],
+          }
+
+          var input = document.querySelector("#phone_number");
+          iti1 = intlTelInput(input, settings);
+
+          input.addEventListener("countrychange", function () {
+            console.log(iti1.getSelectedCountryData());
+          })
+        }
+
         scope.selectSpendingTab = function(opt){
           scope.selectedSpendingTab = opt;
         }
@@ -545,6 +562,7 @@ app.directive("companyContactsDirective", [
         }
 
         scope.onLoad = function(){
+          scope.inititalizeGeoCode();
           scope.getDownloadToken();
           
           hrSettings.getSession( )
