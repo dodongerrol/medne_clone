@@ -458,7 +458,7 @@ class CustomerHelper
 	$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
 	return ['total_purchase_credits' => $total_medical_allocation, 'total_bonus_credits' => (float)$total_bonus];
   }
-  
+
 	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -476,6 +476,75 @@ class CustomerHelper
 				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('wellness_supp_credits', $total);
 			}
 		}
+	}
+
+	public static function getPlanDuration($customer_id, $plan_start)
+	{
+		$plan_coverage = \CustomerHelper::getCompanyPlanDates($customer_id);
+		$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
+		$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
+
+		$interval = date_diff($date_plan_start, $date_new_plan_start);
+		if($interval->m + (1) == 1) {
+			$duration = $interval->m + (1). ' month';
+		} else {
+			$duration = $interval->m + (1). ' months';
+		}
+
+		return $duration;
+	}
+
+	public static function calculateInvoicePlanPrice($default_price, $start, $end)
+	{
+		$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
+		$days = $diff->format('%a');
+		$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+		$remaining_days = $days;
+
+		$cost_plan_and_days = ($remaining_days / $total_days);
+		// return $remaining_days;
+		return $cost_plan_and_days * $default_price;
+	}
+
+	public static function getCompanyPlanDates($customer_id) 
+	{
+		$plan = DB::table('customer_plan')
+		->where('customer_buy_start_id', $customer_id)
+		->orderBy('created_at', 'desc')
+		->first();
+
+		$active_plan = DB::table('customer_active_plan')
+		->where('plan_id', $plan->customer_plan_id)
+		->first();
+
+		if((int)$active_plan->plan_extention_enable == 1) {
+			$plan_extention = DB::table('plan_extensions')
+			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+			->first();
+			if($plan_extention) {
+				if($plan_extention->duration || $plan_extention->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$plan_extention->duration, strtotime($plan_extention->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan_extention->plan_start)));
+				}
+			} else {
+				if($active_plan->duration || $active_plan->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+				}
+			}
+		} else {
+			if($active_plan->duration || $active_plan->duration != "") {
+				$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+			} else {
+				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+			}
+		}
+
+		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
+
+		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
 	}
 }
 ?>

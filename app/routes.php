@@ -454,6 +454,13 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
 	// update company HR details / employee enrollment
 	Route::post('hr/update_company_hr_details', 'CorporateController@updateCompanyHrDetails');
+	// EMPLOYEE ENROLLMENT V2 ROUTES
+	// get plan details
+	Route::get('hr/get_plan_details', 'BenefitsDashboardController@getPlanDetails');
+	// get enrollment histories
+	Route::get('hr/get_plan_enrollment_histories', 'BenefitsDashboardController@getEnrollmentHistories');
+	// get invoice histories
+	Route::get('hr/get_plan_invoice_histories', 'BenefitsDashboardController@getInvoiceHistories');
 });
 
 	// get employee refund details
