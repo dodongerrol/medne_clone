@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModule','authService', 'hrService', 'dependentsService', 'checkCtrl', 'bootstrap3-typeahead', 'ngJsonExportExcel', 'ngFileUpload','cp.ng.fix-image-orientation']);
+var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModule','authService', 'hrService', 'dependentsService', 'activationService' , 'checkCtrl', 'bootstrap3-typeahead', 'ngJsonExportExcel', 'ngFileUpload','cp.ng.fix-image-orientation']);
 
 app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window',
 function ($rootScope, $state, $stateParams, $templateCache, $window) {
