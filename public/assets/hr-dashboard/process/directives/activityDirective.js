@@ -1342,7 +1342,7 @@ app.directive('activityPage', [
 						filter: term_status,
 					}
 					console.log('YAWA');
-					scope.showLoading();
+					// scope.showLoading();
 
 					console.log(scope.dateTerms, 'gawas');
 					if (scope.term_value == 0 || scope.dateTerms.last_term != false) {

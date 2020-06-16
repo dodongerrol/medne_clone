@@ -18,10 +18,14 @@
 					removed, the occupied seat will move to a vacant seat.</span>
 				<span class="review-checkmark"></span>
 			</label>
-			<label class="review-container" >
+			<label ng-if="refund_status == true && !isBasicPlan"  class="review-container" >
         <input type="checkbox" ng-model="checkboxes_options.remove" ng-click="checkboxOption(3)">
-        <span ng-if="refund_status == true && !isBasicPlan" class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
-				<span ng-if="isBasicPlan" class="review-prepare-template-text">Please remove the seat completely.</span>
+        <span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
+				<span class="review-checkmark"></span>
+			</label>
+			<label ng-if="isBasicPlan" class="review-container" >
+        <input type="checkbox" ng-model="checkboxes_options.remove" ng-click="checkboxOption(3)">
+				<span class="review-prepare-template-text">Please remove the seat completely.</span>
 				<span class="review-checkmark"></span>
 			</label>
 		</div>

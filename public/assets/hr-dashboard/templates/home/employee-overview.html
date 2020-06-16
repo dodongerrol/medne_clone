@@ -386,7 +386,7 @@
 					</div>
 				</div>
 
-				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active'">
+				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active' && selectedEmployee.plan_method_type != 'pre_paid'">
 					<button class="btn-remove-employee" ng-click="removeBtn()">Remove Employee</button>
 				</div>
 

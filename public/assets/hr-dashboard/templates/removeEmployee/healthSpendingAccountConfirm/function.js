@@ -99,9 +99,26 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // console.log( response );
               // scope.hideLoading();
               if (response.data.status) {
-                // scope.confirmRemoveEmployee();
-                scope.isRemoveSuccess = true;
                 scope.hideLoading();
+                if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
+                  scope.isRemoveSuccess = true;
+                }else{
+                  swal({
+                    title: "Success!",
+                    // text: response.data.message,
+                    text: "The employee has been successfully removed",
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#0392CF",
+                    closeOnConfirm: true,
+                  },
+                  function (isConfirm) {
+                    if (isConfirm) {
+                      scope.resetEmpData();
+                    }
+                  });
+                }
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
@@ -130,9 +147,26 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                // scope.confirmRemoveEmployee();
-                scope.isRemoveSuccess = true;
                 scope.hideLoading();
+                if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
+                  scope.isRemoveSuccess = true;
+                }else{
+                  swal({
+                    title: "Success!",
+                    // text: response.data.message,
+                    text: "The employee has been successfully removed",
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#0392CF",
+                    closeOnConfirm: true,
+                  },
+                  function (isConfirm) {
+                    if (isConfirm) {
+                      scope.resetEmpData();
+                    }
+                  });
+                }
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
@@ -156,9 +190,26 @@ app.directive('healthSpendingAccountConfirmDirective', [
               // scope.hideLoading();
               // console.log(response);
               if (response.data.status) {
-                // scope.confirmRemoveEmployee();
-                scope.isRemoveSuccess = true;
                 scope.hideLoading();
+                if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
+                  scope.isRemoveSuccess = true;
+                }else{
+                  swal({
+                    title: "Success!",
+                    // text: response.data.message,
+                    text: "The employee has been successfully removed",
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#0392CF",
+                    closeOnConfirm: true,
+                  },
+                  function (isConfirm) {
+                    if (isConfirm) {
+                      scope.resetEmpData();
+                    }
+                  });
+                }
               } else {
                 scope.hideLoading();
                 swal('Error!', response.data.message, 'error');
