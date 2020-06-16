@@ -467,15 +467,17 @@ class CustomerHelper
 				->where('corporate_id', $link_account->corporate_id)
 				->orderBy('user_id', 'desc')
 				->first();
-	$group_number = DB::table('user')
+	if($member) {
+		$group_number = DB::table('user')
 						->where('UserID', $member->user_id)
 						->orderBy('group_number', 'desc')
 						->first();
-	if($group_number) {
-		return $group_number->group_number + 1;
-	} else {
-		return 1;
+
+		if($group_number) {
+			return $group_number->group_number + 1;
+		}
 	}
+	return 1;
   }
   
 	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
