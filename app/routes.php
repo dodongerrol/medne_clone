@@ -11,6 +11,8 @@
 |
 */
 
+// test paginate new
+Route::get('ge_test_paginate', 'testcontroller@paginateMembers');
 // Route::get('test_return_balance', 'testcontroller@testReturnBalance');
 Route::get('test/email_send', 'HomeController@testEmailSend');
 
