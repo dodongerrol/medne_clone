@@ -36,7 +36,7 @@ class SpendingInvoiceLibrary
 		return $final_end;
 	}
 
-	public static function checkCompanyTransactions($customer_id, $start, $end)
+	public static function checkCompanyTransactions($customer_id, $start, $end, $plan_method)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
@@ -44,7 +44,7 @@ class SpendingInvoiceLibrary
 		// $lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 		$transactions = 0;
 
-		if($spending['medical_method'] == "pre_paid") {
+		if($spending['medical_method'] == "pre_paid" && $plan_method == "post_paid") {
 			foreach ($corporate_members as $key => $member) {
 				$ids = StringHelper::getSubAccountsID($member->user_id);
 				$transactions_temp = DB::table('transaction_history')
@@ -123,7 +123,7 @@ class SpendingInvoiceLibrary
 		$total_in_network_amount = 0;
 		$transactions = [];
 
-		if($spending['medical_method'] == "pre_paid") {
+		if($spending['medical_method'] == "pre_paid" && $plan_method == "post_paid") {
 			foreach ($corporate_members as $key => $member) {
 				$ids = StringHelper::getSubAccountsID($member->user_id);
 	
@@ -213,7 +213,7 @@ class SpendingInvoiceLibrary
 				}
 			}
 		}
-
+		
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
 		$number = InvoiceLibrary::getInvoiceNuber('company_credits_statement', 3);
 		$spending_invoice_day = $customer->spending_default_invoice_day;
@@ -257,13 +257,22 @@ class SpendingInvoiceLibrary
 			'statement_contact_number'  => $billing_contact->phone,
 			'statement_contact_email'   => $billing_contact->billing_email,
 			'statement_in_network_amount'   => $total_in_network_amount,
-			'statement_e_claim_amount'       => $total_e_claim_amount,
-			'currency_type'							=> $customer->currency_type,
-			'currency_value'						=> $currency
+			'statement_e_claim_amount'  => $total_e_claim_amount,
+			'currency_type'				=> $customer->currency_type,
+			'currency_value'			=> $currency
 		);
 
 		if($lite_plan) {
 			$statement_data['lite_plan'] = 1;
+		}
+
+		if($spending['medical_method'] == "pre_paid" && $plan_method == "pre_paid") {
+			$statement_data['plan_method'] = 'pre_paid';
+			$statement_data['paid_date'] = date('Y-m-d', strtotime($statement_date));
+			$statement_data['paid_amount'] = 0;
+			$statement_data['statement_status'] = 1;
+		} else {
+			$statement_data['plan_method'] = 'post_paid';
 		}
 
 	   // create statement
@@ -793,7 +802,7 @@ class SpendingInvoiceLibrary
 		);
 	}
 
-	public static function checkSpendingInvoiceNewTransactions($customer_id, $start, $end, $invoice_id)
+	public static function checkSpendingInvoiceNewTransactions($customer_id, $start, $end, $invoice_id, $plan_method)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
@@ -804,7 +813,7 @@ class SpendingInvoiceLibrary
 		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 		$transactions = [];
 
-		if($spending['medical_method'] == "pre_paid")	{
+		if($spending['medical_method'] == "pre_paid" && $plan_method == "post_paid")	{
 			foreach ($corporate_members as $key => $member) {
 				$ids = StringHelper::getSubAccountsID($member->user_id);
 				$in_network = DB::table('transaction_history')

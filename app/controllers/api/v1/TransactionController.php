@@ -573,9 +573,10 @@ class Api_V1_TransactionController extends \BaseController
 											$customer_id = PlanHelper::getCustomerId($user_id);
 											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 											
-											if($spending['medical_method'] == "post_paid") {
-												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
-											}
+											// if($spending['medical_method'] == "post_paid") {
+												$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+											// }
 										} catch(Exception $e) {
 											$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
 											$email['logs'] = 'Mobile Payment Credits Save Transaction Invoice - '.$e;
@@ -960,9 +961,11 @@ class Api_V1_TransactionController extends \BaseController
 
 										$transaction->updateTransaction($transaction_id, $update_trans);
 										// insert transaction
-										if($spending['medical_method'] == "post_paid") {
-											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
-										}
+										// if($spending['medical_method'] == "post_paid") {
+											// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+											$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+										// }
 									} catch(Exception $e) {
 
 										if($data['spending_type'] == "medical") {
@@ -981,7 +984,8 @@ class Api_V1_TransactionController extends \BaseController
 									}
 								} else {
 									// insert to spending invoice
-									$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+									// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "post_paid" : "pre_paid";
+									$plan_method = "post_paid";
 									TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
 								}
 							}
