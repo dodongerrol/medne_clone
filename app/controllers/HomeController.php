@@ -34,11 +34,56 @@ class HomeController extends BaseController {
  {
 
   $data['to'] = 'jeamar1234@gmail.com';
+  // $data['to'] = 'info@medicloud.sg';
+  // $data['to'] = 'shielamaealvarez@ymail.com';
   $data['subject'] = "Email Test";
-  return Mail::send('email-templates.member-successful-transaction', $data, function($message) use ($data){
+  $data['credits'] = 1;
+  $data['transaction_id'] = 1;
+  $data['transaction_date'] = '10 April 2020, 11:11am ';
+  $data['health_provider_name'] = 'Medicloud Family Clinic Medicloud Family Clinic';
+  $data['health_provider_address'] = '7 Temasek Boulevard #18-02';
+  $data['health_provider_city'] = 'Suntec Tower One,';
+  $data['health_provider_country'] = 'SG 038987 ';
+  $data['health_provider_phone'] = '+65 6254 7889';
+  $data['member'] = 1;
+  $data['consultation'] = 1;
+  $data['total_amount'] = 1;
+  $data['nric'] = "Email Test";
+  $data['clinic_type_image'] = "Email Test";
+  $data['service'] = "Email Test";
+  $data['lite_plan_status'] = true;
+  $data['lite_plan_enabled'] = 1;
+  $data['consultation'] = 1;
+  $data['total_amount'] = 1;
+  $data['transaction_type'] = 1;
+  $data['currency_symbol'] = 'SGD';
+  $data['total_credits'] = 1;
+  $data['health_provider_postal'] = 1;
+  $data['cap_per_visit_status'] = true;
+  $data['cap_per_visit'] = 1;
+  $data['paid_by_credits'] = 1;
+  $data['paid_by_cash'] = 1;
+  $data['bill_amount'] = 1;
+
+  // return View::make('pdf-download/pdf-member-successful-transaction', $data);
+  // return View::make('email-templates/email-member-successful-transaction', $data);
+
+  // $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
+  // $pdf->getDomPDF()->get_option('enable_html5_parser');
+  // $pdf->setPaper('A4', 'portrait');
+  // return $pdf->stream();
+  
+  // return $pdf->render();
+  // return $pdf->download('sample.pdf');
+
+  return Mail::send('email-templates.email-member-successful-transaction', $data, function($message) use ($data){
+    $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
+    $pdf->getDomPDF()->get_option('enable_html5_parser');
+    $pdf->setPaper('A4', 'portrait');
     $message->from('noreply@medicloud.sg', 'MediCloud');
     $message->to($data['to'], 'MediCloud');
     $message->subject($data['subject']);
+    $message->attachData($pdf->output(), 'sample-attach.pdf');
   });
 }
 

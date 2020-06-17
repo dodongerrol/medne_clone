@@ -22,7 +22,7 @@ app.directive("companyContactsDirective", [
         scope.spending_deposits = {};
         scope.options = {};
         scope.download_token = {};
-
+        scope.token = window.localStorage.getItem('token');
         scope.wdraw_dl = false;
 
         scope.plan_transactions_page = 1;
@@ -30,10 +30,16 @@ app.directive("companyContactsDirective", [
         scope.spending_deposit_page = 1;
         scope.statementHide = true;
         // scope.empStatementShow = false;
+        scope.selectedSpendingTab = 0;
 
         scope.$on("informationRefresh", function(evt, data){
           scope.onLoad();
         });
+
+        
+        scope.selectSpendingTab = function(opt){
+          scope.selectedSpendingTab = opt;
+        }
 
         scope.companyAccountType = function () {
           scope.account_type = localStorage.getItem('company_account_type');
@@ -134,7 +140,7 @@ app.directive("companyContactsDirective", [
         }
 
         scope.activePlanDownloadInvoice = function(){
-          window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + scope.selected_active_plan_details.invoice.corporate_invoice_id);
+          window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + scope.selected_active_plan_details.invoice.corporate_invoice_id + '&token='+window.localStorage.getItem('token'));
         }
 
         scope.activePlanDownloadReceipt = function(){
@@ -287,20 +293,28 @@ app.directive("companyContactsDirective", [
 
         scope.getBenefitsSpendingTransac = function(page){
           scope.toggleLoading();
+          var request = null;
           var curr_total = scope.benefits_spending.current_total != 0 ? scope.benefits_spending.current_total : 0;
-          hrSettings.getBenefitsSpendingTransac(page).then(function(response) {
+          if(scope.account_plan.plan_method == 'pre_paid'){
+            request = hrSettings.getPrePaidSpendingPurchaseTransac(page);
+          }else{
+            request = hrSettings.getBenefitsSpendingTransac(page);
+          }
+          
+          request.then(function(response) {
+            console.log(response);
             scope.benefits_spending = response.data;
-            angular.forEach(scope.benefits_spending.data, function(value, key) {
-              if(scope.benefits_spending.data[ key ].amount.includes('S$')) {
-                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('S$','');
-              } else if (scope.benefits_spending.data[ key ].amount.includes('RM')) {
-                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('RM','');
-              } else if (scope.benefits_spending.data[ key ].amount.includes('SGD')) {
-                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('SGD','');
-              } else if (scope.benefits_spending.data[ key ].amount.includes('MYR')) {
-                value.new_amount = scope.benefits_spending.data[ key ].amount.replace('MYR','');
-              }
-            });
+            // angular.forEach(scope.benefits_spending.data, function(value, key) {
+            //   if(scope.benefits_spending.data[ key ].amount.includes('S$')) {
+            //     value.new_amount = scope.benefits_spending.data[ key ].amount.replace('S$','');
+            //   } else if (scope.benefits_spending.data[ key ].amount.includes('RM')) {
+            //     value.new_amount = scope.benefits_spending.data[ key ].amount.replace('RM','');
+            //   } else if (scope.benefits_spending.data[ key ].amount.includes('SGD')) {
+            //     value.new_amount = scope.benefits_spending.data[ key ].amount.replace('SGD','');
+            //   } else if (scope.benefits_spending.data[ key ].amount.includes('MYR')) {
+            //     value.new_amount = scope.benefits_spending.data[ key ].amount.replace('MYR','');
+            //   }
+            // });
 
             scope.benefits_spending.current_total = curr_total + parseInt(response.data.to);
             scope.benefits_spending.temp_total = parseInt(response.data.to);
@@ -331,12 +345,24 @@ app.directive("companyContactsDirective", [
 
         scope.downloadSpendingInvoice = function(data) {
           // console.log(data);
-          
-          if(scope.download_token.live == true) {
-            window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + data.statement_id + '&token=' + scope.download_token.token);
-          } else {
-            window.open(serverUrl.url + '/hr/statement_download?id=' + data.statement_id + '&token=' + window.localStorage.getItem('token'));
+          if(scope.account_plan.plan_method == 'pre_paid'){
+            if(data.spending_type == "purchase")  {
+              window.open(serverUrl.url + "/hr/download_spending_purchase_invoice?id=" + data.spending_purchase_invoice_id + "&token=" + window.localStorage.getItem('token'));
+            } else {
+              if(scope.download_token.live == true) {
+                window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + data.statement_id + '&token=' + scope.download_token.token);
+              } else {
+                window.open(serverUrl.url + '/hr/statement_download?id=' + data.statement_id + '&token=' + window.localStorage.getItem('token'));
+              }
+            }
+          }else{
+            if(scope.download_token.live == true) {
+              window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + data.statement_id + '&token=' + scope.download_token.token);
+            } else {
+              window.open(serverUrl.url + '/hr/statement_download?id=' + data.statement_id + '&token=' + window.localStorage.getItem('token'));
+            }
           }
+          
         }
 
         scope.downloadSpendingReceipt = function(data) {
@@ -503,8 +529,32 @@ app.directive("companyContactsDirective", [
           window.open(serverUrl.url + '/hr/download_dependent_invoice?dependent_plan_id=' + data.dependent_plan_id + '&token=' + window.localStorage.getItem('token'));
         }
 
+        scope.getPlanInfo = function(){
+          hrSettings.getMethodType()
+          .then(function(response) {
+            console.log(response);
+            scope.plan_info_status = response.data.data;
+            scope.account_plan = {
+              plan_method : response.data.data.plan.plan_method,
+              account_type : response.data.data.plan.account_type,
+            }
+            scope.getBenefitsSpendingTransac(scope.benefits_spending_page);
+          });
+        }
+
+        scope.spending_account_status = {};
+        scope.getSpendingAcctStatus = function () {
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
+        }
+
         scope.onLoad = function(){
           scope.getDownloadToken();
+          
           hrSettings.getSession( )
             .then(function(response){
             scope.options.accessibility = response.data.accessibility;
@@ -515,11 +565,12 @@ app.directive("companyContactsDirective", [
           }
           if( $state.current.name == "transactions" ){
             scope.getTransac(scope.plan_transactions_page);
-            scope.getBenefitsSpendingTransac(scope.benefits_spending_page);
+            scope.getPlanInfo();
             scope.getSpendingDeposits(scope.spending_deposit_page);
             scope.getRefundList();
           }
           if( $state.current.name == "account-and-payment" ){
+            scope.getSpendingAcctStatus();
             scope.getCompanyContacts();
             scope.getBillingList();
             scope.getPlanSubscriptions();

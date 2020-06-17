@@ -1532,5 +1532,13 @@ public static function get_random_password($length)
             }
         }
         
-    } 
+    }
+    
+    public static function validateFormatDate($date, $firstFormat, $secondFormat)
+	{
+		$d = DateTime::createFromFormat($firstFormat, $date);
+		$c = DateTime::createFromFormat($secondFormat, $date);
+		return $d && $d->format($firstFormat) === $date || $c && $c->format($secondFormat) === $date;
+		// return ['format' => $d->format($format), 'date' => $date];
+	}
 }

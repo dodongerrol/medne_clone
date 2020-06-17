@@ -5,18 +5,23 @@
 			<h4 ui-sref="benefits-dashboard">Overview</h4>
 			<div class="arrow-up" style="visibility: hidden;"></div>
 		</div>
-		<div class="welcome-container" ng-if="statementHide">
-			<div class="dropdown">
-			  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-			    Employee
-			  </h4>
-			  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 30px;border-radius: 0;">
-			    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
-			    <li><a href="javascript:void(0)" ui-sref="cred-allocation" ng-if="statementHide">Credit Allocation</a></li>
-			  </ul>
-			</div>
-			<div class="arrow-up-2" style="visibility: hidden;"></div>
+		<div class="welcome-container">
+			<h4 ui-sref="employee-overview">Employee</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
 		</div>
+		<!-- <div class="welcome-container">
+			<div class="dropdown">
+				<h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					Employee
+				</h4>
+				<ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
+					<li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
+					<li><a href="javascript:void(0)" ui-sref="bulk-cred-allocation">Credit Allocation</a></li>
+					<li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
+				</ul>
+			</div>
+			<div class="arrow-up-2" style="visibility: visible;"></div>
+		</div> -->
 		<div class="welcome-container" ng-if="empStatementShow">
 			<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
 			<div id="arrow-up-statement"></div>
@@ -157,7 +162,7 @@
 						<label>Plan Type: </label>
 						<span ng-if="list.account_type == 'insurance_bundle'">Insurance Bundle</span>
 						<span ng-if="list.account_type == 'stand_alone_plan'">Standalone Plan</span>
-						<span ng-if="list.account_type == 'lite_plan'">Lite Plan</span>
+						<span ng-if="list.account_type == 'lite_plan'">Basic Plan</span>
 						<span ng-if="list.account_type == 'trial_plan'">Trial Plan</span>
 						<span ng-if="list.account_type == 'enterprise_plan'">Enterprise Plan</span>
 					</p>
@@ -184,7 +189,7 @@
 								<label>Plan Account Type: </label>
 								<span ng-if="dep.account_type == 'insurance_bundle'">Insurance Bundle</span>
 								<span ng-if="dep.account_type == 'stand_alone_plan'">Standalone Plan</span>
-								<span ng-if="dep.account_type == 'lite_plan'">Lite Plan</span>
+								<span ng-if="dep.account_type == 'lite_plan'">Basic Plan</span>
 								<span ng-if="dep.account_type == 'trial_plan'">Trial Plan</span>
 							</p>
 							<!-- <p><label>Date:</label> <span ng-bind="dep.plan_start">28-06-2017</span></p> -->
@@ -209,7 +214,7 @@
 					<label>Account Type:</label> 
 					<span ng-if="list.plan_extension.account_type == 'insurance_bundle'">Insurance Bundle</span>
 					<span ng-if="list.plan_extension.account_type == 'stand_alone_plan'">Standalone Plan</span>
-					<span ng-if="list.plan_extension.account_type == 'lite_plan'">Lite Plan</span>
+					<span ng-if="list.plan_extension.account_type == 'lite_plan'">Basic Plan</span>
 					<span ng-if="list.plan_extension.account_type == 'trial_plan'">Trial Plan</span>
 					<p ng-if="list.plan_extension"><label>Date:</label> <span ng-bind="list.plan_extension.plan_start">28-06-2017</span></p>
 					<p ng-if="list.plan_extension"><label>Plan Duration:</label> <span ng-bind="list.plan_extension.duration">365 Days</span></p>
@@ -223,6 +228,8 @@
 				<br>
 				<div class="medical-spending-container">
 					<p><label class="medical-spending-title">Medical Spending Account:</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.medical_method == 'post_paid'">(Post-paid)</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.medical_method == 'pre_paid'">(Pre-paid)</label></p>
 					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p> -->
 					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_medical">0.00</span></p> -->
 					<p><label>Total:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_allocated_amount_medical">1,000.00</span></p>
@@ -230,6 +237,8 @@
 				</div>
 				<div class="wellness-spending-container">
 					<p><label class="wellness-spending-title">Wellness Spending Account:</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.wellness_method == 'post_paid'">(Post-paid)</label></p>
+					<p style="margin-bottom: 5px;"><label ng-if="spending_account_status.wellness_method == 'pre_paid'">(Pre-paid)</label></p>
 					<!-- <p><label>Total Allocation:</label> S$<span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p> -->
 					<!-- <p><label>Deposit:</label> S$<span ng-bind="list.total_deposit_wellness">0.00</span></p> -->
 					<p><label>Total:</label><span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_allocated_amount_wellness">1,000.00</span></p>
@@ -275,7 +284,7 @@
             		<p>Plan Account Type: 
             			<span ng-if="selected_active_plan_details.active_plan.account_type == 'stand_alone_plan'">Standalone Plan</span>
             			<span ng-if="selected_active_plan_details.active_plan.account_type == 'insurance_bundle'">Insurance Bundle</span>
-            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'lite_plan'">Lite Plan</span>
+            			<span ng-if="selected_active_plan_details.active_plan.account_type == 'lite_plan'">Basic Plan</span>
             			<span ng-if="selected_active_plan_details.active_plan.account_type == 'trial_plan'">Trial Plan</span>
             		</p>
             		<p>Invoice: <span ng-bind="selected_active_plan_details.invoice.invoice_number">0MCCC0037</span></p>
@@ -308,7 +317,7 @@
 	            	<p>Dependent Plan Account Type: 
 	        			<span ng-if="list.account_type == 'stand_alone_plan'">Standalone Plan</span>
 	        			<span ng-if="list.account_type == 'insurance_bundle'">Insurance Bundle</span>
-	        			<span ng-if="list.account_type == 'lite_plan'">Lite Plan</span>
+	        			<span ng-if="list.account_type == 'lite_plan'">Basic Plan</span>
 	        			<span ng-if="list.account_type == 'trial_plan'">Trial Plan</span>
 	        		</p>
 	        		<p>Active Plan Type: 
@@ -337,7 +346,7 @@
             	<p>Account Type: 
         			<span ng-if="selected_active_plan_details.extension.account_type == 'stand_alone_plan'">Standalone Plan</span>
         			<span ng-if="selected_active_plan_details.extension.account_type == 'insurance_bundle'">Insurance Bundle</span>
-        			<span ng-if="selected_active_plan_details.extension.account_type == 'lite_plan'">Lite Plan</span>
+        			<span ng-if="selected_active_plan_details.extension.account_type == 'lite_plan'">Basic Plan</span>
         			<span ng-if="selected_active_plan_details.extension.account_type == 'trial_plan'">Trial Plan</span>
         		</p>
         		<p>Invoice: <span ng-bind="selected_active_plan_details.extension.invoice.invoice_number">0MCCC0037</span></p>

@@ -1876,7 +1876,7 @@ public function getNewClinicDetails($id)
     $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
     if($getAccessToken){
      $findUserID = $authSession->findUserID($getAccessToken->session_id);
-                        // return $findUserID;
+      // return $findUserID;
      if($findUserID){
       $returnObject->status = TRUE;
       $returnObject->message = "Success.";
@@ -1888,8 +1888,19 @@ public function getNewClinicDetails($id)
      }
      $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
      $owner_id = StringHelper::getUserId($findUserID);
+     $customer_id = PlanHelper::getCustomerId($owner_id);
+    //  $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+     
+    //  if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+    //   $returnObject->status = FALSE;
+    //   $returnObject->status_type = 'zero_balance';
+    //   $returnObject->head_message = 'Registration on Hold';
+    //   $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+    //   $returnObject->sub_message = '';
+    //   return Response::json($returnObject);
+    //  }
 
-                            // check block access
+     // check block access
      $block = PlanHelper::checkCompanyBlockAccess($owner_id, $id);
 
      if($block) {
@@ -1898,7 +1909,7 @@ public function getNewClinicDetails($id)
        return Response::json($returnObject);
      }
 
-           // check if employee/user is still coverge
+      // check if employee/user is still coverge
      $user_type = PlanHelper::getUserAccountType($findUserID);
      $user_plan_history = DB::table('user_plan_history')
      ->where('user_id', $owner_id)
@@ -1909,9 +1920,8 @@ public function getNewClinicDetails($id)
      $customer_active_plan = DB::table('customer_active_plan')
      ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
      ->first();
-
-
-     if($user_type == "employee") {
+    
+    if($user_type == "employee") {
       $plan_coverage = PlanHelper::checkEmployeePlanStatus($findUserID);
     } else {
       $plan_coverage = PlanHelper::getDependentPlanCoverage($findUserID);
@@ -1933,7 +1943,22 @@ public function getNewClinicDetails($id)
      return Response::json($returnObject);
    }
 
-           // return $plan_coverage;
+   $current_balance = 0;
+   if($customer_active_plan->account_type != "super_pro_plan") {
+    //  check if lite plan user
+     $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+
+    //  if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+        
+    //     if($current_balance <= 0) {
+    //       $returnObject->status = FALSE;
+    //       $returnObject->status_type = 'zero_balance';
+    //       $returnObject->message = 'You have no credit to access this feature at the moment. Kindly contact HR';
+    //       return Response::json($returnObject);
+    //     }
+    //   }
+   }
+
    $user = DB::table('user')->where('UserID', $findUserID)->first();
    $wallet = DB::table('e_wallet')->where('UserID', $owner_id)->first();
 
@@ -1955,13 +1980,9 @@ public function getNewClinicDetails($id)
    ->where('scan_pay_show', 1)
    ->where('Active', 1)
    ->get();
-           // if(!$procedures) {
-           //     $returnObject->status = FALSE;
-           //     $returnObject->message = "Clinic ".$clinic->CLName." does not have services.";
-           //     return Response::json($returnObject);
-           // }
 
-                                // format clinic data
+
+   // format clinic data
    ($clinic->Email) ? $email = $clinic->Email : $email = null;
    ($clinic->Description) ? $descr = $clinic->Description : $descr = null;
    ($clinic->Website) ? $website = $clinic->Website : $website = null;
@@ -1990,18 +2011,12 @@ $jsonArray['address'] = $clinic->CLAddress.' '.$clinic->CLCity.' '.$clinic->CLSt
 $jsonArray['image_url'] = $clinic->CLImage;
 $jsonArray['member'] = ucwords($user->Name);
 $jsonArray['nric'] = $user->NRIC;
-
-$current_balance = 0;
-if($customer_active_plan->account_type != "super_pro_plan") {
-  $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
-}
 $jsonArray['dob'] = date('d/m/Y', strtotime($user->DOB));
 $jsonArray['mobile'] = $user->PhoneCode." ".$user->PhoneNo;
 $jsonArray['plan_type'] = $plan_coverage['plan_type'];
-$current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
+// $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
 
-        // check if employee has plan tier cap
-$customer_id = PlanHelper::getCustomerId($owner_id);
+// check if employee has plan tier cap
 $plan_tier = null;
 
 if($customer_id) {
@@ -5201,6 +5216,7 @@ public function createEclaim( )
 
     if(sizeof(Input::file('files')) == 0) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please input a file.';
      return Response::json($returnObject);
    }
@@ -5209,42 +5225,49 @@ public function createEclaim( )
 
    if(empty($input['amount']) || $input['amount'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please indicate the amount.';
      return Response::json($returnObject);
    }
 
    if(empty($input['merchant']) || $input['merchant'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please indicate the Provider.';
      return Response::json($returnObject);
    }
 
    if(empty($input['service']) || $input['service'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please choose a claim type.';
      return Response::json($returnObject);
    }
 
    if(empty($input['spending_type']) || $input['spending_type'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Please choose a spending wallet.';
      return Response::json($returnObject);
    }
 
    if(empty($input['date']) || $input['date'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Date of Visit is required.';
      return Response::json($returnObject);
    }
 
    if(empty($input['time']) || $input['time'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Time of Visit is required.';
      return Response::json($returnObject);
    }
 
    if(empty($input['spending_type']) || $input['spending_type'] == null) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Spending Account is required (Medical or Wellness)';
      return Response::json($returnObject);
    }
@@ -5254,6 +5277,7 @@ public function createEclaim( )
 
    if(!in_array($input['spending_type'], $spending)) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Spending Account should be medical or wellness only.';
      return Response::json($returnObject);
    }
@@ -5262,6 +5286,7 @@ public function createEclaim( )
 
    if(!$validate_date) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Date of Visit must be a date.';
      return Response::json($returnObject);
    }
@@ -5270,6 +5295,7 @@ public function createEclaim( )
 
    if(!$validate_time) {
      $returnObject->status = FALSE;
+     $returnObject->head_message = 'E-Claim Submission Error';
      $returnObject->message = 'Time of Visit must be a time (00:00 AM/PM).';
      return Response::json($returnObject);
    }
@@ -5280,6 +5306,7 @@ public function createEclaim( )
         // return var_dump($file);
      if(!$file) {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'E-Claim Submission Error';
       $returnObject->message = 'Please input a file.';
       return Response::json($returnObject);
     }
@@ -5300,6 +5327,7 @@ public function createEclaim( )
       }
     } else {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'E-Claim Submission Error';
       $returnObject->message = $file->getClientOriginalName().' file is not valid. Only accepts Image.';
       return Response::json($returnObject);
     }
@@ -5318,42 +5346,35 @@ public function createEclaim( )
 
   if($customer && (int)$customer->access_e_claim == 0) {
     $returnObject->status = FALSE;
-    $returnObject->message = 'The E-claim function is disabled for your company.';
+    $returnObject->head_message = 'E-Claim Disabled';
+    $returnObject->message = 'The E-Claim function has been disabled for your company.';
     return Response::json($returnObject);
   }
 
   $input_amount = 0;
-
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
-    $input_amount = trim($input['amount']);
+    $input_amount = trim($input['claim_amount']);
   } else {
     if(Input::has('currency_type') && $input['currency_type'] != null) {
       if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
-        $input_amount = $input['amount'] / $input['currency_exchange_rate'];
+        $input_amount = $input['claim_amount'] / $input['currency_exchange_rate'];
       } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
-        $input_amount = $input['amount'] * $input['currency_exchange_rate'];
+        $input_amount = $input['claim_amount'] * $input['currency_exchange_rate'];
       } else {
-        $input_amount = trim($input['amount']);
+        $input_amount = trim($input['claim_amount']);
       }
     } else {
-      $input_amount = trim($input['amount']);
+      $input_amount = trim($input['claim_amount']);
     }
   }
 
   $date = date('Y-m-d', strtotime($input['date']));
-
   $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
   $customer_active_plan = DB::table('customer_active_plan')
   ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
   ->first();
 
   if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
-    // if($input['spending_type'] == "medical") {
-    //     // recalculate employee balance
-    //   PlanHelper::reCalculateEmployeeBalance($user_id);
-    // } else {
-    //   PlanHelper::reCalculateEmployeeWellnessBalance($user_id);
-    // }
     $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
     $balance = number_format($spending['balance'], 2);
     $amount = trim($input_amount);
@@ -5362,6 +5383,7 @@ public function createEclaim( )
     $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     if(!$check_user_balance) {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'E-Claim Submission Error';
       $returnObject->message = 'User does not have a wallet data.';
       return Response::json($returnObject);
     }
@@ -5369,7 +5391,9 @@ public function createEclaim( )
     if($spending['back_date'] == false) {
       if($amount > $balance) {
         $returnObject->status = FALSE;
-        $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        // $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        $returnObject->head_message = 'E-Claim Submission Error';
+        $returnObject->message = 'Your E-Claim exceeds the amount of credits you have in your wallet. Please revise the receipt amount and resubmit.';
         return Response::json($returnObject);
       }
 
@@ -5390,7 +5414,7 @@ public function createEclaim( )
      }
     }
  } else {
-  $amount = trim($input_amount);
+  $amount =  trim($input['amount']);
 }
   // get customer id
 $customer_id = PlanHelper::getCustomerId($user_id);
@@ -5478,7 +5502,7 @@ try {
 
   if($result_doc) {
     if($receipt['file_type'] != "image" || $receipt['file_type'] !== "image") {
-                                          //   aws
+     //   aws
      $s3 = AWS::get('s3');
      $s3->putObject(array(
       'Bucket'     => 'mednefits',
@@ -5486,6 +5510,20 @@ try {
       'SourceFile' => public_path().'/receipts/'.$file_name,
     ));
    }
+
+   try {
+    //  logs
+    $admin_logs = array(
+      'admin_id'  => $input['user_id'],
+      'admin_type' => 'member',
+      'type'      => 'admin_employee_create_e_claim_details',
+      'data'      => SystemLogLibrary::serializeData($result)
+    );
+    SystemLogLibrary::createAdminLog($admin_logs);
+   } catch(Exeption $e) {
+    
+   }
+    
  } else {
   $email = [];
   $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
@@ -6279,7 +6317,7 @@ public function payCreditsNew( )
           }
 
           $data = array(
-            'balance' => DecimalHelper::formatDecimal($balance), 
+            'balance' => round($balance, 2),
             'term_status' => $term_status, 
             'currency_type' => $spending['currency_type'],
             'last_term' => $spending['back_date'],
@@ -6370,6 +6408,102 @@ public function payCreditsNew( )
     } else {
       $returnObject->status = FALSE;
       $returnObject->message = 'X-ACCESS-KEY is required';
+    }
+    return Response::json($returnObject);
+  }
+  
+  public function getMemberAccountSpendingStatus( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+         if($findUserID){
+          $input = Input::all();
+          $user_id = StringHelper::getUserId($findUserID);
+          $customer_id = PlanHelper::getCustomerId($user_id);
+          $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
+          $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+
+          if($type == "spending") {
+            $returnObject->status = true;
+            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
+              
+            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+              $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
+
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+              $returnObject->sub_message = '';
+
+              if($current_balance <= 0) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'zero_balance';
+                $returnObject->head_message = 'Registration on Hold';
+                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                $returnObject->sub_message = '';
+                return Response::json($returnObject);
+              }
+            }
+
+            $returnObject->status = TRUE;
+            $returnObject->status_type = 'with_balance';
+            $returnObject->message = 'You have access this feature at the moment.';
+            return Response::json($returnObject);
+          } else {
+
+            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable';
+              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
+
+            // check if e-claim platform is enable
+            $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+            if($customer && (int)$customer->access_e_claim == 0) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Disabled';
+              $returnObject->message = 'The E-Claim function has been disabled for your company.';
+              return Response::json($returnObject);
+            }
+
+            $returnObject->status = TRUE;
+            $returnObject->status_type = 'with_e_claim';
+            $returnObject->message = 'You have access this feature at the moment.';
+            return Response::json($returnObject);
+          }
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+        }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+     }
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
       return Response::json($returnObject);
     }
   }
