@@ -981,7 +981,8 @@ class Api_V1_TransactionController extends \BaseController
 									}
 								} else {
 									// insert to spending invoice
-									TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
+									$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+									TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
 								}
 							}
 

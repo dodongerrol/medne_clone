@@ -107,7 +107,7 @@ class SpendingInvoiceLibrary
 		}
 	}
 
-	public static function createStatement($customer_id, $start, $end)
+	public static function createStatement($customer_id, $start, $end, $plan_method)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
