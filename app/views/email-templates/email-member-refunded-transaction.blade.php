@@ -321,7 +321,7 @@
                 Service
               </div>
               <p style="color: #333;font-size: 22px;font-weight: 700;margin-top: 0;">
-                {{ $health_provider_name }} <br>
+                {{ $service }} <br>
               </p>
             </div>
           </div>
@@ -341,7 +341,10 @@
                 Cap Per Visit
               </div>
               <p style="color: #333;font-size: 22px;font-weight: 700;margin-top: 0;">
-              {{ $currency_symbol }} {{ $cap_per_visit }}
+                @if($cap_per_visit_status)
+                {{ $currency_symbol }}
+                @endif
+                {{ $cap_per_visit }}
               </p>
             </div>
           </div>
@@ -359,7 +362,7 @@
                 Bill Amount
               </div>
               <div class="item amount">
-                <span>{{ $currency_symbol }}</span> <span>{{ $credits }}</span>
+                <span>{{ $currency_symbol }}</span> <span>{{ $bill_amount }}</span>
               </div>
             </div>
             <div class="row-grid">
@@ -408,7 +411,14 @@
                 <span>
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/telephone.png">
                 </span>
-                <span style="text-decoration: underline;">+65 6254 7889 </span> <span> <span style="margin: 0 0 0 5px;">or</span> <span style="text-decoration: underline;">+603 7890 1770</span></span>
+                @if($currency_symbol == "SGD")
+                <span style="text-decoration: underline;">+65 6254 7889</span>
+                @else
+                <span style="text-decoration: underline;">+65 6254 7889</span>
+                  <span style="margin: 0 0 0 5px;">or</span> 
+                  <span style="text-decoration: underline;">+603 7890 1770</span>
+                @endif
+                
               </div>
               <br>
               <div class="contact-support-item">

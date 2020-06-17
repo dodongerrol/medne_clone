@@ -9,123 +9,65 @@ app.directive('uploadExcelDirective', [
 			link: function link( scope, element, attributeSet ) {
 				console.log("uploadExcelDirective Runnning !");
 
-				scope.disableBtn = true;
+				scope.uploadFile = {};
+				scope.uploadedFile = false;
 				scope.isInvalid = false;
 				scope.isValid = false;
-				scope.message = "";
+				scope.isNextBtnDisabled = false;
+				scope.message = 'Successfully Uploaded.';
 
-
-				scope.runUpload = function( file ) {
-					// console.log(file);
+				scope.runUpload = function (file) {
 					var data = {
-						file : file,
-						plan_start : moment().format('YYYY-MM-DD'),
-						// duration : scope.progress.active_plans[0].duration
+						file: file,
+						plan_start: moment().format('YYYY-MM-DD'),
 					}
-					$('.upload-load').show();
-					$('.upload-box').hide();
-
-					if( dashboardFactory.getHeadCountStatus() == true ){
-
-						hrSettings.newPurchaseUploadExcel( data )
-		        		.then(function(response){
-			        		if( response.data.status == true ){
-			        			// dashboardFactory.setActivePlanID( response.data.customer_active_plan_id );
-			        			scope.isInvalid = false;
+					scope.showLoading();
+					hrSettings.uploadExcel(data)
+						.then(function (response) {
+							// console.log( response );
+							scope.hideLoading();
+							if (response.data.status == true) {
+								scope.uploadedFile = true;
+								scope.isInvalid = false;
 								scope.isValid = true;
-			        			scope.disableBtn = false;
-			        			$("#disableBtn").attr('disabled',false);
-			        		}
-
-			        		if( response.data.status == false ){
-			        			scope.isInvalid = true;
+								scope.isNextBtnDisabled = false;
+								scope.message = 'Successfully Uploaded.';
+								swal('Success!', 'uploaded.', 'success');
+							} else {
+								scope.uploadedFile = false;
+								scope.isInvalid = true;
 								scope.isValid = false;
-			        			scope.disableBtn = true;
-			        			$("#disableBtn").attr('disabled',true);
-			        		}
-		        			
-		        			$('.upload-load').hide();
-							$('.upload-box').show();
-			        		scope.message = response.data.message;
-			        	});
-		        	}else{
-			        	hrSettings.uploadExcel( data )
-			        	.then(function(response){
-			        		if( response.data.status == true ){
-			        			scope.isInvalid = false;
-										scope.isValid = true;
-			        			scope.disableBtn = false;
-			        			$("#disableBtn").attr('disabled',false);
-			        		}
+								scope.isNextBtnDisabled = true;
+								swal('Error!', response.data.message, 'error');
+							}
 
-			        		if( response.data.status == false ){
-			        			scope.isInvalid = true;
-										scope.isValid = false;
-			        			scope.disableBtn = true;
-			        			$("#disableBtn").attr('disabled',true);
-			        		}
-			        		
-		        			$('.upload-load').hide();
-									$('.upload-box').show();
-			        		scope.message = response.data.message;
-			        	});
-		        	}
-
-				}
-
-				scope.goToPreview = function( ) {
-					$state.go('web-preview');
-				}
-
-				scope.getProgress = function( ) {
-					hrSettings.getEnrollmentProgress()
-						.then(function(response){
-							scope.progress = response.data.data;
 						});
-        }
+				}
 
-        var loading_trap = false;
+				scope.backBtn = function(){
+					$state.go('excel-enrollment.prepare');
+				}
 
-        scope.toggleLoading = function( ){
-					if ( loading_trap == false ) {
-						$( ".circle-loader" ).fadeIn();	
-						loading_trap = true;
+				scope.nextBtn =	function(){
+					if(scope.uploadedFile == false){
+						swal('Error!', 'please upload a file first.', 'error');
 					}else{
-						setTimeout(function() {
-							$( ".circle-loader" ).fadeOut();
-							loading_trap = false;
-						},100)
+						$state.go('excel-enrollment.web-preview');
 					}
 				}
 
-				scope.showLoading = function( ){
-					$( ".circle-loader" ).fadeIn();	
-					loading_trap = true;
+				scope.showLoading = function () {
+					$(".circle-loader").fadeIn();
 				}
 
-				scope.hideLoading = function( ){
-					setTimeout(function() {
-						$( ".circle-loader" ).fadeOut();
-						loading_trap = false;
+				scope.hideLoading = function () {
+					setTimeout(function () {
+						$(".circle-loader").fadeOut();
 					},100)
 				}
-
-				scope.showGlobalModal = function( message ){
-			    $( "#global_modal" ).modal('show');
-			    $( "#global_message" ).text(message);
-			  }
-
+				
         scope.onLoad = function( ){
-        	scope.getProgress();
-        	$('body').scrollTop(0);
-
-        	scope.toggleLoading();
-
-        	setTimeout(function() {
-        		scope.toggleLoading();
-        	}, 100);
-
-        	console.log( $("#upload-here").val() );
+        	
         }
 
         scope.onLoad();

@@ -267,7 +267,6 @@ class DependentController extends \BaseController {
 				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
-
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
 				$temp_enrollment_data = array(

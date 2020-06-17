@@ -273,21 +273,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cloudinary/cloudinary_php.git",
-<<<<<<< HEAD
-                "reference": "aa0cef2fb1aff0695f3a880800cf343f1080557f"
+                "reference": "cbbe19423d6750e8b5083709bb0e18f3f9a22715"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/aa0cef2fb1aff0695f3a880800cf343f1080557f",
-                "reference": "aa0cef2fb1aff0695f3a880800cf343f1080557f",
-=======
-                "reference": "54db8e7e97fb36438845c529ca1f97013279cefb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/54db8e7e97fb36438845c529ca1f97013279cefb",
-                "reference": "54db8e7e97fb36438845c529ca1f97013279cefb",
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
+                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/cbbe19423d6750e8b5083709bb0e18f3f9a22715",
+                "reference": "cbbe19423d6750e8b5083709bb0e18f3f9a22715",
                 "shasum": ""
             },
             "require": {
@@ -327,11 +318,7 @@
                 "image management",
                 "sdk"
             ],
-<<<<<<< HEAD
-            "time": "2019-12-15T17:17:22+00:00"
-=======
-            "time": "2020-01-05T16:06:11+00:00"
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
+            "time": "2020-01-21T10:49:06+00:00"
         },
         {
             "name": "coreproc/laravel-db-backup",
@@ -381,23 +368,25 @@
         },
         {
             "name": "d11wtq/boris",
-            "version": "v1.0.10",
+            "version": "v1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/borisrepl/boris.git",
-                "reference": "31055b15e2d3fe47f31f6aa8e277f8f3fc7eb483"
+                "reference": "125dd4e5752639af7678a22ea597115646d89c6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/borisrepl/boris/zipball/31055b15e2d3fe47f31f6aa8e277f8f3fc7eb483",
-                "reference": "31055b15e2d3fe47f31f6aa8e277f8f3fc7eb483",
+                "url": "https://api.github.com/repos/borisrepl/boris/zipball/125dd4e5752639af7678a22ea597115646d89c6e",
+                "reference": "125dd4e5752639af7678a22ea597115646d89c6e",
                 "shasum": ""
             },
             "require": {
+                "php": ">=5.3.0"
+            },
+            "suggest": {
                 "ext-pcntl": "*",
                 "ext-posix": "*",
-                "ext-readline": "*",
-                "php": ">=5.3.0"
+                "ext-readline": "*"
             },
             "bin": [
                 "bin/boris"
@@ -409,11 +398,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A tiny, but robust REPL (Read-Evaluate-Print-Loop) for PHP.",
-            "time": "2015-03-01T08:05:19+00:00"
+            "time": "2014-01-17T12:21:18+00:00"
         },
         {
             "name": "dompdf/dompdf",
@@ -821,6 +806,7 @@
                 "Guzzle",
                 "stream"
             ],
+            "abandoned": true,
             "time": "2014-08-10T23:57:01+00:00"
         },
         {
@@ -948,6 +934,7 @@
                 "serialize",
                 "tokenizer"
             ],
+            "abandoned": "opis/closure",
             "time": "2015-01-10T01:09:28+00:00"
         },
         {
@@ -1240,16 +1227,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "1.3.x-dev",
+            "version": "1.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "8aa2762091ed616fd01de19042786f067b28b123"
+                "reference": "38a922afe0714dcddde926ba23dfd0f5678cb18a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/8aa2762091ed616fd01de19042786f067b28b123",
-                "reference": "8aa2762091ed616fd01de19042786f067b28b123",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/38a922afe0714dcddde926ba23dfd0f5678cb18a",
+                "reference": "38a922afe0714dcddde926ba23dfd0f5678cb18a",
                 "shasum": ""
             },
             "require": {
@@ -1302,7 +1289,7 @@
                 "import",
                 "laravel"
             ],
-            "time": "2017-04-17T09:28:55+00:00"
+            "time": "2017-02-28T11:40:11+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1310,21 +1297,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-<<<<<<< HEAD
-                "reference": "b928039c232d09ecfea30950760790179aebe4ed"
+                "reference": "5c670ec3d2cebcc3c20f014f5b8fe2087e434a60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/b928039c232d09ecfea30950760790179aebe4ed",
-                "reference": "b928039c232d09ecfea30950760790179aebe4ed",
-=======
-                "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/fa82921994db851a8becaf3787a9e73c5976b6f1",
-                "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1",
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/5c670ec3d2cebcc3c20f014f5b8fe2087e434a60",
+                "reference": "5c670ec3d2cebcc3c20f014f5b8fe2087e434a60",
                 "shasum": ""
             },
             "require": {
@@ -1389,7 +1367,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2019-12-07T12:16:30+00:00"
+            "time": "2020-03-13T16:46:09+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -1533,29 +1511,16 @@
         },
         {
             "name": "paragonie/sodium_compat",
-<<<<<<< HEAD
-            "version": "v1.12.1",
+            "version": "v1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "063cae9b3a7323579063e7037720f5b52b56c178"
+                "reference": "bbade402cbe84c69b718120911506a3aa2bae653"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/063cae9b3a7323579063e7037720f5b52b56c178",
-                "reference": "063cae9b3a7323579063e7037720f5b52b56c178",
-=======
-            "version": "v1.12.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "3b953109fdfc821c1979bc829c8b7421721fef82"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/3b953109fdfc821c1979bc829c8b7421721fef82",
-                "reference": "3b953109fdfc821c1979bc829c8b7421721fef82",
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
+                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/bbade402cbe84c69b718120911506a3aa2bae653",
+                "reference": "bbade402cbe84c69b718120911506a3aa2bae653",
                 "shasum": ""
             },
             "require": {
@@ -1624,11 +1589,7 @@
                 "secret-key cryptography",
                 "side-channel resistant"
             ],
-<<<<<<< HEAD
-            "time": "2019-11-07T17:07:24+00:00"
-=======
-            "time": "2019-12-30T03:11:08+00:00"
->>>>>>> 174eaae54ddf473d65d3d99b3e55a11038f3e86d
+            "time": "2020-03-20T21:48:09+00:00"
         },
         {
             "name": "patchwork/utf8",
@@ -1932,12 +1893,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "5628725d0e4d687e29575eb41f9d5ee7de33a84c"
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/5628725d0e4d687e29575eb41f9d5ee7de33a84c",
-                "reference": "5628725d0e4d687e29575eb41f9d5ee7de33a84c",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
                 "shasum": ""
             },
             "require": {
@@ -1971,7 +1932,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2019-11-12T16:45:05+00:00"
+            "time": "2020-03-23T09:12:05+00:00"
         },
         {
             "name": "pusher/pusher-php-server",
@@ -1979,12 +1940,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pusher/pusher-http-php.git",
-                "reference": "3c05ef64839845b6114396ff8406712cba052750"
+                "reference": "e75e5715e3b651ec20dee5844095aadefab81acb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/3c05ef64839845b6114396ff8406712cba052750",
-                "reference": "3c05ef64839845b6114396ff8406712cba052750",
+                "url": "https://api.github.com/repos/pusher/pusher-http-php/zipball/e75e5715e3b651ec20dee5844095aadefab81acb",
+                "reference": "e75e5715e3b651ec20dee5844095aadefab81acb",
                 "shasum": ""
             },
             "require": {
@@ -2025,7 +1986,7 @@
                 "rest",
                 "trigger"
             ],
-            "time": "2019-12-03T13:29:13+00:00"
+            "time": "2020-04-14T15:20:04+00:00"
         },
         {
             "name": "stack/builder",
@@ -2033,21 +1994,22 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stackphp/builder.git",
-                "reference": "68e73a9e29e4a5954460b49854523ec9fa02ed1f"
+                "reference": "a4faaa6f532c6086bc66c29e1bc6c29593e1ca7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stackphp/builder/zipball/68e73a9e29e4a5954460b49854523ec9fa02ed1f",
-                "reference": "68e73a9e29e4a5954460b49854523ec9fa02ed1f",
+                "url": "https://api.github.com/repos/stackphp/builder/zipball/a4faaa6f532c6086bc66c29e1bc6c29593e1ca7c",
+                "reference": "a4faaa6f532c6086bc66c29e1bc6c29593e1ca7c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "symfony/http-foundation": "~2.1|~3.0|~4.0",
-                "symfony/http-kernel": "~2.1|~3.0|~4.0"
+                "php": ">=7.2.0",
+                "symfony/http-foundation": "~2.1|~3.0|~4.0|~5.0",
+                "symfony/http-kernel": "~2.1|~3.0|~4.0|~5.0"
             },
             "require-dev": {
-                "silex/silex": "~1.0"
+                "phpunit/phpunit": "~8.0",
+                "symfony/routing": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -2070,11 +2032,11 @@
                     "email": "igor@wiedler.ch"
                 }
             ],
-            "description": "Builder for stack middlewares based on HttpKernelInterface.",
+            "description": "Builder for stack middleware based on HttpKernelInterface.",
             "keywords": [
                 "stack"
             ],
-            "time": "2017-12-20T14:55:06+00:00"
+            "time": "2020-01-30T12:17:27+00:00"
         },
         {
             "name": "stripe/stripe-php",
@@ -2748,12 +2710,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3"
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
-                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
                 "shasum": ""
             },
             "require": {
@@ -2765,7 +2727,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.13-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -2798,7 +2760,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2019-11-27T13:56:44+00:00"
+            "time": "2020-02-27T09:26:54+00:00"
         },
         {
             "name": "symfony/process",

@@ -261,5 +261,221 @@ class CustomerHelper
 		$total_wellness_allocation = $temp_total_wellness_allocation - $temp_total_wellness_deduction;
 		return $total_wellness_allocation;
 	}
+
+	public static function getAccountSpendingStatus($customer_id)	
+	{
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
+		// $activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
+
+		return array(
+			'customer_id'		=> $customer_id,
+			'account_type'		=> $planData->account_type,
+			'medical_method'	=> $spending->medical_plan_method,
+			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
+			'wellness_method'	=> $spending->wellness_plan_method,
+			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
+			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
+		);
+	}
+
+	public static function getExcelLinkBasicPlan($status)
+	{
+		if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == true)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == true)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == true)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Pending-Medical-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Pending-Medical-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == false)	{
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Pending-Medical-Post-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Pending-Medical-Post-Wellness.xlsx'
+			);
+		} else if($status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Pending-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Pending-Wellness.xlsx'
+			);
+		} else {
+			return array('status' => false);
+		}
+	}
+
+	public static function getAccountSpendingBasicPlanStatus($customer_id)	
+	{
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
+		// $activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
+
+		return array(
+			'customer_id'		=> $customer_id,
+			'account_type'		=> $planData->account_type,
+			'medical_method'	=> $spending->medical_plan_method,
+			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
+			'wellness_method'	=> $spending->wellness_plan_method,
+			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
+			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
+		);
+	}
+
+	public static function getCustomerMedicalTotalCredits($customer_id, $user_spending_dates)
+  {
+	
+	$total_bonus = 0;
+	$temp_total_allocation = 0;
+	$temp_total_deduction = 0;
+	$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+	// admin_added_bonus_credits
+	if($user_spending_dates['id']) {
+		$temp_total_allocation = DB::table('customer_credit_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('customer_credit_logs_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$temp_total_allocation = DB::table('customer_credit_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('customer_credit_logs_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$total_bonus = DB::table('customer_credit_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_bonus_credits')
+		->where('customer_credit_logs_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+	} else {
+		$temp_total_allocation = DB::table('customer_credit_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$total_bonus = DB::table('customer_credit_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_bonus_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$temp_total_deduction = DB::table('customer_credit_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_deducted_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+	}
+
+	$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
+	return ['total_purchase_credits' => $total_medical_allocation, 'total_bonus_credits' => (float)$total_bonus];
+  }
+
+  public static function getCustomerWellnessTotalCredits($customer_id, $user_spending_dates)
+  {
+	
+	$total_bonus = 0;
+	$temp_total_allocation = 0;
+	$temp_total_deduction = 0;
+	$company_credits = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+	// admin_added_bonus_credits
+	if($user_spending_dates['id']) {
+		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$total_bonus = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_bonus_credits')
+		->where('customer_wellness_credits_history_id', '>=', $user_spending_dates['id'])
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+	} else {
+		$temp_total_allocation = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$total_bonus = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_added_bonus_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+
+		$temp_total_deduction = DB::table('customer_wellness_credits_logs')
+		->where('customer_credits_id', $company_credits->customer_credits_id)
+		->where('logs', 'admin_deducted_credits')
+		->where('created_at', '>=', $user_spending_dates['start'])
+		->where('created_at', '<=', $user_spending_dates['end'])
+		->sum('credit');
+	}
+
+	$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
+	return ['total_purchase_credits' => $total_medical_allocation, 'total_bonus_credits' => (float)$total_bonus];
+  }
+  
+	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
+	{
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+		if($spending) {
+			if($spending_type == "medical") {
+				// update and increment medical wallet
+				$total = $credits * $spending->medical_supplementary_credits;
+				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('medical_supp_credits', $total);
+			}
+
+			if($spending_type == "wellness")	{
+				// update and increment medical wallet
+				$total = $credits * $spending->wellness_supplementary_credits;
+				DB::table('customer_credits')->where('customer_id', $customer_id)->increment('wellness_supp_credits', $total);
+			}
+		}
+	}
 }
 ?>

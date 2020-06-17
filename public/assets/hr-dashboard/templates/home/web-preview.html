@@ -1,130 +1,193 @@
 <div web-preview-directive>
-	<div class="hrdb-body-container" style="padding-top: 200px;">
+
+	<div class="hrdb-body-container">
 		<div class="container">
-			<h1 class="dl-template-title text-center weight-700 font-25" style="color: #5b5b5b;">Please check if all employee details are correct<br>before we enroll them</h1>
-			<div class="white-space-20"></div>
-			<div class="white-space-20"></div>
-			<div style="margin-right: 50px;margin-left: 50px;">
-				<!-- <span ng-if="hasError" style="color: #ff8a8a;">*Error Fields</span> -->
-				<table class="table table-hover preview-table">
-					<thead>
-						<tr>
-							<th>First Name</th>
-							<th>Last Name</th>
-							<th>NRIC/FIN</th>
-							<th>Date of Birth</th>
-							<th>Work Email</th>
-							<th>Mobile</th>
-							<!-- <th>Job Title</th> -->
-							<th>Medical Credits</th>
-							<th>Wellness Credits</th>
-							<th style="width: 100px;">
-								<span style="display: block;line-height: .1;margin-top: 8px;">Start Date</span>
-								<span style="font-size: 10px;display: inline-block;">(click to edit)</span>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr class="loader-table" style="display: none">
-							<td colspan="8" class="text-center">
-								<div class="loader-container" style="padding: 5%;height: 150px;">
-									<div class="preloader-wrapper big active">
-									    <div class="spinner-layer spinner-blue-only">
-									      <div class="circle-clipper left">
-									        <div class="circle"></div>
-									      </div><div class="gap-patch">
-									        <div class="circle"></div>
-									      </div><div class="circle-clipper right">
-									        <div class="circle"></div>
-									      </div>
-									    </div>
-									  </div>
-								</div>
-							</td>
-						</tr>
-						<tr ng-repeat="emp in temp_employees" ng-class="{'has-error': emp.error_logs.error == true}" data-toggle="modal" data-target="#edit-employee-details" ng-click="editEmployee(emp)">
-							<td>
-								<i ng-if="emp.sending == true" class="fa fa-circle-o-notch fa-spin color-blue-custom"></i> 
-								<i ng-if="emp.done == true" class="fa fa-check color-green"></i> &nbsp;
-								<span class="position-relative">
-									<span ng-bind="emp.enrollee.first_name"></span> 
-									<span ng-if="emp.error_logs.first_name_error" class="text-error temp_error">*</span>
-								</span>
-								<button ng-class="{'editBtn-force-show': emp.error_logs.error == true}" class="table-edit-button pull-right" ng-click="editEmployee(emp)">Edit</button>
-							</td>
-							<td>
-								<span class="position-relative">
-									<span ng-bind="emp.enrollee.last_name">Tan</span>
-									<span ng-if="emp.error_logs.last_name_error" class="text-error temp_error">*</span>
-								</span>
-							</td>
-							<td>
-								<span class="position-relative">
-									<span ng-bind="emp.enrollee.nric">Tan</span>
-									<span ng-if="emp.error_logs.nric_error" class="text-error temp_error">*</span>
-								</span>
-							</td>
-							<td>
-								<span class="position-relative">
-									<span ng-bind="emp.enrollee.dob" >01/01/1990</span>
-									<span ng-if="emp.error_logs.dob_error" class="text-error temp_error">*</span>
-								</span>
-							</td>
-							<td>
-								<span class="position-relative">
-									<span ng-bind="emp.enrollee.email">filbert@mednefits.com</span>
-									<span ng-if="emp.error_logs.email_error" class="text-error temp_error">*</span>
-								</span>
-							</td>
-							<td>
-								<span class="position-relative">
-									<span ng-bind="emp.enrollee.mobile">98000882</span>
-									<span ng-if="emp.error_logs.mobile_error" class="text-error temp_error">*</span>
-								</span>
-							</td>
-							<!-- <td>
-								<span class="position-relative">
-									<span ng-bind="emp.enrollee.job_title">Marketing</span>
-									<span ng-if="emp.error_logs.job_title_error" class="text-error temp_error">*</span>
-								</span>
-							</td> -->
-							<td>
-								<span ng-bind="emp.enrollee.credits">0</span>
-							</td>
-							<td>
-								<span ng-bind="emp.enrollee.wellness_credits">0</span>
-							</td>
-							<td style="width: 100px;">
-								<span class="position-relative">
-									<span ng-bind="emp.start_date">DD/MM/YYYY</span>
-									<span ng-if="emp.error_logs.first_name_error" class="text-error temp_error">*</span>
-								</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+			<div class="col-lg-12">
+				<div class="benefits-tiers-container center-block"> 
+	
+					<div ng-if="!isSuccessfulEnroll" class="details-enroll tier-feature-item item-fade">
+						<h1 class="text-center weight-700 font-25 download-template-title" style="color: #2c3e50;">Please check the details below before we enroll them.</h1>
+						<div class="white-space-20"></div>
+						<div class="white-space-20"></div>
+						<table class="table table-hover preview-table">
+							<thead>
+								<tr>
+									<th>
+										<input type="checkbox" ng-model="selectAllEmp" ng-click="empCheckBoxAll(selectAllEmp)">
+									</th>
+									<th>Full Name</th>
+									<th>Date of Birth</th>
+									<th>Work Email</th>
+									<th>Country Code</th>
+									<th>Mobile</th>
+									<th ng-if="spending_account_status.medical">Medical Entitlement</th>
+									<th ng-if="hasMedicalBalance">Medical Entitlement Balance</th>
+									<th ng-if="spending_account_status.wellness">Wellness Entitlement</th>
+									<th ng-if="hasWellnessBalance">Wellness Entitlement Balance</th>
+									<th ng-repeat-start="dep in range(table_dependents_ctr)">Dependent {{ dep }}<br>Full Name</th>
+									<th>Dependent {{ dep }}<br>Date of Birth</th>
+									<th ng-repeat-end>Dependent {{ dep }}<br>Relationship</th>
+									<th class="start-date-header" style="text-align: left;">Start Date</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="list in temp_employees" class="dependent-hover-container" ng-class="{'has-error' : list.hasError }">
+									<td>
+										<input type="checkbox" ng-model="list.checkboxSelected" ng-click="empCheckBox()">
+									</td>
+									<td>
+										<span class="icon" style="position: absolute;left: -10px;">
+											<i ng-show="list.success" class="fa fa-check"></i>
+											<i ng-show="list.fail" class="fa fa-times"></i>
+											<div ng-show="list.loading">
+												<i class="fa fa-circle-o-notch fa-spin"></i>
+											</div>
+										</span>
+										<span class="fname" ng-bind="list.employee.fullname"></span>
+										<button class="dependent-hover-btn" ng-click="openEditDetailsModal(list)">Edit</button>
+									</td>
+									<td ng-bind="list.employee.dob"></td>
+									<td ng-bind="list.employee.email"></td>
+									<td ng-bind="list.employee.mobile_area_code"></td>
+									<td ng-bind="list.employee.mobile"></td>
+									<td ng-if="spending_account_status.medical" ng-bind="list.employee.credits"></td>
+									<td ng-if="hasMedicalBalance" ng-bind="list.employee.medical_balance_entitlement"></td>
+									<td ng-if="spending_account_status.wellness" ng-bind="list.employee.wellness_credits"></td>
+									<td ng-if="hasWellnessBalance" ng-bind="list.employee.wellness_balance_entitlement"></td>
+									<td ng-repeat-start="dep in list.dependents" ng-bind="dep.enrollee.fullname"></td>
+									<td ng-bind="dep.enrollee.dob"></td>
+									<td ng-repeat-end ng-bind="dep.enrollee.relationship"></td>
+									<td ng-if="list.dependents.length != table_dependents_ctr" colspan="{{ ((table_dependents_ctr - list.dependents.length) * 3) }}"></td>
+									<td ng-bind="list.employee.start_date"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div ng-if="isSuccessfulEnroll" class="successfully-enrolled tier-feature-item item-fade">
+						<h1 class="weight-700 font-25 download-template-title" style="color: #2c3e50;">We've succesfully enrolled <span ng-bind="current_enrolled_count.total_employee_enrolled">5</span> employees and <span ng-bind="current_enrolled_count.total_dependents_enrolled">5</span> dependents to the selected plan</h1>
+						<div class="white-space-20"></div>
+						<div class="white-space-20"></div>
+						<div class="successfully-enrolled-img">
+							<img src="../assets/hr-dashboard/img/successful.png">
+						</div>
+					</div>
+					
+				</div>
 			</div>
 		</div>
 	</div>
+
 	<div class="prev-next-buttons-container">
 		<div class="container">
-			<button ui-sref="benefits-dashboard" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: solid 2px #0392cf;box-shadow: none;font-size: 20px;padding: 11px 39px;">BACK</button>
-			<button ng-click="removeTempEmps()" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 9px 39px;">CANCEL</button>
+	
+			<button ng-if="!isSuccessfulEnroll" ng-click="backBtn()" class="pull-left btn btn-info back-btn">
+				<span>BACK</span>
+			</button>
 
-			<!-- <button ui-sref="successful" class="pull-right btn btn-info next-wizard-button"><p class="pull-left enroll-text">ENROLL</p> <p class="number-of-enrollees pull-right">2</p></button> -->
-			<button ng-disabled="enrolling_active" ng-click="enrollButton()" class="pull-right btn btn-info next-wizard-button" ng-class="{ 'inactive-button' : hasError == true }"><p class="pull-left enroll-text weight-700">ENROLL</p> <p class="number-of-enrollees inactive-enroll-text pull-right" ng-bind="temp_employees.length">0</p></button>
-			<h4 class="pull-right pending-enrollees-text weight-700">
-				<span ng-bind="progress.in_progress">0</span> PENDING<br>ENROLLMENT
-			</h4>
+			<button ng-if="isDeleteActive && !isSuccessfulEnroll" class="pull-left btn btn-info back-btn delete-btn" ng-click="removeManyEmp()">Delete</button>
+	
+			<div ng-if="!isSuccessfulEnroll" class="enroll-container-button">
+				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<button ng-click="saveTempUser()" class="btn-enroll" ng-disabled="hasError" >ENROLL
+					<span class="enroll-badge">
+						{{ temp_employees.length < 1000 ? temp_employees.length : ''  }}
+						{{ ( temp_employees.length > 999 && temp_employees.length < 1000000 ? (temp_employees.length/1000).toFixed(0) + 'K+' : '' ) }}
+						{{ ( temp_employees.length > 999999 ? (temp_employees.length/1000000).toFixed(0) + 'M+' : '' ) }}
+					</span>
+				</button>
+				<span ng-if="temp_employees.length > 999" class="tooltiptext">512</span>
+			</div>
 
-			<!--
-				this button can be clicked if the the ticks are all checked.
-				Uncomment Below
-			-->
+			<button ng-if="isSuccessfulEnroll" ui-sref="benefits-dashboard" class="pull-left btn btn-info back-btn">BACK TO HOME</button>
+			<button ng-if="isSuccessfulEnroll" class="pull-right btn-continue-enrollment" ng-click="enrollAgain()" style="font-size: 14px !important;">CONTINUE WITH ENROLLMENT</button>
 
-			<!-- <button ui-sref="download-template" class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
 		</div>
 	</div>
 
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="edit-employee-details" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 400px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-header" style="background-color: #33a2d4;padding: 20px;">
+						<img src="../assets/hr-dashboard/img/icons/close.svg" style="width: 20px;cursor: pointer;" class="pull-right" data-dismiss="modal">
+						<h4 class="modal-title pull-left weight-700" id="exampleModalLabel" style="color: #fff;">Edit Employee Details</h4>
+				</div>
+				<div class="modal-body" style="padding-bottom: 50px;">
+					<form class="form edit-employee-details-form">
+						<div class="form-group">
+							<label>Full Name</label>
+							<input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.fullname_error == true}" ng-model="selected_edit_details_data.employee.fullname">
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.fullname_message"></span>
+						</div>
+						<div class="form-group">
+							<label>Date of Birth</label>
+							<input type="text" class="form-control input-edit-employee-details datepicker" ng-class="{'has-input-error':list.selected_edit_details_data.error_logs.dob_error == true}" ng-model="selected_edit_details_data.employee.dob" placeholder="DD/MM/YYYY">
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.dob_message"></span>
+						</div>
+						<div class="form-group">
+							<label>Work Email</label>
+							<input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.email_error == true}" ng-model="selected_edit_details_data.employee.email">
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.email_message"></span>
+						</div>
+						<div class="form-group">
+							<label style="display: block;">Mobile</label>
+							<input valid-number id="area_code2"  type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.mobile_error == true}" ng-model="selected_edit_details_data.employee.mobile">
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_message"></span>
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_area_code_message"></span>
+						</div>
+						<div class="form-group">
+							<label>Medical Credits</label>
+							<input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.credits_medical_error == true}" ng-model="selected_edit_details_data.employee.credits">
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.credits_medical_message"></span>
+						</div>
+						<div class="form-group">
+							<label>Wellness Credits</label>
+							<input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.credits_wellness_error == true}" ng-model="selected_edit_details_data.employee.wellness_credits">
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.credits_wellnes_message"></span>
+						</div>
+						<div class="form-group">
+							<label>Start Date</label>
+							<input type="text" class="form-control input-edit-employee-details start-date-datepicker" ng-model="selected_edit_details_data.employee.start_date">
+							<span class="error-message" ng-bind="selected_edit_details_data.error_logs.start_date_message"></span>
+						</div>
+
+						<div ng-if="selected_edit_details_data.dependents.length > 0" ng-repeat="list in selected_edit_details_data.dependents" style="margin: 10px 0;">
+							<p style="font-weight: 700;color: #333;border-bottom: 1px solid #999;padding: 10px 0;width: 80%;">Dependent <span ng-bind="$index + 1">1</span></p>
+							<div class="form-group">
+								<label>Full Name</label>
+								<input disabled-specific-characters type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.fullname_error == true}" ng-model="list.enrollee.fullname">
+								<span class="error-message" ng-bind="list.error_logs.fullname_message"></span>
+							</div>
+							<div class="form-group">
+								<label>Date of Birth</label>
+								<input type="text" class="form-control input-edit-employee-details datepicker" ng-class="{'has-input-error':list.error_logs.dob_error == true}" ng-model="list.enrollee.dob" placeholder="DD/MM/YYYY">
+								<span class="error-message" ng-bind="list.error_logs.dob_message"></span>
+							</div>
+							<div class="form-group">
+								<label>Relationship</label>
+								<select class="form-control input-edit-employee-details" ng-class="{'has-input-error':list.error_logs.relationship_error == true}" ng-model="list.enrollee.relationship">
+									<option value="spouse">Spouse</option>
+									<option value="child">Child</option>
+									<option value="parent">Parent</option>
+									<option value="sibling">Sibling</option>
+									<option value="family">Family</option>
+								</select>
+								<span class="error-message" ng-bind="list.error_logs.relationship_message"></span>
+							</div>
+							<div class="form-group">
+								<label>Start Date</label>
+								<input type="text" class="form-control input-edit-employee-details start-date-datepicker-dependent" ng-class="{'has-input-error':list.error_logs.start_date_error == true}" ng-model="list.enrollee.plan_start">
+								<span class="error-message" ng-bind="list.error_logs.start_date_message"></span>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer" style="border: 0;padding: 5px 39px 20px;">
+					<button ng-click="updateEnrolleEmp(selected_edit_details_data)" class="pull-right edit-employee-details-button" style="border: solid 1px #0392cf;background-color: #0392cf;color: #fff;">UPDATE</button>
+					<button ng-click="removeTempEmp(selected_edit_details_data)" class="pull-right edit-employee-details-button" style="border: solid 1px #ff7373;color: #ff7373;margin-right: 18px;">REMOVE</button>
+				</div>
+			</div>
+    </div>
+	</div>
 </div>
 

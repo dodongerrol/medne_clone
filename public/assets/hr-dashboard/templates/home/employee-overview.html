@@ -60,7 +60,7 @@
 						<img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()">
 					</label>
 				</form>
-				<button class="btn-export-member" ng-if="spending_account_status.medical == true && spending_account_status.wellness == true || spending_account_status.medical == true || spending_account_status.wellness == true" ng-click="goToBulkAllocation()">Bulk Allocation</button>
+				<button class="btn-export-member" ng-if="(spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)" ng-click="goToBulkAllocation()">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
 				<button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button>
 				<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
 				<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
@@ -140,24 +140,24 @@
 							<div class="medical-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
-										ng-bind="emp.spending_account.medical.credits_allocation | number: 2">1,000.00</span></span>
+										ng-bind="emp.spending_account.medical.credits_allocation">1,000.00</span></span>
 							</div>
 							<div class="medical-details">
 								<strong>Balance:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
-										ng-bind="emp.spending_account.medical.balance | number: 2">1,000.00</span></span>
+										ng-bind="emp.spending_account.medical.balance">1,000.00</span></span>
 							</div>
 						</td>
 						<td class="wellness-details-container">
 							<div class="wellness-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
-										ng-bind="emp.spending_account.wellness.credits_allocation_wellness | number: 2">1,000.00</span></span>
+										ng-bind="emp.spending_account.wellness.credits_allocation_wellness">1,000.00</span></span>
 							</div>
 							<div class="wellness-details">
 								<strong>Balance:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
-										ng-bind="emp.spending_account.wellness.balance | number: 2">1,000.00</span></span>
+										ng-bind="emp.spending_account.wellness.balance">1,000.00</span></span>
 							</div>
 						</td>
 					</tr>
@@ -289,22 +289,22 @@
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
-							<strong class="font-helvetica-medium">Allocation</strong>
+							<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-									ng-bind="selectedEmployee.spending_account.medical.credits_allocation | number : 2">1,000.00</span></span>
+									ng-bind="selectedEmployee.spending_account.medical.credits_allocation">1,000.00</span></span>
 						</div>
 						<p ng-if="entitlement_status.medical_entitlement" class="small">*The amount of 
 							<span ng-bind="entitlement_status.medical_entitlement.currency_type" class="currency-type"></span> <span ng-bind="entitlement_status.medical_entitlement.new_allocation_credits">833.33</span> will be updated on <span ng-bind="entitlement_status.medical_entitlement.effective_date">01/05/2019</span>.</p>
 					</div>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.medical.credits_allocation == 'UNLIMITED'">
-						<strong class="font-helvetica-medium">Allocation</strong>
+						<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 						<span><span ng-bind="selectedEmployee.spending_account.medical.credits_allocation"></span></span>
 					</div>
 					<div class="usage-container-wrapper">
 						<div ng-click="toggleMedicalUsage()" class="usage-container">
 							<strong class="font-helvetica-medium">Usage</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-									ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication ) | number : 2">700.00</span></span>
+									ng-bind="getUsage( selectedEmployee.spending_account.medical.credits_spent, selectedEmployee.spending_account.medical.e_claim_amount_pending_medication ) | number: 2">700.00</span></span>
 						</div>
 						<i ng-if="!isMedicalUsageShow" ng-click="toggleMedicalUsage()" class="fa fa-angle-right"
 							aria-hidden="true"></i>
@@ -314,20 +314,20 @@
 							<div class="usage-details">
 								<span>Spent:</span>
 								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
-									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent | number : 2">650</span></span>
+									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
 								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
 									<span
-										ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication | number : 2">50</span></span>
+										ng-bind="selectedEmployee.spending_account.medical.e_claim_amount_pending_medication">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.medical.balance != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
 						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-								ng-bind="selectedEmployee.spending_account.medical.balance | number: 2">300.00</span></span>
+								ng-bind="selectedEmployee.spending_account.medical.balance">300.00</span></span>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.medical.balance == 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
@@ -339,15 +339,15 @@
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
-							<strong class="font-helvetica-medium">Allocation</strong>
+							<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-									ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness | number: 2">500.00</span></span>
+									ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness">500.00</span></span>
 						</div>
 						<p ng-if="entitlement_status.wellness_entitlement" class="small">*The amount of 
 							<span ng-bind="entitlement_status.wellness_entitlement.currency_type" class="currency-type"></span> <span ng-bind="entitlement_status.wellness_entitlement.new_allocation_credits">833.33</span> will be updated on <span ng-bind="entitlement_status.wellness_entitlement.effective_date">01/05/2019</span>.</p>
 					</div>
 					<div class="allocation-container" ng-if="selectedEmployee.spending_account.wellness.credits_allocation_wellness == 'UNLIMITED'">
-						<strong class="font-helvetica-medium">Allocation</strong>
+						<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 						<span><span ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness">500.00</span></span>
 					</div>
 					<div class="usage-container-wrapper">
@@ -365,20 +365,20 @@
 								<span>Spent:</span>
 								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
 									<span
-										ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness | number: 2">650</span></span>
+										ng-bind="selectedEmployee.spending_account.wellness.credits_spent_wellness">650</span></span>
 							</div>
 							<div class="usage-details">
 								<span>Pending claim:</span>
 								<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>
 									<span
-										ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness | number: 2">50</span></span>
+										ng-bind="selectedEmployee.spending_account.wellness.e_claim_amount_pending_wellness">50</span></span>
 							</div>
 						</div>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.wellness.balance != 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
 						<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
-								ng-bind="selectedEmployee.spending_account.wellness.balance | number: 2">380.00</span></span>
+								ng-bind="selectedEmployee.spending_account.wellness.balance">380.00</span></span>
 					</div>
 					<div class="balance-container" ng-if="selectedEmployee.spending_account.wellness.balance == 'UNLIMITED'">
 						<strong class="font-helvetica-medium">Balance</strong>
@@ -386,7 +386,7 @@
 					</div>
 				</div>
 
-				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active'">
+				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active' && selectedEmployee.plan_method_type != 'pre_paid'">
 					<button class="btn-remove-employee" ng-click="removeBtn()">Remove Employee</button>
 				</div>
 
@@ -402,8 +402,7 @@
 						Employee</div>
 					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
 						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div ng-if="selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
-						Allocation</div>
+					<div ng-if="selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)"> {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} </div>
 					<!-- <div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
 						Entitlement</div> -->
 					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">
@@ -447,7 +446,7 @@
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
 								<div ng-if="selectedEmployee.medical_wallet" class="entitlementWithIcon">
-									<strong class="font-helvetica-medium">Medical Allocation</strong>
+									<strong class="font-helvetica-medium">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 									<!-- <strong class="font-helvetica-medium">Medical Entitlement</strong> -->
 									<span>
 										<span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
@@ -468,7 +467,7 @@
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
 								</div>
 								<div ng-if="selectedEmployee.wellness_wallet" class="entitlementWithIcon">
-									<strong class="font-helvetica-medium">Wellness Allocation</strong>
+									<strong class="font-helvetica-medium">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 									<!-- <strong class="font-helvetica-medium">Wellness Entitlement</strong> -->
 									<span>
 										<span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
@@ -588,7 +587,7 @@
 					</div>
 					<div ng-if="empTabSelected == 2" class="entitlement-information">
 						<div class="entitlement-btn-edit-wrapper">
-							<h3>Allocation Information</h3>
+							<h3>{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} Information</h3>
 							<!-- <h3>Entitlement Information</h3> -->
 							<button ng-disabled="updateDisable" ng-class="{ 'calc-disabled' : updateDisable }" class="btn-update" ng-click="updateEntitlement()">Update</button>
 							<!-- ng-class="{'calc-disabled' : emp_entitlement.medical_new_entitlement == false || emp_entitlement.medical_new_entitlement == '' || emp_entitlement.wellness_new_entitlement == false || emp_entitlement.wellness_new_entitlement == '' }"  -->
@@ -616,11 +615,11 @@
 
 						<div class="entitlement-information-details">
 							<div ng-if="selectedEmployee.medical_wallet">
-								<h4 class="weight-700 medical-entitlement">Medical Allocation | {{ selectedEmployee.medical_spending_account_validity}}</h4>
+								<h4 class="weight-700 medical-entitlement">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }} | {{ selectedEmployee.medical_spending_account_validity}}</h4>
 								<div class="col-md-12 medical-entitlement-container">
 									<div class="col-md-4">
 										<div class="entitlement-input-container original">
-											<h5 class="weight-700">Current Allocation</h5>
+											<h5 class="weight-700">Current {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Original Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
@@ -635,18 +634,18 @@
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container new">
-											<h5 class="weight-700">New Allocation</h5>
+											<h5 class="weight-700">New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)">
+												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="(!spending_account_status.paid_status && spending_account_status.medical_method == 'pre_paid')">
 											</div>
 											<!-- <p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span></p> -->
 										</div>
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container usage">
-											<h5 class="weight-700">Effective Date of New Allocation</h5>
+											<h5 class="weight-700">Effective Date of New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Effective Date of New Entitlement</h5> -->
 											<div class="entitlement-input-label withIcon">
 												<!-- <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label> -->
@@ -699,12 +698,12 @@
 
 							<!-- class="weight-700 wellness-entitlement" -->
 							<div ng-if="selectedEmployee.wellness_wallet">
-								<h4 class="weight-700 wellness-entitlement">Wellness Allocation | {{ selectedEmployee.wellness_spending_account_validity}}</h4>
+								<h4 class="weight-700 wellness-entitlement">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }} | {{ selectedEmployee.wellness_spending_account_validity}}</h4>
 								<!-- <h4 class="weight-700 wellness-entitlement">Wellness Entitlement</h4> -->
 								<div class="col-md-12 wellness-entitlement-container">
 									<div class="col-md-4">
 										<div class="entitlement-input-container original">
-											<h5 class="weight-700">Current Allocation</h5>
+											<h5 class="weight-700">Current {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Original Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
@@ -718,18 +717,18 @@
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container new">
-											<h5 class="weight-700">New Allocation</h5>
+											<h5 class="weight-700">New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">New Entitlement</h5> -->
 											<div class="entitlement-input-label">
 												<label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
-												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)">
+												<input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="(!spending_account_status.paid_status && spending_account_status.wellness_method == 'pre_paid')">
 											</div>
 											<!-- <p ng-if="emp_entitlement.updated_wellness_entitlement" class="small">*Updated on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p> -->
 										</div>
 									</div>
 									<div class="col-md-4">
 										<div class="entitlement-input-container usage">
-											<h5 class="weight-700">Effective Date of New Allocation</h5>
+											<h5 class="weight-700">Effective Date of New {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</h5>
 											<!-- <h5 class="weight-700">Effective Date of New Entitlement</h5> -->
 											<div class="entitlement-input-label withIcon">
 												<!-- <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label> -->
@@ -1039,7 +1038,7 @@
 				</div>
 
 				<div ng-if="healthSpendingAccountTabIsShow" class="health-spending-account-information">
-					<div class="account-summary-wrapper">
+					<!-- <div class="account-summary-wrapper">
 						<span class="account-summary-name weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
 						<h1 class="text-center weight-700">Health Spending Account Summary</h1>
 						<div class="account-summary-pro-rated weight-700 text-center">Pro-rated allocation from
@@ -1148,7 +1147,9 @@
 									class="spending-account-status exceed weight-700">Exceed</span>
 							</div>
 						</div>
-					</div>
+					</div> -->
+				
+					<div ui-view="remove-emp-content"></div>
 				</div>
 
 			</div>
@@ -1230,6 +1231,8 @@
 		</div>
 	</div>
 
+	<div ng-if="isRemoveEmployeeShow && !healthSpendingAccountTabIsShow" ui-view="remove-emp-content"></div>
+
 	<div class="remove-employee-wrapper" style="display: none;">
 		<h1 class="text-center weight-700">Remove employee</h1>
 		<form>
@@ -1275,15 +1278,8 @@
 					removed, the occupied seat will move to a vacant seat.</span>
 				<span class="review-checkmark"></span>
 			</label>
-			<!-- 	<label ng-if="refund_status == true" class="review-container">
-				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
-				<span class="review-prepare-template-text">Please remove the seat completely.</span>
-				<span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
-				<span class="review-checkmark"></span>
-			</label> -->
 			<label ng-if="refund_status == true && hideLitePlanCheckbox" class="review-container">
 				<input type="checkbox" ng-model="remove_employee_data.remove" ng-click="changeRemoveOption(3)">
-				<!-- <span class="review-prepare-template-text">Please remove the seat completely.</span> -->
 				<span class="review-prepare-template-text">Please remove the seat completely, and proceed for refund.</span>
 				<span class="review-checkmark"></span>
 			</label>
@@ -1646,6 +1642,8 @@
 
 		</div>
 	</div>
+
+
 
 	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-employee-modal" tabindex="-1"
 		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
