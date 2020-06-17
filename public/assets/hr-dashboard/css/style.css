@@ -829,6 +829,24 @@ button {
 .new-account .success-item {
   padding: 33px 0;
 }
+
+.new-account .form-group .med-button.disabled {
+  cursor: not-allowed;
+  background-color: #DBDBDB;
+  border-color: #DBDBDB;
+}
+
+.new-account .form-group .med-button.not-activated {
+  cursor: not-allowed;
+  background-color: #DBDBDB;
+  border-color: #DBDBDB;
+}
+
+.new-account .med-input.not-activated {
+  border: 1px solid #E63A33;
+}
+
+
 /* End New Account Feature */
 
 /*

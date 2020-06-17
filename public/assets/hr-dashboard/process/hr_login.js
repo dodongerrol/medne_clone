@@ -21,7 +21,9 @@ login.directive('loginSection', [
 			scope: true,
 			link: function link(scope, element, attributeSet) {
 				console.log('running loginSection');
-				scope.login_details = {};
+				scope.login_details = {
+					status : false, // activated , not activated, false
+				};
 				scope.ng_fail = false;
 
 				scope.checkUserLogin = function( ) {
@@ -49,15 +51,32 @@ login.directive('loginSection', [
 						$('#login-btn').text('Log in');
 						if(response.status == true){
 							window.localStorage.setItem('token', response.token)
-			              window.location.href = serverUrl.url + "company-benefits-dashboard/";
-			              scope.ng_fail = false;
-			            }else{
-			              scope.ng_fail = true;
-			            }
+							window.location.href = serverUrl.url + "company-benefits-dashboard/";
+							scope.ng_fail = false;
+						}else{
+							scope.ng_fail = true;
+						}
 					});
 				};
 
-				scope.checkUserLogin( );
+				scope.enableContinue = function (email) {
+					let emailFromDb = 'example@email.com';
+					let account_status = true;
+
+					if( email == emailFromDb && account_status == true) {
+						// check if email exist in db.
+						scope.login_details.status = 'activated';
+					} else if ((email == emailFromDb && account_status == false) || (email != null)) {
+						scope.login_details.status = 'not activated';
+					}	else {
+						scope.login_details.status = false;
+					}
+
+					console.log(scope.login_details.status);
+					
+				}
+
+				scope.checkUserLogin();
 			}
 		}
 	}
