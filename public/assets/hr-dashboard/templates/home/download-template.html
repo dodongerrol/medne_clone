@@ -1,38 +1,33 @@
-<div class="hrdb-body-container download-template">
-	<div class="container">
-		<div class="download-template-container">
-			<h1 class="dl-template-title text-center weight-700">Download Template</h1>
-			<h3 class="text-center dl-template-subtext weight-700">
-				We've put together the fields that are needed for enrollments in the<br>
-				excel template file, first row (aka header). Please download,<br>
-				complete and submit the excel file on step 3 (Upload).
-			</h3>
-			<button class="download-template-button center-block weight-700" onclick="window.location.href = '/excel/Employee Enrollment Listing.xlsx'">
-				<img src="../../assets/hr-dashboard/img/icons/download-file.svg" class="download-icon">
-				<span>DOWNLOAD</span>
-			</button>
-
-			<!--
-				if file was downloaded already
-				Uncomment Below
-			-->
-
-			<!-- <button class="download-template-button downloaded-button center-block">
-				<span>DOWNLOAD</span>
-			</button> -->
+<div download-template-directive>
+	<div class="hrdb-body-container">
+		<div class="container">
+			<div class="col-lg-12">
+				<div class="benefits-tiers-container center-block"> 
+	
+					<div class="download-template-container tier-feature-item item-fade" style="margin: 70px 0;">
+						<h1 class="text-center weight-700 font-25 download-template-title" style="color: #2c3e50;">Download template.</h1>
+						<div class="white-space-20"></div>
+						<p>We've put together the fields that are needed for enrollements in the excel template file, first row (aka header). Please download, complete and submit the excel file on the step 3 (Upload).</p>
+						<div class="download-template-btn">
+							<button ng-class="{'active': downloadTemplateOption == '1'}" ng-click="downloadExcelTemplate(1)"><img src="../assets/hr-dashboard/img/download-gray.png">Employees only</button>
+							<button ng-class="{'active': downloadTemplateOption == '2'}" ng-click="downloadExcelTemplate(2)"><img src="../assets/hr-dashboard/img/download-gray.png">Employees + Dependents</button>
+						</div>
+					</div>
+					
+				</div>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="prev-next-buttons-container">
-	<div class="container">
-		<button ui-sref="enrollment-method" class="pull-left btn btn-info" style="background-color: transparent;color: #0392cf;border: 0;box-shadow: none;font-size: 20px;padding: 11px 39px;">CANCEL</button>
-		<button ui-sref="prepare" class="pull-right btn btn-info next-wizard-button">NEXT</button>
-
-		<!--
-			this button can be clicked if the file was downloaded
-			Uncomment Below
-		-->
-
-		<!-- <button class="pull-right btn btn-info next-wizard-button inactive-button" disabled>NEXT</button> -->
+	<div class="prev-next-buttons-container">
+		<div class="container">
+	
+			<button ng-click="backBtn()" class="pull-left btn btn-info back-btn">
+				<span>BACK</span>
+			</button>
+	
+			<button class="pull-right btn btn-info next-wizard-button" ng-disabled="isNextBtnDisabled" ng-click="nextBtn( )">NEXT</button>
+			<button class="pull-right btn btn-info next-wizard-button download-template-btn-bottom" ng-click="downloadTemplate( )" style="font-size: 14px !important;">DOWNLOAD TEMPLATE</button>
+			
+		</div>
 	</div>
 </div>

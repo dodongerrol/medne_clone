@@ -27,33 +27,11 @@ class EclaimController extends \BaseController {
 		$email = (int)($email);
 		$password = $input['password'];
 
-		// $check = DB::table('user')
-		// ->where(function($query) use ($email, $password) {
-		// 	$query->where('UserType', 5)
-		// 	->where('Email', $email)
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-		// })
-  //   ->orWhere(function($query) use ($email, $password){
-  //   	$query->where('UserType', 5)
-		// 	->where('NRIC', 'like', '%'.$email.'%')
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-  //   })
-  //   ->orWhere(function($query) use ($email, $password){
-  //   	$email = (int)($email);
-  //   	$query->where('UserType', 5)
-		// 	->where('PhoneNo', (string)$email)
-		//   ->where('password', md5($password))
-		//   ->where('Active', 1);
-  //   })
-		// ->first();
-
 		$check = DB::table('user')
 		->where('UserType', 5)
 		->where('PhoneNo', (int)$email)
 		->where('password', md5($password))
-		->where('Active', 1)
+		// ->where('Active', 1)
 		->first();
 
 		if($check) {
@@ -61,6 +39,17 @@ class EclaimController extends \BaseController {
 				return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
 			}
 
+			// check employee status
+			$employee_status = PlanHelper::getEmployeeStatus($check->UserID);
+			$today =  PlanHelper::endDate(date('Y-m-d'));
+			if($employee_status['status'] == true)  {
+				// $expiry = date('Y-m-d', strtotime('+1 days', strtotime($employee_status['expiry_date'])));
+				$expiry = date('Y-m-d H:i:s', strtotime($employee_status['expiry_date']));
+				$expiry = PlanHelper::endDate($expiry);
+				if($today > $expiry) {
+					return array('status' => FALSE, 'message' => 'Invalid Credentials or Please update your user ID by clicking on the link above.');
+				}
+			}
 
 			// Session::put('employee-session', $check->UserID);
 			$jwt = new JWT();
@@ -874,6 +863,7 @@ class EclaimController extends \BaseController {
 	public function getActivity( )
 	{
 		$input = Input::all();
+		// return $input;
 		$data = StringHelper::getEmployeeSession( );
 		$user_id = $data->UserID;
 		$start = date('Y-m-d', strtotime($input['start']));
@@ -898,15 +888,6 @@ class EclaimController extends \BaseController {
 		$total_employee_lite_plan_spent = 0;
 		$wallet_status = false;
 		$lite_plan_status = StringHelper::litePlanStatus($user_id);
-		$user_plan_history = DB::table('user_plan_history')
-                  ->where('user_id', $user_id)
-                  ->where('type', 'started')
-                  ->orderBy('created_at', 'desc')
-                  ->first();
-
-        $customer_active_plan = DB::table('customer_active_plan')
-                  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                  ->first();
 
 		$company_wallet_status = PlanHelper::getCompanyAccountType($user_id);
 		if($company_wallet_status) {
@@ -923,7 +904,6 @@ class EclaimController extends \BaseController {
 			$history_column_id = "wellness_wallet_history_id";
 		}
 
-
 		$user_plan_history = DB::table('user_plan_history')
 		->where('user_id', $user_id)
 		->orderBy('created_at', 'desc')
@@ -936,22 +916,22 @@ class EclaimController extends \BaseController {
 							->first();
 		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
 		if($user_spending_dates) {
-      if($spending_type == 'medical') {
-        $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
-      } else {
-        $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
-      }
-    } else {
-      $credit_data = null;
-    }
+			if($spending_type == 'medical') {
+				$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+			} else {
+				$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+			}
+		} else {
+			$credit_data = null;
+		}
 
-    // return $credit_data;
+    	// return $credit_data;
 		$spending_end_date = PlanHelper::endDate($input['end']);
 		$allocation = $credit_data ? $credit_data['allocation'] : 0;
 		$balance = $credit_data ? $credit_data['balance'] : 0;
 		$ids = StringHelper::getSubAccountsID($user_id);
     
-    // get e claim
+    	// get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -1115,13 +1095,6 @@ class EclaimController extends \BaseController {
 
 				$total_amount = number_format((float)$trans->procedure_cost, 2);
 				$treatment = 0;
-				// if(strripos($trans->procedure_cost, '$') !== false) {
-				// 	$temp_cost = explode('$', $trans->procedure_cost);
-				// 	$total_amount = number_format($temp_cost[1]);
-				// } else {
-				// 	$total_amount = number_format($trans->procedure_cost, 2);
-				// }
-
 				if((int)$trans->health_provider_done == 1 && (int)$trans->deleted == 0) {
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 						if((int)$trans->lite_plan_enabled == 1) {
@@ -1171,9 +1144,9 @@ class EclaimController extends \BaseController {
 							$treatment = $trans->credit_cost + $trans->cash_cost;
 						} else {
 							$total_amount = (float)$trans->procedure_cost + $trans->consultation_fees;
-              // $total_amount = $trans->procedure_cost;
+              				// $total_amount = $trans->procedure_cost;
 							$cash = (float)$trans->procedure_cost;
-							$treatment = $trans->credit_cost;
+							$treatment = (float)$trans->procedure_cost;
 						}
 					} else {
 						if((int)$trans->half_credits == 1) {
@@ -1200,7 +1173,7 @@ class EclaimController extends \BaseController {
 					// }
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
-	            $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	            			$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 							// $total_amount = $trans->credit_cost + $trans->cash_cost;
 							$cash = $trans->cash_cost;
 							$payment_type = 'Mednefits Credits + Cash';
@@ -1208,7 +1181,7 @@ class EclaimController extends \BaseController {
 						} else {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
 							$treatment = $trans->credit_cost;
-	              // $total_amount = $trans->procedure_cost;
+	              			// $total_amount = $trans->procedure_cost;
 								$payment_type = 'Mednefits Credits';
 							if($trans->credit_cost > 0) {
 								$cash = 0;
@@ -1237,7 +1210,7 @@ class EclaimController extends \BaseController {
 					if((int)$trans->lite_plan_enabled == 1) {
 						$bill_amount = (float)$trans->procedure_cost - $trans->consultation_fees;
 					} else {
-						$bill_amount = (float)$trans->procedure_cost;
+						$bill_amount = (float)$trans->procedure_cost + $trans->cash_cost;
 					}
 				} else {
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -1251,7 +1224,6 @@ class EclaimController extends \BaseController {
 							if((int)$trans->lite_plan_use_credits == 1) {
 								$bill_amount = 	(float)$trans->procedure_cost;
 							} else {
-								// $cost_temp = $trans->credit_cost + $trans->cash_cost;
 								$bill_amount = 	$trans->credit_cost + $trans->cash_cost;
 							}
 						}
@@ -1260,7 +1232,10 @@ class EclaimController extends \BaseController {
 					}
 				}
 
-
+				if($consultation_credits)	{
+					$transaction_type = "credit";
+					$payment_type = "Mednefits Credits";
+				}
                 // get clinic type
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 				$type = "";
@@ -2051,21 +2026,21 @@ class EclaimController extends \BaseController {
 					$credit_status = FALSE;
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$cash_cost = $transation->cash_cost;
+							$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
+							$cash_cost = (float)$transation->cash_cost;
 						} else {
 							if($trans->credit_cost > 0) {
 								$total_amount = $trans->procedure_cost;
 							} else {
-								$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+								$total_amount = (float)$trans->procedure_cost + (float)$trans->consultation_fees;
 							}
-							$cash_cost = $trans->procedure_cost;
+							$cash_cost = (float)$trans->procedure_cost;
 						}
 					} else {
 						if((int)$trans->half_credits == 1) {
-							$cash_cost = $trans->cash_cost;
+							$cash_cost = (float)$trans->cash_cost;
 						} else {
-							$cash_cost = $trans->procedure_cost;
+							$cash_cost = (float)$trans->procedure_cost;
 						}
 					}
 				} else {
@@ -2074,11 +2049,11 @@ class EclaimController extends \BaseController {
 
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-							$cash_cost = $trans->cash_cost;
+							$total_amount = (float)$trans->credit_cost + (float)$trans->cash_cost + (float)$trans->consultation_fees;
+							$cash_cost = (float)$trans->cash_cost;
 						} else {
                       // $total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+							$total_amount = (float)$trans->credit_cost + (float)$trans->cash_cost + (float)$trans->consultation_fees;
 							if($trans->credit_cost > 0) {
 								$cash_cost = 0;
 							} else {
@@ -4764,8 +4739,7 @@ public function getHrActivity( )
 	$paginate['per_page'] = $corporate_members->getPerPage();
 	$paginate['to'] = $corporate_members->getTo();
 	$paginate['total'] = $corporate_members->getTotal();
-
-  $total_allocation = 0;
+  	$total_allocation = 0;
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
@@ -4857,10 +4831,10 @@ public function getHrActivity( )
 								}
 							} else if($trans->procedure_cost >= 0 && $trans->lite_plan_use_credits === 0){
 								if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
-									$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
+									// $total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
 									$consultation = floatval($trans->consultation_fees) * $trans->currency_amount;;
 								} else {
-									$total_lite_plan_consultation += floatval($trans->consultation_fees);
+									// $total_lite_plan_consultation += floatval($trans->consultation_fees);
 									$consultation = floatval($trans->consultation_fees);
 								}
 							}

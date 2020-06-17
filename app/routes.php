@@ -396,7 +396,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
-	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// update cap per visit of employee
 	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 	// get pre signed e-claim doc
@@ -436,6 +435,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
 	// get hr date terms
 	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
+	// get customer spending account status
+	Route::get('hr/spending_account_status', 'BenefitsDashboardController@spendingAccountStatus');
+	// get excel link
+	Route::get('hr/get_excel_link', 'BenefitsDashboardController@getExcelLink');
 	// route get employee lists for bulk allocation
 	Route::get('hr/get_employee_lists_bulk_allocation', 'BenefitsDashboardController@getEmployeeListsBulk');
 	// upload employee allocation bulk
@@ -444,10 +447,16 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/member_credits', 'EmployeeController@getMemberCreditDetails');
 	// create new allocation
 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
+	// get spending invoice purchse
+	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
+	// check fields for replacement
+	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
 });
 
 
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
+	// download spending invoice details
+	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
@@ -807,155 +816,6 @@ Route::get('hr/download_employee_cap_per_visit', 'EmployeeController@downloadCap
 
 // 		  	Route::get('clinic/new_nearby','Api_V1_ClinicController@NewNearby');
 
-// 		    Route::get('clinic/booking-history','Api_V1_ClinicController@AppointmentHistory');
-// 		    //Route::get('clinic/booking-detail','Api_V1_ClinicController@AppointmentDetails');
-// 		    Route::get('clinic/booking-detail/{id}','Api_V1_ClinicController@AppointmentDetails');
-// 		    Route::get('clinic/booking-delete','Api_V1_ClinicController@AppointmentDelete');
-// 		    Route::get('clinic/panel-nearby','Api_V1_ClinicController@PanelClinicNearby');
-// 		    Route::get('clinic/appointment','Api_V1_ClinicController@UserAppointmentValidation');
-// 		    Route::get('clinic/procedure_details/{id}','Api_V1_ClinicController@ProcedureDetails');
-// 		    Route::get('clinic/doctor_procedure/{id}','Api_V1_ClinicController@ClinicDoctorProcedures');
-
-// 		    //Post - Clinics
-
-
-
-
-// 		    Route::get('clinic/see','Api_V1_ClinicController@see');
-// 		    Route::post('clinic/post','Api_V1_ClinicController@post');
-
-// 		    //Route::get('doctor/doctordetails','Api_V1_DoctorController@DoctorDetails');
-// 		    //Route::get('doctor/doctor_details/{clinicid}/{doctorid}/{procedureid}','Api_V1_DoctorController@FullDoctorDetails');
-// 		    Route::post('doctor/doctor_details','Api_V1_DoctorController@FullDoctorDetails');
-// 		    Route::post('doctor/slots-refresh','Api_V1_DoctorController@AccessMoreSlots');
-// 		    Route::get('doctor/availability','Api_V1_DoctorController@getDoctorAvailableSlots');
-
-// 		    Route::get('doctor/test','Api_V1_DoctorController@test');
-
-
-// 		    //For doctor
-// 		    Route::post('doctor/booking-queue','Api_V1_DoctorController@QueueBooking');
-// 		    Route::post('doctor/booking-slot','Api_V1_DoctorController@SlotsBooking');
-// 		    //Route::post('doctor/refresh-queue','Api_V1_DoctorController@QueueRefresh');
-// 		    //Route::post('doctor/refresh-slot','Api_V1_DoctorController@SlotRefresh');
-// 		    Route::post('doctor/moreslots','Api_V1_DoctorController@DoctorSlotsForDate');
-// 		    Route::post('doctor/morequeues','Api_V1_DoctorController@DoctorQueueForDate');
-
-// 		    Route::post('doctor/confirm-queue','Api_V1_DoctorController@ConfirmQueueBooking');
-// 		    Route::post('doctor/confirm-slot','Api_V1_DoctorController@ConfirmSlotBooking');
-// 		    Route::post('doctor/booking-delete','Api_V1_DoctorController@BookingDelete');
-
-
-// 		//Route::resource('auth', 'Api_V1_AuthController');
-
-// 		    //For insurance company
-// 		    //GET
-// 		    Route::get('insurance/company','Api_V1_InsuranceController@getAllInsuranceCompany');
-// 		    Route::get('insurance/policy','Api_V1_InsuranceController@AllUserInsurancePolicy');
-// 		    Route::get('insurance/delete','Api_V1_InsuranceController@DeleteInsurancePolicy');
-// 		    Route::get('insurance/change-primary','Api_V1_InsuranceController@ChangePrimaryPolicy');
-
-// 		    //POST
-// 		    Route::post('insurance/add_policy','Api_V1_InsuranceController@AddUserInsurancePolicy');
-
-
-
-// 		    // nhr/////////////////////////////////////////////////////////////
-
-// 		    Route::get('clinic/clinic_type', 'Api_V1_ClinicController@getClnicType');
-// 		    Route::get('new/clinic/clinic_type', 'Api_V1_ClinicController@NewClnicType');
-
-// 		    Route::get('clinic/clinic_type/sub', 'Api_V1_ClinicController@getClnicTypeSub');
-// 		    Route::get('clinic/clinic_by_type/{id}', 'Api_V1_ClinicController@getClinicByType');
-// 		    Route::get('clinic/main_search','Api_V1_ClinicController@mainSearch');
-// 		    Route::get('clinic/sub_search','Api_V1_ClinicController@subSearch');
-// 		    Route::get('clinic/get_favourite_clinics','Api_V1_ClinicController@getFavouriteClinics');
-// 		    Route::get('clinic/get_promo_message','Api_V1_ClinicController@getpromoMessage');
-
-// 		    Route::post('clinic/favourite', 'Api_V1_ClinicController@favourite');
-
-
-// 		    // get credit details
-// 		    Route::get('user/credits', 'Api_V1_AuthController@GetCredits');
-// 		    Route::post('user/match/promo', 'Api_V1_AuthController@getPromoCredit');
-
-// 		    // backup email
-// 		    Route::post('user/create/backup/email', 'Api_V1_AuthController@createBackUpEmail');
-// 		    // get clinic details from qr code
-// 		    Route::get('clinic/details/{id}', 'Api_V1_AuthController@getNewClinicDetails');
-// 		    // check user pin
-// 		    Route::post('clinic/send_payment', 'Api_V1_AuthController@checkUserPin');
-// 		    // send notification to clinic when customer will pay directly to clinic
-// 		    Route::post('clinic/payment_direct', 'Api_V1_AuthController@notifyClinicDirectPayment');
-// 		    // save photo receipt
-// 		    Route::post('user/save_in_network_receipt', 'Api_V1_AuthController@saveInNetworkReceipt');
-// 		    // save photo bulk
-// 		    Route::post('user/save_receipt_bulk', 'Api_V1_AuthController@saveImageReceiptBulk');
-// 		    // get family coverage sub accounts
-// 		    Route::get('user/family_coverage_user_lists', 'Api_V1_AuthController@getFamilCoverageAccounts');
-// 		    // get wallet settings
-// 		    Route::get('user/wallet_settings', 'Api_V1_AuthController@getWalletSettings');
-// 		    // update or insert wallet setting
-// 		    Route::post('user/set_wallet_settings', 'Api_V1_AuthController@setWalletSettings');
-// 		    // get in-network transaction lists
-// 		    Route::get('user/in_network_transactions', 'Api_V1_AuthController@getNetworkTransactions');
-// 		    // get specific in-network transaction
-// 		    Route::get('user/specific_in_network/{id}', 'Api_V1_AuthController@getInNetworkDetails');
-// 		    // upload receipt e-claim
-// 		    // Route::post('user/upload_out_of_network_receipt', 'Api_V1_AuthController@uploadReceipt');
-// 		    // upload receipt in-network
-// 		    Route::post('user/upload_in_network_receipt', 'Api_V1_AuthController@uploadInNetworkReceipt');
-// 		    // get e-claim transactions
-// 		    Route::get('user/e_claim_transactions', 'Api_V1_AuthController@getEclaimTransactions');
-// 		    Route::get('user/specific_e_claim_transaction/{id}', 'Api_V1_AuthController@getEclaimDetails');
-// 		    // upload out-of-network(e-claim receipt)
-// 		    Route::post("user/save_out_of_network_receipt", 'Api_V1_AuthController@saveEclaimReceipt');
-// 		    // get lists of spending type
-// 		    Route::get("user/health_type_lists", 'Api_V1_AuthController@getHealthLists');
-// 		    // create e-claim transaction
-// 		    Route::post("user/create_e_claim", 'Api_V1_AuthController@createEclaim');
-// 	 	});
-// 	});
-// });
-
-
-// // version 2 mobile api
-// Route::group(array('prefix' => 'v2'), function()
-// {
-
-// 	Route::group(array('after' => 'auth.headers'),function(){
-// 		// Route::post('auth/signup', 'Api_V1_AuthController@Signup');
-// 	  	Route::post('auth/login','Api_V1_AuthController@Login');
-// 	  	// new login method 
-// 	  	Route::post('auth/new_login','Api_V1_AuthController@newLogin');
-// 	    //Route::post('auth/login','Api_V1_AuthController@login');
-// 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
-// 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
-// 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
-// 	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
-
-// 	 	Route::group(array('before' => 'auth.v2'),function(){
-// 	 		// test one tap login
-// 		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');
-// 		    // reset details
-
-// 		    Route::post('auth/newallergy','Api_V1_AuthController@AddNewAllergy');
-// 		    Route::post('auth/newcondition','Api_V1_AuthController@AddNewMedicalCondition');
-// 		    Route::post('auth/newmedication','Api_V1_AuthController@AddNewUserMedication');
-// 		    Route::post('auth/newhistory','Api_V1_AuthController@AddNewMedicalHistory');
-// 		    Route::post('auth/update','Api_V1_AuthController@newUpdateUserProfile');
-// 		    Route::post('auth/updatehistory','Api_V1_AuthController@UpdateMedicalHistory');
-// 		    Route::post('auth/change-password','Api_V1_AuthController@ChangePassword');
-// 		    Route::post('auth/device-token','Api_V1_AuthController@AddDeviceToken');
-// 		    Route::post('auth/disable-profile','Api_V1_AuthController@DisableProfile');
-// 		    Route::post('auth/otpupdate','Api_V1_AuthController@OTPProfileUpdate');
-// 		    Route::post('auth/otpvalidation','Api_V1_AuthController@OTPCodeValidation');
-// 		    Route::post('auth/otpresend','Api_V1_AuthController@OTPCodeResend');
-
-// 		    // create or update pin
-// 		    Route::post('auth/pin', 'Api_V1_AuthController@pin');
-// 		    Route::post('auth/update_pin', 'Api_V1_AuthController@updatePin');
-
 // 		    //for get
 // 		    Route::get('auth/logout','Api_V1_AuthController@LogOut');
 // 		    Route::get('auth/coordinate','Api_V1_AuthController@FindCoordinate');
@@ -1110,6 +970,8 @@ Route::get('hr/download_employee_cap_per_visit', 'EmployeeController@downloadCap
 // 			Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
 // 			// get member dates coverage
 // 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
+// 			// get member spending account status feature
+// 			Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 // 	 	});
 // 	});
 // });
