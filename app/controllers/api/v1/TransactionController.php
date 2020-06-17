@@ -100,6 +100,7 @@ class Api_V1_TransactionController extends \BaseController
 
 					if($transaction_access)	{
 						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
 						$returnObject->message = 'Panel function is disabled for your company.';
 						return Response::json($returnObject);
 					}
@@ -806,12 +807,22 @@ class Api_V1_TransactionController extends \BaseController
 						$input_amount = TransactionHelper::floatvalue($input['input_amount']);
 					}
 					
+					$user_id = StringHelper::getUserId($findUserID);
 					// check block access
-					$block = PlanHelper::checkCompanyBlockAccess($findUserID, $input['clinic_id']);
+					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 
 					if($block) {
 						$returnObject->status = FALSE;
 						$returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
+						return Response::json($returnObject);
+					}
+
+					// check if enable to access feature
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+					if($transaction_access)	{
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Panel function is disabled for your company.';
 						return Response::json($returnObject);
 					}
 
