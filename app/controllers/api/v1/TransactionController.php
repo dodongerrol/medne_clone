@@ -592,7 +592,7 @@ class Api_V1_TransactionController extends \BaseController
 										}
 										
 										// deduct visit for enterprise plan user
-										if($customer_active_plan->account_type == "enterprise_plan")	{
+										if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 											MemberHelper::deductPlanHistoryVisit($user_id);
 										}
 										try {
