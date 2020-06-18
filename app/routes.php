@@ -1126,14 +1126,6 @@ Route::group(array('prefix' => 'v2'), function()
 	});
 });
 
-// check in view layout
-// Route::get('app/check_in/view/{id}', 'QRCodeController@checkInView');
-// Route::get('app/payment/view/{id}', 'QRCodeController@paymentView');
-// save check in data
-// Route::post('app/save/check_in', 'UserCheckInController@createUserCheckIn');
-// Route::post('app/check/user_pin', 'UserCheckInController@checkUserPin');
-// Route::post('app/save/payment', 'UserCheckInController@saveCheckInPayment');
-
 //Route::group(array('domain' => 'www.tag.loc','prefix' => ''), function()
 Route::group(array('prefix' => 'app'), function()
 {
@@ -1146,17 +1138,6 @@ Route::group(array('prefix' => 'app'), function()
     Route::get('auth/forgot','App_AuthController@ForgotPassword');
     Route::get('auth/password-reset','App_AuthController@ResetPassword');
     Route::get('auth/newClinic','App_AuthController@newClinic');
-
-
-
-        //Test Route for werb Here
-        //Route::get('auth/file-upload','App_AuthController@FileUpload');
-        //Route::any('auth/upload','App_AuthController@Upload');
-        //Route::get('auth/push','App_AuthController@PushNotification');
-
-        //Route::get('auth/testshow_upload','App_AuthController@TestShowFileUpload');
-        //Route::post('auth/test_upload','App_AuthController@TestUpload');
-
 
     //Auth : POST
     Route::POST('auth/signup','App_AuthController@MainSignUp');
