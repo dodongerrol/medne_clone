@@ -94,8 +94,12 @@
         <div class="img-wrapper">
           <img src="../assets/e-claim/img/bell.png" >
         </div>
-        <p class="modal-text">
+        <p class="modal-text" ng-if="home.memberAccountData.plan_type != 'enterprise_plan'">
           You have no credit to access<br>this feature at the moment.<br>
+          Kindly contact your HR. 
+        </p>
+        <p class="modal-text" ng-if="home.memberAccountData.plan_type == 'enterprise_plan'">
+          Your account is not enabled to<br>access this feature at the moment.<br>
           Kindly contact your HR. 
         </p>
         <div class="btn-container">

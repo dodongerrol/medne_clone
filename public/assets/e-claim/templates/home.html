@@ -117,15 +117,15 @@
 
 					<div class="white-space-10"></div>
 					<!-- <p class="weight-700 font-13">Your Mednefits Credits</p> -->
-					<div ng-if="user_details.plan_type != 'Enterprise Plan'" class="home-spending-type-container" >
+					<div ng-if="current_spending.account_type != 'enterprise_plan' || (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true)" class="home-spending-type-container" >
 						<p class="weight-700">Your Spending Account</p>
 						<button class="btn btn-default btn-medical" ng-class="{'active' : spendingTypeOpt == 0}" ng-click="spendingType( 0 )">Medical</button>
 						<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingTypeOpt == 1}" ng-click="spendingType( 1 )">Wellness</button>
 					</div>
-					<div ng-if="user_details.plan_type == 'Enterprise Plan'" style="min-height: 50px;"></div>
+					<div ng-if="current_spending.account_type == 'enterprise_plan'" style="min-height: 50px;"></div>
 					
 					<div class="activity-container border-bottom">
-						<div ng-if="user_details.plan_type != 'Enterprise Plan'" class="col-xs-12 col-sm-12 col-md-3 text-center" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
+						<div ng-if="current_spending.account_type != 'enterprise_plan'" class="col-xs-12 col-sm-12 col-md-3 text-center" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
 							<div class="white-space-30"></div>
 							<div class="white-space-5"></div>
 							<p class="font-medium2 weight-700">Balance</p>
@@ -134,7 +134,7 @@
 								<span ng-bind="current_spending.balance">00.00</span>
 							</p>
 						</div>
-						<div ng-if="user_details.plan_type == 'Enterprise Plan'" class="col-xs-12 col-sm-12 col-md-3 text-center visits-home-container" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
+						<div ng-if="current_spending.account_type == 'enterprise_plan'" class="col-xs-12 col-sm-12 col-md-3 text-center visits-home-container" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
 							<div class="white-space-20"></div>
 							<p class="font-medium2 weight-700 visit-text">Visits</p>
 							<p class="font-30 weight-700 no-margin" style="color:#00B2E1">
