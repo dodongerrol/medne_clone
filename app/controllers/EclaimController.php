@@ -974,7 +974,6 @@ class EclaimController extends \BaseController {
 			$credit_data = null;
 		}
 
-    	// return $credit_data;
 		$spending_end_date = PlanHelper::endDate($input['end']);
 		$allocation = $credit_data ? $credit_data['allocation'] : 0;
 		$balance = $credit_data ? $credit_data['balance'] : 0;
@@ -1884,11 +1883,12 @@ class EclaimController extends \BaseController {
 		$in_network_spent = 0;
 		$ids = StringHelper::getSubAccountsID($user_id);
 
+		$lite_plan_status = false;
+		$lite_plan_status = StringHelper::litePlanStatus($user_id);
     	// get user wallet_id
 		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 
 		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, 'current_term', $spending_type);
-		// return $user_spending_dates;
 		if($user_spending_dates) {
 			if($spending_type == 'medical') {
 				$table_wallet_history = 'wallet_history';
