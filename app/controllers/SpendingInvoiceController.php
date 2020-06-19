@@ -49,10 +49,8 @@ class SpendingInvoiceController extends \BaseController {
         $statement_e_claim_amount = 0;
 
 
-        // $plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-        // if($plan->account_type == "lite_plan" && $plan->plan_method == "pre_paid")  {
-        //     return array('status' => FALSE, 'message' => 'Pre-paid account does not require spending transaction invoice.');
-        // }
+        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+        $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end, "post_paid");
 
         if($plan->account_type == "enterprise_plan")  {
             return array('status' => FALSE, 'message' => 'Enterprise account does not require spending transaction invoice.');
@@ -72,7 +70,7 @@ class SpendingInvoiceController extends \BaseController {
                             ->where('statement_start_date', $start)
                             ->count();
         if($statement_check == 0) {
-            $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end);
+            $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end, "post_paid");
             if($statement) {
                 $statement_id = $statement->id;
             } else {
@@ -82,19 +80,24 @@ class SpendingInvoiceController extends \BaseController {
             $statement = DB::table('company_credits_statement')
                             ->where('statement_customer_id', $result->customer_buy_start_id)
                             ->where('statement_start_date', $start)
+                            ->where('plan_method', 'post_paid')
                             ->first();
-            // get transaction if there is another transaction
-            SpendingInvoiceLibrary::checkSpendingInvoiceNewTransactions($result->customer_buy_start_id, $start, $end, $statement->statement_id);
-            $statement_id = $statement->statement_id;
+            if($statement) {
+                // get transaction if there is another transaction
+                SpendingInvoiceLibrary::checkSpendingInvoiceNewTransactions($result->customer_buy_start_id, $start, $end, $statement->statement_id, "post_paid");
+                $statement_id = $statement->statement_id;
+            } else {
+                $statement = SpendingInvoiceLibrary::createStatement($result->customer_buy_start_id, $start, $end, "post_paid");
+                if($statement) {
+                    $statement_id = $statement->id;
+                } else {
+                    return array('status' => FALSE, 'message' => 'Failed to create statement record.');
+                }
+            }
         }
 
         $statement = SpendingInvoiceLibrary::getInvoiceSpending($statement_id, true);
-        // return $statement;
         $e_claims = SpendingInvoiceLibrary::getEclaims($result->customer_buy_start_id, $start, $end);
-        // return $e_claims;
-        $company = DB::table('customer_business_information')
-        			->where('customer_buy_start_id', $result->customer_buy_start_id)
-        			->first();
        	$statement['statement_e_claim_amount'] = $e_claims['total_e_claim_spent'];
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
         $today = date("Y-m-d");

@@ -13150,6 +13150,12 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
+			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id);
+
+			if($transaction_access)	{
+				$result['spending_feature_status_type'] = false;
+			}
+
 			return $result;
 		} else {
 			$returnObject->status = FALSE;

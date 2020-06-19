@@ -8615,11 +8615,8 @@ public function getNewClinicDetails($id)
   $authSession = new OauthSessions();
   $input = Input::all();
   $getRequestHeader = StringHelper::requestHeader();
-      // if(StringHelper::Deployment() == 1){
   $returnObject->production = TRUE;
-        // } else {
-        //     $returnObject->production = FALSE;
-        // }
+
 
   if(!empty($getRequestHeader['Authorization'])){
     $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
@@ -8637,17 +8634,6 @@ public function getNewClinicDetails($id)
      }
      $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
      $owner_id = StringHelper::getUserId($findUserID);
-    //  $customer_id = PlanHelper::getCustomerId($owner_id);
-    //  $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
-     
-    //  if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-    //   $returnObject->status = FALSE;
-    //   $returnObject->status_type = 'zero_balance';
-    //   $returnObject->message = 'You have no credit to access this feature at the moment.';
-    //   $returnObject->sub_message = 'Kindly contact HR.';
-    //   return Response::json($returnObject);
-    //  }
-
      // check block access
      $block = PlanHelper::checkCompanyBlockAccess($owner_id, $id);
 
@@ -8656,6 +8642,15 @@ public function getNewClinicDetails($id)
        $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
        return Response::json($returnObject);
      }
+
+     // check if enable to access feature
+      $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($owner_id);
+
+      if($transaction_access)	{
+        $returnObject->status = FALSE;
+        $returnObject->message = 'Panel function is disabled for your company.';
+        return Response::json($returnObject);
+      }
 
       // check if employee/user is still coverge
      $user_type = PlanHelper::getUserAccountType($findUserID);
@@ -13245,6 +13240,17 @@ public function payCreditsNew( )
               $returnObject->status_type = 'without_e_claim';
               $returnObject->head_message = 'E-Claim Disabled';
               $returnObject->message = 'The E-Claim function has been disabled for your company.';
+              return Response::json($returnObject);
+            }
+
+            // check for member transaction
+            $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+            if($transaction_access)	{
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'Non-Panel Disabled';
+              $returnObject->message = 'Non-Panel function is disabled for your company.';
               return Response::json($returnObject);
             }
 

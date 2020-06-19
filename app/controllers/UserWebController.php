@@ -70,6 +70,7 @@ class UserWebController extends BaseController {
                     }
                } else {
                     $data = array(
+                         'bank_name'             => $input['bank_name'],
                          'billing_address'        => $input['billing_address'],
                          'bank_account_type'      => $input['bank_account_type'],
                          'bank_account_number'    => $input['bank_account_number']
