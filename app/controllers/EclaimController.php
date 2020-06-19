@@ -4756,6 +4756,8 @@ public function getHrActivity( )
 	$total_in_network_spent_cash_transaction = 0;
 	$total_lite_plan_consultation = 0;
 	$lite_plan = false;
+	$panel = 0;
+	$non_panel = 0;
 
   // get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
@@ -5383,7 +5385,8 @@ public function getHrActivity( )
 	}
 
 	$total_spent = $e_claim_spent + $in_network_spent + $total_lite_plan_consultation;
-
+	$panel = $in_network_spent;
+	$non_panel = $e_claim_spent;
   // sort in-network transaction
 	usort($transaction_details, function($a, $b) {
 		return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
@@ -5407,6 +5410,8 @@ public function getHrActivity( )
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
+		'panel'			=> $panel,
+		'non_panel'		=> $non_panel,
 		'lite_plan'     => $lite_plan,
 		'total_visit_created' => $total_visit_created,
 		'total_balance_visit' => $total_visit_limit - $total_visit_created
