@@ -15006,6 +15006,8 @@ class BenefitsDashboardController extends \BaseController {
 		$total_company_medical_supp = 0;
 		$total_company_wellness_allocation = 0;
 		$total_company_wellness_supp = 0;
+		$total_medical_percentage = $spending->medical_supplementary_credits;
+		$total_wellness_percentage = $spending->wellness_supplementary_credits;
 		$total_supp = 0;
 		$term_start = null;
 		$term_end = null;
@@ -15022,8 +15024,6 @@ class BenefitsDashboardController extends \BaseController {
 			$account_type = $plan->account_type;
 			$plan_method = $spending->wellness_plan_method;
 		}
-
-		
 
 		$date1 = new DateTime($term_start);
 		$date2 = new DateTime($term_end);
@@ -15156,8 +15156,12 @@ class BenefitsDashboardController extends \BaseController {
 			'wellness_enable' => (int)$spending->wellness_enable == 1 ? true : false,
 			'total_company_medical_allocation'	=> $total_company_medical_allocation,
 			'total_company_medical_supp'		=> $total_company_medical_supp,
+			'total_medical_supplementary_usage'		=> $total_company_medical_supp,
 			'total_company_wellness_supp'		=> $total_company_wellness_supp,
+			'total_wellness_supplementary_usage'		=> $total_company_wellness_supp,
 			'total_company_wellness_allocation'	=> $total_company_wellness_allocation,
+			'total_medical_company_supplementary_allocation' => $total_company_medical_allocation * $total_medical_percentage,
+			'total_wellnes_company_supplementary_allocation' => $total_company_wellness_allocation * $total_wellness_percentage,
 			'total_purchase_credits' => $company_credits['total_purchase_credits'],
 			'total_bonus_credits' => $company_credits['total_bonus_credits'],
 			'total_allocated_credits' => $total_allocation,
