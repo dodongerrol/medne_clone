@@ -299,7 +299,7 @@ class MemberHelper
 							);
 							DB::table('customer_credit_logs')->insert($company_credit_logs);
 
-							// $company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('medical_supp_credits', $new_medical_allocation);
+							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('medical_supp_credits', $new_medical_allocation);
 						} else {
 							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('balance', $new_medical_allocation);
 						}
