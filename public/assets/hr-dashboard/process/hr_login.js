@@ -7,7 +7,8 @@ login.run(function($http) {
 login.factory('serverUrl',[
     function factory(){
       return {
-        url: window.location.origin + '/',
+        url: window.location.origin,
+        // url: 'http://ec2-13-251-63-109.ap-southeast-1.compute.amazonaws.com',
       }
     }
 ]);
@@ -21,7 +22,9 @@ login.directive('loginSection', [
 			scope: true,
 			link: function link(scope, element, attributeSet) {
 				console.log('running loginSection');
-				scope.login_details = {};
+				scope.login_details = {
+					status : false, // activated , not activated, false
+				};
 				scope.ng_fail = false;
 
 				scope.checkUserLogin = function( ) {
@@ -42,14 +45,15 @@ login.directive('loginSection', [
 					console.log(scope.login_details);
 					$('#login-btn').attr('disabled', true);
 					$('#login-btn').text('Logging in...');
-					$http.post(serverUrl.url + 'company-benefits-dashboard-login', scope.login_details)
+					$http.post(serverUrl.url + '/company-benefits-dashboard-login', scope.login_details)
 					.success(function(response){
 						// console.log(response);
 						$('#login-btn').attr('disabled', false);
 						$('#login-btn').text('Log in');
 						if(response.status == true){
-							window.localStorage.setItem('token', response.token)
-			              window.location.href = serverUrl.url + "company-benefits-dashboard/";
+						  window.localStorage.setItem('token', response.token)
+						  // window.location.href = serverUrl.url + "company-benefits-dashboard/";
+			              window.location.href = window.location.origin + "/company-benefits-dashboard/";
 			              scope.ng_fail = false;
 			            }else{
 			              scope.ng_fail = true;
@@ -57,7 +61,24 @@ login.directive('loginSection', [
 					});
 				};
 
-				scope.checkUserLogin( );
+				scope.enableContinue = function (email) {
+					let emailFromDb = 'example@email.com';
+					let account_status = true;
+
+					if( email == emailFromDb && account_status == true) {
+						// check if email exist in db.
+						scope.login_details.status = 'activated';
+					} else if ((email == emailFromDb && account_status == false) || (email != null)) {
+						scope.login_details.status = 'not activated';
+					}	else {
+						scope.login_details.status = false;
+					}
+
+					console.log(scope.login_details.status);
+					
+				}
+
+				scope.checkUserLogin();
 			}
 		}
 	}
@@ -82,7 +103,7 @@ login.directive('forgotSection', [
 					console.log(scope.login_details);
 					$('#login-btn').attr('disabled', true);
 					$('#login-btn').text('Submitting...');
-					$http.post(serverUrl.url + 'hr/forgot/company-benefits-dashboard', scope.login_details)
+					$http.post(serverUrl.url + '/hr/forgot/company-benefits-dashboard', scope.login_details)
 					.success(function(response){
 						// console.log(response);
 						$('#login-btn').attr('disabled', false);
@@ -103,7 +124,7 @@ login.directive('forgotSection', [
 
 						console.log(data);
 
-						$http.post(serverUrl.url + 'hr/reset-password-data', data)
+						$http.post(serverUrl.url + '/hr/reset-password-data', data)
 						.success(function(response){
 							console.log(response);
 							scope.password_success = true;
