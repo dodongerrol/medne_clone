@@ -2487,14 +2487,24 @@ class PlanHelper {
 				if($history->lite_plan_enabled == 1) {
 					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
 					if($transaction) {
-						$in_network_temp_spent += (float)$transaction->consultation_fees;
-						$in_network_spent += (float)$transaction->consultation_fees;
+						if($transaction->default_currency == "myr")	{
+							$in_network_temp_spent += (float)$transaction->consultation_fees * $transaction->currency_amount;
+							$in_network_spent += (float)$transaction->consultation_fees * $transaction->currency_amount;
+						} else {
+							$in_network_temp_spent += (float)$transaction->consultation_fees;
+							$in_network_spent += (float)$transaction->consultation_fees;
+						}
 					}
 				} else {
 					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
 					if($transaction) {
-						$in_network_temp_spent += (float)$transaction->credit_cost;
-						$in_network_spent += (float)$transaction->credit_cost;
+						if($transaction->default_currency == "myr")	{
+							$in_network_temp_spent += (float)$transaction->credit_cost * $transaction->currency_amount;
+							$in_network_spent += (float)$transaction->credit_cost * $transaction->currency_amount;
+						} else {
+							$in_network_temp_spent += (float)$transaction->credit_cost;
+							$in_network_spent += (float)$transaction->credit_cost;
+						}
 					}
 				}
 			}

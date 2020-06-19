@@ -976,14 +976,6 @@ Route::get('hr/download_employee_cap_per_visit', 'EmployeeController@downloadCap
 // 	});
 // });
 
-// check in view layout
-// Route::get('app/check_in/view/{id}', 'QRCodeController@checkInView');
-// Route::get('app/payment/view/{id}', 'QRCodeController@paymentView');
-// save check in data
-// Route::post('app/save/check_in', 'UserCheckInController@createUserCheckIn');
-// Route::post('app/check/user_pin', 'UserCheckInController@checkUserPin');
-// Route::post('app/save/payment', 'UserCheckInController@saveCheckInPayment');
-
 //Route::group(array('domain' => 'www.tag.loc','prefix' => ''), function()
 // Route::group(array('prefix' => 'app'), function()
 // {
