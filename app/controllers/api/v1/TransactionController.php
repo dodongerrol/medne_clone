@@ -573,9 +573,10 @@ class Api_V1_TransactionController extends \BaseController
 											$customer_id = PlanHelper::getCustomerId($user_id);
 											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 											
-											if($spending['medical_method'] == "post_paid") {
-												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
-											}
+											// if($spending['medical_method'] == "post_paid") {
+												$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+											// }
 										} catch(Exception $e) {
 											$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
 											$email['logs'] = 'Mobile Payment Credits Save Transaction Invoice - '.$e;
@@ -832,6 +833,7 @@ class Api_V1_TransactionController extends \BaseController
 
 					$wallet_data = $wallet->getUserWallet($user_id);
 					$date_of_transaction = null;
+					$user_curreny_type = $wallet_data->currency_type;
 
 					if(!empty($input['check_out_time']) && $input['check_out_time'] != null) {
 						$date_of_transaction = date('Y-m-d H:i:s', strtotime($input['check_out_time']));
@@ -887,7 +889,8 @@ class Api_V1_TransactionController extends \BaseController
 						'currency_type'			=> $clinic_data->currency_type,
 						'consultation_fees'		=> $consultation_fees,
 						'created_at'			=> $date_of_transaction,
-						'updated_at'			 => $date_of_transaction
+						'updated_at'			=> $date_of_transaction,
+						'default_currency'		=> $user_curreny_type
 					);
 
 					if($clinic_peak_status) {
@@ -925,7 +928,6 @@ class Api_V1_TransactionController extends \BaseController
 								// check user credits and deduct
 								//  || $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $balance < $consultation_fee
 								if($balance >= $consultation_fees) {
-									$wallet = new Wallet( );
 									// deduct wallet
 									$lite_plan_credits_log = array(
 										'wallet_id'     => $wallet_data->wallet_id,
@@ -935,6 +937,7 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'lite_plan_enabled' => 1,
+										'currency_type' => $user_curreny_type,
 									);
 
 									try {
@@ -960,9 +963,11 @@ class Api_V1_TransactionController extends \BaseController
 
 										$transaction->updateTransaction($transaction_id, $update_trans);
 										// insert transaction
-										if($spending['medical_method'] == "post_paid") {
-											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
-										}
+										// if($spending['medical_method'] == "post_paid") {
+											// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+											$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+										// }
 									} catch(Exception $e) {
 
 										if($data['spending_type'] == "medical") {
@@ -981,7 +986,9 @@ class Api_V1_TransactionController extends \BaseController
 									}
 								} else {
 									// insert to spending invoice
-									TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id);
+									// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "post_paid" : "pre_paid";
+									$plan_method = "post_paid";
+									TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
 								}
 							}
 
