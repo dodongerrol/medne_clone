@@ -808,8 +808,23 @@ class TransactionController extends BaseController {
 
 							\Transaction::where('transaction_id', $new_id)->update($delete_data);
 							$user = DB::table('user')->where('UserID', $user_id)->first();
+
 							// get transaction details
 							$transaction = \TransactionHelper::getTransactionDetails($new_id);
+
+							if($transaction['visit_deduction'] == true) {
+								$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+								if($user_plan_history) {
+									$customer_active_plan = DB::table('customer_active_plan')
+														->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+														->first();
+									
+									if($customer_active_plan->account_type == "enterprise_plan")  {
+										MemberHelper::returnPlanHistoryVisit($user_id);
+									}
+								}
+								
+							}
 							// send email
 
 							if($user->Email) {

@@ -5396,7 +5396,7 @@ public function createEclaim( )
 
     // check if A&E already get for 2 times
     $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
-
+    
     if($claim_status && $input['service'] == "Accident & Emergency") {
       $returnObject->status = FALSE;
       $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
@@ -5437,7 +5437,6 @@ public function createEclaim( )
     $amount = trim($input_amount);
     $balance = TransactionHelper::floatvalue($balance);
 
-    $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
     if(!$check_user_balance) {
       $returnObject->status = FALSE;
       $returnObject->message = 'User does not have a wallet data.';
@@ -5487,14 +5486,7 @@ $data = array(
  'default_currency' => $check_user_balance->currency_type
 );
 
-if($customer_active_plan->account_type == "enterprise_plan")  {
-  $data['spending_type'] = "medical";
-}
-
-if(Input::has('currency_type') && $input['currency_type'] != null) {
-  $data['currency_type'] = strtolower($input['currency_type']);
-  $data['currency_value'] = $input['currency_exchange_rate'];
-}
+$visit_deduction = false;
 
 if($customer_id) {
     // get claim type service cap
@@ -5506,10 +5498,22 @@ if($customer_id) {
   ->first();
   if($get_company_e_claim_service) {
     $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+  }  
+}
+
+if($customer_active_plan->account_type == "enterprise_plan")  {
+  $data['spending_type'] = "medical";
+  $service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
+
+  if($service) {
+    $data['cap_amount'] = $service->cap_amount_enterprise;
   }
 }
 
-// return $data;
+if(Input::has('currency_type') && $input['currency_type'] != null) {
+  $data['currency_type'] = strtolower($input['currency_type']);
+  $data['currency_value'] = $input['currency_exchange_rate'];
+}
 
 try {
  $result = $claim->createEclaim($data);
@@ -5519,7 +5523,12 @@ try {
 
   // deduct visit for enterprise plan user
   if($customer_active_plan->account_type == "enterprise_plan")	{
-    MemberHelper::deductPlanHistoryVisit($user_id);
+    // check if service is enable for deduction
+    $service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
+
+    if($service) {
+      MemberHelper::deductPlanHistoryVisit($user_id);
+    }
   }
   
   $e_claim_docs = new EclaimDocs( );
@@ -5552,16 +5561,11 @@ try {
     $result_doc = $e_claim_docs->createEclaimDocs($receipt);
   } else {
     $file_name = StringHelper::get_random_password(6).' - '.$file_name;
-                      // $receipt_file = $file_name;
     $file->move(public_path().'/temp_uploads/', $file_name);
     $result_doc = Queue::connection('redis_high')->push('\EclaimFileUploadQueue', array('file' => public_path().'/temp_uploads/'.$file_name, 'e_claim_id' => $id));
     $receipt = array(
       'file_type'     => "image"
     );
-                      // $image = \Cloudinary\Uploader::upload($file->getPathName());
-                      // $image = \Cloudinary\Uploader::upload($file->getRealPath());
-                      // $receipt_file = $image['secure_url'];
-                      // $receipt_type = "image";
   }
 
   if($result_doc) {

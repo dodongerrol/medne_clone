@@ -325,8 +325,8 @@ class EclaimHelper
                 ->where('created_at', '>=', $start)
                 ->where('created_at', '<=', $end)
                 ->get();
-
-    if(sizeof($claim) > 2)  {
+                
+    if(sizeof($claim) >= 2)  {
       return true;
     } else {
       return false;
