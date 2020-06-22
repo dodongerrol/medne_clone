@@ -40,7 +40,7 @@ app.directive('dashboardDirective', [
 						$('.statement-hide').hide();
 						scope.statementHide = false;
 						scope.empStatementShow = true;
-						setTimeout();
+						// setTimeout();
 					}
 				}
 
