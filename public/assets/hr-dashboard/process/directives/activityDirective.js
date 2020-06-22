@@ -641,6 +641,7 @@ app.directive('activityPage', [
 				}
 
 				scope.fetchNextPage = function (data) {
+					console.log(data);
 					scope.currentPage = scope.currentPage + 1;
 					data.page = scope.currentPage;
 
@@ -648,7 +649,6 @@ app.directive('activityPage', [
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
 							if (response.status == 200) {
-
 								scope.fetching_data = {
 									from: response.data.from,
 									to: response.data.total
@@ -668,6 +668,9 @@ app.directive('activityPage', [
 								scope.activity.total_lite_plan_consultation += response.data.data.total_lite_plan_consultation;
 								scope.activity.total_in_network_transactions += response.data.data.total_in_network_transactions;
 								scope.activity.total_spent_format_number += response.data.data.total_spent_format_number;
+								scope.activity.panel += response.data.data.panel;
+								scope.activity.non_panel += response.data.data.non_panel;
+								console.log(scope.activity.panel);
 
 								// if( response.data.data.balance.indexOf(',') > -1 ){
 								// 	response.data.data.balance = response.data.data.balance.replace(",", "");
@@ -792,6 +795,7 @@ app.directive('activityPage', [
 								// scope.eclaim_dates = [];
 								scope.activity = response.data.data;
 								console.log(scope.activity);
+								console.log(scope.activity.panel);
 								scope.fetching_data = {
 									from: response.data.from,
 									to: response.data.total
@@ -1467,6 +1471,14 @@ app.directive('activityPage', [
 					$(".per-page-drop").hide();
 					scope.getOutNetworkPagination();
 				}
+				scope.getSpendingAcctStatus = function () {
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
+        }
 
 				scope.onLoad = function () {
 					scope.getDateTermsApi();
@@ -1474,6 +1486,7 @@ app.directive('activityPage', [
 					scope.companyAccountType();
 					scope.checkSession();
 					scope.getEmployeeLists();
+					scope.getSpendingAcctStatus();
 					// scope.initializeRangeSlider( );
 					// scope.initializeNewCustomDatePicker();
 

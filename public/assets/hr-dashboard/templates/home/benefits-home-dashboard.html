@@ -286,19 +286,66 @@
 							<div class="mednefits-header-box"> 
 								<h5 class="mednefits-header-title weight-700">Company Spendings</h5>
 							</div>
-							<div class="mednefits-body-box credit-box" hidden>
-								<div class="row" style="margin-bottom: 0;">
-									<div class="col-md-12 credit-allocated-container">
+							<div ng-if="spending_account_status.wellness == true" class="home-spending-type-container">
+								<button class="btn btn-default btn-medical" ng-class="{'active' : spendingAccountType == 0}" ng-click="selectSpending(0)">Medical</button>
+								<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingAccountType == 1}" ng-click="selectSpending(1)">Wellness</button>
+							</div>
+							<div ng-if="spending_account_status.wellness == true" class="mednefits-body-box credit-box">
+								<div ng-if=" spendingAccountType == 0">
+									<div class="row" style="margin-bottom: 0;">
+										<div class="col-md-12 credit-allocated-container">
+											<h1 class="no-margin credit-amount">
+												<span>
+													<span class="currency-type" ng-bind="credits.currency">SGD</span> <span ng-bind="credits.total_medical_employee_spent"></span>
+												</span>
+											</h1>
+											<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL SPENT</p>
+										</div>
+									</div>
+								</div>
+								<div class="wellness-account-info" ng-if="spendingAccountType == 1">
+									<div class="credit-allocated-container">
 										<h1 class="no-margin credit-amount">
 											<span>
-												<span class="currency-type" ng-bind="credits.currency">SGD</span> <span ng-bind="credits.total_medical_employee_spent"></span>
+												<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+												<span ng-bind="credits.total_wellness_employee_allocated"></span>
 											</span>
 										</h1>
-										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">Total Spent</p>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL ALLOCATED</p>
 									</div>
-
+									<div class="credit-allocated-container">
+										<h1 class="no-margin credit-amount">
+											<span>
+												<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+												<span ng-bind="credits.total_medical_employee_spent"></span>
+											</span>
+										</h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL SPENT</p>
+									</div>
+									<div class="credit-allocated-container">
+										<h1 class="no-margin credit-amount">
+											<span>
+												<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+												<span ng-bind="credits.total_wellness_employee_balance"></span>
+											</span>
+										</h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL BALANCE</p>
+									</div>
 								</div>
 							</div>
+
+							<div ng-if="spending_account_status.wellness == false" class="mednefits-body-box credit-box">
+								<div class="credit-allocated-container">
+									<h1 class="no-margin credit-amount">
+										<span>
+											<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+											<span ng-bind="credits.total_medical_employee_spent"></span>
+										</span>
+									</h1>
+									<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL SPENT</p>
+								</div>
+							</div>
+
 						</div>
 					</div>
 					
