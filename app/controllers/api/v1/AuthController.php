@@ -655,9 +655,8 @@ return Response::json($returnObject);
         	$findUserCondition = $this->GetUserConditions($profileid);
         	$findMedicalHistory = $this->GetUserMedicalHistory($profileid);
           $user_id = StringHelper::getUserId($profileid);
-                // return $findUserProfile);
+          
           if($findUserProfile){
-                    //$userPolicy = $userinsurancepolicy->getUserInsurancePolicy($findUserProfile->UserID);
             $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
             $returnArray->status = TRUE;
             $returnArray->login_status = TRUE;
@@ -671,8 +670,6 @@ return Response::json($returnObject);
             $customer_active_plan = DB::table('customer_active_plan')
               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
               ->first();
-
-
             $returnArray->data['profile']['user_id'] = $findUserProfile->UserID;
             $returnArray->data['profile']['email'] = $findUserProfile->Email;
             $returnArray->data['profile']['account_type'] = $customer_active_plan->account_type;
@@ -793,6 +790,19 @@ return Response::json($returnObject);
  }else{
    $returnArray->data['history'] = null;
  }
+//  check if user is new or old
+$date = date('Y-m-d');
+// get latest plan history
+$user_plan_history = DB::table('user_plan_history')
+                ->where('user_id', $user_id)
+                ->where('type', 'started')
+                ->first();
+$date_created = date('Y-m-d', strtotime('+7 days', strtotime($user_plan_history->created_at)));
+if($date_created > $date)  {
+  $returnArray->data['profile']['status'] = "new";
+} else {
+  $returnArray->data['profile']['status'] = "old";
+}
 }else{
   $returnArray->status = FALSE;
   $returnArray->message = StringHelper::errorMessage("NoRecords");
