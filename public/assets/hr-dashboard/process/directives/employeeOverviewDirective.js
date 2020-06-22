@@ -746,9 +746,14 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.getUsage = function (x, y) {
-          var a = x.replace(',','');
-          var b = y.replace(',','');
-          return (parseFloat(a) + parseFloat(b));
+          if(x && y){
+            var a = x.replace(',','');
+            var b = y.replace(',','');
+            return (parseFloat(a) + parseFloat(b));
+          }else{
+            return x + y;
+          }
+          
         }
 
         scope.range = function (range) {

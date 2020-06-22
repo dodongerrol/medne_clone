@@ -464,7 +464,7 @@ class TransactionHelper
 		}
 	}
 
-	public static function insertTransactionToCompanyInvoice($transaction_id, $member_id)
+	public static function insertTransactionToCompanyInvoice($transaction_id, $member_id, $plan_method)
 	{
 		$transaction = DB::table('transaction_history')->where('transaction_id', $transaction_id)->first();
 
@@ -478,6 +478,7 @@ class TransactionHelper
 				$statement = DB::table('company_credits_statement')
 						->where('statement_customer_id', $customer_id)
 						->where('statement_start_date', $start)
+						->where('plan_method', $plan_method)
 						->first();
 
 				if($statement) {
@@ -491,7 +492,7 @@ class TransactionHelper
 					DB::table('spending_invoice_transactions')->insert($data);
 				} else {
 					// create new spending invoice
-					SpendingInvoiceLibrary::createStatement($customer_id, $start, $end);
+					SpendingInvoiceLibrary::createStatement($customer_id, $start, $end, $plan_method);
 				}
 			}
 		}
