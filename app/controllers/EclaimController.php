@@ -5492,12 +5492,18 @@ public function searchEmployeeActivity( )
 	$total_visit_limit  = 0;
 	
   // check user
-	$check_user = DB::table('user')->where('UserID', $input['user_id'])->count();
+	$check_user = DB::table('user')->where('UserID', $input['user_id'])->first();
 
-	if($check_user == 0) {
+	if(!$check_user) {
 		return array('status' => FALSE, 'message' => 'Employee does not exist');
 	}
 
+	$user_plan_history = DB::table('user_plan_history')
+			->where('user_id', $input['user_id'])
+			->where('type', 'started')
+			->orderBy('created_at', 'desc')
+			->first();
+	$total_visit_limit += $user_plan_history->total_visit_limit;
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
 	} else {
@@ -5550,6 +5556,7 @@ public function searchEmployeeActivity( )
 					if((int)$trans->deleted == 0) {
 						if((int)$trans->enterprise_visit_deduction == 1) {
 							$total_visit_created++;
+							$panel++;
 						}
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
@@ -5990,6 +5997,8 @@ public function searchEmployeeActivity( )
 		if($res->status == 0) {
 			$status_text = 'Pending';
 			$e_claim_pending += $res->amount;
+			$total_visit_created++;
+			$non_panel++;
 		} else if($res->status == 1) {
 			$status_text = 'Approved';
 			$e_claim_data = DB::table($table_wallet_history)
@@ -6006,11 +6015,14 @@ public function searchEmployeeActivity( )
 				$e_claim_spent += $res->claim_amount;
 				$total_e_claim_spent += $res->claim_amount;
 			}
+			$total_visit_created++;
+			$non_panel++;
 		} else if($res->status == 2) {
 			$status_text = 'Rejected';
 		} else {
 			$status_text = 'Pending';
 			$total_visit_created++;
+			$non_panel++;
 		}
 
 		if(date('Y-m-d', strtotime($res->created_at)) >= $start && date('Y-m-d', strtotime($res->created_at)) <= $end) {
@@ -6078,14 +6090,14 @@ public function searchEmployeeActivity( )
 		// 'allocation'  => number_format($total_allocation - $deducted_allocation, 2),
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
-		'balance'           => $balance > 0 ? number_format($balance, 2) : number_format(0, 2),
+		// 'balance'           => $balance > 0 ? number_format($balance, 2) : number_format(0, 2),
 		'pending_e_claim_amount' => number_format($e_claim_pending, 2),
 		'in_network_spent'  => number_format($in_network_spent, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		// 'in_network_breakdown' => $in_network_breakdown,
 		'in_network_transactions' => $transaction_details,
 		'e_claim_transactions'  => $e_claim,
-		'employee'          => ucwords($user->Name),
+		'employee'          => ucwords($check_user->Name),
 		'in_network_spending_format_number' => $in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		// 'total_in_network_credits_cash' => $grand_total_credits_cash > 0 ? number_format($grand_total_credits_cash, 2) : number_format(0, 2),

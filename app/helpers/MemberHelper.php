@@ -891,7 +891,7 @@ class MemberHelper
 		->first();
 
 		$user_plan_history = DB::table('user_plan_history')
-		->where('user_id', $id)
+		->where('user_id', $check_employee->UserID)
 		->where('type', 'started')
 		->orderBy('date', 'desc')
 		->first();
@@ -1676,13 +1676,23 @@ class MemberHelper
 		->where('status', 0)
 		->first();
 
-		if($refund) {
-			// save plan withdraw logs
-			$payment_refund_id = $refund->payment_refund_id;
+		if($plan_active->account_type != "enterprise_plan")	{
+			// check if active plan and date refund is exist
+			$refund = DB::table('payment_refund')
+			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+			->where('date_refund', date('Y-m-d', strtotime($expiry_date)))
+			->where('status', 0)
+			->first();
+
+			if($refund) {
+				// save plan withdraw logs
+				$payment_refund_id = $refund->payment_refund_id;
+			} else {
+				$payment_refund_id = PlanHelper::createPaymentsRefund($active_plan->customer_active_plan_id, date('Y-m-d', strtotime($expiry_date)));
+			}
 		} else {
 			$payment_refund_id = PlanHelper::createPaymentsRefund($active_plan->customer_active_plan_id, date('Y-m-d', strtotime($expiry_date)));
 		}
-
 
 		$data = array(
 			'payment_refund_id'			=> $payment_refund_id,

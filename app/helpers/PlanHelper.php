@@ -3638,7 +3638,9 @@ class PlanHelper {
 			'customer_active_plan_id'   => $id,
 			'cancellation_number'       => $invoice_number,
 			'date_refund'               => $date_refund,
-			'currency_type'				=> $customer->currency_type
+			'currency_type'				=> $customer->currency_type,
+			'invoice_date'				=> date('Y-m-d'),
+			'invoice_due'				=> date('Y-m-d', strtotime('+5 days'))
 		);
 
 		if($active_plan->account_type == "enterprise_plan")	{

@@ -2096,6 +2096,13 @@ class BenefitsDashboardController extends \BaseController {
 				->where('status', 0)
 				->sum('claim_amount');
 
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
+
 				$medical = array(
 					'entitlement' => $wallet_entitlement->medical_entitlement,
 					'credits_allocation' => $medical_credit_data['allocation'],
@@ -2105,6 +2112,15 @@ class BenefitsDashboardController extends \BaseController {
 					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
 					'in_network' 	=> $medical_credit_data['in_network'],
 					'out_network' 	=> $medical_credit_data['out_network']
+				);
+
+				
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 				);
 			} else {
 				// get pending allocation for medical
@@ -7543,13 +7559,12 @@ class BenefitsDashboardController extends \BaseController {
 		foreach ($customer_plans as $key => $cplan) {
 			$active_plans = DB::table('customer_active_plan')->where('plan_id', $cplan->customer_plan_id)->get();
 			foreach ($active_plans as $key => $plan) {
-				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan") {
+				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan" || $plan->account_type == "enterprise_plan") {
 					$withdraws = DB::table('payment_refund')
 					->where('customer_active_plan_id', $plan->customer_active_plan_id)
 					->get();
 
 					foreach ($withdraws as $key => $withdraw) {
-						# code...
 						$refunds = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
 						->whereIn('refund_status', [0, 1])
@@ -10193,6 +10208,7 @@ class BenefitsDashboardController extends \BaseController {
 				$data['first_name'] = ucwords($result_corporate_billing_contact->first_name);
 				$data['last_name']	= ucwords($result_corporate_billing_contact->last_name);
 				$data['email']			= $result_corporate_billing_contact->work_email;
+				$data['phone']			= $result_corporate_billing_contact->phone;
 				$data['billing_contact_status'] = false;
 			} else {
 				$data['first_name'] = ucwords($contact->first_name);
@@ -10217,11 +10233,15 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$refund_data = array(
+				'plan_type'		=> PlanHelper::getAccountType($refund_payment->account_type),
 				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
 				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
 				'date_refund' => $refund_payment->date_refund,
+				'invoice_date' => date('d F Y', strtotime($refund_payment->invoice_date)),
+				'invoice_due' => date('d F Y', strtotime($refund_payment->invoice_due)),
+				'payment_date' => $refund_payment->payment_date ? date('d F Y', strtotime($refund_payment->payment_date)) : null,
 				'payment_status' => $refund_payment->status,
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
@@ -10229,8 +10249,15 @@ class BenefitsDashboardController extends \BaseController {
 				'currency_type' => strtoupper($refund_payment->currency_type)
 			);
 
-			// return View::make('pdf-download.hr-accounts-refund', $refund_data);
-			$pdf = PDF::loadView('pdf-download.hr-accounts-refund', $refund_data);
+			if($refund_payment->account_type == "enterprise_plan")	{
+				// return View::make('pdf-download.enterprise-plan.enterprise-plan-refund-summary', $refund_data);
+				$pdf = PDF::loadView('pdf-download.enterprise-plan.enterprise-plan-refund-summary', $refund_data);
+			} else {
+				// return View::make('pdf-download.hr-accounts-refund', $refund_data);
+				$pdf = PDF::loadView('pdf-download.hr-accounts-refund', $refund_data);
+			}
+
+			
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
 			return $pdf->download($refund_data['cancellation_number'].' CANCELLATION - '.time().'.pdf');
