@@ -961,6 +961,7 @@ app.directive('activityPage', [
 				scope.getEmployeeLists = function () {
 					hrActivity.getEmployeeLists()
 						.then(function (response) {
+							console.log(response);
 							$('.typeahead').typeahead({
 								showHintOnFocus: true,
 								source: response.data.data,
@@ -1139,6 +1140,17 @@ app.directive('activityPage', [
 					},10)
 				}
 
+				scope.togglePanelNonPanel	=	function(num){
+					if(num == 1){
+						scope.inNetWorkTable = true;
+						scope.outNetWorkTable = false;
+					}
+					if(num == 2){
+						scope.inNetWorkTable = false;
+						scope.outNetWorkTable = true;
+					}
+				}
+
 				scope.checkSession = function () {
 					hrSettings.getSession()
 						.then(function (response) {
@@ -1146,6 +1158,7 @@ app.directive('activityPage', [
 							scope.selected_customer_id = response.data.customer_buy_start_id;
 							scope.options.accessibility = response.data.accessibility;
 							// scope.getEmployeeLists( );
+							scope.getEmployeeLists();
 						});
 				}
 
@@ -1488,7 +1501,7 @@ app.directive('activityPage', [
 					// scope.toDate('mtd');
 					scope.companyAccountType();
 					scope.checkSession();
-					scope.getEmployeeLists();
+					
 					scope.getSpendingAcctStatus();
 					// scope.initializeRangeSlider( );
 					// scope.initializeNewCustomDatePicker();
