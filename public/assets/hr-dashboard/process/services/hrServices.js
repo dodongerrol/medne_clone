@@ -379,6 +379,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/get_member_refund_calculation", data  );
   }
 
+  // hrFactory.get_member_refund = function (data) {
+  //   return $http.post( serverUrl.url + "/employee/check_email_validation", data  );
+  // }
+
   return hrFactory;
 });
 

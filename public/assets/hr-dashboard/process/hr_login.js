@@ -26,6 +26,7 @@ login.directive('loginSection', [
 					status : false, // activated , not activated, false
 				};
 				scope.ng_fail = false;
+				scope.showPassword = false;
 
 				scope.checkUserLogin = function( ) {
 					var token = window.localStorage.getItem('token');
@@ -61,21 +62,34 @@ login.directive('loginSection', [
 					});
 				};
 
+				scope.showPasswordToggle = function () {
+					scope.showPassword = !scope.showPassword;
+					console.log(scope.showPassword);
+				}
+
 				scope.enableContinue = function (email) {
-					let emailFromDb = 'example@email.com';
-					let account_status = true;
 
-					if( email == emailFromDb && account_status == true) {
-						// check if email exist in db.
-						scope.login_details.status = 'activated';
-					} else if ((email == emailFromDb && account_status == false) || (email != null)) {
-						scope.login_details.status = 'not activated';
-					}	else {
-						scope.login_details.status = false;
-					}
+					// let emailFromDb = 'example@email.com';
+					let account_status;
 
-					console.log(scope.login_details.status);
-					
+					$http.post(serverUrl.url + `/employee/check_email_validation?email=${email}`)
+					.success(function(response) {
+						console.log(response);
+						account_status = response.status;
+						console.log(account_status);
+						if( account_status == 1) {
+							// check if email exist in db.
+							scope.login_details.status = 'activated';
+						} else if ((account_status == 0)) {
+							scope.login_details.status = 'not activated';
+						}	else if (account_status == 2) {
+							scope.login_details.status = 'not-exist';
+						} else {
+							scope.login_details.status = false;
+						}
+	
+						console.log(scope.login_details.status);
+					});
 				}
 
 				scope.checkUserLogin();

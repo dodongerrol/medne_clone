@@ -846,6 +846,18 @@ button {
   border: 1px solid #E63A33;
 }
 
+.new-account .not-activated {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 15px;
+  color: #000;
+}
+
+.new-account .not-activated a {
+  cursor: pointer;
+}
+
+
 
 /* End New Account Feature */
 
