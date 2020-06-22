@@ -2299,14 +2299,18 @@ class PlanHelper {
 
 				if($history->where_spend == "e_claim_transaction") {
 					$e_claim_spent += $history->credit;
+					$out_network += $history->credit;
 				}
 
 				if($history->where_spend == "in_network_transaction") {
+					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('paid', 1)->where('deleted', 0)->first();
 					$in_network_temp_spent += $history->credit;
-					if($history->spending_type == "medical")	{
-						$in_network += $history->credit;
-					} else {
-						$out_network += $history->credit;
+					if($transaction) {
+						if($history->spending_type == "medical")	{
+							$in_network += $history->credit;
+						} else {
+							$out_network += $history->credit;
+						}
 					}
 				}
 

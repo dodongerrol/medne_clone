@@ -819,7 +819,7 @@ class TransactionController extends BaseController {
 														->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 														->first();
 									
-									if($customer_active_plan->account_type == "enterprise_plan")  {
+									if($customer_active_plan->account_type == "enterprise_plan" && (int)$transaction->enterprise_visit_deduction == 1)  {
 										MemberHelper::returnPlanHistoryVisit($user_id);
 									}
 								}

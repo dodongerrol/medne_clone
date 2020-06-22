@@ -938,15 +938,14 @@ class EclaimController extends \BaseController {
 		$total_in_network_transactions = 0;
 		$total_deleted_in_network_transactions = 0;
 		$total_in_network_spent = 0;
-
 		$in_network_spent = 0;
 		$e_claim_spent = 0;
 		$balance = 0;
-
 		$total_credits = 0;
 		$total_cash = 0;
 		$total_lite_plan_consultation = 0;
 		$total_employee_lite_plan_spent = 0;
+		$total_visit_created = 0;
 		$wallet_status = false;
 		$lite_plan_status = StringHelper::litePlanStatus($user_id);
 
@@ -1026,6 +1025,9 @@ class EclaimController extends \BaseController {
 				$procedure = "";
 
 				if((int)$trans->deleted == 0) {
+					if((int)$trans->enterprise_visit_deduction == 1) {
+						$total_visit_created++;
+					}
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 						$in_network_spent += floatval($trans->credit_cost) * $trans->currency_amount;
 					} else if($trans->currency_type == "sgd" && $trans->default_currency == "myr") {
@@ -1362,6 +1364,9 @@ class EclaimController extends \BaseController {
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
+				if((int)$res->enterprise_visit_deduction == 1) {
+					$total_visit_created++;
+				}
 			} else if($res->status == 1) {
 				$status_text = 'Approved';
 				$e_claim_data = DB::table($table_wallet_history)
@@ -1376,7 +1381,9 @@ class EclaimController extends \BaseController {
 				} else {
 					$e_claim_spent += $res->claim_amount;
 				}
-				
+				if((int)$res->enterprise_visit_deduction == 1) {
+					$total_visit_created++;
+				}
 			} else if($res->status == 2) {
 				$status_text = 'Rejected';
 			} else {
@@ -1464,7 +1471,7 @@ class EclaimController extends \BaseController {
 			$balance = number_format($balance, 2);
 		}
 
-		$total_visit_created = count($transactions) + count($e_claim_result);
+		// $total_visit_created = count($transactions) + count($e_claim_result);
 		$total_balance_visit = $user_plan_history->total_visit_limit - $total_visit_created;
 		return array(
 			'status' 				   => TRUE,
@@ -6864,12 +6871,8 @@ public function updateEclaimStatus( )
 				// 'claim_amount'			=> !empty((float)$input['claim_amount']) ? (float)$input['claim_amount'] : 0
 			);
 
-			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-				$service = DB::table('health_types')->where('name', $e_claim_details->service)->where('type', 'medical')->where('visit_deduction', 1)->first();
-
-				if($service) {
-					MemberHelper::returnPlanHistoryVisit($employee);
-				}
+			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan" && (int)$e_claim_details->enterprise_visit_deduction == 1) {
+				MemberHelper::returnPlanHistoryVisit($employee);
 			}
 			$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
       // send notification to browser
@@ -8979,16 +8982,10 @@ public function revertPending( )
 		$customer_active_plan = DB::table('customer_active_plan')
 								->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 								->first();
-		if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-			$service = DB::table('health_types')->where('name', $e_claim->service)->where('type', 'medical')->where('visit_deduction', 1)->first();
-
-			if($service) {
-				MemberHelper::deductPlanHistoryVisit($employee);
-			}
+		if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan" && (int)$e_claim->enterprise_visit_deduction == 1) {
+			MemberHelper::deductPlanHistoryVisit($employee);
 		}
 	}
-
-
 
 	if($admin_id) {
 		$data = array(
