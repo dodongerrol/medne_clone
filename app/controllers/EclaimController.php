@@ -291,6 +291,8 @@ class EclaimController extends \BaseController {
 				if($claim_amount > $service->cap_amount_enterprise)	{
 					$data['cap_amount'] = $service->cap_amount_enterprise;
 				}
+
+				$data['enterprise_visit_deduction'] = 1;
 			}
 		}
     }
@@ -4768,14 +4770,17 @@ public function getHrActivity( )
 	$lite_plan = false;
 	$panel = 0;
 	$non_panel = 0;
+	$total_visit_created = 0;
+	$total_allocation = 0;
+	$total_visit_limit  = 0;
 
   // get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
 	$corporate_members = DB::table('corporate_members')
-													->join('user', 'user.UserID', '=', 'corporate_members.user_id')
-													->where('corporate_members.corporate_id', $account->corporate_id)
-													->paginate(10);
+							->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+							->where('corporate_members.corporate_id', $account->corporate_id)
+							->paginate(10);
 
 	$paginate['current_page'] = $corporate_members->getCurrentPage();
 	$paginate['from'] = $corporate_members->getFrom();
@@ -4783,8 +4788,7 @@ public function getHrActivity( )
 	$paginate['per_page'] = $corporate_members->getPerPage();
 	$paginate['to'] = $corporate_members->getTo();
 	$paginate['total'] = $corporate_members->getTotal();
-	$total_allocation = 0;
-	$total_visit_limit  = 0;
+	
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
@@ -4819,11 +4823,6 @@ public function getHrActivity( )
 			}
 		}
 
-		// $user_plan_history = DB::table('user_plan_history')
-		// ->where('user_id', $user_id)
-		// ->orderBy('created_at', 'desc')
-		// ->where('type', 'started')
-		// ->first();
     // get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
@@ -4855,6 +4854,10 @@ public function getHrActivity( )
 			if($trans) {
 				if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
 					if((int)$trans->deleted == 0) {
+						if((int)$trans->enterprise_visit_deduction == 1) {
+							$total_visit_created++;
+							$panel++;
+						}
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 							$in_network_spent += (float)$trans->credit_cost * $trans->currency_amount;
 						} else {
@@ -5355,6 +5358,12 @@ public function getHrActivity( )
 				if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
 					$res->amount = $res->amount * $res->currency_value;
 				}
+
+				if((int)$res->status != 2 && (int)$res->enterprise_visit_deduction == 1)	{
+					$total_visit_created++;
+					$non_panel++;
+				}
+
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'status'            => $res->status,
@@ -5395,14 +5404,11 @@ public function getHrActivity( )
 	}
 
 	$total_spent = $e_claim_spent + $in_network_spent + $total_lite_plan_consultation;
-	$panel = $in_network_spent;
-	$non_panel = $e_claim_spent;
   // sort in-network transaction
 	usort($transaction_details, function($a, $b) {
 		return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
 	});
 
-	$total_visit_created = count($transactions) + count($e_claim_result);
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
 		'total_balance'			=> $total_allocation - $total_spent,
@@ -5423,6 +5429,7 @@ public function getHrActivity( )
 		'panel'			=> $panel,
 		'non_panel'		=> $non_panel,
 		'lite_plan'     => $lite_plan,
+		'total_visit_limit'	=> $total_visit_limit,
 		'total_visit_created' => $total_visit_created,
 		'total_balance_visit' => $total_visit_limit - $total_visit_created
 
@@ -5471,7 +5478,12 @@ public function searchEmployeeActivity( )
 	$total_in_network_spent_cash_transaction = 0;
 	$total_cash_transactions = 0;
 	$total_allocation;
-
+	$panel = 0;
+	$non_panel = 0;
+	$total_visit_created = 0;
+	$total_allocation = 0;
+	$total_visit_limit  = 0;
+	
   // check user
 	$check_user = DB::table('user')->where('UserID', $input['user_id'])->count();
 
@@ -5486,17 +5498,8 @@ public function searchEmployeeActivity( )
 	}
 
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
-	// $user = DB::table('user')->where('UserID', $input['user_id'])->first();
 	$wallet = DB::table('e_wallet')->where('UserID', $input['user_id'])->orderBy('created_at', 'desc')->first();
-	// $wallet_reset = PlanHelper::getResetWalletDate($input['user_id'], $spending_type, $start, $input['end'], 'employee');
 	$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
-	// return array('result' => $wallet_reset);
-	// if($wallet_reset) {
-	// 	$wallet_start_date = $wallet_reset;
-	// } else {
-	// 	$wallet_start_date = $start;
-	// }
-
 	if($spending_type == "medical") {
 		$member_spending_dates_medical = MemberHelper::getMemberCreditReset($input['user_id'], $filter, 'medical');
 		$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
@@ -5508,28 +5511,9 @@ public function searchEmployeeActivity( )
 	}
 
 	$spending_end_date = PlanHelper::endDate($input['end']);
-
-    // total employee allocation
-	// $total_allocation = DB::table('e_wallet')
-	// ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-	// ->where('e_wallet.UserID', $input['user_id'])
-	// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
-	// ->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
- //                                // ->where('wallet_history.created_at', '>=', $start)
- //                                // ->where('wallet_history.created_at', '<=', $spending_end_date)
-	// ->where($table_wallet_history.'.logs', 'added_by_hr')
-	// ->sum($table_wallet_history.'.credit');
-
-	// $deducted_allocation = DB::table('e_wallet')
-	// ->join($table_wallet_history, $table_wallet_history.'.wallet_id', '=', 'e_wallet.wallet_id')
-	// ->where('e_wallet.UserID', $input['user_id'])
-	// ->where($table_wallet_history.'.created_at', '>=', date('Y-m-d', strtotime($wallet_start_date)))
-	// ->where($table_wallet_history.'.created_at', '<=', date('Y-m-d', strtotime($spending_end_date)))
-	// ->whereIn('logs', ['deducted_by_hr'])
-	// ->sum($table_wallet_history.'.credit');
 	$ids = StringHelper::getSubAccountsID($input['user_id']);
 
-        // get e claim
+    // get e claim
 	$e_claim_result = DB::table('e_claim')
 	->whereIn('user_id', $ids)
 	->where('date', '>=', $start)
@@ -5555,9 +5539,11 @@ public function searchEmployeeActivity( )
 			$consultation = 0;
 
 			if($trans) {
-
 				if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
 					if((int)$trans->deleted == 0) {
+						if((int)$trans->enterprise_visit_deduction == 1) {
+							$total_visit_created++;
+						}
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 							$in_network_spent += $trans->credit_cost * $trans->currency_amount;
 						} else {
@@ -6017,6 +6003,7 @@ public function searchEmployeeActivity( )
 			$status_text = 'Rejected';
 		} else {
 			$status_text = 'Pending';
+			$total_visit_created++;
 		}
 
 		if(date('Y-m-d', strtotime($res->created_at)) >= $start && date('Y-m-d', strtotime($res->created_at)) <= $end) {
@@ -6077,20 +6064,7 @@ public function searchEmployeeActivity( )
 
 	}
 
-
 	$total_spent = $e_claim_spent + $in_network_spent;
-
-	// $in_network_breakdown = array(
-	// 	'general_practitioner_breakdown' => $general_practitioner_breakdown > 0 ? number_format($general_practitioner_breakdown / $in_network_spent * 100, 0) : 0,
-	// 	'health_screening_breakdown'     => $health_screening_breakdown > 0 ? number_format($health_screening_breakdown / $in_network_spent * 100, 0) : 0,
-	// 	'dental_care_breakdown'          => $dental_care_breakdown > 0 ? number_format($dental_care_breakdown / $in_network_spent * 100, 0) : 0,
-	// 	'tcm_breakdown'                  => $tcm_breakdown > 0 ? number_format($tcm_breakdown / $in_network_spent * 100, 0) : 0,
-	// 	'health_specialist_breakdown'    => $health_specialist_breakdown > 0 ? number_format($health_specialist_breakdown / $in_network_spent * 100, 0) : 0,
-	// 	'wellness_breakdown'             => $wellness_breakdown > 0 ? number_format($wellness_breakdown / $in_network_spent * 100, 0) : 0
-	// );
-
-	// $balance = $total_allocation - $total_spent - $deducted_allocation;
-	// $grand_total_credits_cash = $total_credits - $deleted_transaction_credits - $deleted_transaction_cash;
 	return array(
 		'total_allocation'  => $total_allocation,
 		'total_balance'  => $total_allocation - $total_spent,
@@ -6116,7 +6090,12 @@ public function searchEmployeeActivity( )
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'total_lite_plan_consultation'  => $total_lite_plan_consultation,
 		'lite_plan'         => $lite_plan,
-		'spending_type'     => $spending_type == 'medical' ? 'medical' : 'wellness'
+		'spending_type'     => $spending_type == 'medical' ? 'medical' : 'wellness',
+		'panel'			=> $panel,
+		'non_panel'		=> $non_panel,
+		'total_visit_limit'	=> $total_visit_limit,
+		'total_visit_created' => $total_visit_created,
+		'total_balance_visit' => $total_visit_limit - $total_visit_created
 	);
 }
 

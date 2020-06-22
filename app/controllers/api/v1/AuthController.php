@@ -5507,6 +5507,7 @@ if($customer_active_plan->account_type == "enterprise_plan")  {
 
   if($service) {
     $data['cap_amount'] = $service->cap_amount_enterprise;
+    $data['enterprise_visit_deduction'] = 1;
   }
 }
 

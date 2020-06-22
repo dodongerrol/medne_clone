@@ -668,6 +668,9 @@ app.directive('activityPage', [
 								scope.activity.total_lite_plan_consultation += response.data.data.total_lite_plan_consultation;
 								scope.activity.total_in_network_transactions += response.data.data.total_in_network_transactions;
 								scope.activity.total_spent_format_number += response.data.data.total_spent_format_number;
+								scope.activity.total_visit_created += response.data.data.total_visit_created;
+								scope.activity.total_visit_limit += response.data.data.total_visit_limit;
+								scope.activity.total_balance_visit += response.data.data.total_balance_visit;
 								scope.activity.panel += response.data.data.panel;
 								scope.activity.non_panel += response.data.data.non_panel;
 								console.log(scope.activity.panel);
