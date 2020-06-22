@@ -122,7 +122,7 @@
 						<button class="btn btn-default btn-medical" ng-class="{'active' : spendingTypeOpt == 0}" ng-click="spendingType( 0 )">Medical</button>
 						<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingTypeOpt == 1}" ng-click="spendingType( 1 )">Wellness</button>
 					</div>
-					<div ng-if="current_spending.account_type == 'enterprise_plan'" style="min-height: 50px;"></div>
+					<div ng-if="current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == false" style="min-height: 50px;"></div>
 					
 					<div class="activity-container border-bottom">
 						<div ng-if="current_spending.account_type != 'enterprise_plan' || (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 1)" class="col-xs-12 col-sm-12 col-md-3 text-center" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
