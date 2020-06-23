@@ -829,6 +829,36 @@ button {
 .new-account .success-item {
   padding: 33px 0;
 }
+
+.new-account .form-group .med-button.disabled {
+  cursor: not-allowed;
+  background-color: #DBDBDB;
+  border-color: #DBDBDB;
+}
+
+.new-account .form-group .med-button.not-activated {
+  cursor: not-allowed;
+  background-color: #DBDBDB;
+  border-color: #DBDBDB;
+}
+
+.new-account .med-input.not-activated {
+  border: 1px solid #E63A33;
+}
+
+.new-account .not-activated {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 15px;
+  color: #000;
+}
+
+.new-account .not-activated a {
+  cursor: pointer;
+}
+
+
+
 /* End New Account Feature */
 
 /*
@@ -9402,6 +9432,11 @@ span.dropdown-entitlement.disabled {
 .privacy-wrapper .btn-scroll {
   margin: 20px 0 0;
   padding: 4px 32px;
+}
+.privacy-wrapper .btn-blue[disabled],
+.privacy-wrapper .btn-scroll.disable {
+  background-color: #DBDBDB;
+  pointer-events: none;
 }
 .btn-footer {
   text-align: right;

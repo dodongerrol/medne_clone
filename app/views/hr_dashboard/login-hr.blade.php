@@ -86,31 +86,42 @@
 		<div class="col-sm-12 col-md-12 col-lg-12 new-account">
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
-			<span ng-if="true" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span>
-			<form ng-if="true" class="med-form" ng-submit="loginHr()">
-				<div ng-if="true" class="form-group">
+			<span ng-if="!showPassword" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span>
+			<form class="med-form">
+				<div ng-if="!showPassword" class="form-group">
 					<label for="email">Email</label>
-					<input type="email" name="email" class="form-control med-input" placeholder="Enter Email Address"
-						ng-model="login_details.email" required>
+					<input type="email" name="email" class="form-control med-input" ng-class="{'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist'}" placeholder="Enter Email Address"
+						ng-model="login_details.email" ng-model-options="{debounce: 1000}" ng-change="enableContinue(login_details.email)" required>
 				</div>
-				<div ng-if="false" class="form-group">
+				<div ng-if="showPassword" class="form-group">
 					<label for="password">Password</label>
 					<input type="password" class="form-control med-input" placeholder="Enter password"
 						ng-model="login_details.password" required style="margin-bottom: 15px">
 				</div>
-				<div ng-if="false" class="checkbox">
+				<div ng-if="showPassword" class="checkbox">
 					<label style="color: #000;font-size: 15px;">
 						<input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed
 						in
 					</label>
 				</div>
 				<div class="form-group">
-					<button ng-if="true" type="submit" class="btn btn-info btn-block med-button" id="login-btn">Continue</button>
-					<button ng-if='false' type="submit" class="btn btn-info btn-block med-button" id="login-btn">Sign in</button>
+					<button ng-if="!showPassword" type="submit" class="btn btn-info btn-block med-button" ng-class="{'disabled': login_details.status == false, 'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist' }" id="login-btn" ng-disabled="login_details.status == false || login_details.status == 'not activated' || login_details.status == 'not-exist'" ng-click="showPasswordToggle()">Continue</button>
+					<button ng-if='showPassword' type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="loginHr()">Sign in</button>
 				</div>
 				<span ng-if="ng_fail">*Please check your login credentials</span>
 				<a ng-if="false" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
 					password?</a>
+				
+				<div class="not-activated" ng-if="login_details.status === 'not activated'">
+				Oops! An email to activate your account has been sent on [date wating sa api]. Please click the link inside to activate your account. 
+				<br> <br>
+				Or <a>resend</a> the email now.
+				</div>
+
+				<div class="not-activated" ng-if="login_details.status === 'not-exist'">
+				Your email has not been signed up with Mednefits. 
+
+				</div>
 			</form>
 		</div>
 		<!-- End New Account Feature -->
