@@ -441,12 +441,7 @@ app.directive('eclaimSubmitDirective', [
 						.then(function( response ) {
 							scope.user_details = response.data.data;
 							scope.hideIntroLoader();
-
-							if(scope.user_details.plan_type == 'enterprise_plan'){
-								scope.getEnterpriseClaims( scope.eclaim.spending_type );
-							}else{
-								scope.getClaims( scope.eclaim.spending_type );
-							}
+							scope.getClaims( scope.eclaim.spending_type );
 							// console.log(scope.user_details);
 							// scope.getCurrentActivity();
 						});
