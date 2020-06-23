@@ -15339,5 +15339,40 @@ class BenefitsDashboardController extends \BaseController {
 		$pagination['total_data'] = $invoices->getTotal() + $total_spending_transaction_count;
         $pagination['data'] = $format;
 		return $pagination;
-    }
+	}
+	
+	public function resendHrActivationLnk( )
+	{
+		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null)	{
+			return ['status' => false, 'message' => 'token is required'];
+		}
+
+		// check token existence
+		$check_token = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
+
+		if(!$check_token) {
+			return ['status' => false, 'message' => 'token does not exist'];
+		}
+
+		$reset_link = StringHelper::getEncryptValue();
+		$result = DB::table('customer_hr_dashboard')
+					->where('hr_dashboard_id', $check_token->hr_dashboard_id)
+					->update(['reset_link' => $reset_link, 'updated_at' => date('Y-m-d H:i:s'), 'expiration_time' => date('Y-m-d H:i:s', strtotime('+7 days'))]);
+
+		if($result)	{
+			// resend email activation
+			// send hr email activation
+			$email_data = array();
+			$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+			$email_data['emailName'] = ucwords($check_token->fullname);
+			$email_data['emailPage'] = 'email-templates.latest-templates.activation-email';
+			$email_data['emailTo'] = $check_token->email;
+			$email_data['button'] = url('/company-activation#/activation-link')."?activation_token=".$reset_link;
+			EmailHelper::sendEmail($email_data);
+		}
+
+		return ['status' => true, 'message' => 'Activation Email Send. Please check it on your inbox'];
+	}
 }
