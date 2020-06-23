@@ -9046,8 +9046,10 @@ class BenefitsDashboardController extends \BaseController {
 		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 		if($check) {
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
+			$agree_status = $customer->agree_status == "true" ? true : false;
 			if($check->active == 1)	{
-				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true]);
+				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true, 't_c' => $agree_status]);
 			}
 
 			// check if token is still valid
@@ -9055,10 +9057,10 @@ class BenefitsDashboardController extends \BaseController {
 			$expiry = strtotime($check->expiration_time);
 
 			if($today > $expiry) {
-				return array('status' => false, 'message' => 'token is expired', 'data' => ['valid_token' => true, 'activated' => false, 'expired_token' => true]);
+				return array('status' => false, 'message' => 'token is expired', 'data' => ['valid_token' => true, 'activated' => false, 'expired_token' => true, 't_c' => $agree_status]);
 			}
 
-			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false, 'expired_token' => false]);
+			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false, 'expired_token' => false, 't_c' => $agree_status]);
 		}
 
 		return array('status' => false, 'message' => 'Token expired.', 'data' => ['valid_token' => false, 'activated' => false, 'expired_token' => true]);
