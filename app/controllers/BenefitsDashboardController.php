@@ -9055,13 +9055,13 @@ class BenefitsDashboardController extends \BaseController {
 			$expiry = strtotime($check->expiration_time);
 
 			if($today > $expiry) {
-				return array('status' => false, 'message' => 'token is expired');
+				return array('status' => false, 'message' => 'token is expired', 'data' => ['valid_token' => true, 'activated' => false, 'expired_token' => true]);
 			}
 
-			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
+			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false, 'expired_token' => false]);
 		}
 
-		return array('status' => false, 'message' => 'Token expired.');
+		return array('status' => false, 'message' => 'Token expired.', 'data' => ['valid_token' => false, 'activated' => false, 'expired_token' => true]);
 	}
 
 	public function resetPasswordData( )
