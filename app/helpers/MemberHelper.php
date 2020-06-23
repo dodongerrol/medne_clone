@@ -1680,7 +1680,39 @@ class MemberHelper
 			EmailHelper::sendErrorLogs($email);
 			return FALSE;
 		}
+	}
 
+	public static function getMemberPaginate($corporate_id, $pageNumber)
+	{
+		$perPage = 100;
+		$statement = "SELECT 
+			UserID as user_id
+		FROM
+			(SELECT 
+				user.UserID
+			FROM
+				medi_user AS user
+			LEFT JOIN medi_corporate_members AS corporateMembers ON corporateMembers.user_id = user.UserID
+			WHERE
+				corporateMembers.corporate_id = ".$corporate_id." UNION ALL SELECT 
+				*
+			FROM
+				(SELECT 
+				coverageAccounts.user_id
+			FROM
+				medi_user AS user
+			LEFT JOIN medi_corporate_members AS corporateMembers ON corporateMembers.user_id = user.UserID
+			LEFT JOIN medi_employee_family_coverage_sub_accounts AS coverageAccounts ON coverageAccounts.owner_id = user.UserID
+			WHERE
+				corporateMembers.corporate_id = ".$corporate_id."
+					AND coverageAccounts.user_id IS NOT NULL
+			ORDER BY coverageAccounts.user_id) AS dependent) AS mainTbl
+			group by UserID";
+		
+		$db = DB::select($statement);
+		$slice = array_slice($db, $perPage * ($pageNumber - 1), $perPage);
+		$info = Paginator::make($slice, count($db), $perPage);
+		return $info;
 	}
 }
 ?>
