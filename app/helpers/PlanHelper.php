@@ -298,7 +298,10 @@ class PlanHelper {
 		$data['user_type'] = "employee";
 		$data['currency_type'] = $wallet->currency_type;
 		$data['plan_type'] = $active_plan->account_type;
-
+		$customer_id = PlanHelper::getCustomerId($user_id);
+		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+		$data['medical'] = $spending['medical_enabled'];
+		$data['wellness'] = $spending['wellness_enabled'];
 		if((int)$customer->access_e_claim == 1) {
  			$data['e_claim_access'] = true;
 		} else {
