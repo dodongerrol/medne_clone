@@ -15339,41 +15339,33 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 
-		if(empty($input['token']) || $input['token'] == null) {
-			return array('status' => false, 'message' => 'token required.');
-		}
 		if(empty($input['hr_dashboard_id']) || $input['hr_dashboard_id'] == null) {
 			return array('status' => false, 'message' => 'HR is required.');
 		}
-		$hr  = new HRDashboard();
 		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 		if($check) {
-			
-			if($check->active == 1)	{
-				$new_password = array(
-					'password'	=> md5($input['new_password']),
-					'confirm_password' => md5($input['confirm_password']),
-					'reset_link' => NULL
-				);
-				$result = $hr->updateCorporateHrDashboard($input['hr_id'], $new_password);
-			
-			// // check if token is still valid
-			// $today = strtotime(date('Y-m-d H:i:s'));
-			// $expiry = strtotime($check->expiration_time);
+			$new_password = array(
+				'password'	=> md5($input['new_password']),
+				'reset_link' => NULL,
+				'active'	=> 1,
+				'hr_activated'	=> 1,
+			);
+			$hr = new HRDashboard();
+			$result = $hr->updateCorporateHrDashboard($input['hr_dashboard_id'], $new_password);
 
-			// if($today > $expiry) {
-			// 	return array('status' => false, 'message' => 'token is expired');
-			// }
-				
-			// 	// return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true]);
-			// }
-
+			if($result)	{
+				$jwt = new JWT();
+				$secret = Config::get('config.secret_key');
+				$check->signed_in = TRUE;
+				$token = $jwt->encode($check, $secret);
+				return array ('status' => TRUE, 'message' => 'Successfully created password.', 'token' => $token);
+			}
 			
-		}
-		return array ('status' => TRUE, 'message' => 'Successfully created password.');
 		// return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
 		
-	}
+		}
+
+		return array ('status' => FALSE, 'message' => 'Failed created password.');
 	}
 }
