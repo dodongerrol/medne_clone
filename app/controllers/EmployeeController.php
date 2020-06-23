@@ -3015,9 +3015,9 @@ class EmployeeController extends \BaseController {
       return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
     }
     if($email && $email->hr_activated == 1) {
-      return array('status' => 1, 'date_created' => $email->updated_at, 'message' => 'Account Activated');
+      return array('status' => 1,  'message' => 'Account Activated');
     } else if($email && $email->hr_activated == 0) {
-      return array('status' => 0,  'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+      return array('status' => 0, 'date_created' => $email->updated_at, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
     }
     if($email) {
       return $token;
