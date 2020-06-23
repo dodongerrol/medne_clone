@@ -970,7 +970,9 @@
 
 					hrSettings.getSession( )
 						.then(function(response){
-							scope.options.accessibility = response.data.accessibility;
+							console.log(response);
+							scope.options = response.data;
+							console.log(scope.options);
 	        	});
 
 					scope.getEmployeeLists( );

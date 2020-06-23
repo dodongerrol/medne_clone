@@ -2081,41 +2081,78 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 			}
-
+			
 			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d')) {
 				$emp_status = 'pending';
 			}
-			
-			$credit_balance = self::floatvalue($wallet->balance);
-			// get pending allocation for medical
-			$e_claim_amount_pending_medication = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', 'medical')
-			->where('status', 0)
-			->sum('claim_amount');
 
-			// get pending allocation for wellness
-			$e_claim_amount_pending_wellness = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', 'wellness')
-			->where('status', 0)
-			->sum('claim_amount');
+			$medical = null;
+			$wellness = null;
+			if($active_plan->account_type == 'enterprise_plan') {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$medical = array(
-				'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
-				'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
-				'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
-				'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  number_format($medical_credit_data['balance'], 2),
-				'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
-			);
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$wellness = array(
-				'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
-				'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
-				'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
-				'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
-				'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
-			);
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+					'balance'			=> $user_active_plan_history->total_visit_created,
+					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'in_network' 	=> $medical_credit_data['in_network'],
+					'out_network' 	=> $medical_credit_data['out_network']
+				);
+
+				
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+				);
+			} else {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
+
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
+
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
+				);
+
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+				);
+			}
 
 			if($employee_status['status'] == true) {
 				$expiry_date = $employee_status['expiry_date'];
@@ -2166,8 +2203,6 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_name'				=> $plan_name,
 				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
 				'expiry_date'			=> $expiry_date,
-				'wallet_id'				=> $wallet->wallet_id,
-				'credits'				=> number_format($credit_balance, 2),
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
 				'nric'					=> $user->NRIC,
@@ -2190,7 +2225,7 @@ class BenefitsDashboardController extends \BaseController {
 				'emp_status'			=> $emp_status,
 				'account_status'		=> (int)$user->Active == 1 ? true : false,
 				'plan_type'					=> $plan_type,
-				'wallet_enabled' => (int)$user->wallet == 1 ? true : false,
+				'wallet_enabled' 		=> (int)$user->wallet == 1 ? true : false,
 				'medical_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->medical_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->medical_spending_end_date)),
 				'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
 			);
@@ -3213,6 +3248,8 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
 				$plan_name = "Basic Plan";
+			} else if($active_plan->account_type == 'enterprise_plan') {
+				$plan_name = "Enterprise Plan";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -3279,6 +3316,8 @@ class BenefitsDashboardController extends \BaseController {
 						$plan_name = "Trial Plan";
 					} else if($active_plan_extension->account_type == 'lite_plan') {
 						$plan_name = "Lite Plan";
+					} else if($active_plan_extension->account_type == 'enterprise_plan') {
+						$plan_name = "Enterprise Plan";
 					}
 				} else {
 					$plan_user = DB::table('user_plan_type')
@@ -3303,37 +3342,57 @@ class BenefitsDashboardController extends \BaseController {
 				$emp_status = 'pending';
 			}
 
-			$credit_balance = self::floatvalue($wallet->balance);
-			// get pending allocation for medical
-			$e_claim_amount_pending_medication = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', 'medical')
-			->where('status', 0)
-			->sum('claim_amount');
+			$medical = null;
+			$wellness = null;
+			if($active_plan->account_type == 'enterprise_plan') {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			// get pending allocation for wellness
-			$e_claim_amount_pending_wellness = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('status', 0)
-			->where('spending_type', 'wellness')
-			->where('status', 0)
-			->sum('claim_amount');
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+					'balance'			=> $user_active_plan_history->total_visit_created,
+					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'in_network' 	=> $medical_credit_data['in_network'],
+					'out_network' 	=> $medical_credit_data['out_network']
+				);
+			} else {
+				// get pending allocation for medical
+				$e_claim_amount_pending_medication = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'medical')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$medical = array(
-				'entitlement' => $wallet_entitlement->medical_entitlement,
-				'credits_allocation' => $medical_credit_data['allocation'],
-				'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
-				'balance'			=> $medical_credit_data['balance'],
-				'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
-			);
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
 
-			$wellness = array(
-				'entitlement' => $wallet_entitlement->wellness_entitlement,
-				'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
-				'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
-				'balance'						=> $wellness_credit_data['balance'],
-				'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
-			);
+				$medical = array(
+					'entitlement' => $wallet_entitlement->medical_entitlement,
+					'credits_allocation' => $medical_credit_data['allocation'],
+					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
+					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
+				);
+
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+				);
+			}
 
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
@@ -3369,11 +3428,8 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_name'				=> $plan_name,
 				'start_date'			=> $get_employee_plan->plan_start,
 				'expiry_date'			=> $expiry_date,
-				'wallet_id'				=> $wallet->wallet_id,
-				'credits'				=> number_format($credit_balance, 2),
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
-				'nric'					=> $user->NRIC,
 				'mobile_no'				=> $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
 				'country_code'			=> $country_code,
@@ -7503,13 +7559,12 @@ class BenefitsDashboardController extends \BaseController {
 		foreach ($customer_plans as $key => $cplan) {
 			$active_plans = DB::table('customer_active_plan')->where('plan_id', $cplan->customer_plan_id)->get();
 			foreach ($active_plans as $key => $plan) {
-				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan") {
+				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan" || $plan->account_type == "enterprise_plan") {
 					$withdraws = DB::table('payment_refund')
 					->where('customer_active_plan_id', $plan->customer_active_plan_id)
 					->get();
 
 					foreach ($withdraws as $key => $withdraw) {
-						# code...
 						$refunds = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
 						->whereIn('refund_status', [0, 1])
@@ -10153,6 +10208,7 @@ class BenefitsDashboardController extends \BaseController {
 				$data['first_name'] = ucwords($result_corporate_billing_contact->first_name);
 				$data['last_name']	= ucwords($result_corporate_billing_contact->last_name);
 				$data['email']			= $result_corporate_billing_contact->work_email;
+				$data['phone']			= $result_corporate_billing_contact->phone;
 				$data['billing_contact_status'] = false;
 			} else {
 				$data['first_name'] = ucwords($contact->first_name);
@@ -10177,11 +10233,15 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$refund_data = array(
+				'plan_type'		=> PlanHelper::getAccountType($refund_payment->account_type),
 				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
 				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
 				'date_refund' => $refund_payment->date_refund,
+				'invoice_date' => date('d F Y', strtotime($refund_payment->invoice_date)),
+				'invoice_due' => date('d F Y', strtotime($refund_payment->invoice_due)),
+				'payment_date' => $refund_payment->payment_date ? date('d F Y', strtotime($refund_payment->payment_date)) : null,
 				'payment_status' => $refund_payment->status,
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
@@ -10189,8 +10249,15 @@ class BenefitsDashboardController extends \BaseController {
 				'currency_type' => strtoupper($refund_payment->currency_type)
 			);
 
-			// return View::make('pdf-download.hr-accounts-refund', $refund_data);
-			$pdf = PDF::loadView('pdf-download.hr-accounts-refund', $refund_data);
+			if($refund_payment->account_type == "enterprise_plan")	{
+				// return View::make('pdf-download.enterprise-plan.enterprise-plan-refund-summary', $refund_data);
+				$pdf = PDF::loadView('pdf-download.enterprise-plan.enterprise-plan-refund-summary', $refund_data);
+			} else {
+				// return View::make('pdf-download.hr-accounts-refund', $refund_data);
+				$pdf = PDF::loadView('pdf-download.hr-accounts-refund', $refund_data);
+			}
+
+			
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
 			return $pdf->download($refund_data['cancellation_number'].' CANCELLATION - '.time().'.pdf');
@@ -13082,6 +13149,12 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
+			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id);
+
+			if($transaction_access)	{
+				$result['spending_feature_status_type'] = false;
+			}
+
 			return $result;
 		} else {
 			$returnObject->status = FALSE;
@@ -13328,6 +13401,18 @@ class BenefitsDashboardController extends \BaseController {
 		if(!$check_employee) {
 			return array('status' => false, 'message' => 'Employee does not exist.');
 		}
+
+		$user_plan_history = DB::table('user_plan_history')
+		->where('user_id', $input['employee_id'])
+		->where('type', 'started')
+		->orderBy('date', 'desc')
+		->first();
+
+		// $plan_active = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
+
+		// if($plan_active->account_type == "enterprise_plan") {
+		// 	return array('status' => false, 'message' => 'Enterprise Plan account cannot access employee credits summary');
+		// }
 
 		$coverage = PlanHelper::getEmployeePlanCoverageDate($input['employee_id'], $customer_id);
 		$last_day_coverage = PlanHelper::endDate($input['last_date_of_coverage']);

@@ -2921,6 +2921,90 @@ class EmployeeController extends \BaseController {
         return array('status' => true, 'medical' => $medical, 'wellness' => $wellness);
     }
 
+    public function getRefundEmployeeSummary( )
+    {
+      $input = Input::all();
+      if(empty($input['member_id']) || $input['member_id'] == null) {
+        return array('status' => false, 'message' => 'member_id is required');
+      }
+
+      if(empty($input['refund_date']) || $input['refund_date'] == null) {
+        return array('status' => false, 'message' => 'refund_date is required');
+      }
+
+      $id = $input['member_id'];
+      $expiry_date = date('Y-m-d', strtotime($input['refund_date']));
+      $plan = DB::table('user_plan_type')->where('user_id', $id)->orderBy('created_at', 'desc')->first();
+      $calculate = false;
+      $total_refund = 0;
+      // check if active plan is a trial plan and has a plan extension
+
+      $active_plan = DB::table('user_plan_history')
+      ->where('user_id', $id)
+      ->where('type', 'started')
+      ->orderBy('date', 'desc')
+      ->first();
+      $plan_active = DB::table('customer_active_plan')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
+      $customer_plan = DB::table('customer_plan')->where('customer_plan_id', $plan_active->plan_id)->first();
+      if($plan_active->account_type == "trial_plan") {
+        // check if there is a plan extension
+        $extension = DB::table('plan_extensions')
+        ->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
+        ->first();
+        if($extension && (int)$extension->enable == 1) {
+          // check plan start if satisfies for the employee plan
+          $expiry_date = date('Y-m-d', strtotime($expiry_date));
+          $extension_plan_start = date('Y-m-d', strtotime($extension->plan_start));
+  
+          if($expiry_date >= $extension_plan_start) {
+            $invoice = DB::table('corporate_invoice')
+            ->where('customer_active_plan_id', $plan_active->customer_active_plan_id)
+            ->where('plan_extention_enable', 1)
+            ->first();
+            $plan_start = $extension_plan_start;
+          } else {
+            $plan_start = $plan->plan_start;
+          }
+        } else {
+          $plan_start = $plan->plan_start;
+        }
+      } else {
+        $invoice = DB::table('corporate_invoice')
+        ->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+        ->first();
+        $plan_start = $plan->plan_start;
+      }
+
+      $diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
+      $days = $diff->format('%a') + 1;
+      $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+      $remaining_days = $total_days - $days;
+      $cost_plan_and_days = ($invoice->individual_price/$total_days);
+      $temp_total = $cost_plan_and_days * $remaining_days;
+      $total_refund = $temp_total * 0.70;
+
+      $data = array(
+        'member_id'					      => $id,
+        'customer_active_plan_id'	=> $active_plan->customer_active_plan_id,
+				'account_type'	          => PlanHelper::getAccountType($customer_plan->account_type),
+				'refund_date'				      => $expiry_date,
+        'amount'					        => number_format($total_refund, 2),
+        'plan_start'              => date('Y-m-d', strtotime($plan_start)),
+        'unutilised_start_date'   => date('Y-m-d', strtotime('+1 day', strtotime($expiry_date))),
+        'unutilised_end_date'     => date('Y-m-d', strtotime($customer_plan->plan_end)),
+        'currency_type'			  => $invoice->currency_type,
+        'calculations'            => array(
+          'pro_rated_refund'      => 70,
+          'days_used'             => $days,
+          'days_unused'            => $remaining_days,
+          'total_days'            => $total_days,
+          'price_per_employee'    => $invoice->individual_price
+        )
+      );
+      
+      return ['status' => true, 'data' => $data];
+    }
+    
     public function checkMemberReplaceDetails( )
     {
       $input = Input::all();

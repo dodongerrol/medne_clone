@@ -427,12 +427,26 @@ app.directive('eclaimSubmitDirective', [
 							scope.claim_type_arr = response.data;
 						});
 				}
+				
+				scope.getEnterpriseClaims = function( opt ){
+					eclaimSettings.getClaimTypes( opt )
+						.then(function(response){
+							console.log(response);
+							scope.claim_type_arr = response.data;
+						});
+				}
 
 				scope.getDetails = function( ) {
 					eclaimSettings.empDetails( )
 						.then(function( response ) {
 							scope.user_details = response.data.data;
 							scope.hideIntroLoader();
+
+							if(scope.user_details.plan_type == 'enterprise_plan'){
+								scope.getEnterpriseClaims( scope.eclaim.spending_type );
+							}else{
+								scope.getClaims( scope.eclaim.spending_type );
+							}
 							// console.log(scope.user_details);
 							// scope.getCurrentActivity();
 						});
@@ -525,7 +539,7 @@ app.directive('eclaimSubmitDirective', [
 					scope.getDetails();
 					scope.getEclaimPackages();
 					scope.fetchMembers();
-					scope.getClaims( scope.eclaim.spending_type );
+					
 					
 					scope.local_eclaim = storageFactory.getEclaim();
 					// console.log( scope.local_eclaim );

@@ -483,6 +483,7 @@ class PlanTierController extends \BaseController {
 		$format = [];
 		$temp_enroll = new TempEnrollment();
 		$temp_dependent_enroll = new DependentTempEnrollment();
+		$group_number = CustomerHelper::getMemberLastGroupNumber($customer_id);
 		foreach ($input['employees'] as $key => $user) {
 			$credit = 0;
 			$postal_code = null;
@@ -493,8 +494,8 @@ class PlanTierController extends \BaseController {
       
 
 			$mobile = preg_replace('/\s+/', '', $user['mobile']);
-      $user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
-      $user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
+			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
+			$user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 
 			$temp_enrollment_data = array(
@@ -513,6 +514,7 @@ class PlanTierController extends \BaseController {
 				'medical_balance_entitlement'			=> $user['medical_credits'],
 				'wellness_balance_entitlement'			=> $user['wellness_credits'],
 				'postal_code'			=> $postal_code,
+				'group_number'			=> $group_number,
 				'error_logs'			=> serialize($error_member_logs)
 			);
 

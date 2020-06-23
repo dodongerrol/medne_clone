@@ -176,6 +176,23 @@ class CustomerHelper
 		}
 	}
 
+	public static function getCustomerLastTerm($customer_id)	
+	{
+		$plans = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->get();
+
+		if(sizeof($plans) > 1) {
+			$plans = DB::table('customer_plan')
+						->where('customer_buy_start_id', $customer_id)
+						->orderBy('created_at', 'desc')
+						->skip(1)
+						->take(1)
+						->first();
+			return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($plans->plan_end)))), 'id' => null];
+		} else {
+			return ['start' => date('Y-m-d', strtotime($plans[0]->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($plans[0]->plan_end)))), 'id' => null];
+		}
+	}
+
 	public static function customerMedicalAllocatedCreditsByDates($customer_id, $start, $end, $wallet_history_id)
 	{
 
@@ -457,6 +474,27 @@ class CustomerHelper
 
 	$total_medical_allocation = $temp_total_allocation - $temp_total_deduction;
 	return ['total_purchase_credits' => $total_medical_allocation, 'total_bonus_credits' => (float)$total_bonus];
+  }
+
+  public static function getMemberLastGroupNumber($customer_id)
+  {
+	$link_account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+
+	$member = DB::table('corporate_members')
+				->where('corporate_id', $link_account->corporate_id)
+				->orderBy('user_id', 'desc')
+				->first();
+	if($member) {
+		$group_number = DB::table('user')
+						->where('UserID', $member->user_id)
+						->orderBy('group_number', 'desc')
+						->first();
+
+		if($group_number) {
+			return $group_number->group_number + 1;
+		}
+	}
+	return 1;
   }
   
 	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)

@@ -342,7 +342,7 @@
               <p style="color: #333;font-size: 19px;font-weight: 700;margin-top: 0;margin-bottom: 5px;">
                 @if($cap_per_visit_status)
                 {{ $currency_symbol }}
-                $endif
+                @endif
                 {{ $cap_per_visit }}
               </p>
             </div>
