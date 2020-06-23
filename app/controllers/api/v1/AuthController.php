@@ -5202,6 +5202,11 @@ public function getHealthLists( )
         
         if($customer_active_plan->account_type == "enterprise_plan")  {
           $spending_types = DB::table('health_types')->where('account_type', $customer_active_plan->account_type)->where('active', 1)->get();
+          foreach($spending_types as $key => $spending) {
+            if($spending->cap_amount_enterprise > 0)  {
+              $spending->cap_amount = $spending->cap_amount_enterprise;
+            }
+          }
         } else {
           if(empty($input['spending_type']) || $input['spending_type'] == null) {
             $returnObject->status = FALSE;

@@ -1516,7 +1516,14 @@ class EclaimController extends \BaseController {
                                 ->first();
         
 			if($customer_active_plan->account_type == "enterprise_plan")  {
-				return DB::table('health_types')->where('account_type', $customer_active_plan->account_type)->where('active', 1)->get();
+				$spending_types = DB::table('health_types')->where('account_type', $customer_active_plan->account_type)->where('active', 1)->get();
+				foreach($spending_types as $key => $spending) {
+					if($spending->cap_amount_enterprise > 0)  {
+						$spending->cap_amount = $spending->cap_amount_enterprise;
+					}
+				}
+
+				return $spending_types;
 			} else {
 				// get claim type service cap
 				$get_company_e_claim_services = DB::table('company_e_claim_service_types')
