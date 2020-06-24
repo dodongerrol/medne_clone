@@ -111,7 +111,7 @@ Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordVie
 Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordView');
 
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
-
+Route::post('hr/create-password-activated', 'BenefitsDashboardController@createCompanyPasswordActivated');
 Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 // authentications for eclaim
 Route::group(array('before' => 'auth.jwt_employee'), function( ){
@@ -175,7 +175,10 @@ Route::post('company-benefits-dashboard-login', 'BenefitsDashboardController@hrL
 Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
 Route::get('hr/validate_token', 'BenefitsDashboardController@getTokenDetails');
 Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
+Route::post('hr/create-company-password', 'BenefitsDashboardController@createCompanyPassword');
 
+// create resend hr activation link
+Route::post('hr/resend_hr_activation_link', 'BenefitsDashboardController@resendHrActivationLnk');
 // secure route on hr page, need authenticated to get access on this routes
 
 Route::get('company-benefits-dashboard', 'HomeController@hrDashboard');
@@ -332,6 +335,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get company employees and credits left
 	// Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
 	Route::get('hr/details', 'BenefitsDashboardController@getCompanyDetails');
+
 
 	// plan tier and dependents api
 	

@@ -9046,8 +9046,10 @@ class BenefitsDashboardController extends \BaseController {
 		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 		if($check) {
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
+			$agree_status = $customer->agree_status == "true" ? true : false;
 			if($check->active == 1)	{
-				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true]);
+				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true, 't_c' => $agree_status]);
 			}
 
 			// check if token is still valid
@@ -9055,13 +9057,13 @@ class BenefitsDashboardController extends \BaseController {
 			$expiry = strtotime($check->expiration_time);
 
 			if($today > $expiry) {
-				return array('status' => false, 'message' => 'token is expired');
+				return array('status' => false, 'message' => 'token is expired', 'data' => ['valid_token' => true, 'activated' => false, 'expired_token' => true, 't_c' => $agree_status]);
 			}
 
-			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
+			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false, 'expired_token' => false, 't_c' => $agree_status]);
 		}
 
-		return array('status' => false, 'message' => 'Token expired.');
+		return array('status' => false, 'message' => 'Token expired.', 'data' => ['valid_token' => false, 'activated' => false, 'expired_token' => true]);
 	}
 
 	public function resetPasswordData( )
@@ -15339,5 +15341,73 @@ class BenefitsDashboardController extends \BaseController {
 		$pagination['total_data'] = $invoices->getTotal() + $total_spending_transaction_count;
         $pagination['data'] = $format;
 		return $pagination;
-    }
+	}
+	
+	public function createCompanyPassword ( )
+	{
+		$input = Input::all();
+
+		if(empty($input['hr_dashboard_id']) || $input['hr_dashboard_id'] == null) {
+			return array('status' => false, 'message' => 'HR is required.');
+		}
+		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
+
+		if($check) {
+			$new_password = array(
+				'password'	=> md5($input['new_password']),
+				'reset_link' => NULL,
+				'active'	=> 1,
+				'hr_activated'	=> 1,
+			);
+			$hr = new HRDashboard();
+			$result = $hr->updateCorporateHrDashboard($input['hr_dashboard_id'], $new_password);
+
+			if($result)	{
+				$jwt = new JWT();
+				$secret = Config::get('config.secret_key');
+				$check->signed_in = TRUE;
+				$token = $jwt->encode($check, $secret);
+				return array ('status' => TRUE, 'message' => 'Successfully created password.', 'token' => $token);
+			}
+			
+		// return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
+		
+		}
+
+		return array ('status' => FALSE, 'message' => 'Failed created password.');
+	}
+	public function resendHrActivationLnk( )
+	{
+		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null)	{
+			return ['status' => false, 'message' => 'token is required'];
+		}
+
+		// check token existence
+		$check_token = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
+
+		if(!$check_token) {
+			return ['status' => false, 'message' => 'token does not exist'];
+		}
+
+		$reset_link = StringHelper::getEncryptValue();
+		$result = DB::table('customer_hr_dashboard')
+					->where('hr_dashboard_id', $check_token->hr_dashboard_id)
+					->update(['reset_link' => $reset_link, 'updated_at' => date('Y-m-d H:i:s'), 'expiration_time' => date('Y-m-d H:i:s', strtotime('+7 days'))]);
+
+		if($result)	{
+			// resend email activation
+			// send hr email activation
+			$email_data = array();
+			$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+			$email_data['emailName'] = ucwords($check_token->fullname);
+			$email_data['emailPage'] = 'email-templates.latest-templates.activation-email';
+			$email_data['emailTo'] = $check_token->email;
+			$email_data['button'] = url('/company-activation#/activation-link')."?activation_token=".$reset_link;
+			EmailHelper::sendEmail($email_data);
+		}
+
+		return ['status' => true, 'message' => 'Activation Email Send. Please check it on your inbox'];
+	}
 }

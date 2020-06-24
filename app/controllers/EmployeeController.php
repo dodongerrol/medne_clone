@@ -3014,6 +3014,10 @@ class EmployeeController extends \BaseController {
     if(!$email == 2) {
       return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
     }
+    if($email && (int)$email->active == 0) {
+      return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+    } else if($email && (int)$email->active == 1) {
+      return array('status' => TRUE, 'Activated');
     if($email && $email->hr_activated == 1) {
       return array('status' => 1,  'message' => 'Account Activated');
     } else if($email && $email->hr_activated == 0) {
@@ -3025,7 +3029,7 @@ class EmployeeController extends \BaseController {
         return FALSE;
     }
   }
-
+}
   public function getEmployeeEnrollmentStatus( )
   {
     $result = StringHelper::getJwtHrSession();
