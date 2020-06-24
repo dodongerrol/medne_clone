@@ -310,7 +310,7 @@ class EclaimHelper
     return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent, 'currency_type' => strtoupper($wallet->currency_type));
   }
 
-  public function checkMemberClaimAEstatus($member_id)
+  public static function checkMemberClaimAEstatus($member_id)
   {
     $plan_status = PlanHelper::checkEmployeePlanStatus($member_id);
     $start = date('Y-m-d', strtotime($plan_status['start_date']));
