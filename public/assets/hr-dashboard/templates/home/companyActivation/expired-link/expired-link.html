@@ -1,4 +1,4 @@
-<div class="expired-link-wrapper">
+<div class="expired-link-wrapper" expired-link-directive>
 	<div class="link-header-container">
 		<a href="#" class="pull-right need-help-text tooltips">
 			<span>Need Help?</span>
@@ -17,7 +17,7 @@
 	<div class="mednefits-logo-container">
 		<img class="mednefits-logo" src="../../assets/images/Mednefits Logo_Blue.png">
 	</div>
-	<div ng-if="false" class="link-expired-container">
+	<div ng-if="validateToken.expired_token == true" class="link-expired-container">
 		<div class="link-prompt-img">
 			<img src="../../assets/images/prompt-tri.png">
 		</div>
@@ -26,7 +26,7 @@
 		</div>
 		<div class="new-link-text-container">You may request a <span class="new-link-text">new link</span></div>
 	</div>
-	<div ng-if="true" class="link-succesfully-container">
+	<div ng-if="validateToken.activated == true" class="link-succesfully-container">
 		<div class="link-prompt-img">
 			<img src="../../assets/images/success-circle.png">
 		</div>

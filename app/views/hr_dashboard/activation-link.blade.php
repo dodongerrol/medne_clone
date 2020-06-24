@@ -53,6 +53,23 @@
 <body>
 	
   <div ui-view="main"></div>
+
+	<div class="circle-loader">
+		<div class="preloader-container">
+			<div class="preloader-wrapper big active">
+		    <div class="spinner-layer spinner-blue-only">
+		      <div class="circle-clipper left">
+		        <div class="circle"></div>
+		      </div><div class="gap-patch">
+		        <div class="circle"></div>
+		      </div><div class="circle-clipper right">
+		        <div class="circle"></div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	</div>
+	
 </body>
   <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/jquery.min.js?_={{ $date->format('U') }}"></script>
   <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/bootstrap.min.js?_={{ $date->format('U') }}"></script>
@@ -63,10 +80,13 @@
   <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/activation.js?_={{ $date->format('U') }}"></script>
 
 
+
   <!-- Company activation -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/function.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/t&c/function.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/expired-link/function.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/activationService.js?_={{ $date->format('U') }}"></script>
 

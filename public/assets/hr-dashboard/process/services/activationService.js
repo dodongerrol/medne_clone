@@ -11,6 +11,9 @@ service.factory("activationSettings", function($http, serverUrl) {
     return $http.post(serverUrl.url + "hr/create-password-activated", data);
   };
 
+  activationFactory.validateToken = function( token ) {
+    return $http.get(serverUrl.url + "/hr/validate_token?token=" + token);
+  };
 
   return activationFactory;
 });
