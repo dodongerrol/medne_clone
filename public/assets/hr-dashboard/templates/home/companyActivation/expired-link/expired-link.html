@@ -24,7 +24,7 @@
 		<div class="bold-text">
 			<span>Your link has expired</span>
 		</div>
-		<div class="new-link-text-container">You may request a <span class="new-link-text">new link</span></div>
+		<div class="new-link-text-container">You may request a <span class="new-link-text" ng-click="requestLink()">new link</span></div>
 	</div>
 	<div ng-if="validateToken.activated == true" class="link-succesfully-container">
 		<div class="link-prompt-img">

@@ -81,20 +81,20 @@
 /* GREYCLIFF */
 @font-face {
     font-family: 'Greycliff'; /* Global font */
-    src: url('../fonts/greycliff/greycliff-cf-light.ttf')  format('truetype');
+    src: url('../fonts/greycliff/GreycliffCF-Regular.otf')  format('truetype');
 }
 
 @font-face {
     font-family: 'Greycliff Medium'; /* Global font */
-    src: url('../fonts/greycliff/greycliff-cf-medium.ttf')  format('truetype');
+    src: url('../fonts/greycliff/GreycliffCF-Medium.otf')  format('truetype');
 }
 
 @font-face {
     font-family: 'Greycliff Bold'; /* Global font */
-    src: url('../fonts/greycliff/greycliff-cf-bold.ttf')  format('truetype');
+    src: url('../fonts/greycliff/GreycliffCF-Bold.otf')  format('truetype');
 }
 
 @font-face {
     font-family: 'Greycliff Heavy'; /* Global font */
-    src: url('../fonts/greycliff/greycliff-cf-heavy.ttf')  format('truetype');
+    src: url('../fonts/greycliff/GreycliffCF-ExtraBold.otf')  format('truetype');
 }
