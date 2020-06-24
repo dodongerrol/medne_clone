@@ -15410,4 +15410,25 @@ class BenefitsDashboardController extends \BaseController {
 
 		return ['status' => true, 'message' => 'Activation Email Send. Please check it on your inbox'];
 	}
+
+	public function sendSpendingActivateInquiry( )
+	{
+		$input = Input::all();
+
+		if(empty($input['content']) || $input['content'] == null)	{
+			return ['status' => false, 'message' => 'Enquiry message is required'];
+		}
+		
+		$customer = StringHelper::getJwtHrSession();
+		$customer_id = $customer->customer_buy_start_id;
+		$receiver = Config::get('config.spending_inquiry_email');
+		$email_data = array();
+		$email_data['emailSubject'] = 'Activate Spending Account';
+		$email_data['emailName'] = ucwords($customer->fullname);
+		$email_data['emailPage'] = 'email-templates.spending-activation-inquiry';
+		$email_data['emailTo'] = $receiver;
+		$email_data['content'] = $input['content'];
+		EmailHelper::sendEmail($email_data);
+		return ['status' => true, 'message' => 'Activate Spending Account Inquiry has been sent'];
+	}
 }

@@ -159,7 +159,6 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 });
 
 
-
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
 Route::get('list/local_network_partners/{id}', 'NetworkPatnerController@getLocalNetworkPartnerList');
@@ -463,6 +462,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_enrollment_status', 'EmployeeController@getEmployeeEnrollmentStatus');
 	// check fields for replacement
 	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
+	// hr send email account spending inquiry
+	Route::post('hr/send_spending_activation_inquiry', 'BenefitsDashboardController@sendSpendingActivateInquiry');
 });
 
 	// get employee refund details
