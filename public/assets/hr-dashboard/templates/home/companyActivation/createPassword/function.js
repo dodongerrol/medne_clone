@@ -14,6 +14,7 @@ app.directive('createCompanyPasswordDirective', [
 				
 				console.log(params);
 
+				
 
 				console.log(window.location.search);
 
