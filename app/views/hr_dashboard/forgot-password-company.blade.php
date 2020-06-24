@@ -42,7 +42,7 @@
 			<h2 class="text-center text-below-image">for business</h2>
 
 			@if($token)
-			<p ng-if="!password_success" class="text-center" style="font-size: 20px;color: #222;margin: 40px 0;">We received your reset password request.<br>Please enter your new password!</p>
+			<!-- <p ng-if="!password_success" class="text-center" style="font-size: 20px;color: #222;margin: 40px 0;">We received your reset password request.<br>Please enter your new password!</p>
 			<form ng-if="!password_success" class="med-form" ng-submit="changePassword( forgot_password_data )" id="form-forgot" style="margin-bottom: 100px;">
 				<div class="form-group">
 					<input type="hidden" id="hr-id" value="{{ $hr_id }}">	
@@ -55,12 +55,12 @@
 				<div class="form-group">
 					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">CHANGE PASSWORD</button>
 				</div>
-			</form>
+			</form> -->
 
 			<!-- new account login -->
 
-			<p ng-if="false" class="text-center" style="font-size: 20px;color: #222;margin: 40px 0;">We received your reset password request.<br>Please enter your new password!</p>
-			<form ng-if="false" class="med-form" ng-submit="changePassword( forgot_password_data )" id="form-forgot" style="margin-bottom: 100px;">
+			<p ng-if="!password_success" class="text-center" style="font-size: 20px;color: #222;margin: 40px 0;">We received your reset password request.<br>Please enter your new password!</p>
+			<form ng-if="!password_success" class="med-form" ng-submit="changePassword( forgot_password_data )" id="form-forgot" style="margin-bottom: 100px;">
 				<div class="form-group" style="align-items: center; display: flex;">
 					<input type="hidden" id="hr-id" value="">
 					<label for="password"  style="padding-right: 20px;">Password</label>
@@ -80,7 +80,7 @@
 			
 			<div ng-if="password_success" class="success-content">
 				<img src="../assets/hr-dashboard/img/verified.png" class="center-block login-logo" style="height: 80px;">
-				<p class="text-center" style="font-size: 20px;color: #222;margin: 15px 0;">Your password has been reset successfully!<br>Now <a href="/company-benefits-dashboard-login">login</a> with your new password.</p>
+				<p class="text-center" style="font-size: 20px;color: #222;margin: 15px 0;">Your password has been successfully reset.<br> You may now <a href="/company-benefits-dashboard-login">sign in to Mednefits</a> with your new password.</p>
 			</div>
 			@endif
 			@if(!$token)

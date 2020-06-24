@@ -109,7 +109,7 @@
 					<button ng-if='showPassword' type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="loginHr()">Sign in</button>
 				</div>
 				<span ng-if="ng_fail">*Please check your login credentials</span>
-				<a ng-if="false" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
+				<a ng-if="showPassword" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
 					password?</a>
 				
 				<div class="not-activated" ng-if="login_details.status === 'not activated'">
