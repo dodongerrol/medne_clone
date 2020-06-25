@@ -1462,14 +1462,14 @@ class EclaimController extends \BaseController {
 		}
 
 		$total_spent = $in_network_spent + $e_claim_spent;
-		if($active_plan->account_type == "enterprise_plan") {
-			$allocation = "N.A.";
-			$balance = "N.A.";
-			$final_allocation = "N.A.";
-		} else {
+		// if($active_plan->account_type == "enterprise_plan") {
+		// 	$allocation = "N.A.";
+		// 	$balance = "N.A.";
+		// 	$final_allocation = "N.A.";
+		// } else {
 			$final_allocation = number_format($allocation, 2);
 			$balance = number_format($balance, 2);
-		}
+		// }
 
 		// $total_visit_created = count($transactions) + count($e_claim_result);
 		$total_balance_visit = $user_plan_history->total_visit_limit - $total_visit_created;
@@ -2168,11 +2168,11 @@ class EclaimController extends \BaseController {
 							->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 							->first();
 
-		if($active_plan->account_type == "enterprise_plan") {
-			$balance = "N.A.";
-		} else {
+		// if($active_plan->account_type == "enterprise_plan") {
+		// 	$balance = "N.A.";
+		// } else {
 			$balance = number_format($balance, 2);
-		}
+		// }
 
 		return array(
 			'current_spending' 	=> number_format($current_spending, 2),
@@ -6650,7 +6650,7 @@ public function updateEclaimStatus( )
 		if($customer_active_plan->account_type == "enterprise_plan")	{
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
-			if($limit <= 0) {
+			if($limit < 0) {
 				return ['status' => false, 'message' => 'Maximum of 14 visit already reach.'];
 			}
 

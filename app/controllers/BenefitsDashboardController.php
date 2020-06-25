@@ -2318,7 +2318,7 @@ class BenefitsDashboardController extends \BaseController {
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$filter = 'current_term';
 
-		if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
+		// if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
 			$user_spending_dates_medical = CustomerHelper::getCustomerCreditReset($customer_id, $filter, 'medical');
 			$user_spending_dates_wellness = CustomerHelper::getCustomerCreditReset($customer_id, $filter, 'wellness');
 
@@ -2377,8 +2377,6 @@ class BenefitsDashboardController extends \BaseController {
 				->sum('credit');
 			}
 			$total_medical_allocation = $temp_total_allocation + $total_medical_bonus - $temp_total_deduction;
-				// if($plan->account_type != "enterprise_plan") {
-				    // check if customer has a credit reset in medical
 			$customer_credit_reset_wellness = DB::table('credit_reset')
 			->where('id', $customer_id)
 			->where('spending_type', 'wellness')
@@ -2437,33 +2435,14 @@ class BenefitsDashboardController extends \BaseController {
 				->where('created_at', '<=', $user_spending_dates_wellness['end'])
 				->sum('credit');
 			}
-			// } else {
-			// 	$temp_total_allocation_wellness = DB::table('customer_credits')
-			// 	->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-			// 	->where('customer_credits.customer_id', $customer_id)
-			// 	->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
-			// 	->sum('customer_wellness_credits_logs.credit');
-
-			// 	$temp_total_deduction_wellness = DB::table('customer_credits')
-			// 	->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-			// 	->where('customer_credits.customer_id', $customer_id)
-			// 	->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
-			// 	->sum('customer_wellness_credits_logs.credit');
-			// }
 			$total_allocation_wellness = $temp_total_allocation_wellness + $total_wellness_bonus - $temp_total_deduction_wellness;
-				// }
-
-		}
+		// }
 
 		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$start = $spending_account_settings->medical_spending_start_date;
 		$user_allocated = PlanHelper::getActivePlanUsers($customer_id);
-		// $user_allocated = PlanHelper::getCorporateUserByEntitlementDates($account_link->corporate_id, $customer_id, $start);
 		$get_allocation_spent = 0;
 		$get_allocation_spent_wellness = 0;
-
-		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$start = $spending_account_settings->medical_spending_start_date;
 		$end = PlanHelper::endDate($spending_account_settings->medical_spending_start_date);
 		// $temp = [];
 		foreach ($user_allocated as $key => $user) {
@@ -2511,16 +2490,16 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_supp_credits = $total_medical_allocated * $spending_account_settings->medical_supplementary_credits;
 		$total_wellness_supp_credits = $total_wellnesss_allocated * $spending_account_settings->wellness_supplementary_credits;
 
-		if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
-			$total_medical_allocation = 0;
-			$credits = 0;
-			$total_medical_allocated = 0;
-			$total_medical_balance = 0;
-			$total_allocation_wellness = 0;
-			$credits_wellness = 0;
-			$total_wellnesss_allocated = 0;
-			$total_wellness_balance = 0;
-		}
+		// if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+			// $total_medical_allocation = 0;
+			// $credits = 0;
+			// $total_medical_allocated = 0;
+			// $total_medical_balance = 0;
+			// $total_allocation_wellness = 0;
+			// $credits_wellness = 0;
+			// $total_wellnesss_allocated = 0;
+			// $total_wellness_balance = 0;
+		// }
 
 		if($plan->account_type != "enterprise_plan" && $filter == "current_term") {
 			// if($company_credits->balance != $credits) {
@@ -10233,7 +10212,7 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$refund_data = array(
-				'plan_type'		=> PlanHelper::getAccountType($refund_payment->account_type),
+				'plan_type'		=> $refund_payment->account_type ? PlanHelper::getAccountType($refund_payment->account_type) : null,
 				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
 				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due),
 				'cancellation_number' => $refund_payment->cancellation_number,
