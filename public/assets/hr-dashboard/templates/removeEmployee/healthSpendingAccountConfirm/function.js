@@ -95,6 +95,9 @@ app.directive('healthSpendingAccountConfirmDirective', [
             calibrate_medical: scope.emp_details.wallet_opt,
             calibrate_wellness: scope.emp_details.wallet_opt,
           }
+          if( scope.emp_details.account_type == 'enterprise_plan' ){
+            data.calibrate_medical = false;
+          }
           scope.showLoading();
           dependentsSettings.reserveEmployee(data)
             .then(function (response) {
@@ -144,6 +147,9 @@ app.directive('healthSpendingAccountConfirmDirective', [
           if (!scope.remove_emp_details.wellness_credits) {
             scope.remove_emp_details.wellness_credits = 0;
           }
+          if( scope.emp_details.account_type == 'enterprise_plan' ){
+            scope.remove_emp_details.calibrate_medical = false;
+          }
           dependentsSettings.replaceEmployee(scope.remove_emp_details)
             .then(function (response) {
               // scope.hideLoading();
@@ -184,7 +190,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
             employee_id: scope.emp_details.user_id,
             last_date_of_coverage: moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),
             customer_id: scope.selected_customer_id,
-            calibrate_medical: scope.emp_details.wallet_opt,
+            calibrate_medical: scope.emp_details.account_type == 'enterprise_plan' ? false : scope.emp_details.wallet_opt,
             calibrate_wellness: scope.emp_details.wallet_opt,
           }];
           dependentsSettings.removeEmployee(users)

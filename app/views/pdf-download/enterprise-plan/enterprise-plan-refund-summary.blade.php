@@ -181,17 +181,19 @@
       <div class="bill-to">
         <div class="item left-wrapper" >
           <p style="color: #aaa;margin: 0;"><b>BILL TO</b></p>
-          <p>{{ $company_name }}</p>
-        <p>{{ $contact_name }}</p>
-        <p>{{ $company_address }}, {{ $postal }}</p>
-        <p style="margin-top: 10px;">{{ $contact_number }}</p>
-        <p>{{ $contact_email }}</p>
+          <p>{{ $billing_info['company'] }}</p>
+        <p>{{ $billing_info['first_name'] }} {{ $billing_info['last_name'] }}</p>
+        <p>{{ $billing_info['address'] }}, {{ $billing_info['postal'] }}</p>
+        <p style="margin-top: 10px;">{{ $billing_info['phone'] }}</p>
+        <p>{{ $billing_info['email'] }}</p>
         </div>
         <div class="item right-wrapper" >
-          <p><label>Invoice Number: </label> {{ $invoice_number }}</p>
+          <p><label>Invoice Number: </label> {{ $cancellation_number }}</p>
           <p><label>Invoice Date: </label> {{ $invoice_date }}</p>
           <p><label>Payment Due: </label> {{ $invoice_due }}</p>
+          @if($payment_date)
           <p><label>Payment Date: </label> {{ $payment_date }}</p>
+          @endif
           <p style="background: #eee;"><label>Amount Due: </label> <b>{{ $currency_type }} {{ $amount_due }}</b></p>
         </div>
       </div>
@@ -206,12 +208,12 @@
           <td style="text-align: left !important;padding-left: 30px;padding-top: 20px;">
             <p><b>Refund - {{ $plan_type }}</b></p>
             <br>
-            <p>Period of use {{ $plan_start }} - {{ $plan_end }}</p>
+            <p>Period of use {{ $users[0]['period_of_used'] }}</p>
             <br>
-            <p>Refund: 70% of unutilised period ({{ $unutilised_period_start }} - {{ $unutilised_period_end }})</p>
+            <p>Refund: 70% of unutilised period ({{ $users[0]['period_of_unused'] }})</p>
           </td>
           <td style="vertical-align: bottom;">
-            {{ $currency_type }} {{ $amount }}
+            {{ $currency_type }} {{ $users[0]['after_amount'] }}
           </td>
         </tr>
 
@@ -219,7 +221,7 @@
 
       <div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative; margin-top: 188px">
         <div style="width: 300px;display: inline-block;position: absolute;right: -30px;">
-          <p style="margin-bottom: 5px;margin-top: 10px;"><label></label> {{ $currency_type }} {{ $amount }}</p>
+          <p style="margin-bottom: 5px;margin-top: 10px;"><label></label> {{ $currency_type }} {{ $users[0]['after_amount'] }}</p>
 
           <div style="border-bottom: 1px solid #aaa;display: inline-block;width: 100%;padding-bottom: 10px;"></div>
 

@@ -60,7 +60,7 @@
 						<img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()">
 					</label>
 				</form>
-				<button class="btn-export-member" ng-if="(spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)" ng-click="goToBulkAllocation()">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
+				<button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ng-click="goToBulkAllocation()">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
 				<button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button>
 				<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
 				<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
@@ -88,10 +88,11 @@
 						<!-- <th class="nric-fin-title">NRIC/FIN</th> -->
 						<th class="plan-details-title">Plan details</th>
 						<th class="family-coverage-title">Family coverage</th>
-						<th ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="spending-account-medical-title">Spending account <span>(medical)</span></th>
-						<th ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
-						<th ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-account-visits-title">Visits</th>
-						<th ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-account-spending-title">Spendings</th>
+						<th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-medical-title">Spending account <span>(medical)</span></th>
+						<th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
+						<th ng-if="spending_account_status.account_type == 'enterprise_plan'" class="spending-account-visits-title">Visits</th>
+						<th ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == false" class="spending-account-spending-title">Spendings</th>
+						<th ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true" class="spending-account-spending-title">Wellness<br>Spending Account</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -138,7 +139,7 @@
 								<span ng-bind="emp.dependents">2</span>
 							</div>
 						</td>
-						<td ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="medical-details-container">
+						<td ng-if="spending_account_status.account_type != 'enterprise_plan'" class="medical-details-container">
 							<div class="medical-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
@@ -150,7 +151,7 @@
 										ng-bind="emp.spending_account.medical.balance">1,000.00</span></span>
 							</div>
 						</td>
-						<td ng-if="progress.active_plans[0].account_type != 'enterprise_plan'" class="wellness-details-container">
+						<td ng-if="spending_account_status.account_type != 'enterprise_plan'" class="wellness-details-container">
 							<div class="wellness-details">
 								<strong>Allocation:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
@@ -163,7 +164,7 @@
 							</div>
 						</td>
 
-						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="visits-details-container">
+						<td ng-if="spending_account_status.account_type == 'enterprise_plan'" class="visits-details-container">
 							<div class="enterprise-details">
 								<strong>Utilised:</strong>
 								<span ng-bind="emp.spending_account.medical.utilised">11</span>
@@ -174,7 +175,35 @@
 							</div>
 						</td>
 
-						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-details-container">
+						<td ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == false" class="spending-details-container">
+							<div class="enterprise-details">
+								<strong>Panel:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.in_network | number: 2">1,000.00</span>
+								</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Non-Panel:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
+								</span>
+							</div>
+						</td>
+
+						<!-- <td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="visits-details-container">
+							<div class="enterprise-details">
+								<strong>Utilised:</strong>
+								<span ng-bind="emp.spending_account.medical.utilised">11</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Balance:</strong>
+								<span ng-bind="emp.spending_account.medical.balance">11</span>
+							</div>
+						</td> -->
+
+						<!-- <td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-details-container">
 							<div class="enterprise-details">
 								<strong>In-Network:</strong>
 								<span>
@@ -189,40 +218,25 @@
 									<span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
 								</span>
 							</div>
-						</td>
-
-						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="visits-details-container">
-							<div class="enterprise-details">
-								<strong>Utilised:</strong>
-								<span ng-bind="emp.spending_account.medical.utilised">11</span>
+						</td> -->
+						
+						<td ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true" class="wellness-details-container">
+							<div class="wellness-details">
+								<strong>Allocation:</strong>
+								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
+										ng-bind="emp.spending_account.wellness.credits_allocation_wellness">1,000.00</span></span>
 							</div>
-							<div class="enterprise-details">
+							<div class="wellness-details">
 								<strong>Balance:</strong>
-								<span ng-bind="emp.spending_account.medical.balance">11</span>
-							</div>
-						</td>
-
-						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-details-container">
-							<div class="enterprise-details">
-								<strong>In-Network:</strong>
-								<span>
-									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
-									<span ng-bind="emp.spending_account.medical.in_network | number: 2">1,000.00</span>
-								</span>
-							</div>
-							<div class="enterprise-details">
-								<strong>Out-of-Network:</strong>
-								<span>
-									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
-									<span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
-								</span>
+								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
+										ng-bind="emp.spending_account.wellness.balance">1,000.00</span></span>
 							</div>
 						</td>
 					</tr>
 				<tbody>
 			</table>
 
-			<div ng-if="employees.data.length > 0" class="spending-not-activated-box">
+			<div ng-if="employees.data.length > 0 && (spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false)" class="spending-not-activated-box">
 				<div class="spending-border-box">
 					<p>Spending Account for your company has<br>not been activated.</p>
 					<a href="/sa-landing" target="_blank">Learn more >></a>
@@ -467,7 +481,7 @@
 						Employee</div>
 					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
 						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div ng-if="selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)"> {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} </div>
+					<div ng-if="(selectedEmployee.account_type != 'enterprise_plan' && (selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet)) || (selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.wellness_wallet == true)" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)"> {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} </div>
 					<!-- <div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
 						Entitlement</div> -->
 					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">
@@ -679,7 +693,7 @@
 						</div>
 
 						<div class="entitlement-information-details">
-							<div ng-if="selectedEmployee.medical_wallet">
+							<div ng-if="selectedEmployee.account_type != 'enterprise_plan' && selectedEmployee.medical_wallet">
 								<h4 class="weight-700 medical-entitlement">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }} | {{ selectedEmployee.medical_spending_account_validity}}</h4>
 								<div class="col-md-12 medical-entitlement-container">
 									<div class="col-md-4">

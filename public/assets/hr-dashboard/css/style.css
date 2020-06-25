@@ -8673,7 +8673,8 @@ span.dropdown-entitlement.disabled {
 .new-activity-header-calendar .eclaim-spending-type-container {
   display: inline-block;
   padding: 10px 0;
-  margin-left: -15px;
+  /*margin-left: -15px;*/
+  margin: 0;
   width: 100%;
   padding-bottom: 10px;
 }
@@ -9796,4 +9797,54 @@ span.dropdown-entitlement.disabled {
     font-size: 14px;
   }
 }
+.mednefits-body-box .wellness-account-info {
+  display: inline-block;
+}
+.wellness-account-info >div {
+  margin: 0 0 20px;
+}
+.wellness-account-info >div:last-child {
+  margin: 0;
+}
+
+.team-benefits-old-wrapper {
+  padding: 15px 0;
+}
+.visit-breakdown-col-container,
+.visit-breakdown-panel-container {
+  display: flex;
+}
+.visit-breakdown-col-1 {
+  position: relative;
+  padding: 0 50px 0 0;
+  margin: 0 20px 0 0;
+}
+.visit-breakdown-col-1:after {
+  display: block;
+  content: "";
+  border: 1px solid #cccc;
+  height: 55px;
+  width: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.visit-breakdown-panel-container >div:first-child {
+  position: relative;
+  margin: 0 20px 0 0;
+  padding: 0 20px 0 0;
+}
+
+.visit-breakdown-panel-container >div:first-child:after {
+  display: block;
+  content: "";
+  border: 1px solid #cccc;
+  height: 15px;
+  width: 0;
+  position: absolute;
+  top: 5px;
+  right: 0;
+}
+
+
 
