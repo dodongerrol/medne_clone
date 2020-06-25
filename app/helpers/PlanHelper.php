@@ -1475,7 +1475,7 @@ class PlanHelper {
 			'account_already_update'	=> 1,
 			'communication_type'	=> $communication_type,
 			'group_number'			=> $data_enrollee->group_number,
-			'currency_type'		=> $customer_data->currency_type
+			'currency_type'		=> $customer->currency_type
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
@@ -1658,7 +1658,7 @@ class PlanHelper {
 					$customer_active_plan_id = NULL;
 				}
 
-				if($credits > 0 &&  $customer_spending['wellness_method'] != "pre_paid" || $credits > 0 && $customer_spending['account_type'] == "lite_plan" && $customer_spending['wellness_method'] == "post_paid") {
+				if($credits > 0 && $customer_spending['wellness_method'] == "post_paid") {
 					$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
 					if($customer_credits_result) {
 						// credit log for wellness

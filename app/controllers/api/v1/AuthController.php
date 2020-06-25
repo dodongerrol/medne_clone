@@ -1292,9 +1292,9 @@ return Response::json($returnObject);
             $in_network_spent = $credit_data ? $credit_data['in_network_spent'] : 0;
             $balance = $credit_data ? $credit_data['balance'] : 0;
 
-            if($customer_active_plan->account_type != "enterprise_plan")  {
+            // if($customer_active_plan->account_type != "enterprise_plan")  {
               PlanHelper::reCalculateEmployeeBalance($user_id);
-            }
+            // }
             
             $total_visit_limit = 0;
             $total_vist_created = 0;
@@ -1302,17 +1302,17 @@ return Response::json($returnObject);
 
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
               $currency_symbol = "";
-              $balance = 0;
+              $$balance = number_format($balance, 2);
               if($filter == "current_term") {
                 $total_visit_limit = $user_plan_history->total_visit_limit;
                 $total_vist_created = $user_plan_history->total_visit_created;
-                $total_visit_limit = $total_visit_limit - $total_vist_created;
+                $total_visit_balance = $total_visit_limit - $total_vist_created;
               } else {
                 $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
                 if($plan_history) {
                   $total_visit_limit = $plan_history->total_visit_limit;
                   $total_vist_created = $plan_history->total_visit_created;
-                  $total_visit_limit = $total_visit_limit - $total_vist_created;
+                  $total_visit_balance = $total_visit_limit - $total_vist_created;
                 }
               }
               
@@ -5201,7 +5201,7 @@ public function getHealthLists( )
                                 ->first();
         
         if($customer_active_plan->account_type == "enterprise_plan")  {
-          if($input['type'] == "medical") {
+          if($input['spending_type'] == "medical") {
             $spending_types = DB::table('health_types')->where('account_type', $customer_active_plan->account_type)->where('active', 1)->get();
             foreach($spending_types as $key => $spending) {
               if($spending->cap_amount_enterprise > 0)  {
@@ -5519,13 +5519,15 @@ if($customer_id) {
     $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
   }  
 }
-
+$data['spending_type'] = !empty($input['spending_type']) ? $input['spending_type'] : "medical";
 if($customer_active_plan->account_type == "enterprise_plan")  {
-  $data['spending_type'] = "medical";
+  
   $service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
 
   if($service) {
-    $data['cap_amount'] = $service->cap_amount_enterprise;
+    if($input['claim_amount'] > $service->cap_amount_enterprise) {
+      $data['claim_amount'] = $service->cap_amount_enterprise;
+    }
     $data['enterprise_visit_deduction'] = 1;
   }
 }
@@ -6514,6 +6516,18 @@ public function payCreditsNew( )
               }
             }
 
+             // check for member transaction
+             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+             if($transaction_access)	{
+               $returnObject->status = FALSE;
+               $returnObject->status_type = 'registration_hold';
+               $returnObject->head_message = 'Registration On Hold';
+               $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+               $returnObject->sub_message = 'Kindly contact your HR';
+               return Response::json($returnObject);
+             }
+
             $returnObject->status = TRUE;
             $returnObject->status_type = 'with_balance';
             $returnObject->message = 'You have access this feature at the moment.';
@@ -6546,8 +6560,9 @@ public function payCreditsNew( )
             if($transaction_access)	{
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'Non-Panel Disabled';
-              $returnObject->message = 'Non-Panel function is disabled for your company.';
+              $returnObject->head_message = 'E-claim Unavailable';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+              $returnObject->sub_message = 'Kindly contact your HR';
               return Response::json($returnObject);
             }
 

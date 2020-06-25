@@ -1518,8 +1518,8 @@ class MemberHelper
 			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
 			$days = $diff->format('%a') + 1;
 			
-			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
-			$remaining_days = $total_days - $days;
+			$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+			$remaining_days = $total_days - $days + 1;
 
 			$cost_plan_and_days = ($invoice->individual_price/$total_days);
 			$temp_total = $cost_plan_and_days * $remaining_days;
