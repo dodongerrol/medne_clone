@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="app">
+<html ng-app="enquiry">
 <head>
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-78188906-2"></script>
@@ -165,7 +165,7 @@
     }
   </style>
 </head>
-<body>
+<body enquiry-directive>
 	<div id="main-content">
     <div class="logo-wrapper">
       <img src="../assets/images/mednefits_logo_latest.png" alt="">
@@ -198,6 +198,9 @@
 	</div>
 </body>
 
+<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/angular.min.js?_={{ $date->format('U') }}"></script>
+<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/sweetalert.min.js?_={{ $date->format('U') }}"></script>
+<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/enquiry.js?_={{ $date->format('U') }}"></script>
 	
 
 </html>

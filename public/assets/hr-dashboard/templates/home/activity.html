@@ -316,7 +316,7 @@
 								</div>
 							</div>
 
-							<div class="activity-spending-not-activated-blur">
+							<div ng-if="spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false" class="activity-spending-not-activated-blur">
 								<div class="spending-col-left col-1">
 									<div class="box-1">
 										<div class="one"></div>
@@ -352,7 +352,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="activity-spending-not-activated-box">
+							<div ng-if="spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false" class="activity-spending-not-activated-box">
 								<div class="spending-border-box">
 									<p>Spending Account for your<br>company has not been activated.</p>
 									<a href="/sa-landing" target="_blank">Learn more >></a>
@@ -720,7 +720,7 @@
 
 						</div> -->
 
-						<!-- </div> -->
+						</div>
 					</div>
 
 					<div class="col-md-12">
