@@ -6650,7 +6650,7 @@ public function updateEclaimStatus( )
 		if($customer_active_plan->account_type == "enterprise_plan")	{
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
-			if($limit <= 0) {
+			if($limit < 0) {
 				return ['status' => false, 'message' => 'Maximum of 14 visit already reach.'];
 			}
 
