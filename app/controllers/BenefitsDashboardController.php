@@ -9006,7 +9006,8 @@ class BenefitsDashboardController extends \BaseController {
 			$emailDdata['context'] = "Forgot your company password?";
 			$emailDdata['emailSubject'] = 'HR/Benefits Password Reset';
 			$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;
-				// EmailHelper::sendEmail($emailDdata);
+			$emailDdata['emailTo']= $input['email'];
+				EmailHelper::sendEmail($emailDdata);
 
 			if($contact) {
 				if((int)$contact->send_email_communication == 1 && $contact->work_email) {

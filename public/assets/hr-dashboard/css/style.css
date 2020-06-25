@@ -857,6 +857,19 @@ button {
   cursor: pointer;
 }
 
+.new-account img.lock {
+  display: block;
+  width: 50px;
+  margin: 35px auto;
+}
+
+.new-account img.eye {
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    width: 25px;
+}
+
 
 
 /* End New Account Feature */
