@@ -1292,9 +1292,9 @@ return Response::json($returnObject);
             $in_network_spent = $credit_data ? $credit_data['in_network_spent'] : 0;
             $balance = $credit_data ? $credit_data['balance'] : 0;
 
-            if($customer_active_plan->account_type != "enterprise_plan")  {
+            // if($customer_active_plan->account_type != "enterprise_plan")  {
               PlanHelper::reCalculateEmployeeBalance($user_id);
-            }
+            // }
             
             $total_visit_limit = 0;
             $total_vist_created = 0;
@@ -1302,7 +1302,7 @@ return Response::json($returnObject);
 
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
               $currency_symbol = "";
-              $balance = 0;
+              $$balance = number_format($balance, 2);
               if($filter == "current_term") {
                 $total_visit_limit = $user_plan_history->total_visit_limit;
                 $total_vist_created = $user_plan_history->total_visit_created;
