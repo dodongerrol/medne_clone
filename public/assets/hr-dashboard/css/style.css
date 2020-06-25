@@ -10235,5 +10235,52 @@ span.dropdown-entitlement.disabled {
 .emp-mobile-number-container #phoneNum {
   padding-left: 6px !important;
 }
+.emp-mobile-number-container .iti {
+  width: 100%;
+}
+
+@media ( max-width: 800px ) {
+  #update-employee-modal form.update-form.new {
+    padding: 0 10px;
+  }
+  .new-update-employee-modal .modal-dialog {
+    width: 100%;
+    max-width: 95%;
+    margin: 0 auto;
+  }
+}
+@media ( max-width: 767px ) {
+  #update-employee-modal form.update-form.new {
+    display: block;
+  }
+  #update-employee-modal form.update-form.new >div:first-child,
+  #update-employee-modal form.update-form.new >div:last-child {
+    width: 100%;
+    margin: 0;
+  }
+  .emp-mobile-number-container >div:first-child {
+    width: 15%;
+  }
+  .emp-mobile-number-container >div:last-child {
+    width: 85%;
+  }
+}
+@media ( max-width: 650px ) {
+  .emp-mobile-number-container >div:first-child {
+    width: 35%;
+  }
+  .emp-mobile-number-container >div:last-child {
+    width: 65%;
+  }
+  .edit-employee-footer  {
+    margin: 30px 0 0;
+    padding: 0 10px;
+  }
+  .edit-employee-footer .cancel-employee-update-button,
+  .edit-employee-footer .replace-employee-update-button {
+    width: 100%;
+    margin: 0 0 10px;
+  }
+}
 
 
