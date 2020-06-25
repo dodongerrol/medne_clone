@@ -2727,6 +2727,8 @@ app.directive("employeeOverviewDirective", [
             scope.healthSpendingAccountTabIsShow = false;
           }
         }
+        
+        
 
         scope.inititalizeGeoCode = function () {
           $timeout(function () {
@@ -2762,6 +2764,25 @@ app.directive("employeeOverviewDirective", [
               scope.replace_emp_data.mobile_area_code = iti2.getSelectedCountryData().dialCode;
               scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
             });
+
+            var settings_emp_details = {
+              preferredCountries: [],
+              separateDialCode: true,
+              initialCountry: "SG",
+              autoPlaceholder: "off",
+              utilsScript: "../assets/hr-dashboard/js/utils.js",
+              onlyCountries: ["sg","my"],
+            }
+            
+            var input3 = document.querySelector("#phoneNum");
+            iti3 = intlTelInput(input3, settings_emp_details);
+
+            input3.addEventListener("countrychange", function () {
+              console.log(iti3.getSelectedCountryData());
+              scope.editEmpCountryCode = iti3.getSelectedCountryData().dialCode;
+              console.log(scope.editEmpCountryCode);
+            });
+
           }, 300);
 				}
 				

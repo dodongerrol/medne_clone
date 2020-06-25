@@ -10156,3 +10156,84 @@ span.dropdown-entitlement.disabled {
   }
 }
 
+#update-employee-modal form.update-form.new {
+  width: 100%;
+  display: flex;
+  padding: 0 40px;
+}
+#update-employee-modal form.update-form.new .form-group >div {
+  position: relative;
+}
+#update-employee-modal .form-group i {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  font-size: 15px;
+  color: #ccc;
+  z-index: 1;
+}
+#update-employee-modal .form-group input::placeholder {
+  font-style: italic;
+  font-size: 12px;
+  color: #979797;
+}
+#update-employee-modal form.update-form.new >div{
+  width: 50%;
+}
+#update-employee-modal form.update-form.new >div:first-child {
+  margin: 0 20px 0 0;
+}
+#update-employee-modal form.update-form.new >div:last-child {
+  margin: 0 0 0 20px;
+}
+
+.edit-employee-footer {
+  text-align: center;
+}
+.edit-employee-footer button {
+  height: 33px;
+  padding: 0;
+}
+.edit-employee-footer .cancel-employee-update-button {
+  width: 110px;
+  border: 1px solid #0392CF;
+  background-color: #fff;
+  color: #0392CF;
+  margin: 0 10px 0 0;
+}
+.edit-employee-footer .replace-employee-update-button {
+  width: 172px;
+}
+.update-form.new .edit-employee-modal-input {
+  border: 1px solid #BFBFBF;
+  border-radius: 4px;
+  padding: 6px;
+  background-color: #fff;
+}
+.update-form.new .edit-employee-modal-label {
+  font-size: 14px;
+  color: #2E4057;
+  font-family: "Helvetica Medium";
+}
+.emp-mobile-number-container {
+  display: flex;
+}
+.emp-mobile-number-container >div:first-child {
+  width: 28%;
+  margin: 0 10px 0 0;
+  font-size: 14px;
+}
+.emp-mobile-number-container >div:last-child {
+  width: 72%;
+}
+.emp-mobile-number-container .iti--separate-dial-code .iti__selected-flag {
+  background-color: #fff;
+}
+.emp-mobile-number-container .iti__arrow {
+  display: none;
+}
+.emp-mobile-number-container #phoneNum {
+  padding-left: 6px !important;
+}
+
+
