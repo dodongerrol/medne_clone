@@ -1247,7 +1247,7 @@ app.directive('benefitsTiersDirective', [
 												emp_ctr++;
 											}
 											while (emp_ctr != scope.table_dependents_ctr) {
-												html_tr += '<td></td><td></td><td></td><td></td><td></td>';
+												html_tr += '<td></td><td></td><td></td>';
 												emp_ctr++;
 											}
 											html_tr += '<td>' + value.employee.start_date + '</td></tr>';
