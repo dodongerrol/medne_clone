@@ -6389,29 +6389,46 @@ public function payCreditsNew( )
          $findUserID = $authSession->findUserID($getAccessToken->session_id);
          if($findUserID){
           $user_id = StringHelper::getUserId($findUserID);
-          $date = date('Y-m-d', strtotime($input['visit_date']));
-          $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
-          // return $spending;
-          $ids = StringHelper::getSubAccountsID($user_id);
-          // get pending back dates
-          $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
-          $balance = $spending['balance'] - $claim_amounts;
+          $user_active_plan_history = DB::table('user_plan_history')
+                                      ->where('user_id', $user_id)
+                                      ->orderBy('created_at', 'desc')
+                                      ->first();
+          
+          $customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_active_plan_history->customer_active_plan_id)->first();
+          if($customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && $input['spending_type'] == "wellness") {
+            $date = date('Y-m-d', strtotime($input['visit_date']));
+            $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+            // return $spending;
+            $ids = StringHelper::getSubAccountsID($user_id);
+            // get pending back dates
+            $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
+            $balance = $spending['balance'] - $claim_amounts;
 
-          $term_status = null;
-          if($spending['back_date'] == true) {
-            $term_status = "Last";
+            $term_status = null;
+            if($spending['back_date'] == true) {
+              $term_status = "Last";
+            } else {
+              $term_status = "Current";
+            }
+
+            $data = array(
+              'balance' => DecimalHelper::formatDecimal($balance), 
+              'term_status' => $term_status, 
+              'currency_type' => $spending['currency_type'],
+              'last_term' => $spending['back_date'],
+              'claim_amounts' => $claim_amounts
+            );
           } else {
-            $term_status = "Current";
+            $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+            $data = array(
+              'balance' => 99999999, 
+              'term_status' => 'Current', 
+              'currency_type' => $wallet->currency_type,
+              'last_term' => false,
+              'claim_amounts' => 0
+            );
           }
-
-          $data = array(
-            'balance' => DecimalHelper::formatDecimal($balance), 
-            'term_status' => $term_status, 
-            'currency_type' => $spending['currency_type'],
-            'last_term' => $spending['back_date'],
-            'claim_amounts' => $claim_amounts
-          );
-
+          
           $returnObject->status = true;
           $returnObject->data = $data;
           return Response::json($returnObject);
@@ -6484,6 +6501,11 @@ public function payCreditsNew( )
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
           $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 
+          $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
+
           if($type == "spending") {
             $returnObject->status = true;
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
@@ -6526,6 +6548,20 @@ public function payCreditsNew( )
                return Response::json($returnObject);
              }
 
+            // check visit limit
+
+            if($customer_active_plan->account_type == "enterprise_plan")	{
+              $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+        
+              if($limit <= 0) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'exceed_limit';
+                $returnObject->head_message = '14/14 visits used';
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                return Response::json($returnObject);
+              }
+            }
+
             $returnObject->status = TRUE;
             $returnObject->status_type = 'with_balance';
             $returnObject->message = 'You have access this feature at the moment.';
@@ -6562,6 +6598,18 @@ public function payCreditsNew( )
               $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
               $returnObject->sub_message = 'Kindly contact your HR';
               return Response::json($returnObject);
+            }
+
+            if($customer_active_plan->account_type == "enterprise_plan")	{
+              $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+        
+              if($limit <= 0) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'exceed_limit';
+                $returnObject->head_message = '14/14 visits used';
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                return Response::json($returnObject);
+              }
             }
 
             $returnObject->status = TRUE;
