@@ -335,6 +335,18 @@ class CustomerHelper
 				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Post-Medical-Pending-Wellness.xlsx',
 				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Post-Medical-Pending-Wellness.xlsx'
 			);
+		} else if($status['account_type'] == "enterprise_plan" && $status['wellness_enabled'] == true) {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Enterprise-Wellness.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Enterprise-Wellness.xlsx'
+			);
+		} else if($status['account_type'] == "enterprise_plan" && $status['wellness_enabled'] == false) {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/employee/Employee-Enrollment-Listing-Enterprise.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v3/depedents/Employees-and-Dependents-Enterprise.xlsx'
+			);
 		} else {
 			return array('status' => false);
 		}
