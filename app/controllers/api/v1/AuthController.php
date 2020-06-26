@@ -6503,6 +6503,11 @@ public function payCreditsNew( )
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
           $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 
+          $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
+
           if($type == "spending") {
             $returnObject->status = true;
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
@@ -6545,6 +6550,20 @@ public function payCreditsNew( )
                return Response::json($returnObject);
              }
 
+            // check visit limit
+
+            if($customer_active_plan->account_type == "enterprise_plan")	{
+              $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+        
+              if($limit <= 0) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'exceed_limit';
+                $returnObject->head_message = '14/14 visits used';
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                return Response::json($returnObject);
+              }
+            }
+
             $returnObject->status = TRUE;
             $returnObject->status_type = 'with_balance';
             $returnObject->message = 'You have access this feature at the moment.';
@@ -6581,6 +6600,18 @@ public function payCreditsNew( )
               $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
               $returnObject->sub_message = 'Kindly contact your HR';
               return Response::json($returnObject);
+            }
+
+            if($customer_active_plan->account_type == "enterprise_plan")	{
+              $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+        
+              if($limit <= 0) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'exceed_limit';
+                $returnObject->head_message = '14/14 visits used';
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                return Response::json($returnObject);
+              }
             }
 
             $returnObject->status = TRUE;

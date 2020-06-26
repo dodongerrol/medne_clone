@@ -742,16 +742,20 @@ class MemberHelper
 
 		if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan")	{
 			// create block transaction
-			$customer_id = \PlanHelper::getCustomerId($member_id);
-			$data = array(
-				'member_id'		=> $member_id,
-				'customer_id'	=> $customer_id,
-				'status'		=> 1,
-				'type'			=> 'all',
-				'created_at'	=> date('Y-m-d H:i:s'),
-				'updated_at'	=> date('Y-m-d H:i:s')
-			);
-			DB::table('member_block_transaction')->insert($data);
+			$customer_id = PlanHelper::getCustomerId($member_id);
+			$payment_status = CustomerHelper::checkCustomerEnterprisePayment($customer_id);
+
+			if($payment_status == false)	{
+				$data = array(
+					'member_id'		=> $member_id,
+					'customer_id'	=> $customer_id,
+					'status'		=> 1,
+					'type'			=> 'all',
+					'created_at'	=> date('Y-m-d H:i:s'),
+					'updated_at'	=> date('Y-m-d H:i:s')
+				);
+				DB::table('member_block_transaction')->insert($data);
+			}
 		}
 	}
 	
