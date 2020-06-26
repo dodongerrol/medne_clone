@@ -329,6 +329,69 @@
 					</div>
 				</div>
 
+				<div ng-if="selectedEmployee.account_type == 'enterprise_plan' " class="visit-spending-wrapper">
+					<div>
+						<h4><strong class="font-helvetica-medium">Visits</strong></h4>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Total</strong>
+								<span>
+									<!-- <span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>  -->
+									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Utilised</strong>
+								<span>
+									<!-- <span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>  -->
+									<span ng-bind="selectedEmployee.spending_account.medical.utilised">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Balance</strong>
+								<span>
+									<!-- <span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>  -->
+									<span ng-bind="selectedEmployee.spending_account.medical.balance">1,000.00</span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div>
+						<h4><strong class="font-helvetica-medium">Spendings</strong></h4>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Total</strong>
+								<span>
+									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
+									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Panel</strong>
+								<span>
+									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
+									<span ng-bind="selectedEmployee.spending_account.medical.in_network">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Non-Panel</strong>
+								<span>
+									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
+									<span ng-bind="selectedEmployee.spending_account.medical.out_network">1,000.00</span>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div class="medical-spending-account" ng-if="selectedEmployee.medical_wallet">
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-wrapper">
@@ -489,7 +552,8 @@
 									<strong class="font-helvetica-medium">Member ID</strong>
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
-								<div ng-if="selectedEmployee.medical_wallet" class="entitlementWithIcon">
+								<!-- <div ng-if="selectedEmployee.medical_wallet || selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon"> -->
+									<div ng-if="selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 									<!-- <strong class="font-helvetica-medium">Medical Entitlement</strong> -->
 									<span>
