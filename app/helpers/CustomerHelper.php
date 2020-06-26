@@ -515,5 +515,17 @@ class CustomerHelper
 			}
 		}
 	}
+
+	public static function checkCustomerEnterprisePayment($customer_id)
+	{
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$customer_active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+
+		if($customer_active_plan->account_type == "enterprise_plan" && $customer_active_plan->paid == "false")	{
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 ?>
