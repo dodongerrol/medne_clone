@@ -3161,21 +3161,7 @@ class BenefitsDashboardController extends \BaseController {
 		$filter = "current_term";
 		foreach ($users as $key => $user) {
 			$ids = StringHelper::getSubAccountsID($user->UserID);
-
-			// $user_spending_dates = MemberHelper::getMemberCreditReset($user->UserID, $filter, 'medical');
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
-
-			// if($user_spending_dates) {
-			// 	$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// 	$wellness_credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// } else {
-			// 	$medical_credit_data['allocation'] = 0;
-			// 	$medical_credit_data['get_allocation_spent'] = 0;
-			//  	$medical_credit_data['balance'] = 0;
-			//  	$wellness_credit_data['allocation'] = 0;
-			//  	$wellness_credit_data['get_allocation_spent'] = 0;
-			// }
-
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 			// get medical entitlement
@@ -3332,15 +3318,30 @@ class BenefitsDashboardController extends \BaseController {
 				->where('status', 0)
 				->sum('claim_amount');
 
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
+
 				$medical = array(
 					'entitlement' => $wallet_entitlement->medical_entitlement,
 					'credits_allocation' => $medical_credit_data['allocation'],
 					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+					'visits'			=> $user_active_plan_history->total_visit_limit,
 					'balance'			=> $user_active_plan_history->total_visit_created,
 					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
 					'in_network' 	=> $medical_credit_data['in_network'],
 					'out_network' 	=> $medical_credit_data['out_network']
+				);
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 				);
 			} else {
 				// get pending allocation for medical
