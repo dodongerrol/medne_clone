@@ -134,6 +134,7 @@ app.directive('dashboardDirective', [
 								scope.spendingAccountType = 1;
 							} else {
 								scope.spendingAccountType = 0;
+								scope.companySpendingTotalDue();
 							}
 						});
 				}
@@ -273,7 +274,7 @@ app.directive('dashboardDirective', [
 				scope.companyDependents();
 				scope.getCompanyIntroMessage();
 				scope.companyPlanTotalDue();
-				scope.companySpendingTotalDue();
+				
 				scope.companyAccountType();
 			}
 		}
