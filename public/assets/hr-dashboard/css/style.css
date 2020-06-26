@@ -6071,7 +6071,8 @@ ul.typeahead li a.dropdown-item {
 }
 
 .plan-information,
-.medical-spending-account {
+.medical-spending-account,
+.visit-spending-wrapper {
   padding: 20px 50px;
 }
 
@@ -9351,6 +9352,8 @@ span.dropdown-entitlement.disabled {
   top: 5px;
   right: 0;
 }
-
+.visit-spending-wrapper h4 {
+  margin: 10px 0 20px 0;
+}
 
 
