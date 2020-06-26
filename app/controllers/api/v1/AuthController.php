@@ -6421,7 +6421,7 @@ public function payCreditsNew( )
           } else {
             $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
             $data = array(
-              'balance' => 0, 
+              'balance' => 99999, 
               'term_status' => 'Current', 
               'currency_type' => $wallet->currency_type,
               'last_term' => false,
