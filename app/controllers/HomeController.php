@@ -369,6 +369,13 @@ public function oldhrDashboardLogin( ) {
 public function hrDashboardLogin( ) {
   return View::make('hr_dashboard.login-hr');
 }
+public function getCompanyActivationView( ) {
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new \DateTime();
+  return View::make('hr_dashboard.activation-link', $data);
+}
 
 public function hrForgotPassword( ) {
   return View::make('hr_dashboard.forgot-password-hr');
@@ -1459,6 +1466,25 @@ public function eClaimHome( )
   $data['server'] = $protocol.$hostName;
   $data['date'] = new DateTime;
   return View::make('Eclaim.index', $data);
+}
+
+public function getSALandingPageView( )
+{
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new DateTime;
+  $data['path'] = app_path();
+  return View::make('spendingAccountLandingPage.index', $data);
+}
+public function getEnquiryFormView( )
+{
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new DateTime;
+  $data['path'] = app_path();
+  return View::make('spendingAccountLandingPage.enquiryform', $data);
 }
 
 

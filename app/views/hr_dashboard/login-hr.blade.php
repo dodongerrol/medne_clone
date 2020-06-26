@@ -90,8 +90,8 @@
 			<form ng-if="true" class="med-form" ng-submit="loginHr()">
 				<div ng-if="true" class="form-group">
 					<label for="email">Email</label>
-					<input type="email" name="email" class="form-control med-input" placeholder="Enter Email Address"
-						ng-model="login_details.email" required>
+					<input type="email" name="email" class="form-control med-input" ng-class="{'not-activated': login_details.status == 'not activated'}" placeholder="Enter Email Address"
+						ng-model="login_details.email" ng-change="enableContinue(login_details.email)" required>
 				</div>
 				<div ng-if="false" class="form-group">
 					<label for="password">Password</label>
@@ -105,7 +105,7 @@
 					</label>
 				</div>
 				<div class="form-group">
-					<button ng-if="true" type="submit" class="btn btn-info btn-block med-button" id="login-btn">Continue</button>
+					<button ng-if="true" type="submit" class="btn btn-info btn-block med-button" ng-class="{'disabled': login_details.status == false, 'not-activated': login_details.status == 'not activated' }" id="login-btn" ng-disabled="login_details.status == false || login_details.status == 'not activated'">Continue</button>
 					<button ng-if='false' type="submit" class="btn btn-info btn-block med-button" id="login-btn">Sign in</button>
 				</div>
 				<span ng-if="ng_fail">*Please check your login credentials</span>

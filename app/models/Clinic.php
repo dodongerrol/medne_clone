@@ -208,15 +208,10 @@ class Clinic extends Eloquent implements UserInterface, RemindableInterface {
                               sin( radians( lat ) ) )
                             ) AS distance"))
                 ->where("clinic.Active","=",1)    
-                ->where("clinic_types.Active","=",1)  
-                // ->where("clinic_types.ClinicTypeID","=",$getType)                
+                ->where("clinic_types.Active","=",1)                
                 ->whereIn("clinic_types.ClinicTypeID", $clinic_ids)  
                 ->having("distance", "<", $radius)
-                // ->orderBy("clinic.position","ASC")
                 ->orderBy("distance","ASC")
-                // ->skip($offset)
-                // ->take(10)
-                // ->Simplepaginate(10);
                 ->get();
 
             $clinicDataReal = DB::table('clinic')
@@ -231,15 +226,12 @@ class Clinic extends Eloquent implements UserInterface, RemindableInterface {
                               sin( radians( lat ) ) )
                             ) AS distance"))
                 ->where("clinic.Active","=",1)    
-                ->where("clinic_types.Active","=",1)  
-                // ->where("clinic_types.ClinicTypeID","=",$getType)                
+                ->where("clinic_types.Active","=",1)                
                 ->whereIn("clinic_types.ClinicTypeID", $clinic_ids)  
                 ->having("distance", "<", $radius)
-                // ->orderBy("clinic.position","ASC")
                 ->orderBy("distance","ASC")
                 ->skip($offset)
                 ->take(10)
-                // ->Simplepaginate(10);
                 ->get();
 
             $clinicDataReal = ClinicHelper::removeBlockClinicsFromPaginate($clinicDataReal);
