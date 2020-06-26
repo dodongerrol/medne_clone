@@ -1391,7 +1391,7 @@ return Response::json($returnObject);
                 ->first();
 
                 if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-                  $returnObject->data = ['visits' => $user_plan_history->total_visit_limit, 'account_type' => $customer_active_plan->account_type];
+                  $returnObject->data = ['visits' => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created, 'account_type' => $customer_active_plan->account_type];
                 } else {
                   if($spending_type == 'medical') {
                     $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
