@@ -2227,6 +2227,9 @@ class BenefitsDashboardController extends \BaseController {
 				'account_status'		=> (int)$user->Active == 1 ? true : false,
 				'plan_type'					=> $plan_type,
 				'wallet_enabled' 		=> (int)$user->wallet == 1 ? true : false,
+				'total_visit_limit'          => $user_plan_history->total_visit_limit,
+            	'total_visit_created'       => $user_plan_history->total_visit_created,
+				'total_balance_visit'       => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created,
 				'medical_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->medical_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->medical_spending_end_date)),
 				'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
 			);
