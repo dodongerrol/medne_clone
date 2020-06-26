@@ -1333,7 +1333,7 @@ return Response::json($returnObject);
               'account_type'              => $customer_active_plan->account_type,
               'total_visit'               => $total_visit_limit,
               'total_utilised'            => $total_visit_created,
-              'total_visit_balance'       => $total_visit_limit
+              'total_visit_balance'       => $total_visit_balance
             );
 
             $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
