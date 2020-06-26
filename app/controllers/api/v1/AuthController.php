@@ -1297,22 +1297,22 @@ return Response::json($returnObject);
             // }
             
             $total_visit_limit = 0;
-            $total_vist_created = 0;
+            $total_visit_created = 0;
             $total_visit_balance = 0;
 
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
               $currency_symbol = "";
-              $$balance = number_format($balance, 2);
+              $balance = number_format($balance, 2);
               if($filter == "current_term") {
                 $total_visit_limit = $user_plan_history->total_visit_limit;
-                $total_vist_created = $user_plan_history->total_visit_created;
-                $total_visit_balance = $total_visit_limit - $total_vist_created;
+                $total_visit_created = $user_plan_history->total_visit_created;
+                $total_visit_balance = $total_visit_limit - $total_visit_created;
               } else {
                 $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
                 if($plan_history) {
                   $total_visit_limit = $plan_history->total_visit_limit;
-                  $total_vist_created = $plan_history->total_visit_created;
-                  $total_visit_balance = $total_visit_limit - $total_vist_created;
+                  $total_visit_created = $plan_history->total_visit_created;
+                  $total_visit_balance = $total_visit_limit - $total_visit_created;
                 }
               }
               
