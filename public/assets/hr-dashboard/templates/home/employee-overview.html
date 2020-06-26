@@ -392,7 +392,7 @@
 					</div>
 				</div>
 
-				<div class="medical-spending-account" ng-if="selectedEmployee.medical_wallet">
+				<div ng-if="selectedEmployee.account_type != 'enterprise_plan'" class="medical-spending-account" ng-if="selectedEmployee.medical_wallet">
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
