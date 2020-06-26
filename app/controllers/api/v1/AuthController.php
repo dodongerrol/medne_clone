@@ -1332,7 +1332,7 @@ return Response::json($returnObject);
               'currency_symbol'           => $currency_symbol,
               'account_type'              => $customer_active_plan->account_type,
               'total_visit'               => $total_visit_limit,
-              'total_utilised'            => $total_vist_created,
+              'total_utilised'            => $total_visit_created,
               'total_visit_balance'       => $total_visit_limit
             );
 
