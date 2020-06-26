@@ -1519,7 +1519,7 @@ class MemberHelper
 		$plan = DB::table('user_plan_type')->where('user_id', $id)->orderBy('created_at', 'desc')->first();
 
 		if($calculate) {
-			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
+			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
 			$days = $diff->format('%a') + 1;
 			
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
@@ -1661,7 +1661,7 @@ class MemberHelper
 		}
 
 		if($calculate) {
-			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
+			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
 			$days = $diff->format('%a') + 1;
 
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;

@@ -163,7 +163,18 @@ app.directive('eclaimSubmitDirective', [
 						.then(function(response){
 							scope.hideLoading();
 							scope.checkEclaimVisit_data = response.data;
-							scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance.replace(',','') ).toFixed(2) );
+							// scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance.replace(',','') ).toFixed(2) );
+
+							if(jQuery.type( scope.checkEclaimVisit_data.balance ) == 'string'){
+								scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance.replace(',','') ).toFixed(2) );
+							  }else{
+								scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance ).toFixed(2) );
+							  }
+							  if(jQuery.type( scope.eclaim.service.cap_amount ) == 'string'){
+								scope.eclaim.service.cap_amount = Number( parseFloat( scope.eclaim.service.cap_amount.replace(',','') ).toFixed(2) );
+							  }else{
+								scope.eclaim.service.cap_amount = Number( parseFloat( scope.eclaim.service.cap_amount ).toFixed(2) );
+							  }
 							scope.eclaim.claim_amount = Number( parseFloat( scope.eclaim.claim_amount ).toFixed(2) );
 							console.log('scope.checkEclaimVisit_data.balance', scope.checkEclaimVisit_data.balance);
 							console.log('scope.eclaim.claim_amount', scope.eclaim.claim_amount);
@@ -175,7 +186,11 @@ app.directive('eclaimSubmitDirective', [
 									scope.eclaim.new_claim_amount = scope.checkEclaimVisit_data.balance;
 								}
 							} else {
-								scope.eclaim.new_claim_amount = scope.eclaim.claim_amount;
+								if(scope.eclaim.service.cap_amount > 0 && scope.eclaim.service.cap_amount < scope.eclaim.claim_amount){
+									scope.eclaim.new_claim_amount = scope.eclaim.service.cap_amount;
+								}else{
+									scope.eclaim.new_claim_amount = scope.eclaim.claim_amount;
+								}
 							}
 
 							if( scope.checkEclaimVisit_data.last_term == true) {
