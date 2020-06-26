@@ -6391,29 +6391,46 @@ public function payCreditsNew( )
          $findUserID = $authSession->findUserID($getAccessToken->session_id);
          if($findUserID){
           $user_id = StringHelper::getUserId($findUserID);
-          $date = date('Y-m-d', strtotime($input['visit_date']));
-          $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
-          // return $spending;
-          $ids = StringHelper::getSubAccountsID($user_id);
-          // get pending back dates
-          $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
-          $balance = $spending['balance'] - $claim_amounts;
+          $user_active_plan_history = DB::table('user_plan_history')
+                                      ->where('user_id', $user_id)
+                                      ->orderBy('created_at', 'desc')
+                                      ->first();
+          
+          $customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_active_plan_history->customer_active_plan_id)->first();
+          if($customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && $input['spending_type'] == "wellness") {
+            $date = date('Y-m-d', strtotime($input['visit_date']));
+            $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
+            // return $spending;
+            $ids = StringHelper::getSubAccountsID($user_id);
+            // get pending back dates
+            $claim_amounts = EclaimHelper::checkPendingEclaimsByVisitDate($ids, strtolower($input['spending_type']), $date);
+            $balance = $spending['balance'] - $claim_amounts;
 
-          $term_status = null;
-          if($spending['back_date'] == true) {
-            $term_status = "Last";
+            $term_status = null;
+            if($spending['back_date'] == true) {
+              $term_status = "Last";
+            } else {
+              $term_status = "Current";
+            }
+
+            $data = array(
+              'balance' => DecimalHelper::formatDecimal($balance), 
+              'term_status' => $term_status, 
+              'currency_type' => $spending['currency_type'],
+              'last_term' => $spending['back_date'],
+              'claim_amounts' => $claim_amounts
+            );
           } else {
-            $term_status = "Current";
+            $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+            $data = array(
+              'balance' => 99999999, 
+              'term_status' => 'Current', 
+              'currency_type' => $wallet->currency_type,
+              'last_term' => false,
+              'claim_amounts' => 0
+            );
           }
-
-          $data = array(
-            'balance' => DecimalHelper::formatDecimal($balance), 
-            'term_status' => $term_status, 
-            'currency_type' => $spending['currency_type'],
-            'last_term' => $spending['back_date'],
-            'claim_amounts' => $claim_amounts
-          );
-
+          
           $returnObject->status = true;
           $returnObject->data = $data;
           return Response::json($returnObject);

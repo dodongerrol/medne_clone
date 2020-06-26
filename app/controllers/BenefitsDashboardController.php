@@ -1961,11 +1961,11 @@ class BenefitsDashboardController extends \BaseController {
 
 			$get_employee_plan = DB::table('user_plan_type')->where('user_id', $user->UserID)->orderBy('created_at', 'desc')->first();
 			// check if user has replace property
-			$user_active_plan_history = DB::table('user_plan_history')
-			->where('user_id', $user->UserID)
-			// ->where('type', 'started')
-			->orderBy('created_at', 'desc')
-			->first();
+			// $user_active_plan_history = DB::table('user_plan_history')
+			// ->where('user_id', $user->UserID)
+			// // ->where('type', 'started')
+			// ->orderBy('created_at', 'desc')
+			// ->first();
 			$plan_extension = false;
 			$deleted = false;
 			$deletion_text = null;
@@ -2108,6 +2108,7 @@ class BenefitsDashboardController extends \BaseController {
 					'credits_allocation' => $medical_credit_data['allocation'],
 					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+					'visits'			=> $user_active_plan_history->total_visit_limit,
 					'balance'			=> $user_active_plan_history->total_visit_created,
 					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
 					'in_network' 	=> $medical_credit_data['in_network'],
