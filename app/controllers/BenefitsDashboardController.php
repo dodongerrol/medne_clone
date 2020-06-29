@@ -3148,18 +3148,6 @@ class BenefitsDashboardController extends \BaseController {
 
 			// $user_spending_dates = MemberHelper::getMemberCreditReset($user->UserID, $filter, 'medical');
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
-
-			// if($user_spending_dates) {
-			// 	$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// 	$wellness_credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// } else {
-			// 	$medical_credit_data['allocation'] = 0;
-			// 	$medical_credit_data['get_allocation_spent'] = 0;
-			//  	$medical_credit_data['balance'] = 0;
-			//  	$wellness_credit_data['allocation'] = 0;
-			//  	$wellness_credit_data['get_allocation_spent'] = 0;
-			// }
-
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 			// get medical entitlement
