@@ -2422,6 +2422,7 @@ class TransactionController extends BaseController {
 		$clinic = DB::table('clinic')->where('ClinicID', $clinic_id)->first();
 		$email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $clinic_id)->first();
 		$details = array(
+			'clinic_id'		=> $clinic_id,
 			'clinic_name'	=> ucwords($clinic->Name),
 			'address'			=> ucwords($clinic->Address),
 			'city'				=> ucwords($clinic->City),
@@ -2464,27 +2465,6 @@ class TransactionController extends BaseController {
 				} else {
 					$table_wallet_history = 'wellness_wallet_history';
 				}
-
-		        // if((int)$trans->lite_plan_enabled == 1) {
-		        //     $logs_lite_plan = DB::table($table_wallet_history)
-		        //     ->where('logs', 'deducted_from_mobile_payment')
-		        //     ->where('lite_plan_enabled', 1)
-		        //     ->where('id', $trans->transaction_id)
-		        //     ->first();
-
-		        //     if($logs_lite_plan && floatval($trans->credit_cost) > 0 && (int)$trans->lite_plan_use_credits == 0) {
-		        //         $mednefits_credits += floatval($trans->co_paid_amount);
-		        //     } else if($logs_lite_plan && floatval($trans->procedure_cost) >= 0 && (int)$trans->lite_plan_use_credits == 1){
-		        //         $mednefits_credits += floatval($trans->co_paid_amount);
-		        //     }
-		        // }
-
-
-				if((int)$trans->paid == 1 && (int)$trans->deleted == 0) {
-					$mednefits_total_fee += $trans->credit_cost;
-					$transaction_size++;
-				}
-
 
 				if($trans->co_paid_status == 0) {
 					if(strrpos($trans->clinic_discount, '%')) {
@@ -2603,6 +2583,11 @@ class TransactionController extends BaseController {
 					$trans->currency_type = "sgd";
 				}
 
+				if((int)$trans->paid == 1 && (int)$trans->deleted == 0) {
+					$mednefits_total_fee += $mednefits_credits;
+					$transaction_size++;
+				}
+
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'ClinicID'							=> $trans->ClinicID,
@@ -2633,9 +2618,8 @@ class TransactionController extends BaseController {
 			}
 		}
 
-
 		$data = array(
-			'currency_type'				=> "SGD",
+			'currency_type'				=> $clinic->currency_type == "myr" ? "MYR" : "SGD",
 			'transactions' 				=> $format,
 			'total_transactions'	=> $transaction_size,
 			'mednefits_wallet'		=> number_format($mednefits_total_fee, 2),
