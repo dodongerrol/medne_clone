@@ -1475,7 +1475,8 @@ class PlanHelper {
 			'account_already_update'	=> 1,
 			'communication_type'	=> $communication_type,
 			'group_number'			=> $data_enrollee->group_number,
-			'currency_type'		=> $customer_data->currency_type
+			'currency_type'		=> $customer_data->currency_type,
+			'member_activated'	=> 0
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
