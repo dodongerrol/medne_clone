@@ -4794,7 +4794,8 @@ public function getHrActivity( )
 	$total_allocation = 0;
 	$total_visit_limit  = 0;
 
-  // get all hr employees, spouse and dependents
+	
+  	// get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
 	$corporate_members = DB::table('corporate_members')
@@ -4843,7 +4844,7 @@ public function getHrActivity( )
 			}
 		}
 
-    // get e claim
+    	// get e claim
 		$e_claim_result = DB::table('e_claim')
 		->whereIn('user_id', $ids)
 		->where('spending_type', $spending_type)
@@ -4863,7 +4864,7 @@ public function getHrActivity( )
 		->orderBy('date_of_transaction', 'desc')
 		->get();
 
-    // in-network transactions
+    	// in-network transactions
 		foreach ($transactions as $key => $trans) {
 			$consultation_cash = false;
 			$consultation_credits = false;
@@ -5297,7 +5298,7 @@ public function getHrActivity( )
 
 		}
 
-    // e-claim transactions
+    	// e-claim transactions
 		foreach($e_claim_result as $key => $res) {
 			if($res->status == 0) {
 				$status_text = 'Pending';
@@ -5424,11 +5425,24 @@ public function getHrActivity( )
 	}
 
 	$total_spent = $e_claim_spent + $in_network_spent + $total_lite_plan_consultation;
-  // sort in-network transaction
+  	// sort in-network transaction
 	usort($transaction_details, function($a, $b) {
 		return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
 	});
 
+	$plan = DB::table('customer_plan')->where('customer_buy_start_id', $session->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+
+	$total_occupied_seats = 0;
+	$total_average_visit = 0;
+	if($plan->account_type == "enterprise_plan")	{
+		// get user by started date
+		$total_occupied_seats = \MemberHelper::getMemberByDateStarted($start, $end, $account->corporate_id, $plan->customer_plan_id);
+	}
+	
+	if($total_visit_created > 0) {
+		$total_average_visit = $total_visit_created / $total_occupied_seats;
+	}
+	
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
 		'total_balance'			=> $total_allocation - $total_spent,
@@ -5451,7 +5465,8 @@ public function getHrActivity( )
 		'lite_plan'     => $lite_plan,
 		'total_visit_limit'	=> $total_visit_limit,
 		'total_visit_created' => $total_visit_created,
-		'total_balance_visit' => $total_visit_limit - $total_visit_created
+		'total_balance_visit' => $total_visit_limit - $total_visit_created,
+		'total_average_visit'	=> round($total_average_visit, 2)
 
 	);
 
