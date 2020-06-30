@@ -1762,5 +1762,28 @@ class MemberHelper
 		$info = Paginator::make($slice, count($db), $perPage);
 		return $info;
 	}
+	
+	public static function getMemberByDateStarted($start, $end, $corporate_id, $customer_plan_id)
+	{
+		// employees
+		$members = DB::table('user_plan_history')
+						->join('corporate_members', 'corporate_members.user_id', '=', 'user_plan_history.user_id')
+						->where('corporate_members.corporate_id', $corporate_id)
+						->where('user_plan_history.type', 'started')
+						->where('user_plan_history.created_at', '>=', $start)
+						->where('user_plan_history.created_at', '<=', $end)
+						->count();
+
+		// dependents
+		$dependents = DB::table('dependent_plan_history')
+						->join('dependent_plans', 'dependent_plans.dependent_plan_id', '=', 'dependent_plan_history.dependent_plan_id')
+						->where('dependent_plan_history.type', 'started')
+						->where('dependent_plans.customer_plan_id', $customer_plan_id)
+						->where('dependent_plan_history.created_at', '>=', $start)
+						->where('dependent_plan_history.created_at', '<=', $end)
+						->count();
+		
+		return $members + $dependents;
+	}
 }
 ?>
