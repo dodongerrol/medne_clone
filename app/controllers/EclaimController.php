@@ -190,7 +190,7 @@ class EclaimController extends \BaseController {
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
 			if($limit <= 0) {
-				return ['status' => false, 'message' => 'Maximum of 14 visit already reach.'];
+				return ['status' => false, 'message' => 'Maximum of 14 visits already reached.'];
 			}
 
 			if(trim($input['service']) == "Accident & Emergency") {

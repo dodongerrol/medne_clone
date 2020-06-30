@@ -5409,7 +5409,7 @@ public function createEclaim( )
 
     if($limit <= 0) {
       $returnObject->status = FALSE;
-      $returnObject->message = 'Maximum of 14 visit already reach.';
+      $returnObject->message = 'Maximum of 14 visits already reached.';
       return Response::json($returnObject);
     }
 
