@@ -316,10 +316,11 @@
 					if( num == 3 ){
 						// list.showReasonInput = true;
 						// list.showRemarksInput = false;
-						scope.toggleLoading();
+						// scope.toggleLoading();
 						var data = {
 							e_claim_id : list.trans_id
 						}
+						scope.showLoading();
 						hrActivity.revertEclaim( data )
 							.then(function(response){
 								console.log(response);
@@ -328,16 +329,17 @@
 									list.status_text = 'Pending';
 									list.res = true;
 									list.message = response.data.message;
+									scope.applyDates();
 								}else{
 									swal( 'Oops!', response.data.message, 'error' );
 								}
-								scope.toggleLoading();
+								scope.hideLoading();
 							});
 					}
 				}
 
 				scope.updateStatusToApprove = function( list, num ){
-					scope.toggleLoading();
+					scope.showLoading();
 					var data = {
 						e_claim_id: list.transaction_id,
 						status: num,
@@ -350,7 +352,7 @@
 					hrActivity.updateEclaimStatus( data )
 					.then(function(response){
 						console.log(response);
-						scope.toggleLoading();
+						// scope.toggleLoading();
 						if( response.data.status == true ){
 							console.log(list);
 							list.status = num;
@@ -371,6 +373,8 @@
 								list.res = false;
 								list.message = response.data.message;
 							}
+							
+							scope.applyDates();
 						} else {
 							alert(response.data.message);
 						}
@@ -379,7 +383,7 @@
 
 				scope.updateStatusToReject = function( list, num ){
 					if( list.reason != "" ){
-						scope.toggleLoading();
+						scope.showLoading();
 						var data = {
 							e_claim_id: list.transaction_id,
 							status: num,
@@ -388,7 +392,7 @@
 
 						hrActivity.updateEclaimStatus( data )
 						.then(function(response){
-							scope.toggleLoading();
+							// scope.toggleLoading();
 							if( response.data.status == true ){
 								console.log(list);
 								list.status = num;
@@ -409,6 +413,7 @@
 									list.res = false;
 									list.message = response.data.message;
 								}
+								scope.applyDates();
 							} else {
 								swal('Oops!', response.data.message, 'error')
 							}
@@ -524,7 +529,7 @@
 				}
 
 				scope.searchActivity = function( data ) {
-					scope.toggleLoading();
+					scope.showLoading();
 					scope.togglePointerEvents();
 					$(".searchEclaimLoader").show();
 					$(".searchEclaimLoader2").show();
@@ -549,7 +554,7 @@
 					hrActivity.getEclaimActivity(data)
 					.then(function(response){
 						console.log(response);
-						scope.toggleLoading();
+						scope.hideLoading();
 						scope.activity = {};
 						scope.activity = response.data.data;
 						console.log(scope.activity);
