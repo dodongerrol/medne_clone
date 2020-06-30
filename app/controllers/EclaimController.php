@@ -5466,7 +5466,7 @@ public function getHrActivity( )
 		'total_visit_limit'	=> $total_visit_limit,
 		'total_visit_created' => $total_visit_created,
 		'total_balance_visit' => $total_visit_limit - $total_visit_created,
-		'total_average_visit'	=> $total_average_visit
+		'total_average_visit'	=> round($total_average_visit, 2)
 
 	);
 
