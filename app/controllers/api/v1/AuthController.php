@@ -6525,15 +6525,15 @@ public function payCreditsNew( )
               $returnObject->status = FALSE;
               $returnObject->status_type = 'zero_balance';
               $returnObject->head_message = 'Registration on Hold';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-              $returnObject->sub_message = '';
+              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+              $returnObject->sub_message = 'Kindly contact your HR for more details.';
 
               if($current_balance <= 0) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'zero_balance';
                 $returnObject->head_message = 'Registration on Hold';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-                $returnObject->sub_message = '';
+                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+                $returnObject->sub_message = 'Kindly contact your HR for more details.';
                 return Response::json($returnObject);
               }
             }
@@ -6546,7 +6546,7 @@ public function payCreditsNew( )
                $returnObject->status_type = 'registration_hold';
                $returnObject->head_message = 'Registration On Hold';
                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-               $returnObject->sub_message = 'Kindly contact your HR';
+               $returnObject->sub_message = '';
                return Response::json($returnObject);
              }
 
@@ -6560,6 +6560,7 @@ public function payCreditsNew( )
                 $returnObject->status_type = 'exceed_limit';
                 $returnObject->head_message = '14/14 visits used';
                 $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
             }
@@ -6567,6 +6568,7 @@ public function payCreditsNew( )
             $returnObject->status = TRUE;
             $returnObject->status_type = 'with_balance';
             $returnObject->message = 'You have access this feature at the moment.';
+            $returnObject->sub_message = '';
             return Response::json($returnObject);
           } else {
 
@@ -6574,8 +6576,8 @@ public function payCreditsNew( )
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
               $returnObject->head_message = 'E-Claim Unavailable';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-              $returnObject->sub_message = '';
+              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+              $returnObject->sub_message = 'Kindly contact your HR for more details.';
               return Response::json($returnObject);
             }
 
@@ -6587,6 +6589,7 @@ public function payCreditsNew( )
               $returnObject->status_type = 'without_e_claim';
               $returnObject->head_message = 'E-Claim Disabled';
               $returnObject->message = 'The E-Claim function has been disabled for your company.';
+              $returnObject->sub_message = 'Kindly contact your HR for more details.';
               return Response::json($returnObject);
             }
 
@@ -6610,6 +6613,7 @@ public function payCreditsNew( )
                 $returnObject->status_type = 'exceed_limit';
                 $returnObject->head_message = '14/14 visits used';
                 $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
             }
