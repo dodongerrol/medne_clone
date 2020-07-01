@@ -5543,14 +5543,24 @@ public function searchEmployeeActivity( )
 	$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
 	if($spending_type == "medical") {
 		$member_spending_dates_medical = MemberHelper::getMemberCreditReset($input['user_id'], $filter, 'medical');
-		$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
-		$total_allocation += $credit_data['allocation'];
+		if($member_spending_dates_medical) {
+			$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+			$total_allocation += $credit_data['allocation'];
+		} else {
+			$total_allocation += 0;
+		}
+		
 	} else {
 		$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($input['user_id'], $filter, 'wellness');
-		$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
-		$total_allocation += $credit_data['allocation'];
+		if($member_spending_dates_wellness) {
+			$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+			$total_allocation += $credit_data['allocation'];
+		} else {
+			$total_allocation += 0;
+		}
+		
 	}
-	// return $member_spending_dates_wellness;
+	
 	$spending_end_date = PlanHelper::endDate($input['end']);
 	$ids = StringHelper::getSubAccountsID($input['user_id']);
 
