@@ -2611,6 +2611,7 @@ app.directive("employeeOverviewDirective", [
             .then(function(response) {
               scope.last_term_credits = response.data.last_term_credits;
               scope.allEmpData = response.data.data;
+              scope.export_member_details = response.data;
               scope.hideLoading();
               setTimeout(function() {
                 $( ".export-emp-details-message" ).hide();
