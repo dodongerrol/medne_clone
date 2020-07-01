@@ -5290,6 +5290,12 @@ public function createEclaim( )
      return Response::json($returnObject);
    }
 
+   if(empty($input['claim_amount']) || $input['claim_amount'] == null) {
+    $returnObject->status = FALSE;
+    $returnObject->message = 'Please indicate the claim amount.';
+    return Response::json($returnObject);
+  }
+
    if(empty($input['merchant']) || $input['merchant'] == null) {
      $returnObject->status = FALSE;
      $returnObject->message = 'Please indicate the Provider.';
@@ -5381,8 +5387,6 @@ public function createEclaim( )
       return Response::json($returnObject);
     }
   }
-
-  
 
   $returnObject->status = TRUE;
   $returnObject->message = 'Success.';
