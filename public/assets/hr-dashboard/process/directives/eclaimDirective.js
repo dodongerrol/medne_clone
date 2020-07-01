@@ -261,7 +261,7 @@
 				}
 
 				scope.filterTransactions = function( num ){
-					scope.showLoading();
+					// scope.showLoading();
 					scope.filter_num = num;
 					if( num == 1 ){
 						scope.filter_text = 'All';
@@ -554,7 +554,7 @@
 					hrActivity.getEclaimActivity(data)
 					.then(function(response){
 						console.log(response);
-						scope.hideLoading();
+						// scope.hideLoading();
 						scope.activity = {};
 						scope.activity = response.data.data;
 						console.log(scope.activity);
@@ -774,13 +774,11 @@
 
 				scope.showLoading = function( ){
 					$( ".circle-loader" ).fadeIn();	
-					loading_trap = true;
 				}
 
 				scope.hideLoading = function( ){
 					setTimeout(function() {
 						$(".circle-loader").hide();
-						loading_trap = false;
 					},10)
 				}
 
