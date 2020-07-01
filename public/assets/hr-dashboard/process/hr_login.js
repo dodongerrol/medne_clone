@@ -24,6 +24,7 @@ login.directive('loginSection', [
 				console.log('running loginSection');
 				scope.login_details = {
 					status : false, // activated , not activated, false
+					date_created: '',
 				};
 				scope.ng_fail = false;
 				scope.showPassword = false;
@@ -82,6 +83,10 @@ login.directive('loginSection', [
 							scope.login_details.status = 'activated';
 						} else if ((account_status == 0)) {
 							scope.login_details.status = 'not activated';
+							scope.login_details.date_created = moment(response.date_created).format('DD/MM/YYYY');
+
+							console.log(scope.login_details);
+							
 						}	else if (account_status == 2) {
 							scope.login_details.status = 'not-exist';
 						} else {
@@ -89,6 +94,13 @@ login.directive('loginSection', [
 						}
 	
 						console.log(scope.login_details.status);
+					});
+				}
+
+				scope.resend_hr_activation = function () {
+					$http.post(serverUrl.url + `/hr/resend_hr_activation_link?`)
+					.success(function(response){
+						console.log(response);
 					});
 				}
 

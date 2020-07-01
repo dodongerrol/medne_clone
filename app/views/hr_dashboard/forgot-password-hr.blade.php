@@ -54,7 +54,7 @@
 					<div class="success-item">
 						We’ve sent an email to <b><span ng-bind="login_details.email"></span></b>. <br>
 						Click the link in that email to reset your password. <br>
-						Didn’t receive an email from us? <span><a href="#">Resend email.</a></span>
+						Didn’t receive an email from us? <span><a ng-click="loginHr()">Resend email.</a></span>
 					</div>
 				</div>
 				<!-- <button type="button" class="btn btn-info btn-block med-button">Password Reset Details sent to your Email Account</button> -->

@@ -113,9 +113,9 @@
 					password?</a>
 				
 				<div class="not-activated" ng-if="login_details.status === 'not activated'">
-				Oops! An email to activate your account has been sent on [date wating sa api]. Please click the link inside to activate your account. 
+				Oops! An email to activate your account has been sent on <span ng-bind="login_details.date_created"></span>. Please click the link inside to activate your account. 
 				<br> <br>
-				Or <a>resend</a> the email now.
+				Or <a ng-click="resend_hr_activation()">resend</a> the email now.
 				</div>
 
 				<div class="not-activated" ng-if="login_details.status === 'not-exist'">
@@ -130,10 +130,13 @@
 </body>
 
 
+{{ HTML::script('assets/hr-dashboard/js/calendar/moment/moment.js') }}
+{{ HTML::script('assets/hr-dashboard/js/calendar/moment/min/moment-with-locales.min.js') }}
+{{ HTML::script('assets/hr-dashboard/js/moment-timezone-with-data-2010-2020.min.js') }}
+{{ HTML::script('assets/hr-dashboard/js/calendar/moment/min/moment-with-locales.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/jquery.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/bootstrap.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/parallax.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/angular.min.js') }}
 {{ HTML::script('assets/hr-dashboard/process/hr_login.js') }}
-
 </html>
