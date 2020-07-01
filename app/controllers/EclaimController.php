@@ -5550,7 +5550,7 @@ public function searchEmployeeActivity( )
 		$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $input['user_id'], $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
 		$total_allocation += $credit_data['allocation'];
 	}
-	return $member_spending_dates_wellness;
+	// return $member_spending_dates_wellness;
 	$spending_end_date = PlanHelper::endDate($input['end']);
 	$ids = StringHelper::getSubAccountsID($input['user_id']);
 
