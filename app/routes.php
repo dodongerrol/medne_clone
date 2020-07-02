@@ -11,6 +11,8 @@
 |
 */
 
+// test paginate new
+Route::get('ge_test_paginate', 'testcontroller@paginateMembers');
 // Route::get('test_return_balance', 'testcontroller@testReturnBalance');
 Route::get('test/email_send', 'HomeController@testEmailSend');
 
@@ -166,10 +168,12 @@ Route::get('list/local_network_partners/{id}', 'NetworkPatnerController@getLocal
 
 // hr dashboard
 Route::get('business-portal-login', 'HomeController@hrDashboardLogin');
+Route::get('company-activation', 'HomeController@getCompanyActivationView');
 Route::get('company-benefits-dashboard-login', 'HomeController@oldhrDashboardLogin');
 Route::get('company-benefits-dashboard-logout', 'BenefitsDashboardController@logOutHr');
 Route::post('company-benefits-dashboard-login', 'BenefitsDashboardController@hrLogin');
 Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
+Route::get('hr/validate_token', 'BenefitsDashboardController@getTokenDetails');
 Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
 
 // secure route on hr page, need authenticated to get access on this routes
@@ -398,7 +402,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_spending_account_summary', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// upload e-claim receipt
 	Route::post('hr/upload_e_claim_receipt', 'EclaimController@uploadOutOfNetworkReceipt');
-	// Route::get('hr/get_employee_spending_account_summary_new', 'BenefitsDashboardController@getEmployeeSpendingAccountSummaryNew');
 	// update cap per visit of employee
 	Route::post('hr/update_employee_cap', 'EmployeeController@updateCapPerVisitEmployee');
 	// get pre signed e-claim doc
@@ -461,6 +464,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_plan_enrollment_histories', 'BenefitsDashboardController@getEnrollmentHistories');
 	// get invoice histories
 	Route::get('hr/get_plan_invoice_histories', 'BenefitsDashboardController@getInvoiceHistories');
+	// get employee enrollment status
+	Route::get('hr/get_employee_enrollment_status', 'EmployeeController@getEmployeeEnrollmentStatus');
+	// check fields for replacement
+	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
 });
 
 	// get employee refund details
@@ -478,6 +485,12 @@ Route::get('provider-portal-login', 'HomeController@clinicLogin');
 Route::get('app/clinic/login', 'HomeController@clinicLogin');
 // main login pagef
 Route::get('app/login', 'HomeController@introPageLogin');
+
+
+
+// SPENDING ACCOUNT LANDING PAGE
+Route::get('/sa-landing', 'HomeController@getSALandingPageView');
+Route::get('/enquiry-form', 'HomeController@getEnquiryFormView');
 
 
 
@@ -957,6 +970,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
 		Route::post('auth/send-otp-mobile', 'Api_V1_AuthController@sendOtpMobile');
 		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
+		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
 		
 	 	Route::group(array('before' => 'auth.v2'),function(){
@@ -1141,14 +1155,6 @@ Route::group(array('prefix' => 'v2'), function()
 	});
 });
 
-// check in view layout
-// Route::get('app/check_in/view/{id}', 'QRCodeController@checkInView');
-// Route::get('app/payment/view/{id}', 'QRCodeController@paymentView');
-// save check in data
-// Route::post('app/save/check_in', 'UserCheckInController@createUserCheckIn');
-// Route::post('app/check/user_pin', 'UserCheckInController@checkUserPin');
-// Route::post('app/save/payment', 'UserCheckInController@saveCheckInPayment');
-
 //Route::group(array('domain' => 'www.tag.loc','prefix' => ''), function()
 Route::group(array('prefix' => 'app'), function()
 {
@@ -1161,17 +1167,6 @@ Route::group(array('prefix' => 'app'), function()
     Route::get('auth/forgot','App_AuthController@ForgotPassword');
     Route::get('auth/password-reset','App_AuthController@ResetPassword');
     Route::get('auth/newClinic','App_AuthController@newClinic');
-
-
-
-        //Test Route for werb Here
-        //Route::get('auth/file-upload','App_AuthController@FileUpload');
-        //Route::any('auth/upload','App_AuthController@Upload');
-        //Route::get('auth/push','App_AuthController@PushNotification');
-
-        //Route::get('auth/testshow_upload','App_AuthController@TestShowFileUpload');
-        //Route::post('auth/test_upload','App_AuthController@TestUpload');
-
 
     //Auth : POST
     Route::POST('auth/signup','App_AuthController@MainSignUp');

@@ -24,10 +24,7 @@ app.directive('inputTableEnrollmentDirective', [
 
 					var documentScrollLeft = $(this).scrollLeft();
 					if (lastScrollLeft != documentScrollLeft) {
-						console.log('leftright');
-						$('.body-h-scroll-wrapper::-webkit-scrollbar').css(
-							'background', '#000'
-						);
+						
 					}
 					lastScrollLeft = documentScrollLeft;
 				});
@@ -42,7 +39,7 @@ app.directive('inputTableEnrollmentDirective', [
 
 					var st = $(this).scrollTop();
 					if (st != lastScrollTop){
-						console.log('updown');
+
 					}
 					lastScrollTop = st;
 				});

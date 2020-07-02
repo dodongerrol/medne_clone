@@ -2370,7 +2370,7 @@ class EmployeeController extends \BaseController {
                   if((float)$input['new_allocation_credits'] > $credits) {
                     // check medical balance
                     if($new_allocation > $customer_credits->balance) {
-                      return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member'];
+                      return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                     }
                   }
                 } else {
@@ -2405,7 +2405,7 @@ class EmployeeController extends \BaseController {
                   if((float)$input['new_allocation_credits'] > $credits) {
                     // check medical balance
                     if($new_allocation > $customer_credits->wellness_credits) {
-                      return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member'];
+                      return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
                     }
                   }
                 } else {
@@ -2823,7 +2823,7 @@ class EmployeeController extends \BaseController {
               $result_data[] = $new['new_usage_date'];
               if($today >= $new['new_usage_date']) {
                 // activate now
-                MemberHelper::newActivateNewEntitlement($new['member_id'], $id);
+                MemberHelper::activateNewEntitlement($new['member_id'], $id);
               } else {
                 $future_dates = true;
               }
@@ -3011,13 +3011,17 @@ class EmployeeController extends \BaseController {
     $email = DB::table('customer_hr_dashboard')->where('email', $input['email'])->first();
     $token = StringHelper::getToken();
 
-    if(!$email) {
-      return array('status' => FALSE, 'message' => 'Your email has not been signed up with Mednefits.');
+    if(!$email == 2) {
+      return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
     }
     if($email && (int)$email->activate == 0) {
       return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
     } else if($email && (int)$email->activate == 1) {
       return array('status' => FALSE, 'Activated');
+    if($email && $email->hr_activated == 1) {
+      return array('status' => 1, 'message' => 'Account Activated');
+    } else if($email && $email->hr_activated == 0) {
+      return array('status' => 0, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
     }
     if($email) {
       return $token;
@@ -3025,4 +3029,99 @@ class EmployeeController extends \BaseController {
         return FALSE;
     }
   }
+  }
+
+  public function getEmployeeEnrollmentStatus( )
+  {
+    $result = StringHelper::getJwtHrSession();
+    $customer_id = $result->customer_buy_start_id;
+
+    // get pending users
+    $pending = 0;
+    $login = 0;
+    $active = 0;
+    $members = CustomerHelper::getActiveMembers($customer_id);
+
+    foreach($members as $key => $member)  {
+      // check if member already login base on admin logs
+      $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
+      if(!$check_active_state)  {
+        $pending++;
+      } else {
+        // check if already create a transaction
+        $panel = DB::table('transaction_history')->where('UserID', $member->user_id)->first();
+        $non_panel = DB::table('e_claim')->where('user_id', $member->user_id)->first();
+
+        if($panel || $non_panel) {
+          $active++;
+        } else {
+          $login++;
+        }
+      }
+    }
+    $data = ['pending' => $pending, 'login' => $login, 'active' => $active];
+
+    return ['status' => false, 'data' => $data];
+  }
+    
+    public function checkMemberReplaceDetails( )
+    {
+      $input = Input::all();
+
+      $result = StringHelper::getJwtHrSession();
+      $customer_id = $result->customer_buy_start_id;
+
+      if(!empty($input['email']) && $input['email'] != null) {
+        // check user
+        $user = DB::table('user')->where('Email', $input['email'])->where('UserType', 5)->where('Active', 1)->first();
+        if($user) {
+          return ['status' => false, 'message' => 'Email Address already taken.'];
+        }
+      }
+
+      if(!empty($input['mobile']) && $input['mobile'] != null) {
+        // check user
+        $user = DB::table('user')->where('PhoneNo', $input['mobile'])->where('UserType', 5)->where('Active', 1)->first();
+        if($user) {
+          return ['status' => false, 'message' => 'Mobile already taken.'];
+        }
+      } else {
+        return ['status' => false, 'message' => 'mobile is required.'];
+      }
+
+      $medical = !empty($input['medical']) ? $input['medical'] : 0;
+      $wellness = !empty($input['wellness']) ? $input['wellness'] : 0;
+      $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+      $customer_credits = DB::table('customer_credits')->where("customer_id", $customer_id)->first();
+      // return ['res' => $customer_credits];
+      if($medical > 0) {
+        if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.'];
+        }
+        
+        if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {  
+          if($medical > 0) {
+            // check medical balance
+            if($medical > (float)$customer_credits->balance) {
+              return ['status' => false, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+            }
+          }
+        }
+      }
+
+      if($wellness > 0) {
+        if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+					return ['status' => FALSE, 'message' => 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.'];
+        }
+        
+        if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
+          // check medical balance
+          if($wellness > (float)$customer_credits->wellness_credits) {
+            return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+          }
+        }
+      }
+
+      return ['status' => true, 'message' => 'All good'];
+    }
 }

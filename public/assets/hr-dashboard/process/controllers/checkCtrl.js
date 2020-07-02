@@ -8,7 +8,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 
 	vm.getCompanyContacts = function() {
     hrSettings.getContacts().then(function(response) {
-      // console.log(response);
+      console.log(response);
       // console.log( response.data.data.business_information.created_at );
       // console.log( moment( response.data.data.business_information.created_at ).unix() );
       window.Appcues.identify(
