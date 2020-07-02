@@ -15433,7 +15433,7 @@ class BenefitsDashboardController extends \BaseController {
 			$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $active->customer_active_plan_id)->first();
 		
 			$employees = DB::table('enrollment_status_history')->where('enrollment_status_id', $active->id)->where('type', 'employee')->count();
-			$dependents = DB::table('enrollment_status_history')->where('enrollment_status_id', $active->id)->where('type', 'dependents')->count();
+			$dependents = DB::table('enrollment_status_history')->where('enrollment_status_id', $active->id)->where('type', 'dependent')->count();
 		
 			$pagination['data'][] = [
 				'customer_active_plan_id' => $active->customer_active_plan_id,

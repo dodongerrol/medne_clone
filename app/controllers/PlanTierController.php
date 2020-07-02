@@ -799,6 +799,17 @@ class PlanTierController extends \BaseController {
 			return array('status' => false, 'message' => 'Employee Enrollee ID is required.');
 		}
 
+		$communcation_send = !empty($input['communcation_send']) ? $input['communcation_send'] : 'immediate';
+		$schedule_date = null;
+
+		if($communcation_send == "schedule") {
+			if($input['schedule_date'] == null) {
+				return ['status' => false, 'message' => 'Schedule Date of account activation is required'];
+			}
+
+			$schedule_date = date('Y-m-d', strtotime($input['schedule_date']));
+		}
+
 		$check_enrollee = DB::table('customer_temp_enrollment')
 							->where('temp_enrollment_id', $input['temp_enrollment_id'])
 							->where('enrolled_status', 'false')
@@ -815,7 +826,7 @@ class PlanTierController extends \BaseController {
 			return array('status' => false, 'message' => 'Please fix the Empoyee Enrollee details as it has errors on employee details.');
 		}
 
-		$create_user = PlanHelper::createEmployee($input['temp_enrollment_id'], $customer_id);
+		$create_user = PlanHelper::createEmployee($input['temp_enrollment_id'], $customer_id, $communcation_send, $schedule_date);
 		return array('result' => $create_user);
 	}
 
