@@ -15434,13 +15434,16 @@ class BenefitsDashboardController extends \BaseController {
 		
 			$employees = DB::table('enrollment_status_history')->where('enrollment_status_id', $active->id)->where('type', 'employee')->count();
 			$dependents = DB::table('enrollment_status_history')->where('enrollment_status_id', $active->id)->where('type', 'dependent')->count();
-		
+			$enable_status = DB::table('enrollment_status_history')->where('enrollment_status_id', $active->id)->where('type', 'employee')->where('send_activation', 0)->count();
+
 			$pagination['data'][] = [
 				'customer_active_plan_id' => $active->customer_active_plan_id,
 				'plan_type'               => PlanHelper::getAccountType($active_plan->account_type),
 				'plan_start'              => date('Y-m-d', strtotime($active->plan_start)),
 				'total_enrolled_employees'  => $employees,
 				'total_enrolled_dependents'  => $dependents,
+				'schedule_date'           => $active->schedule_date ? date('Y-m-d', strtotime($active->schedule_date)) : null,
+        		'enabled'                 => $enable_status > 0 ? true : false,
 				'date_of_edit'            => date('Y-m-d', strtotime($active->date_of_enrollment)),
 			];
 		}
@@ -15524,5 +15527,37 @@ class BenefitsDashboardController extends \BaseController {
 		}
 		
 		return ['status' => true, 'data' => $pagination];
+	}
+
+	public function updateEnrollmentSchedule( )
+	{
+		$input = Input::all();
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+		
+		if(empty($input['schedule_date']) || $input['schedule_date'] == null) {
+			return ['status' => false, 'message' => 'schedule_date is required'];
+		}
+
+		$result = self::checkSession();
+		$customer_id = $result->customer_buy_start_id;
+		if(!$customer_id) {
+			return ['status' => false, 'message' => 'Invalid access token'];
+		}
+
+		$enrollment_status = DB::table('enrollment_status')->where('id', $input['id'])->first();
+
+		if(!$enrollment_status) {
+		return ['status' => false, 'message' => 'data not found'];
+		}
+
+		$result = DB::table('enrollment_status')->where('id', $input['id'])->update(['schedule_date' => date('Y-m-d', strtotime($input['schedule_date']))]);
+
+		if($result) {
+		return ['status' => true, 'message' => 'Updated schedule date'];
+		}
+		
+		return ['status' => false, 'message' => 'Failed to update schedule date'];
 	}
 }

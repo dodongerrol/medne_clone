@@ -468,6 +468,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_enrollment_status', 'EmployeeController@getEmployeeEnrollmentStatus');
 	// check fields for replacement
 	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
+	// update edit schedule
+	Route::post('hr/update_enrollment_schedule', 'BenefitsDashboardController@updateEnrollmentSchedule');
+	// seend activaton email
+	Route::post('hr/send_immediate_activation', 'EmployeeController@SendMemberActivation');
 });
 
 	// get employee refund details
