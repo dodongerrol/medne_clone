@@ -351,7 +351,7 @@
 
 
 /* ---------- CUSTOM RADIOBOX ---------- */
-  .container {
+  .custom-radiobox-container {
     display: block;
     position: relative;
     padding-left: 35px;
@@ -365,7 +365,7 @@
   }
 
   /* Hide the browser's default radio button */
-  .container input {
+  .custom-radiobox-container input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -384,7 +384,7 @@
   }
 
   /* When the radio button is checked, add a blue background */
-  .container input:checked ~ .checkmark {
+  .custom-radiobox-container input:checked ~ .checkmark {
     background-color: #fff;
   }
 
@@ -396,12 +396,12 @@
   }
 
   /* Show the indicator (dot/circle) when checked */
-  .container input:checked ~ .checkmark:after {
+  .custom-radiobox-container input:checked ~ .checkmark:after {
     display: block;
   }
 
   /* Style the indicator (dot/circle) */
-  .container .checkmark:after {
+  .custom-radiobox-container .checkmark:after {
     top: 3px;
     left: 3px;
     width: 10px;
@@ -521,6 +521,7 @@
   padding: 4px 12px;
   width: 200px;
   position: relative;
+  margin: 0 0 0 20px;
 }
 
 .enrollment-communication-footer {
