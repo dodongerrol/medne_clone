@@ -286,7 +286,37 @@
 					</div>
 				</div>
 				<div class="plan-details-container">
-					<h4>Plan Details</h4>
+					<div class="plan-details-header">
+						<div>
+							<h4>Plan Details</h4>
+							<span class="seperator"></span>
+							<div>
+								<span class="current-active-plans-text">Current Active Plans:</span>
+								<span class="current-active-plans-pagination">
+									<span>1</span>
+									<span>2</span>
+									<span class="active">3</span>
+									<span class="active-plan-dot">...
+										<span ng-if="false" class="active-plan-dp-wrapper">
+											<div>Active Plan <span>4</span></div>
+											<div>Active Plan <span>5</span></div>
+										</span>
+									</span>
+								</span>
+							</div>
+						</div>
+						<div class="old-active-plans-wrapper">
+							<span class="old-active-plans-text">See Old Active Plans</span>
+							<div ng-if="false" class="old-active-plans-dp-container">
+								<div>
+									<span>Plan Start Date: <span>1 June 2019</span></span>
+								</div>
+								<div>
+									<span>Plan Start Date: <span>1 June 2018</span></span>
+								</div>
+							</div>
+						</div>
+					</div>
 					<div>
 						<div class="account-card-container">
 							<div class="plan-account-sub-title">

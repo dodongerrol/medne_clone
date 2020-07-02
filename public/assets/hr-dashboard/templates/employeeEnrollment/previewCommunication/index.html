@@ -1,0 +1,59 @@
+<div class="enrollment-communication-wrapper" enrollment-communication-directive>
+	<div>
+		<h3>Communication</h3>
+		<div class="emp-activation-email-container">
+			<div class="activation-email-text">
+				<div>When do you wish to have Employee Activation Email sent out?
+					<span class="info-img-wrapper">
+						<img ng-click="_toggleInfo_()" src="../images/info-sky-blue.png">
+						<div class="employee-activation-email-tooltip">
+							<h5>Employee Activation Email</h5>
+							<p>	
+								Employee Activation Email notifies that employees have been enrolled into the Mednefits health benefits program. They will be required to activate their accounts by creating their own passwords. Those without email will receive mobile message instead.
+							</p>
+							<div>
+								<button class="btn-got-it">Got it</button>
+							</div>
+						</div>
+					</span>
+				</div>
+
+			</div>
+			<div class="emp-activation-input-container">
+				<div>
+					<label class="container">Immediate
+					  <input type="radio" checked="checked" name="radio">
+					  <span class="checkmark"></span>
+					</label>
+				</div>
+				<div class="scheduled-date-container">
+					<label class="container">Scheduled Date
+					  <input type="radio" checked="checked" name="radio">
+					  <span class="checkmark"></span>
+					</label>
+					<div class="scheduled-date-input-wrapper">
+						<input type="text" class="datepicker">
+						<img src="../assets//hr-dashboard/img/calendar.png">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="enrollment-communication-footer">
+		<div>
+			<button class="btn-back">BACK</button>
+		</div>
+		<div>	
+			<button class="btn-complete">COMPLETE</button>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$("body").click(function(e){
+    if ($(e.target).parents(".info-img-wrapper").length === 0) {
+      $(".employee-activation-email-tooltip").hide();
+    }
+  });
+</script>

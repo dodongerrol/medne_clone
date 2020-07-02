@@ -709,6 +709,15 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           }
         }
       })
+      .state('enrollment.preview-communication', {
+        url: '/preview-communication',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/previewCommunication/index.html'
+          }
+        }
+      })
+
 
     // -----------------------  END OF NEW EMPLOYEE ENROLLMENT STATES  -------------------- //
     
