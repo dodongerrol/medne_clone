@@ -15602,11 +15602,12 @@ class BenefitsDashboardController extends \BaseController {
         if(!$check) {
             return array('status' => false, 'message' => 'Company does not exist.');
         }
-
+		
         $data = array(
-            'fullname'                  => $request->get('fullname'),
-            'email'                     => $request->get('email'),
-            'phone'                     => !empty($request->get('phone_number')) ? $request->get('phone_number') : null,
+            'fullname'                  => $inpust['fullname'],
+            'email'                     => $input['email'],
+			'phone_number'              => $input['phone_number'],
+			'phone_code'				=> $input['phone_code'],
             'updated_at'                => date('Y-m-d H:i:s')
         );
 
