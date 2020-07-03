@@ -7,7 +7,7 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$hr = self::checkSession();
 		// $input = Input::all();
-		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr->hr_dashboard_id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id->hr_dashboard_id)->first();
 
 		if($hr) {
 			$api = null;
@@ -15564,5 +15564,27 @@ class BenefitsDashboardController extends \BaseController {
 		}
 		
 		return ['status' => false, 'message' => 'Failed to update schedule date'];
+	}
+
+	public function getHrDetails( )
+	{
+		$input = Input::all();
+		$session = self::checkSession();
+		$hr_id = $session->hr_dashboard_id;
+		
+		if(!$hr_id) {
+			return ['status' => false, 'message' => 'Invalid access token'];
+		}
+		// get hr details
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+
+		$hr_acount_details = [
+			'full_name'			=>$hr->fullname,
+			'email'				=>$hr->email,
+			'phone'				=>$hr->phone_number
+		];
+
+		return ['status' => true, 'hr_account_details' => $hr_acount_details];
+
 	}
 }
