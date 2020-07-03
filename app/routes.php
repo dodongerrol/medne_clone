@@ -318,7 +318,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get hr details
 	Route::get('hr/get_hr_details', 'BenefitsDashboardController@getHrDetails');
 	// update hr account details
-	Route::post('hr/update_hr_details', 'BenefitsDashboardController@updateHrDetails');
+	Route::post('hr/update_hr_details', 'BenefitsDashboardController@updateHrAccountDetails');
 	// get cancellation details
 	Route::get('hr/get_head_count_plan/{id}', 'BenefitsDashboardController@getAddedHeadCountInvoice');
 	// get company employees and credits left
