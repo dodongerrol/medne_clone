@@ -15581,14 +15581,15 @@ class BenefitsDashboardController extends \BaseController {
 		$hr_acount_details = [
 			'full_name'			=>$hr->fullname,
 			'email'				=>$hr->email,
-			'phone'				=>$hr->phone_number
+			'phone'				=>$hr->phone_number,
+			'phone_code'		=>$hr->phone_code
 		];
 
 		return ['status' => true, 'hr_account_details' => $hr_acount_details];
 
 	}
 
-	public function updateHrDetails ( )
+	public function updateHrAccountDetails (Request $request)
     {
         $input = Input::all();
 
@@ -15596,11 +15597,17 @@ class BenefitsDashboardController extends \BaseController {
         $admin_id = Session::get('admin-session-id');
         $hr_id = $session->hr_dashboard_id;
         
+        $check = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
 
+        if(!$check) {
+            return array('status' => false, 'message' => 'Company does not exist.');
+        }
+		
         $data = array(
-			'fullname'					=> $input['fullname'],
+            'fullname'                  => $inpust['fullname'],
             'email'                     => $input['email'],
-            'phone_number'              => $input['phone_number'],
+			'phone_number'              => $input['phone_number'],
+			'phone_code'				=> $input['phone_code'],
             'updated_at'                => date('Y-m-d H:i:s')
         );
 
@@ -15622,13 +15629,13 @@ class BenefitsDashboardController extends \BaseController {
             $admin_logs = array(
                 'admin_id'  => $hr_id,
                 'admin_type' => 'hr',
-                'type'      => 'admin_hr_updated_account_password',
+                'type'      => 'admin_hr_updated_account_details',
                 'data'      => SystemLogLibrary::serializeData($input)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
         }
 
-        return array('status' => TRUE, 'message' => 'Successfully Update HR Account Details.');
+        return array('status' => TRUE, 'message' => 'Successfully Update HR Account Password.');
     }
 
 }
