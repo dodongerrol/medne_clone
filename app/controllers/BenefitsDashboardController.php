@@ -10062,43 +10062,48 @@ class BenefitsDashboardController extends \BaseController {
 	}
 
 	public function updateHrPassword( )
-	{
-		$input = Input::all();
+    {
+        $input = Input::all();
 
-		$session = self::checkSession();
-		// get admin session from mednefits admin login
-		$admin_id = Session::get('admin-session-id');
-		$hr_id = $session->hr_dashboard_id;
+        $session = self::checkSession();
+        // get admin session from mednefits admin login
+        $admin_id = Session::get('admin-session-id');
+        $hr_id = $session->hr_dashboard_id;
 
-		$checkPassword = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $session->hr_dashboard_id)->where('password', md5($input['current_password']))->count();
+        // $checkPassword = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $session->hr_dashboard_id)->where('password', md5($input['current_password']))->count();
 
-		if($checkPassword == 0) {
-			return array('status' => FALSE, 'message' => 'Current Password is invalid.');
+        // if($checkPassword == 0) {
+        //     return array('status' => FALSE, 'message' => 'Current Password is invalid.');
+        // }
+
+		$result = \HRDashboard::where('hr_dashboard_id', $session->hr_dashboard_id)->update(['password' => md5($input['new_password']), 'password' => md5($input['confirm_password'])]);
+		
+		if($input['new_password']!=($input['confirm_password'])) {
+			return array('status' => FALSE, 'message' => 'Password did not match.');
 		}
 
-		$result = \HRDashboard::where('hr_dashboard_id', $session->hr_dashboard_id)->update(['password' => md5($input['new_password'])]);
+        if($admin_id) {
+            $input['hr_dashboard_id'] = $session->hr_dashboard_id;
+            $admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_updated_account_password',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        } else {
+            $admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_updated_account_password',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        }
 
-		if($admin_id) {
-			$input['hr_dashboard_id'] = $session->hr_dashboard_id;
-			$admin_logs = array(
-				'admin_id'  => $admin_id,
-				'admin_type' => 'mednefits',
-				'type'      => 'admin_hr_updated_account_password',
-				'data'      => SystemLogLibrary::serializeData($input)
-			);
-			SystemLogLibrary::createAdminLog($admin_logs);
-		} else {
-			$admin_logs = array(
-				'admin_id'  => $hr_id,
-				'admin_type' => 'hr',
-				'type'      => 'admin_hr_updated_account_password',
-				'data'      => SystemLogLibrary::serializeData($input)
-			);
-			SystemLogLibrary::createAdminLog($admin_logs);
-		}
+        return array('status' => TRUE, 'message' => 'Successfully Update HR Account Password.');
+    }
 
-		return array('status' => TRUE, 'message' => 'Successfully Update HR Account Password.');
-	}
 
 	public function refundDetails()
 	{
