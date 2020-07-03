@@ -80,11 +80,11 @@
 				scope.checkTransStatus = function( data ){
 					console.log( data );
 					scope.selected_transaction = data;
-					scope.toggleLoading();
+					scope.showLoading();
 					hrSettings.checkTransactionDuplicates( data.trans_id )
 					.then(function(response){
 						console.log(response);
-						scope.toggleLoading();
+						scope.hideLoading();
 						if( response.data.status ){
 							scope.selected_duplicate_transactions = response.data.data;
 							$('#check-duplicate-modal').modal('show');
@@ -112,7 +112,7 @@
 				}
 
 				scope.downloadReceipt = function( res, all_data ) {
-					scope.toggleLoading();
+					scope.showLoading();
 
 						var zip = new JSZip();
 
@@ -134,7 +134,7 @@
 								zip.generateAsync({type:"blob"}).then(function(content) {
 							    saveAs(content, all_data.transaction_id + " - " + all_data.member + ".zip");
 								});
-								scope.toggleLoading();
+								scope.hideLoading();
 							}
 						})
 
@@ -148,7 +148,7 @@
 						return false;
 					}
 					if( scope.download_receipts_ctr == 0 ){
-						scope.toggleLoading();
+						scope.showLoading();
 						$('.download-receipt-message').show();
 						$('.download-receipt-message .total').text( scope.receipts_arr.length );
 						zip = new JSZip();
@@ -193,7 +193,7 @@
 											});
 										scope.download_receipts_ctr = 0;
 										$('.download-receipt-message').hide();
-										scope.toggleLoading();
+										scope.hideLoading();
 									}, 1000);
 									
 								}else{
@@ -217,7 +217,7 @@
 											});
 										scope.download_receipts_ctr = 0;
 										$('.download-receipt-message').hide();
-										scope.toggleLoading();
+										scope.hideLoading();
 									}, 1000);
 									
 								}else{
@@ -243,13 +243,13 @@
 					if( scope.search.user_id ){
 						data.user_id = scope.search.user_id;
 					}
-					scope.toggleLoading();
+					scope.showLoading();
 					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 			    if( data.user_id ){
 			      api_url += ("&user_id=" + data.user_id);
 			    }
 			    window.open( api_url );
-			    scope.toggleLoading();
+			    scope.hideLoading();
 				}
 
 				scope.openDetails = function( list ) {
@@ -316,7 +316,6 @@
 					if( num == 3 ){
 						// list.showReasonInput = true;
 						// list.showRemarksInput = false;
-						// scope.toggleLoading();
 						var data = {
 							e_claim_id : list.trans_id
 						}
@@ -352,7 +351,6 @@
 					hrActivity.updateEclaimStatus( data )
 					.then(function(response){
 						console.log(response);
-						// scope.toggleLoading();
 						if( response.data.status == true ){
 							console.log(list);
 							list.status = num;
@@ -394,7 +392,6 @@
 
 						hrActivity.updateEclaimStatus( data )
 						.then(function(response){
-							// scope.toggleLoading();
 							if( response.data.status == true ){
 								console.log(list);
 								list.status = num;
@@ -656,7 +653,7 @@
 				};
 
 				scope.searchEmployeeActivity = function(user_id) {
-					scope.toggleLoading();
+					scope.showLoading();
 					scope.temp_no_search_activity = scope.activity;
 					scope.receipts_arr = [];
 					// var range_data = date_slider.getValue();
@@ -670,7 +667,7 @@
 					scope.search.close = true;
 					hrActivity.searchEmployeeEclaimActivity(activity_search)
 					.then(function(response){
-						scope.toggleLoading();
+						scope.hideLoading();
 						if(response.status == 200) {
 							console.log( response);
 							scope.activity_title = response.data.employee + ' Benefits Cost';
@@ -708,7 +705,6 @@
 					// var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
 					// scope.searchActivity( activity_search );
 
-					// scope.toggleLoading();
 					// scope.activity = scope.temp_no_search_activity;
 					// scope.temp_no_search_activity = {};
 					// console.log(scope.activity);
@@ -720,10 +716,6 @@
 						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
 				  };
 					scope.searchActivity( activity_search );
-
-					// setTimeout(function() {
-					// 	scope.toggleLoading();
-					// }, 1000);
 				};
 
 				scope.displayText = function(item) {
@@ -748,18 +740,6 @@
 						$( ".main-loader" ).fadeOut();
 						introLoader_trap = false;
 					}, 1000);
-				}
-
-				scope.toggleLoading = function( ){
-					if ( loading_trap == false ) {
-						$( ".circle-loader" ).fadeIn();	
-						loading_trap = true;
-					}else{
-						setTimeout(function() {
-							$( ".circle-loader" ).fadeOut();
-							loading_trap = false;
-						},100)
-					}
 				}
 
 				var pointer_trap = false;
@@ -1016,10 +996,8 @@
 
 						$(".preview-box img").attr('src', img.file);
 					}else{
-						// scope.toggleLoading();
 						// hrSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
 						// .then(function(response){
-						// 	scope.toggleLoading();
 							// var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
 							$(".preview-box iframe").show();
 							$(".preview-box .img-container").css({'width': '80%'});
