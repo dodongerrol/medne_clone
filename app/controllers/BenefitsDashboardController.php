@@ -15621,7 +15621,7 @@ class BenefitsDashboardController extends \BaseController {
             $admin_logs = array(
                 'admin_id'  => $admin_id,
                 'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_updated_account_password',
+                'type'      => 'admin_hr_updated_account_details',
                 'data'      => SystemLogLibrary::serializeData($input)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
@@ -15629,7 +15629,7 @@ class BenefitsDashboardController extends \BaseController {
             $admin_logs = array(
                 'admin_id'  => $hr_id,
                 'admin_type' => 'hr',
-                'type'      => 'admin_hr_updated_account_password',
+                'type'      => 'admin_hr_updated_account_details',
                 'data'      => SystemLogLibrary::serializeData($input)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
