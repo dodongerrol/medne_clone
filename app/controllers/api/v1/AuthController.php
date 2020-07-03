@@ -5529,9 +5529,9 @@ if($customer_active_plan->account_type == "enterprise_plan")  {
   $service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
 
   if($service) {
-    if($input['claim_amount'] > $service->cap_amount_enterprise) {
+    // if($input['claim_amount'] > $service->cap_amount_enterprise) {
       $data['claim_amount'] = $service->cap_amount_enterprise;
-    }
+    // }
     $data['enterprise_visit_deduction'] = 1;
   }
 }
