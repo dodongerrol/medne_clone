@@ -6189,13 +6189,6 @@ public function searchEmployeeEclaimActivity( )
 	->where('created_at', '<=', $end)
 	->where('status', 0)
 	->sum('amount');
-	// $total_e_claim_approved +=  DB::table('e_claim')
-	// ->where('spending_type', $spending_type)
-	// ->whereIn('user_id', $ids)
-	// ->where('created_at', '>=', $start)
-	// ->where('created_at', '<=', $end)
-	// ->where('status', 1)
-	// ->sum('amount');
 	$total_e_claim_rejected +=  DB::table('e_claim')
 	->where('spending_type', $spending_type)
 	->whereIn('user_id', $ids)
@@ -6437,7 +6430,7 @@ public function hrEclaimActivity( )
 			->where('created_at', '<=', $end)
 			->where('status', 0)
 			->sum('amount');
-			$total_e_claim_approved = 0;
+			
 			$total_e_claim_rejected +=  DB::table('e_claim')
 			->whereIn('user_id', $ids)
 			->where('spending_type', $spending_type)
@@ -6611,7 +6604,7 @@ public function hrEclaimActivity( )
 		}
 
 	}
-
+	
 	$paginate['data'] = array(
 		'total_e_claim_submitted'   => number_format($total_e_claim_submitted, 2),
 		'total_e_claim_submitted_formatted'   => $total_e_claim_submitted,
