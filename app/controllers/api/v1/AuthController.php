@@ -6605,7 +6605,7 @@ public function payCreditsNew( )
               $returnObject->status_type = 'without_e_claim';
               $returnObject->head_message = 'E-claim Unavailable';
               $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-              $returnObject->sub_message = 'Kindly contact your HR';
+              $returnObject->sub_message = 'Kindly contact your HR.';
               return Response::json($returnObject);
             }
 
