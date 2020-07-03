@@ -286,9 +286,9 @@ class EclaimController extends \BaseController {
 			$service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
 			
 			if($service) {
-				if($claim_amount > $service->cap_amount_enterprise)	{
+				// if($claim_amount > $service->cap_amount_enterprise)	{
 					$data['cap_amount'] = $service->cap_amount_enterprise;
-				}
+				// }
 
 				$data['enterprise_visit_deduction'] = 1;
 			}
@@ -6323,9 +6323,9 @@ public function searchEmployeeEclaimActivity( )
 			$res->default_currency = "SGD";
 		}
 
-		if($res->cap_amount > 0) {
-			$res->claim_amount = $res->cap_amount;
-		}
+		// if($res->cap_amount > 0) {
+		// 	$res->claim_amount = $res->cap_amount;
+		// }
 
 		$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 		$temp = array(
@@ -6668,6 +6668,12 @@ public function updateEclaimStatus( )
 		$amount = !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount;
 		$amount = TransactionHelper::floatvalue($amount);
 		$claim_amount = TransactionHelper::floatvalue($input['claim_amount']);
+		// check if claim amount exceeds the cap amount
+		if($check->cap_amount != 0)	{
+			if($amount > $check->cap_amount) {
+				return ['status' => false, 'message' => 'Claim Amount is higher than cap amount which is '.number_format($check->cap_amount, 2).' cap limit.'];
+			}
+		}
 		// check e-claim if already approve
 		if($check->spending_type == "medical") {
 			if($customer_active_plan->account_type == "enterprise_plan")	{
@@ -6686,7 +6692,7 @@ public function updateEclaimStatus( )
 		}
 		
 		$date = date('Y-m-d', strtotime($e_claim_details->date)).' '.date('H:i:s', strtotime($e_claim_details->time));
-		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && (int)$spending_accounts->wellness_enable == 1) {
+		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && (int)$spending_accounts->wellness_enable == 1 && $check->spending_type == "wellness") {
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
 			if($check->spending_type == "medical") {

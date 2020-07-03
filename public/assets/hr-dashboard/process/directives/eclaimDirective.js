@@ -376,7 +376,9 @@
 							
 							scope.applyDates();
 						} else {
-							alert(response.data.message);
+							// alert(response.data.message);
+							swal('Ooops!', response.data.message, 'error');
+							$( ".circle-loader" ).fadeOut();
 						}
 					});
 				}
@@ -415,7 +417,8 @@
 								}
 								scope.applyDates();
 							} else {
-								swal('Oops!', response.data.message, 'error')
+								swal('Oops!', response.data.message, 'error');
+								$( ".circle-loader" ).fadeOut();
 							}
 						});
 					}
