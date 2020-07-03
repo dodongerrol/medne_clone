@@ -15587,4 +15587,48 @@ class BenefitsDashboardController extends \BaseController {
 		return ['status' => true, 'hr_account_details' => $hr_acount_details];
 
 	}
+
+	public function updateHrDetails ( )
+    {
+        $input = Input::all();
+
+        $session = self::checkSession();
+        $admin_id = Session::get('admin-session-id');
+        $hr_id = $session->hr_dashboard_id;
+        
+
+        $data = array(
+			'fullname'					=> $input['fullname'],
+            'email'                     => $input['email'],
+            'phone_number'              => $input['phone_number'],
+            'updated_at'                => date('Y-m-d H:i:s')
+        );
+
+        
+        $result = DB::table('customer_hr_dashboard')
+        ->where('hr_dashboard_id', $hr_id)
+        ->update($data);
+
+        if($admin_id) {
+            $input['hr_dashboard_id'] = $session->hr_dashboard_id;
+            $admin_logs = array(
+                'admin_id'  => $admin_id,
+                'admin_type' => 'mednefits',
+                'type'      => 'admin_hr_updated_account_details',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        } else {
+            $admin_logs = array(
+                'admin_id'  => $hr_id,
+                'admin_type' => 'hr',
+                'type'      => 'admin_hr_updated_account_password',
+                'data'      => SystemLogLibrary::serializeData($input)
+            );
+            SystemLogLibrary::createAdminLog($admin_logs);
+        }
+
+        return array('status' => TRUE, 'message' => 'Successfully Update HR Account Details.');
+    }
+
 }
