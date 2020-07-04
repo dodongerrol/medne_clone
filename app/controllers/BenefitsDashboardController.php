@@ -15604,7 +15604,7 @@ class BenefitsDashboardController extends \BaseController {
         }
 		
         $data = array(
-            'fullname'                  => $inpust['fullname'],
+            'fullname'                  => $input['fullname'],
             'email'                     => $input['email'],
 			'phone_number'              => $input['phone_number'],
 			'phone_code'				=> $input['phone_code'],
