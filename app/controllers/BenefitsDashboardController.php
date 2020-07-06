@@ -1920,7 +1920,7 @@ class BenefitsDashboardController extends \BaseController {
 		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 		->where('corporate.corporate_id', $account_link->corporate_id)
 		// ->where('corporate_members.removed_status', 0)
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
 		->orderBy('corporate_members.removed_status', 'asc')
 		->orderBy('user.UserID', 'asc')
 		->paginate($per_page);
@@ -2196,9 +2196,10 @@ class BenefitsDashboardController extends \BaseController {
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
-				'bank_account'	=> $user->bank_account,
+				'bank_account'			=> $user->bank_account,
 				'bank_code'				=> $user->bank_code,
 				'bank_branch'			=> $user->bank_brh,
+				'bank_name'				=> $user->bank_name,
 				'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
@@ -2208,7 +2209,7 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_withdraw_status' 	=> $plan_withdraw,
 				'emp_status'			=> $emp_status,
 				'account_status'		=> (int)$user->Active == 1 ? true : false,
-				'plan_type'					=> $plan_type,
+				'plan_type'				=> $plan_type,
 				'wallet_enabled' 		=> (int)$user->wallet == 1 ? true : false,
 				'medical_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->medical_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->medical_spending_end_date)),
 				'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
@@ -3120,7 +3121,7 @@ class BenefitsDashboardController extends \BaseController {
 			->where('corporate.corporate_id', $id);
 		})
 		->groupBy('user.UserID')
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet')
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
 		->get();
 
 		if(sizeof($users) == 0) {
@@ -3148,7 +3149,7 @@ class BenefitsDashboardController extends \BaseController {
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 				->where('user.UserID', $dependent->employee_user_id)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
 				->first();
 				if($user) {
 					array_push($users, $user);
@@ -3165,21 +3166,8 @@ class BenefitsDashboardController extends \BaseController {
 		$filter = "current_term";
 		foreach ($users as $key => $user) {
 			$ids = StringHelper::getSubAccountsID($user->UserID);
-
 			// $user_spending_dates = MemberHelper::getMemberCreditReset($user->UserID, $filter, 'medical');
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
-
-			// if($user_spending_dates) {
-			// 	$medical_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// 	$wellness_credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user->UserID, $user_spending_dates['start'], $user_spending_dates['end']);
-			// } else {
-			// 	$medical_credit_data['allocation'] = 0;
-			// 	$medical_credit_data['get_allocation_spent'] = 0;
-			//  	$medical_credit_data['balance'] = 0;
-			//  	$wellness_credit_data['allocation'] = 0;
-			//  	$wellness_credit_data['get_allocation_spent'] = 0;
-			// }
-
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
 			// get medical entitlement
@@ -3420,9 +3408,10 @@ class BenefitsDashboardController extends \BaseController {
 				'job_title'				=> $user->Job_Title,
 				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
 				'postal_code'			=> $user->Zip_Code,
-				'bank_account'	=> $user->bank_account,
+				'bank_account'			=> $user->bank_account,
 				'bank_code'				=> $user->bank_code,
 				'bank_branch'			=> $user->bank_brh,
+				'bank_name'				=> $user->bank_name,
 				'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
