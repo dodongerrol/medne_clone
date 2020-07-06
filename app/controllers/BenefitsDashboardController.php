@@ -15442,6 +15442,7 @@ class BenefitsDashboardController extends \BaseController {
 			$enable_status = DB::table('enrollment_status_history')->where('enrollment_status_id', $active->id)->where('type', 'employee')->where('send_activation', 0)->count();
 
 			$pagination['data'][] = [
+				'id'					  => $active->id,
 				'customer_active_plan_id' => $active->customer_active_plan_id,
 				'plan_type'               => PlanHelper::getAccountType($active_plan->account_type),
 				'plan_start'              => date('Y-m-d', strtotime($active->plan_start)),
