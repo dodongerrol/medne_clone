@@ -10283,4 +10283,76 @@ span.dropdown-entitlement.disabled {
   }
 }
 
+.new-account-payment-wrapper .plan-details-header h4 {
+  margin: 0;
+}
+
+.plan-details-header {
+  display: flex;
+  align-items: center;
+  margin: 15px 0 20px;
+  color: #2E4057;
+  font-size: 14px;
+}
+
+.plan-details-header >div:first-child {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.plan-details-header .seperator {
+  display: inline-block;
+  border: 1px solid #2E4057;
+  height: 14px;
+  margin: 0 20px;
+}
+.current-active-plans-text {
+  display: inline-block;
+  margin: 0 20px 0 0;
+}
+.current-active-plans-pagination >span {
+  border-radius: 5px;
+  border: 1px solid #D9D9D9;
+  color: #D9D9D9;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+.current-active-plans-pagination span.active {
+  background-color: #B4E8FE;
+  border: 1px solid #B4E8FE;
+  color: #2E4057;
+}
+.old-active-plans-wrapper,
+.active-plan-dot {
+  position: relative;
+}
+.old-active-plans-text {
+  text-decoration: underline;
+}
+.old-active-plans-dp-container,
+.active-plan-dp-wrapper {
+  position: absolute;
+  top: 25px;
+  background-color: #fff;
+  border: 1px solid #BFBFBF;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+}
+.old-active-plans-dp-container {
+  width: 230px;
+  right: 0;
+}
+.active-plan-dp-wrapper {
+  left: 0;
+  width: max-content;
+  color: #2E4057;
+}
+.old-active-plans-dp-container >div,
+.active-plan-dp-wrapper >div {
+  border-bottom: 1px solid #BFBFBF;
+  padding: 10px 20px;
+}
+.old-active-plans-dp-container >div:last-child,
+.active-plan-dp-wrapper >div:last-child {
+  border: 0;
+}
 

@@ -241,6 +241,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/previewTable/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/sendEmployeeActivation/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/enterpriseSummary/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/previewCommunication/function.js?_={{ $date->format('U') }}"></script>
 
 
 	<!-- Company activation -->

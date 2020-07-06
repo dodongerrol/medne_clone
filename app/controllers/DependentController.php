@@ -519,6 +519,7 @@ class DependentController extends \BaseController {
 
 				$family_result = DB::table('employee_family_coverage_sub_accounts')->insert($family);
 				if($family_result) {
+					$dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_id)->first();
 					$user['family_data'] = $family;
 					$history = array(
 						'user_id'			=> $user_id,
@@ -567,7 +568,8 @@ class DependentController extends \BaseController {
 					}
 
 					$dependent_plan_status->incrementEnrolledDependents($planned->customer_plan_id);
-
+					// record enrollment status for member
+					PlanHelper::createEnrollmentHistoryStatus($user_id, $dependent_plan->customer_active_plan_id, date('Y-m-d'), $history['plan_start'], null, "immediate", "dependent");
 				}
 			}
 		}

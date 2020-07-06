@@ -315,6 +315,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('get/active_plan_hr', 'BenefitsDashboardController@getActivePlanHr');
 	// update hr password
 	Route::post('hr/update_password', 'BenefitsDashboardController@updateHrPassword');
+	// get hr details
+	Route::get('hr/get_hr_details', 'BenefitsDashboardController@getHrDetails');
+	// update hr account details
+	Route::post('hr/update_hr_details', 'BenefitsDashboardController@updateHrAccountDetails');
 	// get cancellation details
 	Route::get('hr/get_head_count_plan/{id}', 'BenefitsDashboardController@getAddedHeadCountInvoice');
 	// get company employees and credits left
@@ -468,6 +472,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_employee_enrollment_status', 'EmployeeController@getEmployeeEnrollmentStatus');
 	// check fields for replacement
 	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
+	// update edit schedule
+	Route::post('hr/update_enrollment_schedule', 'BenefitsDashboardController@updateEnrollmentSchedule');
+	// seend activaton email
+	Route::post('hr/send_immediate_activation', 'EmployeeController@SendMemberActivation');
 });
 
 	// get employee refund details

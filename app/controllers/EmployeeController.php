@@ -3014,6 +3014,10 @@ class EmployeeController extends \BaseController {
     if(!$email == 2) {
       return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
     }
+    if($email && (int)$email->activate == 0) {
+      return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+    } else if($email && (int)$email->activate == 1) {
+      return array('status' => FALSE, 'Activated');
     if($email && $email->hr_activated == 1) {
       return array('status' => 1, 'message' => 'Account Activated');
     } else if($email && $email->hr_activated == 0) {
@@ -3024,6 +3028,7 @@ class EmployeeController extends \BaseController {
     } else {
         return FALSE;
     }
+  }
   }
 
   public function getEmployeeEnrollmentStatus( )
@@ -3118,5 +3123,65 @@ class EmployeeController extends \BaseController {
       }
 
       return ['status' => true, 'message' => 'All good'];
+    }
+
+    public function SendMemberActivation( )
+    {
+      $input = Input::all();
+
+      $result = StringHelper::getJwtHrSession();
+      $customer_id = $result->customer_buy_start_id;
+
+      if(empty($input['id']) || $input['id'] == null) {
+        return ['status' => false, 'message' => 'id is required'];
+      }
+
+      $enrollment_status = DB::table('enrollment_status')->where('id', $input['id'])->first();
+
+      if(!$enrollment_status) {
+        return ['status' => false, 'message' => 'data not found'];
+      }
+
+      // get all enrollment history send_activation = 0;
+      $activations = DB::table('enrollment_status_history')->where('enrollment_status_id', $input['id'])->where('type', 'employee')->where('send_activation', 0)->get();
+      
+      foreach($activations as $key => $activation)	{
+        $user = DB::table('user')->where('UserID', $activation->member_id)->first();
+        $emailDdata['emailName'] = ucwords($user->Name);
+        $emailDdata['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+        $emailDdata['emailTo'] = $user->Email;
+        $emailDdata['email'] = $user->PhoneNo;
+        // $emailDdata['email'] = 'allan.alzula.work@gmail.com';
+        $emailDdata['name'] = ucwords($user->Name);
+        $emailDdata['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+        $emailDdata['pw'] = "1234";
+        $emailDdata['company'] = null;
+        $emailDdata['start_date'] = null;
+        $emailDdata['plan'] = null;
+          
+        EmailHelper::sendEmail($emailDdata);
+        if($user->PhoneNo) {
+          $phone = SmsHelper::newformatNumber($user);
+	
+          if($phone) {
+            $compose = [];
+            $compose['name'] = $user->Name;
+            $compose['company'] = null;
+            $compose['plan_start'] = null;
+            $compose['email'] = $user->PhoneNo ? $user->PhoneNo : $user->Email;
+            $compose['nric'] = $user->PhoneNo;
+            $compose['password'] = "1234";
+            $compose['phone'] = $phone;
+            $compose['sms_type'] = "LA";
+            $compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+            $result_sms = SmsHelper::sendSms($compose);
+          }
+        }
+
+        // update send activation
+        DB::table('enrollment_status_history')->where('id', $activation->id)->update(['send_activation' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
+      }
+
+      return ['status' => true, 'message' => 'Activation sent.'];
     }
 }

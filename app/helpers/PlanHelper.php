@@ -1399,7 +1399,7 @@ class PlanHelper {
 		);
 	}
 
-	public static function createEmployee($temp_enrollment_id, $customer_id)
+	public static function createEmployee($temp_enrollment_id, $customer_id, $communcation_send, $schedule_date)
 	{
 		// get admin session from mednefits admin login
 		$admin_id = Session::get('admin-session-id');
@@ -1472,7 +1472,7 @@ class PlanHelper {
 			'account_already_update'	=> 1,
 			'communication_type'	=> $communication_type,
 			'group_number'			=> $data_enrollee->group_number,
-			'currency_type'		=> $customer_data->currency_type
+			'currency_type'		=> $customer->currency_type
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
@@ -1782,57 +1782,60 @@ class PlanHelper {
 			}
 		}
 		
-    // enrolle dependent if any
+		// record enrollment status for member
+		PlanHelper::createEnrollmentHistoryStatus($user_id, $active_plan->customer_active_plan_id, date('Y-m-d'), $start_date, $schedule_date, $communcation_send, "employee");
+    	// enrolle dependent if any
 		self::enrollDependents($temp_enrollment_id, $customer_id, $user_id, $planned->customer_plan_id);
 		// create transaction block
 		MemberHelper::createMemberTransactionAccessBlock($user_id);
-    // send email to new employee
+    	// send email to new employee
 		$company = DB::table('corporate')->where('corporate_id', $corporate->corporate_id)->first();
 		$total_dependents_count = DB::table('dependent_temp_enrollment')
 		->where('employee_temp_id', $temp_enrollment_id)
 		->count();
 
-		if($communication_type == "email") {
-			if($data_enrollee->email) {
-				$email_data = [];
-				$email_data['company']   = ucwords($company->company_name);
-				$email_data['emailName'] = $data_enrollee->first_name;
-				$email_data['emailTo']   = $data_enrollee->email;
-				$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
-		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
-				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-				$email_data['start_date'] = date('d F Y', strtotime($start_date));
-				$email_data['name'] = $data_enrollee->first_name;
-				$email_data['plan'] = $active_plan;
-				$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
-				$email_data['pw'] = $password;
-				EmailHelper::sendEmail($email_data);
-			} else {
-				if($data_enrollee->mobile) {
-					$user = DB::table('user')->where('UserID', $user_id)->first();
-					$phone = SmsHelper::newformatNumber($user);
 
-					if($phone) {
-						$compose = [];
-						$compose['name'] = $data_enrollee->first_name;
-						$compose['company'] = $company->company_name;
-						$compose['plan_start'] = date('F d, Y', strtotime($start_date));
-						$compose['email'] = null;
-						$compose['nric'] = $data_enrollee->mobile;
-						$compose['password'] = $password;
-						$compose['phone'] = $phone;
-						$compose['sms_type'] = "LA";
-						$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
-						$result_sms = SmsHelper::sendSms($compose);
+		if($communcation_send == "immediate") {
+			if($communication_type == "email") {
+				if($data_enrollee->email) {
+					$email_data = [];
+					$email_data['company']   = ucwords($company->company_name);
+					$email_data['emailName'] = $data_enrollee->first_name;
+					$email_data['emailTo']   = $data_enrollee->email;
+					$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
+							// $email_data['email'] = 'allan.alzula.work@gmail.com';
+					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+					$email_data['start_date'] = date('d F Y', strtotime($start_date));
+					$email_data['name'] = $data_enrollee->first_name;
+					$email_data['plan'] = $active_plan;
+					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+					$email_data['pw'] = $password;
+					EmailHelper::sendEmail($email_data);
+				} else {
+					if($data_enrollee->mobile) {
+						$user = DB::table('user')->where('UserID', $user_id)->first();
+						$phone = SmsHelper::newformatNumber($user);
+	
+						if($phone) {
+							$compose = [];
+							$compose['name'] = $data_enrollee->first_name;
+							$compose['company'] = $company->company_name;
+							$compose['plan_start'] = date('F d, Y', strtotime($start_date));
+							$compose['email'] = null;
+							$compose['nric'] = $data_enrollee->mobile;
+							$compose['password'] = $password;
+							$compose['phone'] = $phone;
+							$compose['sms_type'] = "LA";
+							$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+							$result_sms = SmsHelper::sendSms($compose);
+						}
 					}
 				}
-			}
-		} 
-		// else if($communication_type == "sms"){
+			} 
 			if($data_enrollee->mobile) {
 				$user = DB::table('user')->where('UserID', $user_id)->first();
 				$phone = SmsHelper::newformatNumber($user);
-
+	
 				if($phone) {
 					$compose = [];
 					$compose['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
@@ -1852,7 +1855,7 @@ class PlanHelper {
 				$email_data['emailName'] = $data_enrollee->first_name;
 				$email_data['emailTo']   = $data_enrollee->email;
 				$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
-		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
+						// $email_data['email'] = 'allan.alzula.work@gmail.com';
 				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
 				$email_data['start_date'] = date('d F Y', strtotime($start_date));
 				$email_data['name'] = $data_enrollee->first_name;
@@ -1861,20 +1864,7 @@ class PlanHelper {
 				$email_data['pw'] = $password;
 				EmailHelper::sendEmail($email_data);
 			}	
-		// } else {
-		// 	$email_data = [];
-		// 	$email_data['company']   = ucwords($company->company_name);
-		// 	$email_data['emailName'] = $data_enrollee->first_name;
-		// 	$email_data['emailTo']   = $data_enrollee->email ? $data_enrollee->email : 'info@medicloud.sg';
-		// 	$email_data['email'] = 'info@medicloud.sg';
-		// 	$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-		// 	$email_data['start_date'] = date('d F Y', strtotime($start_date));
-		// 	$email_data['name'] = $data_enrollee->first_name;
-		// 	$email_data['plan'] = $active_plan;
-		// 	$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
-		// 	$email_data['pw'] = $password;
-		// 	EmailHelper::sendEmail($email_data);
-		// }
+		}
 
 		if($admin_id) {
 			$data['user_id'] = $user_id;
@@ -1965,10 +1955,10 @@ class PlanHelper {
 						);
 
 						$result_dependent_history = $dependent_plan_history->createData($history);
-
+						$dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent->dependent_plan_id)->first();
 						if($result_dependent_history) {
 							$data['dependent_history'] = $history;
-                // check if there is a plan tier id
+                			// check if there is a plan tier id
 							if($dependent->plan_tier_id) {
 								$tier_history = array(
 									'plan_tier_id'              => $dependent->plan_tier_id,
@@ -1984,8 +1974,9 @@ class PlanHelper {
 							}
                                 // update dependent enrollmend
 							$dependent_enrollment->updateEnrollementStatus($dependent->dependent_temp_id);
-
 							$dependent_plan_status->incrementEnrolledDependents($customer_plan_id);
+							// record enrollment status for member
+							PlanHelper::createEnrollmentHistoryStatus($user_id, $dependent_plan->customer_active_plan_id, date('Y-m-d'), $history['plan_start'], null, "immediate", "dependent");
 						}
 
 						if($admin_id) {
@@ -6864,6 +6855,65 @@ class PlanHelper {
 		}
 
 		return ['medical' => $medical, 'wellness' => $wellness];
+	}
+
+	public static function createEnrollmentHistoryStatus($member_id, $customer_active_plan, $date_of_enrollment, $plan_start, $schedule_date, $status, $type)
+	{
+		$enrollment = DB::table('enrollment_status')
+							->where('customer_active_plan_id', $customer_active_plan)
+							->where('plan_start', $plan_start)
+							->where('date_of_enrollment', $date_of_enrollment)
+							->first();
+		
+		if($enrollment) {
+			// insert history data
+			$data = array(
+				'enrollment_status_id'	=> $enrollment->id,
+				'member_id'				=> $member_id,
+				'type'					=> $type,
+				'date_of_enrollment'	=> date('Y-m-d', strtotime($date_of_enrollment)),
+				'send_activation'		=> $status == "immediate" ? 1 : 0,
+				'created_at'			=> date('Y-m-d H:i:s'),
+				'updated_at'			=> date('Y-m-d H:i:s')
+			);
+
+			DB::table('enrollment_status_history')->insert($data);
+			return true;
+		} else {
+			// create enrollment status data
+			$enrollment = array(
+				'customer_active_plan_id'	=> $customer_active_plan,
+				'schedule_date'				=> $status == "schedule" ? date('Y-m-d', strtotime($schedule_date)) : null,
+				'plan_start'		=> date('Y-m-d', strtotime($plan_start)),
+				'date_of_enrollment'		=> date('Y-m-d', strtotime($date_of_enrollment)),
+				'created_at'				=> date('Y-m-d H:i:s'),
+				'updated_at'				=> date('Y-m-d H:i:s')
+			);
+
+			$result = DB::table('enrollment_status')->insert($enrollment);
+			if($result)	{
+				$enrollment = DB::table('enrollment_status')
+							->where('customer_active_plan_id', $customer_active_plan)
+							->where('plan_start', $plan_start)
+							->where('date_of_enrollment', $date_of_enrollment)
+							->first();
+				if($enrollment) {
+					// insert history data
+					$data = array(
+						'enrollment_status_id'	=> $enrollment->id,
+						'member_id'				=> $member_id,
+						'type'					=> $type,
+						'date_of_enrollment'	=> date('Y-m-d', strtotime($date_of_enrollment)),
+						'send_activation'		=> $status == "immediate" ? 1 : 0,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('enrollment_status_history')->insert($data);
+				}
+			}
+			return false;
+		}
 	}
 }
 ?>
