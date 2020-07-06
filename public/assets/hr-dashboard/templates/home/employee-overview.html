@@ -889,8 +889,8 @@
 							<!-- <button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset
 								Account</button> -->
 							<div class="resend-reset-container">
-								<button class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
-								<button class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
+								<button ng-disabled="selectedEmployee.emp_status == 'active' " class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
+								<button ng-disabled="selectedEmployee.emp_status == 'pending' " ng-click="_resetPassword_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
 							</div>
 							<button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
 							<button class="btn" ng-click="settingsShow('open')"><i class="fa fa-cogs"></i> Health Providers Access</button>

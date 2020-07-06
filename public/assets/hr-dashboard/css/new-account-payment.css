@@ -117,7 +117,37 @@
 
 .enrollment-history-container td,
 .invoice-history-container td {
+	position: relative;
 	padding: 20px;
+}
+.enrollment-actions-dp-container {
+	z-index: 1;
+	padding: 10px;
+	position: absolute;
+	background-color: #fff;
+	width: auto;
+	border-radius: 2px;
+	border: 1px solid #DBDBDB;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.enrollment-actions-dp-container span {
+	border-bottom: 1px solid #DBDBDB;
+	padding: 0 0 10px;
+	margin: 0 0 10px;
+	font-family: 'Helvetica Medium';
+	line-height: normal;
+	display: block;
+}
+.enrollment-actions-dp-container button {
+	background-color: #fff;
+	border-radius: 3px;
+	border: 1px solid #0392CF;
+	color: #0392CF;
+	width: 175px;
+	margin: 0 0 10px;
+}
+.enrollment-actions-dp-container .view-members-wrapper {
+	margin: 0 0 10px;
 }
 .enrollment-history-container tbody tr,
 .invoice-history-container tbody tr {
@@ -217,7 +247,7 @@
 	padding-bottom: 30px;
 }
 .new-account-modal .modal-footer button {
-	background-color: #6654A3;
+	background-color: #0392CF;
 	color: #fff;
 	border-radius: 2px;
 	border: 0;
@@ -232,9 +262,13 @@
 	width: 200px;
 }
 #update_password .btn-edit-cancel {
-	border: 1px solid #6654A3;
+	border: 1px solid #0392CF;
 	background-color: #fff;
-	color: #6654A3;
+	color: #0392CF;
+}
+#update_password .btn-update[disabled] {
+	background-color: #e9e9e9;
+	color: #fff;
 }
 #update_password .btn-edit-cancel.btn-close {
 	margin: 0;
@@ -245,6 +279,52 @@
 }
 #update_password .succesfully-updated  img {
 	margin:  0 0 10px;
+}
+#send_immediately_modal .modal-content {
+	padding: 40px;
+}
+#send_immediately_modal .modal-header {
+	font-family: 'Helvetica Light';
+	padding: 0;
+	margin: 0 0 30px;
+}
+#send_immediately_modal .modal-body {
+	padding: 0;
+	text-align: center;
+}
+#send_immediately_modal button { 
+	border-radius: 3px;
+	height: 33px;
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+}
+#send_immediately_modal .btn-cancel {
+	width: 110px;
+	margin: 0 20px 0 0;
+	color: #0392CF;
+	border: 1px solid #0392CF;
+	background-color: transparent;
+}
+#send_immediately_modal .btn-confirm {
+	color: #fff;
+	background-color: #0392CF;
+	width: 179px;
+}
+.error-password-text {
+	color: #E63A33;
+  font-size: 14px;
+  font-family: 'Helvetica Medium';
+}
+.invoice-per-page-container,
+.enrollment-per-page-container {
+	display: none;
+}
+#edit_details #phone_number {
+	color: #fff;
+}
+.iti__selected-dial-code.empty {
+	color: #fff;
 }
 /*-------- Custom Table Pagination -------*/
   .custom-pagination-container{

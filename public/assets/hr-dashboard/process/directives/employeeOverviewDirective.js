@@ -2801,6 +2801,13 @@ app.directive("employeeOverviewDirective", [
         scope._showAddFilterModal_ = function() {
           $("#add-filter-modal").modal('show');
         }
+
+        scope._resetPassword_ = function() {
+          hrSettings.sendPassword ( )
+            .then(function( response ) {
+              console.log(response);
+            });
+        }
         
         scope.onLoad = function () {
           console.log($state.current);

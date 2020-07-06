@@ -266,22 +266,22 @@
 						<div class="account-card-container">
 							<div class="account-card-row-info">
 								<div>Full name: </div> 
-								<span> Filbert Tan</span>
+								<span ng-bind="global_hrData.full_name"> Filbert Tan</span>
 							</div>
 							<div class="account-card-row-info">
 								<div>Email address: </div> 
-								<span> filbert@mednefits.com</span>
+								<span ng-bind="global_hrData.email"> filbert@mednefits.com</span>
 							</div>
 							<div class="account-card-row-info">
 								<div>Mobile number: </div> 
-								<span> +6587671541</span>
+								<span>+<span ng-bind="global_hrData.phone">6587671541</span></span>
 							</div>
 							<div class="btn-edit-container">
-								<button data-toggle="modal" data-target="#edit_details" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+								<button ng-click="_editDetailsBtn_( global_hrData )" data-toggle="modal" data-target="#edit_details" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
 							</div>
 						</div>
 						<div>
-							<button data-toggle="modal" data-target="#update_password" class="btn-update-password">Update Password</button>
+							<button ng-click="_updatePasswordBtn_()" data-toggle="modal" data-target="#update_password" class="btn-update-password">Update Password</button>
 						</div>
 					</div>
 				</div>
@@ -366,34 +366,35 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<td>18 Feb 2020</td>
-										<td>Basic Plan</td>
-										<td>20 Feb 2020</td>
-										<td>03</td>
-										<td>0</td>
+									<tr ng-repeat="list in global_enrollmentHistoryData track by $index">
+										<td ng-bind="list.date_of_edit">18 Feb 2020</td>
 										<td>
-											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+											<span ng-if="list.plan_type == 'Pro Plan' ">Pro Plan</span>
+											<span ng-if="list.plan_type == 'Basic Plan' ">Basic Plan</span>
+											<span ng-if="list.plan_type == 'Enterprise Plan' ">Enterprise Plan</span>
 										</td>
-									</tr>
-									<tr>
-										<td>18 Feb 2020</td>
-										<td>Basic Plan</td>
-										<td>20 Feb 2020</td>
-										<td>03</td>
-										<td>0</td>
-										<td>
-											<img src="../assets/hr-dashboard/img/down-arrow.svg">
-										</td>
-									</tr>
-									<tr>
-										<td>18 Feb 2020</td>
-										<td>Basic Plan</td>
-										<td>20 Feb 2020</td>
-										<td>03</td>
-										<td>0</td>
-										<td>
-											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+										<td ng-bind="list.plan_start">20 Feb 2020</td>
+										<td ng-bind="list.total_enrolled_employees">03</td>
+										<td ng-bind="list.total_enrolled_dependents">0</td>
+										<td class="enrollment-actions-dp-wrapper">
+											<span ng-click="enrollAction( list,$index )">
+												<img src="../assets/hr-dashboard/img/down-arrow.svg">
+												<div ng-if="list.isActionShow" class="enrollment-actions-dp-container">
+													<div class="view-members-wrapper">
+														<span>Members</span>
+														<div>
+															<button>View Members</button>
+														</div>
+													</div>
+													<div class="activation-email-wrapper">
+														<span>Activation Email</span>
+														<div>
+															<button data-toggle="modal" data-target="#send_immediately_modal">Send Immediately</button>
+															<button>Edit Scheduled Date</button>
+														</div>
+													</div>
+												</div>
+											</span>
 										</td>
 									</tr>
 								</tbody>
@@ -404,35 +405,35 @@
 						<div class="custom-pagination">
 							<div class="page-wrapper">
 								<div class="page-scroll-container">
-									<span ng-click="_prevPageList_('open')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+									<span ng-click="_prevPageList_('enrollment-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
 										<i class="fa fa-angle-left"></i> 
 										<span>Prev</span>
 									</span>
 									<div class="pages-list">
 											
-										<span class="page-num active">1</span>	
-										<!-- <span ng-repeat="list in range( global_memberOpenedPagination.last_page ) | limitTo:openPagesToDisplay:startIndex('open') track by $index" ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('open',list + 1)" ng-class="{'active' : list + 1 == open_page_active}">1</span> -->
+										<!-- <span class="page-num active">1</span>	 -->
+										<span ng-repeat="list in range( global_enrollmentHistoryPagination.last_page )" ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('enrollment-history',list + 1)" ng-class="{'active' : list + 1 == enroll_page_active}">1</span>
 
 										 <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
 										
 									</div>
-									<span ng-click="_nextPageList_('open')" class="prev-next-container">  
+									<span ng-click="_nextPageList_('enrollment-history')" class="prev-next-container">  
 										<span>Next</span>
 										<i class="fa fa-angle-right"></i> 
 									</span>
 								</div>
 							</div>
-							<div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
+							<div ng-click="_toggleEnrollmentPerPage_()" class="custom-list-per-page">
 							<!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
 								<span><span>10</span> per page</span>
 								<span>  
 									<i class="fa fa-caret-down"></i>
 								</span>
-								<div ng-if="false" class="opened-per-page-scroll open-per-page-container">
-									<span ng-click="_setPageLimit_( 'open',10 )">10 per page</span>
-									<span ng-click="_setPageLimit_( 'open',25 )">20 per page</span>
-									<span ng-click="_setPageLimit_( 'open',50 )">50 per page</span>
-									<span ng-click="_setPageLimit_( 'open',100 )">100 per page</span>
+								<div class="opened-per-page-scroll enrollment-per-page-container">
+									<span ng-click="_setPageLimit_( 'enrollment-history',10 )">10 per page</span>
+									<span ng-click="_setPageLimit_( 'enrollment-history',25 )">20 per page</span>
+									<span ng-click="_setPageLimit_( 'enrollment-history',50 )">50 per page</span>
+									<span ng-click="_setPageLimit_( 'enrollment-history',100 )">100 per page</span>
 								</div>
 							</div>
 						</div>
@@ -458,62 +459,38 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
+									<tr ng-repeat="list in getPlanInvoiceData">
 										<td>
-											<div class="status pending">Pending</div>
+											<div ng-if="list.payment_status == false" class="status pending">Pending</div>
+											<div ng-if="list.payment_status == true" class="status paid">Paid</div>
 										</td>
 										<td>
-											<span>18 Feb 2020</span>
+											<span ng-bind="list.invoice_date">18 Feb 2020</span>
 										</td>
 										<td>
-											<span>MC00000238283</span>
+											<span ng-bind="list.invoice_number">MC00000238283</span>
 										</td>
 										<td>
-											<span>SGD 300.00</span>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.total">300.00</span>
 										</td>
 										<td>
-											<span>SGD 600.00</span>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.amount_due">600.00</span>
 										</td>
 										<td>
-											<span>18 Feb 2020</span>
+											<span ng-bind="list.invoice_due">18 Feb 2020</span>
 										</td>
 										<td>
-											<span>SGD 0.00</span>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.payment_amount">0.00</span>
 										</td>
 										<td>
-											<span>Not Paid</span>
-										</td>
-										<td></td>
-										<td>
-											<img src="../assets/hr-dashboard/img/down-arrow.svg">
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<div class="status paid">Paid</div>
+											<span ng-bind="list.payment_date">Not Paid</span>
 										</td>
 										<td>
-											<span>18 Feb 2020</span>
+											<span ng-bind="list.payment_remarks"></span>
 										</td>
-										<td>
-											<span>MC00000238283</span>
-										</td>
-										<td>
-											<span>SGD 300.00</span>
-										</td>
-										<td>
-											<span>SGD 600.00</span>
-										</td>
-										<td>
-											<span>18 Feb 2020</span>
-										</td>
-										<td>
-											<span>SGD 0.00</span>
-										</td>
-										<td>
-											<span>Not Paid</span>
-										</td>
-										<td></td>
 										<td>
 											<img src="../assets/hr-dashboard/img/down-arrow.svg">
 										</td>
@@ -526,35 +503,35 @@
 						<div class="custom-pagination">
 							<div class="page-wrapper">
 								<div class="page-scroll-container">
-									<span ng-click="_prevPageList_('open')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+									<span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
 										<i class="fa fa-angle-left"></i> 
 										<span>Prev</span>
 									</span>
 									<div class="pages-list">
 											
-										<span class="page-num active">1</span>	
-										<!-- <span ng-repeat="list in range( global_memberOpenedPagination.last_page ) | limitTo:openPagesToDisplay:startIndex('open') track by $index" ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('open',list + 1)" ng-class="{'active' : list + 1 == open_page_active}">1</span> -->
+										<!-- <span class="page-num active">1</span>	 -->
+										<span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
 
 										 <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
 										
 									</div>
-									<span ng-click="_nextPageList_('open')" class="prev-next-container">  
+									<span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
 										<span>Next</span>
 										<i class="fa fa-angle-right"></i> 
 									</span>
 								</div>
 							</div>
-							<div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
+							<div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
 							<!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
 								<span><span>10</span> per page</span>
 								<span>  
 									<i class="fa fa-caret-down"></i>
 								</span>
-								<div ng-if="false" class="opened-per-page-scroll open-per-page-container">
-									<span ng-click="_setPageLimit_( 'open',10 )">10 per page</span>
-									<span ng-click="_setPageLimit_( 'open',25 )">20 per page</span>
-									<span ng-click="_setPageLimit_( 'open',50 )">50 per page</span>
-									<span ng-click="_setPageLimit_( 'open',100 )">100 per page</span>
+								<div class="opened-per-page-scroll invoice-per-page-container">
+									<span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
+									<span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
+									<span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
+									<span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
 								</div>
 							</div>
 						</div>
@@ -573,31 +550,31 @@
 				        <div class="company-account-input-wrapper">
 				        	<label>Full Name</label>
 				        	<div class="custom-input-wrapper">
-				        		<input type="text">
+				        		<input ng-model="global_hrData.full_name" type="text">
 				        	</div>
 				        </div>
 				        <div class="company-account-input-wrapper">
 				        	<label>Email</label>
 				        	<div class="custom-input-wrapper">
-				        		<input type="text">
+				        		<input ng-model="global_hrData.email" type="text">
 				        	</div>
 				        </div>
 				        <div class="company-account-input-wrapper number">
 									<label></span>Phone Number</label>
 									<div>
 										<div class="custom-input-wrapper">
-											<input ng-model="company_account_details.bill_tel_number" type="tel" id="phone_number">
+											<input ng-model="global_hrData.phone_code" type="tel" id="phone_number">
 											<i class="fa fa-angle-down"></i>
 										</div>
 										<div class="custom-input-wrapper">
-											<input ng-model="company_account_details.bill_phone_number" type="text">
+											<input ng-model="global_hrData.phone" type="text">
 										</div>
 									</div>
 								</div>
 				      </div>
 				      <div class="modal-footer">
-				        <button class="btn-edit-cancel">Cancel</button>
-				        <button class="btn-update">Update</button>
+				        <button data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
+				        <button ng-click="_updateHrDetails_( global_hrData )" class="btn-update">Update</button>
 				      </div>
 			      </form>
 			    </div>
@@ -612,21 +589,21 @@
 				        <h4>Update Password</h4>
 				      </div>
 				      <div class="modal-body">
-				      	<div ng-if="false">
+				      	<div ng-if="!global_passwordSuccess">
 					        <div class="company-account-input-wrapper">
 					        	<label>New Password</label>
 					        	<div class="custom-input-wrapper">
-					        		<input type="text" placeholder="Enter new password">
+					        		<input type="text" ng-model="passwordData.newPassword" placeholder="Enter new password">
 					        	</div>
 					        </div>
 					        <div class="company-account-input-wrapper">
 					        	<label>Confirm Password</label>
 					        	<div class="custom-input-wrapper">
-					        		<input type="text" placeholder="Re-type new password">
+					        		<input type="text" ng-model="passwordData.confirmPassword" placeholder="Re-type new password">
 					        	</div>
 					        </div>
 				        </div>
-				        <div ng-if="true" class="succesfully-updated">
+				        <div ng-if="global_passwordSuccess" class="succesfully-updated">
 				        	<div>
 				        		<img src="../assets/images/success-circle.png">
 				        	</div>
@@ -634,9 +611,27 @@
 				        </div>
 				      </div>
 				      <div class="modal-footer">
-				        <button ng-if="false" class="btn-edit-cancel">Cancel</button>
-				        <button ng-if="false" class="btn-update">Update</button>
-				        <button class="btn-edit-cancel btn-close">Close</button>
+				        <button ng-if="!global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
+				        <button ng-click="_updatePassword_( passwordData )" 
+				        ng-disabled="passwordData.newPassword == '' && passwordData.confirmPassword == '' || passwordData.newPassword != passwordData.confirmPassword" 
+				        ng-if="!global_passwordSuccess" class="btn-update">Update</button>
+				        <button ng-if="global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
+				      </div>
+			      </form>
+			    </div>
+			  </div>
+			</div>
+
+			<div class="modal fade new-account-modal" id="send_immediately_modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+			    <div class="modal-content">
+			    	<form>
+				      <div class="modal-header">
+				        <h5>Are you sure you want to send Activation Email Immediately?</h5>
+				      </div>
+				      <div class="modal-body">
+				      	<button data-dismiss="modal" class="btn-cancel">Cancel</button>
+				        <button ng-click="_confirmActivationEmail_()" class="btn-confirm">Confirm</button>
 				      </div>
 			      </form>
 			    </div>
@@ -775,3 +770,14 @@
 
 </div>
 </div>
+
+<script type="text/javascript">
+	$("body").click(function(e){
+    if ($(e.target).parents(".custom-list-per-page").length === 0) {
+      $(".invoice-per-page-container").hide();
+    }
+    if ($(e.target).parents(".custom-list-per-page").length === 0) {
+      $(".enrollment-per-page-container").hide();
+    }
+  });
+</script>

@@ -36,7 +36,11 @@ app.directive("companyContactsDirective", [
           scope.onLoad();
         });
 
-        scope.inititalizeGeoCode = function () { 
+        scope.global_hrData = {
+          phone_code: '',
+        }
+
+        scope.initializeGeoCode = function () { 
           var settings = {
             preferredCountries: [],
             separateDialCode: true,
@@ -46,12 +50,53 @@ app.directive("companyContactsDirective", [
             onlyCountries: ["sg","my"],
           }
 
-          var input = document.querySelector("#phone_number");
-          iti1 = intlTelInput(input, settings);
+          var settings2 = {
+            preferredCountries: [],
+            separateDialCode: true,
+            initialCountry: "MY",
+            autoPlaceholder: "off",
+            utilsScript: "../assets/hr-dashboard/js/utils.js",
+            onlyCountries: ["sg","my"],
+          }
 
-          input.addEventListener("countrychange", function () {
-            console.log(iti1.getSelectedCountryData());
-          })
+          var settings3 = {
+            preferredCountries: [],
+            separateDialCode: true,
+            initialCountry: false,
+            autoPlaceholder: "off",
+            utilsScript: "../assets/hr-dashboard/js/utils.js",
+            onlyCountries: ["sg","my"],
+          }
+
+          console.log( scope.global_hrData );
+          console.log( scope.global_hrData.phone_code );
+  
+          if ( scope.global_hrData.phone_code == '65' ) {
+            var input = document.querySelector("#phone_number");
+            iti1 = intlTelInput(input, settings);
+
+            input.addEventListener("countrychange", function () {
+              console.log(iti1.getSelectedCountryData());
+              scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
+            })
+          } else if ( scope.global_hrData.phone_code == '60' ) {
+            var input2 = document.querySelector("#phone_number");
+            iti1 = intlTelInput(input2, settings2);
+
+            input2.addEventListener("countrychange", function () {
+              console.log(iti1.getSelectedCountryData());
+              scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
+            })
+          } else if ( scope.global_hrData.phone_code == '63' ) {
+            $('.iti__selected-dial-code').addClass('empty');
+            var input3 = document.querySelector("#phone_number");
+            iti1 = intlTelInput(input3, settings3);
+
+            input3.addEventListener("countrychange", function () {
+              console.log(iti1.getSelectedCountryData());
+              scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
+            })
+          }
         }
 
         scope.selectSpendingTab = function(opt){
@@ -446,20 +491,31 @@ app.directive("companyContactsDirective", [
             }, 200);
           });
         }
-
+        scope.comp_active_plans = [];
+        
         scope.getActiveCompPlans = function(){
           hrSettings.getCompActivePlans().then(function(response) {
             console.log(response);
+            console.log(scope.sample);
             scope.comp_active_plans = response.data.data;
+            console.log(response.data.data[0].customer_active_plan_id);
+            scope.getCustomerPlanId = response.data.data[0].customer_active_plan_id;
+
+            
             angular.forEach( scope.comp_active_plans, function( value, key ){
               value.plan_start = moment( value.plan_start ).format( 'DD MMMM YYYY' );
             });
+            
+            scope.getEnrollmentHistoryData();
             setTimeout(function() {
               $(".info-container").fadeIn();
               $(".loader-container").hide();
             }, 200);
           });
         }
+
+
+       
 
         scope.getSpendingDeposits = function( page ) {
           scope.toggleLoading();
@@ -569,10 +625,216 @@ app.directive("companyContactsDirective", [
 						});
         }
 
-        scope.onLoad = function(){
-          scope.inititalizeGeoCode();
-          scope.getDownloadToken();
+        scope.passwordData = {
+          newPassword: '',
+          confirmPassword: '',
+        };
+        scope.global_passwordSuccess = false;
+
+        scope._updatePasswordBtn_ = function ( ) {
+          scope.global_passwordSuccess = false;
+          scope.passwordData.newPassword = "";
+          scope.passwordData.confirmPassword = "";
+        }
+
+        scope._updatePassword_ = function ( data ) {
+          let params = {
+            new_password: data.newPassword,
+            confirm_password: data.confirmPassword,
+          }
+          scope.toggleLoading();
+          hrSettings.updateHrPassword( params )
+            .then(function (response) {
+              console.log(response);
+
+              if ( response.status ) {
+                scope.global_passwordSuccess = true;
+              }
+              scope.toggleOff();
+            });
+        }
+        scope.page_active = 1;
+        scope.per_page = 3;
+        scope.getInvoiceHistoryData = function ( page,per_page ) {
+          page = scope.page_active;
+          per_page = scope.per_page;
           
+          scope.toggleLoading();
+          hrSettings.getPlanInvoiceHistory( page,per_page )
+            .then(function (response) {
+              console.log(response);
+              scope.getPlanInvoiceData = response.data.data.data;
+              scope.invoicePlanPagination = response.data.data;
+              console.log(scope.invoicePlanPagination);
+
+              angular.forEach(scope.getPlanInvoiceData, function(value, key) {
+                console.log(value);
+                value.invoice_date = moment( value.invoice_date ).format('DD MMMM YYYY');
+                value.invoice_due = moment( value.invoice_due ).format('DD MMMM YYYY');
+                value.payment_date = moment( value.payment_date ).format('DD MMMM YYYY');
+                value.total = value.total.toFixed(2);
+              });
+              scope.toggleOff();
+            });
+        }
+
+        scope.range = function(num) {
+          var arr = [];
+          for (var i = 0; i < num; i++) {
+            arr.push(i);
+          }
+          return arr;
+        };
+
+        scope._selectNumList_ = function ( type,num ) {
+          if ( type == 'invoice-history' ) {
+            scope.page_active = num;
+            scope.getInvoiceHistoryData();
+          }
+          if ( type == 'enrollment-history' ) {
+            scope.enroll_page_active = num;
+            scope.getEnrollmentHistoryData();
+          }
+        }
+
+        scope._prevPageList_ = function ( type ) {
+          if ( type == 'invoice-history' ) {
+            scope.page_active -= 1;
+            scope.getInvoiceHistoryData();
+          }
+          if ( type == 'enrollment-history' ) {
+            scope.enroll_page_active -= 1;
+            scope.getEnrollmentHistoryData();
+          }
+        }
+
+        scope._nextPageList_ = function ( type ) {
+          if ( type == 'invoice-history' ) {
+            scope.page_active += 1;
+            scope.getInvoiceHistoryData();
+          }
+          if ( type == 'enrollment-history' ) {
+            scope.enroll_page_active += 1;
+            scope.getEnrollmentHistoryData();
+          }
+        }
+
+        scope._toggleInvoicePerPage_ = function () {
+          $(".invoice-per-page-container").toggle();
+        }
+
+        scope._toggleEnrollmentPerPage_ = function () {
+          $(".enrollment-per-page-container").toggle();
+        }
+
+        scope._setPageLimit_ = function ( type,num ) {
+          if ( type == 'invoice-history' ) {
+            scope.per_page = num;
+            scope.page_active = 1;
+            scope.getInvoiceHistoryData();
+          }
+          if ( type == 'enrollment-history' ) {
+            scope.enroll_per_page = num;
+            scope.enroll_page_active = 1;
+            scope.getEnrollmentHistoryData();
+          }
+        }
+
+        scope._getHrDetails_ = function () {
+          hrSettings.fecthHrDetails( )
+            .then(function (response) {
+              console.log(response);
+
+              scope.global_hrData = response.data.hr_account_details;
+              console.log(scope.global_hrData);
+              console.log(scope.global_hrData.phone_code);
+            });
+        } 
+
+        scope._editDetailsBtn_ = function ( data ) {
+          
+          scope.initializeGeoCode();
+        }
+
+        scope._updateHrDetails_ = function ( data ) {
+          console.log(data);
+          let params = {
+            email: data.email,
+            phone_number: data.phone,
+            fullname: data.full_name, 
+            phone_code: data.phone_code,
+          }
+
+          hrSettings.updateHrDetails( params )
+            .then(function (response) {
+              console.log(response);
+              scope._getHrDetails_();
+            });
+        }
+
+        scope.enroll_page_active = 1;
+        scope.enroll_per_page = 3;
+        scope.getEnrollmentHistoryData = function ( page,per_page,customer_active_plan_id ) {
+          page = scope.enroll_page_active;
+          per_page = scope.enroll_per_page;
+          customer_active_plan_id = scope.getCustomerPlanId;
+
+          scope.toggleLoading();
+          hrSettings.fetchEnrollmentHistoryData( page,per_page,customer_active_plan_id )
+            .then(function (response) {
+              console.log(response);
+              scope.global_enrollmentHistoryData = response.data.data.data;
+              scope.global_enrollmentHistoryPagination = response.data.data;
+
+              angular.forEach(scope.global_enrollmentHistoryData, function(value, key) {
+                console.log(value);
+                value.date_of_edit = moment( value.date_of_edit ).format('DD MMMM YYYY');
+                value.plan_start = moment( value.plan_start ).format('DD MMMM YYYY');
+              });
+
+              scope.toggleOff();
+            });
+        }
+        
+        scope.enrollAction = function ( data,index ) {
+          scope.global_enrollCustomerId = data.id;
+          
+          scope.global_enrollmentHistoryData.map((value,key)  => {
+            if ( index == key ) {
+              console.log('true');
+              value.isActionShow = value.isActionShow == true ? false : true;
+            } else {
+              console.log('false');
+              value.isActionShow = false;
+            }
+          })
+        }
+
+        scope._confirmActivationEmail_ = function () {
+          let data = {
+            id: scope.global_enrollCustomerId
+          }
+          console.log( data );
+
+          hrSettings.sendImmediateActivation( data )
+            .then(function (response) {
+              console.log(response);
+
+              if ( response.data.status == true ) {
+                $('#send_immediately_modal').modal('hide');
+
+                swal('Success!', response.data.message, 'success');
+              } else {
+                swal('Error!', response.data.message, 'error');
+              }
+              
+            });
+        }
+
+        scope.onLoad = function(){
+          scope.initializeGeoCode();
+          scope.getDownloadToken();
+            
           hrSettings.getSession( )
             .then(function(response){
             scope.options.accessibility = response.data.accessibility;
@@ -594,6 +856,8 @@ app.directive("companyContactsDirective", [
             scope.getPlanSubscriptions();
             scope.getActiveCompPlans();
             scope.companyAccountType();
+            scope.getInvoiceHistoryData();
+            scope._getHrDetails_();
           }
           
         };

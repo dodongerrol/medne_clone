@@ -379,6 +379,26 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/get_member_refund_calculation", data  );
   }
 
+  hrFactory.getPlanInvoiceHistory = function ( page,per_page ) {
+    return $http.get( serverUrl.url + "/hr/get_plan_invoice_histories?page=" + page + '&per_page=' + per_page );
+  };
+
+  hrFactory.fecthHrDetails = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_hr_details" );
+  };
+
+  hrFactory.updateHrDetails = function (data) {
+    return $http.post( serverUrl.url + "/hr/update_hr_details", data  );
+  };
+
+  hrFactory.fetchEnrollmentHistoryData = function ( page,per_page,id ) {
+    return $http.get( serverUrl.url + "/hr/get_plan_enrollment_histories?page=" + page + '&per_page=' + per_page + '&customer_active_plan_id=' + id );
+  };
+
+  hrFactory.sendImmediateActivation = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/send_immediate_activation", data  );
+  }
+
   return hrFactory;
 });
 
