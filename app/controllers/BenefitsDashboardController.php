@@ -15579,7 +15579,7 @@ class BenefitsDashboardController extends \BaseController {
 
 	}
 
-	public function updateHrAccountDetails (Request $request)
+	public function updateHrAccountDetails ( )
     {
         $input = Input::all();
 
@@ -15587,12 +15587,6 @@ class BenefitsDashboardController extends \BaseController {
         $admin_id = Session::get('admin-session-id');
         $hr_id = $session->hr_dashboard_id;
         
-        $check = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
-
-        if(!$check) {
-            return array('status' => false, 'message' => 'Company does not exist.');
-        }
-		
         $data = array(
             'fullname'                  => $input['fullname'],
             'email'                     => $input['email'],
@@ -15625,7 +15619,7 @@ class BenefitsDashboardController extends \BaseController {
             SystemLogLibrary::createAdminLog($admin_logs);
         }
 
-        return array('status' => TRUE, 'message' => 'Successfully Update HR Account Password.');
+        return array('status' => TRUE, 'message' => 'Successfully Update HR Account Details.');
     }
 
 }
