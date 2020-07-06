@@ -3503,11 +3503,11 @@ class BenefitsDashboardController extends \BaseController {
 			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
-			'PhoneNo'			=> $mobile,
+			'PhoneNo'			=> $input['phone_no'],
 			'PhoneCode'			=> "+".$input['country_code'],
 			'DOB'				=> $input['dob'],
-			'Employee_ID'		=> $input['emp_id'],
-			'Bank_Name'			=> $input['bank_name']
+			'emp_no'			=> $input['emp_id'],
+			'bank_name'			=> $input['bank_name']
 		);
 
 		try {
