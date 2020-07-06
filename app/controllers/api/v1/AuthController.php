@@ -1957,6 +1957,16 @@ public function getNewClinicDetails($id)
      $customer_active_plan = DB::table('customer_active_plan')
      ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
      ->first();
+
+     if($customer_active_plan->account_type == "enterprise_plan")	{
+      $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+  
+      if($limit <= 0) {
+        $returnObject->status = FALSE;
+        $returnObject->message = 'Maximum of 14 visits already reached.';
+        return Response::json($returnObject);
+      }
+    }
     
     if($user_type == "employee") {
       $plan_coverage = PlanHelper::checkEmployeePlanStatus($findUserID);
@@ -2005,12 +2015,6 @@ public function getNewClinicDetails($id)
    //   $returnObject->employee_status = false;
    //   return Response::json($returnObject);
    // }
-
-
-   $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
-   $customer_active_plan = DB::table('customer_active_plan')
-   ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-   ->first();
 
    $procedures = DB::table('clinic_procedure')
    ->where('ClinicID', $id)
@@ -3490,7 +3494,6 @@ public function notifyClinicDirectPayment( )
   $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   if($getAccessToken){
    $findUserID = $authSession->findUserID($getAccessToken->session_id);
-                // return $findUserID;
    if($findUserID){
 
     if(!isset($input['services'])) {
@@ -3604,18 +3607,15 @@ public function notifyClinicDirectPayment( )
      $transaction_id = $result->id;
 
      if($result) {
-                            // insert transation services
+      // insert transation services
       $ts = new TransctionServices( );
       $save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
-
-
-                            // send notification to browser
+      // send notification to browser
       Notification::sendNotification('Customer Payment - Mednefits', 'Customer '.ucwords($user->Name).' will pay directly to your clinic.', url('app/setting/claim-report', $parameter = array(), $secure = null), $input['clinic_id'], $user->Image);
-
-                            // send realtime update to claim clinic admin
+      // send realtime update to claim clinic admin
       PusherHelper::sendClinicClaimNotification($transaction_id, $input['clinic_id']);
 
-                  // check if check_in_id exist
+      // check if check_in_id exist
       if(!empty($input['check_in_id']) && $input['check_in_id'] != null) {
                   // check check_in_id data
         $check_in = DB::table('user_check_in_clinic')
@@ -5415,6 +5415,28 @@ public function createEclaim( )
       $returnObject->status = FALSE;
       $returnObject->message = 'Maximum of 14 visits already reached.';
       return Response::json($returnObject);
+    }$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')
+    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+    ->first();
+  
+    if($customer_active_plan->account_type == "enterprise_plan")	{
+      $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+  
+      if($limit <= 0) {
+        $returnObject->status = FALSE;
+        $returnObject->message = 'Maximum of 14 visits already reached.';
+        return Response::json($returnObject);
+      }
+  
+      // check if A&E already get for 2 times
+      $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
+      
+      if($claim_status && $input['service'] == "Accident & Emergency") {
+        $returnObject->status = FALSE;
+        $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
+        return Response::json($returnObject);
+      }
     }
 
     // check if A&E already get for 2 times
@@ -5525,14 +5547,13 @@ if($customer_id) {
 }
 $data['spending_type'] = !empty($input['spending_type']) ? $input['spending_type'] : "medical";
 if($customer_active_plan->account_type == "enterprise_plan")  {
-  
-  $service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
+  $service = DB::table('health_types')->where('name', trim($input['service']))->where('type', 'medical')->where('visit_deduction', 1)->first();
 
   if($service) {
-    // if($input['claim_amount'] > $service->cap_amount_enterprise) {
-      $data['claim_amount'] = $service->cap_amount_enterprise;
-    // }
+    $data['cap_amount'] = (float)$service->cap_amount_enterprise;
     $data['enterprise_visit_deduction'] = 1;
+  } else {
+    $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
   }
 }
 
@@ -5550,7 +5571,7 @@ try {
   // deduct visit for enterprise plan user
   if($customer_active_plan->account_type == "enterprise_plan")	{
     // check if service is enable for deduction
-    $service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
+    $service = DB::table('health_types')->where('name', trim($input['service']))->where('type', 'medical')->where('visit_deduction', 1)->first();
 
     if($service) {
       MemberHelper::deductPlanHistoryVisit($user_id);
@@ -6616,7 +6637,7 @@ public function payCreditsNew( )
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'exceed_limit';
                 $returnObject->head_message = '14/14 visits used';
-                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
                 $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
