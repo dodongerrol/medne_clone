@@ -272,32 +272,28 @@ class EclaimController extends \BaseController {
 		);
 
 		if($customer_id) {
-    	// get claim type service cap
-  		$get_company_e_claim_service = DB::table('company_e_claim_service_types')
-										->where('name', $input['service'])
-										->where('type', 'medical')
-										->where('customer_id', $customer_id)
-										->where('active', 1)
-										->first();
-  		
-		  
-		if($customer_active_plan->account_type == "enterprise_plan")  {
-			$data['spending_type'] = "medical";
-			$service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
+			// get claim type service cap
+			$get_company_e_claim_service = DB::table('company_e_claim_service_types')
+											->where('name', $input['service'])
+											->where('type', 'medical')
+											->where('customer_id', $customer_id)
+											->where('active', 1)
+											->first();
 			
-			if($service) {
-				// if($claim_amount > $service->cap_amount_enterprise)	{
+			if($customer_active_plan->account_type == "enterprise_plan")  {
+				$data['spending_type'] = "medical";
+				$service = DB::table('health_types')->where('name', trim($input['service']))->where('type', 'medical')->where('visit_deduction', 1)->first();
+				
+				if($service) {
 					$data['cap_amount'] = $service->cap_amount_enterprise;
-				// }
-
-				$data['enterprise_visit_deduction'] = 1;
-			}
-		} else {
-			if($get_company_e_claim_service) {
-				$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+					$data['enterprise_visit_deduction'] = 1;
+				}
+			} else {
+				if($get_company_e_claim_service) {
+					$data['cap_amount'] = $get_company_e_claim_service->cap_amount;
+				}
 			}
 		}
-    }
     
 		try {
 			$result = $claim->createEclaim($data);
@@ -4811,7 +4807,6 @@ public function getHrActivity( )
 	$paginate['to'] = $corporate_members->getTo();
 	$paginate['total'] = $corporate_members->getTotal();
 	
-
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
 	} else {
@@ -4851,7 +4846,7 @@ public function getHrActivity( )
 		->where('spending_type', $spending_type)
 		->where('date', '>=', $start)
 		->where('date', '<=', $end)
-		->where('status', 1)
+		// ->where('status', 1)
 		->orderBy('date', 'desc')
 		->get();
 
@@ -5326,10 +5321,15 @@ public function getHrActivity( )
 				$status_text = 'Pending';
 			}
 
+			if((int)$res->status != 2 && (int)$res->enterprise_visit_deduction == 1)	{
+				$total_visit_created++;
+				$non_panel++;
+			}
+			
 			if($res->status == 1) {
 				$member = DB::table('user')->where('UserID', $res->user_id)->first();
 
-        // check user if it is spouse or dependent
+        		// check user if it is spouse or dependent
 				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -5350,7 +5350,7 @@ public function getHrActivity( )
 					$bank_brh = $member->bank_brh;
 				}
 
-                        // get docs
+            	// get docs
 				$docs = DB::table('e_claim_docs')->where('e_claim_id', $res->e_claim_id)->get();
 
 				if(sizeof($docs) > 0) {
@@ -5379,11 +5379,6 @@ public function getHrActivity( )
 
 				if($res->default_currency == $res->currency_type && $res->default_currency == "myr") {
 					$res->amount = $res->amount * $res->currency_value;
-				}
-
-				if((int)$res->status != 2 && (int)$res->enterprise_visit_deduction == 1)	{
-					$total_visit_created++;
-					$non_panel++;
 				}
 
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
@@ -5419,7 +5414,6 @@ public function getHrActivity( )
 				);
 
 				array_push($e_claim, $temp);
-				// }
 			}
 
 		}
