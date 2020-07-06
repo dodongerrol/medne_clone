@@ -283,10 +283,10 @@ class TransactionController extends BaseController {
 				$currency_data = DB::table('currency_options')->where('currency_type', $wallet_data->currency_type)->first();
 
 				if($currency_data) {
-        	$currency = $currency_data->currency_value;
-        } else {
-        	$currency = 3.00;
-        }
+					$currency = $currency_data->currency_value;
+				} else {
+					$currency = 3.00;
+				}
 
 				$peak_amount = 0;
 				$clinic_co_payment = TransactionHelper::getCoPayment($clinic_data, $input['transaction_date'], $owner_id);
