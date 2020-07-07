@@ -6584,7 +6584,7 @@ public function payCreditsNew( )
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'exceed_limit';
                 $returnObject->head_message = '14/14 visits used';
-                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term";
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
                 $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }

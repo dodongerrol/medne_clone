@@ -285,7 +285,7 @@
 						console.log( scope.receipts_arr );
 					}
 					// console.log( scope.receipts_arr );
-					scope.hideLoading();
+					// scope.hideLoading();
 				}
 
 				scope.hideReasonInput = function( list ){
@@ -524,6 +524,7 @@
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
+							scope.hideLoading();
 						}
 					});
 				}
@@ -624,6 +625,7 @@
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
+							scope.hideLoading();
 						}
 					});
 				}
@@ -692,6 +694,7 @@
 								scope.filterTransactions(scope.filter_num);
 								// $('.btn-receipts').attr( 'disabled', true );
 							}
+							scope.hideLoading();
 						}
 					});
 				};
