@@ -285,7 +285,8 @@
 						console.log( scope.receipts_arr );
 					}
 					// console.log( scope.receipts_arr );
-					scope.hideLoading();
+					// scope.hideLoading();
+					$(".circle-loader").hide();
 				}
 
 				scope.hideReasonInput = function( list ){
@@ -525,6 +526,7 @@
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
 							scope.hideLoading();
+							$(".circle-loader").hide();
 						}
 					});
 				}
@@ -626,6 +628,7 @@
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
 							scope.hideLoading();
+							$(".circle-loader").hide();
 						}
 					});
 				}
@@ -763,9 +766,9 @@
 				}
 
 				scope.hideLoading = function( ){
-					// setTimeout(function() {
+					$timeout(function() {
 						$(".circle-loader").hide();
-					// },100)
+					},100)
 				}
 
 				scope.showCustomDate = function( num ){
