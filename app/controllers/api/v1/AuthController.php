@@ -5552,8 +5552,6 @@ if($customer_active_plan->account_type == "enterprise_plan")  {
   if($service) {
     $data['cap_amount'] = (float)$service->cap_amount_enterprise;
     $data['enterprise_visit_deduction'] = 1;
-  } else {
-    $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
   }
 }
 
