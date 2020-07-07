@@ -952,6 +952,15 @@
         		console.log(response);
         		scope.company_details = response.data.data;
         	});
+				}
+				
+				scope.getSpendingAcctStatus = function () {
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
         }
 
 				scope.onLoad = function( ){
@@ -963,11 +972,12 @@
 							scope.options = response.data;
 							console.log(scope.options);
 	        	});
-
+					scope.getSpendingAcctStatus();
 					scope.getEmployeeLists( );
 					// scope.initializeRangeSlider( );
 					scope.initializeNewCustomDatePicker();
 					scope.getCompanyDetails();
+					
 
 					setTimeout(function() {
 						// var activity_search = scope.getFirstEndDate( 4 , 12 );	
@@ -984,6 +994,8 @@
 				scope.checkCompanyBalance = function(){
 					hrSettings.getCheckCredits();
 				}
+
+				
 
 				// scope.checkCompanyBalance();
 				scope.onLoad( );
