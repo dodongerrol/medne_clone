@@ -5431,9 +5431,17 @@ public function getHrActivity( )
 	$total_average_visit = 0;
 	if($plan->account_type == "enterprise_plan")	{
 		// get user by started date
-		$total_occupied_seats = \MemberHelper::getMemberByDateStarted($start, $end, $account->corporate_id, $plan->customer_plan_id);
+		// $total_occupied_seats = \MemberHelper::getMemberByDateStarted($start, $end, $account->corporate_id, $plan->customer_plan_id);
+		// $total_occupied_seats = \MemberHelper::getMemberByDateStarted($start, $end, $account->corporate_id, $plan->customer_plan_id);
+		$customer_plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+		$total_occupied_seats = $customer_plan_status->enrolled_employees;
+		$dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+
+		if($dependent_plan_status) {
+			$total_occupied_seats += $dependent_plan_status->total_enrolled_dependents;
+		}
 	}
-	
+
 	if($total_visit_created > 0) {
 		$total_average_visit = $total_visit_created / $total_occupied_seats;
 	}
