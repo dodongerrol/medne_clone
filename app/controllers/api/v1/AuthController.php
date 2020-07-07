@@ -5437,21 +5437,21 @@ public function createEclaim( )
       
       if($claim_status && $input['service'] == "Accident & Emergency") {
         $returnObject->status = FALSE;
-        $returnObject->head_message = 'Non-Panel Error';
+        $returnObject->head_message = '2/2 A&E used';
         $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
         return Response::json($returnObject);
       }
     }
 
-    // check if A&E already get for 2 times
-    $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
+    // // check if A&E already get for 2 times
+    // $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
     
-    if($claim_status && $input['service'] == "Accident & Emergency") {
-      $returnObject->status = FALSE;
-      $returnObject->head_message = 'Non-Panel Error';
-      $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
-      return Response::json($returnObject);
-    }
+    // if($claim_status && $input['service'] == "Accident & Emergency") {
+    //   $returnObject->status = FALSE;
+    //   $returnObject->head_message = 'Non-Panel Error';
+    //   $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
+    //   return Response::json($returnObject);
+    // }
   }
 
   // check if enable to access feature
