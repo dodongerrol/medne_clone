@@ -285,7 +285,7 @@
 						console.log( scope.receipts_arr );
 					}
 					// console.log( scope.receipts_arr );
-					// scope.hideLoading();
+					scope.hideLoading();
 				}
 
 				scope.hideReasonInput = function( list ){
@@ -332,7 +332,7 @@
 								}else{
 									swal( 'Oops!', response.data.message, 'error' );
 								}
-								scope.hideLoading();
+								// scope.hideLoading();
 							});
 					}
 				}
@@ -765,7 +765,7 @@
 				scope.hideLoading = function( ){
 					setTimeout(function() {
 						$(".circle-loader").hide();
-					},10)
+					},100)
 				}
 
 				scope.showCustomDate = function( num ){
