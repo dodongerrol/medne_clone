@@ -278,7 +278,7 @@ class CustomerHelper
 		$total_wellness_allocation = $temp_total_wellness_allocation - $temp_total_wellness_deduction;
 		return $total_wellness_allocation;
 	}
-
+	
 	public static function getAccountSpendingStatus($customer_id)	
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
