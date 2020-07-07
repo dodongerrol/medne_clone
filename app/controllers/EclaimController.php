@@ -6401,8 +6401,13 @@ public function hrEclaimActivity( )
 	$session = self::checkSession();
 	$paginate = [];
 
-        // get all hr employees, spouse and dependents
+    // get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
+	$plan = DB::table('customer_plan')->where('customer_buy_start_id', $session->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+	$spending = DB::table('spending_account_settings')->where('customer_id', $session->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+	$account_type = $plan->account_type;
+	$medical = (int)$spending->medical_enable == 1 ? true : false;
+	$wellness = (int)$spending->wellness_enable == 1 ? true : false;
 
 	$corporate_members = DB::table('corporate_members')
 	->join('user', 'user.UserID', '=', 'corporate_members.user_id')
@@ -6419,44 +6424,71 @@ public function hrEclaimActivity( )
 
 	foreach ($corporate_members as $key => $member) {
 			$ids = StringHelper::getSubAccountsID($member->user_id);
-			$total_e_claim_submitted +=  DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', $spending_type)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->sum('amount');
-			$total_e_claim_pending +=  DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', $spending_type)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->where('status', 0)
-			->sum('amount');
-			
-			$total_e_claim_rejected +=  DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', $spending_type)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->where('status', 2)
-			->sum('amount');
 
-			$e_claim_result = DB::table('e_claim')
-			->whereIn('user_id', $ids)
-			->where('spending_type', $spending_type)
-			->where('created_at', '>=', $start)
-			->where('created_at', '<=', $end)
-			->orderBy('created_at', 'desc')
-			->get();
+			if($account_type == "enterprise_plan" && $wellness == false) {
+				$total_e_claim_submitted +=  DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->sum('amount');
+				$total_e_claim_pending +=  DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->where('status', 0)
+				->sum('amount');
+				
+				$total_e_claim_rejected +=  DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->where('status', 2)
+				->sum('amount');
 
-			if($spending_type == 'medical') {
-				$table_wallet_history = 'wallet_history';
+				$e_claim_result = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
 			} else {
-				$table_wallet_history = 'wellness_wallet_history';
+				$total_e_claim_submitted +=  DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', $spending_type)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->sum('amount');
+				$total_e_claim_pending +=  DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', $spending_type)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->where('status', 0)
+				->sum('amount');
+				
+				$total_e_claim_rejected +=  DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', $spending_type)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->where('status', 2)
+				->sum('amount');
+
+				$e_claim_result = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', $spending_type)
+				->where('created_at', '>=', $start)
+				->where('created_at', '<=', $end)
+				->orderBy('created_at', 'desc')
+				->get();
 			}
 
-
 			foreach($e_claim_result as $key => $res) {
+				if($res->spending_type == 'medical') {
+					$table_wallet_history = 'wallet_history';
+				} else {
+					$table_wallet_history = 'wellness_wallet_history';
+				}
 				$approved_status = FALSE;
 				$rejected_status = FALSE;
 
