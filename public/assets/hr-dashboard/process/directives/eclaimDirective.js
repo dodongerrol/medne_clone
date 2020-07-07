@@ -762,12 +762,13 @@
 				}
 
 				scope.showLoading = function( ){
-					$( ".circle-loader" ).fadeIn();	
+					$( ".circle-loader" ).show();	
 				}
 
 				scope.hideLoading = function( ){
 					$timeout(function() {
 						$(".circle-loader").hide();
+						scope.$apply();
 					},100)
 				}
 
