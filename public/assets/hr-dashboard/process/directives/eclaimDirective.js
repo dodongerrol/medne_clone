@@ -519,7 +519,7 @@
 							scope.current_page = 1;
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
-							setTimeout(function() {
+							$timeout(function() {
 								$("#fetching_users").fadeOut('slow');
 							}, 10);
 							$(".searchEclaimLoader").hide();
@@ -621,7 +621,7 @@
 							scope.current_page = 1;
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
-							setTimeout(function() {
+							$timeout(function() {
 								$("#fetching_users").fadeOut('slow');
 							}, 10);
 							$(".searchEclaimLoader").hide();
@@ -647,7 +647,7 @@
 					   },
 					   items: 15,
 					   afterSelect: function(item) {
-					   	setTimeout(function() {
+					   	$timeout(function() {
 					   		scope.selected_search_user = item;
 					   		console.log( item );
 					   		scope.searchEmployeeActivity(item.user_id);
@@ -742,7 +742,7 @@
 				};
 
 				scope.hideIntroLoader = function( ){
-					setTimeout(function() {
+					$timeout(function() {
 						$( ".main-loader" ).fadeOut();
 						introLoader_trap = false;
 					}, 1000);
@@ -777,7 +777,7 @@
 					scope.showCustomPicker = true;
 					$( '.showCustomPickerTrue' ).hide();
 
-					setTimeout(function() {
+					$timeout(function() {
 						$('.btn-custom-start').daterangepicker({
 							autoUpdateInput : true,
 							autoApply : true,
@@ -874,7 +874,7 @@
 				}
 
 				scope.initializeNewCustomDatePicker = function(){
-					setTimeout(function() {
+					$timeout(function() {
 						$('.btn-custom-start').daterangepicker({
 							autoUpdateInput : true,
 							autoApply : true,
@@ -926,7 +926,7 @@
 					$( '#date-slider' ).on('slideStop', function(ev){
 						// clearTimeout(slide_trap);
 
-				    // slide_trap = setTimeout(function() {
+				    // slide_trap = $timeout(function() {
 				    	var range_data = date_slider.getValue();
 
 				    	monthToday = range_data[0];
@@ -982,7 +982,7 @@
 					scope.getCompanyDetails();
 					
 
-					setTimeout(function() {
+					$timeout(function() {
 						// var activity_search = scope.getFirstEndDate( 4 , 12 );	
 						// var range_data = date_slider.getValue();
 				  //   var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
