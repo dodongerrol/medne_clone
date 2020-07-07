@@ -763,9 +763,9 @@
 				}
 
 				scope.hideLoading = function( ){
-					setTimeout(function() {
+					// setTimeout(function() {
 						$(".circle-loader").hide();
-					},100)
+					// },100)
 				}
 
 				scope.showCustomDate = function( num ){
