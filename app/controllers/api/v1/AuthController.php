@@ -5399,6 +5399,7 @@ public function createEclaim( )
 
   if($customer && (int)$customer->access_e_claim == 0) {
     $returnObject->status = FALSE;
+    $returnObject->head_message = 'Non-Panel Error';
     $returnObject->message = 'The E-claim function is disabled for your company.';
     return Response::json($returnObject);
   }
@@ -5413,6 +5414,7 @@ public function createEclaim( )
 
     if($limit <= 0) {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
       $returnObject->message = 'Maximum of 14 visits already reached.';
       return Response::json($returnObject);
     }$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
@@ -5425,6 +5427,7 @@ public function createEclaim( )
   
       if($limit <= 0) {
         $returnObject->status = FALSE;
+        $returnObject->head_message = 'Non-Panel Error';
         $returnObject->message = 'Maximum of 14 visits already reached.';
         return Response::json($returnObject);
       }
@@ -5434,6 +5437,7 @@ public function createEclaim( )
       
       if($claim_status && $input['service'] == "Accident & Emergency") {
         $returnObject->status = FALSE;
+        $returnObject->head_message = 'Non-Panel Error';
         $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
         return Response::json($returnObject);
       }
@@ -5444,6 +5448,7 @@ public function createEclaim( )
     
     if($claim_status && $input['service'] == "Accident & Emergency") {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
       $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
       return Response::json($returnObject);
     }
@@ -5454,6 +5459,7 @@ public function createEclaim( )
 
   if($transaction_access)	{
     $returnObject->status = FALSE;
+    $returnObject->head_message = 'Non-Panel Error';
     $returnObject->message = 'Non-Panel function is disabled for your company.';
     return Response::json($returnObject);
   }
@@ -5484,6 +5490,7 @@ public function createEclaim( )
 
     if(!$check_user_balance) {
       $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
       $returnObject->message = 'User does not have a wallet data.';
       return Response::json($returnObject);
     }
@@ -5491,6 +5498,7 @@ public function createEclaim( )
     if($spending['back_date'] == false) {
       if($amount > $balance) {
         $returnObject->status = FALSE;
+        $returnObject->head_message = 'Non-Panel Error';
         $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
         return Response::json($returnObject);
       }
@@ -5507,6 +5515,7 @@ public function createEclaim( )
 
      if($amount > $claim_amounts) {
        $returnObject->status = FALSE;
+       $returnObject->head_message = 'Non-Panel Error';
        $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
        return Response::json($returnObject);
      }
