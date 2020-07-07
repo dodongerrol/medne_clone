@@ -1416,10 +1416,25 @@ public static function get_random_password($length)
                                     ->where('corporate_members.removed_status', 0)
                                     ->where('customer_access_link_company.status',1)
                                     ->first();
-                                   
+            // Check if there are new access Key details
+            $newAccessKeyDetails = DB::table('customer_accessKey')
+                                    ->join('customer_access_link_company', 'customer_access_link_company.accessKeyId', '=', 'customer_accessKey.accessKeyId')
+                                    ->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_access_link_company.customer_id')
+                                    ->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+                                    ->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
+                                    ->where('corporate_members.user_id', $user_id)
+                                    ->where('corporate_members.removed_status', 0)
+                                    ->where('customer_access_link_company.status',1)
+                                    ->orderBy('customer_accessKey.expiry_date', 'DESC')
+                                    ->first();
+
             if (!$accessKeyDetails) {
+                if ($newAccessKeyDetails && $newAccessKeyDetails->accessKey != $xAccessKey) {
+                    $returnObject->message = 'Access key already expired. Please reconnect again to get new access keys.';
+                } else {
+                    $returnObject->message = 'Unathorize Access. Access key/Customer ID does not exist.';
+                }
                 $returnObject->error = TRUE;
-                $returnObject->message = 'Unathorize Access. Access key/Customer ID does not exist.';
                 return $returnObject;
             } else {
 
