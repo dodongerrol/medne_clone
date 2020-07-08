@@ -6632,7 +6632,7 @@ public function payCreditsNew( )
       }
 
       $checker = DB::table('user')
-      ->select('Name as name', 'member_activated')
+      ->select('UserID as user_id', 'Name as name', 'member_activated')
       ->where('PhoneNo', $input['mobile'])->first();
 
       if(!$checker) {
