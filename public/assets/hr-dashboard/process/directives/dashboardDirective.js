@@ -130,12 +130,12 @@ app.directive('dashboardDirective', [
 							scope.progress = response.data.data;
 							// scope.initializeChart();
 
-							if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
-								scope.spendingAccountType = 1;
-							} else {
+							// if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
+							// 	scope.spendingAccountType = 1;
+							// } else {
 								scope.spendingAccountType = 0;
 								scope.companySpendingTotalDue();
-							}
+							// }
 						});
 				}
 
