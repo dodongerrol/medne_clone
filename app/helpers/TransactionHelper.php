@@ -457,8 +457,9 @@ class TransactionHelper
 					'paid_by_cash'      => number_format($trans->cash_cost, 2),
 					'paid_by_credits'   => number_format($paid_by_credits, 2),
 					"currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
-					"currency_type" 		=> $trans->currency_type == "myr" ? "MYR" : "SGD",
-					'files'							=> $doc_files
+					"currency_type" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
+					'files'				=> $doc_files,
+					'visit_deduction'	=> (int)$clinic_type->visit_deduction == 1 ? true : false
 				);
 			}
 		}

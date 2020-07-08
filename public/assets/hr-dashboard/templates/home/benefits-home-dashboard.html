@@ -22,10 +22,10 @@
 				</div>
 				<div class="arrow-up-2" style="visibility: visible;"></div>
 			</div> -->
-			<div class="welcome-container" ng-if="empStatementShow">
+			<!-- <div class="welcome-container" ng-if="empStatementShow">
 				<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
 				<div id="arrow-up-statement"></div>
-			</div>
+			</div> -->
 			<div class="welcome-container">
 				<h4 ui-sref="activity">Activity</h4>
 				<div class="arrow-up-3" style="visibility: hidden;"></div>
@@ -152,10 +152,12 @@
 								<h4 class="subscription-price"><span class="currency-type" ng-bind="total_plan_due.currency_type"></span> <span ng-bind="total_plan_due.total_due"></span></h4>
 							</div> 
 							<div class="health-spending-accounts-container">
-								<h5>Health Spending Accounts</h5>
-								<h6 class="subscription-current-balance">Current balance due</h6>
-								<h4 class="subscription-price"><span class="currency-type" ng-bind="total_spending.currency_type"></span> <span ng-bind="total_spending.spending_total_due"></span></h4>
-								<h6 class="subscription-date" ng-if="total_spending.due_date">Due by <span ng-bind="total_spending.due_date"></span></h6>
+								<div ng-if="progress.active_plans[0].account_type != 'enterprise_plan'">
+									<h5>Health Spending Accounts</h5>
+									<h6 class="subscription-current-balance">Current balance due</h6>
+									<h4 class="subscription-price"><span class="currency-type" ng-bind="total_spending.currency_type"></span> <span ng-bind="total_spending.spending_total_due"></span></h4>
+									<h6 class="subscription-date" ng-if="total_spending.due_date">Due by <span ng-bind="total_spending.due_date"></span></h6>
+								</div>
 							</div>
 							<div class="view-invoice-button">
 								<button ui-sref="transactions">VIEW INVOICE</button>
@@ -165,7 +167,7 @@
 				</div>
 
 				<div class="col-lg-4 no-padding">
-					<div class="col-lg-12 statement-hide" ng-if="options.accessibility == 1">
+					<div class="col-lg-12 statement-hide" ng-if="options.accessibility == 1 && progress.active_plans[0].account_type != 'enterprise_plan'">
 						<div id="tolal-company-container" class="mednefits-box total-company-credits" 
 						style="background-color: #fff; margin-bottom: 20px; height: auto;">
 							<div class="mednefits-header-box"> 
@@ -254,7 +256,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-12" ng-if="options.accessibility != 1" style="display: none;">
+					<div class="col-lg-12" ng-if="options.accessibility != 1 && progress.active_plans[0].account_type != 'enterprise_plan'" style="display: none;">
 						<div class="mednefits-box" style="background-color: #fff;margin-bottom: 20px;">
 							<div class="mednefits-header-box">
 								<h5 class="mednefits-header-title weight-700">Employee Enrollment Status</h5>
@@ -277,6 +279,75 @@
 									</div>
 								</div>
 							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-12 statement-hide" ng-if="progress.active_plans[0].account_type == 'enterprise_plan'">
+						<div id="tolal-company-container" class="mednefits-box total-company-credits" 
+						style="background-color: #fff; margin-bottom: 20px; height: auto;">
+							<div class="mednefits-header-box"> 
+								<h5 class="mednefits-header-title weight-700">Company Spendings</h5>
+							</div>
+							<div ng-if="spending_account_status.wellness == true" class="home-spending-type-container">
+								<button class="btn btn-default btn-medical" ng-class="{'active' : spendingAccountType == 0}" ng-click="selectSpending(0)">Medical</button>
+								<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingAccountType == 1}" ng-click="selectSpending(1)">Wellness</button>
+							</div>
+							<div ng-if="spending_account_status.wellness == true" class="mednefits-body-box credit-box">
+								<div ng-if=" spendingAccountType == 0">
+									<div class="row" style="margin-bottom: 0;">
+										<div class="col-md-12 credit-allocated-container">
+											<h1 class="no-margin credit-amount">
+												<span>
+													<span class="currency-type" ng-bind="credits.currency">SGD</span> <span ng-bind="credits.total_medical_employee_spent"></span>
+												</span>
+											</h1>
+											<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL SPENT</p>
+										</div>
+									</div>
+								</div>
+								<div class="wellness-account-info" ng-if="spendingAccountType == 1">
+									<div class="credit-allocated-container">
+										<h1 class="no-margin credit-amount">
+											<span>
+												<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+												<span ng-bind="credits.total_wellness_employee_allocated"></span>
+											</span>
+										</h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL ALLOCATED</p>
+									</div>
+									<div class="credit-allocated-container">
+										<h1 class="no-margin credit-amount">
+											<span>
+												<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+												<span ng-bind="credits.total_wellness_employee_spent"></span>
+											</span>
+										</h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL SPENT</p>
+									</div>
+									<div class="credit-allocated-container">
+										<h1 class="no-margin credit-amount">
+											<span>
+												<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+												<span ng-bind="credits.total_wellness_employee_balance"></span>
+											</span>
+										</h1>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL BALANCE</p>
+									</div>
+								</div>
+							</div>
+
+							<div ng-if="spending_account_status.wellness == false" class="mednefits-body-box credit-box">
+								<div class="credit-allocated-container">
+									<h1 class="no-margin credit-amount">
+										<span>
+											<span class="currency-type" ng-bind="credits.currency">SGD</span> 
+											<span ng-bind="credits.total_medical_employee_spent"></span>
+										</span>
+									</h1>
+									<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL SPENT</p>
+								</div>
+							</div>
+
 						</div>
 					</div>
 					

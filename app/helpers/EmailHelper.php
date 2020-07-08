@@ -59,7 +59,7 @@ class EmailHelper{
 
     public static function sendEmailRefundWithAttachment($dataArray) {
         Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
-            $pdf = PDF::loadView('pdf-download.member-refunded-transac', $dataArray);
+            $pdf = PDF::loadView('pdf-download.pdf-member-refunded-transaction', $dataArray);
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
             $message->subject($dataArray['emailSubject']);

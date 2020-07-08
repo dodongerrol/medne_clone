@@ -80,11 +80,11 @@
 				scope.checkTransStatus = function( data ){
 					console.log( data );
 					scope.selected_transaction = data;
-					scope.toggleLoading();
+					scope.showLoading();
 					hrSettings.checkTransactionDuplicates( data.trans_id )
 					.then(function(response){
 						console.log(response);
-						scope.toggleLoading();
+						scope.hideLoading();
 						if( response.data.status ){
 							scope.selected_duplicate_transactions = response.data.data;
 							$('#check-duplicate-modal').modal('show');
@@ -112,7 +112,7 @@
 				}
 
 				scope.downloadReceipt = function( res, all_data ) {
-					scope.toggleLoading();
+					scope.showLoading();
 
 						var zip = new JSZip();
 
@@ -134,7 +134,7 @@
 								zip.generateAsync({type:"blob"}).then(function(content) {
 							    saveAs(content, all_data.transaction_id + " - " + all_data.member + ".zip");
 								});
-								scope.toggleLoading();
+								scope.hideLoading();
 							}
 						})
 
@@ -148,7 +148,7 @@
 						return false;
 					}
 					if( scope.download_receipts_ctr == 0 ){
-						scope.toggleLoading();
+						scope.showLoading();
 						$('.download-receipt-message').show();
 						$('.download-receipt-message .total').text( scope.receipts_arr.length );
 						zip = new JSZip();
@@ -193,7 +193,7 @@
 											});
 										scope.download_receipts_ctr = 0;
 										$('.download-receipt-message').hide();
-										scope.toggleLoading();
+										scope.hideLoading();
 									}, 1000);
 									
 								}else{
@@ -217,7 +217,7 @@
 											});
 										scope.download_receipts_ctr = 0;
 										$('.download-receipt-message').hide();
-										scope.toggleLoading();
+										scope.hideLoading();
 									}, 1000);
 									
 								}else{
@@ -243,13 +243,13 @@
 					if( scope.search.user_id ){
 						data.user_id = scope.search.user_id;
 					}
-					scope.toggleLoading();
+					scope.showLoading();
 					var api_url = serverUrl.url + "/hr/download_out_of_network_csv?token=" + data.token + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&status=" + data.status;
 			    if( data.user_id ){
 			      api_url += ("&user_id=" + data.user_id);
 			    }
 			    window.open( api_url );
-			    scope.toggleLoading();
+			    scope.hideLoading();
 				}
 
 				scope.openDetails = function( list ) {
@@ -261,7 +261,7 @@
 				}
 
 				scope.filterTransactions = function( num ){
-					scope.showLoading();
+					// scope.showLoading();
 					scope.filter_num = num;
 					if( num == 1 ){
 						scope.filter_text = 'All';
@@ -285,7 +285,8 @@
 						console.log( scope.receipts_arr );
 					}
 					// console.log( scope.receipts_arr );
-					scope.hideLoading();
+					// scope.hideLoading();
+					$(".circle-loader").hide();
 				}
 
 				scope.hideReasonInput = function( list ){
@@ -316,10 +317,10 @@
 					if( num == 3 ){
 						// list.showReasonInput = true;
 						// list.showRemarksInput = false;
-						scope.toggleLoading();
 						var data = {
 							e_claim_id : list.trans_id
 						}
+						scope.showLoading();
 						hrActivity.revertEclaim( data )
 							.then(function(response){
 								console.log(response);
@@ -328,16 +329,17 @@
 									list.status_text = 'Pending';
 									list.res = true;
 									list.message = response.data.message;
+									scope.applyDates();
 								}else{
 									swal( 'Oops!', response.data.message, 'error' );
 								}
-								scope.toggleLoading();
+								// scope.hideLoading();
 							});
 					}
 				}
 
 				scope.updateStatusToApprove = function( list, num ){
-					scope.toggleLoading();
+					scope.showLoading();
 					var data = {
 						e_claim_id: list.transaction_id,
 						status: num,
@@ -350,7 +352,6 @@
 					hrActivity.updateEclaimStatus( data )
 					.then(function(response){
 						console.log(response);
-						scope.toggleLoading();
 						if( response.data.status == true ){
 							console.log(list);
 							list.status = num;
@@ -371,15 +372,19 @@
 								list.res = false;
 								list.message = response.data.message;
 							}
+							
+							scope.applyDates();
 						} else {
-							alert(response.data.message);
+							// alert(response.data.message);
+							swal('Ooops!', response.data.message, 'error');
+							$( ".circle-loader" ).fadeOut();
 						}
 					});
 				}
 
 				scope.updateStatusToReject = function( list, num ){
 					if( list.reason != "" ){
-						scope.toggleLoading();
+						scope.showLoading();
 						var data = {
 							e_claim_id: list.transaction_id,
 							status: num,
@@ -388,7 +393,6 @@
 
 						hrActivity.updateEclaimStatus( data )
 						.then(function(response){
-							scope.toggleLoading();
 							if( response.data.status == true ){
 								console.log(list);
 								list.status = num;
@@ -409,8 +413,10 @@
 									list.res = false;
 									list.message = response.data.message;
 								}
+								scope.applyDates();
 							} else {
-								swal('Oops!', response.data.message, 'error')
+								swal('Oops!', response.data.message, 'error');
+								$( ".circle-loader" ).fadeOut();
 							}
 						});
 					}
@@ -513,18 +519,20 @@
 							scope.current_page = 1;
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
-							setTimeout(function() {
+							$timeout(function() {
 								$("#fetching_users").fadeOut('slow');
 							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
+							scope.hideLoading();
+							$(".circle-loader").hide();
 						}
 					});
 				}
 
 				scope.searchActivity = function( data ) {
-					scope.toggleLoading();
+					scope.showLoading();
 					scope.togglePointerEvents();
 					$(".searchEclaimLoader").show();
 					$(".searchEclaimLoader2").show();
@@ -549,7 +557,7 @@
 					hrActivity.getEclaimActivity(data)
 					.then(function(response){
 						console.log(response);
-						scope.toggleLoading();
+						// scope.hideLoading();
 						scope.activity = {};
 						scope.activity = response.data.data;
 						console.log(scope.activity);
@@ -613,12 +621,14 @@
 							scope.current_page = 1;
 							$("#fetching_text").hide();
 							$("#done_fetching_text").show();
-							setTimeout(function() {
+							$timeout(function() {
 								$("#fetching_users").fadeOut('slow');
 							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
 							scope.togglePointerEvents();
+							scope.hideLoading();
+							$(".circle-loader").hide();
 						}
 					});
 				}
@@ -637,7 +647,7 @@
 					   },
 					   items: 15,
 					   afterSelect: function(item) {
-					   	setTimeout(function() {
+					   	$timeout(function() {
 					   		scope.selected_search_user = item;
 					   		console.log( item );
 					   		scope.searchEmployeeActivity(item.user_id);
@@ -648,7 +658,7 @@
 				};
 
 				scope.searchEmployeeActivity = function(user_id) {
-					scope.toggleLoading();
+					scope.showLoading();
 					scope.temp_no_search_activity = scope.activity;
 					scope.receipts_arr = [];
 					// var range_data = date_slider.getValue();
@@ -662,7 +672,7 @@
 					scope.search.close = true;
 					hrActivity.searchEmployeeEclaimActivity(activity_search)
 					.then(function(response){
-						scope.toggleLoading();
+						scope.hideLoading();
 						if(response.status == 200) {
 							console.log( response);
 							scope.activity_title = response.data.employee + ' Benefits Cost';
@@ -687,6 +697,7 @@
 								scope.filterTransactions(scope.filter_num);
 								// $('.btn-receipts').attr( 'disabled', true );
 							}
+							scope.hideLoading();
 						}
 					});
 				};
@@ -700,7 +711,6 @@
 					// var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
 					// scope.searchActivity( activity_search );
 
-					// scope.toggleLoading();
 					// scope.activity = scope.temp_no_search_activity;
 					// scope.temp_no_search_activity = {};
 					// console.log(scope.activity);
@@ -712,10 +722,6 @@
 						end: moment(scope.rangePicker_end,'DD/MM/YYYY').format('YYYY-MM-DD'),
 				  };
 					scope.searchActivity( activity_search );
-
-					// setTimeout(function() {
-					// 	scope.toggleLoading();
-					// }, 1000);
 				};
 
 				scope.displayText = function(item) {
@@ -736,22 +742,10 @@
 				};
 
 				scope.hideIntroLoader = function( ){
-					setTimeout(function() {
+					$timeout(function() {
 						$( ".main-loader" ).fadeOut();
 						introLoader_trap = false;
 					}, 1000);
-				}
-
-				scope.toggleLoading = function( ){
-					if ( loading_trap == false ) {
-						$( ".circle-loader" ).fadeIn();	
-						loading_trap = true;
-					}else{
-						setTimeout(function() {
-							$( ".circle-loader" ).fadeOut();
-							loading_trap = false;
-						},100)
-					}
 				}
 
 				var pointer_trap = false;
@@ -768,15 +762,14 @@
 				}
 
 				scope.showLoading = function( ){
-					$( ".circle-loader" ).fadeIn();	
-					loading_trap = true;
+					$( ".circle-loader" ).show();	
 				}
 
 				scope.hideLoading = function( ){
-					setTimeout(function() {
+					$timeout(function() {
 						$(".circle-loader").hide();
-						loading_trap = false;
-					},10)
+						scope.$apply();
+					},100)
 				}
 
 				scope.showCustomDate = function( num ){
@@ -785,7 +778,7 @@
 					scope.showCustomPicker = true;
 					$( '.showCustomPickerTrue' ).hide();
 
-					setTimeout(function() {
+					$timeout(function() {
 						$('.btn-custom-start').daterangepicker({
 							autoUpdateInput : true,
 							autoApply : true,
@@ -882,7 +875,7 @@
 				}
 
 				scope.initializeNewCustomDatePicker = function(){
-					setTimeout(function() {
+					$timeout(function() {
 						$('.btn-custom-start').daterangepicker({
 							autoUpdateInput : true,
 							autoApply : true,
@@ -934,7 +927,7 @@
 					$( '#date-slider' ).on('slideStop', function(ev){
 						// clearTimeout(slide_trap);
 
-				    // slide_trap = setTimeout(function() {
+				    // slide_trap = $timeout(function() {
 				    	var range_data = date_slider.getValue();
 
 				    	monthToday = range_data[0];
@@ -963,6 +956,15 @@
         		console.log(response);
         		scope.company_details = response.data.data;
         	});
+				}
+				
+				scope.getSpendingAcctStatus = function () {
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
         }
 
 				scope.onLoad = function( ){
@@ -970,15 +972,18 @@
 
 					hrSettings.getSession( )
 						.then(function(response){
-							scope.options.accessibility = response.data.accessibility;
+							console.log(response);
+							scope.options = response.data;
+							console.log(scope.options);
 	        	});
-
+					scope.getSpendingAcctStatus();
 					scope.getEmployeeLists( );
 					// scope.initializeRangeSlider( );
 					scope.initializeNewCustomDatePicker();
 					scope.getCompanyDetails();
+					
 
-					setTimeout(function() {
+					$timeout(function() {
 						// var activity_search = scope.getFirstEndDate( 4 , 12 );	
 						// var range_data = date_slider.getValue();
 				  //   var activity_search = scope.getFirstEndDate( range_data[0], range_data[1] );
@@ -994,6 +999,8 @@
 					hrSettings.getCheckCredits();
 				}
 
+				
+
 				// scope.checkCompanyBalance();
 				scope.onLoad( );
 
@@ -1008,10 +1015,8 @@
 
 						$(".preview-box img").attr('src', img.file);
 					}else{
-						// scope.toggleLoading();
 						// hrSettings.getEclaimPresignedUrl(img.e_claim_doc_id)
 						// .then(function(response){
-						// 	scope.toggleLoading();
 							// var url = "https://docs.google.com/viewer?url=" + img.file + "&embedded=true&chrome=true";
 							$(".preview-box iframe").show();
 							$(".preview-box .img-container").css({'width': '80%'});

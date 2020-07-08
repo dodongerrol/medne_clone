@@ -228,6 +228,226 @@
 // 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
 // 	// update employee details
 // 	Route::post('hr/employee/update', 'BenefitsDashboardController@updateEmployeeDetails');
+// test paginate new
+Route::get('ge_test_paginate', 'testcontroller@paginateMembers');
+// Route::get('test_return_balance', 'testcontroller@testReturnBalance');
+Route::get('test/email_send', 'HomeController@testEmailSend');
+
+// test recalculate balance
+Route::get('test_balance', 'testcontroller@testBalance');
+// test member credit reset dates
+// Route::get('test_get_member_reset_dates', 'testcontroller@getMemberResetDateTest');
+// Route::get('test_customer_reset_credits_dates', 'testcontroller@testCustomerResetDates');
+// Route::get('test_member_reset_credits_dates', 'testcontroller@testMemberResetDates');
+// test wallet balance for reset credits
+Route::post('test_spending_balance', 'testcontroller@testGetMedicalBalanceByDate');
+// test date format
+// Route::post('test_format_date', 'testcontroller@testFormatDate');
+// test upload e-claim
+// Route::post("test_upload_e_claim_queue",'testcontroller@testEclaimUploadQueue');
+// test send e-claim emial
+// Route::post('test_send_e_claim', 'testcontroller@testEclaimSendEmail');
+// get currencies
+Route::get('get/currency_lists', 'testcontroller@getCurrencyLists');
+// Route::get('image_cloudinary_auto_quality', 'testcontroller@ImageAutoQuality');
+Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
+// Route::post('upload_image', 'testcontroller@uploadImage');
+// Route::get('update_clinic_default_image', 'testcontroller@updateClinicDefaultImage');
+
+// Route::get('test_employee_reset', 'testcontroller@getUserEmployee');
+// test rouote for sms password reset
+// Route::post('test_sms', 'testcontroller@testSMSsend');
+// test route for sms enroll
+// Route::post('test_sms_enroll', 'testcontroller@testSendSmsEnroll');
+// test nric
+// Route::post('test_nric', 'testcontroller@testNRIC');
+// test employee plan coverage status
+// Route::get('test_employee_plan_coverage', 'testcontroller@testGetuserPlanCoverage');
+
+// cron jobs
+// care plan expiration
+// Route::get('cron/get_customer_expire_plan', 'BenefitsDashboardController@getCompanyExpirePlan');
+// // cron for activate user
+// Route::get('activate/care_plan_user', 'CarePlanPurchaseController@activateCarePlanUser');
+// // cron for generate invoice
+// Route::get('generate/clinic/invoice', 'InvoiceController@generateMonthlyInvoice');
+// // Cron jobs for statement of account
+// Route::get('app/cron/statement_of_account', 'CronController@generateStatementOfAccount');
+// // cron job for corporate monthly invoice
+// // Route::get('app/cron/company_invoice', 'EclaimController@generateMonthlyCompanyInvoice');
+// Route::get('app/cron/company_invoice', 'SpendingInvoiceController@generateMonthlyCompanyInvoice');
+// // generate invoice
+// // Route::get('generate/clinic/invoice', 'InvoiceController@generateMonthlyInvoice');
+// // crom for withdrawal deletion account
+// Route::get('app/cron/withdrawal_deletion_account', 'CronController@createAutomaticDeletion');
+// // cron for activate replace new employee
+// Route::get('app/cron/replace_new_employee', 'CronController@activateReplaceNewEmployee');
+// // cron for activate remove employee
+// Route::get('app/cron/activate_remove_employee', 'CronController@activateRemoveReplaceEmployee');
+// // cron for deactive employee seat
+// Route::get('app/cron/remove_employee_seat', 'CronController@removeEmployeeSeat');
+// // Route::get('app/cron/withdrawal_deletion_account', 'BenefitsDashboardController@createAutomaticDeletion');
+
+// // remove dependents from employee deletion
+// Route::get('app/cron/remove_dependent_from_employee', 'CronController@removeDepdentsEmployeeAccounts');
+
+// // test api for deactivate user
+// Route::get('test_deactivate_user', 'HomeController@testDeactivateUser');
+// // pdf for members coverage
+// Route::get('pdf/Members', 'HomeController@getMembersPdf');
+
+// // get notification config
+// Route::get('config/notification', 'HomeController@getNotificationConfig');
+
+// // test get file as json
+// // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
+
+
+// // EMPLOYEE UPDATE EXERCISES
+// Route::group(array('prefix' => 'exercise'), function()
+// {
+// 	Route::post('validate_member', 'EmployeeController@validateMember');
+// 	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
+// 	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
+// 	Route::post('validate_mobile_number', 'EmployeeController@checkMobileExistence');
+// 	Route::post('send_sms_otp', 'EmployeeController@sendMemberSmsOtp');
+// 	Route::post('validate_otp_code', 'EmployeeController@validateOpt');
+// });
+
+
+// Route::get('app/e_claim', 'HomeController@oldeClaim');
+// Route::get('member-portal-login', 'HomeController@eClaimLogin');
+// Route::get('member-portal', 'HomeController@eClaimHome');
+// // LOGIN FOR ECLAIM EMPLOYEES
+// Route::post('app/e_claim/login', 'EclaimController@loginEmployee');
+// // Route::get('app/e_claim/logout', 'EclaimController@logoutEmployee');
+
+
+// Route::get('app/resetcompanypassword', 'HomeController@getCompanyForgotPasswordView');
+// Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordView');
+// Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordView');
+
+// Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
+
+// // authentications for eclaim
+// Route::group(array('before' => 'auth.jwt_employee'), function( ){
+// 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
+// 	// Route::post('app/create_e_claim', 'EclaimController@createEclaimMedical');
+// 	Route::get('app/get_e_claims', 'EclaimController@getEclaims');
+// 	Route::get('app/get_e_claim_details/{id}', 'EclaimController@getEclaimDetails');
+// 	// upload image
+// 	Route::post('app/image_upload', 'EclaimController@uploadImage');
+// 	// logout
+// 	Route::get('app/e_claim/logout', 'EclaimController@logout');
+// 	// get user coverage
+// 	Route::get('app/e_claim/user_coverage', 'EclaimController@getUserCoverage');
+// 	// update profile
+// 	Route::post('app/e_claim/update_profile', 'EclaimController@updateProfile');
+// 	// get employee current spending for medical
+// 	Route::get('employee/get_current_spending', 'EclaimController@currentSpending');
+// 	// get employee current spending for wellness
+// 	Route::get('employee/get_current_wellness_spending', 'EclaimController@currentSpendingWellness');
+// 	// get employee members
+// 	Route::get('employee/get_members', 'EclaimController@getEmployeeMembers');
+// 	// get employee medical activity
+// 	Route::post('employee/search_eclaim_activity', 'EclaimController@getActivity');
+// 	// create e claim
+// 	Route::post('employee/create/e_claim', 'EclaimController@createEclaimMedical');
+// 	Route::post('employee/save/e_claim_receipt', 'EclaimController@createEclaimReceipt');
+// 	Route::post('employee/create/e_claim_receipt', 'EclaimController@saveEclaim');
+// 	Route::post('employee/create/transaction_receipt', 'EclaimController@createInNetworkReceipt');
+// 	// change password
+// 	Route::post('employee/change_password', 'EclaimController@updateEmployeePassword');
+// 	// create e-claim wellness
+// 	Route::post('employee/create/e_claim_wellness', 'EclaimController@createEclaimWellness');
+// 	// get employee wellness activity
+// 	Route::post('employee/search_eclaim_wellness_activity', 'EclaimController@getWellnessActivity');
+// 	// get health partner lists
+// 	Route::get('employee/get_health_partner_lists', 'EclaimController@getHealthPartnerLists');
+// 	// get user care package
+// 	Route::get('employee_care_package', 'BenefitsDashboardController@employeePackages');
+// 	// get doc presigned url
+// 	Route::get('employee_care_package/get_e_claim_doc', 'EclaimController@getPresignedEclaimDoc');
+// 	// check Employee e-claim submission visit date
+// 	Route::post('employee/check_e_claim_visit', 'EclaimController@checkEClaimDatesBalance');
+// 	// get date terms
+// 	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
+// });
+
+
+
+// // api for getting local_network
+// Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
+// Route::get('list/local_network_partners/{id}', 'NetworkPatnerController@getLocalNetworkPartnerList');
+
+// // Route::post('generate/clinic/invoice', 'InvoiceController@createClinicInvoice');
+
+// // hr dashboard
+// Route::get('business-portal-login', 'HomeController@hrDashboardLogin');
+// Route::get('company-benefits-dashboard-login', 'HomeController@oldhrDashboardLogin');
+// Route::get('company-benefits-dashboard-logout', 'BenefitsDashboardController@logOutHr');
+// Route::post('company-benefits-dashboard-login', 'BenefitsDashboardController@hrLogin');
+// Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
+// Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
+
+// // secure route on hr page, need authenticated to get access on this routes
+
+// Route::get('company-benefits-dashboard', 'HomeController@hrDashboard');
+// Route::get('company-benefits-dashboard-forgot-password', 'HomeController@hrForgotPassword');
+// Route::post('hr/forgot/company-benefits-dashboard', 'BenefitsDashboardController@forgotPassword');
+
+// // benefits invoice
+// Route::get('benefits/invoice', 'BenefitsDashboardController@benefitsInvoice');
+// // benefits receipt
+// Route::get('benefits/receipt', 'BenefitsDashboardController@benefitsReceipt');
+// // spending deposit
+// Route::get("benefits/deposit/{id}", 'BenefitsDashboardController@getSpendingDeposit');
+// Route::get('hr/get_cancellation_details', 'BenefitsDashboardController@refundDetails');
+// // Route::get('hr/statement_download', 'BenefitsDashboardController@downloadStatementPDF');
+
+// Route::get('hr/statement_download', 'SpendingInvoiceController@downloadSpendingInvoice');
+// // Route::get('hr/statement_in_network_download', 'BenefitsDashboardController@downloadStatementInNetwork');
+
+// Route::get('hr/statement_in_network_download', 'SpendingInvoiceController@downloadSpendingInNetwork');
+// // Route::get('hr/statement_eclaim_download', 'BenefitsDashboardController@downloadStatementEclaim');
+// Route::get('hr/statement_eclaim_download', 'SpendingInvoiceController@downloadStatementEclaim');
+// // download receipt spend
+// Route::get('hr/download_spending_receipt', 'BenefitsDashboardController@downloadSpendingReceipt');
+// // download spending deposit
+// Route::get('hr/spending_desposit', 'BenefitsDashboardController@getSpendingDeposit');
+// Route::get('hr/calculate_added_headcount', 'BenefitsDashboardController@calculatePrices');
+// Route::get('hr/download_dependent_invoice', 'DependentController@getDependentInvoice');
+
+// // get pending employee replacement
+// Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@getPendingEmployeeDeactivate');
+
+// Route::group(array('before' => 'auth.jwt_hr'), function( ){
+// 	// get token download
+// 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
+// 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
+// 	Route::get('hr/get_plan_status', 'BenefitsDashboardController@getPlanStatus');
+// 	Route::get('get-hr-session', 'BenefitsDashboardController@hrStatus');
+// 	Route::get('hr/check_plan', 'BenefitsDashboardController@checkPlan');
+// 	Route::get('hr/update_show_done', 'BenefitsDashboardController@updateShowDone');
+// 	Route::get('hr/enrollment_progress', 'BenefitsDashboardController@employeeEnrollmentProgress');
+// 	Route::get('hr/get/temp_enrollment', 'BenefitsDashboardController@getTempEnrollment');
+// 	Route::get('remove/temp_enrollee/{id}', 'BenefitsDashboardController@removeEnrollee');
+// 	Route::post('insert/enrollee_web_input', 'BenefitsDashboardController@insertFromWebInput');
+// 	Route::post('update/enrollee_details', 'BenefitsDashboardController@updateEnrolleeDetails');
+// 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
+// 	Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
+// 	// upload via excel
+// 	// Route::post('upload/excel_enrollment', 'BenefitsDashboardController@uploadExcel');
+// 	Route::post('upload/excel_enrollment', 'DependentController@uploadExcel');
+// 	// finish employee enrollements
+// 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
+// 	// employee list
+// 	Route::get('hr/employee/list/{per_page}', 'BenefitsDashboardController@employeeLists');
+// 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');
+// 	// search employee
+// 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
+// 	// update employee details
+// 	Route::post('hr/employee/update', 'BenefitsDashboardController@updateEmployeeDetails');
 	
 
 // 	// get company details and contacts
@@ -505,6 +725,100 @@
 // Route::post('app/setting/staff/addDoctor','staffController@addDoctor');
 // Route::post('app/setting/staff/updateDoctor','staffController@updateDoctor');
 // Route::post('app/setting/staff/updateStaff','staffController@updateStaff');
+	// get account type
+// 	Route::get('hr/get_company_account_type', 'BenefitsDashboardController@getCompanyPlanAccountType');
+// 	// get clinic type lists for company block
+// 	Route::get('hr/get_block_clinic_type_lists_status', 'EmployeeController@getBlockClinicTypeLists');
+// 	// get clinic type lists for employee block
+// 	Route::get('hr/get_employee_block_clinic_type_lists_status', 'EmployeeController@getBlockClinicTypeListsEmployee');
+// 	// route get clinic lists for compay block
+// 	Route::get('hr/get_company_block_lists', 'EmployeeController@getCompanyBlockClinicLists');
+// 	// route get clinic lists for emplouee block
+// 	Route::get('hr/get_employee_company_block_lists', 'EmployeeController@getCompanyBlockClinicListsEmployee');
+// 	// route get clnic active lists company block
+// 	Route::get('hr/get_clinic_lists_block_company', 'EmployeeController@getCompanyActiveClinicLists');
+// 	// route get clnic active lists company block
+// 	Route::get('hr/get_employee_clinic_lists_block_company', 'EmployeeController@getCompanyActiveClinicListsEmployee');
+// 	// create company block
+// 	Route::post('hr/create_company_block_lists', 'EmployeeController@createCompanyBlockClinicLists');
+// 	// create employee block
+// 	Route::post('hr/create_employee_company_block_lists', 'EmployeeController@createCompanyBlockClinicListsEmployee');
+// 	// get employee cap per visits
+// 	Route::get('hr/employee_cap_per_visit_list', 'EmployeeController@employeeCapPerVisit');
+// 	// upload employee cap per visit
+// 	Route::post('hr/upload_employee_cap_per_visit', 'EmployeeController@uploadCaperPervisit');
+// 	// get customer spending account status
+// 	Route::get('hr/get_spending_account_status', 'PlanRenewalController@getEntitlementEnrolmentStatus');
+// 	// get member entitlement
+// 	Route::get('hr/get_member_entitlement', 'EmployeeController@getMemberEntitlement');
+// 	// calculate pro ration
+// 	Route::post('hr/get_member_entitlement_calculation', 'EmployeeController@calculateProRation');
+// 	// get entitlement status
+// 	Route::get('hr/get_member_new_entitlement_status', 'EmployeeController@entitlementStatus');
+// 	// create new entitlement
+// 	Route::post('hr/create_member_new_entitlement', 'EmployeeController@createNewEntitlement');
+// 	// get hr date terms
+// 	Route::get('hr/get_date_terms', 'CorporateController@getCompanyDateTerms');
+// 	// get customer spending account status
+// 	Route::get('hr/spending_account_status', 'BenefitsDashboardController@spendingAccountStatus');
+// 	// get excel link
+// 	Route::get('hr/get_excel_link', 'BenefitsDashboardController@getExcelLink');
+// 	// route get employee lists for bulk allocation
+// 	Route::get('hr/get_employee_lists_bulk_allocation', 'BenefitsDashboardController@getEmployeeListsBulk');
+// 	// upload employee allocation bulk
+// 	Route::post('hr/upload_employee_bulk_allocation', 'EmployeeController@uploadEmployeeBulkAllocation');
+// 	// get member credits
+// 	Route::get('hr/member_credits', 'EmployeeController@getMemberCreditDetails');
+// 	// create new allocation
+// 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
+// 	// get spending invoice purchse
+// 	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
+// 	// check fields for replacement
+// 	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
+// });
+
+// 	// get employee refund details
+// 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
+// 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
+// 	// download spending invoice details
+// 	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
+
+// // download employee cap per visit
+// Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
+// Route::get('hr/download_employee_cap_per_visit', 'EmployeeController@downloadCaperPervisitCSV');
+
+// // intro login for clinic
+// Route::get('provider-portal-login', 'HomeController@clinicLogin');
+// Route::get('app/clinic/login', 'HomeController@clinicLogin');
+// // main login pagef
+// Route::get('app/login', 'HomeController@introPageLogin');
+
+
+
+// // welcome pack
+// Route::get('get/welcome-pack-corporate', 'HomeController@welcomePackCorporate');
+// Route::get('get/welcome-pack-individual/{id}', 'HomeController@welcomePackIndividual');
+// Route::get('get/contract/{id}', 'HomeController@getContract');
+
+// // invoice for corporate
+// Route::get('get/invoice/{id}', 'InvoiceController@corporateInvoice');
+// Route::get('get/certificate/{id}', 'InvoiceController@getCertificate');
+// Route::get('get/receipt', 'InvoiceController@getReceipt');
+// Route::get('get/statement/{id}', 'InvoiceController@getHrStatement');
+// // get stripe token
+// Route::get('app/get/token', 'CarePlanPurchaseController@getToken');
+
+// // Route::get('test/payout', 'PaymentsController@testPayout');
+// Route::get('conclude/page/{id}', 'HomeController@concludePage');
+
+// // send try-three-months
+// Route::post('send/try-three-months', 'HomeController@sendTryThreeMonths');
+
+// Route::get('conclude/page/{id}/{rate}', 'HomeController@concludePage');
+
+// Route::post('app/save/clinic/rating', 'HomeController@saveClinicRating');
+
+// Route::get('get_previous_bookings', 'UserWebController@getPreviousBookings');
 
 // Route::post('app/setting/staff/addBreak','staffController@addBreak');
 // Route::post('app/setting/staff/removeBreak','staffController@removeBreak');

@@ -45,8 +45,8 @@ function ($rootScope, $state, $stateParams, $templateCache, $window) {
 app.factory('serverUrl',[
     function factory(){
       return {
-        url: window.location.origin,
-        // url: "http://ec2-13-251-63-109.ap-southeast-1.compute.amazonaws.com",
+        // url: window.location.origin,
+        url: "https://hrapi.medicloud.sg",
         external_url: 'https://dev.geckorest.com/mednefits/',
         mednefits_url: 'http://app.mednefits.com/api/'
       }
@@ -614,6 +614,28 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       views: {
         'child-content@settings': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
+        }
+      }
+    })
+    .state('expired-link', {
+      url: '/expired-link',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/expired-link/expired-link.html'
+        }
+      }
+    })
+    .state('T&C', {
+      url: '/T&C',
+      views: {
+        // 'navigation': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+        // },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/t&c/t&c.html'
         }
       }
     })

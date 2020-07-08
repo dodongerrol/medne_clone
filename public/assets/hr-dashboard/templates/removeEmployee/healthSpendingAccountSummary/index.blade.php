@@ -1,4 +1,4 @@
-<div health-spending-account-summary-directive>
+<div class="remove-emp-health-summary-wrapper" health-spending-account-summary-directive>
   
   <div class="account-summary-wrapper" >
 		<span class="account-summary-name weight-700" ng-bind="selectedEmployee.name">Calvin Lee</span>
@@ -39,7 +39,7 @@
 					ng-bind="health_spending_summary.date.usage_end">01/12/2018</span></span>
 		</div>
 
-		<div
+		<!-- <div
 			ng-if="(health_spending_summary.medical && !health_spending_summary.wellness) || (!health_spending_summary.medical && health_spending_summary.wellness)"
 			class="medical-spending-account-container">
 			<h4 ng-if="health_spending_summary.medical" class="font-helvetica-medium ">Medical Spending Account</h4>
@@ -216,14 +216,10 @@
 					<span ng-bind="health_spending_summary.wellness && health_spending_summary.wellness.balance">84.62</span>
 				</span>
 			</div>
-		</div>
+		</div> -->
 
-
-		
-
-		<div ng-if="health_spending_summary.medical && health_spending_summary.wellness "
-			class="medical-wellness-container">
-			<div class="medical-container">
+		<div class="medical-wellness-container" ng-class="{'display-inline-block' : !health_spending_summary.medical.status || !health_spending_summary.wellness.status}">
+			<div ng-if="health_spending_summary.medical.status == true" class="medical-container">
 				<h4 class="font-helvetica-medium text-center">Medical Spending Account</h4>
 				<div class="spending-account-details">
 					<div class="inital-allocation-container weight-700">
@@ -361,12 +357,10 @@
           </span>
         </div>
       </div>
-      
 
-      <div class="separator"></div>
-      
+      <div ng-if="health_spending_summary.medical.status == true && health_spending_summary.wellness.status == true" class="separator"></div>
 
-			<div class="wellness-container">
+			<div ng-if="health_spending_summary.wellness.status == true" class="wellness-container">
 				<h4 class="font-helvetica-medium text-center">Wellness Spending Account</h4>
 				<div class="spending-account-details">
 					<div class="inital-allocation-container weight-700">
