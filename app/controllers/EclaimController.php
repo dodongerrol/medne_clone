@@ -198,7 +198,7 @@ class EclaimController extends \BaseController {
 				$claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
 
 				if($claim_status) {
-					return ['status' => false, 'message' => 'Maximum of 2 approved Accident & Emergency already consumed.'];
+					return ['status' => false, 'message' => "Looks like you've reached the maximum of 2 approved A&E this term."];
 				}
 			}
 		}

@@ -5438,7 +5438,7 @@ public function createEclaim( )
       if($claim_status && $input['service'] == "Accident & Emergency") {
         $returnObject->status = FALSE;
         $returnObject->head_message = '2/2 A&E used';
-        $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
+        $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
         return Response::json($returnObject);
       }
     }
