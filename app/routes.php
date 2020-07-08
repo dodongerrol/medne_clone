@@ -476,6 +476,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update_enrollment_schedule', 'BenefitsDashboardController@updateEnrollmentSchedule');
 	// seend activaton email
 	Route::post('hr/send_immediate_activation', 'EmployeeController@SendMemberActivation');
+	// list og old plans
+	Route::get('hr/get_old_list_plans', 'BenefitsDashboardController@getOldPlansLists');
 });
 
 	// get employee refund details
