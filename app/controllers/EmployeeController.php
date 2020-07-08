@@ -3184,4 +3184,61 @@ class EmployeeController extends \BaseController {
 
       return ['status' => true, 'message' => 'Activation sent.'];
     }
+
+
+    public static function employeeResetPassword( ){
+      $hostName = $_SERVER['HTTP_HOST'];
+      $protocol = $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+      $server = $protocol.$hostName;
+      // return $server;
+      $id = Input::get ('id');
+      $input = Input::all();
+      // $returnObject = new stdClass();
+      if(!empty($id)){
+        $findUserID = null;
+        $user_data = DB::table('user')
+        ->where('UserID', $id)
+        ->first();
+
+        if($user_data){
+          $findUserID = $user_data->UserID;
+          // $returnObject->status = TRUE;
+          // $returnObject->message = "New password is on the way to your email, check your inbox.";
+          $deleteToken = self::Delete_Token();
+          if($user_data->ResetLink) {
+            $updateArray['ResetLink'] = $user_data->ResetLink;
+          } else {
+            $updateArray['ResetLink'] = StringHelper::getEncryptValue();
+          }
+
+          $updateArray['userid'] = $findUserID;
+          $updateArray['Recon'] = 0;
+          $updateArray['updated_at'] = date('Y-m-d H:i:s');
+
+          $user = new User();
+          $update = $user->updateUserProfile($updateArray);
+
+          $findNewUser = DB::table('user')
+          ->where('UserID', '=', $findUserID)
+          ->first();
+
+          // check type of communication type
+          if($findNewUser->UserID) {
+            $emailDdata['emailName'] = $user_data->Name;
+            $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
+            $emailDdata['emailTo'] = $user_data->Email;
+            $emailDdata['emailSubject'] = 'Employee Password Reset';
+            $emailDdata['name'] = $user_data->Name;
+            $emailDdata['context'] = "Forgot your employee password?";
+            $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$updateArray['ResetLink'];
+            EmailHelper::sendEmail($emailDdata);    
+            return array('status' => TRUE, 'message' => 'We sent an email or sms to you with a link to reset your password.');
+          } 
+          return array('status' => FALSE, 'message' => 'Failed to send reset password link.');
+      }else{
+        return ['status' => FALSE, 'message' => 'Reset Password Failed.'];
+      }
+    }
+    return ['status' => FALSE, 'message' => 'Reset Password Failed.'];
+  }
 }
