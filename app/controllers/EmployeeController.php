@@ -3185,47 +3185,6 @@ class EmployeeController extends \BaseController {
       return ['status' => true, 'message' => 'Activation sent.'];
     }
 
-    public function UpdateUserProfile(){
-      $returnObject = new stdClass();
-      $findUserID = AuthLibrary::validToken();
-      if($findUserID){
-        $returnObject = AuthLibrary::ProfileUpdate($findUserID);
-      }else{
-        $returnObject->status = FALSE;
-        $returnObject->message = StringHelper::errorMessage("Token");
-      }
-      return Response::json($returnObject);
-    }
-
-    public static function FindUserProfile($profileid){
-      $user = new User();
-      $findUserProfile = $user->getUserProfileMobile($profileid);
-      if($findUserProfile){
-        return $findUserProfile;
-      }else{
-        return FALSE;
-      }
-    }
-
-
-        public static function Delete_Token(){
-          $AccessToken = new OauthAccessTokens();
-          $getRequestHeader = StringHelper::requestHeader();
-          //if($getRequestHeader['Authorization'] !=""){
-          if(!empty($getRequestHeader['Authorization'])){
-            $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
-            if($getAccessToken){
-              $deleteToken = $AccessToken->DeleteToken($getAccessToken->id);
-              if($deleteToken){
-                return TRUE;
-              }else{
-                return FALSE;
-              }
-            }
-          }else{
-            return FALSE;
-          }
-        }
 
     public static function employeeResetPassword( ){
       $hostName = $_SERVER['HTTP_HOST'];
