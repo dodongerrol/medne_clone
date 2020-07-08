@@ -12,6 +12,10 @@
 */
 
 // Route::get('test/email_send', 'HomeController@testEmailSend');
+// test paginate new
+Route::get('ge_test_paginate', 'testcontroller@paginateMembers');
+// Route::get('test_return_balance', 'testcontroller@testReturnBalance');
+Route::get('test/email_send', 'HomeController@testEmailSend');
 
 // test recalculate balance
 // Route::get('test_balance', 'testcontroller@testBalance');
@@ -220,7 +224,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// Route::post('upload/excel_enrollment', 'BenefitsDashboardController@uploadExcel');
 	Route::post('upload/excel_enrollment', 'DependentController@uploadExcel');
 	// finish employee enrollements
-	Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
+	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 	// employee list
 	Route::get('hr/employee/list/{per_page}', 'BenefitsDashboardController@employeeLists');
 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');
@@ -453,7 +457,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
 });
 
-
+	// get employee refund details
+	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
 	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');

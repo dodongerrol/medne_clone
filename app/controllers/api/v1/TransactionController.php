@@ -79,6 +79,35 @@ class Api_V1_TransactionController extends \BaseController
 						$dependent_user = true;
 					}
 
+					// get clinic info and type
+					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
+					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
+					$consultation_fees = 0;
+					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
+
+					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+						$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+			
+						if($limit <= 0) {
+							$returnObject->status = FALSE;
+							$returnObject->message = 'Maximum of 14 visits already reached.';
+							return Response::json($returnObject);
+						}
+					}
+
+					// check if enable to access feature
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+					if($transaction_access)	{
+						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
+						$returnObject->message = 'Panel function is disabled for your company.';
+						return Response::json($returnObject);
+					}
+
 					// check block access
 					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 					if($block) {
@@ -87,16 +116,6 @@ class Api_V1_TransactionController extends \BaseController
 						$returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
 						return Response::json($returnObject);
 					}
-
-					// get clinic info and type
-					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
-					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
-					$consultation_fees = 0;
-
-					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-					$customer_active_plan = DB::table('customer_active_plan')
-					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-					->first();
 
 					if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
 						$spending_type = $clinic_type->spending_type;
@@ -322,6 +341,10 @@ class Api_V1_TransactionController extends \BaseController
 
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1 && $user_credits < $consultation_fees) {
 						$data['consultation_fees'] = $consultation_fees - $user_credits;
+					}
+
+					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+						$data['enterprise_visit_deduction'] = 1;
 					}
 					
 					try {
@@ -569,6 +592,10 @@ class Api_V1_TransactionController extends \BaseController
 											}
 										}
 										
+										// deduct visit for enterprise plan user
+										if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+											MemberHelper::deductPlanHistoryVisit($user_id);
+										}
 										try {
 											$customer_id = PlanHelper::getCustomerId($user_id);
 											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
@@ -782,12 +809,22 @@ class Api_V1_TransactionController extends \BaseController
 						$input_amount = TransactionHelper::floatvalue($input['input_amount']);
 					}
 					
+					$user_id = StringHelper::getUserId($findUserID);
 					// check block access
-					$block = PlanHelper::checkCompanyBlockAccess($findUserID, $input['clinic_id']);
+					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
 
 					if($block) {
 						$returnObject->status = FALSE;
 						$returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
+						return Response::json($returnObject);
+					}
+
+					// check if enable to access feature
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+					if($transaction_access)	{
+						$returnObject->status = FALSE;
+						$returnObject->message = 'Panel function is disabled for your company.';
 						return Response::json($returnObject);
 					}
 
@@ -818,6 +855,21 @@ class Api_V1_TransactionController extends \BaseController
 					$wallet = new Wallet( );
 					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
+
+					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
+
+					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+						$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+			
+						if($limit <= 0) {
+							$returnObject->status = FALSE;
+							$returnObject->message = 'Maximum of 14 visits already reached.';
+							return Response::json($returnObject);
+						}
+					}
 
                     // check if multiple services selected
 					$multiple = false;
@@ -906,6 +958,10 @@ class Api_V1_TransactionController extends \BaseController
 					if($currency) {
 						$data['currency_amount'] = $currency;
 					}
+
+					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+						$data['enterprise_visit_deduction'] = 1;
+					}
 					
 					try {
 						$result = $transaction->createTransaction($data);
@@ -915,6 +971,11 @@ class Api_V1_TransactionController extends \BaseController
                             // insert transation services
 							$ts = new TransctionServices( );
 							$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+		
+							// deduct visit for enterprise plan user
+							if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+								MemberHelper::deductPlanHistoryVisit($user_id);
+							}
 
 							if($lite_plan_enabled == 1) {
 								$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();
