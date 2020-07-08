@@ -641,6 +641,7 @@ app.directive('activityPage', [
 				}
 
 				scope.fetchNextPage = function (data) {
+					console.log(data);
 					scope.currentPage = scope.currentPage + 1;
 					data.page = scope.currentPage;
 
@@ -648,7 +649,6 @@ app.directive('activityPage', [
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
 							if (response.status == 200) {
-
 								scope.fetching_data = {
 									from: response.data.from,
 									to: response.data.total
@@ -668,6 +668,12 @@ app.directive('activityPage', [
 								scope.activity.total_lite_plan_consultation += response.data.data.total_lite_plan_consultation;
 								scope.activity.total_in_network_transactions += response.data.data.total_in_network_transactions;
 								scope.activity.total_spent_format_number += response.data.data.total_spent_format_number;
+								scope.activity.total_visit_created += response.data.data.total_visit_created;
+								scope.activity.total_visit_limit += response.data.data.total_visit_limit;
+								scope.activity.total_balance_visit += response.data.data.total_balance_visit;
+								scope.activity.panel += response.data.data.panel;
+								scope.activity.non_panel += response.data.data.non_panel;
+								console.log(scope.activity.panel);
 
 								// if( response.data.data.balance.indexOf(',') > -1 ){
 								// 	response.data.data.balance = response.data.data.balance.replace(",", "");
@@ -783,7 +789,7 @@ app.directive('activityPage', [
 					// if (scope.term_value == 0 && scope.dateTerms.last_term != false) {
 					hrActivity.getHrActivity(data)
 						.then(function (response) {
-							// console.log(response);
+							console.log(response);
 							scope.hideLoading();
 							if (response.status == 200) {
 								scope.activity = {};
@@ -791,7 +797,8 @@ app.directive('activityPage', [
 								// scope.activity_dates = [];
 								// scope.eclaim_dates = [];
 								scope.activity = response.data.data;
-
+								console.log(scope.activity);
+								console.log(scope.activity.panel);
 								scope.fetching_data = {
 									from: response.data.from,
 									to: response.data.total
@@ -954,6 +961,7 @@ app.directive('activityPage', [
 				scope.getEmployeeLists = function () {
 					hrActivity.getEmployeeLists()
 						.then(function (response) {
+							console.log(response);
 							$('.typeahead').typeahead({
 								showHintOnFocus: true,
 								source: response.data.data,
@@ -1132,6 +1140,17 @@ app.directive('activityPage', [
 					},10)
 				}
 
+				scope.togglePanelNonPanel	=	function(num){
+					if(num == 1){
+						scope.inNetWorkTable = true;
+						scope.outNetWorkTable = false;
+					}
+					if(num == 2){
+						scope.inNetWorkTable = false;
+						scope.outNetWorkTable = true;
+					}
+				}
+
 				scope.checkSession = function () {
 					hrSettings.getSession()
 						.then(function (response) {
@@ -1139,6 +1158,7 @@ app.directive('activityPage', [
 							scope.selected_customer_id = response.data.customer_buy_start_id;
 							scope.options.accessibility = response.data.accessibility;
 							// scope.getEmployeeLists( );
+							scope.getEmployeeLists();
 						});
 				}
 
@@ -1467,13 +1487,22 @@ app.directive('activityPage', [
 					$(".per-page-drop").hide();
 					scope.getOutNetworkPagination();
 				}
+				scope.getSpendingAcctStatus = function () {
+          // hrSettings.getSpendingAccountStatus()
+          hrSettings.getPrePostStatus()
+						.then(function (response) {
+							console.log(response);
+              scope.spending_account_status = response.data;
+						});
+        }
 
 				scope.onLoad = function () {
 					scope.getDateTermsApi();
 					// scope.toDate('mtd');
 					scope.companyAccountType();
 					scope.checkSession();
-					scope.getEmployeeLists();
+					
+					scope.getSpendingAcctStatus();
 					// scope.initializeRangeSlider( );
 					// scope.initializeNewCustomDatePicker();
 

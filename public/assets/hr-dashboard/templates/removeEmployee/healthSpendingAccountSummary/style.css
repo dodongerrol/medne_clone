@@ -1,3 +1,6 @@
+.remove-emp-health-summary-wrapper .account-summary-wrapper{
+  text-align: center;
+}
 .account-summary-wrapper {
   padding-bottom: 200px;
 }
@@ -13,7 +16,13 @@
   color: #2E4057;
   border: 2px solid #BFBFBF;
   max-width: 1070px;
-  width: 100% !important;
+  min-width: 530px;
+  width: auto;
+  text-align: left;
+}
+.medical-wellness-container.display-inline-block,
+.medical-spending-account-container.display-inline-block{
+  display: inline-block;
 }
 .medical-spending-account-container{
   max-width: 500px;

@@ -319,6 +319,8 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
 								if( scope.spending_account_status.medical_enabled == false){
 									scope.spendingTypeTabSelected = 'wellness';
 								}
+							}else if( scope.spending_account_status.account_type == 'enterprise_plan'){
+								scope.spendingTypeTabSelected = 'wellness';
 							}else{
 								scope.spendingTypeTabSelected = 'all';
 							}

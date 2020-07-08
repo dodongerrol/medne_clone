@@ -1,4 +1,4 @@
-<div activity-page>
+<div class="activity-hr-wrapper" activity-page>
 	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
 		<div class="container">
 			<div class="welcome-container">
@@ -22,10 +22,10 @@
 				</div>
 				<div class="arrow-up-2" style="visibility: visible;"></div>
 			</div> -->
-			<div class="welcome-container" ng-if="empStatementShow">
+			<!-- <div class="welcome-container" ng-if="empStatementShow">
 				<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
 				<div id="arrow-up-statement"></div>
-			</div>
+			</div> -->
 			<div class="welcome-container">
 				<h4 ui-sref="activity">Activity</h4>
 				<div class="arrow-up-3" style="visibility: visible;"></div>
@@ -155,52 +155,171 @@
 				</div>
 			</div>
 
-			<div class="col-md-12 disable-cursor-off">
-				<div class="body-container activity-header-calendar">
-					<!-- <div class="date-selection-container">
-						<div class="custom-date-selector btn-custom-date" style="display: inline-block;">
-							<button class="btn btn-custom-start">
-								<i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
-								<span id="rangePicker_start">01/01/2018</span>
-								<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
-							</button>
+			<div ng-if="spending_account_status.account_type != 'enterprise_plan' ">
+				<div class="col-md-12 disable-cursor-off">
+					<div class="body-container activity-header-calendar">
+						<!-- <div class="date-selection-container">
+							<div class="custom-date-selector btn-custom-date" style="display: inline-block;">
+								<button class="btn btn-custom-start">
+									<i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
+									<span id="rangePicker_start">01/01/2018</span>
+									<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
+								</button>
 
-							<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
+								<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
 
-							<button class="btn btn-custom-end">
-								<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
-								<span id="rangePicker_end">04/01/2018</span>
-								<i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
-							</button>
+								<button class="btn btn-custom-end">
+									<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
+									<span id="rangePicker_end">04/01/2018</span>
+									<i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
+								</button>
 
-							<button class="btn btn-apply" ng-click="applyDates()">
-								Apply
-								<span class="apply-loading" style="position: relative;top: 1px;right: -5px;"><i
-										class="fa fa-circle-o-notch fa-spin" style="font-size: 16px;"></i></span>
-							</button>
-						</div>
-					</div> -->
+								<button class="btn btn-apply" ng-click="applyDates()">
+									Apply
+									<span class="apply-loading" style="position: relative;top: 1px;right: -5px;"><i
+											class="fa fa-circle-o-notch fa-spin" style="font-size: 16px;"></i></span>
+								</button>
+							</div>
+						</div> -->
 
-					<div class="container-fluid new-activity-header-calendar">
-						<div class="row">
-							<div class="col-md-6">
-								<h4 class="color-black3 font-22 weight-700" style="margin: 0 -15px;" ng-bind="activity_title">
-								</h4>
-								<div class="preloader-container searchActivityLoader">
-									<div class="preloader-wrapper big active">
-										<div class="spinner-layer spinner-blue-only">
-											<div class="circle-clipper left">
-												<div class="circle"></div>
-											</div>
-											<div class="gap-patch">
-												<div class="circle"></div>
-											</div>
-											<div class="circle-clipper right">
-												<div class="circle"></div>
+						<div class="container-fluid new-activity-header-calendar">
+							<div class="row">
+								<div class="col-md-6">
+									<h4 class="color-black3 font-22 weight-700" style="margin: 0 -15px;" ng-bind="activity_title">
+									</h4>
+									<div class="preloader-container searchActivityLoader">
+										<div class="preloader-wrapper big active">
+											<div class="spinner-layer spinner-blue-only">
+												<div class="circle-clipper left">
+													<div class="circle"></div>
+												</div>
+												<div class="gap-patch">
+													<div class="circle"></div>
+												</div>
+												<div class="circle-clipper right">
+													<div class="circle"></div>
+												</div>
 											</div>
 										</div>
 									</div>
+
+									<div class="eclaim-spending-type-container">
+										<button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
+											ng-click="setSpendType(0)">Medical</button>
+										<button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
+											ng-click="setSpendType(1)">Wellness</button>
+									</div>
 								</div>
+								<div class="col-md-6">
+									<div class="search-wrapper text-right">
+										<form ng-submit="searchEmployeeActivity();">
+											<div class="input-group">
+												<input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
+												<span class="input-group-btn">
+													<button class="btn btn-default" type="button" ng-if="!search.close"><i
+															class="fa fa-search font-18"></i></button>
+													<button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
+															class="fa fa-close font-18"></i></button>
+												</span>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- <div class="search-wrapper text-right">
+							<form ng-submit="searchEmployeeActivity();">
+								<div class="input-group">
+									<input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
+									<span class="input-group-btn">
+										<button class="btn btn-default" type="button" ng-if="!search.close"><i
+												class="fa fa-search font-18"></i></button>
+										<button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
+												class="fa fa-close font-18"></i></button>
+									</span>
+								</div>
+							</form>
+
+						</div> -->
+					</div>
+				</div>
+
+				<div class="col-md-12 disable-cursor-off">
+					<!-- <div class="white-space-30"></div> -->
+					<div class="body-container">
+						<div class="team-benefits-wrapper">
+
+							<div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
+								<div class=" benefit-box">
+									<h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
+											ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+											ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
+									<p class="color-gray2 font-16 weight-300 no-margin" style="padding:13px 0 18px 0;">SPENT</p>
+									<p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p>
+								</div>
+							</div>
+
+							<div class="col-md-12 new_breakDown">
+								<div class="col-md-6">
+									<div class="benefit-box">
+										<div>
+											<p class="color-black3 weight-500 font-14">Spending Breakdown</p>
+											<!-- <p class="color-black3 weight-300 font-14">In-Network: <span -->
+											<p class="color-black3 weight-300 font-14">Panel: <span
+													class="weight-300 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+													class="weight-300 color-blue-custom"
+													ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
+											</p>
+											<p class="color-black3 weight-300 font-14">E-claim(Non-Panel): <span
+													class="weight-300 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+													class="weight-300 color-blue-custom"
+													ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
+											</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="benefit-box">
+										<div>
+											<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+													class="weight-500 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span>
+												<span class="weight-500 color-blue-custom"
+													ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
+												<!-- <span ng-if="activitySpendingType == 0" class="weight-500 color-blue-custom" ng-bind="credits.total_medical_employee_allocated">0.00</span>
+													<span ng-if="activitySpendingType == 1" class="weight-500 color-blue-custom" ng-bind="credits.total_wellness_employee_allocated">0.00</span> -->
+											</p>
+											<p class="color-black3 weight-500 font-16">Balance:
+												<span class="color-blue-custom2 weight-500 font-14 no-margin-top">
+													<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+													<span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
+													<!-- <span ng-bind="credits.total_medical_employee_balance">0.00</span> -->
+												</span>
+												<!-- <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
+													ng-if="activitySpendingType == 0">
+													<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+													<span ng-bind="credits.total_medical_employee_balance">0.00</span>
+												</span>
+												<span class="color-blue-custom2 weight-500 font-14 no-margin-top"
+													ng-if="activitySpendingType == 1">
+													<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+													<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
+												</span> -->
+											</p>
+											<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+												as Year-to-Date.</small>
+											<!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Old UI before plan renewal -->
+							<!-- <div class="col-md-12  eclaim-border-bottom text-center no-padding">
+								<h4 class="color-black3 font-16 weight-700" style="position: absolute;left: 0" ng-bind="activity_title">
+								</h4>
 
 								<div class="eclaim-spending-type-container">
 									<button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
@@ -208,268 +327,261 @@
 									<button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
 										ng-click="setSpendType(1)">Wellness</button>
 								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="search-wrapper text-right">
-									<form ng-submit="searchEmployeeActivity();">
-										<div class="input-group">
-											<input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
-											<span class="input-group-btn">
-												<button class="btn btn-default" type="button" ng-if="!search.close"><i
-														class="fa fa-search font-18"></i></button>
-												<button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
-														class="fa fa-close font-18"></i></button>
-											</span>
+							</div> -->
+
+							<!-- <div class="preloader-container searchActivityLoader">
+								<div class="preloader-wrapper big active">
+									<div class="spinner-layer spinner-blue-only">
+										<div class="circle-clipper left">
+											<div class="circle"></div>
 										</div>
-									</form>
+										<div class="gap-patch">
+											<div class="circle"></div>
+										</div>
+										<div class="circle-clipper right">
+											<div class="circle"></div>
+										</div>
+									</div>
 								</div>
-							</div>
-						</div>
-					</div>
-					<!-- <div class="search-wrapper text-right">
-						<form ng-submit="searchEmployeeActivity();">
-							<div class="input-group">
-								<input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button" ng-if="!search.close"><i
-											class="fa fa-search font-18"></i></button>
-									<button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
-											class="fa fa-close font-18"></i></button>
-								</span>
-							</div>
-						</form>
+							</div> -->
 
-					</div> -->
-				</div>
-			</div>
+							<!-- End of Old UI before plan renewal -->
 
-			<div class="col-md-12 disable-cursor-off">
-				<!-- <div class="white-space-30"></div> -->
-				<div class="body-container">
-					<div class="team-benefits-wrapper">
 
-						<div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
-							<div class=" benefit-box">
-								<h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
-										ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-										ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
-								<p class="color-gray2 font-16 weight-300 no-margin" style="padding:13px 0 18px 0;">SPENT</p>
-								<p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p>
-							</div>
-						</div>
+							<!-- <div class="no-benefits-overlay" ng-if="options.accessibility == 0">
+								<h3 class="font-30 color-black3 weight-700">Benefits Spending Account</h3>
+								<div class="white-space-20"></div>
+								<p class="font-18 color-black3 weight-700 no-margin">Offer your team the flexibility and freedom to manage their own healthcare.</p>
+								<p class="font-18 color-black3 weight-700" style="max-width: 440px;margin: 0 auto">With an upfront planned benefits budget, it gives you more cost certainty and zero year-end surprises.</p>
+								<div class="white-space-20"></div>
+								<div class="white-space-20"></div>
+								<button onclick="window.location.href='https://mednefits.com/get-mednefits-now-1'" class="btn btn-learn-more">Learn more about Benefits Spending Account</button>
+							</div> -->
 
-						<div class="col-md-12 new_breakDown">
-							<div class="col-md-6">
-								<div class="benefit-box">
-									<div>
-										<p class="color-black3 weight-500 font-14">Spending Breakdown</p>
-										<!-- <p class="color-black3 weight-300 font-14">In-Network: <span -->
-										<p class="color-black3 weight-300 font-14">Panel: <span
-												class="weight-300 color-blue-custom currency-type"
+							<div class="col-md-12 no-padding costs-wrapper">
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="font-medium2 color-blue-custom2 weight-700 font-23 no-margin-top"><span
+												class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="activity.total_spent_format_number | number:2">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">SPENT</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_medical_employee_balance">0.00</span></h5>
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_wellness_employee_balance">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">BALANCE</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_medical_employee_allocated">0.00</span></h5>
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_wellness_employee_allocated">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">ALLOCATED</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.pending_e_claim_amount | number:2">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">PENDING E-CLAIM APPROVAL</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box ">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="total_allocation.total_allocation | number:2"
+												ng-if="activity.spending_type == 'medical'">0.00</span>
+											<span ng-bind="total_allocation.total_wellness_allocation | number:2"
+												ng-if="activity.spending_type == 'wellness'">0.00</span>
+										</h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">TOTAL COMPANY CREDITS</p>
+									</div>
+								</div>
+							</div> -->
+
+								<!-- <div class="col-md-7 no-padding">
+								<div class="white-space-20"></div>
+								<div class="spent-box text-left">
+									<p class="color-black3 weight-700 font-16">Spending Breakdown</p>
+									<div class="progress-wrapper">
+										<div class="progress-bar"></div>
+									</div>
+
+									<div class="white-space-10"></div>
+
+									<div class="in-network-box">
+										<p class="weight-700 color-blue-custom"><span class="currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-												class="weight-300 color-blue-custom"
-												ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
-										</p>
-										<p class="color-black3 weight-300 font-14">E-claim(Non-Panel): <span
-												class="weight-300 color-blue-custom currency-type"
+												ng-bind="activity.in_network_spending_format_number | number:2">0.00</span></p>
+										<p class="color-gray2 font-12 weight-700">IN-NETWORK</p>
+									</div>
+
+									<div class="out-network-box">
+										<p class="weight-700 color-blue-custom"><span class="currency-type"
 												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-												class="weight-300 color-blue-custom"
-												ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
-										</p>
+												ng-bind="activity.e_claim_spending_format_number | number:2">0.00</span></p>
+										<p class="color-gray2 font-12 weight-700">E-CLAIM(OUT-OF-NETWORK)</p>
 									</div>
 								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="benefit-box">
-									<div>
-										<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
-												class="weight-500 color-blue-custom currency-type"
-												ng-bind="total_allocation.currency_type">MYR/SGD</span>
-											<span class="weight-500 color-blue-custom"
-												ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
-											<!-- <span ng-if="activitySpendingType == 0" class="weight-500 color-blue-custom" ng-bind="credits.total_medical_employee_allocated">0.00</span>
-												<span ng-if="activitySpendingType == 1" class="weight-500 color-blue-custom" ng-bind="credits.total_wellness_employee_allocated">0.00</span> -->
-										</p>
-										<p class="color-black3 weight-500 font-16">Balance:
-											<span class="color-blue-custom2 weight-500 font-14 no-margin-top">
-												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
-												<span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
-												<!-- <span ng-bind="credits.total_medical_employee_balance">0.00</span> -->
-											</span>
-											<!-- <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
-												ng-if="activitySpendingType == 0">
-												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
-												<span ng-bind="credits.total_medical_employee_balance">0.00</span>
-											</span>
-											<span class="color-blue-custom2 weight-500 font-14 no-margin-top"
-												ng-if="activitySpendingType == 1">
-												<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
-												<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
-											</span> -->
-										</p>
-										<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
-											as Year-to-Date.</small>
-										<!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- Old UI before plan renewal -->
-						<!-- <div class="col-md-12  eclaim-border-bottom text-center no-padding">
-							<h4 class="color-black3 font-16 weight-700" style="position: absolute;left: 0" ng-bind="activity_title">
-							</h4>
-
-							<div class="eclaim-spending-type-container">
-								<button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
-									ng-click="setSpendType(0)">Medical</button>
-								<button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
-									ng-click="setSpendType(1)">Wellness</button>
-							</div>
-						</div> -->
-
-						<!-- <div class="preloader-container searchActivityLoader">
-							<div class="preloader-wrapper big active">
-								<div class="spinner-layer spinner-blue-only">
-									<div class="circle-clipper left">
-										<div class="circle"></div>
-									</div>
-									<div class="gap-patch">
-										<div class="circle"></div>
-									</div>
-									<div class="circle-clipper right">
-										<div class="circle"></div>
-									</div>
-								</div>
-							</div>
-						</div> -->
-
-						<!-- End of Old UI before plan renewal -->
-
-
-						<!-- <div class="no-benefits-overlay" ng-if="options.accessibility == 0">
-							<h3 class="font-30 color-black3 weight-700">Benefits Spending Account</h3>
-							<div class="white-space-20"></div>
-							<p class="font-18 color-black3 weight-700 no-margin">Offer your team the flexibility and freedom to manage their own healthcare.</p>
-							<p class="font-18 color-black3 weight-700" style="max-width: 440px;margin: 0 auto">With an upfront planned benefits budget, it gives you more cost certainty and zero year-end surprises.</p>
-							<div class="white-space-20"></div>
-							<div class="white-space-20"></div>
-							<button onclick="window.location.href='https://mednefits.com/get-mednefits-now-1'" class="btn btn-learn-more">Learn more about Benefits Spending Account</button>
-						</div> -->
-
-						<div class="col-md-12 no-padding costs-wrapper">
-							<!-- <div class="costs-box no-padding">
-								<div class="benefit-box eclaim-border-right">
-									<h5 class="font-medium2 color-blue-custom2 weight-700 font-23 no-margin-top"><span
-											class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="activity.total_spent_format_number | number:2">0.00</span></h5>
-									<p class="color-gray2 font-12 weight-700 no-margin">SPENT</p>
-								</div>
+								<div class="white-space-30"></div>
 							</div> -->
 
-							<!-- <div class="costs-box no-padding">
-								<div class="benefit-box eclaim-border-right">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">
-										<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="credits.total_medical_employee_balance">0.00</span></h5>
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">
-										<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="credits.total_wellness_employee_balance">0.00</span></h5>
-									<p class="color-gray2 font-12 weight-700 no-margin">BALANCE</p>
+
+								<!-- No UI given Plan renewal for Consultation Spent -->
+								<!-- <div class="col-md-5" style="padding-top: 60px;padding-left: 35px;" ng-if="activity.lite_plan">
+								<div class="col-md-12" style="padding-bottom: 10px;">
+									<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
 								</div>
-							</div> -->
-
-							<!-- <div class="costs-box no-padding">
-								<div class="benefit-box eclaim-border-right">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">
-										<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="credits.total_medical_employee_allocated">0.00</span></h5>
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">
-										<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="credits.total_wellness_employee_allocated">0.00</span></h5>
-									<p class="color-gray2 font-12 weight-700 no-margin">ALLOCATED</p>
+								<div class="col-md-7">
+									<div class="network-box" style="margin: 0">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+										</div>
+									</div>
 								</div>
-							</div> -->
-
-							<!-- <div class="costs-box no-padding">
-								<div class="benefit-box eclaim-border-right">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.pending_e_claim_amount | number:2">0.00</span></h5>
-									<p class="color-gray2 font-12 weight-700 no-margin">PENDING E-CLAIM APPROVAL</p>
-								</div>
-							</div> -->
-
-							<!-- <div class="costs-box no-padding">
-								<div class="benefit-box ">
-									<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">
-										<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="total_allocation.total_allocation | number:2"
-											ng-if="activity.spending_type == 'medical'">0.00</span>
-										<span ng-bind="total_allocation.total_wellness_allocation | number:2"
-											ng-if="activity.spending_type == 'wellness'">0.00</span>
-									</h5>
-									<p class="color-gray2 font-12 weight-700 no-margin">TOTAL COMPANY CREDITS</p>
-								</div>
-							</div>
-						</div> -->
-
-							<!-- <div class="col-md-7 no-padding">
-							<div class="white-space-20"></div>
-							<div class="spent-box text-left">
-								<p class="color-black3 weight-700 font-16">Spending Breakdown</p>
-								<div class="progress-wrapper">
-									<div class="progress-bar"></div>
-								</div>
-
-								<div class="white-space-10"></div>
-
-								<div class="in-network-box">
+								<div class="col-md-5">
 									<p class="weight-700 color-blue-custom"><span class="currency-type"
 											ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="activity.in_network_spending_format_number | number:2">0.00</span></p>
-									<p class="color-gray2 font-12 weight-700">IN-NETWORK</p>
+											ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
+								</div>
+							</div> -->
+								<!-- End of No UI given Plan renewal for Consultation Spent -->
+
+								<!-- <div ng-if="options.accessibility == 1" >
+								<div class="col-md-12 no-padding">
+									<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
+									<div class="white-space-20"></div>
 								</div>
 
-								<div class="out-network-box">
-									<p class="weight-700 color-blue-custom"><span class="currency-type"
-											ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-											ng-bind="activity.e_claim_spending_format_number | number:2">0.00</span></p>
-									<p class="color-gray2 font-12 weight-700">E-CLAIM(OUT-OF-NETWORK)</p>
-								</div>
-							</div>
-							<div class="white-space-30"></div>
-						</div> -->
-
-
-							<!-- No UI given Plan renewal for Consultation Spent -->
-							<!-- <div class="col-md-5" style="padding-top: 60px;padding-left: 35px;" ng-if="activity.lite_plan">
-							<div class="col-md-12" style="padding-bottom: 10px;">
-								<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
-							</div>
-							<div class="col-md-7">
-								<div class="network-box" style="margin: 0">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+								<div class="col-md-7 no-padding">
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Health-Screening.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_screening_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Health Screening</p>
+											</div>
+										</div>
 									</div>
-									<div class="net-desc">
-										<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.general_practitioner_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Dental-Care.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.dental_care_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Dental Care</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Traditonal-Chinese-Medicine.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.tcm_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin" style="width: 100px">Traditional Chinese Medicine</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Health-Specialist.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_specialist_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Health Specialist</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Wellness.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.wellness_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Wellness</p>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="col-md-5">
-								<p class="weight-700 color-blue-custom"><span class="currency-type"
-										ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
-										ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
-							</div>
-						</div> -->
-							<!-- End of No UI given Plan renewal for Consultation Spent -->
 
-							<!-- <div ng-if="options.accessibility == 1" >
+								<div class="col-md-5" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
+									<div class="col-md-12">
+										<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
+									</div>
+									<div class="col-md-7">
+										<div class="network-box" style="margin: 0">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-5">
+										<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="white-space-30"></div>
+								</div>
+							</div> -->
+
+							</div>
+
+							<!-- <div class="no-benefits-container" ng-if="options.accessibility == 0" >
+
+							<div class="col-md-12 no-padding">
+								<div class="white-space-20"></div>
+							</div>
+
 							<div class="col-md-12 no-padding">
 								<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
 								<div class="white-space-20"></div>
 							</div>
 
-							<div class="col-md-7 no-padding">
+							<div class="col-md-8 no-padding">
 								<div class="col-md-4 no-padding-left">
 									<div class="network-box">
 										<div class="img-wrapper">
@@ -543,7 +655,7 @@
 								</div>
 							</div>
 
-							<div class="col-md-5" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
+							<div class="col-md-4" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
 								<div class="col-md-12">
 									<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
 								</div>
@@ -558,178 +670,748 @@
 									</div>
 								</div>
 								<div class="col-md-5">
-									<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
+									<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation">00</span></p>
 								</div>
 							</div>
 
-							<div class="col-md-12">
-								<div class="white-space-30"></div>
+						</div> -->
+
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="body-container transactions-header">
+							<div class="col-md-3">
 							</div>
+
+							<div class="col-md-6 no-padding text-center">
+								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}"
+									ng-click="inNetWorkTable = true;outNetWorkTable = false;">
+									PANEL<br>
+									<!-- IN-NETWORK<br> -->
+									TRANSACTIONS
+								</button>
+
+								<button class="btn-out-network" ng-class="{'active':outNetWorkTable}"
+									ng-click="inNetWorkTable = false;outNetWorkTable = true;">
+									E-CLAIM TRANSACTIONS<br>
+									(NON-PANEL)
+								</button>
+							</div>
+
+							<div class="col-md-3 no-padding text-right disable-cursor-off">
+								<div class="white-space-10"></div>
+
+								<p class="inNetwork-dl" ng-json-export-excel data="in_network_transactions"
+									report-fields="{employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
+									filename="'Panel Transactions'" separator=","
+									class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">
+									DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png"
+										style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+								<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+							<p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+
+							<p ng-if="outNetWorkTable == true" ng-click="downloadCSV()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
+								<div class="right-download-block">
+									<p ng-click="toggleDownloadDrop()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD
+										<img src="../assets/e-claim/img/new-assets/Download.png"
+											style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+									<div ng-if="isDownloadDropShow" class="download-drop-container">
+										<div class="item" ng-click="selectDownloadOpt(0)">Panel</div>
+										<!-- <div class="item" ng-click="selectDownloadOpt(0)">In-Network</div> -->
+										<div class="item" ng-click="selectDownloadOpt(1)">Non-Panel</div>
+										<div class="item" ng-click="selectDownloadOpt(2)">Both</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div ng-if="spending_account_status.account_type == 'enterprise_plan' ">
+				<div class="col-md-12 disable-cursor-off">
+					<div class="body-container activity-header-calendar">
+						<!-- <div class="date-selection-container">
+							<div class="custom-date-selector btn-custom-date" style="display: inline-block;">
+								<button class="btn btn-custom-start">
+									<i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
+									<span id="rangePicker_start">01/01/2018</span>
+									<i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
+								</button>
+
+								<span style="margin: 0 10px;"><i class="fa fa-arrow-right"></i></span>
+
+								<button class="btn btn-custom-end">
+									<i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
+									<span id="rangePicker_end">04/01/2018</span>
+									<i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
+								</button>
+
+								<button class="btn btn-apply" ng-click="applyDates()">
+									Apply
+									<span class="apply-loading" style="position: relative;top: 1px;right: -5px;"><i
+											class="fa fa-circle-o-notch fa-spin" style="font-size: 16px;"></i></span>
+								</button>
+							</div>
+						</div> -->
+
+						<div class="container-fluid new-activity-header-calendar">
+							<div class="row">
+								<div class="col-md-6 col-first">
+									<h4 class="team-benefits-cost-title font-22 weight-700" ng-bind="activity_title">
+									</h4>
+									<div ng-if="true" class="range-date">
+										<span ng-bind="rangePicker_start">01/01/2019</span> - <span ng-bind="rangePicker_end">28/11/2019</span>
+									</div>
+									<div class="preloader-container searchActivityLoader">
+										<div class="preloader-wrapper big active">
+											<div class="spinner-layer spinner-blue-only">
+												<div class="circle-clipper left">
+													<div class="circle"></div>
+												</div>
+												<div class="gap-patch">
+													<div class="circle"></div>
+												</div>
+												<div class="circle-clipper right">
+													<div class="circle"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div ng-if="spending_account_status.wellness_enabled == true" class="eclaim-spending-type-container">
+										<button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
+											ng-click="setSpendType(0)">Medical</button>
+										<button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
+											ng-click="setSpendType(1)">Wellness</button>
+									</div>								
+								</div>
+								<div class="col-md-6">
+									<div class="search-wrapper text-right">
+										<form ng-submit="searchEmployeeActivity();">
+											<div class="input-group">
+												<input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
+												<span class="input-group-btn">
+													<button class="btn btn-default" type="button" ng-if="!search.close"><i
+															class="fa fa-search font-18"></i></button>
+													<button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
+															class="fa fa-close font-18"></i></button>
+												</span>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- <div class="search-wrapper text-right">
+							<form ng-submit="searchEmployeeActivity();">
+								<div class="input-group">
+									<input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
+									<span class="input-group-btn">
+										<button class="btn btn-default" type="button" ng-if="!search.close"><i
+												class="fa fa-search font-18"></i></button>
+										<button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
+												class="fa fa-close font-18"></i></button>
+									</span>
+								</div>
+							</form>
+
+						</div> -->
+					</div>
+				</div>
+
+				<div class="col-md-12 disable-cursor-off">
+					<!-- <div class="white-space-30"></div> -->
+					<div class="body-container">
+						<div ng-if="activitySpendingType == 1" class="team-benefits-wrapper team-benefits-old-wrapper">
+
+							<div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
+								<div class=" benefit-box">
+									<h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
+											ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+											ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
+									<p class="color-gray2 font-16 weight-300 no-margin" style="padding:13px 0 18px 0;">SPENT</p>
+									<p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p>
+								</div>
+							</div>
+
+							<div class="col-md-12 new_breakDown">
+								<div class="col-md-6">
+									<div class="benefit-box">
+										<div>
+											<p class="color-black3 weight-500 font-14">Spending Breakdown</p>
+											<!-- <p class="color-black3 weight-300 font-14">In-Network: <span -->
+											<p class="color-black3 weight-300 font-14">Panel: <span
+													class="weight-300 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+													class="weight-300 color-blue-custom"
+													ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
+											</p>
+											<p class="color-black3 weight-300 font-14">E-claim(Non-Panel): <span
+													class="weight-300 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+													class="weight-300 color-blue-custom"
+													ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
+											</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="benefit-box">
+										<div>
+											<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+													class="weight-500 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span>
+												<span class="weight-500 color-blue-custom"
+													ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
+												<!-- <span ng-if="activitySpendingType == 0" class="weight-500 color-blue-custom" ng-bind="credits.total_medical_employee_allocated">0.00</span>
+													<span ng-if="activitySpendingType == 1" class="weight-500 color-blue-custom" ng-bind="credits.total_wellness_employee_allocated">0.00</span> -->
+											</p>
+											<p class="color-black3 weight-500 font-16">Balance:
+												<span class="color-blue-custom2 weight-500 font-14 no-margin-top">
+													<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+													<span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
+													<!-- <span ng-bind="credits.total_medical_employee_balance">0.00</span> -->
+												</span>
+												<!-- <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
+													ng-if="activitySpendingType == 0">
+													<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+													<span ng-bind="credits.total_medical_employee_balance">0.00</span>
+												</span>
+												<span class="color-blue-custom2 weight-500 font-14 no-margin-top"
+													ng-if="activitySpendingType == 1">
+													<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+													<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
+												</span> -->
+											</p>
+											<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+												as Year-to-Date.</small>
+											<!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Old UI before plan renewal -->
+							<!-- <div class="col-md-12  eclaim-border-bottom text-center no-padding">
+								<h4 class="color-black3 font-16 weight-700" style="position: absolute;left: 0" ng-bind="activity_title">
+								</h4>
+
+								<div class="eclaim-spending-type-container">
+									<button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
+										ng-click="setSpendType(0)">Medical</button>
+									<button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
+										ng-click="setSpendType(1)">Wellness</button>
+								</div>
+							</div> -->
+
+							<!-- <div class="preloader-container searchActivityLoader">
+								<div class="preloader-wrapper big active">
+									<div class="spinner-layer spinner-blue-only">
+										<div class="circle-clipper left">
+											<div class="circle"></div>
+										</div>
+										<div class="gap-patch">
+											<div class="circle"></div>
+										</div>
+										<div class="circle-clipper right">
+											<div class="circle"></div>
+										</div>
+									</div>
+								</div>
+							</div> -->
+
+							<!-- End of Old UI before plan renewal -->
+
+
+							<!-- <div class="no-benefits-overlay" ng-if="options.accessibility == 0">
+								<h3 class="font-30 color-black3 weight-700">Benefits Spending Account</h3>
+								<div class="white-space-20"></div>
+								<p class="font-18 color-black3 weight-700 no-margin">Offer your team the flexibility and freedom to manage their own healthcare.</p>
+								<p class="font-18 color-black3 weight-700" style="max-width: 440px;margin: 0 auto">With an upfront planned benefits budget, it gives you more cost certainty and zero year-end surprises.</p>
+								<div class="white-space-20"></div>
+								<div class="white-space-20"></div>
+								<button onclick="window.location.href='https://mednefits.com/get-mednefits-now-1'" class="btn btn-learn-more">Learn more about Benefits Spending Account</button>
+							</div> -->
+
+							<div class="col-md-12 no-padding costs-wrapper">
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="font-medium2 color-blue-custom2 weight-700 font-23 no-margin-top"><span
+												class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="activity.total_spent_format_number | number:2">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">SPENT</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_medical_employee_balance">0.00</span></h5>
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_wellness_employee_balance">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">BALANCE</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 0">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_medical_employee_allocated">0.00</span></h5>
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top" ng-if="activitySpendingType == 1">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="credits.total_wellness_employee_allocated">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">ALLOCATED</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box eclaim-border-right">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">S$ <span ng-bind="activity.pending_e_claim_amount | number:2">0.00</span></h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">PENDING E-CLAIM APPROVAL</p>
+									</div>
+								</div> -->
+
+								<!-- <div class="costs-box no-padding">
+									<div class="benefit-box ">
+										<h5 class="color-blue-custom2 weight-700 font-23 no-margin-top">
+											<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="total_allocation.total_allocation | number:2"
+												ng-if="activity.spending_type == 'medical'">0.00</span>
+											<span ng-bind="total_allocation.total_wellness_allocation | number:2"
+												ng-if="activity.spending_type == 'wellness'">0.00</span>
+										</h5>
+										<p class="color-gray2 font-12 weight-700 no-margin">TOTAL COMPANY CREDITS</p>
+									</div>
+								</div>
+							</div> -->
+
+								<!-- <div class="col-md-7 no-padding">
+								<div class="white-space-20"></div>
+								<div class="spent-box text-left">
+									<p class="color-black3 weight-700 font-16">Spending Breakdown</p>
+									<div class="progress-wrapper">
+										<div class="progress-bar"></div>
+									</div>
+
+									<div class="white-space-10"></div>
+
+									<div class="in-network-box">
+										<p class="weight-700 color-blue-custom"><span class="currency-type"
+												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="activity.in_network_spending_format_number | number:2">0.00</span></p>
+										<p class="color-gray2 font-12 weight-700">IN-NETWORK</p>
+									</div>
+
+									<div class="out-network-box">
+										<p class="weight-700 color-blue-custom"><span class="currency-type"
+												ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+												ng-bind="activity.e_claim_spending_format_number | number:2">0.00</span></p>
+										<p class="color-gray2 font-12 weight-700">E-CLAIM(OUT-OF-NETWORK)</p>
+									</div>
+								</div>
+								<div class="white-space-30"></div>
+							</div> -->
+
+
+								<!-- No UI given Plan renewal for Consultation Spent -->
+								<!-- <div class="col-md-5" style="padding-top: 60px;padding-left: 35px;" ng-if="activity.lite_plan">
+								<div class="col-md-12" style="padding-bottom: 10px;">
+									<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
+								</div>
+								<div class="col-md-7">
+									<div class="network-box" style="margin: 0">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<p class="weight-700 color-blue-custom"><span class="currency-type"
+											ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+											ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
+								</div>
+							</div> -->
+								<!-- End of No UI given Plan renewal for Consultation Spent -->
+
+								<!-- <div ng-if="options.accessibility == 1" >
+								<div class="col-md-12 no-padding">
+									<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
+									<div class="white-space-20"></div>
+								</div>
+
+								<div class="col-md-7 no-padding">
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Health-Screening.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_screening_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Health Screening</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.general_practitioner_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Dental-Care.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.dental_care_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Dental Care</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Traditonal-Chinese-Medicine.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.tcm_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin" style="width: 100px">Traditional Chinese Medicine</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Health-Specialist.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_specialist_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Health Specialist</p>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-4 no-padding-left">
+										<div class="network-box">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/Wellness.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.wellness_breakdown">0</span>%</p>
+												<p class="color-gray font-11 weight-700 no-margin">Wellness</p>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-5" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
+									<div class="col-md-12">
+										<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
+									</div>
+									<div class="col-md-7">
+										<div class="network-box" style="margin: 0">
+											<div class="img-wrapper">
+												<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+											</div>
+											<div class="net-desc">
+												<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-5">
+										<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation | number: 2">00</span></p>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="white-space-30"></div>
+								</div>
+							</div> -->
+
+							</div>
+
+							<!-- <div class="no-benefits-container" ng-if="options.accessibility == 0" >
+
+							<div class="col-md-12 no-padding">
+								<div class="white-space-20"></div>
+							</div>
+
+							<div class="col-md-12 no-padding">
+								<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
+								<div class="white-space-20"></div>
+							</div>
+
+							<div class="col-md-8 no-padding">
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Health-Screening.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_screening_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Health Screening</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.general_practitioner_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Dental-Care.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.dental_care_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Dental Care</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Traditonal-Chinese-Medicine.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.tcm_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin" style="width: 100px">Traditional Chinese Medicine</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Health-Specialist.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_specialist_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Health Specialist</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4 no-padding-left">
+									<div class="network-box">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/Wellness.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.wellness_breakdown">0</span>%</p>
+											<p class="color-gray font-11 weight-700 no-margin">Wellness</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-4" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
+								<div class="col-md-12">
+									<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
+								</div>
+								<div class="col-md-7">
+									<div class="network-box" style="margin: 0">
+										<div class="img-wrapper">
+											<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
+										</div>
+										<div class="net-desc">
+											<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-5">
+									<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation">00</span></p>
+								</div>
+							</div>
+
 						</div> -->
 
 						</div>
 
-						<!-- <div class="no-benefits-container" ng-if="options.accessibility == 0" >
 
-						<div class="col-md-12 no-padding">
-							<div class="white-space-20"></div>
+						<div ng-if="activitySpendingType == 0" class="team-benefits-wrapper team-benefits-new-wrapper">
+
+							<div class="eclaim-border-bottom new_spent">
+								<div class=" benefit-box">
+									<h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
+											ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+											ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
+									<p class="color-gray2 font-16 weight-300 no-margin">SPENT</p>
+									<!-- <p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p> -->
+								</div>
+							</div>
+
+							<div class="new_breakDown">
+								<div>
+									<div class="benefit-box">
+										<div>
+											<p class="color-black3 weight-500 font-14">Spending Breakdown</p>
+											<!-- <p class="color-black3 weight-300 font-14">In-Network: <span -->
+											<p class="color-black3 weight-400 font-14">Panel: <span
+													class="weight-400 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+													class="weight-400 color-blue-custom"
+													ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
+											</p>
+											<p class="color-black3 weight-400 font-14">E-claim(Non-Panel): <span
+													class="weight-400 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+													class="weight-400 color-blue-custom"
+													ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
+											</p>
+										</div>
+									</div>
+								</div>
+								<div>
+									<div class="benefit-box">
+										<div>
+											<!-- <p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+													class="weight-500 color-blue-custom currency-type"
+													ng-bind="total_allocation.currency_type">MYR/SGD</span>
+												<span class="weight-500 color-blue-custom"
+													ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
+											</p> -->
+											<!-- <p class="color-black3 weight-500 font-16">Balance:
+												<span class="color-blue-custom2 weight-500 font-14 no-margin-top">
+													<span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+													<span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
+												</span>
+											</p>
+											<small class="weight-400 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+												as Year-to-Date.</small> -->
+											<p class="color-black3 weight-500 font-14">Visit Breakdown</p>
+											<div class="visit-breakdown-col-container">
+												<!-- <div class="visit-breakdown-col-1">
+													<p class="color-black3 weight-400 font-14">Total: 
+														<span ng-bind="activity.total_visit_limit" class="weight-400 color-blue-custom">280</span>
+													</p>
+													<p class="color-black3 weight-400 font-14">Balance: 
+															<span ng-bind="activity.total_balance_visit" class="weight-400 color-blue-custom">230</span>
+													</p>
+												</div> -->
+												<div class="visit-breakdown-col-1">
+													<p class="color-black3 weight-400 font-14">Total utilised visits: 
+															<span ng-bind="activity.total_visit_created" class="weight-400 color-blue-custom">230</span>
+													</p>
+													<div class="visit-breakdown-panel-container">
+														<div>
+															<p class="color-black3 weight-400 font-14">Panel: 
+																<span ng-bind="activity.panel" class="weight-400 color-blue-custom">230</span>
+															</p>
+														</div>
+														<div>
+															<p class="color-black3 weight-400 font-14">Non-Panel: 
+																<span ng-bind="activity.non_panel" class="weight-400 color-blue-custom">230</span>
+															</p>
+														</div>
+													</div>
+												</div>
+
+												<div class="visit-breakdown-col-2">
+													<p class="color-black3 weight-400 font-14">Visits per member: 
+														<span ng-bind="activity.total_average_visit" class="weight-400 color-blue-custom">230</span>
+														<span style="display: block;font-size: 12px;color: #bbb;line-height: 18px;width: 180px;">
+															*Average visits per member from <span style="font-size: 13px;">{{ rangePicker_start }} to {{ rangePicker_end }}</span>.
+														</span>
+													</p>
+												</div>
+
+											</div>	
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-12 no-padding costs-wrapper">
+							</div>
+
 						</div>
-
-						<div class="col-md-12 no-padding">
-							<h4 class="color-black3 eclaim-border-bottom font-16 weight-700 ">IN-NETWORK BREAKDOWN</h4>
-							<div class="white-space-20"></div>
-						</div>
-
-						<div class="col-md-8 no-padding">
-							<div class="col-md-4 no-padding-left">
-								<div class="network-box">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/Health-Screening.png" style="width: 35px;">
-									</div>
-									<div class="net-desc">
-										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_screening_breakdown">0</span>%</p>
-										<p class="color-gray font-11 weight-700 no-margin">Health Screening</p>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-md-4 no-padding-left">
-								<div class="network-box">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
-									</div>
-									<div class="net-desc">
-										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.general_practitioner_breakdown">0</span>%</p>
-										<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-md-4 no-padding-left">
-								<div class="network-box">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/Dental-Care.png" style="width: 35px;">
-									</div>
-									<div class="net-desc">
-										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.dental_care_breakdown">0</span>%</p>
-										<p class="color-gray font-11 weight-700 no-margin">Dental Care</p>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-md-4 no-padding-left">
-								<div class="network-box">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/Traditonal-Chinese-Medicine.png" style="width: 35px;">
-									</div>
-									<div class="net-desc">
-										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.tcm_breakdown">0</span>%</p>
-										<p class="color-gray font-11 weight-700 no-margin" style="width: 100px">Traditional Chinese Medicine</p>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-md-4 no-padding-left">
-								<div class="network-box">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/Health-Specialist.png" style="width: 35px;">
-									</div>
-									<div class="net-desc">
-										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.health_specialist_breakdown">0</span>%</p>
-										<p class="color-gray font-11 weight-700 no-margin">Health Specialist</p>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-md-4 no-padding-left">
-								<div class="network-box">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/Wellness.png" style="width: 35px;">
-									</div>
-									<div class="net-desc">
-										<p class="weight-700 color-blue-custom"><span ng-bind="activity.in_network_breakdown.wellness_breakdown">0</span>%</p>
-										<p class="color-gray font-11 weight-700 no-margin">Wellness</p>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-md-4" style="border-left: 1px solid #ccc;" ng-if="activity.lite_plan">
-							<div class="col-md-12">
-								<p style="margin-bottom: 20px;color: #333;" class="weight-700">Consultation Spent</p>
-							</div>
-							<div class="col-md-7">
-								<div class="network-box" style="margin: 0">
-									<div class="img-wrapper">
-										<img src="../../assets/e-claim/img/new-assets/General-Practitioner.png" style="width: 35px;">
-									</div>
-									<div class="net-desc">
-										<p class="color-gray font-11 weight-700 no-margin">General Practitioner</p>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-5">
-								<p class="weight-700 color-blue-custom">S$ <span ng-bind="activity.total_lite_plan_consultation">00</span></p>
-							</div>
-						</div>
-
-					</div> -->
 
 					</div>
-				</div>
 
-				<div class="col-md-12">
-					<div class="body-container transactions-header">
-						<div class="col-md-3">
-						</div>
+					<div class="col-md-12 transaction-header-container">
+						<div class="body-container transactions-header">
+							<div class="col-md-3">
+							</div>
 
-						<div class="col-md-6 no-padding text-center">
-							<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}"
-								ng-click="inNetWorkTable = true;outNetWorkTable = false;">
-								PANEL<br>
-								<!-- IN-NETWORK<br> -->
-								TRANSACTIONS
-							</button>
+							<div class="col-md-6 no-padding text-center transactions-btn-container">
+								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+									PANEL<br>
+									<!-- IN-NETWORK<br> -->
+									TRANSACTIONS
+								</button>
 
-							<button class="btn-out-network" ng-class="{'active':outNetWorkTable}"
-								ng-click="inNetWorkTable = false;outNetWorkTable = true;">
-								E-CLAIM TRANSACTIONS<br>
-								(NON-PANEL)
-							</button>
-						</div>
+								<button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+									E-CLAIM TRANSACTIONS<br>
+									(NON-PANEL)
+								</button>
+							</div>
 
-						<div class="col-md-3 no-padding text-right disable-cursor-off">
-							<div class="white-space-10"></div>
+							<div class="col-md-3 no-padding text-right disable-cursor-off">
+								<div class="white-space-10"></div>
 
-							<p class="inNetwork-dl" ng-json-export-excel data="in_network_transactions"
-								report-fields="{employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
-								filename="'Panel Transactions'" separator=","
-								class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">
-								DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png"
-									style="width: 20px;display: inline-block;margin-left: 5px;"></p>
-
-							<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
-
-						<p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
-
-
-						<p ng-if="outNetWorkTable == true" ng-click="downloadCSV()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
-							<div class="right-download-block">
-								<p ng-click="toggleDownloadDrop()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD
-									<img src="../assets/e-claim/img/new-assets/Download.png"
+								<p class="inNetwork-dl" ng-json-export-excel data="in_network_transactions"
+									report-fields="{employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
+									filename="'Panel Transactions'" separator=","
+									class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">
+									DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png"
 										style="width: 20px;display: inline-block;margin-left: 5px;"></p>
 
-								<div ng-if="isDownloadDropShow" class="download-drop-container">
-									<div class="item" ng-click="selectDownloadOpt(0)">Panel</div>
-									<!-- <div class="item" ng-click="selectDownloadOpt(0)">In-Network</div> -->
-									<div class="item" ng-click="selectDownloadOpt(1)">Non-Panel</div>
-									<div class="item" ng-click="selectDownloadOpt(2)">Both</div>
+								<!-- <p ng-if="inNetWorkTable == true && activity.lite_plan == false" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+							<p ng-if="inNetWorkTable == true && activity.lite_plan == true" ng-json-export-excel data="in_network_transactions" report-fields="{member: 'EMPLOYEE', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', procedure_cost: 'MEDICINE & TREATMENT', consultation: 'CONSULTATION', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}" filename="'In-Network-Transactions'" separator="," class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+
+							<p ng-if="outNetWorkTable == true" ng-click="downloadCSV()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png" style="width: 20px;display: inline-block;margin-left: 5px;"></p> -->
+								<div class="right-download-block">
+									<p ng-click="toggleDownloadDrop()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD
+										<img src="../assets/e-claim/img/new-assets/Download.png"
+											style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+									<div ng-if="isDownloadDropShow" class="download-drop-container">
+										<div class="item" ng-click="selectDownloadOpt(0)">Panel</div>
+										<!-- <div class="item" ng-click="selectDownloadOpt(0)">In-Network</div> -->
+										<div class="item" ng-click="selectDownloadOpt(1)">Non-Panel</div>
+										<div class="item" ng-click="selectDownloadOpt(2)">Both</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
+				</div>
 			</div>
 
 			<div ng-if="inNetWorkTable == true" class="transactions-container"
