@@ -266,8 +266,11 @@ class SpendingInvoiceLibrary
 			$statement_data['lite_plan'] = 1;
 		}
 
-		if($spending['medical_method'] == "pre_paid" && $plan_method == "pre_paid") {
-			$statement_data['plan_method'] = 'pre_paid';
+		if($spending['medical_method'] == "pre_paid" && $plan_method == "pre_paid" || $spending['account_type'] == "enterprise_plan") {
+			if($spending['account_type'] != "enterprise_plan") {
+				$statement_data['plan_method'] = 'pre_paid';
+			}
+			
 			$statement_data['paid_date'] = date('Y-m-d', strtotime($statement_date));
 			$statement_data['paid_amount'] = 0;
 			$statement_data['statement_status'] = 1;

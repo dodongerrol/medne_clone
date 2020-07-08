@@ -11,7 +11,7 @@ app.directive('dashboardDirective', [
 
 				scope.options = {};
 				scope.progress = {};
-				scope.spendingAccountType = 0;
+				// scope.spendingAccountType = 0;
 				scope.plan_status = {};
 				scope.dependents = {};
 				scope.total_plan_due = 0;
@@ -27,6 +27,11 @@ app.directive('dashboardDirective', [
 				// scope.totalCompanyHeight = document.getElementById("tolal-company-container").style.height = "50px";
 				// console.log(scope.totalCompanyHeight);
 
+				// if ( scope.spending_account_status.wellness == true ) {
+				// 	scope.spendingAccountType = 1;
+				// }
+				console.log(scope.spendingAccountType);
+
 				scope.companyAccountType = function () {
 					scope.account_type = localStorage.getItem('company_account_type');
 					console.log(scope.account_type);
@@ -35,7 +40,7 @@ app.directive('dashboardDirective', [
 						$('.statement-hide').hide();
 						scope.statementHide = false;
 						scope.empStatementShow = true;
-						setTimeout();
+						// setTimeout();
 					}
 				}
 
@@ -124,6 +129,13 @@ app.directive('dashboardDirective', [
 							console.log(response);
 							scope.progress = response.data.data;
 							// scope.initializeChart();
+
+							// if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
+							// 	scope.spendingAccountType = 1;
+							// } else {
+								scope.spendingAccountType = 0;
+								scope.companySpendingTotalDue();
+							// }
 						});
 				}
 
@@ -152,6 +164,7 @@ app.directive('dashboardDirective', [
 
 					hrSettings.getCheckCredits('current_term')
 						.then(function (response) {
+							console.log(response);
 							scope.credits = response.data;
 							localStorage.setItem('currency_type', scope.credits.currency);
 							$('.credit-load').hide();
@@ -228,6 +241,7 @@ app.directive('dashboardDirective', [
 						.then(function (response) {
 							console.log(response);
 							scope.spending_account_status = response.data;
+							console.log(scope.spending_account_status);
 						});
 				}
 
@@ -246,7 +260,6 @@ app.directive('dashboardDirective', [
 
 					localStorage.setItem('method', 'input');
 					dashboardFactory.setHeadCountStatus(false);
-
 				}
 
 				scope.getCompanyDetails = function () {
@@ -261,7 +274,7 @@ app.directive('dashboardDirective', [
 				scope.companyDependents();
 				scope.getCompanyIntroMessage();
 				scope.companyPlanTotalDue();
-				scope.companySpendingTotalDue();
+				
 				scope.companyAccountType();
 			}
 		}
