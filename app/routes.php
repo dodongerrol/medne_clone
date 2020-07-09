@@ -1074,6 +1074,9 @@ Route::group(array('prefix' => 'v2'), function()
 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
 	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
 
+		// for getting member lists
+		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
+
 	 	Route::group(array('before' => 'auth.v2'),function(){
 	 		// test one tap login
 		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');
