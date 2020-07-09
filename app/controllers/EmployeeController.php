@@ -3185,6 +3185,25 @@ class EmployeeController extends \BaseController {
       return ['status' => true, 'message' => 'Activation sent.'];
     }
 
+    public static function Delete_Token(){
+      $AccessToken = new OauthAccessTokens();
+      $getRequestHeader = StringHelper::requestHeader();
+      //if($getRequestHeader['Authorization'] !=""){
+      if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+          $deleteToken = $AccessToken->DeleteToken($getAccessToken->id);
+          if($deleteToken){
+            return TRUE;
+          }else{
+            return FALSE;
+          }
+        }
+      }else{
+        return FALSE;
+      }
+    }
+
 
     public static function employeeResetPassword( ){
       $hostName = $_SERVER['HTTP_HOST'];
