@@ -114,6 +114,8 @@ Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardCo
 
 Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 Route::post('hr/employee_reset_password', 'EmployeeController@employeeResetPassword');
+// admin resend activation email
+Route::post('hr/resend_activation_email', 'CorporateController@resendCorporateActivationEmail');
 // authentications for eclaim
 Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
