@@ -223,11 +223,11 @@ class CorporateController extends BaseController {
         $emailData = [];
         $id = Input::get ('id');
         // $corporate = Corporate::where('corporate_id', $request->get('corporate_id'))->first();
-        $hr = DB::table('customer_hr_dashboard')
-        ->where('hr_dashboard_id', $id)
-        ->first();
-	   
-		if(!$hr) {
+        $user = DB::table('user')
+        ->where('UserID', $id)
+		->first();
+
+		if(!$user) {
 			return array('status' => FALSE, 'message' => 'Company does not exist.');
 		}
 		
@@ -243,27 +243,19 @@ class CorporateController extends BaseController {
             $url = 'http://medicloud.local/company-benefits-dashboard';
         }
 
-        if($hr->active == "1") {
+        if((int)$user->member_activated == 1) {
             $emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
-            $emailDdata['emailTo']= $hr->email;
+            $emailDdata['emailTo']= $user->Email;
             $emailDdata['emailName'] = ucwords($business_contact->first_name.' '.$business_contact->last_name);
             $emailDdata['emailPage'] = 'email-templates.activation-email';
             $emailDdata['url'] = $url;
             $emailDdata['button'] = $url.'/company-benefits-dashboard-login';
             
             \EmailHelper::sendEmail($emailDdata);
-                    // $admin_id = \AdminHelper::getAdminID();
-                    // if($admin_id) {
-                    //     $emailDdata['user_id'] = $request->get('user_id');
-                    //     $admin_logs = array(
-                    //         'admin_id'  => $admin_id,
-                    //         'type'      => 'resend_account_details_employee',
-                    //         'data'      => \AdminHelper::serializeData($emailDdata)
-                    //     );
-                    //     \AdminHelper::createAdminLog($admin_logs);
-                    }
-                    return array('status' => TRUE, 'message' => 'Successfully resend activation email.');
-        // return array('status' => FALSE, 'message' => 'Failed to send activation email');
-            
-        }
+			return array('status' => TRUE, 'message' => 'Successfully resend activation email.');         
+		} else {
+			return array('status' => FALSE, 'message' => 'Failed to resend activation email.');
+		}
+	}
 }
+
