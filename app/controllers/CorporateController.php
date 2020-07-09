@@ -246,7 +246,7 @@ class CorporateController extends BaseController {
         if((int)$user->member_activated == 1) {
             $emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
             $emailDdata['emailTo']= $user->Email;
-            $emailDdata['emailName'] = ucwords($business_contact->first_name.' '.$business_contact->last_name);
+            $emailDdata['emailName'] = ucwords($user->Name);
             $emailDdata['emailPage'] = 'email-templates.activation-email';
             $emailDdata['url'] = $url;
             $emailDdata['button'] = $url.'/company-benefits-dashboard-login';
