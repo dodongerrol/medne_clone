@@ -1908,22 +1908,110 @@ class BenefitsDashboardController extends \BaseController {
 		}
 	}
 
-	public function employeeLists($per_page)
+	public function employeeLists( )
 	{
+		$input = Input::all();
 		$result = self::checkSession();
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 		$final_user = [];
 		$paginate = [];
 
-		$users = DB::table('user')
-		->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
-		->where('corporate.corporate_id', $account_link->corporate_id)
-		// ->where('corporate_members.removed_status', 0)
-		->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'corporate.company_name', 'corporate_members.removed_status', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
-		->orderBy('corporate_members.removed_status', 'asc')
-		->orderBy('user.UserID', 'asc')
-		->paginate($per_page);
+		$types = !empty($input['status']) && sizeof($input['status']) > 0 ? $input['status'] : null;
+		$per_page = !empty($input['limit']) ? $input['limit'] : 5;
+		$search = !empty($input['search']) ? $input['search'] : null;
+		if($types)	{
+			foreach($types as $key => $type) {
+				if(!in_array($type, ['pending', 'activated', 'active', 'removed'])) {
+					return ['status' => false, 'message' => 'status should be pending, activated, active or removed'];
+				}
+			}
+			
+			$ids = [];
+			foreach($types as $key => $type) {
+				if($type == "pending") {
+					$users = DB::table('user')
+							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+							->where('user.pending', 1)
+							->where('corporate_members.corporate_id', $account_link->corporate_id)
+							->lists('UserID');
+					if(sizeof($users) > 0) {
+						foreach($users as $key => $user) {
+							array_push($ids, $user);
+						}
+					}
+				}
+
+				if($type == "activated") {
+					$users = DB::table('user')
+							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+							->where('user.member_activated', 1)
+							->where('corporate_members.corporate_id', $account_link->corporate_id)
+							->lists('UserID');
+					if(sizeof($users) > 0) {
+						foreach($users as $key => $user) {
+							array_push($ids, $user);
+						}
+					}
+				}
+
+				if($type == "active") {
+					$users = DB::table('user')
+							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+							->where('user.Active', 1)
+							->where('corporate_members.corporate_id', $account_link->corporate_id)
+							->lists('UserID');
+					if(sizeof($users) > 0) {
+						foreach($users as $key => $user) {
+							array_push($ids, $user);
+						}
+					}
+				}
+
+				if($type == "removed") {
+					$users = DB::table('user')
+							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+							->where('user.Active', 0)
+							->where('corporate_members.corporate_id', $account_link->corporate_id)
+							->lists('UserID');
+					if(sizeof($users) > 0) {
+						foreach($users as $key => $user) {
+							array_push($ids, $user);
+						}
+					}
+				}
+			}
+
+			$unique_ids = array();
+			foreach($ids as $v){
+				isset($k[$v]) || ($k[$v]=1) && $unique_ids[] = $v;
+			}
+			
+			if(sizeof($unique_ids) > 0) {
+				$users = DB::table('user')
+						->whereIn('UserID', $unique_ids)
+						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name')
+						->paginate($per_page);
+			} else {
+
+			}
+		} else {
+			if($search) {
+				$users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->where('user.Name', 'like', '%'.$search.'%')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
+				->paginate($per_page);
+			} else {
+				$users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
+				->orderBy('corporate_members.removed_status', 'asc')
+				->orderBy('user.UserID', 'asc')
+				->paginate($per_page);
+			}
+		}
 
 		$paginate['last_page'] = $users->getLastPage();
 		$paginate['current_page'] = $users->getCurrentPage();
@@ -2200,7 +2288,7 @@ class BenefitsDashboardController extends \BaseController {
 				'bank_code'				=> $user->bank_code,
 				'bank_branch'			=> $user->bank_brh,
 				'bank_name'				=> $user->bank_name,
-				'company'				=> ucwords($user->company_name),
+				// 'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
 				'deletion'      		=> $deleted,
