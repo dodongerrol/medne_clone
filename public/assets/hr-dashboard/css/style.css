@@ -9962,9 +9962,15 @@ span.dropdown-entitlement.disabled {
   font-family: 'Helvetica Medium';
 }
 
+#add-filter-modal .filter-header >div {
+  line-height: normal;
+}
+
 #add-filter-modal .filter-header span {
   color: #0392CF;
   text-decoration: underline;
+  font-size: 14px;
+  font-family: 'Helvetica Medium';
 }
 
 #add-filter-modal .filter-body {

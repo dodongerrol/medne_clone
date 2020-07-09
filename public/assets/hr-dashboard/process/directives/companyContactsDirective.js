@@ -765,10 +765,17 @@ app.directive("companyContactsDirective", [
             phone_code: data.phone_code,
           }
 
+          scope.toggleLoading();
           hrSettings.updateHrDetails( params )
             .then(function (response) {
               console.log(response);
-              scope._getHrDetails_();
+              
+              if ( response.data.status == true ) {
+                $('#edit_details').modal('hide');
+
+                scope._getHrDetails_();
+                scope.toggleOff();
+              }
             });
         }
 

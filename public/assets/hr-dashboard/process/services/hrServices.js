@@ -118,9 +118,9 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/remove_employee/" + id);
   };
 
-  hrFactory.getEmployees = function(num, page) {
+  hrFactory.getEmployees = function(page,limit) {
     return $http.get(
-      serverUrl.url + "/hr/employee/list/" + num + "?page=" + page
+      serverUrl.url + "/hr/employee/list/"+ "?page=" + page +  "&limit=" + limit
     );
   };
 
@@ -398,6 +398,32 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.sendImmediateActivation = function ( data ) {
     return $http.post( serverUrl.url + "/hr/send_immediate_activation", data  );
   }
+
+  hrFactory.employeeResetPassword = function ( id ) {
+    return $http.post( serverUrl.url + "/hr/employee_reset_password", id  );
+  }
+
+  hrFactory.employeeResetActivation = function ( id ) {
+    return $http.post( serverUrl.url + "/hr/resend_activation_email", id  );
+  }
+
+  hrFactory.getFilterEmployees = function(page,limit,status_pending,status_activated,status_active,status_removed) {
+
+    let url = serverUrl.url + "/hr/employee/list/"+ "?page=" + page +  "&limit=" + limit;
+    if ( status_pending == true ) {
+      url += ("&status[]=" + 'pending');
+    }
+    if ( status_activated == true ) {
+      url += ("&status[]=" + 'activated');
+    }
+    if ( status_active == true ) {
+      url += ("&status[]=" + 'active');
+    }
+    if ( status_removed == true ) {
+      url += ("&status[]=" + 'removed');
+    }
+    return $http.get( url );
+  };
 
   return hrFactory;
 });

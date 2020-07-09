@@ -2346,12 +2346,12 @@ app.directive("employeeOverviewDirective", [
               }
             });
         }
-
+        scope.global_empLimitList = 5;
         scope.getEmployeeList = function (page) {
           $(".employee-overview-pagination").show();
 
           scope.showLoading();
-          hrSettings.getEmployees(scope.page_ctr, page)
+          hrSettings.getEmployees(page,scope.global_empLimitList)
             .then(function (response) {
               console.log(response);
               scope.employees = response.data;
@@ -2498,6 +2498,8 @@ app.directive("employeeOverviewDirective", [
                   bank_code: data.bank_code,
                   bank_branch: data.bank_branch,
                   user_id: data.user_id,
+                  bank_name: data.bank_name,
+                  emp_id: data.member_id,
                 };
                 console.log(update_data);
                 dependentsSettings.updateEmployee(update_data)
@@ -2800,13 +2802,71 @@ app.directive("employeeOverviewDirective", [
 
         scope._showAddFilterModal_ = function() {
           $("#add-filter-modal").modal('show');
+
+          scope.global_statusData = {
+            pending: false,
+            logged_in: false,
+            active: false,
+            removed: false,
+          }
+        }
+
+        scope._resetActivation_ = function () {
+          let params = {
+            id: scope.selectedEmployee.member_id,
+          }
+          scope.showLoading();
+          hrSettings.employeeResetActivation ( params  )
+            .then(function( response ) {
+              console.log(response);
+
+              if ( response.data.status == true ) {
+                scope.hideLoading();
+                swal('Success!', response.data.message, 'success');
+              }
+            });
         }
 
         scope._resetPassword_ = function() {
-          hrSettings.sendPassword ( )
+          let params = {
+            id: scope.selectedEmployee.member_id,
+          }
+          scope.showLoading();
+          hrSettings.employeeResetPassword ( params  )
             .then(function( response ) {
               console.log(response);
+
+              if ( response.data.status == true ) {
+                scope.hideLoading();
+                swal('Success!', response.data.message, 'success');
+              }
             });
+        }
+
+        scope._statusClear_ = function ( data ) {
+          data.pending = false;
+          data.logged_in = false;
+          data.active = false;
+          data.removed = false;
+        }
+        
+        
+        scope._empApplyFilter_ = function ( data ) {
+          
+          console.log( data );
+          scope.showLoading();
+          hrSettings.getFilterEmployees ( scope.page_active,scope.global_empLimitList,data.pending,data.logged_in,data.active,data.removed  )
+          .then(function( response ) {
+            console.log(response);
+
+            scope.getEmployeeList( scope.page_active );
+            scope.hideLoading();
+            $('#add-filter-modal').modal('hide');            
+          });
+        }
+
+        scope._cancelModal_ = function () {
+          $('#add-filter-modal').modal('hide');
         }
         
         scope.onLoad = function () {
@@ -2914,7 +2974,7 @@ app.directive("employeeOverviewDirective", [
           scope.isUpdateEmpInfoModalOpen = false;
           // iti2.destroy();
           console.log(iti);
-          console.log(iti2);
+          // console.log(iti2);
         })
 
         // -------------- //

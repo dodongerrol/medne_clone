@@ -622,7 +622,7 @@
 								</div> -->
 								<div>
 									<strong class="font-helvetica-medium">Bank Name</strong>
-									<span>BDO</span>
+									<span ng-bind="selectedEmployee.bank_name">BDO</span>
 								</div>
 							</div>
 						</div>
@@ -889,7 +889,7 @@
 							<!-- <button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset
 								Account</button> -->
 							<div class="resend-reset-container">
-								<button ng-disabled="selectedEmployee.emp_status == 'active' " class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
+								<button ng-disabled="selectedEmployee.emp_status == 'active' " ng-click="_resetActivation_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
 								<button ng-disabled="selectedEmployee.emp_status == 'pending' " ng-click="_resetPassword_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
 							</div>
 							<button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
@@ -1998,7 +1998,7 @@
 	                  <div class="form-group">
 	                    <label class="edit-employee-modal-label">Bank Name</label>
 	                    <div>
-		                    <input type="text" class="form-control edit-employee-modal-input" placeholder="Choose Bank Name">
+		                    <input ng-model="selectedEmployee.bank_name" type="text" class="form-control edit-employee-modal-input" placeholder="Choose Bank Name">
 		                    <i class="fa fa-angle-down"></i>
 	                    </div>
 	                  </div>
@@ -2187,42 +2187,42 @@
 				<div class="filter-header">
 					<h4>Status</h4>
 					<div>
-						<span>Clear</span>
+						<span ng-click="_statusClear_( global_statusData )" ng-show="global_statusData.pending == true || global_statusData.logged_in == true || global_statusData.active == true || global_statusData.removed == true">Clear</span>
 					</div>
 				</div>
 				<div class="filter-body">
 					<div class="custom-checkbox-selector">
 			      <label class="selector-container">
 			        <span class="text">Pending</span>
-			        <input ng-model="company_account_details.hr_billing_status" type="checkbox"/>
+			        <input ng-model="global_statusData.pending" type="checkbox"/>
 			        <span class="custom-checkbox-checkmark"></span>
 			      </label>
 			    </div>
 			    <div class="custom-checkbox-selector">
 			      <label class="selector-container">
 			        <span class="text">Logged in</span>
-			        <input ng-model="company_account_details.hr_billing_status" type="checkbox"/>
+			        <input ng-model="global_statusData.logged_in" type="checkbox"/>
 			        <span class="custom-checkbox-checkmark"></span>
 			      </label>
 			    </div>
 			    <div class="custom-checkbox-selector">
 			      <label class="selector-container">
 			        <span class="text">Active</span>
-			        <input ng-model="company_account_details.hr_billing_status" type="checkbox"/>
+			        <input ng-model="global_statusData.active" type="checkbox"/>
 			        <span class="custom-checkbox-checkmark"></span>
 			      </label>
 			    </div> 
 			    <div class="custom-checkbox-selector">
 			      <label class="selector-container">
 			        <span class="text">Removed</span>
-			        <input ng-model="company_account_details.hr_billing_status" type="checkbox"/>
+			        <input ng-model="global_statusData.removed" type="checkbox"/>
 			        <span class="custom-checkbox-checkmark"></span>
 			      </label>
 			    </div>   
 				</div>
 				<div class="filter-footer">
-					<button class="btn-cancel">Cancel</button>
-					<button class="btn-apply-filter">Apply Filter</button>
+					<button ng-click="_cancelModal_()" class="btn-cancel">Cancel</button>
+					<button ng-click="_empApplyFilter_( global_statusData )" class="btn-apply-filter">Apply Filter</button>
 				</div>
 			</div>
 		</div>
