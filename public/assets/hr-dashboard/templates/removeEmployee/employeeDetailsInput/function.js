@@ -18,7 +18,15 @@ app.directive('employeeDetailsInputDirective', [
 				scope.nextBtn	=	function(){
 					scope.showLoading();
 					removeEmployeeFactory.setEmployeeDetails( scope.selectedEmployee );
-					$state.go('employee-overview.remove-emp-checkboxes');
+					if( scope.selectedEmployee.account_type == 'enterprise_plan' ){
+						if( scope.selectedEmployee.wellness_wallet == true ){
+							$state.go('employee-overview.health-spending-account-summary');
+						}else{
+							$state.go('employee-overview.refund-summary');
+						}
+					}else{
+						$state.go('employee-overview.remove-emp-checkboxes');
+					}
 				}
 
 				setTimeout(() => {

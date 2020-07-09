@@ -235,27 +235,16 @@ class StringHelper{
 
         public static function getToken( )
         {
-            // $getRequestHeader = getallheaders();
-            // $getRequestHeader = getallheaders();
-            // if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
-            //     $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
-            // }
-            // // return $getRequestHeader;
-            // if(isset($getRequestHeader['Authorization'])) {
-            //     return $getRequestHeader['Authorization'];
-            // } else {
-            //     return FALSE;
-            // }
-
-
-            // if(isset($getRequestHeader['Authorization'])) {
-            //     return $getRequestHeader['Authorization'];
-            // } else {
-            //     return FALSE;
-            // }
-
-            return self::requestHeader();
-
+            $getRequestHeader = getallheaders();
+            if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
+                $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
+            }
+ 
+            if(isset($getRequestHeader['Authorization'])) {
+                return $getRequestHeader['Authorization'];
+            } else {
+                return self::requestHeader();
+            }
         }
 
         public static function getHrSession( )

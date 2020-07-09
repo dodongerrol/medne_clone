@@ -264,11 +264,13 @@ class DoctorWidgetController extends \BaseController {
 				foreach ($findDoctorTimes as $value) {
 					# code...
 
-					$startDate = $value->From_Date;
+					// $startDate = $value->From_Date;
+					$startDate = date('Y').'-'.date('m-d', $value->From_Date);
+					$startDate = strtotime($startDate);
 					$repeat = $value->Repeat;
 
 					if ($repeat==1) {
-						$endDate = strtotime("+48 months", $startDate);
+						$endDate = strtotime("+6 months", $startDate);
 					} else {
 						$endDate = $value->To_Date;
 					}

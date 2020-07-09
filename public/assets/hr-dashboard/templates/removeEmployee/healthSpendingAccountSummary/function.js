@@ -39,9 +39,14 @@ app.directive('healthSpendingAccountSummaryDirective', [
             .then(function (response) {
               console.log(response);
 							scope.health_spending_summary = response.data;
+							
 							scope.emp_details.summary = response.data;
 							scope.emp_details.summary.date.pro_rated_start = new Date(moment(scope.emp_details.summary.date.pro_rated_start, 'DD/MM/YYYY'));
 							scope.emp_details.summary.date.pro_rated_end = new Date(moment(scope.emp_details.summary.date.pro_rated_end, 'DD/MM/YYYY'));
+							if( scope.emp_details.account_type == 'enterprise_plan' ){
+								scope.health_spending_summary.medical = {};
+								scope.emp_details.summary.medical = {};
+							}
 							removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
 							// scope.health_spending_summary.medical = false;
               scope.initializeNewCustomDatePicker();

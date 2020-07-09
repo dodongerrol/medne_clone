@@ -365,6 +365,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/get_excel_link?customer_id=" + id );
   }
 
+  // Enterprise Plan
+
+  hrFactory.get_member_refund = function (data) {
+    return $http.post( serverUrl.url + "/hr/get_member_refund_calculation", data  );
+  }
+  
   hrFactory.checkReplaceEmpForm = function (data) {
     return $http.post( serverUrl.url + "/hr/check_user_field_replacement", data);
   }

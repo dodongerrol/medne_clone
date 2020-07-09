@@ -45,7 +45,7 @@ app.directive('empDetailsDirective', [
 						pieColor = [ '00B2E1', '8EA4AA' ];
 					}
 					var data = [{
-					  values: [current, balance],
+					  values: (scope.current_spending.account_type == 'enterprise_plan' && scope.current_spending.wellness_enabled == true && scope.spendingTypeOpt == 1) ? [current, 100 - current] : [current, balance],
 					  type: 'pie',
 					  hole: .8,
 					  showlegend : false,

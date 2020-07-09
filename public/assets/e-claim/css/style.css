@@ -485,6 +485,16 @@ html {
   padding: 15px 0 5px 0;
 }
 
+.activity-account.disabled-panel .top {
+  background: #F2F2F2;
+}
+.activity-account.disabled-panel .top p{
+  color: #D9D9D9 !important;
+}
+.activity-account.disabled-panel .bottom{
+  background: #4EB0DD;
+}
+
 .transaction-list-title {
   display: inline-block;
   overflow: hidden;
@@ -889,6 +899,9 @@ html {
 .spent-box .in-network-box p {
   margin-bottom: 3px;
 }
+.spent-box .in-network-box.disabled-panel p {
+  color: #D9D9D9 !important;
+}
 
 .spent-box .out-network-box {
   display: inline-block;
@@ -927,6 +940,11 @@ html {
   border-radius: 6px;
   color: #555;
   font-weight: 700;
+  outline: none;
+}
+.transactions-header button[disabled]{
+  border: 2px solid #D9D9D9;
+  color: #D9D9D9;
 }
 
 .transactions-header button.active {
@@ -2112,7 +2130,8 @@ body::-webkit-scrollbar-thumb {
   z-index: 1;
   padding: 7px;
   position: absolute;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 300;
 }
 
 /* Submit E-Claim */
@@ -2222,4 +2241,38 @@ body::-webkit-scrollbar-thumb {
   margin-top: 24px;
   margin-bottom: 28px;
   color: #FFF;
+}
+
+
+.visits-home-container .visits-text{ 
+  color: #555;
+  font-size: 16px;
+  font-family: 'Helvetica Medium';
+  margin-bottom: 5px;
+}
+.visits-home-container .balance-text{ 
+  color: #555;
+}
+.visits-home-container .visits-bottom-values{ 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.enterprise-activity .enterprise-dates{
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: 'Helvetica Thin';
+}
+
+.visits-activity-container{
+  border-right: 1px solid #ccc;
+  text-align: center;
+  padding-bottom: 20px;
+  padding-top: 15px;
+}
+.visits-activity-container .visits-bottom-values{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 20px;
 }

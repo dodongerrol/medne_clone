@@ -22,10 +22,10 @@
 			</div>
 			<div class="arrow-up-2" style="visibility: visible;"></div>
 		</div> -->
-		<div class="welcome-container" ng-if="empStatementShow">
+		<!-- <div class="welcome-container" ng-if="empStatementShow">
 			<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
 			<div id="arrow-up-statement"></div>
-		</div>
+		</div> -->
 		<div class="welcome-container">
 			<h4 ui-sref="activity">Activity</h4>
 			<div class="arrow-up-3" style="visibility: hidden;"></div>
@@ -125,9 +125,9 @@
 					<div class="col-md-12 eclaim-border-bottom  no-padding text-center" >
 						<h4 class="color-black3 font-16 weight-700" style="position: absolute;left: 0"><span class="font-medium2">Team</span> E-Claim</h4>
 
-						<div class="eclaim-spending-type-container">
-                <button ng-class="{ 'active': eclaimSpendingType == 0 }" class="btn btn-default btn-medical" ng-click="setSpendType(0)">Medical</button>
-                <button ng-class="{ 'active': eclaimSpendingType == 1 }" class="btn btn-default btn-wellness" ng-click="setSpendType(1)">Wellness</button>
+						<div class="eclaim-spending-type-container" style="min-height: 40px;">
+                <button ng-if="spending_account_status.account_type != 'enterprise_plan' || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ng-class="{ 'active': eclaimSpendingType == 0 }" class="btn btn-default btn-medical" ng-click="setSpendType(0)">Medical</button>
+                <button ng-if="spending_account_status.account_type != 'enterprise_plan' || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ng-class="{ 'active': eclaimSpendingType == 1 }" class="btn btn-default btn-wellness" ng-click="setSpendType(1)">Wellness</button>
             </div>
 					</div>
 
