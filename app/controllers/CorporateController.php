@@ -216,4 +216,57 @@ class CorporateController extends BaseController {
 			return array('status' => false, 'message' => 'Failed to update Company Billing Contact Details.');
 		}
 	}
+
+	public function resendCorporateActivationEmail ( )
+    {
+        $message = [];
+        $emailData = [];
+        $id = Input::get ('id');
+        // $corporate = Corporate::where('corporate_id', $request->get('corporate_id'))->first();
+        $hr = DB::table('customer_hr_dashboard')
+        ->where('hr_dashboard_id', $id)
+        ->first();
+        // $contacts = CompanyContacts::where('customer_id', $request->get('customer_id'))->where('active', 1)->get();
+
+        // foreach ($contacts as $key => $contact) {
+        //  $contact->send_email_communication = (int)$contact->send_email_communication == 1 ? true : false;
+        //  $contact->send_email_billing = (int)$contact->send_email_billing == 1 ? true : false;
+        // }
+
+        // get company business contact details
+        $business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $id)->first();
+
+
+
+        if(url('/') == 'https://admin.medicloud.sg') {
+            $url = 'https://medicloud.sg/company-benefits-dashboard';
+        } else if(url('/') == 'http://stage.medicloud.sg') {
+            $url = 'http://staging.medicloud.sg/company-benefits-dashboard';
+        } else {
+            $url = 'http://medicloud.local/company-benefits-dashboard';
+        }
+
+        if($hr->active == "1") {
+            $emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+            $emailDdata['emailTo']= $hr->email;
+            $emailDdata['emailName'] = ucwords($business_contact->first_name.' '.$business_contact->last_name);
+            $emailDdata['emailPage'] = 'email-templates.activation-email';
+            $emailDdata['url'] = $url;
+            $emailDdata['button'] = $url.'/company-benefits-dashboard-login';
+            
+            \EmailHelper::sendEmail($emailDdata);
+                    // $admin_id = \AdminHelper::getAdminID();
+                    // if($admin_id) {
+                    //     $emailDdata['user_id'] = $request->get('user_id');
+                    //     $admin_logs = array(
+                    //         'admin_id'  => $admin_id,
+                    //         'type'      => 'resend_account_details_employee',
+                    //         'data'      => \AdminHelper::serializeData($emailDdata)
+                    //     );
+                    //     \AdminHelper::createAdminLog($admin_logs);
+                    }
+                    return array('status' => TRUE, 'message' => 'Successfully resend activation email.');
+        // return array('status' => FALSE, 'message' => 'Failed to send activation email');
+            
+        }
 }
