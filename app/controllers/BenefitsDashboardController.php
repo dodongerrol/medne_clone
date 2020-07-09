@@ -11549,6 +11549,7 @@ class BenefitsDashboardController extends \BaseController {
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 	    // get user plan
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+		$spending = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 
 		$final_user = [];
@@ -11577,25 +11578,13 @@ class BenefitsDashboardController extends \BaseController {
 			$wallet = DB::table('e_wallet')->where('UserID', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
-
-			// // get user plan details
-			if($plan->account_type == "stand_alone_plan") {
-				$plan_type = "Stand Alone Plan";
-			} else if($plan->account_type == "insurance_bundle") {
-				$plan_type = "Insurance Bundle Plan";
-			} else if($plan->account_type == "trial_plan") {
-				$plan_type = "Trial Plan";
-			} else {
-				$plan_type = "";
-			}
-
 			$plan_dates = PlanHelper::getEmployeePlanCoverageDate($users[$x]->UserID, $result->customer_buy_start_id);
 
 			$temp = array(
 				'Name'		=> ucwords($users[$x]->Name),
 				'PhoneNo'		=> $users[$x]->PhoneCode.$users[$x]->PhoneNo,
 				'Email'		=> $users[$x]->Email,
-				'Plan_Type' => $plan_type." (Corporate)",
+				'Plan_Type' => PlanHelper::getAccountType($plan->account_type)." (Corporate)",
 				'Start_Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
 				'End_Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
 				'Medical_Allocation' => number_format($medical_credit_data['allocation'], 2),
@@ -11605,7 +11594,10 @@ class BenefitsDashboardController extends \BaseController {
 				'Wellness_Allocation' => number_format($wellness_credit_data['allocation'], 2),
 				'Wellness_Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
 				'Wellness_Balance' => number_format($wellness_credit_data['balance'], 2),
-				'Credits_Wellness' => number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2)
+				'Credits_Wellness' => number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+				'DOB'		=> $users[$x]->DOB,
+				'Zip_Code'	=>$users[$x]->Zip_Code,
+				'Employee_Id' =>$users[$x]->emp_no
 			);
 
 			$medical_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'medical');
@@ -11622,6 +11614,7 @@ class BenefitsDashboardController extends \BaseController {
 				$temp['Medical_Usage_Last_Term'] = 0;
 				$temp['Medical_Balance_Last_Term'] = 0;
 			}
+			
 
 			$wellness_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'wellness');
 			if($wellness_last_term_credits) {
@@ -11636,8 +11629,11 @@ class BenefitsDashboardController extends \BaseController {
 				$temp['Wellness_Allocation_Last_Term'] = 0;
 				$temp['Wellness_Usage_Last_Term'] = 0;
 				$temp['Wellness_Balance_Last_Term'] = 0;
-			}
-
+			}		
+			if($spending->medical_reimbursement == 1 || $spending->wellness_reimbursement == 1) {
+				$temp['Bank_Name'] = $users[$x]->bank_name;
+				$temp['Bank_Account'] =  $users[$x]->bank_account;
+			} 
 			$final_user[] = $temp;
 		}
 
