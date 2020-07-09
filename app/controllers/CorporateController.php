@@ -226,14 +226,11 @@ class CorporateController extends BaseController {
         $hr = DB::table('customer_hr_dashboard')
         ->where('hr_dashboard_id', $id)
         ->first();
-        // $contacts = CompanyContacts::where('customer_id', $request->get('customer_id'))->where('active', 1)->get();
-
-        // foreach ($contacts as $key => $contact) {
-        //  $contact->send_email_communication = (int)$contact->send_email_communication == 1 ? true : false;
-        //  $contact->send_email_billing = (int)$contact->send_email_billing == 1 ? true : false;
-        // }
-
-        // get company business contact details
+	   
+		if(!$hr) {
+			return array('status' => FALSE, 'message' => 'Company does not exist.');
+		}
+		
         $business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $id)->first();
 
 
