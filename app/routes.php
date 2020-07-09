@@ -229,7 +229,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// finish employee enrollements
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 	// employee list
-	Route::get('hr/employee/list/{per_page}', 'BenefitsDashboardController@employeeLists');
+	Route::get('hr/employee/list', 'BenefitsDashboardController@employeeLists');
 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');
 	// search employee
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
