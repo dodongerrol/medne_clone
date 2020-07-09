@@ -11645,10 +11645,7 @@ class BenefitsDashboardController extends \BaseController {
 			if($spending->medical_reimbursement == 1 || $spending->wellness_reimbursement == 1) {
 				$temp['Bank_Name'] = $users[$x]->bank_name;
 				$temp['Bank_Account'] =  $users[$x]->bank_account;
-			} else {
-				$temp['Bank_Name'] = null;
-				$temp['Bank_Account'] =  null;
-			}
+			} 
 			$final_user[] = $temp;
 		}
 
