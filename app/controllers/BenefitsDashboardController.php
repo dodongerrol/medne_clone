@@ -11578,25 +11578,13 @@ class BenefitsDashboardController extends \BaseController {
 			$wallet = DB::table('e_wallet')->where('UserID', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
-
-			// // get user plan details
-			if($plan->account_type == "stand_alone_plan") {
-				$plan_type = "Stand Alone Plan";
-			} else if($plan->account_type == "insurance_bundle") {
-				$plan_type = "Insurance Bundle Plan";
-			} else if($plan->account_type == "trial_plan") {
-				$plan_type = "Trial Plan";
-			} else {
-				$plan_type = "";
-			}
-
 			$plan_dates = PlanHelper::getEmployeePlanCoverageDate($users[$x]->UserID, $result->customer_buy_start_id);
 
 			$temp = array(
 				'Name'		=> ucwords($users[$x]->Name),
 				'PhoneNo'		=> $users[$x]->PhoneCode.$users[$x]->PhoneNo,
 				'Email'		=> $users[$x]->Email,
-				'Plan_Type' => $plan_type." (Corporate)",
+				'Plan_Type' => PlanHelper::getAccountType($plan->account_type)." (Corporate)",
 				'Start_Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
 				'End_Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
 				'Medical_Allocation' => number_format($medical_credit_data['allocation'], 2),
