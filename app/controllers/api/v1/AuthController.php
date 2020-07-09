@@ -6632,7 +6632,7 @@ public function payCreditsNew( )
       }
 
       $checker = DB::table('user')
-      ->select('UserID as user_id', 'Name as name', 'member_activated')
+      ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code')
       ->where('PhoneNo', $input['mobile'])->first();
 
       if(!$checker) {
@@ -6640,6 +6640,14 @@ public function payCreditsNew( )
           $returnObject->message = 'This phone number has not been signed up with Mednefits';
           return Response::json($returnObject);
       }
+
+      if($checker->postal_code == null || $checker->postal_code === null) {
+          $checker->postal_code = 0;
+      }
+      else {
+          $checker->postal_code = 1;
+      }
+
       $returnObject->status = true;
       $returnObject->message = 'Member is already registered';
       $returnObject->data = $checker;
