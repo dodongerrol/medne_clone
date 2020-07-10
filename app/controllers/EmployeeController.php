@@ -3004,6 +3004,65 @@ class EmployeeController extends \BaseController {
       
       return ['status' => true, 'data' => $data];
     }
+
+  public function checkEmailValidation( )
+  {
+    $input = Input::all();
+    $email = DB::table('customer_hr_dashboard')->where('email', $input['email'])->first();
+    $token = StringHelper::getToken();
+
+    if(!$email == 2) {
+      return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
+    }
+    if($email && (int)$email->active == 0 && $email->hr_activated == 0) {
+      return array('status' => 0, 'date_created' => $email->updated_at, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+      
+    } else if($email && (int)$email->active == 1) {
+      return array('status' => TRUE, 'Activated');
+    if($email && $email->hr_activated == 1) {
+      return array('status' => 1,  'message' => 'Account Activated');
+    } else if($email && $email->active == 0) {
+      return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+    }
+    if($email) {
+      return $token;
+    } else {
+        return FALSE;
+    }
+  }
+}
+  public function getEmployeeEnrollmentStatus( )
+  {
+    $result = StringHelper::getJwtHrSession();
+    $customer_id = $result->customer_buy_start_id;
+
+    // get pending users
+    $pending = 0;
+    $login = 0;
+    $active = 0;
+    $members = CustomerHelper::getActiveMembers($customer_id);
+
+    foreach($members as $key => $member)  {
+      // check if member already login base on admin logs
+      $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
+      if(!$check_active_state)  {
+        $pending++;
+      } else {
+        // check if already create a transaction
+        $panel = DB::table('transaction_history')->where('UserID', $member->user_id)->first();
+        $non_panel = DB::table('e_claim')->where('user_id', $member->user_id)->first();
+
+        if($panel || $non_panel) {
+          $active++;
+        } else {
+          $login++;
+        }
+      }
+    }
+    $data = ['pending' => $pending, 'login' => $login, 'active' => $active];
+
+    return ['status' => false, 'data' => $data];
+  }
     
     public function checkMemberReplaceDetails( )
     {

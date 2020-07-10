@@ -316,6 +316,50 @@
 								</div>
 							</div>
 
+							<div ng-if="spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false" class="activity-spending-not-activated-blur">
+								<div class="spending-col-left col-1">
+									<div class="box-1">
+										<div class="one"></div>
+										<div class="two"></div>
+										<div class="three"></div>
+									</div>
+									<div class="box-2">
+										<div class="one"></div>
+										<div class="two"></div>
+										<div class="three"></div>
+									</div>
+									<div class="box-3">
+										<div class="one"></div>
+										<div class="two"></div>
+										<div class="three"></div>
+									</div>
+								</div>
+								<div class="col-2"></div>
+								<div class="spending-col-right col-1">
+									<div class="box-1">
+										<div class="one"></div>
+										<div class="two"></div>
+										<div class="three"></div>
+									</div>
+									<div class="box-2">
+										<div class="one"></div>
+										<div class="two"></div>
+										<div class="three"></div>
+									</div>
+									<div class="box-3">
+										<div class="one"></div>
+										<div class="two"></div>
+									</div>
+								</div>
+							</div>
+							<div ng-if="spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false" class="activity-spending-not-activated-box">
+								<div class="spending-border-box">
+									<p>Spending Account for your<br>company has not been activated.</p>
+									<a href="/sa-landing" target="_blank">Learn more >></a>
+								</div>
+							</div>
+						</div>
+
 							<!-- Old UI before plan renewal -->
 							<!-- <div class="col-md-12  eclaim-border-bottom text-center no-padding">
 								<h4 class="color-black3 font-16 weight-700" style="position: absolute;left: 0" ng-bind="activity_title">

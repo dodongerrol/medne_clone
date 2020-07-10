@@ -1475,7 +1475,8 @@ class PlanHelper {
 			'account_already_update'	=> 1,
 			'communication_type'	=> $communication_type,
 			'group_number'			=> $data_enrollee->group_number,
-			'currency_type'		=> $customer->currency_type
+			'currency_type'		=> $customer->currency_type,
+			'member_activated'	=> 0
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
@@ -1802,11 +1803,14 @@ class PlanHelper {
 				$email_data['emailName'] = $data_enrollee->first_name;
 				$email_data['emailTo']   = $data_enrollee->email;
 				$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
-		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
-				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+		        // $email_data['email'] = 'allan.alzula.work@gmail.com';
+		        // $email_data['emailTo'] = 'allan.alzula.work@gmail.com';
+				$email_data['emailPage'] = 'email-templates.newAccountLogin.member-activation-email';
 				$email_data['start_date'] = date('d F Y', strtotime($start_date));
 				$email_data['name'] = $data_enrollee->first_name;
 				$email_data['plan'] = $active_plan;
+				$email_data['code'] = $data['PhoneCode'];
+				$email_data['phone'] = $data['PhoneNo'];
 				$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 				$email_data['pw'] = $password;
 				EmailHelper::sendEmail($email_data);
@@ -1830,54 +1834,7 @@ class PlanHelper {
 					}
 				}
 			}
-		} 
-		// else if($communication_type == "sms"){
-			if($data_enrollee->mobile) {
-				$user = DB::table('user')->where('UserID', $user_id)->first();
-				$phone = SmsHelper::newformatNumber($user);
-
-				if($phone) {
-					$compose = [];
-					$compose['name'] = $data_enrollee->first_name.' '.$data_enrollee->last_name;
-					$compose['company'] = $company->company_name;
-					$compose['plan_start'] = date('F d, Y', strtotime($start_date));
-					$compose['email'] = null;
-					$compose['nric'] = $data_enrollee->mobile;
-					$compose['password'] = $password;
-					$compose['phone'] = $phone;
-					$compose['sms_type'] = "LA";
-					$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
-					$result_sms = SmsHelper::sendSms($compose);
-				}
-			} else {
-				$email_data = [];
-				$email_data['company']   = ucwords($company->company_name);
-				$email_data['emailName'] = $data_enrollee->first_name;
-				$email_data['emailTo']   = $data_enrollee->email;
-				$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
-		                // $email_data['email'] = 'allan.alzula.work@gmail.com';
-				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-				$email_data['start_date'] = date('d F Y', strtotime($start_date));
-				$email_data['name'] = $data_enrollee->first_name;
-				$email_data['plan'] = $active_plan;
-				$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
-				$email_data['pw'] = $password;
-				EmailHelper::sendEmail($email_data);
-			}	
-		// } else {
-		// 	$email_data = [];
-		// 	$email_data['company']   = ucwords($company->company_name);
-		// 	$email_data['emailName'] = $data_enrollee->first_name;
-		// 	$email_data['emailTo']   = $data_enrollee->email ? $data_enrollee->email : 'info@medicloud.sg';
-		// 	$email_data['email'] = 'info@medicloud.sg';
-		// 	$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
-		// 	$email_data['start_date'] = date('d F Y', strtotime($start_date));
-		// 	$email_data['name'] = $data_enrollee->first_name;
-		// 	$email_data['plan'] = $active_plan;
-		// 	$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
-		// 	$email_data['pw'] = $password;
-		// 	EmailHelper::sendEmail($email_data);
-		// }
+		}
 
 		if($admin_id) {
 			$data['user_id'] = $user_id;

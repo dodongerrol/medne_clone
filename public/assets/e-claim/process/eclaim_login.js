@@ -36,9 +36,14 @@ login.directive('eclaimLogin', [
         scope.login_details = {};
         var introLoader_trap;
         var loading_trap;
+        scope.email = '';
+        scope.password = '';
         scope.forgot_password_data = {};
         scope.new_password_error = false;
         scope.password_success = false;
+        scope.showPasswordInput = false;
+        scope.disabledContinue = true;
+        scope.disabledSignIn = true;
 
 
         scope.deviceOs = null;
@@ -67,6 +72,32 @@ login.directive('eclaimLogin', [
         }
 
         scope.getOs();
+
+        scope.goToPassword = function () {
+          scope.showPasswordInput = !scope.showPasswordInput;
+        }
+
+        scope.removeDisabledBtn = function (email,password) {
+
+          scope.email = email;
+          scope.password = password;
+
+          console.log(scope.email, scope.password);
+
+          if (email) {
+            scope.disabledContinue = false;
+          } else {
+            scope.disabledContinue = true;
+          }
+
+          if (password) {
+            scope.disabledSignIn = false;
+          } else {
+            scope.disabledSignIn = true;
+          }
+
+          
+        }
 
         scope.goToUpdateDetails = function(){
           // if( scope.deviceOs == 'iOS' ){
@@ -106,9 +137,13 @@ login.directive('eclaimLogin', [
         scope.showLogin = function() {
           $("#forgot-password").hide();
           $("#login-container").show();
+          scope.showPasswordInput = false;
+          
         };
 
         scope.login = function(){
+
+          console.log(scope.email, scope.password);
           
           if( !scope.email || !scope.password ){
             swal('Ooops!', 'Mobile Number and Password is required', 'error');
@@ -131,7 +166,11 @@ login.directive('eclaimLogin', [
 	              window.location.href = window.location.origin + '/member-portal#/home';
                 window.localStorage.setItem('token_member', response.data.token);
 	            } else {
-	              scope.invalid_credentials = true;
+                scope.invalid_credentials = true;
+                scope.email = null;
+                scope.password = null;
+                scope.showPasswordInput = false;
+                scope.removeDisabledBtn();
                 // if(  ){
                   // swal('Ooops!', response.data.message, 'error');
                 // }else{

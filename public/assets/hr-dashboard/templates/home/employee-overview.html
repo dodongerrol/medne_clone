@@ -199,6 +199,34 @@
 							</div>
 						</td>
 
+						<!-- <td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="visits-details-container">
+							<div class="enterprise-details">
+								<strong>Utilised:</strong>
+								<span ng-bind="emp.spending_account.medical.utilised">11</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Balance:</strong>
+								<span ng-bind="emp.spending_account.medical.balance">11</span>
+							</div>
+						</td> -->
+
+						<!-- <td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-details-container">
+							<div class="enterprise-details">
+								<strong>In-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.in_network | number: 2">1,000.00</span>
+								</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Out-of-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
+								</span>
+							</div>
+						</td> -->
+						
 						<td ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true" class="wellness-details-container">
 							<div class="wellness-details">
 								<strong>Allocation:</strong>
@@ -214,6 +242,13 @@
 					</tr>
 				<tbody>
 			</table>
+
+			<div ng-if="employees.data.length > 0 && (spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false)" class="spending-not-activated-box">
+				<div class="spending-border-box">
+					<p>Spending Account for your company has<br>not been activated.</p>
+					<a href="/sa-landing" target="_blank">Learn more >></a>
+				</div>
+			</div>
 		</div>
 		<!-- </div> -->
 		<div class="employee-pagination-wrapper employee-overview-pagination">
@@ -2119,7 +2154,7 @@
 	var pagi_header_height = $('.employee-pagination-wrapper').outerHeight(true);
 
 
-	$('.employee-overview-table tbody').css('height', height - (body_header_height + table_header_height + pagi_header_height + 120));
+	// $('.employee-overview-table tbody').css('height', height - (body_header_height + table_header_height + pagi_header_height + 120));
 
 	// console.log( $(window).height() );
 	// console.log( body_header_height );

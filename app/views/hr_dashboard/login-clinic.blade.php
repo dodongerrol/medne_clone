@@ -44,15 +44,17 @@
 				</div>
 			</a>
 		</div>
-		<div class="col-sm-12 col-md-12 col-lg-12" id="login-container">
+		<div class="col-sm-12 col-md-12 col-lg-12 new-account" id="login-container">
 			<img src="{{ URL::asset('assets/hr-dashboard/img/Mednefits Logo V1.svg') }}" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for health provider</h2>
 			<form class="med-form" ng-submit="loginClinic()">
 				<div class="form-group">
-					<input type="email" name="email" class="form-control med-input" placeholder="Email address" ng-model="login_details.email" required/>
+					<label for="email">Email</label>
+					<input type="email" name="email" class="form-control med-input" placeholder="Enter Email Address" ng-model="login_details.email" required/>
 				</div>
 				<div class="form-group">
-					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="login_details.password" required style="margin-bottom: 15px">
+					<label for="password">Password</label>
+					<input type="password" class="form-control med-input" placeholder="Enter Password" ng-model="login_details.password" required style="margin-bottom: 15px">
 				</div>
 				<div class="checkbox">
 			    <label style="color: #777;font-size: 15px;">
@@ -67,11 +69,12 @@
 			</form>
 		</div>
 
-		<div class="col-sm-12 col-md-12 col-lg-12" id="forgot-password" hidden>
+		<div class="col-sm-12 col-md-12 col-lg-12 new-account" id="forgot-password" hidden>
 			<img src="{{ URL::asset('assets/hr-dashboard/img/Mednefits Logo V1.svg') }}" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for health provider</h2>
 			<form class="med-form" ng-submit="resetPassword()">
 				<div class="form-group">
+					<label for="email">Email</label>
 					<input type="email" name="email" class="form-control med-input" placeholder="Communication Email Address" ng-model="login_details.email" required/>
 				</div>
 				<div class="form-group">

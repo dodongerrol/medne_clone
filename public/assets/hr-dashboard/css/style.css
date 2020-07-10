@@ -371,6 +371,15 @@ button {
   font-size: 13px;
 }
 
+.mednefits-box .task-box > .task-title a{
+  color: #18A4E0;
+  text-decoration: none;
+}
+.mednefits-box .task-box > .task-title a:hover{
+  color: #18A4E0;
+  text-decoration: none;
+}
+
 .mednefits-body-box > ul.faqs-list li:first-child {
   margin-top: 0;
 }
@@ -386,6 +395,20 @@ button {
 .mednefits-body-box > ul.faqs-list li a {
   font-weight: 700;
   font-size: 14px;
+}
+
+.mednefits-box > .mednefits-body-box .row-box{
+  display: flex;
+}
+.mednefits-box > .mednefits-body-box .row-box div{
+  flex: 1;
+  margin: 5px 0;
+}
+.mednefits-box .info-box-img{
+  height: 12px;
+  width: 12px;
+  margin-left: 10px;
+  vertical-align: top;
 }
 
 .circle-graph-light {
@@ -676,7 +699,7 @@ button {
 .login-logo {
   margin-top: 60px;
   /*margin-top: 90px;*/
-  /*height: 60px;*/
+  height: 60px;
   height: 50px;
 }
 
@@ -685,15 +708,6 @@ button {
   font-family: "Open Sans";
   margin-top: 10px;
   font-size: 23px;
-}
-
-.med-form {
-  max-width: 390px;
-  margin: 0 auto;
-}
-
-.form-group .med-input {
-  margin: 35px 0;
 }
 
 .form-group .med-button {
@@ -712,6 +726,16 @@ button {
   font-size: 18px;
 }
 
+.med-form {
+  max-width: 390px;
+  margin: 0 auto;
+}
+
+/* .form-group .med-input {
+  margin: 35px 0;
+} */
+
+
 .forgot-password {
   color: #777777;
   text-decoration: underline;
@@ -726,6 +750,129 @@ button {
   color: #909090;
   outline: none;
 }
+
+/* New Account Feature */
+
+.new-account label {
+  margin-bottom: 9px;
+  font-weight: normal;
+  color: #000;
+}
+
+.new-account .no-account a {
+  color: #18A4E0;
+}
+
+.new-account .no-account {
+  display: block;
+  text-align: center;
+  font-size: 15px;
+  color: #000;
+  padding-bottom: 22px;
+}
+
+.new-account .login-logo { 
+  margin-top: 60px;
+  /* margin-top: 90px; */
+  /* height: 60px; */
+  height: 38px;
+  width: 208.9px;
+}
+
+.new-account .text-below-image {
+  color: #777777;
+  font-family: "Open Sans";
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.new-account .form-group .med-button {
+  padding: 10px 0;
+  background-color: #0392cf;
+  font-size: 16px;
+}
+
+.new-account .med-input {
+  height: 45px;
+  padding: 0 25px;
+  font-size: 13px;
+}
+
+.new-account .med-input::placeholder {
+  font-size: 13px;
+}
+
+.new-account .form-group .med-input {
+  margin-bottom: 24px;
+}
+
+.new-account .forgot-password {
+  color: #000;
+  text-decoration: underline;
+  font-size: 13px;
+}
+
+#forgot-password .med-form {
+  max-width: 390px;
+  margin: 50px auto;
+}
+
+.new-account .success-container {
+  margin: 70px auto;
+  text-align: center;
+  color: #000;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 3;
+}
+
+.new-account .success-item {
+  padding: 33px 0;
+}
+
+.new-account .form-group .med-button.disabled {
+  cursor: not-allowed;
+  background-color: #DBDBDB;
+  border-color: #DBDBDB;
+}
+
+.new-account .form-group .med-button.not-activated {
+  cursor: not-allowed;
+  background-color: #DBDBDB;
+  border-color: #DBDBDB;
+}
+
+.new-account .med-input.not-activated {
+  border: 1px solid #E63A33;
+}
+
+.new-account .not-activated {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 15px;
+  color: #000;
+}
+
+.new-account .not-activated a {
+  cursor: pointer;
+}
+
+.new-account img.lock {
+  display: block;
+  width: 50px;
+  margin: 35px auto;
+}
+
+.new-account img.eye {
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    width: 25px;
+}
+
+
+
+/* End New Account Feature */
 
 /*
 	Download Template
@@ -1765,7 +1912,8 @@ p.number-of-enrollees.inactive-enroll-text {
 }
 
 .employee-overview-table tbody {
-  height: 100px;
+  height: 100%;
+  max-height: calc(100vh - 350px);
   overflow-y: auto;
   padding: 10px 20px;
   margin: 0 -20px;
@@ -5625,6 +5773,12 @@ ul.typeahead li a.dropdown-item {
   color: #666;
 }
 
+.credit-text a:hover{
+  background-color: transparent;
+  color: #039be5;
+  text-decoration: none;
+}
+
 .dependent-enrollment-box {
   margin-top: 20px;
 }
@@ -5793,6 +5947,7 @@ ul.typeahead li a.dropdown-item {
 .employee-overview-table {
   color: #283e52;
   margin: 0 0 0 -40px;
+  position: relative;
 }
 
 .employee-overview-table tbody::-webkit-scrollbar-track {
@@ -8564,6 +8719,7 @@ span.dropdown-entitlement.disabled {
 
 .new_spent, .new_breakDown {
   font-family: Helvetica Neue !important;
+  position: relative;
 }
 
 .new_breakDown .benefit-box {
@@ -9292,6 +9448,11 @@ span.dropdown-entitlement.disabled {
   margin: 20px 0 0;
   padding: 4px 32px;
 }
+.privacy-wrapper .btn-blue[disabled],
+.privacy-wrapper .btn-scroll.disable {
+  background-color: #DBDBDB;
+  pointer-events: none;
+}
 .btn-footer {
   text-align: right;
 }
@@ -9304,6 +9465,353 @@ span.dropdown-entitlement.disabled {
 
 /* --------------------------------------------------------- */
 
+
+.spending-not-activated-box{
+  position: absolute;
+  top: 55px;
+  right: 0;
+  width: 36%;
+  background: #FFFFFF;
+  padding-left: 30px;
+  height: calc( 100% - 80px );
+  padding: 5px 0 5px 30px;
+}
+.spending-not-activated-box .spending-border-box{
+  width: 100%;
+  height: 100%;
+  border: 1px solid #037CB0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.activity-spending-not-activated-box .spending-border-box p,
+.spending-not-activated-box .spending-border-box p{
+  margin-bottom: 10px;
+  color: #2E4057;
+}
+.activity-spending-not-activated-box .spending-border-box a,
+.spending-not-activated-box .spending-border-box a,
+.activity-spending-not-activated-box .spending-border-box a:hover,
+.spending-not-activated-box .spending-border-box a:hover{
+  color: #18A4E0;
+  text-decoration: none;
+}
+
+.activity-spending-not-activated-box{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: transparent;
+  padding-left: 30px;
+  padding: 5px;
+  width: 100%;
+  height: calc( 100% - 208px );
+}
+.activity-spending-not-activated-box .spending-border-box{
+  width: 100%;
+  height: 100%;
+  border: 1px solid #037CB0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  background: transparent;
+  /* backdrop-filter: blur(10px); */
+}
+.activity-spending-not-activated-blur{
+  background: #fff;
+  /* backdrop-filter: blur(10px); */
+  /* opacity: 0.7; */
+  width: 100%;
+  /* height: 100%; */
+  height: calc( 100% - 208px );
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  padding: 25px 250px;
+}
+.activity-spending-not-activated-blur .col-1{
+  flex: 1;
+}
+.activity-spending-not-activated-blur .col-2{
+  flex: 1.5;
+}
+.activity-spending-not-activated-blur .box-1,
+.activity-spending-not-activated-blur .box-2,
+.activity-spending-not-activated-blur .box-3{
+  height: 24px;
+  width: 100%;
+  filter: blur(4px);
+  margin-bottom: 10px;
+  display: flex;
+}
+.spending-col-left .box-1 .one{
+  flex: 1.5;
+  background: #e8e8e8;
+  margin-right: 10px;
+}
+.spending-col-left .box-1 .two{
+  flex: 1;
+}
+.spending-col-left .box-2 .one{
+  flex: 1;
+  background: #e8e8e8;
+  margin-right: 10px;
+}
+.spending-col-left .box-2 .two{
+  flex: 1;
+  background: #d5e8ef;
+  margin-right: 10px;
+}
+.spending-col-left .box-2 .three{
+  flex: 1;
+}
+.spending-col-left .box-3 .one{
+  flex: 2;
+  background: #e8e8e8;
+  margin-right: 10px;
+}
+.spending-col-left .box-3 .two{
+  flex: 1;
+  background: #d5e8ef;
+  margin-right: 10px;
+}
+
+.spending-col-right .box-1 .one{
+  flex: 2;
+  background: #e8e8e8;
+  margin-right: 10px;
+}
+.spending-col-right .box-1 .two{
+  flex: 1;
+  background: #d5e8ef;
+}
+.spending-col-right .box-2 .one{
+  flex: 1;
+  background: #e8e8e8;
+  margin-right: 10px;
+}
+.spending-col-right .box-2 .two{
+  flex: none;
+  width: 25%;
+  background: #d5e8ef;
+  margin-right: 10px;
+}
+.spending-col-right .box-2 .three{
+  flex: 1;
+}
+.spending-col-right .box-3{
+  display: block;
+}
+.spending-col-right .box-3 .one{
+  width: 100%;
+  background: #f3f0f0;
+  height: 12px;
+}
+.spending-col-right .box-3 .two{
+  width: 25%;
+  background: #f3f0f0;
+  height: 12px;
+  margin-top: 3px;
+}
+
+
+
+/*  --------------------- EXPIRED LINK --------------------- */
+.expired-link-wrapper,
+.t-and-c-wrapper {
+  padding: 20px 40px;
+  height: 100vh;
+}
+.link-header-container span,
+.t-and-c-wrapper .need-help-text span {
+  font-family: "Open Sans";
+  color: #777777;
+}
+.mednefits-logo-container .mednefits-logo {
+  width: 180px;
+  margin: 40px 0 90px;
+}
+.mednefits-logo-container {
+  text-align: center;
+  clear: both;
+}
+.link-expired-container,
+.link-succesfully-container {
+  text-align: center;
+  color: #000000;
+}
+.link-prompt-img img {
+  height: 50px;
+}
+.link-expired-container .bold-text,
+.link-succesfully-container .bold-text {
+  margin: 30px 0 20px;
+  font-family: 'Helvetica Medium';
+}
+.new-link-text {
+  text-decoration: underline;
+  color: #3592cd;
+  cursor: pointer;
+}
+.new-link-text-container {
+  font-size: 14px;
+}
+
+/* --------------------------------------------------------- */
+
+
+/*  ------------------------ T & C ------------------------- */
+.privacy-policy-wrapper {
+  border: 1px solid #e4e4e4;
+  padding: 10px;
+  /*width: 830px;*/
+  margin: 0 auto;
+}
+.privacy-wrapper {
+  width: 950px;
+  margin: 0 auto;
+}
+.privacy-container {
+  border: 4px solid #f4f4f4;
+  padding: 40px 60px;
+  border-radius: 4px;
+  height: 400px;
+  overflow: auto;
+}
+.privacy-container h1 {
+  margin: 0 0 40px;
+  color: #5a5a5a;
+}
+.privacy-container >div:nth-child(1) {
+  text-align: center; 
+}
+.privacy-policy-wrapper >div:nth-child(1) {
+  text-align: center;
+  border-bottom: 1px solid #e4e4e4;
+}
+.privacy-policy-wrapper >div:nth-child(2) {
+  padding: 20px;
+  font-size: 14px;
+}
+.privacy-wrapper .btn-blue {
+  border-radius: 4px;
+  color: #fff;
+  background-color: #3591CF;
+  border: 0;
+  font-size: 14px;
+  padding: 4px 32px;
+}
+.privacy-wrapper .btn-scroll {
+  margin: 20px 0 0;
+}
+.btn-footer {
+  text-align: right;
+}
+.privacy-policy-wrapper >div:nth-child(2) p:nth-child(2) {
+  margin: 0 0 40px;
+}
+.mednefits-privacy-link {
+  color: #3592cd;
+}
+.agreement-container {
+  display: flex;
+  margin: 40px 0 0;
+}
+.agreement-container >div:nth-child(1) {
+  flex: 1;
+  padding: 0 0 0 20px;
+}
+
+/* --------------------------------------------------------- */
+
+/* ------------ CUSTOM T&C RADIOBOX ------------ */
+  .custom-radiobox-container .radiobox-input {
+    display: block;
+    position: relative;
+    margin-bottom: 0px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin-top: 0px;
+    padding: 0 0 0 25px;
+    font-size: 16px;
+  }
+  .custom-radiobox-container .radiobox-input input {
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .custom-radiobox-container .radiobox-input input:checked ~ .radiobox-mark { 
+    background-color: #fff;
+  }
+
+  .custom-radiobox-container .radiobox-input input:checked ~ .radiobox-mark:after {
+    display: block;
+  }
+
+  .custom-radiobox-container .radiobox-input .radiobox-mark {
+    position: absolute;
+    top: 2px;
+    left: 0px;
+    height: 20px;
+    width: 20px;
+    border: 1px solid #e4e4e4;
+    border-radius: 50%;
+  }
+
+  .custom-radiobox-container .radiobox-input .radiobox-mark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 4px;
+    bottom: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #C4C4C4;
+  }
+
+/* ---------------------------------------- */
+
+@media ( max-width: 1024px ) {
+  .privacy-wrapper {
+    width: 100%;
+  }
+}
+
+@media ( max-width: 650px ) {
+  .t-and-c-wrapper {
+    padding: 20px;
+  }
+  .privacy-container {
+    padding: 40px 20px;
+  }
+  .agreement-container >div:nth-child(1) {
+    padding: 0;
+    margin: 0 0 20px;
+  }
+  .privacy-policy-wrapper >div:nth-child(2) {
+    padding: 20px 0;
+  }
+  .agreement-container {
+    display: block;
+  }
+  .custom-radiobox-container .radiobox-input {
+    font-size: 14px;
+  }
+  .privacy-policy-wrapper >div:nth-child(1) p {
+    font-size: 14px;
+  }
+}
 .mednefits-body-box .wellness-account-info {
   display: inline-block;
 }

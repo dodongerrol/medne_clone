@@ -42,6 +42,7 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/fonts.css?_={{ $date->format('U') }}">
 
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bulk-credit-allocation.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/style.css?_={{ $date->format('U') }}">
 
 	<!-- REMOVE EMPLOYEE STYLES -->
 		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/style.css?_={{ $date->format('U') }}">
@@ -236,6 +237,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/dependentsService.js?_={{ $date->format('U') }}"></script>
 	<!-- Factories -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/factories/dashboardFactory.js?_={{ $date->format('U') }}"></script>
+
 
 	<!-- <script type="text/javascript">
 		window.Appcues.identify(

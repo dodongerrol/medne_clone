@@ -6543,14 +6543,14 @@ public function payCreditsNew( )
           if($type == "spending") {
             $returnObject->status = true;
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-              $returnObject->status = FALSE;
-              $returnObject->status_type = 'zero_balance';
-              $returnObject->head_message = 'Registration on Hold';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-              $returnObject->sub_message = '';
-              return Response::json($returnObject);
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'zero_balance';
+                $returnObject->head_message = 'Registration on Hold';
+                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                $returnObject->sub_message = '';
+                return Response::json($returnObject);
             }
-              
+                
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
               $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
 
@@ -6655,6 +6655,11 @@ public function payCreditsNew( )
             $returnObject->message = 'You have access this feature at the moment.';
             return Response::json($returnObject);
           }
+
+          $returnObject->status = TRUE;
+          $returnObject->status_type = 'with_balance';
+          $returnObject->message = 'You have access this feature at the moment.';
+          return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;
           $returnObject->message = StringHelper::errorMessage("Token");
@@ -6670,5 +6675,219 @@ public function payCreditsNew( )
       $returnObject->message = StringHelper::errorMessage("Token");
       return Response::json($returnObject);
     }
+  }
+
+  public function sendOtpMobile( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Country Code is required.';
+          return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID as user_id', 'Name as name', 'PhoneNo as mobile_number')
+      ->where('PhoneNo', $input['mobile'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      $member_id = $checker->user_id;
+      $mobile_number = (int)$input['mobile'];
+      $code = $input['mobile_country_code'];
+      $phone = $code.$mobile_number;
+
+      $otp_code = StringHelper::OTPChallenge();
+      // StringHelper::TestSendOTPSMS($phone, $otp_code);
+      $data = array();
+      $data['phone'] = $phone;
+      $data['message'] = 'Your Mednefits OTP is '.$otp_code;
+      $data['sms_type'] = "LA";
+      SmsHelper::sendSms($data);
+      DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
+      $returnObject->status = true;
+      $returnObject->message = 'OTP SMS sent';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+      // return $otp_code;
+  }
+
+  public function checkMemberExist( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code')
+      ->where('PhoneNo', $input['mobile'])->first();
+
+      if(!$checker) {
+          $returnObject->status = false;
+          $returnObject->message = 'This phone number has not been signed up with Mednefits';
+          return Response::json($returnObject);
+      }
+
+      if($checker->postal_code == null || $checker->postal_code === null) {
+          $checker->postal_code = 0;
+      }
+      else {
+          $checker->postal_code = 1;
+      }
+
+      $returnObject->status = true;
+      $returnObject->message = 'Member is already registered';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+  }
+
+  public function validateOtpMobile( )
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['otp_code']) || $input['otp_code'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'OTP Code is required.';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'User ID is required.';
+      return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+    ->select('UserID as user_id', 'Name as name', 'member_activated')
+    ->where('UserID', $input['user_id'])->first();
+
+    if(!$checker) {
+      $returnObject->status = false;
+      $returnObject->message = 'User not found!';
+      return Response::json($returnObject);
+    }
+
+    $member_id = $checker->user_id;
+    $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
+    if(!$result) {
+        $returnObject->status = false;
+        $returnObject->message = 'Invalid OTP Code.';
+        return Response::json($returnObject);
+    }
+
+    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
+    $returnObject->status = true;
+    $returnObject->message = 'OTP Code is valid';
+    $returnObject->data = $checker;
+    return Response::json($returnObject);
+  }
+
+  public function addPostalCodeMember( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['postal_code']) || $input['postal_code'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'postal code is required.';
+        return Response::json($returnObject);
+      }
+
+      if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'user id is required.';
+        return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated')
+      ->where('UserID', $input['user_id'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      $member_id = $checker->UserID;
+      DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code']]);
+      $returnObject->status = true;
+      $returnObject->message = 'Postal Code already set';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+  }
+
+  public function createNewPasswordByMember()
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['password']) || $input['password'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'Password is required.';
+        return Response::json($returnObject);
+    }
+
+    if(empty($input['password_confirm']) || $input['password_confirm'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'Confirm Password is required.';
+        return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'User ID is required.';
+        return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated')
+      ->where('UserID', $input['user_id'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      if($checker->member_activated) {
+        $returnObject->status = false;
+        $returnObject->message = 'User was active, please sign in!';
+        return Response::json($returnObject);
+      }
+
+      if($input['password'] !== $input['password_confirm']) {
+        $returnObject->status = false;
+        $returnObject->message = 'Your password is not match!';
+        return Response::json($returnObject);
+      }
+
+      $newPassword = [
+        'Password' => StringHelper::encode($input['password_confirm']),
+        'member_activated' => 1
+      ];
+
+      DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
+        $returnObject->status = true;
+        $returnObject->message = 'Your Password has been created, Account was active!';
+        return Response::json($returnObject);
   }
 }

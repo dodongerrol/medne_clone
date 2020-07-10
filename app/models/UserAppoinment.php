@@ -40,7 +40,7 @@ class UserAppoinment extends Eloquent implements UserInterface, RemindableInterf
         $this->duration = $dataArray['duration'];
         $this->Created_on = time();
         $this->created_at = time();
-        $this->updated_at = 0;
+        // $this->updated_at = 0;
         $this->Status = 0;
         $this->Active = 1;
         $this->event_type = 0;
@@ -71,7 +71,7 @@ class UserAppoinment extends Eloquent implements UserInterface, RemindableInterf
         $this->BookDate = $dataArray['bookdate'];
         $this->Created_on = time();
         $this->created_at = time();
-        $this->updated_at = 0;
+        // $this->updated_at = 0;
         $this->Status = 0;
         $this->Active = 1;
         $this->Gc_event_id = $dataArray['event_id'];
@@ -122,7 +122,7 @@ class UserAppoinment extends Eloquent implements UserInterface, RemindableInterf
             $this->BookDate = $dataArray['bookdate'];
             $this->Created_on = time();
             $this->created_at = time();
-            $this->updated_at = 0;
+            // $this->updated_at = 0;
             $this->Status = 0;
             $this->Active = 1;
             
