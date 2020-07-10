@@ -111,7 +111,7 @@ Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordVie
 Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordView');
 
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
-
+Route::post('hr/create-password-activated', 'BenefitsDashboardController@createCompanyPasswordActivated');
 Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 Route::post('hr/employee_reset_password', 'EmployeeController@employeeResetPassword');
 // admin resend activation email
@@ -162,7 +162,6 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 });
 
 
-
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
 Route::get('list/local_network_partners/{id}', 'NetworkPatnerController@getLocalNetworkPartnerList');
@@ -178,7 +177,10 @@ Route::post('company-benefits-dashboard-login', 'BenefitsDashboardController@hrL
 Route::get('hr/reset-password-details/{token}', 'BenefitsDashboardController@getHrPasswordTokenDetails');
 Route::get('hr/validate_token', 'BenefitsDashboardController@getTokenDetails');
 Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
+Route::post('hr/create-company-password', 'BenefitsDashboardController@createCompanyPassword');
 
+// create resend hr activation link
+Route::post('hr/resend_hr_activation_link', 'BenefitsDashboardController@resendHrActivationLnk');
 // secure route on hr page, need authenticated to get access on this routes
 
 Route::get('company-benefits-dashboard', 'HomeController@hrDashboard');
@@ -340,6 +342,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
 	Route::get('hr/details', 'BenefitsDashboardController@getCompanyDetails');
 
+
 	// plan tier and dependents api
 	
 	Route::post("hr/create/employee_enrollment", "PlanTierController@createWebInputTier");
@@ -481,6 +484,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/send_immediate_activation', 'EmployeeController@SendMemberActivation');
 	// list og old plans
 	Route::get('hr/get_old_list_plans', 'BenefitsDashboardController@getOldPlansLists');
+	// hr send email account spending inquiry
+	Route::post('hr/send_spending_activation_inquiry', 'BenefitsDashboardController@sendSpendingActivateInquiry');
 });
 
 	// get employee refund details

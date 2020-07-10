@@ -298,7 +298,10 @@ class PlanHelper {
 		$data['user_type'] = "employee";
 		$data['currency_type'] = $wallet->currency_type;
 		$data['plan_type'] = $active_plan->account_type;
-
+		$customer_id = PlanHelper::getCustomerId($user_id);
+		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+		$data['medical'] = $spending['medical_enabled'];
+		$data['wellness'] = $spending['wellness_enabled'];
 		if((int)$customer->access_e_claim == 1) {
  			$data['e_claim_access'] = true;
 		} else {
@@ -1472,7 +1475,8 @@ class PlanHelper {
 			'account_already_update'	=> 1,
 			'communication_type'	=> $communication_type,
 			'group_number'			=> $data_enrollee->group_number,
-			'currency_type'		=> $customer->currency_type
+			'currency_type'		=> $customer->currency_type,
+			'member_activated'	=> 0
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
@@ -1655,7 +1659,7 @@ class PlanHelper {
 					$customer_active_plan_id = NULL;
 				}
 
-				if($credits > 0 &&  $customer_spending['wellness_method'] != "pre_paid" || $credits > 0 && $customer_spending['account_type'] == "lite_plan" && $customer_spending['wellness_method'] == "post_paid") {
+				if($credits > 0 && $customer_spending['wellness_method'] == "post_paid") {
 					$customer_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->increment("wellness_credits", $credits);
 					if($customer_credits_result) {
 						// credit log for wellness
@@ -1794,7 +1798,6 @@ class PlanHelper {
 		->where('employee_temp_id', $temp_enrollment_id)
 		->count();
 
-
 		if($communcation_send == "immediate") {
 			if($communication_type == "email") {
 				if($data_enrollee->email) {
@@ -1803,11 +1806,12 @@ class PlanHelper {
 					$email_data['emailName'] = $data_enrollee->first_name;
 					$email_data['emailTo']   = $data_enrollee->email;
 					$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
-							// $email_data['email'] = 'allan.alzula.work@gmail.com';
-					$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+					$email_data['emailPage'] = 'email-templates.newAccountLogin.member-activation-email';
 					$email_data['start_date'] = date('d F Y', strtotime($start_date));
 					$email_data['name'] = $data_enrollee->first_name;
 					$email_data['plan'] = $active_plan;
+					$email_data['code'] = $data['PhoneCode'];
+					$email_data['phone'] = $data['PhoneNo'];
 					$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 					$email_data['pw'] = $password;
 					EmailHelper::sendEmail($email_data);
@@ -1831,7 +1835,8 @@ class PlanHelper {
 						}
 					}
 				}
-			} 
+			}
+
 			if($data_enrollee->mobile) {
 				$user = DB::table('user')->where('UserID', $user_id)->first();
 				$phone = SmsHelper::newformatNumber($user);
@@ -1855,11 +1860,12 @@ class PlanHelper {
 				$email_data['emailName'] = $data_enrollee->first_name;
 				$email_data['emailTo']   = $data_enrollee->email;
 				$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
-						// $email_data['email'] = 'allan.alzula.work@gmail.com';
-				$email_data['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+				$email_data['emailPage'] = 'email-templates.newAccountLogin.member-activation-email';
 				$email_data['start_date'] = date('d F Y', strtotime($start_date));
 				$email_data['name'] = $data_enrollee->first_name;
 				$email_data['plan'] = $active_plan;
+				$email_data['code'] = $data['PhoneCode'];
+				$email_data['phone'] = $data['PhoneNo'];
 				$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
 				$email_data['pw'] = $password;
 				EmailHelper::sendEmail($email_data);
@@ -2290,14 +2296,18 @@ class PlanHelper {
 
 				if($history->where_spend == "e_claim_transaction") {
 					$e_claim_spent += $history->credit;
+					$out_network += $history->credit;
 				}
 
 				if($history->where_spend == "in_network_transaction") {
+					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('paid', 1)->where('deleted', 0)->first();
 					$in_network_temp_spent += $history->credit;
-					if($history->spending_type == "medical")	{
-						$in_network += $history->credit;
-					} else {
-						$out_network += $history->credit;
+					if($transaction) {
+						if($history->spending_type == "medical")	{
+							$in_network += $history->credit;
+						} else {
+							$out_network += $history->credit;
+						}
 					}
 				}
 
@@ -3618,29 +3628,21 @@ class PlanHelper {
 	public static function createPaymentsRefund($id, $date_refund)
 	{
 		$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $id)->first();
-		// $refund_count = DB::table('payment_refund')
-		// ->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', '=', 'payment_refund.customer_active_plan_id')
-		// ->join('customer_plan', 'customer_plan.customer_plan_id', '=', 'customer_active_plan.plan_id')
-		// ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_plan.customer_buy_start_id')
-		// ->where('customer_buy_start.customer_buy_start_id', $active_plan->customer_start_buy_id)
-		// ->count();
-
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $active_plan->customer_start_buy_id)->first();
-  //     // create refund payment
-		// $check = 10 + $refund_count;
-		// $temp_invoice_number = str_pad($check, 6, "0", STR_PAD_LEFT);
-		// $invoice_number = 'OMC'.$temp_invoice_number.'A';
-		// if($refund_count > 0) {
-		// 	++$invoice_number;
-		// }
 		$invoice_number = InvoiceLibrary::getInvoiceNuber('payment_refund', 4);
 
 		$data = array(
 			'customer_active_plan_id'   => $id,
 			'cancellation_number'       => $invoice_number,
 			'date_refund'               => $date_refund,
-			'currency_type'							=> $customer->currency_type
+			'currency_type'				=> $customer->currency_type,
+			'invoice_date'				=> date('Y-m-d'),
+			'invoice_due'				=> date('Y-m-d', strtotime('+5 days'))
 		);
+
+		if($active_plan->account_type == "enterprise_plan")	{
+			$data['account_type'] = $active_plan->account_type;
+		}
 
 		$result = \PaymentRefund::create($data);
 		return $result->id;

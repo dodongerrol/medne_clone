@@ -747,9 +747,14 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.getUsage = function (x, y) {
-          var a = x.toString().replace(',','');
-          var b = y.toString().replace(',','');
-          return (parseFloat(a) + parseFloat(b));
+          if( x && y ){
+            var a = x.toString().replace(',','');
+            var b = y.toString().replace(',','');
+            return (parseFloat(a) + parseFloat(b));
+          }else{
+            return x + y;
+          }
+          
         }
 
         scope.range = function (range) {
@@ -2608,6 +2613,7 @@ app.directive("employeeOverviewDirective", [
             .then(function(response) {
               scope.last_term_credits = response.data.last_term_credits;
               scope.allEmpData = response.data.data;
+              scope.export_member_details = response.data;
               scope.hideLoading();
               setTimeout(function() {
                 $( ".export-emp-details-message" ).hide();

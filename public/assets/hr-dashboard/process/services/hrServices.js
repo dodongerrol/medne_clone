@@ -424,6 +424,9 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     }
     return $http.get( url );
   };
+  // hrFactory.get_member_refund = function (data) {
+  //   return $http.post( serverUrl.url + "/employee/check_email_validation", data  );
+  // }
 
   return hrFactory;
 });

@@ -154,24 +154,24 @@
 					</div>
 				</div>
 			</div>
-			<form class="med-form" ng-submit="login()">
-				<div ng-if="true" class="form-group">
+			<form class="med-form">
+				<div ng-if="!showPasswordInput" class="form-group">
 					<!-- valid-number pattern="[0-9]*" type="tel" -->
 					<label for="mobile">Mobile</label>
-					<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" />
+					<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
 				</div>
-				<div ng-if="false" class="form-group">
+				<div ng-if="showPasswordInput" class="form-group">
 					<label for="mobile">Password</label>
-					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password"  style="margin-bottom: 15px">
+					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)"  style="margin-bottom: 15px">
 				</div>
-				<div ng-if="false" class="checkbox">
+				<div ng-if="showPasswordInput" class="checkbox">
 			    <label>
 			      <input type="checkbox"> Stay signed in
 			    </label>
 			  </div>
 				<div  class="form-group">
-					<button ng-if="true" type="submit" class="btn btn-info btn-block med-button" id="login-btn">Continue</button>
-					<button ng-if="false" type="submit" class="btn btn-info btn-block med-button" id="login-btn">Sign in</button>
+					<button ng-if="!showPasswordInput" type="none" class="btn btn-info btn-block med-button" ng-class="{'disabled': disabledContinue}" id="login-btn" ng-click="goToPassword()" ng-disabled="disabledContinue">Continue</button>
+					<button ng-if="showPasswordInput" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Sign in</button>
 				</div>
 				<span ng-if="invalid_credentials">*Please check your login credentials</span>
 				<a ng-if="true" href="javascript:void(0)" class="forgot-password pull-right" ng-click="showForgotPassword()">Forgot password?</a>

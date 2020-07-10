@@ -29,7 +29,7 @@
 
 				<div id="eclaim-form" ng-if="step_active == 1">
 					<form class="form-inline">
-						<div ng-if="user_details.plan_type != 'enterprise_plan'" class="form-group col-md-12 ">
+						<div ng-if="user_details.plan_type != 'enterprise_plan' || (user_details.plan_type == 'enterprise_plan' && user_details.wellness == true)" class="form-group col-md-12 ">
 							<label>Spending Account<span>*</span></label>
 							<div class="input-wrapper">
 								<button ng-click="setSpendingType(0)" ng-class="{'active' : spendingTypeOpt == 0}"
@@ -49,7 +49,7 @@
 									</button>
 									<ul class="dropdown-menu medical-drop">
 										<li ng-repeat="list in claim_type_arr"><a href="javascript:void(0)"
-												ng-click="selectClaimType(list.name)" ng-bind="list.name"></a></li>
+												ng-click="selectClaimType(list, list.name)" ng-bind="list.name"></a></li>
 									</ul>
 								</div>
 							</div>
@@ -259,7 +259,7 @@
 
 				<div id="claim-form" ng-if="step_active == 3">
 					<form class="form-inline">
-						<div ng-if="user_details.plan_type != 'enterprise_plan'" class="form-group col-xs-12 col-sm-12 col-md-12">
+						<div ng-if="user_details.plan_type != 'enterprise_plan' || (user_details.plan_type == 'enterprise_plan' && user_details.wellness == true)" class="form-group col-xs-12 col-sm-12 col-md-12">
 							<p class="color-blue-custom">
 								<label class="color-black3">Spending Account<span></span></label>
 								<span style="text-transform: capitalize;" ng-bind="eclaim.spending_type"></span>

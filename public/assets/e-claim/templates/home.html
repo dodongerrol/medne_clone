@@ -122,10 +122,10 @@
 						<button class="btn btn-default btn-medical" ng-class="{'active' : spendingTypeOpt == 0}" ng-click="spendingType( 0 )">Medical</button>
 						<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingTypeOpt == 1}" ng-click="spendingType( 1 )">Wellness</button>
 					</div>
-					<div ng-if="current_spending.account_type == 'enterprise_plan'" style="min-height: 50px;"></div>
+					<div ng-if="current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == false" style="min-height: 50px;"></div>
 					
 					<div class="activity-container border-bottom">
-						<div ng-if="current_spending.account_type != 'enterprise_plan'" class="col-xs-12 col-sm-12 col-md-3 text-center" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
+						<div ng-if="current_spending.account_type != 'enterprise_plan' || (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 1)" class="col-xs-12 col-sm-12 col-md-3 text-center" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
 							<div class="white-space-30"></div>
 							<div class="white-space-5"></div>
 							<p class="font-medium2 weight-700">Balance</p>
@@ -134,7 +134,7 @@
 								<span ng-bind="current_spending.balance">00.00</span>
 							</p>
 						</div>
-						<div ng-if="current_spending.account_type == 'enterprise_plan'" class="col-xs-12 col-sm-12 col-md-3 text-center visits-home-container" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
+						<div ng-if="current_spending.account_type == 'enterprise_plan' && spendingTypeOpt == 0" class="col-xs-12 col-sm-12 col-md-3 text-center visits-home-container" style="min-height: 160px;margin: 24px 0;border-right: 1px dashed #ddd;">
 							<div class="white-space-20"></div>
 							<p class="font-medium2 weight-700 visit-text">Visits</p>
 							<p class="font-30 weight-700 no-margin" style="color:#00B2E1">
@@ -167,7 +167,7 @@
 						</div>
 
 						<div class="col-xs-12 col-sm-12 col-md-5  xss-no-padding">
-							<div class="activity-account">
+							<div class="activity-account" ng-class="{'disabled-panel' : (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 1)}">
 								<div class="top text-center">
 									<p class="color-white weight-700">Panel Account</p>
 									<!-- <p class="color-white weight-700">In-Network Account</p> -->
@@ -199,11 +199,11 @@
 						<div class="transaction-list-title">
 							<div class="col-md-6 text-center">
 								<!-- <p class="weight-700 font-15 color-blue-custom2">In-Network Transactions</p> -->
-								<p class="weight-700 font-15 color-blue-custom2">Panel Transactions</p>
+								<p class="weight-700 font-15 " ng-class="{'color-gray' : (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 1), 'color-blue-custom2' : current_spending.account_type != 'enterprise_plan' || (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 0) }">Panel Transactions</p>
 							</div>
 
 							<div class="col-md-6 text-center">
-								<p class="weight-700 font-15 color-gray">Non-Panel Transactions</p>
+								<p class="weight-700 font-15" ng-class="{'color-blue-custom2' : (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 1), 'color-gray' : current_spending.account_type != 'enterprise_plan' || (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 0) }">Non-Panel Transactions</p>
 								<!-- <p class="weight-700 font-15 color-gray">Out-of-Network Transactions</p> -->
 							</div>
 						</div>

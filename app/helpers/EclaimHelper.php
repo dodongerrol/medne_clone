@@ -172,27 +172,8 @@ class EclaimHelper
     $user = DB::table('user')->where('UserID', $user_id)->first();
     $first_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->first();
     $allocation_date = date('Y-m-d', strtotime($wallet->created_at));
-    // $temp_start_date = $allocation_date;
-    if(sizeof($reset) > 0) {
-      // for( $i = 0; $i < sizeof( $reset ); $i++ ){
-      //   $temp_end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $reset[$i]->date_resetted ) ) ));
-      //   $temp_end_date = PlanHelper::endDate($temp_end_date);
-      //   if( strtotime( $temp_start_date ) < strtotime($date) && strtotime($date) < strtotime( $temp_end_date ) ){
-      //     $start_date = $temp_start_date;
-      //     $end_date = $temp_end_date;
-      //   }
-      //   $temp_start_date = $reset[$i]->date_resetted;
-      //   $back_date = true;
-      //   if( $i == (sizeof( $reset )-1) ){
-      //     if( $start_date == null && $end_date == null ){
-      //       $back_date = false;
-      //       $start_date = $temp_start_date;
-      //       $end_date = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( date('Y-m-d') ) ) ));
-      //       $end_date = PlanHelper::endDate($end_date);
-      //     }
-      //   }
-      // }
 
+    if(sizeof($reset) > 0) {
       $start_temp = strtotime($date);
       $default_start = false;
       for( $i = 0; $i < sizeof( $reset ); $i++ ){
@@ -240,9 +221,6 @@ class EclaimHelper
               ->get();
     } else {
       $wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->get();
-      // $last_wallet_history = DB::table($wallet_table_logs)->where('wallet_id', $wallet_id)->orderBy('created_at', 'desc')->first();
-      // $start_date = $allocation_date;
-      // $end_date = PlanHelper::endDate($last_wallet_history->created_at);
     }
 
     foreach ($wallet_history as $key => $history) {
@@ -310,7 +288,7 @@ class EclaimHelper
     return array('balance' => (float)$balance, 'back_date' => $back_date, 'last_term' => $back_date, 'allocation' => $allocation, 'in_network_spent' => $get_allocation_spent_temp, 'e_claim_spent' => $e_claim_spent, 'total_spent' => $get_allocation_spent, 'currency_type' => strtoupper($wallet->currency_type));
   }
 
-  public function checkMemberClaimAEstatus($member_id)
+  public static function checkMemberClaimAEstatus($member_id)
   {
     $plan_status = PlanHelper::checkEmployeePlanStatus($member_id);
     $start = date('Y-m-d', strtotime($plan_status['start_date']));
@@ -325,8 +303,8 @@ class EclaimHelper
                 ->where('created_at', '>=', $start)
                 ->where('created_at', '<=', $end)
                 ->get();
-
-    if(sizeof($claim) > 2)  {
+                
+    if(sizeof($claim) >= 2)  {
       return true;
     } else {
       return false;

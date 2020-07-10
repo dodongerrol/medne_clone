@@ -41,8 +41,9 @@ app.directive('eclaimSubmitDirective', [
 					scope.getClaims( scope.eclaim.spending_type );
 				}
 
-				scope.selectClaimType = function( type ){
+				scope.selectClaimType = function( service, type ){
 					scope.eclaim.service_selected = type;
+					scope.eclaim.service = service;
 				}
 
 				scope.showVisitTime = function(){
@@ -157,17 +158,39 @@ app.directive('eclaimSubmitDirective', [
 							spending_type: scope.eclaim.spending_type,
 							currency_type: localStorage.getItem('currency_type'),
 						}
-
+						scope.showLoading();
 						eclaimSettings.getCheckEclaimVisit(data)
 						.then(function(response){
+							scope.hideLoading();
 							scope.checkEclaimVisit_data = response.data;
-							scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance.replace(',','') ).toFixed(2) );
-							scope.eclaim.claim_amount = Number( parseFloat( scope.eclaim.claim_amount.replace(',','') ).toFixed(2) );
+							// scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance.replace(',','') ).toFixed(2) );
+
+							if(jQuery.type( scope.checkEclaimVisit_data.balance ) == 'string'){
+								scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance.replace(',','') ).toFixed(2) );
+							  }else{
+								scope.checkEclaimVisit_data.balance = Number( parseFloat( scope.checkEclaimVisit_data.balance ).toFixed(2) );
+							  }
+							  if(jQuery.type( scope.eclaim.service.cap_amount ) == 'string'){
+								scope.eclaim.service.cap_amount = Number( parseFloat( scope.eclaim.service.cap_amount.replace(',','') ).toFixed(2) );
+							  }else{
+								scope.eclaim.service.cap_amount = Number( parseFloat( scope.eclaim.service.cap_amount ).toFixed(2) );
+							  }
+							scope.eclaim.claim_amount = Number( parseFloat( scope.eclaim.claim_amount ).toFixed(2) );
+							console.log('scope.checkEclaimVisit_data.balance', scope.checkEclaimVisit_data.balance);
+							console.log('scope.eclaim.claim_amount', scope.eclaim.claim_amount);
 							// claim_amount = receipt & new_claim_amount = claim_amount
-							if (scope.checkEclaimVisit_data.balance >= scope.eclaim.claim_amount ) {
-								scope.eclaim.new_claim_amount = scope.eclaim.claim_amount;
+							if (scope.checkEclaimVisit_data.balance < scope.eclaim.claim_amount ) {
+								if(scope.eclaim.service.cap_amount > 0 && scope.eclaim.service.cap_amount < scope.eclaim.claim_amount){
+									scope.eclaim.new_claim_amount = scope.eclaim.service.cap_amount;
+								}else{
+									scope.eclaim.new_claim_amount = scope.checkEclaimVisit_data.balance;
+								}
 							} else {
-								scope.eclaim.new_claim_amount = scope.checkEclaimVisit_data.balance
+								if(scope.eclaim.service.cap_amount > 0 && scope.eclaim.service.cap_amount < scope.eclaim.claim_amount){
+									scope.eclaim.new_claim_amount = scope.eclaim.service.cap_amount;
+								}else{
+									scope.eclaim.new_claim_amount = scope.eclaim.claim_amount;
+								}
 							}
 
 							if( scope.checkEclaimVisit_data.last_term == true) {
@@ -441,12 +464,7 @@ app.directive('eclaimSubmitDirective', [
 						.then(function( response ) {
 							scope.user_details = response.data.data;
 							scope.hideIntroLoader();
-
-							if(scope.user_details.plan_type == 'enterprise_plan'){
-								scope.getEnterpriseClaims( scope.eclaim.spending_type );
-							}else{
-								scope.getClaims( scope.eclaim.spending_type );
-							}
+							scope.getClaims( scope.eclaim.spending_type );
 							// console.log(scope.user_details);
 							// scope.getCurrentActivity();
 						});

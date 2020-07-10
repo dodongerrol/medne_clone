@@ -390,6 +390,10 @@ app.directive('activityDirective', [
 						// scope.activity_dates = {};
 						console.log(scope.dateTerms,'else');
 					}
+					if(scope.activity_results.account_type == 'enterprise_plan' && scope.activity_results.wellness_enabled == true && scope.spendingTypeOpt == 1){
+						scope.inNetWorkTable = false;
+						scope.outNetWorkTable = true;
+					}
 					// scope.searchActivity(activity_search);
 				}
 

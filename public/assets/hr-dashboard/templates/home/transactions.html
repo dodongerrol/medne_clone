@@ -115,8 +115,8 @@
 			<div class="white-space-20"></div>
 
 			<!-- SPENDING CREDITS -->
-			<h3 class="table-box-title" style="font-weight: bolder;margin-top: 0;">Benefits Spending Account Transactions</h3>
-			<table class="table table-bordered transaction-table">
+			<h3 ng-if="account_plan.account_type != 'enterprise_plan'" class="table-box-title" style="font-weight: bolder;margin-top: 0;">Benefits Spending Account Transactions</h3>
+			<table ng-if="account_plan.account_type != 'enterprise_plan'" class="table table-bordered transaction-table">
 				<thead>
 					<tr>
 						<th>Transaction</th>
@@ -153,7 +153,7 @@
 				</tbody>
 			</table>
 
-			<div ng-if="account_plan.plan_method == 'post_paid'" class="pagination-plan-transactions-container">
+			<div ng-if="account_plan.account_type != 'enterprise_plan' && account_plan.plan_method == 'post_paid'" class="pagination-plan-transactions-container">
 				<div ng-if="benefits_spending.current_page != benefits_spending.from" class="arrows" ng-click="nextPrevBenefitsSpendingTransac(false)">
 					<i class="fa fa-caret-left"></i>
 				</div>
@@ -171,7 +171,7 @@
 				</div>
 			</div>
 
-			<div ng-if="account_plan.plan_method == 'pre_paid'" class="pagination-plan-transactions-container">
+			<div ng-if="account_plan.account_type != 'enterprise_plan' && account_plan.plan_method == 'pre_paid'" class="pagination-plan-transactions-container">
 				<div ng-if="benefits_spending.current_page != benefits_spending.from" class="arrows" ng-click="nextPrevBenefitsSpendingTransac(false)">
 					<i class="fa fa-caret-left"></i>
 				</div>

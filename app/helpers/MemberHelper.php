@@ -129,8 +129,21 @@ class MemberHelper
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
 				return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => $credit_resets[0]->wallet_history_id];
 			} else {
-				// $customer_id = PlanHelper::getCustomerId($member_id);
-				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+				$customer_id = PlanHelper::getCustomerId($member_id);
+				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->get();
+				// if(sizeof($spending_accounts) > 1) {
+				// 	$spending_accounts = DB::table('spending_account_settings')
+				// 								->where('customer_id', $customer_id)
+				// 								->orderBy('created_at', 'desc')
+				// 								->skip(1)
+				// 								->take(1)
+				// 								->first();
+				// 	if(!$spending_accounts) {
+				// 		$spending_accounts = $spending_accounts[0];
+				// 	}
+				// } else {
+				// 	$spending_accounts = $spending_accounts[0];
+				// }
 				// return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($spending_accounts->medical_spending_end_date)))), 'id' => null];
 				return false;
 			}
@@ -696,8 +709,26 @@ class MemberHelper
 
 		if($plan_history)
 		{
+			if($plan_history->total_visit_created < 14)	{
+				// increase visit created
+				DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->increment('total_visit_created', 1);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	public static function returnPlanHistoryVisit($member_id)
+	{
+		$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if($plan_history)
+		{
 			// increase visit created
-			DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->increment('total_visit_created', 1);
+			if($plan_history->total_visit_created > 0)	{
+				DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->decrement('total_visit_created', 1);
+			}
 			return true;
 		}
 
@@ -724,16 +755,20 @@ class MemberHelper
 
 		if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan")	{
 			// create block transaction
-			$customer_id = \PlanHelper::getCustomerId($member_id);
-			$data = array(
-				'member_id'		=> $member_id,
-				'customer_id'	=> $customer_id,
-				'status'		=> 1,
-				'type'			=> 'all',
-				'created_at'	=> date('Y-m-d H:i:s'),
-				'updated_at'	=> date('Y-m-d H:i:s')
-			);
-			DB::table('member_block_transaction')->insert($data);
+			$customer_id = PlanHelper::getCustomerId($member_id);
+			$payment_status = CustomerHelper::checkCustomerEnterprisePayment($customer_id);
+
+			if($payment_status == false)	{
+				$data = array(
+					'member_id'		=> $member_id,
+					'customer_id'	=> $customer_id,
+					'status'		=> 1,
+					'type'			=> 'all',
+					'created_at'	=> date('Y-m-d H:i:s'),
+					'updated_at'	=> date('Y-m-d H:i:s')
+				);
+				DB::table('member_block_transaction')->insert($data);
+			}
 		}
 	}
 	
@@ -872,6 +907,13 @@ class MemberHelper
 		->orderBy('created_at', 'desc')
 		->first();
 
+		$user_plan_history = DB::table('user_plan_history')
+		->where('user_id', $check_employee->UserID)
+		->where('type', 'started')
+		->orderBy('date', 'desc')
+		->first();
+
+		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
 		$check_wallet_status = DB::table('member_wallet_status')->where('member_id', $input['employee_id'])->first();
 
 		if($employee_credit_reset_medical) {
@@ -1265,82 +1307,85 @@ class MemberHelper
 		
 		$calibrate_medical = false;
 		$calibrate_wellness = false;
-		if($has_medical_allocation) {
-			// start calibration for medical
-			if(isset($input['calibrate_medical'])) {
-				$calibrate_medical = false;
-				$calibrate_medical = json_decode($input['calibrate_medical']);
-				if($input['calibrate_medical'] == true && $total_allocation_medical > 0 && $exceed == false) {
-					$new_allocation = $total_pro_medical_allocation;
-					$to_return_to_company = $total_allocation_medical - $total_pro_medical_allocation;
-				} else if($input['calibrate_medical'] == true && $exceed == true && $total_allocation_medical > 0) {
-					$new_allocation = $total_pro_medical_allocation;
-					$balance = abs($medical_balance);
-					$to_return_to_company = $remaining_allocated_medical_credits - $balance;
-				}
 
-				if($input['calibrate_medical'] == true && $total_allocation_medical > 0) {
-					$calibrate_medical = true;
-					$calibrated_medical = DB::table('wallet_history')
-					->where('wallet_id', $wallet->wallet_id)
-					->where('logs', 'pro_allocation')
-					->first();
-
-					if($calibrated_medical) {
-						return array('status' => false, 'message' => 'Medical Spending Account Pro Allocation is already updated.');
+		if($customer_active_plan->account_type != "enterprise_plan")	{
+			if($has_medical_allocation) {
+				// start calibration for medical
+				if(isset($input['calibrate_medical'])) {
+					$calibrate_medical = false;
+					$calibrate_medical = json_decode($input['calibrate_medical']);
+					if($input['calibrate_medical'] == true && $total_allocation_medical > 0 && $exceed == false) {
+						$new_allocation = $total_pro_medical_allocation;
+						$to_return_to_company = $total_allocation_medical - $total_pro_medical_allocation;
+					} else if($input['calibrate_medical'] == true && $exceed == true && $total_allocation_medical > 0) {
+						$new_allocation = $total_pro_medical_allocation;
+						$balance = abs($medical_balance);
+						$to_return_to_company = $remaining_allocated_medical_credits - $balance;
 					}
-					// begin medical callibration
-					$calibrate_medical_data = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_pro_medical_allocation,
-						'logs'              => 'pro_allocation',
-						'running_balance'   => $total_pro_medical_allocation,
-						'spending_type'     => 'medical',
-						'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
-						'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s'),
-						'currency_type'	=> $wallet->currency_type
-					);
-
-          			// begin medical callibration
-					$calibrate_medical_deduction_parameter = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $total_allocation_medical - $total_pro_medical_allocation,
-						'logs'              => 'pro_allocation_deduction',
-						'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
-						'spending_type'     => 'medical',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s'),
-						'currency_type'	=> $wallet->currency_type
-					);
-
-					$calibrate_medical_deduction_by_hr = array(
-						'wallet_id'         => $wallet->wallet_id,
-						'credit'            => $to_return_to_company,
-						'logs'              => 'deducted_by_hr',
-						'running_balance'   => $to_return_to_company,
-						'spending_type'     => 'medical',
-						'created_at'        => date('Y-m-d H:i:s'),
-						'updated_at'        => date('Y-m-d H:i:s'),
-						'currency_type'	=> $wallet->currency_type
-					);
-
-					$new_balance = $total_pro_medical_allocation - $total_medical_spent;
-
-					if($new_balance < 0) {
-						$new_balance = 0;
+	
+					if($input['calibrate_medical'] == true && $total_allocation_medical > 0) {
+						$calibrate_medical = true;
+						$calibrated_medical = DB::table('wallet_history')
+						->where('wallet_id', $wallet->wallet_id)
+						->where('logs', 'pro_allocation')
+						->first();
+	
+						if($calibrated_medical) {
+							return array('status' => false, 'message' => 'Medical Spending Account Pro Allocation is already updated.');
+						}
+						// begin medical callibration
+						$calibrate_medical_data = array(
+							'wallet_id'         => $wallet->wallet_id,
+							'credit'            => $total_pro_medical_allocation,
+							'logs'              => 'pro_allocation',
+							'running_balance'   => $total_pro_medical_allocation,
+							'spending_type'     => 'medical',
+							'pro_allocation_start_date' => !empty($input['pro_allocation_start_date']) ? date('Y-m-d', strtotime($input['pro_allocation_start_date'])) : null,
+							'pro_allocation_end_date' => !empty($input['pro_allocation_end_date']) ? date('Y-m-d', strtotime($input['pro_allocation_end_date'])) : null,
+							'created_at'        => date('Y-m-d H:i:s'),
+							'updated_at'        => date('Y-m-d H:i:s'),
+							'currency_type'	=> $wallet->currency_type
+						);
+	
+						  // begin medical callibration
+						$calibrate_medical_deduction_parameter = array(
+							'wallet_id'         => $wallet->wallet_id,
+							'credit'            => $total_allocation_medical - $total_pro_medical_allocation,
+							'logs'              => 'pro_allocation_deduction',
+							'running_balance'   => $total_allocation_medical - $total_pro_medical_allocation,
+							'spending_type'     => 'medical',
+							'created_at'        => date('Y-m-d H:i:s'),
+							'updated_at'        => date('Y-m-d H:i:s'),
+							'currency_type'	=> $wallet->currency_type
+						);
+	
+						$calibrate_medical_deduction_by_hr = array(
+							'wallet_id'         => $wallet->wallet_id,
+							'credit'            => $to_return_to_company,
+							'logs'              => 'deducted_by_hr',
+							'running_balance'   => $to_return_to_company,
+							'spending_type'     => 'medical',
+							'created_at'        => date('Y-m-d H:i:s'),
+							'updated_at'        => date('Y-m-d H:i:s'),
+							'currency_type'	=> $wallet->currency_type
+						);
+	
+						$new_balance = $total_pro_medical_allocation - $total_medical_spent;
+	
+						if($new_balance < 0) {
+							$new_balance = 0;
+						}
+	
+						DB::table('wallet_history')->insert($calibrate_medical_data);
+						DB::table('wallet_history')->insert($calibrate_medical_deduction_parameter);
+						DB::table('wallet_history')->insert($calibrate_medical_deduction_by_hr);
+						DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $new_balance]);
+	
+						$wallet_status['medical_return_credits_date'] = date('Y-m-d', strtotime($input['last_date_of_coverage']));
+						$wallet_status['medical_pro_allocation_status'] = 1;
+						$wallet_status['medical_initial_allocation'] = $total_allocation_medical;
+						$wallet_status['medical_pro_allocation'] = $total_pro_medical_allocation;
 					}
-
-					DB::table('wallet_history')->insert($calibrate_medical_data);
-					DB::table('wallet_history')->insert($calibrate_medical_deduction_parameter);
-					DB::table('wallet_history')->insert($calibrate_medical_deduction_by_hr);
-					DB::table('e_wallet')->where('wallet_id', $wallet->wallet_id)->update(['balance' => $new_balance]);
-
-					$wallet_status['medical_return_credits_date'] = date('Y-m-d', strtotime($input['last_date_of_coverage']));
-					$wallet_status['medical_pro_allocation_status'] = 1;
-					$wallet_status['medical_initial_allocation'] = $total_allocation_medical;
-					$wallet_status['medical_pro_allocation'] = $total_pro_medical_allocation;
 				}
 			}
 		}
@@ -1487,11 +1532,11 @@ class MemberHelper
 		$plan = DB::table('user_plan_type')->where('user_id', $id)->orderBy('created_at', 'desc')->first();
 
 		if($calculate) {
-			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
+			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
 			$days = $diff->format('%a') + 1;
 			
-			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
-			$remaining_days = $total_days - $days;
+			$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+			$remaining_days = $total_days - $days + 1;
 
 			$cost_plan_and_days = ($invoice->individual_price/$total_days);
 			$temp_total = $cost_plan_and_days * $remaining_days;
@@ -1511,19 +1556,25 @@ class MemberHelper
 		try {
 			self::getEmployeeSpendingAccountSummaryNew($input);
 			$user_plan_history->createUserPlanHistory($user_plan_history_data);
-			// check if active plan and date refund is exist
-			$refund = DB::table('payment_refund')
-			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
-			->where('date_refund', date('Y-m-d', strtotime($expiry_date)))
-			->where('status', 0)
-			->first();
 
-			if($refund) {
-				// save plan withdraw logs
-				$payment_refund_id = $refund->payment_refund_id;
+			if($plan_active->account_type != "enterprise_plan")	{
+				// check if active plan and date refund is exist
+				$refund = DB::table('payment_refund')
+				->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+				->where('date_refund', date('Y-m-d', strtotime($expiry_date)))
+				->where('status', 0)
+				->first();
+
+				if($refund) {
+					// save plan withdraw logs
+					$payment_refund_id = $refund->payment_refund_id;
+				} else {
+					$payment_refund_id = PlanHelper::createPaymentsRefund($active_plan->customer_active_plan_id, date('Y-m-d', strtotime($expiry_date)));
+				}
 			} else {
 				$payment_refund_id = PlanHelper::createPaymentsRefund($active_plan->customer_active_plan_id, date('Y-m-d', strtotime($expiry_date)));
 			}
+			
 
 			$amount = $total_refund;
 			$data = array(
@@ -1623,7 +1674,7 @@ class MemberHelper
 		}
 
 		if($calculate) {
-			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
+			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
 			$days = $diff->format('%a') + 1;
 
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
@@ -1642,13 +1693,23 @@ class MemberHelper
 		->where('status', 0)
 		->first();
 
-		if($refund) {
-			// save plan withdraw logs
-			$payment_refund_id = $refund->payment_refund_id;
+		if($plan_active->account_type != "enterprise_plan")	{
+			// check if active plan and date refund is exist
+			$refund = DB::table('payment_refund')
+			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+			->where('date_refund', date('Y-m-d', strtotime($expiry_date)))
+			->where('status', 0)
+			->first();
+
+			if($refund) {
+				// save plan withdraw logs
+				$payment_refund_id = $refund->payment_refund_id;
+			} else {
+				$payment_refund_id = PlanHelper::createPaymentsRefund($active_plan->customer_active_plan_id, date('Y-m-d', strtotime($expiry_date)));
+			}
 		} else {
 			$payment_refund_id = PlanHelper::createPaymentsRefund($active_plan->customer_active_plan_id, date('Y-m-d', strtotime($expiry_date)));
 		}
-
 
 		$data = array(
 			'payment_refund_id'			=> $payment_refund_id,
@@ -1713,6 +1774,32 @@ class MemberHelper
 		$slice = array_slice($db, $perPage * ($pageNumber - 1), $perPage);
 		$info = Paginator::make($slice, count($db), $perPage);
 		return $info;
+	}
+	
+	public static function getMemberByDateStarted($start, $end, $corporate_id, $customer_plan_id)
+	{
+		// employees
+		$members = DB::table('user_plan_history')
+						->join('corporate_members', 'corporate_members.user_id', '=', 'user_plan_history.user_id')
+						->where('corporate_members.corporate_id', $corporate_id)
+						->where('corporate_members.removed_status', 0)
+						->where('user_plan_history.type', 'started')
+						->where('user_plan_history.created_at', '>=', $start)
+						->where('user_plan_history.created_at', '<=', $end)
+						->count();
+
+		// dependents
+		$dependents = DB::table('dependent_plan_history')
+						->join('dependent_plans', 'dependent_plans.dependent_plan_id', '=', 'dependent_plan_history.dependent_plan_id')
+						->join('user', 'user.UserID', '=', 'dependent_plan_history.user_id')
+						->where('user.Active', 1)
+						->where('dependent_plan_history.type', 'started')
+						->where('dependent_plans.customer_plan_id', $customer_plan_id)
+						->where('dependent_plan_history.created_at', '>=', $start)
+						->where('dependent_plan_history.created_at', '<=', $end)
+						->count();
+		
+		return $members + $dependents;
 	}
 }
 ?>

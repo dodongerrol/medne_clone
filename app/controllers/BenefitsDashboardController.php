@@ -2049,11 +2049,11 @@ class BenefitsDashboardController extends \BaseController {
 
 			$get_employee_plan = DB::table('user_plan_type')->where('user_id', $user->UserID)->orderBy('created_at', 'desc')->first();
 			// check if user has replace property
-			$user_active_plan_history = DB::table('user_plan_history')
-			->where('user_id', $user->UserID)
-			// ->where('type', 'started')
-			->orderBy('created_at', 'desc')
-			->first();
+			// $user_active_plan_history = DB::table('user_plan_history')
+			// ->where('user_id', $user->UserID)
+			// // ->where('type', 'started')
+			// ->orderBy('created_at', 'desc')
+			// ->first();
 			$plan_extension = false;
 			$deleted = false;
 			$deletion_text = null;
@@ -2184,15 +2184,32 @@ class BenefitsDashboardController extends \BaseController {
 				->where('status', 0)
 				->sum('claim_amount');
 
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
+
 				$medical = array(
 					'entitlement' => $wallet_entitlement->medical_entitlement,
 					'credits_allocation' => $medical_credit_data['allocation'],
 					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
-					'balance'			=> $user_active_plan_history->total_visit_created,
-					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'visits'			=> $user_active_plan_history->total_visit_limit,
+					'balance'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'utilised'			=> $user_active_plan_history->total_visit_created,
 					'in_network' 	=> $medical_credit_data['in_network'],
 					'out_network' 	=> $medical_credit_data['out_network']
+				);
+
+				
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 				);
 			} else {
 				// get pending allocation for medical
@@ -2299,6 +2316,9 @@ class BenefitsDashboardController extends \BaseController {
 				'account_status'		=> (int)$user->Active == 1 ? true : false,
 				'plan_type'				=> $plan_type,
 				'wallet_enabled' 		=> (int)$user->wallet == 1 ? true : false,
+				'total_visit_limit'          => $user_active_plan_history->total_visit_limit,
+            	'total_visit_created'       => $user_active_plan_history->total_visit_created,
+				'total_balance_visit'       => $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
 				'medical_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->medical_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->medical_spending_end_date)),
 				'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
 			);
@@ -2391,7 +2411,7 @@ class BenefitsDashboardController extends \BaseController {
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$filter = 'current_term';
 
-		if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
+		// if((int)$company_credits->unlimited_medical_credits == 0 && (int)$company_credits->unlimited_wellness_credits == 0) {
 			$user_spending_dates_medical = CustomerHelper::getCustomerCreditReset($customer_id, $filter, 'medical');
 			$user_spending_dates_wellness = CustomerHelper::getCustomerCreditReset($customer_id, $filter, 'wellness');
 
@@ -2450,8 +2470,6 @@ class BenefitsDashboardController extends \BaseController {
 				->sum('credit');
 			}
 			$total_medical_allocation = $temp_total_allocation + $total_medical_bonus - $temp_total_deduction;
-				// if($plan->account_type != "enterprise_plan") {
-				    // check if customer has a credit reset in medical
 			$customer_credit_reset_wellness = DB::table('credit_reset')
 			->where('id', $customer_id)
 			->where('spending_type', 'wellness')
@@ -2510,33 +2528,14 @@ class BenefitsDashboardController extends \BaseController {
 				->where('created_at', '<=', $user_spending_dates_wellness['end'])
 				->sum('credit');
 			}
-			// } else {
-			// 	$temp_total_allocation_wellness = DB::table('customer_credits')
-			// 	->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-			// 	->where('customer_credits.customer_id', $customer_id)
-			// 	->where('customer_wellness_credits_logs.logs', 'admin_added_credits')
-			// 	->sum('customer_wellness_credits_logs.credit');
-
-			// 	$temp_total_deduction_wellness = DB::table('customer_credits')
-			// 	->join('customer_wellness_credits_logs', 'customer_wellness_credits_logs.customer_credits_id', '=', 'customer_credits.customer_credits_id')
-			// 	->where('customer_credits.customer_id', $customer_id)
-			// 	->where('customer_wellness_credits_logs.logs', 'admin_deducted_credits')
-			// 	->sum('customer_wellness_credits_logs.credit');
-			// }
 			$total_allocation_wellness = $temp_total_allocation_wellness + $total_wellness_bonus - $temp_total_deduction_wellness;
-				// }
-
-		}
+		// }
 
 		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$start = $spending_account_settings->medical_spending_start_date;
 		$user_allocated = PlanHelper::getActivePlanUsers($customer_id);
-		// $user_allocated = PlanHelper::getCorporateUserByEntitlementDates($account_link->corporate_id, $customer_id, $start);
 		$get_allocation_spent = 0;
 		$get_allocation_spent_wellness = 0;
-
-		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$start = $spending_account_settings->medical_spending_start_date;
 		$end = PlanHelper::endDate($spending_account_settings->medical_spending_start_date);
 		// $temp = [];
 		foreach ($user_allocated as $key => $user) {
@@ -2584,16 +2583,16 @@ class BenefitsDashboardController extends \BaseController {
 		$total_medical_supp_credits = $total_medical_allocated * $spending_account_settings->medical_supplementary_credits;
 		$total_wellness_supp_credits = $total_wellnesss_allocated * $spending_account_settings->wellness_supplementary_credits;
 
-		if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
-			$total_medical_allocation = 0;
-			$credits = 0;
-			$total_medical_allocated = 0;
-			$total_medical_balance = 0;
-			$total_allocation_wellness = 0;
-			$credits_wellness = 0;
-			$total_wellnesss_allocated = 0;
-			$total_wellness_balance = 0;
-		}
+		// if((int)$company_credits->unlimited_medical_credits == 1 && (int)$company_credits->unlimited_wellness_credits == 1) {
+			// $total_medical_allocation = 0;
+			// $credits = 0;
+			// $total_medical_allocated = 0;
+			// $total_medical_balance = 0;
+			// $total_allocation_wellness = 0;
+			// $credits_wellness = 0;
+			// $total_wellnesss_allocated = 0;
+			// $total_wellness_balance = 0;
+		// }
 
 		if($plan->account_type != "enterprise_plan" && $filter == "current_term") {
 			// if($company_credits->balance != $credits) {
@@ -3254,7 +3253,6 @@ class BenefitsDashboardController extends \BaseController {
 		$filter = "current_term";
 		foreach ($users as $key => $user) {
 			$ids = StringHelper::getSubAccountsID($user->UserID);
-			// $user_spending_dates = MemberHelper::getMemberCreditReset($user->UserID, $filter, 'medical');
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
@@ -3412,15 +3410,30 @@ class BenefitsDashboardController extends \BaseController {
 				->where('status', 0)
 				->sum('claim_amount');
 
+				// get pending allocation for wellness
+				$e_claim_amount_pending_wellness = DB::table('e_claim')
+				->whereIn('user_id', $ids)
+				->where('spending_type', 'wellness')
+				->where('status', 0)
+				->sum('claim_amount');
+
 				$medical = array(
 					'entitlement' => $wallet_entitlement->medical_entitlement,
 					'credits_allocation' => $medical_credit_data['allocation'],
 					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
 					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
-					'balance'			=> $user_active_plan_history->total_visit_created,
-					'utilised'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'visits'			=> $user_active_plan_history->total_visit_limit,
+					'balance'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+					'utilised'			=> $user_active_plan_history->total_visit_created,
 					'in_network' 	=> $medical_credit_data['in_network'],
 					'out_network' 	=> $medical_credit_data['out_network']
+				);
+				$wellness = array(
+					'entitlement' => $wallet_entitlement->wellness_entitlement,
+					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
+					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
 				);
 			} else {
 				// get pending allocation for medical
@@ -7619,13 +7632,12 @@ class BenefitsDashboardController extends \BaseController {
 		foreach ($customer_plans as $key => $cplan) {
 			$active_plans = DB::table('customer_active_plan')->where('plan_id', $cplan->customer_plan_id)->get();
 			foreach ($active_plans as $key => $plan) {
-				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan") {
+				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan" || $plan->account_type == "enterprise_plan") {
 					$withdraws = DB::table('payment_refund')
 					->where('customer_active_plan_id', $plan->customer_active_plan_id)
 					->get();
 
 					foreach ($withdraws as $key => $withdraw) {
-						# code...
 						$refunds = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
 						->whereIn('refund_status', [0, 1])
@@ -9067,7 +9079,8 @@ class BenefitsDashboardController extends \BaseController {
 			$emailDdata['context'] = "Forgot your company password?";
 			$emailDdata['emailSubject'] = 'HR/Benefits Password Reset';
 			$emailDdata['activeLink'] = $server.'/app/resetcompanypassword?token='.$reset_link;
-				// EmailHelper::sendEmail($emailDdata);
+			$emailDdata['emailTo']= $input['email'];
+				EmailHelper::sendEmail($emailDdata);
 
 			if($contact) {
 				if((int)$contact->send_email_communication == 1 && $contact->work_email) {
@@ -9122,8 +9135,10 @@ class BenefitsDashboardController extends \BaseController {
 		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 		if($check) {
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
+			$agree_status = $customer->agree_status == "true" ? true : false;
 			if($check->active == 1)	{
-				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true]);
+				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true, 't_c' => $agree_status]);
 			}
 
 			// check if token is still valid
@@ -9131,13 +9146,13 @@ class BenefitsDashboardController extends \BaseController {
 			$expiry = strtotime($check->expiration_time);
 
 			if($today > $expiry) {
-				return array('status' => false, 'message' => 'token is expired');
+				return array('status' => false, 'message' => 'token is expired', 'data' => ['valid_token' => true, 'activated' => false, 'expired_token' => true, 't_c' => $agree_status]);
 			}
 
-			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
+			return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false, 'expired_token' => false, 't_c' => $agree_status]);
 		}
 
-		return array('status' => false, 'message' => 'Token expired.');
+		return array('status' => false, 'message' => 'Token expired.', 'data' => ['valid_token' => false, 'activated' => false, 'expired_token' => true]);
 	}
 
 	public function resetPasswordData( )
@@ -10227,8 +10242,9 @@ class BenefitsDashboardController extends \BaseController {
 
 					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 					$days = $diff->format('%a') + 1;
-					$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
-					$remaining_days = $total_days - $days;
+					// $total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+					$remaining_days = $total_days - $days + 1;
 
 					$cost_plan_and_days = ($individual_price/$total_days);
 					$temp_total = $cost_plan_and_days * $remaining_days;
@@ -10302,6 +10318,7 @@ class BenefitsDashboardController extends \BaseController {
 				$data['first_name'] = ucwords($result_corporate_billing_contact->first_name);
 				$data['last_name']	= ucwords($result_corporate_billing_contact->last_name);
 				$data['email']			= $result_corporate_billing_contact->work_email;
+				$data['phone']			= $result_corporate_billing_contact->phone;
 				$data['billing_contact_status'] = false;
 			} else {
 				$data['first_name'] = ucwords($contact->first_name);
@@ -10326,11 +10343,15 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$refund_data = array(
+				'plan_type'		=> $refund_payment->account_type ? PlanHelper::getAccountType($refund_payment->account_type) : null,
 				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
 				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
 				'date_refund' => $refund_payment->date_refund,
+				'invoice_date' => date('d F Y', strtotime($refund_payment->invoice_date)),
+				'invoice_due' => date('d F Y', strtotime($refund_payment->invoice_due)),
+				'payment_date' => $refund_payment->payment_date ? date('d F Y', strtotime($refund_payment->payment_date)) : null,
 				'payment_status' => $refund_payment->status,
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
@@ -10338,8 +10359,15 @@ class BenefitsDashboardController extends \BaseController {
 				'currency_type' => strtoupper($refund_payment->currency_type)
 			);
 
-			// return View::make('pdf-download.hr-accounts-refund', $refund_data);
-			$pdf = PDF::loadView('pdf-download.hr-accounts-refund', $refund_data);
+			if($refund_payment->account_type == "enterprise_plan")	{
+				// return View::make('pdf-download.enterprise-plan.enterprise-plan-refund-summary', $refund_data);
+				$pdf = PDF::loadView('pdf-download.enterprise-plan.enterprise-plan-refund-summary', $refund_data);
+			} else {
+				// return View::make('pdf-download.hr-accounts-refund', $refund_data);
+				$pdf = PDF::loadView('pdf-download.hr-accounts-refund', $refund_data);
+			}
+
+			
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
 			return $pdf->download($refund_data['cancellation_number'].' CANCELLATION - '.time().'.pdf');
@@ -11551,7 +11579,7 @@ class BenefitsDashboardController extends \BaseController {
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$spending = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
-
+		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->first();
 		$final_user = [];
 
 		$users = DB::table('user')
@@ -11584,7 +11612,7 @@ class BenefitsDashboardController extends \BaseController {
 				'Name'		=> ucwords($users[$x]->Name),
 				'PhoneNo'		=> $users[$x]->PhoneCode.$users[$x]->PhoneNo,
 				'Email'		=> $users[$x]->Email,
-				'Plan_Type' => PlanHelper::getAccountType($plan->account_type)." (Corporate)",
+				'Plan_Type' => PlanHelper::getAccountType($plan->account_type )." (Corporate)",
 				'Start_Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
 				'End_Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
 				'Medical_Allocation' => number_format($medical_credit_data['allocation'], 2),
@@ -11599,6 +11627,13 @@ class BenefitsDashboardController extends \BaseController {
 				'Zip_Code'	=>$users[$x]->Zip_Code,
 				'Employee_Id' =>$users[$x]->emp_no
 			);
+
+			if((int)$spending_accounts->wellness_enable == 1) {
+				$temp['Wellness_Allocation'] = number_format($wellness_credit_data['allocation'], 2);
+				$temp['Wellness_Usage'] = number_format($wellness_credit_data['get_allocation_spent'], 2);
+				$temp['Wellness_Balance'] = number_format($wellness_credit_data['balance'], 2);
+				$temp['Credits_Wellness'] = number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2);
+			}
 
 			$medical_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'medical');
 			if($medical_last_term_credits) {
@@ -11616,15 +11651,17 @@ class BenefitsDashboardController extends \BaseController {
 			}
 			
 
-			$wellness_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'wellness');
-			if($wellness_last_term_credits) {
-				$last_term_credits = true;
-				// $temp['wellness_last_term_credits'] = $wellness_last_term_credits;
-				$wellness_last_term_credit_data = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet->wallet_id, $users[$x]->UserID, $wellness_last_term_credits['start'], PlanHelper::endDate($wellness_last_term_credits['end']));
+			if((int)$spending_accounts->wellness_enable == 1) {
+				$wellness_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'wellness');
+				if($wellness_last_term_credits) {
+					$last_term_credits = true;
+					// $temp['wellness_last_term_credits'] = $wellness_last_term_credits;
+					$wellness_last_term_credit_data = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet->wallet_id, $users[$x]->UserID, $wellness_last_term_credits['start'], PlanHelper::endDate($wellness_last_term_credits['end']));
 
-				$temp['Wellness_Allocation_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['allocation']);
-				$temp['Wellness_Usage_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['total_spent']);
-				$temp['Wellness_Balance_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['balance']);
+					$temp['Wellness_Allocation_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['allocation']);
+					$temp['Wellness_Usage_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['total_spent']);
+					$temp['Wellness_Balance_Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['balance']);
+				}
 			} else {
 				$temp['Wellness_Allocation_Last_Term'] = 0;
 				$temp['Wellness_Usage_Last_Term'] = 0;
@@ -11637,7 +11674,7 @@ class BenefitsDashboardController extends \BaseController {
 			$final_user[] = $temp;
 		}
 
-		return array('status' => TRUE, 'data' => $final_user, 'last_term_credits' => $last_term_credits);
+		return array('status' => TRUE, 'data' => $final_user, 'last_term_credits' => $last_term_credits, 'medical' => (int)$spending_accounts->medical_enable == 1 ? true : false, 'wellness' => (int)$spending_accounts->wellness_enable == 1 ? true : false);
 
 	}
 
@@ -15057,6 +15094,7 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$status = CustomerHelper::getAccountSpendingStatus($customer_id);
+		// return $status;
 		$link = CustomerHelper::getExcelLinkBasicPlan($status);
 		return $link;
 	}
@@ -15911,5 +15949,94 @@ class BenefitsDashboardController extends \BaseController {
 	
 		$plans = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->where('active', 0)->orderBy('plan_start', 'desc')->get();
 		return ['status' => true, 'data' => $plans];
+	}
+	
+	public function createCompanyPassword ( )
+	{
+		$input = Input::all();
+
+		if(empty($input['hr_dashboard_id']) || $input['hr_dashboard_id'] == null) {
+			return array('status' => false, 'message' => 'HR is required.');
+		}
+		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
+
+		if($check) {
+			$new_password = array(
+				'password'	=> md5($input['new_password']),
+				'reset_link' => NULL,
+				'active'	=> 1,
+				'hr_activated'	=> 1,
+			);
+			$hr = new HRDashboard();
+			$result = $hr->updateCorporateHrDashboard($input['hr_dashboard_id'], $new_password);
+
+			if($result)	{
+				$jwt = new JWT();
+				$secret = Config::get('config.secret_key');
+				$check->signed_in = TRUE;
+				$token = $jwt->encode($check, $secret);
+				return array ('status' => TRUE, 'message' => 'Successfully created password.', 'token' => $token);
+			}
+			
+		// return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => false]);
+		
+		}
+
+		return array ('status' => FALSE, 'message' => 'Failed created password.');
+	}
+	public function resendHrActivationLnk( )
+	{
+		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null)	{
+			return ['status' => false, 'message' => 'token is required'];
+		}
+
+		// check token existence
+		$check_token = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
+
+		if(!$check_token) {
+			return ['status' => false, 'message' => 'token does not exist'];
+		}
+
+		$reset_link = StringHelper::getEncryptValue();
+		$result = DB::table('customer_hr_dashboard')
+					->where('hr_dashboard_id', $check_token->hr_dashboard_id)
+					->update(['reset_link' => $reset_link, 'updated_at' => date('Y-m-d H:i:s'), 'expiration_time' => date('Y-m-d H:i:s', strtotime('+7 days'))]);
+
+		if($result)	{
+			// resend email activation
+			// send hr email activation
+			$email_data = array();
+			$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+			$email_data['emailName'] = ucwords($check_token->fullname);
+			$email_data['emailPage'] = 'email-templates.latest-templates.activation-email';
+			$email_data['emailTo'] = $check_token->email;
+			$email_data['button'] = url('/company-activation#/activation-link')."?activation_token=".$reset_link;
+			EmailHelper::sendEmail($email_data);
+		}
+
+		return ['status' => true, 'message' => 'Activation Email Send. Please check it on your inbox'];
+	}
+
+	public function sendSpendingActivateInquiry( )
+	{
+		$input = Input::all();
+
+		if(empty($input['content']) || $input['content'] == null)	{
+			return ['status' => false, 'message' => 'Enquiry message is required'];
+		}
+		
+		$customer = StringHelper::getJwtHrSession();
+		$customer_id = $customer->customer_buy_start_id;
+		$receiver = Config::get('config.spending_inquiry_email');
+		$email_data = array();
+		$email_data['emailSubject'] = 'Activate Spending Account';
+		$email_data['emailName'] = ucwords($customer->fullname);
+		$email_data['emailPage'] = 'email-templates.spending-activation-inquiry';
+		$email_data['emailTo'] = $receiver;
+		$email_data['content'] = $input['content'];
+		EmailHelper::sendEmail($email_data);
+		return ['status' => true, 'message' => 'Activate Spending Account Inquiry has been sent'];
 	}
 }

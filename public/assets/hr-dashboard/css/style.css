@@ -400,7 +400,7 @@ button {
 .mednefits-box > .mednefits-body-box .row-box{
   display: flex;
 }
-.mednefits-box > .mednefits-body-box .row-box >div{
+.mednefits-box > .mednefits-body-box .row-box div{
   flex: 1;
   margin: 5px 0;
 }
@@ -1008,6 +1008,31 @@ button {
   border: 1px solid #E63A33;
 }
 
+.new-account .not-activated {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 15px;
+  color: #000;
+}
+
+.new-account .not-activated a {
+  cursor: pointer;
+}
+
+.new-account img.lock {
+  display: block;
+  width: 50px;
+  margin: 35px auto;
+}
+
+.new-account img.eye {
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    width: 25px;
+}
+
+
 
 /* End New Account Feature */
 
@@ -1346,11 +1371,11 @@ a.link-box:hover {
   margin: -1px 2px 2px -1px;
 }
 
-@media [type="radio"].with-gap:checked+label:after {
+/* @media [type="radio"].with-gap:checked+label:after {
   .enrollment-method-box {
     background-color: #f2f2f2;
   }
-}
+} */
 
 [type="radio"].with-gap:checked + label:after,
 [type="radio"].with-gap:checked + label:before,
@@ -6363,7 +6388,8 @@ ul.typeahead li a.dropdown-item {
 }
 
 .plan-information,
-.medical-spending-account {
+.medical-spending-account,
+.visit-spending-wrapper {
   padding: 20px 50px;
 }
 
@@ -8836,7 +8862,8 @@ span.dropdown-entitlement.disabled {
 .new-activity-header-calendar .eclaim-spending-type-container {
   display: inline-block;
   padding: 10px 0;
-  margin-left: -15px;
+  /*margin-left: -15px;*/
+  margin: 0;
   width: 100%;
   padding-bottom: 10px;
 }
@@ -9650,13 +9677,13 @@ span.dropdown-entitlement.disabled {
 
 .activity-spending-not-activated-box{
   position: absolute;
-  top: 0;
+  bottom: 0;
   right: 0;
   background: transparent;
   padding-left: 30px;
   padding: 5px;
   width: 100%;
-  height: 100%;
+  height: calc( 100% - 208px );
 }
 .activity-spending-not-activated-box .spending-border-box{
   width: 100%;
@@ -9675,9 +9702,10 @@ span.dropdown-entitlement.disabled {
   /* backdrop-filter: blur(10px); */
   /* opacity: 0.7; */
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  height: calc( 100% - 208px );
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   display: flex;
   padding: 25px 250px;
@@ -10087,7 +10115,6 @@ span.dropdown-entitlement.disabled {
   }
 }
 
-
 @media ( max-width: 1024px ) {
   .privacy-wrapper {
     width: 100%;
@@ -10118,6 +10145,7 @@ span.dropdown-entitlement.disabled {
     font-size: 14px;
   }
 }
+
 
 @media ( max-width: 1199px ) {
   .home-dashboard-container .billing-status-box {
@@ -10362,3 +10390,54 @@ span.dropdown-entitlement.disabled {
   border: 0;
 }
 
+.mednefits-body-box .wellness-account-info {
+  display: inline-block;
+}
+.wellness-account-info >div {
+  margin: 0 0 20px;
+}
+.wellness-account-info >div:last-child {
+  margin: 0;
+}
+
+.team-benefits-old-wrapper {
+  padding: 15px 0;
+}
+.visit-breakdown-col-container,
+.visit-breakdown-panel-container {
+  display: flex;
+}
+.visit-breakdown-col-1 {
+  position: relative;
+  padding: 0 50px 0 0;
+  margin: 0 20px 0 0;
+}
+.visit-breakdown-col-1:after {
+  display: block;
+  content: "";
+  border: 1px solid #cccc;
+  height: 55px;
+  width: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.visit-breakdown-panel-container >div:first-child {
+  position: relative;
+  margin: 0 20px 0 0;
+  padding: 0 20px 0 0;
+}
+
+.visit-breakdown-panel-container >div:first-child:after {
+  display: block;
+  content: "";
+  border: 1px solid #cccc;
+  height: 15px;
+  width: 0;
+  position: absolute;
+  top: 5px;
+  right: 0;
+}
+.visit-spending-wrapper h4 {
+  margin: 10px 0 20px 0;
+}

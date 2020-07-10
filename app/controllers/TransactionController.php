@@ -253,7 +253,21 @@ class TransactionController extends BaseController {
 				$lite_plan_enabled = 0;
 			}
 
-			if($input['back_date'] == 1 || $input['back_date'] == "1") {
+			if((int)$input['back_date'] == 1) {
+
+				$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+				$customer_active_plan = DB::table('customer_active_plan')
+				->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+				->first();
+
+				if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+					$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+		
+					if($limit <= 0) {
+						return array('status' => FALSE, 'message' => 'Maximum of 14 visit already reach');
+					}
+				}
+
 				// check if is a valid date
 				if(!strtotime($input['transaction_date'])) {
 					return array('status' => FALSE, 'message' => 'Date/Time of Visit is not a valid date.');
@@ -303,6 +317,7 @@ class TransactionController extends BaseController {
 					'claim_date'			=> date('Y-m-d H:i:s'),
 					'ClinicID'				=> $clinic_id,
 					'procedure_cost'		=> $input['amount'],
+					'cash_cost'		=> $input['amount'],
 					'AppointmenID'			=> 0,
 					'revenue'				=> 0,
 					'debit'					=> 0,
@@ -341,74 +356,86 @@ class TransactionController extends BaseController {
 					} 
 				}
 
+				if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+					$temp['enterprise_visit_deduction'] = 1;
+				}
+
 				try {
 					$result = $transaction->createTransaction($temp);
-					if($lite_plan_enabled == 1) {
-						$transaction_data = DB::table('transaction_history')->where('transaction_id', $result->id)->first();
-						// $user_id = PlanHelper::getDependentOwnerID($input['id']);
-						
-						if($transaction_data->spending_type == "medical") {
-							$balance = $wallet_data->balance;
-						} else {
-							$balance = $wallet_data->wellness_balance;
-						}
-						// check user credits and deduct
 
-						if($balance >= $consultation_fees) {
-							$wallet = new Wallet( );
-							// deduct wallet
-							$lite_plan_credits_log = array(
-								'wallet_id'     => $wallet_data->wallet_id,
-								'credit'        => $consultation_fees,
-								'logs'          => 'deducted_from_mobile_payment',
-								'running_balance' => $balance - $consultation_fees,
-								'where_spend'   => 'in_network_transaction',
-								'id'            => $result->id,
-								'lite_plan_enabled' => 1,
-							);
-
-							try {
-								// create logs
-								if($transaction_data->spending_type == "medical") {
-									$deduct_history = \WalletHistory::create($lite_plan_credits_log);
-									$wallet_history_id = $deduct_history->id;
-								} else {
-									$deduct_history = \WellnessWalletHistory::create($lite_plan_credits_log);
-									$wallet_history_id = $deduct_history->id;
-								}
-
-								if($transaction_data->spending_type == "medical") {
-									$wallet->deductCredits($owner_id, $transaction_data->co_paid_amount);
-								} else {
-									$wallet->deductWellnessCredits($owner_id, $transaction_data->co_paid_amount);
-								}
-
-								// update transaction
-								$update_trans = array(
-									'lite_plan_use_credits' => 1
+					if($result) {
+						if($lite_plan_enabled == 1) {
+							$transaction_data = DB::table('transaction_history')->where('transaction_id', $result->id)->first();
+							// $user_id = PlanHelper::getDependentOwnerID($input['id']);
+							
+							if($transaction_data->spending_type == "medical") {
+								$balance = $wallet_data->balance;
+							} else {
+								$balance = $wallet_data->wellness_balance;
+							}
+							// check user credits and deduct
+	
+							if($balance >= $consultation_fees) {
+								$wallet = new Wallet( );
+								// deduct wallet
+								$lite_plan_credits_log = array(
+									'wallet_id'     => $wallet_data->wallet_id,
+									'credit'        => $consultation_fees,
+									'logs'          => 'deducted_from_mobile_payment',
+									'running_balance' => $balance - $consultation_fees,
+									'where_spend'   => 'in_network_transaction',
+									'id'            => $result->id,
+									'lite_plan_enabled' => 1,
 								);
-
-								$transaction->updateTransaction($result->id, $update_trans);
-
-							} catch(Exception $e) {
-
-								if($transaction_data->spending_type == "medical") {
-									$history = new WalletHistory( );
-									$history->deleteFailedWalletHistory($wallet_history_id);
-								} else {
-									\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
+	
+								try {
+									// create logs
+									if($transaction_data->spending_type == "medical") {
+										$deduct_history = \WalletHistory::create($lite_plan_credits_log);
+										$wallet_history_id = $deduct_history->id;
+									} else {
+										$deduct_history = \WellnessWalletHistory::create($lite_plan_credits_log);
+										$wallet_history_id = $deduct_history->id;
+									}
+	
+									if($transaction_data->spending_type == "medical") {
+										$wallet->deductCredits($owner_id, $transaction_data->co_paid_amount);
+									} else {
+										$wallet->deductWellnessCredits($owner_id, $transaction_data->co_paid_amount);
+									}
+	
+									// update transaction
+									$update_trans = array(
+										'lite_plan_use_credits' => 1
+									);
+	
+									$transaction->updateTransaction($result->id, $update_trans);
+	
+								} catch(Exception $e) {
+	
+									if($transaction_data->spending_type == "medical") {
+										$history = new WalletHistory( );
+										$history->deleteFailedWalletHistory($wallet_history_id);
+									} else {
+										\WellnessWalletHistory::where('wellness_wallet_history_id', $wallet_history_id)->delete();
+									}
+	
+									$email = [];
+									$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
+									$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e->getMessage();
+									$email['emailSubject'] = 'Error log.';
+									EmailHelper::sendErrorLogs($email);
+									return array('status' => FALSE, 'message' => 'Failed to save transaction.');
 								}
-
-								$email = [];
-								$email['end_point'] = url('clinic/save/claim/transaction', $parameter = array(), $secure = null);
-								$email['logs'] = 'Save Claim Transaction With Credits GST - '.$e->getMessage();
-								$email['emailSubject'] = 'Error log.';
-								EmailHelper::sendErrorLogs($email);
-								return array('status' => FALSE, 'message' => 'Failed to save transaction.');
 							}
 						}
+	
+						// deduct visit for enterprise plan user
+						if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+							MemberHelper::deductPlanHistoryVisit($user_id);
+						}
 					}
-
+					
 					if($multiple == 1) {
 						$transaction_services = new TransctionServices( );
 						$transaction_services->createTransctionServices($input['procedure_ids'], $result->id);
@@ -808,8 +835,23 @@ class TransactionController extends BaseController {
 
 							\Transaction::where('transaction_id', $new_id)->update($delete_data);
 							$user = DB::table('user')->where('UserID', $user_id)->first();
+
 							// get transaction details
 							$transaction = \TransactionHelper::getTransactionDetails($new_id);
+
+							if($transaction['visit_deduction'] == true) {
+								$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+								if($user_plan_history) {
+									$customer_active_plan = DB::table('customer_active_plan')
+														->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+														->first();
+									
+									if($customer_active_plan->account_type == "enterprise_plan" && (int)$transaction->enterprise_visit_deduction == 1)  {
+										MemberHelper::returnPlanHistoryVisit($user_id);
+									}
+								}
+								
+							}
 							// send email
 
 							if($user->Email) {
@@ -2422,6 +2464,7 @@ class TransactionController extends BaseController {
 		$clinic = DB::table('clinic')->where('ClinicID', $clinic_id)->first();
 		$email = DB::table('user')->where('UserType', 3)->where('Ref_ID', $clinic_id)->first();
 		$details = array(
+			'clinic_id'		=> $clinic_id,
 			'clinic_name'	=> ucwords($clinic->Name),
 			'address'			=> ucwords($clinic->Address),
 			'city'				=> ucwords($clinic->City),
@@ -2464,27 +2507,6 @@ class TransactionController extends BaseController {
 				} else {
 					$table_wallet_history = 'wellness_wallet_history';
 				}
-
-		        // if((int)$trans->lite_plan_enabled == 1) {
-		        //     $logs_lite_plan = DB::table($table_wallet_history)
-		        //     ->where('logs', 'deducted_from_mobile_payment')
-		        //     ->where('lite_plan_enabled', 1)
-		        //     ->where('id', $trans->transaction_id)
-		        //     ->first();
-
-		        //     if($logs_lite_plan && floatval($trans->credit_cost) > 0 && (int)$trans->lite_plan_use_credits == 0) {
-		        //         $mednefits_credits += floatval($trans->co_paid_amount);
-		        //     } else if($logs_lite_plan && floatval($trans->procedure_cost) >= 0 && (int)$trans->lite_plan_use_credits == 1){
-		        //         $mednefits_credits += floatval($trans->co_paid_amount);
-		        //     }
-		        // }
-
-
-				if((int)$trans->paid == 1 && (int)$trans->deleted == 0) {
-					$mednefits_total_fee += $trans->credit_cost;
-					$transaction_size++;
-				}
-
 
 				if($trans->co_paid_status == 0) {
 					if(strrpos($trans->clinic_discount, '%')) {
@@ -2603,6 +2625,11 @@ class TransactionController extends BaseController {
 					$trans->currency_type = "sgd";
 				}
 
+				if((int)$trans->paid == 1 && (int)$trans->deleted == 0) {
+					$mednefits_total_fee += $mednefits_credits;
+					$transaction_size++;
+				}
+
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'ClinicID'							=> $trans->ClinicID,
@@ -2633,9 +2660,8 @@ class TransactionController extends BaseController {
 			}
 		}
 
-
 		$data = array(
-			'currency_type'				=> "SGD",
+			'currency_type'				=> $clinic->currency_type == "myr" ? "MYR" : "SGD",
 			'transactions' 				=> $format,
 			'total_transactions'	=> $transaction_size,
 			'mednefits_wallet'		=> number_format($mednefits_total_fee, 2),

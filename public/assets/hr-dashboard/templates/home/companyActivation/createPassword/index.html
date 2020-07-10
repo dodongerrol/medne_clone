@@ -30,7 +30,7 @@
       <div class="input-row">
         <label>Password</label>
         <div class="input-with-clickable">
-          <input type="{{ inputType }}" placeholder="Enter Your Password">
+          <input type="{{ inputType }}" ng-model="formData.password" placeholder="Enter Your Password">
           <div class="clickable" ng-click="togglePassword()">
             <img src="../../assets/images/showhidepass.png" alt="">
           </div>
@@ -39,10 +39,10 @@
 
       <div class="input-row">
         <label>Confirm</label>
-        <input type="{{ inputType }}" placeholder="Confirm Your Password">
+        <input type="{{ inputType }}" ng-model="formData.confirm_password" placeholder="Confirm Your Password">
       </div>
 
-      <button class="create-password-btn">Create</button>
+      <button class="create-password-btn" ng-disabled="!formData.password || !formData.confirm_password" ng-click="createPassword(formData)">Create password & Sign in</button>
     </form>
   </div>
 </div>

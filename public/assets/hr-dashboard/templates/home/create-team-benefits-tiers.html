@@ -424,7 +424,7 @@
 								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
   							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
 							</div> -->
-							<div ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.medical_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.medical_method == 'post_paid' && spendingPlan_status.medical_enabled)" class="employee-input-wrapper">
+							<div ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.medical_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.account_type != 'enterprise_plan' && spendingPlan_status.medical_method == 'post_paid' && spendingPlan_status.medical_enabled)" class="employee-input-wrapper">
 								<label for="fname">Medical Allocation</label>
   							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
 							</div>
@@ -670,7 +670,7 @@
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_message"></span>
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_area_code_message"></span>
                     </div>
-                    <div ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.medical_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.medical_method == 'post_paid' && spendingPlan_status.medical_enabled)" class="form-group">
+                    <div ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.medical_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.account_type != 'enterprise_plan' && spendingPlan_status.medical_method == 'post_paid' && spendingPlan_status.medical_enabled)" class="form-group">
                         <label>Medical Allocation</label>
                         <!-- <label>Medical Credits</label> -->
                         <input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.credits_medical_error == true}" ng-model="selected_edit_details_data.employee.credits">

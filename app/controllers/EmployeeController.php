@@ -2977,12 +2977,12 @@ class EmployeeController extends \BaseController {
 
       $diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
       $days = $diff->format('%a') + 1;
-      $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
-      $remaining_days = $total_days - $days;
+      $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+      $remaining_days = $total_days - $days + 1;
       $cost_plan_and_days = ($invoice->individual_price/$total_days);
       $temp_total = $cost_plan_and_days * $remaining_days;
       $total_refund = $temp_total * 0.70;
-
+      // return $remaining_days;
       $data = array(
         'member_id'					      => $id,
         'customer_active_plan_id'	=> $active_plan->customer_active_plan_id,
@@ -3014,23 +3014,24 @@ class EmployeeController extends \BaseController {
     if(!$email == 2) {
       return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
     }
-    if($email && (int)$email->activate == 0) {
-      return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
-    } else if($email && (int)$email->activate == 1) {
-      return array('status' => FALSE, 'Activated');
-    if($email && $email->hr_activated == 1) {
-      return array('status' => 1, 'message' => 'Account Activated');
-    } else if($email && $email->hr_activated == 0) {
-      return array('status' => 0, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
-    }
-    if($email) {
-      return $token;
-    } else {
-        return FALSE;
+    if($email && (int)$email->active == 0 && $email->hr_activated == 0) {
+      return array('status' => 0, 'date_created' => $email->updated_at, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+      
+    } else if($email && (int)$email->active == 1) {
+      return array('status' => TRUE, 'Activated');
+      if($email && $email->hr_activated == 1) {
+        return array('status' => 1,  'message' => 'Account Activated');
+      } else if($email && $email->active == 0) {
+        return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+      }
+      if($email) {
+        return $token;
+      } else {
+          return FALSE;
+      }
     }
   }
-  }
-
+  
   public function getEmployeeEnrollmentStatus( )
   {
     $result = StringHelper::getJwtHrSession();
