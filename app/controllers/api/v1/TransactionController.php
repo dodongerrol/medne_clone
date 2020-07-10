@@ -93,7 +93,7 @@ class Api_V1_TransactionController extends \BaseController
 			
 						if($limit <= 0) {
 							$returnObject->status = FALSE;
-							$returnObject->message = 'Maximum of 14 visit already reach.';
+							$returnObject->message = 'Maximum of 14 visits already reached.';
 							return Response::json($returnObject);
 						}
 					}
@@ -856,6 +856,21 @@ class Api_V1_TransactionController extends \BaseController
 					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
 
+					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
+
+					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+						$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+			
+						if($limit <= 0) {
+							$returnObject->status = FALSE;
+							$returnObject->message = 'Maximum of 14 visits already reached.';
+							return Response::json($returnObject);
+						}
+					}
+
                     // check if multiple services selected
 					$multiple = false;
 					if(sizeof($input['services']) == 1) {
@@ -943,6 +958,10 @@ class Api_V1_TransactionController extends \BaseController
 					if($currency) {
 						$data['currency_amount'] = $currency;
 					}
+
+					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+						$data['enterprise_visit_deduction'] = 1;
+					}
 					
 					try {
 						$result = $transaction->createTransaction($data);
@@ -952,6 +971,11 @@ class Api_V1_TransactionController extends \BaseController
                             // insert transation services
 							$ts = new TransctionServices( );
 							$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+		
+							// deduct visit for enterprise plan user
+							if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
+								MemberHelper::deductPlanHistoryVisit($user_id);
+							}
 
 							if($lite_plan_enabled == 1) {
 								$wallet_data = DB::table('e_wallet')->where('UserID', $user_id)->first();

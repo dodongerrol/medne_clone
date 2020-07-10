@@ -158,10 +158,12 @@
 								<h4 class="subscription-price"><span class="currency-type" ng-bind="total_plan_due.currency_type"></span> <span ng-bind="total_plan_due.total_due"></span></h4>
 							</div> 
 							<div class="health-spending-accounts-container">
-								<h5>Health Spending Accounts</h5>
-								<h6 class="subscription-current-balance">Current balance due</h6>
-								<h4 class="subscription-price"><span class="currency-type" ng-bind="total_spending.currency_type"></span> <span ng-bind="total_spending.spending_total_due"></span></h4>
-								<h6 class="subscription-date" ng-if="total_spending.due_date">Due by <span ng-bind="total_spending.due_date"></span></h6>
+								<div ng-if="progress.active_plans[0].account_type != 'enterprise_plan'">
+									<h5>Health Spending Accounts</h5>
+									<h6 class="subscription-current-balance">Current balance due</h6>
+									<h4 class="subscription-price"><span class="currency-type" ng-bind="total_spending.currency_type"></span> <span ng-bind="total_spending.spending_total_due"></span></h4>
+									<h6 class="subscription-date" ng-if="total_spending.due_date">Due by <span ng-bind="total_spending.due_date"></span></h6>
+								</div>
 							</div>
 							<div class="view-invoice-button">
 								<button ui-sref="transactions">VIEW INVOICE</button>
@@ -344,7 +346,7 @@
 										<h1 class="no-margin credit-amount">
 											<span>
 												<span class="currency-type" ng-bind="credits.currency">SGD</span> 
-												<span ng-bind="credits.total_medical_employee_spent"></span>
+												<span ng-bind="credits.total_wellness_employee_spent"></span>
 											</span>
 										</h1>
 										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">TOTAL SPENT</p>

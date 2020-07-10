@@ -126,8 +126,8 @@
 						<h4 class="color-black3 font-16 weight-700" style="position: absolute;left: 0"><span class="font-medium2">Team</span> E-Claim</h4>
 
 						<div class="eclaim-spending-type-container" style="min-height: 40px;">
-                <button ng-if="options.account_type != 'enterprise_plan'" ng-class="{ 'active': eclaimSpendingType == 0 }" class="btn btn-default btn-medical" ng-click="setSpendType(0)">Medical</button>
-                <button ng-if="options.account_type != 'enterprise_plan'" ng-class="{ 'active': eclaimSpendingType == 1 }" class="btn btn-default btn-wellness" ng-click="setSpendType(1)">Wellness</button>
+                <button ng-if="spending_account_status.account_type != 'enterprise_plan' || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ng-class="{ 'active': eclaimSpendingType == 0 }" class="btn btn-default btn-medical" ng-click="setSpendType(0)">Medical</button>
+                <button ng-if="spending_account_status.account_type != 'enterprise_plan' || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ng-class="{ 'active': eclaimSpendingType == 1 }" class="btn btn-default btn-wellness" ng-click="setSpendType(1)">Wellness</button>
             </div>
 					</div>
 

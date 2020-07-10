@@ -219,7 +219,7 @@
 
       </table>
 
-      <div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative; margin-top: 188px">
+      <div class="col-md-12 total text-right" style="width: 90.5%;text-align: right;position: relative; margin-top: 50px">
         <div style="width: 300px;display: inline-block;position: absolute;right: -30px;">
           <p style="margin-bottom: 5px;margin-top: 10px;"><label></label> {{ $currency_type }} {{ $users[0]['after_amount'] }}</p>
 

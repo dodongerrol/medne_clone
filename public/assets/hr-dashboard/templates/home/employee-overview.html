@@ -65,10 +65,17 @@
 				<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
 				<button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
 
-				<button ng-if="!last_term_credits" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Medical_Balance: 'MEDICAL BALANCE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE', Wellness_Balance: 'WELLNESS BALANCE' }" filename="'Employee Details'" separator="," hidden></button>
+				<button ng-if="!last_term_credits && export_member_details.medical && export_member_details.wellness" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Medical_Balance: 'MEDICAL BALANCE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE', Wellness_Balance: 'WELLNESS BALANCE' }" filename="'Employee Details'" separator="," hidden></button>
 
-				<button ng-if="last_term_credits" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Medical_Balance: 'MEDICAL BALANCE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE', Wellness_Balance: 'WELLNESS BALANCE', Medical_Allocation_Last_Term: 'MEDICAL ALLOCATION LAST TERM', Medical_Usage_Last_Term: 'MEDICAL USAGE LAST TERM', Medical_Balance_Last_Term: 'MEDICAL BALANCE LAST TERM', Wellness_Allocation_Last_Term: 'WELLNESS ALLOCATION LAST TERM', Wellness_Usage_Last_Term: 'WELLNESS USAGE LAST TERM', Wellness_Balance_Last_Term: 'WELLNESS BALANCE LAST TERM' }" filename="'Employee Details'" separator="," hidden></button>
+				<button ng-if="last_term_credits && export_member_details.medical && export_member_details.wellness" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Medical_Balance: 'MEDICAL BALANCE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE', Wellness_Balance: 'WELLNESS BALANCE', Medical_Allocation_Last_Term: 'MEDICAL ALLOCATION LAST TERM', Medical_Usage_Last_Term: 'MEDICAL USAGE LAST TERM', Medical_Balance_Last_Term: 'MEDICAL BALANCE LAST TERM', Wellness_Allocation_Last_Term: 'WELLNESS ALLOCATION LAST TERM', Wellness_Usage_Last_Term: 'WELLNESS USAGE LAST TERM', Wellness_Balance_Last_Term: 'WELLNESS BALANCE LAST TERM' }" filename="'Employee Details'" separator="," hidden></button>
 				
+				<button ng-if="!last_term_credits && export_member_details.medical && !export_member_details.wellness" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Medical_Balance: 'MEDICAL BALANCE' }" filename="'Employee Details'" separator="," hidden></button>
+
+				<button ng-if="last_term_credits && export_member_details.medical && !export_member_details.wellness" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Medical_Allocation: 'MEDICAL ALLOCATION', Medical_Usage: 'MEDICAL USAGE', Medical_Balance: 'MEDICAL BALANCE', Medical_Allocation_Last_Term: 'MEDICAL ALLOCATION LAST TERM', Medical_Usage_Last_Term: 'MEDICAL USAGE LAST TERM', Medical_Balance_Last_Term: 'MEDICAL BALANCE LAST TERM' }" filename="'Employee Details'" separator="," hidden></button>
+			
+				<button ng-if="!last_term_credits && !export_member_details.medical && export_member_details.wellness" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE', Wellness_Balance: 'WELLNESS BALANCE' }" filename="'Employee Details'" separator="," hidden></button>
+
+				<button ng-if="last_term_credits && !export_member_details.medical && export_member_details.wellness" id="empDetailsBtn" ng-json-export-excel data="allEmpData" report-fields="{Name: 'NAME', PhoneNo: 'MOBILE NO', Email: 'EMAIL', Plan_Type: 'PLAN TYPE', Start_Date: 'START DATE', End_Date: 'END DATE', Wellness_Allocation: 'WELLNESS ALLOCATION', Wellness_Usage: 'WELLNESS USAGE', Wellness_Balance: 'WELLNESS BALANCE' }" filename="'Employee Details'" separator="," hidden></button>
 			</div>
 		</div>
 		<div class="employee-overview-table">
@@ -364,7 +371,70 @@
 					</div>
 				</div>
 
-				<div class="medical-spending-account" ng-if="selectedEmployee.medical_wallet">
+				<div ng-if="selectedEmployee.account_type == 'enterprise_plan' " class="visit-spending-wrapper">
+					<div>
+						<h4><strong class="font-helvetica-medium">Visits</strong></h4>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Total</strong>
+								<span>
+									<!-- <span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>  -->
+									<span ng-bind="selectedEmployee.spending_account.medical.visits">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Utilised</strong>
+								<span>
+									<!-- <span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>  -->
+									<span ng-bind="selectedEmployee.spending_account.medical.utilised">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Balance</strong>
+								<span>
+									<!-- <span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span>  -->
+									<span ng-bind="selectedEmployee.spending_account.medical.balance">1,000.00</span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div>
+						<h4><strong class="font-helvetica-medium">Spendings</strong></h4>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Total</strong>
+								<span>
+									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
+									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Panel</strong>
+								<span>
+									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
+									<span ng-bind="selectedEmployee.spending_account.medical.in_network">1,000.00</span>
+								</span>
+							</div>
+						</div>
+						<div class="allocation-wrapper">
+							<div class="allocation-container">
+								<strong class="font-helvetica-medium">Non-Panel</strong>
+								<span>
+									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
+									<span ng-bind="selectedEmployee.spending_account.medical.out_network">1,000.00</span>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div ng-if="selectedEmployee.account_type != 'enterprise_plan'" class="medical-spending-account" ng-if="selectedEmployee.medical_wallet">
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
@@ -524,7 +594,8 @@
 									<strong class="font-helvetica-medium">Member ID</strong>
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
-								<div ng-if="selectedEmployee.medical_wallet" class="entitlementWithIcon">
+								<!-- <div ng-if="selectedEmployee.medical_wallet || selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon"> -->
+									<div ng-if="selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon">
 									<strong class="font-helvetica-medium">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
 									<!-- <strong class="font-helvetica-medium">Medical Entitlement</strong> -->
 									<span>

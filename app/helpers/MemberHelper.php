@@ -129,8 +129,21 @@ class MemberHelper
 				$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
 				return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($credit_resets[0]->date_resetted)))), 'id' => $credit_resets[0]->wallet_history_id];
 			} else {
-				// $customer_id = PlanHelper::getCustomerId($member_id);
-				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+				$customer_id = PlanHelper::getCustomerId($member_id);
+				// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->get();
+				// if(sizeof($spending_accounts) > 1) {
+				// 	$spending_accounts = DB::table('spending_account_settings')
+				// 								->where('customer_id', $customer_id)
+				// 								->orderBy('created_at', 'desc')
+				// 								->skip(1)
+				// 								->take(1)
+				// 								->first();
+				// 	if(!$spending_accounts) {
+				// 		$spending_accounts = $spending_accounts[0];
+				// 	}
+				// } else {
+				// 	$spending_accounts = $spending_accounts[0];
+				// }
 				// return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($spending_accounts->medical_spending_end_date)))), 'id' => null];
 				return false;
 			}
@@ -742,16 +755,20 @@ class MemberHelper
 
 		if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan")	{
 			// create block transaction
-			$customer_id = \PlanHelper::getCustomerId($member_id);
-			$data = array(
-				'member_id'		=> $member_id,
-				'customer_id'	=> $customer_id,
-				'status'		=> 1,
-				'type'			=> 'all',
-				'created_at'	=> date('Y-m-d H:i:s'),
-				'updated_at'	=> date('Y-m-d H:i:s')
-			);
-			DB::table('member_block_transaction')->insert($data);
+			$customer_id = PlanHelper::getCustomerId($member_id);
+			$payment_status = CustomerHelper::checkCustomerEnterprisePayment($customer_id);
+
+			if($payment_status == false)	{
+				$data = array(
+					'member_id'		=> $member_id,
+					'customer_id'	=> $customer_id,
+					'status'		=> 1,
+					'type'			=> 'all',
+					'created_at'	=> date('Y-m-d H:i:s'),
+					'updated_at'	=> date('Y-m-d H:i:s')
+				);
+				DB::table('member_block_transaction')->insert($data);
+			}
 		}
 	}
 	
@@ -1515,11 +1532,11 @@ class MemberHelper
 		$plan = DB::table('user_plan_type')->where('user_id', $id)->orderBy('created_at', 'desc')->first();
 
 		if($calculate) {
-			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
+			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
 			$days = $diff->format('%a') + 1;
 			
-			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
-			$remaining_days = $total_days - $days;
+			$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+			$remaining_days = $total_days - $days + 1;
 
 			$cost_plan_and_days = ($invoice->individual_price/$total_days);
 			$temp_total = $cost_plan_and_days * $remaining_days;
@@ -1657,7 +1674,7 @@ class MemberHelper
 		}
 
 		if($calculate) {
-			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d')));
+			$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
 			$days = $diff->format('%a') + 1;
 
 			$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
@@ -1757,6 +1774,32 @@ class MemberHelper
 		$slice = array_slice($db, $perPage * ($pageNumber - 1), $perPage);
 		$info = Paginator::make($slice, count($db), $perPage);
 		return $info;
+	}
+	
+	public static function getMemberByDateStarted($start, $end, $corporate_id, $customer_plan_id)
+	{
+		// employees
+		$members = DB::table('user_plan_history')
+						->join('corporate_members', 'corporate_members.user_id', '=', 'user_plan_history.user_id')
+						->where('corporate_members.corporate_id', $corporate_id)
+						->where('corporate_members.removed_status', 0)
+						->where('user_plan_history.type', 'started')
+						->where('user_plan_history.created_at', '>=', $start)
+						->where('user_plan_history.created_at', '<=', $end)
+						->count();
+
+		// dependents
+		$dependents = DB::table('dependent_plan_history')
+						->join('dependent_plans', 'dependent_plans.dependent_plan_id', '=', 'dependent_plan_history.dependent_plan_id')
+						->join('user', 'user.UserID', '=', 'dependent_plan_history.user_id')
+						->where('user.Active', 1)
+						->where('dependent_plan_history.type', 'started')
+						->where('dependent_plans.customer_plan_id', $customer_plan_id)
+						->where('dependent_plan_history.created_at', '>=', $start)
+						->where('dependent_plan_history.created_at', '<=', $end)
+						->count();
+		
+		return $members + $dependents;
 	}
 }
 ?>

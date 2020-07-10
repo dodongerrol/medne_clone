@@ -1357,16 +1357,16 @@
 												as Year-to-Date.</small> -->
 											<p class="color-black3 weight-500 font-14">Visit Breakdown</p>
 											<div class="visit-breakdown-col-container">
-												<div class="visit-breakdown-col-1">
+												<!-- <div class="visit-breakdown-col-1">
 													<p class="color-black3 weight-400 font-14">Total: 
 														<span ng-bind="activity.total_visit_limit" class="weight-400 color-blue-custom">280</span>
 													</p>
 													<p class="color-black3 weight-400 font-14">Balance: 
 															<span ng-bind="activity.total_balance_visit" class="weight-400 color-blue-custom">230</span>
 													</p>
-												</div>
-												<div class="visit-breakdown-col-2">
-													<p class="color-black3 weight-400 font-14">Utilised: 
+												</div> -->
+												<div class="visit-breakdown-col-1">
+													<p class="color-black3 weight-400 font-14">Total utilised visits: 
 															<span ng-bind="activity.total_visit_created" class="weight-400 color-blue-custom">230</span>
 													</p>
 													<div class="visit-breakdown-panel-container">
@@ -1382,6 +1382,16 @@
 														</div>
 													</div>
 												</div>
+
+												<div class="visit-breakdown-col-2">
+													<p class="color-black3 weight-400 font-14">Visits per member: 
+														<span ng-bind="activity.total_average_visit" class="weight-400 color-blue-custom">230</span>
+														<span style="display: block;font-size: 12px;color: #bbb;line-height: 18px;width: 180px;">
+															*Average visits per member from <span style="font-size: 13px;">{{ rangePicker_start }} to {{ rangePicker_end }}</span>.
+														</span>
+													</p>
+												</div>
+
 											</div>	
 										</div>
 									</div>
