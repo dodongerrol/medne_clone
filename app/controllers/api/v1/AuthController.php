@@ -6861,7 +6861,7 @@ public function payCreditsNew( )
     $checker = DB::table('user')
       ->select('UserID', 'Name as name', 'member_activated')
       ->where('UserID', $input['user_id'])->first();
-
+    
       if(!$checker) {
         $returnObject->status = false;
         $returnObject->message = 'User not found!';
@@ -6886,7 +6886,7 @@ public function payCreditsNew( )
         'account_update_status' => 1,
         'account_already_update'  => 1
       ];
-
+      
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
       $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
       if(!$token->status) {

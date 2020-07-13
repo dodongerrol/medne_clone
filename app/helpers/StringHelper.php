@@ -1148,7 +1148,6 @@ public static function get_random_password($length)
             // check creds
             $user = new User();
             $result = $user->newAuthLogin($data['username'], $data['password']);
-
             if($result) {
                 $session_data = array(
                     'client_id'             => $data['client_id'],
