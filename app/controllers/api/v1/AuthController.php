@@ -6882,7 +6882,9 @@ public function payCreditsNew( )
 
       $newPassword = [
         'Password' => StringHelper::encode($input['password_confirm']),
-        'member_activated' => 1
+        'member_activated' => 1,
+        'account_update_status' => 1,
+        'account_already_update'  => 1
       ];
 
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
