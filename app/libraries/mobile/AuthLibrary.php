@@ -618,25 +618,10 @@ class AuthLibrary{
         $hostName = $_SERVER['HTTP_HOST'];
         $protocol = $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         $server = $protocol.$hostName;
-        // return $server;
+        
         $email = Input::get ('email');
         $returnObject = new stdClass();
         if(!empty($email)){
-      // $findUserID = self::FindUserIDByEmail($email);
-      // $findUserID = DB::table('user')->where(function($query) use ($email) {
-      //           $query->where('Email', $email)
-      //           ->where('UserType', 5)
-      //           ->where('Active', 1)
-      //           ->whereIn('access_type', [1, 0]);
-      // })
-      // ->orWhere(function($query) use ($email) {
-      //           $email = (int)($email);
-      //           $query->where('PhoneNo', (int)$email)
-      //           ->where('UserType', 5)
-      //           ->where('Active', 1)
-      //           ->whereIn('access_type', [1, 0]);
-      // })
-      // ->first();
           $findUserID = null;
           $findUserEmail = DB::table('user')
           ->where('Email', $email)
@@ -755,7 +740,6 @@ class AuthLibrary{
                 $compose['sms_type'] = "LA";
 
                 $result_sms = SmsHelper::sendSms($compose);
-                return $result_sms;
                     // if($result_sms['status'] == true) {
                        // $returnObject->status = TRUE;
                        // $returnObject->type = "sms";
