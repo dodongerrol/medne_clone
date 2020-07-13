@@ -5341,6 +5341,15 @@ public function createEclaim( )
      return Response::json($returnObject);
    }
 
+   $customerID = PlanHelper::getCustomerId($findUserID);
+   $spending = CustomerHelper::getAccountSpendingStatus($customerID);
+
+    if($input['spending_type'] == "medical" && $spending['medical_enabled'] == false || $input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false) {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'user not eligible for medical transactions';
+      return Response::json($returnObject);
+    }
+
    $validate_date = SpendingInvoiceLibrary::validateStartDate($input['date']);
 
    if(!$validate_date) {
