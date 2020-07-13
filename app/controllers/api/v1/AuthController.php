@@ -6888,7 +6888,7 @@ public function payCreditsNew( )
       ];
 
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
-      $token = StringHelper::newCustomLoginToken($input);
+      $token = StringHelper::createLoginToken($$checker->UserID, $input['client_id']);
       if(!$token->status) {
         return Response::json($token);
       }
