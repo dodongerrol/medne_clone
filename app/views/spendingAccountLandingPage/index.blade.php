@@ -140,7 +140,7 @@
 			</section>
 
 			<div class="footer-wrapper">
-				<p>If you wish to open a Spending Account, please contact us<br>at <a href="tel: +6562547889">+65 6254 7889</a> or through <a href="/enquiry-form" target="_blank" >this form</a>.</p>
+				<p>If you wish to open a Spending Account, please contact us<br>through <a href="/enquiry-form" target="_blank" >this form</a>.</p>
 			</div>
 
 		</div>
