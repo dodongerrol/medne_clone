@@ -1208,6 +1208,7 @@ public static function get_random_password($length)
 
     public static function createLoginToken($user_d, $client_id)
     {
+        $returnObject = new stdClass();
         $session_data = array(
             'client_id'             => $client_id,
             'owner_type'            => 'user',
