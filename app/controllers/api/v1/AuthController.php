@@ -6880,6 +6880,12 @@ public function payCreditsNew( )
         return Response::json($returnObject);
       }
 
+      $token = StringHelper::newCustomLoginToken($input);
+
+      if(!$token->status) {
+        return Response::json($token);
+      }
+
       $newPassword = [
         'Password' => StringHelper::encode($input['password_confirm']),
         'member_activated' => 1,
@@ -6888,8 +6894,9 @@ public function payCreditsNew( )
       ];
 
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
-        $returnObject->status = true;
-        $returnObject->message = 'Your Password has been created, Account was active!';
-        return Response::json($returnObject);
+      $returnObject->status = true;
+      $returnObject->token = $token->data['access_token'];
+      $returnObject->message = 'Your Password has been created, Account was active!';
+      return Response::json($returnObject);
   }
 }
