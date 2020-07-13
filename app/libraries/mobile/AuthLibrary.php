@@ -754,14 +754,7 @@ class AuthLibrary{
                 $compose['message'] = $message;
                 $compose['sms_type'] = "LA";
 
-                $result_sms = SmsHelper::sendSms($compose);
-                return $result_sms;
-                    // if($result_sms['status'] == true) {
-                       // $returnObject->status = TRUE;
-                       // $returnObject->type = "sms";
-                       // $returnObject->message = "We’ve sent a sms to you with a link to reset your password";
-                       // return $returnObject;
-                   // }
+                SmsHelper::sendSms($compose);
               }
             }
 
