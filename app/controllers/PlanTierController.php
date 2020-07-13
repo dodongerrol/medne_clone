@@ -513,7 +513,11 @@ class PlanTierController extends \BaseController {
 				'start_date'			=> $user['plan_start'],
 				'medical_balance_entitlement'			=> $user['medical_credits'],
 				'wellness_balance_entitlement'			=> $user['wellness_credits'],
-				'postal_code'			=> $postal_code,
+				'emp_no'			=> !empty($user['emp_no']) ? $user['emp_no'] : null,
+				'bank_name'			=> !empty($user['bank_name']) ? $user['bank_name'] : null,
+				'bank_account_number'			=> !empty($user['bank_account_number']) ? $user['bank_account_number'] : null,
+				'cap_per_visit'			=> !empty($user['cap_per_visit']) ? $user['cap_per_visit'] : null,
+				'postal_code'			=> null,
 				'group_number'			=> $group_number,
 				'error_logs'			=> serialize($error_member_logs)
 			);

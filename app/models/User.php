@@ -151,7 +151,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->account_update_date = date('Y-m-d H:i:s');
                 $this->account_already_update = 1;
                 $this->member_activated = 0;
-                $this->group_number = !empty($data['group_number']) && $data['group_number'] ? $data['group_number'] : 1;
+                $this->emp_no = !empty($data['emp_no']) && $data['emp_no'] ? $data['emp_no'] : null;
+                $this->bank_name = !empty($data['bank_name']) && $data['bank_name'] ? $data['bank_name'] : null;
+                $this->bank_account = !empty($data['bank_account']) && $data['bank_account'] ? $data['bank_account'] : null;
                 if($this->save()){
                     $insertedId = $this->id;
                     $wallet = new Wallet( );
@@ -164,6 +166,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
                     if(isset($data['currency_type']) || !empty($data['currency_type'])) {
                         $data_wallet['currency_type'] = $data['currency_type'];
+                    }
+
+                    if(isset($data['cap_per_visit']) || !$data['cap_per_visit']) {
+                        $data_wallet['cap_per_visit_medical'] = $data['cap_per_visit'];
+                        $data_wallet['cap_per_visit_wellness'] = $data['cap_per_visit'];
                     }
                     $wallet->createWallet($data_wallet);
                     return $insertedId;

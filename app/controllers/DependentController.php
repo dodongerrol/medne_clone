@@ -46,7 +46,13 @@ class DependentController extends \BaseController {
 
 			$temp_file = time().$file->getClientOriginalName();
 			$file->move('excel_upload', $temp_file);
-			$data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+			try {
+				// $data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+			} catch(Exception $e) {
+				return ['status' => false, 'message' => "Please use the sheet name 'Member Information'"];
+			}
+
 			$headerRow = $data_array->first()->keys();
 			
 			$temp_users = [];
@@ -75,14 +81,12 @@ class DependentController extends \BaseController {
 					$mobile = true;
 				} else if($row == "start_date" || $row == "start_date_ddmmyyyy") {
 					$start_date = true;
-				} else if($row == "postal_code") {
-					$postal_code = true;
-				} else if($row == "mobile_country_code" || $row == "mobile_country_code") {
+				} else if($row == "mobile_country_code" || $row == "mobile_country_code" || $row == "country_code") {
 					$mobile_area_code = true;
 				}
 			}
 
-			if(!$fullname || !$dob || !$mobile || !$start_date || !$postal_code || !$mobile_area_code) {
+			if(!$fullname || !$dob || !$mobile || !$start_date || !$mobile_area_code) {
 				return array(
 					'status'	=> FALSE,
 					'message' => 'Excel is invalid format. Please download the recommended file for Employee Enrollment.'
@@ -267,6 +271,10 @@ class DependentController extends \BaseController {
 				
 				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
+				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
+				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
+				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
+				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
@@ -277,14 +285,18 @@ class DependentController extends \BaseController {
 					'first_name'			=> trim($user['fullname']),
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
+					'emp_no'				=> trim($user['employee_id']),
 					'mobile'				=> (int)$mobile,
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
+					'bank_name'				=> $user['bank_name'],
+					'bank_account_number'	=> $user['bank_account_number'],
+					'cap_per_visit'			=> $user['cap_per_visit'],
 					'credits'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
 					'medical_balance_entitlement'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
 					'wellness_credits'		=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
 					'wellness_balance_entitlement'				=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
-					'postal_code'			=> trim($user['postal_code']),
+					'postal_code'			=> null,
 					'start_date'			=> $user['plan_start'],
 					'group_number'			=> $group_number,
 					'error_logs'			=> serialize($error_member_logs)

@@ -1476,7 +1476,11 @@ class PlanHelper {
 			'communication_type'	=> $communication_type,
 			'group_number'			=> $data_enrollee->group_number,
 			'currency_type'		=> $customer->currency_type,
-			'member_activated'	=> 0
+			'member_activated'	=> 0,
+			'emp_no'	=> $data_enrollee->emp_no,
+			'bank_name'	=> $data_enrollee->bank_name,
+			'bank_account'	=> $data_enrollee->bank_account_number,
+			'cap_per_visit'	=> $data_enrollee->cap_per_visit,
 		);
 
 		$user_id = $user->createUserFromCorporate($data);
