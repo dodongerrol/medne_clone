@@ -290,9 +290,11 @@ class CustomerHelper
 			'customer_id'		=> $customer_id,
 			'account_type'		=> $planData->account_type,
 			'medical_method'	=> $spending->medical_plan_method,
+			'medical_reimbursement'	=> $spending->medical_reimbursement == 1 ? true : false,
 			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
 			'wellness_method'	=> $spending->wellness_plan_method,
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
+			'wellness_reimbursement'	=> $spending->wellness_reimbursement == 1 ? true : false,
 			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
 		);
 	}

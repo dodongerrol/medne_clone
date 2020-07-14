@@ -5341,15 +5341,6 @@ public function createEclaim( )
      return Response::json($returnObject);
    }
 
-   $customerID = PlanHelper::getCustomerId($findUserID);
-   $spending = CustomerHelper::getAccountSpendingStatus($customerID);
-
-    if($input['spending_type'] == "medical" && $spending['medical_enabled'] == false || $input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false) {
-      $returnObject->status = FALSE;
-      $returnObject->message = 'user not eligible for medical transactions';
-      return Response::json($returnObject);
-    }
-
    $validate_date = SpendingInvoiceLibrary::validateStartDate($input['date']);
 
    if(!$validate_date) {
@@ -5404,14 +5395,22 @@ public function createEclaim( )
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
   
   $customer_id = PlanHelper::getCustomerId($user_id);
-  $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+  // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+  $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-  if($customer && (int)$customer->access_e_claim == 0) {
+  if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
     $returnObject->status = FALSE;
     $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'The E-claim function is disabled for your company.';
+    $returnObject->message = 'Member not eligible for Non-Panel transactions';
     return Response::json($returnObject);
   }
+
+  // if($customer && (int)$customer->access_e_claim == 0) {
+  //   $returnObject->status = FALSE;
+  //   $returnObject->head_message = 'Non-Panel Error';
+  //   $returnObject->message = 'The E-claim function is disabled for your company.';
+  //   return Response::json($returnObject);
+  // }
 
   $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
   $customer_active_plan = DB::table('customer_active_plan')
@@ -5532,8 +5531,6 @@ public function createEclaim( )
  } else {
   $amount = trim($input_amount);
 }
-  // get customer id
-$customer_id = PlanHelper::getCustomerId($user_id);
 
 $time = date('h:i A', strtotime($input['time']));
 $claim = new Eclaim();
