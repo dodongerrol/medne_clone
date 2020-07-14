@@ -214,11 +214,20 @@
 	font-size: 14px;
 	font-family: 'Helvetica Medium';
 }
-.new-account-modal .company-account-input-wrapper input {
+.new-account-modal .company-account-input-wrapper input,
+.new-account-modal .company-account-input-wrapper select {
 	border: 0;
 	outline: none;
 	width: 100%;
 	padding: 0;
+	display: block;
+	font-size: 14px;
+	line-height: inherit;
+}
+.new-account-modal .company-account-input-wrapper select {
+	height: auto;
+  display: inherit;
+  -webkit-appearance: none;
 }
 .new-account-modal .company-account-input-wrapper input:placeholder {
 	color: #848484;

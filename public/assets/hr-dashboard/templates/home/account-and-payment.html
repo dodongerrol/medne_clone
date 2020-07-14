@@ -332,7 +332,7 @@
 								<span> 03</span>
 							</div>
 							<div class="btn-edit-container">
-								<button data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+								<button ng-click="_editDetails_()" data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
 							</div>
 						</div>
 						<div class="account-card-container">
@@ -598,7 +598,7 @@
 				        <div class="company-account-input-wrapper">
 				        	<label>Plan Type</label>
 				        	<div class="custom-input-wrapper">
-				        		<input ng-model="global_hrData.plan_type" type="text">
+				        		<input ng-model="global_planData.plan_type" type="text">
 				        		<i class="fa fa-angle-down"></i>
 				        	</div>
 				        </div>
@@ -606,14 +606,27 @@
 				        	<div class="company-account-input-wrapper">
 					        	<label>Start Date</label>
 					        	<div class="custom-input-wrapper">
-					        		<input ng-model="global_hrData.start_date" type="text">
+					        		<input class="datepicker" ng-model="global_planData.start_date" type="text">
 					        		<img src="../assets/images/calendar-gray.png">
 					        	</div>
 					        </div>
 					        <div class="company-account-input-wrapper">
 					        	<label>Plan Duration</label>
 					        	<div class="custom-input-wrapper">
-					        		<input ng-model="global_hrData.plan_duration" type="text">
+					        		<select ng-change="_changePlanDuration_(global_planData.plan_duration,global_planData.start_date)" ng-model="global_planData.plan_duration">
+					        			<option value="12">12 months</option>
+					        			<option value="11">11 months</option>
+					        			<option value="10">10 months</option>
+					        			<option value="9">9 months</option>
+					        			<option value="8">8 months</option>
+					        			<option value="7">7 months</option>
+					        			<option value="6">6 months</option>
+					        			<option value="5">5 months</option>
+					        			<option value="4">4 months</option>
+					        			<option value="3">3 months</option>
+					        			<option value="2">2 months</option>
+					        			<option value="1">1 months</option>
+					        		</select>
 					        		<i class="fa fa-angle-down"></i>
 					        	</div>
 					        </div>
@@ -622,7 +635,7 @@
 				        	<div class="company-account-input-wrapper">
 					        	<label>Total Enrolled Accounts</label>
 					        	<div class="custom-input-wrapper">
-					        		<input ng-model="global_hrData.dependent_account" type="text">
+					        		<input ng-model="global_planData.dependent_account" type="text">
 					        	</div>
 					        </div>
 				        </div>
@@ -630,7 +643,7 @@
 				        	<div class="company-account-input-wrapper">
 					        	<label>Total Dependent Accounts</label>
 					        	<div class="custom-input-wrapper">
-					        		<input ng-model="global_hrData.dependent_account" type="text">
+					        		<input ng-model="global_planData.dependent_account" type="text">
 					        	</div>
 					        </div>
 					        <div class="company-account-input-wrapper">
@@ -639,7 +652,7 @@
 					        		<div>
 					        			<span>SGD</span>
 					        		</div>
-					        		<input ng-model="global_hrData.price_dependent" type="text">
+					        		<input ng-model="global_planData.price_dependent" type="text">
 					        	</div>
 					        </div>
 				        </div>
@@ -647,14 +660,14 @@
 				        	<div class="company-account-input-wrapper">
 					        	<label>Invoice Start Date</label>
 					        	<div class="custom-input-wrapper">
-					        		<input ng-model="global_hrData.invoice_start_date" type="text">
+					        		<input class="datepicker" ng-model="global_planData.invoice_start_date" type="text">
 					        		<img src="../assets/images/calendar-gray.png">
 					        	</div>
 					        </div>
 					        <div class="company-account-input-wrapper">
 					        	<label>Invoice Due Date</label>
 					        	<div class="custom-input-wrapper">
-					        		<input ng-model="global_hrData.invoice_date" type="text">
+					        		<input class="datepicker" ng-model="global_planData.invoice_date" type="text">
 					        		<img src="../assets/images/calendar-gray.png">
 					        	</div>
 					        </div>
