@@ -3040,7 +3040,11 @@ class EmployeeController extends \BaseController {
     $pending = 0;
     $login = 0;
     $active = 0;
+    $dependent_total_enrolled = 0;
     $members = CustomerHelper::getActiveMembers($customer_id);
+    $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+    $customer_plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+    $dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
     foreach($members as $key => $member)  {
       // check if member already login base on admin logs
@@ -3059,9 +3063,19 @@ class EmployeeController extends \BaseController {
         }
       }
     }
-    $data = ['pending' => $pending, 'login' => $login, 'active' => $active];
 
-    return ['status' => false, 'data' => $data];
+    if($dependent_plan_status) {
+      $dependent_total_enrolled = $dependent_plan_status->total_enrolled_dependents;
+    }
+
+    $data = [
+      'total_enrolled_employees' => $customer_plan_status->enrolled_employees,
+      'total_enrolled_dependents' => $dependent_total_enrolled,
+      'pending' => $pending, 
+      'login' => $login, 
+      'active' => $active
+    ];
+    return ['status' => true, 'data' => $data];
   }
     
     public function checkMemberReplaceDetails( )

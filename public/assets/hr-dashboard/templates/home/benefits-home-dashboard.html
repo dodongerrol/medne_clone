@@ -517,26 +517,26 @@
 						 </div>
 						 <div class="mednefits-body-box">
 							 <div class="">
-								 <h3 class="enrollment-status-number" ng-bind="progress.total_employees"></h3>
+								 <h3 class="enrollment-status-number" ng-bind="employee_plan_status.total_enrolled_employees"></h3>
 								 <h3 class="enrollment-status-text">TOTAL ENROLLED EMPLOYEES</h3>
 							 </div>
 							 <div class="row-box">
 									<div class="">
-										<h3 class="enrollment-status-number font-14" ng-bind="progress.in_progress"></h3>
+										<h3 class="enrollment-status-number font-14" ng-bind="employee_plan_status.pending"></h3>
 										<h3 class="enrollment-status-text font-11">PENDING
 											<img class="info-box-img" src="../assets/hr-dashboard/img/info-tooltip.png">
 
 										</h3>
 									</div>
 									<div class="">
-										<h3 class="enrollment-status-number font-14" ng-bind="progress.in_progress"></h3>
+										<h3 class="enrollment-status-number font-14" ng-bind="employee_plan_status.active"></h3>
 										<h3 class="enrollment-status-text font-11 ">ACTIVE
 											<img class="info-box-img" src="../assets/hr-dashboard/img/info-tooltip.png">
 										</h3>
 									</div>
 							 </div>
 							 <div class="">
-								<h3 class="enrollment-status-number font-14" ng-bind="progress.completed"></h3>
+								<h3 class="enrollment-status-number font-14" ng-bind="employee_plan_status.login"></h3>
 								<h3 class="enrollment-status-text font-11">ACTIVATED
 									<img class="info-box-img" src="../assets/hr-dashboard/img/info-tooltip.png">
 								</h3>
@@ -551,7 +551,7 @@
 						 </div>
 						 <div class="mednefits-body-box">
 							 <div class="">
-								 <h3 class="enrollment-status-number" ng-bind="dependents.total_number_of_seats"></h3>
+								 <h3 class="enrollment-status-number" ng-bind="employee_plan_status.total_enrolled_dependents"></h3>
 								 <h3 class="enrollment-status-text">TOTAL ENROLLED DEPENDENTS</h3>
 							 </div>
 						 </div>
