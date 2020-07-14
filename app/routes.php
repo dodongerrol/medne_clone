@@ -209,6 +209,8 @@ Route::get('hr/download_dependent_invoice', 'DependentController@getDependentInv
 // get pending employee replacement
 Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@getPendingEmployeeDeactivate');
 
+// update agree status
+Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
 Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get token download
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
@@ -223,7 +225,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('insert/enrollee_web_input', 'BenefitsDashboardController@insertFromWebInput');
 	Route::post('update/enrollee_details', 'BenefitsDashboardController@updateEnrolleeDetails');
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
-	Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
+	
 	// upload via excel
 	// Route::post('upload/excel_enrollment', 'BenefitsDashboardController@uploadExcel');
 	Route::post('upload/excel_enrollment', 'DependentController@uploadExcel');
