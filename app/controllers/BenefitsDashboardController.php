@@ -7,7 +7,7 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$hr = self::checkSession();
 		// $input = Input::all();
-		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id->hr_dashboard_id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr->hr_dashboard_id)->first();
 
 		if($hr) {
 			$api = null;
@@ -16044,6 +16044,75 @@ class BenefitsDashboardController extends \BaseController {
 		return ['status' => true, 'message' => 'Activate Spending Account Inquiry has been sent'];
 	}
 
+	public function enrolledUsersFromActivePlan( )
+	{
+
+		$input = Input::all();
+		if(empty($input['customer_active_plan_id']) || $input['customer_active_plan_id'] == null)	{
+			return ['status' => false, 'message' => 'customer_active_plan_id is required'];
+		}
+
+		$check = DB::table('customer_active_plan')->where('customer_active_plan_id', $input['customer_active_plan_id'])->first();
+
+		if(!$check) {
+			return ['status' => FALSE, 'message' => 'Customer Active Plan does not exist.'];
+		}
+
+		$pagination = [];
+		$limit = !empty($input['per_page']) ? $input['per_page'] : 10;
+		$corporate_plan = CorporatePlan::where('customer_buy_start_id', $check->customer_start_buy_id)->orderBy('created_at', 'desc')->first();
+		$end_date_policy = $corporate_plan->plan_end;
+
+		if(isset($input['search']) && $input['search'] != null)	{
+			$users = DB::table('customer_active_plan')
+					->join('user_plan_history', 'user_plan_history.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
+					->join('user', 'user.UserID', '=', 'user_plan_history.user_id')
+					->where('user_plan_history.customer_active_plan_id', $input['customer_active_plan_id'])
+					->where('user_plan_history.type', 'started')
+					->where('user.Name', 'like', '%'.$input['search'].'%')
+					->where('user.Active', 1)
+					->select('user.UserID', 'user.Name')
+					->paginate($limit);
+		} else {
+			$users = DB::table('customer_active_plan')
+					->join('user_plan_history', 'user_plan_history.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
+					->join('user', 'user.UserID', '=', 'user_plan_history.user_id')
+					->where('user_plan_history.customer_active_plan_id', $input['customer_active_plan_id'])
+					->where('user_plan_history.type', 'started')
+					->where('user.Active', 1)
+					->select('user.UserID', 'user.Name')
+					->paginate($limit);
+		}
+		
+		$pagination['last_page'] = $users->getLastPage();
+		$pagination['current_page'] = $users->getCurrentPage();
+		$pagination['total_data'] = $users->getTotal();
+		$pagination['from'] = $users->getFrom();
+		$pagination['to'] = $users->getTo();
+		$pagination['count'] = $users->count();
+
+
+		$corporate_members = [];
+		foreach ($users as $key => $user) {
+			$user->Name = ucwords($user->Name);
+			$dependents = DB::table('employee_family_coverage_sub_accounts')->where('owner_id', $user->UserID)->where('deleted', 0)->select('user_id')->get();
+
+			foreach($dependents as $key => $dependent)	{
+				$member = DB::table('user')->where('UserID', $dependent->user_id)->first();
+				$dependent->Name = ucwords($member->Name);
+			}
+			
+			$user_data = array(
+				'member'			=> $user,
+				'dependents'        => $dependents
+			);
+			array_push($corporate_members, $user_data);
+		}
+		$pagination['plan_start'] = $check->plan_start;
+		$pagination['data'] = $corporate_members;
+
+		return ['status' => TRUE, 'data' => $pagination];
+	}
 	public function updateActivePlanDetails( )
 	{
 		$input = Input::all();

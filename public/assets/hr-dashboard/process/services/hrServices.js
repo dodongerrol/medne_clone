@@ -379,8 +379,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/get_member_refund_calculation", data  );
   }
 
-  hrFactory.getPlanInvoiceHistory = function ( page,per_page ) {
-    return $http.get( serverUrl.url + "/hr/get_plan_invoice_histories?page=" + page + '&per_page=' + per_page );
+  hrFactory.getPlanInvoiceHistory = function ( page,per_page,id ) {
+    return $http.get( serverUrl.url + "/hr/get_plan_invoice_histories?page=" + page + '&per_page=' + per_page + '&customer_active_plan_id=' + id);
   };
 
   hrFactory.fecthHrDetails = function ( ) {
@@ -424,6 +424,37 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     }
     return $http.get( url );
   };
+  // hrFactory.get_member_refund = function (data) {
+  //   return $http.post( serverUrl.url + "/employee/check_email_validation", data  );
+  // }
+
+
+  hrFactory.getActivePlanDetails = function ( data ) {
+    var url = serverUrl.url + "/hr/get_plan_details?page=" + data.page;
+    if(data.oldPlanCustomerPlanID){
+      url += ("&type=old&customer_plan_id=" + data.oldPlanCustomerPlanID);
+    }else{
+      url += "&type=new";
+    }
+    return $http.get( url );
+  }
+  hrFactory.getOldPlanList = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_old_list_plans");
+  }
+  
+  hrFactory.updateEmployeePlan = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_employee_active_plan_details", data);
+  }
+  hrFactory.updateDependentPlan = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_dependent_active_plan_details", data);
+  }
+  hrFactory.getViewMemberModalList = function ( data ) {
+    var url = serverUrl.url + "/hr/get_users_by_active_plan?page=" + data.page + "&customer_active_plan_id=" + data.customer_active_plan_id + "&per_page=" + data.per_page;
+    if(data.search){
+      url += '&search=' + data.search;
+    }
+    return $http.get( url );
+  }
 
   return hrFactory;
 });

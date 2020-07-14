@@ -10343,17 +10343,26 @@ span.dropdown-entitlement.disabled {
 .current-active-plans-text {
   display: inline-block;
   margin: 0 20px 0 0;
+  width: 130px;
 }
-.current-active-plans-pagination >span {
+.current-active-plans-pagination{
+
+}
+.current-active-plans-pagination >div {
   border-radius: 5px;
   border: 1px solid #D9D9D9;
   color: #D9D9D9;
-  padding: 3px 10px;
+  padding: 0;
   cursor: pointer;
+  width: 38px;
+  height: 26px;
+  float: left;
+  text-align: center;
+  margin-right: 2px;
 }
-.current-active-plans-pagination span.active {
-  background-color: #B4E8FE;
-  border: 1px solid #B4E8FE;
+.current-active-plans-pagination div.active {
+  background-color: #0392CF;
+  border: 1px solid #0392CF;
   color: #2E4057;
 }
 .old-active-plans-wrapper,
@@ -10362,6 +10371,8 @@ span.dropdown-entitlement.disabled {
 }
 .old-active-plans-text {
   text-decoration: underline;
+  margin-left: 20px;
+  cursor: pointer;
 }
 .old-active-plans-dp-container,
 .active-plan-dp-wrapper {
@@ -10370,6 +10381,8 @@ span.dropdown-entitlement.disabled {
   background-color: #fff;
   border: 1px solid #BFBFBF;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  max-height: 150px;
+  overflow-y: auto;
 }
 .old-active-plans-dp-container {
   width: 230px;
@@ -10448,4 +10461,13 @@ span.dropdown-entitlement.disabled {
 }
 .visit-spending-wrapper h4 {
   margin: 10px 0 20px 0;
+}
+
+.plan-details-pagination-container{
+  display: flex;
+  align-items: center;
+}
+.plan-details-pagination-container .dot-click{
+  display: inline-block;
+  width: 100%;
 }

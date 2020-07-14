@@ -532,18 +532,18 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/account-and-payment.html'
         },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-modal.html'
-        },
-        'modal_2': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-details-modal.html'
-        },
-        'modal_3': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/credit-card-details-modal.html'
-        },
-        'modal_4': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-password-modal.html'
-        }
+        // 'modal': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-modal.html'
+        // },
+        // 'modal_2': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-details-modal.html'
+        // },
+        // 'modal_3': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/credit-card-details-modal.html'
+        // },
+        // 'modal_4': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-password-modal.html'
+        // }
       },
     })
     .state('plan-coverage', {

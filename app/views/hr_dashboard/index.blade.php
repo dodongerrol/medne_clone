@@ -43,6 +43,7 @@
 
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bulk-credit-allocation.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/new-account-payment.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/view-member-modal.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/style.css?_={{ $date->format('U') }}">
 
 	<!-- REMOVE EMPLOYEE STYLES -->
