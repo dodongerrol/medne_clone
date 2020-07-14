@@ -15544,11 +15544,11 @@ class BenefitsDashboardController extends \BaseController {
 			// get latest plan
 			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		} else {
-		if(empty($request->get('customer_plan_id')) || $request->get('customer_plan_id') == null) {
+		if(empty($input['customer_plan_id']) || $input['customer_plan_id'] == null) {
 			return ['status' => false, 'message' => 'customer_plan_id is required'];
 		}
 		// old plans
-		$plan = DB::table('customer_plan')->where('customer_plan_id', $request->get('customer_plan_id'))->orderBy('created_at', 'desc')->first();
+		$plan = DB::table('customer_plan')->where('customer_plan_id', $input['customer_plan_id'])->orderBy('created_at', 'desc')->first();
 		}
 	  
 		if($plan->account_type == "lite_plan") {
