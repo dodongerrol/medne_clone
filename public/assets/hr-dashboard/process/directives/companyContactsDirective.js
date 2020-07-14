@@ -847,6 +847,57 @@ app.directive("companyContactsDirective", [
             });
         }
 
+        scope.global_planData = {
+          start_date: new Date(),
+          plan_duration: '12',
+          invoice_start_date: new Date(),
+          // invoice_date: new Date(),
+        }
+
+        scope._editDetails_ = function (  ) {
+          
+          scope.global_planData.invoice_start_date = scope.global_planData.start_date;
+
+          scope.global_planData.invoice_date = new Date(moment(scope.global_planData.invoice_start_date).add(scope.global_planData.plan_duration, 'months').subtract(1, 'days'));
+
+          scope.global_planData.start_date = moment(scope.global_planData.start_date).format('DD/MM/YYYY');
+          scope.global_planData.invoice_start_date = moment(scope.global_planData.invoice_start_date).format('DD/MM/YYYY');
+          scope.global_planData.invoice_date = moment(scope.global_planData.invoice_date).format('DD/MM/YYYY');
+
+          setTimeout(() => {
+            var dt = new Date();
+            // dt.setFullYear(new Date().getFullYear()-18);
+            $('.datepicker').datepicker({
+              format: 'dd/mm/yyyy',
+              endDate: dt
+            });
+
+            $('.datepicker').datepicker().on('hide', function (evt) {
+              var val = $(this).val();
+              if (val != "") {
+                $(this).datepicker('setDate', val);
+              }
+            })
+          }, 1000); 
+        }
+
+        scope._changePlanDuration_ = function ( duration, start) {
+          
+          let year = moment(start, 'DD/MM/YYYY').year();
+          let month = moment(start, 'DD/MM/YYYY').month();
+          let day = moment(start, 'DD/MM/YYYY').date();
+          let new_invoice_start = start;
+          let new_invoice_due = moment([year,month,day]).add(parseInt(duration),'months').subtract(1, 'days').format('DD/MM/YYYY');
+          
+
+          console.log('new dates', parseInt(duration),start, new_invoice_due);
+
+          // scope.edit_employee_acount_details.invoice_start = new_invoice_start;
+          scope.global_planData.invoice_date = new_invoice_due;
+        }
+
+        
+
         scope.onLoad = function(){
           scope.initializeGeoCode();
           scope.getDownloadToken();
