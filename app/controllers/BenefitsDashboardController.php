@@ -296,6 +296,10 @@ class BenefitsDashboardController extends \BaseController {
 			$in_progress = 0;
 		}
 
+		if($plan->account_type == "lite_plan") {
+			$in_progress = 99999;
+		}
+
 		return array(
 			'status'	=> TRUE,
 			'data'		=> array(
@@ -15082,7 +15086,7 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'customer_id is required');
 		}
 	  
-		return CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+		return CustomerHelper::getAccountSpendingStatus($customer_id);
 	}
 
 	public function getExcelLink( )

@@ -157,74 +157,77 @@ class DependentController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->first();
 
-			$total = $plan_status->employees_input - $plan_status->enrolled_employees;
+			if($planned->account_type != "lite_plan") {
+				$total = $plan_status->employees_input - $plan_status->enrolled_employees;
 
-			if($total <= 0) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
-				);
-			}
-
-			if(sizeof($temp_users) > $total) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
-				);
-			}
-
-			$total_dependents_entry = 0;
-			$total_dependents = 0;
-
-			foreach ($temp_users as $key => $employee) {
-				if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
-					$total_dependents_entry += sizeof($employee['dependents']);
-				}
-			}
-
-			if($plan_tier_id) {
-				$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
-				if(sizeof($temp_users) > $total_left_count) {
+				if($total <= 0) {
 					return array(
 						'status'	=> FALSE,
-						'message'	=> "Current Member headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".sizeof($temp_users)." of current total left of ".$total_left_count." for this Plan Tier."
+						'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
 					);
 				}
 
-			}
+				if(sizeof($temp_users) > $total) {
+					return array(
+						'status'	=> FALSE,
+						'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
+					);
+				}
 
-			if($total_dependents_entry > 0) {
-				$dependent_plan_status = DB::table('dependent_plan_status')
-				->where('customer_plan_id', $planned->customer_plan_id)
-				->orderBy('created_at', 'desc')
-				->first();
-				
-				if($dependent_plan_status) {
-					$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
+				$total_dependents_entry = 0;
+				$total_dependents = 0;
 
-					if($total_dependents_entry > $total_dependents) {
+				foreach ($temp_users as $key => $employee) {
+					if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
+						$total_dependents_entry += sizeof($employee['dependents']);
+					}
+				}
+
+				if($plan_tier_id) {
+					$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
+					if(sizeof($temp_users) > $total_left_count) {
 						return array(
 							'status'	=> FALSE,
-							'message'	=> "We realised the current headcount you wish to enroll is over the current vacant dependent seat/s."
+							'message'	=> "Current Member headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".sizeof($temp_users)." of current total left of ".$total_left_count." for this Plan Tier."
 						);
 					}
-				} else if(!$dependent_plan_status && $total_dependents_entry > 0){
-					return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
-				}
-				
-				if($plan_tier_id) {
-					if($plan_tier->dependent_head_count > 0) {
-						$plan_tier_dependent_total = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
 
-						if($total_dependents_entry > $plan_tier_dependent_total) {
+				}
+
+				if($total_dependents_entry > 0) {
+					$dependent_plan_status = DB::table('dependent_plan_status')
+					->where('customer_plan_id', $planned->customer_plan_id)
+					->orderBy('created_at', 'desc')
+					->first();
+					
+					if($dependent_plan_status) {
+						$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
+
+						if($total_dependents_entry > $total_dependents) {
 							return array(
 								'status'	=> FALSE,
-								'message'	=> "Current Dependent headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".$total_dependents_entry." of current total left of ".$plan_tier_dependent_total." for this Plan Tier"
+								'message'	=> "We realised the current headcount you wish to enroll is over the current vacant dependent seat/s."
 							);
+						}
+					} else if(!$dependent_plan_status && $total_dependents_entry > 0){
+						return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
+					}
+					
+					if($plan_tier_id) {
+						if($plan_tier->dependent_head_count > 0) {
+							$plan_tier_dependent_total = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
+
+							if($total_dependents_entry > $plan_tier_dependent_total) {
+								return array(
+									'status'	=> FALSE,
+									'message'	=> "Current Dependent headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".$total_dependents_entry." of current total left of ".$plan_tier_dependent_total." for this Plan Tier"
+								);
+							}
 						}
 					}
 				}
 			}
+			
 			// get active plan id for member
 			$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 			$customer_active_plan = DB::table('customer_active_plan')
@@ -346,7 +349,7 @@ class DependentController extends \BaseController {
 					$email['end_point'] = url('upload_excel_dependents', $parameter = array(), $secure = null);
 					$email['logs'] = 'Save Temp Enrollment Excel - '.$e;
 					$email['emailSubject'] = 'Error log.';
-					// EmailHelper::sendErrorLogs($email);
+					EmailHelper::sendErrorLogs($email);
 					return array('status' => FALSE, 'message' => 'Failed to create enrollment employee. Please contact Mednefits team.', 'res' => $temp_enrollment_data, 'e' => $e->getMessage());
 				}
 

@@ -1419,12 +1419,14 @@ class PlanHelper {
 		$planned = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $planned->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
-		$total = $plan_status->employees_input - $plan_status->enrolled_employees;
-		if($total <= 0) {
-			return array(
-				'status'    => false,
-				'message'   => "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
-			);
+		if($planned->account_type != "lite_plan")	{
+			$total = $plan_status->employees_input - $plan_status->enrolled_employees;
+			if($total <= 0) {
+				return array(
+					'status'    => false,
+					'message'   => "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
+				);
+			}
 		}
 
 		$user = new User();
@@ -1763,15 +1765,24 @@ class PlanHelper {
 		
 		DB::table('employee_wallet_entitlement')->insert($data_entitlement);
 
-		$Customer_PlanStatus = new CustomerPlanStatus( );
-		$Customer_PlanStatus->addjustCustomerStatus('enrolled_employees', $active_plan->plan_id, 'increment', 1);
+		// $Customer_PlanStatus = new CustomerPlanStatus( );
+		// $Customer_PlanStatus->addjustCustomerStatus('enrolled_employees', $active_plan->plan_id, 'increment', 1);
+		if($planned->account_type != "lite_plan") {
+			DB::table('customer_plan_status')->where('customer_plan_id', $active_plan->plan_id)->increment('enrolled_employees', 1);
+		} else {
+			// increase active plan employees and invoice
+			DB::table('customer_plan_status')->where('customer_plan_id', $active_plan->plan_id)->increment('enrolled_employees', 1);
+			DB::table('customer_plan_status')->where('customer_plan_id', $active_plan->plan_id)->increment('employees_input', 1);
+			DB::table('customer_active_plan')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->increment('employees', 1);
+			DB::table('corporate_invoice')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->increment('employees', 1);
+		}
 		DB::table('customer_temp_enrollment')
 		->where('temp_enrollment_id', $temp_enrollment_id)
 		->update(['enrolled_status' => "true", 'active_plan_id' => $active_plan->customer_active_plan_id]);
 
     	// check if there is a plan tier
 		if($data_enrollee->plan_tier_id) {
-    	// check plan tier if exist
+    		// check plan tier if exist
 			$plan_tier = DB::table('plan_tiers')
 			->where('plan_tier_id', $data_enrollee->plan_tier_id)
 			->first();
@@ -1911,6 +1922,8 @@ class PlanHelper {
 		->where('employee_temp_id', $temp_enrollment_id)
 		->get();
 
+		$plan = DB::table('customer_plan')->where('customer_plan_id', $customer_plan_id)->first();
+
 		if(sizeof($dependent_enrollees) > 0) {
                 // process dependents
 			$user = new User();
@@ -1982,9 +1995,17 @@ class PlanHelper {
 								$plan_tier_class->increamentDependentEnrolledHeadCount($dependent->plan_tier_id);
 
 							}
-                                // update dependent enrollmend
+                                // update dependent enrollment
 							$dependent_enrollment->updateEnrollementStatus($dependent->dependent_temp_id);
-							$dependent_plan_status->incrementEnrolledDependents($customer_plan_id);
+							// $dependent_plan_status->incrementEnrolledDependents($customer_plan_id);
+							if($plan->account_type != "lite_plan") {
+								DB::table('dependent_plan_status')->where('customer_plan_id', $customer_plan_id)->increment('total_enrolled_dependents', 1);
+							} else {
+								DB::table('dependent_plan_status')->where('customer_plan_id', $customer_plan_id)->increment('total_dependents', 1);
+								DB::table('dependent_plan_status')->where('customer_plan_id', $customer_plan_id)->increment('total_enrolled_dependents', 1);
+								DB::table('dependent_plans')->where('dependent_plan_id', $dependent->dependent_plan_id)->increment('total_dependents', 1);
+								DB::table('dependent_invoice')->where('dependent_plan_id', $dependent->dependent_plan_id)->increment('total_dependents', 1);
+							}
 							// record enrollment status for member
 							PlanHelper::createEnrollmentHistoryStatus($user_id, $dependent_plan->customer_active_plan_id, date('Y-m-d'), $history['plan_start'], null, "immediate", "dependent");
 						}
