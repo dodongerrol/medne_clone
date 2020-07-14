@@ -486,8 +486,13 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_old_list_plans', 'BenefitsDashboardController@getOldPlansLists');
 	// hr send email account spending inquiry
 	Route::post('hr/send_spending_activation_inquiry', 'BenefitsDashboardController@sendSpendingActivateInquiry');
+	// update plan details
+	Route::post('hr/update_employee_active_plan_details', 'BenefitsDashboardController@updateActivePlanDetails');
+	// update dependent details
+	Route::post('hr/update_dependent_active_plan_details', 'BenefitsDashboardController@updateActiveDependentDetails');
 });
-
+	// downloand plan invoice
+	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');

@@ -16043,4 +16043,569 @@ class BenefitsDashboardController extends \BaseController {
 		EmailHelper::sendEmail($email_data);
 		return ['status' => true, 'message' => 'Activate Spending Account Inquiry has been sent'];
 	}
+
+	public function updateActivePlanDetails( )
+	{
+		$input = Input::all();
+		$admin_id = Session::get('admin-session-id');
+		$result = self::checkSession();
+		$hr_id = $result->hr_dashboard_id;
+		
+		if(empty($input['customer_active_plan_id']) || $input['customer_active_plan_id'] == null) {
+			return ['status' => false, 'message' => 'customer_active_plan_id is required'];
+		}
+
+		if(empty($input['start_date']) || $input['start_date'] == null) {
+			return ['status' => false, 'message' => 'start_date is required'];
+		}
+
+		if(empty($input['plan_duration']) || $input['plan_duration'] == null) {
+			return ['status' => false, 'message' => 'plan_duration is required'];
+		}
+
+		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $input['customer_active_plan_id'])->first();
+
+		if(!$customer_active_plan)  {
+			return ['status' => false, 'message' => 'Active Plan does not exist'];
+		}
+
+		if($customer_active_plan->account_type == "enterprise_plan")  {
+			if(empty($input['invoice_start']) || $input['invoice_start'] == null) {
+				return ['status' => false, 'message' => 'invoice_start is required'];
+			}
+
+			if(empty($input['invoice_due']) || $input['invoice_due'] == null) {
+				return ['status' => false, 'message' => 'invoice_due is required'];
+			}
+
+			if(empty($input['individual_price']) || $input['individual_price'] == null) {
+				return ['status' => false, 'message' => 'individual_price is required'];
+			}
+
+			// update detals
+			$validate_date = \PlanHelper::validateStartDate($input['invoice_start']);
+
+			if(!$validate_date) {
+				return ['status' => false, 'message' => 'Invoice Date must be a date'];
+			}
+
+			// update detals
+			$validate_date = \PlanHelper::validateStartDate($input['invoice_due']);
+
+			if(!$validate_date) {
+				return ['status' => false, 'message' => 'Invoice Due Date must be a date'];
+			}
+		}
+
+		// update detals
+		$validate_plan_start = \PlanHelper::validateStartDate($input['start_date']);
+
+		if(!$validate_plan_start) {
+			return ['status' => false, 'message' => 'Start Date must be a date'];
+		}
+
+		$admin_id = \AdminHelper::getAdminID();
+		$data = array();
+		$plan_start = date('Y-m-d', strtotime($input['start_date']));
+		$plan_end = date('Y-m-d', strtotime('+'.$input['plan_duration'], strtotime($plan_start)));
+		$plan_end = date('Y-m-d', strtotime('-1 day', strtotime($plan_end)));
+		
+		// update data
+		$customer_active_plan_update = array(
+			'plan_start'      => $plan_start,
+			'duration'        => $input['plan_duration'],
+			'end_date_policy' => $plan_end,
+			'updated_at'      => date('Y-m-d H:i:s')
+		);
+
+		$result = DB::table('customer_active_plan')->where('customer_active_plan_id', $input['customer_active_plan_id'])->update($customer_active_plan_update);
+
+		if($result) {
+			array_merge($data, $customer_active_plan_update);
+			if((int)$customer_active_plan->new_head_count == 0) {
+				DB::table('customer_plan')->where('customer_plan_id', $customer_active_plan->plan_id)->update(['plan_start' => $plan_start, 'plan_end' => $plan_end]);
+				$data['customer_plan_id'] = $customer_active_plan->plan_id;
+				if($admin_id) {
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'type'      => 'updated_company_primary_plan',
+					'data'      => \SystemLogLibrary::serializeData($data)
+				);
+				\SystemLogLibrary::createAdminLog($admin_logs);
+				}
+			}
+
+			if($customer_active_plan->account_type == "enterprise_plan")  {
+				// update invoice
+				$invoice = array(
+				'invoice_date'      => date('Y-m-d', strtotime($input['invoice_start'])),
+				'invoice_due'       => date('Y-m-d', strtotime($input['invoice_due'])),
+				'individual_price'  => $input['individual_price'],
+				'updated_at'      => date('Y-m-d H:i:s')
+				);
+
+				DB::table('corporate_invoice')->where('customer_active_plan_id', $input['customer_active_plan_id'])->update($invoice);
+				array_merge($data, $invoice);
+			}
+
+			
+			if($admin_id) {
+				$data['customer_active_plan'] = $input['customer_active_plan_id'];
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'updated_company_active_plan',
+					'data'      => \SystemLogLibrary::serializeData($data)
+				);
+				\SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$data['customer_active_plan'] = $input['customer_active_plan_id'];
+				$admin_logs = array(
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'updated_company_active_plan',
+					'data'      => \SystemLogLibrary::serializeData($data)
+				);
+				\SystemLogLibrary::createAdminLog($admin_logs);
+			}
+			return ['status' => true, 'message' => 'Plan details updated'];
+		}
+
+		return ['status' => false, 'message' => 'Failed to update plan details'];
+	}
+
+	public function updateActiveDependentDetails( )
+	{
+		$input = Input::all();
+		$admin_id = Session::get('admin-session-id');
+		$result = self::checkSession();
+		$hr_id = $result->hr_dashboard_id;
+
+		if(empty($input['dependent_plan_id']) || $input['dependent_plan_id'] == null) {
+			return ['status' => false, 'message' => 'dependent_plan_id is required'];
+		}
+
+		if(empty($input['start_date']) || $input['start_date'] == null) {
+			return ['status' => false, 'message' => 'start_date is required'];
+		}
+
+		if(empty($input['plan_duration']) || $input['plan_duration'] == null) {
+			return ['status' => false, 'message' => 'plan_duration is required'];
+		}
+
+
+		$customer_active_plan = DB::table('dependent_plans')->where('dependent_plan_id', $input['dependent_plan_id'])->first();
+
+		if(!$customer_active_plan)  {
+			return ['status' => false, 'message' => 'Dependent Plan does not exist'];
+		}
+
+		if($customer_active_plan->account_type == "enterprise_plan")  {
+			if(empty($input['invoice_start']) || $input['invoice_start'] == null) {
+				return ['status' => false, 'message' => 'invoice_start is required'];
+			}
+
+			if(empty($input['invoice_due']) || $input['invoice_due'] == null) {
+				return ['status' => false, 'message' => 'invoice_due is required'];
+			}
+
+			if(empty($input['individual_price']) || $input['individual_price'] == null) {
+				return ['status' => false, 'message' => 'individual_price is required'];
+			}
+
+			// update detals
+			$validate_date = \PlanHelper::validateStartDate($input['invoice_start']);
+
+			if(!$validate_date) {
+				return ['status' => false, 'message' => 'Invoice Date must be a date'];
+			}
+
+			// update detals
+			$validate_date = \PlanHelper::validateStartDate($input['invoice_due']);
+
+			if(!$validate_date) {
+				return ['status' => false, 'message' => 'Invoice Due Date must be a date'];
+			}
+		}
+
+		// update detals
+		$validate_plan_start = \PlanHelper::validateStartDate($input['start_date']);
+
+		if(!$validate_plan_start) {
+			return ['status' => false, 'message' => 'Start Date must be a date'];
+		}
+
+		$data = array();
+		$plan_start = date('Y-m-d', strtotime($input['start_date']));
+		$plan_end = date('Y-m-d', strtotime('+'.$input['plan_duration'], strtotime($plan_start)));
+		$plan_end = date('Y-m-d', strtotime('-1 day', strtotime($plan_end)));
+		
+		// update data
+		$customer_active_plan_update = array(
+			'plan_start'      => $plan_start,
+			'duration'        => $input['plan_duration'],
+			'updated_at'      => date('Y-m-d H:i:s')
+		);
+
+		$result = DB::table('dependent_plans')->where('dependent_plan_id', $input['dependent_plan_id'])->update($customer_active_plan_update);
+
+		if($result) {
+			array_merge($data, $customer_active_plan_update);
+			if($customer_active_plan->account_type == "enterprise_plan")  {
+				// update invoice
+				$invoice = array(
+				'invoice_date'      => date('Y-m-d', strtotime($input['invoice_start'])),
+				'invoice_due'       => date('Y-m-d', strtotime($input['invoice_due'])),
+				'individual_price'  => $input['individual_price'],
+				'updated_at'      => date('Y-m-d H:i:s')
+				);
+
+				DB::table('dependent_invoice')->where('dependent_plan_id', $input['dependent_plan_id'])->update($invoice);
+				array_merge($data, $invoice);
+			}
+
+			if($admin_id) {
+				$data['dependent_plan_id'] = $input['dependent_plan_id_id'];
+				$admin_logs = array(
+				'admin_id'  => $admin_id,
+				'admin_type' => 'mednefits',
+				'type'      => 'admin_updated_dependent_details',
+				'data'      => \SystemLogLibrary::serializeData($data)
+				);
+				\SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$data['dependent_plan_id'] = $input['dependent_plan_id_id'];
+				$admin_logs = array(
+				'admin_id'  => $hr_id,
+				'admin_type' => 'hr',
+				'type'      => 'admin_updated_dependent_details',
+				'data'      => \SystemLogLibrary::serializeData($data)
+				);
+				\SystemLogLibrary::createAdminLog($admin_logs);
+			}
+			return ['status' => true, 'message' => 'Plan details updated'];
+		}
+
+		return ['status' => false, 'message' => 'Failed to update plan details'];
+	}
+
+	public function downloadPlanInvoice( )
+	{
+		$input = Input::all();
+
+		if(empty($input['token'])) {
+			return View::make('errors.503');
+		}
+		
+		if(empty($input['customer_active_plan_id']) || $input['customer_active_plan_id'] == null)   {
+			return ['status' => false, 'message' => 'customer_active_plan_id is required'];
+		}
+		
+		$invoices = DB::table('corporate_invoice')->where('customer_active_plan_id', $input['customer_active_plan_id'])->get();
+
+		if(sizeof($invoices) == 0)   {
+			return ['status' => false, 'message' => 'no invoices found'];
+		}
+
+		// directory
+		$path = public_path().'/plan_invoices/' . $input['customer_active_plan_id'];
+		File::makeDirectory($path, $mode = 0777, true, true);
+		$zip_file = public_path().'/invoices.zip';
+		foreach($invoices as $key => $invoice)  {
+			$data = [];
+
+			$statement = "
+							SELECT 
+							*
+						FROM
+							(SELECT 
+								invoicesTbl.customer_active_plan_id AS planId,
+									customerBusinessContact.company_name,
+									(CASE
+										WHEN customerBusinessContactTbl.billing_status = TRUE THEN CONCAT(customerBusinessContactTbl.first_name, ' ', customerBusinessContactTbl.last_name)
+										ELSE customerBillingContact.billing_name
+									END) AS contactName,
+									(CASE
+										WHEN customerBusinessContactTbl.billing_status = TRUE THEN customerBusinessContact.company_address
+										ELSE customerBillingContact.billing_address
+									END) AS contactAddress,
+									customerBusinessContactTbl.phone AS contactPhone,
+									customerBusinessContactTbl.work_email AS contactEmail,
+									invoicesTbl.invoice_number,
+									invoicesTbl.invoice_date,
+									invoicesTbl.invoice_due,
+									customerChequeLogs.date_received,
+									ROUND(IF(((invoicesTbl.employees * invoicesTbl.individual_price) - IFNULL(customerChequeLogs.paid_amount, 0)) < 0, 0, ((invoicesTbl.employees * invoicesTbl.individual_price) - IFNULL(customerChequeLogs.paid_amount, 0))), 2) AS amtDue,
+									(CASE
+									WHEN
+										customerActivePlan.new_head_count = 1
+									THEN
+										(CASE
+											WHEN 
+										customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'stand_alone_plan'
+										|| customerActivePlan.secondary_account_type is not null AND customerActivePlan.secondary_account_type = 'pro_plan_bundle' 
+										AND customerActivePlan.account_type = 'insurance_bundle'
+										THEN 'Seat Addition - Pro Plan'
+									WHEN 
+										customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'lite_plan'
+												|| customerActivePlan.secondary_account_type is not null AND customerActivePlan.secondary_account_type = 'insurance_bundle_lite' 
+										AND customerActivePlan.account_type = 'insurance_bundle'
+										THEN 'Seat Addition - Basic Plan'
+									WHEN 
+										customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'enterprise_plan'
+										THEN 'Seat Addition - Enterprise Plan'
+										END)
+									ELSE (CASE
+										WHEN 
+									customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'stand_alone_plan'
+									|| customerActivePlan.secondary_account_type is not null AND customerActivePlan.secondary_account_type = 'pro_plan_bundle' 
+										AND customerActivePlan.account_type = 'insurance_bundle'
+									THEN 'Plan Creation - Pro Plan'
+									WHEN 
+									customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'lite_plan'
+									|| customerActivePlan.secondary_account_type is not null AND customerActivePlan.secondary_account_type = 'insurance_bundle_lite' 
+										AND customerActivePlan.account_type = 'insurance_bundle'
+									THEN 'Plan Creation - Basic Plan'
+									WHEN 
+									customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'enterprise_plan'
+									THEN 'Plan Creation - Enterprise Plan'
+									END)
+								END) AS planType,
+								(CASE
+									WHEN 
+									customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'stand_alone_plan'
+									|| customerActivePlan.secondary_account_type is not null AND customerActivePlan.secondary_account_type = 'pro_plan_bundle' 
+									AND customerActivePlan.account_type = 'insurance_bundle'
+									THEN 'Pro Plan'
+								WHEN 
+									customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'lite_plan'
+									|| customerActivePlan.secondary_account_type is not null AND customerActivePlan.secondary_account_type = 'insurance_bundle_lite' 
+									AND customerActivePlan.account_type = 'insurance_bundle'
+									THEN 'Basic Plan'
+								WHEN 
+									customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'enterprise_plan'
+									THEN 'Enterprise Plan'
+								ELSE  customerActivePlan.account_type
+								END) AS activeType,
+								(CASE
+									WHEN customerActivePlan.secondary_account_type is null AND customerActivePlan.account_type = 'lite_plan'
+									|| customerActivePlan.secondary_account_type is not null AND customerActivePlan.secondary_account_type = 'insurance_bundle_lite' 
+									AND customerActivePlan.account_type = 'insurance_bundle' 
+									THEN 1
+									ELSE 0
+								END) AS complementary,
+									invoicesTbl.customer_active_plan_id AS ActivePlanId,
+									invoicesTbl.employees AS NoOfEmployee,
+									'Annual' AS billingFrequency,
+									@plan_start:=(CASE
+										WHEN invoicesTbl.plan_extention_enable THEN planExtension.plan_start
+										ELSE customerActivePlan.plan_start
+									END) AS startDate,
+									@plan_end:=(CASE
+										WHEN
+											customerActivePlan.new_head_count = 0
+										THEN
+											(CASE
+												WHEN
+													invoicesTbl.plan_extention_enable
+												THEN
+													DATE_SUB((CASE
+														WHEN INSTR(planExtension.duration, 'year') > 0 THEN DATE_ADD(planExtension.plan_start, INTERVAL planExtension.duration YEAR)
+														ELSE DATE_ADD(planExtension.plan_start, INTERVAL planExtension.duration MONTH)
+													END), INTERVAL 1 DAY)
+												ELSE DATE_SUB((CASE
+													WHEN INSTR(customerActivePlan.duration, 'year') > 0 THEN DATE_ADD(customerActivePlan.plan_start, INTERVAL customerActivePlan.duration YEAR)
+													ELSE DATE_ADD(customerActivePlan.plan_start, INTERVAL customerActivePlan.duration MONTH)
+												END), INTERVAL 1 DAY)
+											END)
+										ELSE customerPlan.plan_end
+									END) AS endDate,
+									customerActivePlan.duration AS planDuration,
+									invoicesTbl.employees AS quantity,
+									(CASE 
+									WHEN 
+										customerActivePlan.new_head_count = 0 
+									THEN
+									truncate((invoicesTbl.employees * invoicesTbl.individual_price),2)
+									ELSE 
+										truncate((invoicesTbl.employees * truncate((invoicesTbl.individual_price / DAYOFYEAR(CONCAT(YEAR(NOW()), '-12-31'))) * (DATEDIFF(@plan_end, @plan_start)+1),
+												2)),2)
+									END) AS amt,
+									(CASE
+										WHEN customerActivePlan.new_head_count = 0 THEN invoicesTbl.individual_price
+										ELSE truncate((invoicesTbl.individual_price / DAYOFYEAR(CONCAT(YEAR(NOW()), '-12-31'))) * (DATEDIFF(@plan_end, @plan_start)+1), 2)
+									END) AS price,
+									invoicesTbl.currency_type,
+									customerActivePlan.paid
+							FROM
+								medi_corporate_invoice AS invoicesTbl
+							LEFT JOIN medi_customer_business_contact AS customerBusinessContactTbl ON customerBusinessContactTbl.customer_buy_start_id = invoicesTbl.customer_id
+							LEFT JOIN medi_customer_billing_contact AS customerBillingContact ON customerBillingContact.customer_buy_start_id = invoicesTbl.customer_id
+							LEFT JOIN medi_customer_business_information AS customerBusinessContact ON customerBusinessContact.customer_buy_start_id = invoicesTbl.customer_id
+							LEFT JOIN (SELECT 
+								*
+							FROM
+								medi_customer_cheque_logs
+							WHERE
+								invoice_id IS NOT NULL
+							GROUP BY customer_active_plan_id , invoice_id) AS customerChequeLogs ON customerChequeLogs.customer_active_plan_id = invoicesTbl.customer_active_plan_id
+								AND customerChequeLogs.invoice_id = invoicesTbl.corporate_invoice_id
+							LEFT JOIN medi_customer_active_plan AS customerActivePlan ON customerActivePlan.customer_active_plan_id = invoicesTbl.customer_active_plan_id
+								AND customerActivePlan.customer_start_buy_id = invoicesTbl.customer_id
+							LEFT JOIN medi_plan_extensions AS planExtension ON planExtension.customer_active_plan_id = invoicesTbl.customer_active_plan_id
+							LEFT JOIN medi_customer_plan AS customerPlan ON customerPlan.customer_buy_start_id = customerActivePlan.customer_start_buy_id
+								AND customerPlan.customer_plan_id = customerActivePlan.plan_id
+							JOIN (SELECT @planStart:=0, @planEnd:=0) AS dumTbl ON 1 = 1
+							WHERE
+								invoicesTbl.corporate_invoice_id = ".$invoice->corporate_invoice_id." AND customerActivePlan.account_type != 'trial_plan' UNION ALL SELECT 
+								'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									'dependent_data',
+									(CASE
+										WHEN dependentPlan.account_type = 'stand_alone_plan' 
+										THEN 'Plan Creation - Pro Plan'
+										WHEN dependentPlan.account_type = 'lite_plan' 
+										THEN 'Plan Creation - Basic Plan'
+										WHEN dependentPlan.account_type = 'enterprise_plan' 
+										THEN 'Plan Creation - Enterprise Plan'
+									END),
+									(CASE
+									WHEN dependentPlan.account_type = 'stand_alone_plan' 
+										THEN 'Pro Plan'
+									WHEN dependentPlan.account_type = 'lite_plan' 
+										THEN 'Basic Plan'
+									WHEN dependentPlan.account_type = 'enterprise_plan' 
+										THEN 'Enterprise Plan'
+									END),
+									'dependent_data',
+									'dependent_data',
+									dependentInvoice.total_dependents,
+									'dependent_data',
+									dependentPlan.plan_start,
+									DATE_SUB((CASE
+										WHEN INSTR(dependentPlan.duration, 'year') > 0 THEN DATE_ADD(dependentPlan.plan_start, INTERVAL dependentPlan.duration YEAR)
+										ELSE DATE_ADD(dependentPlan.plan_start, INTERVAL dependentPlan.duration MONTH)
+									END), INTERVAL 1 DAY) AS plan_end,
+									dependentPlan.duration,
+									dependentInvoice.total_dependents AS dependent_quantity,
+									ROUND(dependentInvoice.total_dependents * dependentInvoice.individual_price, 2) AS dependent_amt,
+									dependentInvoice.individual_price AS dependent_price,
+									'dependent_data',
+									'dependent_data'
+							FROM
+								medi_dependent_plans AS dependentPlan
+							LEFT JOIN medi_dependent_invoice AS dependentInvoice ON dependentInvoice.dependent_plan_id = dependentPlan.dependent_plan_id
+							WHERE
+								type = 'active_plan' AND tagged = 1
+									AND dependentPlan.customer_active_plan_id = ".$invoice->customer_active_plan_id."
+								AND dependentPlan.account_type != 'trial_plan') AS mainTbl
+						WHERE
+							amt > 0;
+			";
+			$result = DB::select($statement);
+
+			if(sizeof($result) == 0) {
+				return ['status' => false, 'message' => 'no results found'];
+			}
+		
+			$employee = $result[0];
+			$dependent = null;
+		
+			if(sizeof($result) > 1) {
+				$dependent = $result[1];
+			}
+			
+			$data['email'] = $employee->contactEmail;
+			$data['phone']     = $employee->contactPhone;
+			$data['company'] = $employee->company_name;
+			$data['postal'] = null;
+			$data['currency_type'] = strtoupper($employee->currency_type);
+			$data['name'] = $employee->contactName;
+			$data['address'] = $employee->contactAddress;
+			$data['account_type'] = $employee->activeType;
+			$data['complimentary'] = (int)$employee->complementary == 1 ? true : false;
+			$data['plan_type'] = $employee->planType;
+			$data['invoice_number'] = $employee->invoice_number;
+			$data['invoice_date']		= date('F d, Y', strtotime($employee->invoice_date));
+			$data['invoice_due']		= date('F d, Y', strtotime($employee->invoice_due));
+			$data['number_employess'] = $employee->NoOfEmployee;
+			$data['plan_start']     = date('F d, Y', strtotime($employee->startDate));
+			$data['plan_end'] = date('F d, Y', strtotime($employee->endDate));
+			$data['duration'] = $employee->planDuration;
+			$data['notes'] = null;
+			$data['head_count'] = false;
+			
+			$data['paid'] = $employee->paid == "true" ? true : false;
+			
+			$data['customer_active_plan_id'] = $employee->planId;
+		
+			if($data['paid'] == true) {
+				$data['payment_date'] = date('F d, Y', strtotime($employee->date_received));
+			}
+			
+			// dependents
+			$data['dependents'] = [];
+			$amount_due = 0;
+			$total = 0;
+			$amount_due += (float)$employee->amtDue;
+			$total += (float)$employee->amt;
+			
+			if($dependent) {
+				$data['dependents'][] = array(
+				'account_type'		=> $dependent->activeType,
+				'total_dependents'	=> $dependent->NoOfEmployee,
+				'price'  => $dependent->price,
+				'amount'			=> number_format($dependent->amt, 2),
+				'plan_start'		=> date('F d, Y', strtotime($dependent->startDate)),
+				'plan_end'			=> date('F d, Y', strtotime($dependent->endDate)),
+				'duration'			=> $dependent->planDuration,
+				'currency_type' => strtoupper($employee->currency_type)
+				);
+				
+				$amount_due += (float)$dependent->amt;
+				$total += (float)$dependent->amt;
+			}
+		
+			$data['amount_due'] = number_format($amount_due, 2);
+			$data['total'] = number_format($total, 2);
+			$data['price'] = number_format($employee->price, 2);
+			$data['amount'] = number_format((float)$employee->amt, 2);
+			// return View::make('pdf-download.hr-accounts-transaction', $data);
+			$pdf = \PDF::loadView('pdf-download.hr-accounts-transaction', $data);
+			$pdf->getDomPDF()->get_option('enable_html5_parser');
+			$pdf->setPaper('A4', 'portrait');
+			$pdf->save($path."/".$data['invoice_number'].'.pdf');
+		}
+	
+		// return view('pdf-download.admin-corporate-transactions-download-invoice', $data);
+		// then zip and  download pdf
+		$zip = new \ZipArchive();
+		$zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+		$files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
+
+		foreach ($files as $name => $file)
+		{
+			// We're skipping all subfolders
+			if (!$file->isDir()) {
+				$filePath     = $file->getRealPath();
+
+				// extracting filename with substr/strlen
+				$relativePath = $request->get('customer_active_plan_id').'/' . substr($filePath, strlen($path) + 1);
+				$zip->addFile($filePath, $relativePath);
+			}
+		}
+		$zip->close();
+		// delete directory
+		File::deleteDirectory($path);
+		// unlink($zip_file);
+		return response()->download($zip_file)->deleteFileAfterSend(true);
+	}
 }
