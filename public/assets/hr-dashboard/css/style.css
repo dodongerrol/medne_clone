@@ -10389,7 +10389,15 @@ span.dropdown-entitlement.disabled {
 .active-plan-dp-wrapper >div:last-child {
   border: 0;
 }
+.new-account-modal .password-input.password-border {
+  border: 1px solid #E63A33;
+}
 
+.password-confirmation-text {
+  color: #E63A33;
+  text-align: center;
+  font-size: 14px;
+}
 .mednefits-body-box .wellness-account-info {
   display: inline-block;
 }

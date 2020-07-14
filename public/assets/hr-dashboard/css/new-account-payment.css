@@ -218,7 +218,7 @@
 	border: 0;
 	outline: none;
 	width: 100%;
-	padding: 0 !important;
+	padding: 0;
 }
 .new-account-modal .company-account-input-wrapper input:placeholder {
 	color: #848484;
@@ -500,4 +500,48 @@
 	}
 }
 
-
+.plan-details-container .btn-edit-details {
+	font-size: 14px;
+}
+#edit_employee_plan .edit-emp-row-info {
+	display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-column-gap: 37px;
+}
+#edit_employee_plan .edit-emp-row-info:last-child {
+	grid-template-columns: 1fr 1fr;
+}
+#edit_employee_plan .btn-edit-cancel {
+	background-color: #fff;
+	border: 1px solid #0392CF;
+	color: #0392CF;
+}
+#edit_employee_plan .custom-input-wrapper {
+	position: relative;
+}
+#edit_employee_plan .custom-input-wrapper img {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	height: 15px;
+	width: 14px;
+}
+#edit_employee_plan .custom-input-wrapper i {
+	position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 20px;
+  color: #ccc;
+}
+#edit_employee_plan .price-dependent-input-wrapper {
+	display: flex;
+	padding: 0;
+}
+#edit_employee_plan .price-dependent-input-wrapper >div {
+	border-right: 1px solid #BFBFBF;
+	padding: 5px;
+	font-size: 14px;
+}
+#edit_employee_plan .price-dependent-input-wrapper input {
+	padding: 5px 10px;
+}

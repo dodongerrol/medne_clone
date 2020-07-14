@@ -331,6 +331,9 @@
 								<div>Total Enrolled Employees: </div> 
 								<span> 03</span>
 							</div>
+							<div class="btn-edit-container">
+								<button data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+							</div>
 						</div>
 						<div class="account-card-container">
 							<div class="plan-account-sub-title">
@@ -344,6 +347,9 @@
 							<div class="account-card-row-info">
 								<div>Total Enrolled Dependents: </div> 
 								<span> 0</span>
+							</div>
+							<div class="btn-edit-container">
+								<button data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
 							</div>
 						</div>
 					</div>
@@ -567,10 +573,92 @@
 											<i class="fa fa-angle-down"></i>
 										</div>
 										<div class="custom-input-wrapper">
-											<input ng-model="global_hrData.phone" type="text">
+											<input ng-model="global_hrData.phone" type="number">
 										</div>
 									</div>
 								</div>
+				      </div>
+				      <div class="modal-footer">
+				        <button data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
+				        <button ng-click="_updateHrDetails_( global_hrData )" class="btn-update">Update</button>
+				      </div>
+			      </form>
+			    </div>
+			  </div>
+			</div>
+
+			<div class="modal fade new-account-modal" id="edit_employee_plan" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+			    <div class="modal-content">
+			    	<form>
+				      <div class="modal-header">
+				        <h4>Edit Employee Plan</h4>
+				      </div>
+				      <div class="modal-body">
+				        <div class="company-account-input-wrapper">
+				        	<label>Plan Type</label>
+				        	<div class="custom-input-wrapper">
+				        		<input ng-model="global_hrData.plan_type" type="text">
+				        		<i class="fa fa-angle-down"></i>
+				        	</div>
+				        </div>
+				        <div class="edit-emp-row-info">
+				        	<div class="company-account-input-wrapper">
+					        	<label>Start Date</label>
+					        	<div class="custom-input-wrapper">
+					        		<input ng-model="global_hrData.start_date" type="text">
+					        		<img src="../assets/images/calendar-gray.png">
+					        	</div>
+					        </div>
+					        <div class="company-account-input-wrapper">
+					        	<label>Plan Duration</label>
+					        	<div class="custom-input-wrapper">
+					        		<input ng-model="global_hrData.plan_duration" type="text">
+					        		<i class="fa fa-angle-down"></i>
+					        	</div>
+					        </div>
+				        </div>
+				        <div ng-if="spending_account_status.account_type == 'basic_plan' " class="company-account-input-wrapper">
+				        	<div class="company-account-input-wrapper">
+					        	<label>Total Enrolled Accounts</label>
+					        	<div class="custom-input-wrapper">
+					        		<input ng-model="global_hrData.dependent_account" type="text">
+					        	</div>
+					        </div>
+				        </div>
+				        <div ng-if="spending_account_status.account_type == 'enterprise_plan' " class="edit-emp-row-info">
+				        	<div class="company-account-input-wrapper">
+					        	<label>Total Dependent Accounts</label>
+					        	<div class="custom-input-wrapper">
+					        		<input ng-model="global_hrData.dependent_account" type="text">
+					        	</div>
+					        </div>
+					        <div class="company-account-input-wrapper">
+					        	<label>Price Per Dependent</label>
+					        	<div class="custom-input-wrapper price-dependent-input-wrapper">
+					        		<div>
+					        			<span>SGD</span>
+					        		</div>
+					        		<input ng-model="global_hrData.price_dependent" type="text">
+					        	</div>
+					        </div>
+				        </div>
+				        <div ng-if="spending_account_status.account_type == 'enterprise_plan' " class="edit-emp-row-info">
+				        	<div class="company-account-input-wrapper">
+					        	<label>Invoice Start Date</label>
+					        	<div class="custom-input-wrapper">
+					        		<input ng-model="global_hrData.invoice_start_date" type="text">
+					        		<img src="../assets/images/calendar-gray.png">
+					        	</div>
+					        </div>
+					        <div class="company-account-input-wrapper">
+					        	<label>Invoice Due Date</label>
+					        	<div class="custom-input-wrapper">
+					        		<input ng-model="global_hrData.invoice_date" type="text">
+					        		<img src="../assets/images/calendar-gray.png">
+					        	</div>
+					        </div>
+				        </div>
 				      </div>
 				      <div class="modal-footer">
 				        <button data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
@@ -592,15 +680,18 @@
 				      	<div ng-if="!global_passwordSuccess">
 					        <div class="company-account-input-wrapper">
 					        	<label>New Password</label>
-					        	<div class="custom-input-wrapper">
-					        		<input type="text" ng-model="passwordData.newPassword" placeholder="Enter new password">
+					        	<div class="custom-input-wrapper password-input" ng-class="{'password-border' :  passwordCheck }">
+					        		<input  type="text" ng-model="passwordData.newPassword" placeholder="Enter new password">
 					        	</div>
 					        </div>
 					        <div class="company-account-input-wrapper">
 					        	<label>Confirm Password</label>
-					        	<div class="custom-input-wrapper">
+					        	<div class="custom-input-wrapper password-input" ng-class="{'password-border' :  passwordCheck }">
 					        		<input type="text" ng-model="passwordData.confirmPassword" placeholder="Re-type new password">
 					        	</div>
+					        </div>
+					        <div ng-if="passwordCheck" class="password-confirmation-text">
+					        	<span>Your new password and confirmation password do not match.</span>
 					        </div>
 				        </div>
 				        <div ng-if="global_passwordSuccess" class="succesfully-updated">
@@ -613,7 +704,7 @@
 				      <div class="modal-footer">
 				        <button ng-if="!global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
 				        <button ng-click="_updatePassword_( passwordData )" 
-				        ng-disabled="passwordData.newPassword == '' && passwordData.confirmPassword == '' || passwordData.newPassword != passwordData.confirmPassword" 
+				        ng-disabled="passwordData.newPassword == '' && passwordData.confirmPassword == '' " 
 				        ng-if="!global_passwordSuccess" class="btn-update">Update</button>
 				        <button ng-if="global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
 				      </div>

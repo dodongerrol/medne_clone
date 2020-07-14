@@ -87,7 +87,8 @@ app.directive("companyContactsDirective", [
               console.log(iti1.getSelectedCountryData());
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
             })
-          } else if ( scope.global_hrData.phone_code == '63' ) {
+          } else if ( scope.global_hrData.phone_code == '63' || scope.global_hrData.phone_code == "" ) {
+            console.log('pag blank');
             $('.iti__selected-dial-code').addClass('empty');
             var input3 = document.querySelector("#phone_number");
             iti1 = intlTelInput(input3, settings3);
@@ -635,23 +636,31 @@ app.directive("companyContactsDirective", [
           scope.global_passwordSuccess = false;
           scope.passwordData.newPassword = "";
           scope.passwordData.confirmPassword = "";
+          scope.passwordCheck = false;
         }
 
+        scope.passwordCheck = false;
         scope._updatePassword_ = function ( data ) {
           let params = {
             new_password: data.newPassword,
             confirm_password: data.confirmPassword,
           }
-          scope.toggleLoading();
-          hrSettings.updateHrPassword( params )
-            .then(function (response) {
-              console.log(response);
 
-              if ( response.status ) {
-                scope.global_passwordSuccess = true;
-              }
-              scope.toggleOff();
-            });
+          if ( data.newPassword == data.confirmPassword ) {
+            scope.toggleLoading();
+            hrSettings.updateHrPassword( params )
+              .then(function (response) {
+                console.log(response);
+
+                if ( response.status ) {
+                  scope.global_passwordSuccess = true;
+                }
+                scope.toggleOff();
+              });
+          } else {
+            scope.passwordCheck = true;
+          }
+          
         }
         scope.page_active = 1;
         scope.per_page = 3;
