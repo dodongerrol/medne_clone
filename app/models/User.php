@@ -169,8 +169,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                     }
 
                     if(isset($data['cap_per_visit']) || !$data['cap_per_visit']) {
-                        $data_wallet['cap_per_visit_medical'] = $data['cap_per_visit'];
-                        $data_wallet['cap_per_visit_wellness'] = $data['cap_per_visit'];
+                        $data_wallet['cap_per_visit_medical'] = $data['cap_per_visit'] ? $data['cap_per_visit'] : 0;
+                        $data_wallet['cap_per_visit_wellness'] = $data['cap_per_visit'] ? $data['cap_per_visit'] : 0;
                     }
                     $wallet->createWallet($data_wallet);
                     return $insertedId;
