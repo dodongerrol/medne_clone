@@ -371,15 +371,15 @@ class PlanTierController extends \BaseController {
 
 		$customer_id = PlanHelper::getCusomerIdToken();
 		$plan_tier_id = null;
-		if(!empty($input['plan_tier_id']) || $input['plan_tier_id'] != null) {
-			$plan_tier = DB::table('plan_tiers')->where('plan_tier_id', $input['plan_tier_id'])->where('active', 1)->first();
+		// if(!empty($input['plan_tier_id']) || $input['plan_tier_id'] != null) {
+		// 	$plan_tier = DB::table('plan_tiers')->where('plan_tier_id', $input['plan_tier_id'])->where('active', 1)->first();
 
-			if(!$plan_tier) {
-				return array('satus' => false, 'message' => 'Plan Tier not found.');
-			}
+		// 	if(!$plan_tier) {
+		// 		return array('satus' => false, 'message' => 'Plan Tier not found.');
+		// 	}
 
-			$plan_tier_id = $input['plan_tier_id'];
-		}
+		// 	$plan_tier_id = $input['plan_tier_id'];
+		// }
 
 
 		if(empty($input['employees']) || sizeof($input['employees']) == 0) {
@@ -391,39 +391,41 @@ class PlanTierController extends \BaseController {
 					->orderBy('created_at', 'desc')
 					->first();
 
-		$plan_status = DB::table('customer_plan_status')
+
+		if($planned->account_type != "lite_plan") {
+			$plan_status = DB::table('customer_plan_status')
 							->where('customer_plan_id', $planned->customer_plan_id)
 							->orderBy('created_at', 'desc')
 							->first();
 
-		$total = $plan_status->employees_input - $plan_status->enrolled_employees;
-		// return $total;
-		// return sizeof($input['employees']);
-		if($total <= 0) {
-			return array(
-				'status'	=> FALSE,
-				'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
-			);
-		}
-
-		if(sizeof($input['employees']) > $total) {
-			return array(
-				'status'	=> FALSE,
-				'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
-			);
-		}
-
-		if($plan_tier_id) {
-			$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
-
-			if(sizeof($input['employees']) > $total_left_count) {
+			$total = $plan_status->employees_input - $plan_status->enrolled_employees;
+			
+			
+			if($total <= 0) {
 				return array(
 					'status'	=> FALSE,
-					'message'	=> "Current Member headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".sizeof($input['employees'])." of current total left of ".$total_left_count." for this Plan Tier"
+					'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
 				);
 			}
-		}
 
+			if(sizeof($input['employees']) > $total) {
+				return array(
+					'status'	=> FALSE,
+					'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
+				);
+			}
+
+			if($plan_tier_id) {
+				$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
+
+				if(sizeof($input['employees']) > $total_left_count) {
+					return array(
+						'status'	=> FALSE,
+						'message'	=> "Current Member headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".sizeof($input['employees'])." of current total left of ".$total_left_count." for this Plan Tier"
+					);
+				}
+			}
+		}
 
 		// get active plan id for member
 		$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
@@ -433,48 +435,49 @@ class PlanTierController extends \BaseController {
 			$customer_active_plan_id = $active_plan->customer_active_plan_id;
 		}
 
-		$total_dependents_entry = 0;
-		$total_dependents = 0;
-		// check total depedents to be save
-		foreach ($input['employees'] as $key => $employee) {
-			if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
-				$total_dependents_entry += sizeof($employee['dependents']);
+		if($planned->account_type != "lite_plan") {
+			$total_dependents_entry = 0;
+			$total_dependents = 0;
+			// check total depedents to be save
+			foreach ($input['employees'] as $key => $employee) {
+				if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
+					$total_dependents_entry += sizeof($employee['dependents']);
+				}
 			}
-		}
 
-		$dependent_plan_status = DB::table('dependent_plan_status')
-								->where('customer_plan_id', $planned->customer_plan_id)
-								->orderBy('created_at', 'desc')
-								->first();
-		
-		if($dependent_plan_status) {
-			$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
-			if($total_dependents <= 0 && $total_dependents_entry > 0) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
-				);
-			}
-		} else if(!$dependent_plan_status && $total_dependents_entry > 0){
-			return array(
-					'status'	=> FALSE,
-					'message'	=> "Please purchase a dependent plan to be able to enroll the dependent accounts."
-				);
-		}
-
-		if($plan_tier_id) {
-			if($plan_tier->dependent_head_count > 0) {
-				$plan_tier_dependent_total = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
-
-				if($total_dependents_entry > $plan_tier_dependent_total) {
+			$dependent_plan_status = DB::table('dependent_plan_status')
+									->where('customer_plan_id', $planned->customer_plan_id)
+									->orderBy('created_at', 'desc')
+									->first();
+			
+			if($dependent_plan_status) {
+				$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
+				if($total_dependents <= 0 && $total_dependents_entry > 0) {
 					return array(
 						'status'	=> FALSE,
-						'message'	=> "Current Dependent headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".$total_dependents_entry." of current total left of ".$plan_tier_dependent_total." for this Plan Tier"
+						'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
 					);
+				}
+			} else if(!$dependent_plan_status && $total_dependents_entry > 0){
+				return array(
+						'status'	=> FALSE,
+						'message'	=> "Please purchase a dependent plan to be able to enroll the dependent accounts."
+					);
+			}
+
+			if($plan_tier_id) {
+				if($plan_tier->dependent_head_count > 0) {
+					$plan_tier_dependent_total = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
+
+					if($total_dependents_entry > $plan_tier_dependent_total) {
+						return array(
+							'status'	=> FALSE,
+							'message'	=> "Current Dependent headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".$total_dependents_entry." of current total left of ".$plan_tier_dependent_total." for this Plan Tier"
+						);
+					}
 				}
 			}
 		}
-
 
 		$customer_active_plan = DB::table('customer_active_plan')
 									->where('customer_active_plan_id', $customer_active_plan_id)
