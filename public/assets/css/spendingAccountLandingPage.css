@@ -183,6 +183,9 @@ b{
   justify-content: center;
   align-items: center;
 }
+.footer-wrapper a{
+  text-decoration: none;
+}
 
 
 @media (max-width: 1330px) {

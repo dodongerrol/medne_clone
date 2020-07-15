@@ -1,7 +1,8 @@
 app.directive('tAndCDirective', [
 	'$state',
 	'activationSettings',
-	function directive($state,activationSettings) {
+	'$location',
+	function directive($state,activationSettings, $location) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -16,22 +17,30 @@ app.directive('tAndCDirective', [
 //         }
 // =======
 				scope.global_agreementSelector = false;
+				scope.getToken = {};
+				scope.scrollBottom = function () {
+					let myDiv = document.getElementById("privacy-policy-container");
+					// let clientHeight = document.getElementById("privacy-policy-container").clientHeight;
 
-        scope.scrollBottom = function () {
-        	let myDiv = document.getElementById("privacy-policy-container");
-        	// let clientHeight = document.getElementById("privacy-policy-container").clientHeight;
+					myDiv.scrollTop = myDiv.scrollHeight;        	
+				}
+				scope.validateToken = function () {
+					let token = localStorage.getItem('activation_token');
+					activationSettings.validateToken( token )
+					.then(function(response){
+						console.log('response', response);
+						scope.getToken = response.data.data;
+					});
+				}
 
-        	myDiv.scrollTop = myDiv.scrollHeight;        	
-        }
-
-        jQuery( function($) {
-	    			$('#privacy-policy-container').bind('scroll', function() {
-	            if($(this).scrollTop() + $(this).innerHeight()>=$(this)[0].scrollHeight) {
-	              $('.btn-scroll').addClass('disable');
-	            } else {
-	            	$('.btn-scroll').removeClass('disable');
-	            }
-	          })
+				jQuery( function($) {
+							$('#privacy-policy-container').bind('scroll', function() {
+						if($(this).scrollTop() + $(this).innerHeight()>=$(this)[0].scrollHeight) {
+						$('.btn-scroll').addClass('disable');
+						} else {
+							$('.btn-scroll').removeClass('disable');
+						}
+					})
 	  			}
 				);
 
@@ -43,14 +52,19 @@ app.directive('tAndCDirective', [
 				}
 				scope.proceedPrivacy = function () {
 					console.log('sulod');
-					activationSettings.updateAgreeStatus()
-          	.then(function(response){
-          		console.log(response);
-          		$state.go('company-create-password');
-          	});
+					activationSettings.updateAgreeStatus(scope.getToken.hr_dashboard_id)
+					.then(function(response){
+						console.log(response);
+						if(response.status) {
+							$state.go('company-create-password');
+						} else {
+							alert(response.data.message);
+						}
+					});
 				}
 
 				scope.onLoad = function () {
+					scope.validateToken();
 					scope.scrollBottom();
 					document.getElementById('privacy-policy-container').scrollTop -= 1000;
 				}

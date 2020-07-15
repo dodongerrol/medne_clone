@@ -3,8 +3,8 @@ var service = angular.module("activationService", []);
 service.factory("activationSettings", function($http, serverUrl) {
   var activationFactory = {};
 
-  activationFactory.updateAgreeStatus = function() {
-    return $http.get(serverUrl.url + "update/agree_status");
+  activationFactory.updateAgreeStatus = function($id) {
+    return $http.get(serverUrl.url + "update/agree_status?hr_id=" + $id);
   };
   
   activationFactory.createActivationPassword = function(data) {

@@ -24,6 +24,7 @@ app.directive('dashboardDirective', [
 				scope.statementHide = true;
 				scope.empStatementShow = false;
 				scope.spending_account_status = {};
+				scope.employee_plan_status = {};
 				// scope.totalCompanyHeight = document.getElementById("tolal-company-container").style.height = "50px";
 				// console.log(scope.totalCompanyHeight);
 
@@ -287,12 +288,21 @@ app.directive('dashboardDirective', [
 						});
 				}
 
+				scope.getEmployeeStatus = function( ) {
+					console.log('here oh')
+					hrSettings.getEmployeeStatus( )
+					.then(function(response) {
+					  console.log(response);
+					  scope.employee_plan_status = response.data.data;
+					});
+				};
+
 				scope.onLoad();
 				scope.getPlanStatus();
 				scope.companyDependents();
 				scope.getCompanyIntroMessage();
 				scope.companyPlanTotalDue();
-				
+				scope.getEmployeeStatus();
 				scope.companyAccountType();
 			}
 		}

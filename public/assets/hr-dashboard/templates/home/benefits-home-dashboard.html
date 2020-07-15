@@ -518,12 +518,12 @@
 						 </div>
 						 <div class="mednefits-body-box">
 							 <div class="">
-								 <h3 class="enrollment-status-number" ng-bind="progress.total_employees"></h3>
+								 <h3 class="enrollment-status-number" ng-bind="employee_plan_status.total_enrolled_employees"></h3>
 								 <h3 class="enrollment-status-text">TOTAL ENROLLED EMPLOYEES</h3>
 							 </div>
 							 <div class="row-box">
 									<div class="">
-										<h3 class="enrollment-status-number font-14" ng-bind="progress.in_progress"></h3>
+										<h3 class="enrollment-status-number font-14" ng-bind="employee_plan_status.pending"></h3>
 										<h3 class="enrollment-status-text font-11">PENDING
 											<span class="info-box-img-wrapper">
 												<img ng-click="_toggleInfo_('pending')" class="info-box-img pending-info-img" src="../assets/hr-dashboard/img/info-blue.png">
@@ -570,7 +570,7 @@
 										</h3>
 									</div>
 									<div class="">
-										<h3 class="enrollment-status-number font-14" ng-bind="progress.in_progress"></h3>
+										<h3 class="enrollment-status-number font-14" ng-bind="employee_plan_status.active"></h3>
 										<h3 class="enrollment-status-text font-11 ">ACTIVE
 											<span class="info-box-img-wrapper">
 											<img ng-click="_toggleInfo_('active')" class="info-box-img active-info-img" src="../assets/hr-dashboard/img/info-blue.png">
@@ -619,7 +619,7 @@
 							 </div>
 							 <div class="row-box">
 								 <div class="">
-									<h3 class="enrollment-status-number font-14" ng-bind="progress.completed"></h3>
+									<h3 class="enrollment-status-number font-14" ng-bind="employee_plan_status.login"></h3>
 									<h3 class="enrollment-status-text font-11">ACTIVATED
 										<span class="info-box-img-wrapper">
 											<img ng-click="_toggleInfo_('activated')" class="info-box-img activated-info-img" src="../assets/hr-dashboard/img/info-blue.png">
@@ -676,7 +676,7 @@
 						 </div>
 						 <div class="mednefits-body-box">
 							 <div class="">
-								 <h3 class="enrollment-status-number" ng-bind="dependents.total_number_of_seats"></h3>
+								 <h3 class="enrollment-status-number" ng-bind="employee_plan_status.total_enrolled_dependents"></h3>
 								 <h3 class="enrollment-status-text">TOTAL ENROLLED DEPENDENTS</h3>
 							 </div>
 						 </div>

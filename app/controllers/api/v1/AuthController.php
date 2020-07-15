@@ -6867,7 +6867,7 @@ public function payCreditsNew( )
     $checker = DB::table('user')
       ->select('UserID', 'Name as name', 'member_activated')
       ->where('UserID', $input['user_id'])->first();
-
+    
       if(!$checker) {
         $returnObject->status = false;
         $returnObject->message = 'User not found!';
@@ -6888,12 +6888,19 @@ public function payCreditsNew( )
 
       $newPassword = [
         'Password' => StringHelper::encode($input['password_confirm']),
-        'member_activated' => 1
+        'member_activated' => 1,
+        'account_update_status' => 1,
+        'account_already_update'  => 1
       ];
-
+      
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
-        $returnObject->status = true;
-        $returnObject->message = 'Your Password has been created, Account was active!';
-        return Response::json($returnObject);
+      $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
+      if(!$token->status) {
+        return Response::json($token);
+      }
+      $returnObject->status = true;
+      $returnObject->token = $token->data['access_token'];
+      $returnObject->message = 'Your Password has been created, Account was active!';
+      return Response::json($returnObject);
   }
 }

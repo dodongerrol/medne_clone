@@ -264,7 +264,18 @@ class BenefitsDashboardController extends \BaseController {
 
 	public function updateAgreeStatus( )
 	{
-		$result = self::checkSession();
+		$input = Input::all();
+		
+		if(empty($input['hr_id']) || $input['hr_id'] == null) {
+			return ['status' => false, 'message' => 'hr_id is required'];
+		}
+
+		$result = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $input['hr_id'])->first();
+
+		if(!$result) {
+			return ['status' => false, 'message' => 'hr id does not exist'];
+		}
+		// $result = self::checkSession();
 		// return json_encode($result);
 		$customer_start = new CorporateBuyStart();
 		return $customer_start->updateAgreeStatus($result->customer_buy_start_id);

@@ -427,6 +427,9 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   // hrFactory.get_member_refund = function (data) {
   //   return $http.post( serverUrl.url + "/employee/check_email_validation", data  );
   // }
+  hrFactory.getEmployeeStatus = function( ) {
+    return $http.get( serverUrl.url + "/hr/get_employee_enrollment_status");
+  };
 
 
   hrFactory.getActivePlanDetails = function ( data ) {
@@ -616,6 +619,5 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   hrFactory.memberCredits = function( id  ) {
     return $http.get( serverUrl.url + "/hr/member_credits?member_id=" + id );
   };
-
   return hrFactory;
 });
