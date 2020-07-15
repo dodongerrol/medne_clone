@@ -22,28 +22,26 @@ class EclaimController extends \BaseController {
 	// login
 	public function loginEmployee( )
 	{
-		$input = Input::all();
-		$email = $input['email'];
-		$email = (int)($email);
-		$password = $input['password'];
+			$input = Input::all();
+			$email = $input['email'];
+			$email = (int)($email);
+			$password = $input['password'];
 
-		$check = DB::table('user')
-		->where('UserType', 5)
-		->where('PhoneNo', (int)$email)
-		->where('password', md5($password))
-		// ->where('Active', 1)
-		->first();
+			$check = DB::table('user')
+			->where('UserType', 5)
+			->where('PhoneNo', (int)$email)
+			->where('password', md5($password))
+			// ->where('Active', 1)
+			->first();
 
-		if($check) {
-			if((int)$check->account_update_status == 0) {
-				return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
+			if($check) {
+				if((int)$check->account_update_status == 0) {
+					return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
+				}
+
+			if($check && (int)$check->member_activated == 0) {
+				return array('status' => FALSE, 'message' => 'Account is not active.');
 			}
-
-		if($check && (int)$check->member_activated == 0) {
-			return array('status' => FALSE, 'message' => 'Account is not active.');
-		} else if($check && (int)$check->member_activated == 1) {
-			return array ('status' => TRUE, 'message' => 'Account is active.');
-		}
 			// check employee status
 			$employee_status = PlanHelper::getEmployeeStatus($check->UserID);
 			$today =  PlanHelper::endDate(date('Y-m-d'));
