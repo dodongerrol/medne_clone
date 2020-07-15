@@ -497,7 +497,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             //$this->FIN = $dataArray['fin'];
 
             $this->created_at = time();
-            $this->updated_at = 0;
+            $this->updated_at = time();
             $this->Ref_ID = $dataArray['ref_id'];
             $this->ActiveLink = $dataArray['activelink'];
             $this->Status = $dataArray['status'];
