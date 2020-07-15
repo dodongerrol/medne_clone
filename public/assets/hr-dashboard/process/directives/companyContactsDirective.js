@@ -449,6 +449,7 @@ app.directive("companyContactsDirective", [
 
         scope.getCompanyContacts = function() {
           hrSettings.getContacts().then(function(response) {
+            console.log(response);
             scope.company_contacts = response.data.data;
             setTimeout(function() {
               $(".info-container").fadeIn();
@@ -792,6 +793,20 @@ app.directive("companyContactsDirective", [
             }
           })
         }
+        scope.closeAllEnrollAction  = function(){
+          if(scope.global_enrollmentHistoryData.length > 0){
+            scope.global_enrollmentHistoryData.map((value,key)  => {
+              value.isActionShow = false;
+            })
+          }
+        }
+
+        $("body").click(function(e){
+          if ($(e.target).parents(".enrollment-actions-dp-wrapper").length === 0) {
+            scope.closeAllEnrollAction();
+            // scope.$apply();
+          }
+        });
 
         scope._confirmActivationEmail_ = function () {
           let data = {
@@ -1112,7 +1127,7 @@ app.directive("companyContactsDirective", [
       // ---------------------------------------- //
 
         scope.onLoad = function(){
-          scope.initializeGeoCode();
+          // scope.initializeGeoCode();
           scope.getDownloadToken();
             
           hrSettings.getSession( )
