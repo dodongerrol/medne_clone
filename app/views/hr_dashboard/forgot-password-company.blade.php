@@ -65,8 +65,8 @@
 				<div class="form-group" style="align-items: center; display: flex; position:relative;">
 					<input type="hidden" id="hr-id" value="">
 					<label for="password"  style="padding-right: 20px; margin-bottom: 22px;">Password</label>
-					<input type="password" name="" class="form-control med-input" placeholder="Enter Your Password" ng-model="forgot_password_data.new_password" required>
-					<img src="../assets/images/showhidepass.png" class="eye" alt="eye">
+					<input ng-type="{{inputType ? 'text' : 'password'}}" name="" class="form-control med-input" placeholder="Enter Your Password" ng-model="forgot_password_data.new_password" required>
+					<img src="../assets/images/showhidepass.png" class="eye" alt="eye" ng-click="inputType = !inputType">
 				</div>
 				<div class="form-group" style="align-items: center; display: flex;">
 					<label for="confirm" style="padding-right: 34px; margin-bottom: 22px;">Confirm</label>

@@ -28,6 +28,7 @@ login.directive('loginSection', [
 				};
 				scope.ng_fail = false;
 				scope.showPassword = false;
+				scope.hr_id = null;
 
 				scope.checkUserLogin = function( ) {
 					var token = window.localStorage.getItem('token');
@@ -76,6 +77,7 @@ login.directive('loginSection', [
 					$http.post(serverUrl.url + `/employee/check_email_validation?email=${email}`)
 					.success(function(response) {
 						console.log(response);
+						scope.hr_id = response.hr_id;
 						account_status = response.status;
 						console.log(account_status);
 						if( account_status == 1) {
@@ -98,7 +100,8 @@ login.directive('loginSection', [
 				}
 
 				scope.resend_hr_activation = function () {
-					$http.post(serverUrl.url + `/hr/resend_hr_activation_link?`)
+					// $http.post(serverUrl.url + `/hr/resend_hr_activation_link?id=${scope.hr_id}`)
+					$http.post(serverUrl.url + `/hr/resend_activation_email?hr_id=${scope.hr_id}`)
 					.success(function(response){
 						console.log(response);
 					});
@@ -124,6 +127,8 @@ login.directive('forgotSection', [
 				scope.ng_fail = false;
 				scope.new_password_error = false;
 				scope.password_success = false;
+				scope.inputType = false;
+				
 
 				scope.loginHr = function( ) {
 					console.log(scope.login_details);

@@ -86,7 +86,7 @@
 		<div class="col-sm-12 col-md-12 col-lg-12 new-account">
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
-			<span ng-if="!showPassword" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span>
+			<!-- <span ng-if="!showPassword" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span> -->
 			<form class="med-form">
 				<div ng-if="!showPassword" class="form-group">
 					<label for="email">Email</label>
@@ -106,7 +106,7 @@
 				</div>
 				<div class="form-group">
 					<button ng-if="!showPassword" type="submit" class="btn btn-info btn-block med-button" ng-class="{'disabled': login_details.status == false, 'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist' }" id="login-btn" ng-disabled="login_details.status == false || login_details.status == 'not activated' || login_details.status == 'not-exist'" ng-click="showPasswordToggle()">Continue</button>
-					<button ng-if='showPassword' type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="loginHr()">Sign in</button>
+					<button ng-if='showPassword' type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="loginHr()" ng-disabled="!login_details.password">Sign in</button>
 				</div>
 				<span ng-if="ng_fail">*Please check your login credentials</span>
 				<a ng-if="showPassword" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot

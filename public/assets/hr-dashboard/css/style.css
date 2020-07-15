@@ -891,6 +891,7 @@ button {
 .med-form {
   max-width: 390px;
   margin: 0 auto;
+  padding-top: 50px;
 }
 
 /* .form-group .med-input {
