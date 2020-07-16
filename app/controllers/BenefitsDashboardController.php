@@ -15615,12 +15615,13 @@ class BenefitsDashboardController extends \BaseController {
 				// get invoice
 				$payment = DB::table('customer_cheque_logs')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
 				if($payment) {
-					$invoice = DB::table('corporate_invoice')->where('corporate_invoice_id', $payment->invoice_id)->first();
-					if($invoice) {
-					$employee_acount_details['invoice_date'] = $invoice->invoice_date;
-					$employee_acount_details['invoice_due'] = $invoice->invoice_due;
+						$invoice = DB::table('corporate_invoice')->where('corporate_invoice_id', $payment->invoice_id)->first();
+						if($invoice) {
+							$employee_acount_details['invoice_date'] = $invoice->invoice_date;
+							$employee_acount_details['invoice_due'] = $invoice->invoice_due;
+							$employee_acount_details['individual_price'] = $invoice->individual_price;
+						}
 					}
-				}
 				}
 		
 				// check if there is a dependent plan
@@ -15643,8 +15644,9 @@ class BenefitsDashboardController extends \BaseController {
 					if($dependent_plan->account_type != "lite_plan")  {
 						$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
 						if($invoice) {
-						$dependent_acount_details['invoice_date'] = $invoice->invoice_date;
-						$dependent_acount_details['invoice_due'] = $invoice->invoice_due;
+							$dependent_acount_details['invoice_date'] = $invoice->invoice_date;
+							$dependent_acount_details['invoice_due'] = $invoice->invoice_due;
+							$dependent_acount_details['individual_price'] = $invoice->individual_price;
 						}
 					}
 				} else {
