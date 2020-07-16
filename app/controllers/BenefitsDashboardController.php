@@ -15584,11 +15584,11 @@ class BenefitsDashboardController extends \BaseController {
 			// get latest plan
 			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		} else {
-		if(empty($input['customer_plan_id']) || $input['customer_plan_id'] == null) {
-			return ['status' => false, 'message' => 'customer_plan_id is required'];
-		}
-		// old plans
-		$plan = DB::table('customer_plan')->where('customer_plan_id', $input['customer_plan_id'])->orderBy('created_at', 'desc')->first();
+			if(empty($input['customer_plan_id']) || $input['customer_plan_id'] == null) {
+				return ['status' => false, 'message' => 'customer_plan_id is required'];
+			}
+			// old plans
+			$plan = DB::table('customer_plan')->where('customer_plan_id', $input['customer_plan_id'])->orderBy('created_at', 'desc')->first();
 		}
 	  
 		if($plan->account_type == "lite_plan") {
@@ -15599,6 +15599,84 @@ class BenefitsDashboardController extends \BaseController {
 	
 			// format employee plan details
 			$employee_acount_details = [
+			  'customer_active_plan'      => $active_plan->customer_active_plan_id,
+			  'customer_id'               => $customer_id,
+			  'customer_plan_id'          => $plan->customer_plan_id,
+			  'plan_start'                => date('Y-m-d', strtotime($plan->plan_start)),
+			  'duration'                  => $active_plan->duration,
+			  'plan_type'                 => \PlanHelper::getAccountType($plan->account_type),
+			  'total_enrolled_employees'  => $plan_status->enrolled_employees,
+			  'account_type'              => $plan->account_type
+			];
+	
+			if($plan->account_type != "lite_plan")  {
+			  $employee_acount_details['invoice_date'] = null;
+			  $employee_acount_details['invoice_due'] = null;
+			  // get invoice
+			  $payment = DB::table('customer_cheque_logs')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
+			  if($payment) {
+				$invoice = DB::table('corporate_invoice')->where('corporate_invoice_id', $payment->invoice_id)->first();
+				if($invoice) {
+				  $employee_acount_details['invoice_date'] = $invoice->invoice_date;
+				  $employee_acount_details['invoice_due'] = $invoice->invoice_due;
+				}
+			  }
+			}
+	
+			// check if there is a dependent plan
+			$dependent_plan = DB::table('dependent_plans')->where('customer_plan_id', $plan->customer_plan_id)->first();
+	
+			if($dependent_plan) {
+			  $dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+			  $dependent_acount_details = [
+				'customer_id'               => $customer_id,
+				'customer_active_plan'      => $active_plan->customer_active_plan_id,
+				'customer_plan_id'          => $plan->customer_plan_id,
+				'dependent_plan_id'         => $dependent_plan->dependent_plan_id,
+				'plan_start'                => date('Y-m-d', strtotime($dependent_plan->plan_start)),
+				'duration'                  => $dependent_plan->duration,
+				'plan_type'                 => \PlanHelper::getAccountType($dependent_plan->account_type),
+				'total_enrolled_employees'  => $dependent_plan_status->total_enrolled_dependents,
+				'account_type'              => $plan->account_type
+			  ];
+	
+			  if($dependent_plan->account_type != "lite_plan")  {
+				$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
+				if($invoice) {
+				  $dependent_acount_details['invoice_date'] = $invoice->invoice_date;
+				  $dependent_acount_details['invoice_due'] = $invoice->invoice_due;
+				}
+			  }
+			} else {
+			  $dependent_acount_details = [
+				'customer_id'               => $customer_id,
+				'customer_active_plan'      => $active_plan->customer_active_plan_id,
+				'customer_plan_id'          => $plan->customer_plan_id,
+				'plan_start'                => null,
+				'duration'                  => null,
+				'plan_type'                 => null,
+				'total_enrolled_employees'  => null,
+				'invoice_date'              => null,
+				'invoice_due'              => null,
+			  ];
+			}
+	
+			$data['data'] = array(
+			  'status' => true,
+			  'customer_active_plan_id' => $active_plan->customer_active_plan_id,
+			  'employee_acount_details' => $employee_acount_details, 
+			  'dependent_acount_details' => $dependent_acount_details
+			);
+			$data['paginate'] = false;
+		} else {
+			// paginate
+			// get active plan lists
+			$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->paginate(1);
+			// get customer plan status
+			$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+			foreach($active_plans as $key => $active_plan) {
+			  // format employee plan details
+			  $employee_acount_details = [
 				'customer_active_plan'      => $active_plan->customer_active_plan_id,
 				'customer_id'               => $customer_id,
 				'customer_plan_id'          => $plan->customer_plan_id,
@@ -15606,147 +15684,70 @@ class BenefitsDashboardController extends \BaseController {
 				'duration'                  => $active_plan->duration,
 				'plan_type'                 => PlanHelper::getAccountType($plan->account_type),
 				'total_enrolled_employees'  => $plan_status->enrolled_employees,
+				'individual_price'          => 300,
 				'account_type'              => $plan->account_type
-			];
+			  ];
 	
-			if($plan->account_type != "lite_plan")  {
+			  if($plan->account_type != "lite_plan")  {
 				$employee_acount_details['invoice_date'] = null;
 				$employee_acount_details['invoice_due'] = null;
 				// get invoice
 				$payment = DB::table('customer_cheque_logs')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
 				if($payment) {
-						$invoice = DB::table('corporate_invoice')->where('corporate_invoice_id', $payment->invoice_id)->first();
-						if($invoice) {
-							$employee_acount_details['invoice_date'] = $invoice->invoice_date;
-							$employee_acount_details['invoice_due'] = $invoice->invoice_due;
-							$employee_acount_details['individual_price'] = $invoice->individual_price;
-						}
-					}
+				  $invoice = DB::table('corporate_invoice')->where('corporate_invoice_id', $payment->invoice_id)->first();
+				  if($invoice) {
+					$employee_acount_details['invoice_date'] = $invoice->invoice_date;
+					$employee_acount_details['invoice_due'] = $invoice->invoice_due;
+					$employee_acount_details['individual_price'] = $invoice->individual_price;
+				  }
 				}
-		
-				// check if there is a dependent plan
-				$dependent_plan = DB::table('dependent_plans')->where('customer_plan_id', $plan->customer_plan_id)->first();
-		
-				if($dependent_plan) {
-					$dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
-					$dependent_acount_details = [
-						'customer_id'               => $customer_id,
-						'customer_active_plan'      => $active_plan->customer_active_plan_id,
-						'customer_plan_id'          => $plan->customer_plan_id,
-						'dependent_plan_id'         => $dependent_plan->dependent_plan_id,
-						'plan_start'                => date('Y-m-d', strtotime($dependent_plan->plan_start)),
-						'duration'                  => $dependent_plan->duration,
-						'plan_type'                 => PlanHelper::getAccountType($dependent_plan->account_type),
-						'total_enrolled_employees'  => $dependent_plan_status->total_enrolled_dependents,
-						'account_type'              => $plan->account_type
-					];
-			
-					if($dependent_plan->account_type != "lite_plan")  {
-						$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
-						if($invoice) {
-							$dependent_acount_details['invoice_date'] = $invoice->invoice_date;
-							$dependent_acount_details['invoice_due'] = $invoice->invoice_due;
-							$dependent_acount_details['individual_price'] = $invoice->individual_price;
-						}
-					}
-				} else {
-					$dependent_acount_details = [
-						'customer_id'               => $customer_id,
-						'customer_active_plan'      => $active_plan->customer_active_plan_id,
-						'customer_plan_id'          => $plan->customer_plan_id,
-						'plan_start'                => null,
-						'duration'                  => null,
-						'plan_type'                 => null,
-						'total_enrolled_employees'  => null,
-						'invoice_date'              => null,
-						'invoice_due'              => null,
-					];
-				}
-		
-				$data['data'] = array(
-					'status' => true,
-					'customer_active_plan_id' => $active_plan->customer_active_plan_id,
-					'employee_acount_details' => $employee_acount_details, 
-					'dependent_acount_details' => $dependent_acount_details
-				);
-				$data['paginate'] = false;
-			} else {
-				// paginate
-				// get active plan lists
-				$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->paginate(1);
-				// get customer plan status
-				$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
-				foreach($active_plans as $key => $active_plan) {
-				// format employee plan details
-				$employee_acount_details = [
-					'customer_active_plan'      => $active_plan->customer_active_plan_id,
-					'customer_id'               => $customer_id,
-					'customer_plan_id'          => $plan->customer_plan_id,
-					'plan_start'                => date('Y-m-d', strtotime($plan->plan_start)),
-					'duration'                  => $active_plan->duration,
-					'plan_type'                 => PlanHelper::getAccountType($plan->account_type),
-					'total_enrolled_employees'  => $plan_status->enrolled_employees,
-					'account_type'              => $plan->account_type
-				];
-		
-				if($plan->account_type != "lite_plan")  {
-					$employee_acount_details['invoice_date'] = null;
-					$employee_acount_details['invoice_due'] = null;
-					// get invoice
-					$payment = DB::table('customer_cheque_logs')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
-					if($payment) {
-						$invoice = DB::table('corporate_invoice')->where('corporate_invoice_id', $payment->invoice_id)->first();
-						if($invoice) {
-							$employee_acount_details['invoice_date'] = $invoice->invoice_date;
-							$employee_acount_details['invoice_due'] = $invoice->invoice_due;
-						}
-					}
-				}
-		
-				// check if there is a dependent plan
-				$dependent_plan = DB::table('dependent_plans')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
-		
-				if($dependent_plan) {
-					$dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
-					$dependent_acount_details = [
-						'customer_id'               => $customer_id,
-						'customer_active_plan'      => $active_plan->customer_active_plan_id,
-						'customer_plan_id'          => $plan->customer_plan_id,
-						'dependent_plan_id'         => $dependent_plan->dependent_plan_id,
-						'plan_start'                => date('Y-m-d', strtotime($dependent_plan->plan_start)),
-						'duration'                  => $dependent_plan->duration,
-						'plan_type'                 => \PlanHelper::getAccountType($dependent_plan->account_type),
-						'total_enrolled_employees'  => $dependent_plan_status->total_enrolled_dependents,
-						'account_type'              => $plan->account_type
-					];
-		
-					if($dependent_plan->account_type != "lite_plan")  {
-						$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
-						if($invoice) {
-							$dependent_acount_details['invoice_date'] = $invoice->invoice_date;
-							$dependent_acount_details['invoice_due'] = $invoice->invoice_due;
-						}
-					}
-				} else {
-					$dependent_acount_details = [
-						'customer_id'               => $customer_id,
-						'customer_active_plan'      => $active_plan->customer_active_plan_id,
-						'customer_plan_id'          => $plan->customer_plan_id,
-						'plan_start'                => null,
-						'duration'                  => null,
-						'plan_type'                 => null,
-						'total_enrolled_employees'  => null,
-						'invoice_date'              => null,
-						'invoice_due'              => null,
-					];
-				}
+			  }
 	
-				$data['data'] = array(
-					'status' => true,
-					'customer_active_plan_id' => $active_plan->customer_active_plan_id,
-					'employee_acount_details'   => $employee_acount_details, 
-					'dependent_acount_details'  => $dependent_acount_details,
-				);
+			  // check if there is a dependent plan
+			  $dependent_plan = DB::table('dependent_plans')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
+	
+			  if($dependent_plan) {
+				$dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+				$dependent_acount_details = [
+				  'customer_id'               => $customer_id,
+				  'customer_active_plan'      => $active_plan->customer_active_plan_id,
+				  'customer_plan_id'          => $plan->customer_plan_id,
+				  'dependent_plan_id'         => $dependent_plan->dependent_plan_id,
+				  'plan_start'                => date('Y-m-d', strtotime($dependent_plan->plan_start)),
+				  'duration'                  => $dependent_plan->duration,
+				  'plan_type'                 => PlanHelper::getAccountType($dependent_plan->account_type),
+				  'total_enrolled_employees'  => $dependent_plan_status->total_enrolled_dependents,
+				  'account_type'              => $plan->account_type
+				];
+	
+				if($dependent_plan->account_type != "lite_plan")  {
+				  $invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent_plan->dependent_plan_id)->first();
+				  if($invoice) {
+					$dependent_acount_details['invoice_date'] = $invoice->invoice_date;
+					$dependent_acount_details['invoice_due'] = $invoice->invoice_due;
+					$dependent_acount_details['individual_price'] = $invoice->individual_price;
+				  }
+				}
+			  } else {
+				$dependent_acount_details = [
+				  'customer_id'               => $customer_id,
+				  'customer_active_plan'      => $active_plan->customer_active_plan_id,
+				  'customer_plan_id'          => $plan->customer_plan_id,
+				  'plan_start'                => null,
+				  'duration'                  => null,
+				  'plan_type'                 => null,
+				  'total_enrolled_employees'  => null,
+				  'invoice_date'              => null,
+				  'invoice_due'              => null,
+				];
+			  }
+	
+			  $data['data'] = array(
+				'status' => true,
+				'customer_active_plan_id' => $active_plan->customer_active_plan_id,
+				'employee_acount_details'   => $employee_acount_details, 
+				'dependent_acount_details'  => $dependent_acount_details,
+			  );
 			}
 	
 			$data['paginate'] = true;
@@ -15757,7 +15758,7 @@ class BenefitsDashboardController extends \BaseController {
 			$data['to'] = $active_plans->getTo();
 			$data['count'] = $active_plans->count();
 		}
-		
+	   
 		return $data;
 	}
 
