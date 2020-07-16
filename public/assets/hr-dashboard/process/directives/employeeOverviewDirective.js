@@ -6,7 +6,8 @@ app.directive("employeeOverviewDirective", [
   "dashboardFactory",
   "dependentsSettings",
   "$timeout",
-  function directive($state, hrSettings, hrActivity, $rootScope, dashboardFactory, dependentsSettings, $timeout) {
+  "serverUrl",
+  function directive($state, hrSettings, hrActivity, $rootScope, dashboardFactory, dependentsSettings, $timeout, serverUrl) {
     return {
       restrict: "A",
       scope: true,
@@ -2607,19 +2608,20 @@ app.directive("employeeOverviewDirective", [
 
         scope.last_term_credits = false;
         scope.empDetailsLoadingState = function(){
-          scope.showLoading();
-          $(".export-emp-details-message").show();
-          hrSettings.getEployeeDetails()
-            .then(function(response) {
-              scope.last_term_credits = response.data.last_term_credits;
-              scope.allEmpData = response.data.data;
-              scope.export_member_details = response.data;
-              scope.hideLoading();
-              setTimeout(function() {
-                $( ".export-emp-details-message" ).hide();
-                $( "#empDetailsBtn" ).click();
-              }, 10);
-            });
+          window.open(serverUrl.url + '/hr/get_company_employee_lists_credits?token=' + window.localStorage.getItem('token'));
+          // scope.showLoading();
+          // $(".export-emp-details-message").show();
+          // hrSettings.getEployeeDetails()
+          //   .then(function(response) {
+          //     scope.last_term_credits = response.data.last_term_credits;
+          //     scope.allEmpData = response.data.data;
+          //     scope.export_member_details = response.data;
+          //     scope.hideLoading();
+          //     setTimeout(function() {
+          //       $( ".export-emp-details-message" ).hide();
+          //       $( "#empDetailsBtn" ).click();
+          //     }, 10);
+          //   });
         }
 
         scope.checkCompanyBalance = function () {

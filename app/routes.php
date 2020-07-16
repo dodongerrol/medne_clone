@@ -328,8 +328,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update_hr_details', 'BenefitsDashboardController@updateHrAccountDetails');
 	// get cancellation details
 	Route::get('hr/get_head_count_plan/{id}', 'BenefitsDashboardController@getAddedHeadCountInvoice');
-	// get company employees and credits left
-	Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
+	
 	// get hr credits total allocation
 	Route::get('hr/total_credits_allocation', 'BenefitsDashboardController@getCompanyTotalAllocation');
 	// get company plan status
@@ -492,13 +491,16 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update_employee_active_plan_details', 'BenefitsDashboardController@updateActivePlanDetails');
 	// update dependent details
 	Route::post('hr/update_dependent_active_plan_details', 'BenefitsDashboardController@updateActiveDependentDetails');
-});
-
 	Route::get('hr/get_users_by_active_plan', 'BenefitsDashboardController@enrolledUsersFromActivePlan');
 	// downloand plan invoice
 	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
+});
+
+	// get company employees and credits left
+	Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
+	
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
 	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
