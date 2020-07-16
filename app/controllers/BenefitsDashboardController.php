@@ -15933,7 +15933,8 @@ class BenefitsDashboardController extends \BaseController {
 			'full_name'			=>$hr->fullname,
 			'email'				=>$hr->email,
 			'phone'				=>$hr->phone_number,
-			'phone_code'		=>$hr->phone_code
+			'phone_code'		=>$hr->phone_code,
+			'id' 				=>$hr->hr_dashboard_id
 		];
 
 		return ['status' => true, 'hr_account_details' => $hr_acount_details];
