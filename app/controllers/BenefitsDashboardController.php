@@ -1946,9 +1946,9 @@ class BenefitsDashboardController extends \BaseController {
 				if($type == "pending") {
 					$users = DB::table('user')
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-							->where('user.pending', 1)
+							->where('user.member_activated', 0)
 							->where('corporate_members.corporate_id', $account_link->corporate_id)
-							->lists('UserID');
+							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
 							array_push($ids, $user);
@@ -1961,7 +1961,7 @@ class BenefitsDashboardController extends \BaseController {
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 							->where('user.member_activated', 1)
 							->where('corporate_members.corporate_id', $account_link->corporate_id)
-							->lists('UserID');
+							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
 							array_push($ids, $user);
@@ -1974,7 +1974,7 @@ class BenefitsDashboardController extends \BaseController {
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 							->where('user.Active', 1)
 							->where('corporate_members.corporate_id', $account_link->corporate_id)
-							->lists('UserID');
+							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
 							array_push($ids, $user);
@@ -1987,7 +1987,7 @@ class BenefitsDashboardController extends \BaseController {
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 							->where('user.Active', 0)
 							->where('corporate_members.corporate_id', $account_link->corporate_id)
-							->lists('UserID');
+							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
 							array_push($ids, $user);
@@ -1995,7 +1995,7 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 			}
-
+			
 			$unique_ids = array();
 			foreach($ids as $v){
 				isset($k[$v]) || ($k[$v]=1) && $unique_ids[] = $v;
@@ -2004,10 +2004,10 @@ class BenefitsDashboardController extends \BaseController {
 			if(sizeof($unique_ids) > 0) {
 				$users = DB::table('user')
 						->whereIn('UserID', $unique_ids)
-						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name')
+						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated')
 						->paginate($per_page);
 			} else {
-
+				$users = false;
 			}
 		} else {
 			if($search) {
@@ -2015,25 +2015,27 @@ class BenefitsDashboardController extends \BaseController {
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
 				->where('user.Name', 'like', '%'.$search.'%')
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','emp_no', 'member_activated')
 				->paginate($per_page);
 			} else {
 				$users = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'member_activated')
 				->orderBy('corporate_members.removed_status', 'asc')
 				->orderBy('user.UserID', 'asc')
 				->paginate($per_page);
 			}
 		}
-
-		$paginate['last_page'] = $users->getLastPage();
-		$paginate['current_page'] = $users->getCurrentPage();
-		$paginate['total_data'] = $users->getTotal();
-		$paginate['from'] = $users->getFrom();
-		$paginate['to'] = $users->getTo();
-		$paginate['count'] = $users->count();
+		
+		if($users) {
+			$paginate['last_page'] = $users->getLastPage();
+			$paginate['current_page'] = $users->getCurrentPage();
+			$paginate['total_data'] = $users->getTotal();
+			$paginate['from'] = $users->getFrom();
+			$paginate['to'] = $users->getTo();
+			$paginate['count'] = $users->count();
+		}
 
 		// spending account
 		$spending_account = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
@@ -2063,12 +2065,6 @@ class BenefitsDashboardController extends \BaseController {
 			->first();
 
 			$get_employee_plan = DB::table('user_plan_type')->where('user_id', $user->UserID)->orderBy('created_at', 'desc')->first();
-			// check if user has replace property
-			// $user_active_plan_history = DB::table('user_plan_history')
-			// ->where('user_id', $user->UserID)
-			// // ->where('type', 'started')
-			// ->orderBy('created_at', 'desc')
-			// ->first();
 			$plan_extension = false;
 			$deleted = false;
 			$deletion_text = null;
@@ -2077,7 +2073,6 @@ class BenefitsDashboardController extends \BaseController {
 			$schedule = false;
 			$plan_withdraw = false;
 			$emp_status = 'active';
-			// $get_employee_plan = DB::table('user_plan_type')->where('user_id', $user->UserID)->orderBy('created_at', 'desc')->first();
 			// check if user has replace property
 			$user_active_plan_history = DB::table('user_plan_history')->where('user_id', $user->UserID)->where('type', 'started')->orderBy('created_at', 'desc')->first();
 
@@ -2309,6 +2304,8 @@ class BenefitsDashboardController extends \BaseController {
 				'expiry_date'			=> $expiry_date,
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
+				'employee_id'			=> $user->emp_no,
+				'member_activated'		=> (int)$user->member_activated == 1 ? true : false,
 				'nric'					=> $user->NRIC,
 				'mobile_no'				=> $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
@@ -15846,10 +15843,10 @@ class BenefitsDashboardController extends \BaseController {
 				'total'           => $plan_amount,
 				'amount_due'      => $payment_data ? DecimalHelper::formatDecimal($plan_amount - $payment_data->paid_amount) : $plan_amount,
 				'payment_amount'  => $payment_data ? $payment_data->paid_amount : 0,
-				'payment_date'    => $payment_data ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
+				'payment_date'    => $active->paid == "true" && $payment_data ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
 				'payment_remarks' => $payment_data ? $payment_data->remarks : null,
 				'currency_type'   => $invoice->currency_type,
-				'payment_status'          => $active->paid == "true" ? true : false
+				'payment_status'  => $active->paid == "true" ? true : false
 			];
 		}
 		
