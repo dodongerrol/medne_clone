@@ -550,6 +550,14 @@
 #edit_employee_plan .custom-input-wrapper {
 	position: relative;
 }
+#edit_employee_plan .custom-input-wrapper.disabled {
+	pointer-events: none;
+	background-color: #eee;
+}
+#edit_employee_plan .custom-input-wrapper.disabled input,
+#edit_employee_plan .custom-input-wrapper.disabled select{
+	background-color: #eee;
+}
 #edit_employee_plan .custom-input-wrapper img {
 	position: absolute;
 	top: 8px;

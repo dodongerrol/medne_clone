@@ -26,6 +26,8 @@
   
   <link rel="stylesheet" href="<?php echo $server; ?>/assets/css/reset.css?_={{ $date->format('U') }}">
   <link rel="stylesheet" href="<?php echo $server; ?>/assets/css/fonts.css?_={{ $date->format('U') }}">
+  <link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/pre-loader.css?_={{ $date->format('U') }}">
+  <link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/sweetalert.css?_={{ $date->format('U') }}">
 
 
   <style>
@@ -172,32 +174,49 @@
     </div>
 
     <div class="user-info-wrapper">
-      <p><b>Hi Flynn,<br>We are here to help!</b></p>
+      <p><b>Hi <span ng-bind="companyDetails.contact_name"></span>,<br>We are here to help!</b></p>
     </div>
 
     <div class="form-wrapper">
       
-
       <form>
         <div class="form-box">
           <label>Subject</label>
-          <input type="text">
+          <input type="text" value="Activate Spending Account" readonly>
         </div>
         <div class="form-box">
           <label>Your Enquiry</label>
-          <textarea cols="30" rows="10" placeholder="Please type in your enquiry"></textarea>
+          <textarea cols="30" rows="10" placeholder="Please type in your enquiry" ng-model="companyDetails.message"></textarea>
         </div>
 
         <div class="btn-container">
           <div></div>
-          <button class="btn">Submit</button>
+          <button class="btn" ng-click="submitEnquiry(companyDetails)">Submit</button>
         </div>
       </form>
     </div>
 
+  </div>
+  
+  <div class="circle-loader" hidden>
+		<div class="preloader-container" style="width: auto !important;">
+			<div class="white-space-50"></div>
+			<div class="preloader-wrapper big active">
+		    <div class="spinner-layer spinner-blue-only">
+		      <div class="circle-clipper left">
+		        <div class="circle"></div>
+		      </div><div class="gap-patch">
+		        <div class="circle"></div>
+		      </div><div class="circle-clipper right">
+		        <div class="circle"></div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 	</div>
 </body>
 
+<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/jquery.min.js?_={{ $date->format('U') }}"></script>
 <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/angular.min.js?_={{ $date->format('U') }}"></script>
 <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/sweetalert.min.js?_={{ $date->format('U') }}"></script>
 <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/enquiry.js?_={{ $date->format('U') }}"></script>

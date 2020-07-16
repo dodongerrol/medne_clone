@@ -16217,7 +16217,6 @@ class BenefitsDashboardController extends \BaseController {
 			return ['status' => false, 'message' => 'Start Date must be a date'];
 		}
 
-		$admin_id = \AdminHelper::getAdminID();
 		$data = array();
 		$plan_start = date('Y-m-d', strtotime($input['start_date']));
 		$plan_end = date('Y-m-d', strtotime('+'.$input['plan_duration'], strtotime($plan_start)));
@@ -16378,7 +16377,7 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			if($admin_id) {
-				$data['dependent_plan_id'] = $input['dependent_plan_id_id'];
+				$data['dependent_plan_id'] = $input['dependent_plan_id'];
 				$admin_logs = array(
 				'admin_id'  => $admin_id,
 				'admin_type' => 'mednefits',
@@ -16387,7 +16386,7 @@ class BenefitsDashboardController extends \BaseController {
 				);
 				\SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
-				$data['dependent_plan_id'] = $input['dependent_plan_id_id'];
+				$data['dependent_plan_id'] = $input['dependent_plan_id'];
 				$admin_logs = array(
 				'admin_id'  => $hr_id,
 				'admin_type' => 'hr',
