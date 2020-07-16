@@ -15923,9 +15923,6 @@ class BenefitsDashboardController extends \BaseController {
 		$session = self::checkSession();
 		$hr_id = $session->hr_dashboard_id;
 		
-		if(empty($input['customer_id']) || ($input['customer_id']) == null) {
-			return ['status' => false, 'message' => 'customer_id is required'];
-		  }
 		if(!$hr_id) {
 			return ['status' => false, 'message' => 'Invalid access token'];
 		}
@@ -15936,7 +15933,8 @@ class BenefitsDashboardController extends \BaseController {
 			'full_name'			=>$hr->fullname,
 			'email'				=>$hr->email,
 			'phone'				=>$hr->phone_number,
-			'phone_code'		=>$hr->phone_code
+			'phone_code'		=>$hr->phone_code,
+			'id' 				=>$hr->hr_dashboard_id
 		];
 
 		return ['status' => true, 'hr_account_details' => $hr_acount_details];
