@@ -290,9 +290,11 @@ class CustomerHelper
 			'customer_id'		=> $customer_id,
 			'account_type'		=> $planData->account_type,
 			'medical_method'	=> $spending->medical_plan_method,
+			'medical_reimbursement'	=> $spending->medical_reimbursement == 1 ? true : false,
 			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
 			'wellness_method'	=> $spending->wellness_plan_method,
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
+			'wellness_reimbursement'	=> $spending->wellness_reimbursement == 1 ? true : false,
 			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
 		);
 	}
@@ -349,6 +351,139 @@ class CustomerHelper
 			);
 		} else {
 			return array('status' => false);
+		}
+	}
+
+	public static function getExcelLink($status)
+	{
+		if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == true)	{
+			if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All+-+R.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All-R.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
+				);
+			}
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == true) {
+			if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All+-+R.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All-R.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
+				);
+			}
+		} else if($status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == true)	{
+			if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All+-+R.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All-R.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
+				);
+			}
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+NO+SA.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+NO-SA.xlsx'
+			);
+		} else if($status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == false)	{
+			if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All+-+R+-+Wellness.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-R-Wellness.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+Wellness.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-Wellness.xlsx'
+				);
+			}
+		} else if($status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
+			if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All+-+R+-+Medical.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-R-Medical.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+Medical.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-Medical.xlsx'
+				);
+			}
+		} else if($status['account_type'] == "enterprise_plan" && $status['wellness_enabled'] == true) {
+			if($status['wellness_reimbursement'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/employees/Employee+R-Wellness.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/dependents/Employees-and-Dependents+R-Wellness+.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/employees/Employee+NO-SA-R.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/dependents/Employees-and-Dependents+NO-SA-R.xlsx'
+				);
+			}
+		} else if($status['account_type'] == "enterprise_plan" && $status['wellness_enabled'] == false) {
+			return array(
+				'status' => true,
+				'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/employees/Employee+NO-SA-R.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/dependents/Employees-and-Dependents+NO-SA-R.xlsx'
+			);
+		} else if($status['account_type'] != "enterprise_plan" && $status['account_type'] != "lite_plan") {
+			if($status['medical_enabled'] == true && $status['wellness_enabled'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
+				);
+			} else if($status['medical_enabled'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+Medical.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-Medical.xlsx'
+				);
+			} else if($status['medical_enabled'] == false) {
+				return array(
+					'status' => true,
+					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+Wellness.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-Wellness.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
+				);
+			}
+		} else {
+			return array(
+				'status' => true,
+				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All.xlsx',
+				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
+			);
 		}
 	}
 
@@ -542,6 +677,75 @@ class CustomerHelper
 		} else {
 			return ['status' => false, 'message' => 'key does not exist.'];
 		}
+	}
+	
+	public static function getPlanDuration($customer_id, $plan_start)
+	{
+		$plan_coverage = \CustomerHelper::getCompanyPlanDates($customer_id);
+		$date_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_start)));
+		$date_new_plan_start = new \DateTime(date('Y-m-d', strtotime($plan_coverage['plan_end'])));
+
+		$interval = date_diff($date_plan_start, $date_new_plan_start);
+		if($interval->m + (1) == 1) {
+			$duration = $interval->m + (1). ' month';
+		} else {
+			$duration = $interval->m + (1). ' months';
+		}
+
+		return $duration;
+	}
+
+	public static function calculateInvoicePlanPrice($default_price, $start, $end)
+	{
+		$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
+		$days = $diff->format('%a');
+		$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+		$remaining_days = $days;
+
+		$cost_plan_and_days = ($remaining_days / $total_days);
+		// return $remaining_days;
+		return $cost_plan_and_days * $default_price;
+	}
+
+	public static function getCompanyPlanDates($customer_id) 
+	{
+		$plan = DB::table('customer_plan')
+		->where('customer_buy_start_id', $customer_id)
+		->orderBy('created_at', 'desc')
+		->first();
+
+		$active_plan = DB::table('customer_active_plan')
+		->where('plan_id', $plan->customer_plan_id)
+		->first();
+
+		if((int)$active_plan->plan_extention_enable == 1) {
+			$plan_extention = DB::table('plan_extensions')
+			->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+			->first();
+			if($plan_extention) {
+				if($plan_extention->duration || $plan_extention->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$plan_extention->duration, strtotime($plan_extention->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan_extention->plan_start)));
+				}
+			} else {
+				if($active_plan->duration || $active_plan->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+				}
+			}
+		} else {
+			if($active_plan->duration || $active_plan->duration != "") {
+				$end_plan_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+			} else {
+				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+			}
+		}
+
+		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
+
+		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
 	}
 	
 	public static function getActiveMembers($customer_id)

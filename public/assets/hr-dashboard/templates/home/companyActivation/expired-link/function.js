@@ -14,6 +14,7 @@ app.directive('expiredLinkDirective', [
 
 				scope.validateToken = function () {
 					let token = $location.search().activation_token;
+					localStorage.setItem('activation_token', token);
 					// console.log(token);
 
 					scope.showLoading();

@@ -6,7 +6,8 @@ app.directive("employeeOverviewDirective", [
   "dashboardFactory",
   "dependentsSettings",
   "$timeout",
-  function directive($state, hrSettings, hrActivity, $rootScope, dashboardFactory, dependentsSettings, $timeout) {
+  "serverUrl",
+  function directive($state, hrSettings, hrActivity, $rootScope, dashboardFactory, dependentsSettings, $timeout, serverUrl) {
     return {
       restrict: "A",
       scope: true,
@@ -2351,12 +2352,12 @@ app.directive("employeeOverviewDirective", [
               }
             });
         }
-
+        scope.global_empLimitList = 5;
         scope.getEmployeeList = function (page) {
           $(".employee-overview-pagination").show();
 
           scope.showLoading();
-          hrSettings.getEmployees(scope.page_ctr, page)
+          hrSettings.getEmployees(page,scope.global_empLimitList)
             .then(function (response) {
               console.log(response);
               scope.employees = response.data;
@@ -2503,6 +2504,8 @@ app.directive("employeeOverviewDirective", [
                   bank_code: data.bank_code,
                   bank_branch: data.bank_branch,
                   user_id: data.user_id,
+                  bank_name: data.bank_name,
+                  emp_id: data.member_id,
                 };
                 console.log(update_data);
                 dependentsSettings.updateEmployee(update_data)
@@ -2605,19 +2608,20 @@ app.directive("employeeOverviewDirective", [
 
         scope.last_term_credits = false;
         scope.empDetailsLoadingState = function(){
-          scope.showLoading();
-          $(".export-emp-details-message").show();
-          hrSettings.getEployeeDetails()
-            .then(function(response) {
-              scope.last_term_credits = response.data.last_term_credits;
-              scope.allEmpData = response.data.data;
-              scope.export_member_details = response.data;
-              scope.hideLoading();
-              setTimeout(function() {
-                $( ".export-emp-details-message" ).hide();
-                $( "#empDetailsBtn" ).click();
-              }, 10);
-            });
+          window.open(serverUrl.url + '/hr/get_company_employee_lists_credits?token=' + window.localStorage.getItem('token'));
+          // scope.showLoading();
+          // $(".export-emp-details-message").show();
+          // hrSettings.getEployeeDetails()
+          //   .then(function(response) {
+          //     scope.last_term_credits = response.data.last_term_credits;
+          //     scope.allEmpData = response.data.data;
+          //     scope.export_member_details = response.data;
+          //     scope.hideLoading();
+          //     setTimeout(function() {
+          //       $( ".export-emp-details-message" ).hide();
+          //       $( "#empDetailsBtn" ).click();
+          //     }, 10);
+          //   });
         }
 
         scope.checkCompanyBalance = function () {
@@ -2733,6 +2737,8 @@ app.directive("employeeOverviewDirective", [
             scope.healthSpendingAccountTabIsShow = false;
           }
         }
+        
+        
 
         scope.inititalizeGeoCode = function () {
           $timeout(function () {
@@ -2768,6 +2774,25 @@ app.directive("employeeOverviewDirective", [
               scope.replace_emp_data.mobile_area_code = iti2.getSelectedCountryData().dialCode;
               scope.replace_emp_data.mobile_area_code_country = iti2.getSelectedCountryData().iso2;
             });
+
+            var settings_emp_details = {
+              preferredCountries: [],
+              separateDialCode: true,
+              initialCountry: "SG",
+              autoPlaceholder: "off",
+              utilsScript: "../assets/hr-dashboard/js/utils.js",
+              onlyCountries: ["sg","my"],
+            }
+            
+            var input3 = document.querySelector("#phoneNum");
+            iti3 = intlTelInput(input3, settings_emp_details);
+
+            input3.addEventListener("countrychange", function () {
+              console.log(iti3.getSelectedCountryData());
+              scope.editEmpCountryCode = iti3.getSelectedCountryData().dialCode;
+              console.log(scope.editEmpCountryCode);
+            });
+
           }, 300);
 				}
 				
@@ -2782,6 +2807,75 @@ app.directive("employeeOverviewDirective", [
 
 					});
 				}
+
+        scope._showAddFilterModal_ = function() {
+          $("#add-filter-modal").modal('show');
+
+          scope.global_statusData = {
+            pending: false,
+            logged_in: false,
+            active: false,
+            removed: false,
+          }
+        }
+
+        scope._resetActivation_ = function () {
+          let params = {
+            id: scope.selectedEmployee.member_id,
+          }
+          scope.showLoading();
+          hrSettings.employeeResetActivation ( params  )
+            .then(function( response ) {
+              console.log(response);
+
+              if ( response.data.status == true ) {
+                scope.hideLoading();
+                swal('Success!', response.data.message, 'success');
+              }
+            });
+        }
+
+        scope._resetPassword_ = function() {
+          let params = {
+            id: scope.selectedEmployee.member_id,
+          }
+          scope.showLoading();
+          hrSettings.employeeResetPassword ( params  )
+            .then(function( response ) {
+              console.log(response);
+
+              if ( response.data.status == true ) {
+                scope.hideLoading();
+                swal('Success!', response.data.message, 'success');
+              }
+            });
+        }
+
+        scope._statusClear_ = function ( data ) {
+          data.pending = false;
+          data.logged_in = false;
+          data.active = false;
+          data.removed = false;
+        }
+        
+        
+        scope._empApplyFilter_ = function ( data ) {
+          
+          console.log( data );
+          scope.showLoading();
+          hrSettings.getFilterEmployees ( scope.page_active,scope.global_empLimitList,data.pending,data.logged_in,data.active,data.removed  )
+          .then(function( response ) {
+            console.log(response);
+
+            scope.getEmployeeList( scope.page_active );
+            scope.hideLoading();
+            $('#add-filter-modal').modal('hide');            
+          });
+        }
+
+        scope._cancelModal_ = function () {
+          $('#add-filter-modal').modal('hide');
+        }
         
         scope.onLoad = function () {
           console.log($state.current);
@@ -2888,7 +2982,7 @@ app.directive("employeeOverviewDirective", [
           scope.isUpdateEmpInfoModalOpen = false;
           // iti2.destroy();
           console.log(iti);
-          console.log(iti2);
+          // console.log(iti2);
         })
 
         // -------------- //

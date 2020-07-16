@@ -52,6 +52,9 @@
 				<h4><span ng-bind="member_count"></span> total members</h4>
 			</div>
 			<div class="overview-menu">
+				<span ng-click="_showAddFilterModal_()" class="add-filter-container">
+					<img src="../assets/hr-dashboard/img/plus-gray.png"> <span>Add filter</span>
+				</span>
 				<form ng-submit="searchEmployee(inputSearch)" style="display: inline-block;">
 					<label class="overview-input-wrapper">
 						<input type="text" placeholder="Search for a member" ng-model="inputSearch">
@@ -239,6 +242,34 @@
 										ng-bind="emp.spending_account.wellness.balance">1,000.00</span></span>
 							</div>
 						</td>
+
+						<!-- <td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="visits-details-container">
+							<div class="enterprise-details">
+								<strong>Utilised:</strong>
+								<span ng-bind="emp.spending_account.medical.utilised">11</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Balance:</strong>
+								<span ng-bind="emp.spending_account.medical.balance">11</span>
+							</div>
+						</td>
+
+						<td ng-if="progress.active_plans[0].account_type == 'enterprise_plan'" class="spending-details-container">
+							<div class="enterprise-details">
+								<strong>In-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.in_network | number: 2">1,000.00</span>
+								</span>
+							</div>
+							<div class="enterprise-details">
+								<strong>Out-of-Network:</strong>
+								<span>
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
+								</span>
+							</div>
+						</td> -->
 					</tr>
 				<tbody>
 			</table>
@@ -484,7 +515,7 @@
 					</div>
 				</div>
 
-				<div class="wellness-spending-account" ng-if="selectedEmployee.wellness_wallet">
+				<div class="wellness-spending-account" ng-if="selectedEmployee.account_type != 'enterprise_plan' && selectedEmployee.wellness_wallet">
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
@@ -640,10 +671,10 @@
 									<strong class="font-helvetica-medium">Date of Birth</strong>
 									<span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
 								</div>
-								<div>
+								<!-- <div>
 									<strong class="font-helvetica-medium">Job Title</strong>
 									<span ng-bind="selectedEmployee.job_title">Accountant</span>
-								</div>
+								</div> -->
 							</div>
 							<div class="col-2-employee-information-details">
 								<div>
@@ -666,13 +697,17 @@
 									<strong class="font-helvetica-medium">Bank Account Number</strong>
 									<span ng-bind="selectedEmployee.bank_account">0173489384</span>
 								</div>
-								<div>
+								<!-- <div>
 									<strong class="font-helvetica-medium">Bank Code</strong>
 									<span ng-bind="selectedEmployee.bank_code">0173489384</span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Bank BRH</strong>
 									<span ng-bind="selectedEmployee.bank_branch">0173489384</span>
+								</div> -->
+								<div>
+									<strong class="font-helvetica-medium">Bank Name</strong>
+									<span ng-bind="selectedEmployee.bank_name">BDO</span>
 								</div>
 							</div>
 						</div>
@@ -936,8 +971,12 @@
 					</div>
 					<div ng-if="empTabSelected == 3" class="settings-information">
 						<div class="employee-settings-wrapper">
-							<button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset
-								Account</button>
+							<!-- <button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset
+								Account</button> -->
+							<div class="resend-reset-container">
+								<button ng-disabled="selectedEmployee.emp_status == 'active' " ng-click="_resetActivation_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
+								<button ng-disabled="selectedEmployee.emp_status == 'pending' " ng-click="_resetPassword_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
+							</div>
 							<button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
 							<button class="btn" ng-click="settingsShow('open')"><i class="fa fa-cogs"></i> Health Providers Access</button>
 						</div>
@@ -1836,9 +1875,8 @@
 		</div>
 	</div>
 
-
-
-	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-employee-modal" tabindex="-1"
+	<!-- Old Edit Employee Details  -->
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" tabindex="-1"
 		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document" style="width: 800px;">
 			<div class="modal-content" style="border-radius: 0;">
@@ -1973,6 +2011,103 @@
 
 								</div>
 							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade new-update-employee-modal" id="update-employee-modal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document" style="width: 800px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-body">
+
+					<p class="text-center font-helvetica-medium"
+						style="color: #444;font-weight: 500;font-size: 18px;margin: 35px 0 40px 0;">Edit employee details</p>
+					<p class="text-center status-wrapper"
+						style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
+					<div class="row">
+						<div>
+							<form class="form update-form new">
+								<div>
+									<div>
+										<div class="form-group">
+											<label class="edit-employee-modal-label">Full Name</label>
+											<input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.name">
+										</div>
+									</div>
+									<div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Employee ID</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" placeholder="Type in Employee ID" ng-model="selectedEmployee.member_id" readonly>
+	                  </div>
+	                </div>
+	                 <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Date of Birth</label>
+	                    <input type="text" class="form-control edit-employee-modal-input datepicker" ng-model="selectedEmployee.dob">
+	                  </div>
+	                </div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Work Email</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.email">
+	                  </div>
+	                </div>
+                </div>
+                <div>
+                	<div>
+                		<label class="edit-employee-modal-label">Mobile Number</label>
+	                	<div class="emp-mobile-number-container">
+	                		<div class="form-group">
+	                			<div>
+		                			<input id="phoneNum" class="form-control edit-employee-modal-input" ng-model="editEmpCountryCode">
+		                			<i class="fa fa-angle-down"></i>
+	                			</div>
+	                		</div>
+											<div class="form-group">
+												<input valid-number id="area_code" type="text" class="form-control edit-employee-modal-input"
+													ng-model="selectedEmployee.phone_no">
+											</div>
+										</div>
+									</div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Postal Code</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.postal_code">
+	                  </div>
+	                </div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Bank Name</label>
+	                    <div>
+		                    <input ng-model="selectedEmployee.bank_name" type="text" class="form-control edit-employee-modal-input" placeholder="Choose Bank Name">
+		                    <i class="fa fa-angle-down"></i>
+	                    </div>
+	                  </div>
+	                </div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Bank Account Number</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" placeholder="Type in Account Number" ng-model="selectedEmployee.bank_account">
+	                  </div>
+	                </div>
+								</div>
+							</form>
+							<div class="col-md-12 edit-employee-footer">
+								<button class="cancel-employee-update-button" data-dismiss="modal">
+									Cancel
+								</button>
+								<!-- <div class="status-wrapper pull-right"
+									style="height: 20px;width: 20px;text-align: center;margin-top: 30px;margin-left: 10px;display: none">
+									<i class="fa fa-check" style="color: green;font-size: 30px"></i>
+								</div> -->
+								<button ng-click="saveEmployee( selectedEmployee )"
+									class="replace-employee-update-button update-replace">Update</button>
+
+							</div>
 						</div>
 					</div>
 				</div>
@@ -2125,6 +2260,54 @@
 				<div class="modal-footer">
 					<button class="btn btn-primary custom-btn"
 						ng-click="submitCapPerVisit( selectedEmployee.gp_cap_per_visit )">SAVE & CONTINUE</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="add-filter-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
+		<div class="modal-dialog" role="document" style="margin-top: 200px;">
+			<div class="modal-content">
+				<div class="filter-header">
+					<h4>Status</h4>
+					<div>
+						<span ng-click="_statusClear_( global_statusData )" ng-show="global_statusData.pending == true || global_statusData.logged_in == true || global_statusData.active == true || global_statusData.removed == true">Clear</span>
+					</div>
+				</div>
+				<div class="filter-body">
+					<div class="custom-checkbox-selector">
+			      <label class="selector-container">
+			        <span class="text">Pending</span>
+			        <input ng-model="global_statusData.pending" type="checkbox"/>
+			        <span class="custom-checkbox-checkmark"></span>
+			      </label>
+			    </div>
+			    <div class="custom-checkbox-selector">
+			      <label class="selector-container">
+			        <span class="text">Logged in</span>
+			        <input ng-model="global_statusData.logged_in" type="checkbox"/>
+			        <span class="custom-checkbox-checkmark"></span>
+			      </label>
+			    </div>
+			    <div class="custom-checkbox-selector">
+			      <label class="selector-container">
+			        <span class="text">Active</span>
+			        <input ng-model="global_statusData.active" type="checkbox"/>
+			        <span class="custom-checkbox-checkmark"></span>
+			      </label>
+			    </div> 
+			    <div class="custom-checkbox-selector">
+			      <label class="selector-container">
+			        <span class="text">Removed</span>
+			        <input ng-model="global_statusData.removed" type="checkbox"/>
+			        <span class="custom-checkbox-checkmark"></span>
+			      </label>
+			    </div>   
+				</div>
+				<div class="filter-footer">
+					<button ng-click="_cancelModal_()" class="btn-cancel">Cancel</button>
+					<button ng-click="_empApplyFilter_( global_statusData )" class="btn-apply-filter">Apply Filter</button>
 				</div>
 			</div>
 		</div>

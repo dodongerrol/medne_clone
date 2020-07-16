@@ -1,0 +1,80 @@
+.employee-enrollment-container{
+  height: calc(100vh - 60px);
+  padding-top: 60px;
+  position: relative;
+}
+.enrollment-content-scroll{
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  padding-bottom: 80px;
+}
+.employee-enrollment-container b{
+  font-family: 'Helvetica Medium';
+}
+.enrollment-header-wrapper{
+  height: 80px;
+  width: 100%;
+  padding: 0 62px;
+  background-color: #0392cf;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  color: #FFF;
+  position: relative;
+}
+.enrollment-header-wrapper .left-text-container{
+  position: absolute;
+  left: 62px;
+  top: 0;
+  color: #FFF;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.left-text-container p{
+  font-size: 18px;
+  text-transform: uppercase;
+  margin: 0;
+  font-weight: 700;
+}
+.enrollment-steps-container{
+  text-align: center;
+  width: 100%;
+}
+.enrollment-steps-container .steps-wrapper{
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.steps-wrapper .step{
+  width: 70px;
+  text-align: center;
+  margin: 0 40px;
+  opacity: .4;
+}
+.steps-wrapper .step .num{
+  width: 26px;
+  height: 26px;
+  line-height: 22px;
+  border: 2px solid #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0px 0 15px 0;
+  border-radius: 50%;
+  display: inline-block;
+}
+.steps-wrapper .step .step-text{
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 700;
+}
+.steps-wrapper .step.active,
+.steps-wrapper .step.done{
+  opacity: 1;
+}
+
+.steps-wrapper .step.done .num{
+  background-color: #FFF;
+  color: #0392cf;
+}

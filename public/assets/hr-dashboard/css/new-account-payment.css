@@ -1,0 +1,578 @@
+.new-account-payment-wrapper {
+	padding: 0 0 0 40px;
+}
+.new-account-payment-wrapper h4 {
+	color: #2E4057;
+	font-family: 'Helvetica Medium';
+	font-size: 16px;
+	margin: 15px 0 20px;
+}
+.new-account-payment-wrapper .account-card-container {
+	border: 2px solid #E0E0E0;
+	border-radius: 4px;
+	padding: 20px;
+	color: #2E4057;
+}
+.account-card-row-info {
+	font-size: 14px;
+	display: flex;
+}
+.account-card-row-info div {
+	font-family: 'Helvetica Medium';
+	margin: 0 5px 0 0;
+}
+.hr-admin-container {
+	font-size: 14px;
+	border-bottom: 2px solid #DBDBDB;
+  padding: 0 0 40px;
+}
+.hr-admin-container >div {
+	display: flex;
+}
+.hr-admin-container >div >div {
+	width: 50%;
+}
+.hr-admin-container >div >div:nth-child(2) {
+	text-align: right;
+}
+.new-account-payment-wrapper .btn-edit-details {
+	background-color: #fff;
+	border-radius: 4px;
+	border: 1px solid #0392CF;
+	color: #0392CF;
+  display: flex;
+  align-items: center;
+  padding: 2px 14px;
+  margin: 0 0 0 auto;
+}
+.btn-edit-details img {
+	width: 16px;
+	margin: 0 5px 0 0;
+}
+.new-account-payment-wrapper .btn-update-password {
+	background-color: #0392CF;
+	border-radius: 4px;
+	border: 0;
+	color: #fff;
+	padding: 2px 35px;
+}
+.account-card-container .btn-edit-container {
+	margin: 20px 0 0;
+}
+.hr-admin-container .account-card-container {
+	width: 500px;
+}
+.plan-account-sub-title {
+	display: flex;
+	margin: 0 0 10px;
+}
+.plan-account-sub-title >div {
+	font-family: 'Helvetica Medium';
+	font-size: 15px;
+}
+.plan-account-sub-title span {
+	font-size: 13px;
+}
+.plan-account-sub-title span:before {
+	display: inline-block;
+	content: "";
+	border: 1px solid #2E4057;
+	margin: 0 10px;
+	height: 13px;
+	position: relative;
+	top: 2px;
+}
+.plan-details-container >div {
+	display: flex;
+}
+.plan-details-container .account-card-container:nth-child(1) {
+	margin: 0 15px 0 0;
+}
+.plan-details-container .account-card-container:nth-child(2) {
+	margin: 0 0 0 15px;
+}
+.plan-details-container,
+.enrollment-history-container {
+	padding: 25px 0 0;
+}
+.enrollment-history-container table,
+.invoice-history-container table {
+	border: 2px solid #E0E0E0;
+	font-size: 14px;
+	color: #000000;
+}
+.enrollment-history-container thead,
+.invoice-history-container thead {
+	border: 0;
+}
+.enrollment-history-container thead tr,
+.invoice-history-container thead tr {
+	background-color: #F7F9FA;	
+}
+.enrollment-history-container th,
+.invoice-history-container th {
+	padding: 10px 20px;
+	font-family: 'Helvetica Medium';
+}
+
+.enrollment-history-container td,
+.invoice-history-container td {
+	position: relative;
+	padding: 20px;
+}
+.enrollment-actions-dp-wrapper span{
+	position: relative;
+}
+.enrollment-actions-dp-container {
+	z-index: 1;
+	padding: 10px;
+	position: absolute;
+	/* left: -95px; */
+	right: -50px;
+	top: 0;
+	background-color: #fff;
+	width: auto;
+	border-radius: 2px;
+	border: 1px solid #DBDBDB;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.enrollment-actions-dp-container span {
+	border-bottom: 1px solid #DBDBDB;
+	padding: 0 0 10px;
+	margin: 0 0 10px;
+	font-family: 'Helvetica Medium';
+	line-height: normal;
+	display: block;
+}
+.enrollment-actions-dp-container button {
+	background-color: #fff;
+	border-radius: 3px;
+	border: 1px solid #0392CF;
+	color: #0392CF;
+	width: 175px;
+	margin: 0 0 10px;
+}
+.enrollment-actions-dp-container .view-members-wrapper {
+	margin: 0 0 10px;
+}
+.enrollment-history-container tbody tr,
+.invoice-history-container tbody tr {
+	border-top: 1px solid #E0E0E0;
+}
+.enrollment-history-container td img,
+.invoice-history-container td img {
+	width: 12px;
+}
+.enrollment-history-tbl-wrapper,
+.invoice-history-tbl-wrapper {
+	overflow: auto;
+	/* overflow-x: auto; */
+}
+.enrollment-history-tbl-container,
+.invoice-history-tbl-container {
+	width: 1200px;
+	/* width: 100%; */
+}
+
+.new-account-payment-wrapper .status {
+	color: #fff;
+	border-radius: 4px;
+	padding: 2px 0px;
+	width: 70px;
+	text-align: center;
+}
+.new-account-payment-wrapper .status.paid {
+	background-color: #5BBD76;
+}
+.new-account-payment-wrapper .status.pending {
+	background-color: #EB635D;
+}
+.invoice-history-container {
+	margin: 40px 0 0;
+	position: relative;
+}
+.invoice-history-container .btn-download-invoice{
+	/* width: 188px; */
+  /* height: 38px; */
+  background: #0392CF;
+  font-size: 14px;
+	color: #FFFFFF;
+	border-radius: 4px;
+	border: 0;
+	padding: 2px 35px;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+.new-account-modal .modal-header,
+.new-account-modal .modal-footer {
+	border-top: 0;
+	border-bottom: 0;
+}
+.new-account-modal {
+	color: #2E4057;
+}
+.new-account-modal .modal-header {
+	text-align: center;
+	font-family: 'Helvetica Medium';
+}
+.new-account-modal .company-account-input-wrapper {
+	margin: 0 0 20px;
+}
+.new-account-modal .company-account-input-wrapper.number >div {
+	display: flex;
+}
+.new-account-modal .company-account-input-wrapper.number >div >div:nth-child(1) {
+	width: 25%;
+	margin: 0 10px 0 0;
+}
+.new-account-modal .company-account-input-wrapper.number >div >div:nth-child(2) {
+	width: 100%;
+}
+.new-account-modal .company-account-input-wrapper label {
+	display: block;
+	margin: 0 0 5px;
+	color: #2E4057;
+	font-size: 14px;
+	font-family: 'Helvetica Medium';
+}
+.new-account-modal .company-account-input-wrapper input,
+.new-account-modal .company-account-input-wrapper select {
+	border: 0;
+	outline: none;
+	width: 100%;
+	padding: 0;
+	display: block;
+	font-size: 14px;
+	line-height: inherit;
+}
+.new-account-modal .company-account-input-wrapper select {
+	height: auto;
+  display: inherit;
+  -webkit-appearance: none;
+}
+.new-account-modal .company-account-input-wrapper input:placeholder {
+	color: #848484;
+	font-size: 12px;
+}
+.new-account-modal .custom-input-wrapper {
+	border-radius: 4px;
+	border: 1px solid #BFBFBF;
+	background-color: #fff;
+	padding: 5px 10px;
+	position: relative;
+}
+.new-account-modal .custom-input-wrapper i {
+	position: absolute;
+	top: 10px;
+	right: 7px;
+}
+.new-account-modal .modal-header {
+	padding-top: 20px;
+}
+.new-account-modal .modal-body {
+	padding: 15px 70px;
+}
+.new-account-modal .modal-footer {
+	text-align: center;
+	padding-bottom: 30px;
+}
+.new-account-modal .modal-footer button {
+	background-color: #0392CF;
+	color: #fff;
+	border-radius: 2px;
+	border: 0;
+	font-size: 14px;
+	padding: 5px 0;
+}
+.new-account-modal .btn-edit-cancel {
+	width: 100px;
+	margin: 0 10px 0 0;
+}
+.new-account-modal .btn-update {
+	width: 200px;
+}
+#update_password .btn-edit-cancel {
+	border: 1px solid #0392CF;
+	background-color: #fff;
+	color: #0392CF;
+}
+#update_password .btn-update[disabled] {
+	background-color: #e9e9e9;
+	color: #fff;
+}
+#update_password .btn-edit-cancel.btn-close {
+	margin: 0;
+}
+#update_password .succesfully-updated {
+	text-align: center;
+	color: #2E4057;
+}
+#update_password .succesfully-updated  img {
+	margin:  0 0 10px;
+}
+#send_immediately_modal .modal-content {
+	padding: 40px;
+}
+#send_immediately_modal .modal-header {
+	font-family: 'Helvetica Light';
+	padding: 0;
+	margin: 0 0 30px;
+}
+#send_immediately_modal .modal-body {
+	padding: 0;
+	text-align: center;
+}
+#send_immediately_modal button { 
+	border-radius: 3px;
+	height: 33px;
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+}
+#send_immediately_modal .btn-cancel {
+	width: 110px;
+	margin: 0 20px 0 0;
+	color: #0392CF;
+	border: 1px solid #0392CF;
+	background-color: transparent;
+}
+#send_immediately_modal .btn-confirm {
+	color: #fff;
+	background-color: #0392CF;
+	width: 179px;
+}
+.error-password-text {
+	color: #E63A33;
+  font-size: 14px;
+  font-family: 'Helvetica Medium';
+}
+.invoice-per-page-container,
+.enrollment-per-page-container {
+	display: none;
+}
+#edit_details #phone_number {
+	color: #fff;
+}
+.iti__selected-dial-code.empty {
+	color: #fff;
+}
+/*-------- Custom Table Pagination -------*/
+  .custom-pagination-container{
+
+  }
+  .custom-pagination {
+    display: flex;
+    color: #777;
+    padding: 10px 0;
+    /*justify-content: center;*/
+    align-items: center;
+  }
+  .custom-pagination .pages-list{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .custom-pagination .pages-list span{
+    flex: 1;
+  }
+  .custom-pagination span {
+    font-size: 12px;
+  }
+  .custom-pagination .prev-next-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .custom-pagination .fa-angle-left {
+    margin: 0 10px 0 0;
+    font-size: 25px;
+  }
+  .custom-pagination .fa-angle-right {
+    margin: 0 0 0 10px;
+    font-size: 25px;
+  }
+  .custom-pagination .page-scroll-container {
+    display: flex;
+    margin: 0 70px 0 0;
+  }
+  .custom-pagination .page-scroll-container > div {
+    margin: 0 10px;
+  }
+  .custom-pagination .page-num {
+    border-radius: 2px;
+    margin: 0 5px;
+    padding: 5px 8px;
+    cursor: pointer;
+  }
+  .custom-pagination .page-num.active {
+    background-color: #e8e8e8;
+  }
+  .custom-pagination .page-num:last-child{
+    margin: 0;
+  }
+  .custom-pagination .custom-list-per-page {
+    position: relative;
+    cursor: pointer;
+  }
+  .custom-pagination .custom-list-per-page > span{
+    display: inline-block;
+    height: 26px;
+    line-height: 28px;
+  }
+  .custom-pagination .custom-list-per-page > span:first-child {
+    margin: 0 5px 0 0;
+  }
+  .custom-pagination .custom-list-per-page i {
+    font-size: 14px;
+  }
+  .custom-pagination .opened-per-page-scroll {
+    border: 1px rgba(0,0,0,.12) solid;
+    background-color: #fff;
+    position: absolute;
+    width: 140px;
+    bottom: 40px;
+    left: -38px;
+    padding: 0 0 10px;
+  }
+  .custom-pagination .opened-per-page-scroll > span {
+    display: block;
+    text-align: center;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  .custom-pagination .opened-per-page-scroll:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    /* top: 108px; */
+    left: 63px;
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border: 1px rgba(0,0,0,.12) solid;
+    border-left: 0;
+    border-top: 0;
+    transform: rotate(45deg);
+  }
+  
+/*----------------------------------------*/
+
+@media ( max-width: 992px ) {
+	.hr-admin-container >div {
+		display: block;
+	}
+	.hr-admin-container >div >div:nth-child(2) {
+		text-align: left;
+	}
+	.hr-admin-container .account-card-container {
+		width: 100%;
+		margin: 0 0 20px;
+	}
+	.plan-details-container >div {
+		display: block;
+	}
+
+	.plan-details-container .account-card-container:nth-child(1) {
+		margin: 0 0 20px;
+	}
+
+	.plan-details-container .account-card-container:nth-child(2) {
+		margin: 0
+	}
+	.new-account-payment-wrapper {
+		padding: 0;
+	}
+	.hr-admin-container >div >div {
+		width: 100%;
+	}
+}
+@media ( max-width: 800px ) {
+	#edit_details .modal-dialog {
+		width: 100% !important;
+		margin: 0 auto;
+		max-width: 98%;
+	}
+	.new-account-modal .modal-body {
+		padding: 15px 20px;
+	}
+	#update_password .modal-dialog {
+		width: 100% !important;
+		margin: 0 auto;
+		max-width: 98%;
+	}
+}
+@media ( max-width: 500px ) {
+	.new-account-payment-wrapper .btn-update-password {
+		width: 100%;
+	}
+	.account-card-row-info {
+		font-size: 12px;
+	}
+	.hr-admin-container .account-card-container {
+		padding: 10px;
+	}
+	.plan-account-sub-title {
+		display: block;
+	}
+	.plan-account-sub-title span:before {
+		display: none;
+	}
+	.new-account-payment-wrapper .custom-pagination {
+		display: block;
+	}
+	.new-account-modal .btn-update {
+		width: 150px;
+	}
+}
+@media ( max-width: 400px ) {
+	.new-account-modal .company-account-input-wrapper.number >div >div:nth-child(1) {
+		width: 50%;
+	}
+}
+
+.plan-details-container .btn-edit-details {
+	font-size: 14px;
+}
+#edit_employee_plan .edit-emp-row-info {
+	display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-column-gap: 37px;
+}
+#edit_employee_plan .edit-emp-row-info:last-child {
+	grid-template-columns: 1fr 1fr;
+}
+#edit_employee_plan .btn-edit-cancel {
+	background-color: #fff;
+	border: 1px solid #0392CF;
+	color: #0392CF;
+}
+#edit_employee_plan .custom-input-wrapper {
+	position: relative;
+}
+#edit_employee_plan .custom-input-wrapper img {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	height: 15px;
+	width: 14px;
+}
+#edit_employee_plan .custom-input-wrapper i {
+	position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 20px;
+  color: #ccc;
+}
+#edit_employee_plan .price-dependent-input-wrapper {
+	display: flex;
+	padding: 0;
+}
+#edit_employee_plan .price-dependent-input-wrapper >div {
+	border-right: 1px solid #BFBFBF;
+	padding: 5px;
+	font-size: 14px;
+}
+#edit_employee_plan .price-dependent-input-wrapper input {
+	padding: 5px 10px;
+}

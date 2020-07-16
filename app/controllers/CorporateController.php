@@ -164,4 +164,98 @@ class CorporateController extends BaseController {
 
 		return ['status' => true, 'current_term' => $current_term, 'last_term' => $last_term];
 	}
+
+	public function updateCompanyHrDetails (Request $request)
+	{
+		if(empty($request->get('customer_id')) || $request->get('customer_id') == null) {
+			return array('status' => false, 'message' => 'Customer ID is required.');
+		}
+
+		if(empty($request->get('customer_business_contact_id')) || $request->get('customer_business_contact_id') == null) {
+			return array('status' => false, 'message' => 'Customer Business Contact ID is required.');
+		}
+
+		if(empty($request->get('first_name')) || $request->get('first_name') == null) {
+			return array('status' => false, 'message' => 'Customer Business Contact First Name is required.');
+		}
+
+		$check = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
+		
+		if(!$check) {
+			return array('status' => false, 'message' => 'Company does not exist.');
+		}
+
+		$data = array(
+			'first_name'				=> $request->get('first_name'),
+			'last_name'					=> $request->get('last_name'),
+			'billing_email'				=> $request->get('work_email'),
+			'phone'						=> !empty($request->get('phone')) ? $request->get('phone') : null,
+			'updated_at'				=> date('Y-m-d H:i:s')
+		);
+
+		if(!empty($request->get('billing_name')) || $request->get('billing_name') != null) {
+			$data['billing_name'] = $request->get('billing_name');
+		}
+
+		$result = DB::table('customer_billing_contact')
+		->where('customer_billing_contact_id', $request->get('customer_billing_contact_id'))
+		->update($data);
+
+		if($result) {
+			$admin_id = \AdminHelper::getAdminID();
+			if($admin_id) {
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'type'      => 'admin_updated_company_billing_contact_details',
+					'data'      => \AdminHelper::serializeData($data)
+				);
+				\AdminHelper::createAdminLog($admin_logs);
+			}
+			return array('status' => true, 'message' => 'Company Billing Contact Details updated.');
+		} else {
+			return array('status' => false, 'message' => 'Failed to update Company Billing Contact Details.');
+		}
+	}
+
+	public function resendCorporateActivationEmail ( )
+    {
+        $message = [];
+        $emailData = [];
+        $id = Input::get ('id');
+        // $corporate = Corporate::where('corporate_id', $request->get('corporate_id'))->first();
+        $user = DB::table('user')
+        ->where('UserID', $id)
+		->first();
+
+		if(!$user) {
+			return array('status' => FALSE, 'message' => 'Company does not exist.');
+		}
+		
+        $business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $id)->first();
+
+
+
+        if(url('/') == 'https://admin.medicloud.sg') {
+            $url = 'https://medicloud.sg/company-benefits-dashboard';
+        } else if(url('/') == 'http://stage.medicloud.sg') {
+            $url = 'http://staging.medicloud.sg/company-benefits-dashboard';
+        } else {
+            $url = 'http://medicloud.local/company-benefits-dashboard';
+        }
+
+        if((int)$user->member_activated == 1) {
+            $emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+            $emailDdata['emailTo']= $user->Email;
+            $emailDdata['emailName'] = ucwords($user->Name);
+            $emailDdata['emailPage'] = 'email-templates.activation-email';
+            $emailDdata['url'] = $url;
+            $emailDdata['button'] = $url.'/company-benefits-dashboard-login';
+            
+            \EmailHelper::sendEmail($emailDdata);
+			return array('status' => TRUE, 'message' => 'Successfully resend activation email.');         
+		} else {
+			return array('status' => FALSE, 'message' => 'Failed to resend activation email.');
+		}
+	}
 }
+

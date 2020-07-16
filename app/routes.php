@@ -113,6 +113,9 @@ Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordVie
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 Route::post('hr/create-password-activated', 'BenefitsDashboardController@createCompanyPasswordActivated');
 Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
+Route::post('hr/employee_reset_password', 'EmployeeController@employeeResetPassword');
+// admin resend activation email
+Route::post('hr/resend_activation_email', 'CorporateController@resendCorporateActivationEmail');
 // authentications for eclaim
 Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::get('employee/get/user_details', 'EclaimController@getUserData');
@@ -209,6 +212,8 @@ Route::get('hr/download_dependent_invoice', 'DependentController@getDependentInv
 // get pending employee replacement
 Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@getPendingEmployeeDeactivate');
 
+// update agree status
+Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
 Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get token download
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
@@ -223,14 +228,14 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('insert/enrollee_web_input', 'BenefitsDashboardController@insertFromWebInput');
 	Route::post('update/enrollee_details', 'BenefitsDashboardController@updateEnrolleeDetails');
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
-	Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
+	
 	// upload via excel
 	// Route::post('upload/excel_enrollment', 'BenefitsDashboardController@uploadExcel');
 	Route::post('upload/excel_enrollment', 'DependentController@uploadExcel');
 	// finish employee enrollements
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 	// employee list
-	Route::get('hr/employee/list/{per_page}', 'BenefitsDashboardController@employeeLists');
+	Route::get('hr/employee/list', 'BenefitsDashboardController@employeeLists');
 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');
 	// search employee
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
@@ -317,10 +322,13 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('get/active_plan_hr', 'BenefitsDashboardController@getActivePlanHr');
 	// update hr password
 	Route::post('hr/update_password', 'BenefitsDashboardController@updateHrPassword');
+	// get hr details
+	Route::get('hr/get_hr_details', 'BenefitsDashboardController@getHrDetails');
+	// update hr account details
+	Route::post('hr/update_hr_details', 'BenefitsDashboardController@updateHrAccountDetails');
 	// get cancellation details
 	Route::get('hr/get_head_count_plan/{id}', 'BenefitsDashboardController@getAddedHeadCountInvoice');
-	// get company employees and credits left
-	Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
+	
 	// get hr credits total allocation
 	Route::get('hr/total_credits_allocation', 'BenefitsDashboardController@getCompanyTotalAllocation');
 	// get company plan status
@@ -458,16 +466,41 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_member_credits_allocation', 'EmployeeController@createNewAllocation');
 	// get spending invoice purchse
 	Route::get('hr/get_spending_invoice_purchase_lists', 'BenefitsDashboardController@getSpendingInvoicePurchaseLists');
+	// update company HR details / employee enrollment
+	Route::post('hr/update_company_hr_details', 'CorporateController@updateCompanyHrDetails');
+	// EMPLOYEE ENROLLMENT V2 ROUTES
+	// get plan details
+	Route::get('hr/get_plan_details', 'BenefitsDashboardController@getPlanDetails');
+	// get enrollment histories
+	Route::get('hr/get_plan_enrollment_histories', 'BenefitsDashboardController@getEnrollmentHistories');
+	// get invoice histories
+	Route::get('hr/get_plan_invoice_histories', 'BenefitsDashboardController@getInvoiceHistories');
 	// get employee enrollment status
 	Route::get('hr/get_employee_enrollment_status', 'EmployeeController@getEmployeeEnrollmentStatus');
 	// check fields for replacement
 	Route::post('hr/check_user_field_replacement', 'EmployeeController@checkMemberReplaceDetails');
+	// update edit schedule
+	Route::post('hr/update_enrollment_schedule', 'BenefitsDashboardController@updateEnrollmentSchedule');
+	// seend activaton email
+	Route::post('hr/send_immediate_activation', 'EmployeeController@SendMemberActivation');
+	// list og old plans
+	Route::get('hr/get_old_list_plans', 'BenefitsDashboardController@getOldPlansLists');
 	// hr send email account spending inquiry
 	Route::post('hr/send_spending_activation_inquiry', 'BenefitsDashboardController@sendSpendingActivateInquiry');
-});
-
+	// update plan details
+	Route::post('hr/update_employee_active_plan_details', 'BenefitsDashboardController@updateActivePlanDetails');
+	// update dependent details
+	Route::post('hr/update_dependent_active_plan_details', 'BenefitsDashboardController@updateActiveDependentDetails');
+	Route::get('hr/get_users_by_active_plan', 'BenefitsDashboardController@enrolledUsersFromActivePlan');
+	// downloand plan invoice
+	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
+});
+
+	// get company employees and credits left
+	Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
+	
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
 	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');

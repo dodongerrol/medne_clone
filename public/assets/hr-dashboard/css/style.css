@@ -410,6 +410,168 @@ button {
   margin-left: 10px;
   vertical-align: top;
 }
+.mednefits-box .info-box-img-wrapper {
+  position: relative;
+}
+.mednefits-box .status-tooltip-wrapper {
+  position: absolute;
+  top: 24px;
+  left: -7px;
+  width: 300px;
+  background-color: #fff;
+  border: 1px solid #DBDBDB;
+  border-radius: 3px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  z-index: 1;
+}
+.mednefits-box .status-tooltip-wrapper:before {
+  display: block;
+  content: "";
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: -8px;
+  transform: rotate(45deg);
+  border: 1px solid #DBDBDB;
+  width: 15px;
+  height: 15px;
+  border-right: 0;
+  border-bottom: 0;
+  background-color: #fff;
+}
+.status-tooltip-wrapper {
+  text-transform: none;
+}
+.status-tooltip-container {
+  position: relative;
+}
+.status-steps-container {
+  display: flex;
+  padding: 0 30px;
+}
+.status-steps-container >div {
+  flex: 1;
+}
+.blue-circle-wrapper .line-container {
+  display: block;
+  content: "";
+  width: 100%;
+  height: 5px;
+  /* border: 1px solid red; */
+  position: relative;
+  top: -9px;
+  left: 6px;
+  border-radius: 15px;
+}
+/*.blue-circle-wrapper:after {
+  display: block;
+  content: "";
+  width: 100%;
+  height: 10px;
+  position: relative;
+  top: -17px;
+  left: 6px;
+  border-radius: 15px;
+}*/
+.status-tooltip-wrapper.pending .blue-circle-wrapper.active {
+  color: rgba(0, 0, 0, 0.1);
+}
+.blue-circle-wrapper.pending .line-container {
+  background-color: #bae8fc;
+}
+.blue-circle-wrapper.activated .line-container {
+  background-color: #e8f8fe;
+}
+.blue-circle-wrapper.active .line-container {
+  background-color: #e6f4fa;
+}
+.blue-circle-wrapper {
+  text-align: center;
+}
+.blue-circle-wrapper.activated {
+  color: rgba(0, 0, 0, 0.1);
+}
+.blue-circle {
+  background: #02597E;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  z-index: 1;
+  position: relative;
+}
+.blue-circle.first-login {
+  background-color: #e6eef2;
+}
+.status-steps-container >div >span {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  color: #000000;
+}
+.mednefits-box > .mednefits-body-box .row-box div.status-tooltip-header {
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 0.5px solid #000000;
+  margin: 0px 10px 20px;
+  font-family: "Helvetica Medium";
+}
+/*.status-tooltip-wrapper.pending .pass-created,*/
+.status-tooltip-wrapper.pending .first-login{
+  color: rgba(0, 0, 0, 0.1);
+}
+.subtext-container {
+  margin: 20px 10px;
+  font-size: 14px;
+}
+.btn-got-it-container {
+  text-align: center;
+  margin:  0 0 20px;
+}
+.btn-got-it-container button {
+  border-radius: 3px;
+  background-color: #0392CF;
+  border: 0;
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 20px;
+}
+.status-tooltip-wrapper.active {
+
+}
+.status-tooltip-wrapper.active .blue-circle-wrapper.activated,
+.status-tooltip-wrapper.active .blue-circle-wrapper.active  {
+  color: #000000;
+}
+.status-tooltip-wrapper.active .blue-circle-wrapper.activated .line-container{
+  background-color: #47b9f8;
+}
+.status-tooltip-wrapper.active .blue-circle-wrapper.active .line-container {
+  background-color: #3593cf;
+}
+.status-tooltip-wrapper.active .blue-circle.first-login {
+  background-color: #02597E;
+}
+.status-tooltip-wrapper.activated .blue-circle-wrapper.activated .line-container{
+  background-color: #47b9f8;
+}
+.status-tooltip-wrapper.activated .blue-circle-wrapper.activated {
+  color: #000000;
+}
+.status-tooltip-wrapper.activated .first-login,
+.status-tooltip-wrapper.activated .blue-circle-wrapper.active {
+  color: rgba(0, 0, 0, 0.1);
+}
+.status-tooltip-wrapper.activated .blue-circle.first-login {
+  background-color: #02597E;
+}
+#edit_details .iti--separate-dial-code .iti__selected-flag {
+  background-color: transparent;
+  padding: 0;@
+}
+#edit_details .iti__arrow {
+  display: none;
+}
 
 .circle-graph-light {
   height: 100px;
@@ -729,6 +891,7 @@ button {
 .med-form {
   max-width: 390px;
   margin: 0 auto;
+  padding-top: 50px;
 }
 
 /* .form-group .med-input {
@@ -1209,11 +1372,11 @@ a.link-box:hover {
   margin: -1px 2px 2px -1px;
 }
 
-@media [type="radio"].with-gap:checked+label:after {
+/* @media [type="radio"].with-gap:checked+label:after {
   .enrollment-method-box {
     background-color: #f2f2f2;
   }
-}
+} */
 
 [type="radio"].with-gap:checked + label:after,
 [type="radio"].with-gap:checked + label:before,
@@ -6866,6 +7029,19 @@ span.dropdown-entitlement.disabled {
   padding-right: 40px;
 }
 
+.envelope-icon {
+  width: 22px;
+  margin: 0 10px 0 0;
+}
+
+.resend-reset-container {
+  display: flex;
+}
+
+.resend-reset-container >button:first-child {
+  margin: 10px 30px 10px 0;
+}
+
 .employee-settings-wrapper .btn {
   background-color: transparent;
   border: 2px solid #e8e8e8;
@@ -9782,6 +9958,164 @@ span.dropdown-entitlement.disabled {
 
 /* ---------------------------------------- */
 
+.add-filter-container {
+  color: #283e52;
+  font-family: 'Helvetica Medium';
+  font-size: 14px;
+  margin: 0 10px 0 0;
+}
+
+.add-filter-container img {
+  height: 12px;
+  margin: 0 5px 5px 0;
+}
+
+#add-filter-modal .modal-dialog {
+  background: #fff;
+  border-radius: 4px;
+  width: max-content;
+}
+#add-filter-modal .modal-content {
+  padding: 20px;
+}
+
+#add-filter-modal .filter-header,
+#add-filter-modal .filter-body {
+  display: flex;
+  align-items: center;
+}
+
+#add-filter-modal .filter-header h4 {
+  flex: 1;
+  margin: 0;
+  font-family: 'Helvetica Medium';
+}
+
+#add-filter-modal .filter-header >div {
+  line-height: normal;
+}
+
+#add-filter-modal .filter-header span {
+  color: #0392CF;
+  text-decoration: underline;
+  font-size: 14px;
+  font-family: 'Helvetica Medium';
+}
+
+#add-filter-modal .filter-body {
+  /*justify-content: center;*/
+}
+#add-filter-modal .filter-body >div{
+  margin: 0 20px;
+}
+#add-filter-modal .filter-body >div:first-child {
+  margin: 0 20px 0 0;
+}
+#add-filter-modal .filter-body >div:last-child {
+  margin: 0 0 0 20px;
+}
+
+#add-filter-modal .filter-footer {
+  text-align: center;
+  margin: 10px 0 0;
+}
+
+#add-filter-modal .filter-footer button {
+  padding: 5px 0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#add-filter-modal .filter-footer .btn-cancel {
+  width: 110px;
+  background-color: #fff;
+  color: #0392CF;
+  border: 1px solid #0392CF;
+  margin: 0 10px 0 0;
+}
+
+#add-filter-modal .filter-footer .btn-apply-filter {
+  width: 122px;
+  background-color: #0392CF;
+  border: 0;
+  color: #fff;
+}
+
+#add-filter-modal .custom-checkbox-selector .selector-container {
+  display: block;
+  position: relative;
+  padding-left: 25px;
+  margin: 20px 0;
+  cursor: pointer;
+  font-size: 16px;
+}     
+#add-filter-modal .custom-checkbox-selector .selector-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+#add-filter-modal .custom-checkbox-selector input:checked ~ .custom-checkbox-checkmark:after {
+  display: block;
+}
+
+#add-filter-modal .custom-checkbox-selector .custom-checkbox-checkmark {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  height: 13px;
+  width: 13px;
+  background-color: transparent;
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+#add-filter-modal .custom-checkbox-selector .custom-checkbox-checkmark:after {
+  display: none;
+  content: "";
+  position: absolute;
+  left: 4px;
+  bottom: 2px;
+  width: 8px;
+  height: 13px;
+  border: solid #18A4E0;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+#add-filter-modal .custom-checkbox-selector .text {
+  font-size: 14px;
+  color: #2E4057;
+}
+
+@media ( max-width: 767px ) {
+  #add-filter-modal .modal-dialog {
+    margin: 0 auto;
+  }
+}
+
+@media ( max-width: 600px ) {
+  #add-filter-modal .modal-dialog {
+   width: auto;
+  }
+
+  #add-filter-modal .filter-body {
+    display: block;
+  }
+  #add-filter-modal .filter-body >div:first-child,
+  #add-filter-modal .filter-body >div:last-child,
+  #add-filter-modal .filter-body >div {
+    margin: 0;
+  }
+  #add-filter-modal .filter-footer .btn-cancel {
+    width: 90px;
+  }
+  #add-filter-modal .filter-footer .btn-apply-filter {
+    width: 108px;
+  }
+}
+
 @media ( max-width: 1024px ) {
   .privacy-wrapper {
     width: 100%;
@@ -9811,6 +10145,272 @@ span.dropdown-entitlement.disabled {
   .privacy-policy-wrapper >div:nth-child(1) p {
     font-size: 14px;
   }
+}
+
+
+@media ( max-width: 1199px ) {
+  .home-dashboard-container .billing-status-box {
+    margin: 30px 0;
+  }
+}
+
+@media ( max-width: 700px ) {
+  .home-dashboard-container .hrbd-body-box {
+    margin: 0;
+  }
+
+  .mednefits-box > .mednefits-body-box .row-box {
+    display: block;
+  }
+  .home-dashboard-container .body-subtext {
+    width: 100%;
+  }
+  .home-dashboard-container .billing-status-box {
+    grid-template-columns: 100%;
+  }
+  .home-dashboard-container .billing-status-box >div {
+    margin: 0 0 20px;
+  }
+  .plan-subscription-container {
+    border: 0;
+  }
+  .health-spending-accounts-container {
+    padding: 0;
+  }
+  .view-invoice-button {
+    text-align: left;
+  }
+}
+
+@media ( max-width: 400px ) {
+  .mednefits-box .status-tooltip-wrapper {
+    left: -102px;
+  }
+  .mednefits-box .status-tooltip-wrapper:before {
+    left: 110px;
+  }
+}
+
+#update-employee-modal form.update-form.new {
+  width: 100%;
+  display: flex;
+  padding: 0 40px;
+}
+#update-employee-modal form.update-form.new .form-group >div {
+  position: relative;
+}
+#update-employee-modal .form-group i {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  font-size: 15px;
+  color: #ccc;
+  z-index: 1;
+}
+#update-employee-modal .form-group input::placeholder {
+  font-style: italic;
+  font-size: 12px;
+  color: #979797;
+}
+#update-employee-modal form.update-form.new >div{
+  width: 50%;
+}
+#update-employee-modal form.update-form.new >div:first-child {
+  margin: 0 20px 0 0;
+}
+#update-employee-modal form.update-form.new >div:last-child {
+  margin: 0 0 0 20px;
+}
+
+.edit-employee-footer {
+  text-align: center;
+}
+.edit-employee-footer button {
+  height: 33px;
+  padding: 0;
+}
+.edit-employee-footer .cancel-employee-update-button {
+  width: 110px;
+  border: 1px solid #0392CF;
+  background-color: #fff;
+  color: #0392CF;
+  margin: 0 10px 0 0;
+}
+.edit-employee-footer .replace-employee-update-button {
+  width: 172px;
+}
+.update-form.new .edit-employee-modal-input {
+  border: 1px solid #BFBFBF;
+  border-radius: 4px;
+  padding: 6px;
+  background-color: #fff;
+}
+.update-form.new .edit-employee-modal-label {
+  font-size: 14px;
+  color: #2E4057;
+  font-family: "Helvetica Medium";
+}
+.emp-mobile-number-container {
+  display: flex;
+}
+.emp-mobile-number-container >div:first-child {
+  width: 28%;
+  margin: 0 10px 0 0;
+  font-size: 14px;
+}
+.emp-mobile-number-container >div:last-child {
+  width: 72%;
+}
+.emp-mobile-number-container .iti--separate-dial-code .iti__selected-flag {
+  background-color: #fff;
+}
+.emp-mobile-number-container .iti__arrow {
+  display: none;
+}
+.emp-mobile-number-container #phoneNum {
+  padding-left: 6px !important;
+}
+.emp-mobile-number-container .iti {
+  width: 100%;
+}
+
+@media ( max-width: 800px ) {
+  #update-employee-modal form.update-form.new {
+    padding: 0 10px;
+  }
+  .new-update-employee-modal .modal-dialog {
+    width: 100%;
+    max-width: 95%;
+    margin: 0 auto;
+  }
+}
+@media ( max-width: 767px ) {
+  #update-employee-modal form.update-form.new {
+    display: block;
+  }
+  #update-employee-modal form.update-form.new >div:first-child,
+  #update-employee-modal form.update-form.new >div:last-child {
+    width: 100%;
+    margin: 0;
+  }
+  .emp-mobile-number-container >div:first-child {
+    width: 15%;
+  }
+  .emp-mobile-number-container >div:last-child {
+    width: 85%;
+  }
+}
+@media ( max-width: 650px ) {
+  .emp-mobile-number-container >div:first-child {
+    width: 35%;
+  }
+  .emp-mobile-number-container >div:last-child {
+    width: 65%;
+  }
+  .edit-employee-footer  {
+    margin: 30px 0 0;
+    padding: 0 10px;
+  }
+  .edit-employee-footer .cancel-employee-update-button,
+  .edit-employee-footer .replace-employee-update-button {
+    width: 100%;
+    margin: 0 0 10px;
+  }
+}
+
+.new-account-payment-wrapper .plan-details-header h4 {
+  margin: 0;
+}
+
+.plan-details-header {
+  display: flex;
+  align-items: center;
+  margin: 15px 0 20px;
+  color: #2E4057;
+  font-size: 14px;
+}
+
+.plan-details-header >div:first-child {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.plan-details-header .seperator {
+  display: inline-block;
+  border: 1px solid #2E4057;
+  height: 14px;
+  margin: 0 20px;
+}
+.current-active-plans-text {
+  display: inline-block;
+  margin: 0 20px 0 0;
+  width: 130px;
+}
+.current-active-plans-pagination{
+
+}
+.current-active-plans-pagination >div {
+  border-radius: 5px;
+  border: 1px solid #D9D9D9;
+  color: #D9D9D9;
+  padding: 0;
+  cursor: pointer;
+  width: 38px;
+  height: 26px;
+  float: left;
+  text-align: center;
+  margin-right: 2px;
+}
+.current-active-plans-pagination div.active {
+  background-color: #0392CF;
+  border: 1px solid #0392CF;
+  color: #2E4057;
+}
+.old-active-plans-wrapper,
+.active-plan-dot {
+  position: relative;
+}
+.old-active-plans-text {
+  text-decoration: underline;
+  margin-left: 20px;
+  cursor: pointer;
+}
+.old-active-plans-dp-container,
+.active-plan-dp-wrapper {
+  position: absolute;
+  top: 25px;
+  background-color: #fff;
+  border: 1px solid #BFBFBF;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  max-height: 150px;
+  overflow-y: auto;
+}
+.old-active-plans-dp-container {
+  width: 230px;
+  right: 0;
+}
+.active-plan-dp-wrapper {
+  left: 0;
+  width: max-content;
+  color: #2E4057;
+}
+.old-active-plans-dp-container >div,
+.active-plan-dp-wrapper >div {
+  border-bottom: 1px solid #BFBFBF;
+  padding: 10px 20px;
+}
+.old-active-plans-dp-container >div:last-child,
+.active-plan-dp-wrapper >div:last-child {
+  border: 0;
+}
+.new-account-modal .password-input.password-border {
+  border: 1px solid #E63A33;
+}
+
+.password-confirmation-text {
+  color: #E63A33;
+  text-align: center;
+  font-size: 14px;
 }
 .mednefits-body-box .wellness-account-info {
   display: inline-block;
@@ -9864,4 +10464,11 @@ span.dropdown-entitlement.disabled {
   margin: 10px 0 20px 0;
 }
 
-
+.plan-details-pagination-container{
+  display: flex;
+  align-items: center;
+}
+.plan-details-pagination-container .dot-click{
+  display: inline-block;
+  width: 100%;
+}
