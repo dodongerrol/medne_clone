@@ -1797,11 +1797,13 @@ app.directive("employeeOverviewDirective", [
           // console.log(input);
           if (input) {
             scope.showLoading();
-            var data = {
-              search: input
-            };
+            // var data = {
+            //   search: input
+            // };
+            let data = input;
 
-            hrSettings.findEmployee(data)
+            // hrSettings.findEmployee(data)
+            hrSettings.searchMemberList(scope.page_active,scope.global_empLimitList,data)
               .then(function (response) {
                 scope.employees = response.data;
                 angular.forEach(scope.employees.data, function (value, key) {
@@ -2867,8 +2869,8 @@ app.directive("employeeOverviewDirective", [
           hrSettings.getFilterEmployees ( scope.page_active,scope.global_empLimitList,data.pending,data.logged_in,data.active,data.removed  )
           .then(function( response ) {
             console.log(response);
-
-            scope.getEmployeeList( scope.page_active );
+            scope.employees = response.data;
+            // scope.getEmployeeList( scope.page_active );
             scope.hideLoading();
             $('#add-filter-modal').modal('hide');            
           });
@@ -2877,7 +2879,16 @@ app.directive("employeeOverviewDirective", [
         scope._cancelModal_ = function () {
           $('#add-filter-modal').modal('hide');
         }
+
+        scope.listBank = function () {
+          $('.bank-list-wrapper').toggle();
+        }
         
+        scope.selectBank = function ( data ) {
+          scope.selectedEmployee.bank_name = data;
+          $('.bank-list-wrapper').hide();
+        }
+
         scope.onLoad = function () {
           console.log($state.current);
           if( $state.current.name != 'employee-overview' && $state.current.name.indexOf('employee-overview') > -1 ){
@@ -2982,7 +2993,7 @@ app.directive("employeeOverviewDirective", [
           }
           scope.isUpdateEmpInfoModalOpen = false;
           // iti2.destroy();
-          console.log(iti);
+          // console.log(iti);
           // console.log(iti2);
         })
 

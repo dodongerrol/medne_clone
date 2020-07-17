@@ -624,7 +624,7 @@
 									<span ng-bind="selectedEmployee.lname">Lee</span>
 								</div> -->
 								<div>
-									<strong class="font-helvetica-medium">Member ID</strong>
+									<strong class="font-helvetica-medium">Employee ID</strong>
 									<span ng-bind="selectedEmployee.member_id">657834</span>
 								</div>
 								<!-- <div ng-if="selectedEmployee.medical_wallet || selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon"> -->
@@ -976,8 +976,8 @@
 							<!-- <button class="btn" ng-click="resendResetAccount()"><i class="fa fa-wrench"></i> Resend/Reset
 								Account</button> -->
 							<div class="resend-reset-container">
-								<button ng-disabled="selectedEmployee.emp_status == 'active' " ng-click="_resetActivation_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
-								<button ng-disabled="selectedEmployee.emp_status == 'pending' " ng-click="_resetPassword_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
+								<button ng-disabled="selectedEmployee.member_activated == true" ng-click="_resetActivation_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
+								<button ng-disabled="selectedEmployee.member_activated == false " ng-click="_resetPassword_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
 							</div>
 							<button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
 							<button class="btn" ng-click="settingsShow('open')"><i class="fa fa-cogs"></i> Health Providers Access</button>
@@ -2027,7 +2027,7 @@
 				<div class="modal-body">
 
 					<p class="text-center font-helvetica-medium"
-						style="color: #444;font-weight: 500;font-size: 18px;margin: 35px 0 40px 0;">Edit employee details</p>
+						style="color: #444;font-weight: 500;font-size: 18px;margin: 35px 0 40px 0;">Edit Employee details</p>
 					<p class="text-center status-wrapper"
 						style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
 					<div class="row">
@@ -2037,7 +2037,7 @@
 									<div>
 										<div class="form-group">
 											<label class="edit-employee-modal-label">Full Name</label>
-											<input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.name">
+											<input type="text" class="form-control edit-employee-modal-input disabled" ng-model="selectedEmployee.name">
 										</div>
 									</div>
 									<div>
@@ -2084,9 +2084,23 @@
 	                <div>
 	                  <div class="form-group">
 	                    <label class="edit-employee-modal-label">Bank Name</label>
-	                    <div>
-		                    <input ng-model="selectedEmployee.bank_name" type="text" class="form-control edit-employee-modal-input" placeholder="Choose Bank Name">
+	                    <div style="position: relative;">
+		                    <input ng-click="listBank()" ng-model="selectedEmployee.bank_name" type="text" class="form-control edit-employee-modal-input" placeholder="Choose Bank Name">
 		                    <i class="fa fa-angle-down"></i>
+		                    <div class="bank-list-wrapper">
+		                    	<div ng-click="selectBank('DBS/POSB BANK')">DBS/POSB BANK</div>
+		                    	<div ng-click="selectBank('OCBC')">OCBC</div>
+		                    	<div ng-click="selectBank('UOB')">UOB</div>
+		                    	<div ng-click="selectBank('CITI BANK')">CITI BANK</div>
+		                    	<div ng-click="selectBank('MAYBANK')">MAYBANK</div>
+		                    	<div ng-click="selectBank('SCB (Standard Chartered Bank)')">SCB (Standard Chartered Bank)</div>
+		                    	<div ng-click="selectBank('HSBC')">HSBC</div>
+		                    	<div ng-click="selectBank('BOC (Bank of China)')">BOC (Bank of China)</div>
+		                    	<div ng-click="selectBank('RHB BANK')">RHB BANK</div>
+		                    	<div ng-click="selectBank('CIMB BANK Berhad')">CIMB BANK Berhad</div>
+		                    	<div ng-click="selectBank('FEB (Far Eastern Bank)')">FEB (Far Eastern Bank)</div>
+		                    	<div ng-click="selectBank('SBI BANK(State Bank of India)')">SBI BANK(State Bank of India)</div>
+		                    </div>
 	                    </div>
 	                  </div>
 	                </div>

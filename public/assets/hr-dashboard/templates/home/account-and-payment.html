@@ -399,7 +399,7 @@
 														<span>Activation Email</span>
 														<div>
 															<button data-toggle="modal" data-target="#send_immediately_modal">Send Immediately</button>
-															<button>Edit Scheduled Date</button>
+															<button ng-click="_editScheduleDate_(list)" data-toggle="modal" data-target="#edit_scheduled_modal">Edit Scheduled Date</button>
 														</div>
 													</div>
 												</div>
@@ -448,7 +448,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="invoice-history-container">
+				<div ng-if="spending_account_status.account_type == 'enterprise_plan'" class="invoice-history-container">
 					<h4>Invoice History</h4>
 					<button ng-if="spending_account_status.account_type == 'enterprise_plan'" class="btn-download-invoice" ng-click="_downloadInvoiceHistoryPDF_()">Download Invoice</button>
 					<div class="invoice-history-tbl-wrapper">
@@ -496,7 +496,8 @@
 											<span ng-bind="list.payment_amount">0.00</span>
 										</td>
 										<td>
-											<span ng-bind="list.payment_date">Not Paid</span>
+											<span ng-if="list.payment_date != null" ng-bind="list.payment_date">Not Paid</span>
+											<span ng-if="list.payment_date == null" ng-bind="list.payment_date"></span>
 										</td>
 										<td>
 											<span ng-bind="list.payment_remarks"></span>
@@ -852,6 +853,41 @@
 			    </div>
 			  </div>
 			</div>
+
+			<div class="modal fade new-account-modal" id="edit_scheduled_modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document" style="margin-top: 200px;">
+			    <div class="modal-content">
+			    	<form>
+				      <div class="modal-header">
+				        <h4>Edit Schedule Date</h4>
+				      </div>
+				      <div class="modal-body">
+				      	<form>
+					      	<div ng-if="!global_passwordSuccess">
+						        <div class="company-account-input-wrapper">
+						        	<label>Scheduled Date</label>
+						        	<div class="custom-input-wrapper disabled">
+						        		<input class="schedule-date disabled" type="text" ng-model="scheduleData.schedule_date">
+						        	</div>
+						        </div>
+						        <div class="company-account-input-wrapper">
+						        	<label>New Scheduled Date</label>
+						        	<div class="custom-input-wrapper">
+						        		<input id="new-scheduled-date" class="datepicker" type="text" ng-model="newScheduleDate" ng-change="_changeDate_( newScheduleDate )" placeholder="DD/MM/YYYY">
+						        		<img src="../assets/images/calendar-gray.png">
+						        	</div>
+						        </div>
+					        </div>
+					      </form>
+				      </div>
+				      <div class="modal-footer">
+				        <button data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
+				        <button ng-click="setScheduleDate(  )" class="btn-update">Update</button>
+				      </div>
+			      </form>
+			    </div>
+			  </div>
+			</div>
 		</div>
 
 		<div class="col-lg-8">
@@ -965,7 +1001,7 @@
             </div>
             <div ng-if="selected_active_plan_details.deposits.length > 0" ng-repeat="list in selected_active_plan_details.deposits" class="col-md-12 body">
             	<div class="col-md-6 no-padding">
-            		<p>Invoice: <span <span ng-bind="list.deposit_number">DEP000085</span></p>
+            		<p>Invoice: <span> <span ng-bind="list.deposit_number">DEP000085</span></p>
             		<p>Total Credits: <span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_credits">12,500.00</span></p>
             		<p>(<span ng-bind="list.total_all_credits_text"></span>)</p>
             		<p>Deposit: <span class="currency-type" ng-bind="local_currency_type">SGD/MYR</span> <span ng-bind="list.total_deposit">1,250.00</span></p>
