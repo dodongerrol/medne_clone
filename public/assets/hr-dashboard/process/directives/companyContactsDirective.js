@@ -772,7 +772,7 @@ app.directive("companyContactsDirective", [
             .then(function (response) {
               scope.global_enrollmentHistoryData = response.data.data.data;
               scope.global_enrollmentHistoryPagination = response.data.data;
-
+              console.log(scope.global_enrollmentHistoryData)
               angular.forEach(scope.global_enrollmentHistoryData, function(value, key) {
                 value.date_of_edit = moment( value.date_of_edit ).format('DD MMMM YYYY');
                 value.plan_start = moment( value.plan_start ).format('DD MMMM YYYY');
@@ -788,9 +788,10 @@ app.directive("companyContactsDirective", [
           scope.global_enrollmentHistoryData.map((value,key)  => {
             if ( index == key ) {
               value.isActionShow = value.isActionShow == true ? false : true;
-            } else {
-              value.isActionShow = false;
-            }
+            } 
+            // else {
+            //   value.isActionShow = false;
+            // }
           })
         }
         scope.closeAllEnrollAction  = function(){
@@ -1126,6 +1127,58 @@ app.directive("companyContactsDirective", [
           }
           
         }
+        // scope.newScheduleDate = new Date();
+        scope._editScheduleDate_ = function ( data ) {
+          console.log(data);
+          scope.scheduleData = data;
+          scope.scheduleData.schedule_date = moment( scope.scheduleData.schedule_date,['YYYY-MM-DD', 'DD/MM/YYYY'] ).format('DD/MM/YYYY');
+          document.getElementById('new-scheduled-date').value = '';
+        
+          setTimeout(() => {
+            // var dt = new Date();
+            // dt.setFullYear(new Date().getFullYear()-18);
+            $('.datepicker').datepicker({
+              format: 'dd/mm/yyyy',
+              // endDate: dt
+            });
+
+            $('.datepicker').datepicker().on('hide', function (evt) {
+              var val = $(this).val();
+              if (val != "") {
+                $(this).datepicker('setDate', val);
+              }
+            })
+          }, 300); 
+        }
+
+        scope._changeDate_ = function ( date ) {
+          console.log(date);
+          scope.new_scheduled_date = date.split("/").reverse().join("-");;
+          console.log(scope.new_scheduled_date);
+        }
+
+        scope.setScheduleDate = function (  ) {
+          let data = {
+            id: scope.scheduleData.id,
+            schedule_date: scope.new_scheduled_date,
+          } 
+          scope.toggleLoading();
+          hrSettings.updateScheduleDate( data )
+            .then(function(response){
+              console.log(response);
+              if ( response.data.status) {
+                // scope.toggleOff();
+                $('#edit_scheduled_modal').modal('hide');
+                document.getElementById('new-scheduled-date').value = '';
+                scope.getEnrollmentHistoryData();
+              } else {
+                scope.toggleOff();
+                swal('Error!', response.data.message, 'error');
+              }
+              
+            });
+        }
+
       // ---------------------------------------- //
 
         scope.onLoad = function(){

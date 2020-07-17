@@ -27,7 +27,7 @@ app.directive('expiredLinkDirective', [
 							scope.hideLoading();
 							scope.validateToken.token = scope.getTokenData;
 							activationFactory.setActivationDetails(scope.validateToken);
-		      		if ( scope.validateToken.activated == false && scope.validateToken.expired_token == false && scope.validateToken.t_c == false || scope.validateToken.activated == true && scope.validateToken.t_c == false ) {
+		      		if ( scope.validateToken.activated == false && scope.validateToken.expired_token == false && scope.validateToken.t_c == false || scope.validateToken.activated == true && scope.validateToken.t_c == false || scope.validateToken.activated == false && scope.validateToken.expired_token == false && scope.validateToken.t_c == true) {
 		      			scope.hideLoading();
 		      			$state.go('T&C');
 		      		}

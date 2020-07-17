@@ -806,7 +806,7 @@ class PlanTierController extends \BaseController {
 			return array('status' => false, 'message' => 'Employee Enrollee ID is required.');
 		}
 
-		$communcation_send = !empty($input['communcation_send']) ? $input['communcation_send'] : 'immediate';
+		$communcation_send = !empty($input['communication_send']) ? $input['communication_send'] : 'immediate';
 		$schedule_date = null;
 
 		if($communcation_send == "schedule") {

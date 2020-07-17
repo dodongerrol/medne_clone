@@ -217,7 +217,7 @@
 						</div>
 					</div>
 
-					<div ng-if="downloadWithDependentsCheckbox && !downloadWithDependents" class="review-no-dependents tier-feature-item item-fade">
+					<div ng-if="new-body-container && !downloadWithDependents" class="review-no-dependents tier-feature-item item-fade">
 						<h1 class="weight-700 font-25 download-template-title" style="color: #2c3e50;">Let us help you with the review before upload.</h1>
 						<div class="white-space-20"></div>
 						<div class="review-tick-container">
@@ -555,25 +555,49 @@
 						</div>
 					</div>	
 					
-					<div class="enrolment-communication-container tier-feature-item item-fade">
+					<div ng-if="isCommunicationShow" class="enrolment-communication-container tier-feature-item item-fade">
 						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Communication</h1>
-						<p>When do you wish to have Employee Activation Email sent out?</p>
+						<div class="sub-header-text">
+							<p >When do you wish to have Employee Activation Email sent out?</p>
+
+							<span>
+								<img ng-click="toggleActivationInfo()" src="../assets/hr-dashboard/img/info-blue.png" alt="">
+
+								<div ng-if="isActivationInfoDropShow" class="activation-info-drop-container">
+									<div class="activation-info-drop-caret"></div>
+									<div class="activation-info-drop">
+										<p class="info-header">Employee Activation Email</p>
+
+										<p class="info-content">Employee Activation Email notifies that employees have been enrolled into the Mednefits health benefits program. They will be required to activate their accounts by creating their own passwords.
+											Those without email will receive mobile message instead.</p>
+
+										<button class="btn" ng-click="toggleActivationInfo()">Got it</button>
+									</div>
+								</div>
+							</span>
+						</div>
 
 						<form>
 							<div class="form-div">
-								<label>
-									<input type="radio" name="activation">
-									<span>Immediate</span>
-								</label>
+								<div class="custom-radiobox-container">
+									<label class="radiobox-input">
+										<span>Immediate</span>
+										<input value="immediate" type="radio" ng-model="communication_send.type" name="activation"/>
+										<span class="radiobox-mark"></span>
+									</label>
+								</div> 
 							</div>
 
 							<div class="form-div">
-								<label>
-									<input type="radio" name="activation">
-									<span>Scheduled Date</span>
-								</label>
-								<div class="input-group-div">
-									<input type="text">
+								<div class="custom-radiobox-container">
+									<label class="radiobox-input">
+										<span>Scheduled Date</span>
+										<input value="schedule" type="radio" ng-model="communication_send.type" name="activation"/>
+										<span class="radiobox-mark"></span>
+									</label>
+								</div> 
+								<div class="input-group-div" ng-class="{'disabled' : communication_send.type != 'schedule'}">
+									<input class="comm-schedule-datepicker" type="text" ng-model="communication_send.date">
 									<img src="../assets/images/calendar-gray.png">
 								</div>
 							</div>
@@ -624,7 +648,7 @@
 			</button>
 			<button ng-if="isReviewEnroll && previewTable_arr.length > 0" class="pull-left btn btn-info back-btn delete-btn" ng-click="removeManyEmp()">Delete</button>
 			
-			<button ng-if="!isWebInput && !isAddDependentsShow && !isReviewEnroll && !isSuccessfulEnroll" class="pull-right btn btn-info next-wizard-button" ng-disabled="isNextBtnDisabled" ng-click="nextBtn( )">NEXT</button>
+			<button ng-if="!isWebInput && !isAddDependentsShow && !isReviewEnroll && !isSuccessfulEnroll && !isCommunicationShow" class="pull-right btn btn-info next-wizard-button" ng-disabled="isNextBtnDisabled" ng-click="nextBtn( )">NEXT</button>
 
 			<button ng-if="isExcel" class="pull-right btn btn-info next-wizard-button download-template-btn-bottom" ng-click="downloadTemplate( )" style="font-size: 14px !important;">DOWNLOAD TEMPLATE</button>
 
@@ -634,12 +658,13 @@
 				<button ng-if="employee_ctr > 0" class="btn-next-employee" ng-click="prevActiveEmployee( )">PREVIOUS EMPLOYEE</button>
 				<button ng-if="isTiering && employee_ctr != tierSelected.member_head_count" class="btn-next-employee" ng-click="nextActiveEmployee()">NEXT EMPLOYEE</button>
 				<button ng-if="!isTiering && employee_ctr != progress.total_employees" class="btn-next-employee" ng-click="nextActiveEmployee()">NEXT EMPLOYEE</button>
-				<button class="btn-enroll" ng-click="enrollEmployees()">ENROLL</button>
+				<button ng-if="!isCommunicationShow" class="btn-enroll" ng-click="enrollEmployees()">ENROLL</button>
+				
 			</div>
 
 			<div ng-if="isReviewEnroll" class="enroll-container-button">
 				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
-				<button ng-click="saveTempUser()" class="btn-enroll" ng-disabled="hasError" >ENROLL
+				<button ng-click="goToCommunication()" class="btn-enroll" ng-disabled="hasError" >ENROLL
 					<span class="enroll-badge">
 						{{ temp_employees.length < 1000 ? temp_employees.length : ''  }}
 						{{ ( temp_employees.length > 999 && temp_employees.length < 1000000 ? (temp_employees.length/1000).toFixed(0) + 'K+' : '' ) }}
@@ -647,6 +672,11 @@
 					</span>
 				</button>
 				<span ng-if="temp_employees.length > 999" class="tooltiptext">512</span>
+			</div>
+
+			<div ng-if="isCommunicationShow" class="enroll-container-button">
+				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<button class="btn-enroll" ng-click="saveTempUser()">COMPLETE</button>
 			</div>
 
 			<button ng-if="isSuccessfulEnroll" ui-sref="benefits-dashboard" class="pull-left btn btn-info back-btn">BACK TO HOME</button>

@@ -119,6 +119,10 @@ public function getCompanyForgotPasswordView( )
 {
   $input = Input::all();
 
+  if(empty($input['token']) || $input['token'] == null) {
+    return "token is required";
+  }
+
   $result = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 

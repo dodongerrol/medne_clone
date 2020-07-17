@@ -2202,24 +2202,24 @@ class BenefitsDashboardController extends \BaseController {
 				->sum('claim_amount');
 
 				$medical = array(
-					'entitlement' => $wallet_entitlement->medical_entitlement,
-					'credits_allocation' => $medical_credit_data['allocation'],
-					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
-					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
+					'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
+					'credits_allocation' =>  number_format($medical_credit_data['allocation'], 2),
+					'credits_spent' 	=>  number_format($medical_credit_data['get_allocation_spent'], 2),
+					'e_claim_amount_pending_medication' =>  number_format($e_claim_amount_pending_medication, 2),
 					'visits'			=> $user_active_plan_history->total_visit_limit,
 					'balance'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
 					'utilised'			=> $user_active_plan_history->total_visit_created,
-					'in_network' 	=> $medical_credit_data['in_network'],
-					'out_network' 	=> $medical_credit_data['out_network']
+					'in_network' 	=>  number_format($medical_credit_data['in_network'], 2),
+					'out_network' 	=>  number_format($medical_credit_data['out_network'], 2)
 				);
 
 				
 				$wellness = array(
-					'entitlement' => $wallet_entitlement->wellness_entitlement,
-					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
-					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
-					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
-					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+					'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
+					'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
+					'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+					'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2),
 				);
 			} else {
 				// get pending allocation for medical
@@ -2237,19 +2237,19 @@ class BenefitsDashboardController extends \BaseController {
 				->sum('claim_amount');
 
 				$medical = array(
-					'entitlement' => $wallet_entitlement->medical_entitlement,
-					'credits_allocation' => $medical_credit_data['allocation'],
-					'credits_spent' 	=> $medical_credit_data['get_allocation_spent'],
-					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
-					'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication
+					'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
+					'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
+					'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  number_format($medical_credit_data['balance'], 2),
+					'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
 				);
 
 				$wellness = array(
-					'entitlement' => $wallet_entitlement->wellness_entitlement,
-					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'],
-					'credits_spent_wellness' 		=> $wellness_credit_data['get_allocation_spent'],
-					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
-					'e_claim_amount_pending_wellness'	=> $e_claim_amount_pending_wellness
+					'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
+					'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
+					'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+					'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
 				);
 			}
 
@@ -15932,12 +15932,31 @@ class BenefitsDashboardController extends \BaseController {
 		// get hr details
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
 
+		if(!$hr->fullname) {
+			// update info
+			$customer = DB::table('customer_business_contact')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
+
+			if($customer) {
+				$hr_acount_details = [
+					'fullname'			=> $customer->first_name.' '.$customer->last_name,
+					'email'				=> $customer->work_email,
+					'phone_number'		=> $customer->phone,
+					'phone_code'		=> "+65"
+				];
+
+				DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr->hr_dashboard_id)->update($hr_acount_details);
+				$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+			}
+		}
+
+		$phone_code = str_replace('+', '', $hr->phone_code);
+		$phone_number = str_replace('+', '', $hr->phone_number);
 		$hr_acount_details = [
 			'full_name'			=>$hr->fullname,
 			'email'				=>$hr->email,
-			'phone'				=>$hr->phone_number,
-			'phone_code'		=>$hr->phone_code,
-			'id' 				=>$hr->hr_dashboard_id
+			'phone'				=>(int)$phone_number,
+			'phone_code'		=>"+".$phone_code,
+			'id'				=>$hr->hr_dashboard_id
 		];
 
 		return ['status' => true, 'hr_account_details' => $hr_acount_details];
@@ -15951,16 +15970,19 @@ class BenefitsDashboardController extends \BaseController {
         $session = self::checkSession();
         $admin_id = Session::get('admin-session-id');
         $hr_id = $session->hr_dashboard_id;
-        
+	
+
+		$phone_code = str_replace('+', '', $input['phone_code']);
+		$phone_number = str_replace('+', '', $input['phone_number']);
+
         $data = array(
             'fullname'                  => $input['fullname'],
             'email'                     => $input['email'],
-			'phone_number'              => $input['phone_number'],
-			'phone_code'				=> $input['phone_code'],
+			'phone_number'              => $phone_number,
+			'phone_code'				=> $phone_code,
             'updated_at'                => date('Y-m-d H:i:s')
         );
 
-        
         $result = DB::table('customer_hr_dashboard')
         ->where('hr_dashboard_id', $hr_id)
         ->update($data);

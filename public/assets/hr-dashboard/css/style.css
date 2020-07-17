@@ -459,7 +459,7 @@ button {
   height: 5px;
   /* border: 1px solid red; */
   position: relative;
-  top: -9px;
+  top: -13px;
   left: 6px;
   border-radius: 15px;
 }
@@ -473,6 +473,12 @@ button {
   left: 6px;
   border-radius: 15px;
 }*/
+.status-tooltip-container .subtext-container {
+  padding: 0 10px 5px;
+}
+.status-tooltip-container .btn-got-it-container {
+  padding: 0 0 20px;
+}
 .status-tooltip-wrapper.pending .blue-circle-wrapper.active {
   color: rgba(0, 0, 0, 0.1);
 }
@@ -2378,12 +2384,20 @@ p.number-of-enrollees.inactive-enroll-text {
   border: solid 1px #0392cf;
   background-color: #0392cf;
 }
-
+#update-employee-modal .modal-content {
+  border: none;
+  box-shadow: none;
+}
 #update-dependent-modal form.update-form,
 #update-employee-modal form.update-form {
   display: block;
   width: 80%;
   margin: 0 auto;
+}
+
+#update-employee-modal .edit-employee-modal-input.disabled {
+  pointer-events: none;
+  background-color: #F2F2F2;
 }
 
 .cancel-employee-update-button {
@@ -10481,7 +10495,201 @@ span.dropdown-entitlement.disabled {
   display: inline-block;
   width: 100%;
 }
+.bank-list-wrapper {
+  position: absolute;
+  background-color: #fff;
+  z-index: 1;
+  font-size: 14px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  padding: 10px;
+  width: 100%;
+  height: 250px;
+  overflow: auto;
+  margin: 0 0 20px;
+  display: none;
+}
+.bank-list-wrapper >div {
+  padding: 5px 0;
+  cursor: pointer;
+}
+
 
 .enrolment-communication-container{
-  
+  max-width: 485px;
+  margin: 0 auto;
+}
+.enrolment-communication-container h1{
+  margin-bottom: 50px;
+}
+.enrolment-communication-container .sub-header-text > p{
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #2E4057;
+  width: auto;
+  display: inline-block;
+}
+.enrolment-communication-container .sub-header-text{
+  margin-bottom: 40px;
+}
+.enrolment-communication-container .sub-header-text span{
+  position: relative;
+}
+.enrolment-communication-container .sub-header-text img{
+  width: 20px;
+  height: 20px;
+  margin-top: -4px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.enrolment-communication-container .sub-header-text .activation-info-drop-container{
+  position: absolute;
+  top: 30px;
+  left: -10px;
+  z-index: 99;
+}
+.enrolment-communication-container .sub-header-text .activation-info-drop-caret{
+  position: absolute;
+  top: -8px;
+  left: 22px;
+  height: 15px;
+  width: 15px;
+  background: #FFF;
+  border: 1px solid #DBDBDB;
+  border-width: 1px 0px 0 1px;
+  transform: rotate(45deg);
+  z-index: 1;
+}
+.enrolment-communication-container .sub-header-text .activation-info-drop{
+  width: 390px;
+  border: 1px solid #DBDBDB;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 2px;
+  padding: 12px;
+  background: #FFF;
+}
+.enrolment-communication-container .activation-info-drop .info-header{
+  font-size: 15px;
+  line-height: 18px;
+  color: #000000;
+  font-family: 'Helvetica Medium';
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 0.5px solid #000000;
+}
+.enrolment-communication-container .activation-info-drop .info-content{
+  font-size: 15px;
+  line-height: 18px;
+  color: #000000;
+  margin-bottom: 30px;
+}
+.enrolment-communication-container .activation-info-drop button,
+.enrolment-communication-container .activation-info-drop button:hover{
+  background: #0392CF;
+  border-radius: 3px;
+  width: 86px;
+  height: 31px;
+  margin: 0 auto 10px auto;
+  display: block;
+  font-size: 15px;
+  line-height: 17px;
+  box-shadow: none;
+  color: #FFF;
+}
+.enrolment-communication-container .form-div{
+  margin-bottom: 30px;
+}
+.enrolment-communication-container .custom-radiobox-container{
+  padding-left: 0;
+  width: 160px;
+  display: inline-block;
+}
+.enrolment-communication-container .custom-radiobox-container .radiobox-input{
+  padding-left: 40px;
+  color: #000000;
+  font-size: 16px;
+}
+.enrolment-communication-container input[type="radio"]:checked,
+.enrolment-communication-container input[type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+.enrolment-communication-container input[type="radio"]:checked + label,
+.enrolment-communication-container input[type="radio"]:not(:checked) + label
+{
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+    color: #666;
+}
+.enrolment-communication-container .radiobox-input .radiobox-mark{
+  border: 2px solid #bfbfbf;
+}
+.enrolment-communication-container input[type="radio"]:checked + label:after,
+.enrolment-communication-container input[type="radio"]:not(:checked) + label:after {
+    content: '';
+    width: 11px;
+    height: 11px;
+    background: #F87DA9;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+.enrolment-communication-container input[type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+.enrolment-communication-container input[type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+.enrolment-communication-container .radiobox-input input:checked ~ .radiobox-mark{
+  border: 2px solid #0392CF !important;
+}
+.enrolment-communication-container .radiobox-mark:after{
+  background: #0392CF !important;
+  left: 3px !important;
+  bottom: 3px !important;
+}
+.enrolment-communication-container .input-group-div{
+  border: 1px solid #BFBFBF;
+  background: #FFFF;
+  width: 247px;
+  height: 38px;
+  position: relative;
+  border-radius: 3px;
+  display: inline-block;
+  margin-left: 30px;
+}
+.enrolment-communication-container .input-group-div input{
+  background: transparent;
+  border: none;
+  width: 100%;
+  height: 100%;
+  padding: 10px 50px 10px 10px;
+  outline: none;
+  color: #333;
+}
+.enrolment-communication-container .input-group-div img{
+  position: absolute;
+  right: 15px;
+  top: 7px;
+  width: 19px;
+  height: 20px;
+}
+.enrolment-communication-container .input-group-div.disabled{
+  pointer-events: none;
+  background: #F2F2F2;
+}
+.btn-complete{
+  width: 140px;
+  height: 50px;
 }
