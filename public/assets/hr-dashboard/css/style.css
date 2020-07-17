@@ -5249,13 +5249,22 @@ ul.typeahead li a.dropdown-item {
   padding: 30px 0 50px 0;
 }
 
-.details-enroll table {
+/* .details-enroll table {
   width: 100%;
   border: 1px solid #ccd3d6;
   display: inline-block;
-  /*display: block;*/
   overflow-x: auto;
   white-space: nowrap;
+} */
+
+.details-enroll table {
+  width: 90%;
+  border: 1px solid #ccd3d6;
+  /* display: inline-block; */
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin: 0 auto;
 }
 
 .details-enroll table > thead > tr > th:first-child {

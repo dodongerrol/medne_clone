@@ -70,7 +70,7 @@
 				</div>
 				<div class="form-group" style="align-items: center; display: flex;">
 					<label for="confirm" style="padding-right: 34px; margin-bottom: 22px;">Confirm</label>
-					<input type="password" name="" class="form-control med-input" placeholder="Confirm Your Password" ng-model="forgot_password_data.new_password2" required>
+					<input type="@{{inputType ? 'text' : 'password'}}" name="" class="form-control med-input" placeholder="Confirm Your Password" ng-model="forgot_password_data.new_password2" required>
 				</div>
 				<p ng-if="new_password_error" class="text-center" style="color: #e61111">Password did not match!</p>
 				<div class="form-group">
