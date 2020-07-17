@@ -14,7 +14,7 @@
 			</div>
 		</a>
 	</div>
-	<div class="mednefits-logo-container">
+	<div ng-if="scope.validateToken.activated == false && scope.validateToken.expired_token == false && scope.validateToken.t_c == false || scope.validateToken.activated == true && scope.validateToken.t_c == false" class="mednefits-logo-container">
 		<img class="mednefits-logo" src="../../assets/images/Mednefits Logo_Blue.png">
 	</div>
 	<div ng-if="validateToken.expired_token == true" class="link-expired-container">

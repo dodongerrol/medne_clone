@@ -31,6 +31,9 @@ app.directive('expiredLinkDirective', [
 		      			scope.hideLoading();
 		      			$state.go('T&C');
 		      		}
+		      		if ( scope.validateToken.activated == false && scope.validateToken.expired_token == false && scope.validateToken.t_c == true ) {
+		      			$state.go('company-create-password');
+		      		}
 		      	});
 				}
 

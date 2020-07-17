@@ -93,7 +93,7 @@ app.directive("companyContactsDirective", [
             input2.addEventListener("countrychange", function () {
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
             })
-          } else if ( scope.global_hrData.phone_code == '63' || scope.global_hrData.phone_code == "" ) {
+          } else if ( scope.global_hrData.phone_code == '63' || scope.global_hrData.phone_code == "" || scope.global_hrData.phone_code == null ) {
             $('.iti__selected-dial-code').addClass('empty');
             var input3 = document.querySelector("#phone_number");
             iti1 = intlTelInput(input3, settings3);
@@ -733,7 +733,7 @@ app.directive("companyContactsDirective", [
         } 
 
         scope._editDetailsBtn_ = function ( data ) {
-          
+          console.log(data);
           scope.initializeGeoCode();
         }
 
@@ -748,7 +748,7 @@ app.directive("companyContactsDirective", [
           scope.toggleLoading();
           hrSettings.updateHrDetails( params )
             .then(function (response) {
-              
+              // console.log(response);
               if ( response.data.status == true ) {
                 $('#edit_details').modal('hide');
 
