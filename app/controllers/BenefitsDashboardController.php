@@ -15949,12 +15949,14 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 
+		$phone_code = str_replace('+', '', $hr->phone_code);
+		$phone_number = str_replace('+', '', $hr->phone_number);
 		$hr_acount_details = [
 			'full_name'			=>$hr->fullname,
 			'email'				=>$hr->email,
-			'phone'				=>$hr->phone_number,
-			'phone_code'		=>$hr->phone_code,
-			'id' 				=>$hr->hr_dashboard_id
+			'phone'				=>(int)$phone_number,
+			'phone_code'		=>"+".$phone_code,
+			'id'				=>$hr->hr_dashboard_id
 		];
 
 		return ['status' => true, 'hr_account_details' => $hr_acount_details];
@@ -15968,16 +15970,19 @@ class BenefitsDashboardController extends \BaseController {
         $session = self::checkSession();
         $admin_id = Session::get('admin-session-id');
         $hr_id = $session->hr_dashboard_id;
-        
+	
+
+		$phone_code = str_replace('+', '', $input['phone_code']);
+		$phone_number = str_replace('+', '', $input['phone_number']);
+
         $data = array(
             'fullname'                  => $input['fullname'],
             'email'                     => $input['email'],
-			'phone_number'              => $input['phone_number'],
-			'phone_code'				=> $input['phone_code'],
+			'phone_number'              => $phone_number,
+			'phone_code'				=> $phone_code,
             'updated_at'                => date('Y-m-d H:i:s')
         );
 
-        
         $result = DB::table('customer_hr_dashboard')
         ->where('hr_dashboard_id', $hr_id)
         ->update($data);
