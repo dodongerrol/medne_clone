@@ -755,7 +755,6 @@ class AuthLibrary{
                 $compose['sms_type'] = "LA";
 
                 $result_sms = SmsHelper::sendSms($compose);
-                return $result_sms;
                     // if($result_sms['status'] == true) {
                        // $returnObject->status = TRUE;
                        // $returnObject->type = "sms";
