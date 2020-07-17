@@ -553,7 +553,34 @@
 							<img ng-if="added_dependent_ctr != 0" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png" ng-click="prevAddedDependent()">
 							<img ng-if="added_dependent_ctr < (employee_data.dependents.length-1)" class="summary-right-btn" src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextAddedDependent()">
 						</div>
-					</div>		
+					</div>	
+					
+					<div class="enrolment-communication-container tier-feature-item item-fade">
+						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Communication</h1>
+						<p>When do you wish to have Employee Activation Email sent out?</p>
+
+						<form>
+							<div class="form-div">
+								<label>
+									<input type="radio" name="activation">
+									<span>Immediate</span>
+								</label>
+							</div>
+
+							<div class="form-div">
+								<label>
+									<input type="radio" name="activation">
+									<span>Scheduled Date</span>
+								</label>
+								<div class="input-group-div">
+									<input type="text">
+									<img src="../assets/images/calendar-gray.png">
+								</div>
+							</div>
+						</form>
+					</div>
+
+
 				</div>
 			</div>
 		</div>
