@@ -219,21 +219,22 @@ class CorporateController extends BaseController {
 
 	public function resendCorporateActivationEmail ( )
     {
+		$input = Input::all();
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required.'];
+		}
+
         $message = [];
         $emailData = [];
-        $id = Input::get ('id');
-        // $corporate = Corporate::where('corporate_id', $request->get('corporate_id'))->first();
+        $id = (int)$input['id'];
         $user = DB::table('user')
         ->where('UserID', $id)
 		->first();
 
 		if(!$user) {
-			return array('status' => FALSE, 'message' => 'Company does not exist.');
+			return array('status' => FALSE, 'message' => 'Member does not exist.');
 		}
-		
-        $business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $id)->first();
-
-
 
         if(url('/') == 'https://admin.medicloud.sg') {
             $url = 'https://medicloud.sg/company-benefits-dashboard';
@@ -243,18 +244,20 @@ class CorporateController extends BaseController {
             $url = 'http://medicloud.local/company-benefits-dashboard';
         }
 
-        if((int)$user->member_activated == 1) {
+        if((int)$user->member_activated == 0) {
             $emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
             $emailDdata['emailTo']= $user->Email;
             $emailDdata['emailName'] = ucwords($user->Name);
             $emailDdata['emailPage'] = 'email-templates.newAccountLogin.member-activation-email';
             $emailDdata['url'] = $url;
+            $emailDdata['code'] = $user->PhoneCode;
+            $emailDdata['phone'] = $user->PhoneNo;
             $emailDdata['button'] = $url.'/company-benefits-dashboard-login';
             
             \EmailHelper::sendEmail($emailDdata);
 			return array('status' => TRUE, 'message' => 'Successfully resend activation email.');         
 		} else {
-			return array('status' => FALSE, 'message' => 'Failed to resend activation email.');
+			return array('status' => FALSE, 'message' => 'Member already Activated');
 		}
 	}
 }
