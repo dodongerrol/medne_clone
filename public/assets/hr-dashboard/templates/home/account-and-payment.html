@@ -289,8 +289,8 @@
 					<div class="plan-details-header">
 						<div>
 							<h4>Plan Details</h4>
-							<span ng-if="spending_account_status.account_type == 'enterprise_plan'" class="seperator"></span>
-							<div ng-if="spending_account_status.account_type == 'enterprise_plan'" class="plan-details-pagination-container"> 
+							<span ng-if="spending_account_status.paginate == true" class="seperator"></span>
+							<div ng-if="spending_account_status.paginate == true" class="plan-details-pagination-container"> 
 								<span class="current-active-plans-text">Current Active Plans:</span>
 								<div class="current-active-plans-pagination">
 									<div ng-if="$index + 1 < 5" ng-repeat="list in range(activePlanDetails_pagination.total_data)" ng-click="selectActivePlanPage($index + 1)" ng-class="{'active' : activePlan_active_page == $index + 1}">{{$index + 1}}</div>
