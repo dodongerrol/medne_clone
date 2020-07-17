@@ -289,8 +289,8 @@
 					<div class="plan-details-header">
 						<div>
 							<h4>Plan Details</h4>
-							<span ng-if="spending_account_status.paginate == true" class="seperator"></span>
-							<div ng-if="spending_account_status.paginate == true" class="plan-details-pagination-container"> 
+							<span ng-if="activePlanDetails_pagination.paginate == true" class="seperator"></span>
+							<div ng-if="activePlanDetails_pagination.paginate == true" class="plan-details-pagination-container"> 
 								<span class="current-active-plans-text">Current Active Plans:</span>
 								<div class="current-active-plans-pagination">
 									<div ng-if="$index + 1 < 5" ng-repeat="list in range(activePlanDetails_pagination.total_data)" ng-click="selectActivePlanPage($index + 1)" ng-class="{'active' : activePlan_active_page == $index + 1}">{{$index + 1}}</div>
@@ -308,7 +308,7 @@
 								</div>
 							</div>
 						</div>
-						<div ng-if="spending_account_status.account_type == 'enterprise_plan' && oldPlan_list.length > 0" class="old-active-plans-wrapper">
+						<div ng-if="activePlanDetails_pagination.paginate == true && oldPlan_list.length > 0" class="old-active-plans-wrapper">
 							<span class="old-active-plans-text" ng-if="oldPlan_active_page != null" ng-click="_selectCurrentPlan_()">Select Current Plan</span>
 							<span class="old-active-plans-text" ng-click="_toggleOldActivePlanDrop_()">See Old Active Plans</span>
 							<div ng-if="isOldPlanListDropShow" class="old-active-plans-dp-container">
