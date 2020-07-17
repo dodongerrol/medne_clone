@@ -458,6 +458,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     }
     return $http.get( url );
   }
+  hrFactory.searchMemberList = function ( page,limit,search ) {
+    return $http.get( serverUrl.url + "/hr/employee/list?page=" + page + "&limit=" + limit + "&search=" + search ); 
+  }
+  hrFactory.updateScheduleDate = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_enrollment_schedule", data);
+  }
 
   return hrFactory;
 });

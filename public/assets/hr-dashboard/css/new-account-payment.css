@@ -354,6 +354,13 @@
 #edit_details #phone_number {
 	color: #fff;
 }
+#edit_details .iti__flag-container {
+	width: 100%;
+}
+#edit_details .iti__flag {
+	background-color: #fff;
+	box-shadow: none;
+}
 .iti__selected-dial-code.empty {
 	color: #fff;
 }
@@ -583,4 +590,25 @@
 }
 #edit_employee_plan .price-dependent-input-wrapper input {
 	padding: 5px 10px;
+}
+#edit_scheduled_modal .modal-dialog {
+	width: 450px;
+  min-width: auto;
+}
+#edit_scheduled_modal .custom-input-wrapper img{
+	position: absolute;
+  height: 16px;
+  width: 16px;
+  right: 10px;
+  top: 10px;
+}
+#edit_scheduled_modal .btn-edit-cancel {
+	background-color: #fff;
+	border: 1px solid #0392CF;
+	color: #0392CF;
+}
+#edit_scheduled_modal .custom-input-wrapper.disabled,
+#edit_scheduled_modal .schedule-date.disabled {
+	pointer-events: none;
+	background-color: #F2F2F2;
 }
