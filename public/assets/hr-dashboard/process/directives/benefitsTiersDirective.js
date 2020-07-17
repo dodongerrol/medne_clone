@@ -88,6 +88,12 @@ app.directive('benefitsTiersDirective', [
 
 				scope.isCommunicationShow = false;
 
+				scope.communication_send = {
+					type: 'immediate',
+					date: null,
+				};
+				scope.isActivationInfoDropShow = false;
+
 				console.log(scope.showCurrencyType);
 
 				var iti = null;
@@ -283,6 +289,11 @@ app.directive('benefitsTiersDirective', [
 						scope.isUploadFile = false;
 						scope.isExcel = true;
 						scope.download_step = 1;
+					}
+					if( scope.isCommunicationShow == true ){
+						scope.isCommunicationShow = false;
+						scope.getEnrollTempEmployees();
+						scope.isReviewEnroll = true;
 					}
 				}
 
@@ -1408,8 +1419,26 @@ app.directive('benefitsTiersDirective', [
 							}
 						});
 				}
+				scope.goToCommunication	=	function(){
+					scope.isReviewEnroll = false;
+					scope.isCommunicationShow = true;
+					
+					$timeout(function(){
+						$('.comm-schedule-datepicker').datepicker({
+							format: 'dd/mm/yyyy',
+							startDate : new Date()
+						});
+					},400);
+					
+				}
 
 				scope.saveTempUser = function () {
+					console.log(scope.communication_send);
+					console.log($('.comm-schedule-datepicker').val());
+					if( scope.communication_send.type == 'schedule' && ($('.comm-schedule-datepicker').val() == null || $('.comm-schedule-datepicker').val() == '' )){
+						swal('Error!', 'Please select schedule date.', 'error');
+						return false;
+					}
 					scope.showLoading();
 					var err = 0;
 					scope.current_enrolled_count = {
@@ -1419,32 +1448,36 @@ app.directive('benefitsTiersDirective', [
 					angular.forEach(scope.temp_employees, function (value, key) {
 						$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-circle-o-notch').fadeIn();
 						var data = {
-							temp_enrollment_id: value.employee.temp_enrollment_id
+							temp_enrollment_id: value.employee.temp_enrollment_id,
+							communication_send: scope.communication_send.type,
+						}
+						if(scope.communication_send.type == 'schedule'){
+							data.schedule_date = moment( $('.comm-schedule-datepicker').val(), ['DD/MM/YYYY', 'YYYY-MM-DD'] ).format('YYYY-MM-DD');
 						}
 						dependentsSettings.saveTempEnrollees(data)
 							.then(function (response) {
-								// console.log( response );
+								console.log( response );
 								scope.current_enrolled_count.total_employee_enrolled += response.data.result.total_employee_enrolled;
 								scope.current_enrolled_count.total_dependents_enrolled += response.data.result.total_dependents_enrolled;
-								$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-circle-o-notch').hide();
+								// $('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-circle-o-notch').hide();
 								if (response.data.result) {
 									if (response.data.result.status == true) {
 										value.success = true;
 										value.fail = false;
-										$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-check').fadeIn();
+										// $('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-check').fadeIn();
 									}
 								} else {
 									value.success = false;
 									value.fail = true;
 									err++;
-									$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-times').fadeIn();
+									// $('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-times').fadeIn();
 								}
 								if (key == scope.temp_employees.length - 1) {
 									$timeout(function () {
 										scope.hideLoading();
 										scope.getEnrollTempEmployees();
 										if (err == 0) {
-											scope.isReviewEnroll = false;
+											scope.isCommunicationShow = false;
 											scope.isSuccessfulEnroll = true;
 											scope.isFromUpload = false;
 											scope.employee_data = {
@@ -1636,6 +1669,16 @@ app.directive('benefitsTiersDirective', [
 						});
 				}
 
+				scope.toggleActivationInfo	=	function(){
+					scope.isActivationInfoDropShow = scope.isActivationInfoDropShow == true ? false : true;
+				}
+				$("body").click(function (e) {
+					if ($(e.target).parents(".sub-header-text span").length === 0) {
+						scope.isActivationInfoDropShow = false;
+						scope.$apply();
+					}
+				});
+
 				scope.showLoading = function () {
 					$(".circle-loader").fadeIn();
 					loading_trap = true;
@@ -1671,9 +1714,7 @@ app.directive('benefitsTiersDirective', [
 
 						scope.isTierSummary = false;
 						scope.isTierBtn = false;
-						scope.isEnrollmentOptions = false;
-
-						scope.isCommunicationShow = true;
+						scope.isEnrollmentOptions = true;
 
 
 						// if (scope.isTiering == true || scope.isTiering == 'true') {
