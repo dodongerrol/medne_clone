@@ -6747,7 +6747,7 @@ public function payCreditsNew( )
 
       if(!$checker) {
           $returnObject->status = false;
-          $returnObject->message = 'This phone number has not been signed up with Mednefits';
+          $returnObject->message = 'Sorry, your phone number has not been signed up with Mednefits.';
           return Response::json($returnObject);
       }
 
