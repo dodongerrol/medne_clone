@@ -79,21 +79,21 @@ app.directive("companyContactsDirective", [
             onlyCountries: ["sg","my"],
           }
   
-          if ( scope.global_hrData.phone_code == '65' ) {
+          if ( scope.global_hrData.phone_code == '+65' ) {
             var input = document.querySelector("#phone_number");
             iti1 = intlTelInput(input, settings);
 
             input.addEventListener("countrychange", function () {
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
             })
-          } else if ( scope.global_hrData.phone_code == '60' ) {
+          } else if ( scope.global_hrData.phone_code == '+60' ) {
             var input2 = document.querySelector("#phone_number");
             iti1 = intlTelInput(input2, settings2);
 
             input2.addEventListener("countrychange", function () {
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
             })
-          } else if ( scope.global_hrData.phone_code == '63' || scope.global_hrData.phone_code == "" || scope.global_hrData.phone_code == null ) {
+          } else if ( scope.global_hrData.phone_code == '+63' || scope.global_hrData.phone_code == "" || scope.global_hrData.phone_code == null ) {
             $('.iti__selected-dial-code').addClass('empty');
             var input3 = document.querySelector("#phone_number");
             iti1 = intlTelInput(input3, settings3);
@@ -652,7 +652,7 @@ app.directive("companyContactsDirective", [
             .then(function (response) {
               scope.getPlanInvoiceData = response.data.data.data;
               scope.invoicePlanPagination = response.data.data;
-
+              console.log(scope.getPlanInvoiceData);
               angular.forEach(scope.getPlanInvoiceData, function(value, key) {
                 value.invoice_date = moment( value.invoice_date ).format('DD MMMM YYYY');
                 value.invoice_due = moment( value.invoice_due ).format('DD MMMM YYYY');
