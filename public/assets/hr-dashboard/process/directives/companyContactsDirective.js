@@ -794,7 +794,7 @@ app.directive("companyContactsDirective", [
           })
         }
         scope.closeAllEnrollAction  = function(){
-          if(scope.global_enrollmentHistoryData.length > 0){
+          if(scope.global_enrollmentHistoryData){
             scope.global_enrollmentHistoryData.map((value,key)  => {
               value.isActionShow = false;
             })
@@ -949,9 +949,11 @@ app.directive("companyContactsDirective", [
 
         scope._updatePlanDetails_ = function(formData){
           console.log(formData);
-          formData.plan_start = moment(formData.plan_start).format('YYYY-MM-DD');
+          formData.plan_start = moment(formData.plan_start, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD');
           let data = {};
-          if (formData.plan_type == 'enterprise_plan') {
+          if (formData.account_type == 'enterprise_plan') {
+            formData.invoice_date = moment(formData.invoice_date, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD');
+            formData.invoice_due = moment(formData.invoice_due, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD');
             data = {
               start_date: formData.plan_start,
               plan_duration: formData.duration,

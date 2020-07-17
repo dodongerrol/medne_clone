@@ -810,7 +810,7 @@ class PlanTierController extends \BaseController {
 		$schedule_date = null;
 
 		if($communcation_send == "schedule") {
-			if($input['schedule_date'] == null) {
+			if(empty($input['schedule_date']) || $input['schedule_date'] == null) {
 				return ['status' => false, 'message' => 'Schedule Date of account activation is required'];
 			}
 
@@ -832,7 +832,7 @@ class PlanTierController extends \BaseController {
 		if($error_logs['error'] == true) {
 			return array('status' => false, 'message' => 'Please fix the Empoyee Enrollee details as it has errors on employee details.');
 		}
-
+		
 		$create_user = PlanHelper::createEmployee($input['temp_enrollment_id'], $customer_id, $communcation_send, $schedule_date);
 		return array('result' => $create_user);
 	}

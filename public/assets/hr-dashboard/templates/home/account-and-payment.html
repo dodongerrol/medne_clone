@@ -308,7 +308,7 @@
 								</div>
 							</div>
 						</div>
-						<div ng-if="spending_account_status.account_type == 'enterprise_plan'" class="old-active-plans-wrapper">
+						<div ng-if="spending_account_status.account_type == 'enterprise_plan' && oldPlan_list.length > 0" class="old-active-plans-wrapper">
 							<span class="old-active-plans-text" ng-if="oldPlan_active_page != null" ng-click="_selectCurrentPlan_()">Select Current Plan</span>
 							<span class="old-active-plans-text" ng-click="_toggleOldActivePlanDrop_()">See Old Active Plans</span>
 							<div ng-if="isOldPlanListDropShow" class="old-active-plans-dp-container">
@@ -596,14 +596,17 @@
 			    <div class="modal-content">
 			    	<form>
 				      <div class="modal-header">
-				        <h4>Edit Employee Plan</h4>
+				        <h4>Edit {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }} Plan</h4>
 				      </div>
 				      <div class="modal-body">
 				        <div class="company-account-input-wrapper">
 				        	<label>Plan Type</label>
-				        	<div class="custom-input-wrapper">
+				        	<div class="custom-input-wrapper disabled">
 										<!-- <input ng-model="global_planData.plan_type" type="text"> -->
-										<select ng-model="global_planData.plan_type" ng-change="_planTypeChanged_(global_planData.plan_type)">
+										<select ng-model="global_planData.account_type" ng-change="_planTypeChanged_(global_planData.account_type)">
+											<option value="trial_plan">Trial Plan</option>
+											<option value="insurance_bundle">Insurance Bundle</option>
+											<option value="stand_alone_plan">Pro Plan</option>
 											<option value="lite_plan">Basic Plan</option>
 											<option value="enterprise_plan">Enterprise Plan</option>
 										</select>
@@ -647,13 +650,13 @@
 				        </div> -->
 				        <div class="edit-emp-row-info">
 				        	<div class="company-account-input-wrapper">
-										<label ng-if="global_planData.plan_type != 'enterprise_plan'">Total Enrolled {{ global_planData.type == 'employee' ? 'Employees' : 'Dependents' }}</label>
-					        	<label ng-if="global_planData.plan_type == 'enterprise_plan'">Total {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }} Accounts</label>
-					        	<div class="custom-input-wrapper">
+										<label ng-if="global_planData.account_type != 'enterprise_plan'">Total Enrolled {{ global_planData.type == 'employee' ? 'Employees' : 'Dependents' }}</label>
+					        	<label ng-if="global_planData.account_type == 'enterprise_plan'">Total {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }} Accounts</label>
+					        	<div class="custom-input-wrapper disabled">
 					        		<input ng-model="global_planData.total_enrolled_employees" type="text" readonly>
 					        	</div>
 					        </div>
-					        <div ng-if="global_planData.plan_type == 'enterprise_plan'" class="company-account-input-wrapper">
+					        <div ng-if="global_planData.account_type == 'enterprise_plan'" class="company-account-input-wrapper">
 					        	<label>Price Per {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }}</label>
 					        	<div class="custom-input-wrapper price-dependent-input-wrapper">
 					        		<div>
@@ -663,17 +666,17 @@
 					        	</div>
 					        </div>
 								</div>
-				        <div ng-if="global_planData.plan_type == 'enterprise_plan'" class="edit-emp-row-info">
+				        <div ng-if="global_planData.account_type == 'enterprise_plan'" class="edit-emp-row-info">
 				        	<div class="company-account-input-wrapper">
 					        	<label>Invoice Start Date</label>
-					        	<div class="custom-input-wrapper">
+					        	<div class="custom-input-wrapper" ng-class="{'disabled' : global_planData.type == 'dependent' }">
 					        		<input class="datepicker" ng-model="global_planData.invoice_date" type="text">
 					        		<img src="../assets/images/calendar-gray.png">
 					        	</div>
 					        </div>
 					        <div class="company-account-input-wrapper">
 					        	<label>Invoice Due Date</label>
-					        	<div class="custom-input-wrapper">
+					        	<div class="custom-input-wrapper" ng-class="{'disabled' : global_planData.type == 'dependent' }">
 					        		<input class="datepicker" ng-model="global_planData.invoice_due" type="text">
 					        		<img src="../assets/images/calendar-gray.png">
 					        	</div>

@@ -149,7 +149,7 @@ app.directive('dashboardDirective', [
 							scope.task_lists = response.data
 							$('.task-load').hide();
 							$('.task-box-list').fadeIn();
-
+							scope.dashCredits();
 						});
 				}
 
@@ -170,7 +170,6 @@ app.directive('dashboardDirective', [
 							localStorage.setItem('currency_type', scope.credits.currency);
 							$('.credit-load').hide();
 							$('.credit-box').fadeIn();
-							localStorage.setItem("currency_type", scope.credits.currency);
 						});
 
 					// hrSettings.getDashCredits()
@@ -270,7 +269,7 @@ app.directive('dashboardDirective', [
 						.then(function (response) {
 							scope.hideLoading();
 							scope.options.accessibility = response.data.accessibility;
-							scope.dashCredits();
+							
 							scope.getProgress();
 							scope.getTaskList();
 							scope.getCompanyDetails();

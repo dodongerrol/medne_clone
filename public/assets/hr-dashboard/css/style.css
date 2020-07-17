@@ -2088,6 +2088,11 @@ p.number-of-enrollees.inactive-enroll-text {
   float: left;
 }*/
 
+.employee-overview-table .id{
+  width: 100px;
+  float: left;
+}
+
 .employee-overview-table .name-title,
 .employee-overview-table .emp-name-container {
   width: 15%;
@@ -2096,19 +2101,20 @@ p.number-of-enrollees.inactive-enroll-text {
 
 .employee-overview-table .status-title,
 .employee-overview-table .status-details-wrapper {
-  width: 13%;
+  /* width: 13%; */
+  width: 80px;
   float: left;
 }
 
 .employee-overview-table .nric-fin-title,
 .employee-overview-table .nric-fin-details {
-  width: 8%;
+  width: 10%;
   float: left;
 }
 
 .employee-overview-table .plan-details-title,
 .employee-overview-table .plan-start-container {
-  width: 18.5%;
+  width: 16%;
   float: left;
 }
 
@@ -6176,13 +6182,15 @@ ul.typeahead li a.dropdown-item {
 .employee-overview-table thead tr th {
   /*padding-left: 48px;*/
   font-family: "Helvetica Medium";
-  padding: 10px 20px 10px 40px;
+  padding: 10px 20px 10px 25px;
+  /* padding: 10px 20px 10px 40px; */
   position: relative;
 }
 
 .employee-overview-table tbody tr td {
   /*padding-left: 48px;*/
-  padding: 10px 20px 25px 40px;
+  /* padding: 10px 20px 25px 40px; */
+  padding: 10px 20px 25px 25px;
   font-weight: 700;
 }
 
@@ -9655,6 +9663,7 @@ span.dropdown-entitlement.disabled {
 .spending-not-activated-box .spending-border-box{
   width: 100%;
   height: 100%;
+  min-height: 100px;
   border: 1px solid #037CB0;
   display: flex;
   justify-content: center;
@@ -10471,4 +10480,8 @@ span.dropdown-entitlement.disabled {
 .plan-details-pagination-container .dot-click{
   display: inline-block;
   width: 100%;
+}
+
+.enrolment-communication-container{
+  
 }

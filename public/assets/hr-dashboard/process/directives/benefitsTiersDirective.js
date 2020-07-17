@@ -86,6 +86,8 @@ app.directive('benefitsTiersDirective', [
 				scope.showCurrencyType = localStorage.getItem("currency_type");
 				scope.spending_account_status = {}
 
+				scope.isCommunicationShow = false;
+
 				console.log(scope.showCurrencyType);
 
 				var iti = null;
@@ -1669,7 +1671,10 @@ app.directive('benefitsTiersDirective', [
 
 						scope.isTierSummary = false;
 						scope.isTierBtn = false;
-						scope.isEnrollmentOptions = true;
+						scope.isEnrollmentOptions = false;
+
+						scope.isCommunicationShow = true;
+
 
 						// if (scope.isTiering == true || scope.isTiering == 'true') {
 						// 	if (scope.tier_arr.length > 0) {
