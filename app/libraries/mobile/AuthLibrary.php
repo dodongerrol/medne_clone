@@ -720,7 +720,7 @@ class AuthLibrary{
                   return $returnObject;
                 } else {
                   $returnObject->status = false;
-                  $returnObject->message = "This member does not have an Email Address associated. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                  $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
                   return $returnObject;
                 }
                
@@ -751,7 +751,7 @@ class AuthLibrary{
                     return $returnObject;
                   } else {
                     $returnObject->status = false;
-                    $returnObject->message = "This member does not have a Phone Number associated. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                    $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
                     return $returnObject;
                   }
                 }
