@@ -108,7 +108,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="emp in employees.data" ng-click="toggleEmployee(emp, $index)">
-						<td class="id" ng-bind="emp.member_id"></td>
+						<td class="id" ng-bind="emp.employee_id"></td>
 						<td class="emp-name-container">
 							<strong ng-bind="emp.name">Calvin Lee</strong>
 						</td>
@@ -625,7 +625,7 @@
 								</div> -->
 								<div>
 									<strong class="font-helvetica-medium">Employee ID</strong>
-									<span ng-bind="selectedEmployee.member_id">657834</span>
+									<span ng-bind="selectedEmployee.employee_id">657834</span>
 								</div>
 								<!-- <div ng-if="selectedEmployee.medical_wallet || selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon"> -->
 									<div ng-if="selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon">
@@ -2043,7 +2043,7 @@
 									<div>
 	                  <div class="form-group">
 	                    <label class="edit-employee-modal-label">Employee ID</label>
-	                    <input type="text" class="form-control edit-employee-modal-input" placeholder="Type in Employee ID" ng-model="selectedEmployee.member_id" readonly>
+	                    <input type="text" class="form-control edit-employee-modal-input" placeholder="Type in Employee ID" ng-model="selectedEmployee.employee_id">
 	                  </div>
 	                </div>
 	                 <div>

@@ -1426,7 +1426,7 @@ app.directive('benefitsTiersDirective', [
 					$timeout(function(){
 						$('.comm-schedule-datepicker').datepicker({
 							format: 'dd/mm/yyyy',
-							startDate : new Date()
+							startDate : new Date( moment().add(1, 'days') )
 						});
 					},400);
 					
