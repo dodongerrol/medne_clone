@@ -620,23 +620,9 @@ class AuthLibrary{
         $server = $protocol.$hostName;
         // return $server;
         $email = Input::get ('email');
+        $send_type = !empty(Input::get ('send_type')) && Input::get ('send_type') == "sms" ? "sms" : "email";
         $returnObject = new stdClass();
         if(!empty($email)){
-      // $findUserID = self::FindUserIDByEmail($email);
-      // $findUserID = DB::table('user')->where(function($query) use ($email) {
-      //           $query->where('Email', $email)
-      //           ->where('UserType', 5)
-      //           ->where('Active', 1)
-      //           ->whereIn('access_type', [1, 0]);
-      // })
-      // ->orWhere(function($query) use ($email) {
-      //           $email = (int)($email);
-      //           $query->where('PhoneNo', (int)$email)
-      //           ->where('UserType', 5)
-      //           ->where('Active', 1)
-      //           ->whereIn('access_type', [1, 0]);
-      // })
-      // ->first();
           $findUserID = null;
           $findUserEmail = DB::table('user')
           ->where('Email', $email)
@@ -672,7 +658,6 @@ class AuthLibrary{
                 return $returnObject;
               }
             } else {
-              // return $findUserPhone;
                 // backup phone
               $findUserBackUpPhone = DB::table('user')
               ->where('backup_mobile', (string)$email)
@@ -705,7 +690,6 @@ class AuthLibrary{
             $deleteToken = self::Delete_Token();
             $user = DB::table('user')->where('UserID', $findUserID)->first();
 
-        // $password = StringHelper::get_random_password(8);
             if($user->ResetLink) {
               $updateArray['ResetLink'] = $user->ResetLink;
             } else {
@@ -713,7 +697,6 @@ class AuthLibrary{
             }
 
             $updateArray['userid'] = $findUserID;
-        // $updateArray['Password'] = md5($password);
             $updateArray['Recon'] = 0;
             $updateArray['updated_at'] = date('Y-m-d H:i:s');
             $userUpdated = self::UpdateUserProfile($updateArray);
@@ -721,49 +704,59 @@ class AuthLibrary{
 
             if($findNewUser){
               // check type of communication type
-              if($findNewUser->Email) {
-               $emailDdata['emailName'] = $findNewUser->Name;
-                        // $emailDdata['emailPage'] = 'email-templates.reset-password';
-               $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
-               $emailDdata['emailTo'] = $findNewUser->Email;
-               $emailDdata['emailSubject'] = 'Employee Password Reset';
-               $emailDdata['name'] = $findNewUser->Name;
-               $emailDdata['context'] = "Forgot your employee password?";
-                        // $emailDdata['password'] = $password;
-                        // $emailDdata['login_email'] = $findNewUser->Email;
-               $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink;
-               EmailHelper::sendEmail($emailDdata);          
-             }
+              if($send_type == "email") {
+                if($findNewUser->Email) {
+                  $emailDdata['emailName'] = $findNewUser->Name;
+                  $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
+                  $emailDdata['emailTo'] = $findNewUser->Email;
+                  $emailDdata['emailSubject'] = 'Employee Password Reset';
+                  $emailDdata['name'] = $findNewUser->Name;
+                  $emailDdata['context'] = "Forgot your employee password?";
+                  $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink;
+                  EmailHelper::sendEmail($emailDdata);
+                  $returnObject->status = TRUE;
+                  $returnObject->type = "email";
+                  $returnObject->message = "We’ve sent an email to you with a link to reset your password";
+                  return $returnObject;
+                } else {
+                  $returnObject->status = false;
+                  $returnObject->message = "This member does not have an Email Address associated. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                  return $returnObject;
+                }
+               
+             } else {
+                 // check phone if valid then send else use email
+                if($findNewUser->PhoneNo || $findNewUser->backup_mobile) {
+                  if(!$findNewUser->PhoneNo) {
+                    $findNewUser->PhoneNo = $findNewUser->backup_mobile;
+                    $findNewUser->PhoneCode = $findNewUser->backup_mobile_area_code;
+                  }
+                  
+                  // check and format phone number
+                  $phone = SmsHelper::newformatNumber($findNewUser);
 
-              // check phone if valid then send else use email
-             if($findNewUser->PhoneNo || $findNewUser->backup_mobile) {
-              if(!$findNewUser->PhoneNo) {
-                $findNewUser->PhoneNo = $findNewUser->backup_mobile;
-                $findNewUser->PhoneCode = $findNewUser->backup_mobile_area_code;
-              }
-                // check and format phone number
-              $phone = SmsHelper::newformatNumber($findNewUser);
-
-              if($phone) {
-                $findNewUser->phone = $phone;
-                $findNewUser->server = $server;
-                $message = SmsHelper::formatForgotPasswordMessage($findNewUser);
+                  if($send_type == "sms" && $phone) {
+                    $findNewUser->phone = $phone;
+                    $findNewUser->server = $server;
+                    $message = SmsHelper::formatForgotPasswordMessage($findNewUser);
                     // send messge
-                $compose = [];
-                $compose['phone'] = $phone;
-                $compose['message'] = $message;
-                $compose['sms_type'] = "LA";
-
-                $result_sms = SmsHelper::sendSms($compose);
-                    // if($result_sms['status'] == true) {
-                       // $returnObject->status = TRUE;
-                       // $returnObject->type = "sms";
-                       // $returnObject->message = "We’ve sent a sms to you with a link to reset your password";
-                       // return $returnObject;
-                   // }
-              }
-            }
-
+                    $compose = [];
+                    $compose['phone'] = $phone;
+                    $compose['message'] = $message;
+                    $compose['sms_type'] = "LA";
+                    SmsHelper::sendSms($compose);
+                    $returnObject->status = TRUE;
+                    $returnObject->type = "sms";
+                    $returnObject->message = "We’ve sent an sms to you with a link to reset your password";
+                    return $returnObject;
+                  } else {
+                    $returnObject->status = false;
+                    $returnObject->message = "This member does not have a Phone Number associated. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                    return $returnObject;
+                  }
+                }
+             }
+             
             $returnObject->status = TRUE;
             $returnObject->type = "email";
             $returnObject->message = "We’ve sent an email or sms to you with a link to reset your password";
