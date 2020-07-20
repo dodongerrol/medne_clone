@@ -6795,7 +6795,7 @@ public function payCreditsNew( )
     $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
     if(!$result) {
         $returnObject->status = false;
-        $returnObject->message = 'Invalid OTP Code.';
+        $returnObject->message = 'Sorry, your OTP is incorrect.';
         return Response::json($returnObject);
     }
 
