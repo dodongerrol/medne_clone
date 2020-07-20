@@ -271,14 +271,7 @@ Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 // Route::get('activate/care_plan_user', 'CarePlanPurchaseController@activateCarePlanUser');
 // // cron for generate invoice
 // Route::get('generate/clinic/invoice', 'InvoiceController@generateMonthlyInvoice');
-// // Cron jobs for statement of account
-// Route::get('app/cron/statement_of_account', 'CronController@generateStatementOfAccount');
-// // cron job for corporate monthly invoice
-// // Route::get('app/cron/company_invoice', 'EclaimController@generateMonthlyCompanyInvoice');
-// Route::get('app/cron/company_invoice', 'SpendingInvoiceController@generateMonthlyCompanyInvoice');
-// // generate invoice
-// // Route::get('generate/clinic/invoice', 'InvoiceController@generateMonthlyInvoice');
-// // crom for withdrawal deletion account
+// crom for withdrawal deletion account
 // Route::get('app/cron/withdrawal_deletion_account', 'CronController@createAutomaticDeletion');
 // // cron for activate replace new employee
 // Route::get('app/cron/replace_new_employee', 'CronController@activateReplaceNewEmployee');
@@ -303,6 +296,9 @@ Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 // // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
+// // THIRD PARTY ACCESS
+// Route::get('validate/member', 'ThirdPartyAccessController@checkMember');
+
 // // EMPLOYEE UPDATE EXERCISES
 // Route::group(array('prefix' => 'exercise'), function()
 // {
@@ -323,9 +319,9 @@ Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 // // Route::get('app/e_claim/logout', 'EclaimController@logoutEmployee');
 
 
-Route::get('app/resetcompanypassword', 'HomeController@getCompanyForgotPasswordView');
-Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordView');
-Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordView');
+// Route::get('app/resetcompanypassword', 'HomeController@getCompanyForgotPasswordView');
+// Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordView');
+// Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordView');
 
 // Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 
