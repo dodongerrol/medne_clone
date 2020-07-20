@@ -1328,7 +1328,7 @@ public function searchUser( )
 {
   $input = Input::all();
   $data = [];
-  return $input;
+  
   $results = DB::table('user')
   ->where('PhoneNo', 'LIKE', '%'.(int)$input['q'].'%')
   ->where('UserType', 5)
