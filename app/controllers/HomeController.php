@@ -1339,7 +1339,7 @@ public function searchUser( )
 {
   $input = Input::all();
   $data = [];
-
+  
   $results = DB::table('user')
   ->where('PhoneNo', 'LIKE', '%'.(int)$input['q'].'%')
   ->where('UserType', 5)

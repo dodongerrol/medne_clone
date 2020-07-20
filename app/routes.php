@@ -86,6 +86,9 @@ Route::get('config/notification', 'HomeController@getNotificationConfig');
 // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
+// THIRD PARTY ACCESS
+Route::get('validate/member', 'ThirdPartyAccessController@checkMember');
+
 // EMPLOYEE UPDATE EXERCISES
 Route::group(array('prefix' => 'exercise'), function()
 {
