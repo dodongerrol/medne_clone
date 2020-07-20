@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Input;
 /*
 |--------------------------------------------------------------------------
 | Application & Route Filters
@@ -19,6 +19,8 @@ App::before(function($request)
     header('Content-Type', 'application/json');
     // header('Accept', 'application/json');
     header('Access-Control-Allow-Credentials: true');
+    Utility::stripXSS(Input::all());
+    // Input::merge(Utility::stripXSS(Input::all()));
 });
 
 
@@ -34,6 +36,7 @@ App::after(function($request, $response)
         // $response->header("Content-Type", "application/json");
         // return $response;
     // header('Content-Type', 'application/json');
+    // Input::merge(Utility::array_strip_tags(Input::all()));
 });
 
 /*
@@ -550,4 +553,9 @@ Route::filter('csrf', function()
 	{
 		throw new Illuminate\Session\TokenMismatchException;
 	}
+});
+
+Route::filter('strip_tags', function()
+{
+    Input::merge(Utility::array_strip_tags(Input::all()));
 });
