@@ -39,7 +39,7 @@
 
 </head>
 
-<body login-section>
+<body ng-cloak login-section>
 	<div class="container">
 		<div class="login-need-help-container">
 			<a href="#" class="pull-right need-help-text tooltips">
