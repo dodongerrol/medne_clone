@@ -179,9 +179,9 @@ Route::filter('auth.v2', function($request, $response)
     header('Accept', 'application/json');
     header('Access-Control-Allow-Credentials: true');
     // return StringHelper::requestHeader();
-    if(!StringHelper::requestHeader()){
-        return Response::json($returnObject, 200);
-    } else {
+    // if(!StringHelper::requestHeader()){
+    //     return Response::json($returnObject, 200);
+    // } else {
         /*
             Description: 
                 - Accessing API as Third Party Condition.
@@ -195,11 +195,11 @@ Route::filter('auth.v2', function($request, $response)
                 April 9 2020
         */
         
-        $return_data = StringHelper::verifyXAccessKey();
+        // $return_data = StringHelper::verifyXAccessKey();
         
-        if (is_object($return_data)) {
-            return Response::json($return_data, 200);
-        }
+        // if (is_object($return_data)) {
+        //     return Response::json($return_data, 200);
+        // }
         /*  
             End here.
         */
@@ -291,7 +291,7 @@ Route::filter('auth.v2', function($request, $response)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
         }
-    }
+    // }
 });
 
 Route::filter('auth.headers', function($request, $response) {

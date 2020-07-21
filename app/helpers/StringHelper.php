@@ -760,7 +760,12 @@ public static function get_random_password($length)
     public static function checkUserType($id)
     {
         $result = DB::table('user')->where('UserID', $id)->first();
-        return array('user_type' => $result->UserType, 'access_type' => $result->access_type);
+        if($result) {
+            return array('user_type' => $result->UserType, 'access_type' => $result->access_type);
+        } else {
+            return false;
+        }
+        
     }
 
     public static function getUserId($id)
@@ -1404,6 +1409,20 @@ public static function get_random_password($length)
              * Date: July 6, 2020
              * Developer: Stephen
             ***/
+            
+            // check member type
+            $member_type = PlanHelper::getUserAccountType($user_id);
+            if(!$member_type) {
+                $returnObject->error = TRUE;
+                $returnObject->message = 'X-MEMBER-ID not member or dependent.';
+                return $returnObject;
+            }
+
+            $member_id = $user_id;
+            if($member_type == "dependent") {
+                $owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $user_id)->first();
+			    $member_id = $owner->owner_id;
+            }
 
             // Check access key details if existed
             $accessKeyDetails = DB::table('customer_accessKey')
@@ -1412,7 +1431,7 @@ public static function get_random_password($length)
                                     ->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
                                     ->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
                                     ->where('customer_accessKey.accessKey', $xAccessKey)
-                                    ->where('corporate_members.user_id', $user_id)
+                                    ->where('corporate_members.user_id', $member_id)
                                     ->where('corporate_members.removed_status', 0)
                                     ->where('customer_access_link_company.status',1)
                                     ->first();
@@ -1422,7 +1441,7 @@ public static function get_random_password($length)
                                     ->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_access_link_company.customer_id')
                                     ->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
                                     ->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
-                                    ->where('corporate_members.user_id', $user_id)
+                                    ->where('corporate_members.user_id', $member_id)
                                     ->where('corporate_members.removed_status', 0)
                                     ->where('customer_access_link_company.status',1)
                                     ->orderBy('customer_accessKey.expiry_date', 'DESC')
