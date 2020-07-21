@@ -557,7 +557,7 @@
 					hrActivity.getEclaimActivity(data)
 					.then(function(response){
 						console.log(response);
-						// scope.hideLoading();
+						scope.hideLoading();
 						scope.activity = {};
 						scope.activity = response.data.data;
 						console.log(scope.activity);
