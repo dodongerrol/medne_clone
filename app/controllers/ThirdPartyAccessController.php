@@ -10,9 +10,12 @@ class ThirdPartyAccessController extends \BaseController {
 			return ['status' => false, 'message' => 'token is required.'];
 		}
 
-		if(empty($input['search']) || $input['search'] == null) {
-			return ['status' => false, 'message' => 'search is required.'];
-		}
+		// if(empty($input['search']) || $input['search'] == null) {
+		// 	return ['status' => false, 'message' => 'search is required.'];
+		// }
+		
+		$email = !empty($input['email']) ? $input['email'] : null;
+		$phone = !empty($input['phone']) ? $input['phone'] : null;
 
 		// check token
 		$token = DB::table('customer_accessKey')->where('integration', 'ntuc')->where('accessKey', $input['token'])->first();
@@ -21,36 +24,41 @@ class ThirdPartyAccessController extends \BaseController {
 			return ['status' => false, 'message' => 'token is invalid.'];
 		}
 
-		$search = $input['search'];
-		// make a query
-		$memberEmail = DB::table('user')
-					->where('Email', $search)
-					->where('UserType', 5)
-					->where('Active', 1)
-					->first();
-		
-		if($memberEmail) {
-			$member = $memberEmail;
-		} else {
-			$memberPhone = DB::table('user')
-					->where('PhoneNo', $search)
+		if($email) {
+			// make a query
+			$member = DB::table('user')
+					->where('Email', $email)
 					->where('UserType', 5)
 					->where('Active', 1)
 					->first();
 			
-			if(!$memberPhone) {
-				return ['status' => false, 'message' => 'member does not exist or active'];
+			if($member) {
+				$data = array(
+					'member_id'	=> $member->UserID,
+					'email'		=> $member->Email,
+					'phone'		=> $member->PhoneNo
+				);
+				return array('status' => true, 'data' => $data);
 			}
-
-			$member = $memberPhone;
-		}
+		} 
 		
-		$data = array(
-			'member_id'	=> $member->UserID,
-			'email'		=> $member->Email,
-			'phone'		=> $member->PhoneNo
-		);
-
-		return array('status' => true, 'data' => $data);
+		if($phone) {
+			$member = DB::table('user')
+					->where('PhoneNo', $phone)
+					->where('UserType', 5)
+					->where('Active', 1)
+					->first();
+			
+			if($member) {
+				$data = array(
+					'member_id'	=> $member->UserID,
+					'email'		=> $member->Email,
+					'phone'		=> $member->PhoneNo
+				);
+		
+				return array('status' => true, 'data' => $data);
+			}
+		}
+		return ['status' => false, 'message' => 'member does not exist or active'];
 	}
 }
