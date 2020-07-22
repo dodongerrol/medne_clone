@@ -333,7 +333,7 @@
 								}else{
 									swal( 'Oops!', response.data.message, 'error' );
 								}
-								// scope.hideLoading();
+								scope.hideLoading();
 							});
 					}
 				}
@@ -372,7 +372,7 @@
 								list.res = false;
 								list.message = response.data.message;
 							}
-							
+							scope.hideLoading();
 							scope.applyDates();
 						} else {
 							// alert(response.data.message);
@@ -413,6 +413,7 @@
 									list.res = false;
 									list.message = response.data.message;
 								}
+								scope.hideLoading();
 								scope.applyDates();
 							} else {
 								swal('Oops!', response.data.message, 'error');
