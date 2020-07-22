@@ -620,70 +620,105 @@ class AuthLibrary{
         $server = $protocol.$hostName;
         // return $server;
         $email = Input::get ('email');
-        $send_type = !empty(Input::get ('send_type')) && Input::get ('send_type') == "sms" ? "sms" : "email";
+        $send_type = !empty(Input::get ('send_type')) ? Input::get ('send_type') : "both";
         $returnObject = new stdClass();
         if(!empty($email)){
           $findUserID = null;
-          $findUserEmail = DB::table('user')
-          ->where('Email', $email)
-          ->where('UserType', 5)
-          ->where('Active', 1)
-          ->whereIn('access_type', [1, 0])
-          ->get();
 
-          if(sizeof($findUserEmail) > 0) {
-            if(sizeof($findUserEmail) == 1) {
-              $findUserID = $findUserEmail[0];
+          if($send_type == "email") {
+            $findUserID = DB::table('user')
+                            ->where('Email', $email)
+                            ->where('UserType', 5)
+                            ->where('Active', 1)
+                            ->whereIn('access_type', [1, 0])
+                            ->first();
+            
+            if($findUserID) {
+              $findUserID = $findUserID->UserID;
             } else {
               $returnObject->status = false;
-              $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+              $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
               return $returnObject;
             }
-          } else {
-            $email = $email;
-            // phone number
-            $findUserPhone = DB::table('user')
-            ->where('PhoneNo', (string)$email)
-            ->where('UserType', 5)
-            ->where('Active', 1)
-            ->whereIn('access_type', [1, 0])
-            ->get();
-
-            if(sizeof($findUserPhone) > 0) {
-              if(sizeof($findUserPhone) == 1) {
-                $findUserID = $findUserPhone[0];
+          } else if($send_type == "sms") {
+            $findUserID = DB::table('user')
+                        ->where('PhoneNo', $email)
+                        ->where('UserType', 5)
+                        ->where('Active', 1)
+                        ->whereIn('access_type', [1, 0])
+                        ->first();
+            if($findUserID) {
+              $findUserID = $findUserID->UserID;
+            } else {
+              $returnObject->status = false;
+              $returnObject->message = "Sorry, your phone number has not been signed up with Mednefits";
+              return $returnObject;
+            }
+          } else if($send_type == "both"){
+            $findUserEmail = DB::table('user')
+                          ->where('Email', $email)
+                          ->where('UserType', 5)
+                          ->where('Active', 1)
+                          ->whereIn('access_type', [1, 0])
+                          ->get();
+            
+            if(sizeof($findUserEmail) > 0) {
+              if(sizeof($findUserEmail) == 1) {
+                $findUserID = $findUserEmail[0]->UserID;
               } else {
                 $returnObject->status = false;
                 $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                 return $returnObject;
               }
             } else {
-                // backup phone
-              $findUserBackUpPhone = DB::table('user')
-              ->where('backup_mobile', (string)$email)
+              $email = $email;
+              // phone number
+              $findUserPhone = DB::table('user')
+              ->where('PhoneNo', (string)$email)
               ->where('UserType', 5)
               ->where('Active', 1)
               ->whereIn('access_type', [1, 0])
               ->get();
 
-              if(sizeof($findUserBackUpPhone) > 0) {
-                if(sizeof($findUserBackUpPhone) == 1) {
-                  $findUserID = $findUserBackUpPhone[0];
+              if(sizeof($findUserPhone) > 0) {
+                if(sizeof($findUserPhone) == 1) {
+                  $findUserID = $findUserPhone[0]->UserID;
                 } else {
                   $returnObject->status = false;
                   $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                   return $returnObject;
                 }
               } else {
-                $returnObject->status = false;
-                $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
-                return $returnObject;
+                  // backup phone
+                $findUserBackUpPhone = DB::table('user')
+                ->where('backup_mobile', (string)$email)
+                ->where('UserType', 5)
+                ->where('Active', 1)
+                ->whereIn('access_type', [1, 0])
+                ->get();
+
+                if(sizeof($findUserBackUpPhone) > 0) {
+                  if(sizeof($findUserBackUpPhone) == 1) {
+                    $findUserID = $findUserBackUpPhone[0];
+                  } else {
+                    $returnObject->status = false;
+                    $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                    return $returnObject;
+                  }
+                } else {
+                  $returnObject->status = false;
+                  $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                  return $returnObject;
+                }
               }
             }
+          } else {
+            $returnObject->status = false;
+            $returnObject->message = "send type should be email or sms";
+            return $returnObject;
           }
 
           if($findUserID){
-            $findUserID = $findUserID->UserID;
             $returnObject->status = TRUE;
             //$returnObject->data['userid'] = $findUserID;
             $returnObject->message = "New password is on the way to your email, check your inbox.";
@@ -723,8 +758,7 @@ class AuthLibrary{
                   $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
                   return $returnObject;
                 }
-               
-             } else {
+             } else if($send_type == "sms"){
                  // check phone if valid then send else use email
                 if($findNewUser->PhoneNo || $findNewUser->backup_mobile) {
                   if(!$findNewUser->PhoneNo) {
@@ -753,6 +787,51 @@ class AuthLibrary{
                     $returnObject->status = false;
                     $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
                     return $returnObject;
+                  }
+                }
+             } else {
+                if($findNewUser->Email) {
+                  $emailDdata['emailName'] = $findNewUser->Name;
+                  $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
+                  $emailDdata['emailTo'] = $findNewUser->Email;
+                  $emailDdata['emailSubject'] = 'Employee Password Reset';
+                  $emailDdata['name'] = $findNewUser->Name;
+                  $emailDdata['context'] = "Forgot your employee password?";
+                  $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$findNewUser->ResetLink;
+                  EmailHelper::sendEmail($emailDdata);
+                  $returnObject->status = TRUE;
+                  $returnObject->type = "email";
+                  $returnObject->message = "We’ve sent an email to you with a link to reset your password";
+                  return $returnObject;
+                } else {
+                  if($findNewUser->PhoneNo || $findNewUser->backup_mobile) {
+                    if(!$findNewUser->PhoneNo) {
+                      $findNewUser->PhoneNo = $findNewUser->backup_mobile;
+                      $findNewUser->PhoneCode = $findNewUser->backup_mobile_area_code;
+                    }
+                    
+                    // check and format phone number
+                    $phone = SmsHelper::newformatNumber($findNewUser);
+  
+                    if($send_type == "sms" && $phone) {
+                      $findNewUser->phone = $phone;
+                      $findNewUser->server = $server;
+                      $message = SmsHelper::formatForgotPasswordMessage($findNewUser);
+                      // send messge
+                      $compose = [];
+                      $compose['phone'] = $phone;
+                      $compose['message'] = $message;
+                      $compose['sms_type'] = "LA";
+                      SmsHelper::sendSms($compose);
+                      $returnObject->status = TRUE;
+                      $returnObject->type = "sms";
+                      $returnObject->message = "We’ve sent an sms to you with a link to reset your password";
+                      return $returnObject;
+                    } else {
+                      $returnObject->status = false;
+                      $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                      return $returnObject;
+                    }
                   }
                 }
              }
