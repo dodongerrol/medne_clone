@@ -1801,5 +1801,12 @@ class MemberHelper
 		
 		return $members + $dependents;
 	}
+
+	public static function getMemberSpendingStatusLive($token, $type)
+	{
+		$api = Config::get('config.api_node_live');
+		$api = $api.'/employees/get_spending_feature_status?token='.$token.'&type='.$type;
+		return httpLibrary::getHttp($api, []);
+	}
 }
 ?>
