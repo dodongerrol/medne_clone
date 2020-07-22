@@ -524,7 +524,7 @@
 							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
-							scope.togglePointerEvents();
+							// scope.togglePointerEvents();
 							scope.hideLoading();
 							$(".circle-loader").hide();
 						}
@@ -532,8 +532,8 @@
 				}
 
 				scope.searchActivity = function( data ) {
-					scope.showLoading();
-					scope.togglePointerEvents();
+					// scope.showLoading();
+					// scope.togglePointerEvents();
 					$(".searchEclaimLoader").show();
 					$(".searchEclaimLoader2").show();
 					$("#fetching_text").show();
@@ -626,7 +626,7 @@
 							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
-							scope.togglePointerEvents();
+							// scope.togglePointerEvents();
 							scope.hideLoading();
 							$(".circle-loader").hide();
 						}
