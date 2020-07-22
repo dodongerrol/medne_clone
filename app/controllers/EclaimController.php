@@ -6407,7 +6407,7 @@ public function hrEclaimActivity( )
 	$corporate_members = DB::table('corporate_members')
 	->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 	->where('corporate_members.corporate_id', $account->corporate_id)
-	->paginate(100);
+	->paginate(10);
 
 	$paginate['current_page'] = $corporate_members->getCurrentPage();
 	$paginate['from'] = $corporate_members->getFrom();
