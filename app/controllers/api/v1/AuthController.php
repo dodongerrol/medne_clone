@@ -6541,11 +6541,6 @@ public function payCreditsNew( )
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
           $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 
-          $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-					$customer_active_plan = DB::table('customer_active_plan')
-					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-					->first();
-
           if($type == "spending") {
             $returnObject->status = true;
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
@@ -6589,7 +6584,10 @@ public function payCreditsNew( )
              }
 
             // check visit limit
-
+            $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+            $customer_active_plan = DB::table('customer_active_plan')
+            ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+            ->first();
             if($customer_active_plan->account_type == "enterprise_plan")	{
               $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
         
@@ -6643,6 +6641,10 @@ public function payCreditsNew( )
               return Response::json($returnObject);
             }
 
+            $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+            $customer_active_plan = DB::table('customer_active_plan')
+            ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+            ->first();
             if($customer_active_plan->account_type == "enterprise_plan")	{
               $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
         
