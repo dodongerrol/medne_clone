@@ -366,7 +366,39 @@
 								</tr>
 							</thead>
 							<tbody>
-								
+								<tr class="dependent-hover-container" ng-class="{'has-error' : list.error_logs.error}" ng-repeat="list in temp_employees">
+									<td>
+										<input type="checkbox" ng-model="list.checkboxSelected" ng-click="empCheckBoxClicked($index)">
+									</td>
+									<td>
+										<span class="icon">
+											<i class="fa fa-check" style="display: none;"></i>
+											<i class="fa fa-times" style="display: none;"></i>
+											<i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
+										</span>
+										<span class="fname">{{ list.employee.fullname }}</span>
+										<button class="dependent-hover-btn" ng-click="openEditDetailsModal($index)">Edit</button>
+									</td>
+									<td>{{ formatMomentDate( list.employee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY'], 'DD/MM/YYYY' ) }}</td>
+									<td>{{list.employee.email}}</td>
+									<td>{{list.employee.mobile_area_code}}</td>
+									<td>{{list.employee.mobile}}</td>
+									<td>{{ formatMomentDate( list.employee.start_date, ['YYYY-MM-DD', 'DD/MM/YYYY'], 'DD/MM/YYYY' ) }}</td>
+									<td>{{list.employee.emp_no}}</td>
+
+									<td ng-if="isMedicalAllocColShow">{{ parseValueCommaFloat( list.employee.credits ) }}</td>
+									<td ng-if="isWellnessAllocColShow">{{ parseValueCommaFloat( list.employee.wellness_credits ) }}</td>
+									<td ng-if="isCapVisitColShow">{{ list.employee.cap_per_visit }}</td>
+
+									<td ng-if="isBankNameColShow">{{list.employee.bank_name}}</td>
+									<td ng-if="isBankNumColShow">{{list.employee.bank_account_number}}</td>
+
+									<td ng-repeat-start="dep in list.dependents">{{ dep.enrollee.fullname }}</td>
+									<td>{{ formatMomentDate(dep.enrollee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY'], 'DD/MM/YYYY')  }}</td>
+									<td ng-repeat-end="">{{ dep.enrollee.relationship }}</td>
+
+									<td ng-if="list.dependents.length != table_dependents_ctr" colspan="{{ ((table_dependents_ctr - list.dependents.length) * 3) }}"></td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -461,7 +493,7 @@
 							</div>
 							<div ng-if="isBankNumColShow" class="employee-input-wrapper">
 								<label for="fname">Bank Account Number</label>
-  							<input valid-number type="number" ng-model="employee_data.bank_account">
+  							<input valid-number type="number" ng-model="employee_data.bank_account_number">
 							</div>
 							<div ng-if="isCapVisitColShow" class="employee-input-wrapper">
 								<label for="fname">Cap per Visit</label>

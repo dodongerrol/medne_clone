@@ -69,6 +69,7 @@ login.directive('loginSection', [
 					console.log(scope.showPassword);
 				}
 
+				scope.token = null;
 				scope.enableContinue = function (email) {
 
 					// let emailFromDb = 'example@email.com';
@@ -86,7 +87,7 @@ login.directive('loginSection', [
 						} else if ((account_status == 0)) {
 							scope.login_details.status = 'not activated';
 							scope.login_details.date_created = moment(response.date_created).format('DD/MM/YYYY');
-
+							scope.token = response.token;
 							console.log(scope.login_details);
 							
 						}	else if (account_status == 2) {
@@ -101,7 +102,7 @@ login.directive('loginSection', [
 
 				scope.resend_hr_activation = function () {
 					// $http.post(serverUrl.url + `/hr/resend_hr_activation_link?id=${scope.hr_id}`)
-					$http.post(serverUrl.url + `/hr/resend_activation_email?hr_id=${scope.hr_id}`)
+					$http.post(serverUrl.url + `/hr/resend_hr_activation_link?token=${scope.token}`)
 					.success(function(response){
 						console.log(response);
 					});
