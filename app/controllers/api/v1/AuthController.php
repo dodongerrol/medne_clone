@@ -6543,6 +6543,18 @@ public function payCreditsNew( )
 
           if($type == "spending") {
             $returnObject->status = true;
+            // check if user id deactivated
+            $deactivated = MemberHelper::checkMemberDeactivated($user_id);
+
+            if($deactivated) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
+
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'zero_balance';
@@ -6607,6 +6619,16 @@ public function payCreditsNew( )
             $returnObject->sub_message = '';
             return Response::json($returnObject);
           } else {
+            $deactivated = MemberHelper::checkMemberDeactivated($user_id);
+
+            if($deactivated) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
 
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
               $returnObject->status = FALSE;

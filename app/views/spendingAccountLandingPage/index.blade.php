@@ -39,7 +39,7 @@
 
 				<div class="banner-text-wrapper">
 					<p><b>What is my Spending Account?</b></p>
-					<p>Your spending account enables you to enjoy the full benefits of the Mednefits platform with <b>cashless payments</b> at in-network providers and <b>e-claim submissions</b> at out-of-network providers</p>
+					<p>Your spending account enables you to enjoy the full benefits of the Mednefits platform with <b>cashless payments</b> at Mednefits panel providers and <b>e-claim submissions</b> at non-panel providers</p>
 					<p>What this means for your team:</p>
 
 				</div>

@@ -1801,5 +1801,16 @@ class MemberHelper
 		
 		return $members + $dependents;
 	}
+
+	public static function checkMemberDeactivated($member_id)
+	{
+		$check = DB::table('hr_employee_deactivate')->where('user_id', $member_id)->first();
+
+		if($check) {
+			return true;
+		}
+
+		return false;
+	}
 }
 ?>

@@ -2043,8 +2043,12 @@ class BenefitsDashboardController extends \BaseController {
 		$wellness_wallet = (int)$spending_account->wellness_enable == 1 ? true : false;
 
 		// return $users;
-    	$filter = 'current_term';
+		$filter = 'current_term';
+		$with_employee_id = false;
 		foreach ($users as $key => $user) {
+			if($user->emp_no) {
+				$with_employee_id = true;
+			}
 			$ids = StringHelper::getSubAccountsID($user->UserID);
 			$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
 			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
@@ -2340,6 +2344,7 @@ class BenefitsDashboardController extends \BaseController {
 
 
 		$paginate['data'] = $final_user;
+		$paginate['with_employee_id'] = $with_employee_id;
 		$paginate['medical_wallet'] = $medical_wallet;
 		$paginate['wellness_wallet'] = $wellness_wallet;
 		return $paginate;
