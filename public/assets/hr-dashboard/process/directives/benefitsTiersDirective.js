@@ -1258,6 +1258,22 @@ app.directive('benefitsTiersDirective', [
 
 				scope.parseValueCommaFloat = function(value){
           return parseFloat(value).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+				}
+				
+				scope.formatMomentDate = function (date, from, to) {
+          return date ? moment(date, from).format(to) : date;
+        };
+
+				scope.range = function (range) {
+          var arr = [];
+          for (var i = 0; i < range; i++) {
+            arr.push(i);
+          }
+          return arr;
+        }
+
+				scope.parseValueCommaFloat = function(value){
+          return parseFloat(value).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
 				scope.updateEnrolleEmp = function (emp) {
@@ -1299,7 +1315,7 @@ app.directive('benefitsTiersDirective', [
 									wellness_credits: parseFloat(emp.employee.wellness_credits),
 									plan_start: moment(emp.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 									postal_code: emp.employee.postal_code,
-									mobile_area_code: emp.employee.mobile_area_code
+									mobile_area_code: emp.employee.mobile_area_code,
 								}
 								dependentsSettings.updateTempEnrollee(data)
 									.then(function (response) {
@@ -1665,12 +1681,12 @@ app.directive('benefitsTiersDirective', [
           scope.isBankNameColShow = false;
           scope.isBankNumColShow = false;
 
-          if(scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid' && scope.spendingPlan_status.paid_status){
+          if(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid' && scope.spendingPlan_status.paid_status){
             scope.isMedicalAllocColShow = true;
           }
           if(
-              (scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'post_paid' && scope.spendingPlan_status.paid_status) ||
-              (scope.spendingPlan_status.account_type == 'enterprise_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.paid_status)
+              (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'post_paid' && scope.spendingPlan_status.paid_status) ||
+              (scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.paid_status)
             ){
             scope.isWellnessAllocColShow = true;
           }
