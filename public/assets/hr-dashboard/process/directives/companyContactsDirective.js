@@ -734,9 +734,10 @@ app.directive("companyContactsDirective", [
 
         scope._editDetailsBtn_ = function ( data ) {
           console.log(data);
+          scope.editHrSuccessfullyUpdated = false;
           scope.initializeGeoCode();
         }
-
+        scope.editHrSuccessfullyUpdated = false;
         scope._updateHrDetails_ = function ( data ) {
           let params = {
             email: data.email,
@@ -750,7 +751,8 @@ app.directive("companyContactsDirective", [
             .then(function (response) {
               // console.log(response);
               if ( response.data.status == true ) {
-                $('#edit_details').modal('hide');
+                // $('#edit_details').modal('hide');
+                scope.editHrSuccessfullyUpdated = true;
 
                 scope._getHrDetails_();
                 scope.toggleOff();

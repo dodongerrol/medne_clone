@@ -365,7 +365,7 @@
 								<thead>
 									<tr>
 										<th>
-											Date <br><span>of edit</span>
+											Date <br><span>of enrollment</span>
 										</th>
 										<th>Plan Type</th>
 										<th>Plan Start Date</th>
@@ -556,7 +556,7 @@
 				      <div class="modal-header">
 				        <h4>Edit HR Administrator Details</h4>
 				      </div>
-				      <div class="modal-body">
+				      <div ng-if="!editHrSuccessfullyUpdated" class="modal-body">
 				        <div class="company-account-input-wrapper">
 				        	<label>Full Name</label>
 				        	<div class="custom-input-wrapper">
@@ -581,10 +581,17 @@
 										</div>
 									</div>
 								</div>
-				      </div>
+							</div>
+							<div ng-if="editHrSuccessfullyUpdated" class="modal-body edit-hr-success-container">
+								<div>
+									<img src="../assets/images/success-circle.png">
+								</div>
+								<span>Detail(s) has been succesfully updated.</span>
+							</div>
 				      <div class="modal-footer">
-				        <button data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
-				        <button ng-click="_updateHrDetails_( global_hrData )" class="btn-update">Update</button>
+				        <button ng-if="!editHrSuccessfullyUpdated" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
+								<button ng-if="!editHrSuccessfullyUpdated" ng-click="_updateHrDetails_( global_hrData )" class="btn-update">Update</button>
+								<button ng-if="editHrSuccessfullyUpdated" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
 				      </div>
 			      </form>
 			    </div>
