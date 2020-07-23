@@ -1228,6 +1228,7 @@ app.directive('benefitsTiersDirective', [
 				scope.getEnrollTempEmployees = function () {
 					scope.temp_employees = [];
 					scope.hasError = false;
+					scope.table_dependents_ctr = 0;
 					
 					scope.showLoading();
 					dependentsSettings.getTempEmployees()
