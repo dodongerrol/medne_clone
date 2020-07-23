@@ -1681,19 +1681,24 @@ app.directive('benefitsTiersDirective', [
           scope.isBankNameColShow = false;
           scope.isBankNumColShow = false;
 
-          if(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid' && scope.spendingPlan_status.paid_status){
+          if(
+						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid' && scope.spendingPlan_status.paid_status) ||
+						(scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.medical_enabled)
+						){
             scope.isMedicalAllocColShow = true;
           }
           if(
               (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'post_paid' && scope.spendingPlan_status.paid_status) ||
-              (scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.paid_status)
+              (scope.spendingPlan_status.account_type == 'enterprise_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.paid_status) ||
+              (scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.wellness_enabled)
             ){
             scope.isWellnessAllocColShow = true;
           }
           if(
-            scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.paid_status &&
+            (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.paid_status &&
             (scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
-            (scope.spendingPlan_status.medical_method == 'post_paid' || scope.spendingPlan_status.wellness_method == 'post_paid')
+						(scope.spendingPlan_status.medical_method == 'post_paid' || scope.spendingPlan_status.wellness_method == 'post_paid')) ||
+						(scope.spendingPlan_status.account_type != 'lite_plan' && (scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled)) 
             ){
             scope.isCapVisitColShow = true;
           }
