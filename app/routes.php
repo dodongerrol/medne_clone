@@ -104,7 +104,7 @@
 
 
 // Route::get('app/resetcompanypassword', 'HomeController@getCompanyForgotPasswordView');
-// Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordView');
+Route::get('app/resetmemberpassword', 'HomeController@getMemberForgotPasswordView');
 // Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordView');
 
 // Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
