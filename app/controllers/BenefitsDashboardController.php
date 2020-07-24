@@ -12,7 +12,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($hr) {
 			$api = null;
 
-			if(url() == "https://medicloud.sg") {
+			if(url() == "https://medicloud.sg" || url() == "https://hrapi.medicloud.sg") {
 				$api = "https://api.medicloud.sg/hr/login_token";
 				$download_link = "https://api.medicloud.sg/hr";
 				$live = true;

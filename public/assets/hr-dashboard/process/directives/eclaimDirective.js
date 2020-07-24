@@ -329,7 +329,7 @@
 									list.status_text = 'Pending';
 									list.res = true;
 									list.message = response.data.message;
-									scope.applyDates();
+									// scope.applyDates();
 								}else{
 									swal( 'Oops!', response.data.message, 'error' );
 								}
@@ -373,7 +373,7 @@
 								list.message = response.data.message;
 							}
 							scope.hideLoading();
-							scope.applyDates();
+							// scope.applyDates();
 						} else {
 							// alert(response.data.message);
 							swal('Ooops!', response.data.message, 'error');
@@ -414,7 +414,7 @@
 									list.message = response.data.message;
 								}
 								scope.hideLoading();
-								scope.applyDates();
+								// scope.applyDates();
 							} else {
 								swal('Oops!', response.data.message, 'error');
 								$( ".circle-loader" ).fadeOut();
