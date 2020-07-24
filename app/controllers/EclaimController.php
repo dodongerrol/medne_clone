@@ -6386,6 +6386,7 @@ public function searchEmployeeEclaimActivity( )
 
 public function hrEclaimActivity( )
 {
+	set_time_limit(20000);
 	$input = Input::all();
 	$start = date('Y-m-d', strtotime($input['start']));
 	$end = PlanHelper::endDate($input['end']);
