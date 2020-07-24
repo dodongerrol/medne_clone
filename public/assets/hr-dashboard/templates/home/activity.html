@@ -1313,16 +1313,16 @@
 												as Year-to-Date.</small> -->
 											<p class="color-black3 weight-500 font-14">Visit Breakdown</p>
 											<div class="visit-breakdown-col-container">
-												<!-- <div class="visit-breakdown-col-1">
+												<div class="visit-breakdown-col-1">
 													<p class="color-black3 weight-400 font-14">Total: 
-														<span ng-bind="activity.total_visit_limit" class="weight-400 color-blue-custom">280</span>
+														<span ng-bind="activity.total_balance_visit" class="weight-400 color-blue-custom">280</span>
 													</p>
 													<p class="color-black3 weight-400 font-14">Balance: 
-															<span ng-bind="activity.total_balance_visit" class="weight-400 color-blue-custom">230</span>
+															<span ng-bind="activity.total_balance" class="weight-400 color-blue-custom">230</span>
 													</p>
-												</div> -->
-												<div class="visit-breakdown-col-1">
-													<p class="color-black3 weight-400 font-14">Total utilised visits: 
+												</div>
+												<div class="visit-breakdown-col-2">
+													<p class="color-black3 weight-400 font-14">Utilised: 
 															<span ng-bind="activity.total_visit_created" class="weight-400 color-blue-custom">230</span>
 													</p>
 													<div class="visit-breakdown-panel-container">
@@ -1338,7 +1338,6 @@
 														</div>
 													</div>
 												</div>
-
 												<div class="visit-breakdown-col-2">
 													<p class="color-black3 weight-400 font-14">Visits per member: 
 														<span ng-bind="activity.total_average_visit" class="weight-400 color-blue-custom">230</span>
@@ -1347,7 +1346,6 @@
 														</span>
 													</p>
 												</div>
-
 											</div>	
 										</div>
 									</div>
@@ -1367,13 +1365,15 @@
 							</div>
 
 							<div class="col-md-6 no-padding text-center transactions-btn-container">
-								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}"
+									ng-click="togglePanelNonPanel(1);">
 									PANEL<br>
 									<!-- IN-NETWORK<br> -->
 									TRANSACTIONS
 								</button>
 
-								<button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+								<button class="btn-out-network" ng-class="{'active':outNetWorkTable}"
+									ng-click="togglePanelNonPanel(2);">
 									E-CLAIM TRANSACTIONS<br>
 									(NON-PANEL)
 								</button>
