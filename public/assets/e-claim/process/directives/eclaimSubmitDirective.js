@@ -467,6 +467,10 @@ app.directive('eclaimSubmitDirective', [
 							scope.getClaims( scope.eclaim.spending_type );
 							// console.log(scope.user_details);
 							// scope.getCurrentActivity();
+
+							if ( scope.user_details.wellness == true && scope.user_details.currency_type == 'myr' && scope.user_details.plan_type == 'enterprise_plan' ) {
+								scope.spendingTypeOpt = 1;
+							}
 						});
 				}
 
@@ -562,6 +566,7 @@ app.directive('eclaimSubmitDirective', [
 					scope.local_eclaim = storageFactory.getEclaim();
 					// console.log( scope.local_eclaim );
 					console.log(scope.eclaim);
+
         }
 
         scope.onLoad();

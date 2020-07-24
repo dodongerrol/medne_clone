@@ -2276,3 +2276,8 @@ body::-webkit-scrollbar-thumb {
   grid-template-columns: 1fr 1fr;
   margin-top: 20px;
 }
+.eclaim-left-container .btn-medical.disable-spending-account-btn,
+.eclaim-left-container .btn-medical.disable-spending-account-btn:hover {
+  pointer-events: none;
+  border-color: #eee;
+}
