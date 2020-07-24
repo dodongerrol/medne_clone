@@ -122,14 +122,21 @@ class EclaimController extends \BaseController {
 		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
+		$wallet = DB::table('e_wallet')->where('UserID', $input['user_id'])->first ( );
 
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
 
+		
 		// check if their is receipts
 		if(sizeof($input['receipts']) == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
+		}
+
+		// check if it is myr or sgd
+		if($wallet->currency_type == "myr" ) {
+			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
 		}
 
 		$ids = [];
