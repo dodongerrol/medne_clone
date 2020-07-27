@@ -304,6 +304,7 @@ Route::filter('auth.headers', function($request, $response) {
 Route::filter('auth.jwt_hr', function($request, $response)
 {
     $headers = [];
+    return StringHelper::requestHeader();
     if(!StringHelper::requestHeader()){
         $headers[]['error'] = true;
         // return Redirect::to('company-benefits-dashboard-login');
