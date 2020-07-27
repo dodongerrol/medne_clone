@@ -122,7 +122,6 @@ class EclaimController extends \BaseController {
 		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
-		$wallet = DB::table('e_wallet')->where('UserID', $input['user_id'])->first ( );
 
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
@@ -134,10 +133,7 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
 
-		// check if it is myr or sgd
-		if($wallet->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
+		
 
 		$ids = [];
         // get real userid for dependents
@@ -176,6 +172,11 @@ class EclaimController extends \BaseController {
 			}
 		}
 
+		// check if it is myr or sgd
+		if($check_user_balance->currency_type == "myr" ) {
+			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+		}
+
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
 
@@ -195,6 +196,10 @@ class EclaimController extends \BaseController {
 
 		if($customer_active_plan->account_type == "enterprise_plan")	{
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+
+			if($customer_active_plan->account_type != "enterprise_plan") {
+				return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+			}
 
 			if($limit <= 0) {
 				return ['status' => false, 'message' => 'Maximum of 14 visits already reached.'];
