@@ -442,6 +442,26 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="new-popup baackdrop eClaim-disabled" ng-if="eClaimDisabledState">
+		<div class="popup-container">
+			<div class="popup-row">
+				<div class="popup-header">
+					<i class="fa fa-bell-o" aria-hidden="true"></i>
+				</div>
+				<div class="popup-content">
+					<h5>E-Claim Disabled</h5>
+					<br>
+					<p>The E-Claim function has been disabled for your company.</p>
+					<p>Kindly contact your HR for more details.</p>
+				</div>
+
+				<div class="popup-footer">
+					<button class="btn" ng-click="eClaimDisabledClosed()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style type="text/css">

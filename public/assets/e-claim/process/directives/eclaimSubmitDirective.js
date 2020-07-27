@@ -462,6 +462,7 @@ app.directive('eclaimSubmitDirective', [
 				scope.getDetails = function( ) {
 					eclaimSettings.empDetails( )
 						.then(function( response ) {
+							console.log(response);
 							scope.user_details = response.data.data;
 							scope.hideIntroLoader();
 							scope.getClaims( scope.eclaim.spending_type );
@@ -551,12 +552,23 @@ app.directive('eclaimSubmitDirective', [
 						// });
 	        }, 100);
 				}
+				scope.eClaimDisabledState = false;
+				scope.eClaimDisabled = function () {
+					if ( scope.user_details.plan_type == 'enterprise_plan' && scope.user_details.wellness == false && scope.user_details.currency_type == 'myr') {
+						scope.eClaimDisabledState = true;
+					}
+				}
+
+				scope.eClaimDisabledClosed = function () {
+					scope.eClaimDisabledState = false;
+				}
 
 				scope.onLoad = function( ) {
 
 					scope.getDetails();
 					scope.getEclaimPackages();
 					scope.fetchMembers();
+					scope.eClaimDisabled();
 					
 					
 					scope.local_eclaim = storageFactory.getEclaim();
