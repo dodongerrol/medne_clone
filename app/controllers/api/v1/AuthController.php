@@ -1966,6 +1966,16 @@ public function getNewClinicDetails($id)
         $returnObject->message = 'Maximum of 14 visits already reached.';
         return Response::json($returnObject);
       }
+      
+      $wallet_checker = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+
+      if($wallet_checker->currency_type === 'myr') {
+        if($clinic->currency_type === 'sgd') {
+            $returnObject->status = FALSE;
+            $returnObject->message = 'Member is prohibited to access this clinic from Singpapore';
+            return Response::json($returnObject);
+        }
+      }
     }
     
     if($user_type == "employee") {
