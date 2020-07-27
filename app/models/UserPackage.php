@@ -269,6 +269,7 @@ class UserPackage extends Eloquent
                         $plan_type = 'Corporate';
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($user_details->UserID);
                         $data['packages'] = PlanHelper::getUserPackages($active_plan_data, $id, $data['plan_add_on'], $plan_user);
+                        return $data;
                         $data['fullname'] = ucwords($user_details->Name);
                         $data['member_id'] = $user_details->UserID;
                         $data['nric'] = $user_details->NRIC;

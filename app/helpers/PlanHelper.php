@@ -787,7 +787,9 @@ class PlanHelper {
 	}
 
 	public static function getUserPackages($active_plan_data, $user_id, $plan_add_on, $user_plan)
-	{
+	{	
+
+		$user_wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 		// $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $customer_active_plan_id)->first();
 		$active_plan = $active_plan_data;
 		$account_type = null;
@@ -799,7 +801,7 @@ class PlanHelper {
 			->where('user_package.user_id', $user_id)
 			->get();
 		}
-
+		
 		if($active_plan->account_type == "insurance_bundle") {
 			if($active_plan->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active_plan->plan_id)->first();
@@ -821,6 +823,7 @@ class PlanHelper {
 			return DB::table('user_package')
 			->join('care_package', 'care_package.care_package_id', '=', 'user_package.care_package_id')
 			->where('user_package.user_id', $user_id)
+			->where('care_package.currency_type', $user_wallet->currency_type)
 			->get();
 		} else {
 			$account_type = $active_plan->account_type;
@@ -849,6 +852,7 @@ class PlanHelper {
 		$package_bundle = DB::table('package_bundle')
 		->join('care_package', 'care_package.care_package_id', '=', 'package_bundle.care_package_id')
 		->where('package_bundle.package_group_id', $package_group->package_group_id)
+		->where('care_package.currency_type', $user_wallet->currency_type)
 		->orderBy('care_package.position', 'asc')
 		->get();
 		return $package_bundle;
