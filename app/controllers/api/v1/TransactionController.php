@@ -96,6 +96,17 @@ class Api_V1_TransactionController extends \BaseController
 							$returnObject->message = 'Maximum of 14 visits already reached.';
 							return Response::json($returnObject);
 						}
+
+						$owner_id = StringHelper::getUserId($findUserID);
+						$wallet_checker = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+
+						if($wallet_checker->currency_type === 'myr') {
+							if($clinic->currency_type === 'sgd') {
+								$returnObject->status = FALSE;
+								$returnObject->message = 'Member is prohibited to access this clinic from Singpapore';
+								return Response::json($returnObject);
+							}
+						}
 					}
 
 					// check if enable to access feature
