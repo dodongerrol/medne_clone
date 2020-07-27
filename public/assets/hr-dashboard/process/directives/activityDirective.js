@@ -1501,7 +1501,9 @@ app.directive('activityPage', [
 					// scope.toDate('mtd');
 					scope.companyAccountType();
 					scope.checkSession();
-					
+
+					scope.getEmployeeLists();
+
 					scope.getSpendingAcctStatus();
 					// scope.initializeRangeSlider( );
 					// scope.initializeNewCustomDatePicker();
