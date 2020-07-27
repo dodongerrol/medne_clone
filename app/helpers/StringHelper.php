@@ -29,8 +29,9 @@ class StringHelper{
                     April 9, 2020
             */ 
             $thirdPartyAuthorization = '';
-            $getRequestHeader = getallheaders();
-
+            // $getRequestHeader = getallheaders();
+            $getRequestHeader = self::getRequestHeaders();
+            return $getRequestHeader;
             if (
                 (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
                 || (!empty($getRequestHeader['x-access-key']) && !empty($getRequestHeader['x-member-id']))
@@ -235,7 +236,9 @@ class StringHelper{
 
         public static function getToken( )
         {
-            $getRequestHeader = getallheaders();
+            // $getRequestHeader = getallheaders();
+            $getRequestHeader = self::getRequestHeaders();
+            return $getRequestHeader;
             if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
                 $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
             }
@@ -243,7 +246,7 @@ class StringHelper{
             if(isset($getRequestHeader['Authorization'])) {
                 return $getRequestHeader['Authorization'];
             } else {
-                return self::requestHeader();
+                return self::getRequestHeaders();
             }
         }
 
@@ -1587,5 +1590,9 @@ public static function get_random_password($length)
 		$c = DateTime::createFromFormat($secondFormat, $date);
 		return $d && $d->format($firstFormat) === $date || $c && $c->format($secondFormat) === $date;
 		// return ['format' => $d->format($format), 'date' => $date];
-	}
+    }
+    
+    public static function getRequestHeaders() {
+        return apache_request_headers();
+    }
 }
