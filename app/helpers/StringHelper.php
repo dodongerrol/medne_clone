@@ -1379,7 +1379,7 @@ public static function get_random_password($length)
 
     public static function verifyXAccessKey () {
         
-        $getRequestHeader = getallheaders();
+        $getRequestHeader = self::getHeaders();
         $returnObject = new stdClass();
         $todate =  date("Y-m-d H:i:s");
 
@@ -1592,10 +1592,10 @@ public static function get_random_password($length)
     
     public static function getHeaders( )
     {
-        // if (!function_exists('getallheaders'))
-        // {
-        //     function getallheaders()
-        //     {
+        if (!function_exists('getallheaders'))
+        {
+            function getallheaders()
+            {
                 $headers = array();
                 // return $_SERVER;
                 foreach($_SERVER as $key => $value) {
@@ -1611,9 +1611,9 @@ public static function get_random_password($length)
                    
                 }
                 return $headers;
-            // }
-        // } else {
-        //     return getallheaders();
-        // }
+            }
+        } else {
+            return getallheaders();
+        }
     }
 }
