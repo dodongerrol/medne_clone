@@ -62,8 +62,8 @@ return array(
 					'host' => 'medicloud-db.ceszful8sael.ap-southeast-1.rds.amazonaws.com'
 			),
 			'database'  => 'medicloud_v3',
-			'username'  => 'medicloud',
-			'password'  => 'medi657cloud',
+			'username'  => 'root',
+			'password'  => 'root',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => 'medi_',
