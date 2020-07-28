@@ -1594,18 +1594,18 @@ public static function get_random_password($length)
     {
         if (!function_exists('getallheaders'))
         {
-                function getallheaders()
-                {
-                    $headers = '';
-                    foreach ($_SERVER as $name => $value)
-                    {
-                        if (substr($name, 0, 5) == 'HTTP_')
-                        {
-                            $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('-', ' ', substr($name, 5)))))] = $value;
-                        }
+            function getallheaders()
+            {
+                $headers = array();
+                foreach($_SERVER as $key => $value) {
+                    if (substr($key, 0, 5) <> 'HTTP_') {
+                        continue;
                     }
-                    return $headers;
+                    $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+                    $headers[strtoupper($header)] = $value;
                 }
+                return $headers;
+            }
         } else {
             return getallheaders();
         }
