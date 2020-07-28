@@ -236,7 +236,7 @@ class StringHelper{
 
         public static function getToken( )
         {
-            $getRequestHeader = getallheaders();
+            $getRequestHeader = self::getHeaders();
             if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
                 $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
             }
