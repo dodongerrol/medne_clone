@@ -44,20 +44,20 @@
         <tr>
           <td style="width: 60%;padding-left: 40px;padding-bottom: 80px;">
             <p style="font-size: 35px;line-height: 35px;margin: 0 0 15px 0;">CANCELLATION</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">COMPANY ABC PTE LTD</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: SAM NG</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">7 JALAN KENARI 19,  BANDAR PUTRA</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">038989</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">MALAYSIA</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$billing_info['company']}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$billing_info['first_name']}} {{$billing_info['last_name']}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$billing_info['address']}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$billing_info['postal']}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;">
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">
               <div class="one" style="width: 46%;display: inline-block;vertical-align: top;">
                 <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Date</p>
-                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">01 Jan 2020</p>
+                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$invoice_date}}</p>
     
                 <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Number</p>
-                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">0000423422</p>
+                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$cancellation_number}}</p>
               </div>
               <div class="two" style="width: 52%;display: inline-block;vertical-align: top;">
                 <p style="font-size: 14px;line-height: 16px;margin: 0;">
@@ -88,26 +88,26 @@
           <td style="font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;padding-right: 20px;">Quantity</td>
           <td style="font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;padding-right: 20px;">Unit Price</td>
           <td style="font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;padding-right: 20px;">Tax</td>
-          <td style="font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;">Amount MYR</td>
+          <td style="font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;">Amount {{$currency_type}}</td>
         </tr>
         <tr>
           <td style="padding-top: 20px;border-bottom: 1px solid #BFBFBF;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Refund - Enterprise Plan Mednefits Care (Corporate)</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Period of use: 01/01/2020 - 30/06/2020</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Refund - {{$plan_type}} Mednefits Care (Corporate)</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Period of use: {{ $plan_start }} - {{ $date_refund }}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 5px 0;">Refund : 70% of unutilised period </p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">(01/07/2020 - 31/12/2020)</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">({{ $plan_start }} - {{ $plan_end }})</p>
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;padding-right: 20px;">
-            3.00
+          {{$quantity}}
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;padding-right: 20px;">
-            300.00
+          {{$unit_price}}
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;padding-right: 20px;">
             No Tax
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-            900.00
+          {{$total_refund}}
           </td>
         </tr>
         <tr>
@@ -117,17 +117,17 @@
             Subtotal
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
-            900.00
+          {{$amount_due}}
           </td>
         </tr>
         <tr>
           <td colspan="2"></td>
           <td></td>
           <td style="text-align: right;padding: 10px 0;padding-right: 20px;">
-            TOTAL MYR
+            TOTAL {{$currency_type}}
           </td>
           <td style="text-align: right;font-weight: 700;padding: 10px 0;">
-            900.00
+          {{$amount_due}}
           </td>
         </tr>
       </table>
@@ -135,7 +135,7 @@
       <table border="0" cellpadding="0" cellspacing="0" style="margin: 0; padding: 0 40px;" width="100%">
         <tr>
           <td>
-            <p style="font-weight: 700;font-size: 18px;line-height: 16px;margin: 0 0 10px 0;">Due Date: 01 Jan 2020</p>
+            <p style="font-weight: 700;font-size: 18px;line-height: 16px;margin: 0 0 10px 0;">Due Date: {{$invoice_due}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 35px 0;">Payment Information:</p>
 
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Bank Transfer:</p>
