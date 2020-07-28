@@ -10085,6 +10085,7 @@ class BenefitsDashboardController extends \BaseController {
 		$link_account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 
 		$amount_due = 0;
+		$unit_price = 0;
 
 		$refund_payment = DB::table('payment_refund')->where('payment_refund_id', $id)->first();	
 		if($refund_payment) {
@@ -10135,6 +10136,7 @@ class BenefitsDashboardController extends \BaseController {
 
 					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
 					$total_refund += $temp_sub_total;
+					$unit_price = $user->amount;
 
 					$temp = array(
 						'user_id'			=> $user->user_id,
@@ -10222,9 +10224,12 @@ class BenefitsDashboardController extends \BaseController {
 			$refund_data = array(
 				'plan_type'		=> $refund_payment->account_type ? PlanHelper::getAccountType($refund_payment->account_type) : null,
 				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
+				'plan_start' => date('d/m/Y', strtotime($company_plan->plan_start)),
+				'plan_end'		=>  date('d/m/Y', strtotime($end_date)),
 				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
+				'quantity'	=> sizeof($users),
 				'date_refund' => $refund_payment->date_refund,
 				'invoice_date' => date('d F Y', strtotime($refund_payment->invoice_date)),
 				'invoice_due' => date('d F Y', strtotime($refund_payment->invoice_due)),
@@ -10233,7 +10238,8 @@ class BenefitsDashboardController extends \BaseController {
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
 				'users' => $users,
-				'currency_type' => strtoupper($refund_payment->currency_type)
+				'currency_type' => strtoupper($refund_payment->currency_type),
+				'unit_price'	=> \DecimalHelper::formatDecimal($unit_price)
 			);
 
 			if($refund_payment->account_type == "enterprise_plan")	{
