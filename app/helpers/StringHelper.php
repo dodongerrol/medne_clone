@@ -1592,22 +1592,28 @@ public static function get_random_password($length)
     
     public static function getHeaders( )
     {
-        if (!function_exists('getallheaders'))
-        {
-            function getallheaders()
-            {
+        // if (!function_exists('getallheaders'))
+        // {
+        //     function getallheaders()
+        //     {
                 $headers = array();
+                // return $_SERVER;
                 foreach($_SERVER as $key => $value) {
                     if (substr($key, 0, 5) <> 'HTTP_') {
                         continue;
                     }
                     $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
-                    $headers[strtoupper($header)] = $value;
+                    if($header == "Authorization" || $header == "authorization") {
+                        $headers[$header] = $value;
+                    } else {
+                        $headers[strtoupper($header)] = $value;
+                    }
+                   
                 }
                 return $headers;
-            }
-        } else {
-            return getallheaders();
-        }
+            // }
+        // } else {
+        //     return getallheaders();
+        // }
     }
 }
