@@ -29,7 +29,8 @@ class StringHelper{
                     April 9, 2020
             */ 
             $thirdPartyAuthorization = '';
-            $getRequestHeader = getallheaders();
+            // $getRequestHeader = getallheaders();
+            $getRequestHeader = self::getHeaders();
 
             if (
                 (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
@@ -1587,5 +1588,26 @@ public static function get_random_password($length)
 		$c = DateTime::createFromFormat($secondFormat, $date);
 		return $d && $d->format($firstFormat) === $date || $c && $c->format($secondFormat) === $date;
 		// return ['format' => $d->format($format), 'date' => $date];
-	}
+    }
+    
+    public static function getHeaders( )
+    {
+        if (!function_exists('getallheaders'))
+        {
+                function getallheaders()
+                {
+                    $headers = '';
+                    foreach ($_SERVER as $name => $value)
+                    {
+                        if (substr($name, 0, 5) == 'HTTP_')
+                        {
+                            $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                        }
+                    }
+                    return $headers;
+                }
+        } else {
+            return getallheaders();
+        }
+    }
 }
