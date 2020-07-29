@@ -5432,6 +5432,13 @@ public function createEclaim( )
   ->first();
 
   if($customer_active_plan->account_type == "enterprise_plan")	{
+    if($input['spending_type'] == "medical" && $check_user_balance->currency_type == "myr") {
+      $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
+      $returnObject->message = 'Member is prohibited to access the medical wallet';
+      return Response::json($returnObject);
+    }
+
     $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
     if($limit <= 0) {
@@ -5439,41 +5446,24 @@ public function createEclaim( )
       $returnObject->head_message = 'Non-Panel Error';
       $returnObject->message = 'Maximum of 14 visits already reached.';
       return Response::json($returnObject);
-    }$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-    $customer_active_plan = DB::table('customer_active_plan')
-    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-    ->first();
+    }
   
-    if($customer_active_plan->account_type == "enterprise_plan")	{
-      $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
-  
-      if($limit <= 0) {
-        $returnObject->status = FALSE;
-        $returnObject->head_message = 'Non-Panel Error';
-        $returnObject->message = 'Maximum of 14 visits already reached.';
-        return Response::json($returnObject);
-      }
-  
-      // check if A&E already get for 2 times
-      $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
-      
-      if($claim_status && $input['service'] == "Accident & Emergency") {
-        $returnObject->status = FALSE;
-        $returnObject->head_message = '2/2 A&E used';
-        $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
-        return Response::json($returnObject);
-      }
+    if($limit <= 0) {
+      $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
+      $returnObject->message = 'Maximum of 14 visits already reached.';
+      return Response::json($returnObject);
     }
 
-    // // check if A&E already get for 2 times
-    // $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
+    // check if A&E already get for 2 times
+    $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
     
-    // if($claim_status && $input['service'] == "Accident & Emergency") {
-    //   $returnObject->status = FALSE;
-    //   $returnObject->head_message = 'Non-Panel Error';
-    //   $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
-    //   return Response::json($returnObject);
-    // }
+    if($claim_status && $input['service'] == "Accident & Emergency") {
+      $returnObject->status = FALSE;
+      $returnObject->head_message = '2/2 A&E used';
+      $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
+      return Response::json($returnObject);
+    }
   }
 
   // check if enable to access feature
