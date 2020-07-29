@@ -1,0 +1,71 @@
+.mwbc-card-box-container .available-credits .available-credits-text {
+  font-size: 18px;
+}
+.mwbc-card-box-container .available-credits {
+  margin: 0 0 40px;
+}
+.mwbc-card-box-container .available-credits .available-credits-amount {
+  font-size: 20px;
+}
+.btn-top-up-credits { 
+  border: 1px solid #0392CF;
+  color: #0392CF;
+  width: 120px;
+  background-color: #fff;
+  border-radius: 3px;
+  padding: 6px 0;
+}
+.available-credits-container {
+  /* margin: 0 0 40px; */
+}
+.mednefits-credits-account-container .mwbc-card-box-container {
+  width: 640px;
+}
+.mednefits-credits-account-container .available-credits-container {
+  margin: 0 0 10px;
+}
+.total-credits-container,
+.purchased-credits-container,
+.bonus-credits-container {
+  display: flex;
+  align-items: center;
+}
+.credits-border-container {
+  border-right: .5px solid #BFBFBF;
+  margin: 0 10px;
+  height: 25px;
+}
+.mednefits-credits-pending {
+  margin: 20px 0 0;
+}
+.wallet-container {
+  margin: 10px 0 0;
+}
+.wallet-container >div:first-child {
+  width: 150px;
+}
+.wallet-panel-container >div {
+  margin: 0 30px 0 0;
+}
+
+.member-activities-table-container table {
+  border: 2px solid #E0E0E0;
+  margin: 20px 0 0;
+}
+.member-activities-table-container thead {
+  background-color: #FAFAFA;
+}
+
+.member-activities-table-container tr {
+  border-top: 2px solid #E0E0E0;
+}
+.member-activities-table-container th {
+  font-family: 'Helvetica Medium';
+}
+.member-activities-table-container th,
+.member-activities-table-container td {
+  padding: 15px;
+}
+.member-activities-table-container .amount-value {
+  color: #3F9D59;
+}

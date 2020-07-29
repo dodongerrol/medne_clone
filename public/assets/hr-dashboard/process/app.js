@@ -771,9 +771,40 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/index.blade.php'
           },
         },
-      });
+      })
 
     // ======================================================== //
+
+    .state('member-wallet-benefits-coverage', {
+      url: '/member-wallet-benefits-coverage',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn-emp-overview.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.member-wallet', {
+      url: '/member-wallet',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/memberWallet/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.mednefits-credits-account', {
+      url: '/mednefits-credits-account',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/index.html'
+        }
+      }
+    })
+
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');

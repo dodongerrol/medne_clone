@@ -1,0 +1,39 @@
+.member-medical-wallet-wrapper .available-credits-container {
+  margin: 0 0 10px;
+}
+.member-medical-wallet-wrapper .mwbc-card-box-container {
+  width: 350px;
+}
+.mwbc-benefits-container {
+  margin: 20px 0 0;
+}
+.mwbc-benefits-container label {
+  font-family: 'Helvetica Medium';
+  font-size: 14px;
+  color: #000;
+}
+.mwbc-benefits-container >div {
+  width: 25%;
+}
+.benefits-input-wrapper.start-date,
+.benefits-input-wrapper.end-date {
+  width: 130px;
+}
+.benefits-input-wrapper.rollover,
+.benefits-input-wrapper.deposits {
+  width: 80px;
+}
+.non-panel-claim-container >div{
+  margin: 10px 0 0;
+}
+.payment-methods-box-container {
+  display: flex;
+  /* margin: 20px 0 0; */
+  flex-wrap: wrap;
+}
+.payment-methods-box-container >div {
+  margin: 15px 20px 0 0;
+}
+.mednefits-panel >div{
+  margin: 20px 0 0;
+}
