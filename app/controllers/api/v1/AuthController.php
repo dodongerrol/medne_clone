@@ -6623,6 +6623,17 @@ public function payCreditsNew( )
               return Response::json($returnObject);
             }
 
+            if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
+              if($spending['wellness_enabled'] == false) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'without_e_claim';
+                $returnObject->head_message = 'E-Claim Unavailable';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+                $returnObject->sub_message = 'Kindly contact your HR for more details.';
+                return Response::json($returnObject);
+              }
+            }
+
             // check if e-claim platform is enable
             $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
