@@ -10243,10 +10243,10 @@ class BenefitsDashboardController extends \BaseController {
 			);
 
 			if($refund_payment->account_type == "enterprise_plan")	{
-				return View::make('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
+				// return View::make('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 				$pdf = PDF::loadView('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 			} else {
-				return View::make('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
+				// return View::make('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 				$pdf = PDF::loadView('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 			}
 

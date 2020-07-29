@@ -836,15 +836,17 @@ class PlanHelper {
 			$wallet = 1;
 		}
 
-            // return $account_type.' - '.$secondary_account_type;
+		if($account_type == "enterprise_plan") {
+			$wallet = 1;
+		}
 
 		$package_group = DB::table('package_group')
 		->where('account_type', $account_type)
 		->where('secondary_account_type', $secondary_account_type)
 		->where('wallet', $wallet)
 		->first();
-            // return $package_group;
-            // update user package plan
+		
+		// update user package plan
 		if((int)$user_plan->package_group_id !== (int)$package_group->package_group_id) {
 			\UserPlanType::where('user_plan_type_id', $user_plan->user_plan_type_id)->update(['package_group_id' => $package_group->package_group_id]);
 		}
