@@ -6906,7 +6906,7 @@ public function payCreditsNew( )
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Your password is not match!';
+        $returnObject->message = 'Sorry, your password and confirmation password does not match';
         return Response::json($returnObject);
       }
 

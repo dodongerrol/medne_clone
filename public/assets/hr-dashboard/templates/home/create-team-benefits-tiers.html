@@ -493,7 +493,7 @@
 							</div>
 							<div ng-if="isBankNumColShow" class="employee-input-wrapper">
 								<label for="fname">Bank Account Number</label>
-  							<input valid-number type="number" ng-model="employee_data.bank_account_number">
+  							<input type="text" ng-model="employee_data.bank_account_number">
 							</div>
 							<div ng-if="isCapVisitColShow" class="employee-input-wrapper">
 								<label for="fname">Cap per Visit</label>
@@ -718,7 +718,7 @@
 			</div>
 
 			<div ng-if="isReviewEnroll" class="enroll-container-button">
-				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
 				<button ng-click="goToCommunication()" class="btn-enroll" ng-disabled="hasError" >ENROLL
 					<span class="enroll-badge">
 						{{ temp_employees.length < 1000 ? temp_employees.length : ''  }}
@@ -730,7 +730,7 @@
 			</div>
 
 			<div ng-if="isCommunicationShow" class="enroll-container-button">
-				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
 				<button class="btn-enroll" ng-click="saveTempUser()">COMPLETE</button>
 			</div>
 
