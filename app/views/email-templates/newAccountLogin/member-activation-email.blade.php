@@ -63,7 +63,7 @@
           </p>
 
           <div style="text-align: center; margin: 30px 0 50px;">
-            <a href="https://bit.ly/34DpPLO" style="display:inline-block;text-decoration: none;background-color: #3192CF; border-radius: 4px; color: #fff; border: 0; width: 331px; font-size: 15px; padding: 8px 0; outline: none;">Download Mednefits</a>
+            <a href="https://bridgeurl.com/mednefits-app" style="display:inline-block;text-decoration: none;background-color: #3192CF; border-radius: 4px; color: #fff; border: 0; width: 331px; font-size: 15px; padding: 8px 0; outline: none;">Download Mednefits</a>
           </div>
 
           <div style="border-bottom: 2px solid #ddd;width: 100%;"></div>

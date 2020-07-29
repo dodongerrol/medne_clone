@@ -85,7 +85,7 @@
 			<table>
 				<thead>
 					<tr>
-						<th ng-if="emp.with_employee_id == true" class="id">ID</th>
+						<th ng-if="employees.with_employee_id == true" class="id">ID</th>
 						<th class="name-title">Name
 							<div class="name-chevron-icon">
 								<!-- <img class="employee-arrow-up" src="../assets/hr-dashboard/img/icons/down-arrow.svg"> -->
@@ -108,7 +108,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="emp in employees.data" ng-click="toggleEmployee(emp, $index)">
-						<td ng-if="emp.with_employee_id == true" class="id" ng-bind="emp.employee_id"></td>
+						<td ng-if="employees.with_employee_id == true" class="id" ng-bind="emp.employee_id"></td>
 						<td class="emp-name-container">
 							<strong ng-bind="emp.name">Calvin Lee</strong>
 						</td>
