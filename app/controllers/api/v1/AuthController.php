@@ -1933,6 +1933,8 @@ public function getNewClinicDetails($id)
 
      if($block) {
        $returnObject->status = FALSE;
+       $returnObject->status_type = 'access_block';
+      $returnObject->head_message = 'Registration Unavailable';
        $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
        return Response::json($returnObject);
      }
@@ -1942,6 +1944,8 @@ public function getNewClinicDetails($id)
 
       if($transaction_access)	{
         $returnObject->status = FALSE;
+        $returnObject->status_type = 'access_block';
+        $returnObject->head_message = 'Registration Unavailable';
         $returnObject->message = 'Panel function is disabled for your company.';
         return Response::json($returnObject);
       }
@@ -1963,6 +1967,8 @@ public function getNewClinicDetails($id)
   
       if($limit <= 0) {
         $returnObject->status = FALSE;
+        $returnObject->status_type = 'access_block';
+        $returnObject->head_message = 'Registration Unavailable';
         $returnObject->message = 'Maximum of 14 visits already reached.';
         return Response::json($returnObject);
       }
@@ -1972,7 +1978,9 @@ public function getNewClinicDetails($id)
       if($wallet_checker->currency_type === 'myr') {
         if($clinic->currency_type === 'sgd') {
             $returnObject->status = FALSE;
-            $returnObject->message = 'Member is prohibited to access this clinic from Singpapore';
+            $returnObject->status_type = 'access_block';
+            $returnObject->head_message = 'Registration Unavailable';
+            $returnObject->message = 'Sorry, your acccount is not enabled to access Singapore GP registration. Kindly contact your HR for more details.';
             return Response::json($returnObject);
         }
       }
@@ -1986,6 +1994,8 @@ public function getNewClinicDetails($id)
 
     if($plan_coverage['expired'] == true) {
      $returnObject->status = FALSE;
+     $returnObject->status_type = 'access_block';
+    $returnObject->head_message = 'Registration Unavailable';
      $returnObject->message = 'Employee Plan Coverage has expired';
      $returnObject->data = $plan_coverage;
      $returnObject->employee_status = false;
@@ -1994,6 +2004,8 @@ public function getNewClinicDetails($id)
 
    if($plan_coverage['pending'] == true) {
      $returnObject->status = FALSE;
+     $returnObject->status_type = 'access_block';
+     $returnObject->head_message = 'Registration Unavailable';
      $returnObject->message = 'Employee Plan Account is still pending';
      $returnObject->data = $plan_coverage;
      $returnObject->employee_status = false;
