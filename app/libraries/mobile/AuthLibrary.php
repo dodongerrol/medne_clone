@@ -625,97 +625,62 @@ class AuthLibrary{
         if(!empty($email)){
           $findUserID = null;
 
-          if($send_type == "email") {
-            $findUserID = DB::table('user')
-                            ->where('Email', $email)
-                            ->where('UserType', 5)
-                            ->where('Active', 1)
-                            ->whereIn('access_type', [1, 0])
-                            ->first();
-            
-            if($findUserID) {
-              $findUserID = $findUserID->UserID;
-            } else {
-              $returnObject->status = false;
-              $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
-              return $returnObject;
-            }
-          } else if($send_type == "sms") {
-            $findUserID = DB::table('user')
-                        ->where('PhoneNo', $email)
-                        ->where('UserType', 5)
-                        ->where('Active', 1)
-                        ->whereIn('access_type', [1, 0])
-                        ->first();
-            if($findUserID) {
-              $findUserID = $findUserID->UserID;
-            } else {
-              $returnObject->status = false;
-              $returnObject->message = "Sorry, your phone number has not been signed up with Mednefits";
-              return $returnObject;
-            }
-          } else if($send_type == "both"){
-            $findUserEmail = DB::table('user')
+          $findUserEmail = DB::table('user')
                           ->where('Email', $email)
                           ->where('UserType', 5)
                           ->where('Active', 1)
                           ->whereIn('access_type', [1, 0])
                           ->get();
             
-            if(sizeof($findUserEmail) > 0) {
-              if(sizeof($findUserEmail) == 1) {
-                $findUserID = $findUserEmail[0]->UserID;
+          if(sizeof($findUserEmail) > 0) {
+            if(sizeof($findUserEmail) == 1) {
+              $findUserID = $findUserEmail[0]->UserID;
+            } else {
+              $returnObject->status = false;
+              $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+              return $returnObject;
+            }
+          } else {
+            $email = $email;
+            // phone number
+            $findUserPhone = DB::table('user')
+            ->where('PhoneNo', (string)$email)
+            ->where('UserType', 5)
+            ->where('Active', 1)
+            ->whereIn('access_type', [1, 0])
+            ->get();
+
+            if(sizeof($findUserPhone) > 0) {
+              if(sizeof($findUserPhone) == 1) {
+                $findUserID = $findUserPhone[0]->UserID;
               } else {
                 $returnObject->status = false;
                 $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                 return $returnObject;
               }
             } else {
-              $email = $email;
-              // phone number
-              $findUserPhone = DB::table('user')
-              ->where('PhoneNo', (string)$email)
+                // backup phone
+              $findUserBackUpPhone = DB::table('user')
+              ->where('backup_mobile', (string)$email)
               ->where('UserType', 5)
               ->where('Active', 1)
               ->whereIn('access_type', [1, 0])
               ->get();
 
-              if(sizeof($findUserPhone) > 0) {
-                if(sizeof($findUserPhone) == 1) {
-                  $findUserID = $findUserPhone[0]->UserID;
+              if(sizeof($findUserBackUpPhone) > 0) {
+                if(sizeof($findUserBackUpPhone) == 1) {
+                  $findUserID = $findUserBackUpPhone[0];
                 } else {
                   $returnObject->status = false;
                   $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
                   return $returnObject;
                 }
               } else {
-                  // backup phone
-                $findUserBackUpPhone = DB::table('user')
-                ->where('backup_mobile', (string)$email)
-                ->where('UserType', 5)
-                ->where('Active', 1)
-                ->whereIn('access_type', [1, 0])
-                ->get();
-
-                if(sizeof($findUserBackUpPhone) > 0) {
-                  if(sizeof($findUserBackUpPhone) == 1) {
-                    $findUserID = $findUserBackUpPhone[0];
-                  } else {
-                    $returnObject->status = false;
-                    $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
-                    return $returnObject;
-                  }
-                } else {
-                  $returnObject->status = false;
-                  $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
-                  return $returnObject;
-                }
+                $returnObject->status = false;
+                $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                return $returnObject;
               }
             }
-          } else {
-            $returnObject->status = false;
-            $returnObject->message = "send type should be email or sms";
-            return $returnObject;
           }
 
           if($findUserID){
