@@ -5846,12 +5846,12 @@ class BenefitsDashboardController extends \BaseController {
 		if((int)$get_active_plan->new_head_count == 0) {
 			$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
 			// return $data;
-			// return View::make('pdf-download.hr-accounts-transaction', $data);
-			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction', $data);
+			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+			$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
 		} else {
 			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
-			// return View::make('pdf-download.hr-accounts-transaction-new-head-count', $data);
-			$pdf = PDF::loadView('pdf-download.hr-accounts-transaction-new-head-count', $data);
+			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+			$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
 		}
 
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
