@@ -1010,6 +1010,10 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
 		
+
+		// for getting member lists
+		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
+
 	 	Route::group(array('before' => 'auth.v2'),function(){
 	 		// test one tap login
 		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');

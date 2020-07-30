@@ -12,7 +12,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($hr) {
 			$api = null;
 
-			if(url() == "https://medicloud.sg") {
+			if(url() == "https://medicloud.sg" || url() == "https://hrapi.medicloud.sg") {
 				$api = "https://api.medicloud.sg/hr/login_token";
 				$download_link = "https://api.medicloud.sg/hr";
 				$live = true;
@@ -2220,10 +2220,10 @@ class BenefitsDashboardController extends \BaseController {
 				$wellness_balance = $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'];
 				$wellness = array(
 					'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
-					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'] > 0 ? number_format($wellness_credit_data['allocation'], 2) : "0.00",
+					'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
 					'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
-					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_balance > 0 ? number_format($wellness_balance, 2) : 0,
-					'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+					'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2),
 				);
 			} else {
 				// get pending allocation for medical
@@ -2242,18 +2242,18 @@ class BenefitsDashboardController extends \BaseController {
 
 				$medical = array(
 					'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
-					'credits_allocation' => $medical_credit_data['allocation'] > 0 ? number_format($medical_credit_data['allocation'], 2) : "0.00",
+					'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
 					'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
-					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'] > 0 ? number_format($medical_credit_data['balance'], 2) : 0,
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  number_format($medical_credit_data['balance'], 2),
 					'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
 				);
 
 				$wellness_balance = $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'];
 				$wellness = array(
 					'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
-					'credits_allocation_wellness'	 => $wellness_credit_data['allocation'] > 0 ? number_format($wellness_credit_data['allocation'], 2) : "0.00",
+					'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
 					'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
-					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellness_balance > 0 ? number_format($wellness_balance, 2) : 0,
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
 					'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
 				);
 			}
