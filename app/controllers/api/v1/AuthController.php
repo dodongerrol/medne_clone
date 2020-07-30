@@ -797,7 +797,7 @@ $user_plan_history = DB::table('user_plan_history')
                 ->where('user_id', $user_id)
                 ->where('type', 'started')
                 ->first();
-$date_created = date('Y-m-d', strtotime('+7 days', strtotime($user_plan_history->created_at)));
+$date_created = date('Y-m-d', strtotime('+14 days', strtotime($user_plan_history->created_at)));
 if($date_created > $date)  {
   $returnArray->data['profile']['status'] = "new";
 } else {
