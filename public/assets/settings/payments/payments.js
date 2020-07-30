@@ -602,7 +602,6 @@ function getClinicInvoiceList(date) {
         }, 300);
       }
     }
-
     $(".main-loader").hide();
   });
 }
