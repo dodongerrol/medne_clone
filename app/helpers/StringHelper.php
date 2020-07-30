@@ -31,8 +31,12 @@ class StringHelper{
             $thirdPartyAuthorization = '';
             $getRequestHeader = getallheaders();
 
-            if (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID'])) {
+            if (
+                (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
+                || (!empty($getRequestHeader['x-access-key']) && !empty($getRequestHeader['x-member-id']))
+            ) {
                 $getRequestHeader['Authorization'] = self::verifyXAccessKey();
+                
             } else {
                 if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
                     $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
@@ -756,7 +760,12 @@ public static function get_random_password($length)
     public static function checkUserType($id)
     {
         $result = DB::table('user')->where('UserID', $id)->first();
-        return array('user_type' => $result->UserType, 'access_type' => $result->access_type);
+        if($result) {
+            return array('user_type' => $result->UserType, 'access_type' => $result->access_type);
+        } else {
+            return false;
+        }
+        
     }
 
     public static function getUserId($id)
@@ -1422,106 +1431,139 @@ public static function get_random_password($length)
         $todate =  date("Y-m-d H:i:s");
 
         // Confirmed X-Access Key
-        if (!isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID'])) {
+        if (
+            (!isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID']))
+            ||(!isset($getRequestHeader['x-access-key']) && isset($getRequestHeader['x-member-id']))
+        ) {
             $returnObject->error = TRUE;
             $returnObject->message = 'X-ACCESS-KEY not defined.';
             return $returnObject;
-        } else if (isset($getRequestHeader['X-ACCESS-KEY']) && !isset($getRequestHeader['X-MEMBER-ID'])) {
+        } else if (
+            (isset($getRequestHeader['X-ACCESS-KEY']) && !isset($getRequestHeader['X-MEMBER-ID']))
+            || (isset($getRequestHeader['x-access-key']) && !isset($getRequestHeader['x-member-id']))
+        ) {
             $returnObject->error = TRUE;
             $returnObject->message = 'X-MEMBER-ID not defined.';
             return $returnObject;
-        } else if (isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID'])) {
+        } else if (
+            (isset($getRequestHeader['X-ACCESS-KEY']) && isset($getRequestHeader['X-MEMBER-ID']))
+            || (isset($getRequestHeader['x-access-key']) && isset($getRequestHeader['x-member-id']))
+        ) {
 
-            $xAccessKey = $getRequestHeader['X-ACCESS-KEY'];
-            $user_id = $getRequestHeader['X-MEMBER-ID'];
-            // check X-ACCESS-KEY details
-            $accessKeyDetails = DB::table('customer_accessKey')->where('accessKey', $xAccessKey)->first();
+            $xAccessKey = isset($getRequestHeader['X-ACCESS-KEY']) ? $getRequestHeader['X-ACCESS-KEY']: $getRequestHeader['x-access-key'];
+            $user_id = isset($getRequestHeader['X-MEMBER-ID'])? $getRequestHeader['X-MEMBER-ID']: $getRequestHeader['x-member-id'];
+            /***
+             * Description: Refactor algorithm starts here.
+             * Date: July 6, 2020
+             * Developer: Stephen
+            ***/
             
-            // Verify Access Key given
-            if ($accessKeyDetails) {
+            // check member type
+            $member_type = PlanHelper::getUserAccountType($user_id);
+            if(!$member_type) {
+                $returnObject->error = TRUE;
+                $returnObject->message = 'X-MEMBER-ID not member or dependent.';
+                return $returnObject;
+            }
+
+            $member_id = $user_id;
+            if($member_type == "dependent") {
+                $owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $user_id)->first();
+			    $member_id = $owner->owner_id;
+            }
+
+            // Check access key details if existed
+            $accessKeyDetails = DB::table('customer_accessKey')
+                                    ->join('customer_access_link_company', 'customer_access_link_company.accessKeyId', '=', 'customer_accessKey.accessKeyId')
+                                    ->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_access_link_company.customer_id')
+                                    ->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+                                    ->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
+                                    ->where('customer_accessKey.accessKey', $xAccessKey)
+                                    ->where('corporate_members.user_id', $member_id)
+                                    ->where('corporate_members.removed_status', 0)
+                                    ->where('customer_access_link_company.status',1)
+                                    ->first();
+            // Check if there are new access Key details
+            $newAccessKeyDetails = DB::table('customer_accessKey')
+                                    ->join('customer_access_link_company', 'customer_access_link_company.accessKeyId', '=', 'customer_accessKey.accessKeyId')
+                                    ->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_access_link_company.customer_id')
+                                    ->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+                                    ->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
+                                    ->where('corporate_members.user_id', $member_id)
+                                    ->where('corporate_members.removed_status', 0)
+                                    ->where('customer_access_link_company.status',1)
+                                    ->orderBy('customer_accessKey.expiry_date', 'DESC')
+                                    ->first();
+
+            if (!$accessKeyDetails) {
+                if ($newAccessKeyDetails && $newAccessKeyDetails->accessKey != $xAccessKey) {
+                    $returnObject->message = 'Access key already expired. Please reconnect again to get new access keys.';
+                } else {
+                    $returnObject->message = 'Unathorize Access. Access key/Customer ID does not exist.';
+                }
+                $returnObject->error = TRUE;
+                return $returnObject;
+            } else {
+
                 // Check access key expiration
                 $accessKeyExpiryDate =  $accessKeyDetails->expiry_date;
-
-                if ($todate == $accessKeyExpiryDate) {
+               
+                if ($todate > $accessKeyExpiryDate) {
                     // Create new access key
-                    $newAccessKey = md5($accessKeyDetails->customer_id,$todate);
+                    $newAccessKey = md5($accessKeyDetails->customer_id.$todate);
                     $expiraryDate = date("Y-m-d H:i:s",strtotime('+30 days',strtotime(date("Y-m-d H:i:s"))));
-
+                  
                     $newAccessKeyData =  array(
                         'accessKey' => $newAccessKey, 
-                        'customer_id' => $accessKeyDetails->customer_id, 
-                        'expiry_date' => $expiraryDate, 
+                        'expiry_date' => $expiraryDate,
+                        'syncEnable' => $accessKeyDetails->syncEnable,
+                        'thirdPartyLink' => $accessKeyDetails->thirdPartyLink,
+                        'authorizartion' => $accessKeyDetails->authorizartion,
                     );
 
-                    DB::table('customer_accessKey')->insert($newAccessKeyData);
+                     // Check access key for new data if the used accesskey already expired.
+                    $checkForNewAccesskey = DB::table('customer_accessKey')
+                                            ->where('accessKey', $newAccessKey)
+                                            ->where('expiry_date', $expiraryDate)
+                                            ->first();
+                    
+                    if ($checkForNewAccesskey) {
+                        $returnObject->error = TRUE;
+                        $returnObject->message = 'Access key already expired. Please reconnect again to get new access keys.';
+                        return $returnObject;
+                    }
+                    // Create new Access key
+                    $lastInsertedDataId = DB::table('customer_accessKey')
+                        ->insertGetId($newAccessKeyData);
+
+                    // Update Access Key company link key ID
+                    DB::table('customer_access_link_company')
+                        ->where('accessKeyId', $accessKeyDetails->accessKeyId)
+                        ->update(['accessKeyId' =>  $lastInsertedDataId]);
                     // Send access to the third party database.
 
                     // Return message to refresh key
                     $returnObject->error = TRUE;
-                    $returnObject->message = 'Access key already expired.';
+                    $returnObject->message = 'Access key already expired. Please reconnect again to get new access key.';
                     return $returnObject;
                 } else {
-                     $member = DB::table('customer_link_customer_buy')
-                        ->join('corporate', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
-                        ->join('corporate_members', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
-                        ->where('customer_link_customer_buy.customer_buy_start_id', $accessKeyDetails->customer_id)
-                        ->where('corporate_members.user_id', $user_id)
-                        ->where('corporate_members.removed_status', 0)
-                        ->select("*")
-                        ->get();
-                        
-                    // Return Error message if member id not found/deleted.
-                    if (count($member) <= 0) {
-                        $returnObject->error = TRUE;
-                        $returnObject->message = 'Unathorize Access. Member does not exist/Member record has already been deleted.';
-                        return $returnObject;
-                    } else {
-                        
-                        // Check if there are existing session
-                        $sessionHistory = DB::table('oauth_sessions')
-                        ->where("owner_id", $user_id)
-                        ->orderBy("created_at", "desc")
+                    
+                    // Check if there are existing session
+                    $sessionHistory = DB::table('oauth_sessions')
+                    ->where("owner_id", $user_id)
+                    ->orderBy("created_at", "desc")
+                    ->first();
+                    
+                    if (count((array)$sessionHistory) > 0) {
+                        // check session expiration
+                        $tokenDetails = DB::table('oauth_access_tokens')
+                        ->where("session_id", $sessionHistory->id)
                         ->first();
-
-                        if (count((array)$sessionHistory) > 0) {
-                            // check session expiration
-                            $tokenDetails = DB::table('oauth_access_tokens')
-                            ->where("session_id", $sessionHistory->id)
-                            ->first();
-                            
-                            // Convert time to datetime format
-                            $tokenExpirationDateTime = date("Y-m-d H:i:s", $tokenDetails->expire_time);
-
-                            if ($tokenExpirationDateTime == $todate) {
-                                $authorization = "Authorization: ".self::getAlgorithm()->generate(40);
-                                header($authorization);
-                                // Create oauth session
-                                $oauth = array(
-                                    "client_id" => "cfcd208495d565ef66e7dff9f98764da",
-                                    "owner_type" => "user",
-                                    "owner_id" => $user_id,
-                                    "client_redirect_uri" => null,
-                                    "created_at" => $todate,
-                                    "updated_at" => $todate
-                                );
-                                DB::table('oauth_sessions')->insert($oauth);
-                                $session_id = DB::getPdo()->lastInsertId();
-                                
-                                // Create oauth session token
-                                $oauthToken = array(
-                                    "id" => self::getAlgorithm()->generate(40),
-                                    "session_id" => $session_id,
-                                    "expire_time" => time() + 72000,
-                                    "created_at" => $todate,
-                                    "updated_at" => $todate
-                                );
-                                DB::table('oauth_access_tokens')->insert($oauthToken);   
-                                return $oauthToken['id'];
-                            } else {
-                                $authorization = "Authorization: ".$tokenDetails->id;
-                                return $tokenDetails->id;
-                            }
-                        } else {
+                        
+                        // Convert time to datetime format
+                        $tokenExpirationDateTime = date("Y-m-d H:i:s", $tokenDetails->expire_time);
+                       
+                        if ($tokenExpirationDateTime == $todate) {
                             $authorization = "Authorization: ".self::getAlgorithm()->generate(40);
                             header($authorization);
                             // Create oauth session
@@ -1544,17 +1586,45 @@ public static function get_random_password($length)
                                 "created_at" => $todate,
                                 "updated_at" => $todate
                             );
-                            
-                            DB::table('oauth_access_tokens')->insert($oauthToken); 
-                            return $oauthToken['id'];
+                            DB::table('oauth_access_tokens')->insert($oauthToken);   
+                            return self::getAlgorithm()->generate(40);
+                        } else {
+                            $authorization = "Authorization: ".$tokenDetails->id;
+                            header($authorization);
+                            return $tokenDetails->id;
                         }
+                    } else {
+                        $authorization = "Authorization: ".self::getAlgorithm()->generate(40);
+                        header($authorization);
+                        // Create oauth session
+                        $oauth = array(
+                            "client_id" => "cfcd208495d565ef66e7dff9f98764da",
+                            "owner_type" => "user",
+                            "owner_id" => $user_id,
+                            "client_redirect_uri" => null,
+                            "created_at" => $todate,
+                            "updated_at" => $todate
+                        );
+                        DB::table('oauth_sessions')->insert($oauth);
+                        $session_id = DB::getPdo()->lastInsertId();
+                        
+                        // Create oauth session token
+                        $oauthToken = array(
+                            "id" => self::getAlgorithm()->generate(40),
+                            "session_id" => $session_id,
+                            "expire_time" => time() + 72000,
+                            "created_at" => $todate,
+                            "updated_at" => $todate
+                        );
+                        
+                        DB::table('oauth_access_tokens')->insert($oauthToken); 
+                        return $oauthToken['id'];
                     }
                 }
-            } else {
-                $returnObject->error = TRUE;
-                $returnObject->message = 'Unathorize Access. Access Key not registered.';
-                return $returnObject;
             }
+
+            /***Refactor algorithm end here.***/
+            
         }
         
     }

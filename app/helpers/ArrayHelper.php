@@ -264,7 +264,10 @@ class ArrayHelper{
         $thirdPartyAuthorization = '';
         $getRequestHeader = getallheaders();
 
-        if (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID'])) {
+        if (
+            (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
+            || (!empty($getRequestHeader['x-access-key']) && !empty($getRequestHeader['x-member-id']))
+        ) {
             $getRequestHeader['Authorization'] = self::verifyXAccessKey();
         } else {
             if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {

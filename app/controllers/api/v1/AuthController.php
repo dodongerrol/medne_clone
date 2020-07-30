@@ -6541,11 +6541,6 @@ public function payCreditsNew( )
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
           $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
 
-          $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-					$customer_active_plan = DB::table('customer_active_plan')
-					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-					->first();
-
           if($type == "spending") {
             $returnObject->status = true;
             // check if user id deactivated
@@ -6601,7 +6596,10 @@ public function payCreditsNew( )
              }
 
             // check visit limit
-
+            $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+            $customer_active_plan = DB::table('customer_active_plan')
+            ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+            ->first();
             if($customer_active_plan->account_type == "enterprise_plan")	{
               $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
         
@@ -6665,6 +6663,10 @@ public function payCreditsNew( )
               return Response::json($returnObject);
             }
 
+            $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+            $customer_active_plan = DB::table('customer_active_plan')
+            ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+            ->first();
             if($customer_active_plan->account_type == "enterprise_plan")	{
               $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
         
@@ -6924,5 +6926,39 @@ public function payCreditsNew( )
       $returnObject->token = $token->data['access_token'];
       $returnObject->message = 'Your Password has been created, Account was active!';
       return Response::json($returnObject);
+  }
+
+  public function getCompanyMemberLists( )
+  {
+    $returnObject = new stdClass();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['X-ACCESS-KEY']) || $getRequestHeader['x-access-key']){
+      $getRequestHeader['X-ACCESS-KEY'] = !empty($getRequestHeader['X-ACCESS-KEY']) ? $getRequestHeader['X-ACCESS-KEY'] : $getRequestHeader['x-access-key'];
+      $customer = CustomerHelper::getCustomerIdFromToken($getRequestHeader['X-ACCESS-KEY']);
+      if($customer['status'] == false) {
+        $returnObject->status = FALSE;
+        $returnObject->message = $customer['message'];
+        return Response::json($returnObject);
+      }
+
+      // get member lists
+      $members = DB::table('customer_link_customer_buy')
+                  ->join('corporate', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
+                  ->join('corporate_members', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+                  ->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+                  ->where('customer_link_customer_buy.customer_buy_start_id', $customer['customer_id'])
+                  ->where('corporate_members.removed_status', 0)
+                  ->select("user.UserID as member_id", "user.Name as fullname", "user.NRIC as nric", "user.Email as email_address", "user.PhoneNo as phone_number", "user.PhoneCode as phone_code")
+                  ->get();
+      $returnObject->status = TRUE;
+      $returnObject->message = 'Success';
+      $returnObject->data = $members;
+      return Response::json($returnObject);
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'X-ACCESS-KEY is required';
+    }
+    return Response::json($returnObject);
   }
 }

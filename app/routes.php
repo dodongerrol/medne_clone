@@ -86,6 +86,9 @@ Route::get('config/notification', 'HomeController@getNotificationConfig');
 // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
+// THIRD PARTY ACCESS
+Route::get('validate/member', 'ThirdPartyAccessController@checkMember');
+
 // EMPLOYEE UPDATE EXERCISES
 Route::group(array('prefix' => 'exercise'), function()
 {
@@ -1001,7 +1004,10 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
-		
+
+		// for getting member lists
+		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
+
 	 	Route::group(array('before' => 'auth.v2'),function(){
 	 		// test one tap login
 		   	Route::post('auth/one_tap/login', 'Api_V1_AuthController@oneTapLogin');
@@ -1086,7 +1092,7 @@ Route::group(array('prefix' => 'v2'), function()
 		    Route::post('doctor/booking-delete','Api_V1_DoctorController@BookingDelete');
 
 
-		//Route::resource('auth', 'Api_V1_AuthController');
+			//Route::resource('auth', 'Api_V1_AuthController');
 
 		    //For insurance company
 		    //GET
@@ -1178,9 +1184,11 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
 			// get member dates coverage
 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
-			// get member spending account status feature
-			Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
-	 	});
+			
+		 });
+		 
+		 // get member spending account status feature
+		 Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 	});
 });
 

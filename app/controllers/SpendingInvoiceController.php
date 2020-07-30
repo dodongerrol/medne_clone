@@ -56,11 +56,7 @@ class SpendingInvoiceController extends \BaseController {
             return array('status' => FALSE, 'message' => 'Enterprise account does not require spending transaction invoice.');
         }
 
-        if($plan->account_type == "enterprise_plan")  {
-            return array('status' => FALSE, 'message' => 'Enterprise account does not require spending transaction invoice.');
-        }
-
-        $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end);
+        $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end, "post_paid");
         if(!$check_company_transactions) {
             return array('status' => FALSE, 'message' => 'No Transactions for this Month.');
         }
