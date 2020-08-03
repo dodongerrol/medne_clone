@@ -13287,6 +13287,18 @@ class BenefitsDashboardController extends \BaseController {
 					$total_due += $amount;
 				}
 			}
+
+			// get dependents
+			$dependents = DB::table('dependent_plans')->where('customer_plan_id', $plan->customer_plan_id)->get();
+
+			foreach($dependents as $key => $dependent) {
+				$invoices = DB::table('dependent_invoice')->where('dependent_plan_id', $dependent->dependent_plan_id)->get();
+
+				foreach($invoices as $key => $invoice) {
+					$amount = $invoice->individual_price * $invoice->total_dependents;
+					$total_due += $amount;
+				}
+			}
 		}
 
 		return array('status' => true, 'total_due' => number_format($total_due, 2), 'currency_type' => $customer->currency_type);
