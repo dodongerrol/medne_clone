@@ -37,6 +37,6 @@ app.config(function($stateProvider, $urlRouterProvider){
     
     
 
-    $urlRouterProvider.otherwise('/member-wallet-benefits-coverage/member-wallet');
+    $urlRouterProvider.otherwise('/member-wallet-benefits-coverage/mednefits-credits-account');
   
 });

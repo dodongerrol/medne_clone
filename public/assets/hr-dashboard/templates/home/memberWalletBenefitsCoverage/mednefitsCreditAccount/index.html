@@ -17,12 +17,23 @@
   </div>
   <div class="mwbc-box-container">
     <h4 class="member-bold-text"> Mednefits Credits Account</h4>
-    <div class="mwbc-card-box-container">
-      <div class="available-credits-container display-flex">
+    <div class="mwbc-card-box-container mednefits-credits-account pending">
+      <span ng-if="true" class="credits-on-hold-text">Credits amounts are on hold due to Pending Mednefits Credits Account Invoice</span>
+      <div class="mednefits-available-credits display-flex">
         <div class="available-credits flex-1">
           <span class="available-credits-container dp-flex-ai">
-            <div class="available-credits-text member-bold-text">Availabe Credits</div>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+            <div class="available-credits-text member-bold-text">Available Credits</div>
+            <span class="credits-tooltip-wrapper">
+              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <div ng-if="false" class="credits-tooltip-container">
+                <div class="tooltip-title">Available Credits</div>
+                <p>The amount of undistributed/unallocated Total Credits.<br>(Total Credits minus Total Allocated Credits)
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div> 
+            </span>
           </span>
           <span>
             <div class="available-credits-amount member-bold-text">SGD 120,000.00</div>
@@ -37,7 +48,17 @@
           <div>
             <span class="dp-flex-ai">
               <div>Total Credits</div>
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <span class="credits-tooltip-wrapper">
+                <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+                <div ng-if="false" class="credits-tooltip-container">
+                  <div class="tooltip-title">Total Credits</div>
+                  <p>The amount of credits is given to your company’s wallet.<br>(The sum of Purchased Credits and Bonus Credits)
+                  </p>
+                  <div class="tooltip-btn-footer">
+                    <button>Got it</button>
+                  </div>
+                </div> 
+              </span>
             </span>
             <span>
               <div class="member-bold-text">SGD 120,000.00</div>
@@ -49,7 +70,16 @@
           <div>
             <span class="dp-flex-ai">
               <div>Purchased Credits</div>
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <span class="credits-tooltip-wrapper">
+                <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+                <div ng-if="false" class="credits-tooltip-container">
+                  <div class="tooltip-title">Purchased Credits</div>
+                  <p>The amount of credits that your company agreed to purchase.</p>
+                  <div class="tooltip-btn-footer">
+                    <button>Got it</button>
+                  </div>
+                </div> 
+              </span>
             </span>
             <span>
               <div class="member-bold-text">SGD 120,000.00</div>
@@ -61,7 +91,16 @@
           <div>
             <span class="dp-flex-ai">
               <div>Bonus Credits</div>
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <span class="credits-tooltip-wrapper">
+                <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+                <div ng-if="false" class="credits-tooltip-container">
+                  <div class="tooltip-title">Bonus Credits</div>
+                  <p>Free-of-charge credits from Mednefits as an addition to your Purchased Credits.</p>
+                  <div class="tooltip-btn-footer">
+                    <button>Got it</button>
+                  </div>
+                </div>
+              </span>
             </span>
             <span>
               <div class="member-bold-text">SGD 120,000.00</div>
@@ -72,7 +111,16 @@
         <div>
           <span class="dp-flex-ai">
             <div>Total Utilised Credits</div>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+            <span class="credits-tooltip-wrapper">
+              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <div ng-if="false" class="credits-tooltip-container">
+                <div class="tooltip-title">Total Utilised Credits<</div>
+                <p>The amount of Total Credits that have already been distributed/allocated to members.</p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div>
+            </span>
           </span>
           <span>
             <div class="member-bold-text">SGD 120,000.00</div>

@@ -787,11 +787,20 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     })
 
-    .state('member-wallet-benefits-coverage.member-wallet', {
-      url: '/member-wallet',
+    .state('member-wallet-benefits-coverage.medical-wallet', {
+      url: '/medical-wallet',
       views: {
         'child-content@member-wallet-benefits-coverage': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/memberWallet/index.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/medicalWallet/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.wellness-wallet', {
+      url: '/wellness-wallet',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/wellnessWallet/index.html'
         }
       }
     })

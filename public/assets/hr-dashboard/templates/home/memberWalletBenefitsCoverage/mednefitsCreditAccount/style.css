@@ -69,3 +69,21 @@
 .member-activities-table-container .amount-value {
   color: #3F9D59;
 }
+.mednefits-credits-account-container .mwbc-card-box-container.mednefits-credits-account {
+  padding: 0;
+}
+.mednefits-credits-account-container .mwbc-card-box-container .mednefits-available-credits {
+  padding: 20px 20px 0;
+}
+.mednefits-credits-account-container .mwbc-card-box-container .credits-info-details-container {
+  padding: 0 20px 20px;
+}
+.credits-on-hold-text {
+  background-color: #FDF3F3;
+  color: #EB635D;
+  font-family: "Helvetica Medium";
+  font-family: "Helvetica Medium";
+  display: block;
+  padding: 15px 20px;
+  font-size: 16px;
+}

@@ -1,21 +1,21 @@
-.member-wallet-wrapper {
+.member-wallet-benefits-wrapper {
   height: 100%;
 }
-.member-wallet-wrapper .navbar-blue-bg {
+.member-wallet-benefits-wrapper .navbar-blue-bg {
   padding: 0 50px;
 }
-.member-wallet-wrapper >div:last-child {
+.member-wallet-benefits-wrapper >div:last-child {
   padding: 100px 0 0;
   height: 100%;
 }
 .member-wallet-body-info-container {
   display: flex;
 }
-.member-wallet-wrapper a {
+.member-wallet-benefits-wrapper a {
   color: #000000;
   font-size: 14px;
 }
-.member-wallet-wrapper a:hover {
+.member-wallet-benefits-wrapper a:hover {
   text-decoration: none;
 }
 .member-wallet-body-info-container >div:first-child {
@@ -49,7 +49,7 @@
   margin: 10px 50px 20px;
 }
 .show-details-on-container {
-  border-bottom: 2px solid #DBDBDB;
+  /* border-bottom: 2px solid #DBDBDB; */
   display: flex;
   padding: 0 0 20px;
 }
@@ -84,10 +84,10 @@
 }
 .mwbc-box-container {
   padding: 20px 0;
-  border-bottom: 2px solid #DBDBDB;
+  border-top: 2px solid #DBDBDB;
 }
-.mwbc-box-container:last-child {
-  border-bottom: none;
+.mwbc-box-container:first-child {
+  border-top: none;
 }
 .mwbc-card-box-container {
   border: 1px solid #BFBFBF;
@@ -189,3 +189,75 @@
   position: relative;
   bottom: 2px;
 }
+.credits-tooltip-wrapper {
+  position: relative;
+}
+.credits-tooltip-container {
+  position: absolute;
+  top: 35px;
+  left: -5px;
+  background: #fff;
+  color: #000;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border: 1px solid #DBDBDB;
+  width: 400px;
+  border-radius: 2px;
+  padding: 12px 15px;
+}
+.credits-tooltip-container::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 15px;
+  height: 14px;
+  width: 14px;
+  background: #FFFFFF;
+  border: 1px solid #DBDBDB;
+  border-width: 1px 0 0 1px;
+  transform: rotate(45deg);
+}
+.credits-tooltip-container .tooltip-title {
+  border-bottom: 1px solid #aaa;
+  padding: 5px 0 10px 0;
+  margin: 0 0 15px;
+  font-family: 'Helvetica Medium';
+}
+.tooltip-btn-footer {
+  text-align: center;
+}
+.tooltip-btn-footer button {
+  width: 85px;
+  height: 35px;
+  background: #0392CF;
+  border-radius: 3px;
+  font-size: 15px;
+  color: #FFF;
+  border: 0;
+}
+.credits-tooltip-container p {
+  line-height: normal;
+  margin: 0 0 20px;
+}
+.mwbc-card-box-container.pending {
+  pointer-events: none;
+  opacity: 0.4;
+}
+.non-panel-text {
+  width: 450px;
+}
+.mwbc-fotter-btn {
+  text-align: right;
+  margin: 20px 0 0;
+  display: block;
+}
+.mwbc-fotter-btn .deactivate-btn {
+  color: #EB635D;
+  border: 1px solid #EB635D;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 5px 50px;
+}
+.member-wallet-benefits-wrapper >div.wellness-not-activated {
+  padding: 0;
+}
+
