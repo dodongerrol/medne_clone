@@ -368,8 +368,35 @@
         </div>
         <div class="active-wallet-footer-btn">
           <button class="btn-cancel-wallet">Cancel</button>
-          <button class="btn-activate-wallet">Activate Wallet</button>
+          <button class="btn-activate-wallet" data-toggle="modal" data-target="#activate-member-modal">Activate Wallet</button>
         </div>
       </div>
+  </div>
+
+  <div class="modal fade spending-account-modal" id="activate-member-modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h5>Activate Member Wellness Wallet</h5>
+          </div>
+          <div ng-if="false" class="modal-body active-member-confirmation-container">
+            <div>Are you sure want to activate Wellness Wallet?</div>
+            <div>Please confirm to proceed.</div>
+          </div>
+          <div ng-if="true" class="modal-body active-member-success-container">
+            <div>
+              <img src="../assets/images/success-circle.png">
+            </div>
+            <span>Wellness Wallet has been succesfully activated.</span>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-if="true" class="btn-update">Confirm</button>
+            <button ng-if="false" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

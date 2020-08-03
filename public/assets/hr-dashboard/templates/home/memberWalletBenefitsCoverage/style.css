@@ -261,3 +261,55 @@
   padding: 0;
 }
 
+/* ---------- MODAL ---------- */
+  .spending-account-modal .modal-header {
+    padding: 20px 15px 15px;
+    text-align: center;
+    font-family: 'Helvetica Medium';
+  }
+  .spending-account-modal .modal-header {
+    border-bottom: 0;
+  }
+  .spending-account-modal .modal-body {
+    padding: 0 15px 15px;
+  }
+  .spending-account-modal .modal-body.active-member-confirmation-container {
+    padding: 0 30px 15px;
+  }
+  .spending-account-modal .modal-body.active-member-confirmation-container >div:first-child {
+    margin: 0 0 20px;
+  }
+  .spending-account-modal .modal-body.active-member-success-container {
+    text-align: center;
+  }
+  .spending-account-modal .modal-footer {
+    text-align: center;
+    padding: 15px 15px 30px;
+    border-top: 0;
+  }
+  .spending-account-modal .modal-footer button {
+    background-color: #0392CF;
+    color: #fff;
+    border-radius: 2px;
+    border: 0;
+    font-size: 14px;
+    padding: 5px 0;
+  }
+  .spending-account-modal .btn-edit-cancel {
+    width: 100px;
+    margin: 0 10px 0 0;
+  }
+  .spending-account-modal .btn-update {
+    width: 200px;
+  }
+  .spending-account-modal .modal-footer .btn-edit-cancel.btn-close {
+    border: 1px solid #0392CF;
+    color: #0392CF;
+    background-color: #fff;
+  }
+  .active-member-success-container >div {
+    margin: 0 0 20px;
+  }
+/* --------------------------- */
+
+
