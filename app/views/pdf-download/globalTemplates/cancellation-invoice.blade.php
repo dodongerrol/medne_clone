@@ -95,7 +95,7 @@
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Refund - {{$plan_type}} Mednefits Care (Corporate)</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Period of use: {{ $plan_start }} - {{ $date_refund }}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 5px 0;">Refund : 70% of unutilised period </p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">({{ $plan_start }} - {{ $plan_end }})</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">({{ $unutilised_date }} - {{ $plan_end }})</p>
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;padding-right: 20px;">
           {{$quantity}}

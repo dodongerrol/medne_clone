@@ -1037,11 +1037,6 @@ return Response::json($returnObject);
         	return Response::json($returnObject);
         }
 
-
-
-
-
-
         public function FindCoordinate(){
         	$response = Geocode::make()->address('#01-01 Blk 51 Avenue 3 Ang Mo Kio');
 
@@ -1087,6 +1082,8 @@ return Response::json($returnObject);
                 $dates = MemberHelper::getMemberDateTerms($user_id, $filter, $spending_type);
                 $user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
+                $user_type = PlanHelper::getUserAccountType($findUserID);
+
                 if($user_spending_dates) {
                   if($spending_type == 'medical') {
                     $table_wallet_history = 'wallet_history';
@@ -1102,24 +1099,46 @@ return Response::json($returnObject);
                 }
 
                 if($dates) {
-                  $e_claim_result = DB::table('e_claim')
-                  ->whereIn('user_id', $ids)
-                  ->where('spending_type', $spending_type)
-                  ->where('date', '>=', $dates['start'])
-                  ->where('date', '<=', $dates['end'])
-                  ->orderBy('date', 'desc')
-                  ->take(3)
-                  ->get();
+                  if($user_type == "employee") {
+                    $e_claim_result = DB::table('e_claim')
+                    ->whereIn('user_id', $ids)
+                    ->where('spending_type', $spending_type)
+                    ->where('date', '>=', $dates['start'])
+                    ->where('date', '<=', $dates['end'])
+                    ->orderBy('date', 'desc')
+                    ->take(3)
+                    ->get();
 
-                  // get in-network transactions
-                  $transactions = DB::table('transaction_history')
-                  ->whereIn('UserID', $ids)
-                  ->where('spending_type', $spending_type)
-                  ->where('created_at', '>=', $dates['start'])
-                  ->where('created_at', '<=', $dates['end'])
-                  ->orderBy('created_at', 'desc')
-                  ->take(3)
-                  ->get();
+                    // get in-network transactions
+                    $transactions = DB::table('transaction_history')
+                    ->whereIn('UserID', $ids)
+                    ->where('spending_type', $spending_type)
+                    ->where('created_at', '>=', $dates['start'])
+                    ->where('created_at', '<=', $dates['end'])
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get();
+                  } else {
+                    $e_claim_result = DB::table('e_claim')
+                    ->where('user_id', $findUserID)
+                    ->where('spending_type', $spending_type)
+                    ->where('date', '>=', $dates['start'])
+                    ->where('date', '<=', $dates['end'])
+                    ->orderBy('date', 'desc')
+                    ->take(3)
+                    ->get();
+
+                    // get in-network transactions
+                    $transactions = DB::table('transaction_history')
+                    ->where('UserID', $findUserID)
+                    ->where('spending_type', $spending_type)
+                    ->where('created_at', '>=', $dates['start'])
+                    ->where('created_at', '<=', $dates['end'])
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get();
+                  }
+                  
                 } else {
                   $e_claim_result = [];
                   $transactions = [];
@@ -4909,7 +4928,6 @@ public function getEclaimTransactions( )
   $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   if($getAccessToken){
    $findUserID = $authSession->findUserID($getAccessToken->session_id);
-                // return $findUserID;
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->message = 'Success.';
@@ -4919,25 +4937,46 @@ public function getEclaimTransactions( )
     $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
     $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
     $ids = StringHelper::getSubAccountsID($findUserID);
+    $user_type = PlanHelper::getUserAccountType($findUserID);
     $e_claim = [];
     $paginate = [];
     
     if($dates) {
       if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
         $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
-        $e_claims = DB::table('e_claim')
+        if($user_type == "employee") {
+          $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
                       ->where('date', '>=', $dates['start'])
                       ->where('date', '<=', $dates['end'])
                       ->orderBy('date', 'desc')
                       ->paginate($per_page);
+        } else {
+          $e_claims = DB::table('e_claim')
+                      ->where('user_id', $findUserID)
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
+                      ->paginate($per_page);
+        }
+        
       } else {
-        $e_claims = DB::table('e_claim')
+        if($user_type == "employee") {
+          $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
                       ->where('date', '>=', $dates['start'])
                       ->where('date', '<=', $dates['end'])
                       ->orderBy('date', 'desc')
                       ->get();
+        } else {
+          $e_claims = DB::table('e_claim')
+                      ->where('user_id', $findUserID)
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
+                      ->get();
+        }
+        
       }
 
       foreach ($e_claims as $key => $res) {
@@ -5425,11 +5464,19 @@ public function createEclaim( )
     $returnObject->message = 'The E-claim function is disabled for your company.';
     return Response::json($returnObject);
   }
+  $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
-  $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-  $customer_active_plan = DB::table('customer_active_plan')
-  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-  ->first();
+  if($user_type == "employee") {
+    $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')
+    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+    ->first();
+  } else {
+    $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $input['user_id'])->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('dependent_plans')
+    ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+    ->first();
+  }
 
   if($customer_active_plan->account_type == "enterprise_plan")	{
     if($input['spending_type'] == "medical" && $check_user_balance->currency_type == "myr") {
@@ -5593,7 +5640,7 @@ try {
     $service = DB::table('health_types')->where('name', trim($input['service']))->where('type', 'medical')->where('visit_deduction', 1)->first();
 
     if($service) {
-      MemberHelper::deductPlanHistoryVisit($user_id);
+      MemberHelper::deductPlanHistoryVisit($input['user_id']);
     }
   }
   

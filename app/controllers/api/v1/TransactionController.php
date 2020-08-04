@@ -83,10 +83,18 @@ class Api_V1_TransactionController extends \BaseController
 					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 					$consultation_fees = 0;
-					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-					$customer_active_plan = DB::table('customer_active_plan')
-					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-					->first();
+
+					if(!$dependent_user) {
+						$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+						$customer_active_plan = DB::table('customer_active_plan')
+						->where('customer_active_plan_id', $user_plan_history->dependent_plan_id)
+						->first();
+					} else {
+						$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $customer_id)->orderBy('created_at', 'desc')->first();
+						$customer_active_plan = DB::table('dependent_plans')
+													->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+													->first();
+					}
 
 					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 						$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
@@ -605,7 +613,7 @@ class Api_V1_TransactionController extends \BaseController
 										
 										// deduct visit for enterprise plan user
 										if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
-											MemberHelper::deductPlanHistoryVisit($user_id);
+											MemberHelper::deductPlanHistoryVisit($findUserID);
 										}
 										try {
 											$customer_id = PlanHelper::getCustomerId($user_id);
@@ -852,12 +860,13 @@ class Api_V1_TransactionController extends \BaseController
 					{
 						$user_id = $findUserID;
 						$customer_id = $findUserID;
+						$dependent_user = false;
 					} else {
                         // find owner
 						$owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $findUserID)->first();
 						$user_id = $owner->owner_id;
-                        // $user_id = $findUserID;
 						$customer_id = $findUserID;
+						$dependent_user = false;
 					}
 
 					$customerID = PlanHelper::getCustomerId($user_id);
@@ -867,10 +876,18 @@ class Api_V1_TransactionController extends \BaseController
 					$clinic_data = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic_data->Clinic_Type)->first();
 
-					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-					$customer_active_plan = DB::table('customer_active_plan')
-					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-					->first();
+					if($dependent_user) {
+						$user_plan_history = DB::table('user_plan_history')->where('user_id', $customer_id)->orderBy('created_at', 'desc')->first();
+						$customer_active_plan = DB::table('customer_active_plan')
+						->where('customer_active_plan_id', $user_plan_history->dependent_plan_id)
+						->first();
+					} else {
+						$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+						$customer_active_plan = DB::table('dependent_plans')
+											->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+											->first();
+					}
+
 
 					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 						$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
@@ -985,7 +1002,7 @@ class Api_V1_TransactionController extends \BaseController
 		
 							// deduct visit for enterprise plan user
 							if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
-								MemberHelper::deductPlanHistoryVisit($user_id);
+								MemberHelper::deductPlanHistoryVisit($findUserID);
 							}
 
 							if($lite_plan_enabled == 1) {
@@ -1135,8 +1152,9 @@ class Api_V1_TransactionController extends \BaseController
 					$user = DB::table('user')->where('UserID', $findUserID)->first();
 					$user_id = StringHelper::getUserId($findUserID);
 					$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
-          $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
-          $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
+					$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+					$dates = MemberHelper::getMemberDateTerms($user_id, $filter);
+					$user_type = PlanHelper::getUserAccountType($findUserID);
 					$lite_plan_status = false;
 
 					$transaction_details = [];
@@ -1145,19 +1163,39 @@ class Api_V1_TransactionController extends \BaseController
 					if($dates) {
 						if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
 							$per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
-							$transactions = DB::table('transaction_history')
+							
+							if($user_type == "employee") {
+								$transactions = DB::table('transaction_history')
 														->whereIn('UserID', $ids)
 														->where('created_at', '>=', $dates['start'])
-	                  				->where('created_at', '<=', $dates['end'])
+	                  									->where('created_at', '<=', $dates['end'])
 														->orderBy('created_at', 'desc')
 														->paginate($per_page);
+							} else {
+								$transactions = DB::table('transaction_history')
+														->where('UserID', $findUserID)
+														->where('created_at', '>=', $dates['start'])
+	                  									->where('created_at', '<=', $dates['end'])
+														->orderBy('created_at', 'desc')
+														->paginate($per_page);
+							}
 						} else {
-							$transactions = DB::table('transaction_history')
+							if($user_type == "employee") {
+								$transactions = DB::table('transaction_history')
 														->whereIn('UserID', $ids)
 														->where('created_at', '>=', $dates['start'])
-	                  				->where('created_at', '<=', $dates['end'])
+	                  									->where('created_at', '<=', $dates['end'])
 														->orderBy('created_at', 'desc')
 														->get();
+							} else {
+								$transactions = DB::table('transaction_history')
+														->where('UserID', $findUserID)
+														->where('created_at', '>=', $dates['start'])
+	                  									->where('created_at', '<=', $dates['end'])
+														->orderBy('created_at', 'desc')
+														->get();
+							}
+							
 						}
 					} else {
 						$transactions = [];
@@ -1235,7 +1273,7 @@ class Api_V1_TransactionController extends \BaseController
 								if((int)$trans->lite_plan_enabled == 1) {
 									if((int)$trans->half_credits == 1) {
 										$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-                  // $total_amount = $trans->credit_cost + $trans->cash_cost;
+                 						 // $total_amount = $trans->credit_cost + $trans->cash_cost;
 									} else {
 										$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
 									}
