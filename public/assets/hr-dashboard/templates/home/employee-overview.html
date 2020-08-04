@@ -182,7 +182,7 @@
 							</div>
 						</td>
 
-						<td ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == false" class="spending-details-container">
+						<td ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == false && emp.spending_account.currency_type != 'myr'" class="spending-details-container">
 							<div class="enterprise-details">
 								<strong>Panel:</strong>
 								<span>
@@ -196,6 +196,16 @@
 									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
 									<span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
 								</span>
+							</div>
+						</td>
+
+						<td ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == false && emp.spending_account.currency_type == 'myr'" class="spending-details-container">
+							<div class="enterprise-details">
+								<!-- <strong>Panel:</strong> -->
+								<!-- <span> -->
+									<span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+									<span ng-bind="emp.spending_account.medical.in_network | number: 2">1,000.00</span>
+								<!-- </span> -->
 							</div>
 						</td>
 

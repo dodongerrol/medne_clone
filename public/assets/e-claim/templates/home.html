@@ -180,10 +180,10 @@
 										<span ng-bind="current_spending.in_network_spent"></span></p>		
 								</div>
 
-								<div class="bottom text-center">
-									<p class="color-white weight-700">Non-Panel Account</p>
-									<p class="color-white weight-700 font-11 no-margin">Spent</p>
-									<p class="color-white weight-700 font-medium font-16">
+								<div class="bottom text-center non-panel" ng-class="{'greyed-out': current_spending.account_type == 'enterprise_plan' && current_spending.currency_type == 'myr' && current_spending.wellness_enabled == false}">
+									<p class="weight-700">Non-Panel Account</p>
+									<p class="weight-700 font-11 no-margin">Spent</p>
+									<p class="weight-700 font-medium font-16">
 										<span ng-bind="current_spending.currency_type" class="currency-type"></span> 
 										<span ng-bind="current_spending.e_claim_spent"></span></p>		
 								</div>

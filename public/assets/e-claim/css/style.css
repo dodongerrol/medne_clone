@@ -2296,3 +2296,12 @@ body::-webkit-scrollbar-thumb {
   pointer-events: none;
   border-color: #eee;
 }
+
+.non-panel {
+  color: #fff;
+}
+
+.non-panel.greyed-out {
+  background-color: #dcd9d9;
+  color: #abababd6 !important;
+}
