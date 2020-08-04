@@ -57,14 +57,14 @@ return array(
 			'driver'    => 'mysql',
 		'read' => array(
             // Return a random host
-            'host' => 'root',
+            'host' => 'localhost',
     ),
     'write' => array(
-            'host' => 'root'
+            'host' => 'localhost'
     ),
-    'database'  => 'root',
+    'database'  => 'medicloud_v3',
     'username'  => 'root',
-    'password'  => 'root',
+    'password'  => '',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => 'medi_',
