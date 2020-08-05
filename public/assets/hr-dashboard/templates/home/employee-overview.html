@@ -117,14 +117,17 @@
 								<span class="status-color pending"></span>
 								<span>Pending</span>
 							</div>
-							<div class="status-details-container"
-								ng-if="emp.account_status && emp.emp_status == 'active' || emp.account_status && emp.schedule">
+							<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'active' || emp.account_status && emp.schedule">
 								<span class="status-color active"></span>
 								<span>Active</span>
 							</div>
 							<div class="status-details-container" ng-if="!emp.account_status || emp.emp_status == 'deleted'">
 								<span class="status-color removed"></span>
 								<span>Removed</span>
+							</div>
+							<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'activated'">
+								<span class="status-color active"></span>
+								<span>Logged In</span>
 							</div>
 							<div class="status-expired-container" ng-if="emp.deletion || emp.schedule">
 								<span ng-bind="emp.deletion_text"></span>

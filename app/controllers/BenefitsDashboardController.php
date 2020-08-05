@@ -1977,7 +1977,13 @@ class BenefitsDashboardController extends \BaseController {
 							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
-							array_push($ids, $user);
+							// check if there is panel and non-panel already created
+							$panel = DB::table('transaction_history')->where('UserID', $user)->first();
+							$non_panel = DB::table('e_claim')->where('user_id', $user)->first();
+							
+							if($panel || $non_panel) {
+								array_push($ids, $user);
+							}
 						}
 					}
 				}
@@ -2184,7 +2190,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 			
-			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d')) {
+			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0) {
 				$emp_status = 'pending';
 			}
 
@@ -2288,6 +2294,18 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
+			if((int)$user->Active == 1 && (int)$user->member_activated == 1) {
+				// statuses
+				$panel = DB::table('transaction_history')->where('UserID', $user->UserID)->first();
+				$non_panel = DB::table('e_claim')->where('user_id', $user->UserID)->first();
+								
+				if($panel || $non_panel) {
+					$emp_status = 'active';
+				} else {
+					$emp_status = 'activated';
+				}
+			}
+			
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
