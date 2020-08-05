@@ -94,27 +94,72 @@
           <td style="width: 18%;font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;">Amount {{$currency_type}}</td>
         </tr>
         <tr>
-          <td style="padding-top: 20px;border-bottom: 1px solid #BFBFBF;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$plan_type}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Active type: {{$account_type}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Number of Employee Accounts:</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Billing Frequency: Annual</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Start Date: {{$plan_start}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">End Date: {{$plan_end}}</p>
+          <td style="padding: 20px 0 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">{{$plan_type}}</p>
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-          {{$number_employess}}
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Active type: {{$account_type}}</p>
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-          {{$price}}
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Number of Employee Accounts:</p>
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
+          <td style="text-align: right;">
+            {{$number_employess}}
+          </td>
+          <td style="text-align: right;">
+            {{$price}}
+          </td>
+          <td style="text-align: right;">
             No Tax
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-          {{$amount}}
+          <td style="text-align: right;">
+            {{$amount}}
           </td>
         </tr>
+        @foreach($dependents as $key => $dependent)
+        <tr>
+          <td style="padding: 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Number of Dependent Accounts:</p>
+          </td>
+          <td style="text-align: right;">
+            {{$dependent['total_dependents']}}
+          </td>
+          <td style="text-align: right;">
+            {{$dependent['price']}}
+          </td>
+          <td style="text-align: right;">
+            No Tax
+          </td>
+          <td style="text-align: right;">
+            {{$dependent['amount']}}
+          </td>
+        </tr>
+        @endforeach
+        <tr>
+          <td style="padding: 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Billing Frequency: Annual</p>
+          </td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Start Date: {{$plan_start}}</p>
+          </td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid #BFBFBF;padding: 5px 0 20px 0;" >
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">End Date: {{$plan_end}}</p>
+          </td>
+          <td colspan="4" style="border-bottom: 1px solid #BFBFBF;"></td>
+        </tr>
+    
         <tr>
           <td colspan="2"></td>
           <td style="border-bottom: 2px solid #000;"></td>
