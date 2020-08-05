@@ -55,20 +55,17 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-		'read' => array(
-            // Return a random host
-            'host' => 'root',
-    ),
-    'write' => array(
-            'host' => 'root'
-    ),
-    'database'  => 'root',
-    'username'  => 'root',
-    'password'  => 'root',
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => 'medi_',
-    ),
+
+       'host'      => 'localhost',
+        'database'  => 'medicloud_staging',
+        'username'  => 'root',
+        'password'  => '',
+
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    => 'medi_',
+		),
+
 		'pgsql' => array(
 			'driver'   => 'pgsql',
 			'host'     => 'localhost',
