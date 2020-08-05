@@ -69,7 +69,7 @@
                     038987<br>
                     Singapore
                     </span>
-                  @else if
+                  @else
                     <span>
                       Mednefits Sdn Bhd<br>
                       Komune, Level 2,<br>

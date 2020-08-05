@@ -7550,14 +7550,13 @@ class BenefitsDashboardController extends \BaseController {
 					->where('customer_active_plan_id', $plan->customer_active_plan_id)
 					->get();
 
-					$amount = 0;
 					foreach ($withdraws as $key => $withdraw) {
 						$refunds = DB::table('customer_plan_withdraw')
 						->where('payment_refund_id', $withdraw->payment_refund_id)
 						->whereIn('refund_status', [0, 1])
 						->get();
 
-
+						$amount = 0;
 						foreach ($refunds as $key => $user) {
 							if((int)$user->has_no_user == 0) {
 								$employee = DB::table('user')->where('UserID', $user->user_id)->first();
@@ -7576,7 +7575,8 @@ class BenefitsDashboardController extends \BaseController {
 			
 								$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 								$days = $diff->format('%a') + 1;
-								$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+								// $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+								$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $cplan->plan_end);
 								$remaining_days = $total_days - $days + 1;
 			
 								$cost_plan_and_days = ($individual_price/$total_days);
@@ -10123,7 +10123,6 @@ class BenefitsDashboardController extends \BaseController {
 
 		$refund_payment = DB::table('payment_refund')->where('payment_refund_id', $id)->first();	
 		if($refund_payment) {
-			// $refund_payment = DB::table('payment_refund')->where('customer_active_plan_id', $id)->first();
 			$company_active_plan = DB::table('customer_active_plan')
 			->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
 			->first();
@@ -10154,8 +10153,8 @@ class BenefitsDashboardController extends \BaseController {
 					
 					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
 					$days = $diff->format('%a') + 1;
-					// $total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
-					$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+					$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
+					// $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
 					$remaining_days = $total_days - $days + 1;
 
 					$cost_plan_and_days = ($individual_price/$total_days);

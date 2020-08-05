@@ -1953,7 +1953,7 @@ public function getNewClinicDetails($id)
      if($block) {
        $returnObject->status = FALSE;
        $returnObject->status_type = 'access_block';
-      $returnObject->head_message = 'Registration Unavailable';
+       $returnObject->head_message = 'Registration Unavailable';
        $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
        return Response::json($returnObject);
      }
