@@ -1972,7 +1972,7 @@ public function getNewClinicDetails($id)
        $returnObject->status = FALSE;
        $returnObject->status_type = 'access_block';
        $returnObject->head_message = 'Registration Unavailable';
-       $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
+       $returnObject->message = 'Sorry, your acccount is not enabled to access Singapore providers. Kindly contact your HR for more details.';
        return Response::json($returnObject);
      }
 
@@ -1983,7 +1983,7 @@ public function getNewClinicDetails($id)
         $returnObject->status = FALSE;
         $returnObject->status_type = 'access_block';
         $returnObject->head_message = 'Registration Unavailable';
-        $returnObject->message = 'Panel function is disabled for your company.';
+        $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
         return Response::json($returnObject);
       }
 
@@ -2032,7 +2032,7 @@ public function getNewClinicDetails($id)
     if($plan_coverage['expired'] == true) {
      $returnObject->status = FALSE;
      $returnObject->status_type = 'access_block';
-    $returnObject->head_message = 'Registration Unavailable';
+     $returnObject->head_message = 'Registration Unavailable';
      $returnObject->message = 'Employee Plan Coverage has expired';
      $returnObject->data = $plan_coverage;
      $returnObject->employee_status = false;
@@ -2053,16 +2053,6 @@ public function getNewClinicDetails($id)
    if($customer_active_plan->account_type != "super_pro_plan") {
     //  check if lite plan user
      $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
-
-    //  if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
-        
-    //     if($current_balance <= 0) {
-    //       $returnObject->status = FALSE;
-    //       $returnObject->status_type = 'zero_balance';
-    //       $returnObject->message = 'You have no credit to access this feature at the moment. Kindly contact HR';
-    //       return Response::json($returnObject);
-    //     }
-    //   }
    }
 
    $user = DB::table('user')->where('UserID', $findUserID)->first();
