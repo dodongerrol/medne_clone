@@ -1418,6 +1418,7 @@ return Response::json($returnObject);
               if($findUserID){
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
                 $user_id = StringHelper::getUserId($findUserID);
+                $user_type = PlanHelper::getUserAccountType($findUserID);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
                 $balance = 0;
 
@@ -1428,7 +1429,17 @@ return Response::json($returnObject);
                 ->first();
 
                 if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-                  $returnObject->data = ['visits' => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created, 'account_type' => $customer_active_plan->account_type];
+                  if($user_type == "employee") {
+                    $returnObject->data = ['visits' => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created, 'account_type' => $customer_active_plan->account_type];
+                  } else {
+                    $user_plan_history = DB::table('dependent_plan_history')
+                                              ->where('user_id', $findUserID)
+                                              ->where('type', 'started')
+                                              ->orderBy('created_at', 'desc')
+                                              ->first();
+
+                    $returnObject->data = ['visits' => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created, 'account_type' => $customer_active_plan->account_type];
+                  }
                 } else {
                   if($spending_type == 'medical') {
                     $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
