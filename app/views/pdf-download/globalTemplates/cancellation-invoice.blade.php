@@ -91,24 +91,39 @@
           <td style="font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;">Amount {{$currency_type}}</td>
         </tr>
         <tr>
-          <td style="padding-top: 20px;border-bottom: 1px solid #BFBFBF;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Refund - {{$plan_type}} Mednefits Care (Corporate)</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Period of use: {{ $plan_start }} - {{ $date_refund }}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 5px 0;">Refund : 70% of unutilised period </p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">({{ $unutilised_date }} - {{ $plan_end }})</p>
+          <td style="padding: 20px 0 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Refund - {{$billing_info['account_type']}} Mednefits Care (Corporate)</p>
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;padding-right: 20px;">
-          {{$quantity}}
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Period of use: {{ $plan_start }} - {{ $date_refund }}</p>
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;padding-right: 20px;">
-          {{$unit_price}}
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td style="padding: 5px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Refund : 70% of unutilised period </p>
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;padding-right: 20px;">
+          <td style="text-align: right;padding-right: 20px;">
+            {{$quantity}}
+          </td>
+          <td style="text-align: right;padding-right: 20px;">
+            {{$unit_price}}
+          </td>
+          <td style="text-align: right;padding-right: 20px;">
             No Tax
           </td>
-          <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-          {{$total_refund}}
+          <td style="text-align: right;">
+            {{$total_refund}}
           </td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid #BFBFBF;padding: 5px 0 20px 0;">
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">({{ $unutilised_date }} - {{ $plan_end }})</p>
+          </td>
+          <td colspan="4" style="border-bottom: 1px solid #BFBFBF;"></td>
         </tr>
         <tr>
           <td colspan="2"></td>
