@@ -805,6 +805,24 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     })
 
+    .state('member-wallet-benefits-coverage.mednefits-basic-plan', {
+      url: '/mednefits-basic-plan',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsBasicPlan/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.mednefits-enterprise-plan', {
+      url: '/mednefits-enterprise-plan',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsEnterprisePlan/index.html'
+        }
+      }
+    })
+
     .state('member-wallet-benefits-coverage.mednefits-credits-account', {
       url: '/mednefits-credits-account',
       views: {

@@ -1,0 +1,226 @@
+<div class="mednefits-basic-plan-wrapper">
+  <div class="show-details-on-container">
+    <div class="flex-1">
+      <span class="member-bold-text">Show details on</span> 
+      <div class="current-term-input-wrapper">
+        <span>Current term</span>
+        <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        <i class="fa fa-angle-down"></i>
+      </div>
+      <div>
+        <button>Apply</button>
+      </div>
+    </div>
+    <div>
+      <button>Save</button>
+    </div>
+  </div>
+  <div class="mwbc-box-container">
+    <h4 class="member-bold-text">Mednefits Basic Plan</h4>
+    <div class="mwbc-card-box-container mbp-total-spent-box">
+      <div class="available-credits-container">
+        <div class="available-credits">
+          <span class="available-credits-container dp-flex-ai">
+            <div class="available-credits-text member-bold-text">Total Spent</div>
+            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+          </span>
+          <span>
+            <div class="available-credits-amount member-bold-text">SGD 120,000.00</div>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="mwbc-payment-methods-wrapper">
+      <div class="mwbc-payment-methods">
+        <h5 class="member-bold-text">Payment Methods</h5>
+        <div class="mwbc-card-box-container">
+          <div class="available-credits-container">
+            <div class="available-credits">
+              <span class="available-credits-container dp-flex-ai">
+                <h5 class="flex-1 member-bold-text">GIRO</h5>
+                <div>
+                  <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                </div>
+              </span>
+              <div>This method is currently used in:</div>
+              <div class="display-flex wellness-wallet-container">
+                <div class="member-bold-text">Wellness Wallet:</div>
+                <div>Non-Panel</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mwbc-payment-methods bank-transfer-paynow">
+        <div class="mwbc-card-box-container">
+          <div class="available-credits-container">
+            <div class="available-credits">
+              <span class="available-credits-container dp-flex-ai">
+                <h5 class="flex-1 member-bold-text">Bank Transfer/ PayNow</h5>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mwbc-payment-methods">
+        <div class="mwbc-card-box-container">
+          <div class="available-credits-container">
+            <div class="available-credits">
+              <span class="available-credits-container dp-flex-ai">
+                <h5 class="flex-1 member-bold-text">Mednefits Credits</h5>
+                <div>
+                  <button class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                </div>
+              </span>
+              <p class="mca-text">Mednefits Credits is held in Mednefits Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
+              <div>This method is currently used in:</div>
+              <div class="display-flex mednefits-credits-wallet-container">
+                <div class="member-bold-text">Medical Wallet:</div>
+                <div class="display-flex m-panel">
+                  <div class="mednefits-panel-text">Mednefits Panel</div>
+                  <div>Non-Panel</div>
+                </div>
+              </div>
+              <div class="display-flex mednefits-credits-wallet-container">
+                <div class="member-bold-text">Wellness Wallet:</div>
+                <div>Non-Panel</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade spending-account-modal" id="edit-payment-methods-modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div ng-if="true" class="modal-dialog medical-wellness-wallet-container" role="document" style="margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h5>Edit Payment Methods</h5>
+          </div>
+          <div class="modal-body display-flex">
+            <div class="payment-medical-wallet">
+              <h5>Medical Wallet</h5>
+              <div class="display-flex">
+                <div class="mednefits-panel-container">
+                  <div>
+                    <h5>Mednefits Panel</h5>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">GIRO</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">Bank Transfer/PayNow</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">Mednefits Credits</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="mednefits-nonpanel-container">
+                  <div>
+                    <h5>Non-Panel</h5>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">GIRO</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">Bank Transfer/PayNow</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">Mednefits Credits</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="payment-border-separator"></div>
+            <div class="payment-wellness-wallet">
+              <h5>Wellness Wallet</h5>
+              <div class="display-flex">
+                <div class="mednefits-nonpanel-container">
+                  <div>
+                    <h5>Non-Panel</h5>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">GIRO</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">Bank Transfer/PayNow</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="custom-checkbox-selector">
+                      <label class="selector-container">
+                        <span class="text">Mednefits Credits</span>
+                        <input type="checkbox">
+                        <span class="custom-checkbox-checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-if="true" class="btn-update">Confirm</button>
+            <button ng-if="false" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div ng-if="false" class="modal-dialog spending-account-modal" role="document" style="margin-top: 280px">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h5>Edit Payments Methods</h5>
+          </div>
+          <div ng-if="false" class="modal-body active-member-confirmation-container">
+            <div>Are you sure want to update payment methods?</div>
+            <div>Please confirm to proceed.</div>
+          </div>
+          <div ng-if="true" class="modal-body active-member-success-container">
+            <div>
+              <img src="../assets/images/success-circle.png">
+            </div>
+            <span>Payment methods has been succesfully updated.</span>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-if="true" class="btn-update">Confirm</button>
+            <button ng-if="false" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> 
