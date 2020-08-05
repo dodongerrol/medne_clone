@@ -299,6 +299,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/save/payment/method/new_active_plan', 'BenefitsDashboardController@newPaymentAddedPurchaseEmployee');
 	// get hr activity
 	Route::get('hr/get_activity', 'EclaimController@getHrActivity');
+	Route::get('hr/get_spending_invoice_history_list', 'InvoiceController@spendingInvoiceHistoryList');
 	
 	// search employee activity
 	Route::post('hr/search_employee_activity', 'EclaimController@searchEmployeeActivity');
