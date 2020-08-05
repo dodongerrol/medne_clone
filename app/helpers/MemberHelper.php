@@ -778,6 +778,19 @@ class MemberHelper
 		return $plan_history  ? $plan_history  : false;
 	}
 
+	public static function getDependentPreviousPlanHistory($member_id)
+	{
+		$plan_history = DB::table('dependent_plan_history')
+								->where('user_id', $member_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->skip(1)
+								->take(1)
+								->first();
+
+		return $plan_history  ? $plan_history  : false;
+	}
+
 	public static function createMemberTransactionAccessBlock($member_id)
 	{
 		$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
