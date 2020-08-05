@@ -206,7 +206,7 @@
 							</div>
 
 							<div class="col-md-6 text-center">
-								<p class="weight-700 font-15" ng-class="{'color-blue-custom2' : (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 1), 'color-gray' : current_spending.account_type != 'enterprise_plan' || (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 0) }">Non-Panel Transactions</p>
+								<p class="weight-700 font-15" ng-class="{'color-blue-custom2' : (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 1), 'color-gray' : current_spending.account_type != 'enterprise_plan' || (current_spending.account_type == 'enterprise_plan' && current_spending.wellness_enabled == true && spendingTypeOpt == 0), 'color-gray' : current_spending.account_type == 'enterprise_plan' && current_spending.currency_type == 'myr' && current_spending.wellness_enabled == false }">Non-Panel Transactions</p>
 								<!-- <p class="weight-700 font-15 color-gray">Out-of-Network Transactions</p> -->
 							</div>
 						</div>

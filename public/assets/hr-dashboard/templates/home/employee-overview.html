@@ -381,14 +381,14 @@
 						<h4><strong class="font-helvetica-medium">Spendings</strong></h4>
 						<div class="allocation-wrapper">
 							<div class="allocation-container">
-								<strong class="font-helvetica-medium">Total</strong>
+								<strong class="font-helvetica-medium">{{selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.spending_account.currency_type != 'myr'? 'Total': 'Total Panel'}}</strong>
 								<span>
 									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
 									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent">1,000.00</span>
 								</span>
 							</div>
 						</div>
-						<div class="allocation-wrapper">
+						<div ng-if="selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.spending_account.currency_type != 'myr'" class="allocation-wrapper">
 							<div class="allocation-container">
 								<strong class="font-helvetica-medium">Panel</strong>
 								<span>
@@ -397,7 +397,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="allocation-wrapper">
+						<div ng-if="selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.spending_account.currency_type != 'myr'" class="allocation-wrapper">
 							<div class="allocation-container">
 								<strong class="font-helvetica-medium">Non-Panel</strong>
 								<span>

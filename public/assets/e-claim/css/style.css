@@ -2303,5 +2303,5 @@ body::-webkit-scrollbar-thumb {
 
 .non-panel.greyed-out {
   background-color: #dcd9d9;
-  color: #abababd6 !important;
+  color: #999 !important;
 }
