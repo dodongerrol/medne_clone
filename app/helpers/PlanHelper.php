@@ -3649,12 +3649,9 @@ class PlanHelper {
 			'date_refund'               => $date_refund,
 			'currency_type'				=> $customer->currency_type,
 			'invoice_date'				=> date('Y-m-d'),
-			'invoice_due'				=> date('Y-m-d', strtotime('+5 days'))
+			'invoice_due'				=> date('Y-m-d', strtotime('+5 days')),
+			'account_type'				=> $active_plan->account_type
 		);
-
-		if($active_plan->account_type == "enterprise_plan")	{
-			$data['account_type'] = $active_plan->account_type;
-		}
 
 		$result = \PaymentRefund::create($data);
 		return $result->id;
