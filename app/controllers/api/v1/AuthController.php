@@ -1323,11 +1323,28 @@ return Response::json($returnObject);
               $currency_symbol = "";
               $balance = number_format($balance, 2);
               if($filter == "current_term") {
-                $total_visit_limit = $user_plan_history->total_visit_limit;
-                $total_visit_created = $user_plan_history->total_visit_created;
-                $total_visit_balance = $total_visit_limit - $total_visit_created;
+                if($user_type == "employee") {
+                  $total_visit_limit = $user_plan_history->total_visit_limit;
+                  $total_visit_created = $user_plan_history->total_visit_created;
+                  $total_visit_balance = $total_visit_limit - $total_visit_created;
+                } else {
+                  $user_plan_history = DB::table('dependent_plan_history')
+                                            ->where('user_id', $findUserID)
+                                            ->where('type', 'started')
+                                            ->orderBy('created_at', 'desc')
+                                            ->first();
+                  $total_visit_limit = $user_plan_history->total_visit_limit;
+                  $total_visit_created = $user_plan_history->total_visit_created;
+                  $total_visit_balance = $total_visit_limit - $total_visit_created;
+                }
+                
               } else {
-                $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
+                if($user_type == "employee") {
+                  $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
+                } else {
+                  $plan_history = MemberHelper::getDependentPreviousPlanHistory($findUserID);
+                }
+
                 if($plan_history) {
                   $total_visit_limit = $plan_history->total_visit_limit;
                   $total_visit_created = $plan_history->total_visit_created;
@@ -1352,7 +1369,8 @@ return Response::json($returnObject);
               'account_type'              => $customer_active_plan->account_type,
               'total_visit'               => $total_visit_limit,
               'total_utilised'            => $total_visit_created,
-              'total_visit_balance'       => $total_visit_balance
+              'total_visit_balance'       => $total_visit_balance,
+              'user_type'                 => $user_type
             );
 
             $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);

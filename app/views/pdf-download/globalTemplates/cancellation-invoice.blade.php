@@ -92,7 +92,7 @@
         </tr>
         <tr>
           <td style="padding: 20px 0 5px 0;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Refund - {{$billing_info['account_type']}} Mednefits Care (Corporate)</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Refund - {{$plan_type}} Mednefits Care (Corporate)</p>
           </td>
           <td colspan="4"></td>
         </tr>

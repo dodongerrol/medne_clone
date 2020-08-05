@@ -10254,7 +10254,7 @@ class BenefitsDashboardController extends \BaseController {
 			}
 			
 			$refund_data = array(
-				'plan_type'		=> $refund_payment->account_type ? PlanHelper::getAccountType($refund_payment->account_type) : null,
+				'plan_type'		=> $refund_payment->account_type ? PlanHelper::getAccountType($refund_payment->account_type) : PlanHelper::getAccountType($company_plan->account_type),
 				'total_refund' => \DecimalHelper::formatDecimal($total_refund),
 				'plan_start' => date('d/m/Y', strtotime($company_plan->plan_start)),
 				'plan_end'		=>  date('d/m/Y', strtotime($end_date)),
@@ -10264,8 +10264,8 @@ class BenefitsDashboardController extends \BaseController {
 				'quantity'	=> sizeof($users),
 				'date_refund' => date('d/m/Y', strtotime($refund_payment->date_refund)),
 				'unutilised_date' => date('d/m/Y', strtotime('+1 day', strtotime($refund_payment->date_refund))),
-				'invoice_date' => date('d F Y', strtotime($refund_payment->invoice_date)),
-				'invoice_due' => date('d F Y', strtotime($refund_payment->invoice_due)),
+				'invoice_date' => $refund_payment->invoice_date ? date('d F Y', strtotime($refund_payment->invoice_date)) : null,
+				'invoice_due' => $refund_payment->invoice_due ? date('d F Y', strtotime($refund_payment->invoice_due)) : null,
 				'payment_date' => $refund_payment->payment_date ? date('d F Y', strtotime($refund_payment->payment_date)) : null,
 				'payment_status' => $refund_payment->status,
 				'billing_info' => $data,
