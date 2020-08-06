@@ -607,6 +607,8 @@ class DependentController extends \BaseController {
 		->where('employee_family_coverage_sub_accounts.deleted', 0)
 		->get();
 
+		$today = date('Y-m-d');
+
 		foreach ($dependents as $key => $dependent) {
 			// check for dependent withdraw
 			$deletion = false;
@@ -643,18 +645,6 @@ class DependentController extends \BaseController {
 
 			$dependent->relationship = $dependent->relationship ? $dependent->relationship : 'Dependent';
 
-			// $name = explode(" ", $dependent->Name);
-
-			// if(!empty($name[0]) && !empty($name[1])) {
-			// 	$first_name = $name[0];
-			// 	for( $i = 1; $i < count( $name ) - 1; $i++ ){
-			// 		$first_name .= ' ' . $name[$i];
-			// 	}
-			// 	$last_name =  $name[ sizeof($name) - 1 ];
-			// } else {
-			// 	$first_name = $dependent->Name;
-			// 	$last_name = $dependent->Name;
-			// }
 
 			if($dependent->DOB == null) {
 				$dependent->dob = null;
@@ -665,10 +655,74 @@ class DependentController extends \BaseController {
 			$dependent->name = $dependent->Name;
 			// $dependent->nric = $dependent->NRIC;
 			$dependent->member_id = str_pad($dependent->UserID, 6, "0", STR_PAD_LEFT);
+
+			// dependent plan history
+			$history = DB::table('dependent_plan_history')
+							->where('user_id', $dependent->user_id)
+							->where('type', 'started')
+							->orderBy('created_at', 'desc')
+							->first();
+			if(!$history) {
+				$new_data_history = \DependentHelper::createDependentPlanHistory($request->get('employee_id'), $dependent->user_id);
+				// create plan history
+				$plan_history = array(
+					'user_id'							=> $dependent->user_id,
+					'dependent_plan_id'					=> $new_data_history->dependent_plan_id,
+					'package_group_id'					=> $new_data_history->package_group_id,
+					'plan_start'						=> $new_data_history->plan_start,
+					'duration'							=> $new_data_history->duration,
+					'type'								=> $new_data_history->type,
+					'fixed'								=> $new_data_history->fixed,
+					'total_visit_limit'        			=> $new_data_history->total_visit_limit,
+            		'total_visit_created'       		=> $new_data_history->total_visit_created,
+					'total_balance_visit'       		=> $new_data_history->total_visit_limit - $new_data_history->total_visit_created,
+					'created_at'						=> date('Y-m-d H:i:s'),
+					'updated_at'						=> date('Y-m-d H:i:s')
+				);
+				DB::table('dependent_plan_history')->insert($plan_history);
+				$history = DB::table('dependent_plan_history')
+							->where('user_id', $dependent->user_id)
+							->where('type', 'started')
+							->orderBy('created_at', 'desc')
+							->first();
+			}
+			$history->formatted_plan_start = date('F d, Y', strtotime($history->plan_start));
+			$dependent->nric = $dependent->NRIC;
+			$dependent->member_id = str_pad($dependent->UserID, 6, "0", STR_PAD_LEFT);
+	
+
+		$dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $history->dependent_plan_id)->first();
+		$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+
+		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+		$data['start_date'] = date('d F Y', strtotime($history->plan_start));
+		
+		$dependent_plan_extenstion = DB::table('dependent_plans')->where('customer_plan_id', $dependent_plan->customer_plan_id)->where('type', 'extension_plan')->first();
+
+		if($dependent_plan_extenstion && $dependent_plan_extenstion->activate_plan_extension == 1) {
+			$temp_valid_date = date('Y-m-d', strtotime('+'.$dependent_plan_extenstion->duration, strtotime($dependent_plan_extenstion->plan_start)));
+			$dependent->plan_end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_valid_date)));
+		} else {
+			if((int)$history->fixed == 1) {
+				$temp_valid_date = date('Y-m-d', strtotime('+'.$active_plan->duration, strtotime($plan->plan_start)));
+				$dependent->plan_end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_valid_date)));
+			} else if((int)$history->fixed == 0) {
+				$dependent->plan_end_date = date('Y-m-d', strtotime('+'.$plan_user->duration, strtotime($history->plan_start)));
+			}
 		}
 
-		return array('status' => true, 'dependents' => $dependents);
-	}
+
+		$history->formatted_plan_end = date('F d, Y', strtotime($dependent->plan_end_date));
+		$dependent->dependent_plan_history = $history;
+		if($today > $dependent->plan_end_date) {
+			$dependent->plan_expired_status = true;
+		} else {
+			$dependent->plan_expired_status = false;
+		}
+			}
+
+			return array('status' => true, 'dependents' => $dependents);
+		}
 
 	public function updateDependentDetails( )
 	{
