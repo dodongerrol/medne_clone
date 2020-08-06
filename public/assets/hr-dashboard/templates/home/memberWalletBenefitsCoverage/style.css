@@ -360,3 +360,16 @@
 	font-size: 13px;
 	color: #929292;
 }
+
+.mednefits-enterprise-plan-wrapper {
+  height: 100vh;
+}
+.out-of-pocket-wrapper {
+  height: 100vh;
+}
+.out-of-pocket-wrapper .mwbc-card-box-container .available-credits {
+  margin: 0;
+}
+.out-of-pocket-wrapper .mwbc-card-box-container {
+  width: 350px;
+}
