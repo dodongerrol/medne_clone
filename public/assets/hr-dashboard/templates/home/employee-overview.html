@@ -708,6 +708,24 @@
 									</div>
 								</div>
 							</div>
+
+							<div class="employee-information-details">
+								<div class="col-1-employee-information-details">
+									<h3 class="weight-700" style="position:relative; margin-bottom: 50px;">Dependent Visits</h3>
+									<div>
+										<strong class="font-helvetica-medium">Total</strong>
+										<span ng-bind="list.dependent_plan_history.total_visit_limit ? list.dependent_plan_history.total_visit_limit : 0 ">1</span>
+									</div>
+									<div>
+										<strong class="font-helvetica-medium">Utilised</strong>
+										<span ng-bind="list.dependent_plan_history.total_visit_created ? list.dependent_plan_history.total_visit_created : 0 ">2</span>
+									</div>
+									<div>
+										<strong class="font-helvetica-medium">Balance</strong>
+										<span ng-bind="list.dependent_plan_history.total_balance_visit ? list.dependent_plan_history.total_balance_visit : 0 ">3</span>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div ng-if="empTabSelected == 2" class="entitlement-information">
