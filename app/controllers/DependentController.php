@@ -662,30 +662,22 @@ class DependentController extends \BaseController {
 							->where('type', 'started')
 							->orderBy('created_at', 'desc')
 							->first();
-			if(!$history) {
-				$new_data_history = \DependentHelper::createDependentPlanHistory($request->get('employee_id'), $dependent->user_id);
-				// create plan history
+	
 				$plan_history = array(
 					'user_id'							=> $dependent->user_id,
-					'dependent_plan_id'					=> $new_data_history->dependent_plan_id,
-					'package_group_id'					=> $new_data_history->package_group_id,
-					'plan_start'						=> $new_data_history->plan_start,
-					'duration'							=> $new_data_history->duration,
-					'type'								=> $new_data_history->type,
-					'fixed'								=> $new_data_history->fixed,
-					'total_visit_limit'        			=> $new_data_history->total_visit_limit,
-            		'total_visit_created'       		=> $new_data_history->total_visit_created,
-					'total_balance_visit'       		=> $new_data_history->total_visit_limit - $new_data_history->total_visit_created,
+					'dependent_plan_id'					=> $history->dependent_plan_id,
+					'package_group_id'					=> $history->package_group_id,
+					'plan_start'						=> $history->plan_start,
+					'duration'							=> $history->duration,
+					'type'								=> $history->type,
+					'fixed'								=> $history->fixed,
+					'total_visit_limit'        			=> $history->total_visit_limit,
+            		'total_visit_created'       		=> $history->total_visit_created,
+					'total_balance_visit'       		=> $history->total_visit_limit - $history->total_visit_created,
 					'created_at'						=> date('Y-m-d H:i:s'),
 					'updated_at'						=> date('Y-m-d H:i:s')
 				);
-				DB::table('dependent_plan_history')->insert($plan_history);
-				$history = DB::table('dependent_plan_history')
-							->where('user_id', $dependent->user_id)
-							->where('type', 'started')
-							->orderBy('created_at', 'desc')
-							->first();
-			}
+			
 			$history->formatted_plan_start = date('F d, Y', strtotime($history->plan_start));
 			$dependent->nric = $dependent->NRIC;
 			$dependent->member_id = str_pad($dependent->UserID, 6, "0", STR_PAD_LEFT);
