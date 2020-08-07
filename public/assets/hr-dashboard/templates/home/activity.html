@@ -685,15 +685,13 @@
 							</div>
 
 							<div class="col-md-6 no-padding text-center">
-								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}"
-									ng-click="inNetWorkTable = true;outNetWorkTable = false;">
+								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
 									PANEL<br>
 									<!-- IN-NETWORK<br> -->
 									TRANSACTIONS
 								</button>
 
-								<button class="btn-out-network" ng-class="{'active':outNetWorkTable}"
-									ng-click="inNetWorkTable = false;outNetWorkTable = true;">
+								<button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
 									E-CLAIM TRANSACTIONS<br>
 									(NON-PANEL)
 								</button>
