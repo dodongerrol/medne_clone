@@ -7,7 +7,7 @@
 <script type="text/javascript" src="<?php echo $server; ?>/assets/dashboard/calender_index.js?_={{ $date->format('U') }}"></script>
 <script type="text/javascript" src="<?php echo $server; ?>/assets/dashboard/search-features.js?_={{ $date->format('U') }}"></script>
 
-<script src="/assets/js/OneSignalSDK.js" async='async'></script>
+<script src="/assets/js/OneSignalSDK-new.js" async='async'></script>
 <script>
   var OneSignal = window.OneSignal || [];
 

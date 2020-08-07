@@ -329,11 +329,11 @@
 									list.status_text = 'Pending';
 									list.res = true;
 									list.message = response.data.message;
-									scope.applyDates();
+									// scope.applyDates();
 								}else{
 									swal( 'Oops!', response.data.message, 'error' );
 								}
-								// scope.hideLoading();
+								scope.hideLoading();
 							});
 					}
 				}
@@ -372,8 +372,8 @@
 								list.res = false;
 								list.message = response.data.message;
 							}
-							
-							scope.applyDates();
+							scope.hideLoading();
+							// scope.applyDates();
 						} else {
 							// alert(response.data.message);
 							swal('Ooops!', response.data.message, 'error');
@@ -413,7 +413,8 @@
 									list.res = false;
 									list.message = response.data.message;
 								}
-								scope.applyDates();
+								scope.hideLoading();
+								// scope.applyDates();
 							} else {
 								swal('Oops!', response.data.message, 'error');
 								$( ".circle-loader" ).fadeOut();
@@ -524,7 +525,7 @@
 							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
-							scope.togglePointerEvents();
+							// scope.togglePointerEvents();
 							scope.hideLoading();
 							$(".circle-loader").hide();
 						}
@@ -532,8 +533,8 @@
 				}
 
 				scope.searchActivity = function( data ) {
-					scope.showLoading();
-					scope.togglePointerEvents();
+					// scope.showLoading();
+					// scope.togglePointerEvents();
 					$(".searchEclaimLoader").show();
 					$(".searchEclaimLoader2").show();
 					$("#fetching_text").show();
@@ -626,7 +627,7 @@
 							}, 10);
 							$(".searchEclaimLoader").hide();
 							$(".searchEclaimLoader2").hide();
-							scope.togglePointerEvents();
+							// scope.togglePointerEvents();
 							scope.hideLoading();
 							$(".circle-loader").hide();
 						}
