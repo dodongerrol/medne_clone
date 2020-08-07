@@ -2000,15 +2000,19 @@ public function getNewClinicDetails($id)
 
       // check if employee/user is still coverge
      $user_type = PlanHelper::getUserAccountType($findUserID);
-     $user_plan_history = DB::table('user_plan_history')
-     ->where('user_id', $owner_id)
-     ->where('type', 'started')
-     ->orderBy('created_at', 'desc')
-     ->first();
-
-     $customer_active_plan = DB::table('customer_active_plan')
-     ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-     ->first();
+    
+     // // check visit limit
+     if($user_type == "employee") {
+      $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
+      $customer_active_plan = DB::table('customer_active_plan')
+      ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+      ->first();
+    } else {
+      $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
+      $customer_active_plan = DB::table('dependent_plans')
+                    ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+                    ->first();
+    }
 
      if($customer_active_plan->account_type == "enterprise_plan")	{
       $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
