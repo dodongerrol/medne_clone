@@ -491,6 +491,8 @@ $("body").on("click", "#invoice-date-go-btn", function() {
  
 
 function getClinicInvoiceList(date) {
+
+  $(".main-loader").show();
   $(".statement-wrapper").hide();
   $("#invoice-download-as-pdf").hide();
   // var month = date.getMonth();
@@ -600,6 +602,7 @@ function getClinicInvoiceList(date) {
         }, 300);
       }
     }
+    $(".main-loader").hide();
   });
 }
 
