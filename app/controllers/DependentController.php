@@ -662,22 +662,8 @@ class DependentController extends \BaseController {
 							->where('type', 'started')
 							->orderBy('created_at', 'desc')
 							->first();
-	
-				$plan_history = array(
-					'user_id'							=> $dependent->user_id,
-					'dependent_plan_id'					=> $history->dependent_plan_id,
-					'package_group_id'					=> $history->package_group_id,
-					'plan_start'						=> $history->plan_start,
-					'duration'							=> $history->duration,
-					'type'								=> $history->type,
-					'fixed'								=> $history->fixed,
-					'total_visit_limit'        			=> $history->total_visit_limit,
-            		'total_visit_created'       		=> $history->total_visit_created,
-					'total_balance_visit'       		=> $history->total_visit_limit - $history->total_visit_created,
-					'created_at'						=> date('Y-m-d H:i:s'),
-					'updated_at'						=> date('Y-m-d H:i:s')
-				);
 			
+			$history->total_balance_visit = $history->total_visit_limit - $history->total_visit_created;
 			$history->formatted_plan_start = date('F d, Y', strtotime($history->plan_start));
 			$dependent->nric = $dependent->NRIC;
 			$dependent->member_id = str_pad($dependent->UserID, 6, "0", STR_PAD_LEFT);
