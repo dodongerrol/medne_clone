@@ -759,7 +759,7 @@
 							</div>
 						</div> -->
 
-						<div class="container-fluid new-activity-header-calendar">
+						<div class="container-fluid new-activity-header-calendar" ng-class="{ 'isEnterpriseMedical' : activitySpendingType == 0 && total_allocation.currency_type == 'myr'}">
 							<div class="row">
 								<div class="col-md-6 col-first">
 									<h4 class="team-benefits-cost-title font-22 weight-700" ng-bind="activity_title">
@@ -793,7 +793,7 @@
 								<div class="col-md-6">
 									<div class="search-wrapper text-right">
 										<form ng-submit="searchEmployeeActivity();">
-											<div class="input-group">
+											<div class="input-group"  ng-class="{ 'isEnterpriseMedical' : activitySpendingType == 0 && total_allocation.currency_type == 'myr'}">
 												<input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
 												<span class="input-group-btn">
 													<button class="btn btn-default" type="button" ng-if="!search.close"><i
@@ -826,7 +826,7 @@
 
 				<div class="col-md-12 disable-cursor-off">
 					<!-- <div class="white-space-30"></div> -->
-					<div class="body-container">
+					<div class="body-container" ng-class="{ 'isEnterpriseMedical' : activitySpendingType == 0 && total_allocation.currency_type == 'myr'}">
 						<div ng-if="activitySpendingType == 1" class="team-benefits-wrapper team-benefits-old-wrapper">
 
 							<div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
@@ -845,7 +845,7 @@
 										<div>
 											<p class="color-black3 weight-500 font-14">Spending Breakdown</p>
 											<!-- <p class="color-black3 weight-300 font-14">In-Network: <span -->
-											<p class="color-black3 weight-300 font-14">Panel: <span
+											<p ng-class="{'greyed-text' : spending_account_status.wellness_enabled == true }"class="color-black3 weight-300 font-14">Panel: <span
 													class="weight-300 color-blue-custom currency-type"
 													ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
 													class="weight-300 color-blue-custom"
@@ -1272,7 +1272,7 @@
 							</div>
 
 							<div class="new_breakDown">
-								<div>
+								<div ng-if="total_allocation.currency_type != 'myr' && spending_account_status.account_type == 'enterprise_plan' ">
 									<div class="benefit-box">
 										<div>
 											<p class="color-black3 weight-500 font-14">Spending Breakdown</p>
@@ -1292,7 +1292,7 @@
 										</div>
 									</div>
 								</div>
-								<div>
+								<div ng-if="total_allocation.currency_type != 'myr' && spending_account_status.account_type == 'enterprise_plan' ">
 									<div class="benefit-box">
 										<div>
 											<!-- <p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
@@ -1350,6 +1350,19 @@
 										</div>
 									</div>
 								</div>
+								<div ng-if="total_allocation.currency_type == 'myr' && spending_account_status.account_type == 'enterprise_plan' " class="no-wellness-visit-details">
+									<h5 class="visit-details-title-text">Visit Details</h5>
+
+									<div>
+										<span>Total utilised visits: </span> <span ng-bind="activity.total_visit_created" class="visits-value">12</span>
+									</div>
+									<div>
+										<div>
+											<span>Visits per member: </span> <span ng-bind="activity.total_average_visit" class="visits-value">04</span>
+										</div>
+										<span class="average-text">* Average visits per member from <span ng-bind="rangePicker_start">01/01/2019</span> to <span ng-bind="rangePicker_end">26/11/2019</span> </span>
+									</div>
+								</div>
 							</div>
 
 							<div class="col-md-12 no-padding costs-wrapper">
@@ -1365,13 +1378,13 @@
 							</div>
 
 							<div class="col-md-6 no-padding text-center transactions-btn-container">
-								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+								<button ng-disabled="spending_account_status.wellness_enabled == true && inNetWorkTable == false" class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
 									PANEL<br>
 									<!-- IN-NETWORK<br> -->
-									TRANSACTIONS
+									TRANSACTIONS 
 								</button>
 
-								<button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+								<button ng-disabled="spending_account_status.wellness_enabled == true && outNetWorkTable == false || spending_account_status.wellness_enabled == false" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
 									E-CLAIM TRANSACTIONS<br>
 									(NON-PANEL)
 								</button>

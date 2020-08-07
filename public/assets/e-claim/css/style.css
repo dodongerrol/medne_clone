@@ -899,8 +899,13 @@ html {
 .spent-box .in-network-box p {
   margin-bottom: 3px;
 }
-.spent-box .in-network-box.disabled-panel p {
+.spent-box .in-network-box.disabled-panel p, .spent-box .out-network-box.disabled-panel p {
   color: #D9D9D9 !important;
+}
+
+button.btn-out-network.disabled-panel {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .spent-box .out-network-box {
@@ -2150,7 +2155,7 @@ body::-webkit-scrollbar-thumb {
 
 .new-popup .popup-container {
   width: 325px;
-  height: 300px;
+  height: 250px;
   margin: 0 auto;
   background: #fff;
   -webkit-box-shadow: 0px 0px 6px 1px rgba(156, 156, 156, 1);
@@ -2160,6 +2165,16 @@ body::-webkit-scrollbar-thumb {
   display: flex;
   align-items: center;
   padding: 15px 45px;
+}
+
+.eClaim-disabled.new-popup .popup-container {
+  width: 340px;
+  height: 320px;
+  text-align: center;
+}
+
+.eClaim-disabled.new-popup h5 {
+  color: #000;
 }
 
 .new-popup .popup-row {
@@ -2275,4 +2290,18 @@ body::-webkit-scrollbar-thumb {
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin-top: 20px;
+}
+.eclaim-left-container .btn-medical.disable-spending-account-btn,
+.eclaim-left-container .btn-medical.disable-spending-account-btn:hover {
+  pointer-events: none;
+  border-color: #eee;
+}
+
+.non-panel {
+  color: #fff;
+}
+
+.non-panel.greyed-out {
+  background-color: #dcd9d9;
+  color: #999 !important;
 }
