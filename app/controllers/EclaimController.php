@@ -127,10 +127,13 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
 
+		
 		// check if their is receipts
 		if(sizeof($input['receipts']) == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
+
+		
 
 		$ids = [];
         // get real userid for dependents
@@ -169,6 +172,11 @@ class EclaimController extends \BaseController {
 			}
 		}
 
+		// check if it is myr or sgd
+		if($check_user_balance->currency_type == "myr" ) {
+			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+		}
+
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
 
@@ -186,8 +194,15 @@ class EclaimController extends \BaseController {
 		->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 		->first();
 
-		if($customer_active_plan->account_type == "enterprise_plan")	{
+		if($customer_active_plan->account_type == "enterprise_plan"){
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+
+			// check if it is myr or sgd
+		if($check_user_balance->currency_type == "myr" ) {
+			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+		}
+
+			
 
 			if($limit <= 0) {
 				return ['status' => false, 'message' => 'Maximum of 14 visits already reached.'];
@@ -6407,7 +6422,7 @@ public function hrEclaimActivity( )
 	$corporate_members = DB::table('corporate_members')
 	->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 	->where('corporate_members.corporate_id', $account->corporate_id)
-	->paginate(100);
+	->paginate(10);
 
 	$paginate['current_page'] = $corporate_members->getCurrentPage();
 	$paginate['from'] = $corporate_members->getFrom();

@@ -21,6 +21,23 @@
 </style>
 <div id="editor"></div>
 <br>
+<div class="main-loader" hidden>
+	<div class="circle-loader">
+		<div class="preloader-container">
+			<div class="preloader-wrapper big active">
+			<div class="spinner-layer spinner-blue-only">
+				<div class="circle-clipper left">
+				<div class="circle"></div>
+				</div><div class="gap-patch">
+				<div class="circle"></div>
+				</div><div class="circle-clipper right">
+				<div class="circle"></div>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
 <input type="hidden" id="clinicID" value="{{$clinicdetails['clinicid']}}">
 <div class="transac-invoice">
 
@@ -63,7 +80,7 @@
             </div>
         </div>
         <button id="invoice-date-go-btn" class="btn">Go</button>
-        <a href="javascript:void(0)" id="invoice-download-as-pdf" class="btn btn-default btn-export"><i class="glyphicon glyphicon-file" hidden></i>  Export as .PDF</a>
+        <a href="javascript:void(0)" id="invoice-download-as-peedf" class="btn btn-default btn-export"><i class="glyphicon glyphicon-file" hidden></i>  Export as .PDF</a>
     </div>
 
     <div class="col-md-12 invoice-wrapper no-padding" id="error-log" hidden>
