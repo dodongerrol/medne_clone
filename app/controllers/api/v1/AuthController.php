@@ -6610,9 +6610,9 @@ public function payCreditsNew( )
     if(!empty($getRequestHeader['Authorization'])){
       $config = Config::get('config.deployment');
       $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
-      // if($config == "Production") {
-      //   return MemberHelper::getMemberSpendingStatusLive($getRequestHeader['Authorization'], $type);
-      // } else {
+      if($config == "Production") {
+        return MemberHelper::getMemberSpendingStatusLive($getRequestHeader['Authorization'], $type);
+      } else {
         $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
         if($getAccessToken){
           $findUserID = $authSession->findUserID($getAccessToken->session_id);
@@ -6775,11 +6775,11 @@ public function payCreditsNew( )
             return Response::json($returnObject);
           }
         } else {
-        $returnObject->status = FALSE;
-        $returnObject->message = StringHelper::errorMessage("Token");
-        return Response::json($returnObject);
+          $returnObject->status = FALSE;
+          $returnObject->message = StringHelper::errorMessage("Token");
+          return Response::json($returnObject);
+        }
       }
-      // }
     } else {
       $returnObject->status = FALSE;
       $returnObject->message = StringHelper::errorMessage("Token");
