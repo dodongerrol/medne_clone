@@ -705,31 +705,61 @@ class MemberHelper
 
 	public static function deductPlanHistoryVisit($member_id)
 	{
-		$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+		$user_type = PlanHelper::getUserAccountType($member_id);
 
-		if($plan_history)
-		{
-			if($plan_history->total_visit_created < 14)	{
-				// increase visit created
-				DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->increment('total_visit_created', 1);
+		if($user_type == "employee") {
+			$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+			if($plan_history)
+			{
+				if($plan_history->total_visit_created < 14)	{
+					// increase visit created
+					DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->increment('total_visit_created', 1);
+				}
+				return true;
 			}
-			return true;
-		}
+		} else {
+			$plan_history = DB::table('dependent_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
 
+			if($plan_history)
+			{
+				if($plan_history->total_visit_created < 14)	{
+					// increase visit created
+					DB::table('dependent_plan_history')->where('dependent_plan_history_id', $plan_history->dependent_plan_history_id)->increment('total_visit_created', 1);
+				}
+				return true;
+			}
+		}
+		
 		return false;
 	}
 
 	public static function returnPlanHistoryVisit($member_id)
 	{
-		$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+		$user_type = PlanHelper::getUserAccountType($member_id);
 
-		if($plan_history)
-		{
-			// increase visit created
-			if($plan_history->total_visit_created > 0)	{
-				DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->decrement('total_visit_created', 1);
+		if($user_type == "employee") {
+			$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+			if($plan_history)
+			{
+				// increase visit created
+				if($plan_history->total_visit_created > 0)	{
+					DB::table('user_plan_history')->where('user_plan_history_id', $plan_history->user_plan_history_id)->decrement('total_visit_created', 1);
+				}
+				return true;
 			}
-			return true;
+		} else {
+			$plan_history = DB::table('dependent_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+			if($plan_history)
+			{
+				if($plan_history->total_visit_created > 0)	{
+					// increase visit created
+					DB::table('dependent_plan_history')->where('dependent_plan_history_id', $plan_history->dependent_plan_history_id)->decrement('total_visit_created', 1);
+				}
+				return true;
+			}
 		}
 
 		return false;
@@ -738,6 +768,19 @@ class MemberHelper
 	public static function getMemberPreviousPlanHistory($member_id)
 	{
 		$plan_history = DB::table('user_plan_history')
+								->where('user_id', $member_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->skip(1)
+								->take(1)
+								->first();
+
+		return $plan_history  ? $plan_history  : false;
+	}
+
+	public static function getDependentPreviousPlanHistory($member_id)
+	{
+		$plan_history = DB::table('dependent_plan_history')
 								->where('user_id', $member_id)
 								->where('type', 'started')
 								->orderBy('created_at', 'desc')
