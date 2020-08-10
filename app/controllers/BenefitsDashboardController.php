@@ -1977,7 +1977,13 @@ class BenefitsDashboardController extends \BaseController {
 							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
-							array_push($ids, $user);
+							// check if there is panel and non-panel already created
+							$panel = DB::table('transaction_history')->where('UserID', $user)->first();
+							$non_panel = DB::table('e_claim')->where('user_id', $user)->first();
+							
+							if($panel || $non_panel) {
+								array_push($ids, $user);
+							}
 						}
 					}
 				}
@@ -2184,7 +2190,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 			
-			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d')) {
+			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0) {
 				$emp_status = 'pending';
 			}
 
@@ -2288,6 +2294,18 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
+			if((int)$user->Active == 1 && (int)$user->member_activated == 1) {
+				// statuses
+				$panel = DB::table('transaction_history')->where('UserID', $user->UserID)->first();
+				$non_panel = DB::table('e_claim')->where('user_id', $user->UserID)->first();
+								
+				if($panel || $non_panel) {
+					$emp_status = 'active';
+				} else {
+					$emp_status = 'activated';
+				}
+			}
+			
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -15888,6 +15906,8 @@ class BenefitsDashboardController extends \BaseController {
 		$pagination['count'] = $active_plans->count();
 
 		foreach($active_plans as $key => $active) {
+			$total = 0;
+      		$amount_due = 0;
 			$invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $active->customer_active_plan_id)->first();
 			$end_plan_date = null;
 			$calculated_prices = 0;
@@ -15910,8 +15930,6 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_amount = $calculated_prices * $invoice->employees;
 				$new_head_count = false;
 			} else {
-				$calculated_prices_end_date = null;
-			
 				// $calculated_prices_end_date = CustomerHelper::getCompanyPlanDates($active->customer_start_buy_id);
 				$calculated_prices_end_date = $plan->plan_end;
 				$duration = CustomerHelper::getPlanDuration($active->customer_start_buy_id, $active->plan_start);
@@ -15925,6 +15943,27 @@ class BenefitsDashboardController extends \BaseController {
 				$new_head_count = true;
 			}
 
+			$total += $plan_amount;
+			// get dependent if any
+			$dependents = DB::table('dependent_plans')
+			->where('customer_active_plan_id', $invoice->customer_active_plan_id)
+			->get();
+	  
+			foreach ($dependents as $key => $dependent) {
+			  $invoice_dependent = DB::table('dependent_invoice')
+			  ->where('dependent_plan_id', $dependent->dependent_plan_id)
+			  ->first();
+	  
+			  if((int)$dependent->new_head_count == 1) {
+				$calculated_prices_end_date = $plan->plan_end;
+				$calculated_prices_end_date = date('Y-m-d', strtotime('+1 day', strtotime($calculated_prices_end_date['plan_end'])));
+				$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice_dependent->individual_price, $dependent->plan_start, $calculated_prices_end_date);
+				$total += $calculated_prices * $dependent->total_dependents;
+			  } else {
+				$total += $dependent->individual_price * $dependent->total_dependents;
+			  }
+			}
+			
 			$payment_data = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
 			
 			$pagination['data'][] = [
@@ -15932,10 +15971,10 @@ class BenefitsDashboardController extends \BaseController {
 				'invoice_date'    => date('Y-m-d', strtotime($invoice->invoice_date)),
 				'invoice_due'    => date('Y-m-d', strtotime($invoice->invoice_due)),
 				'invoice_number'  => $invoice->invoice_number,
-				'total'           => $plan_amount,
-				'amount_due'      => $payment_data ? DecimalHelper::formatDecimal($plan_amount - $payment_data->paid_amount) : $plan_amount,
+				'total'           => $total,
+        		'amount_due'      => $payment_data ? DecimalHelper::formatDecimal($total - $payment_data->paid_amount) : $total,
 				'payment_amount'  => $payment_data ? $payment_data->paid_amount : 0,
-				'payment_date'    => $active->paid == "true" && $payment_data ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
+				'payment_date'    => $payment_data && $active->paid == "true" ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
 				'payment_remarks' => $payment_data ? $payment_data->remarks : null,
 				'currency_type'   => $invoice->currency_type,
 				'payment_status'  => $active->paid == "true" ? true : false
