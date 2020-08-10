@@ -32,7 +32,7 @@
 						<div ng-if="user_details.plan_type != 'enterprise_plan' || (user_details.plan_type == 'enterprise_plan' && user_details.wellness == true)" class="form-group col-md-12 ">
 							<label>Spending Account<span>*</span></label>
 							<div class="input-wrapper">
-								<button ng-click="setSpendingType(0)" ng-class="{'active' : spendingTypeOpt == 0}"
+								<button ng-class="{'disable-spending-account-btn' : user_details.wellness == true && user_details.currency_type == 'myr' && user_details.plan_type == 'enterprise_plan'} " ng-click="setSpendingType(0)" ng-class="{'active' : spendingTypeOpt == 0}"
 									class="btn btn-default btn-medical" style="margin-right: 5px;">Medical</button>
 								<button ng-click="setSpendingType(1)" ng-class="{'active' : spendingTypeOpt == 1}"
 									class="btn btn-default btn-wellness">Wellness</button>
@@ -438,6 +438,26 @@
 
 				<div class="popup-footer">
 					<button class="btn" ng-click="close_new_popup()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="new-popup baackdrop eClaim-disabled" ng-if="eClaimDisabledState">
+		<div class="popup-container">
+			<div class="popup-row">
+				<div class="popup-header">
+					<i class="fa fa-bell-o" aria-hidden="true"></i>
+				</div>
+				<div class="popup-content">
+					<h5>E-Claim Disabled</h5>
+					<br>
+					<p>The E-Claim function has been disabled for your company.</p>
+					<p>Kindly contact your HR for more details.</p>
+				</div>
+
+				<div class="popup-footer">
+					<button class="btn" ng-click="eClaimDisabledClosed()">Close</button>
 				</div>
 			</div>
 		</div>

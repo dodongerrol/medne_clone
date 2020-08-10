@@ -518,6 +518,15 @@ app.directive('activityPage', [
 						console.log(scope.dateTerms, 'else');
 					}
 
+					if ( scope.activitySpendingType == 1 ) {
+							console.log('sulod please');
+							scope.inNetWorkTable = false;
+							scope.outNetWorkTable = true;
+					} else {
+						scope.inNetWorkTable = true;
+						scope.outNetWorkTable = false;
+					}
+
 					// if (scope.search.user_id) {
 					// 	scope.searchEmployeeActivity(scope.search.user_id);
 					// } else {
@@ -1492,7 +1501,11 @@ app.directive('activityPage', [
           hrSettings.getPrePostStatus()
 						.then(function (response) {
 							console.log(response);
-              scope.spending_account_status = response.data;
+							scope.spending_account_status = response.data;
+						
+							if ( total_allocation.currency_type == 'myr' && spending_account_status.account_type == 'enterprise_plan' &&  scope.spending_account_status.wellness_enabled == false ) {
+								
+							}
 						});
         }
 

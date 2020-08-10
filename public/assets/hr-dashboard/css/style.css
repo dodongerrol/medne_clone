@@ -878,6 +878,15 @@ button {
   font-size: 23px;
 }
 
+.med-form {
+  max-width: 390px;
+  margin: 0 auto;
+}
+
+.form-group .med-input {
+  margin: 35px 0;
+}
+
 .form-group .med-button {
   padding: 19px 0;
   background-color: #0392cf;
@@ -1378,11 +1387,11 @@ a.link-box:hover {
   margin: -1px 2px 2px -1px;
 }
 
-/* @media [type="radio"].with-gap:checked+label:after {
+@media [type="radio"].with-gap:checked+label:after {
   .enrollment-method-box {
     background-color: #f2f2f2;
   }
-} */
+}
 
 [type="radio"].with-gap:checked + label:after,
 [type="radio"].with-gap:checked + label:before,
@@ -10702,4 +10711,48 @@ span.dropdown-entitlement.disabled {
 .btn-complete{
   width: 140px;
   height: 50px;
+}
+
+.no-wellness-visit-details {
+  padding: 80px;
+}
+.no-wellness-visit-details {
+  color: #2E4057;
+}
+.visit-details-title-text {
+  font-family: 'Helvetica Medium';
+  /* color: #2E4057; */
+  font-size: 16px;
+  margin: 0 0 20px;
+}
+.no-wellness-visit-details >div {
+  margin: 0 0 10px;
+}
+.no-wellness-visit-details .average-text {
+  font-size: 14px;
+  color: #9c9c9c;
+  width: 210px;
+  display: inline-block;
+}
+.no-wellness-visit-details .visits-value {
+  color: #009EC8;
+  font-family: 'Helvetica Medium';
+}
+.greyed-text {
+  opacity: 0.4;
+}
+.btn-in-network[disabled],
+.btn-out-network[disabled] {
+  opacity: 0.4;
+}
+.body-container.isEnterpriseMedical{
+  width: 70%;
+  margin: 0 auto;
+}
+.new-activity-header-calendar.isEnterpriseMedical{
+  width: 70%;
+  padding: 0 10px;
+}
+.search-wrapper .input-group.isEnterpriseMedical{
+  margin-right: -50%;
 }
