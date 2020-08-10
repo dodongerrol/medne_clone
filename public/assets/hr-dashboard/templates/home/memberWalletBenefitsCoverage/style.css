@@ -293,7 +293,7 @@
     border-radius: 2px;
     border: 0;
     font-size: 14px;
-    padding: 5px 0;
+    padding: 3px 0;
   }
   .spending-account-modal .btn-edit-cancel {
     width: 100px;
@@ -313,3 +313,63 @@
 /* --------------------------- */
 
 
+.custom-checkbox-selector .selector-container {
+  display: block;
+  position: relative;
+  padding-left: 25px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 16px;
+}     
+.custom-checkbox-selector .selector-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox-selector input:checked ~ .custom-checkbox-checkmark:after {
+  display: block;
+}
+
+.custom-checkbox-selector .custom-checkbox-checkmark {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  height: 14px;
+  width: 14px;
+  background-color: transparent;
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+.custom-checkbox-selector .custom-checkbox-checkmark:after {
+  display: none;
+  content: "";
+  position: absolute;
+  left: 4px;
+  bottom: 2px;
+  width: 8px;
+  height: 15px;
+  border: solid #18A4E0;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.custom-checkbox-selector .text {
+	font-size: 13px;
+	color: #929292;
+}
+
+.mednefits-enterprise-plan-wrapper {
+  height: 100vh;
+}
+.out-of-pocket-wrapper {
+  height: 100vh;
+}
+.out-of-pocket-wrapper .mwbc-card-box-container .available-credits {
+  margin: 0;
+}
+.out-of-pocket-wrapper .mwbc-card-box-container {
+  width: 350px;
+}

@@ -1,0 +1,131 @@
+<div class="out-of-pocket-wrapper">
+  <div class="show-details-on-container">
+    <div>
+      <span class="member-bold-text">Show details on</span> 
+      <div class="current-term-input-wrapper">
+        <span>Current term</span>
+        <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        <i class="fa fa-angle-down"></i>
+      </div>
+      <div>
+        <button>Apply</button>
+      </div>
+    </div>
+    <div>
+      <!-- <button>Save</button> -->
+    </div>
+  </div>
+  <div class="mwbc-box-container">
+    <h4 class="member-bold-text">Out of pocket</h4>
+    <div class="mwbc-card-box-container">
+      <div class="available-credits-container">
+        <div class="available-credits">
+          <span class="available-credits-container dp-flex-ai">
+            <div class="available-credits-text member-bold-text">Total Member Transaction</div>
+            <span class="credits-tooltip-wrapper">
+              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <div ng-if="false" class="credits-tooltip-container">
+                <div class="tooltip-title">Total Utilised Visits</div>
+                <p>The amount of undistributed/unallocated Total Credits.<br>(Total Credits minus Total Allocated Credits)
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div> 
+            </span>
+          </span>
+          <span>
+            <div class="available-credits-amount member-bold-text">SGD 5,0000.00</div>
+          </span>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <div class="mwbc-box-container">
+    <div class="dp-flex-ai">
+      <h5 class="member-bold-text flex-1">Member Wallet</h5>
+      <div>
+        <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+      </div>
+    </div>
+    <div ng-if="false" class="mednefits-credits-pending">
+      <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
+    </div>
+    <div ng-if="true">
+      <div>Mednefits Credits is currently used in:</div>
+      <div>
+        <div class="wallet-container medical-wallet-container display-flex">
+            <div class="member-bold-text">Medical Wallet:</div>
+            <div class="display-flex wallet-panel-container">
+              <div>Mednefits Panel</div>
+              <div>Non Panel</div>
+            </div>
+        </div>
+        <div class="wallet-container wellness-wallet-container display-flex">
+          <div class="member-bold-text">Wellness Wallet:</div>
+          <div>
+            <div>Non Panel Panel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mwbc-box-container">
+    <h5 class="member-bold-text">Activities</h5>
+    <div class="member-activities-table-wrapper">
+      <div class="member-activities-table-container">
+        <table>
+          <thead>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Amount</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>01 Jan 2020</td>
+              <td>Bonus Credits</td>
+              <td class="amount-value">+ SGD 20,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="custom-pagination-container flex-1">
+          <div class="custom-pagination">
+            <div class="page-wrapper">
+              <div class="page-scroll-container">
+                <span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                  <i class="fa fa-angle-left"></i> 
+                  <span>Prev</span>
+                </span>
+                <div class="pages-list">
+                    
+                  <!-- <span class="page-num active">1</span>	 -->
+                  <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
+
+                   <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+                  
+                </div>
+                <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
+                  <span>Next</span>
+                  <i class="fa fa-angle-right"></i> 
+                </span>
+              </div>
+            </div>
+            <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
+            <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+              <span><span>10</span> per page</span>
+              <span>  
+                <i class="fa fa-caret-down"></i>
+              </span>
+              <div class="opened-per-page-scroll invoice-per-page-container">
+                <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
+                <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
+                <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
+                <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div> 

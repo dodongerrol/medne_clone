@@ -2305,6 +2305,7 @@ class BenefitsDashboardController extends \BaseController {
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
 				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
+				'end_date'				=> date('F d, Y', strtotime($plan_user_history->end_date)),
 				'expiry_date'			=> $expiry_date,
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
