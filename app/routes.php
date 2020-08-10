@@ -241,8 +241,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
 	// update employee details
 	Route::post('hr/employee/update', 'BenefitsDashboardController@updateEmployeeDetails');
-	
-
+	//
+	Route::get('hr/spending_account_activity', 'SpendingInvoiceController@spendingAccountActivities');
 	// get company details and contacts
 	Route::get('hr/company_contacts', 'BenefitsDashboardController@getCompanyContacts');
 	// get transactions

@@ -454,4 +454,38 @@ class SpendingInvoiceController extends \BaseController {
         return $pdf->stream();
     }
 
+    public function spendingAccountActivities ( )
+    {
+        $input = Input::all();
+        $result = self::checkSession();
+        $paginate = [];
+
+        $per_page = !empty($input['limit']) ? $input['limit'] : 10;
+        
+        $spending = DB::table('spending_account_activity')
+                    ->where('customer_id', $result->customer_id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+        
+        if($spending) {
+            $data = [
+                'Date'      => $spending->created_at,
+                'Category'  => $spending->type,
+                'Amount'    => $spending->credit,
+                'Type'      => $spending->spending_type
+            ];
+        }
+
+        if($spending) {
+			$paginate['last_page'] = $spending->getLastPage();
+			$paginate['current_page'] = $spending->getCurrentPage();
+			$paginate['total_data'] = $spending->getTotal();
+			$paginate['from'] = $spending->getFrom();
+			$paginate['to'] = $spending->getTo();
+			$paginate['count'] = $spending->count();
+        }
+        
+        return array ('status' => TRUE, 'data' => $data);
+    }
+
 }
