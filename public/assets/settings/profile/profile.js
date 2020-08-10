@@ -761,7 +761,7 @@ function getBankDetails() {
 
     $("#bank-name").val(data.details.bank_name);
     $("#billing-address").val(data.details.billing_address);
-    $("#bank-type").val(data.details.bank_account_type);
+    $("#bank-type").val(data.details.company_billing_name);
     $("#bank-number").val(data.details.bank_account_number);
   });
 }

@@ -439,14 +439,14 @@
 						<h4><strong class="font-helvetica-medium">Spendings</strong></h4>
 						<div class="allocation-wrapper">
 							<div class="allocation-container">
-								<strong class="font-helvetica-medium">Total</strong>
+                                <strong class="font-helvetica-medium">{{selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.spending_account.currency_type != 'myr'? 'Total': 'Total Panel'}}</strong>
 								<span>
 									<span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> 
 									<span ng-bind="selectedEmployee.spending_account.medical.credits_spent">1,000.00</span>
 								</span>
 							</div>
 						</div>
-						<div class="allocation-wrapper">
+                        <div ng-if="selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.spending_account.currency_type != 'myr'" class="allocation-wrapper">
 							<div class="allocation-container">
 								<strong class="font-helvetica-medium">Panel</strong>
 								<span>
@@ -455,7 +455,7 @@
 								</span>
 							</div>
 						</div>
-						<div class="allocation-wrapper">
+						<div ng-if="selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.spending_account.currency_type != 'myr'" class="allocation-wrapper">
 							<div class="allocation-container">
 								<strong class="font-helvetica-medium">Non-Panel</strong>
 								<span>
@@ -767,6 +767,23 @@
 									<div>
 										<strong class="font-helvetica-medium">Member ID</strong>
 										<span ng-bind="list.member_id">657835</span>
+									</div>
+								</div>
+							</div>
+                            <div class="employee-information-details" ng-if="selectedEmployee.account_type == 'enterprise_plan'">
+								<div class="col-1-employee-information-details">
+									<h3 class="weight-700" style="position:relative; margin-bottom: 50px;">Dependent Visits</h3>
+									<div>
+										<strong class="font-helvetica-medium">Total</strong>
+										<span ng-bind="list.dependent_plan_history.total_visit_limit ? list.dependent_plan_history.total_visit_limit : 0 ">1</span>
+									</div>
+									<div>
+										<strong class="font-helvetica-medium">Utilised</strong>
+										<span ng-bind="list.dependent_plan_history.total_visit_created ? list.dependent_plan_history.total_visit_created : 0 ">2</span>
+									</div>
+									<div>
+										<strong class="font-helvetica-medium">Balance</strong>
+										<span ng-bind="list.dependent_plan_history.total_balance_visit ? list.dependent_plan_history.total_balance_visit : 0 ">3</span>
 									</div>
 								</div>
 							</div>

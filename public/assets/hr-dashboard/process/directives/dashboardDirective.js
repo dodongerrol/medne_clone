@@ -130,7 +130,11 @@ app.directive('dashboardDirective', [
 							console.log(response);
 							scope.progress = response.data.data;
 							// scope.initializeChart();
-
+                            if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
+								scope.spendingAccountType = 1;
+							} else {
+								scope.spendingAccountType = 0;
+							}
 							// if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
 							// 	scope.spendingAccountType = 1;
 							// } else {
@@ -269,7 +273,7 @@ app.directive('dashboardDirective', [
 						.then(function (response) {
 							scope.hideLoading();
 							scope.options.accessibility = response.data.accessibility;
-							
+							scope.dashCredits();
 							scope.getProgress();
 							scope.getTaskList();
 							scope.getCompanyDetails();

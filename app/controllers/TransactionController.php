@@ -840,53 +840,70 @@ class TransactionController extends BaseController {
 							$transaction = \TransactionHelper::getTransactionDetails($new_id);
 
 							if($transaction['visit_deduction'] == true) {
-								$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-								if($user_plan_history) {
+								$user_type = PlanHelper::getUserAccountType($transaction['user_id']);
+
+								if($user_type == "employee") {
+									$user_plan_history = DB::table('user_plan_history')->where('user_id', $transaction['user_id'])->orderBy('created_at', 'desc')->first();
 									$customer_active_plan = DB::table('customer_active_plan')
-														->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-														->first();
-									
-									if($customer_active_plan->account_type == "enterprise_plan" && (int)$transaction->enterprise_visit_deduction == 1)  {
-										MemberHelper::returnPlanHistoryVisit($user_id);
-									}
+									->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+									->first();
+								} else {
+									$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $transaction['user_id'])->orderBy('created_at', 'desc')->first();
+									$customer_active_plan = DB::table('dependent_plans')
+									->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+									->first();
 								}
 								
+								if($customer_active_plan->account_type == "enterprise_plan")  {
+									MemberHelper::returnPlanHistoryVisit($transaction['user_id']);
+								}
 							}
 							// send email
-
-							if($user->Email) {
-								$email['member'] = ucwords($user->Name);
-								$email['credits'] = $transaction['total_amount'];
-								$email['total_amount'] = $transaction['total_amount'];
-								$email['bill_amount'] = $transaction['bill_amount'];
-								$email['transaction_id'] = $transaction['transaction_id'];
-								$email['transaction_date'] = $transaction['transaction_date'];
-								$email['health_provider_name'] = $transaction['health_provider_name'];
-								$email['health_provider_address'] = $transaction['health_provider_address'];
-								$email['health_provider_city'] = $transaction['health_provider_city'];
-								$email['health_provider_country'] = $transaction['health_provider_country'];
-								$email['health_provider_phone'] = $transaction['health_provider_phone'];
-								$email['health_provider_postal'] = $transaction['health_provider_postal'];
-								$email['service'] = $transaction['service'];
-								$email['emailSubject'] = 'Member - Refunded Transaction';
-								$email['emailTo'] = $user->Email;
-								$email['emailName'] = ucwords($user->Name);
-								$email['clinic_type_image'] = $transaction['clinic_type'];
-								$email['emailPage'] = 'email-templates.email-member-refunded-transaction';
-								$email['lite_plan_status'] = $transaction['lite_plan'];
-								$email['consultation'] = $transaction['consultation'];
-								$email['total_credits'] = $transaction['credits'];
-								$email['paid_by_credits'] = $transaction['paid_by_credits'];
-								$email['paid_by_cash'] = $transaction['paid_by_cash'];
-								$email['cap_per_visit'] = $transaction['cap_per_visit'];
-								$email['cap_per_visit_status'] = $transaction['cap_per_visit_status'];
-								$email['lite_plan_enabled'] = $transaction['lite_plan'];
-								$email['currency_symbol'] = $transaction['currency_symbol'];
-								EmailHelper::sendEmailRefundWithAttachment($email);
+							try {
+								if($user->Email) {
+									$email['member'] = ucwords($user->Name);
+									$email['credits'] = $transaction['total_amount'];
+									$email['total_amount'] = $transaction['total_amount'];
+									$email['bill_amount'] = $transaction['bill_amount'];
+									$email['transaction_id'] = $transaction['transaction_id'];
+									$email['transaction_date'] = $transaction['transaction_date'];
+									$email['health_provider_name'] = $transaction['health_provider_name'];
+									$email['health_provider_address'] = $transaction['health_provider_address'];
+									$email['health_provider_city'] = $transaction['health_provider_city'];
+									$email['health_provider_country'] = $transaction['health_provider_country'];
+									$email['health_provider_phone'] = $transaction['health_provider_phone'];
+									$email['health_provider_postal'] = $transaction['health_provider_postal'];
+									$email['service'] = $transaction['service'];
+									$email['emailSubject'] = 'Member - Refunded Transaction';
+									$email['emailTo'] = $user->Email;
+									$email['emailName'] = ucwords($user->Name);
+									$email['clinic_type_image'] = $transaction['clinic_type'];
+									$email['emailPage'] = 'email-templates.email-member-refunded-transaction';
+									$email['lite_plan_status'] = $transaction['lite_plan'];
+									$email['consultation'] = $transaction['consultation'];
+									$email['total_credits'] = $transaction['credits'];
+									$email['paid_by_credits'] = $transaction['paid_by_credits'];
+									$email['paid_by_cash'] = $transaction['paid_by_cash'];
+									$email['cap_per_visit'] = $transaction['cap_per_visit'];
+									$email['cap_per_visit_status'] = $transaction['cap_per_visit_status'];
+									$email['lite_plan_enabled'] = $transaction['lite_plan'];
+									$email['currency_symbol'] = $transaction['currency_symbol'];
+									EmailHelper::sendEmailRefundWithAttachment($email);
+								}
+							} catch(Exception $e) {
+								$email['end_point'] = url('clinic/remove/transaction', $parameter = array(), $secure = null);
+								$email['logs'] = 'Refund Transaction from Clinic - '.$e;
+								$email['emailSubject'] = 'Error log.';
+								EmailHelper::sendErrorLogs($email);
+								return array(
+									'status'	=> TRUE,
+									'message'	=> 'Success.'
+								);
 							}
+							
 						} catch(Exception $e) {
 							$email['end_point'] = url('clinic/remove/transaction', $parameter = array(), $secure = null);
-							$email['logs'] = 'Refund Transaction from Clinic - '.$e->getMessage();
+							$email['logs'] = 'Refund Transaction from Clinic - '.$e;
 							$email['emailSubject'] = 'Error log.';
 							EmailHelper::sendErrorLogs($email);
 							return array(
