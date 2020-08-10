@@ -75,7 +75,7 @@
 		    		<br />
 		    		<span style="font-weight: normal;">Singapore</span>
 		    		<p></p>
-		    		<span style="font-weight: normal;">+65 6254 7889</span>
+		    		<span style="font-weight: normal;">+65 3163 5403</span>
 		    		<br />
 		    		<span style="font-weight: normal;">mednefits.com</span>
 	    		</b>

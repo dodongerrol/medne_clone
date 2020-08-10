@@ -189,7 +189,7 @@
 						<h4 class="font-open-sans">happiness@mednefits.com</h4>
 
 						<h5 class="color-blue margin-bottom-20 margin-top-30">Call Us</h5>
-						<h4 class="font-open-sans">+65 6254 7889</h4>
+						<h4 class="font-open-sans">+65 3163 5403</h4>
 
 						<!-- <h5 class="color-blue">Let's Stay Connected</h5>
 						<div class="social">

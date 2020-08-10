@@ -145,7 +145,7 @@
    </div>
    
     <div id="contact-detail" style="padding-left:18px; font-family: 'Varela Round', sans-serif; color:#9c9c9c; padding-bottom:20px;"> 
-       <span> +65 6254 7889 </span> 
+       <span> +65 3163 5403 </span> 
        <span> 
            <a style="text-decoration:none;  color:#9c9c9c; border-left: 1px solid; margin-left: 3px; padding-left: 6px;" href="mailto:happiness@mednefits.com">        happiness@mednefits.com
            </a>
