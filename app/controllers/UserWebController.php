@@ -53,7 +53,7 @@ class UserWebController extends BaseController {
                          'partner_id'             => $input['partner_id'],
                          'bank_name'             => $input['bank_name'],
                          'billing_address'        => $input['billing_address'],
-                         'bank_account_type'      => $input['bank_account_type'],
+                         'company_billing_name'      => $input['bank_account_type'],
                          'bank_account_number'    => $input['bank_account_number']
                     );
                     $result = $bank->createBankDetails($data);
