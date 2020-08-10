@@ -495,12 +495,12 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// update dependent details
 	Route::post('hr/update_dependent_active_plan_details', 'BenefitsDashboardController@updateActiveDependentDetails');
 	Route::get('hr/get_users_by_active_plan', 'BenefitsDashboardController@enrolledUsersFromActivePlan');
-	// downloand plan invoice
-	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 });
 
+	// downloand plan invoice
+	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get company employees and credits left
 	Route::get('hr/get_company_employee_lists_credits', 'BenefitsDashboardController@newGetCompanyEmployeeWithCredits');
 	
