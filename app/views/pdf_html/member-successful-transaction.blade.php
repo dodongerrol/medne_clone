@@ -258,7 +258,7 @@
                   Contact support
                 </div>
                 <p style="color: #999;font-size: 13px;">
-                  +65 6254 7889
+                  +65 3163 5403
                   <br>
                   <span style="text-decoration: underline;">happiness@mednefits.com</span>
                 </p>

@@ -167,9 +167,8 @@ app.directive('benefitsTiersDirective', [
 						}
 					} else if (scope.downloadWithDependentsCheckbox == true) { 
 						//scope.reviewExcelData.name slide 21
-						if (scope.reviewExcelData.format &&
-							scope.reviewExcelData.dob && scope.reviewExcelData.email &&
-							scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start) {
+						// scope.reviewExcelData.email &&
+						if (scope.reviewExcelData.format && scope.reviewExcelData.dob && scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start) {
 							if (scope.downloadWithDependents == true) {
 								if (scope.reviewExcelData.relationship) {
 									scope.downloadWithDependentsCheckbox = false;
