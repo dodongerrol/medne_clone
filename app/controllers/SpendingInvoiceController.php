@@ -454,4 +454,53 @@ class SpendingInvoiceController extends \BaseController {
         return $pdf->stream();
     }
 
+    public function getMemberAllocationActivity( )
+	{	
+        $input = Input::all();
+		if(empty($input['customer_id']) || $input['customer_id'] == null) {
+			return ['status' => false, 'message' => 'customer_id is required.'];
+		}
+
+		if(empty($input['spending_type']) || $input['spending_type'] == null) {
+			return ['status' => false, 'message' => 'spending_type is required.'];
+		}
+
+		$per_page = !empty($input['limit']) ? $input['limit'] : 10;
+		$customer_id = $input['customer_id'];
+
+		$credit_wallet_activity = DB::table('credit_wallet_activity')
+								->where('customer_id', $customer_id)
+								->where('spending_type', $input['spending_type'])
+								->orderBy('created_at', 'desc')
+								->paginate($per_page);
+
+		
+			$pagination = [];
+			$pagination['current_page'] = $credit_wallet_activity->getCurrentPage();
+			$pagination['last_page'] = $credit_wallet_activity->getLastPage();
+			$pagination['total'] = $credit_wallet_activity->getTotal();
+			$pagination['per_page'] = $credit_wallet_activity->getPerPage();
+			$pagination['count'] = $credit_wallet_activity->count();
+			$format = [];
+
+			//do some format
+			foreach($credit_wallet_activity as $key => $activity) {
+
+				$temp = array(
+					'mednefits_credits_id'	=> $activity->mednefits_credits_id,
+					'customer_id'	=> $activity->customer_buy_start_id,
+					'credit'	=> $activity->credit,
+					'type' => $activity->type,
+					'spending_type'	=> $activity->spending_type,
+					'currency_type' => $activity->currency_type,
+					'created_at' => date('j M Y', strtotime($activity->created_at)),
+					'company' => $activity->company_name,
+				);
+
+				array_push($format, $temp);
+			}
+
+			$pagination['data'] = $format;
+			return $pagination;
+	}
 }
