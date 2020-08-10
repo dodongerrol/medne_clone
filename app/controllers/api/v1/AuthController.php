@@ -1202,8 +1202,8 @@ return Response::json($returnObject);
                     //  if($company_wallet_status == "Health Wallet") {
                     //   $wallet_status = true;
                     // }
-                  // }
-                  // get services
+                    // }
+                    // get services
                   if((int)$trans->multiple_service_selection == 1)
                   {
                     // get multiple service
