@@ -15940,7 +15940,8 @@ class BenefitsDashboardController extends \BaseController {
 
 		if(!$hr->fullname) {
 			// update info
-			$customer = DB::table('customer_business_contact')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
+			$customer = DB::table('customer_business_contact')->where('customer_buy_start_id', $hr->customer_buy_start_id)
+			->first();
 
 			if($customer) {
 				$hr_acount_details = [

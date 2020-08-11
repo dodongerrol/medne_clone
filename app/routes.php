@@ -241,8 +241,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
 	// update employee details
 	Route::post('hr/employee/update', 'BenefitsDashboardController@updateEmployeeDetails');
-	
-
+	//
+	Route::get('hr/spending_account_activity', 'BenefitsDashboardController@spendingAccountActivities');
 	// get company details and contacts
 	Route::get('hr/company_contacts', 'BenefitsDashboardController@getCompanyContacts');
 	// get transactions
@@ -299,6 +299,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/save/payment/method/new_active_plan', 'BenefitsDashboardController@newPaymentAddedPurchaseEmployee');
 	// get hr activity
 	Route::get('hr/get_activity', 'EclaimController@getHrActivity');
+	Route::get('hr/get_spending_invoice_history_list', 'InvoiceController@spendingInvoiceHistoryList');
 	
 	// search employee activity
 	Route::post('hr/search_employee_activity', 'EclaimController@searchEmployeeActivity');
@@ -498,6 +499,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	// get member allocation activity
 	Route::get('hr/get_member_allocation_activity', 'SpendingInvoiceController@getMemberAllocationActivity');
+	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 });
 
 	// get company employees and credits left
