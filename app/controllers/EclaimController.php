@@ -172,10 +172,6 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-		// check if it is myr or sgd
-		if($check_user_balance->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
 
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
@@ -198,11 +194,9 @@ class EclaimController extends \BaseController {
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
 			// check if it is myr or sgd
-		if($check_user_balance->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
-
-			
+			if($check_user_balance->currency_type == "myr" ) {
+				return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+			}
 
 			if($limit <= 0) {
 				return ['status' => false, 'message' => 'Maximum of 14 visits already reached.'];
