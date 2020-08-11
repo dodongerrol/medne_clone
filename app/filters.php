@@ -206,11 +206,11 @@ Route::filter('auth.v2', function($request, $response)
 
         // return StringHelper::requestHeader();
         // check if there is a header authorization
-        $token = StringHelper::getToken();
-        if(!$token) {
-            $returnObject->expired = true;
-          return Response::json($returnObject, 200);
-        }
+        // $token = StringHelper::getToken();
+        // if(!$token) {
+        //     $returnObject->expired = true;
+        //   return Response::json($returnObject, 200);
+        // }
 
         $findUserID = AuthLibrary::validToken();
         
@@ -223,19 +223,19 @@ Route::filter('auth.v2', function($request, $response)
 
         // check if user is still valid on the last day of the deletion
         $member_id = StringHelper::getUserId($findUserID);
-        $employee_status = PlanHelper::getEmployeeStatus($member_id);
-        if($employee_status['status'] == true)  {
-            $expiry = date('Y-m-d', strtotime($employee_status['expiry_date']));
-            $expiry = PlanHelper::endDate($expiry);
-            if($today > $expiry) {
-                $user = false;
-            } else {
-                $user = DB::table('user')->where('UserID', $findUserID)->first();
+        $user = DB::table('user')->where('UserID', $findUserID)->where('Active', 1)->first();
+        return $user;
+        if($user->Active == 0) {
+            $employee_status = PlanHelper::getEmployeeStatus($member_id);
+            if($employee_status['status'] == true)  {
+                $expiry = date('Y-m-d', strtotime($employee_status['expiry_date']));
+                $expiry = PlanHelper::endDate($expiry);
+                if($today > $expiry) {
+                    $user = false;
+                }
             }
-        } else {
-            $user = DB::table('user')->where('UserID', $findUserID)->where('Active', 1)->first();
         }
-
+        
         if(!$user) {
           $returnObject->status = FALSE;
           $returnObject->expired = true;

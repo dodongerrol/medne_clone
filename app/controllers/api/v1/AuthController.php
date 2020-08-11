@@ -649,7 +649,8 @@ return Response::json($returnObject);
         public function GetUserProfileInformation($profileid){
         	$userinsurancepolicy = new UserInsurancePolicy();
         	$returnArray = new stdClass();
-        	$findUserProfile = $this->GetUserProfile($profileid);
+          // $findUserProfile = $this->GetUserProfile($profileid);
+          $findUserProfile = DB::table('user')->where('UserID', $profileid)->first();
         	$findUserAllergy = $this->GetUserAllergies($profileid);
         	$findUserMedication = $this->GetUserMedications($profileid);
         	$findUserCondition = $this->GetUserConditions($profileid);
@@ -657,7 +658,7 @@ return Response::json($returnObject);
           $user_id = StringHelper::getUserId($profileid);
           
           if($findUserProfile){
-            $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
+            // $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
             $returnArray->status = TRUE;
             $returnArray->login_status = TRUE;
             $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
@@ -682,6 +683,7 @@ return Response::json($returnObject);
             $returnArray->data['profile']['weight'] = $findUserProfile->Weight;
             $returnArray->data['profile']['height'] = $findUserProfile->Height;
             $returnArray->data['profile']['currency_type'] = $wallet->currency_type;
+            $returnArray->data['insurance'] = null;
             if((int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 0 || (int)$findUserProfile->UserType == 5 && (int)$findUserProfile->access_type == 1) {
               $returnArray->data['profile']['to_update_auto_logout'] = $findUserProfile->account_update_status == 0 && $findUserProfile->account_already_update == 0 ? true : false;
             } else {
@@ -696,27 +698,27 @@ return Response::json($returnObject);
            $returnArray->data['profile']['blood_type'] = $findUserProfile->Blood_Type;
                     //This one need to change when image upload available
            $returnArray->data['profile']['photo_url'] = $findUserProfile->Image;
-           if($userPolicy){
-             $returnArray->data['profile']['insurance_company'] = $userPolicy->Name;
-             $returnArray->data['profile']['insurance_policy_no'] = $userPolicy->PolicyNo;
-             $returnArray->data['profile']['insurance_policy_name'] = $userPolicy->PolicyName;
-           }else{
-             $returnArray->data['profile']['insurance_company'] = null;
-             $returnArray->data['profile']['insurance_policy_no'] = null;
-             $returnArray->data['profile']['insurance_policy_name'] = null;
-           }
-                    //Insurance details
-           if($userPolicy){
-             $returnArray->data['insurance']['insurance_id'] = $userPolicy->UserInsurancePolicyID;
-             $returnArray->data['insurance']['name'] = $userPolicy->Name;
-             $returnArray->data['insurance']['policy_no'] = $userPolicy->PolicyNo;
-             $returnArray->data['insurance']['policy_name'] = $userPolicy->PolicyName;
-             $returnArray->data['insurance']['expire_date'] = 0;
-                        //$returnArray->data['insurance']['image_url'] = URL::to('/assets/'.$userPolicy->Image);
-             $returnArray->data['insurance']['image_url'] = $userPolicy->Image;
-           }else{
-             $returnArray->data['insurance'] = null;
-           }
+          //  if($userPolicy){
+          //    $returnArray->data['profile']['insurance_company'] = $userPolicy->Name;
+          //    $returnArray->data['profile']['insurance_policy_no'] = $userPolicy->PolicyNo;
+          //    $returnArray->data['profile']['insurance_policy_name'] = $userPolicy->PolicyName;
+          //  }else{
+          //    $returnArray->data['profile']['insurance_company'] = null;
+          //    $returnArray->data['profile']['insurance_policy_no'] = null;
+          //    $returnArray->data['profile']['insurance_policy_name'] = null;
+          //  }
+          //           //Insurance details
+          //  if($userPolicy){
+          //    $returnArray->data['insurance']['insurance_id'] = $userPolicy->UserInsurancePolicyID;
+          //    $returnArray->data['insurance']['name'] = $userPolicy->Name;
+          //    $returnArray->data['insurance']['policy_no'] = $userPolicy->PolicyNo;
+          //    $returnArray->data['insurance']['policy_name'] = $userPolicy->PolicyName;
+          //    $returnArray->data['insurance']['expire_date'] = 0;
+          //               //$returnArray->data['insurance']['image_url'] = URL::to('/assets/'.$userPolicy->Image);
+          //    $returnArray->data['insurance']['image_url'] = $userPolicy->Image;
+          //  }else{
+          //    $returnArray->data['insurance'] = null;
+          //  }
 
                     //Allagies
            if($findUserAllergy){
