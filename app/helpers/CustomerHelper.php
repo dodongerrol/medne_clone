@@ -458,7 +458,7 @@ class CustomerHelper
 			} else {
 				return array(
 					'status' => true,
-					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+Medical.xlsx',
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+All.xlsx',
 					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 				);
 			}
@@ -472,8 +472,8 @@ class CustomerHelper
 			} else {
 				return array(
 					'status' => true,
-					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/employees/Employee+NO-SA-R.xlsx',
-					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/dependents/Employees-and-Dependents+NO-SA-R.xlsx'
+					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/employees/Employee-Wellness.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/enterprise/dependents/Employees-and-Dependents-Wellness.xlsx'
 				);
 			}
 		} else if($status['account_type'] == "enterprise_plan" && $status['wellness_enabled'] == false) {
@@ -519,6 +519,7 @@ class CustomerHelper
 
 	public static function getAccountSpendingBasicPlanStatus($customer_id)	
 	{
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		// $activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
@@ -532,6 +533,7 @@ class CustomerHelper
 			'wellness_method'	=> $spending->wellness_plan_method,
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
 			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
+			'currency_type'		=> $customer->currency_type
 		);
 	}
 

@@ -25,7 +25,8 @@ app.directive('prepareDirective', [
 				}
 
 				scope.nextBtn	=	function(){
-					if (scope.reviewExcelData.format && scope.reviewExcelData.dob && scope.reviewExcelData.email && 
+					// && scope.reviewExcelData.email
+					if (scope.reviewExcelData.format && scope.reviewExcelData.dob && 
 						scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start) {
 						if (scope.isWithDependents == true) {
 							if (scope.reviewExcelData.relationship) {
