@@ -17,7 +17,8 @@
   </div>
   <div class="mwbc-box-container">
     <h4 class="member-bold-text"> Mednefits Credits Account</h4>
-    <div class="mwbc-card-box-container mednefits-credits-account pending">
+    <!-- add class "pending" if the account is still pending -->
+    <div class="mwbc-card-box-container mednefits-credits-account">
       <span ng-if="true" class="credits-on-hold-text">Credits amounts are on hold due to Pending Mednefits Credits Account Invoice</span>
       <div class="mednefits-available-credits display-flex">
         <div class="available-credits flex-1">
@@ -40,7 +41,7 @@
           </span>
         </div>
         <div>
-          <button class="btn-top-up-credits">Top up credits</button>
+          <button data-toggle="modal" data-target="#top-up-credits-modal" class="btn-top-up-credits">Top up credits</button>
         </div>
       </div>
       <div class="credits-info-details-container display-flex">
@@ -213,6 +214,101 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade spending-account-modal" id="top-up-credits-modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h5>Top Up Mednefits Credits</h5>
+            <span>Input amount of Total Credits or Purchased Credits you wish to top up</span>
+          </div>
+          <div class="modal-body top-up-body-container">
+            <div class="display-flex">
+              <div>
+                <div class="company-account-text"><span class="asterisk-red">*</span>How much do you want to top up to the company account?</div>
+              </div>
+              <div>
+                <div class="top-up-credits-container">
+                  <h5 class="member-bold-text">Total Credits</h5>
+                  <span>*The credits amount will be added to company account</span>
+                  <div class="top-up-input-wrapper">
+                    <div>SGD</div>
+                    <input type="number">
+                  </div>
+                </div>
+                <div class="top-up-calculation-wrapper">
+                  <div class="dp-flex-ai top-up-see-calc-wrapper">
+                    <div class="top-up-icon-container see-calc">
+                      <i ng-if="false" class="fa fa-angle-down"></i>
+                      <img src="../../assets/hr-dashboard/img/blue-angle-up.png">
+                      <img ng-if="false" src="../../assets/hr-dashboard/img/blue-angle-down.png">
+                    </div>
+                    <div>
+                      <span>See calculation</span>
+                      <span ng-if="false">Hide calculation</span>
+                    </div>
+                  </div>
+                  <div class="dp-flex-ai">
+                    <div class="top-up-icon-container calc-details">
+                      <i class="fa fa-minus"></i>
+                    </div>
+                    <div class="bonus-credits-amount"><span class="member-bold-text">SGD 1,800.00</span> <span class="member-bold-text">(Bonus Credits)</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="display-flex">
+              <div>
+                <div class="company-account-text"><span class="asterisk-red">*</span>How much does the company need to pay?</div>
+              </div>
+              <div>
+                <div class="top-up-credits-container">
+                  <h5 class="member-bold-text">Purchased Credits</h5>
+                  <span>*The credits amount company will be paying for</span>
+                  <div class="top-up-input-wrapper">
+                    <div>SGD</div>
+                    <input type="number">
+                  </div>
+                </div>
+                <div class="bonus-credtits-rate-container">
+                  <div>
+                    <i class="fa fa-angle-down"></i>
+                    <i ng-if="false" class="fa fa-angle-up"></i>
+                    <span>See Bonus Credits rate</span>
+                  </div>
+                  <div class="top-up-bonus-credits-container top-up-credits-container">
+                    <h5 class="member-bold-text">Bonus Credits</h5>
+                    <span>*The percentage of Purchased Credits given by Mednefits</span>
+                    <div class="top-up-input-wrapper">
+                      <div>%</div>
+                      <input type="number">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="display-flex">
+              <div>
+                <div class="company-account-text"><span class="asterisk-red">*</span>Invoice Date</div>
+              </div>
+              <div>
+                <div class="top-up-credits-container invoice-date">
+                  <div class="top-up-input-wrapper">
+                    <input type="number">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-if="true" class="btn-update">Top Up</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

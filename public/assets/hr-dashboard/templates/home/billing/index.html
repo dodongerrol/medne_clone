@@ -1,0 +1,210 @@
+<div class="spending-billing-wrapper">
+  <div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
+		<!-- <div class="container"> -->
+		<div class="welcome-container">
+			<h4 ui-sref="benefits-dashboard">Overview</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4  ng-click="toggleEmployee()">Employee</h4>
+			<div class="arrow-up" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="activity">Activity</h4>
+			<div class="arrow-up-3" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container" ng-if="options.accessibility == 1">
+			<h4 ui-sref="e-claim">Claim</h4>
+			<div class="arrow-up-4" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container statement-hide">
+			<h4 ui-sref="statement">Statement</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="account-and-payment">Account</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="member-wallet-benefits-coverage.mednefits-credits-account">Member Wallet & Benefits Coverage</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<div class="welcome-container">
+			<h4 ui-sref="spending-billing">Billing</h4>
+			<div class="arrow-up-5" style="visibility: hidden;"></div>
+		</div>
+		<!-- </div> -->
+	</div>
+  <div class="spending-billing-container">
+    <div class="show-details-on-container">
+      <div class="flex-1">
+        <span class="member-bold-text">Show details on</span> 
+        <div class="current-term-input-wrapper">
+          <span>Current term</span>
+          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+          <i class="fa fa-angle-down"></i>
+        </div>
+        <div>
+          <button>Apply</button>
+        </div>
+      </div>
+      <div>
+        <button class="btn-download-soa"> <img src="../../assets/hr-dashboard/img/blue-download.png"> Download SOA</button>
+      </div>
+    </div>
+    <div>
+      <div class="billing-invoice-history-header display-flex">
+        <div class="display-flex flex-1">
+          <h4 class="member-bold-text">Invoice History</h4>
+          <div  class="invoice-type-select-wrapper">
+            <select>
+              <option>Spending</option>
+              <option>Plan</option>
+              <option>Refund</option>
+              <option>Deposit</option>
+            </select>
+            <i class="fa fa-angle-down"></i>
+          </div>
+        </div>
+        <div class="total-outstanding-container display-flex">
+          <div></div>
+          <div>
+            <span>Total Outstanding</span>
+            <div>SGD 506.00</div>
+          </div>
+        </div>
+      </div>  
+      <div class="billing-invoice-history-body">
+        <div>
+          <table class="billing-tbl-invoice">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Invoice Date</th>
+                <th>Number</th>
+                <th>Amount Due</th>
+                <th>Panel/Non-panel</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="dp-flex-ai invoice-status-wrapper">
+                    <i class="fa fa-angle-down"></i>
+                    <div class="invoice-status pending">Pending</div>
+                  </div>
+                </td>
+                <td>01 Feb 2010</td>
+                <td>000056634</td>
+                <td>SGD 500.00</td>
+                <td>Mednefits Panel</td>
+                <td class="download-dot-container"><img class="download-dot-img" src="../../assets/hr-dashboard/img/three-dot.png"></td>
+              </tr>
+              <tr ng-if="true" class="invoice-history-info">
+                <td colspan="6" class="invoice-credits-info-wrapper">
+                  <div class="invoice-credits-info-container display-flex credits-not-enough">
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Amount Due: </span>
+                        <span>SGD 500.00</span>
+                      </div>
+                      <!-- <div>
+                        <span>Remarks: </span>
+                      </div> -->
+                    </div>
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Payment Due: </span>
+                        <span>16 Feb 2020</span>
+                      </div>
+                    </div>
+                    <div></div>
+                  </div>
+                  <div class="invoice-credits-info-container display-flex">
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Amount Due: </span>
+                        <span>SGD 500.00</span>
+                      </div>
+                      <div class="invoice-credits-remarks">
+                        <span class="member-bold-text">Remarks: </span>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Payment Due: </span>
+                        <span>16 Feb 2020</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Payment Method: </span>
+                        <span>Bank Transfer</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="dp-flex-ai invoice-status-wrapper">
+                    <i class="fa fa-angle-down"></i>
+                    <div class="invoice-status pending">Pending</div>
+                  </div>
+                </td>
+                <td>01 Feb 2010</td>
+                <td>000056634</td>
+                <td>SGD 500.00</td>
+                <td>Mednefits Panel</td>
+                <td class="download-dot-container">
+                  <img class="download-dot-img" src="../../assets/hr-dashboard/img/three-dot.png">
+                  <div class="download-dp-container">
+                    <div>View Invoice</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="custom-pagination-container flex-1">
+            <div class="custom-pagination">
+              <div class="page-wrapper">
+                <div class="page-scroll-container">
+                  <span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                    <i class="fa fa-angle-left"></i> 
+                    <span>Prev</span>
+                  </span>
+                  <div class="pages-list">
+                      
+                    <!-- <span class="page-num active">1</span>	 -->
+                    <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
+  
+                     <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+                    
+                  </div>
+                  <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
+                    <span>Next</span>
+                    <i class="fa fa-angle-right"></i> 
+                  </span>
+                </div>
+              </div>
+              <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
+              <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+                <span><span>10</span> per page</span>
+                <span>  
+                  <i class="fa fa-caret-down"></i>
+                </span>
+                <div class="opened-per-page-scroll invoice-per-page-container">
+                  <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
+                  <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
+                  <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
+                  <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
