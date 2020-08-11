@@ -506,11 +506,9 @@ class SpendingInvoiceController extends \BaseController {
     
     public function getCompanyInvoiceHistory( )
 	{
+		$session = self::checkSession();
+		$customer_id = $session->customer_buy_start_id;
         $input = Input::all();
-        
-		if(empty($input['customer_id']) || $input['customer_id'] == null) {
-			return array('status' => false, 'message' => 'Company customer id is required.');
-		}
 
 		if(empty($input['type']) || $input['type'] == null) {
 			return array('status' => false, 'message' => 'type is required.');
@@ -534,7 +532,7 @@ class SpendingInvoiceController extends \BaseController {
 			// 	$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $request->get('customer_id'))->where('statement_status', $type)->orderBy('statement_date', 'desc')->paginate($limit);
 			// }
 
-			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $input['customer_id'])->orderBy('statement_date', 'desc')->paginate($limit);
+			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
 
 			$pagination['current_page'] = $credits_statements->getCurrentPage();
 			$pagination['last_page'] = $credits_statements->getLastPage();
@@ -624,7 +622,7 @@ class SpendingInvoiceController extends \BaseController {
 										->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
 										->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
 										->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-										->where('customer_buy_start.customer_buy_start_id', $input['customer_id'])
+										->where('customer_buy_start.customer_buy_start_id', $customer_id)
 										->orderBy('corporate_invoice.invoice_date', 'desc')
 										->paginate($limit);
 
@@ -689,7 +687,7 @@ class SpendingInvoiceController extends \BaseController {
 			$deposits = DB::table('spending_deposit_credits')
 							->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', "=", 'spending_deposit_credits.customer_active_plan_id')
 							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', "=", 'customer_active_plan.customer_start_buy_id')
-							->where('customer_buy_start.customer_buy_start_id', $input['customer_id'])
+							->where('customer_buy_start.customer_buy_start_id', $customer_id)
 							->orderBy('spending_deposit_credits.invoice_date', 'desc')
 	                       ->paginate($limit);
 	
@@ -757,7 +755,7 @@ class SpendingInvoiceController extends \BaseController {
 							->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id',"=",'payment_refund.customer_active_plan_id')
 							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id',"=", 'customer_active_plan.customer_start_buy_id')
 							->whereIn('customer_active_plan.account_type',['stand_alone_plan', "=",'lite_plan'])
-							->where('customer_buy_start.customer_buy_start_id', $input['customer_id'])
+							->where('customer_buy_start.customer_buy_start_id', $customer_id)
 							->orderBy('payment_refund.created_at', 'desc')
 							->paginate($limit);
 			
