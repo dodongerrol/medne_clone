@@ -444,7 +444,7 @@ return Response::json($returnObject);
         	$AccessToken = new Api_V1_AccessTokenController();
         	$authSession = new OauthSessions();
         	$getRequestHeader = StringHelper::requestHeader();
-            // return $getRequestHeader['Authorization'];
+            // return $getRequestHeader;
         	if(!empty($getRequestHeader['Authorization'])){
         		$getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
                 // return $getAccessToken->session_id;
