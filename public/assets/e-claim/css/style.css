@@ -2276,3 +2276,6 @@ body::-webkit-scrollbar-thumb {
   grid-template-columns: 1fr 1fr;
   margin-top: 20px;
 }
+button{
+  outline: none !important;
+}
