@@ -373,3 +373,16 @@
 .out-of-pocket-wrapper .mwbc-card-box-container {
   width: 350px;
 }
+
+.invoice-status {
+  text-align: center;
+  color: #fff;
+  border-radius: 5px;
+  width: 70px;
+}
+.invoice-status.pending {
+  background-color: #EB635D;
+}
+.invoice-status.paid {
+  background-color: #5BBD76;
+}

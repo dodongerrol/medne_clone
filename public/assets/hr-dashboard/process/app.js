@@ -841,6 +841,18 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     })
 
+    .state('spending-billing', {
+      url: '/spending-billing',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn-emp-overview.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/billing/index.html'
+        }
+      }
+    })
+
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');
