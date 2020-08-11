@@ -56,14 +56,14 @@ return array(
 			'driver'    => 'mysql',
 				'read' => array(
 					// Return a random host
-					'host' => 'localhost'
+					'host' => 'db.medicloud.sg'
 			),
 			'write' => array(
-					'host' => 'localhost'
+					'host' => 'medicloud-db.ceszful8sael.ap-southeast-1.rds.amazonaws.com'
 			),
 			'database'  => 'medicloud_v3',
 			'username'  => 'root',
-			'password'  => '',
+			'password'  => 'root',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => 'medi_',

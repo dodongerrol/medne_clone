@@ -209,9 +209,33 @@ Route::filter('auth.v2', function($request, $response)
         $token = StringHelper::getToken();
         if(!$token) {
             $returnObject->expired = true;
-          return Response::json($returnObject, 200);
+            return Response::json($returnObject, 200);
         }
 
+        if(isset($token['Authorization']) && isset($token['Authorization']->error) && $token['Authorization']->error == true) {
+            return Response::json($token['Authorization'], 200);
+        } else if(isset($token['Authorization']) && $token['Authorization'] != null) {
+            $token = $token['Authorization'];
+        }
+        
+        $AccessToken = new Api_V1_AccessTokenController();
+        $authSession = new OauthSessions();
+
+        $getAccessToken = $AccessToken->FindToken($token);
+        if($getAccessToken){
+            $findUserID = $authSession->findUserID($getAccessToken->session_id);
+            if(!$findUserID){
+                $returnObject->status = FALSE;
+                $returnObject->expired = true;
+                $returnObject->message = StringHelper::errorMessage("Token");
+                return Response::json($returnObject, 200);
+            }
+        } else {
+            $returnObject->status = FALSE;
+            $returnObject->expired = true;
+            $returnObject->message = StringHelper::errorMessage("Token");
+            return Response::json($returnObject, 200);
+        }
         // // $findUserID = AuthLibrary::validToken();
         // if(!$findUserID) {
         //   $returnObject->status = FALSE;
@@ -224,7 +248,6 @@ Route::filter('auth.v2', function($request, $response)
         $member_id = StringHelper::getUserId($findUserID);
         $user = DB::table('user')->where('UserID', $member_id)->where('Active', 1)->first();
         
-        return $user;
         if($user->Active == 0) {
             $employee_status = PlanHelper::getEmployeeStatus($member_id);
             if($employee_status['status'] == true)  {
