@@ -499,6 +499,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	// get member allocation activity
 	Route::get('hr/get_member_allocation_activity', 'SpendingInvoiceController@getMemberAllocationActivity');
+	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 });
 
 	// get company employees and credits left
