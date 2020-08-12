@@ -647,14 +647,12 @@ return Response::json($returnObject);
 
         //No public direct access allowed
         public function GetUserProfileInformation($profileid){
+          $input = Input::all();
         	$userinsurancepolicy = new UserInsurancePolicy();
         	$returnArray = new stdClass();
         	$findUserProfile = $this->GetUserProfile($profileid);
-        	$findUserAllergy = $this->GetUserAllergies($profileid);
-        	$findUserMedication = $this->GetUserMedications($profileid);
-        	$findUserCondition = $this->GetUserConditions($profileid);
-        	$findMedicalHistory = $this->GetUserMedicalHistory($profileid);
           $user_id = StringHelper::getUserId($profileid);
+          $properties = !empty($input['type']) && $input['type'] == "with_medical_properties" ? "with_medical_properties" : "profile";
           
           if($findUserProfile){
             $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
@@ -662,10 +660,9 @@ return Response::json($returnObject);
             $returnArray->login_status = TRUE;
             $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
             $user_plan_history = DB::table('user_plan_history')
-                ->where('user_id', $user_id)
-                ->where('type', 'started')
-                ->orderBy('created_at', 'desc')
-                ->first();
+                      ->where('user_id', $user_id)
+                      ->where('type', 'started')
+                      ->first();
 
             $customer_active_plan = DB::table('customer_active_plan')
               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
@@ -718,96 +715,97 @@ return Response::json($returnObject);
              $returnArray->data['insurance'] = null;
            }
 
-                    //Allagies
-           if($findUserAllergy){
-             foreach($findUserAllergy as $allergy){
-              $getAllergy['allergy_id'] = $allergy->AllergyID;
-              $getAllergy['name'] = $allergy->Name;
-              $allAllergy[] = $getAllergy;
-            }
-            $returnArray->data['allergies'] = $allAllergy;
-          }else{
-           $returnArray->data['allergies'] = null;
-         }
+           if($properties == "with_medical_properties") {
+            $findUserAllergy = $this->GetUserAllergies($profileid);
+            $findUserMedication = $this->GetUserMedications($profileid);
+            $findUserCondition = $this->GetUserConditions($profileid);
+            $findMedicalHistory = $this->GetUserMedicalHistory($profileid);
+              //Allagies
+              if($findUserAllergy){
+                foreach($findUserAllergy as $allergy){
+                  $getAllergy['allergy_id'] = $allergy->AllergyID;
+                  $getAllergy['name'] = $allergy->Name;
+                  $allAllergy[] = $getAllergy;
+                }
+                $returnArray->data['allergies'] = $allAllergy;
+              }else{
+                $returnArray->data['allergies'] = null;
+              }
 
-                    //Medications
-         if($findUserMedication){
-           foreach($findUserMedication as $medication){
-            $getMedication['medication_id'] = $medication->MedicationID;
-            $getMedication['name'] = $medication->Name;
-            $getMedication['dosage'] = $medication->Dosage;
-            $allMedication[] = $getMedication;
-          }
-          $returnArray->data['medications'] = $allMedication;
-        }else{
-         $returnArray->data['medications']= null;
-       }
+              //Medications
+              if($findUserMedication){
+                foreach($findUserMedication as $medication){
+                  $getMedication['medication_id'] = $medication->MedicationID;
+                  $getMedication['name'] = $medication->Name;
+                  $getMedication['dosage'] = $medication->Dosage;
+                  $allMedication[] = $getMedication;
+                }
+                $returnArray->data['medications'] = $allMedication;
+              }else{
+                $returnArray->data['medications']= null;
+              }
 
-                    //Conditions
-       if($findUserCondition){
-         foreach($findUserCondition as $condition){
-          $getCondition['condition_id'] = $condition->ConditionID;
-          $getCondition['name'] = $condition->Name;
-          $newDate = date("d-m-Y", strtotime($condition->Date));
-          $getCondition['date'] = $newDate;
-          $allConditions[] = $getCondition;
-        }
-        $returnArray->data['conditions'] = $allConditions;
+              //Conditions
+              if($findUserCondition){
+                foreach($findUserCondition as $condition){
+                  $getCondition['condition_id'] = $condition->ConditionID;
+                  $getCondition['name'] = $condition->Name;
+                  $newDate = date("d-m-Y", strtotime($condition->Date));
+                  $getCondition['date'] = $newDate;
+                  $allConditions[] = $getCondition;
+                }
+                $returnArray->data['conditions'] = $allConditions;
+              }else{
+                $returnArray->data['conditions'] = null;
+              }
+
+                              //History
+                if($findMedicalHistory){
+                  foreach($findMedicalHistory as $history){
+                    $historyDetail = new UserMedicalHistoryDetail();
+                    $findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
+                    $newDate = date("d-m-Y", strtotime($history->Date));
+                    $getHistory['date'] = $newDate;
+                    $getHistory['record_id'] = $history->HistoryID;
+                    $getHistory['visit_type'] = $history->VisitType;
+                                        //$getHistory['list']['doctor'] = $history->Name;
+                    $getHistory['doctor'] = $history->Doctor_Name;
+                    $getHistory['clinic_name'] = $history->Clinic_Name;
+                                        //need to check clinic
+                                        ///$getHistory['list']['clinic_name'] = $history->Name;
+                    $getHistory['note'] = $history->Note;
+                                        //$getHistory['date'] = $newDate;
+                    if($findHistoryDetail){
+                        foreach($findHistoryDetail as $hisDetail){
+                          $getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
+                          $getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
+                          $getHistory1[] = $getHistoryDetail;
+                        }
+                        $getHistory['attachments'] = $getHistory1;
+                      }else{
+                      $getHistory['attachments'] = null;
+                    }
+                    $allHistory[] = $getHistory;
+                  }
+
+                  $returnArray->data['history'] = $allHistory;
+              }else{
+                $returnArray->data['history'] = null;
+              }
+           }
+      //  check if user is new or old
+      $date = date('Y-m-d');
+      $date_created = date('Y-m-d', strtotime('+14 days', strtotime($user_plan_history->created_at)));
+      if($date_created > $date)  {
+        $returnArray->data['profile']['status'] = "new";
+      } else {
+        $returnArray->data['profile']['status'] = "old";
+      }
       }else{
-       $returnArray->data['conditions'] = null;
-     }
-
-                    //History
-     if($findMedicalHistory){
-       foreach($findMedicalHistory as $history){
-        $historyDetail = new UserMedicalHistoryDetail();
-        $findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
-        $newDate = date("d-m-Y", strtotime($history->Date));
-        $getHistory['date'] = $newDate;
-        $getHistory['record_id'] = $history->HistoryID;
-        $getHistory['visit_type'] = $history->VisitType;
-                            //$getHistory['list']['doctor'] = $history->Name;
-        $getHistory['doctor'] = $history->Doctor_Name;
-        $getHistory['clinic_name'] = $history->Clinic_Name;
-                            //need to check clinic
-                            ///$getHistory['list']['clinic_name'] = $history->Name;
-        $getHistory['note'] = $history->Note;
-                            //$getHistory['date'] = $newDate;
-        if($findHistoryDetail){
-         foreach($findHistoryDetail as $hisDetail){
-          $getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
-          $getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
-          $getHistory1[] = $getHistoryDetail;
-        }
-        $getHistory['attachments'] = $getHistory1;
-      }else{
-       $getHistory['attachments'] = null;
-     }
-     $allHistory[] = $getHistory;
-   }
-
-   $returnArray->data['history'] = $allHistory;
- }else{
-   $returnArray->data['history'] = null;
- }
-//  check if user is new or old
-$date = date('Y-m-d');
-// get latest plan history
-$user_plan_history = DB::table('user_plan_history')
-                ->where('user_id', $user_id)
-                ->where('type', 'started')
-                ->first();
-$date_created = date('Y-m-d', strtotime('+14 days', strtotime($user_plan_history->created_at)));
-if($date_created > $date)  {
-  $returnArray->data['profile']['status'] = "new";
-} else {
-  $returnArray->data['profile']['status'] = "old";
-}
-}else{
-  $returnArray->status = FALSE;
-  $returnArray->message = StringHelper::errorMessage("NoRecords");
-}
-return $returnArray;
+        $returnArray->status = FALSE;
+        $returnArray->message = StringHelper::errorMessage("NoRecords");
+      }
+    return $returnArray;
 }
 
         //Add new user allergy
