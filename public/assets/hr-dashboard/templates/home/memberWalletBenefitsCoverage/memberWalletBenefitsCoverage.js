@@ -24,14 +24,14 @@ app.config(function($stateProvider, $urlRouterProvider){
       }
     })
 
-    .state('member-wallet-benefits-coverage.member-wallet', {
-      url: '/member-wallet',
-      views: {
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/memberWallet/index.html'
-        }
-      }
-    })
+    // .state('member-wallet-benefits-coverage.member-wallet', {
+    //   url: '/member-wallet',
+    //   views: {
+    //     'main': {
+    //       templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/memberWallet/index.html'
+    //     }
+    //   }
+    // })
 
     
     
