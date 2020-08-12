@@ -2116,8 +2116,8 @@ p.number-of-enrollees.inactive-enroll-text {
 
 .employee-overview-table .status-title,
 .employee-overview-table .status-details-wrapper {
-  /* width: 13%; */
-  width: 80px;
+  width: 13%;
+  /* width: 80px; */
   float: left;
 }
 
@@ -2177,10 +2177,13 @@ p.number-of-enrollees.inactive-enroll-text {
 }
 
 .status-details-container .status-color.active {
-  background-color: #33cccc;
+  background-color: #5BBD76;
 }
 .status-details-container .status-color.pending {
-  background-color: #f7c421;
+  background-color: #EB635D;
+}
+.status-details-container .status-color.loggedIn {
+  background-color: #FDFF92;
 }
 .status-details-container .status-color.removed {
   background-color: #f7444e;
@@ -10755,4 +10758,11 @@ span.dropdown-entitlement.disabled {
 }
 .search-wrapper .input-group.isEnterpriseMedical{
   margin-right: -50%;
+}
+
+/* Feedback 4 new account css */
+
+.link-expired-container {
+  width: 50%;
+  margin: 50px auto;
 }
