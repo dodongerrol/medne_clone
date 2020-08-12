@@ -500,6 +500,12 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get member allocation activity
 	Route::get('hr/get_member_allocation_activity', 'SpendingInvoiceController@getMemberAllocationActivity');
 	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
+	// get mednefits credits account
+	Route::get('hr/get_mednefits_credits_account', 'SpendingAccountController@getMednefitsCreditsAccount');
+	// get company wallet details
+	Route::get('hr/get_member_wallet_details', 'SpendingAccountController@getMemberWalletDetails');
+	// get company date terms
+	Route::get('hr/get_company_date_terms', 'SpendingAccountController@getTermsSpendingDates');
 });
 
 	// get company employees and credits left
