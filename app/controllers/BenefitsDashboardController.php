@@ -13548,6 +13548,7 @@ class BenefitsDashboardController extends \BaseController {
 		$total_due = 0;
 		$data_due = null;
 		$paid = false;
+		$due_date = null;
 		$spendings = DB::table('company_credits_statement')
 		->where('statement_customer_id', $customer_id)
 		->where('statement_status', 0)
@@ -13560,12 +13561,24 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			if($key == count( $spendings ) -1) {
-				$data_due = $spend;
+				// $data_due = $spend;
+				$due_date = date('d F Y', strtotime($spend->statement_due));
 			}
 		}
 
-		if($data_due) {
-			return array('status' => true, 'spending_total_due' => number_format($total_due, 2), 'due_date' => date('d F Y', strtotime($data_due->statement_due)), 'currency_type' => $customer->currency_type);
+		// check for spending invoice purchse
+		$spending_purchase_invoices = DB::table('spending_purchase_invoice')
+										->where('customer_id', $customer_id)
+										->where('payment_status', 0)
+										->first();
+		
+		if($spending_purchase_invoices) {
+			$total_due += $spending_purchase_invoices->medical_purchase_credits + $spending_purchase_invoices->wellness_purchase_credits;
+			$due_date = date('d F Y', strtotime($spending_purchase_invoices->invoice_due));
+		}
+
+		if($due_date) {
+			return array('status' => true, 'spending_total_due' => number_format($total_due, 2), 'due_date' => $due_date, 'currency_type' => $customer->currency_type);
 		} else {
 			return array('status' => true, 'spending_total_due' => number_format($total_due, 2), 'currency_type' => $customer->currency_type);
 		}
@@ -15971,7 +15984,7 @@ class BenefitsDashboardController extends \BaseController {
 				'invoice_date'    => date('Y-m-d', strtotime($invoice->invoice_date)),
 				'invoice_due'    => date('Y-m-d', strtotime($invoice->invoice_due)),
 				'invoice_number'  => $invoice->invoice_number,
-				'total'           => $total,
+				'total'           => DecimalHelper::formatDecimal($total),
         		'amount_due'      => $payment_data ? DecimalHelper::formatDecimal($total - $payment_data->paid_amount) : $total,
 				'payment_amount'  => $payment_data ? $payment_data->paid_amount : 0,
 				'payment_date'    => $payment_data && $active->paid == "true" ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
@@ -16828,7 +16841,7 @@ class BenefitsDashboardController extends \BaseController {
 				$filePath     = $file->getRealPath();
 
 				// extracting filename with substr/strlen
-				$relativePath = $request->get('customer_active_plan_id').'/' . substr($filePath, strlen($path) + 1);
+				$relativePath = $input['customer_active_plan_id'].'/' . substr($filePath, strlen($path) + 1);
 				$zip->addFile($filePath, $relativePath);
 			}
 		}
