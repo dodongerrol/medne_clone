@@ -193,4 +193,79 @@ class DashboardController extends \BaseController {
 
 		
 	}
+	/*
+		Payload Legend:
+			*	providersDetails
+			*	provider_id
+
+			parent key in a array
+				- providersDetails
+			Child Keys
+				- providersInfo
+				- providersOperatingHours
+				- providersBreakHours
+	*/
+	function updateProvidersDetail() {
+		try {
+			$payload = Input::all();
+
+			// Update Providers info, operating hours and break hours.
+			if (isset($payload['providersDetails']['providersInfo'])
+				&& isset($payload['providersDetails']['providersOperatingHours'])
+				&& isset($payload['providersDetails']['providersBreakHours'])) {
+					// update providers info
+					new updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
+					// update providers operating hours
+					new updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
+					// update providers break hours
+					new updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					
+					return array(
+						'message' => 'Providers details successfully updated.',
+						'success' => true
+					);
+			} else if(!isset($payload['providersDetails']['providersInfo'])
+				&& isset($payload['providersDetails']['providersOperatingHours'])
+				&& !isset($payload['providersDetails']['providersBreakHours'])) {
+					// update providers operating hours
+					new updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
+					
+					return array(
+						'message' => 'Providers Operating Hours Successfully Updated.',
+						'success' => true
+					);
+			} else if(!isset($payload['providersDetails']['providersInfo'])
+				&& !isset($payload['providersDetails']['providersOperatingHours'])
+				&& isset($payload['providersDetails']['providersBreakHours'])) {
+					// update providers break hours
+					new updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					
+					return array(
+						'message' => 'Providers Break Hours Successfully Updated.',
+						'success' => true
+					);
+			} else if(isset($payload['providersDetails']['providersInfo'])
+				&& !isset($payload['providersDetails']['providersOperatingHours'])
+				&& !isset($payload['providersDetails']['providersBreakHours'])) {
+					// update providers info
+					new updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
+					
+					return array(
+						'message' => 'Providers Info Successfully Updated.',
+						'success' => true
+					);
+			} else {
+				return array(
+					'message' => 'providersDetails is required.',
+					'success' => false
+				);
+			}
+
+		} catch(Exception $error) {
+			return array(
+				'message' => $error,
+				'success' => false
+			);
+		}
+	}
 }
