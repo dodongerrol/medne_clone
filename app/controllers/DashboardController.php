@@ -170,4 +170,27 @@ class DashboardController extends \BaseController {
 				});
 		})->export('xls');
 	}
+
+	/*
+		NOTE: 
+			- Applying MVC Structure
+			- Other Terms for CLINIC is PROVIDER
+	*/
+	function getProvidersDetail(){
+		try {
+			// Get session
+			$sessionHolder = StringHelper::getMainSession(3);
+			return array(
+				'data' => new ClinicDetail($sessionHolder->Ref_ID),
+				'success' => true
+			);
+		} catch (Exception $error) {
+			return array(
+				'message' => $error,
+				'success' => false
+			);
+		}
+
+		
+	}
 }
