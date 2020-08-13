@@ -9622,69 +9622,6 @@ span.dropdown-entitlement.disabled {
 
 /* --------------------------------------------------------- */
 
-
-/*  ------------------------ T & C ------------------------- */
-.privacy-policy-wrapper {
-  border: 1px solid #e4e4e4;
-  padding: 10px;
-  /*width: 830px;*/
-  margin: 0 auto;
-}
-.privacy-wrapper {
-  width: 950px;
-  margin: 0 auto;
-}
-.privacy-container {
-  border: 4px solid #f4f4f4;
-  padding: 40px 60px;
-  border-radius: 4px;
-  height: 400px;
-  overflow: auto;
-}
-.privacy-container h1 {
-  margin: 0 0 40px;
-  color: #5a5a5a;
-}
-.privacy-container >div:nth-child(1) {
-  text-align: center;
-}
-.privacy-policy-wrapper >div:nth-child(1) {
-  text-align: center;
-  border-bottom: 1px solid #e4e4e4;
-}
-.privacy-policy-wrapper >div:nth-child(2) {
-  padding: 20px;
-  font-size: 14px;
-}
-.privacy-wrapper .btn-blue {
-  border-radius: 4px;
-  color: #fff;
-  background-color: #3591CF;
-  border: 0;
-  font-size: 14px;
-}
-.privacy-wrapper .btn-scroll {
-  margin: 20px 0 0;
-  padding: 4px 32px;
-}
-.privacy-wrapper .btn-blue[disabled],
-.privacy-wrapper .btn-scroll.disable {
-  background-color: #DBDBDB;
-  pointer-events: none;
-}
-.btn-footer {
-  text-align: right;
-}
-.privacy-policy-wrapper >div:nth-child(2) p:nth-child(2) {
-  margin: 0 0 40px;
-}
-.mednefits-privacy-link {
-  color: #3592cd;
-}
-
-/* --------------------------------------------------------- */
-
-
 .spending-not-activated-box{
   position: absolute;
   top: 55px;
@@ -9901,7 +9838,8 @@ span.dropdown-entitlement.disabled {
   border: 4px solid #f4f4f4;
   padding: 40px 60px;
   border-radius: 4px;
-  height: 400px;
+  /* height: 400px; */
+  height: 70vh;
   overflow: auto;
 }
 .privacy-container h1 {
@@ -9934,7 +9872,10 @@ span.dropdown-entitlement.disabled {
   text-align: right;
 }
 .privacy-policy-wrapper >div:nth-child(2) p:nth-child(2) {
-  margin: 0 0 40px;
+  /* margin: 0 0 40px; */
+}
+.privacy-policy-wrapper p{
+  margin: 0 0 5px;
 }
 .mednefits-privacy-link {
   color: #3592cd;
@@ -9946,6 +9887,14 @@ span.dropdown-entitlement.disabled {
 .agreement-container >div:nth-child(1) {
   flex: 1;
   padding: 0 0 0 20px;
+}
+
+.privacy-policy-wrapper b{
+  font-family: 'Helvetica Medium';
+  color: #777;
+}
+.policy-text-div{
+  margin-top: 50px;
 }
 
 /* --------------------------------------------------------- */
