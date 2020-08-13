@@ -16850,6 +16850,9 @@ class BenefitsDashboardController extends \BaseController {
 		File::deleteDirectory($path);
 		// unlink($zip_file);
 		// return response()->download($zip_file)->deleteFileAfterSend(true);
-		return Response::download($zip_file)->deleteFileAfterSend(true);
+		// return Response::download($zip_file)->deleteFileAfterSend(true);
+		Response::download($zip_file);
+		unlink($zip_file);
+		return "done";
 	}
 }
