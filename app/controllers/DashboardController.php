@@ -203,7 +203,7 @@ class DashboardController extends \BaseController {
 			Child Keys
 				- providersInfo
 				- providersOperatingHours
-				- providersBreakHours
+				- providersBreakHours (for public holiday day value must be 'br')
 	*/
 	function updateProvidersDetail() {
 		try {
