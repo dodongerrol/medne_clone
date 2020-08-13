@@ -1702,7 +1702,10 @@ app.directive('benefitsTiersDirective', [
 						(scope.spendingPlan_status.account_type != 'lite_plan' && (scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled)) 
             ){
             scope.isCapVisitColShow = true;
-          }
+					}
+					if(scope.spendingPlan_status.account_type == 'enterprise_plan' && !scope.spendingPlan_status.wellness_enabled){
+						scope.isCapVisitColShow = false;
+					}
           if(scope.spendingPlan_status.medical_reimbursement || scope.spendingPlan_status.wellness_reimbursement){
             scope.isBankNameColShow = true;
             scope.isBankNumColShow = true;

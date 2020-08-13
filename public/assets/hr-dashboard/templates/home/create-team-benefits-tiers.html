@@ -432,7 +432,7 @@
   							<input disabled-specific-characters type="text" name="fname" ng-model="employee_data.fullname">
 							</div>
 							<div class="employee-input-wrapper">
-								<label >Employee ID</label>
+								<label >Employee ID (optional)</label>
   							<input type="text" name="fname" ng-model="employee_data.employee_id">
 							</div>
 							<div class="employee-input-wrapper">
@@ -440,7 +440,7 @@
   							<input type="text" name="datebirth" class="datepicker" ng-model="employee_data.dob" placeholder="DD/MM/YYYY">
 							</div>
 							<div class="employee-input-wrapper">
-								<label for="fname">Work Email</label>
+								<label for="fname">Work Email (optional)</label>
   							<input type="text" name="work-email" ng-model="employee_data.email">
 							</div>
 							<div class="employee-input-wrapper">
@@ -496,7 +496,7 @@
   							<input type="text" ng-model="employee_data.bank_account_number">
 							</div>
 							<div ng-if="isCapVisitColShow" class="employee-input-wrapper">
-								<label for="fname">Cap per Visit</label>
+								<label for="fname">Cap per Visit (optional)</label>
   							<input valid-number type="text" ng-model="employee_data.cap_per_visit">
 							</div>
 						</form>
