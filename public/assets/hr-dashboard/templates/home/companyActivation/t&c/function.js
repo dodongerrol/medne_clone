@@ -65,8 +65,8 @@ app.directive('tAndCDirective', [
 
 				scope.onLoad = function () {
 					scope.validateToken();
-					scope.scrollBottom();
-					document.getElementById('privacy-policy-container').scrollTop -= 1000;
+					// scope.scrollBottom();
+					// document.getElementById('privacy-policy-container').scrollTop -= 1000;
 				}
 
 				scope.onLoad();
