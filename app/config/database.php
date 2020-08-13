@@ -57,7 +57,7 @@ return array(
 			'driver'    => 'mysql',
 
        'host'      => 'localhost',
-        'database'  => 'medicloud_staging',
+        'database'  => 'medicloud_ive_db',
         'username'  => 'root',
         'password'  => '',
 
