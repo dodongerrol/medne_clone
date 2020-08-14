@@ -502,7 +502,14 @@
 											<span ng-bind="list.payment_remarks"></span>
 										</td>
 										<td>
-											<img src="../assets/hr-dashboard/img/down-arrow.svg">
+											<span class="invoice-history-drop-click" ng-click="toggleInvoiceHistoryDrop( list,$index )">
+												<img src="../assets/hr-dashboard/img/down-arrow.svg">
+												<div ng-if="list.isShowDrop" class="custom-dropdown">
+													<div ng-click="downloadInvoiceHistoryDataPDF(list)">
+														Download PDF
+													</div>
+												</div>
+											</span>
 										</td>
 									</tr>
 								</tbody>
