@@ -2183,7 +2183,7 @@ p.number-of-enrollees.inactive-enroll-text {
   background-color: #EB635D;
 }
 .status-details-container .status-color.loggedIn {
-  background-color: #FDFF92;
+  background-color: #ECF100;
 }
 .status-details-container .status-color.removed {
   background-color: #f7444e;
@@ -9802,6 +9802,16 @@ span.dropdown-entitlement.disabled {
 .link-succesfully-container {
   text-align: center;
   color: #000000;
+  width: 50%;
+  margin: 50px auto;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.link-prompt-img{
+  width: 100%;
+  display: inline-block;
 }
 .link-prompt-img img {
   height: 50px;
@@ -9864,6 +9874,9 @@ span.dropdown-entitlement.disabled {
   border: 0;
   font-size: 14px;
   padding: 4px 32px;
+}
+.privacy-wrapper .btn-blue[disabled]{
+  opacity: .3;
 }
 .privacy-wrapper .btn-scroll {
   margin: 20px 0 0;
@@ -10714,4 +10727,8 @@ span.dropdown-entitlement.disabled {
 .link-expired-container {
   width: 50%;
   margin: 50px auto;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

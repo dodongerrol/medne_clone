@@ -1183,6 +1183,22 @@ app.directive("companyContactsDirective", [
 
       // ---------------------------------------- //
 
+      scope.toggleInvoiceHistoryDrop = function ( data,index ) {
+        scope.getPlanInvoiceData[index].isShowDrop = scope.getPlanInvoiceData[index].isShowDrop == true ? false : true;
+      }
+      scope.downloadInvoiceHistoryDataPDF  = function(list){
+        window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + list.invoice_id + '&token='+window.localStorage.getItem('token'));
+      }
+      $("body").click(function(e){
+        if ($(e.target).parents(".invoice-history-drop-click").length === 0) {
+          scope.getPlanInvoiceData.map((value,key)  => {
+            value.isShowDrop = false;
+          })
+          scope.$apply();
+        }
+      });
+
+
         scope.onLoad = function(){
           // scope.initializeGeoCode();
           scope.getDownloadToken();
