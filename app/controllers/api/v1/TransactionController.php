@@ -56,13 +56,16 @@ class Api_V1_TransactionController extends \BaseController
 					$lite_plan_status = false;
 					$clinic_peak_status = false;
 					$service_id = $input['services'][0];
-					if($service_id == null) {
+					if(is_array($service_id)) {
 						// $returnObject->status = FALSE;
 						// $returnObject->head_message = 'Panel Submission Error';
 						// $returnObject->message = 'Please choose a service.';
 						// return Response::json($returnObject);
-						$service_id = 55;
-						$input['services'] = [55];
+						// if()
+						if(isset($service_id['procedureid'])) {
+							$service_id = $service_id['procedureid'];
+							$input['services'] = [$service_id];
+						}					
 					}
 					
 					// check user type
@@ -285,17 +288,9 @@ class Api_V1_TransactionController extends \BaseController
 						$multiple_service_selection = 1;
 						$multiple = true;
 					} else {
-						$services = $input['services'][0];
-						if($services == null) {
-							// $returnObject->status = FALSE;
-							// $returnObject->head_message = 'Panel Submission Error';
-							// $returnObject->message = 'Please choose a service.';
-							// return Response::json($returnObject);
-							$services = 55;
-							$input['services'] = [55];
-						}
 						$multiple_service_selection = 0;
 						$multiple = false;
+						$services = $service_id;
 					}
 					
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
@@ -393,12 +388,12 @@ class Api_V1_TransactionController extends \BaseController
 
 							// insert transation services
 							$ts = new TransctionServices( );
-							if($input['services'] == null) {
-								$input['services'] = 55;
-								$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
-								$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', 55)->first();
-								$procedure = ucwords($procedure_data->Name);
-							} else {
+							// if($input['services'] == null) {
+							// 	$input['services'] = 55;
+							// 	$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+							// 	$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', 55)->first();
+							// 	$procedure = ucwords($procedure_data->Name);
+							// } else {
 								$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
 
 								if($multiple == true) {
@@ -411,7 +406,7 @@ class Api_V1_TransactionController extends \BaseController
 									$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $service_id)->first();
 									$procedure = ucwords($procedure_data->Name);
 								}
-							}
+							// }
 							
 
 							// deduct medical/wellness credit
@@ -853,9 +848,11 @@ class Api_V1_TransactionController extends \BaseController
 						$input_amount = TransactionHelper::floatvalue($input['input_amount']);
 					}
 					$service_id = $input['services'][0];
-					if($service_id == null) {
-						$service_id = 55;
-						$input['services'] = [55];
+					if(is_array($service_id)) {
+						if(isset($service_id['procedureid'])) {
+							$service_id = $service_id['procedureid'];
+							$input['services'] = [$service_id];
+						}					
 					}
 					$user_id = StringHelper::getUserId($findUserID);
 					// check block access
