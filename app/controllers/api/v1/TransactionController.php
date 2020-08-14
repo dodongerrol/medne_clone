@@ -773,7 +773,7 @@ class Api_V1_TransactionController extends \BaseController
 						$returnObject->status = FALSE;
 						$returnObject->message = 'Cannot process payment credits. Please try again.';
 						// send email logs
-						$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
+						$email['end_point'] = url('v2/clinic/send_payment - '.$customer_id, $parameter = array(), $secure = null);
 						$email['logs'] = 'Mobile Payment Credits - '.$e;
 						$email['emailSubject'] = 'Error log.';
 						EmailHelper::sendErrorLogs($email);
