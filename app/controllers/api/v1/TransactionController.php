@@ -57,11 +57,15 @@ class Api_V1_TransactionController extends \BaseController
 					$clinic_peak_status = false;
 					$service_id = $input['services'][0];
 					if($service_id == null) {
-						$returnObject->status = FALSE;
-						$returnObject->head_message = 'Panel Submission Error';
-						$returnObject->message = 'Please choose a service.';
-						return Response::json($returnObject);
+						// $returnObject->status = FALSE;
+						// $returnObject->head_message = 'Panel Submission Error';
+						// $returnObject->message = 'Please choose a service.';
+						// return Response::json($returnObject);
+						$service_id = 55;
+
+						$input['services'] = [55];
 					}
+					
 					// check user type
 					$type = StringHelper::checkUserType($findUserID);
 					$lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
