@@ -186,15 +186,20 @@ class StringHelper{
             if($result) {
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('hr_dashboard_id', $result->hr_dashboard_id)
-                            ->where('active', 1)
+                            // ->where('active', 1)
                             ->first();
                 if($hr) {
-                    $hr->signed_in = $result->signed_in;
-                    if(isset($result->expire_in)) {
-                        $hr->expire_in = $result->expire_in;
-                    } else {
-                        $hr->expire_in = null;
+                    if((int)$hr->active == 1) {
+                        $hr->signed_in = $result->signed_in;
+                        if(isset($result->expire_in)) {
+                            $hr->expire_in = $result->expire_in;
+                        } else {
+                            $hr->expire_in = null;
+                        }
+                    } else if((int)$hr->hr_activated == 0) {
+                        return ['status' => false, 'hr_activated' => false];
                     }
+                   
                     return $hr;
                 } else {
                     return FALSE;
