@@ -16826,10 +16826,11 @@ class BenefitsDashboardController extends \BaseController {
 			$pdf->setPaper('A4', 'portrait');
 			$pdf->save($path."/".$data['invoice_number'].'.pdf');
 			// return $pdf->stream();
-			return [
-				'res' => var_dump($pdf->save($path."/".$data['invoice_number'].'.pdf')),
-				'path'	=> $path."/".$data['invoice_number'].'.pdf'
-			];
+			// $pdf->save($path."/".$data['invoice_number'].'.pdf');
+			// return [
+			// 	'res' => var_dump($pdf->save($path."/".$data['invoice_number'].'.pdf')),
+			// 	'path'	=> $path."/".$data['invoice_number'].'.pdf'
+			// ];
 			// return $path."/".$data['invoice_number'].'.pdf';
 			// file_put_contents($path."/".$data['invoice_number'].'.pdf', $pdf->output());
 		}
@@ -16839,7 +16840,7 @@ class BenefitsDashboardController extends \BaseController {
 		$zip = new \ZipArchive();
 		$zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 		$files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-
+		// return $files;
 		foreach ($files as $name => $file)
 		{
 			// We're skipping all subfolders
