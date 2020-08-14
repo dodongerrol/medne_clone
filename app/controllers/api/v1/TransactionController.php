@@ -837,7 +837,11 @@ class Api_V1_TransactionController extends \BaseController
 					if(isset($input['input_amount'])) {
 						$input_amount = TransactionHelper::floatvalue($input['input_amount']);
 					}
-					
+					$service_id = $input['services'][0];
+					if($service_id == null) {
+						$service_id = 1;
+						$input['services'] = [1];
+					}
 					$user_id = StringHelper::getUserId($findUserID);
 					// check block access
 					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
