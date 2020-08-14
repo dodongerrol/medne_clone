@@ -197,7 +197,8 @@ class StringHelper{
                             $hr->expire_in = null;
                         }
                     } else if((int)$hr->hr_activated == 0) {
-                        return ['status' => false, 'hr_activated' => false];
+                        $hr->status = false;
+                        $hr->hr_activated = false;
                     }
                    
                     return $hr;
