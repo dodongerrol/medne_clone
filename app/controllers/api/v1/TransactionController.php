@@ -56,6 +56,12 @@ class Api_V1_TransactionController extends \BaseController
 					$lite_plan_status = false;
 					$clinic_peak_status = false;
 					$service_id = $input['services'][0];
+					if($service_id == null) {
+						$returnObject->status = FALSE;
+						$returnObject->head_message = 'Panel Submission Error';
+						$returnObject->message = 'Please choose a service.';
+						return Response::json($returnObject);
+					}
 					// check user type
 					$type = StringHelper::checkUserType($findUserID);
 					$lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
@@ -343,7 +349,7 @@ class Api_V1_TransactionController extends \BaseController
 						'updated_at'						 => $date_of_transaction,
 						'default_currency'			=> $user_curreny_type
 					);
-
+					
 					if($clinic_peak_status) {
 						$data['peak_hour_status'] = 1;
 						if((int)$clinic->co_paid_status == 1) {
