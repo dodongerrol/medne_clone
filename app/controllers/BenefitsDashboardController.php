@@ -16142,7 +16142,6 @@ class BenefitsDashboardController extends \BaseController {
 		if($check) {
 			$new_password = array(
 				'password'	=> md5($input['new_password']),
-				'reset_link' => NULL,
 				'active'	=> 1,
 				'hr_activated'	=> 1,
 			);
@@ -16825,7 +16824,8 @@ class BenefitsDashboardController extends \BaseController {
 			$pdf = \PDF::loadView('pdf-download.hr-accounts-transaction', $data);
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
-			$pdf->save($path."/".$data['invoice_number'].'.pdf');
+			// $pdf->save($path."/".$data['invoice_number'].'.pdf');
+			file_put_contents($path."/".$data['invoice_number'].'.pdf', $pdf->output());
 		}
 	
 		// return view('pdf-download.admin-corporate-transactions-download-invoice', $data);

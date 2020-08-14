@@ -415,11 +415,19 @@ class CustomerHelper
 				);
 			}
 		} else if($status['account_type'] == "lite_plan" &&  $status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
-			return array(
-				'status' => true,
-				'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+NO+SA.xlsx',
-				'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+NO-SA.xlsx'
-			);
+			if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+SA+-+NO+-+R.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+SA-NO-R.xlsx'
+				);
+			} else {
+				return array(
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/employee/Employee+NO+SA.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v4/basic/dependent/Employees-and-Dependents+NO-SA.xlsx'
+				);
+			}
 		} else if($status['account_type'] == "lite_plan" &&  $status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == false)	{
 			if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
 				return array(
