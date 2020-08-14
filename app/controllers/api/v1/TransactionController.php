@@ -62,7 +62,6 @@ class Api_V1_TransactionController extends \BaseController
 						// $returnObject->message = 'Please choose a service.';
 						// return Response::json($returnObject);
 						$service_id = 55;
-
 						$input['services'] = [55];
 					}
 					
@@ -298,7 +297,7 @@ class Api_V1_TransactionController extends \BaseController
 						$multiple_service_selection = 0;
 						$multiple = false;
 					}
-
+					
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
@@ -326,7 +325,7 @@ class Api_V1_TransactionController extends \BaseController
 					} else {
 						$date_of_transaction = date('Y-m-d H:i:s');
 					}
-
+					
 					$data = array(
 						'UserID'                => $customer_id,
 						'ProcedureID'           => $services,
@@ -394,18 +393,26 @@ class Api_V1_TransactionController extends \BaseController
 
 							// insert transation services
 							$ts = new TransctionServices( );
-							$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
-
-							if($multiple == true) {
-								foreach ($input['services'] as $key => $value) {
-									$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value)->first();
-									$procedure_temp .= ucwords($procedure_data->Name).',';
-								}
-								$procedure = rtrim($procedure_temp, ',');
-							} else {
-								$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $service_id)->first();
+							if($input['services'] == null) {
+								$input['services'] = 55;
+								$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+								$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', 55)->first();
 								$procedure = ucwords($procedure_data->Name);
+							} else {
+								$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+
+								if($multiple == true) {
+									foreach ($input['services'] as $key => $value) {
+										$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value)->first();
+										$procedure_temp .= ucwords($procedure_data->Name).',';
+									}
+									$procedure = rtrim($procedure_temp, ',');
+								} else {
+									$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $service_id)->first();
+									$procedure = ucwords($procedure_data->Name);
+								}
 							}
+							
 
 							// deduct medical/wellness credit
 							$history = new WalletHistory( );
@@ -847,8 +854,8 @@ class Api_V1_TransactionController extends \BaseController
 					}
 					$service_id = $input['services'][0];
 					if($service_id == null) {
-						$service_id = 1;
-						$input['services'] = [1];
+						$service_id = 55;
+						$input['services'] = [55];
 					}
 					$user_id = StringHelper::getUserId($findUserID);
 					// check block access
