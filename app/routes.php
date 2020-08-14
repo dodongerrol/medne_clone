@@ -241,8 +241,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
 	// update employee details
 	Route::post('hr/employee/update', 'BenefitsDashboardController@updateEmployeeDetails');
-	//
-	Route::get('hr/spending_account_activity', 'BenefitsDashboardController@spendingAccountActivities');
 	// get company details and contacts
 	Route::get('hr/company_contacts', 'BenefitsDashboardController@getCompanyContacts');
 	// get transactions
@@ -498,7 +496,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	// get member allocation activity
-	Route::get('hr/get_member_allocation_activity', 'SpendingInvoiceController@getMemberAllocationActivity');
+	Route::get('hr/get_member_allocation_activity', 'SpendingAccountController@getMemberAllocationActivity');
 	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 	// get mednefits credits account
 	Route::get('hr/get_mednefits_credits_account', 'SpendingAccountController@getMednefitsCreditsAccount');
@@ -506,6 +504,19 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_member_wallet_details', 'SpendingAccountController@getMemberWalletDetails');
 	// get company date terms
 	Route::get('hr/get_company_date_terms', 'SpendingAccountController@getTermsSpendingDates');
+	Route::get('hr/spending_account_activity', 'SpendingAccountController@spendingAccountActivities');
+	// get bebnefits coverage details
+	Route::get('hr/get_benefits_coverage_details', 'SpendingAccountController@getBenefitsCoverageDetails');
+	// get company medical wallet details
+	Route::get('hr/get_company_wallet_details', 'SpendingAccountController@getWalletDetails');
+	// update wallet details
+	Route::post('hr/update_member_wallet_details', 'SpendingAccountController@updateWalletDetails');
+	// activate wellness wallet
+	Route::post('hr/activate_wellness_wallet_details', 'SpendingAccountController@activeWellnessWallet');
+	// update spending payment method
+	Route::post('hr/update_spending_payment_method', 'SpendingAccountController@updateSpendingPaymentMethod');
+	// create top up mednefits credits
+	Route::post('hr/create_top_up_mednefits_credits', 'SpendingAccountController@createMednefitsCreditsTopUp');
 });
 
 	// get company employees and credits left

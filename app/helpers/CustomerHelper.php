@@ -284,7 +284,11 @@ class CustomerHelper
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
-		// $activePlan = DB::table('customer_active_plan')->where('plan_id', $spending->customer_plan_id)->where("paid", "false")->count();
+		// check if there is an mendnefit
+		$mednefits_credits = DB::table('mednefits_credits')
+							->where('customer_plan_id', $spending->customer_plan_id)
+							->orderBy('created_at', 'desc')
+							->first();
 
 		return array(
 			'customer_id'		=> $customer_id,
@@ -295,7 +299,9 @@ class CustomerHelper
 			'wellness_method'	=> $spending->wellness_plan_method,
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
 			'wellness_reimbursement'	=> $spending->wellness_reimbursement == 1 ? true : false,
-			'paid_status'		=> $planData->account_type == "lite_plan" && $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
+			'paid_status'		=> $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
+			'with_mednefits_credits' => $mednefits_credits ? true : false,
+			'mednefits_credits_id' => $mednefits_credits->id
 		);
 	}
 
@@ -776,6 +782,35 @@ class CustomerHelper
 					->where('type', 'started')
 					->lists('user_id');
 		return $ids;
+	}
+
+	public static function getUpdatedMednefitsCredits($customer_id)
+	{
+		$total_credits = 0;
+		$total_medical = 0;
+		$total_wellness = 0;
+		$account_credits = DB::table('mednefits_credits')
+							->where('customer_id', $customer_id)
+							->get();
+		
+		foreach($account_credits as $key => $credits) {
+			$total_credits += $credits->credits + $credits->bonus_credits;
+
+			// get all medical credits
+			$medical_credits = DB::table('medical_credits')
+									->where('mednefits_credits_id', $credits->id)
+									->where('credit_type', 'added_employee_credits')
+									->sum('credits');
+			// get all medical credits
+			$wellness_credits = DB::table('wellness_credits')
+									->where('mednefits_credits_id', $credits->id)
+									->where('credit_type', 'added_employee_credits')
+									->sum('credits');
+		}
+		
+		$total_allocated = $medical_credits + $wellness_credits;
+		$total_balance = $total_credits - $total_allocated;
+		return ['total_credits' => $total_credits, 'total_allocated' => $total_allocated, 'total_balance' => $total_balance];
 	}
 }
 ?>

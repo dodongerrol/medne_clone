@@ -1215,25 +1215,29 @@ class PlanHelper {
 					$credits_medical_error = true;
 					$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
 				} else if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
-					$total_credits = PlanHelper::getTempCredits($customer_id);
-					if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
-						$credits_medical_error = true;
-						$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
+					if($spending['with_mednefits_credits'] == true) {
+						$creditData = CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+						$total_balance_remaining = $creditData['total_balance'];
+		
+						if($total_balance_remaining == 0) {
+							$credits_medical_error = true;
+							$credits_medical_message = '*Company Total Medical Credits is not sufficient for this Member';
+						}
 					} else {
-						$credits_medical_error = false;
-						$credits_medical_message = '';
-					}
+						$total_credits = PlanHelper::getTempCredits($customer_id);
+						if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
+							$credits_medical_error = true;
+							$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
+						} else {
+							$credits_medical_error = false;
+							$credits_medical_message = '';
+						}
+					}					
 				}
 			} else {
 				if(is_numeric($user['medical_credits'])) {
-					// check
-					// if($user['medical_credits'] > $customer_wallet->balance) {
-					// 	$credits_medical_error = true;
-					// 	$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
-					// } else {
-						$credits_medical_error = false;
-						$credits_medical_message = '';
-					// }
+					$credits_medical_error = false;
+					$credits_medical_message = '';
 				} else {
 					$credits_medical_error = true;
 					$credits_medical_message = '*Credits is not a number.';                
@@ -1250,13 +1254,23 @@ class PlanHelper {
 					$credits_wellness_error = true;
 					$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
 				} else if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
-					$total_credits = PlanHelper::getTempCredits($customer_id);
-					if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
-						$credits_wellness_error = true;
-						$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
+					if($spending['with_mednefits_credits'] == true) {
+						$creditData = \CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+						$total_balance_remaining = $creditData['total_balance'];
+		
+						if($total_balance_remaining == 0) {
+							$credits_wellness_error = true;
+							$credits_wellnes_message = '*Company Total Medical Credits is not sufficient for this Member';
+						}
 					} else {
-						$credits_wellness_error = false;
-						$credits_wellnes_message = '';
+						$total_credits = PlanHelper::getTempCredits($customer_id);
+						if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
+							$credits_wellness_error = true;
+							$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
+						} else {
+							$credits_wellness_error = false;
+							$credits_wellnes_message = '';
+						}
 					}
 				}
 			} else {
@@ -1432,6 +1446,39 @@ class PlanHelper {
 		$user = new User();
 		// $customer_spending = CustomerHelper::getCustomerWalletStatus($customer_id);
 		$customer_spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+
+		$pre_paid_status = false;
+		$total_balance_remaining = 0;
+		$top_up_credits = false;
+		if($customer_spending['with_mednefits_credits'] == true) {
+			$creditData = CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+			$total_balance_remaining = $creditData['total_balance'];
+		}
+
+		$medical_entitlement = $data_enrollee->credits;
+		$wellness_entitlement = $data_enrollee->wellness_credits;
+		
+		if((float)$medical_entitlement > 0 && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
+			// check medical balance
+			if($customer_spending['with_mednefits_credits'] == true) {
+				if((float)$medical_entitlement > $creditData['total_balance']) {
+					$top_up_credits = true;
+				}
+				$total_balance_remaining = $creditData['total_balance'] - $medical_entitlement;
+				$pre_paid_status = true;
+			}
+		}
+		
+		if((float)$wellness_entitlement > 0 && $customer_spending['wellness_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
+			if($customer_spending['with_mednefits_credits'] == true) {
+				if((float)$wellness_entitlement > $total_balance_remaining) {
+					$top_up_credits = true;
+				}
+				$total_balance_remaining = $total_balance_remaining - $wellness_entitlement;
+				$pre_paid_status = true;
+			}
+		}
+
 		// check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 		// $customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
@@ -1584,7 +1631,8 @@ class PlanHelper {
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1601,13 +1649,14 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 						\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'medical', $credits);
 					}
-				} else if($customer->balance >= $credits && $customer_spending['account_type'] == "lite_plan" && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
+				} else if($customer->balance >= $credits && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 					if($result_customer_active_plan) {
 						$customer_active_plan_id = $result_customer_active_plan;
@@ -1626,7 +1675,8 @@ class PlanHelper {
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1643,10 +1693,54 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+					}
+				}
+
+				if($pre_paid_status) {
+					$medicalCreditsHistory = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credits'				=> $credits,
+						'member_id'				=> $user_id,
+						'credit_type'			=> 'added_employee_credits',
+						'top_up_status'			=> 0,
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('medical_credits')->insert($medicalCreditsHistory);
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+
+					if($top_up_credits) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}
@@ -1692,7 +1786,8 @@ class PlanHelper {
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1706,7 +1801,8 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
@@ -1722,7 +1818,8 @@ class PlanHelper {
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1737,10 +1834,54 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+					}
+				}
+
+				if($pre_paid_status) {
+					$medicalCreditsHistory = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credits'				=> $credits,
+						'member_id'				=> $user_id,
+						'credit_type'			=> 'added_employee_credits',
+						'top_up_status'			=> 0,
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('medical_credits')->insert($medicalCreditsHistory);
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+
+					if($top_up_credits) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}
