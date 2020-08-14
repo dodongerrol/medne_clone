@@ -287,6 +287,14 @@ class Api_V1_TransactionController extends \BaseController
 						$multiple = true;
 					} else {
 						$services = $input['services'][0];
+						if($services == null) {
+							// $returnObject->status = FALSE;
+							// $returnObject->head_message = 'Panel Submission Error';
+							// $returnObject->message = 'Please choose a service.';
+							// return Response::json($returnObject);
+							$services = 55;
+							$input['services'] = [55];
+						}
 						$multiple_service_selection = 0;
 						$multiple = false;
 					}
