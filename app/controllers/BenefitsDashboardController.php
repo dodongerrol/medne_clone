@@ -16840,7 +16840,7 @@ class BenefitsDashboardController extends \BaseController {
 		$zip = new \ZipArchive();
 		$zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 		$files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-		// return $files;
+		return var_dump($files);
 		foreach ($files as $name => $file)
 		{
 			// We're skipping all subfolders
