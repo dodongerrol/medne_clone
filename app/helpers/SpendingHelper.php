@@ -13,7 +13,7 @@ class SpendingHelper {
         $user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
 
         if(sizeof($user_allocated) > 0) {
-            $wallet_ids = DB::table('e_wallet')->whereIn('UserID', $user_allocated)->pluck('wallet_id');
+            $wallet_ids = DB::table('e_wallet')->whereIn('UserID', $user_allocated)->lists('wallet_id');
 
             if(sizeof($wallet_ids) > 0) {
                 if($type == "all") {
@@ -65,15 +65,15 @@ class SpendingHelper {
         if($with_user_allocation) {
             foreach($user_allocated as $key => $user) {
                 if($type == "all") {
-                    $medical_credit = \UserHelper::memberMedicalPrepaid($user, $start, $end);
-                    $wellness_credit = \UserHelper::memberWellnessPrepaid($user, $start, $end);
+                    $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end);
+                    $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end);
                     $total_medical_balance += $medical_credit['allocation'] - $medical_credit['get_allocation_spent'];
                     $total_wellness_balance += $wellness_credit['allocation'] - $wellness_credit['get_allocation_spent'];
                 } else if($type == "medical") {
-                    $medical_credit = \UserHelper::memberMedicalPrepaid($user, $start, $end);
+                    $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end);
                     $total_medical_balance += $medical_credit['allocation'] - $medical_credit['get_allocation_spent'];
                 } else {
-                    $wellness_credit = \UserHelper::memberWellnessPrepaid($user, $start, $end);
+                    $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end);
                     $total_wellness_balance += $wellness_credit['allocation'] - $wellness_credit['get_allocation_spent'];
                 }
             }

@@ -402,21 +402,10 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 
-	        // return $temp_users;
-
 				if(sizeof($temp_users) == 0) {
 					return array('status' => FALSE, 'message' => 'Excel File data is empty.');
 				}
 
-	        // if($total_employees >= sizeof($temp_users)) {
-
-		        // $completed = DB::table('customer_link_customer_buy')
-						// 		->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-						// 		->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
-						// 		->where('customer_link_customer_buy.customer_buy_start_id', $result->customer_buy_start_id)
-						// 		->where('corporate_members.removed_status', 0)
-						// 		->count();
-						// $total = $total_employees - $completed;
 				if($total <= 0) {
 					return array(
 						'status'	=> FALSE,

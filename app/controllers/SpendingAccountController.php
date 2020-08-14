@@ -16,28 +16,67 @@ class SpendingAccountController extends \BaseController {
 		}
 
 		$account_credits = DB::table('mednefits_credits')
-							->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
-							->where('mednefits_credits.customer_id', $customer_id)
-							->where('mednefits_credits.start_term', $input['start'])
-							->where('mednefits_credits.end_term', $input['end'])
-							->first();
+                        ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+                        ->where('mednefits_credits.customer_id', $customer_id)
+                        ->where('mednefits_credits.start_term', $input['start'])
+                        ->where('mednefits_credits.end_term', $input['end'])
+                        ->get();
 
-		if(!$account_credits) {
+		if(sizeof($account_credits) == 0) {
 			return ['status' => false, 'message' => 'no mednefits credits account for this customer'];
 		}
-		// get utilised credits both medical and wellness
-		$creditAccount = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 
+		$total_credits = 0;
+		$purchased_credits = 0;
+		$bonus_credits = 0;
+		$payment_status = false;
+		$top_up_available = 0;
+		$top_up_purchase = 0;
+		$top_up_total_credits = 0;
+		$top_up_bonus_credits = 0;
+	
+		// check for to top-up
+		$toTopUp = DB::table('top_up_credits')
+					->where('customer_id', $customer_id)
+					->where('status', 0)
+					->sum('credits');
+
+		foreach($account_credits as $key => $credits) {
+			if((int)$credits->payment_status == 1) {
+				$payment_status = true;
+			}
+			$purchased_credits += $credits->credits;
+
+			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
+				$top_up_purchase += $credits->credits;
+			}
+		}
+
+		foreach($account_credits as $key => $credits) {
+			$bonus_credits += $credits->bonus_credits;
+			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
+				$top_up_bonus_credits += $credits->credits;
+			}
+		}
+
+		$total_credits = $purchased_credits + $bonus_credits;
+		// get utilised credits both medical and wellness
 		$utilised_credits = SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
+
 		$format = array(
-		'customer_id'           => $account_credits->customer_id,
-		'mednefits_credits_id'  => $account_credits->id,
-		'total_credits'         => $account_credits->credits + $account_credits->bonus_credits,
-		'available_credits'     => $account_credits->credits + $account_credits->bonus_credits,
-		'purchased_credits'     => $account_credits->credits,
-		'bonus_credits'         => $account_credits->bonus_credits,
-		'total_utilised_credits'  => $utilised_credits['credits'],
-		'payment_status'        => (int)$account_credits->payment_status == 1 ? true : false
+			'customer_id'           => $customer_id,
+			// 'mednefits_credits_id'  => $account_credits->id,
+			'total_credits'         => $total_credits,
+			'available_credits'     => $total_credits - $utilised_credits['credits'],
+			'purchased_credits'     => $purchased_credits,
+			'bonus_credits'         => $bonus_credits,
+			'total_utilised_credits'  => $utilised_credits['credits'],
+			'top_up_total_credits'  => $top_up_purchase,
+			'top_up_purchase'       => $top_up_purchase,
+			'top_up_bonus_credits'  => $top_up_bonus_credits,
+			'payment_status'        =>  $payment_status,
+			'to_top_up_status'      => $toTopUp > 0 ? true : false,
+			'to_top_value'          => $toTopUp
 		);
 		return ['status' => true, 'data' => $format];
 	  }
@@ -147,135 +186,134 @@ class SpendingAccountController extends \BaseController {
 		return ['status' => true, 'data' => $format];
 	}
 
-	public function updateWalletDetails(Request $request)
+	public function updateWalletDetails( )
 	{
-		if(empty($request->get('customer_id')) || $request->get('customer_id') == null) {
-		return array('status' => false, 'message' => 'Customer ID is required.');
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return array('status' => false, 'message' => 'id is required.');
 		}
 
-		if(empty($request->get('id')) || $request->get('id') == null) {
-		return array('status' => false, 'message' => 'id is required.');
-		}
-
-		if(empty($request->get('type')) || $request->get('type') == null) {
+		if(empty($input['type']) || $input['type'] == null) {
 				return array('status' => false, 'message' => 'type is required.');
 		}
 		
-			if(!in_array($request->get('type'), ['medical', 'wellness'])) {
-				return ['status' => false, 'message' => 'only medical and wellness'];
+		if(!in_array($input['type'], ['medical', 'wellness'])) {
+			return ['status' => false, 'message' => 'only medical and wellness'];
 		}
 		
-		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
-			if(!$customer) {
-				return ['status' => false, 'message' => 'customer does not exist'];
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
 		}
 		
 		// get spending settings
-			$spending_account_settings = DB::table('spending_account_settings')
-									->where('customer_id', $request->get('id'))
+		$spending_account_settings = DB::table('spending_account_settings')
+									->where('spending_account_setting_id', $input['id'])
 									->orderBy('created_at', 'desc')
 									->first();
 		
 		if(!$spending_account_settings) {
-		return ['status' => false, 'message' => 'spending account does not exits'];
+			return ['status' => false, 'message' => 'spending account does not exits'];
 		}
+
 		$update = array(
-		'updated_at' => date('Y-m-d H:i:s')
+			'updated_at' => date('Y-m-d H:i:s')
 		);
 
-		if(!empty($request->get('start')) && !empty($request->get('end'))) {
-		if($request->get('type') == "medical") {
-			$update['medical_spending_start_date'] = date('Y-m-d', strtotime($request->get('start')));
-			$update['medical_spending_end_date'] = date('Y-m-d', strtotime($request->get('end')));
+		if(!empty($input['start']) && !empty($input['end'])) {
+			if($input['type'] == "medical") {
+				$update['medical_spending_start_date'] = date('Y-m-d', strtotime($input['start']));
+				$update['medical_spending_end_date'] = date('Y-m-d', strtotime($input['end']));
+			} else {
+				$update['wellness_spending_start_date'] = date('Y-m-d', strtotime($input['start']));
+				$update['wellness_spending_end_date'] = date('Y-m-d', strtotime($input['end']));
+			}
+		}
+
+		if($input['type'] == "medical") {
+			if(!empty($input['active_non_panel_claim']) || $input['active_non_panel_claim'] != null) {
+				$update['medical_active_non_panel_claim'] = $input['active_non_panel_claim'] === true || $input['active_non_panel_claim'] === "true" ? 1 : 0;
+			}
+
+			if(!empty($input['reimbursement']) || $input['reimbursement'] != null) {
+				$update['medical_reimbursement'] = $input['reimbursement'] === true || $input['reimbursement'] === "true" ? 1 : 0;
+			}
+
+			if(!empty($input['payment_method_panel']) || $input['payment_method_panel'] != null) {
+				$update['medical_payment_method_panel'] = $input['payment_method_non_panel'];
+			}
+
+			if(!empty($input['payment_method_non_panel']) || $input['payment_method_non_panel'] != null) {
+				$update['medical_payment_method_non_panel'] = $input['payment_method_non_panel'];
+			}
 		} else {
-			$update['wellness_spending_start_date'] = date('Y-m-d', strtotime($request->get('start')));
-			$update['wellness_spending_end_date'] = date('Y-m-d', strtotime($request->get('end')));
-		}
-		}
+			if(!empty($input['active_non_panel_claim']) || $input['active_non_panel_claim'] != null) {
+				$update['wellness_active_non_panel_claim'] = $input['active_non_panel_claim'] === true || $input['active_non_panel_claim'] === "true" ? 1 : 0;
+			}
 
-		if($request->get('type') == "medical") {
-		if(!empty($request->get('active_non_panel_claim')) || $request->get('active_non_panel_claim') != null) {
-			$update['medical_active_non_panel_claim'] = $request->get('active_non_panel_claim') === true || $request->get('active_non_panel_claim') === "true" ? 1 : 0;
-		}
+			if(!empty($input['reimbursement']) || $input['reimbursement'] != null) {
+				$update['wellness_reimbursement'] = $input['reimbursement'] === true || $input['reimbursement'] == "true" ? 1 : 0;
+			}
 
-		if(!empty($request->get('reimbursement')) || $request->get('reimbursement') != null) {
-			$update['medical_reimbursement'] = $request->get('reimbursement') === true || $request->get('reimbursement') === "true" ? 1 : 0;
-		}
+			if(!empty($input['payment_method_panel']) || $input['ayment_method_panel'] != null) {
+				$update['wellness_payment_method_panel'] = $input['payment_method_panel'];
+			}
 
-		if(!empty($request->get('payment_method_panel')) || $request->get('payment_method_panel') != null) {
-			$update['medical_payment_method_panel'] = $request->get('payment_method_non_panel');
-		}
-
-		if(!empty($request->get('payment_method_non_panel')) || $request->get('payment_method_non_panel') != null) {
-			$update['medical_payment_method_non_panel'] = $request->get('payment_method_non_panel');
-		}
-		} else {
-		if(!empty($request->get('active_non_panel_claim')) || $request->get('active_non_panel_claim') != null) {
-			$update['wellness_active_non_panel_claim'] = $request->get('active_non_panel_claim') === true || $request->get('active_non_panel_claim') === "true" ? 1 : 0;
-		}
-
-		if(!empty($request->get('reimbursement')) || $request->get('reimbursement') != null) {
-			$update['wellness_reimbursement'] = $request->get('reimbursement') === true || $request->get('reimbursement') == "true" ? 1 : 0;
-		}
-
-		if(!empty($request->get('payment_method_panel')) || $request->get('ayment_method_panel') != null) {
-			$update['wellness_payment_method_panel'] = $request->get('payment_method_panel');
-		}
-
-		if(!empty($request->get('payment_method_non_panel')) || $request->get('payment_method_non_panel') != null) {
-			$update['wellness_payment_method_non_panel'] = $request->get('payment_method_non_panel');
-		}
+			if(!empty($input['payment_method_non_panel']) || $input['payment_method_non_panel'] != null) {
+				$update['wellness_payment_method_non_panel'] = $input['payment_method_non_panel'];
+			}
 		}
 		
 		$updateData = DB::table('spending_account_settings')
-						->where('spending_account_setting_id', $request->get('id'))
+						->where('spending_account_setting_id', $input['id'])
 						->update($update);
 		
 		if($updateData) {
-		return ['status' => true, 'message' => 'Wallet details updated.'];
+			return ['status' => true, 'message' => 'Wallet details updated.'];
 		}
 
 		return ['status' => false, 'message' => 'Failed to update wallet details.'];
 	}
 
-	public function activeWellnessWallet(Request $request)
+	public function activeWellnessWallet( )
 	{
-		if(empty($request->get('customer_id')) || $request->get('customer_id') == null) {
-		return array('status' => false, 'message' => 'Customer ID is required.');
-		}
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
 
-		if(empty($request->get('id')) || $request->get('id') == null) {
-		return array('status' => false, 'message' => 'id is required.');
+		if(empty($input['id']) || $input['id'] == null) {
+			return array('status' => false, 'message' => 'id is required.');
 		}
 		
-		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
-			if(!$customer) {
-				return ['status' => false, 'message' => 'customer does not exist'];
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
 		}
 		
 		// get spending settings
-			$spending_account_settings = DB::table('spending_account_settings')
-									->where('customer_id', $request->get('id'))
+		$spending_account_settings = DB::table('spending_account_settings')
+									->where('spending_account_setting_id', $input['id'])
 									->orderBy('created_at', 'desc')
 									->first();
 		
 		if(!$spending_account_settings) {
-		return ['status' => false, 'message' => 'spending account does not exits'];
+			return ['status' => false, 'message' => 'spending account does not exits'];
 		}
 
 		$update = array(
-		'updated_at' => date('Y-m-d H:i:s'),
-		'wellness_enable' => true,
+			'updated_at' => date('Y-m-d H:i:s'),
+			'wellness_enable' => true,
 		);
 
 		$updateData = DB::table('spending_account_settings')
-						->where('spending_account_setting_id', $request->get('id'))
+						->where('spending_account_setting_id', $input['id'])
 						->update($update);
 		
 		if($updateData) {
-		return ['status' => true, 'message' => 'Wellness Wallet has been successfully activated.'];
+			return ['status' => true, 'message' => 'Wellness Wallet has been successfully activated.'];
 		}
 
 		return ['status' => false, 'message' => 'Failed to activate Wellness Wallet.'];
@@ -308,129 +346,122 @@ class SpendingAccountController extends \BaseController {
 									->first();
 	}
 
-	public function updateSpendingPaymentMethod(Request $request)
+	public function updateSpendingPaymentMethod( )
 	{
-		if(empty($request->get('customer_id')) || $request->get('customer_id') == null) {
-		return array('status' => false, 'message' => 'Customer ID is required.');
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return array('status' => false, 'message' => 'id is required.');
 		}
 
-		if(empty($request->get('id')) || $request->get('id') == null) {
-		return array('status' => false, 'message' => 'id is required.');
+		if(empty($input['medical_panel_payment_method']) || $input['medical_panel_payment_method'] == null) {
+			return array('status' => false, 'message' => 'medical_panel_payment_method is required.');
 		}
 
-		if(empty($request->get('medical_panel_payment_method')) || $request->get('medical_panel_payment_method') == null) {
-		return array('status' => false, 'message' => 'medical_panel_payment_method is required.');
+		if(empty($input['medical_non_panel_payment_method']) || $input['medical_non_panel_payment_method'] == null) {
+			return array('status' => false, 'message' => 'medical_non_panel_payment_method is required.');
 		}
 
-		if(empty($request->get('medical_non_panel_payment_method')) || $request->get('medical_non_panel_payment_method') == null) {
-		return array('status' => false, 'message' => 'medical_non_panel_payment_method is required.');
-		}
-
-		if(empty($request->get('wellness_non_panel_payment_method')) || $request->get('wellness_non_panel_payment_method') == null) {
-		return array('status' => false, 'message' => 'wellness_non_panel_payment_method is required.');
+		if(empty($input['wellness_non_panel_payment_method']) || $input['wellness_non_panel_payment_method'] == null) {
+			return array('status' => false, 'message' => 'wellness_non_panel_payment_method is required.');
 		}
 		
-		if(!in_array($request->get('medical_panel_payment_method'), ['giro', 'bank_transfer', 'mednefits_credits', 'out_of_pocket'])) {
-		return ['status' => false, 'message' => 'medical_panel_payment_method should only be giro, bank_transfer or mednefits_credits'];
+		if(!in_array($input['medical_panel_payment_method'], ['giro', 'bank_transfer', 'mednefits_credits', 'out_of_pocket'])) {
+			return ['status' => false, 'message' => 'medical_panel_payment_method should only be giro, bank_transfer or mednefits_credits'];
 		}
 
-		if(!in_array($request->get('medical_non_panel_payment_method'), ['giro', 'bank_transfer', 'mednefits_credits', 'out_of_pocket'])) {
-		return ['status' => false, 'message' => 'medical_panel_paymentmedical_non_panel_payment_method_method should only be giro, bank_transfer or mednefits_credits'];
+		if(!in_array($input['medical_non_panel_payment_method'], ['giro', 'bank_transfer', 'mednefits_credits', 'out_of_pocket'])) {
+			return ['status' => false, 'message' => 'medical_panel_paymentmedical_non_panel_payment_method_method should only be giro, bank_transfer or mednefits_credits'];
 		}
 
-		if(!in_array($request->get('wellness_non_panel_payment_method'), ['giro', 'bank_transfer', 'mednefits_credits', 'out_of_pocket'])) {
-		return ['status' => false, 'message' => 'wellness_non_panel_payment_method should only be giro, bank_transfer or mednefits_credits'];
+		if(!in_array($input['wellness_non_panel_payment_method'], ['giro', 'bank_transfer', 'mednefits_credits', 'out_of_pocket'])) {
+			return ['status' => false, 'message' => 'wellness_non_panel_payment_method should only be giro, bank_transfer or mednefits_credits'];
 		}
 
-		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $input['customer_id'])->first();
 
-			if(!$customer) {
-				return ['status' => false, 'message' => 'customer does not exist'];
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
 		}
 		
 		// get spending settings
-			$spending_account_settings = DB::table('spending_account_settings')
-									->where('customer_id', $request->get('id'))
+		$spending_account_settings = DB::table('spending_account_settings')
+									->where('spending_account_setting_id', $input['id'])
 									->orderBy('created_at', 'desc')
 									->first();
 		
 		if(!$spending_account_settings) {
-		return ['status' => false, 'message' => 'spending account does not exits'];
+			return ['status' => false, 'message' => 'spending account does not exits'];
 		}
 
 		$update = array(
-		'updated_at' => date('Y-m-d H:i:s'),
-		'medical_payment_method_panel' => $request->get('medical_panel_payment_method'),
-		'medical_payment_method_non_panel' => $request->get('medical_non_panel_payment_method'),
-		'wellness_payment_method_non_panel' => $request->get('wellness_non_panel_payment_method'),
+			'updated_at' => date('Y-m-d H:i:s'),
+			'medical_payment_method_panel' => $input['medical_panel_payment_method'],
+			'medical_payment_method_non_panel' => $input['medical_non_panel_payment_method'],
+			'wellness_payment_method_non_panel' => $input['wellness_non_panel_payment_method'],
 		);
 
 		$updateData = DB::table('spending_account_settings')
-						->where('spending_account_setting_id', $request->get('id'))
+						->where('spending_account_setting_id', $input['id'])
 						->update($update);
 		
 		if($updateData) {
-		return ['status' => true, 'message' => 'Payment methods has been successfully updated.'];
+			return ['status' => true, 'message' => 'Payment methods has been successfully updated.'];
 		}
 
 		return ['status' => false, 'message' => 'Failed to update Payment methods'];
 	}
 
-	public function getBenefitsCoverageDetails(Request $request)
+	public function getBenefitsCoverageDetails( )
 	{
-		if(empty($request->get('customer_id')) || $request->get('customer_id') == null) {
-		return array('status' => false, 'message' => 'Customer ID is required.');
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+		
+		if(empty($input['start']) || $input['start'] == null) {
+			return array('status' => false, 'message' => 'start term is required.');
 		}
 
-		if(empty($request->get('start')) || $request->get('start') == null) {
-		return array('status' => false, 'message' => 'start term is required.');
+		if(empty($input['end']) || $input['end'] == null) {
+			return array('status' => false, 'message' => 'end term is required.');
 		}
 
-		if(empty($request->get('end')) || $request->get('end') == null) {
-		return array('status' => false, 'message' => 'end term is required.');
-		}
-
-		if(empty($request->get('type')) || $request->get('type') == null) {
-		return array('status' => false, 'message' => 'type is required.');
+		if(empty($input['type']) || $input['type'] == null) {
+			return array('status' => false, 'message' => 'type is required.');
 		}
 		
-		if(!in_array($request->get('type'), ['basic_plan', 'enterprise_plan', 'out_of_plan', 'stand_alone_plan', 'insurance_bundle'])) {
-		return ['status' => true, 'message' => 'type should only be basic_plan, enterprise_plan, out_of_plan, stand_alone_plan or insurance_bundle'];
+		if(!in_array($input['type'], ['basic_plan', 'enterprise_plan', 'out_of_plan', 'stand_alone_plan', 'insurance_bundle'])) {
+			return ['status' => true, 'message' => 'type should only be basic_plan, enterprise_plan, out_of_plan, stand_alone_plan or insurance_bundle'];
 		}
 
-		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $request->get('customer_id'))->first();
-
-			if(!$customer) {
-				return ['status' => false, 'message' => 'customer does not exist'];
-		}
-
-		if($request->get('type') != "enterprise_plan") {
-		$credits = \SpendingHelper::getMednefitsAccountSpending($request->get('customer_id'), $request->get('start'), $request->get('end'), 'all', false);
-		
-		return [
-			'status' => true,
-			'spent' => $credits['credits'],
-			'currency_type' => $customer->currency_type
-		];
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+		if($input['type'] != "enterprise_plan") {
+			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
+			
+			return [
+				'status' => true,
+				'spent' => $credits['credits'],
+				'currency_type' => $customer->currency_type
+			];
 		} else {
-		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $request->get('customer_id'))->first();
-		$user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $request->get('customer_id'));
-		$total = 0;
-		$panel = 0;
-		$non_panel = 0;
+			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+			$user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
+			$total = 0;
+			$panel = 0;
+			$non_panel = 0;
 
-		foreach ($user_allocated as $key => $user) {
-			$data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $request->get('start'), $request->get('end'));
-			$total += $data['total'];
-			$panel += $data['panels'];
-			$non_panel += $data['non_panels'];
-		}
-		
-		return [
-			'total_panel'     => $panel,
-			'total_non_panel' => $non_panel,
-			'average' => sizeof($user_allocated) > 0 ? sizeof($user_allocated) / $total : 0
-		];
+			foreach ($user_allocated as $key => $user) {
+				$data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $input['start'], $input['end']);
+				$total += $data['total'];
+				$panel += $data['panels'];
+				$non_panel += $data['non_panels'];
+			}
+			
+			return [
+				'total_panel'     => $panel,
+				'total_non_panel' => $non_panel,
+				'average' => sizeof($user_allocated) > 0 ? sizeof($user_allocated) / $total : 0
+			];
 		}
 	}
 
@@ -444,5 +475,275 @@ class SpendingAccountController extends \BaseController {
 										->get();
 		
 		return ['status' => true, 'data' => $spending_account_settings];
+	}
+
+	public function spendingAccountActivities( )
+	{
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+  
+		if(empty($input['start']) || $input['start'] == null) {
+			return array('status' => false, 'message' => 'start term is required.');
+		}
+
+		if(empty($input['end']) || $input['end'] == null) {
+			return array('status' => false, 'message' => 'end term is required.');
+		}
+	
+		// get spending account activity
+		$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->get();
+	
+		return ['status' => true, 'data' => $activites];
+	}
+
+	public function getMemberAllocationActivity( )
+	{	
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+		
+		if(empty($input['spending_type']) || $input['spending_type'] == null) {
+			return ['status' => false, 'message' => 'spending_type is required.'];
+		}
+
+		$per_page = !empty($input['limit']) ? $input['limit'] : 10;
+		$credit_wallet_activity = DB::table('credit_wallet_activity')
+								->where('customer_id', $customer_id)
+								->where('spending_type', $input['spending_type'])
+								->orderBy('created_at', 'desc')
+								->paginate($per_page);
+
+		
+		$pagination = [];
+		$pagination['current_page'] = $credit_wallet_activity->getCurrentPage();
+		$pagination['last_page'] = $credit_wallet_activity->getLastPage();
+		$pagination['total'] = $credit_wallet_activity->getTotal();
+		$pagination['per_page'] = $credit_wallet_activity->getPerPage();
+		$pagination['count'] = $credit_wallet_activity->count();
+		$format = [];
+
+		//do some format
+		foreach($credit_wallet_activity as $key => $activity) {
+			$info = DB::table('customer_business_information')->where('customer_buy_start_id', $activity->customer_id)->first();
+			$temp = array(
+				'mednefits_credits_id'	=> $activity->mednefits_credits_id,
+				'customer_id'	=> $activity->customer_id,
+				'credit'	=> $activity->credit,
+				'type' => $activity->type,
+				'spending_type'	=> $activity->spending_type,
+				'currency_type' => $activity->currency_type,
+				'created_at' => date('j M Y', strtotime($activity->created_at)),
+				'company' => $info->company_name,
+			);
+
+			array_push($format, $temp);
+		}
+
+		$pagination['data'] = $format;
+		return $pagination;
+	}
+	
+	public function getWalletDetails( )
+	{
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(empty($input['type']) || $input['type'] == null) {
+			return array('status' => false, 'message' => 'type is required.');
+		}
+
+		if(!in_array($input['type'], ['medical', 'wellness'])) {
+			return ['status' => false, 'message' => 'only medical and wellness'];
+		}
+
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
+		}
+
+		// get spending settings
+		$spending_account_settings = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->orderBy('created_at', 'desc')
+										->first();
+		
+		if($spending_account_settings) {
+			if($spending_account_settings->medical_benefits_coverage == null) {
+				$plan = DB::table('customer_plan')
+							->where('customer_buy_start_id', $customer_id)
+							->orderBy('created_at', 'desc')
+							->first();
+
+				// update 
+				$update = array(
+					'medical_benefits_coverage'			=> $plan->account_type,
+					'medical_payment_method_panel'		=> 'bank_transfer',
+					'medical_payment_method_non_panel'	=> 'bank_transfer',
+					'wellness_benefits_coverage'		=> $plan->account_type,
+					'wellness_payment_method_panel'		=> 'bank_transfer',
+					'wellness_payment_method_non_panel' => 'bank_transfer'
+				);
+
+				DB::table('spending_account_settings')
+					->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)
+					->update($update);
+				$spending_account_settings = DB::table('spending_account_settings')
+					->where('customer_id', $customer_id)
+					->orderBy('created_at', 'desc')
+					->first();
+			}
+		}
+
+		if($input['type'] == "medical") {
+			// format details
+			$format = array(
+				'customer_id'		=> $spending_account_settings->customer_id,
+				'payment_method'	=> $spending_account_settings->medical_payment_method_panel,
+				'benefits_coverage'	=> $spending_account_settings->medical_benefits_coverage,
+				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
+				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
+			);
+		} else {
+			if((int)$spending_account_settings->wellness_enable == 0) {
+				return ['status' => false, 'message' => 'wellness wallet is not enabled'];
+			}
+	
+			// format details
+			$format = array(
+				'customer_id'		=> $spending_account_settings->customer_id,
+				'payment_method'	=> $spending_account_settings->medical_payment_method_panel,
+				'benefits_coverage'	=> $spending_account_settings->wellness_benefits_coverage,
+				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
+				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
+			);
+		}
+		
+		return ['status' => true, 'data' => $format];
+	}
+
+	public function createMednefitsCreditsTopUp( ) 
+	{
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(empty($input['total_credits']) || $input['total_credits'] == null) {
+			return array('status' => false, 'message' => 'total credits is required.');
+		}
+
+		if(empty($input['purchase_credits']) || $input['purchase_credits'] == null) {
+			return array('status' => false, 'message' => 'purchase credits is required.');
+		}
+
+		if(empty($input['bonus_percentage']) || $input['bonus_percentage'] == null) {
+			return array('status' => false, 'message' => 'bonus_percentage is required.');
+		}
+
+		if(empty($input['bonus_credits']) || $input['bonus_credits'] == null) {
+			return array('status' => false, 'message' => 'bonus_credits is required.');
+		}
+
+		if(empty($input['invoice_date']) || $input['invoice_date'] == null) {
+			return array('status' => false, 'message' => 'invoice_date is required.');
+		}
+		
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
+		}
+
+		// check if there is payment false
+		$account_credits = DB::table('mednefits_credits')
+							->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+							->where('mednefits_credits.customer_id', $customer_id)
+							->where('spending_purchase_invoice.payment_status', 0)
+							->first();
+
+		if($account_credits) {
+			return ['status' => false, 'message' => 'Unable to create top up because there is pending payment for medenfits credits account.'];
+		}
+
+		$spending_account_settings = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->select('customer_id', 'customer_plan_id', 'medical_spending_start_date as start', 'medical_spending_end_date as end')
+										->orderBy('created_at', 'desc')
+										->first();
+		$start = $spending_account_settings->start;
+		$end = $spending_account_settings->end;
+
+		// create mednefits credits data
+		$mednefitCreditsAccount = array(
+			'customer_plan_id'		=> $spending_account_settings->customer_plan_id,
+			'customer_id'			=> $customer_id,
+			'credits'				=> $input['purchase_credits'],
+			'bonus_credits'			=> $input['bonus_credits'],
+			'bonus_percentage'		=> $input['bonus_percentage'],
+			'start_term'			=> date('Y-m-d', strtotime($start)),
+			'end_term'				=> date('Y-m-d', strtotime($end)),
+			'currency_type'			=> $customer->currency_type,
+			'top_up'        		=> 1,
+			'created_at'			=> date('Y-m-d H:i:s'),
+			'updated_at'			=> date('Y-m-d H:i:s')
+		);
+
+		$mednefitsDataResult = DB::table('mednefits_credits')->insertGetId($mednefitCreditsAccount);
+		// create spending account activity
+		$spendingAccountActivityData = array(
+			'mednefits_credits_id'	=> $mednefitsDataResult,
+			'customer_id'			=> $customer_id,
+			'credit'				=> $input['purchase_credits'],
+			'type'					=> 'added_purchase_credits',
+			'spending_type'			=> 'all',
+			'currency_type'			=> $customer->currency_type,
+			'created_at'				=> date('Y-m-d H:i:s'),
+			'updated_at'				=> date('Y-m-d H:i:s')
+		);
+
+		Db::table('spending_account_activity')->insert($spendingAccountActivityData);
+		$spendingAccountActivityData['credit'] = $input['bonus_credits'];
+		$spendingAccountActivityData['type'] = 'added_bonus_credits';
+		Db::table('spending_account_activity')->insert($spendingAccountActivityData);
+	
+		// create spending invoice purchase and reuse this one
+		$invoice_number = \InvoiceLibrary::getInvoiceNuber('spending_purchase_invoice', 8);
+		// billing
+		$billing = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
+		$information = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
+		$active_plan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		
+		$spending_purchase = array(
+				"customer_id"				=> $customer_id,
+				"customer_plan_id"			=> $spending_account_settings->customer_plan_id,
+				"customer_active_plan_id"	=> $active_plan->customer_active_plan_id,
+				"plan_start"				=> date('Y-m-d', strtotime($start)),
+				"plan_end"					=> date('Y-m-d', strtotime($end)),
+				"duration"					=> "12 months",
+				"invoice_number"			=> $invoice_number,
+				"invoice_date"				=> date('Y-m-d', strtotime($input['invoice_date'])),
+				"invoice_due"				=> date('Y-m-d', strtotime('+1 month', strtotime($input['invoice_date']))),
+				"payment_amount"			=> 0,
+				"payment_date"				=> null,
+				"remarks"					=> null,
+				"medical_purchase_credits"	=> $input['purchase_credits'],
+				"medical_credit_bonus"		=> $input['bonus_credits'],
+				"bonus_percentage"			=> $input['bonus_percentage'],
+				"company_name"				=> $information->company_name,
+				"company_address"			=> $information->company_address,
+				"postal"					=> $information->postal_code,
+				"contact_name"				=> $billing->first_name,
+				"contact_number"			=> $billing->phone,
+				"contact_email"				=> $billing->billing_email,
+				'mednefits_credits_link'	=> 1,
+				'mednefits_credits_id'		=> $mednefitsDataResult,
+				'created_at'				=> date('Y-m-d H:i:s'),
+				'updated_at'				=> date('Y-m-d H:i:s')
+			);
+		
+		DB::table('spending_purchase_invoice')->insert($spending_purchase);
+		// updated top up data
+		DB::table('top_up_credits')->where('customer_id', $customer_id)
+			->whereNull('mednefits_credits_id')
+			->update(['mednefits_credits_id' => $mednefitsDataResult, 'status' => 1]);
+		return ['status' => true, 'message' => 'This top-up has been successfully completed.'];
 	}
 }
