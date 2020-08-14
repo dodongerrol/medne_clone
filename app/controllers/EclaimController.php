@@ -134,7 +134,6 @@ class EclaimController extends \BaseController {
 		}
 
 		
-
 		$ids = [];
         // get real userid for dependents
 		$type = StringHelper::checkUserType($input['user_id']);
@@ -144,6 +143,7 @@ class EclaimController extends \BaseController {
 			$customer_id = $input['user_id'];
 			$email_address = $check->Email;
 			$ids[] = $user_id;
+			$dependent_user = false;
 		} else {
             // find owner
 			$owner = DB::table('employee_family_coverage_sub_accounts')
@@ -154,6 +154,7 @@ class EclaimController extends \BaseController {
 			$email_address = $user_email->Email;
 			$customer_id = $input['user_id'];
 			$ids = [$user_id, $customer_id];
+			$dependent_user = true;
 		}
 
         // check if employee plan is expired
@@ -172,10 +173,6 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-		// check if it is myr or sgd
-		if($check_user_balance->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
 
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
@@ -184,25 +181,34 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
 		}
 		
-		$user_plan_history = DB::table('user_plan_history')
-                  ->where('user_id', $user_id)
-                  ->where('type', 'started')
-                  ->orderBy('created_at', 'desc')
-				  ->first();
+		// $user_plan_history = DB::table('user_plan_history')
+        //           ->where('user_id', $user_id)
+        //           ->where('type', 'started')
+        //           ->orderBy('created_at', 'desc')
+		// 		  ->first();
 				  
-		$customer_active_plan = DB::table('customer_active_plan')
-		->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-		->first();
+		// $customer_active_plan = DB::table('customer_active_plan')
+		// ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+		// ->first();
+		if(!$dependent_user) {
+			$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+			$customer_active_plan = DB::table('customer_active_plan')
+			->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+			->first();
+		} else {
+			$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $customer_id)->orderBy('created_at', 'desc')->first();
+			$customer_active_plan = DB::table('dependent_plans')
+										->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+										->first();
+		}
 
 		if($customer_active_plan->account_type == "enterprise_plan"){
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
 			// check if it is myr or sgd
-		if($check_user_balance->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
-
-			
+			if($check_user_balance->currency_type == "myr" ) {
+				return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+			}
 
 			if($limit <= 0) {
 				return ['status' => false, 'message' => 'Maximum of 14 visits already reached.'];
@@ -320,7 +326,7 @@ class EclaimController extends \BaseController {
 					$service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
 
 					if($service) {
-					  MemberHelper::deductPlanHistoryVisit($user_id);
+					  MemberHelper::deductPlanHistoryVisit($input['user_id']);
 					}
 				}
 
