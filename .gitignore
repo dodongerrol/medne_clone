@@ -10,3 +10,5 @@ public/receipts/*
 public/excel_upload/*
 public/temp_uploads/*
 app/config/database.php
+public/plan_invoices/*
+invoices.zip
