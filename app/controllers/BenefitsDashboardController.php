@@ -16824,8 +16824,12 @@ class BenefitsDashboardController extends \BaseController {
 			$pdf = \PDF::loadView('pdf-download.hr-accounts-transaction', $data);
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
-			return $pdf->stream();
-			// $pdf->save($path."/".$data['invoice_number'].'.pdf');
+			// return $pdf->stream();
+			return [
+				'res' => $pdf->save($path."/".$data['invoice_number'].'.pdf'),
+				'path'	=> $path."/".$data['invoice_number'].'.pdf'
+			];
+			// return $path."/".$data['invoice_number'].'.pdf';
 			// file_put_contents($path."/".$data['invoice_number'].'.pdf', $pdf->output());
 		}
 	
