@@ -1,4 +1,4 @@
-<div class="member-wallet-benefits-wrapper">
+<div class="member-wallet-benefits-wrapper" member-wallet-benefits-coverage-directive>
   <div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
 		<!-- <div class="container"> -->
 		<div class="welcome-container">
@@ -39,31 +39,31 @@
     <div>
       <div class="side-menu-selector member-wallet-container">
         <div class="member-side-menu-title">Member Wallet</div>
-        <div class="side-selector-text">
-          <a ui-sref="member-wallet-benefits-coverage.medical-wallet">Medical Wallet</a>
+        <div ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.medical-wallet" ng-click="memberWalletSelector('medical-wallet')" ng-class="{'active' : memberWalletBeneftsSelectorValue == 'medical-wallet' }" class="side-selector-text">
+          <a>Medical Wallet</a>
         </div>
-        <div class="side-selector-text">
-          <a ui-sref="member-wallet-benefits-coverage.wellness-wallet">Wellness Wallet</a>
+        <div ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.wellness-wallet" ng-click="memberWalletSelector('wellness-wallet')" ng-class="{'active' : memberWalletBeneftsSelectorValue == 'wellness-wallet' }" class="side-selector-text">
+          <a>Wellness Wallet</a>
         </div>
         <div class="border-container"></div>
       </div>
       <div class="side-menu-selector benefits-coverage-container">
         <div class="member-side-menu-title">Benefits Coverage</div>
-        <div class="side-selector-text">
-          <a ui-sref="member-wallet-benefits-coverage.mednefits-basic-plan">Mednefits Basic Plan</a>
+        <div ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.mednefits-basic-plan" ng-click="memberWalletSelector('mednefits-basic-plan')" ng-class="{'active' : memberWalletBeneftsSelectorValue == 'mednefits-basic-plan' }" class="side-selector-text">
+          <a>Mednefits Basic Plan</a>
         </div>
-        <div class="side-selector-text">
-          <a ui-sref="member-wallet-benefits-coverage.mednefits-enterprise-plan">Mednefits Enterprise Plan</a>
+        <div ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.mednefits-enterprise-plan" ng-click="memberWalletSelector('mednefits-enterprise-plan')" ng-class="{'active' : memberWalletBeneftsSelectorValue == 'mednefits-enterprise-plan' }" class="side-selector-text">
+          <a>Mednefits Enterprise Plan</a>
         </div>
-        <div class="side-selector-text">
-          <a ui-sref="member-wallet-benefits-coverage.out-of-pocket">Out of pocket</a>
+        <div ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.out-of-pocket" ng-click="memberWalletSelector('out-of-pocket')" ng-class="{'active' : memberWalletBeneftsSelectorValue == 'out-of-pocket' }" class="side-selector-text">
+          <a>Out of pocket</a>
         </div>
         <div class="border-container"></div>
       </div>
       <div class="side-menu-selector mednefits-credits-account">
         <div class="member-side-menu-title">Mednefits Credits Account</div>
-        <div class="side-selector-text active">
-          <a ui-sref="member-wallet-benefits-coverage.mednefits-credits-account">Mednefits Credits Account</a>
+        <div ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.mednefits-credits-account" ng-click="memberWalletSelector('mednefits-credits-account')" ng-class="{'active' : memberWalletBeneftsSelectorValue == 'mednefits-credits-account' }" class="side-selector-text">
+          <a>Mednefits Credits Account</a>
         </div>
       </div>
     </div>

@@ -2,10 +2,18 @@
   <div class="show-details-on-container">
     <div class="flex-1">
       <span class="member-bold-text">Show details on</span> 
-      <div class="current-term-input-wrapper">
-        <span>Current term</span>
-        <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
-        <i class="fa fa-angle-down"></i>
+      <div class="current-term-wrapper"> 
+        <div ng-click="termSelector()" class="current-term-input-wrapper">
+          <span>Current term</span>
+          <span ng-repeat="list in dateTerm" ng-if="$last">
+            (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
+          </span>
+          <i class="fa fa-angle-down"></i>
+        </div>
+        <div ng-if="showLastTermSelector" class="last-term-selector">
+          <span>Last term</span>
+          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        </div>
       </div>
       <div>
         <button>Apply</button>
@@ -22,7 +30,17 @@
         <div class="available-credits">
           <span class="available-credits-container dp-flex-ai">
             <div class="available-credits-text member-bold-text">Medical Funds Balance</div>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+            <span class="credits-tooltip-wrapper">
+              <img ng-click="toggleFunds('medical-balance')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <div class="credits-tooltip-container medical-balance">
+                <div class="tooltip-title">Medical Balance</div>
+                <p>The remaining amount available for use from the Medical Budget.
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div> 
+            </span>
           </span>
           <span>
             <div class="available-credits-amount member-bold-text">SGD 120,000.00</div>
@@ -34,7 +52,17 @@
           <div>
             <span class="dp-flex-ai">
               <div>Total Medical Funds</div>
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <span class="credits-tooltip-wrapper">
+                <img ng-click="toggleFunds('medical-funds')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+                <div class="credits-tooltip-container medical-funds">
+                  <div class="tooltip-title">Total Medical Budget</div>
+                  <p>The total budgeted amount of medical benefits allocated to the employees.
+                  </p>
+                  <div class="tooltip-btn-footer">
+                    <button>Got it</button>
+                  </div>
+                </div> 
+              </span> 
             </span>
             <span>
               <div class="member-bold-text">SGD 120,000.00</div>
@@ -45,7 +73,17 @@
         <div>
           <span class="dp-flex-ai">
             <div>Total Company Funds</div>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+            <span class="credits-tooltip-wrapper">
+              <img ng-click="toggleFunds('company-funds')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <div class="credits-tooltip-container company-funds">
+                <div class="tooltip-title">Total Company Budget</div>
+                <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div> 
+            </span>
           </span>
           <span>
             <div class="member-bold-text">SGD 120,000.00</div>
@@ -57,22 +95,25 @@
       <div>
         <label>Benefits Start Date</label>
         <div class="benefits-input-wrapper start-date">
-          <input type="text">
+          <input ng-model="medicalWalletData.benefits_start" type="text">
           <img src="../../assets/hr-dashboard/img/calendar.png">
         </div>
       </div>
       <div>
         <label>Benefits End Date</label>
         <div class="benefits-input-wrapper end-date">
-          <input type="text">
+          <input ng-model="medicalWalletData.benefits_end" type="text">
           <img src="../../assets/hr-dashboard/img/calendar.png">
         </div>
       </div>
       <div>
         <label>Rollover</label>
         <div class="benefits-input-wrapper rollover">
-          <input type="text">
-          <i class="fa fa-angle-down"></i>
+          <select ng-model="medicalWalletData.roll_over">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+          <!-- <i class="fa fa-angle-down"></i> -->
         </div>
       </div>
       <div>

@@ -464,6 +464,22 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.updateScheduleDate = function ( data ) {
     return $http.post( serverUrl.url + "/hr/update_enrollment_schedule", data);
   }
+  hrFactory.fetchMednefitsCreditsAccountData = function ( start,end ) {
+    return $http.get( serverUrl.url + "/hr/get_mednefits_credits_account/?start=" + start + "&end=" + end  ); 
+  }
+  hrFactory.fetchDateTerms = function (  ) {
+    return $http.get( serverUrl.url + "/hr/get_company_date_terms" );
+  }
+
+  // Member Wallet
+  hrFactory.fetchMemberWallet = function ( start,end,type ) {
+    return $http.get( serverUrl.url + "/hr/get_member_wallet_details/?start=" + start + "&end=" + end + "&type=" + type );
+  }
+
+  // Mednefits Credits Account Activity Table
+  hrFactory.fetchMednefitsActivitiesData = function ( start,end ) {
+    return $http.get( serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end );
+  }
 
   return hrFactory;
 });

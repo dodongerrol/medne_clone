@@ -1,11 +1,19 @@
-<div class="mednefits-credits-account-container">
+<div class="mednefits-credits-account-container" mednefits-credit-account-directive>
   <div class="show-details-on-container">
     <div>
       <span class="member-bold-text">Show details on</span> 
-      <div class="current-term-input-wrapper">
-        <span>Current term</span>
-        <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
-        <i class="fa fa-angle-down"></i>
+      <div class="current-term-wrapper"> 
+        <div ng-click="termSelector()" class="current-term-input-wrapper">
+          <span>Current term</span>
+          <span ng-repeat="list in dateTerm" ng-if="$last">
+            (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
+          </span>
+          <i class="fa fa-angle-down"></i>
+        </div>
+        <div ng-if="showLastTermSelector" class="last-term-selector">
+          <span>Last term</span>
+          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        </div>
       </div>
       <div>
         <button>Apply</button>
@@ -18,8 +26,8 @@
   <div class="mwbc-box-container">
     <h4 class="member-bold-text"> Mednefits Credits Account</h4>
     <!-- add class "pending" if the account is still pending -->
-    <div class="mwbc-card-box-container mednefits-credits-account">
-      <span ng-if="true" class="credits-on-hold-text">Credits amounts are on hold due to Pending Mednefits Credits Account Invoice</span>
+    <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : mednefitsCreditsData.payment_status == false }">
+      <span ng-if="mednefitsCreditsData.payment_status == false" class="credits-on-hold-text">Credits amounts are on hold due to Pending Mednefits Credits Account Invoice</span>
       <div class="mednefits-available-credits display-flex">
         <div class="available-credits flex-1">
           <span class="available-credits-container dp-flex-ai">
@@ -37,7 +45,7 @@
             </span>
           </span>
           <span>
-            <div class="available-credits-amount member-bold-text">SGD 120,000.00</div>
+            <div class="available-credits-amount member-bold-text">SGD {{ mednefitsCreditsData.available_credits }}</div>
           </span>
         </div>
         <div>
@@ -62,7 +70,7 @@
               </span>
             </span>
             <span>
-              <div class="member-bold-text">SGD 120,000.00</div>
+              <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_credits }}</div>
             </span>
           </div>
           <div class="credits-border-container"></div>
@@ -83,7 +91,7 @@
               </span>
             </span>
             <span>
-              <div class="member-bold-text">SGD 120,000.00</div>
+              <div class="member-bold-text">SGD {{ mednefitsCreditsData.purchased_credits }}</div>
             </span>
           </div>
           <div class="credits-border-container"></div>
@@ -104,7 +112,7 @@
               </span>
             </span>
             <span>
-              <div class="member-bold-text">SGD 120,000.00</div>
+              <div class="member-bold-text">SGD {{ mednefitsCreditsData.bonus_credits }}</div>
             </span>
           </div>
           <div class="credits-border-container"></div>
@@ -124,7 +132,7 @@
             </span>
           </span>
           <span>
-            <div class="member-bold-text">SGD 120,000.00</div>
+            <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_utilised_credits }}</div>
           </span>
         </div>
       </div>
@@ -170,10 +178,15 @@
             <th>Amount</th>
           </thead>
           <tbody>
-            <tr>
-              <td>01 Jan 2020</td>
-              <td>Bonus Credits</td>
-              <td class="amount-value">+ SGD 20,000.00</td>
+            <tr ng-repeat="list in mednefitsActivitiesData">
+              <td>
+                <span ng-bind="formatTableDate(list.created_at)">01 Jan 2020</span>
+              </td>
+              <td>
+                <span ng-if="list.type == 'added_bonus_credits'">Bonus Credits</span>
+                <span ng-if="list.type == 'added_purchase_credits'">Purchased Credits</span>
+              </td>
+              <td class="amount-value">+ <span class="currency-type" ng-bind="list.currency_type">SGD</span> <span ng-bind="list.credit">20,000.00</span></td>
             </tr>
           </tbody>
         </table>

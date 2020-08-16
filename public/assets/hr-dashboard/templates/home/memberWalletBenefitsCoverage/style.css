@@ -43,6 +43,7 @@
 }
 .side-menu-selector .side-selector-text {
   padding: 10px 50px;
+  cursor: pointer;
 }
 .side-menu-selector .border-container {
   border-bottom: 1px solid #BFBFBF;
@@ -203,6 +204,7 @@
   width: 400px;
   border-radius: 2px;
   padding: 12px 15px;
+  z-index: 1;
 }
 .credits-tooltip-container::before {
   content: '';
@@ -385,4 +387,17 @@
 }
 .invoice-status.paid {
   background-color: #5BBD76;
+}
+.show-details-on-container .current-term-wrapper {
+  position: relative;
+}
+.show-details-on-container .last-term-selector {
+  position: absolute;
+  top: 42px;
+  background: #fff;
+  width: 285px;
+  margin: 0 20px;
+  padding: 5px 10px;
+  border: 2px solid #E0E0E0;
+  border-radius: 3px;
 }
