@@ -12,3 +12,4 @@ public/temp_uploads/*
 db
 public/invoices.zip
 public/plan_invoices/*
+app/config/database.php
