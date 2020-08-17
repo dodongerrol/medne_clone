@@ -1184,7 +1184,8 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::post('user/check_e_claim_visit', 'Api_V1_AuthController@checkEclaimVisit');
 			// get member dates coverage
 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
-			
+			// create tap ready on boarding
+			Route::get('user/ready_on_boarding', 'Api_V1_AuthController@updateReadyOnBoarding');
 		 });
 		 
 		 // get member spending account status feature
