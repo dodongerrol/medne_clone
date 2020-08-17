@@ -35,6 +35,7 @@
 	{{ HTML::style('assets/hr-dashboard/css/bootstrap.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/font-awesome.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/style.css') }}
+	{{ HTML::style('assets/hr-dashboard/css/hr-login.css') }}
 	<!-- {{ HTML::style('assets/hr-dashboard/css/responsive.css') }} -->
 
 </head>
@@ -87,7 +88,7 @@
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
 			<!-- <span ng-if="!showPassword" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span> -->
-			<form class="med-form">
+			<form class="med-form" ng-if="!showAccounts">
 				<div ng-if="!showPassword" class="form-group">
 					<label for="email">Email</label>
 					<input type="email" name="email" class="form-control med-input" ng-class="{'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist'}" placeholder="Enter Email Address"
@@ -111,18 +112,19 @@
 				<span ng-if="ng_fail">*Please check your login credentials</span>
 				<a ng-if="showPassword" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
 					password?</a>
-				
+
 				<div class="not-activated" ng-if="login_details.status === 'not activated'">
-				Oops! An email to activate your account has been sent on <span ng-bind="login_details.date_created"></span>. Please click the link inside to activate your account. 
+				Oops! An email to activate your account has been sent on <span ng-bind="login_details.date_created"></span>. Please click the link inside to activate your account.
 				<br> <br>
 				Or <a ng-click="resend_hr_activation()">resend</a> the email now.
 				</div>
 
 				<div class="not-activated" ng-if="login_details.status === 'not-exist'">
-				Your email has not been signed up with Mednefits. 
+				Your email has not been signed up with Mednefits.
 
 				</div>
 			</form>
+			@include('hr_dashboard.hr-login.partials.account-table')
 		</div>
 		<!-- End New Account Feature -->
 	</div>
@@ -139,4 +141,5 @@
 {{ HTML::script('assets/hr-dashboard/js/parallax.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/angular.min.js') }}
 {{ HTML::script('assets/hr-dashboard/process/hr_login.js') }}
+{{-- {{ HTML::script('assets/hr-dashboard/process/directives/hr-login/accounts.js') }} --}}
 </html>
