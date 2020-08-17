@@ -9209,6 +9209,13 @@ class BenefitsDashboardController extends \BaseController {
 			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
 			$agree_status = $customer->agree_status == "true" ? true : false;
 			if($check->active == 1)	{
+				// create token
+				$jwt = new JWT();
+				$secret = Config::get('config.secret_key');
+				$check->signed_in = FALSE;
+				$check->expire_in = strtotime('+15 days', time());
+				
+				$token = $jwt->encode($check, $secret);
 				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true, 't_c' => $agree_status]);
 			}
 

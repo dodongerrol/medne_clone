@@ -174,12 +174,21 @@
         <div class="text-right item">
           <h1 style="font-size: 35px !important;color: #000 !important;font-family: 'Open Sans', sans-serif !important;margin-bottom: 0px;">INVOICE</h1>
           <p style="font-weight: 700;margin-top: 10px;">Medicloud Pte Ltd </p>
-          <p>7 Temasek Boulevard</p>
-          <p>#18-02 Suntec Tower One</p>
-          <p>038987</p>
-          <p style="margin-top: 10px;">Singapore</p>
-          <p>+65 3163 5403</p>
-          <p>mednefits.com</p>
+
+          @if($currency_type == "SGD")
+            <p>7 Temasek Boulevard</p>
+            <p>#18-02 Suntec Tower One</p>
+            <p>038987</p>
+            <p style="margin-top: 10px;">Singapore</p>
+            <p>+65 3163 5403</p>
+            <p>mednefits.com</p>
+          @else
+            <p>Mednefits Sdn Bhd</p>
+            <p>Komune, Level 2,</p>
+            <p>No. 20, Jalan Kerinchi Kiri 3,</p>
+            <p>59200, Kuala Lumpur,</p>
+            <p>Malaysia</p>
+          @endif
         </div>
       </div>
 
@@ -306,6 +315,7 @@
 
       <div class="col-md-12 notes">
         <div class="item-col">
+        @if($currency_type == "SGD")
           <!-- <p style="margin-bottom: 10px;font-size: 13px;"><b>Notes</b></p> -->
           <!-- <p style="font-size: 13px;"><b>Please make cheques payable to:</b></p>
           <p>Medicloud Pte Ltd</p>
@@ -346,11 +356,27 @@
 
           <p style="margin: 15px 0 0 0;font-size: 15px;">Please contact us for any questions related to your invoice/contract at happiness@mednefits.com</p>
           <p style="font-size: 12px;">Please send all payment advice to finance@mednefits.com</p>
+        @else
+
+          <p style="font-weight: 700;font-size: 18px;line-height: 16px;margin: 0 0 10px 0;">Due Date: {{$invoice_due}}</p>
+          <p style="font-size: 14px;line-height: 14px;margin: 0 0 35px 0;">Payment Information:</p>
+
+          <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Bank Transfer:</p>
+          <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Bank: UOB</p>
+          
+          
+          <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Mednefits Sdn. Bhd.</p>
+          <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 2213020031</p>
+          
+          <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Note: Please quote invoice number when submitting payment</p>
+        @endif
         </div>
 
+        @if($currency_type == "SGD")
         <div class="item-col2">
           <img class="stamp" src="https://s3-ap-southeast-1.amazonaws.com/mednefits/images/Mednefits_Company_Stamp-01.png">
         </div>
+        @endif
       </div>
 
       <div class="col-md-12 copyright text-center">
