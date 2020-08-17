@@ -9,3 +9,6 @@ node_modules
 public/receipts/*
 public/excel_upload/*
 public/temp_uploads/*
+db
+public/invoices.zip
+public/plan_invoices/*
