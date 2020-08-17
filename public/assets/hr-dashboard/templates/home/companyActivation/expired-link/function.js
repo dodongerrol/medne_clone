@@ -55,6 +55,12 @@ app.directive('expiredLinkDirective', [
 						});
 				}
 
+				scope.goToLogin	=	function(){
+					console.log(scope.validateToken);
+					window.localStorage.setItem('token', scope.validateToken.token);
+					window.replace($location.$$host + 'company-benefits-dashboard');
+				}
+
 				scope.showLoading = function () {
 					$(".circle-loader").fadeIn();
 					loading_trap = true;
