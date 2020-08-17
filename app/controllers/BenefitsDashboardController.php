@@ -16852,11 +16852,10 @@ class BenefitsDashboardController extends \BaseController {
 			}
 		}
 		$zip->close();
-		// delete directory
-		// File::deleteDirectory($path);
-		// unlink($zip_file);
-		// return response()->download($zip_file)->deleteFileAfterSend(true);
-		// return Response::download($zip_file)->deleteFileAfterSend(true);
-		return Response::download($zip_file);
+		$response = Response::download($zip_file, NULL, array('content-type' => 'application/zip'));
+		if(ob_get_length() > 0) {
+			ob_clean();
+		}
+		return $response;
 	}
 }
