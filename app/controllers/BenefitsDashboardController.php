@@ -16772,7 +16772,7 @@ class BenefitsDashboardController extends \BaseController {
 			$data['currency_type'] = strtoupper($employee->currency_type);
 			$data['name'] = $employee->contactName;
 			$data['address'] = $employee->contactAddress;
-			$data['account_type'] = $employee->activeType;
+			$data['account_type'] = PlanHelper::getAccountType($employee->activeType);
 			$data['complimentary'] = (int)$employee->complementary == 1 ? true : false;
 			$data['plan_type'] = $employee->planType;
 			$data['invoice_number'] = $employee->invoice_number;
@@ -16820,8 +16820,8 @@ class BenefitsDashboardController extends \BaseController {
 			$data['total'] = number_format($total, 2);
 			$data['price'] = number_format($employee->price, 2);
 			$data['amount'] = number_format((float)$employee->amt, 2);
-			// return View::make('pdf-download.hr-accounts-transaction', $data);
-			$pdf = \PDF::loadView('pdf-download.hr-accounts-transaction', $data);
+			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+			$pdf = \PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
 			$pdf->save($path."/".$data['invoice_number'].'.pdf');
