@@ -801,8 +801,9 @@ class App_ClinicController extends \BaseController {
             if($getSessionData != FALSE){
                 $imageUpload = Clinic_Library::CloudineryImageUploadWithResize(200,200);
                 if($imageUpload) {
-                    DB::table('clinic')->where('clinicID', $getSessionData->Ref_ID)->update(['image' => $imageUpload['image']]);
+                    DB::table('clinic')->where('clinicID', $getSessionData->Ref_ID)->update(['image' => $imageUpload['img']]);
                 }
+                return $imageUpload;
             }else{
                 return Redirect::to('provider-portal-login');
             }
