@@ -1,0 +1,6 @@
+.welcome-container .arrow-up{
+  opacity: 0;
+}
+.welcome-container h4.active + .arrow-up{
+  opacity: 1;
+}
