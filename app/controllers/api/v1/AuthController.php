@@ -6615,15 +6615,6 @@ public function payCreditsNew( )
           $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
           $user_type = PlanHelper::getUserAccountType($findUserID);
 
-          if($user_type == "employee") {
-            // check and update login status
-            $user = DB::table('user')->where('UserID', $findUserID)->first();
-            if((int)$user->Status == 0) {
-              // update
-              DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
-            }
-          }
-
           if($type == "spending") {
             $returnObject->status = true;
             // check if user id deactivated
@@ -7073,5 +7064,41 @@ public function payCreditsNew( )
       $returnObject->message = 'X-ACCESS-KEY is required';
     }
     return Response::json($returnObject);
+  }
+
+  public function updateReadyOnBoarding( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+        $findUserID = $authSession->findUserID($getAccessToken->session_id);
+      
+        if($findUserID){
+          $user_type = PlanHelper::getUserAccountType($findUserID);
+
+          if($user_type == "employee") {
+            // check and update login status
+            $user = DB::table('user')->where('UserID', $findUserID)->first();
+            if((int)$user->Status == 0) {
+              // update
+              DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
+            }
+          }
+        }
+      }
+
+      $returnObject->status = true;
+      $returnObject->message = 'done';
+      return Response::json($returnObject);
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
   }
 }
