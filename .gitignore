@@ -9,3 +9,4 @@ node_modules
 public/receipts/*
 public/excel_upload/*
 public/temp_uploads/*
+app/config/database.php
