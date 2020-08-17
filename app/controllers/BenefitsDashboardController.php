@@ -2010,7 +2010,7 @@ class BenefitsDashboardController extends \BaseController {
 			if(sizeof($unique_ids) > 0) {
 				$users = DB::table('user')
 						->whereIn('UserID', $unique_ids)
-						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated')
+						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated', 'Status')
 						->paginate($per_page);
 			} else {
 				$users = false;
@@ -2021,13 +2021,13 @@ class BenefitsDashboardController extends \BaseController {
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
 				->where('user.Name', 'like', '%'.$search.'%')
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','emp_no', 'member_activated')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','emp_no', 'member_activated', 'Status')
 				->paginate($per_page);
 			} else {
 				$users = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'member_activated')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'member_activated', 'Status')
 				->orderBy('corporate_members.removed_status', 'asc')
 				->orderBy('user.UserID', 'asc')
 				->paginate($per_page);
@@ -2189,10 +2189,6 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 			}
-			
-			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0) {
-				$emp_status = 'pending';
-			}
 
 			$medical = null;
 			$wellness = null;
@@ -2301,11 +2297,15 @@ class BenefitsDashboardController extends \BaseController {
 								
 				if($panel || $non_panel) {
 					$emp_status = 'active';
-				} else {
+				} else if((int)$user->Active == 1 && (int)$user->member_activated == 1 && (int)$user->Status == 1){
 					$emp_status = 'activated';
 				}
 			}
 			
+			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0 || (int)$user->member_activated == 1 && (int)$user->Status == 0) {
+				$emp_status = 'pending';
+			}
+
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -9209,6 +9209,13 @@ class BenefitsDashboardController extends \BaseController {
 			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
 			$agree_status = $customer->agree_status == "true" ? true : false;
 			if($check->active == 1)	{
+				// create token
+				$jwt = new JWT();
+				$secret = Config::get('config.secret_key');
+				$check->signed_in = FALSE;
+				$check->expire_in = strtotime('+15 days', time());
+				
+				$token = $jwt->encode($check, $secret);
 				return array('status' => true, 'data' => ['hr_dashboard_id' => $check->hr_dashboard_id, 'valid_token' => true, 'activated' => true, 't_c' => $agree_status]);
 			}
 
@@ -16772,7 +16779,7 @@ class BenefitsDashboardController extends \BaseController {
 			$data['currency_type'] = strtoupper($employee->currency_type);
 			$data['name'] = $employee->contactName;
 			$data['address'] = $employee->contactAddress;
-			$data['account_type'] = $employee->activeType;
+			$data['account_type'] = PlanHelper::getAccountType($employee->activeType);
 			$data['complimentary'] = (int)$employee->complementary == 1 ? true : false;
 			$data['plan_type'] = $employee->planType;
 			$data['invoice_number'] = $employee->invoice_number;
@@ -16820,8 +16827,8 @@ class BenefitsDashboardController extends \BaseController {
 			$data['total'] = number_format($total, 2);
 			$data['price'] = number_format($employee->price, 2);
 			$data['amount'] = number_format((float)$employee->amt, 2);
-			// return View::make('pdf-download.hr-accounts-transaction', $data);
-			$pdf = \PDF::loadView('pdf-download.hr-accounts-transaction', $data);
+			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+			$pdf = \PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
 			$pdf->save($path."/".$data['invoice_number'].'.pdf');
