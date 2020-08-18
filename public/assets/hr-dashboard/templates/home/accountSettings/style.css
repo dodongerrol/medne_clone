@@ -1,0 +1,14 @@
+.account-settings-container{
+  max-width: 1296px;
+  padding: 50px 0;
+  margin: 0 auto;
+  width: 80%;
+}
+.account-settings-container .page-title{
+  text-align: center;
+  font-size: 25px;
+  line-height: 31px;
+  color: #2E4057;
+  font-family: 'Helvetica Medium';
+  margin-bottom: 40px;
+}

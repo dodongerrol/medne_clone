@@ -841,6 +841,33 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     })
 
+    // Account Settings
+
+    .state('account-settings', {
+      url: '/account-settings',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/accountSettings/index.html'
+        }
+      }
+    })
+
+    // Company Profile
+
+    .state('company-profile', {
+      url: '/company-profile',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/container/index.html'
+        }
+      }
+    })
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');
