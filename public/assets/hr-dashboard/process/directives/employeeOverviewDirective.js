@@ -2360,7 +2360,7 @@ app.directive("employeeOverviewDirective", [
           $(".employee-overview-pagination").show();
 
           scope.showLoading();
-          hrSettings.getEmployees(page,scope.global_empLimitList)
+          hrSettings.getEmployees(page,scope.page_ctr)
             .then(function (response) {
               console.log(response);
               scope.employees = response.data;

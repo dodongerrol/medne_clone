@@ -2117,7 +2117,7 @@ p.number-of-enrollees.inactive-enroll-text {
 .employee-overview-table .status-title,
 .employee-overview-table .status-details-wrapper {
   /* width: 13%; */
-  width: 110px;
+  width: 115px;
   float: left;
 }
 
