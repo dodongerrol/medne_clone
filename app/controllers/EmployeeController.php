@@ -3047,11 +3047,11 @@ class EmployeeController extends \BaseController {
     $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
     $customer_plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
     $dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
-
+    
     foreach($members as $key => $member)  {
       // check if member already login base on admin logs
       $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
-      if(!$check_active_state)  {
+      if(!$check_active_state || $check_active_state && (int)$member->Status == 0)  {
         $pending++;
       } else {
         // check if already create a transaction
