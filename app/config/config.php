@@ -13,5 +13,6 @@ return array(
     'environment' => 'staging',
     'enable_auto_logout' => false,
     'sms_provider' => 'commz_gate',
-    'api_node_live' => 'https://api.medicloud.sg'
+    'api_node_live' => 'https://api.medicloud.sg',
+    'spending_inquiry_email'  => 'info@medicloud.sg'
 );

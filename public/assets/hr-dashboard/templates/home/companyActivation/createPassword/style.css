@@ -1,0 +1,96 @@
+/*  --------------------- CREATE PASSWORD --------------------- */
+.company-create-password-container {
+  padding: 20px 40px;
+  height: 100vh;
+  text-align: center;
+
+  font-family: 'Greycliff';
+}
+.company-create-password-container .mednefits-logo{
+  width: 250px;
+  margin: 40px 0 80px;
+}
+.company-create-password-container .create-password-form-wrapper{
+  width: 420px;
+  margin: 0 auto;
+}
+.company-create-password-container .header-text{
+  font-size: 20px;
+  line-height: 24px;
+  color: #000000;
+  /* font-family: 'Helvetica Medium'; */
+  font-family: 'Greycliff Medium';
+  font-weight: 700;
+}
+.company-create-password-container .lock-img img{
+  margin: 35px auto;
+  width: 40px;
+  height: 50px;
+}
+.create-password-form-wrapper .input-row{
+  text-align: left;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.create-password-form-wrapper .input-row label{
+  width: 100px;
+  font-size: 16px;
+  line-height: 19px;
+  color: #000000;
+}
+.create-password-form-wrapper .input-row input{
+  height: 38px;
+  flex: 1;
+  /* font-family: 'Helvetica Light'; */
+  /* line-height: 17px; */
+  background: #FFFFFF;
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;
+  padding: 0 10px;
+  outline: none;
+}
+.create-password-form-wrapper .input-row input[type="password"]{
+  font-size: 25px;
+  padding-bottom: 15px;
+  padding-top: 10px;
+}
+.create-password-form-wrapper .input-row input[type="password"]::placeholder{
+  font-size: 14px;
+  position: relative;
+  top: -3px;
+}
+.create-password-form-wrapper .input-with-clickable{
+  flex: 1;
+  position: relative;
+}
+.create-password-form-wrapper .input-with-clickable input{
+  width: 100%;
+}
+.create-password-form-wrapper .input-with-clickable .clickable{
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+}
+.create-password-form-wrapper .clickable img{
+  width: 20px;
+}
+
+.create-password-form-wrapper .create-password-btn{
+  width: 100%;
+  height: 38px;
+  background-color: #3591CF;
+  border-radius: 4px;
+  font-size: 15px;
+  line-height: 34px;
+  color: #FFFFFF;
+  margin-top: 15px;
+  border: none;
+  font-family: 'Greycliff Medium';
+}
+.create-password-form-wrapper .create-password-btn[disabled]{
+  background: #DBDBDB;
+}
+
+/* --------------------------------------------------------- */

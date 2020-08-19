@@ -86,6 +86,14 @@ app.directive('benefitsTiersDirective', [
 				scope.showCurrencyType = localStorage.getItem("currency_type");
 				scope.spending_account_status = {}
 
+				scope.isCommunicationShow = false;
+
+				scope.communication_send = {
+					type: 'immediate',
+					date: null,
+				};
+				scope.isActivationInfoDropShow = false;
+
 				console.log(scope.showCurrencyType);
 
 				var iti = null;
@@ -159,9 +167,9 @@ app.directive('benefitsTiersDirective', [
 						}
 					} else if (scope.downloadWithDependentsCheckbox == true) { 
 						//scope.reviewExcelData.name slide 21
-						if (scope.reviewExcelData.format &&
-							scope.reviewExcelData.dob && scope.reviewExcelData.email &&
-							scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start) {
+						// scope.reviewExcelData.email &&
+						//  && scope.reviewExcelData.postcode
+						if (scope.reviewExcelData.format && scope.reviewExcelData.dob && scope.reviewExcelData.plan_start) {
 							if (scope.downloadWithDependents == true) {
 								if (scope.reviewExcelData.relationship) {
 									scope.downloadWithDependentsCheckbox = false;
@@ -281,6 +289,11 @@ app.directive('benefitsTiersDirective', [
 						scope.isUploadFile = false;
 						scope.isExcel = true;
 						scope.download_step = 1;
+					}
+					if( scope.isCommunicationShow == true ){
+						scope.isCommunicationShow = false;
+						scope.getEnrollTempEmployees();
+						scope.isReviewEnroll = true;
 					}
 				}
 
@@ -781,7 +794,12 @@ app.directive('benefitsTiersDirective', [
 										dependents: [],
 										plan_start: scope.customer_data.plan.plan_start,
 										mobile_area_code: '65',
-										mobile_area_code_country: 'sg'
+										mobile_area_code_country: 'sg',
+										medical_entitlement: null,
+										wellness_entitlement: null,
+										bank_name: null,
+										bank_account: null,
+										cap_per_visit: null,
 									};
 									iti.setCountry("SG");
 								}
@@ -804,7 +822,12 @@ app.directive('benefitsTiersDirective', [
 										dependents: [],
 										plan_start: scope.customer_data.plan.plan_start,
 										mobile_area_code: '65',
-										mobile_area_code_country: 'sg'
+										mobile_area_code_country: 'sg',
+										medical_entitlement: null,
+										wellness_entitlement: null,
+										bank_name: null,
+										bank_account: null,
+										cap_per_visit: null,
 									};
 									iti.setCountry("SG");
 								}
@@ -852,6 +875,8 @@ app.directive('benefitsTiersDirective', [
 						.then(function (response) {
 							console.log(response);
 							scope.spendingPlan_status = response.data;
+
+							scope.checkSpendingValuesStatus();
 						});
 				}
 
@@ -1203,76 +1228,54 @@ app.directive('benefitsTiersDirective', [
 				scope.getEnrollTempEmployees = function () {
 					scope.temp_employees = [];
 					scope.hasError = false;
-					// var hasMedicalBalance = false;
-					// var hasWellnessBalance = false;
-					scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance') == 'true' ? true : false;
-					scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
-					var option = {
-						minimumFractionDigits: 2, 
-						maximumFractionDigits: 2
-					}
-					console.log(scope.employee_data.hasWellnessBalance, scope.employee_data.hasWellnessBalance);
+					scope.table_dependents_ctr = 0;
 					
-					$timeout(function () {
-						scope.employee_data.hasMedicalBalance = localStorage.getItem('hasMedicalEntitlementBalance') == 'true' ? true : false;
-						scope.employee_data.hasWellnessBalance = localStorage.getItem('hasWellnessEntitlementBalance') == 'true' ? true : false;
-						console.log(scope.employee_data.hasWellnessBalance, scope.employee_data.hasWellnessBalance);
-						$("#enrollee-details-tbl tbody").html('');
-						$("#enrollee-details-tbl thead tr").html($compile(`<th><input type="checkbox" ng-click="empCheckBoxAll()"></th><th>Full Name</th><th>Date of Birth</th><th>Work Email</th><th>Country Code</th><th>Mobile</th ><th ng-if="(spendingPlan_status.account_type != 'enterprise_plan' && spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.medical_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.account_type != 'enterprise_plan' && spendingPlan_status.medical_method == 'post_paid' && spendingPlan_status.medical_enabled)">Medical Allocation</th><th ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.wellness_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.wellness_method == 'post_paid' && spendingPlan_status.wellness_enabled)">Wellness Allocation</th>`)(scope));
-						// <th ng-if="employee_data.hasMedicalBalance">Medical Entitlement Balance</th>	<th ng-if="employee_data.hasWellnessBalance">Wellness Entitlement Balance</th>
-						dependentsSettings.getTempEmployees()
-							.then(function (response) {
-								// console.log( response );
-								scope.temp_employees = response.data.data;
-								angular.forEach(scope.temp_employees, function (ctr_value, ctr_key) {
-									if (ctr_value.dependents.length > scope.table_dependents_ctr) {
-										scope.table_dependents_ctr = ctr_value.dependents.length;
-									}
-									if ((scope.temp_employees.length - 1) == ctr_key) {
-										angular.forEach(scope.temp_employees, function (value, key) {
-											console.log(value);
-											if (value.error_logs.error == true) {
-												scope.hasError = true;
-											}
-											value.success = false;
-											value.fail = false;
-											scope.isTrError = (value.error_logs.error == true) ? 'has-error' : '';
-											var html_tr = '<tr class="dependent-hover-container ' + scope.isTrError + ' "><td><input type="checkbox" ng-model="temp_employees[' + key + '].checkboxSelected" ng-click="empCheckBoxClicked(' + key + ')"></td><td><span class="icon"><i class="fa fa-check" style="display: none;"></i><i class="fa fa-times" style="display: none;"></i><i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i></span><span class="fname">' + value.employee.fullname + '</span><button class="dependent-hover-btn" ng-click="openEditDetailsModal(' + key + ')">Edit</button></td><td>' + value.employee.dob + '</td><td>' + value.employee.email + '</td><td>+' + value.employee.mobile_area_code + '</td><td>' + value.employee.mobile + `</td><td ng-if="(spendingPlan_status.account_type != 'enterprise_plan' && spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.medical_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.account_type != 'enterprise_plan' &&  spendingPlan_status.medical_method == 'post_paid' && spendingPlan_status.medical_enabled)">` + parseFloat(value.employee.credits).toLocaleString('en', option) + `</td><td ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.wellness_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.wellness_method == 'post_paid' && spendingPlan_status.wellness_enabled)">` + parseFloat(value.employee.wellness_credits).toLocaleString('en', option) + '</td>';
-											// <td ng-if="employee_data.hasMedicalBalance">' + value.employee.medical_balance_entitlement.toLocaleString('en', option) + '</td>
-											// <td ng-if="employee_data.hasWellnessBalance">' + value.employee.wellness_balance_entitlement.toLocaleString('en', option) + '</td>
-											var emp_ctr = 0;
-											while (emp_ctr != value.dependents.length) {
-												scope.isTrError = (value.dependents[emp_ctr].error_logs.error == true) ? 'has-error' : '';
-												html_tr += '<td>' + value.dependents[emp_ctr].enrollee.fullname + '</td><td>' + value.dependents[emp_ctr].enrollee.dob + '</td><td>' + value.dependents[emp_ctr].enrollee.relationship + '</td>';
-												emp_ctr++;
-											}
-											while (emp_ctr != scope.table_dependents_ctr) {
-												html_tr += '<td></td><td></td><td></td>';
-												emp_ctr++;
-											}
-											html_tr += '<td>' + value.employee.start_date + '</td></tr>';
-
-											$("#enrollee-details-tbl tbody").append($compile(html_tr)(scope));
-
-											if ((scope.temp_employees.length - 1) == key) {
-												var while_ctr = 0;
-												while (while_ctr != scope.table_dependents_ctr) {
-													while_ctr++;
-													$("#enrollee-details-tbl thead tr").append(
-														'<th>Dependent ' + while_ctr + '<br>Full Name</th>' +
-														'<th>Dependent ' + while_ctr + '<br>Date of Birth</th>' +
-														'<th>Dependent ' + while_ctr + '<br>Relationship</th>'
-													);
-												}
-												$("#enrollee-details-tbl thead tr").append('<th class="start-date-header">Start Date</th>');
-												scope.hideLoading();
-											}
-										});
-									}
-								})
-							});
-					}, 200);
+					scope.showLoading();
+					dependentsSettings.getTempEmployees()
+						.then(function (response) {
+							// console.log( response );
+							scope.temp_employees = response.data.data;
+							angular.forEach(scope.temp_employees, function (value, key) {
+								if (value.dependents.length > scope.table_dependents_ctr) {
+									scope.table_dependents_ctr = value.dependents.length;
+								}
+								if (value.error_logs.error == true) {
+									scope.hasError = true;
+								}
+								if ((scope.temp_employees.length - 1) == key) {
+									scope.hideLoading();
+								}
+							})
+						});
 				}
+
+				scope.range = function (range) {
+          var arr = [];
+          for (var i = 0; i < range; i++) {
+            arr.push(i);
+          }
+          return arr;
+        }
+
+				scope.parseValueCommaFloat = function(value){
+          return parseFloat(value).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+				}
+				
+				scope.formatMomentDate = function (date, from, to) {
+          return date ? moment(date, from).format(to) : date;
+        };
+
+				scope.range = function (range) {
+          var arr = [];
+          for (var i = 0; i < range; i++) {
+            arr.push(i);
+          }
+          return arr;
+        }
+
+				scope.parseValueCommaFloat = function(value){
+          return parseFloat(value).toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
 
 				scope.updateEnrolleEmp = function (emp) {
 					if (emp.employee.email == "" && emp.employee.mobile == "") {
@@ -1313,7 +1316,7 @@ app.directive('benefitsTiersDirective', [
 									wellness_credits: parseFloat(emp.employee.wellness_credits),
 									plan_start: moment(emp.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 									postal_code: emp.employee.postal_code,
-									mobile_area_code: emp.employee.mobile_area_code
+									mobile_area_code: emp.employee.mobile_area_code,
 								}
 								dependentsSettings.updateTempEnrollee(data)
 									.then(function (response) {
@@ -1406,8 +1409,26 @@ app.directive('benefitsTiersDirective', [
 							}
 						});
 				}
+				scope.goToCommunication	=	function(){
+					scope.isReviewEnroll = false;
+					scope.isCommunicationShow = true;
+					
+					$timeout(function(){
+						$('.comm-schedule-datepicker').datepicker({
+							format: 'dd/mm/yyyy',
+							startDate : new Date( moment().add(1, 'days') )
+						});
+					},400);
+					
+				}
 
 				scope.saveTempUser = function () {
+					console.log(scope.communication_send);
+					console.log($('.comm-schedule-datepicker').val());
+					if( scope.communication_send.type == 'schedule' && ($('.comm-schedule-datepicker').val() == null || $('.comm-schedule-datepicker').val() == '' )){
+						swal('Error!', 'Please select schedule date.', 'error');
+						return false;
+					}
 					scope.showLoading();
 					var err = 0;
 					scope.current_enrolled_count = {
@@ -1417,32 +1438,36 @@ app.directive('benefitsTiersDirective', [
 					angular.forEach(scope.temp_employees, function (value, key) {
 						$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-circle-o-notch').fadeIn();
 						var data = {
-							temp_enrollment_id: value.employee.temp_enrollment_id
+							temp_enrollment_id: value.employee.temp_enrollment_id,
+							communication_send: scope.communication_send.type,
+						}
+						if(scope.communication_send.type == 'schedule'){
+							data.schedule_date = moment( $('.comm-schedule-datepicker').val(), ['DD/MM/YYYY', 'YYYY-MM-DD'] ).format('YYYY-MM-DD');
 						}
 						dependentsSettings.saveTempEnrollees(data)
 							.then(function (response) {
-								// console.log( response );
+								console.log( response );
 								scope.current_enrolled_count.total_employee_enrolled += response.data.result.total_employee_enrolled;
 								scope.current_enrolled_count.total_dependents_enrolled += response.data.result.total_dependents_enrolled;
-								$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-circle-o-notch').hide();
+								// $('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-circle-o-notch').hide();
 								if (response.data.result) {
 									if (response.data.result.status == true) {
 										value.success = true;
 										value.fail = false;
-										$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-check').fadeIn();
+										// $('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-check').fadeIn();
 									}
 								} else {
 									value.success = false;
 									value.fail = true;
 									err++;
-									$('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-times').fadeIn();
+									// $('#enrollee-details-tbl tbody tr:nth-child(' + (key + 1) + ') .fa-times').fadeIn();
 								}
 								if (key == scope.temp_employees.length - 1) {
 									$timeout(function () {
 										scope.hideLoading();
 										scope.getEnrollTempEmployees();
 										if (err == 0) {
-											scope.isReviewEnroll = false;
+											scope.isCommunicationShow = false;
 											scope.isSuccessfulEnroll = true;
 											scope.isFromUpload = false;
 											scope.employee_data = {
@@ -1634,6 +1659,70 @@ app.directive('benefitsTiersDirective', [
 						});
 				}
 
+				scope.toggleActivationInfo	=	function(){
+					scope.isActivationInfoDropShow = scope.isActivationInfoDropShow == true ? false : true;
+				}
+				$("body").click(function (e) {
+					if ($(e.target).parents(".sub-header-text span").length === 0) {
+						scope.isActivationInfoDropShow = false;
+						scope.$apply();
+					}
+				});
+
+				scope.isMedicalAllocColShow = false;
+        scope.isWellnessAllocColShow = false;
+        scope.isCapVisitColShow = false;
+        scope.isBankNameColShow = false;
+        scope.isBankNumColShow = false;
+
+        scope.checkSpendingValuesStatus = function(){
+          scope.isMedicalAllocColShow = false;
+          scope.isWellnessAllocColShow = false;
+          scope.isCapVisitColShow = false;
+          scope.isBankNameColShow = false;
+          scope.isBankNumColShow = false;
+
+          if(
+						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid') ||
+						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'pre_paid' && scope.spendingPlan_status.paid_status) ||
+						(scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.medical_enabled)
+						){
+            scope.isMedicalAllocColShow = true;
+          }
+          if(
+              (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'post_paid') ||
+              (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'pre_paid' && scope.spendingPlan_status.paid_status) ||
+              (scope.spendingPlan_status.account_type == 'enterprise_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.paid_status) ||
+              (scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.wellness_enabled)
+            ){
+            scope.isWellnessAllocColShow = true;
+          }
+          if(
+							(scope.spendingPlan_status.account_type == 'lite_plan' && 
+								(scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
+								(scope.spendingPlan_status.medical_method == 'post_paid' && scope.spendingPlan_status.wellness_method == 'post_paid')
+							) ||
+							(scope.spendingPlan_status.account_type == 'lite_plan' && 
+								(scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
+								(scope.spendingPlan_status.medical_method == 'pre_paid' || scope.spendingPlan_status.wellness_method == 'pre_paid') &&
+								scope.spendingPlan_status.paid_status
+							) ||
+							(scope.spendingPlan_status.account_type != 'lite_plan' && 
+								(scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
+								scope.spendingPlan_status.paid_status
+							) 
+						){
+            scope.isCapVisitColShow = true;
+					}
+					if(scope.spendingPlan_status.account_type == 'enterprise_plan'){
+						scope.isCapVisitColShow = false;
+					}
+          if(scope.spendingPlan_status.medical_reimbursement || scope.spendingPlan_status.wellness_reimbursement){
+            scope.isBankNameColShow = true;
+            scope.isBankNumColShow = true;
+          }
+        }
+
 				scope.showLoading = function () {
 					$(".circle-loader").fadeIn();
 					loading_trap = true;
@@ -1670,6 +1759,7 @@ app.directive('benefitsTiersDirective', [
 						scope.isTierSummary = false;
 						scope.isTierBtn = false;
 						scope.isEnrollmentOptions = true;
+
 
 						// if (scope.isTiering == true || scope.isTiering == 'true') {
 						// 	if (scope.tier_arr.length > 0) {

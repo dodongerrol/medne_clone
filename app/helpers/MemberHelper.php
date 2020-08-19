@@ -312,7 +312,7 @@ class MemberHelper
 							);
 							DB::table('customer_credit_logs')->insert($company_credit_logs);
 
-							// $company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('medical_supp_credits', $new_medical_allocation);
+							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('medical_supp_credits', $new_medical_allocation);
 						} else {
 							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('balance', $new_medical_allocation);
 						}
@@ -1850,6 +1850,17 @@ class MemberHelper
 		$api = Config::get('config.api_node_live');
 		$api = $api.'/employees/get_spending_feature_status?token='.$token.'&type='.$type;
 		return httpLibrary::getHttp($api, []);
+	}
+	
+	public static function checkMemberDeactivated($member_id)
+	{
+		$check = DB::table('hr_employee_deactivate')->where('user_id', $member_id)->first();
+
+		if($check) {
+			return true;
+		}
+
+		return false;
 	}
 }
 ?>

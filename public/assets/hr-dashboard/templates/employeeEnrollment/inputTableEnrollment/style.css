@@ -1,0 +1,53 @@
+.enrollment-input-table-wrapper{
+  padding: 0 60px;
+}
+.enrollment-input-table-wrapper .header-title{
+  display: flex;
+  text-align: center;
+  position: relative;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.enrollment-input-table-wrapper .header-title .title{
+  font-size: 20px;
+  line-height: 24px;
+  color: #000000;
+  margin: 70px 0 50px 0;
+  text-align: center;
+}
+.enrollment-input-table-wrapper .right-btns-wrapper{
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.right-btns-wrapper .btn-excel-import{
+  background: #02597E;
+  border-radius: 5px; 
+  color: #FFFFFF;
+  font-size: 14px;
+  line-height: 17px;
+  text-decoration-line: underline;
+  margin-top: 70px;
+  width: 189px;
+  height: 35px;
+  border: none;
+  outline: none;
+  text-transform: uppercase;
+}
+.add-emp-btn-wrapper{
+  margin: 25px 0;
+}
+.add-emp-btn-wrapper .btn-add-emp{
+  background-color: #0392cf;
+  color: #fff;
+  border: 0;
+  box-shadow: none;
+  padding: 11px 20px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  border-radius: 5px;
+  width: 159px;
+  height: 41px;
+}

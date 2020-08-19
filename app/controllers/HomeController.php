@@ -119,6 +119,10 @@ public function getCompanyForgotPasswordView( )
 {
   $input = Input::all();
 
+  if(empty($input['token']) || $input['token'] == null) {
+    return "token is required";
+  }
+
   $result = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 
@@ -368,6 +372,13 @@ public function oldhrDashboardLogin( ) {
 
 public function hrDashboardLogin( ) {
   return View::make('hr_dashboard.login-hr');
+}
+public function getCompanyActivationView( ) {
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new \DateTime();
+  return View::make('hr_dashboard.activation-link', $data);
 }
 
 public function hrForgotPassword( ) {
@@ -1459,6 +1470,25 @@ public function eClaimHome( )
   $data['server'] = $protocol.$hostName;
   $data['date'] = new DateTime;
   return View::make('Eclaim.index', $data);
+}
+
+public function getSALandingPageView( )
+{
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new DateTime;
+  $data['path'] = app_path();
+  return View::make('spendingAccountLandingPage.index', $data);
+}
+public function getEnquiryFormView( )
+{
+  $hostName = $_SERVER['HTTP_HOST'];
+  $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+  $data['server'] = $protocol.$hostName;
+  $data['date'] = new DateTime;
+  $data['path'] = app_path();
+  return View::make('spendingAccountLandingPage.enquiryform', $data);
 }
 
 

@@ -1068,7 +1068,13 @@ Route::group(array('prefix' => 'v2'), function()
 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
-	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
+		Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
+		
+		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
+		Route::post('auth/send-otp-mobile', 'Api_V1_AuthController@sendOtpMobile');
+		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
+		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
+		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
 
 		// for getting member lists
 		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
@@ -1251,6 +1257,8 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
 			// get member spending account status feature
 			Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
+			// create tap ready on boarding
+			Route::get('user/ready_on_boarding', 'Api_V1_AuthController@updateReadyOnBoarding');
 		 });
 	});
 });

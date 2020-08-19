@@ -46,7 +46,13 @@ class DependentController extends \BaseController {
 
 			$temp_file = time().$file->getClientOriginalName();
 			$file->move('excel_upload', $temp_file);
-			$data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+			try {
+				// $data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+			} catch(Exception $e) {
+				return ['status' => false, 'message' => "Please use the sheet name 'Member Information'"];
+			}
+
 			$headerRow = $data_array->first()->keys();
 			
 			$temp_users = [];
@@ -75,14 +81,12 @@ class DependentController extends \BaseController {
 					$mobile = true;
 				} else if($row == "start_date" || $row == "start_date_ddmmyyyy") {
 					$start_date = true;
-				} else if($row == "postal_code") {
-					$postal_code = true;
-				} else if($row == "mobile_country_code" || $row == "mobile_country_code") {
+				} else if($row == "mobile_country_code" || $row == "mobile_country_code" || $row == "country_code") {
 					$mobile_area_code = true;
 				}
 			}
 
-			if(!$fullname || !$dob || !$mobile || !$start_date || !$postal_code || !$mobile_area_code) {
+			if(!$fullname || !$dob || !$mobile || !$start_date || !$mobile_area_code) {
 				return array(
 					'status'	=> FALSE,
 					'message' => 'Excel is invalid format. Please download the recommended file for Employee Enrollment.'
@@ -153,74 +157,77 @@ class DependentController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->first();
 
-			$total = $plan_status->employees_input - $plan_status->enrolled_employees;
+			if($planned->account_type != "lite_plan") {
+				$total = $plan_status->employees_input - $plan_status->enrolled_employees;
 
-			if($total <= 0) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
-				);
-			}
-
-			if(sizeof($temp_users) > $total) {
-				return array(
-					'status'	=> FALSE,
-					'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
-				);
-			}
-
-			$total_dependents_entry = 0;
-			$total_dependents = 0;
-
-			foreach ($temp_users as $key => $employee) {
-				if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
-					$total_dependents_entry += sizeof($employee['dependents']);
-				}
-			}
-
-			if($plan_tier_id) {
-				$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
-				if(sizeof($temp_users) > $total_left_count) {
+				if($total <= 0) {
 					return array(
 						'status'	=> FALSE,
-						'message'	=> "Current Member headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".sizeof($temp_users)." of current total left of ".$total_left_count." for this Plan Tier."
+						'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
 					);
 				}
 
-			}
+				if(sizeof($temp_users) > $total) {
+					return array(
+						'status'	=> FALSE,
+						'message'	=> "We realised the current headcount you wish to enroll is over the current vacant member seat/s."
+					);
+				}
 
-			if($total_dependents_entry > 0) {
-				$dependent_plan_status = DB::table('dependent_plan_status')
-				->where('customer_plan_id', $planned->customer_plan_id)
-				->orderBy('created_at', 'desc')
-				->first();
-				
-				if($dependent_plan_status) {
-					$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
+				$total_dependents_entry = 0;
+				$total_dependents = 0;
 
-					if($total_dependents_entry > $total_dependents) {
+				foreach ($temp_users as $key => $employee) {
+					if(!empty($employee['dependents']) && sizeof($employee['dependents']) > 0) {
+						$total_dependents_entry += sizeof($employee['dependents']);
+					}
+				}
+
+				if($plan_tier_id) {
+					$total_left_count = $plan_tier->member_head_count - $plan_tier->member_enrolled_count;
+					if(sizeof($temp_users) > $total_left_count) {
 						return array(
 							'status'	=> FALSE,
-							'message'	=> "We realised the current headcount you wish to enroll is over the current vacant dependent seat/s."
+							'message'	=> "Current Member headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".sizeof($temp_users)." of current total left of ".$total_left_count." for this Plan Tier."
 						);
 					}
-				} else if(!$dependent_plan_status && $total_dependents_entry > 0){
-					return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
-				}
-				
-				if($plan_tier_id) {
-					if($plan_tier->dependent_head_count > 0) {
-						$plan_tier_dependent_total = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
 
-						if($total_dependents_entry > $plan_tier_dependent_total) {
+				}
+
+				if($total_dependents_entry > 0) {
+					$dependent_plan_status = DB::table('dependent_plan_status')
+					->where('customer_plan_id', $planned->customer_plan_id)
+					->orderBy('created_at', 'desc')
+					->first();
+					
+					if($dependent_plan_status) {
+						$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
+
+						if($total_dependents_entry > $total_dependents) {
 							return array(
 								'status'	=> FALSE,
-								'message'	=> "Current Dependent headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".$total_dependents_entry." of current total left of ".$plan_tier_dependent_total." for this Plan Tier"
+								'message'	=> "We realised the current headcount you wish to enroll is over the current vacant dependent seat/s."
 							);
+						}
+					} else if(!$dependent_plan_status && $total_dependents_entry > 0){
+						return array('status' => false, 'message' => 'Dependent Plan is currently not available for this Company. Please purchase a dependent plan, contact Mednefits Team for more information.');
+					}
+					
+					if($plan_tier_id) {
+						if($plan_tier->dependent_head_count > 0) {
+							$plan_tier_dependent_total = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
+
+							if($total_dependents_entry > $plan_tier_dependent_total) {
+								return array(
+									'status'	=> FALSE,
+									'message'	=> "Current Dependent headcount you wish to enroll to this Plan Tier is over the current vacant member seat/s. Your are trying to enroll a total of ".$total_dependents_entry." of current total left of ".$plan_tier_dependent_total." for this Plan Tier"
+								);
+							}
 						}
 					}
 				}
 			}
+			
 			// get active plan id for member
 			$customer_active_plan_id = PlanHelper::getCompanyAvailableActivePlanId($customer_id);
 			$customer_active_plan = DB::table('customer_active_plan')
@@ -267,6 +274,10 @@ class DependentController extends \BaseController {
 				
 				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
+				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
+				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
+				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
+				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
@@ -277,14 +288,18 @@ class DependentController extends \BaseController {
 					'first_name'			=> trim($user['fullname']),
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
+					'emp_no'				=> trim($user['employee_id']),
 					'mobile'				=> (int)$mobile,
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
+					'bank_name'				=> $user['bank_name'],
+					'bank_account_number'	=> $user['bank_account_number'],
+					'cap_per_visit'			=> $user['cap_per_visit'],
 					'credits'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
 					'medical_balance_entitlement'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
 					'wellness_credits'		=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
 					'wellness_balance_entitlement'				=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
-					'postal_code'			=> trim($user['postal_code']),
+					'postal_code'			=> null,
 					'start_date'			=> $user['plan_start'],
 					'group_number'			=> $group_number,
 					'error_logs'			=> serialize($error_member_logs)
@@ -334,7 +349,7 @@ class DependentController extends \BaseController {
 					$email['end_point'] = url('upload_excel_dependents', $parameter = array(), $secure = null);
 					$email['logs'] = 'Save Temp Enrollment Excel - '.$e;
 					$email['emailSubject'] = 'Error log.';
-					// EmailHelper::sendErrorLogs($email);
+					EmailHelper::sendErrorLogs($email);
 					return array('status' => FALSE, 'message' => 'Failed to create enrollment employee. Please contact Mednefits team.', 'res' => $temp_enrollment_data, 'e' => $e->getMessage());
 				}
 
@@ -519,6 +534,7 @@ class DependentController extends \BaseController {
 
 				$family_result = DB::table('employee_family_coverage_sub_accounts')->insert($family);
 				if($family_result) {
+					$dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $dependent_plan_id)->first();
 					$user['family_data'] = $family;
 					$history = array(
 						'user_id'			=> $user_id,
@@ -567,7 +583,8 @@ class DependentController extends \BaseController {
 					}
 
 					$dependent_plan_status->incrementEnrolledDependents($planned->customer_plan_id);
-
+					// record enrollment status for member
+					PlanHelper::createEnrollmentHistoryStatus($user_id, $dependent_plan->customer_active_plan_id, date('Y-m-d'), $history['plan_start'], null, "immediate", "dependent");
 				}
 			}
 		}

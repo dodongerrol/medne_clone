@@ -1,0 +1,179 @@
+<div input-table-enrollment-directive>
+  <div class="enrollment-input-table-wrapper">
+    <div class="header-title">
+      <p class="title">
+        Please fill in employees’ details below<br>
+        or select Excel Import for bulk enrollment (recommended for more than 5 employees).
+      </p>
+
+      <div class="right-btns-wrapper">
+        <button class="btn-excel-import">
+          Excel Import
+        </button>
+      </div>
+    </div>
+
+    <div class="input-table-container">
+      <div class="tbl-header-wrapper">
+
+        <div class="head-h-fixed">
+          <div class="header-row">
+            <div class="head-col option"></div>
+            <div class="head-col number"></div>
+            <div class="head-col fullname">
+              <span>
+                Fullname<span class="required">*</span>
+              </span> 
+            </div>
+          </div>
+        </div>
+
+        <div class="head-h-scroll-wrapper">
+          <div class="header-row">
+            <div class="head-col dob">
+              <span>
+                Date of Birth<span class="required">*</span><br>(DD/MM/YYYY)
+              </span>
+            </div>
+            <div class="head-col email">Work Email</div>
+            <div class="head-col country-code">
+              <span>
+                Country Code<span class="required">*</span>
+              </span>
+            </div>
+            <div class="head-col mobile">
+              <span>
+                Mobile Number<span class="required">*</span>
+              </span>
+            </div>
+            <div class="head-col start-date">
+              <span>
+                Start Date<span class="required">*</span><br>(DD/MM/YYYY)
+              </span>
+            </div>
+
+            <div class="head-col med-alloc">Medical Allocation</div>
+            <div class="head-col wel-alloc">Wellness Allocation</div>
+
+            <div class="head-col bank-name">
+              <span>
+                Bank Name<span class="required">*</span>
+              </span>
+            </div>
+            <div class="head-col bank-num">
+              <span>
+                Bank Account Number<span class="required">*</span>
+              </span>
+            </div>
+
+            <div class="head-col dep-name">
+              <span>
+                Dependent 1 Full Name<span class="required">*</span>
+              </span>
+            </div>
+            <div class="head-col dep-dob">
+              <span>
+                Dependent 1 Date of Birth<span class="required">*</span><br>(DD/MM/YYYY)
+              </span>
+            </div>
+            <div class="head-col dep-rel">
+              <span>
+                Dependent 1 Relationship<span class="required">*</span></div>
+              </span>
+          </div>
+        </div>
+
+      </div>
+      <div class="tbl-body-wrapper">
+        <div class="body-v-scroll-wrapper">
+
+          <div class="body-h-fixed">
+            <div ng-repeat="list in [1,2,3,4,5,6,7,8,9]" class="body-row">
+              <div class="body-col option">
+                <img src="../images/dots.png">
+              </div>
+              <div class="body-col number">
+                {{ $index }}
+              </div>
+              <div class="body-col fullname">
+                A
+              </div>
+            </div>
+          </div>
+
+          <div class="body-h-scroll-wrapper">
+            <div ng-repeat="list in [1,2,3,4,5,6,7,8,9]" class="body-row">
+              <div class="body-col dob">
+                A
+              </div>
+              <div class="body-col email">
+                A
+              </div>
+              <div class="body-col country-code">
+                A
+              </div>
+              <div class="body-col mobile">
+                A
+              </div>
+              <div class="body-col start-date">
+                A
+              </div>
+              <div class="body-col med-alloc">
+                A
+              </div>
+              <div class="body-col wel-alloc">
+                A
+              </div>
+              <div class="body-col bank-name">
+                A
+              </div>
+              <div class="body-col bank-num">
+                A
+              </div>
+              <div class="body-col dep-name">
+                A
+              </div>
+              <div class="body-col dep-dob">
+                A
+              </div>
+              <div class="body-col dep-rel">
+                A
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="right-scroll-text">
+        <label>Scroll for more</label>
+        <img src="../assets/images/scroll-right-arrow.png">
+      </div>
+      
+      <div class="right-scroll-text">
+        <label>Scroll for more</label>
+        <img src="../assets/images/scroll-bottom-arrow.png">
+      </div>
+    </div>
+
+    <div class="add-emp-btn-wrapper">
+      <button class="btn-add-emp">
+        + Add Employee
+      </button>
+    </div>
+  </div>
+
+  <div class="bottom-btns-wrapper">
+    <div class="left-wrapper">
+      <button class="btn-back" ng-click="backPage()">
+        Back
+      </button>
+      <button class="btn-cancel">
+        Cancel
+      </button>
+    </div>
+    <div class="right-wrapper">
+      <button class="btn-next" ng-click="nextPage()">Next</button>
+    </div>
+  </div>
+</div>

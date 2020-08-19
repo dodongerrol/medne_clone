@@ -72,3 +72,29 @@
 .font-helveticaNeueHv{
     font-family: 'HelveticaNeueHv';
 }
+
+
+
+
+
+
+/* GREYCLIFF */
+@font-face {
+    font-family: 'Greycliff'; /* Global font */
+    src: url('../fonts/greycliff/GreycliffCF-Regular.otf')  format('truetype');
+}
+
+@font-face {
+    font-family: 'Greycliff Medium'; /* Global font */
+    src: url('../fonts/greycliff/GreycliffCF-Medium.otf')  format('truetype');
+}
+
+@font-face {
+    font-family: 'Greycliff Bold'; /* Global font */
+    src: url('../fonts/greycliff/GreycliffCF-Bold.otf')  format('truetype');
+}
+
+@font-face {
+    font-family: 'Greycliff Heavy'; /* Global font */
+    src: url('../fonts/greycliff/GreycliffCF-ExtraBold.otf')  format('truetype');
+}

@@ -3005,6 +3005,80 @@ class EmployeeController extends \BaseController {
       
       return ['status' => true, 'data' => $data];
     }
+
+  public function checkEmailValidation( )
+  {
+    $input = Input::all();
+    $email = DB::table('customer_hr_dashboard')->where('email', $input['email'])->first();
+    $token = StringHelper::getToken();
+
+    if(!$email == 2) {
+      return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
+    }
+    if($email && (int)$email->active == 0 && $email->hr_activated == 0) {
+      return array('status' => 0, 'token' => $email->reset_link, 'date_created' => $email->updated_at, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.', 'hr_id' => $email->hr_dashboard_id);
+      
+    } else if($email && (int)$email->active == 1) {
+      return array('status' => TRUE, 'Activated');
+      if($email && $email->hr_activated == 1) {
+        return array('status' => 1,  'message' => 'Account Activated');
+      } else if($email && $email->active == 0) {
+        return array('status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.');
+      }
+      if($email) {
+        return $token;
+      } else {
+          return FALSE;
+      }
+    }
+  }
+  
+  public function getEmployeeEnrollmentStatus( )
+  {
+    $result = StringHelper::getJwtHrSession();
+    $customer_id = $result->customer_buy_start_id;
+
+    // get pending users
+    $pending = 0;
+    $login = 0;
+    $active = 0;
+    $dependent_total_enrolled = 0;
+    $members = CustomerHelper::getActiveMembers($customer_id);
+    $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+    $customer_plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+    $dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+    
+    foreach($members as $key => $member)  {
+      // check if member already login base on admin logs
+      $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
+      if(!$check_active_state || $check_active_state && (int)$member->Status == 0)  {
+        $pending++;
+      } else {
+        // check if already create a transaction
+        $panel = DB::table('transaction_history')->where('UserID', $member->user_id)->first();
+        $non_panel = DB::table('e_claim')->where('user_id', $member->user_id)->first();
+
+        if($panel || $non_panel) {
+          $active++;
+        } else {
+          $login++;
+        }
+      }
+    }
+
+    if($dependent_plan_status) {
+      $dependent_total_enrolled = $dependent_plan_status->total_enrolled_dependents;
+    }
+
+    $data = [
+      'total_enrolled_employees' => $customer_plan_status->enrolled_employees,
+      'total_enrolled_dependents' => $dependent_total_enrolled,
+      'pending' => $pending, 
+      'login' => $login, 
+      'active' => $active
+    ];
+    return ['status' => true, 'data' => $data];
+  }
     
     public function checkMemberReplaceDetails( )
     {
@@ -3066,4 +3140,140 @@ class EmployeeController extends \BaseController {
 
       return ['status' => true, 'message' => 'All good'];
     }
+
+    public function SendMemberActivation( )
+    {
+      $input = Input::all();
+
+      $result = StringHelper::getJwtHrSession();
+      $customer_id = $result->customer_buy_start_id;
+
+      if(empty($input['id']) || $input['id'] == null) {
+        return ['status' => false, 'message' => 'id is required'];
+      }
+
+      $enrollment_status = DB::table('enrollment_status')->where('id', $input['id'])->first();
+
+      if(!$enrollment_status) {
+        return ['status' => false, 'message' => 'data not found'];
+      }
+
+      // get all enrollment history send_activation = 0;
+      $activations = DB::table('enrollment_status_history')->where('enrollment_status_id', $input['id'])->where('type', 'employee')->where('send_activation', 0)->get();
+      
+      foreach($activations as $key => $activation)	{
+        $user = DB::table('user')->where('UserID', $activation->member_id)->first();
+        $emailDdata['emailName'] = ucwords($user->Name);
+        $emailDdata['emailPage'] = 'email-templates.latest-templates.mednefits-welcome-member-enrolled';
+        $emailDdata['emailTo'] = $user->Email;
+        $emailDdata['email'] = $user->PhoneNo;
+        // $emailDdata['email'] = 'allan.alzula.work@gmail.com';
+        $emailDdata['name'] = ucwords($user->Name);
+        $emailDdata['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
+        $emailDdata['pw'] = "1234";
+        $emailDdata['company'] = null;
+        $emailDdata['start_date'] = null;
+        $emailDdata['plan'] = null;
+          
+        EmailHelper::sendEmail($emailDdata);
+        if($user->PhoneNo) {
+          $phone = SmsHelper::newformatNumber($user);
+	
+          if($phone) {
+            $compose = [];
+            $compose['name'] = $user->Name;
+            $compose['company'] = null;
+            $compose['plan_start'] = null;
+            $compose['email'] = $user->PhoneNo ? $user->PhoneNo : $user->Email;
+            $compose['nric'] = $user->PhoneNo;
+            $compose['password'] = "1234";
+            $compose['phone'] = $phone;
+            $compose['sms_type'] = "LA";
+            $compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
+            $result_sms = SmsHelper::sendSms($compose);
+          }
+        }
+
+        // update send activation
+        DB::table('enrollment_status_history')->where('id', $activation->id)->update(['send_activation' => 1, 'updated_at' => date('Y-m-d H:i:s')]);
+      }
+
+      return ['status' => true, 'message' => 'Activation sent.'];
+    }
+
+    public static function Delete_Token(){
+      $AccessToken = new OauthAccessTokens();
+      $getRequestHeader = StringHelper::requestHeader();
+      //if($getRequestHeader['Authorization'] !=""){
+      if(!empty($getRequestHeader['Authorization'])){
+        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+        if($getAccessToken){
+          $deleteToken = $AccessToken->DeleteToken($getAccessToken->id);
+          if($deleteToken){
+            return TRUE;
+          }else{
+            return FALSE;
+          }
+        }
+      }else{
+        return FALSE;
+      }
+    }
+
+
+    public static function employeeResetPassword( ){
+      $hostName = $_SERVER['HTTP_HOST'];
+      $protocol = $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+      $server = $protocol.$hostName;
+      // return $server;
+      $id = Input::get ('id');
+      $input = Input::all();
+      // $returnObject = new stdClass();
+      if(!empty($id)){
+        $findUserID = null;
+        $user_data = DB::table('user')
+        ->where('UserID', $id)
+        ->first();
+
+        if($user_data){
+          $findUserID = $user_data->UserID;
+          // $returnObject->status = TRUE;
+          // $returnObject->message = "New password is on the way to your email, check your inbox.";
+          $deleteToken = self::Delete_Token();
+          if($user_data->ResetLink) {
+            $updateArray['ResetLink'] = $user_data->ResetLink;
+          } else {
+            $updateArray['ResetLink'] = StringHelper::getEncryptValue();
+          }
+
+          $updateArray['userid'] = $findUserID;
+          $updateArray['Recon'] = 0;
+          $updateArray['updated_at'] = date('Y-m-d H:i:s');
+
+          $user = new User();
+          $update = $user->updateUserProfile($updateArray);
+
+          $findNewUser = DB::table('user')
+          ->where('UserID', '=', $findUserID)
+          ->first();
+
+          // check type of communication type
+          if($findNewUser->UserID) {
+            $emailDdata['emailName'] = $user_data->Name;
+            $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
+            $emailDdata['emailTo'] = $user_data->Email;
+            $emailDdata['emailSubject'] = 'Employee Password Reset';
+            $emailDdata['name'] = $user_data->Name;
+            $emailDdata['context'] = "Forgot your employee password?";
+            $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$updateArray['ResetLink'];
+            EmailHelper::sendEmail($emailDdata);    
+            return array('status' => TRUE, 'message' => 'We sent an email or sms to you with a link to reset your password.');
+          } 
+          return array('status' => FALSE, 'message' => 'Failed to send reset password link.');
+      }else{
+        return ['status' => FALSE, 'message' => 'Reset Password Failed.'];
+      }
+    }
+    return ['status' => FALSE, 'message' => 'Reset Password Failed.'];
+  }
 }

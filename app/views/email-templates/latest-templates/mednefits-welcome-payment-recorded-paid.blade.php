@@ -65,7 +65,8 @@
           <div class="social-contact">
             <p style="color: #807b7b;font-weight:700;margin-top: 0;font-size: 18px;">Contact support</p>
 
-            <p style="color: #807b7b;margin: 0;font-size: 17px;">+65 6254 7889</p>
+            <p style="color: #807b7b;margin: 0;font-size: 17px;">+65 3163 5403</p>
+            <p style="color: #807b7b;margin: 0;font-size: 17px;">+60 330 995 774</p>
             <p style="color: #807b7b;margin: 0;font-size: 17px;">happiness@mednefits.com</p>
           </div>
 

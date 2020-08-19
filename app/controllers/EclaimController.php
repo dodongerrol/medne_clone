@@ -22,23 +22,26 @@ class EclaimController extends \BaseController {
 	// login
 	public function loginEmployee( )
 	{
-		$input = Input::all();
-		$email = $input['email'];
-		$email = (int)($email);
-		$password = $input['password'];
+			$input = Input::all();
+			$email = $input['email'];
+			$email = (int)($email);
+			$password = $input['password'];
 
-		$check = DB::table('user')
-		->where('UserType', 5)
-		->where('PhoneNo', (int)$email)
-		->where('password', md5($password))
-		// ->where('Active', 1)
-		->first();
+			$check = DB::table('user')
+			->where('UserType', 5)
+			->where('PhoneNo', (int)$email)
+			->where('password', md5($password))
+			// ->where('Active', 1)
+			->first();
 
-		if($check) {
-			if((int)$check->account_update_status == 0) {
-				return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
+			if($check) {
+				if((int)$check->account_update_status == 0) {
+					return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
+				}
+
+			if($check && (int)$check->member_activated == 0) {
+				return array('status' => FALSE, 'message' => 'Account is not active.');
 			}
-
 			// check employee status
 			$employee_status = PlanHelper::getEmployeeStatus($check->UserID);
 			$today =  PlanHelper::endDate(date('Y-m-d'));
@@ -157,11 +160,15 @@ class EclaimController extends \BaseController {
 			$dependent_user = true;
 		}
 
+		// get customer id
+		$customer_id = PlanHelper::getCustomerId($user_id);
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($user_id);
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
 		$date = date('Y-m-d', strtotime($input['date']));
 		$claim_amount = $input['claim_amount'];
+		
+		
 
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
@@ -202,7 +209,15 @@ class EclaimController extends \BaseController {
 										->first();
 		}
 
-		if($customer_active_plan->account_type == "enterprise_plan"){
+		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+			$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+
+			if($spending['medical_reimbursement'] == false) {
+				return array('status' => FALSE, 'message' => 'Member not eligible for Non-Panel transactions.');
+			}
+		}
+
+		if($customer_active_plan->account_type == "enterprise_plan")	{
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
 			// check if it is myr or sgd
@@ -232,24 +247,24 @@ class EclaimController extends \BaseController {
 		}
 
 		if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
-	    $amount = trim($input['amount']);
-	  } else {
-	    if(Input::has('currency_type') && $input['currency_type'] != null) {
-	      if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
-	        $amount = $input['amount'] / $currency;
-	        $claim_amount = $claim_amount / $currency;
-	      } else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
-	        $amount = $input['amount'] * $currency;
-	        $claim_amount = $claim_amount * $currency;
-	      } else {
-	        $amount = trim($input['amount']);
-	        $claim_amount = trim($claim_amount);
-	      }
-	    } else {
-	      $amount = trim($input['amount']);
-	      $claim_amount = trim($claim_amount);
-	    }
-	  }    	
+			$amount = trim($input['amount']);
+		} else {
+			if(Input::has('currency_type') && $input['currency_type'] != null) {
+			if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
+				$amount = $input['amount'] / $currency;
+				$claim_amount = $claim_amount / $currency;
+			} else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
+				$amount = $input['amount'] * $currency;
+				$claim_amount = $claim_amount * $currency;
+			} else {
+				$amount = trim($input['amount']);
+				$claim_amount = trim($claim_amount);
+			}
+			} else {
+			$amount = trim($input['amount']);
+			$claim_amount = trim($claim_amount);
+			}
+		}    	
 
     	if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
@@ -273,8 +288,6 @@ class EclaimController extends \BaseController {
 			$amount = trim($amount);
 		}
 
-		// get customer id
-		$customer_id = PlanHelper::getCustomerId($user_id);
 		$time = date('h:i A', strtotime($input['time']));
 		$claim = new Eclaim();
 		$data = array(
@@ -443,6 +456,8 @@ class EclaimController extends \BaseController {
 			$ids = [$user_id, $customer_id];
 		}
 
+		// get customer id
+		$customerId = StringHelper::getCustomerId($employee->UserID);
         // check if employee plan is expired
 		$check_plan = PlanHelper::checkEmployeePlanStatus($employee->UserID);
 		$date = date('Y-m-d', strtotime($input['date']));
@@ -464,11 +479,9 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
 		}
 
-		// get customer id
-		$customerId = StringHelper::getCustomerId($employee->UserID);
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
 		$currency_data = DB::table('currency_options')->where('currency_type', $check_user_balance->currency_type)->first();
-		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customerId)->first();
+		// $spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customerId)->first();
 		
 		if($currency_data) {
 			$currency = $currency_data->currency_value;
@@ -499,24 +512,13 @@ class EclaimController extends \BaseController {
 		$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
     	$customer_active_plan = DB::table('customer_active_plan')
                               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                              ->first();
-		  
-		// if($customer_active_plan->account_type == "enterprise_plan")	{
-		// 	$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
-
-		// 	if($limit <= 0) {
-		// 		return ['status' => false, 'message' => 'Maximum of 14 visit already reach.'];
-		// 	}
-
-		// 	// check if A&E already get for 2 times
-		// 	$claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
-
-		// 	if($claim_status) {
-		// 		return ['status' => false, 'message' => 'Maximum of 2 approved Accident & Emergency already consumed.'];
-		// 	}
-		// }					  
-		
-		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && (int)$spending_accounts->wellness_enable == 1) {
+							  ->first();
+							  
+		$spending = CustomerHelper::getAccountSpendingStatus($customerId);
+		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && $spending['wellness_enabled'] == true) {
+			if($spending['medical_reimbursement'] == false) {
+				return array('status' => FALSE, 'message' => 'Member not eligible for Non-Panel transactions.');
+			}
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'wellness');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);

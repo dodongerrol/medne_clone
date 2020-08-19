@@ -24,6 +24,7 @@ app.directive('dashboardDirective', [
 				scope.statementHide = true;
 				scope.empStatementShow = false;
 				scope.spending_account_status = {};
+				scope.employee_plan_status = {};
 				// scope.totalCompanyHeight = document.getElementById("tolal-company-container").style.height = "50px";
 				// console.log(scope.totalCompanyHeight);
 
@@ -129,8 +130,7 @@ app.directive('dashboardDirective', [
 							console.log(response);
 							scope.progress = response.data.data;
 							// scope.initializeChart();
-
-							if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
+                            if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
 								scope.spendingAccountType = 1;
 							} else {
 								scope.spendingAccountType = 0;
@@ -138,10 +138,9 @@ app.directive('dashboardDirective', [
 							// if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
 							// 	scope.spendingAccountType = 1;
 							// } else {
-							//	scope.spendingAccountType = 0;
-							//	scope.companySpendingTotalDue();
+								scope.spendingAccountType = 0;
+								scope.companySpendingTotalDue();
 							// }
-
 						});
 				}
 
@@ -154,7 +153,7 @@ app.directive('dashboardDirective', [
 							scope.task_lists = response.data
 							$('.task-load').hide();
 							$('.task-box-list').fadeIn();
-
+							scope.dashCredits();
 						});
 				}
 
@@ -175,7 +174,6 @@ app.directive('dashboardDirective', [
 							localStorage.setItem('currency_type', scope.credits.currency);
 							$('.credit-load').hide();
 							$('.credit-box').fadeIn();
-							localStorage.setItem("currency_type", scope.credits.currency);
 						});
 
 					// hrSettings.getDashCredits()
@@ -251,6 +249,24 @@ app.directive('dashboardDirective', [
 						});
 				}
 
+				scope._toggleInfo_ = function ( type ) {
+					if ( type == 'pending' ) {
+						$('.status-tooltip-wrapper.pending').toggle();
+						$('.status-tooltip-wrapper.active').hide();
+						$('.status-tooltip-wrapper.activated').hide();
+					}
+					if ( type == 'active' ) {
+						$('.status-tooltip-wrapper.active').toggle();
+						$('.status-tooltip-wrapper.pending').hide();
+						$('.status-tooltip-wrapper.activated').hide();
+					}
+					if ( type == 'activated' ) {
+						$('.status-tooltip-wrapper.activated').toggle();
+						$('.status-tooltip-wrapper.active').hide();
+						$('.status-tooltip-wrapper.pending').hide();
+					}
+				}
+
 				scope.onLoad = function () {
 					scope.showLoading();
 					hrSettings.getSession()
@@ -275,12 +291,21 @@ app.directive('dashboardDirective', [
 						});
 				}
 
+				scope.getEmployeeStatus = function( ) {
+					console.log('here oh')
+					hrSettings.getEmployeeStatus( )
+					.then(function(response) {
+					  console.log(response);
+					  scope.employee_plan_status = response.data.data;
+					});
+				};
+
 				scope.onLoad();
 				scope.getPlanStatus();
 				scope.companyDependents();
 				scope.getCompanyIntroMessage();
 				scope.companyPlanTotalDue();
-				
+				scope.getEmployeeStatus();
 				scope.companyAccountType();
 			}
 		}
