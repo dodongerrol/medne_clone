@@ -1,4 +1,4 @@
-<div class="top-navbar">
+<div class="top-navbar" style="display:none;">
 	<div class="container">
 		<img ui-sref="benefits-dashboard" src="../../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="top-logo pull-left pointer-cursor">
 		<span class="pull-right account-dropdown">
@@ -38,7 +38,7 @@
 		</a>
 	</div>
 </div>
-<div class="sub-navigation-bar">
+<div class="sub-navigation-bar" style="display:none;">
 	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;" >
 		<div class="container">
 			<div class="welcome-container">
@@ -76,6 +76,49 @@
       </div>
 		</div>
   </div>
+</div>
+
+<div class="header-navigation-section">
+	<div class="logo-div">
+		<img ui-sref="benefits-dashboard" src="../../assets/hr-dashboard/img/Mednefits Logo V2.svg" class="top-logo pointer-cursor">
+	</div>
+	<div class="header-menu-div">
+		<div class="menu-div" ui-sref-active="active" ui-sref="benefits-dashboard">Home</div>
+		<div class="menu-div" ui-sref-active="active" ui-sref="employee-overview">Employee</div>
+		<div class="menu-div" ui-sref-active="active" ui-sref="activity">History</div>
+		<div class="menu-div" ui-sref-active="active" ui-sref="e-claim">Non-panel Claim</div>
+		<div class="menu-div" ui-sref-active="active" ui-sref="statement">Reports</div>
+	</div>
+	<div class="header-settings-div">
+		<div class="icon-selection-container">
+			<img ui-sref="account-settings" src="../../assets/hr-dashboard/img/cog-icon.png" class="pointer-cursor">
+			<img src="../../assets/hr-dashboard/img/circle-question.png" class="pointer-cursor">
+
+			<div class="tooltip-container">
+				<h3 class="tooltip-title">We're here to help.</h3>
+				<h3 class="tooltip-phone-email-title">You may ring us</h3>
+				<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
+				<h3 class="tooltip-phone-email-details">+60 3789 01770</h3>
+				<h3 class="tooltip-phone-email-details">Mon - Fri 9:30am to 6:30pm</h3>
+				<br>
+				<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
+				<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
+			</div>
+		</div>
+		<div class="user-info-drop-container active">
+			<div class="drop-select-wrapper">
+				<div class="user-img-icon">
+					<div class="circle">
+						<div class="letter">F</div>
+					</div>
+				</div>
+				<div class="company-name">Mednefits Pte Ltd</div>
+				<div class="icon">
+					<i class="fa fa-angle-down"></i>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script type="text/javascript">

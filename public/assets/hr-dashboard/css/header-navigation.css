@@ -4,3 +4,105 @@
 .welcome-container h4.active + .arrow-up{
   opacity: 1;
 }
+.header-navigation-section{
+  height: 60px;
+  display: flex;
+  background: #02597E;
+  padding: 0 50px;
+}
+.header-navigation-section .logo-div{
+  width: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 50px;
+}
+.header-navigation-section .header-menu-div{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.header-menu-div .menu-div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 21px;
+  color: #FFFFFF;
+  padding: 0 20px;
+  cursor: pointer;
+  height: 100%;
+}
+.header-menu-div .menu-div.active{
+  background-color: #014968;
+}
+.header-navigation-section .header-settings-div{
+  /* width: 350px; */
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-settings-div .icon-selection-container{
+  margin-right: 12px;
+  border-right: 0.8px solid #FFFFFF;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.icon-selection-container img{
+  width: 25px;
+  height: 25px;
+  margin-right: 20px;
+}
+.icon-selection-container .tooltip-container{
+  display: none;
+}
+.user-info-drop-container{
+  height: 100%;
+  cursor: pointer;
+}
+.user-info-drop-container.active{
+  background: #014968;
+}
+.user-info-drop-container .drop-select-wrapper{
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+.drop-select-wrapper .user-img-icon{
+  width: 60px;
+  text-align: center;
+}
+.drop-select-wrapper .user-img-icon .circle{
+  width: 40px;
+  height: 40px;
+  background: #40A5A3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.user-img-icon .circle .letter{
+  font-size: 24px;
+  line-height: 29px;
+  color: #FFFFFF;
+}
+.drop-select-wrapper .company-name{
+  flex: 1;
+  color: #FFFFFF;
+}
+.drop-select-wrapper .icon{
+  width: 15px;
+  text-align: center;
+  margin:0 10px 0 8px;
+}
+.drop-select-wrapper .icon i{
+  font-size: 22px;
+  color: #FFF;
+  position: relative;
+  top: 2px;
+}

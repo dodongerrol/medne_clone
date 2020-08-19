@@ -11,7 +11,7 @@
 	  gtag('config', 'UA-78188906-2');
 	</script>
 	<!-- Facebook Pixel Code -->
-	
+
 	<script>!function (f, b, e, v, n, t, s) { if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments) }; if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = []; t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s) }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '165152804138364'); fbq('track', 'PageView');</script>
 	<noscript><img height="1" width="1" src="https://www.facebook.com/tr?id=165152804138364&ev=PageView(44 B)https://www.facebook.com/tr?id=165152804138364&ev=PageView&noscript=1" /></noscript>
 	<!-- End Facebook Pixel Code -->
@@ -73,6 +73,15 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsBasicPlan/style.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/style.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/style.css?_={{ $date->format('U') }}">
+
+	<!-- ACCOUNT SETTINGS -->
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/generated.css?_={{ $date->format('U') }}">
+
+
+	<!-- Company Profile -->
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/container/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/style.css?_={{ $date->format('U') }}">
 
 	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async="async"></script>
 
@@ -159,7 +168,7 @@
 		    </div>
 		  </div>
 		  <p class="text-center export-emp-details-message color-black2 weight-700" style="margin-top: 30px;" hidden>
-		  	Fetching employee details. 
+		  	Fetching employee details.
 		  	May take a while depending on the number of employees.
 		  </p>
 		  <p class="text-center download-receipt-message color-black2 weight-700" style="margin-top: 30px;" hidden>
@@ -169,8 +178,9 @@
 	</div>
 
 	<span id="siteseal" style="position: fixed; bottom: 8px; left: 8px;"><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=UJjiOv0ThIvbJiVEP3Csx2qHmSWwQ1FP3QkB55XTnkysyqGC2w3u7kKI5k7o"></script></span>
-</body>
 
+</body>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/calendar/moment/moment.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/calendar/moment/min/moment-with-locales.min.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/jquery.min.js?_={{ $date->format('U') }}"></script>
@@ -228,10 +238,10 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/settingsDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/blockHealthPartnersDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/capPerVisitDirective.js?_={{ $date->format('U') }}"></script>
-	
+
 	<!-- enrollment -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/enrollmentMethodDirective.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/enrollmentOptionsDirective.js?_={{ $date->format('U') }}"></script>	
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/enrollmentOptionsDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/excelEnrollmentDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/downloadTemplateDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/prepareDirective.js?_={{ $date->format('U') }}"></script>
@@ -255,7 +265,7 @@
 
 	<!-- Company activation -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/function.js?_={{ $date->format('U') }}"></script>
-	
+
 	<!-- REMOVE EMPLOYEE DIRECTIVES -->
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/function.js?_={{ $date->format('U') }}"></script>
@@ -272,9 +282,21 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/outOfPocket/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/function.js?_={{ $date->format('U') }}"></script>
 
+
+	<!-- ACCOUNT SETTINGS -->
+	<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/change-primary-admin.js?_={{ $date->format('U') }}"></script>
+
+
+	<!-- Company Profile -->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/container/function.js?_={{ $date->format('U') }}"></script>
+
+
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>
 	<!-- Services -->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/axios-service.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/hrServices.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/authService.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/services/dependentsService.js?_={{ $date->format('U') }}"></script>

@@ -301,7 +301,7 @@ class CustomerHelper
 			'wellness_reimbursement'	=> $spending->wellness_reimbursement == 1 ? true : false,
 			'paid_status'		=> $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
 			'with_mednefits_credits' => $mednefits_credits ? true : false,
-			'mednefits_credits_id' => $mednefits_credits->id
+			'mednefits_credits_id' => $mednefits_credits ? $mednefits_credits->id : false,
 		);
 	}
 

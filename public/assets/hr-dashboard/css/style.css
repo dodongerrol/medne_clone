@@ -26,6 +26,8 @@ body {
   letter-spacing: 0.14px;
   line-height: 24px;
   overflow-x: hidden;
+  /* background: #E5E5E5; */
+  background: #f5f5f5;
 }
 .bg-color-home {
   background: #f5f5f5;
@@ -47,7 +49,7 @@ button {
 .top-logo {
   /*height: 40px;*/
   height: 30px;
-  margin-top: 5px;
+  /* margin-top: 5px; */
 }
 
 .user-icon {
@@ -657,7 +659,7 @@ button {
 
 /* HR DASHBOARD BODY RESET CSS */
 .hrdb-body-container {
-  padding-top: 150px;
+  padding-top: 50px;
   padding-bottom: 50px;
   /*background-color: #f5f5f5;*/
   min-height: calc( 100vh - 180px );;
@@ -5996,7 +5998,7 @@ ul.typeahead li a.dropdown-item {
 }
 .employee-overview-new .hrdb-body-container {
   /*padding: 150px 100px 50px 100px;*/
-  padding: 110px 80px 49px 80px;
+  padding: 30px 80px 49px 80px;
 }
 
 .employee-overview-header {

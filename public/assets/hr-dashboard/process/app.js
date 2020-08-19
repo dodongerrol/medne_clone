@@ -2,7 +2,7 @@ var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModu
 
 app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window',
 function ($rootScope, $state, $stateParams, $templateCache, $window) {
-   
+
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
 
@@ -85,7 +85,7 @@ app.directive('disabledSpecificCharacters', function() {
     restrict: 'A',
     require: 'ngModel',
     link: link
-  };      
+  };
 });
 
 app.directive('validNumber', function() {
@@ -93,7 +93,7 @@ app.directive('validNumber', function() {
     require: '?ngModel',
     link: function(scope, element, attrs, ngModelCtrl) {
       if(!ngModelCtrl) {
-        return; 
+        return;
       }
 
       ngModelCtrl.$parsers.push(function(val) {
@@ -269,8 +269,8 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           },
         },
       })
-    
-    
+
+
     .state('vacant-seat-enrollment', {
       url: '/vacant-seat-enrollment?vacant_id&type',
       views: {
@@ -635,9 +635,9 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         }
       }
     })
-    
+
     // ------------------------  NEW EMPLOYEE ENROLLMENT STATES  --------------------------- //
-    
+
       .state('enrollment', {
         url: '/enrollment',
         views: {
@@ -708,10 +708,10 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
 
 
     // -----------------------  END OF NEW EMPLOYEE ENROLLMENT STATES  -------------------- //
-    
-    
+
+
     // ============== REMOVE EMPLOYEE STATES ================== //
-    
+
       .state('employee-overview.remove-emp-inputs', {
         url: '/remove-emp-inputs',
         views: {
@@ -841,8 +841,79 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     })
 
+    // Account Settings
 
-    
+    .state('account-settings', {
+      url: '/account-settings',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/accountSettings/index.html'
+        }
+      }
+    })
+
+    // Company Profile
+
+    .state('company-profile', {
+      url: '/company',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/container/index.html'
+        }
+      }
+    })
+    .state('company-profile.company-overview', {
+      url: '/overview',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/companyOverview/index.html'
+        }
+      }
+    })
+    .state('company-profile.locations-departments', {
+      url: '/locations-departments',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/index.html'
+        }
+      }
+    })
+    .state('company-profile.billings-payments', {
+      url: '/billings-payments',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/billingPayments/index.html'
+        }
+      }
+    })
+    .state('company-profile.administrators', {
+      url: '/administrators',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/administrators/index.html'
+        }
+      }
+    })
+
+
     $urlRouterProvider.otherwise('/benefits-dashboard');
     // $urlRouterProvider.otherwise('/introduction');
     // $locationProvider.html5Mode(true);
