@@ -858,13 +858,57 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
     // Company Profile
 
     .state('company-profile', {
-      url: '/company-profile',
+      url: '/company',
       views: {
         'navigation': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/container/index.html'
+        }
+      }
+    })
+    .state('company-profile.company-overview', {
+      url: '/overview',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/companyOverview/index.html'
+        }
+      }
+    })
+    .state('company-profile.locations-departments', {
+      url: '/locations-departments',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/index.html'
+        }
+      }
+    })
+    .state('company-profile.billings-payments', {
+      url: '/billings-payments',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/billingPayments/index.html'
+        }
+      }
+    })
+    .state('company-profile.administrators', {
+      url: '/administrators',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'company-profile-content@company-profile': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/administrators/index.html'
         }
       }
     })
