@@ -104,7 +104,7 @@
 							<p class="">1 Raffles Road</p>
 							<p class="">#01-88</p>
 							<p class="">Singapore 000948</p>
-							<p class="">+65 6254 7889</p>
+							<p class="">+65 3163 5403</p>
 							<p class="">clinic@mednefits.com</p>
 						</div>
 						<div class="col-md-6 text-right">
@@ -118,7 +118,7 @@
 							<p class="">Singapore</p>
 							<div class="white-space-10"></div>
 							<div class="white-space-5"></div>
-							<p class="">+65 6254 7889</p>
+							<p class="">+65 3163 5403</p>
 							<p class="">mednefits.com</p>
 						</div>
 					</div>

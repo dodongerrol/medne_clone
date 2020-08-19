@@ -247,7 +247,7 @@
 							  <span class="review-prepare-template-subtext">Our system will only pick and capture date in the stated format.</span>
 							  <span class="review-checkmark"></span>
 							</label>
-							<label class="review-container">
+							<!-- <label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.email">
 							  <span class="review-prepare-template-text">A valid employee's email address.</span>
 							  <span class="review-prepare-template-subtext">Login credential will be sent to this email address once account is set up.</span>
@@ -258,7 +258,7 @@
 							  <span class="review-prepare-template-text">Input employee's 6 digit postal code</span>
 							  <span class="review-prepare-template-subtext">It should be the local residential postal code where the employee reside.</span>
 							  <span class="review-checkmark"></span>
-							</label>	
+							</label>	 -->
 						</div>
 					</div>
 
@@ -291,7 +291,7 @@
 							  <span class="review-prepare-template-subtext">Our system will only pick and capture date in the stated format.</span>
 							  <span class="review-checkmark"></span>
 							</label>
-							<label class="review-container">
+							<!-- <label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.email">
 							  <span class="review-prepare-template-text">A valid employee's email address.</span>
 							  <span class="review-prepare-template-subtext">Login credential will be sent to this email address once account is set up.</span>
@@ -302,7 +302,7 @@
 							  <span class="review-prepare-template-text">Input employee's 6 digit postal code</span>
 							  <span class="review-prepare-template-subtext">It should be the local residential postal code where the employee reside.</span>
 							  <span class="review-checkmark"></span>
-							</label>
+							</label> -->
 							<label class="review-container">
 							  <input type="checkbox"  ng-model="reviewExcelData.relationship">
 							  <span class="review-prepare-template-text">Under dependent/s relationship column only select from drop down list.</span>
@@ -342,11 +342,63 @@
 						<table id="enrollee-details-tbl">
 							<thead>
 								<tr>
-									
+									<th>
+										<input type="checkbox" ng-click="empCheckBoxAll()">
+									</th>
+									<th>Full Name</th>
+									<th>Date of Birth</th>
+									<th>Work Email</th>
+									<th>Country Code</th>
+									<th>Mobile</th>
+									<th>Start Date</th>
+									<th>Employee ID</th>
+
+									<th ng-if="isMedicalAllocColShow">Medical Allocation</th>
+									<th ng-if="isWellnessAllocColShow">Wellness Allocation</th>
+									<th ng-if="isCapVisitColShow">Cap Per Visit</th>
+
+									<th ng-if="isBankNameColShow">Bank Name</th>
+									<th ng-if="isBankNumColShow">Bank Account Number</th>
+
+									<th ng-repeat-start="list in range(table_dependents_ctr)">Dependent {{$index+1}}<br>Full Name</th>
+									<th>Dependent {{$index+1}}<br>Date of Birth</th>
+									<th ng-repeat-end="">Dependent {{$index+1}}<br>Relationship</th>
 								</tr>
 							</thead>
 							<tbody>
-								
+								<tr class="dependent-hover-container" ng-class="{'has-error' : list.error_logs.error}" ng-repeat="list in temp_employees">
+									<td>
+										<input type="checkbox" ng-model="list.checkboxSelected" ng-click="empCheckBoxClicked($index)">
+									</td>
+									<td>
+										<span class="icon">
+											<i class="fa fa-check" style="display: none;"></i>
+											<i class="fa fa-times" style="display: none;"></i>
+											<i class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
+										</span>
+										<span class="fname">{{ list.employee.fullname }}</span>
+										<button class="dependent-hover-btn" ng-click="openEditDetailsModal($index)">Edit</button>
+									</td>
+									<td>{{ formatMomentDate( list.employee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY'], 'DD/MM/YYYY' ) }}</td>
+									<td>{{list.employee.email}}</td>
+									<td>{{list.employee.mobile_area_code}}</td>
+									<td>{{list.employee.mobile}}</td>
+									<td>{{ formatMomentDate( list.employee.start_date, ['YYYY-MM-DD', 'DD/MM/YYYY'], 'DD/MM/YYYY' ) }}</td>
+									<td>{{list.employee.emp_no}}</td>
+
+									<td ng-if="isMedicalAllocColShow">{{ parseValueCommaFloat( list.employee.credits ) }}</td>
+									<td ng-if="isWellnessAllocColShow">{{ parseValueCommaFloat( list.employee.wellness_credits ) }}</td>
+									<td ng-if="isCapVisitColShow">{{ list.employee.cap_per_visit }}</td>
+
+									<td ng-if="isBankNameColShow">{{list.employee.bank_name}}</td>
+									<td ng-if="isBankNumColShow">{{list.employee.bank_account_number}}</td>
+
+									<td ng-repeat-start="dep in list.dependents">{{ dep.enrollee.fullname }}</td>
+									<td>{{ formatMomentDate(dep.enrollee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY'], 'DD/MM/YYYY')  }}</td>
+									<td ng-repeat-end="">{{ dep.enrollee.relationship }}</td>
+
+									<td ng-if="list.dependents.length != table_dependents_ctr" colspan="{{ ((table_dependents_ctr - list.dependents.length) * 3) }}"></td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -379,27 +431,16 @@
 								<label for="fname">Full Name</label>
   							<input disabled-specific-characters type="text" name="fname" ng-model="employee_data.fullname">
 							</div>
-							<!-- <div class="employee-input-wrapper">
-								<label for="fname">Last / Family Name</label>
-  							<input disabled-specific-characters type="text" name="lname" ng-model="employee_data.last_name">
-							</div> -->
-							<!-- <div class="employee-input-wrapper nric">
-								<label>
-                    <input type="radio" ng-value="true" name="id_status" ng-model="nric_status" style="position: relative;top: 2px;left: 0;opacity: 1;">
-                    NRIC
-                </label>
-                <label>
-                    <input type="radio" ng-value="true" name="id_status" ng-model="fin_status" style="position: relative;top: 2px;left: 0;opacity: 1;">
-                    FIN
-                </label>
-  							<input type="text" name="nric-fin" ng-model="employee_data.nric">
-							</div> -->
+							<div class="employee-input-wrapper">
+								<label >Employee ID (optional)</label>
+  							<input type="text" name="fname" ng-model="employee_data.employee_id">
+							</div>
 							<div class="employee-input-wrapper">
 								<label for="fname">Date of Birth</label>
   							<input type="text" name="datebirth" class="datepicker" ng-model="employee_data.dob" placeholder="DD/MM/YYYY">
 							</div>
 							<div class="employee-input-wrapper">
-								<label for="fname">Work Email</label>
+								<label for="fname">Work Email (optional)</label>
   							<input type="text" name="work-email" ng-model="employee_data.email">
 							</div>
 							<div class="employee-input-wrapper">
@@ -407,32 +448,19 @@
   							<input valid-number type="text" id="area_code" ng-model="employee_data.mobile">
 							</div>
 							<div class="employee-input-wrapper">
-								<label for="fname">Postal Code</label>
-  							<input type="text" name="postal-code" ng-model="employee_data.postal_code">
-							</div>
-							<div class="employee-input-wrapper">
 								<label for="fname">Start Date</label>
   							<input type="text" name="start-date" class="start-date-datepicker" ng-model="employee_data.plan_start">
 							</div>
-							<!-- <div class="employee-input-wrapper">
-								<label for="fname" style="line-height: 1;margin-top: 5px;">Medical Credits</label>
-								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
-  							<input type="number" min="0" value="0" name="medical-credits" ng-model="employee_data.medical_credits">
-							</div>
-							<div class="employee-input-wrapper">
-								<label for="fname" style="line-height: 1;margin-top: 5px;">Wellness Credits</label>
-								<label class="subtext">*If there are no credits to allocate, please key in 0</label>
-  							<input type="number" min="0" value="0" name="wellness-credits" ng-model="employee_data.wellness_credits">
-							</div> -->
-							<div ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.medical_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.account_type != 'enterprise_plan' && spendingPlan_status.medical_method == 'post_paid' && spendingPlan_status.medical_enabled)" class="employee-input-wrapper">
+							
+							<div ng-if="isMedicalAllocColShow" class="employee-input-wrapper">
 								<label for="fname">Medical Allocation</label>
   							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
 							</div>
-							<div ng-if="(spendingPlan_status.account_type == 'lite_plan' && spendingPlan_status.wellness_enabled && spendingPlan_status.paid_status) || (spendingPlan_status.wellness_method == 'post_paid' && spendingPlan_status.wellness_enabled)" class="employee-input-wrapper">
+							<div ng-if="isWellnessAllocColShow" class="employee-input-wrapper">
 								<label for="fname">Wellness Allocation</label>
 								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
 							</div>
-							<div class="employee-input-wrapper">
+							<!-- <div class="employee-input-wrapper">
 								<div ng-if="employee_data.hasMedicalBalance">
 									<label for="fname">Medical Entitlement Balance</label>
 	  							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement_balance">
@@ -443,6 +471,33 @@
 									<label for="fname">Wellness Entitlement Balance</label>
 	  							<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement_balance">
 	  						</div>
+							</div> -->
+							<div ng-if="isBankNameColShow" class="employee-input-wrapper">
+								<label for="fname">Bank Name</label>
+								<!-- <input type="text" ng-model="employee_data.bank_name"> -->
+								<select ng-model="employee_data.bank_name">
+									<option value="DBS/POSB BANK">DBS/POSB BANK</option>
+									<option value="OCBC">OCBC</option>
+									<option value="UOB">UOB</option>
+									<option value="CITI BANK">CITI BANK</option>
+									<option value="MAYBANK">MAYBANK</option>
+									<option value="SCB (Standard Chartered Bank)">SCB (Standard Chartered Bank)</option>
+									<option value="HSBC">HSBC</option>
+									<option value="BOC (Bank of China)">BOC (Bank of China)</option>
+									<option value="RHB BANK">RHB BANK</option>
+									<option value="CIMB BANK Berhad">CIMB BANK Berhad</option>
+									<option value="FEB (Far Eastern Bank)">FEB (Far Eastern Bank)</option>
+									<option value="SBI BANK(State Bank of India)">SBI BANK(State Bank of India)</option>
+								</select>
+								<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
+							</div>
+							<div ng-if="isBankNumColShow" class="employee-input-wrapper">
+								<label for="fname">Bank Account Number</label>
+  							<input type="text" ng-model="employee_data.bank_account_number">
+							</div>
+							<div ng-if="isCapVisitColShow" class="employee-input-wrapper">
+								<label for="fname">Cap per Visit (optional)</label>
+  							<input valid-number type="text" ng-model="employee_data.cap_per_visit">
 							</div>
 						</form>
 					</div>
@@ -553,7 +608,58 @@
 							<img ng-if="added_dependent_ctr != 0" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png" ng-click="prevAddedDependent()">
 							<img ng-if="added_dependent_ctr < (employee_data.dependents.length-1)" class="summary-right-btn" src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextAddedDependent()">
 						</div>
-					</div>		
+					</div>	
+					
+					<div ng-if="isCommunicationShow" class="enrolment-communication-container tier-feature-item item-fade">
+						<h1 class="text-center weight-700 font-25" style="color: #2c3e50;">Communication</h1>
+						<div class="sub-header-text">
+							<p >When do you wish to have Employee Activation Email sent out?</p>
+
+							<span>
+								<img ng-click="toggleActivationInfo()" src="../assets/hr-dashboard/img/info-blue.png" alt="">
+
+								<div ng-if="isActivationInfoDropShow" class="activation-info-drop-container">
+									<div class="activation-info-drop-caret"></div>
+									<div class="activation-info-drop">
+										<p class="info-header">Employee Activation Email</p>
+
+										<p class="info-content">Employee Activation Email notifies that employees have been enrolled into the Mednefits health benefits program. They will be required to activate their accounts by creating their own passwords.
+											Those without email will receive mobile message instead.</p>
+
+										<button class="btn" ng-click="toggleActivationInfo()">Got it</button>
+									</div>
+								</div>
+							</span>
+						</div>
+
+						<form>
+							<div class="form-div">
+								<div class="custom-radiobox-container">
+									<label class="radiobox-input">
+										<span>Immediate</span>
+										<input value="immediate" type="radio" ng-model="communication_send.type" name="activation"/>
+										<span class="radiobox-mark"></span>
+									</label>
+								</div> 
+							</div>
+
+							<div class="form-div">
+								<div class="custom-radiobox-container">
+									<label class="radiobox-input">
+										<span>Scheduled Date</span>
+										<input value="schedule" type="radio" ng-model="communication_send.type" name="activation"/>
+										<span class="radiobox-mark"></span>
+									</label>
+								</div> 
+								<div class="input-group-div" ng-class="{'disabled' : communication_send.type != 'schedule'}">
+									<input class="comm-schedule-datepicker" type="text" ng-model="communication_send.date">
+									<img src="../assets/images/calendar-gray.png">
+								</div>
+							</div>
+						</form>
+					</div>
+
+
 				</div>
 			</div>
 		</div>
@@ -597,7 +703,7 @@
 			</button>
 			<button ng-if="isReviewEnroll && previewTable_arr.length > 0" class="pull-left btn btn-info back-btn delete-btn" ng-click="removeManyEmp()">Delete</button>
 			
-			<button ng-if="!isWebInput && !isAddDependentsShow && !isReviewEnroll && !isSuccessfulEnroll" class="pull-right btn btn-info next-wizard-button" ng-disabled="isNextBtnDisabled" ng-click="nextBtn( )">NEXT</button>
+			<button ng-if="!isWebInput && !isAddDependentsShow && !isReviewEnroll && !isSuccessfulEnroll && !isCommunicationShow" class="pull-right btn btn-info next-wizard-button" ng-disabled="isNextBtnDisabled" ng-click="nextBtn( )">NEXT</button>
 
 			<button ng-if="isExcel" class="pull-right btn btn-info next-wizard-button download-template-btn-bottom" ng-click="downloadTemplate( )" style="font-size: 14px !important;">DOWNLOAD TEMPLATE</button>
 
@@ -607,12 +713,13 @@
 				<button ng-if="employee_ctr > 0" class="btn-next-employee" ng-click="prevActiveEmployee( )">PREVIOUS EMPLOYEE</button>
 				<button ng-if="isTiering && employee_ctr != tierSelected.member_head_count" class="btn-next-employee" ng-click="nextActiveEmployee()">NEXT EMPLOYEE</button>
 				<button ng-if="!isTiering && employee_ctr != progress.total_employees" class="btn-next-employee" ng-click="nextActiveEmployee()">NEXT EMPLOYEE</button>
-				<button class="btn-enroll" ng-click="enrollEmployees()">ENROLL</button>
+				<button ng-if="!isCommunicationShow" class="btn-enroll" ng-click="enrollEmployees()">ENROLL</button>
+				
 			</div>
 
 			<div ng-if="isReviewEnroll" class="enroll-container-button">
-				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
-				<button ng-click="saveTempUser()" class="btn-enroll" ng-disabled="hasError" >ENROLL
+				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<button ng-click="goToCommunication()" class="btn-enroll" ng-disabled="hasError" >ENROLL
 					<span class="enroll-badge">
 						{{ temp_employees.length < 1000 ? temp_employees.length : ''  }}
 						{{ ( temp_employees.length > 999 && temp_employees.length < 1000000 ? (temp_employees.length/1000).toFixed(0) + 'K+' : '' ) }}
@@ -620,6 +727,11 @@
 					</span>
 				</button>
 				<span ng-if="temp_employees.length > 999" class="tooltiptext">512</span>
+			</div>
+
+			<div ng-if="isCommunicationShow" class="enroll-container-button">
+				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<button class="btn-enroll" ng-click="saveTempUser()">COMPLETE</button>
 			</div>
 
 			<button ng-if="isSuccessfulEnroll" ui-sref="benefits-dashboard" class="pull-left btn btn-info back-btn">BACK TO HOME</button>

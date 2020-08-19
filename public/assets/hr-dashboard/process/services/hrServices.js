@@ -118,9 +118,9 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/remove_employee/" + id);
   };
 
-  hrFactory.getEmployees = function(num, page) {
+  hrFactory.getEmployees = function(page,limit) {
     return $http.get(
-      serverUrl.url + "/hr/employee/list/" + num + "?page=" + page
+      serverUrl.url + "/hr/employee/list/"+ "?page=" + page +  "&limit=" + limit
     );
   };
 
@@ -379,6 +379,92 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/get_member_refund_calculation", data  );
   }
 
+  hrFactory.getPlanInvoiceHistory = function ( page,per_page,id ) {
+    return $http.get( serverUrl.url + "/hr/get_plan_invoice_histories?page=" + page + '&per_page=' + per_page + '&customer_active_plan_id=' + id);
+  };
+
+  hrFactory.fecthHrDetails = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_hr_details" );
+  };
+
+  hrFactory.updateHrDetails = function (data) {
+    return $http.post( serverUrl.url + "/hr/update_hr_details", data  );
+  };
+
+  hrFactory.fetchEnrollmentHistoryData = function ( page,per_page,id ) {
+    return $http.get( serverUrl.url + "/hr/get_plan_enrollment_histories?page=" + page + '&per_page=' + per_page + '&customer_active_plan_id=' + id );
+  };
+
+  hrFactory.sendImmediateActivation = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/send_immediate_activation", data  );
+  }
+
+  hrFactory.employeeResetPassword = function ( id ) {
+    return $http.post( serverUrl.url + "/hr/employee_reset_password", id  );
+  }
+
+  hrFactory.employeeResetActivation = function ( id ) {
+    return $http.post( serverUrl.url + "/hr/resend_activation_email", id  );
+  }
+
+  hrFactory.getFilterEmployees = function(page,limit,status_pending,status_activated,status_active,status_removed) {
+
+    let url = serverUrl.url + "/hr/employee/list/"+ "?page=" + page +  "&limit=" + limit;
+    if ( status_pending == true ) {
+      url += ("&status[]=" + 'pending');
+    }
+    if ( status_activated == true ) {
+      url += ("&status[]=" + 'activated');
+    }
+    if ( status_active == true ) {
+      url += ("&status[]=" + 'active');
+    }
+    if ( status_removed == true ) {
+      url += ("&status[]=" + 'removed');
+    }
+    return $http.get( url );
+  };
+  // hrFactory.get_member_refund = function (data) {
+  //   return $http.post( serverUrl.url + "/employee/check_email_validation", data  );
+  // }
+  hrFactory.getEmployeeStatus = function( ) {
+    return $http.get( serverUrl.url + "/hr/get_employee_enrollment_status");
+  };
+
+
+  hrFactory.getActivePlanDetails = function ( data ) {
+    var url = serverUrl.url + "/hr/get_plan_details?page=" + data.page;
+    if(data.oldPlanCustomerPlanID){
+      url += ("&type=old&customer_plan_id=" + data.oldPlanCustomerPlanID);
+    }else{
+      url += "&type=new";
+    }
+    return $http.get( url );
+  }
+  hrFactory.getOldPlanList = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_old_list_plans");
+  }
+  
+  hrFactory.updateEmployeePlan = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_employee_active_plan_details", data);
+  }
+  hrFactory.updateDependentPlan = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_dependent_active_plan_details", data);
+  }
+  hrFactory.getViewMemberModalList = function ( data ) {
+    var url = serverUrl.url + "/hr/get_users_by_active_plan?page=" + data.page + "&customer_active_plan_id=" + data.customer_active_plan_id + "&per_page=" + data.per_page;
+    if(data.search){
+      url += '&search=' + data.search;
+    }
+    return $http.get( url );
+  }
+  hrFactory.searchMemberList = function ( page,limit,search ) {
+    return $http.get( serverUrl.url + "/hr/employee/list?page=" + page + "&limit=" + limit + "&search=" + search ); 
+  }
+  hrFactory.updateScheduleDate = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_enrollment_schedule", data);
+  }
+
   return hrFactory;
 });
 
@@ -539,6 +625,5 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   hrFactory.memberCredits = function( id  ) {
     return $http.get( serverUrl.url + "/hr/member_credits?member_id=" + id );
   };
-
   return hrFactory;
 });

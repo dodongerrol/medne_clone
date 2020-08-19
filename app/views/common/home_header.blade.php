@@ -101,8 +101,8 @@
 	            <h3 class="font-medium2 color-blue-custom weight-700">We're here to help.</h3>
 	            <div class="white-space-20"></div>
 	            <p class="font-medium2 weight-700">You may ring us</p>
-	            <p class="weight-700">+65 6254 7889</p>
-	            <p class="weight-700">+60 3789 01770</p>
+	            <p class="weight-700">+65 3163 5403</p>
+	            <p class="weight-700">+60 330 995 774</p>
 	            <p class="weight-700">Mon - Fri 9:30am to 6:30pm</p>
 	            <div class="white-space-20"></div>
 	            <p class="font-medium2 weight-700">Drop us a note, anytime</p>

@@ -43,45 +43,7 @@
 	</style>
 </head>
 <body eclaim-login>
-	<!-- <div class="container">
-		<div class="login-need-help-container">
-			<a href="#" class="pull-right need-help-text tooltips">
-				<h3>Need help?</h3>
-				<div class="tooltip-container">
-					<h3 class="tooltip-title">We're here to help.</h3>
-					<h3 class="tooltip-phone-email-title">You may ring us</h3>
-					<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
-					<h3 class="tooltip-phone-email-details">Mon - Fri 10:00 to 19:00</h3>
-					<br>
-					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
-					<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
-				</div>
-			</a>
-		</div>
-		<div class="col-sm-12 col-md-12 col-lg-12">
-			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
-			<h2 class="text-center text-below-image">for business</h2>
-			<form class="med-form" ng-submit="loginHr()">
-				<div class="form-group">
-					<input type="email" name="email" class="form-control med-input" placeholder="Email Address" ng-model="login_details.email" required>
-				</div>
-				<div class="form-group">
-					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="login_details.password" required style="margin-bottom: 15px">
-				</div>
-				<div class="checkbox">
-			    <label style="color: #777;font-size: 15px;">
-			      <input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed in
-			    </label>
-			  </div>
-				<div class="form-group">
-					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">Log in</button>
-				</div>
-				<span ng-if="ng_fail">*Please check your login credentials</span>
-				<a href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot password?</a>
-			</form>
-		</div>
-	</div> -->
-
+	
 	<div class="login-wrapper">
 		<div class="login-need-help-container">
 			<a href="#" class="pull-right need-help-text tooltips">
@@ -89,8 +51,8 @@
 				<div class="tooltip-container">
 					<h3 class="tooltip-title">We're here to help.</h3>
 					<h3 class="tooltip-phone-email-title">You may ring us</h3>
-					<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
-					<h3 class="tooltip-phone-email-details">+60 3789 01770</h3>
+					<h3 class="tooltip-phone-email-details">+65 3163 5403</h3>
+					<h3 class="tooltip-phone-email-details">+60 330 995 774</h3>
 					<h3 class="tooltip-phone-email-details">Mon - Fri 9:30am to 6:30pm</h3>
 					<br>
 					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
@@ -98,7 +60,7 @@
 				</div>
 			</a>
 		</div>
-		<div class="col-sm-12 col-md-12 col-lg-12" id="login-container">
+		<!-- <div class="col-sm-12 col-md-12 col-lg-12" id="login-container">
 			<div class="login-container-header">
 				<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 				<h2 class="text-center text-below-image">for member</h2>
@@ -117,7 +79,7 @@
 			</div>
 			<form class="med-form" ng-submit="login()">
 				<div class="form-group">
-					<!-- valid-number pattern="[0-9]*" type="tel" -->
+					valid-number pattern="[0-9]*" type="tel" comment ni
 					<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" />
 				</div>
 				<div class="form-group">
@@ -134,16 +96,60 @@
 				<span ng-if="invalid_credentials">*Please check your login credentials</span>
 				<a href="javascript:void(0)" class="forgot-password pull-right" ng-click="showForgotPassword()">Forgot password?</a>
 			</form>
-		</div>
+		</div> -->
 
-		<div class="col-sm-12 col-md-12 col-lg-12" id="forgot-password" hidden>
+		<!-- new account login feature -->
+		<div class="col-sm-12 col-md-12 col-lg-12 new-account" id="login-container">
+			<div class="login-container-header">
+				<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
+				<h2 class="text-center text-below-image">for member</h2>
+			</div>
+			<!-- <div class="notification-wrapper">
+				<div class="notification-container">
+					<div>
+						<img src="./assets/images/danger.png">
+					</div>
+					<div>
+						<div class="notification-text">Notification: User ID Change</div>
+						<p>NRIC/FIN and email address will no longer be valid as your user ID. <br>
+						Please click <a class="here-text" ng-click="goToUpdateDetails()">here</a> to change your user ID to your mobile number.</p>
+					</div>
+				</div>
+			</div> -->
+			<form class="med-form">
+				<div ng-if="!showPasswordInput" class="form-group">
+					<!-- valid-number pattern="[0-9]*" type="tel" -->
+					<label for="mobile">Mobile</label>
+					<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Mobile Number" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+				</div>
+				<div ng-if="showPasswordInput" class="form-group">
+					<label for="mobile">Password</label>
+					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)"  style="margin-bottom: 15px">
+				</div>
+				<div ng-if="showPasswordInput" class="checkbox">
+			    <label>
+			      <input type="checkbox"> Stay signed in
+			    </label>
+			  </div>
+				<div  class="form-group">
+					<button ng-if="!showPasswordInput" type="none" class="btn btn-info btn-block med-button" ng-class="{'disabled': disabledContinue}" id="login-btn" ng-click="goToPassword()" ng-disabled="disabledContinue">Continue</button>
+					<button ng-if="showPasswordInput" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Sign in</button>
+				</div>
+				<span ng-if="invalid_credentials">*Please check your login credentials</span>
+				<a ng-if="true" href="javascript:void(0)" class="forgot-password pull-right" ng-click="showForgotPassword()">Forgot password?</a>
+			</form>
+		</div>
+		<!-- end new account login -->
+
+		<div class="col-sm-12 col-md-12 col-lg-12 new-account" id="forgot-password" hidden>
 			<div class="login-container-header">
 				<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 				<h2 class="text-center text-below-image">for member</h2>
 			</div>
 			<form class="med-form" ng-submit="resetPassword()">
 				<div class="form-group">
-					<input type="text" name="email" class="form-control med-input" placeholder="Mobile Number or Email Address" ng-model="login_details.email" required/>
+					<label for="email">Mobile or Email</label>
+					<input type="text" name="email" class="form-control med-input" placeholder="Enter Mobile Number or Email Address" ng-model="login_details.email" required/>
 				</div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-info btn-block med-button" id="reset-password">Reset Password</button>

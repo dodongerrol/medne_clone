@@ -45,8 +45,8 @@ function ($rootScope, $state, $stateParams, $templateCache, $window) {
 app.factory('serverUrl',[
     function factory(){
       return {
-        // url: window.location.origin,
-        url: "https://hrapi.medicloud.sg",
+        url: window.location.origin,
+        // url: "https://hrapi.medicloud.sg",
         external_url: 'https://dev.geckorest.com/mednefits/',
         mednefits_url: 'http://app.mednefits.com/api/'
       }
@@ -532,18 +532,18 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/account-and-payment.html'
         },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-modal.html'
-        },
-        'modal_2': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-details-modal.html'
-        },
-        'modal_3': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/credit-card-details-modal.html'
-        },
-        'modal_4': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-password-modal.html'
-        }
+        // 'modal': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-modal.html'
+        // },
+        // 'modal_2': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-details-modal.html'
+        // },
+        // 'modal_3': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/credit-card-details-modal.html'
+        // },
+        // 'modal_4': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-password-modal.html'
+        // }
       },
     })
     .state('plan-coverage', {
@@ -639,6 +639,87 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         }
       }
     })
+    .state('company-create-password', {
+      url: '/company-create-password',
+      views: {
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyActivation/createPassword/index.html'
+        }
+      }
+    })
+    
+    // ------------------------  NEW EMPLOYEE ENROLLMENT STATES  --------------------------- //
+    
+      .state('enrollment', {
+        url: '/enrollment',
+        views: {
+          'navigation': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          },
+          'main': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/container/index.html'
+          }
+        }
+      })
+      .state('enrollment.select-account-type', {
+        url: '/select-account-type',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/selectAccountType/index.html'
+          }
+        }
+      })
+      .state('enrollment.input-table', {
+        url: '/input-table',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/inputTableEnrollment/index.html'
+          }
+        }
+      })
+      .state('enrollment.excel-upload', {
+        url: '/excel-upload',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/excelEnrollment/index.html'
+          }
+        }
+      })
+      .state('enrollment.preview-table', {
+        url: '/preview-table',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/previewTable/index.html'
+          }
+        }
+      })
+      .state('enrollment.send-employee-activation', {
+        url: '/send-employee-activation',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/sendEmployeeActivation/index.html'
+          }
+        }
+      })
+      .state('enrollment.enterprise-summary', {
+        url: '/enterprise-summary',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/enterpriseSummary/index.html'
+          }
+        }
+      })
+      .state('enrollment.preview-communication', {
+        url: '/preview-communication',
+        views: {
+          'enrollment-content@enrollment': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeEnrollment/previewCommunication/index.html'
+          }
+        }
+      })
+
+
+    // -----------------------  END OF NEW EMPLOYEE ENROLLMENT STATES  -------------------- //
     
     
     // ============== REMOVE EMPLOYEE STATES ================== //

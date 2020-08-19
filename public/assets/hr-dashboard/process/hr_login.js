@@ -7,8 +7,8 @@ login.run(function($http) {
 login.factory('serverUrl',[
     function factory(){
       return {
-        // url: window.location.origin,
-        url: 'https://hrapi.medicloud.sg',
+        url: window.location.origin,
+        // url: 'https://hrapi.medicloud.sg',
       }
     }
 ]);
@@ -22,8 +22,13 @@ login.directive('loginSection', [
 			scope: true,
 			link: function link(scope, element, attributeSet) {
 				console.log('running loginSection');
-				scope.login_details = {};
+				scope.login_details = {
+					status : false, // activated , not activated, false
+					date_created: '',
+				};
 				scope.ng_fail = false;
+				scope.showPassword = false;
+				scope.hr_id = null;
 
 				scope.checkUserLogin = function( ) {
 					var token = window.localStorage.getItem('token');
@@ -49,7 +54,8 @@ login.directive('loginSection', [
 						$('#login-btn').attr('disabled', false);
 						$('#login-btn').text('Log in');
 						if(response.status == true){
-							window.localStorage.setItem('token', response.token)
+						  window.localStorage.setItem('token', response.token)
+						  // window.location.href = serverUrl.url + "company-benefits-dashboard/";
 			              window.location.href = window.location.origin + "/company-benefits-dashboard/";
 			              scope.ng_fail = false;
 			            }else{
@@ -58,7 +64,51 @@ login.directive('loginSection', [
 					});
 				};
 
-				scope.checkUserLogin( );
+				scope.showPasswordToggle = function () {
+					scope.showPassword = !scope.showPassword;
+					console.log(scope.showPassword);
+				}
+
+				scope.token = null;
+				scope.enableContinue = function (email) {
+
+					// let emailFromDb = 'example@email.com';
+					let account_status;
+
+					$http.post(serverUrl.url + `/employee/check_email_validation?email=${email}`)
+					.success(function(response) {
+						console.log(response);
+						scope.hr_id = response.hr_id;
+						account_status = response.status;
+						console.log(account_status);
+						if( account_status == 1) {
+							// check if email exist in db.
+							scope.login_details.status = 'activated';
+						} else if ((account_status == 0)) {
+							scope.login_details.status = 'not activated';
+							scope.login_details.date_created = moment(response.date_created).format('DD/MM/YYYY');
+							scope.token = response.token;
+							console.log(scope.login_details);
+							
+						}	else if (account_status == 2) {
+							scope.login_details.status = 'not-exist';
+						} else {
+							scope.login_details.status = false;
+						}
+	
+						console.log(scope.login_details.status);
+					});
+				}
+
+				scope.resend_hr_activation = function () {
+					// $http.post(serverUrl.url + `/hr/resend_hr_activation_link?id=${scope.hr_id}`)
+					$http.post(serverUrl.url + `/hr/resend_hr_activation_link?token=${scope.token}`)
+					.success(function(response){
+						console.log(response);
+					});
+				}
+
+				scope.checkUserLogin();
 			}
 		}
 	}
@@ -78,6 +128,8 @@ login.directive('forgotSection', [
 				scope.ng_fail = false;
 				scope.new_password_error = false;
 				scope.password_success = false;
+				scope.inputType = false;
+				
 
 				scope.loginHr = function( ) {
 					console.log(scope.login_details);

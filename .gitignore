@@ -9,8 +9,9 @@ node_modules
 public/receipts/*
 public/excel_upload/*
 public/temp_uploads/*
+app/config/database.php
+public/plan_invoices/*
+invoices.zip
+app/config/database.php
 db
 run
-public/invoices.zip
-public/plan_invoices/*
-app/config/database.php

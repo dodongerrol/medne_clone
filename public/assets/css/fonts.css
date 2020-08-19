@@ -53,3 +53,24 @@
     font-family: 'HelveticaNeueHv'; /* Global font */
     src: url('../fonts/helveticaneue/HelveticaNeueHv.ttf')  format('truetype');
 }
+
+
+
+
+/* ----------------- GREYCLIFF ---------------------- */
+
+/* GreycliffCF-Regular.otf */
+
+@font-face {
+    font-family: 'Greycliff'; /* Global font */
+    src: url('../fonts/greycliff/GreycliffCF-Regular.otf')  format('truetype');
+}
+@font-face {
+    font-family: 'Greycliff Light'; /* Global font */
+    src: url('../fonts/greycliff/GreycliffCF-Light.otf')  format('truetype');
+}
+@font-face {
+    font-family: 'Greycliff Medium'; /* Global font */
+    src: url('../fonts/greycliff/GreycliffCF-Medium.otf')  format('truetype');
+}
+/* -------------------------------------------------- */
