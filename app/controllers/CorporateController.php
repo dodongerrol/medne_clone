@@ -260,5 +260,20 @@ class CorporateController extends BaseController {
 			return array('status' => FALSE, 'message' => 'Member already Activated');
 		}
 	}
+
+	public function getWorkLocationList( )
+	{
+		$input = Input::all();
+
+		if(empty($input['customer']) || $input['customer_id'] == null) {
+			return array('status' => false, 'message' => 'customer_id is required.');
+		}
+
+		$location = DB::table('company_locations')->where('LocationID', $input['clinic_id'])->first();
+
+		if(!$location) {
+			return array('status' => false, 'message' => 'company location does not exist.');
+		}
+	}
 }
 
