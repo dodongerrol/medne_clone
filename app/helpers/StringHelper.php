@@ -187,15 +187,21 @@ class StringHelper{
             if($result) {
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('hr_dashboard_id', $result->hr_dashboard_id)
-                            ->where('active', 1)
+                            // ->where('active', 1)
                             ->first();
                 if($hr) {
-                    $hr->signed_in = $result->signed_in;
-                    if(isset($result->expire_in)) {
-                        $hr->expire_in = $result->expire_in;
-                    } else {
-                        $hr->expire_in = null;
+                    if((int)$hr->active == 1) {
+                        $hr->signed_in = $result->signed_in;
+                        if(isset($result->expire_in)) {
+                            $hr->expire_in = $result->expire_in;
+                        } else {
+                            $hr->expire_in = null;
+                        }
+                    } else if((int)$hr->hr_activated == 0) {
+                        $hr->status = false;
+                        $hr->hr_activated = false;
                     }
+                   
                     return $hr;
                 } else {
                     return FALSE;
@@ -1158,7 +1164,6 @@ public static function get_random_password($length)
             // check creds
             $user = new User();
             $result = $user->newAuthLogin($data['username'], $data['password']);
-
             if($result) {
                 $session_data = array(
                     'client_id'             => $data['client_id'],
@@ -1213,6 +1218,55 @@ public static function get_random_password($length)
                 $returnObject->fields = TRUE;
                 return $returnObject;
             }
+        }
+    }
+
+    public static function createLoginToken($user_d, $client_id)
+    {
+        $returnObject = new stdClass();
+        $session_data = array(
+            'client_id'             => $client_id,
+            'owner_type'            => 'user',
+            'owner_id'              => $user_d,
+            'client_redirect_uri'   => NULL
+        );
+
+        $session_class = new OauthSessions( );
+        $session = $session_class->createSession($session_data);
+
+        if($session) {
+            $token_data = array(
+                'id'        => self::getAlgorithm()->generate(40),
+                'session_id'  => $session->id,
+                'expire_time' => time() + 72000
+            );
+
+            $token_class = new OauthAccessTokens( );
+            $token = $token_class->createToken($token_data);
+            $get_token = DB::table('oauth_access_tokens')->where('session_id', $token->session_id)->orderBy('created_at', 'desc')->first();
+
+            if($get_token) {
+                $returnObject->error = "false";
+                $returnObject->status = TRUE;
+                $returnObject->data['access_token'] = $get_token->id;
+                $returnObject->data['token_type'] = 'Bearer';
+                $returnObject->data['expires_in'] = 7200;
+                $returnObject->data['pin_setup'] = FALSE;
+                $returnObject->fields = TRUE;
+                return $returnObject;
+            } else {
+                $returnObject->status = FALSE;
+                $returnObject->error = 'invalid_credentials';
+                $returnObject->error_description = 'The user credentials were incorrect.';
+                $returnObject->fields = TRUE;
+                return $returnObject;
+            }
+        } else {
+            $returnObject->status = FALSE;
+            $returnObject->error = 'invalid_credentials';
+            $returnObject->error_description = 'The user credentials were incorrect.';
+            $returnObject->fields = TRUE;
+            return $returnObject;
         }
     }
 

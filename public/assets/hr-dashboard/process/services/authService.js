@@ -46,19 +46,29 @@ service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope, 
 			$('#global_modal').modal('show');
 			$('#global_message').text(response.data);
 			$('#login-status').show();
+			$('.circle-loader').hide();
 		} else if(response.status == 401) {
 			$('#global_modal').modal('show');
-			$('#global_message').text(response.data);
-			$('#login-status').show();
+			if(response.data.type && response.data.type == "hr_not_activated"){
+				$('#global_message').text(response.data.message);
+				$('#login-status').hide();
+			}else{
+				$('#global_message').text(response.data);
+				$('#login-status').show();
+			}
+			$('.circle-loader').hide();
 		} else if(response.status == 500 || response.status == 408) {
 			$('#global_modal').modal('show');
 			$('#global_message').text('Ooops! Something went wrong. Please check you internet connection or reload the page.');
 			$('#login-status').hide();
+			$('.circle-loader').hide();
 		} else {
 			$('#global_modal').modal('show');
 			$('#global_message').text('Ooops! Something went wrong. Please check you internet connection or reload the page.');
 			$('#login-status').hide();
+			$('.circle-loader').hide();
 		}
+		
 		return $q.reject(response);
 	};
 	return interceptorFactory;

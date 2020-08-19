@@ -153,7 +153,7 @@
           <p class="weight-300">#18-02 Suntec Tower One</p>
           <p class="weight-300">038987</p>
           <p class="weight-300" style="margin-bottom: 20px;">Singapore</p>
-          <p class="weight-300">+65 6254 7889</p>
+          <p class="weight-300">+65 3163 5403</p>
           <p class="weight-300">mednefits.com</p>
 	    	</div>
     	</div>

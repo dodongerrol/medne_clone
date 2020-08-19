@@ -31,7 +31,7 @@
         <!-- <div style="width: 80%;; margin: 0 auto;"> -->
           <p style="padding: 20px;display: inline-block;color: #7F7F7F;width: 100%;"><b>Contact Support</b></p>
           <p style="padding-left: 20px;display: inline-block;color: #7F7F7F!important;width: 100%;margin-bottom: 12%;">
-            +65 6254 7889
+            +65 3163 5403
             <br />
             <a href="mailto:happiness@mednefits.com" style="color: #7F7F7F;padding-top: 5px; display: inline-block;">happiness@mednefits.com</a>
           </p>

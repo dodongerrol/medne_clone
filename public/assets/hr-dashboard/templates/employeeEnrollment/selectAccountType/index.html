@@ -1,0 +1,53 @@
+<div select-account-type-directive>
+  <div class="select-account-type-wrapper">
+    <p class="title">Select the account/s you’d like to enroll</p>
+
+    <div class="account-types-wrapper">
+      <div class="account-type-box" ng-class="{ 'active' : selectedAccountType == 'employee' }" ng-click="setAccountType('employee')">
+        <div class="enrollment-radiobox-container">
+          <label class="radiobox-input">
+            <input value="employee" type="radio" name="account-type" ng-model="selectedAccountType" />
+            <span class="radiobox-mark"></span>
+          </label>
+        </div> 
+
+        <p class="type-name">Employees</p>
+        <p class="text-desc">
+          The people employed in<br>
+          this company - full time,<br>
+          part time or contracts. 
+        </p>
+      </div>
+
+      <div class="account-type-box" ng-class="{ 'active' : selectedAccountType == 'employee-with-dependents' }" ng-click="setAccountType('employee-with-dependents')">
+        <div class="enrollment-radiobox-container">
+          <label class="radiobox-input">
+            <input value="employee-with-dependents" type="radio" name="account-type" ng-model="selectedAccountType" />
+            <span class="radiobox-mark"></span>
+          </label>
+        </div> 
+
+        <p class="type-name">Employees and Dependents</p>
+        <p class="text-desc">
+          You may choose to enroll<br>
+          both accounts in one<br>
+          import exercise.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-btns-wrapper">
+    <div class="left-wrapper">
+      <button class="btn-back" ng-click="backPage()">
+        Back
+      </button>
+      <button class="btn-cancel">
+        Cancel
+      </button>
+    </div>
+    <div class="right-wrapper">
+      <button class="btn-next" ng-click="nextPage()">Next</button>
+    </div>
+  </div>
+</div>

@@ -166,6 +166,7 @@ class UserPackage extends Eloquent
                         $data['fullname'] = ucwords($user_details->Name);
                         $data['member_id'] = $user_details->UserID;
                         $data['nric'] = $user_details->NRIC;
+                        $data['employee_id'] = $user_details->emp_no;
                         $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
                         $data['plan_type'] = PlanHelper::getDependentPlanType($dependent_plan_history->dependent_plan_id);
                         $data['care_online'] = TRUE;
@@ -271,6 +272,7 @@ class UserPackage extends Eloquent
                         $data['packages'] = PlanHelper::getUserPackages($active_plan_data, $id, $data['plan_add_on'], $plan_user);
                         $data['fullname'] = ucwords($user_details->Name);
                         $data['member_id'] = $user_details->UserID;
+                        $data['employee_id'] = $user_details->emp_no;
                         $data['nric'] = $user_details->NRIC;
                         if((int)$active_plan_first->plan_extention_enable == 1) {
                             $data['plan_type'] = PlanHelper::getEmployeePlanTypeExtenstion($active_plan->customer_active_plan_id, $active_plan_data);

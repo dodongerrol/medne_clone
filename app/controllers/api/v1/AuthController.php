@@ -647,14 +647,12 @@ return Response::json($returnObject);
 
         //No public direct access allowed
         public function GetUserProfileInformation($profileid){
+          $input = Input::all();
         	$userinsurancepolicy = new UserInsurancePolicy();
         	$returnArray = new stdClass();
         	$findUserProfile = $this->GetUserProfile($profileid);
-        	$findUserAllergy = $this->GetUserAllergies($profileid);
-        	$findUserMedication = $this->GetUserMedications($profileid);
-        	$findUserCondition = $this->GetUserConditions($profileid);
-        	$findMedicalHistory = $this->GetUserMedicalHistory($profileid);
           $user_id = StringHelper::getUserId($profileid);
+          $properties = !empty($input['type']) && $input['type'] == "with_medical_properties" ? "with_medical_properties" : "profile";
           
           if($findUserProfile){
             $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
@@ -662,10 +660,9 @@ return Response::json($returnObject);
             $returnArray->login_status = TRUE;
             $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
             $user_plan_history = DB::table('user_plan_history')
-                ->where('user_id', $user_id)
-                ->where('type', 'started')
-                ->orderBy('created_at', 'desc')
-                ->first();
+                      ->where('user_id', $user_id)
+                      ->where('type', 'started')
+                      ->first();
 
             $customer_active_plan = DB::table('customer_active_plan')
               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
@@ -718,96 +715,97 @@ return Response::json($returnObject);
              $returnArray->data['insurance'] = null;
            }
 
-                    //Allagies
-           if($findUserAllergy){
-             foreach($findUserAllergy as $allergy){
-              $getAllergy['allergy_id'] = $allergy->AllergyID;
-              $getAllergy['name'] = $allergy->Name;
-              $allAllergy[] = $getAllergy;
-            }
-            $returnArray->data['allergies'] = $allAllergy;
-          }else{
-           $returnArray->data['allergies'] = null;
-         }
+           if($properties == "with_medical_properties") {
+            $findUserAllergy = $this->GetUserAllergies($profileid);
+            $findUserMedication = $this->GetUserMedications($profileid);
+            $findUserCondition = $this->GetUserConditions($profileid);
+            $findMedicalHistory = $this->GetUserMedicalHistory($profileid);
+              //Allagies
+              if($findUserAllergy){
+                foreach($findUserAllergy as $allergy){
+                  $getAllergy['allergy_id'] = $allergy->AllergyID;
+                  $getAllergy['name'] = $allergy->Name;
+                  $allAllergy[] = $getAllergy;
+                }
+                $returnArray->data['allergies'] = $allAllergy;
+              }else{
+                $returnArray->data['allergies'] = null;
+              }
 
-                    //Medications
-         if($findUserMedication){
-           foreach($findUserMedication as $medication){
-            $getMedication['medication_id'] = $medication->MedicationID;
-            $getMedication['name'] = $medication->Name;
-            $getMedication['dosage'] = $medication->Dosage;
-            $allMedication[] = $getMedication;
-          }
-          $returnArray->data['medications'] = $allMedication;
-        }else{
-         $returnArray->data['medications']= null;
-       }
+              //Medications
+              if($findUserMedication){
+                foreach($findUserMedication as $medication){
+                  $getMedication['medication_id'] = $medication->MedicationID;
+                  $getMedication['name'] = $medication->Name;
+                  $getMedication['dosage'] = $medication->Dosage;
+                  $allMedication[] = $getMedication;
+                }
+                $returnArray->data['medications'] = $allMedication;
+              }else{
+                $returnArray->data['medications']= null;
+              }
 
-                    //Conditions
-       if($findUserCondition){
-         foreach($findUserCondition as $condition){
-          $getCondition['condition_id'] = $condition->ConditionID;
-          $getCondition['name'] = $condition->Name;
-          $newDate = date("d-m-Y", strtotime($condition->Date));
-          $getCondition['date'] = $newDate;
-          $allConditions[] = $getCondition;
-        }
-        $returnArray->data['conditions'] = $allConditions;
+              //Conditions
+              if($findUserCondition){
+                foreach($findUserCondition as $condition){
+                  $getCondition['condition_id'] = $condition->ConditionID;
+                  $getCondition['name'] = $condition->Name;
+                  $newDate = date("d-m-Y", strtotime($condition->Date));
+                  $getCondition['date'] = $newDate;
+                  $allConditions[] = $getCondition;
+                }
+                $returnArray->data['conditions'] = $allConditions;
+              }else{
+                $returnArray->data['conditions'] = null;
+              }
+
+                              //History
+                if($findMedicalHistory){
+                  foreach($findMedicalHistory as $history){
+                    $historyDetail = new UserMedicalHistoryDetail();
+                    $findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
+                    $newDate = date("d-m-Y", strtotime($history->Date));
+                    $getHistory['date'] = $newDate;
+                    $getHistory['record_id'] = $history->HistoryID;
+                    $getHistory['visit_type'] = $history->VisitType;
+                                        //$getHistory['list']['doctor'] = $history->Name;
+                    $getHistory['doctor'] = $history->Doctor_Name;
+                    $getHistory['clinic_name'] = $history->Clinic_Name;
+                                        //need to check clinic
+                                        ///$getHistory['list']['clinic_name'] = $history->Name;
+                    $getHistory['note'] = $history->Note;
+                                        //$getHistory['date'] = $newDate;
+                    if($findHistoryDetail){
+                        foreach($findHistoryDetail as $hisDetail){
+                          $getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
+                          $getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
+                          $getHistory1[] = $getHistoryDetail;
+                        }
+                        $getHistory['attachments'] = $getHistory1;
+                      }else{
+                      $getHistory['attachments'] = null;
+                    }
+                    $allHistory[] = $getHistory;
+                  }
+
+                  $returnArray->data['history'] = $allHistory;
+              }else{
+                $returnArray->data['history'] = null;
+              }
+           }
+      //  check if user is new or old
+      $date = date('Y-m-d');
+      $date_created = date('Y-m-d', strtotime('+14 days', strtotime($user_plan_history->created_at)));
+      if($date_created > $date)  {
+        $returnArray->data['profile']['status'] = "new";
+      } else {
+        $returnArray->data['profile']['status'] = "old";
+      }
       }else{
-       $returnArray->data['conditions'] = null;
-     }
-
-                    //History
-     if($findMedicalHistory){
-       foreach($findMedicalHistory as $history){
-        $historyDetail = new UserMedicalHistoryDetail();
-        $findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
-        $newDate = date("d-m-Y", strtotime($history->Date));
-        $getHistory['date'] = $newDate;
-        $getHistory['record_id'] = $history->HistoryID;
-        $getHistory['visit_type'] = $history->VisitType;
-                            //$getHistory['list']['doctor'] = $history->Name;
-        $getHistory['doctor'] = $history->Doctor_Name;
-        $getHistory['clinic_name'] = $history->Clinic_Name;
-                            //need to check clinic
-                            ///$getHistory['list']['clinic_name'] = $history->Name;
-        $getHistory['note'] = $history->Note;
-                            //$getHistory['date'] = $newDate;
-        if($findHistoryDetail){
-         foreach($findHistoryDetail as $hisDetail){
-          $getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
-          $getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
-          $getHistory1[] = $getHistoryDetail;
-        }
-        $getHistory['attachments'] = $getHistory1;
-      }else{
-       $getHistory['attachments'] = null;
-     }
-     $allHistory[] = $getHistory;
-   }
-
-   $returnArray->data['history'] = $allHistory;
- }else{
-   $returnArray->data['history'] = null;
- }
-//  check if user is new or old
-$date = date('Y-m-d');
-// get latest plan history
-$user_plan_history = DB::table('user_plan_history')
-                ->where('user_id', $user_id)
-                ->where('type', 'started')
-                ->first();
-$date_created = date('Y-m-d', strtotime('+7 days', strtotime($user_plan_history->created_at)));
-if($date_created > $date)  {
-  $returnArray->data['profile']['status'] = "new";
-} else {
-  $returnArray->data['profile']['status'] = "old";
-}
-}else{
-  $returnArray->status = FALSE;
-  $returnArray->message = StringHelper::errorMessage("NoRecords");
-}
-return $returnArray;
+        $returnArray->status = FALSE;
+        $returnArray->message = StringHelper::errorMessage("NoRecords");
+      }
+    return $returnArray;
 }
 
         //Add new user allergy
@@ -1202,8 +1200,8 @@ return Response::json($returnObject);
                     //  if($company_wallet_status == "Health Wallet") {
                     //   $wallet_status = true;
                     // }
-                  // }
-                  // get services
+                    // }
+                    // get services
                   if((int)$trans->multiple_service_selection == 1)
                   {
                     // get multiple service
@@ -5479,12 +5477,13 @@ public function createEclaim( )
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
   
   $customer_id = PlanHelper::getCustomerId($user_id);
-  $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+  // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+  $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-  if($customer && (int)$customer->access_e_claim == 0) {
+  if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
     $returnObject->status = FALSE;
     $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'The E-claim function is disabled for your company.';
+    $returnObject->message = 'Member not eligible for Non-Panel transactions';
     return Response::json($returnObject);
   }
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
@@ -5605,8 +5604,6 @@ public function createEclaim( )
  } else {
   $amount = trim($input_amount);
 }
-  // get customer id
-$customer_id = PlanHelper::getCustomerId($user_id);
 
 $time = date('h:i A', strtotime($input['time']));
 $claim = new Eclaim();
@@ -6620,15 +6617,27 @@ public function payCreditsNew( )
 
           if($type == "spending") {
             $returnObject->status = true;
-            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+            // check if user id deactivated
+            $deactivated = MemberHelper::checkMemberDeactivated($user_id);
+
+            if($deactivated) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'zero_balance';
               $returnObject->head_message = 'Registration on Hold';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
               $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
-              
+
+            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'zero_balance';
+                $returnObject->head_message = 'Registration on Hold';
+                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                $returnObject->sub_message = '';
+                return Response::json($returnObject);
+            }
+                
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
               $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
 
@@ -6694,6 +6703,16 @@ public function payCreditsNew( )
             $returnObject->sub_message = '';
             return Response::json($returnObject);
           } else {
+            $deactivated = MemberHelper::checkMemberDeactivated($user_id);
+
+            if($deactivated) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
 
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
               $returnObject->status = FALSE;
@@ -6770,6 +6789,11 @@ public function payCreditsNew( )
             $returnObject->message = 'You have access this feature at the moment.';
             return Response::json($returnObject);
           }
+
+          $returnObject->status = TRUE;
+          $returnObject->status_type = 'with_balance';
+          $returnObject->message = 'You have access this feature at the moment.';
+          return Response::json($returnObject);
         } else {
           $returnObject->status = FALSE;
           $returnObject->message = StringHelper::errorMessage("Token");
@@ -6785,6 +6809,227 @@ public function payCreditsNew( )
       $returnObject->message = StringHelper::errorMessage("Token");
       return Response::json($returnObject);
     }
+  }
+  
+  public function sendOtpMobile( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Country Code is required.';
+          return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID as user_id', 'Name as name', 'PhoneNo as mobile_number')
+      ->where('PhoneNo', $input['mobile'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      $member_id = $checker->user_id;
+      $mobile_number = (int)$input['mobile'];
+      $code = $input['mobile_country_code'];
+      $phone = $code.$mobile_number;
+
+      $otp_code = StringHelper::OTPChallenge();
+      // StringHelper::TestSendOTPSMS($phone, $otp_code);
+      $data = array();
+      $data['phone'] = $phone;
+      $data['message'] = 'Your Mednefits OTP is '.$otp_code;
+      $data['sms_type'] = "LA";
+      SmsHelper::sendSms($data);
+      DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
+      $returnObject->status = true;
+      $returnObject->message = 'OTP SMS sent';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+      // return $otp_code;
+  }
+
+  public function checkMemberExist( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code')
+      ->where('PhoneNo', $input['mobile'])->first();
+
+      if(!$checker) {
+          $returnObject->status = false;
+          $returnObject->message = 'Sorry, your phone number has not been signed up with Mednefits.';
+          return Response::json($returnObject);
+      }
+
+      if($checker->postal_code == null || $checker->postal_code === null) {
+          $checker->postal_code = 0;
+      }
+      else {
+          $checker->postal_code = 1;
+      }
+
+      $returnObject->status = true;
+      $returnObject->message = 'Member is already registered';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+  }
+
+  public function validateOtpMobile( )
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['otp_code']) || $input['otp_code'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'OTP Code is required.';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'User ID is required.';
+      return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+    ->select('UserID as user_id', 'Name as name', 'member_activated')
+    ->where('UserID', $input['user_id'])->first();
+
+    if(!$checker) {
+      $returnObject->status = false;
+      $returnObject->message = 'User not found!';
+      return Response::json($returnObject);
+    }
+
+    $member_id = $checker->user_id;
+    $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
+    if(!$result) {
+        $returnObject->status = false;
+        $returnObject->message = 'Sorry, your OTP is incorrect.';
+        return Response::json($returnObject);
+    }
+
+    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
+    $returnObject->status = true;
+    $returnObject->message = 'OTP Code is valid';
+    $returnObject->data = $checker;
+    return Response::json($returnObject);
+  }
+
+  public function addPostalCodeMember( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['postal_code']) || $input['postal_code'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'postal code is required.';
+        return Response::json($returnObject);
+      }
+
+      if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'user id is required.';
+        return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated')
+      ->where('UserID', $input['user_id'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      $member_id = $checker->UserID;
+      DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code']]);
+      $returnObject->status = true;
+      $returnObject->message = 'Postal Code already set';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+  }
+
+  public function createNewPasswordByMember()
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['password']) || $input['password'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'Password is required.';
+        return Response::json($returnObject);
+    }
+
+    if(empty($input['password_confirm']) || $input['password_confirm'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'Confirm Password is required.';
+        return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'User ID is required.';
+        return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated')
+      ->where('UserID', $input['user_id'])->first();
+    
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      if($checker->member_activated) {
+        $returnObject->status = false;
+        $returnObject->message = 'User was active, please sign in!';
+        return Response::json($returnObject);
+      }
+
+      if($input['password'] !== $input['password_confirm']) {
+        $returnObject->status = false;
+        $returnObject->message = 'Sorry, your password and confirmation password do not match';
+        return Response::json($returnObject);
+      }
+
+      $newPassword = [
+        'Password' => StringHelper::encode($input['password_confirm']),
+        'member_activated' => 1,
+        'account_update_status' => 1,
+        'account_already_update'  => 1
+      ];
+      
+      DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
+      $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
+      if(!$token->status) {
+        return Response::json($token);
+      }
+      $returnObject->status = true;
+      $returnObject->token = $token->data['access_token'];
+      $returnObject->message = 'Your Password has been created, Account was active!';
+      return Response::json($returnObject);
   }
 
   public function getCompanyMemberLists( )
@@ -6819,5 +7064,41 @@ public function payCreditsNew( )
       $returnObject->message = 'X-ACCESS-KEY is required';
     }
     return Response::json($returnObject);
+  }
+
+  public function updateReadyOnBoarding( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+        $findUserID = $authSession->findUserID($getAccessToken->session_id);
+      
+        if($findUserID){
+          $user_type = PlanHelper::getUserAccountType($findUserID);
+
+          if($user_type == "employee") {
+            // check and update login status
+            $user = DB::table('user')->where('UserID', $findUserID)->first();
+            if((int)$user->Status == 0) {
+              // update
+              DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
+            }
+          }
+        }
+      }
+
+      $returnObject->status = true;
+      $returnObject->message = 'done';
+      return Response::json($returnObject);
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
   }
 }

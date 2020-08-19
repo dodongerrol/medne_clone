@@ -420,11 +420,11 @@
                 </div>
                 <div class="child-two">
                 @if($currency_symbol == "SGD")
-                  <span style="text-decoration: underline;">+65 6254 7889</span>
+                  <span style="text-decoration: underline;">+65 3163 5403</span>
                 @else
-                  <span style="text-decoration: underline;">+65 6254 7889</span>
+                  <span style="text-decoration: underline;">+65 3163 5403</span>
                   <span style="margin: 0 0 0 5px;">or</span> 
-                  <span style="text-decoration: underline;">+603 7890 1770</span>
+                  <span style="text-decoration: underline;">+60 330 995 774</span>
                 @endif
                 </div>
               </div>

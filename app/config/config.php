@@ -10,7 +10,8 @@ return array(
     //Send copy of Booking email to Medicloud
     'booking_email' => 'info@medicloud.sg',
     'secret_key' => 'w2c5M]=JSE/tpj#4;X',
-    'environment' => 'staging',
+    'environment' => 'production',
     'enable_auto_logout' => false,
-    'sms_provider' => 'commz_gate'
+    'sms_provider' => 'commz_gate',
+    'spending_inquiry_email'  => 'info@medicloud.sg'
 );

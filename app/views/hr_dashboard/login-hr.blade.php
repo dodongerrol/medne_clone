@@ -39,7 +39,7 @@
 
 </head>
 
-<body login-section>
+<body ng-cloak login-section>
 	<div class="container">
 		<div class="login-need-help-container">
 			<a href="#" class="pull-right need-help-text tooltips">
@@ -47,8 +47,8 @@
 				<div class="tooltip-container">
 					<h3 class="tooltip-title">We're here to help.</h3>
 					<h3 class="tooltip-phone-email-title">You may ring us</h3>
-					<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
-					<h3 class="tooltip-phone-email-details">+60 3789 01770</h3>
+					<h3 class="tooltip-phone-email-details">+65 3163 5403</h3>
+					<h3 class="tooltip-phone-email-details">+60 330 995 774</h3>
 					<h3 class="tooltip-phone-email-details">Mon - Fri 9:30am to 6:30pm</h3>
 					<br>
 					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
@@ -56,7 +56,7 @@
 				</div>
 			</a>
 		</div>
-		<div class="col-sm-12 col-md-12 col-lg-12">
+		<!-- <div class="col-sm-12 col-md-12 col-lg-12">
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
 			<form class="med-form" ng-submit="loginHr()">
@@ -81,16 +81,62 @@
 				<a href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
 					password?</a>
 			</form>
+		</div> -->
+		<!-- New Account Feature -->
+		<div class="col-sm-12 col-md-12 col-lg-12 new-account">
+			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
+			<h2 class="text-center text-below-image">for business</h2>
+			<!-- <span ng-if="!showPassword" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span> -->
+			<form class="med-form">
+				<div ng-if="!showPassword" class="form-group">
+					<label for="email">Email</label>
+					<input type="email" name="email" class="form-control med-input" ng-class="{'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist'}" placeholder="Enter Email Address"
+						ng-model="login_details.email" ng-model-options="{debounce: 1000}" ng-change="enableContinue(login_details.email)" required>
+				</div>
+				<div ng-if="showPassword" class="form-group">
+					<label for="password">Password</label>
+					<input type="password" class="form-control med-input" placeholder="Enter password"
+						ng-model="login_details.password" required style="margin-bottom: 15px">
+				</div>
+				<div ng-if="showPassword" class="checkbox">
+					<label style="color: #000;font-size: 15px;">
+						<input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed
+						in
+					</label>
+				</div>
+				<div class="form-group">
+					<button ng-if="!showPassword" type="submit" class="btn btn-info btn-block med-button" ng-class="{'disabled': login_details.status == false, 'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist' }" id="login-btn" ng-disabled="login_details.status == false || login_details.status == 'not activated' || login_details.status == 'not-exist'" ng-click="showPasswordToggle()">Continue</button>
+					<button ng-if='showPassword' type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="loginHr()" ng-disabled="!login_details.password">Sign in</button>
+				</div>
+				<span ng-if="ng_fail">*Please check your login credentials</span>
+				<a ng-if="showPassword" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
+					password?</a>
+				
+				<div class="not-activated" ng-if="login_details.status === 'not activated'">
+				Oops! An email to activate your account has been sent on <span ng-bind="login_details.date_created"></span>. Please click the link inside to activate your account. 
+				<br> <br>
+				Or <a ng-click="resend_hr_activation()">resend</a> the email now.
+				</div>
+
+				<div class="not-activated" ng-if="login_details.status === 'not-exist'">
+				Your email has not been signed up with Mednefits. 
+
+				</div>
+			</form>
 		</div>
+		<!-- End New Account Feature -->
 	</div>
 
 </body>
 
 
+{{ HTML::script('assets/hr-dashboard/js/calendar/moment/moment.js') }}
+{{ HTML::script('assets/hr-dashboard/js/calendar/moment/min/moment-with-locales.min.js') }}
+{{ HTML::script('assets/hr-dashboard/js/moment-timezone-with-data-2010-2020.min.js') }}
+{{ HTML::script('assets/hr-dashboard/js/calendar/moment/min/moment-with-locales.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/jquery.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/bootstrap.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/parallax.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/angular.min.js') }}
 {{ HTML::script('assets/hr-dashboard/process/hr_login.js') }}
-
 </html>
