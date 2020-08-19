@@ -13,3 +13,4 @@ db
 run
 public/invoices.zip
 public/plan_invoices/*
+app/config/database.php
