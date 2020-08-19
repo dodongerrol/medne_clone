@@ -56,6 +56,18 @@ class Api_V1_TransactionController extends \BaseController
 					$lite_plan_status = false;
 					$clinic_peak_status = false;
 					$service_id = $input['services'][0];
+					if(is_array($service_id)) {
+						// $returnObject->status = FALSE;
+						// $returnObject->head_message = 'Panel Submission Error';
+						// $returnObject->message = 'Please choose a service.';
+						// return Response::json($returnObject);
+						// if()
+						if(isset($service_id['procedureid'])) {
+							$service_id = $service_id['procedureid'];
+							$input['services'] = [$service_id];
+						}					
+					}
+					
 					// check user type
 					$type = StringHelper::checkUserType($findUserID);
 					$lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
@@ -276,11 +288,11 @@ class Api_V1_TransactionController extends \BaseController
 						$multiple_service_selection = 1;
 						$multiple = true;
 					} else {
-						$services = $input['services'][0];
 						$multiple_service_selection = 0;
 						$multiple = false;
+						$services = $service_id;
 					}
-
+					
 					if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
 						$lite_plan_enabled = 1;
 						$total_procedure_cost = $total_amount;
@@ -308,7 +320,7 @@ class Api_V1_TransactionController extends \BaseController
 					} else {
 						$date_of_transaction = date('Y-m-d H:i:s');
 					}
-
+					
 					$data = array(
 						'UserID'                => $customer_id,
 						'ProcedureID'           => $services,
@@ -343,7 +355,7 @@ class Api_V1_TransactionController extends \BaseController
 						'updated_at'						 => $date_of_transaction,
 						'default_currency'			=> $user_curreny_type
 					);
-
+					
 					if($clinic_peak_status) {
 						$data['peak_hour_status'] = 1;
 						if((int)$clinic->co_paid_status == 1) {
@@ -376,18 +388,26 @@ class Api_V1_TransactionController extends \BaseController
 
 							// insert transation services
 							$ts = new TransctionServices( );
-							$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+							// if($input['services'] == null) {
+							// 	$input['services'] = 55;
+							// 	$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
+							// 	$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', 55)->first();
+							// 	$procedure = ucwords($procedure_data->Name);
+							// } else {
+								$save_ts = $ts->createTransctionServices($input['services'], $transaction_id);
 
-							if($multiple == true) {
-								foreach ($input['services'] as $key => $value) {
-									$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value)->first();
-									$procedure_temp .= ucwords($procedure_data->Name).',';
+								if($multiple == true) {
+									foreach ($input['services'] as $key => $value) {
+										$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $value)->first();
+										$procedure_temp .= ucwords($procedure_data->Name).',';
+									}
+									$procedure = rtrim($procedure_temp, ',');
+								} else {
+									$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $service_id)->first();
+									$procedure = ucwords($procedure_data->Name);
 								}
-								$procedure = rtrim($procedure_temp, ',');
-							} else {
-								$procedure_data = DB::table('clinic_procedure')->where('ProcedureID', $service_id)->first();
-								$procedure = ucwords($procedure_data->Name);
-							}
+							// }
+							
 
 							// deduct medical/wellness credit
 							$history = new WalletHistory( );
@@ -763,7 +783,7 @@ class Api_V1_TransactionController extends \BaseController
 						$returnObject->status = FALSE;
 						$returnObject->message = 'Cannot process payment credits. Please try again.';
 						// send email logs
-						$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
+						$email['end_point'] = url('v2/clinic/send_payment - '.$customer_id, $parameter = array(), $secure = null);
 						$email['logs'] = 'Mobile Payment Credits - '.$e;
 						$email['emailSubject'] = 'Error log.';
 						EmailHelper::sendErrorLogs($email);
@@ -827,7 +847,13 @@ class Api_V1_TransactionController extends \BaseController
 					if(isset($input['input_amount'])) {
 						$input_amount = TransactionHelper::floatvalue($input['input_amount']);
 					}
-					
+					$service_id = $input['services'][0];
+					if(is_array($service_id)) {
+						if(isset($service_id['procedureid'])) {
+							$service_id = $service_id['procedureid'];
+							$input['services'] = [$service_id];
+						}					
+					}
 					$user_id = StringHelper::getUserId($findUserID);
 					// check block access
 					$block = PlanHelper::checkCompanyBlockAccess($user_id, $input['clinic_id']);
