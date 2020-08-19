@@ -1,20 +1,20 @@
-app.directive('accountSettingsDirective', [
-  '$state',
-  'hrSettings',
-	'$rootScope',
-  '$state',
-  'serverUrl',
-  '$timeout',
-	function directive($state,hrSettings,$rootScope,$state,serverUrl,$timeout) {
-		return {
-			restrict: "A",
-			scope: true,
-			link: function link( scope, element, attributeSet ) {
-				console.log("accountSettingsDirective Runnning !");
-        scope.token = window.localStorage.getItem('token');
+app.directive("accountSettingsDirective", [
+  "$state",
+  "hrSettings",
+  "$rootScope",
+  "$state",
+  "serverUrl",
+  "$timeout",
+  function directive($state, hrSettings, $rootScope, $state, serverUrl, $timeout) {
+    return {
+      restrict: "A",
+      scope: true,
+      link: function link(scope, element, attributeSet) {
+        console.log("accountSettingsDirective Runnning !");
+        scope.token = window.localStorage.getItem("token");
         scope.global_hrData = {
-          phone_code: '',
-        }
+          phone_code: "",
+        };
         scope.editHrSuccessfullyUpdated = false;
         // Active Plan Pagination and Old Plan List
         scope.selectedOldPlan = null;
@@ -32,11 +32,11 @@ app.directive('accountSettingsDirective', [
         scope.isViewMemberModalShow = false;
         scope.viewMemberModalpagesToDisplay = 10;
         scope.memberSearch = null;
-        scope.viewMemberList  = [];
+        scope.viewMemberList = [];
 
         scope.passwordData = {
-          newPassword: '',
-          confirmPassword: '',
+          newPassword: "",
+          confirmPassword: "",
         };
         scope.global_passwordSuccess = false;
         scope.passwordCheck = false;
@@ -49,194 +49,187 @@ app.directive('accountSettingsDirective', [
 
         scope.global_planData = {
           start_date: new Date(),
-          plan_duration: '12',
+          plan_duration: "12",
           invoice_start_date: new Date(),
           // invoice_date: new Date(),
-        }
+        };
 
+        scope.linkedAccountHeaders = ["Account Name", "Company ID", "Link Date", "Plan Type", "Primary Admin's email", "Action"];
 
-        
-        scope._updatePasswordBtn_ = function ( ) {
+        scope._updatePasswordBtn_ = function () {
           scope.global_passwordSuccess = false;
           scope.passwordData.newPassword = "";
           scope.passwordData.confirmPassword = "";
           scope.passwordCheck = false;
-        }
-        
-        scope._updatePassword_ = function ( data ) {
+        };
+
+        scope._updatePassword_ = function (data) {
           let params = {
             new_password: data.newPassword,
             confirm_password: data.confirmPassword,
-          }
+          };
 
-          if ( data.newPassword == data.confirmPassword ) {
+          if (data.newPassword == data.confirmPassword) {
             scope.showLoading();
-            hrSettings.updateHrPassword( params )
-              .then(function (response) {
-                if ( response.status ) {
-                  scope.global_passwordSuccess = true;
-                }
-                scope.hideLoading();
-              });
+            hrSettings.updateHrPassword(params).then(function (response) {
+              if (response.status) {
+                scope.global_passwordSuccess = true;
+              }
+              scope.hideLoading();
+            });
           } else {
             scope.passwordCheck = true;
           }
-          
-        }
-        
-        scope.getInvoiceHistoryData = function ( page,per_page,customer_active_plan_id ) {
+        };
+
+        scope.getInvoiceHistoryData = function (page, per_page, customer_active_plan_id) {
           page = scope.page_active;
           per_page = scope.per_page;
           customer_active_plan_id = scope.activePlanDetails_pagination.data.customer_active_plan_id;
-          
-          scope.showLoading();
-          hrSettings.getPlanInvoiceHistory( page,per_page,customer_active_plan_id )
-            .then(function (response) {
-              scope.getPlanInvoiceData = response.data.data.data;
-              scope.invoicePlanPagination = response.data.data;
-              console.log(scope.getPlanInvoiceData);
-              angular.forEach(scope.getPlanInvoiceData, function(value, key) {
-                value.invoice_date = moment( value.invoice_date ).format('DD MMMM YYYY');
-                value.invoice_due = moment( value.invoice_due ).format('DD MMMM YYYY');
-                value.payment_date = moment( value.payment_date ).format('DD MMMM YYYY');
-                value.total = value.total.toFixed(2);
-              });
-              scope.hideLoading();
-            });
-        }
 
-        scope._selectNumList_ = function ( type,num ) {
-          if ( type == 'invoice-history' ) {
+          scope.showLoading();
+          hrSettings.getPlanInvoiceHistory(page, per_page, customer_active_plan_id).then(function (response) {
+            scope.getPlanInvoiceData = response.data.data.data;
+            scope.invoicePlanPagination = response.data.data;
+            console.log(scope.getPlanInvoiceData);
+            angular.forEach(scope.getPlanInvoiceData, function (value, key) {
+              value.invoice_date = moment(value.invoice_date).format("DD MMMM YYYY");
+              value.invoice_due = moment(value.invoice_due).format("DD MMMM YYYY");
+              value.payment_date = moment(value.payment_date).format("DD MMMM YYYY");
+              value.total = value.total.toFixed(2);
+            });
+            scope.hideLoading();
+          });
+        };
+
+        scope._selectNumList_ = function (type, num) {
+          if (type == "invoice-history") {
             scope.page_active = num;
             scope.getInvoiceHistoryData();
           }
-          if ( type == 'enrollment-history' ) {
+          if (type == "enrollment-history") {
             scope.enroll_page_active = num;
             scope.getEnrollmentHistoryData();
           }
-        }
+        };
 
-        scope._prevPageList_ = function ( type ) {
-          if ( type == 'invoice-history' ) {
+        scope._prevPageList_ = function (type) {
+          if (type == "invoice-history") {
             scope.page_active -= 1;
             scope.getInvoiceHistoryData();
           }
-          if ( type == 'enrollment-history' ) {
+          if (type == "enrollment-history") {
             scope.enroll_page_active -= 1;
             scope.getEnrollmentHistoryData();
           }
-        }
+        };
 
-        scope._nextPageList_ = function ( type ) {
-          if ( type == 'invoice-history' ) {
+        scope._nextPageList_ = function (type) {
+          if (type == "invoice-history") {
             scope.page_active += 1;
             scope.getInvoiceHistoryData();
           }
-          if ( type == 'enrollment-history' ) {
+          if (type == "enrollment-history") {
             scope.enroll_page_active += 1;
             scope.getEnrollmentHistoryData();
           }
-        }
+        };
 
         scope._toggleInvoicePerPage_ = function () {
           $(".invoice-per-page-container").toggle();
-        }
+        };
 
         scope._toggleEnrollmentPerPage_ = function () {
           $(".enrollment-per-page-container").toggle();
-        }
+        };
 
-        scope._setPageLimit_ = function ( type,num ) {
-          if ( type == 'invoice-history' ) {
+        scope._setPageLimit_ = function (type, num) {
+          if (type == "invoice-history") {
             scope.per_page = num;
             scope.page_active = 1;
             scope.getInvoiceHistoryData();
           }
-          if ( type == 'enrollment-history' ) {
+          if (type == "enrollment-history") {
             scope.enroll_per_page = num;
             scope.enroll_page_active = 1;
             scope.getEnrollmentHistoryData();
           }
-        }
+        };
 
         scope._getHrDetails_ = async function () {
-          await hrSettings.fecthHrDetails( )
-            .then(function (response) {
-              scope.global_hrData = response.data.hr_account_details;
-            });
-        } 
+          await hrSettings.fecthHrDetails().then(function (response) {
+            scope.global_hrData = response.data.hr_account_details;
+          });
+        };
 
-        scope._editDetailsBtn_ = function ( data ) {
+        scope._editDetailsBtn_ = function (data) {
           console.log(data);
           scope.editHrSuccessfullyUpdated = false;
           scope.initializeGeoCode();
-        }
-        
-        scope._updateHrDetails_ = function ( data ) {
+        };
+
+        scope._updateHrDetails_ = function (data) {
           let params = {
             email: data.email,
             phone_number: data.phone,
-            fullname: data.full_name, 
+            fullname: data.full_name,
             phone_code: data.phone_code,
-          }
+          };
 
           scope.showLoading();
-          hrSettings.updateHrDetails( params )
-            .then(function (response) {
-              // console.log(response);
-              if ( response.data.status == true ) {
-                // $('#edit_details').modal('hide');
-                scope.editHrSuccessfullyUpdated = true;
+          hrSettings.updateHrDetails(params).then(function (response) {
+            // console.log(response);
+            if (response.data.status == true) {
+              // $('#edit_details').modal('hide');
+              scope.editHrSuccessfullyUpdated = true;
 
-                scope._getHrDetails_();
-                scope.hideLoading();
-              }
-            });
-        }
+              scope._getHrDetails_();
+              scope.hideLoading();
+            }
+          });
+        };
 
-        scope.getEnrollmentHistoryData = function ( page,per_page,customer_active_plan_id ) {
+        scope.getEnrollmentHistoryData = function (page, per_page, customer_active_plan_id) {
           page = scope.enroll_page_active;
           per_page = scope.enroll_per_page;
           // customer_active_plan_id = scope.getCustomerPlanId;
           customer_active_plan_id = scope.activePlanDetails_pagination.data.customer_active_plan_id;
 
-
           scope.showLoading();
-          hrSettings.fetchEnrollmentHistoryData( page,per_page,customer_active_plan_id )
-            .then(function (response) {
-              scope.global_enrollmentHistoryData = response.data.data.data;
-              scope.global_enrollmentHistoryPagination = response.data.data;
-              console.log(scope.global_enrollmentHistoryData)
-              angular.forEach(scope.global_enrollmentHistoryData, function(value, key) {
-                value.date_of_edit = moment( value.date_of_edit ).format('DD MMMM YYYY');
-                value.plan_start = moment( value.plan_start ).format('DD MMMM YYYY');
-              });
-
-              scope.hideLoading();
+          hrSettings.fetchEnrollmentHistoryData(page, per_page, customer_active_plan_id).then(function (response) {
+            scope.global_enrollmentHistoryData = response.data.data.data;
+            scope.global_enrollmentHistoryPagination = response.data.data;
+            console.log(scope.global_enrollmentHistoryData);
+            angular.forEach(scope.global_enrollmentHistoryData, function (value, key) {
+              value.date_of_edit = moment(value.date_of_edit).format("DD MMMM YYYY");
+              value.plan_start = moment(value.plan_start).format("DD MMMM YYYY");
             });
-        }
-        
-        scope.enrollAction = function ( data,index ) {
+
+            scope.hideLoading();
+          });
+        };
+
+        scope.enrollAction = function (data, index) {
           scope.global_enrollCustomerId = data.id;
-          
-          scope.global_enrollmentHistoryData.map((value,key)  => {
-            if ( index == key ) {
+
+          scope.global_enrollmentHistoryData.map((value, key) => {
+            if (index == key) {
               value.isActionShow = value.isActionShow == true ? false : true;
-            } 
+            }
             // else {
             //   value.isActionShow = false;
             // }
-          })
-        }
-        scope.closeAllEnrollAction  = function(){
-          if(scope.global_enrollmentHistoryData){
-            scope.global_enrollmentHistoryData.map((value,key)  => {
+          });
+        };
+        scope.closeAllEnrollAction = function () {
+          if (scope.global_enrollmentHistoryData) {
+            scope.global_enrollmentHistoryData.map((value, key) => {
               value.isActionShow = false;
-            })
+            });
           }
-        }
+        };
 
-        $("body").click(function(e){
+        $("body").click(function (e) {
           if ($(e.target).parents(".enrollment-actions-dp-wrapper").length === 0) {
             scope.closeAllEnrollAction();
             // scope.$apply();
@@ -245,97 +238,99 @@ app.directive('accountSettingsDirective', [
 
         scope._confirmActivationEmail_ = function () {
           let data = {
-            id: scope.global_enrollCustomerId
-          }
+            id: scope.global_enrollCustomerId,
+          };
 
-          hrSettings.sendImmediateActivation( data )
-            .then(function (response) {
+          hrSettings.sendImmediateActivation(data).then(function (response) {
+            if (response.data.status == true) {
+              $("#send_immediately_modal").modal("hide");
 
-              if ( response.data.status == true ) {
-                $('#send_immediately_modal').modal('hide');
-
-                swal('Success!', response.data.message, 'success');
-              } else {
-                swal('Error!', response.data.message, 'error');
-              }
-              
-            });
-        }
+              swal("Success!", response.data.message, "success");
+            } else {
+              swal("Error!", response.data.message, "error");
+            }
+          });
+        };
 
         scope.getPlanDetails = async function () {
-          var data  = {
+          var data = {
             page: scope.activePlan_active_page,
-          }
-          if(scope.selectedOldPlan != null){
+          };
+          if (scope.selectedOldPlan != null) {
             data.oldPlanCustomerPlanID = scope.selectedOldPlan.customer_plan_id;
           }
           scope.showLoading();
-          await hrSettings.getActivePlanDetails(data)
-            .success(function (response) {
-              scope.activePlanDetails_pagination = response;
-              scope.employee_acount_details = response.data.employee_acount_details;
-              scope.dependent_acount_details = response.data.dependent_acount_details;
+          await hrSettings.getActivePlanDetails(data).success(function (response) {
+            scope.activePlanDetails_pagination = response;
+            scope.employee_acount_details = response.data.employee_acount_details;
+            scope.dependent_acount_details = response.data.dependent_acount_details;
 
-              scope.getEnrollmentHistoryData();
-              scope.getInvoiceHistoryData();
-            })
-        }
+            scope.getEnrollmentHistoryData();
+            scope.getInvoiceHistoryData();
+          });
+        };
 
-        scope.customFormatDate  = function(date, from, to){
-          return moment(date , from).format(to);
-        }
+        scope.customFormatDate = function (date, from, to) {
+          return moment(date, from).format(to);
+        };
 
         scope.getOldPlansList = async function () {
           // scope.showLoading();
-          await hrSettings.getOldPlanList()
-            .success(function (response) {
-              scope.oldPlan_list = response.data;
-            })
-        }
+          await hrSettings.getOldPlanList().success(function (response) {
+            scope.oldPlan_list = response.data;
+          });
+        };
 
         // Active Plan pagination and Old Plan list //
-          scope._toggleActivePlanDrop_ = function(){
-            scope.isActivePlanDropShow = scope.isActivePlanDropShow ? false : true;
+        scope._toggleActivePlanDrop_ = function () {
+          scope.isActivePlanDropShow = scope.isActivePlanDropShow ? false : true;
+        };
+        scope._toggleOldActivePlanDrop_ = function () {
+          scope.isOldPlanListDropShow = scope.isOldPlanListDropShow ? false : true;
+        };
+        $("body").click(function (e) {
+          if ($(e.target).parents(".active-plan-dot").length === 0) {
+            scope.isActivePlanDropShow = false;
+            scope.$apply();
           }
-          scope._toggleOldActivePlanDrop_ = function(){
-            scope.isOldPlanListDropShow = scope.isOldPlanListDropShow ? false : true;
-          }
-          $("body").click(function(e){
-            if ($(e.target).parents(".active-plan-dot").length === 0) {
-              scope.isActivePlanDropShow = false;
-              scope.$apply();
-            }
-            if ($(e.target).parents(".old-active-plans-wrapper").length === 0) {
-              scope.isOldPlanListDropShow = false;
-              scope.$apply();
-            }
-          });
-          scope.selectActivePlanPage  = function(page){
-            if(scope.activePlan_active_page != page){
-              scope.activePlan_active_page = page;
-              scope.isActivePlanDropShow = false;
-              scope.getPlanDetails();
-            }
-          }
-          scope.selectOldPlanPage = function(page, plan){
-            scope.selectedOldPlan = plan;
-            scope.activePlan_active_page = 1;
+          if ($(e.target).parents(".old-active-plans-wrapper").length === 0) {
             scope.isOldPlanListDropShow = false;
-            scope.oldPlan_active_page = page;
+            scope.$apply();
+          }
+        });
+        scope.selectActivePlanPage = function (page) {
+          if (scope.activePlan_active_page != page) {
+            scope.activePlan_active_page = page;
+            scope.isActivePlanDropShow = false;
             scope.getPlanDetails();
           }
-          scope._selectCurrentPlan_ = function(){
-            scope.activePlan_active_page = 1;
-            scope.selectedOldPlan = null;
-            scope.oldPlan_active_page = null;
-            scope.getPlanDetails();
-          }
+        };
+        scope.selectOldPlanPage = function (page, plan) {
+          scope.selectedOldPlan = plan;
+          scope.activePlan_active_page = 1;
+          scope.isOldPlanListDropShow = false;
+          scope.oldPlan_active_page = page;
+          scope.getPlanDetails();
+        };
+        scope._selectCurrentPlan_ = function () {
+          scope.activePlan_active_page = 1;
+          scope.selectedOldPlan = null;
+          scope.oldPlan_active_page = null;
+          scope.getPlanDetails();
+        };
         // ---------------------------------------- //
-        scope._downloadInvoiceHistoryPDF_ = function(){
-          window.open(serverUrl.url + `/hr/plan_all_download?token=` + window.localStorage.getItem('token') + `&customer_active_plan_id=` + scope.activePlanDetails_pagination.data.customer_active_plan_id, '_blank' );
-        }
+        scope._downloadInvoiceHistoryPDF_ = function () {
+          window.open(
+            serverUrl.url +
+              `/hr/plan_all_download?token=` +
+              window.localStorage.getItem("token") +
+              `&customer_active_plan_id=` +
+              scope.activePlanDetails_pagination.data.customer_active_plan_id,
+            "_blank"
+          );
+        };
 
-        scope._editDetails_ = function ( type, planData ) {
+        scope._editDetails_ = function (type, planData) {
           console.log(planData);
           scope.global_planData = planData;
           scope.global_planData.type = type;
@@ -343,184 +338,181 @@ app.directive('accountSettingsDirective', [
 
           // scope.global_planData.invoice_date = moment(scope.global_planData.invoice_date).add(scope.global_planData.duration, 'months').subtract(1, 'days');
 
-          scope.global_planData.plan_start = moment(scope.global_planData.plan_start, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
-          scope.global_planData.invoice_date = moment(scope.global_planData.invoice_date, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
-          scope.global_planData.invoice_due = moment(scope.global_planData.invoice_due, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
+          scope.global_planData.plan_start = moment(scope.global_planData.plan_start, ["YYYY-MM-DD", "DD/MM/YYYY"]).format("DD/MM/YYYY");
+          scope.global_planData.invoice_date = moment(scope.global_planData.invoice_date, ["YYYY-MM-DD", "DD/MM/YYYY"]).format("DD/MM/YYYY");
+          scope.global_planData.invoice_due = moment(scope.global_planData.invoice_due, ["YYYY-MM-DD", "DD/MM/YYYY"]).format("DD/MM/YYYY");
 
           setTimeout(() => {
             var dt = new Date();
             // dt.setFullYear(new Date().getFullYear()-18);
-            $('.datepicker').datepicker({
-              format: 'dd/mm/yyyy',
-              endDate: dt
+            $(".datepicker").datepicker({
+              format: "dd/mm/yyyy",
+              endDate: dt,
             });
 
-            $('.datepicker').datepicker().on('hide', function (evt) {
-              var val = $(this).val();
-              if (val != "") {
-                $(this).datepicker('setDate', val);
-              }
-            })
-          }, 300); 
-        }
+            $(".datepicker")
+              .datepicker()
+              .on("hide", function (evt) {
+                var val = $(this).val();
+                if (val != "") {
+                  $(this).datepicker("setDate", val);
+                }
+              });
+          }, 300);
+        };
 
-        scope._changePlanDuration_ = function ( duration, start) {
-          
-          let year = moment(start, 'DD/MM/YYYY').year();
-          let month = moment(start, 'DD/MM/YYYY').month();
-          let day = moment(start, 'DD/MM/YYYY').date();
+        scope._changePlanDuration_ = function (duration, start) {
+          let year = moment(start, "DD/MM/YYYY").year();
+          let month = moment(start, "DD/MM/YYYY").month();
+          let day = moment(start, "DD/MM/YYYY").date();
           let new_invoice_start = start;
-          let new_invoice_due = moment([year,month,day]).add(parseInt(duration),'months').subtract(1, 'days').format('DD/MM/YYYY');
+          let new_invoice_due = moment([year, month, day]).add(parseInt(duration), "months").subtract(1, "days").format("DD/MM/YYYY");
           // scope.edit_employee_acount_details.invoice_start = new_invoice_start;
           scope.global_planData.invoice_date = new_invoice_due;
-        }
+        };
 
-        scope._updatePlanDetails_ = function(formData){
+        scope._updatePlanDetails_ = function (formData) {
           console.log(formData);
-          formData.plan_start = moment(formData.plan_start, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD');
+          formData.plan_start = moment(formData.plan_start, ["YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD");
           let data = {};
-          if (formData.account_type == 'enterprise_plan') {
-            formData.invoice_date = moment(formData.invoice_date, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD');
-            formData.invoice_due = moment(formData.invoice_due, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD');
+          if (formData.account_type == "enterprise_plan") {
+            formData.invoice_date = moment(formData.invoice_date, ["YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD");
+            formData.invoice_due = moment(formData.invoice_due, ["YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD");
             data = {
               start_date: formData.plan_start,
               plan_duration: formData.duration,
               invoice_start: formData.invoice_date,
               invoice_due: formData.invoice_due,
-              individual_price: formData.individual_price
-            }
+              individual_price: formData.individual_price,
+            };
           } else {
             data = {
               start_date: formData.plan_start,
               plan_duration: formData.duration,
-            }
+            };
           }
           scope.showLoading();
-          if(formData.type == 'employee'){
+          if (formData.type == "employee") {
             data.customer_active_plan_id = scope.activePlanDetails_pagination.data.customer_active_plan_id;
-            hrSettings.updateEmployeePlan(data)
-              .then(function(response){
-                console.log(response);
-                if(response.data.status){
-                  $(".modal").modal('hide');
-                  scope.getPlanDetails();
-                }else{
-                  swal('Error!', response.data.message, 'error');
-                }
-                
-              });
+            hrSettings.updateEmployeePlan(data).then(function (response) {
+              console.log(response);
+              if (response.data.status) {
+                $(".modal").modal("hide");
+                scope.getPlanDetails();
+              } else {
+                swal("Error!", response.data.message, "error");
+              }
+            });
           }
-          if(formData.type == 'dependent'){
+          if (formData.type == "dependent") {
             data.dependent_plan_id = formData.dependent_plan_id;
-            hrSettings.updateDependentPlan(data)
-              .then(function(response){
-                console.log(response);
-                if(response.data.status){
-                  $(".modal").modal('hide');
-                  scope.getPlanDetails();
-                }else{
-                  swal('Error!', response.data.message, 'error');
-                }
-              });
+            hrSettings.updateDependentPlan(data).then(function (response) {
+              console.log(response);
+              if (response.data.status) {
+                $(".modal").modal("hide");
+                scope.getPlanDetails();
+              } else {
+                swal("Error!", response.data.message, "error");
+              }
+            });
           }
-        }
-        scope._planTypeChanged_ = function(plan_type){
-          if(plan_type == 'enterprise_plan'){
+        };
+        scope._planTypeChanged_ = function (plan_type) {
+          if (plan_type == "enterprise_plan") {
             setTimeout(() => {
               var dt = new Date();
               // dt.setFullYear(new Date().getFullYear()-18);
-              $('.datepicker').datepicker({
-                format: 'dd/mm/yyyy',
-                endDate: dt
+              $(".datepicker").datepicker({
+                format: "dd/mm/yyyy",
+                endDate: dt,
               });
-  
-              $('.datepicker').datepicker().on('hide', function (evt) {
-                var val = $(this).val();
-                if (val != "") {
-                  $(this).datepicker('setDate', val);
-                }
-              })
-            }, 300); 
-          }
-        }
 
+              $(".datepicker")
+                .datepicker()
+                .on("hide", function (evt) {
+                  var val = $(this).val();
+                  if (val != "") {
+                    $(this).datepicker("setDate", val);
+                  }
+                });
+            }, 300);
+          }
+        };
 
         // view member modal functions //
-        
-        
-        scope._getEnrolledMemberList_  = function(list, search){       
-          scope.selectedEnrollHistoryList = list;      
-          var data  = {
+
+        scope._getEnrolledMemberList_ = function (list, search) {
+          scope.selectedEnrollHistoryList = list;
+          var data = {
             page: scope.mem_active_page,
-            customer_active_plan_id : list.customer_active_plan_id,
-            per_page : scope.mem_per_page,
-          }
-          if(search){
+            customer_active_plan_id: list.customer_active_plan_id,
+            per_page: scope.mem_per_page,
+          };
+          if (search) {
             data.search = search;
           }
           scope.showLoading();
-          hrSettings.getViewMemberModalList(data)
-            .then(function(response){
-              scope.hideLoading();
-              console.log(response);
-              if (response.data.status) {
-                scope.viewMemberList = response.data.data.data;
-                scope.viewMemberModalPagination = response.data.data;
-                if(!scope.isViewMemberModalShow){
-                  $('#viewMemberModal').modal('show');
-                  scope.isViewMemberModalShow = true;
-                }
-              } else {
-                swal('Error!', response.data.message, 'error');
+          hrSettings.getViewMemberModalList(data).then(function (response) {
+            scope.hideLoading();
+            console.log(response);
+            if (response.data.status) {
+              scope.viewMemberList = response.data.data.data;
+              scope.viewMemberModalPagination = response.data.data;
+              if (!scope.isViewMemberModalShow) {
+                $("#viewMemberModal").modal("show");
+                scope.isViewMemberModalShow = true;
               }
-            });
-        }
-        scope.closeViewMemberModal  = function(){
+            } else {
+              swal("Error!", response.data.message, "error");
+            }
+          });
+        };
+        scope.closeViewMemberModal = function () {
           scope.isViewMemberModalShow = false;
-          $('#viewMemberModal').modal('hide');
-        }
-        scope.showDependentList = function(list){
-          if(list.dependents.length > 0){
+          $("#viewMemberModal").modal("hide");
+        };
+        scope.showDependentList = function (list) {
+          if (list.dependents.length > 0) {
             list.showDependents = list.showDependents == true ? false : true;
           }
-        }
-        scope._toggleViewMemberPopUp  = function(){
+        };
+        scope._toggleViewMemberPopUp = function () {
           scope.isViewMemberPerPageShow = scope.isViewMemberPerPageShow == false ? true : false;
-        }
-        scope._setViewMembersPageLimit_  = function(page){
+        };
+        scope._setViewMembersPageLimit_ = function (page) {
           scope.mem_per_page = page;
           scope.mem_active_page = 1;
           scope._getEnrolledMemberList_(scope.selectedEnrollHistoryList, scope.memberSearch);
-        }
-        scope._viewMembersSetPage_  = function(page){
+        };
+        scope._viewMembersSetPage_ = function (page) {
           scope.mem_active_page = page;
           scope._getEnrolledMemberList_(scope.selectedEnrollHistoryList, scope.memberSearch);
-        }
-        scope._viewMembersPrevPage_  = function(page){
-          if( scope.mem_active_page != 1 ){
+        };
+        scope._viewMembersPrevPage_ = function (page) {
+          if (scope.mem_active_page != 1) {
             scope.mem_active_page -= 1;
             scope._getEnrolledMemberList_(scope.selectedEnrollHistoryList, scope.memberSearch);
           }
-        }
-        scope._viewMembersNextPage_  = function(page){
+        };
+        scope._viewMembersNextPage_ = function (page) {
           // pagination.length + 1
-          if( scope.mem_active_page != 10 ){
+          if (scope.mem_active_page != 10) {
             scope.mem_active_page += 1;
             scope._getEnrolledMemberList_(scope.selectedEnrollHistoryList, scope.memberSearch);
           }
-        }
-        
+        };
+
         scope.startViewMembersModalIndex = function () {
-          if (scope.mem_active_page > ((scope.viewMemberModalpagesToDisplay / 2) + 1)) {
-            if ((scope.mem_active_page + Math.floor(scope.viewMemberModalpagesToDisplay / 2)) > scope.viewMemberModalPagination.last_page) {
+          if (scope.mem_active_page > scope.viewMemberModalpagesToDisplay / 2 + 1) {
+            if (scope.mem_active_page + Math.floor(scope.viewMemberModalpagesToDisplay / 2) > scope.viewMemberModalPagination.last_page) {
               return scope.viewMemberModalPagination.last_page - scope.viewMemberModalpagesToDisplay + 1;
             }
             return scope.mem_active_page - Math.floor(scope.viewMemberModalpagesToDisplay / 2);
           }
           return 0;
-        }
+        };
 
-        $("body").click(function(e){
+        $("body").click(function (e) {
           if ($(e.target).parents("#viewMemberModal .custom-list-per-page").length === 0) {
             scope.isViewMemberPerPageShow = false;
             scope.$apply();
@@ -529,86 +521,85 @@ app.directive('accountSettingsDirective', [
             scope.hideEnrolActionDrops();
           }
         });
-        $('#viewMemberModal').on('hidden.bs.modal', function (e) {
+        $("#viewMemberModal").on("hidden.bs.modal", function (e) {
           scope.isViewMemberModalShow = false;
           scope.memberSearch = null;
-        })
+        });
 
-        scope.hideEnrolActionDrops  = function(){
-          if(scope.enrollment_history){
-            angular.forEach(scope.enrollment_history.data, function(value, key){
+        scope.hideEnrolActionDrops = function () {
+          if (scope.enrollment_history) {
+            angular.forEach(scope.enrollment_history.data, function (value, key) {
               // console.log(value);
-              if( value.isEnrolActionsShow == true ){
+              if (value.isEnrolActionsShow == true) {
                 value.isEnrolActionsShow = false;
                 scope.$apply();
               }
             });
           }
-          
-        }
+        };
         // scope.newScheduleDate = new Date();
-        scope._editScheduleDate_ = function ( data ) {
+        scope._editScheduleDate_ = function (data) {
           console.log(data);
           scope.scheduleData = data;
-          scope.scheduleData.schedule_date = moment( scope.scheduleData.schedule_date,['YYYY-MM-DD', 'DD/MM/YYYY'] ).format('DD/MM/YYYY');
-          document.getElementById('new-scheduled-date').value = '';
-        
+          scope.scheduleData.schedule_date = moment(scope.scheduleData.schedule_date, ["YYYY-MM-DD", "DD/MM/YYYY"]).format("DD/MM/YYYY");
+          document.getElementById("new-scheduled-date").value = "";
+
           setTimeout(() => {
             // var dt = new Date();
             // dt.setFullYear(new Date().getFullYear()-18);
-            $('.datepicker').datepicker({
-              format: 'dd/mm/yyyy',
+            $(".datepicker").datepicker({
+              format: "dd/mm/yyyy",
               // endDate: dt
             });
 
-            $('.datepicker').datepicker().on('hide', function (evt) {
-              var val = $(this).val();
-              if (val != "") {
-                $(this).datepicker('setDate', val);
-              }
-            })
-          }, 300); 
-        }
+            $(".datepicker")
+              .datepicker()
+              .on("hide", function (evt) {
+                var val = $(this).val();
+                if (val != "") {
+                  $(this).datepicker("setDate", val);
+                }
+              });
+          }, 300);
+        };
 
-        scope._changeDate_ = function ( date ) {
+        scope._changeDate_ = function (date) {
           console.log(date);
-          scope.new_scheduled_date = date.split("/").reverse().join("-");;
+          scope.new_scheduled_date = date.split("/").reverse().join("-");
           console.log(scope.new_scheduled_date);
-        }
+        };
 
-        scope.setScheduleDate = function (  ) {
+        scope.setScheduleDate = function () {
           let data = {
             id: scope.scheduleData.id,
             schedule_date: scope.new_scheduled_date,
-          } 
+          };
           scope.showLoading();
-          hrSettings.updateScheduleDate( data )
-            .then(function(response){
-              console.log(response);
-              if ( response.data.status) {
-                // scope.hideLoading();
-                $('#edit_scheduled_modal').modal('hide');
-                document.getElementById('new-scheduled-date').value = '';
-                scope.getEnrollmentHistoryData();
-              } else {
-                scope.hideLoading();
-                swal('Error!', response.data.message, 'error');
-              }
-              
-            });
-        }
+          hrSettings.updateScheduleDate(data).then(function (response) {
+            console.log(response);
+            if (response.data.status) {
+              // scope.hideLoading();
+              $("#edit_scheduled_modal").modal("hide");
+              document.getElementById("new-scheduled-date").value = "";
+              scope.getEnrollmentHistoryData();
+            } else {
+              scope.hideLoading();
+              swal("Error!", response.data.message, "error");
+            }
+          });
+        };
 
         // ---------------------------------------- //
 
-        scope.initializeGeoCode = function () { 
+        scope.initializeGeoCode = function () {
           var settings = {
             preferredCountries: [],
             separateDialCode: true,
             initialCountry: "SG",
             autoPlaceholder: "off",
             utilsScript: "../assets/hr-dashboard/js/utils.js",
-            onlyCountries: ["sg","my"],
-          }
+            onlyCountries: ["sg", "my"],
+          };
 
           var settings2 = {
             preferredCountries: [],
@@ -616,8 +607,8 @@ app.directive('accountSettingsDirective', [
             initialCountry: "MY",
             autoPlaceholder: "off",
             utilsScript: "../assets/hr-dashboard/js/utils.js",
-            onlyCountries: ["sg","my"],
-          }
+            onlyCountries: ["sg", "my"],
+          };
 
           var settings3 = {
             preferredCountries: [],
@@ -625,43 +616,42 @@ app.directive('accountSettingsDirective', [
             initialCountry: false,
             autoPlaceholder: "off",
             utilsScript: "../assets/hr-dashboard/js/utils.js",
-            onlyCountries: ["sg","my"],
-          }
-  
-          if ( scope.global_hrData.phone_code == '+65' ) {
+            onlyCountries: ["sg", "my"],
+          };
+
+          if (scope.global_hrData.phone_code == "+65") {
             var input = document.querySelector("#phone_number");
             iti1 = intlTelInput(input, settings);
 
             input.addEventListener("countrychange", function () {
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
-            })
-          } else if ( scope.global_hrData.phone_code == '+60' ) {
+            });
+          } else if (scope.global_hrData.phone_code == "+60") {
             var input2 = document.querySelector("#phone_number");
             iti1 = intlTelInput(input2, settings2);
 
             input2.addEventListener("countrychange", function () {
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
-            })
-          } else if ( scope.global_hrData.phone_code == '+63' || scope.global_hrData.phone_code == "" || scope.global_hrData.phone_code == null ) {
-            $('.iti__selected-dial-code').addClass('empty');
+            });
+          } else if (scope.global_hrData.phone_code == "+63" || scope.global_hrData.phone_code == "" || scope.global_hrData.phone_code == null) {
+            $(".iti__selected-dial-code").addClass("empty");
             var input3 = document.querySelector("#phone_number");
             iti1 = intlTelInput(input3, settings3);
 
             input3.addEventListener("countrychange", function () {
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
-            })
+            });
           }
-        }
+        };
 
         scope.spending_account_status = {};
         scope.getSpendingAcctStatus = function () {
-          hrSettings.getPrePostStatus()
-						.then(function (response) {
-              scope.spending_account_status = response.data;
-						});
-        }
+          hrSettings.getPrePostStatus().then(function (response) {
+            scope.spending_account_status = response.data;
+          });
+        };
 
-        scope.range = function(num) {
+        scope.range = function (num) {
           var arr = [];
           for (var i = 0; i < num; i++) {
             arr.push(i);
@@ -670,23 +660,23 @@ app.directive('accountSettingsDirective', [
         };
 
         scope.showLoading = function () {
-					$(".circle-loader").show();
-				}
+          $(".circle-loader").show();
+        };
 
-				scope.hideLoading = function () {
-					$timeout(function () {
-						$(".circle-loader").fadeOut();
-					},100)
-				}
+        scope.hideLoading = function () {
+          $timeout(function () {
+            $(".circle-loader").fadeOut();
+          }, 100);
+        };
 
-        scope.onLoad  = async function(){
+        scope.onLoad = async function () {
           scope.getSpendingAcctStatus();
           await scope._getHrDetails_();
           await scope.getOldPlansList();
           await scope.getPlanDetails();
-        }
+        };
         scope.onLoad();
-			}
-		}
-	}
+      },
+    };
+  },
 ]);
