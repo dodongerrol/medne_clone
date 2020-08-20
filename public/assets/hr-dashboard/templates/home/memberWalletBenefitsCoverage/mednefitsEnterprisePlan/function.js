@@ -1,4 +1,4 @@
-app.directive('mednefitsCreditAccountDirective', [
+app.directive('mednefitsEnterprisePlanDirective', [
 	'$state',
   '$location',
   'hrSettings',
@@ -7,15 +7,14 @@ app.directive('mednefitsCreditAccountDirective', [
 			restrict: "A",
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
-				console.log("mednefits credit account directive Runnning !");
+				console.log("mednefits basic plan directive Runnning !");
 				console.log($location);
 
         scope.showLastTermSelector = false;
-        scope.defaultDateTerms = {};
+        
 
         scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
-          console.log(scope.showLastTermSelector);
         }
 
         scope.formatDate = function (date) {
@@ -29,12 +28,8 @@ app.directive('mednefitsCreditAccountDirective', [
         scope.getDateTerms = function () {
           hrSettings.fetchDateTerms()
           .then(function(response){
-            console.log(response);
             scope.dateTerm = response.data.data;
-            // console.log(scope.dateTerm);
-
-            // scope.currentTerm = scope.dateTerm.slice(-1).pop();
-            // console.log(scope.currentTerm );
+            console.log(scope.dateTerm);
 
             let termLength = scope.dateTerm.length;
             // console.log(termLength);
@@ -51,8 +46,9 @@ app.directive('mednefitsCreditAccountDirective', [
               }
             });
 
-            scope.getMednefitsCreditAccount(scope.defaultDateTerms);
-            scope.getMednefitsCreditActivities();
+            scope.getBenefitsCoverageData(scope.defaultDateTerms);
+
+            
           })
         }
 
@@ -67,32 +63,54 @@ app.directive('mednefitsCreditAccountDirective', [
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
-            scope.getMednefitsCreditAccount(data);
+            scope.getBenefitsCoverageData(data);
           }
           console.log(scope.selectedTerm)
         }
 
-        scope.getMednefitsCreditAccount = function (data) {
-          scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
+        scope.getBenefitsCoverageData = function ( data ) {
+					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
+          scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
           scope.showLoading();
-          hrSettings.fetchMednefitsCreditsAccountData( scope.currentTermStartDate, scope.currentTermEndDate )
-            .then(function(response){
-              scope.mednefitsCreditsData = response.data.data;
-
-              scope.hideLoading();
-              console.log(scope.mednefitsCreditsData);
-            })
-        }
-
-        scope.getMednefitsCreditActivities = function () {
-          hrSettings.fetchMednefitsActivitiesData( scope.currentTermStartDate, scope.currentTermEndDate )
+          hrSettings.fetchBenefitsCoverageData( scope.currentTermStartDate, scope.currentTermEndDate, 'enterprise_plan' )
             .then(function(response){
               console.log(response);
-              scope.mednefitsActivitiesData = response.data.data;
-              // console.log(scope.mednefitsActivitiesData);
+							scope.benefitsCoverageData = response.data;
+							// scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
+							// scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
+							// scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
+							console.log(scope.benefitsCoverageData);
+							
+							scope.hideLoading();
             })
-        }
+				}
+
+        scope.toggleVisits = function ( type ) {
+          if ( type == 'total-utilised-visits' ) {
+            $('.credits-tooltip-container.total-utilised-visits').toggle();
+            $('.credits-tooltip-container.utilised-panel-visits').hide(); 
+            $('.credits-tooltip-container.utilised-non-panel-visits').hide();  
+            $('.credits-tooltip-container.visits-per-member').hide(); 
+          }
+          if ( type == 'utilised-panel-visits' ) {
+            $('.credits-tooltip-container.total-utilised-visits').hide();
+            $('.credits-tooltip-container.utilised-panel-visits').toggle(); 
+            $('.credits-tooltip-container.utilised-non-panel-visits').hide();  
+            $('.credits-tooltip-container.visits-per-member').hide(); 
+          }
+          if ( type == 'utilised-non-panel-visits' ) {
+            $('.credits-tooltip-container.total-utilised-visits').hide();
+            $('.credits-tooltip-container.utilised-panel-visits').hide(); 
+            $('.credits-tooltip-container.utilised-non-panel-visits').toggle();  
+            $('.credits-tooltip-container.visits-per-member').hide(); 
+          }
+          if ( type == 'visits-per-member' ) {
+            $('.credits-tooltip-container.total-utilised-visits').hide();
+            $('.credits-tooltip-container.utilised-panel-visits').hide(); 
+            $('.credits-tooltip-container.utilised-non-panel-visits').hide();  
+            $('.credits-tooltip-container.visits-per-member').toggle(); 
+          }
+				}
 
 
         scope.showLoading = function () {
@@ -111,7 +129,6 @@ app.directive('mednefitsCreditAccountDirective', [
         scope.onLoad = function () {
           scope.showLoading();
           scope.getDateTerms();
-          scope.getMednefitsCreditActivities();
         }
 
         scope.onLoad();

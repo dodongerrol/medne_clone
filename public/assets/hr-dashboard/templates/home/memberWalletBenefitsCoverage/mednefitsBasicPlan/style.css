@@ -57,3 +57,6 @@
 .medical-wellnss-wallet-container .modal-body {
   padding: 0 40px 40px;
 }
+.credits-tooltip-container.total-spent {
+  display: none;
+}

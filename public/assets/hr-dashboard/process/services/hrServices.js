@@ -481,6 +481,11 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end );
   }
 
+  // Benefits Coverage
+  hrFactory.fetchBenefitsCoverageData = function ( start,end,type ) {
+    return $http.get( serverUrl.url + "/hr/get_benefits_coverage_details/?start=" + start + "&end=" + end + "&type=" + type );
+  }
+
   return hrFactory;
 });
 

@@ -269,6 +269,8 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/medicalWallet/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/wellnessWallet/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsBasicPlan/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsEnterprisePlan/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/outOfPocket/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/function.js?_={{ $date->format('U') }}"></script>
 

@@ -401,3 +401,16 @@
   border: 2px solid #E0E0E0;
   border-radius: 3px;
 }
+
+/* medical enterprise plan */
+.credits-tooltip-container.total-utilised-visits,
+.credits-tooltip-container.utilised-panel-visits,
+.credits-tooltip-container.utilised-non-panel-visits, 
+.credits-tooltip-container.visits-per-member {
+  display: none;
+}
+
+/* out of pocket */
+.credits-tooltip-container.total-member-transaction {
+  display: none;
+}

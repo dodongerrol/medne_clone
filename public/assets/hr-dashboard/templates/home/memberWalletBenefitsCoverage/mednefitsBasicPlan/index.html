@@ -1,14 +1,23 @@
-<div class="mednefits-basic-plan-wrapper">
+<div class="mednefits-basic-plan-wrapper" mednefits-basic-plan-directive>
   <div class="show-details-on-container">
     <div class="flex-1">
       <span class="member-bold-text">Show details on</span> 
-      <div class="current-term-input-wrapper">
-        <span>Current term</span>
-        <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
-        <i class="fa fa-angle-down"></i>
+      <div class="current-term-wrapper"> 
+        <div ng-click="termSelector()" class="current-term-input-wrapper">
+          <span>{{ selectedTerm.term }}</span>
+          <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
+            (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
+          </span> -->
+          <i class="fa fa-angle-down"></i>
+        </div>
+        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+          <!-- <span>Last term</span> -->
+          <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+          <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
+        </div>
       </div>
       <div>
-        <button>Apply</button>
+        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
@@ -22,10 +31,20 @@
         <div class="available-credits">
           <span class="available-credits-container dp-flex-ai">
             <div class="available-credits-text member-bold-text">Total Spent</div>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+            <span class="credits-tooltip-wrapper">
+              <img ng-click="toggleFunds()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <div class="credits-tooltip-container total-spent">
+                <div class="tooltip-title">Total Spent</div>
+                <p>The total amount of employee benefits payments settled from GIRO, Bank Transfer, PayNow, and/or Mednefits Credits.
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div> 
+            </span>
           </span>
           <span>
-            <div class="available-credits-amount member-bold-text">SGD 120,000.00</div>
+            <div class="available-credits-amount member-bold-text"><span class="currency-type" ng-bind="benefitsCoverageData.currency_type"></span> {{ benefitsCoverageData.spent }}</div>
           </span>
         </div>
       </div>

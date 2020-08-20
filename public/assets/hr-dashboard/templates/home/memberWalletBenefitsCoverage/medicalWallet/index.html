@@ -4,19 +4,20 @@
       <span class="member-bold-text">Show details on</span> 
       <div class="current-term-wrapper"> 
         <div ng-click="termSelector()" class="current-term-input-wrapper">
-          <span>Current term</span>
-          <span ng-repeat="list in dateTerm" ng-if="$last">
+          <span>{{ selectedTerm.term }}</span>
+          <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
             (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
-          </span>
+          </span> -->
           <i class="fa fa-angle-down"></i>
         </div>
-        <div ng-if="showLastTermSelector" class="last-term-selector">
-          <span>Last term</span>
-          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+          <!-- <span>Last term</span> -->
+          <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+          <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
         </div>
       </div>
       <div>
-        <button>Apply</button>
+        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
@@ -95,14 +96,14 @@
       <div>
         <label>Benefits Start Date</label>
         <div class="benefits-input-wrapper start-date">
-          <input ng-model="medicalWalletData.benefits_start" type="text">
+          <input class="datepicker" ng-model="medicalWalletData.benefits_start" type="text">
           <img src="../../assets/hr-dashboard/img/calendar.png">
         </div>
       </div>
       <div>
         <label>Benefits End Date</label>
         <div class="benefits-input-wrapper end-date">
-          <input ng-model="medicalWalletData.benefits_end" type="text">
+          <input class="datepicker" ng-model="medicalWalletData.benefits_end" type="text">
           <img src="../../assets/hr-dashboard/img/calendar.png">
         </div>
       </div>
@@ -130,7 +131,17 @@
     <div class="dp-flex-ai">
       <div>Mednefits Basic Plan</div>
       <div>
-        <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+        <span class="credits-tooltip-wrapper">
+          <img ng-click="toggleMednefitsCredits('mednefits-basic-plan')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+          <div class="credits-tooltip-container mednefits-basic-plan">
+            <div class="tooltip-title">Mednefits Basic Plan</div>
+            <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
+            </p>
+            <div class="tooltip-btn-footer">
+              <button>Got it</button>
+            </div>
+          </div> 
+        </span>
       </div>
     </div>
   </div>
@@ -142,24 +153,24 @@
         <h5 class="member-bold-text">Mednefits Panel</h5>
         <div class="dp-flex-ai">
           <div class="flex-1">GIRO</div>
-          <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-            <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+          <div ng-class="{'on' : panelGiroStatus == true,'off' : panelGiroStatus == false }" class="on-off-container">
+            <button ng-click="togglePaymentMethods( 'panel_giro',true )" ng-class="{'on' : panelGiroStatus == true }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+            <button ng-click="togglePaymentMethods( 'panel_giro',false )" ng-class="{'off' : panelGiroStatus == false }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
         </div>
         <div class="dp-flex-ai">
           <div class="flex-1">Bank Transfer/PayNow</div>
-          <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-            <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+          <div ng-class="{'on' : panelBankTransfer == true,'off' : panelBankTransfer == false }" class="on-off-container">
+            <button ng-click="togglePaymentMethods( 'panel_bank_transfer',true )" ng-class="{'on' : panelBankTransfer == true }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+            <button ng-click="togglePaymentMethods( 'panel_bank_transfer',false )" ng-class="{'off' : panelBankTransfer == false }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
@@ -167,14 +178,24 @@
         <div class="dp-flex-ai">
           <div class="dp-flex-ai flex-1">
             <span>Mednefits Credits</span>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+            <span class="credits-tooltip-wrapper">
+              <img ng-click="toggleMednefitsCredits('panel-mednefits-credits')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <div class="credits-tooltip-container panel-mednefits-credits">
+                <div class="tooltip-title">Mednefits Credits</div>
+                <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div> 
+            </span>
           </div>
-          <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-            <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+          <div ng-class="{'on' : panelMednefitsCredits == true,'off' : panelMednefitsCredits == false }" class="on-off-container">
+            <button ng-click="togglePaymentMethods( 'panel_mednefits_credits',true )" ng-class="{'on' : panelMednefitsCredits == true }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+            <button ng-click="togglePaymentMethods( 'panel_mednefits_credits',false )" ng-class="{'off' : panelMednefitsCredits == false }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
@@ -184,24 +205,24 @@
         <h5 class="member-bold-text">Non-Panel (for reimbursement)</h5>
         <div class="display-flex">
           <div class="flex-1">GIRO</div>
-          <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-            <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+          <div ng-class="{'on' : nonPanelGiroStatus == true,'off' : nonPanelGiroStatus == false }" class="on-off-container">
+            <button ng-click="togglePaymentMethods( 'non_panel_giro',true )" ng-class="{'on' : nonPanelGiroStatus == true }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+            <button ng-click="togglePaymentMethods( 'non_panel_giro',false )" ng-class="{'off' : nonPanelGiroStatus == false }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
         </div>
         <div class="display-flex">
           <div class="flex-1">Bank Transfer/PayNow</div>
-          <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-            <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+          <div ng-class="{'on' : nonPanelBankTransfer == true,'off' : nonPanelBankTransfer == false }" class="on-off-container">
+            <button ng-click="togglePaymentMethods( 'non_panel_bank_transfer',true )" ng-class="{'on' : nonPanelBankTransfer == true }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+            <button ng-click="togglePaymentMethods( 'non_panel_bank_transfer',false )" ng-class="{'off' : nonPanelBankTransfer == false }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
@@ -209,14 +230,24 @@
         <div class="display-flex">
           <div class="dp-flex-ai flex-1">
             <span>Mednefits Credits</span>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+            <span class="credits-tooltip-wrapper">
+              <img ng-click="toggleMednefitsCredits('non-panel-mednefits-credits')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <div class="credits-tooltip-container non-panel-mednefits-credits">
+                <div class="tooltip-title">Mednefits Credits</div>
+                <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button>Got it</button>
+                </div>
+              </div> 
+            </span>
           </div>
-          <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-            <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+          <div ng-class="{'on' : nonPanelMednefitsCredits == true,'off' : nonPanelMednefitsCredits == false }" class="on-off-container">
+            <button ng-click="togglePaymentMethods( 'non_panel_mednefits_credits',true )" ng-class="{'on' : nonPanelMednefitsCredits == true }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+            <button ng-click="togglePaymentMethods( 'non_panel_mednefits_credits',false )" ng-class="{'off' : nonPanelMednefitsCredits == false }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
@@ -230,24 +261,24 @@
     <div>Mednefits executes reimbursement to members.</div> -->
     <div class="dp-flex-ai">
       <div class="non-panel-text">Would you allow members to submit <span class="member-bold-text">Non-Panel</span> claims?</div>
-      <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-        <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+      <div ng-class="{'on' : medicalWalletData.non_panel_reimbursement == true,'off' : medicalWalletData.non_panel_reimbursement == false }" class="on-off-container">
+        <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',true )" ng-model="medicalWalletData.non_panel_reimbursement" ng-class="{'on' : medicalWalletData.non_panel_reimbursement == true }" class="">
           <!-- <span class="check-mark"></span> -->
           <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
         </button>
-        <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+        <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',false )" ng-model="medicalWalletData.non_panel_reimbursement" ng-class="{'off' : medicalWalletData.non_panel_reimbursement == false }" class="">
           <img src="../../assets/hr-dashboard/img/new-close-icon.png">
         </button>
       </div>
     </div>
     <div class="dp-flex-ai">
       <div class="non-panel-text">Would Mednefits exectute reimbursement to members?</div>
-      <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-        <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
+      <div ng-class="{'on' : medicalWalletData.non_panel_submission == true,'off' : medicalWalletData.non_panel_submission == false }" class="on-off-container">
+        <button ng-click="toggleNonPanelClaim( 'non-panel-submission',true )" ng-model="medicalWalletData.non_panel_submission" ng-class="{'on' : medicalWalletData.non_panel_submission == true }" class="">
           <!-- <span class="check-mark"></span> -->
           <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
         </button>
-        <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
+        <button ng-click="toggleNonPanelClaim( 'non-panel-submission',false )" ng-model="medicalWalletData.non_panel_submission" ng-class="{'off' : medicalWalletData.non_panel_submission == false }" class="">
           <img src="../../assets/hr-dashboard/img/new-close-icon.png">
         </button>
       </div>

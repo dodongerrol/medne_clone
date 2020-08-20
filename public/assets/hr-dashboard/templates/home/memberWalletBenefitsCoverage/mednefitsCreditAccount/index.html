@@ -4,19 +4,22 @@
       <span class="member-bold-text">Show details on</span> 
       <div class="current-term-wrapper"> 
         <div ng-click="termSelector()" class="current-term-input-wrapper">
-          <span>Current term</span>
-          <span ng-repeat="list in dateTerm" ng-if="$last">
+          <span>{{ selectedTerm.term }}</span>
+          <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
             (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
-          </span>
+          </span> -->
           <i class="fa fa-angle-down"></i>
         </div>
-        <div ng-if="showLastTermSelector" class="last-term-selector">
-          <span>Last term</span>
-          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+          <!-- <span>Last term</span> -->
+          <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+          <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
         </div>
       </div>
+      
+      
       <div>
-        <button>Apply</button>
+        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
