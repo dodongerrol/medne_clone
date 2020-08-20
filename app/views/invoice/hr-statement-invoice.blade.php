@@ -152,7 +152,7 @@
             <p class="color-gray weight-700 no-margin font-14 line-height-1">038987</p>
             <p class="color-gray weight-700 no-margin font-14 line-height-1">Singapore</p>
             <div class="white-space-20"></div>
-            <p class="color-gray weight-700 no-margin font-14 line-height-1">+65 6254 7889</p>
+            <p class="color-gray weight-700 no-margin font-14 line-height-1">+65 3163 5403</p>
             <p class="color-gray weight-700 no-margin font-14 line-height-1">mednefits.com</p>
           </div>
         </div>

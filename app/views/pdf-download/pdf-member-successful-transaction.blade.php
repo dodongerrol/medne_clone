@@ -419,11 +419,11 @@
                 </div>
                 <div class="child-two">
                 @if($currency_symbol == "SGD")
-                  <span style="text-decoration: underline;"><a href="tel:+65-6254-7889">+65 6254 7889</a></span>
+                  <span style="text-decoration: underline;"><a href="tel:+65-3163-5403">+65 3163 5403</a></span>
                 @else
-                  <span style="text-decoration: underline;"><a href="tel:+65-6254-7889">+65 6254 7889</a></span>
+                  <span style="text-decoration: underline;"><a href="tel:+65-3163-5403">+65 3163 5403</a></span>
                   <span style="margin: 0 0 0 5px;">or</span> 
-                  <span style="text-decoration: underline;"><a href="tel:+603-7890-1770">+603 7890 1770</a></span>
+                  <span style="text-decoration: underline;"><a href="tel:+603-7890-1770">+60 330 995 774</a></span>
                 @endif
                 </div>
               </div>

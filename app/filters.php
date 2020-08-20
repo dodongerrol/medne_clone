@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Input;
 /*
 |--------------------------------------------------------------------------
 | Application & Route Filters
@@ -19,6 +19,8 @@ App::before(function($request)
     header('Content-Type', 'application/json');
     // header('Accept', 'application/json');
     header('Access-Control-Allow-Credentials: true');
+    Utility::stripXSS(Input::all());
+    // Input::merge(Utility::stripXSS(Input::all()));
 });
 
 
@@ -34,6 +36,7 @@ App::after(function($request, $response)
         // $response->header("Content-Type", "application/json");
         // return $response;
     // header('Content-Type', 'application/json');
+    // Input::merge(Utility::array_strip_tags(Input::all()));
 });
 
 /*
@@ -176,9 +179,9 @@ Route::filter('auth.v2', function($request, $response)
     header('Accept', 'application/json');
     header('Access-Control-Allow-Credentials: true');
     // return StringHelper::requestHeader();
-    if(!StringHelper::requestHeader()){
-        return Response::json($returnObject, 200);
-    } else {
+    // if(!StringHelper::requestHeader()){
+    //     return Response::json($returnObject, 200);
+    // } else {
         /*
             Description: 
                 - Accessing API as Third Party Condition.
@@ -192,11 +195,11 @@ Route::filter('auth.v2', function($request, $response)
                 April 9 2020
         */
         
-        $return_data = StringHelper::verifyXAccessKey();
+        // $return_data = StringHelper::verifyXAccessKey();
         
-        if (is_object($return_data)) {
-            return Response::json($return_data, 200);
-        }
+        // if (is_object($return_data)) {
+        //     return Response::json($return_data, 200);
+        // }
         /*  
             End here.
         */
@@ -204,13 +207,14 @@ Route::filter('auth.v2', function($request, $response)
         // return StringHelper::requestHeader();
         // check if there is a header authorization
         $token = StringHelper::getToken();
+        
         if(!$token) {
             $returnObject->expired = true;
           return Response::json($returnObject, 200);
         }
 
         $findUserID = AuthLibrary::validToken();
-
+        
         if(!$findUserID) {
           $returnObject->status = FALSE;
           $returnObject->expired = true;
@@ -287,7 +291,7 @@ Route::filter('auth.v2', function($request, $response)
             );
             SystemLogLibrary::createAdminLog($admin_logs);
         }
-    }
+    // }
 });
 
 Route::filter('auth.headers', function($request, $response) {
@@ -314,8 +318,9 @@ Route::filter('auth.jwt_hr', function($request, $response)
         }
 
         $result = StringHelper::getJwtHrSession();
-        if(!$result) {
-            // return Redirect::to('company-benefits-dashboard-login');
+        if($result && (int)$result->hr_activated == 0 || $result->hr_activated == false) {
+            return Response::json(['type' => 'hr_not_activated', 'message' => 'This account has not been activated yet. Please activate through the activation email before accessing.'], 401, $headers);
+        } else  if(!$result) {
             return Response::json('You account was deactivated. Please contact Mednefits Team.', 401, $headers);
         }
 
@@ -549,4 +554,9 @@ Route::filter('csrf', function()
 	{
 		throw new Illuminate\Session\TokenMismatchException;
 	}
+});
+
+Route::filter('strip_tags', function()
+{
+    Input::merge(Utility::array_strip_tags(Input::all()));
 });

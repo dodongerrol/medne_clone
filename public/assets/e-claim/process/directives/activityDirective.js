@@ -10,6 +10,9 @@ app.directive('activityDirective', [
 			link: function link(scope, element, attributeSet) {
 				console.log("activityDirective Runnning !");
 
+				scope.states_activity = {};
+				scope.user_details = {};
+
 				scope.inNetWorkTable = true;
 				scope.outNetWorkTable = false;
 				scope.in_network_transactions = {};
@@ -393,6 +396,9 @@ app.directive('activityDirective', [
 					if(scope.activity_results.account_type == 'enterprise_plan' && scope.activity_results.wellness_enabled == true && scope.spendingTypeOpt == 1){
 						scope.inNetWorkTable = false;
 						scope.outNetWorkTable = true;
+					} else if (scope.activity_results.account_type == 'enterprise_plan' && scope.activity_results.wellness_enabled == true && scope.spendingTypeOpt == 0) {
+						scope.inNetWorkTable = true;
+						scope.outNetWorkTable = false;
 					}
 					// scope.searchActivity(activity_search);
 				}
@@ -520,7 +526,9 @@ app.directive('activityDirective', [
 				scope.getDetails = function () {
 					eclaimSettings.empDetails()
 						.then(function (response) {
+							console.log(response);
 							scope.user_details = response.data.data;
+
 							scope.hideIntroLoader();
 						});
 				}

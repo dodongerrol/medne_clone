@@ -1,4 +1,4 @@
-	var gl_enableDays = [];
+var gl_enableDays = [];
 var gl_disableTimes = [[]];
 var gl_duration = 0;
 var gl_price = 0;
@@ -212,10 +212,6 @@ jQuery(document).ready(function($) {
                 },    
                 submitHandler: function(form) {
                     // form.submit();
-                    
-                    var nric = $('#nric').val();
-                    var email = $('#email').val();
-					console.log(nric);
 					// $('#btn-next-2').text("Wait ...");
 					// $.ajax({
 					// 	url: base_url + 'widget/check_nric',
@@ -253,7 +249,7 @@ jQuery(document).ready(function($) {
 			var phone 			= $('#phone').val();	 		
 			var code 			= $('#phone_code').val();
 			var email 			= $('#email').val();
-			var name 			= $('#name').val();
+			var name 			= sanitize($('#name').val());
 			var nric 			= $('#nric').val();
 			var duration 		= gl_duration; 
 			var endtime 		= $('#lbl_time').val();
@@ -261,7 +257,7 @@ jQuery(document).ready(function($) {
 			var doctorid 		= $('#doctor').val();
 			var procedureid 	= $('#procedure').val();
 			var bookdate 		= $('#date').val();
-			var remarks 		= $('#remarks').val();
+			var remarks 		= sanitize($('#remarks').val());
 			var clinictimeid 	= 0;
 			var clinicID 		= $('#h-clinicID').val();
 			var price 			= $('#sc3-price').text();
@@ -401,27 +397,25 @@ $(this).text('Sending ...');
 
 }); //end of ready///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 function viewDetails () {
 
 	$('#btn-next-2').text("Wait ...");
 
 
-	var doctor = $('#doctor option:selected').text();
-	var procedure = $('#procedure option:selected').text();
-	var date = $('#date').val();
-	var ftime = $('#time').val();
-	var ttime = $('#lbl_time').val();
+	var doctor = sanitize($('#doctor option:selected').text());
+	var procedure = sanitize($('#procedure option:selected').text());
+	var date = sanitize($('#date').val());
+	var ftime = sanitize($('#time').val());
+	var ttime = sanitize($('#lbl_time').val());
 	var datetime = date+'<br>'+ftime+' - '+ttime;
-	var remarks = $('#remarks').val();
-	var nric = $('#nric').val();
-	var email = $('#email').val();
-	var phone_code = $('#phone_code').val();
-	var phone = $('#phone').val();
+	var remarks = sanitize($('#remarks').val());
+	var nric = sanitize($('#nric').val());
+	var email = sanitize($('#email').val());
+	var phone_code = sanitize($('#phone_code').val());
+	var phone = sanitize($('#phone').val());
 	var emailphone = email+'<br>'+phone_code+' '+phone;
 	// var price = $('#price').val('SGD 400');
-	var name = $('#name').val();
-
+	var name = sanitize($('#name').val());
 	$('#sc3-doctor').html(doctor);
 	$('#sc3-procedure').html(procedure);
 	$('#sc3-datetime').html(datetime);
@@ -485,6 +479,11 @@ function resendOtpSms () {
 	});
 }
 
+function sanitize(str) {
+	// return str;
+	str = String(str);
+  	return str.replace(/<[^>]*>/g, '');
+}
 
 
 function resendOtpSms () {

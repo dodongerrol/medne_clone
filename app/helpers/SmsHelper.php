@@ -154,7 +154,7 @@ class SmsHelper
 		}
 
 		// return "Hi ".ucwords($data['name']).", your company ".ucwords($data['company'])." has enrolled you into the Mednefits health benefits program. Your plan will start on ".$data['plan_start'].". Your Member Account Login ID is ".$contact." and Password is ".$data['password'].". Download Mednefits App in either on Apple App Store or Android PlayStore.";
-		return "Hi! Your company ha enrolled you to Mednefits! Download the app here https://bit.ly/34DpPLO and activate your account by creating password using this mobile number.";
+		return "Hi! Your company has enrolled you into Mednefits! Download the app here https://bridgeurl.com/mednefits-app and activate your account by creating password using this mobile number.";
 	}
 }
 ?>

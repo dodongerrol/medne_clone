@@ -68,23 +68,23 @@ class HomeController extends BaseController {
   // return View::make('pdf-download/pdf-member-successful-transaction', $data);
   // return View::make('email-templates/email-member-successful-transaction', $data);
 
-  // $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
-  // $pdf->getDomPDF()->get_option('enable_html5_parser');
-  // $pdf->setPaper('A4', 'portrait');
-  // return $pdf->stream();
+  $pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
+  $pdf->getDomPDF()->get_option('enable_html5_parser');
+  $pdf->setPaper('A4', 'portrait');
+  return $pdf->stream();
   
   // return $pdf->render();
   // return $pdf->download('sample.pdf');
 
-  return Mail::send('email-templates.email-member-successful-transaction', $data, function($message) use ($data){
-    $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
-    $pdf->getDomPDF()->get_option('enable_html5_parser');
-    $pdf->setPaper('A4', 'portrait');
-    $message->from('noreply@medicloud.sg', 'MediCloud');
-    $message->to($data['to'], 'MediCloud');
-    $message->subject($data['subject']);
-    $message->attachData($pdf->output(), 'sample-attach.pdf');
-  });
+  // return Mail::send('email-templates.email-member-successful-transaction', $data, function($message) use ($data){
+  //   $pdf = PDF::loadView('pdf-download.pdf-member-successful-transaction', $data);
+  //   $pdf->getDomPDF()->get_option('enable_html5_parser');
+  //   $pdf->setPaper('A4', 'portrait');
+  //   $message->from('noreply@medicloud.sg', 'MediCloud');
+  //   $message->to($data['to'], 'MediCloud');
+  //   $message->subject($data['subject']);
+  //   $message->attachData($pdf->output(), 'sample-attach.pdf');
+  // });
 }
 
 public function testEmailClinicPeak( )
@@ -1339,7 +1339,7 @@ public function searchUser( )
 {
   $input = Input::all();
   $data = [];
-
+  
   $results = DB::table('user')
   ->where('PhoneNo', 'LIKE', '%'.(int)$input['q'].'%')
   ->where('UserType', 5)

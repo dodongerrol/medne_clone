@@ -647,14 +647,12 @@ return Response::json($returnObject);
 
         //No public direct access allowed
         public function GetUserProfileInformation($profileid){
+          $input = Input::all();
         	$userinsurancepolicy = new UserInsurancePolicy();
         	$returnArray = new stdClass();
         	$findUserProfile = $this->GetUserProfile($profileid);
-        	$findUserAllergy = $this->GetUserAllergies($profileid);
-        	$findUserMedication = $this->GetUserMedications($profileid);
-        	$findUserCondition = $this->GetUserConditions($profileid);
-        	$findMedicalHistory = $this->GetUserMedicalHistory($profileid);
           $user_id = StringHelper::getUserId($profileid);
+          $properties = !empty($input['type']) && $input['type'] == "with_medical_properties" ? "with_medical_properties" : "profile";
           
           if($findUserProfile){
             $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
@@ -662,10 +660,9 @@ return Response::json($returnObject);
             $returnArray->login_status = TRUE;
             $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
             $user_plan_history = DB::table('user_plan_history')
-                ->where('user_id', $user_id)
-                ->where('type', 'started')
-                ->orderBy('created_at', 'desc')
-                ->first();
+                      ->where('user_id', $user_id)
+                      ->where('type', 'started')
+                      ->first();
 
             $customer_active_plan = DB::table('customer_active_plan')
               ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
@@ -718,96 +715,97 @@ return Response::json($returnObject);
              $returnArray->data['insurance'] = null;
            }
 
-                    //Allagies
-           if($findUserAllergy){
-             foreach($findUserAllergy as $allergy){
-              $getAllergy['allergy_id'] = $allergy->AllergyID;
-              $getAllergy['name'] = $allergy->Name;
-              $allAllergy[] = $getAllergy;
-            }
-            $returnArray->data['allergies'] = $allAllergy;
-          }else{
-           $returnArray->data['allergies'] = null;
-         }
+           if($properties == "with_medical_properties") {
+            $findUserAllergy = $this->GetUserAllergies($profileid);
+            $findUserMedication = $this->GetUserMedications($profileid);
+            $findUserCondition = $this->GetUserConditions($profileid);
+            $findMedicalHistory = $this->GetUserMedicalHistory($profileid);
+              //Allagies
+              if($findUserAllergy){
+                foreach($findUserAllergy as $allergy){
+                  $getAllergy['allergy_id'] = $allergy->AllergyID;
+                  $getAllergy['name'] = $allergy->Name;
+                  $allAllergy[] = $getAllergy;
+                }
+                $returnArray->data['allergies'] = $allAllergy;
+              }else{
+                $returnArray->data['allergies'] = null;
+              }
 
-                    //Medications
-         if($findUserMedication){
-           foreach($findUserMedication as $medication){
-            $getMedication['medication_id'] = $medication->MedicationID;
-            $getMedication['name'] = $medication->Name;
-            $getMedication['dosage'] = $medication->Dosage;
-            $allMedication[] = $getMedication;
-          }
-          $returnArray->data['medications'] = $allMedication;
-        }else{
-         $returnArray->data['medications']= null;
-       }
+              //Medications
+              if($findUserMedication){
+                foreach($findUserMedication as $medication){
+                  $getMedication['medication_id'] = $medication->MedicationID;
+                  $getMedication['name'] = $medication->Name;
+                  $getMedication['dosage'] = $medication->Dosage;
+                  $allMedication[] = $getMedication;
+                }
+                $returnArray->data['medications'] = $allMedication;
+              }else{
+                $returnArray->data['medications']= null;
+              }
 
-                    //Conditions
-       if($findUserCondition){
-         foreach($findUserCondition as $condition){
-          $getCondition['condition_id'] = $condition->ConditionID;
-          $getCondition['name'] = $condition->Name;
-          $newDate = date("d-m-Y", strtotime($condition->Date));
-          $getCondition['date'] = $newDate;
-          $allConditions[] = $getCondition;
-        }
-        $returnArray->data['conditions'] = $allConditions;
+              //Conditions
+              if($findUserCondition){
+                foreach($findUserCondition as $condition){
+                  $getCondition['condition_id'] = $condition->ConditionID;
+                  $getCondition['name'] = $condition->Name;
+                  $newDate = date("d-m-Y", strtotime($condition->Date));
+                  $getCondition['date'] = $newDate;
+                  $allConditions[] = $getCondition;
+                }
+                $returnArray->data['conditions'] = $allConditions;
+              }else{
+                $returnArray->data['conditions'] = null;
+              }
+
+                              //History
+                if($findMedicalHistory){
+                  foreach($findMedicalHistory as $history){
+                    $historyDetail = new UserMedicalHistoryDetail();
+                    $findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
+                    $newDate = date("d-m-Y", strtotime($history->Date));
+                    $getHistory['date'] = $newDate;
+                    $getHistory['record_id'] = $history->HistoryID;
+                    $getHistory['visit_type'] = $history->VisitType;
+                                        //$getHistory['list']['doctor'] = $history->Name;
+                    $getHistory['doctor'] = $history->Doctor_Name;
+                    $getHistory['clinic_name'] = $history->Clinic_Name;
+                                        //need to check clinic
+                                        ///$getHistory['list']['clinic_name'] = $history->Name;
+                    $getHistory['note'] = $history->Note;
+                                        //$getHistory['date'] = $newDate;
+                    if($findHistoryDetail){
+                        foreach($findHistoryDetail as $hisDetail){
+                          $getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
+                          $getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
+                          $getHistory1[] = $getHistoryDetail;
+                        }
+                        $getHistory['attachments'] = $getHistory1;
+                      }else{
+                      $getHistory['attachments'] = null;
+                    }
+                    $allHistory[] = $getHistory;
+                  }
+
+                  $returnArray->data['history'] = $allHistory;
+              }else{
+                $returnArray->data['history'] = null;
+              }
+           }
+      //  check if user is new or old
+      $date = date('Y-m-d');
+      $date_created = date('Y-m-d', strtotime('+14 days', strtotime($user_plan_history->created_at)));
+      if($date_created > $date)  {
+        $returnArray->data['profile']['status'] = "new";
+      } else {
+        $returnArray->data['profile']['status'] = "old";
+      }
       }else{
-       $returnArray->data['conditions'] = null;
-     }
-
-                    //History
-     if($findMedicalHistory){
-       foreach($findMedicalHistory as $history){
-        $historyDetail = new UserMedicalHistoryDetail();
-        $findHistoryDetail = $historyDetail->getUserMedicalHistoryDetails($history->HistoryID);
-        $newDate = date("d-m-Y", strtotime($history->Date));
-        $getHistory['date'] = $newDate;
-        $getHistory['record_id'] = $history->HistoryID;
-        $getHistory['visit_type'] = $history->VisitType;
-                            //$getHistory['list']['doctor'] = $history->Name;
-        $getHistory['doctor'] = $history->Doctor_Name;
-        $getHistory['clinic_name'] = $history->Clinic_Name;
-                            //need to check clinic
-                            ///$getHistory['list']['clinic_name'] = $history->Name;
-        $getHistory['note'] = $history->Note;
-                            //$getHistory['date'] = $newDate;
-        if($findHistoryDetail){
-         foreach($findHistoryDetail as $hisDetail){
-          $getHistoryDetail['attachment_id'] = $hisDetail->DetailID;
-          $getHistoryDetail['url'] = URL::to('/assets/'.$hisDetail->Image);
-          $getHistory1[] = $getHistoryDetail;
-        }
-        $getHistory['attachments'] = $getHistory1;
-      }else{
-       $getHistory['attachments'] = null;
-     }
-     $allHistory[] = $getHistory;
-   }
-
-   $returnArray->data['history'] = $allHistory;
- }else{
-   $returnArray->data['history'] = null;
- }
-//  check if user is new or old
-$date = date('Y-m-d');
-// get latest plan history
-$user_plan_history = DB::table('user_plan_history')
-                ->where('user_id', $user_id)
-                ->where('type', 'started')
-                ->first();
-$date_created = date('Y-m-d', strtotime('+7 days', strtotime($user_plan_history->created_at)));
-if($date_created > $date)  {
-  $returnArray->data['profile']['status'] = "new";
-} else {
-  $returnArray->data['profile']['status'] = "old";
-}
-}else{
-  $returnArray->status = FALSE;
-  $returnArray->message = StringHelper::errorMessage("NoRecords");
-}
-return $returnArray;
+        $returnArray->status = FALSE;
+        $returnArray->message = StringHelper::errorMessage("NoRecords");
+      }
+    return $returnArray;
 }
 
         //Add new user allergy
@@ -1037,11 +1035,6 @@ return Response::json($returnObject);
         	return Response::json($returnObject);
         }
 
-
-
-
-
-
         public function FindCoordinate(){
         	$response = Geocode::make()->address('#01-01 Blk 51 Avenue 3 Ang Mo Kio');
 
@@ -1087,6 +1080,8 @@ return Response::json($returnObject);
                 $dates = MemberHelper::getMemberDateTerms($user_id, $filter, $spending_type);
                 $user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
+                $user_type = PlanHelper::getUserAccountType($findUserID);
+
                 if($user_spending_dates) {
                   if($spending_type == 'medical') {
                     $table_wallet_history = 'wallet_history';
@@ -1102,24 +1097,46 @@ return Response::json($returnObject);
                 }
 
                 if($dates) {
-                  $e_claim_result = DB::table('e_claim')
-                  ->whereIn('user_id', $ids)
-                  ->where('spending_type', $spending_type)
-                  ->where('date', '>=', $dates['start'])
-                  ->where('date', '<=', $dates['end'])
-                  ->orderBy('date', 'desc')
-                  ->take(3)
-                  ->get();
+                  if($user_type == "employee") {
+                    $e_claim_result = DB::table('e_claim')
+                    ->whereIn('user_id', $ids)
+                    ->where('spending_type', $spending_type)
+                    ->where('date', '>=', $dates['start'])
+                    ->where('date', '<=', $dates['end'])
+                    ->orderBy('date', 'desc')
+                    ->take(3)
+                    ->get();
 
-                  // get in-network transactions
-                  $transactions = DB::table('transaction_history')
-                  ->whereIn('UserID', $ids)
-                  ->where('spending_type', $spending_type)
-                  ->where('created_at', '>=', $dates['start'])
-                  ->where('created_at', '<=', $dates['end'])
-                  ->orderBy('created_at', 'desc')
-                  ->take(3)
-                  ->get();
+                    // get in-network transactions
+                    $transactions = DB::table('transaction_history')
+                    ->whereIn('UserID', $ids)
+                    ->where('spending_type', $spending_type)
+                    ->where('created_at', '>=', $dates['start'])
+                    ->where('created_at', '<=', $dates['end'])
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get();
+                  } else {
+                    $e_claim_result = DB::table('e_claim')
+                    ->where('user_id', $findUserID)
+                    ->where('spending_type', $spending_type)
+                    ->where('date', '>=', $dates['start'])
+                    ->where('date', '<=', $dates['end'])
+                    ->orderBy('date', 'desc')
+                    ->take(3)
+                    ->get();
+
+                    // get in-network transactions
+                    $transactions = DB::table('transaction_history')
+                    ->where('UserID', $findUserID)
+                    ->where('spending_type', $spending_type)
+                    ->where('created_at', '>=', $dates['start'])
+                    ->where('created_at', '<=', $dates['end'])
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get();
+                  }
+                  
                 } else {
                   $e_claim_result = [];
                   $transactions = [];
@@ -1183,8 +1200,8 @@ return Response::json($returnObject);
                     //  if($company_wallet_status == "Health Wallet") {
                     //   $wallet_status = true;
                     // }
-                  // }
-                  // get services
+                    // }
+                    // get services
                   if((int)$trans->multiple_service_selection == 1)
                   {
                     // get multiple service
@@ -1304,11 +1321,28 @@ return Response::json($returnObject);
               $currency_symbol = "";
               $balance = number_format($balance, 2);
               if($filter == "current_term") {
-                $total_visit_limit = $user_plan_history->total_visit_limit;
-                $total_visit_created = $user_plan_history->total_visit_created;
-                $total_visit_balance = $total_visit_limit - $total_visit_created;
+                if($user_type == "employee") {
+                  $total_visit_limit = $user_plan_history->total_visit_limit;
+                  $total_visit_created = $user_plan_history->total_visit_created;
+                  $total_visit_balance = $total_visit_limit - $total_visit_created;
+                } else {
+                  $user_plan_history = DB::table('dependent_plan_history')
+                                            ->where('user_id', $findUserID)
+                                            ->where('type', 'started')
+                                            ->orderBy('created_at', 'desc')
+                                            ->first();
+                  $total_visit_limit = $user_plan_history->total_visit_limit;
+                  $total_visit_created = $user_plan_history->total_visit_created;
+                  $total_visit_balance = $total_visit_limit - $total_visit_created;
+                }
+                
               } else {
-                $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
+                if($user_type == "employee") {
+                  $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
+                } else {
+                  $plan_history = MemberHelper::getDependentPreviousPlanHistory($findUserID);
+                }
+
                 if($plan_history) {
                   $total_visit_limit = $plan_history->total_visit_limit;
                   $total_visit_created = $plan_history->total_visit_created;
@@ -1333,7 +1367,8 @@ return Response::json($returnObject);
               'account_type'              => $customer_active_plan->account_type,
               'total_visit'               => $total_visit_limit,
               'total_utilised'            => $total_visit_created,
-              'total_visit_balance'       => $total_visit_balance
+              'total_visit_balance'       => $total_visit_balance,
+              'user_type'                 => $user_type
             );
 
             $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
@@ -1381,6 +1416,7 @@ return Response::json($returnObject);
               if($findUserID){
                 $spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
                 $user_id = StringHelper::getUserId($findUserID);
+                $user_type = PlanHelper::getUserAccountType($findUserID);
                 $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
                 $balance = 0;
 
@@ -1391,7 +1427,17 @@ return Response::json($returnObject);
                 ->first();
 
                 if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-                  $returnObject->data = ['visits' => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created, 'account_type' => $customer_active_plan->account_type];
+                  if($user_type == "employee") {
+                    $returnObject->data = ['visits' => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created, 'account_type' => $customer_active_plan->account_type];
+                  } else {
+                    $user_plan_history = DB::table('dependent_plan_history')
+                                              ->where('user_id', $findUserID)
+                                              ->where('type', 'started')
+                                              ->orderBy('created_at', 'desc')
+                                              ->first();
+
+                    $returnObject->data = ['visits' => $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created, 'account_type' => $customer_active_plan->account_type];
+                  }
                 } else {
                   if($spending_type == 'medical') {
                     $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
@@ -1933,7 +1979,9 @@ public function getNewClinicDetails($id)
 
      if($block) {
        $returnObject->status = FALSE;
-       $returnObject->message = 'Clinic not accessible to your Company. Please contact Your company for more information.';
+       $returnObject->status_type = 'access_block';
+       $returnObject->head_message = 'Registration Unavailable';
+       $returnObject->message = 'Sorry, your acccount is not enabled to access Singapore providers. Kindly contact your HR for more details.';
        return Response::json($returnObject);
      }
 
@@ -1942,29 +1990,49 @@ public function getNewClinicDetails($id)
 
       if($transaction_access)	{
         $returnObject->status = FALSE;
-        $returnObject->message = 'Panel function is disabled for your company.';
+        $returnObject->status_type = 'access_block';
+        $returnObject->head_message = 'Registration Unavailable';
+        $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
         return Response::json($returnObject);
       }
 
       // check if employee/user is still coverge
      $user_type = PlanHelper::getUserAccountType($findUserID);
-     $user_plan_history = DB::table('user_plan_history')
-     ->where('user_id', $owner_id)
-     ->where('type', 'started')
-     ->orderBy('created_at', 'desc')
-     ->first();
-
-     $customer_active_plan = DB::table('customer_active_plan')
-     ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-     ->first();
+    
+     // // check visit limit
+     if($user_type == "employee") {
+      $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
+      $customer_active_plan = DB::table('customer_active_plan')
+      ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+      ->first();
+    } else {
+      $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
+      $customer_active_plan = DB::table('dependent_plans')
+                    ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+                    ->first();
+    }
 
      if($customer_active_plan->account_type == "enterprise_plan")	{
       $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
   
       if($limit <= 0) {
         $returnObject->status = FALSE;
+        $returnObject->status_type = 'access_block';
+        $returnObject->head_message = 'Registration Unavailable';
         $returnObject->message = 'Maximum of 14 visits already reached.';
         return Response::json($returnObject);
+      }
+      
+      $wallet_checker = DB::table('e_wallet')->where('UserID', $owner_id)->first();
+
+      if($wallet_checker->currency_type === 'myr') {
+        if($clinic->currency_type === 'sgd') {
+            $returnObject->status = FALSE;
+            $returnObject->status_type = 'access_block';
+            $returnObject->head_message = 'Registration Unavailable';
+            $returnObject->message = 'Sorry, your acccount is not enabled to access Singapore providers. Kindly contact your HR for more details.';
+            return Response::json($returnObject);
+        }
       }
     }
     
@@ -1976,6 +2044,8 @@ public function getNewClinicDetails($id)
 
     if($plan_coverage['expired'] == true) {
      $returnObject->status = FALSE;
+     $returnObject->status_type = 'access_block';
+     $returnObject->head_message = 'Registration Unavailable';
      $returnObject->message = 'Employee Plan Coverage has expired';
      $returnObject->data = $plan_coverage;
      $returnObject->employee_status = false;
@@ -1984,6 +2054,8 @@ public function getNewClinicDetails($id)
 
    if($plan_coverage['pending'] == true) {
      $returnObject->status = FALSE;
+     $returnObject->status_type = 'access_block';
+     $returnObject->head_message = 'Registration Unavailable';
      $returnObject->message = 'Employee Plan Account is still pending';
      $returnObject->data = $plan_coverage;
      $returnObject->employee_status = false;
@@ -1994,16 +2066,6 @@ public function getNewClinicDetails($id)
    if($customer_active_plan->account_type != "super_pro_plan") {
     //  check if lite plan user
      $current_balance = PlanHelper::reCalculateEmployeeBalance($owner_id);
-
-    //  if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
-        
-    //     if($current_balance <= 0) {
-    //       $returnObject->status = FALSE;
-    //       $returnObject->status_type = 'zero_balance';
-    //       $returnObject->message = 'You have no credit to access this feature at the moment. Kindly contact HR';
-    //       return Response::json($returnObject);
-    //     }
-    //   }
    }
 
    $user = DB::table('user')->where('UserID', $findUserID)->first();
@@ -4887,7 +4949,6 @@ public function getEclaimTransactions( )
   $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   if($getAccessToken){
    $findUserID = $authSession->findUserID($getAccessToken->session_id);
-                // return $findUserID;
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->message = 'Success.';
@@ -4897,25 +4958,46 @@ public function getEclaimTransactions( )
     $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
     $dates = MemberHelper::getMemberDateTerms($user_id, $filter);
     $ids = StringHelper::getSubAccountsID($findUserID);
+    $user_type = PlanHelper::getUserAccountType($findUserID);
     $e_claim = [];
     $paginate = [];
     
     if($dates) {
       if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
         $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
-        $e_claims = DB::table('e_claim')
+        if($user_type == "employee") {
+          $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
                       ->where('date', '>=', $dates['start'])
                       ->where('date', '<=', $dates['end'])
                       ->orderBy('date', 'desc')
                       ->paginate($per_page);
+        } else {
+          $e_claims = DB::table('e_claim')
+                      ->where('user_id', $findUserID)
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
+                      ->paginate($per_page);
+        }
+        
       } else {
-        $e_claims = DB::table('e_claim')
+        if($user_type == "employee") {
+          $e_claims = DB::table('e_claim')
                       ->whereIn('user_id', $ids)
                       ->where('date', '>=', $dates['start'])
                       ->where('date', '<=', $dates['end'])
                       ->orderBy('date', 'desc')
                       ->get();
+        } else {
+          $e_claims = DB::table('e_claim')
+                      ->where('user_id', $findUserID)
+                      ->where('date', '>=', $dates['start'])
+                      ->where('date', '<=', $dates['end'])
+                      ->orderBy('date', 'desc')
+                      ->get();
+        }
+        
       }
 
       foreach ($e_claims as $key => $res) {
@@ -5404,20 +5486,28 @@ public function createEclaim( )
     $returnObject->message = 'Member not eligible for Non-Panel transactions';
     return Response::json($returnObject);
   }
+  $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
-  // if($customer && (int)$customer->access_e_claim == 0) {
-  //   $returnObject->status = FALSE;
-  //   $returnObject->head_message = 'Non-Panel Error';
-  //   $returnObject->message = 'The E-claim function is disabled for your company.';
-  //   return Response::json($returnObject);
-  // }
-
-  $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-  $customer_active_plan = DB::table('customer_active_plan')
-  ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-  ->first();
+  if($user_type == "employee") {
+    $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('customer_active_plan')
+    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+    ->first();
+  } else {
+    $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $input['user_id'])->orderBy('created_at', 'desc')->first();
+    $customer_active_plan = DB::table('dependent_plans')
+    ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+    ->first();
+  }
 
   if($customer_active_plan->account_type == "enterprise_plan")	{
+    if($input['spending_type'] == "medical" && $check_user_balance->currency_type == "myr") {
+      $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
+      $returnObject->message = 'Member is prohibited to access the medical wallet';
+      return Response::json($returnObject);
+    }
+
     $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
     if($limit <= 0) {
@@ -5425,41 +5515,24 @@ public function createEclaim( )
       $returnObject->head_message = 'Non-Panel Error';
       $returnObject->message = 'Maximum of 14 visits already reached.';
       return Response::json($returnObject);
-    }$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-    $customer_active_plan = DB::table('customer_active_plan')
-    ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-    ->first();
+    }
   
-    if($customer_active_plan->account_type == "enterprise_plan")	{
-      $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
-  
-      if($limit <= 0) {
-        $returnObject->status = FALSE;
-        $returnObject->head_message = 'Non-Panel Error';
-        $returnObject->message = 'Maximum of 14 visits already reached.';
-        return Response::json($returnObject);
-      }
-  
-      // check if A&E already get for 2 times
-      $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
-      
-      if($claim_status && $input['service'] == "Accident & Emergency") {
-        $returnObject->status = FALSE;
-        $returnObject->head_message = '2/2 A&E used';
-        $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
-        return Response::json($returnObject);
-      }
+    if($limit <= 0) {
+      $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
+      $returnObject->message = 'Maximum of 14 visits already reached.';
+      return Response::json($returnObject);
     }
 
-    // // check if A&E already get for 2 times
-    // $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
+    // check if A&E already get for 2 times
+    $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
     
-    // if($claim_status && $input['service'] == "Accident & Emergency") {
-    //   $returnObject->status = FALSE;
-    //   $returnObject->head_message = 'Non-Panel Error';
-    //   $returnObject->message = 'Maximum of 2 approved Accident & Emergency already consumed.';
-    //   return Response::json($returnObject);
-    // }
+    if($claim_status && $input['service'] == "Accident & Emergency") {
+      $returnObject->status = FALSE;
+      $returnObject->head_message = '2/2 A&E used';
+      $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
+      return Response::json($returnObject);
+    }
   }
 
   // check if enable to access feature
@@ -5587,7 +5660,7 @@ try {
     $service = DB::table('health_types')->where('name', trim($input['service']))->where('type', 'medical')->where('visit_deduction', 1)->first();
 
     if($service) {
-      MemberHelper::deductPlanHistoryVisit($user_id);
+      MemberHelper::deductPlanHistoryVisit($input['user_id']);
     }
   }
   
@@ -6540,11 +6613,7 @@ public function payCreditsNew( )
           $customer_id = PlanHelper::getCustomerId($user_id);
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
           $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
-
-          $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-					$customer_active_plan = DB::table('customer_active_plan')
-					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-					->first();
+          $user_type = PlanHelper::getUserAccountType($findUserID);
 
           if($type == "spending") {
             $returnObject->status = true;
@@ -6596,11 +6665,24 @@ public function payCreditsNew( )
                $returnObject->status_type = 'registration_hold';
                $returnObject->head_message = 'Registration On Hold';
                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-               $returnObject->sub_message = '';
+               $returnObject->sub_message = 'Kindly contact your HR for more details.';
                return Response::json($returnObject);
              }
 
-            // check visit limit
+
+
+            // // check visit limit
+            if($user_type == "employee") {
+              $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('customer_active_plan')
+              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+              ->first();
+            } else {
+              $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('dependent_plans')
+                            ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+                            ->first();
+            }
 
             if($customer_active_plan->account_type == "enterprise_plan")	{
               $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
@@ -6641,6 +6723,17 @@ public function payCreditsNew( )
               return Response::json($returnObject);
             }
 
+            if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
+              if($spending['wellness_enabled'] == false) {
+                $returnObject->status = FALSE;
+                $returnObject->status_type = 'without_e_claim';
+                $returnObject->head_message = 'E-Claim Unavailable';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+                $returnObject->sub_message = 'Kindly contact your HR for more details.';
+                return Response::json($returnObject);
+              }
+            }
+
             // check if e-claim platform is enable
             $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
@@ -6659,12 +6752,25 @@ public function payCreditsNew( )
             if($transaction_access)	{
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-claim Unavailable';
+              $returnObject->head_message = 'E-claim Disabled';
               $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
               $returnObject->sub_message = 'Kindly contact your HR.';
               return Response::json($returnObject);
             }
 
+            // // check visit limit
+            if($user_type == "employee") {
+              $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('customer_active_plan')
+              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+              ->first();
+            } else {
+              $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('dependent_plans')
+                            ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+                            ->first();
+            }
+            
             if($customer_active_plan->account_type == "enterprise_plan")	{
               $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
         
@@ -6904,7 +7010,7 @@ public function payCreditsNew( )
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Your password is not match!';
+        $returnObject->message = 'Sorry, your password and confirmation password do not match';
         return Response::json($returnObject);
       }
 
@@ -6924,5 +7030,75 @@ public function payCreditsNew( )
       $returnObject->token = $token->data['access_token'];
       $returnObject->message = 'Your Password has been created, Account was active!';
       return Response::json($returnObject);
+  }
+
+  public function getCompanyMemberLists( )
+  {
+    $returnObject = new stdClass();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['X-ACCESS-KEY']) || $getRequestHeader['x-access-key']){
+      $getRequestHeader['X-ACCESS-KEY'] = !empty($getRequestHeader['X-ACCESS-KEY']) ? $getRequestHeader['X-ACCESS-KEY'] : $getRequestHeader['x-access-key'];
+      $customer = CustomerHelper::getCustomerIdFromToken($getRequestHeader['X-ACCESS-KEY']);
+      if($customer['status'] == false) {
+        $returnObject->status = FALSE;
+        $returnObject->message = $customer['message'];
+        return Response::json($returnObject);
+      }
+
+      // get member lists
+      $members = DB::table('customer_link_customer_buy')
+                  ->join('corporate', 'customer_link_customer_buy.corporate_id', '=', 'corporate.corporate_id')
+                  ->join('corporate_members', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+                  ->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+                  ->where('customer_link_customer_buy.customer_buy_start_id', $customer['customer_id'])
+                  ->where('corporate_members.removed_status', 0)
+                  ->select("user.UserID as member_id", "user.Name as fullname", "user.NRIC as nric", "user.Email as email_address", "user.PhoneNo as phone_number", "user.PhoneCode as phone_code")
+                  ->get();
+      $returnObject->status = TRUE;
+      $returnObject->message = 'Success';
+      $returnObject->data = $members;
+      return Response::json($returnObject);
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = 'X-ACCESS-KEY is required';
+    }
+    return Response::json($returnObject);
+  }
+
+  public function updateReadyOnBoarding( )
+  {
+    $AccessToken = new Api_V1_AccessTokenController();
+    $returnObject = new stdClass();
+    $authSession = new OauthSessions();
+    $getRequestHeader = StringHelper::requestHeader();
+
+    if(!empty($getRequestHeader['Authorization'])){
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+        $findUserID = $authSession->findUserID($getAccessToken->session_id);
+      
+        if($findUserID){
+          $user_type = PlanHelper::getUserAccountType($findUserID);
+
+          if($user_type == "employee") {
+            // check and update login status
+            $user = DB::table('user')->where('UserID', $findUserID)->first();
+            if((int)$user->Status == 0) {
+              // update
+              DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
+            }
+          }
+        }
+      }
+
+      $returnObject->status = true;
+      $returnObject->message = 'done';
+      return Response::json($returnObject);
+    } else {
+      $returnObject->status = FALSE;
+      $returnObject->message = StringHelper::errorMessage("Token");
+      return Response::json($returnObject);
+    }
   }
 }
