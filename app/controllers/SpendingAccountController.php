@@ -118,12 +118,12 @@ class SpendingAccountController extends \BaseController {
 
 				// update 
 				$update = array(
-				'medical_benefits_coverage'			=> $plan->account_type,
-				'medical_payment_method_panel'		=> 'bank_transfer',
-				'medical_payment_method_non_panel'	=> 'bank_transfer',
-				'wellness_benefits_coverage'		=> $plan->account_type,
-				'wellness_payment_method_panel'		=> 'bank_transfer',
-				'wellness_payment_method_non_panel' => 'bank_transfer'
+					'medical_benefits_coverage'			=> $plan->account_type,
+					'medical_payment_method_panel'		=> 'bank_transfer',
+					'medical_payment_method_non_panel'	=> 'bank_transfer',
+					'wellness_benefits_coverage'		=> $plan->account_type,
+					'wellness_payment_method_panel'		=> 'bank_transfer',
+					'wellness_payment_method_non_panel' => 'bank_transfer'
 				);
 
 				DB::table('spending_account_settings')
@@ -153,7 +153,8 @@ class SpendingAccountController extends \BaseController {
 			$format = array(
 				'customer_id'		=> $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
-				'payment_method'	=> $spending_account_settings->medical_payment_method_panel,
+				'panel_payment_method'	=> $spending_account_settings->medical_payment_method_panel,
+				'non_panel_payment_method'	=> $spending_account_settings->medical_payment_method_non_panel,
 				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
 				'total_company_budget' => $total_credits,
@@ -170,7 +171,8 @@ class SpendingAccountController extends \BaseController {
 			$format = array(
 				'customer_id'		  => $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
-				'payment_method'	=> $spending_account_settings->medical_payment_method_panel,
+				'panel_payment_method'	=> $spending_account_settings->wellness_payment_method_panel,
+				'non_panel_payment_method'	=> $spending_account_settings->wellness_payment_method_non_panel,
 				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
 				'total_company_budget' => $total_credits,
@@ -492,7 +494,31 @@ class SpendingAccountController extends \BaseController {
 	
 		// get spending account activity
 		$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->get();
-	
+
+		foreach($activites as $key => $activity) {
+			if($activity->type == "added_purchase_credits") {
+			  $activity->label = 'Purchased Credits';
+			  $activity->type_status = "added";
+			} else if($activity->type == "added_bonus_credits") {
+			  $activity->label = 'Bonus Credits';
+			  $activity->type_status = "added";
+			} else if($activity->type == "carried_forward_renewal_credits") {
+			  $activity->label = 'Carried-forward Purchased Credits';
+			  $activity->type_status = "added";
+			} else if($activity->type == "carried_forward_bonus_credits") {
+			  $activity->label = 'Bonus Credits';
+			  $activity->type_status = "added";
+			} else if($activity->type == "deduct_panel_spending") {
+			  $activity->label = 'Panel Monthly Spending';
+			  $activity->type_status = "deduct";
+			} else if($activity->type == "deduct_non_panel_spending") {
+			  $activity->label = 'Non-Panel Spending';
+			  $activity->type_status = "deduct";
+			} else if($activity->type == "deduct_non_panel_spending") {
+			  $activity->label = 'Refund';
+			  $activity->type_status = "deduct";
+			}
+		  }
 		return ['status' => true, 'data' => $activites];
 	}
 
