@@ -1,5 +1,5 @@
 <div
-  x-data="locationDepartments()"
+  locations-departments-directive
   class="location-department-container"
   >
   <p class="page-title">Locations & Departments</p>
@@ -10,7 +10,7 @@
         <div class="bottom-border">
           <button
             type="button"
-            @click="showAddLocationModal = true"
+            ng-click="addLocation()"
             class="ui-btn ui-btn-link text-blue-500 hover:bg-blue-100 w-full h-10"
           >
             <svg
@@ -24,28 +24,27 @@
         </div>
         <div>
           <div class="grid grid-cols-1 gap-2">
-            <template x-for="location in workLocations" :key="location.id">
+            <div ng-repeat="location in workLocations">
               <div class="ui-card-inner bottom-border">
                 <div class="flex items-center justify-between">
                   <div>
-                    <p class="ui-label-md" x-text="location.location_name"></p>
+                    <p class="ui-label-md" ng-bind="location.location_name"></p>
                   </div>
                   <div class="w-64">
                     <p class="ui-label">
-                      <span x-text="location.business_address"></span>
-                      <span x-text="location.unit"></span>
-                      <span x-text="location.building"></span>,
-                      <span x-text="location.country"></span>
-                      <span x-text="location.postal_code"></span>
+                      <span ng-bind="location.business_address"></span>
+                      <span ng-bind="location.unit"></span>
+                      <span ng-bind="location.building"></span>,
+                      <span ng-bind="location.country"></span>
+                      <span ng-bind="location.postal_code"></span>
                     </p>
                     <p class="ui-label text-teal-600">
-                      <span x-text="location.employees"></span>
+                      <span ng-bind="location.employees"></span>
                       Current Employees
                     </p>
                   </div>
                   <div class="flex flex-col items-end justify-between space-y-8">
                     <button
-                      @click="editLocation(location)"
                       type="button"
                       class="ui-btn ui-btn-primary-outline w-24"
                       >
@@ -62,7 +61,7 @@
                   </div>
                 </div>
               </div>
-            </template>
+            </div>
           </div>
         </div>
       </div>
@@ -71,28 +70,13 @@
 
   <!-- Add Location Modal -->
   <div
-    x-show="showAddLocationModal"
-    class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
+    class="{{ showAddLocationModal ? 'sm:flex' : 'hidden'}} fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:items-center sm:justify-center">
     <div
-      x-show="showAddLocationModal"
-      x-transition:enter="ease-out duration-300"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-      @click="showAddLocationModal = false"
-      class="fixed inset-0 transition-opacity">
+      class="{{ showAddLocationModal ? 'block' : 'hidden'}} fixed inset-0 transition-opacity">
       <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
     </div>
     <div
-      x-show="showAddLocationModal"
-      x-transition:enter="ease-out duration-300"
-      x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200"
-      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-xl sm:w-full" role="dialog"
-      aria-modal="true" aria-labelledby="modal-headline">
+      class="{{ showAddLocationModal ? 'block' : 'hidden'}} bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-xl sm:w-full" role="dialog">
       <div class="py-1 px-16">
         <div class="flex flex-col items-center justify-between space-y-8 pt-6">
           <h4 class="section-title font-bold">
@@ -141,121 +125,13 @@
             </div>
           </div>
           <div class="flex items-center justify-end space-x-4 w-full pb-6">
-            <button @click="showAddLocationModal = false" type="button" class="ui-btn ui-btn-primary-outline">
+            <button ng-click="addLocation()" type="button" class="ui-btn ui-btn-primary-outline">
               Cancel
             </button>
             <button type="button" class="ui-btn ui-btn-primary w-56"
-              @click="addLocation()">
+              ng-click="saveLocation()">
               Add Location
             </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Location Modal -->
-  <div
-    x-show="showEditLocationModal"
-    class="fixed bottom-0 inset-x-0 px-4 pb-4 sm:inset-0 sm:flex sm:items-center sm:justify-center">
-    <div
-      x-show="showEditLocationModal"
-      x-transition:enter="ease-out duration-300"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-      @click="showEditLocationModal = false"
-      class="fixed inset-0 transition-opacity">
-      <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-    </div>
-    <div
-      x-show="showEditLocationModal"
-      x-transition:enter="ease-out duration-300"
-      x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200"
-      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-xl sm:w-full" role="dialog"
-      aria-modal="true" aria-labelledby="modal-headline">
-      <div class="py-1 px-16">
-        <div class="flex flex-col items-center justify-between space-y-8 pt-6">
-          <h4 class="section-title font-bold">
-            Edit Business Information
-          </h4>
-          <div class="w-full">
-            <div class="grid grid-cols-1 gap-4">
-              <div>
-                <label class="form-label">Work Location Name</label>
-                <div class="form-input-group">
-                  <input
-                    class="form-input"
-                    type="text"
-                    x-model="workLocationFields.location_name"
-                  >
-                </div>
-              </div>
-              <div>
-                <label class="form-label">Business Legal Address</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div class="form-input-group col-span-1 md:col-span-2">
-                    <input
-                      class="form-input"
-                      type="text"
-                      x-model="workLocationFields.business_address"
-                    >
-                  </div>
-                  <div class="form-input-group">
-                    <input
-                      class="form-input"
-                      type="text"
-                      x-model="workLocationFields.unit"
-                    >
-                  </div>
-                  <div class="form-input-group">
-                    <input
-                      class="form-input"
-                      type="text"
-                      x-model="workLocationFields.building"
-                    >
-                  </div>
-                </div>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label class="form-label">
-                    Country Incorporated
-                  </label>
-                  <div class="form-input-group">
-                    <input class="form-input" type="text">
-                  </div>
-                </div>
-                <div>
-                  <label class="form-label">
-                    Postal Code
-                  </label>
-                  <div class="form-input-group">
-                    <input class="form-input" type="text">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <button @click="removeLocation(location)" type="button" class="ui-btn ui-btn-danger-outline">
-                Remove
-              </button>
-            </div>
-            <div class="flex items-center justify-end space-x-4 w-full pb-6">
-              <button @click="showAddLocationModal = false" type="button" class="ui-btn ui-btn-primary-outline">
-                Cancel
-              </button>
-              <button type="button" class="ui-btn ui-btn-primary w-56"
-                @click="addLocation()">
-                Add Location
-              </button>
-            </div>
           </div>
         </div>
       </div>
