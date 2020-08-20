@@ -174,7 +174,7 @@
           <p>#18-02 Suntec Tower One</p>
           <p>038987</p>
           <p style="margin-top: 10px;">Singapore</p>
-          <p>+65 6254 7889</p>
+          <p>+65 3163 5403</p>
           <p>mednefits.com</p>
         </div>
       </div>

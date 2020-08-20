@@ -497,15 +497,15 @@
 																</div>
 															</div>
 															<div>
-																<span class="pass-created">Password created</span>
+																<span class="pass-created first-login" >First <br>log in</span>
 																<div class="blue-circle-wrapper activated">
 																	<div class="blue-circle"></div>
 																	<div class="line-container"></div>
-																	<span>Activated</span>
+																	<span>Logged In</span>
 																</div>
 															</div>
 															<div>
-																<span class="first-login">First <br>log in</span>
+																<span class="first-login">First <br>activity</span>
 																<div class="blue-circle-wrapper active">
 																	<div class="blue-circle first-login"></div>
 																	<div class="line-container"></div>
@@ -514,10 +514,10 @@
 															</div>
 														</div>
 														<div class="subtext-container">
-															<p>Employees who have been enrolled into the company portal but have not created their own password.</p>
+															<p>Employees who have been enrolled into the company portal but have not yet logged into Mednefits app homepage.</p>
 														</div>
 														<div class="btn-got-it-container">
-															<button>Got it</button>
+															<button ng-click="_toggleInfo_('pending')">Got it</button>
 														</div>
 													</div>
 												</div>
@@ -544,15 +544,15 @@
 																</div>
 															</div>
 															<div>
-																<span class="pass-created">Password created</span>
+																<span class="pass-created">First <br>log in</span>
 																<div class="blue-circle-wrapper activated">
 																	<div class="blue-circle"></div>
 																	<div class="line-container"></div>
-																	<span>Activated</span>
+																	<span>Logged In</span>
 																</div>
 															</div>
 															<div>
-																<span class="first-login">First <br>log in</span>
+																<span class="first-login">First <br>activity</span>
 																<div class="blue-circle-wrapper active">
 																	<div class="blue-circle first-login"></div>
 																	<div class="line-container"></div>
@@ -561,10 +561,10 @@
 															</div>
 														</div>
 														<div class="subtext-container">
-															<p>Employees who have created their password and completed their first login to the Mednefits app.</p>
+															<p>Employees who have completed a panel transaction or submitted a non-panel claim.</p>
 														</div>
 														<div class="btn-got-it-container">
-															<button>Got it</button>
+															<button ng-click="_toggleInfo_('active')">Got it</button>
 														</div>
 													</div>
 												</div>
@@ -575,13 +575,13 @@
 							 <div class="row-box">
 								 <div class="">
 									<h3 class="enrollment-status-number font-14" ng-bind="employee_plan_status.login"></h3>
-									<h3 class="enrollment-status-text font-11">ACTIVATED
+									<h3 class="enrollment-status-text font-11">Logged In
 										<span class="info-box-img-wrapper">
 											<img ng-click="_toggleInfo_('activated')" class="info-box-img activated-info-img" src="../assets/hr-dashboard/img/info-blue.png">
 											<div class="status-tooltip-wrapper activated" style="display: none;">
 												<div class="status-tooltip-container">
 													<div class="status-tooltip-header">
-														Activated
+														Logged In
 													</div>
 													<div class="status-steps-container">
 														<div>
@@ -593,15 +593,15 @@
 															</div>
 														</div>
 														<div>
-															<span class="pass-created">Password created</span>
+															<span class="pass-created">First <br>log in</span>
 															<div class="blue-circle-wrapper activated">
 																<div class="blue-circle"></div>
 																<div class="line-container"></div>
-																<span>Activated</span>
+																<span>Logged In</span>
 															</div>
 														</div>
 														<div>
-															<span class="first-login">First <br>log in</span>
+															<span class="first-login">First <br>activity</span>
 															<div class="blue-circle-wrapper active">
 																<div class="blue-circle first-login"></div>
 																<div class="line-container"></div>
@@ -610,10 +610,10 @@
 														</div>
 													</div>
 													<div class="subtext-container">
-														<p>Employees who have created their password but have not logged into the Mednefits app.</p>
+														<p>Employees who have logged into Mednefits app homepage but not yet completed a panel transaction or submitted a non-panel claim.</p>
 													</div>
 													<div class="btn-got-it-container">
-														<button>Got it</button>
+														<button ng-click="_toggleInfo_('activated')">Got it</button>
 													</div>
 												</div>
 											</div>

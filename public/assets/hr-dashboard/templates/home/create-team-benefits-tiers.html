@@ -247,7 +247,7 @@
 							  <span class="review-prepare-template-subtext">Our system will only pick and capture date in the stated format.</span>
 							  <span class="review-checkmark"></span>
 							</label>
-							<label class="review-container">
+							<!-- <label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.email">
 							  <span class="review-prepare-template-text">A valid employee's email address.</span>
 							  <span class="review-prepare-template-subtext">Login credential will be sent to this email address once account is set up.</span>
@@ -258,7 +258,7 @@
 							  <span class="review-prepare-template-text">Input employee's 6 digit postal code</span>
 							  <span class="review-prepare-template-subtext">It should be the local residential postal code where the employee reside.</span>
 							  <span class="review-checkmark"></span>
-							</label>	
+							</label>	 -->
 						</div>
 					</div>
 
@@ -291,7 +291,7 @@
 							  <span class="review-prepare-template-subtext">Our system will only pick and capture date in the stated format.</span>
 							  <span class="review-checkmark"></span>
 							</label>
-							<label class="review-container">
+							<!-- <label class="review-container">
 							  <input type="checkbox" ng-model="reviewExcelData.email">
 							  <span class="review-prepare-template-text">A valid employee's email address.</span>
 							  <span class="review-prepare-template-subtext">Login credential will be sent to this email address once account is set up.</span>
@@ -302,7 +302,7 @@
 							  <span class="review-prepare-template-text">Input employee's 6 digit postal code</span>
 							  <span class="review-prepare-template-subtext">It should be the local residential postal code where the employee reside.</span>
 							  <span class="review-checkmark"></span>
-							</label>
+							</label> -->
 							<label class="review-container">
 							  <input type="checkbox"  ng-model="reviewExcelData.relationship">
 							  <span class="review-prepare-template-text">Under dependent/s relationship column only select from drop down list.</span>
@@ -432,7 +432,7 @@
   							<input disabled-specific-characters type="text" name="fname" ng-model="employee_data.fullname">
 							</div>
 							<div class="employee-input-wrapper">
-								<label >Employee ID</label>
+								<label >Employee ID (optional)</label>
   							<input type="text" name="fname" ng-model="employee_data.employee_id">
 							</div>
 							<div class="employee-input-wrapper">
@@ -440,7 +440,7 @@
   							<input type="text" name="datebirth" class="datepicker" ng-model="employee_data.dob" placeholder="DD/MM/YYYY">
 							</div>
 							<div class="employee-input-wrapper">
-								<label for="fname">Work Email</label>
+								<label for="fname">Work Email (optional)</label>
   							<input type="text" name="work-email" ng-model="employee_data.email">
 							</div>
 							<div class="employee-input-wrapper">
@@ -493,10 +493,10 @@
 							</div>
 							<div ng-if="isBankNumColShow" class="employee-input-wrapper">
 								<label for="fname">Bank Account Number</label>
-  							<input valid-number type="number" ng-model="employee_data.bank_account_number">
+  							<input type="text" ng-model="employee_data.bank_account_number">
 							</div>
 							<div ng-if="isCapVisitColShow" class="employee-input-wrapper">
-								<label for="fname">Cap per Visit</label>
+								<label for="fname">Cap per Visit (optional)</label>
   							<input valid-number type="text" ng-model="employee_data.cap_per_visit">
 							</div>
 						</form>
@@ -718,7 +718,7 @@
 			</div>
 
 			<div ng-if="isReviewEnroll" class="enroll-container-button">
-				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
 				<button ng-click="goToCommunication()" class="btn-enroll" ng-disabled="hasError" >ENROLL
 					<span class="enroll-badge">
 						{{ temp_employees.length < 1000 ? temp_employees.length : ''  }}
@@ -730,7 +730,7 @@
 			</div>
 
 			<div ng-if="isCommunicationShow" class="enroll-container-button">
-				<span class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
 				<button class="btn-enroll" ng-click="saveTempUser()">COMPLETE</button>
 			</div>
 

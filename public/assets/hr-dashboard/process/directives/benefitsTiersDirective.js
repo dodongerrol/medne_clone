@@ -167,9 +167,9 @@ app.directive('benefitsTiersDirective', [
 						}
 					} else if (scope.downloadWithDependentsCheckbox == true) { 
 						//scope.reviewExcelData.name slide 21
-						if (scope.reviewExcelData.format &&
-							scope.reviewExcelData.dob && scope.reviewExcelData.email &&
-							scope.reviewExcelData.postcode && scope.reviewExcelData.plan_start) {
+						// scope.reviewExcelData.email &&
+						//  && scope.reviewExcelData.postcode
+						if (scope.reviewExcelData.format && scope.reviewExcelData.dob && scope.reviewExcelData.plan_start) {
 							if (scope.downloadWithDependents == true) {
 								if (scope.reviewExcelData.relationship) {
 									scope.downloadWithDependentsCheckbox = false;
@@ -1683,26 +1683,40 @@ app.directive('benefitsTiersDirective', [
           scope.isBankNumColShow = false;
 
           if(
-						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid' && scope.spendingPlan_status.paid_status) ||
+						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid') ||
+						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'pre_paid' && scope.spendingPlan_status.paid_status) ||
 						(scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.medical_enabled)
 						){
             scope.isMedicalAllocColShow = true;
           }
           if(
-              (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'post_paid' && scope.spendingPlan_status.paid_status) ||
+              (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'post_paid') ||
+              (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.wellness_method == 'pre_paid' && scope.spendingPlan_status.paid_status) ||
               (scope.spendingPlan_status.account_type == 'enterprise_plan' && scope.spendingPlan_status.wellness_enabled && scope.spendingPlan_status.paid_status) ||
               (scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.wellness_enabled)
             ){
             scope.isWellnessAllocColShow = true;
           }
           if(
-            (scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.paid_status &&
-            (scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
-						(scope.spendingPlan_status.medical_method == 'post_paid' || scope.spendingPlan_status.wellness_method == 'post_paid')) ||
-						(scope.spendingPlan_status.account_type != 'lite_plan' && (scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled)) 
-            ){
+							(scope.spendingPlan_status.account_type == 'lite_plan' && 
+								(scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
+								(scope.spendingPlan_status.medical_method == 'post_paid' && scope.spendingPlan_status.wellness_method == 'post_paid')
+							) ||
+							(scope.spendingPlan_status.account_type == 'lite_plan' && 
+								(scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
+								(scope.spendingPlan_status.medical_method == 'pre_paid' || scope.spendingPlan_status.wellness_method == 'pre_paid') &&
+								scope.spendingPlan_status.paid_status
+							) ||
+							(scope.spendingPlan_status.account_type != 'lite_plan' && 
+								(scope.spendingPlan_status.medical_enabled || scope.spendingPlan_status.wellness_enabled) &&
+								scope.spendingPlan_status.paid_status
+							) 
+						){
             scope.isCapVisitColShow = true;
-          }
+					}
+					if(scope.spendingPlan_status.account_type == 'enterprise_plan'){
+						scope.isCapVisitColShow = false;
+					}
           if(scope.spendingPlan_status.medical_reimbursement || scope.spendingPlan_status.wellness_reimbursement){
             scope.isBankNameColShow = true;
             scope.isBankNumColShow = true;

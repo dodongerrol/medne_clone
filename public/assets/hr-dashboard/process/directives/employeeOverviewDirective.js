@@ -2360,7 +2360,7 @@ app.directive("employeeOverviewDirective", [
           $(".employee-overview-pagination").show();
 
           scope.showLoading();
-          hrSettings.getEmployees(page,scope.global_empLimitList)
+          hrSettings.getEmployees(page,scope.page_ctr)
             .then(function (response) {
               console.log(response);
               scope.employees = response.data;
@@ -2508,7 +2508,7 @@ app.directive("employeeOverviewDirective", [
                   bank_branch: data.bank_branch,
                   user_id: data.user_id,
                   bank_name: data.bank_name,
-                  emp_id: data.member_id,
+                  emp_id: data.employee_id,
                 };
                 console.log(update_data);
                 dependentsSettings.updateEmployee(update_data)
