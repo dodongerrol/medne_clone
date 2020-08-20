@@ -21,6 +21,8 @@
 	<link rel="shortcut icon" href="assets/hr-dashboard/img/icons/favicon.ico" type="image/ico">
 
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+	{{ HTML::style('assets/hr-dashboard/css/fonts.css') }}
 	<!-- <script>
       (adsbygoogle = window.adsbygoogle || []).push({
         google_ad_client: "ca-pub-8344843655918366",
@@ -35,7 +37,7 @@
 	{{ HTML::style('assets/hr-dashboard/css/bootstrap.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/font-awesome.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/style.css') }}
-	{{ HTML::style('assets/hr-dashboard/css/hr-login.css') }}
+	{{ HTML::style('assets/hr-dashboard/css/tailwind.css') }}
 	<!-- {{ HTML::style('assets/hr-dashboard/css/responsive.css') }} -->
 
 </head>
