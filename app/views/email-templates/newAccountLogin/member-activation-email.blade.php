@@ -63,7 +63,7 @@
           </p>
 
           <div style="text-align: center; margin: 30px 0 50px;">
-            <a href="https://bit.ly/34DpPLO" style="display:inline-block;text-decoration: none;background-color: #3192CF; border-radius: 4px; color: #fff; border: 0; width: 331px; font-size: 15px; padding: 8px 0; outline: none;">Download Mednefits</a>
+            <a href="https://bridgeurl.com/mednefits-app" style="display:inline-block;text-decoration: none;background-color: #3192CF; border-radius: 4px; color: #fff; border: 0; width: 331px; font-size: 15px; padding: 8px 0; outline: none;">Download Mednefits</a>
           </div>
 
           <div style="border-bottom: 2px solid #ddd;width: 100%;"></div>
@@ -73,7 +73,8 @@
           <p style="margin: 0;">We are always here to help. Should you encounter any issues or have any questions, feel free to contact us:</p>
 
           <p style="margin:0;font-weight: 700">You may ring us</p>
-          <p style="margin:0;">+65 6254 7889</p>
+          <p style="margin:0;">+65 3163 5403</p>
+          <p style="margin:0;">+60 330 995 774</p>
           <p style="margin:0;">Mon - Fri 09:30 to 18:30</p>
 
           <p style="margin:0;font-weight: 700">Drop us a note, anytime</p>

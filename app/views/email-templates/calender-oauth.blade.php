@@ -257,7 +257,7 @@ body .logo150 img {width: 150px; height: auto;}
 
 										<tr>
 											<td valign="middle" width="100%" style="text-align: left; font-family: Helvetica, Arial, sans-serif, 'Open Sans'; font-size: 14px; color: #9c9c9c; line-height: 24px; font-weight: 400;" class="fullCenter">
-												<p style="text-align: center;">+65 6254 7889 | <a href="mailto:happiness@mednefits.com" style="text-decoration: none;"> happiness@mednefits.com </a><br>​1 Temasek Boulevard #18-02, Suntec Tower One, Singapore 038987</p>
+												<p style="text-align: center;">+65 3163 5403 | <a href="mailto:happiness@mednefits.com" style="text-decoration: none;"> happiness@mednefits.com </a><br>​1 Temasek Boulevard #18-02, Suntec Tower One, Singapore 038987</p>
 											</td>
 										</tr>
 										<tr>

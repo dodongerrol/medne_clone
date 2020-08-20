@@ -43,45 +43,7 @@
 	</style>
 </head>
 <body eclaim-login>
-	<!-- <div class="container">
-		<div class="login-need-help-container">
-			<a href="#" class="pull-right need-help-text tooltips">
-				<h3>Need help?</h3>
-				<div class="tooltip-container">
-					<h3 class="tooltip-title">We're here to help.</h3>
-					<h3 class="tooltip-phone-email-title">You may ring us</h3>
-					<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
-					<h3 class="tooltip-phone-email-details">Mon - Fri 10:00 to 19:00</h3>
-					<br>
-					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
-					<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
-				</div>
-			</a>
-		</div>
-		<div class="col-sm-12 col-md-12 col-lg-12">
-			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
-			<h2 class="text-center text-below-image">for business</h2>
-			<form class="med-form" ng-submit="loginHr()">
-				<div class="form-group">
-					<input type="email" name="email" class="form-control med-input" placeholder="Email Address" ng-model="login_details.email" required>
-				</div>
-				<div class="form-group">
-					<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="login_details.password" required style="margin-bottom: 15px">
-				</div>
-				<div class="checkbox">
-			    <label style="color: #777;font-size: 15px;">
-			      <input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed in
-			    </label>
-			  </div>
-				<div class="form-group">
-					<button type="submit" class="btn btn-info btn-block med-button" id="login-btn">Log in</button>
-				</div>
-				<span ng-if="ng_fail">*Please check your login credentials</span>
-				<a href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot password?</a>
-			</form>
-		</div>
-	</div> -->
-
+	
 	<div class="login-wrapper">
 		<div class="login-need-help-container">
 			<a href="#" class="pull-right need-help-text tooltips">
@@ -89,8 +51,8 @@
 				<div class="tooltip-container">
 					<h3 class="tooltip-title">We're here to help.</h3>
 					<h3 class="tooltip-phone-email-title">You may ring us</h3>
-					<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
-					<h3 class="tooltip-phone-email-details">+60 3789 01770</h3>
+					<h3 class="tooltip-phone-email-details">+65 3163 5403</h3>
+					<h3 class="tooltip-phone-email-details">+60 330 995 774</h3>
 					<h3 class="tooltip-phone-email-details">Mon - Fri 9:30am to 6:30pm</h3>
 					<br>
 					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
@@ -142,7 +104,7 @@
 				<img src="../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 				<h2 class="text-center text-below-image">for member</h2>
 			</div>
-			<div class="notification-wrapper">
+			<!-- <div class="notification-wrapper">
 				<div class="notification-container">
 					<div>
 						<img src="./assets/images/danger.png">
@@ -153,7 +115,7 @@
 						Please click <a class="here-text" ng-click="goToUpdateDetails()">here</a> to change your user ID to your mobile number.</p>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<form class="med-form">
 				<div ng-if="!showPasswordInput" class="form-group">
 					<!-- valid-number pattern="[0-9]*" type="tel" -->

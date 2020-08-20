@@ -22,7 +22,7 @@
 		<label class="profile-lbl">Company Name</label>
 	</div>	
 	<div class="col-md-8">
-		<input type="text" id="bank-name" class="dropdown-btn col-sm-1" style="height: 15px; width: 300px;">
+		<input type="text" id="bank-type" class="dropdown-btn col-sm-1" style="height: 15px; width: 300px;">
 	</div>
 	
 </div>
@@ -41,10 +41,10 @@
 <div style="clear: both"></div>
 <div class="row">
 	<div class="col-md-3" style="padding: 0px;text-align: right;">
-		<label class="profile-lbl">Bank Account Type</label>
+		<label class="profile-lbl">Bank Name</label>
 	</div>	
 	<div class="col-md-8">
-		<input type="text" id="bank-type" placeholder="i.e UOB Account" class="dropdown-btn col-sm-1" style="height: 15px; width: 300px;">
+		<input type="text" id="bank-name" placeholder="i.e UOB Account" class="dropdown-btn col-sm-1" style="height: 15px; width: 300px;">
 	</div>
 	
 </div>

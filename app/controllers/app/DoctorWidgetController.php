@@ -28,7 +28,7 @@ class DoctorWidgetController extends \BaseController {
 	// ----
 	public function index($clinicid)
 	{
-
+		Utility::stripXSS();
         $data = Widget_Library::getClinicData($clinicid);
 
         return $data;

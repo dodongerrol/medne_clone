@@ -2977,7 +2977,8 @@ class EmployeeController extends \BaseController {
 
       $diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan_start))), new DateTime(date('Y-m-d', strtotime($expiry_date))));
       $days = $diff->format('%a') + 1;
-      $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+      // $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
+      $total_days = MemberHelper::getMemberTotalDaysSubscription($plan_start, $customer_plan->plan_end);
       $remaining_days = $total_days - $days + 1;
       $cost_plan_and_days = ($invoice->individual_price/$total_days);
       $temp_total = $cost_plan_and_days * $remaining_days;
@@ -2988,11 +2989,11 @@ class EmployeeController extends \BaseController {
         'customer_active_plan_id'	=> $active_plan->customer_active_plan_id,
 				'account_type'	          => PlanHelper::getAccountType($customer_plan->account_type),
 				'refund_date'				      => $expiry_date,
-        'amount'					        => number_format($total_refund, 2),
+        'amount'					        => DecimalHelper::formatDecimal($total_refund),
         'plan_start'              => date('Y-m-d', strtotime($plan_start)),
         'unutilised_start_date'   => date('Y-m-d', strtotime('+1 day', strtotime($expiry_date))),
         'unutilised_end_date'     => date('Y-m-d', strtotime($customer_plan->plan_end)),
-        'currency_type'			  => $invoice->currency_type,
+        'currency_type'			      => $invoice->currency_type,
         'calculations'            => array(
           'pro_rated_refund'      => 70,
           'days_used'             => $days,
@@ -3046,11 +3047,11 @@ class EmployeeController extends \BaseController {
     $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
     $customer_plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
     $dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
-
+    
     foreach($members as $key => $member)  {
       // check if member already login base on admin logs
       $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
-      if(!$check_active_state)  {
+      if(!$check_active_state || $check_active_state && (int)$member->Status == 0)  {
         $pending++;
       } else {
         // check if already create a transaction

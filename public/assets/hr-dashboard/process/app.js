@@ -46,7 +46,7 @@ app.factory('serverUrl',[
     function factory(){
       return {
         url: window.location.origin,
-        // url: "http://ec2-13-251-63-109.ap-southeast-1.compute.amazonaws.com",
+        // url: "https://hrapi.medicloud.sg",
         external_url: 'https://dev.geckorest.com/mednefits/',
         mednefits_url: 'http://app.mednefits.com/api/'
       }

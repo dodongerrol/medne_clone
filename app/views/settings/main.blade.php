@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="<?php echo $server; ?>/assets/settings/main.css?_={{ $date->format('U') }}">
 <link rel="stylesheet" href="<?php echo $server; ?>/assets/settings/staff/staff.css?_={{ $date->format('U') }}">
 <link rel="stylesheet" href="<?php echo $server; ?>/assets/css/settings-page.css?_={{ $date->format('U') }}">
+<link rel="stylesheet" href="<?php echo $server; ?>/assets/claim/css/claim-loader.css?_={{ $date->format('U') }}">
 <!-- <link rel="stylesheet" href="<?php //echo $server; ?>/assets/css/bootstrap-toggle.min.css?_={{ $date->format('U') }}"> -->
 <!-- {{ HTML::style('assets/settings/main.css') }} -->
 <script type="text/javascript" src="<?php echo $server; ?>/assets/settings/main.js?_={{ $date->format('U') }}"></script>

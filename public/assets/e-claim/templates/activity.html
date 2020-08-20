@@ -236,7 +236,7 @@
 						<!-- <p class="color-gray font-10">IN-NETWORK</p> -->
 					</div>
 
-					<div class="out-network-box">
+					<div ng-class="{'disabled-panel': (activity_results.account_type == 'enterprise_plan' && activity_results.wellness_enabled == false && activity_results.currency_type == 'myr') || (activity_results.account_type == 'enterprise_plan' && activity_results.medical_enabled == true && activity_results.wellness_enabled == true && activity_results.currency_type == 'myr' && spendingTypeOpt == 0)}" class="out-network-box">
 						<p class="color-blue-custom">
 							<span ng-bind="activity_results.currency_type" class="currency-type">SGD</span>
 							<span ng-bind="(activity_results.e_claim_spent) ? activity_results.e_claim_spent : 00"></span></p>
@@ -268,8 +268,7 @@
 					PANEL<br>TRANSACTIONS
 					<!-- IN-NETWORK<br>TRANSACTIONS -->
 				</button>
-
-				<button class="btn-out-network" ng-class="{'active':outNetWorkTable}"
+				<button class="btn-out-network" ng-class="{'active':outNetWorkTable, 'disabled-panel': (activity_results.account_type == 'enterprise_plan' && activity_results.wellness_enabled == false && activity_results.currency_type == 'myr') || (activity_results.account_type == 'enterprise_plan' && activity_results.medical_enabled == true && activity_results.wellness_enabled == true && activity_results.currency_type == 'myr' && spendingTypeOpt == 0)}"
 					ng-click="inNetWorkTable = false;outNetWorkTable = true;" style="margin-left: 5px;">
 					NON-PANEL<br>TRANSACTIONS
 					<!-- OUT-OF-NETWORK<br>TRANSACTIONS -->

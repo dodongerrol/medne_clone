@@ -1,0 +1,25 @@
+version: '3.5'
+
+services:
+    medicloud:
+        build:
+            context: '.'
+            dockerfile: .docker/Dockerfile
+        image: 'laravelapp'
+        container_name: medicloud
+        volumes:
+            - .:/var/www/html
+        extra_hosts:
+            - "medicloud.local:127.0.0.1"
+        hostname: medicloud.local
+        domainname: medicloud.local 
+        ports:
+            - 80:80
+        networks:
+            backend:
+                aliases:
+                - medicloud
+                
+networks:
+  backend:
+    name: backend-network
