@@ -479,7 +479,7 @@ class DependentController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->first();
 
-			if($dependent_plan_status) {
+			if(!$dependent_plan_status) {
 				return ['status' => false, 'message' => 'Unable to create dependent account as company has no dependent account purchased.'];
 			}
 		}
