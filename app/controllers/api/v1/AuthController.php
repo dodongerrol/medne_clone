@@ -1974,15 +1974,32 @@ public function getNewClinicDetails($id)
      }
      $clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
      $owner_id = StringHelper::getUserId($findUserID);
+     $wallet_checker = DB::table('e_wallet')->where('UserID', $owner_id)->first();
      // check block access
      $block = PlanHelper::checkCompanyBlockAccess($owner_id, $id);
 
      if($block) {
-       $returnObject->status = FALSE;
-       $returnObject->status_type = 'access_block';
-       $returnObject->head_message = 'Registration Unavailable';
-       $returnObject->message = 'Sorry, your acccount is not enabled to access Singapore providers. Kindly contact your HR for more details.';
-       return Response::json($returnObject);
+      if($wallet_checker->currency_type === 'myr') {
+        if($clinic->currency_type === 'sgd') {
+            $returnObject->status = FALSE;
+            $returnObject->status_type = 'access_block';
+            $returnObject->head_message = 'Registration Unavailable';
+            $returnObject->message = 'Sorry, your acccount is not enabled to access Singapore providers. Kindly contact your HR for more details.';
+            return Response::json($returnObject);
+        } else {
+          $returnObject->status = FALSE;
+          $returnObject->status_type = 'access_block';
+          $returnObject->head_message = 'Registration Unavailable';
+          $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+          return Response::json($returnObject);
+        }
+      } else {
+        $returnObject->status = FALSE;
+        $returnObject->status_type = 'access_block';
+        $returnObject->head_message = 'Registration Unavailable';
+        $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+        return Response::json($returnObject);
+      }
      }
 
      // check if enable to access feature
@@ -2023,8 +2040,6 @@ public function getNewClinicDetails($id)
         return Response::json($returnObject);
       }
       
-      $wallet_checker = DB::table('e_wallet')->where('UserID', $owner_id)->first();
-
       if($wallet_checker->currency_type === 'myr') {
         if($clinic->currency_type === 'sgd') {
             $returnObject->status = FALSE;
