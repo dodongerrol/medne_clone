@@ -571,7 +571,7 @@
 					</div>
 				</div>
 
-				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active'">
+				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active' || selectedEmployee.emp_status == 'pending' || selectedEmployee.emp_status == 'activated'">
 					<button class="btn-remove-employee" ng-click="removeBtn()">Remove Employee</button>
 				</div>
 
