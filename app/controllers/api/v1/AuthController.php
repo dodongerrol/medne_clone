@@ -652,7 +652,8 @@ return Response::json($returnObject);
         	$returnArray = new stdClass();
         	$findUserProfile = $this->GetUserProfile($profileid);
           $user_id = StringHelper::getUserId($profileid);
-          $properties = !empty($input['type']) && $input['type'] == "with_medical_properties" ? "with_medical_properties" : "profile";
+          // $properties = !empty($input['type']) && $input['type'] == "with_medical_properties" ? "with_medical_properties" : "profile";
+          $properties = "with_medical_properties";
           
           if($findUserProfile){
             // $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
