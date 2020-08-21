@@ -15768,7 +15768,7 @@ class BenefitsDashboardController extends \BaseController {
 			// get active plan lists
 			$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->paginate(1);
 			// get customer plan status
-			$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+			// $plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
 			foreach($active_plans as $key => $active_plan) {
 			  // format employee plan details
 			  $employee_acount_details = [
@@ -15778,7 +15778,7 @@ class BenefitsDashboardController extends \BaseController {
 				'plan_start'                => date('Y-m-d', strtotime($plan->plan_start)),
 				'duration'                  => $active_plan->duration,
 				'plan_type'                 => PlanHelper::getAccountType($plan->account_type),
-				'total_enrolled_employees'  => $plan_status->enrolled_employees,
+				'total_enrolled_employees'  => $active_plan->employees,
 				'individual_price'          => 300,
 				'account_type'              => $plan->account_type
 			  ];
@@ -15802,7 +15802,7 @@ class BenefitsDashboardController extends \BaseController {
 			  $dependent_plan = DB::table('dependent_plans')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
 	
 			  if($dependent_plan) {
-				$dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
+				// $dependent_plan_status = DB::table('dependent_plan_status')->where('customer_plan_id', $plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
 				$dependent_acount_details = [
 				  'customer_id'               => $customer_id,
 				  'customer_active_plan'      => $active_plan->customer_active_plan_id,
@@ -15811,7 +15811,7 @@ class BenefitsDashboardController extends \BaseController {
 				  'plan_start'                => date('Y-m-d', strtotime($dependent_plan->plan_start)),
 				  'duration'                  => $dependent_plan->duration,
 				  'plan_type'                 => PlanHelper::getAccountType($dependent_plan->account_type),
-				  'total_enrolled_employees'  => $dependent_plan_status->total_enrolled_dependents,
+				  'total_enrolled_employees'  => $dependent_plan->total_dependents,
 				  'account_type'              => $plan->account_type
 				];
 	
@@ -16055,7 +16055,7 @@ class BenefitsDashboardController extends \BaseController {
 			if($customer) {
 				$hr_acount_details = [
 					'fullname'			=> $customer->first_name.' '.$customer->last_name,
-					'email'				=> $customer->work_email,
+					// 'email'				=> $customer->work_email,
 					'phone_number'		=> $customer->phone,
 					'phone_code'		=> "+65"
 				];

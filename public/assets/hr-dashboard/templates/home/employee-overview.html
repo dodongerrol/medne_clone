@@ -279,7 +279,7 @@
 				<tbody>
 			</table>
 
-			<div ng-if="employees.data.length > 0 && (spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false)" class="spending-not-activated-box">
+			<div ng-if="spending_account_status.account_type != 'enterprise_plan' && employees.data.length > 0 && (spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false)" class="spending-not-activated-box">
 				<div class="spending-border-box">
 					<p>Spending Account for your company has<br>not been activated.</p>
 					<a href="/sa-landing" target="_blank">Learn more >></a>
@@ -571,7 +571,7 @@
 					</div>
 				</div>
 
-				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active'">
+				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active' || selectedEmployee.emp_status == 'pending' || selectedEmployee.emp_status == 'activated'">
 					<button class="btn-remove-employee" ng-click="removeBtn()">Remove Employee</button>
 				</div>
 
