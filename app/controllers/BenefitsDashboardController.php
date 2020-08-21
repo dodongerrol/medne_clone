@@ -16055,7 +16055,7 @@ class BenefitsDashboardController extends \BaseController {
 			if($customer) {
 				$hr_acount_details = [
 					'fullname'			=> $customer->first_name.' '.$customer->last_name,
-					'email'				=> $customer->work_email,
+					// 'email'				=> $customer->work_email,
 					'phone_number'		=> $customer->phone,
 					'phone_code'		=> "+65"
 				];
