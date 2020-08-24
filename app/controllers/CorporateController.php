@@ -277,12 +277,17 @@ class CorporateController extends BaseController {
 
 		$members = DB::table('company_location_members')
 		->where('id', $input['customer_id'])
+		->where('Active', 1)
+		->orderBy('created_at', 'desc')
 		->first();
 
 	
-	foreach ($locations as $key => $location) {
+		foreach ($locations as $key => $location) {
 			$location->member = DB::table('company_locations')
-			->join('company_location_members','company_location_members.LocationID', '=' , 'company_locations.LocationID')
+			->join('company_location_members','company_location_members.company_location_id', '=' , 'company_locations.company_location_id')
+			->where('user.UserID', $members->UserID)
+			->where('user.Active', 1)
+			->get();
 			
 		}
 	}	
