@@ -263,17 +263,26 @@ class CorporateController extends BaseController {
 
 	public function getWorkLocationList( )
 	{
+		$session = self::checkSession();
+		$customer_id = $session->customer_buy_start_id;
 		$input = Input::all();
 
-		if(empty($input['customer']) || $input['customer_id'] == null) {
+		if(empty($input['customer_id']) || $input['customer_id'] == null) {
 			return array('status' => false, 'message' => 'customer_id is required.');
 		}
 
-		$location = DB::table('company_locations')->where('LocationID', $input['clinic_id'])->first();
+		$locations = DB::table('company_locations')
+		->where('LocationID', $input['customer_id'])
+		->first();
 
-		if(!$location) {
-			return array('status' => false, 'message' => 'company location does not exist.');
+		$members = DB::table('company_location_members')
+		->where('id', $input['customer_id'])
+		->first();
+
+	
+	foreach ($locations as $key => $location) {
+		
 		}
-	}
+	}	
 }
 
