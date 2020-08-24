@@ -305,7 +305,7 @@ Route::filter('auth.jwt_hr', function($request, $response)
 {
     $headers = [];
     $requestHeaders = StringHelper::requestHeader();
-    if((!isset($requestHeaders['Authorization']) || $requestHeaders['Authorization'] == null) || (!isset($requestHeaders['authorization']) || $requestHeaders['authorization'])){
+    if((!isset($requestHeaders['Authorization']) || $requestHeaders['Authorization'] == null) && (!isset($requestHeaders['authorization']) || $requestHeaders['authorization'] == null)){
         $headers[]['error'] = true;
         // return Redirect::to('company-benefits-dashboard-login');
         return Response::json('You have an invalid token. Please login again', 403, $headers);
