@@ -178,12 +178,11 @@ class StringHelper{
             $secret = Config::get('config.secret_key');
             
             $getRequestHeader = self::getHeaders();
-            
-            if(!isset($getRequestHeader['Authorization']) || empty($getRequestHeader['Authorization']) && $getRequestHeader['Authorization'] == null) {
+            if(!isset($getRequestHeader['Authorization']) && empty($getRequestHeader['Authorization']) && $getRequestHeader['Authorization'] == null) {
                 return false;
             }
 
-            $token = $getRequestHeader['Authorization'];
+            $token = isset($getRequestHeader['Authorization']) ? $getRequestHeader['Authorization'] : $getRequestHeader['authorization'];
             $result = FALSE;
             try {
                 $result = JWT::decode($token, $secret);
