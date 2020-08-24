@@ -176,7 +176,14 @@ class StringHelper{
         public static function getJwtHrSession()
         {   
             $secret = Config::get('config.secret_key');
-            $token = StringHelper::getToken();
+            
+            $getRequestHeader = self::getHeaders();
+            
+            if(!isset($getRequestHeader['Authorization']) || empty($getRequestHeader['Authorization']) && $getRequestHeader['Authorization'] == null) {
+                return false;
+            }
+
+            $token = $getRequestHeader['Authorization'];
             $result = FALSE;
             try {
                 $result = JWT::decode($token, $secret);
