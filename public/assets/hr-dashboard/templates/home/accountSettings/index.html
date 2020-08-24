@@ -57,7 +57,7 @@
             <td class="bg-white px-4 text-gray-900"> chris.teo@mednefits.com </td>
             <td class="bg-white px-4 rounded-r-lg text-gray-900">
               <div class="relative inline-block text-left" x-data="{ open: false }">
-                <button class="ui-btn ui-btn-link" @click="open = !open">
+                <button class="ui-btn ui-btn-link-dark" @click="open = !open">
                   <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
                     <path fill-rule="evenodd"
                       d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -73,7 +73,7 @@
                   class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg">
                   <div class="rounded-md bg-white shadow-xs">
                     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                      <button type="button" class="ui-btn ui-btn-link w-full font-semibold" role="menuitem">
+                      <button type="button" class="ui-btn ui-btn-link-dark w-full font-semibold" role="menuitem">
                         Unlink Account
                       </button>
                     </div>
@@ -741,61 +741,6 @@
             <button ng-click="setScheduleDate(  )" class="btn-update">Update</button>
           </div>
         </form>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade new-account-modal" id="change_primary_admin_form_modal" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog mt-32" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          <form>
-            <div class="modal-header">
-              <h4> Change HR Administrator (Primary Admin)</h4>
-            </div>
-            <div class="modal-body">
-              <div class="company-account-input-wrapper">
-                <label>Full Name</label>
-                <div class="custom-input-wrapper">
-                  <input ng-model="global_hrData.full_name" type="text">
-                </div>
-              </div>
-              <div class="company-account-input-wrapper">
-                <label>Email</label>
-                <div class="custom-input-wrapper">
-                  <input ng-model="global_hrData.email" type="text">
-                </div>
-              </div>
-              <div class="company-account-input-wrapper number">
-                <label></span>Phone Number</label>
-                <div>
-                  <div class="custom-input-wrapper">
-                    <input ng-model="global_hrData.phone_code" type="tel" id="phone_number">
-                    <i class="fa fa-angle-down"></i>
-                  </div>
-                  <div class="custom-input-wrapper">
-                    <input ng-model="global_hrData.phone" type="text">
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div ng-if="editHrSuccessfullyUpdated" class="modal-body edit-hr-success-container">
-              <div>
-                <img src="../assets/images/success-circle.png">
-              </div>
-              <span>Detail(s) has been succesfully updated.</span>
-            </div>
-            <div class="modal-footer">
-              <button ng-if="!editHrSuccessfullyUpdated" data-dismiss="modal"
-                class="btn-edit-cancel btn-close">Cancel</button>
-              <button ng-if="!editHrSuccessfullyUpdated" ng-click="_updateHrDetails_( global_hrData )"
-                class="btn-update">Update</button>
-              <button ng-if="editHrSuccessfullyUpdated" data-dismiss="modal"
-                class="btn-edit-cancel btn-close">Close</button>
-            </div>
-          </form>
-        </div>
       </div>
     </div>
   </div>

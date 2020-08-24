@@ -1,5 +1,5 @@
 <div class="container mx-auto px-12 py-12" ng-if="showAccounts">
-    <div class="grid-layout-one">
+    <div class="grid-layout-one font-greycliff">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="flex flex-col justify-center">
                 <a
@@ -19,12 +19,12 @@
                 @include('hr_dashboard.hr-login.partials.search')
             </div>
         </div>
-        <div class="table-v1-wrapper">
+        <div class="ui-card border-solid border border-color">
             <table class="table-v1">
                 <thead>
                     <th class="thead-v1"> Account Name </th>
                     <th class="thead-v1"> Company ID </th>
-                    <th class="thead-v1"> Total Enrolled Employees</th>
+                    <th class="thead-v1"> Total Enrolled Employees </th>
                     <th class="thead-v1"> Total Enrolled Dependents </th>
                     <th class="thead-v1"> Plan Type </th>
                 </thead>
@@ -40,7 +40,7 @@
                             50
                         </td>
                         <td class="td-v1">
-                        20
+                            20
                         </td>
                         <td class="td-v1">
                             Basic Plan (Pre-paid)
