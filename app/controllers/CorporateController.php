@@ -281,7 +281,9 @@ class CorporateController extends BaseController {
 
 	
 	foreach ($locations as $key => $location) {
-		
+			$location->member = DB::table('company_locations')
+			->join('company_location_members','company_location_members.LocationID', '=' , 'company_locations.LocationID')
+			
 		}
 	}	
 }
