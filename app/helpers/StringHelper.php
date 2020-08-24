@@ -178,7 +178,7 @@ class StringHelper{
             $secret = Config::get('config.secret_key');
             
             $getRequestHeader = self::getHeaders();
-            if(!isset($getRequestHeader['Authorization']) && empty($getRequestHeader['Authorization']) && $getRequestHeader['Authorization'] == null) {
+            if(!isset($getRequestHeader['Authorization']) && empty($getRequestHeader['Authorization']) && $getRequestHeader['Authorization'] == null || !isset($getRequestHeader['authorization']) && empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] == null) {
                 return false;
             }
 
