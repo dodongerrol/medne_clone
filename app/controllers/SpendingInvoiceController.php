@@ -481,7 +481,7 @@ class SpendingInvoiceController extends \BaseController {
 			// } else {
 			// 	$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $request->get('customer_id'))->where('statement_status', $type)->orderBy('statement_date', 'desc')->paginate($limit);
 			// }
-
+			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();		
 			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
 
 			$pagination['current_page'] = $credits_statements->getCurrentPage();
@@ -491,6 +491,44 @@ class SpendingInvoiceController extends \BaseController {
 			$pagination['count'] = $credits_statements->count();
 			$format = [];
 
+			$total_due = 0;
+			
+			foreach ($all_data as $key => $data) {
+				$lite_plan = false;
+				$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
+
+				if($results['credits'] > 0 || $results['total_consultation'] > 0) {
+					$consultation_amount_due = 0;
+					// $company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
+					if((int)$data->lite_plan == 1 || $results['lite_plan'] == true) {
+						$lite_plan = true;
+					}
+
+					if($lite_plan == true) {
+						$consultation_amount_due_temp = DB::table('transaction_history')
+						->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
+						->where('spending_invoice_transactions.invoice_id', $data->statement_id)
+						->where('transaction_history.deleted', 0)
+						->where('transaction_history.paid', 1)
+						->where('transaction_history.lite_plan_enabled', 1)
+						->sum('transaction_history.co_paid_amount');
+						$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
+					}
+
+					if((int)$data->statement_status == 1) {
+						$total = round($results['credits'] + $results['total_consultation'], 2);
+						$amount_due = (float)$total - (float)$data->paid_amount;
+					} else {
+						$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
+						$total = $amount_due;
+					}
+
+					$amount_due = $amount_due < 0 ? 0 : $amount_due;
+					// array_push($format, $data);
+
+					$total_due += $amount_due;
+				}
+			}
 
 			foreach ($credits_statements as $key => $data) {
 				$lite_plan = false;
@@ -563,6 +601,7 @@ class SpendingInvoiceController extends \BaseController {
 			}
 
 			$pagination['data'] = $format;
+			$pagination['total_due'] = $total_due;
 			return $pagination;
 
 		} elseif ($input['type'] == 'plan') {
