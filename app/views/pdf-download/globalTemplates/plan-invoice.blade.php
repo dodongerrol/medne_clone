@@ -122,25 +122,27 @@
             {{$amount}}
           </td>
         </tr>
-        @foreach($dependents as $key => $dependent)
-        <tr>
-          <td style="padding: 5px 0;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Number of Dependent Accounts:</p>
-          </td>
-          <td style="text-align: right;">
-            {{$dependent['total_dependents']}}
-          </td>
-          <td style="text-align: right;">
-            {{$dependent['price']}}
-          </td>
-          <td style="text-align: right;">
-            No Tax
-          </td>
-          <td style="text-align: right;">
-            {{$dependent['amount']}}
-          </td>
-        </tr>
-        @endforeach
+        @if(isset($dependents))
+          @foreach($dependents as $key => $dependent)
+          <tr>
+            <td style="padding: 5px 0;">
+              <p style="font-size: 14px;line-height: 14px;margin: 0;">Number of Dependent Accounts:</p>
+            </td>
+            <td style="text-align: right;">
+              {{$dependent['total_dependents']}}
+            </td>
+            <td style="text-align: right;">
+              {{$dependent['price']}}
+            </td>
+            <td style="text-align: right;">
+              No Tax
+            </td>
+            <td style="text-align: right;">
+              {{$dependent['amount']}}
+            </td>
+          </tr>
+          @endforeach
+        @endif
         <tr>
           <td style="padding: 5px 0;">
             <p style="font-size: 14px;line-height: 14px;margin: 0;">Billing Frequency: Annual</p>
