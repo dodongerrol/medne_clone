@@ -83,5 +83,6 @@
                 </tbody>
             </table>
         </div>
+        @include('hr_dashboard.hr-login.partials.pagination')
     </div>
 </div>

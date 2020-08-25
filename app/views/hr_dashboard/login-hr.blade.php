@@ -133,7 +133,7 @@
 
 </body>
 
-
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
 {{ HTML::script('assets/hr-dashboard/js/calendar/moment/moment.js') }}
 {{ HTML::script('assets/hr-dashboard/js/calendar/moment/min/moment-with-locales.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/moment-timezone-with-data-2010-2020.min.js') }}
