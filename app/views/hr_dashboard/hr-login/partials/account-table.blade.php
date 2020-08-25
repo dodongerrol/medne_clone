@@ -24,8 +24,14 @@
                 <thead>
                     <th class="thead-v1"> Account Name </th>
                     <th class="thead-v1"> Company ID </th>
-                    <th class="thead-v1"> Total Enrolled Employees </th>
-                    <th class="thead-v1"> Total Enrolled Dependents </th>
+                    <th class="thead-v1">
+                        <p class="m-0"> Total Enrolled </p>
+                        <p class="m-0  leading-none"> Employees  </p>
+                    </th>
+                    <th class="thead-v1">
+                        <p class="m-0"> Total Enrolled </p>
+                        <p class="m-0 leading-none"> Dependents  </p>
+                    </th>
                     <th class="thead-v1"> Plan Type </th>
                 </thead>
                 <tbody>
