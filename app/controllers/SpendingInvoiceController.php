@@ -726,7 +726,7 @@ class SpendingInvoiceController extends \BaseController {
 							->orderBy('spending_deposit_credits.invoice_date', 'desc')
 	                       ->paginate($limit);
 	
-			return $deposits;
+			
 			$pagination = [];
 			$pagination['current_page'] = $deposits->getCurrentPage();
 			$pagination['last_page'] = $deposits->getLastPage();

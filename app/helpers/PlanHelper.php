@@ -7717,5 +7717,97 @@ class PlanHelper {
 
 		}
 	}
+
+	public static function getSpendingDeposit($id) 
+	{
+		$deposit = DB::table("spending_deposit_credits")->where("deposit_id", $id)->first();
+
+		if(!$deposit) {
+			return array('status' => FALSE, 'message' => 'Deposit not found.');
+		}
+
+		$data = [];
+
+		$contact = DB::table('customer_business_contact')
+		->where('customer_buy_start_id', $deposit->customer_id)
+		->first();
+
+		$data['email'] = $contact->work_email;
+		$data['phone']     = $contact->phone;
+		$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $deposit->customer_id)->first();
+		$data['company'] = ucwords($business_info->company_name);
+		$data['postal'] = $business_info->postal_code;
+
+		if($contact->billing_status == "true" || $contact->billing_status == true) {
+			$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+			$data['address'] = $business_info->company_address;
+		} else {
+			$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $deposit->customer_id)->first();
+			$data['name'] = ucwords($billing_contact->billing_name);
+			$data['address'] = $billing_contact->billing_address;
+		}
+
+		$percent = floatval($deposit->percent);
+		$wellness_percent = floatval($deposit->wellness_percent);
+		
+		$data['percent'] = $percent;
+		$data['medical_status'] = false;
+		$data['wellness_status'] = false;
+		$data['medical_deposit_amount'] = 0;
+		$medical_deposit_amount = 0;
+		$data['wellness_deposit_amount'] = 0;
+		$wellness_deposit_amount = 0;
+		$data['total_wellness'] = 0;
+		$data['total_medical'] = 0;
+
+		if($deposit->medical_credits > 0) {
+			$data['total_medical'] = $deposit->medical_credits;
+			$medical_deposit_amount = $deposit->medical_credits * $percent;
+			$data['medical_deposit_amount'] = number_format($medical_deposit_amount, 2);
+			$data['medical_status'] = true;
+		} 
+
+		if($deposit->welness_credits > 0) {
+			$data['total_wellness'] = $deposit->welness_credits;
+			$wellness_deposit_amount = $deposit->welness_credits * $wellness_percent;
+			$data['wellness_deposit_amount'] = number_format($wellness_deposit_amount, 2);
+			$data['wellness_status'] = true;
+		}
+
+		$total_price = $medical_deposit_amount + $wellness_deposit_amount;
+		$amount_due = $total_price - $deposit->amount_paid;
+		$data['price'] = number_format($total_price, 2);
+		$data['amount'] = number_format($total_price, 2);
+		$data['total'] = number_format($total_price, 2);
+		$data['amount_due'] = number_format($amount_due, 2);
+		$data['paid'] = (int)$deposit->payment_status == 1 ? true : false;
+		$data['notes'] = $deposit->payment_remarks;
+		$data['invoice_number'] = $deposit->deposit_number;
+		$data['invoice_date'] = date('F d, Y', strtotime($deposit->invoice_date));
+		$data['invoice_due'] = date('F d, Y', strtotime($deposit->invoice_due));
+		$data['active_plan_id'] = $deposit->customer_active_plan_id;
+		$data['currency_type'] = $deposit->currency_type;
+		$active_plan = DB::table("customer_active_plan")->where("customer_active_plan_id", $deposit->customer_active_plan_id)->first();
+
+		if($active_plan->account_type == "insurance_bundle") {
+			$data['account_type'] = 'Insurance Bundle';
+		} else if($active_plan->account_type == "stand_alone_plan") {
+			$data['account_type'] = 'Stand Alone Plan';
+		} else if($active_plan->account_type == "lite_plan") {
+			$data['account_type'] = 'Lite Plan';
+		} else {
+			$data['account_type'] = 'Trial Plan';
+		}
+
+		if((int)$deposit->payment_status == 1) {
+			$data['payment_date'] = date('F d, Y', strtotime($deposit->payment_date));
+			if($deposit->payment_remarks) {
+				$data['notes'] = $deposit->payment_remarks;
+			}
+		}
+
+
+		return $data;
+	}
 }
 ?>
