@@ -54,7 +54,33 @@ app.directive("accountSettingsDirective", [
           // invoice_date: new Date(),
         };
 
+        scope.setPhoneCode = () => {
+          alert('asdasds');
+          // scope.global_hrData.phone_code = code;
+        }
+
         scope.linkedAccountHeaders = ["Account Name", "Company ID", "Link Date", "Plan Type", "Primary Admin's email", "Action"];
+
+        scope.changePrimaryAdminModals = {
+          warn: 'change-primary-admin-warn-modal',
+          form: 'change-primary-admin-form-modal',
+          success: 'change-primary-admin-success'
+        }
+
+        scope.presentModal = (id, show = true) => {
+          $(`#${id}`).modal(show ? "show" : "hide");
+        };
+
+        scope.changeAdmin = () => {
+          scope.presentModal(
+            scope.changePrimaryAdminModals.form,
+            false
+          );
+          scope.presentModal(
+            scope.changePrimaryAdminModals.success,
+            true
+          );
+        }
 
         scope._updatePasswordBtn_ = function () {
           scope.global_passwordSuccess = false;

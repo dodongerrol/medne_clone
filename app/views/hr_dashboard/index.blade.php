@@ -213,6 +213,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/intlTelInput.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/app.js?_={{ $date->format('U') }}"></script>
+
 	<!-- Directives -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/introDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/dashboardDirective.js?_={{ $date->format('U') }}"></script>
@@ -285,8 +286,6 @@
 	<!-- ACCOUNT SETTINGS -->
 	<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/function.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/change-primary-admin.js?_={{ $date->format('U') }}"></script>
-
 
 	<!-- Company Profile -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/container/function.js?_={{ $date->format('U') }}"></script>
