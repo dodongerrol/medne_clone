@@ -288,7 +288,20 @@ class SpendingAccountController extends \BaseController {
 		if(empty($input['id']) || $input['id'] == null) {
 			return array('status' => false, 'message' => 'id is required.');
 		}
-		
+
+		if(empty($input['benefits_start']) || $input['benefits_start'] == null) {
+			return array('status' => false, 'message' => 'benefits_start is required.');
+		}
+
+		if(empty($input['benefits_end']) || $input['benefits_end'] == null) {
+			return array('status' => false, 'message' => 'benefits_end is required.');
+		}
+
+		if(empty($input['non_panel_payment_method']) || $input['non_panel_payment_method'] == null) {
+			return array('status' => false, 'message' => 'non_panel_payment_method is required.');
+		}
+
+		$non_panel_reimbursement = !empty($input['non_panel_reimbursement']) && $input['non_panel_reimbursement'] == true ? 1 : 0; 
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
 		if(!$customer) {
@@ -308,6 +321,10 @@ class SpendingAccountController extends \BaseController {
 		$update = array(
 			'updated_at' => date('Y-m-d H:i:s'),
 			'wellness_enable' => true,
+			'wellness_spending_start_date'      => date('Y-m-d', strtotime($data['benefits_start'])),
+			'wellness_spending_end_date'        => date('Y-m-d', strtotime($data['benefits_end'])),
+			'wellness_payment_method_non_panel' => $data['non_panel_payment_method'],
+			'wellness_reimbursement'            => $non_panel_reimbursement
 		);
 
 		$updateData = DB::table('spending_account_settings')
@@ -491,35 +508,48 @@ class SpendingAccountController extends \BaseController {
 		if(empty($input['end']) || $input['end'] == null) {
 			return array('status' => false, 'message' => 'end term is required.');
 		}
-	
+		
+		$limit = !empty($data['per_page']) ? $data['per_page'] : 5;
 		// get spending account activity
-		$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->get();
+		$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->paginate($limit);
+		
+		$pagination = [];
+		$pagination['current_page'] = $activites->getCurrentPage();
+		$pagination['last_page'] = $activites->getLastPage();
+		$pagination['total'] = $activites->getTotal();
+		$pagination['per_page'] = $activites->getPerPage();
+		$pagination['count'] = $activites->count();
+		$format = [];
 
 		foreach($activites as $key => $activity) {
 			if($activity->type == "added_purchase_credits") {
-			  $activity->label = 'Purchased Credits';
-			  $activity->type_status = "added";
+				$activity->label = 'Purchased Credits';
+				$activity->type_status = "added";
 			} else if($activity->type == "added_bonus_credits") {
-			  $activity->label = 'Bonus Credits';
-			  $activity->type_status = "added";
+				$activity->label = 'Bonus Credits';
+				$activity->type_status = "added";
 			} else if($activity->type == "carried_forward_renewal_credits") {
-			  $activity->label = 'Carried-forward Purchased Credits';
-			  $activity->type_status = "added";
+				$activity->label = 'Carried-forward Purchased Credits';
+				$activity->type_status = "added";
 			} else if($activity->type == "carried_forward_bonus_credits") {
-			  $activity->label = 'Bonus Credits';
-			  $activity->type_status = "added";
+				$activity->label = 'Bonus Credits';
+				$activity->type_status = "added";
 			} else if($activity->type == "deduct_panel_spending") {
-			  $activity->label = 'Panel Monthly Spending';
-			  $activity->type_status = "deduct";
+				$activity->label = 'Panel Monthly Spending';
+				$activity->type_status = "deduct";
 			} else if($activity->type == "deduct_non_panel_spending") {
-			  $activity->label = 'Non-Panel Spending';
-			  $activity->type_status = "deduct";
+				$activity->label = 'Non-Panel Spending';
+				$activity->type_status = "deduct";
 			} else if($activity->type == "deduct_non_panel_spending") {
-			  $activity->label = 'Refund';
-			  $activity->type_status = "deduct";
+				$activity->label = 'Refund';
+				$activity->type_status = "deduct";
 			}
-		  }
-		return ['status' => true, 'data' => $activites];
+
+			$format[] = $activity;
+		}
+
+		$pagination['data'] = $format;
+		return ['status' => true, 'data' => $pagination];
 	}
 
 	public function getMemberAllocationActivity( )
@@ -550,11 +580,28 @@ class SpendingAccountController extends \BaseController {
 		//do some format
 		foreach($credit_wallet_activity as $key => $activity) {
 			$info = DB::table('customer_business_information')->where('customer_buy_start_id', $activity->customer_id)->first();
+			
+			$label = null;
+			$type_status = null;
+
+			if($activity->type == "added_employee_credits") {
+				$label = "Member Enrollment";
+				$type_status = "add";
+			} else if($activity->type == "deducted_employee_credits") {
+				$label = "Entitlement Decreased";
+				$type_status = "deduct";
+			} else {
+				$label = "Member Removal";
+				$type_status = "deduct";
+			}
+
 			$temp = array(
 				'mednefits_credits_id'	=> $activity->mednefits_credits_id,
 				'customer_id'	=> $activity->customer_id,
 				'credit'	=> $activity->credit,
 				'type' => $activity->type,
+				'label'	=> $label,
+				'type_status'	=> $type_status,
 				'spending_type'	=> $activity->spending_type,
 				'currency_type' => $activity->currency_type,
 				'created_at' => date('j M Y', strtotime($activity->created_at)),
