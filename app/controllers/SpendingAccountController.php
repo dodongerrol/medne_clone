@@ -449,37 +449,65 @@ class SpendingAccountController extends \BaseController {
 			return array('status' => false, 'message' => 'type is required.');
 		}
 		
-		if(!in_array($input['type'], ['basic_plan', 'enterprise_plan', 'out_of_plan', 'stand_alone_plan', 'insurance_bundle'])) {
+		if(!in_array($input['type'], ['basic_plan', 'enterprise_plan', 'out_of_pocket', 'stand_alone_plan', 'insurance_bundle'])) {
 			return ['status' => true, 'message' => 'type should only be basic_plan, enterprise_plan, out_of_plan, stand_alone_plan or insurance_bundle'];
 		}
 
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
-		if($input['type'] != "enterprise_plan") {
-			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
-			
-			return [
-				'status' => true,
-				'spent' => $credits['credits'],
-				'currency_type' => $customer->currency_type
-			];
-		} else {
+		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+		// get wallet use
+		$medical = array(
+			'panel'     => $spending_account_settings->medical_payment_method_panel == "mednefits_credits" ? true : false,
+			'non_panel' => $spending_account_settings->medical_payment_method_non_panel == "mednefits_credits" ? true : false
+		);
+
+		// get wallet use
+		$wellness = array(
+			'panel'     => $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" ? true : false,
+			'non_panel' => $spending_account_settings->wellness_payment_method_non_panel == "mednefits_credits" ? true : false
+		);
+	
+		if($input['type'] == "enterprise_plan") {
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 			$user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
 			$total = 0;
 			$panel = 0;
 			$non_panel = 0;
-
+	  
 			foreach ($user_allocated as $key => $user) {
-				$data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $input['start'], $input['end']);
-				$total += $data['total'];
-				$panel += $data['panels'];
-				$non_panel += $data['non_panels'];
+			  $data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $input['start'], $input['end']);
+			  $total += $data['total'];
+			  $panel += $data['panels'];
+			  $non_panel += $data['non_panels'];
 			}
 			
 			return [
-				'total_panel'     => $panel,
-				'total_non_panel' => $non_panel,
-				'average' => sizeof($user_allocated) > 0 ? sizeof($user_allocated) / $total : 0
+			  'total_panel'     => $panel,
+			  'total_non_panel' => $non_panel,
+			  'average' => sizeof($user_allocated) > 0 && $total > 0 ? sizeof($user_allocated) / $total : 0,
+			  'medical'         => $medical,
+        	  'wellness'        => $wellness
+			];
+		} else if($input['type'] == "out_of_pocket"){
+			$credits = \MemberHelper::getTransactionSpent($customer_id, $input['start'], $input['end'], 'all', false);
+			
+			return [
+				'status' => true,
+				'spent' => $credits['credits'],
+				'currency_type' => $customer->currency_type,
+				'medical'         => $medical,
+        	  	'wellness'        => $wellness
+			];
+		} else {
+			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
+			
+			return [
+				'status' => true,
+				'spent' => $credits['credits'],
+				'currency_type' => $customer->currency_type,
+				'medical'         => $medical,
+        	  	'wellness'        => $wellness
 			];
 		}
 	}
@@ -491,6 +519,9 @@ class SpendingAccountController extends \BaseController {
 		$spending_account_settings = DB::table('spending_account_settings')
 										->where('customer_id', $customer_id)
 										->select('customer_id', 'medical_spending_start_date as start', 'medical_spending_end_date as end')
+										->groupBy('medical_spending_start_date')
+                                    	->orderBy('created_at', 'desc')
+                                    	->limit(2)
 										->get();
 		
 		return ['status' => true, 'data' => $spending_account_settings];
