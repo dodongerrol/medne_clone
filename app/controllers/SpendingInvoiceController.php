@@ -560,6 +560,7 @@ class SpendingInvoiceController extends \BaseController {
 						$total = $amount_due;
 					}
 
+					$type = null;
 					$amount_due = $amount_due < 0 ? 0 : $amount_due;
 					// array_push($format, $data);
 
@@ -573,7 +574,8 @@ class SpendingInvoiceController extends \BaseController {
 						'paid_date'				=> $data->paid_date ? date('j M Y', strtotime($data->paid_date)) : NULL,
 						'payment_amount' => number_format($data->paid_amount, 2),
 						'currency_type' => $data->currency_type,
-						'company_name' => $data->statement_company_name
+						'company_name' => $data->statement_company_name,
+						'Panel/Non-Panel' => 'Wellness Non-Panel'
 					);
 
 					array_push($format, $temp);
