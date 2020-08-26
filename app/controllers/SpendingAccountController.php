@@ -26,6 +26,12 @@ class SpendingAccountController extends \BaseController {
 			return ['status' => false, 'message' => 'no mednefits credits account for this customer'];
 		}
 
+		// get spending settings
+		$spending_account_settings = DB::table('spending_account_settings')
+								->where('customer_id', $customer_id)
+								->orderBy('created_at', 'desc')
+								->first();
+
 		$total_credits = 0;
 		$purchased_credits = 0;
 		$bonus_credits = 0;
@@ -65,6 +71,7 @@ class SpendingAccountController extends \BaseController {
 
 		$format = array(
 			'customer_id'           => $customer_id,
+			'id'                    => $spending_account_settings->spending_account_setting_id,
 			// 'mednefits_credits_id'  => $account_credits->id,
 			'total_credits'         => $total_credits,
 			'available_credits'     => $total_credits - $utilised_credits['credits'],
@@ -163,7 +170,8 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_submission' => (int)$spending_account_settings->medical_active_non_panel_claim == 1 ? true : false,
 				'non_panel_reimbursement' => (int)$spending_account_settings->medical_reimbursement == 1 ? true : false,
 				'benefits_coverage' => $spending_account_settings->wellness_benefits_coverage,
-				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false
+				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
+				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 1 ? false : true
 			);
 		} else {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'welenss', true);
@@ -181,11 +189,71 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_submission' => (int)$spending_account_settings->wellness_active_non_panel_claim == 1 ? true : false,
 				'non_panel_reimbursement' => (int)$spending_account_settings->wellness_reimbursement == 1 ? true : false,
 				'benefits_coverage' => (int)$spending_account_settings->wellness_enable == 1 ? $spending_account_settings->wellness_benefits_coverage : 'out_of_pocket',
-				'status'          => (int)$spending_account_settings->wellness_enable == 1 ? true : false
+				'status'          => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
+				'disable'         => (int)$spending_account_settings->wellness_activate_allocation == 1 ? false : true
 			);
 		}
 		
 		return ['status' => true, 'data' => $format];
+	}
+
+	public function activateDeactivateWallet( )
+	{
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+		
+		if(empty($input['id']) || $input['id'] == null) {
+			return array('status' => false, 'message' => 'id is required.');
+		}
+
+		if(empty($input['type']) || $input['type'] == null) {
+			return array('status' => false, 'message' => 'type is required.');
+		}
+		
+		if(!in_array($input['type'], ['medical', 'wellness'])) {
+			return ['status' => false, 'message' => 'only medical and wellness'];
+		}
+		
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+			if(!$customer) {
+				return ['status' => false, 'message' => 'customer does not exist'];
+		}
+		
+		// get spending settings
+			$spending_account_settings = DB::table('spending_account_settings')
+									->where('spending_account_setting_id', $input['id'])
+									->orderBy('created_at', 'desc')
+									->first();
+		
+		if(!$spending_account_settings) {
+			return ['status' => false, 'message' => 'spending account does not exits'];
+		}
+
+		$update = array(
+			'updated_at' => date('Y-m-d H:i:s')
+		);
+
+		$status = !empty($input['status']) && $input['status'] === true || !empty($input['status']) && $input['status'] === "true" ? 1 : 0;
+		if($input['type'] == "medical") {
+			$update['medical_activate_allocation'] = $status;
+		} else {
+			$update['wellness_activate_allocation'] = $status;
+		}
+
+		$updateData = DB::table('spending_account_settings')
+						->where('spending_account_setting_id', $input['id'])
+						->update($update);
+		
+		if($updateData) {
+			if($status == 1) {
+				return ['status' => true, 'message' => ucwords($input['type']).' wallet has been successfully reactivated.'];
+			} else {
+				return ['status' => true, 'message' => ucwords($input['type']).' wallet has been successfully deactivated.'];
+			}
+		}
+
+		return ['status' => false, 'message' => 'Failed to update wallet details.'];
 	}
 
 	public function updateWalletDetails( )
@@ -876,7 +944,6 @@ class SpendingAccountController extends \BaseController {
 	public function activateBasicPlan( )
 	{
 		$input = Input::all();
-		$input = Input::all();
 		$customer_id = PlanHelper::getCusomerIdToken();
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
@@ -924,5 +991,43 @@ class SpendingAccountController extends \BaseController {
 									->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)
 									->update($updateData);
 		return ['status' => true, 'message' => 'Mednefits Basic Plan has been successfully activated'];
+	}
+
+	public function enableDisableCreditsAccount( )
+	{
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return array('status' => false, 'message' => 'spending settings id is required.');
+		}
+		
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
+		}
+
+		// check if there is payment false
+		$account_credits = DB::table('mednefits_credits')
+							->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+							->where('mednefits_credits.customer_id', $customer_id)
+							->first();
+
+		if(!$account_credits) {
+			return ['status' => false, 'message' => 'Company does not have a Prepaid Credits Account.'];
+		}
+
+		$status = !empty($inpput['status']) && $inpput['status']=== true || !empty($inpput['status']) && $inpput['status'] === "true" ? 1 : 0;
+		
+		DB::table('spending_account_settings')
+			->where('spending_account_setting_id', $inpput['id'])
+			->update(['activate_mednefits_credit_account' => $status, 'updated_at' => date('Y-m-d H:i:s')]);
+		
+		if($status == 1) {
+			return ['status' => true, 'message' => 'Prepaid Credits Account has been successfully activated.'];
+		} else {
+			return ['status' => true, 'message' => 'Prepaid Credits Account has been successfully deactivated.'];
+		}
 	}
 }
