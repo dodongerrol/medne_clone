@@ -29,7 +29,7 @@ login.directive('loginSection', [
 				scope.ng_fail = false;
 				scope.showPassword = false;
 				scope.hr_id = null;
-				scope.showAccounts = true;
+				scope.showAccounts = false;
 				scope.accounts = [];
 				scope.token = null;
 
