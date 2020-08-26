@@ -520,6 +520,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_top_up_mednefits_credits', 'SpendingAccountController@createMednefitsCreditsTopUp');
 	// activate mednefis basic plan
 	Route::post('hr/activate_mednefits_basic_plan', 'SpendingAccountController@activateBasicPlan');
+	// wallet activation or deactivation
+	Route::post('hr/wallet_activate_deactivate', 'SpendingAccountController@activateDeactivateWallet');
+	// enable disable mednefits credits account
+	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
 });
 
 	// downloand plan invoice
