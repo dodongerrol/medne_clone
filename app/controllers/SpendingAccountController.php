@@ -524,7 +524,22 @@ class SpendingAccountController extends \BaseController {
                                     	->limit(2)
 										->get();
 		
-		return ['status' => true, 'data' => $spending_account_settings];
+										$spending_account_setting = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->orderBy('created_at', 'desc')
+										->first();
+		
+		$secondary_plan = null;
+		if($plan->account_type == "enterprise_plan" && (int)$spending_account_setting->wellness_reimbursement == 1) {
+		  if($spending_account_setting->wellness_benefits_coverage != "lite_plan") {
+			// update wellness benefits method;
+			DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_setting->spending_account_setting_id)->update(['wellness_benefits_coverage' => 'lite_plan']);
+			$secondary_plan = "lite_plan";
+		  } else {
+			DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_setting->spending_account_setting_id)->update(['wellness_benefits_coverage' => 'out_of_pocket']);
+		  }
+		}
+		return ['status' => true, 'data' => $spending_account_settings, 'account_type' => $plan->account_type, 'secondary_plan' => $secondary_plan];
 	}
 
 	public function spendingAccountActivities( )
