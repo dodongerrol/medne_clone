@@ -2133,5 +2133,27 @@ class MemberHelper
 			return false;
 		}
 	}
+
+	public function getTransactionSpent($customer_id, $start, $end)
+    {
+        $end = \PlanHelper::endDate($end);
+        $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+        $user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
+
+        $total_spent = 0;
+
+        foreach($user_allocated as $key => $user) {
+            $ids = StringHelper::getSubAccountsID($user);
+
+            // panel
+            $total_spent += DB::table('transaction_history')
+                        ->whereIn('UserID', $ids)
+                        ->where('procedure_cost', '>', 0)
+                        ->where('deleted', 0)
+                        ->sum('procedure_cost');
+        }
+
+        return $total_spent;
+    }
 }
 ?>

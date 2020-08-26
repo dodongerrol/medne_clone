@@ -449,37 +449,65 @@ class SpendingAccountController extends \BaseController {
 			return array('status' => false, 'message' => 'type is required.');
 		}
 		
-		if(!in_array($input['type'], ['basic_plan', 'enterprise_plan', 'out_of_plan', 'stand_alone_plan', 'insurance_bundle'])) {
+		if(!in_array($input['type'], ['basic_plan', 'enterprise_plan', 'out_of_pocket', 'stand_alone_plan', 'insurance_bundle'])) {
 			return ['status' => true, 'message' => 'type should only be basic_plan, enterprise_plan, out_of_plan, stand_alone_plan or insurance_bundle'];
 		}
 
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
-		if($input['type'] != "enterprise_plan") {
-			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
-			
-			return [
-				'status' => true,
-				'spent' => $credits['credits'],
-				'currency_type' => $customer->currency_type
-			];
-		} else {
+		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+		// get wallet use
+		$medical = array(
+			'panel'     => $spending_account_settings->medical_payment_method_panel == "mednefits_credits" ? true : false,
+			'non_panel' => $spending_account_settings->medical_payment_method_non_panel == "mednefits_credits" ? true : false
+		);
+
+		// get wallet use
+		$wellness = array(
+			'panel'     => $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" ? true : false,
+			'non_panel' => $spending_account_settings->wellness_payment_method_non_panel == "mednefits_credits" ? true : false
+		);
+	
+		if($input['type'] == "enterprise_plan") {
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 			$user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
 			$total = 0;
 			$panel = 0;
 			$non_panel = 0;
-
+	  
 			foreach ($user_allocated as $key => $user) {
-				$data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $input['start'], $input['end']);
-				$total += $data['total'];
-				$panel += $data['panels'];
-				$non_panel += $data['non_panels'];
+			  $data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $input['start'], $input['end']);
+			  $total += $data['total'];
+			  $panel += $data['panels'];
+			  $non_panel += $data['non_panels'];
 			}
 			
 			return [
-				'total_panel'     => $panel,
-				'total_non_panel' => $non_panel,
-				'average' => sizeof($user_allocated) > 0 ? sizeof($user_allocated) / $total : 0
+			  'total_panel'     => $panel,
+			  'total_non_panel' => $non_panel,
+			  'average' => sizeof($user_allocated) > 0 && $total > 0 ? sizeof($user_allocated) / $total : 0,
+			  'medical'         => $medical,
+        	  'wellness'        => $wellness
+			];
+		} else if($input['type'] == "out_of_pocket"){
+			$credits = \MemberHelper::getTransactionSpent($customer_id, $input['start'], $input['end'], 'all', false);
+			
+			return [
+				'status' => true,
+				'spent' => $credits['credits'],
+				'currency_type' => $customer->currency_type,
+				'medical'         => $medical,
+        	  	'wellness'        => $wellness
+			];
+		} else {
+			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
+			
+			return [
+				'status' => true,
+				'spent' => $credits['credits'],
+				'currency_type' => $customer->currency_type,
+				'medical'         => $medical,
+        	  	'wellness'        => $wellness
 			];
 		}
 	}
@@ -491,9 +519,34 @@ class SpendingAccountController extends \BaseController {
 		$spending_account_settings = DB::table('spending_account_settings')
 										->where('customer_id', $customer_id)
 										->select('customer_id', 'medical_spending_start_date as start', 'medical_spending_end_date as end')
+										->groupBy('medical_spending_start_date')
+                                    	->orderBy('created_at', 'desc')
+                                    	->limit(2)
 										->get();
 		
-		return ['status' => true, 'data' => $spending_account_settings];
+		$spending_account_setting = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->orderBy('created_at', 'desc')
+										->first();
+		
+		$secondary_plan = null;
+		if($plan->account_type == "enterprise_plan" && (int)$spending_account_setting->wellness_reimbursement == 1) {
+		  if($spending_account_setting->wellness_benefits_coverage != "lite_plan") {
+			// update wellness benefits method;
+			DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_setting->spending_account_setting_id)->update(['wellness_benefits_coverage' => 'lite_plan']);
+			$secondary_plan = "lite_plan";
+		  } else {
+			DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_setting->spending_account_setting_id)->update(['wellness_benefits_coverage' => 'out_of_pocket']);
+		  }
+		}
+		return [
+			'status' => true, 
+			'data' => $spending_account_settings,
+			'id'	=> $spending_account_setting->spending_account_setting_id,
+			'customer_id'	=> $customer_id,
+			'account_type' => $plan->account_type, 
+			'secondary_plan' => $secondary_plan
+		];
 	}
 
 	public function spendingAccountActivities( )
@@ -818,5 +871,58 @@ class SpendingAccountController extends \BaseController {
 			->whereNull('mednefits_credits_id')
 			->update(['mednefits_credits_id' => $mednefitsDataResult, 'status' => 1]);
 		return ['status' => true, 'message' => 'This top-up has been successfully completed.'];
+	}
+
+	public function activateBasicPlan( )
+	{
+		$input = Input::all();
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
+		}
+
+		$plan = DB::table('customer_plan')
+				->where('customer_buy_start_id', $customer_id)
+				->orderBy('created_at', 'desc')
+				->first();
+		
+		if($plan->account_type != "out_of_pocket") {
+			return ['status' => false, 'message' => 'only out of pocket can activate mednefits basic plan'];
+		}
+
+		// update plan details
+		$updateData = DB::table('customer_plan')
+					->where('customer_plan_id', $plan->customer_plan_id)
+					->update(['account_type' => 'lite_plan', 'updated_at' => date('Y-m-d H:i:s')]);
+		DB::table('customer_active_plan')
+					->where('plan_id', $plan->customer_plan_id)
+					->update(['account_type' => 'lite_plan', 'updated_at' => date('Y-m-d H:i:s')]);
+		
+		$spending_account_settings = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->orderBy('created_at', 'desc')
+										->first();
+		$updateData = array(
+			'medical_benefits_coverage'           => 'lite_plan',
+			'medical_payment_method_panel'        => 'giro',
+			'medical_payment_method_non_panel'    => 'giro',
+			'wellness_benefits_coverage'          => 'lite_plan',
+			'wellness_payment_method_panel'       => 'giro',
+			'wellness_payment_method_non_panel'   => 'giro',
+			'medical_spending_start_date'         => date('Y-m-d'),
+			'medical_spending_end_date'           => date('Y-m-d', strtotime('+12 months')),
+			'wellness_spending_start_date'        => date('Y-m-d'),
+			'wellness_spending_end_date'          => date('Y-m-d', strtotime('+12 months')),
+			'updated_at'                          => date('Y-m-d H:i:s')
+		);
+		
+		// spending settings
+		$updateSpendingSettings = DB::table('spending_account_settings')
+									->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)
+									->update($updateData);
+		return ['status' => true, 'message' => 'Mednefits Basic Plan has been successfully activated'];
 	}
 }
