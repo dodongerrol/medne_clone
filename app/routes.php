@@ -518,6 +518,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update_spending_payment_method', 'SpendingAccountController@updateSpendingPaymentMethod');
 	// create top up mednefits credits
 	Route::post('hr/create_top_up_mednefits_credits', 'SpendingAccountController@createMednefitsCreditsTopUp');
+	// activate mednefis basic plan
+	Route::post('hr/activate_mednefits_basic_plan', 'SpendingAccountController@activateBasicPlan');
 });
 
 	// downloand plan invoice

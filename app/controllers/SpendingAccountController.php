@@ -524,7 +524,7 @@ class SpendingAccountController extends \BaseController {
                                     	->limit(2)
 										->get();
 		
-										$spending_account_setting = DB::table('spending_account_settings')
+		$spending_account_setting = DB::table('spending_account_settings')
 										->where('customer_id', $customer_id)
 										->orderBy('created_at', 'desc')
 										->first();
@@ -539,7 +539,14 @@ class SpendingAccountController extends \BaseController {
 			DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_setting->spending_account_setting_id)->update(['wellness_benefits_coverage' => 'out_of_pocket']);
 		  }
 		}
-		return ['status' => true, 'data' => $spending_account_settings, 'account_type' => $plan->account_type, 'secondary_plan' => $secondary_plan];
+		return [
+			'status' => true, 
+			'data' => $spending_account_settings,
+			'id'	=> $spending_account_setting->spending_account_setting_id,
+			'customer_id'	=> $customer_id,
+			'account_type' => $plan->account_type, 
+			'secondary_plan' => $secondary_plan
+		];
 	}
 
 	public function spendingAccountActivities( )
@@ -864,5 +871,58 @@ class SpendingAccountController extends \BaseController {
 			->whereNull('mednefits_credits_id')
 			->update(['mednefits_credits_id' => $mednefitsDataResult, 'status' => 1]);
 		return ['status' => true, 'message' => 'This top-up has been successfully completed.'];
+	}
+
+	public function activateBasicPlan( )
+	{
+		$input = Input::all();
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
+		}
+
+		$plan = DB::table('customer_plan')
+				->where('customer_buy_start_id', $customer_id)
+				->orderBy('created_at', 'desc')
+				->first();
+		
+		if($plan->account_type != "out_of_pocket") {
+			return ['status' => false, 'message' => 'only out of pocket can activate mednefits basic plan'];
+		}
+
+		// update plan details
+		$updateData = DB::table('customer_plan')
+					->where('customer_plan_id', $plan->customer_plan_id)
+					->update(['account_type' => 'lite_plan', 'updated_at' => date('Y-m-d H:i:s')]);
+		DB::table('customer_active_plan')
+					->where('plan_id', $plan->customer_plan_id)
+					->update(['account_type' => 'lite_plan', 'updated_at' => date('Y-m-d H:i:s')]);
+		
+		$spending_account_settings = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->orderBy('created_at', 'desc')
+										->first();
+		$updateData = array(
+			'medical_benefits_coverage'           => 'lite_plan',
+			'medical_payment_method_panel'        => 'giro',
+			'medical_payment_method_non_panel'    => 'giro',
+			'wellness_benefits_coverage'          => 'lite_plan',
+			'wellness_payment_method_panel'       => 'giro',
+			'wellness_payment_method_non_panel'   => 'giro',
+			'medical_spending_start_date'         => date('Y-m-d'),
+			'medical_spending_end_date'           => date('Y-m-d', strtotime('+12 months')),
+			'wellness_spending_start_date'        => date('Y-m-d'),
+			'wellness_spending_end_date'          => date('Y-m-d', strtotime('+12 months')),
+			'updated_at'                          => date('Y-m-d H:i:s')
+		);
+		
+		// spending settings
+		$updateSpendingSettings = DB::table('spending_account_settings')
+									->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)
+									->update($updateData);
+		return ['status' => true, 'message' => 'Mednefits Basic Plan has been successfully activated'];
 	}
 }
