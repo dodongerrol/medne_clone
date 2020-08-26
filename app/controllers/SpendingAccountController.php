@@ -596,7 +596,11 @@ class SpendingAccountController extends \BaseController {
 										->where('customer_id', $customer_id)
 										->orderBy('created_at', 'desc')
 										->first();
-		
+
+		$plan = DB::table('customer_plan')
+					->where('customer_buy_start_id', $customer_id)
+					->orderBy('created_at', 'desc')
+					->first();
 		$secondary_plan = null;
 		if($plan->account_type == "enterprise_plan" && (int)$spending_account_setting->wellness_reimbursement == 1) {
 		  if($spending_account_setting->wellness_benefits_coverage != "lite_plan") {
