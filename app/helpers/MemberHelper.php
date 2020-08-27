@@ -1597,7 +1597,10 @@ class MemberHelper
 		);
 
 		try {
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			$user_plan_history->createUserPlanHistory($user_plan_history_data);
 
 			if($plan_active->account_type != "enterprise_plan")	{
@@ -1628,7 +1631,7 @@ class MemberHelper
 				'amount'					=> $amount
 			);
 
-			if($plan_active->account_type == "lite_plan") {
+			if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 				$data['refund_status'] = 2;
 				$data['keep_seat']	= 1;
 				$data['vacate_seat']	= 1;
@@ -1762,7 +1765,7 @@ class MemberHelper
 			'amount'					=> $amount
 		);
 
-		if($plan_active->account_type == "lite_plan") {
+		if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 			$data['refund_status'] = 2;
 			$data['keep_seat']	= 1;
 			$data['vacate_seat']	= 1;
@@ -1773,7 +1776,10 @@ class MemberHelper
 
 		try {
 			$withdraw->createPlanWithdraw($data);
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			PlanHelper::revemoDependentAccounts($user_id, date('Y-m-d', strtotime($expiry_date)));
 			return TRUE;
 		} catch(Exception $e) {
