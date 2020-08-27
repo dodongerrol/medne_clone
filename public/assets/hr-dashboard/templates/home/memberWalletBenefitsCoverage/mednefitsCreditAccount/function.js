@@ -89,7 +89,7 @@ app.directive('mednefitsCreditAccountDirective', [
           hrSettings.fetchMednefitsActivitiesData( scope.currentTermStartDate, scope.currentTermEndDate )
             .then(function(response){
               console.log(response);
-              scope.mednefitsActivitiesData = response.data.data;
+              scope.mednefitsActivitiesData = response.data.data.data;
               // console.log(scope.mednefitsActivitiesData);
             })
         }

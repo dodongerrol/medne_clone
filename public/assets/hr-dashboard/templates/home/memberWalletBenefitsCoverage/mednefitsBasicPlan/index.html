@@ -21,7 +21,7 @@
       </div>
     </div>
     <div>
-      <button>Save</button>
+      <!-- <!-- <button>Save</button> --> 
     </div>
   </div>
   <div class="mwbc-box-container">
@@ -88,7 +88,7 @@
               <span class="available-credits-container dp-flex-ai">
                 <h5 class="flex-1 member-bold-text">Mednefits Credits</h5>
                 <div>
-                  <button class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                  <button ng-click="editMednefitsCredits()" class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
                 </div>
               </span>
               <p class="mca-text">Mednefits Credits is held in Mednefits Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
@@ -112,7 +112,7 @@
   </div>
 
   <div class="modal fade spending-account-modal" id="edit-payment-methods-modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div ng-if="true" class="modal-dialog medical-wellness-wallet-container" role="document" style="margin-top: 200px;">
+    <div ng-if="!isConfirmPaymentShow" class="modal-dialog medical-wellness-wallet-container" role="document" style="margin-top: 200px;">
       <div class="modal-content">
         <form>
           <div class="modal-header">
@@ -128,21 +128,21 @@
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">GIRO</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.panel_payment_method" value="giro" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Bank Transfer/PayNow</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.panel_payment_method" value="bank_transfer" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Mednefits Credits</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.panel_payment_method" value="mednefits_credits" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
@@ -154,21 +154,21 @@
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">GIRO</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.non_panel_payment_method" value="giro" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Bank Transfer/PayNow</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.non_panel_payment_method" value="bank_transfer" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Mednefits Credits</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.non_panel_payment_method" value="mednefits_credits" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
@@ -186,21 +186,21 @@
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">GIRO</span>
-                        <input type="checkbox">
+                        <input ng-model="wellness_wallet_details.non_panel_payment_method" value="giro" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Bank Transfer/PayNow</span>
-                        <input type="checkbox">
+                        <input ng-model="wellness_wallet_details.non_panel_payment_method" value="bank_transfer" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Mednefits Credits</span>
-                        <input type="checkbox">
+                        <input ng-model="wellness_wallet_details.non_panel_payment_method" value="mednefits_credits" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
@@ -211,13 +211,13 @@
           </div>
           <div class="modal-footer">
             <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
-            <button ng-if="true" class="btn-update">Confirm</button>
+            <button ng-if="true" ng-click="updatePaymentMethods('update')" class="btn-update">Update</button>
             <button ng-if="false" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
           </div>
         </form>
       </div>
     </div>
-    <div ng-if="false" class="modal-dialog spending-account-modal" role="document" style="margin-top: 280px">
+    <div ng-if="isConfirmPaymentShow" class="modal-dialog spending-account-modal" role="document" style="margin-top: 280px">
       <div class="modal-content">
         <form>
           <div class="modal-header">
@@ -235,7 +235,7 @@
           </div>
           <div class="modal-footer">
             <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
-            <button ng-if="true" class="btn-update">Confirm</button>
+            <button ng-if="true" ng-click="updatePaymentMethods('confirm')" class="btn-update">Confirm</button>
             <button ng-if="false" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
           </div>
         </form>

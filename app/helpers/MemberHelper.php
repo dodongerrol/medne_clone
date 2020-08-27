@@ -1597,7 +1597,10 @@ class MemberHelper
 		);
 
 		try {
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			$user_plan_history->createUserPlanHistory($user_plan_history_data);
 
 			if($plan_active->account_type != "enterprise_plan")	{
@@ -1628,7 +1631,7 @@ class MemberHelper
 				'amount'					=> $amount
 			);
 
-			if($plan_active->account_type == "lite_plan") {
+			if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 				$data['refund_status'] = 2;
 				$data['keep_seat']	= 1;
 				$data['vacate_seat']	= 1;
@@ -1762,7 +1765,7 @@ class MemberHelper
 			'amount'					=> $amount
 		);
 
-		if($plan_active->account_type == "lite_plan") {
+		if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 			$data['refund_status'] = 2;
 			$data['keep_seat']	= 1;
 			$data['vacate_seat']	= 1;
@@ -1773,7 +1776,10 @@ class MemberHelper
 
 		try {
 			$withdraw->createPlanWithdraw($data);
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			PlanHelper::revemoDependentAccounts($user_id, date('Y-m-d', strtotime($expiry_date)));
 			return TRUE;
 		} catch(Exception $e) {
@@ -2154,6 +2160,33 @@ class MemberHelper
         }
 
         return $total_spent;
-    }
+	}
+	
+	public static function getMemberWalletValidity($member_id, $spending_type)
+	{
+		$today = date('Y-m-d');
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if(!$user_plan_history) {
+			return false;
+		}
+
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = date('Y-m-d', strtotime($user_plan_history->date));
+
+		if($spending_type == "medical") {
+			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		} else {
+			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		}
+
+		$end = PlanHelper::endDate($end);
+		if($start <= $today && $end >= $today) {
+			return true;
+		}
+
+		return false;
+	}
 }
 ?>

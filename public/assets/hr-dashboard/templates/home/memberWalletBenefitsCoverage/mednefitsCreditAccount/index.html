@@ -18,9 +18,9 @@
       </div>
       
       
-      <!-- <div>
+      <div>
         <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
-      </div> -->
+      </div>
     </div>
     <div>
       <!-- <button>Save</button> -->
@@ -189,7 +189,7 @@
                 <span ng-if="list.type == 'added_bonus_credits'">Bonus Credits</span>
                 <span ng-if="list.type == 'added_purchase_credits'">Purchased Credits</span>
               </td>
-              <td class="amount-value">+ <span class="currency-type" ng-bind="list.currency_type">SGD</span> <span ng-bind="list.credit">20,000.00</span></td>
+              <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td>
             </tr>
           </tbody>
         </table>

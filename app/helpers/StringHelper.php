@@ -183,7 +183,7 @@ class StringHelper{
                 return FALSE;
             }
 
-            if($result) {
+            if($result && isset($result->hr_dashboard_id)) {
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('hr_dashboard_id', $result->hr_dashboard_id)
                             // ->where('active', 1)

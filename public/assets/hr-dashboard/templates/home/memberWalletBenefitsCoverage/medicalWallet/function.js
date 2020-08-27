@@ -16,6 +16,7 @@ app.directive('memberMedicalWalletDirective', [
 				scope.nonPanelGiroStatus = false;
 				scope.nonPanelBankTransfer = false;
 				scope.nonPanelMednefitsCredits = false;
+				scope.defaultDateTerms = {};
 
 				scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
@@ -46,6 +47,7 @@ app.directive('memberMedicalWalletDirective', [
             });
 						
 						scope.getMemberWalletData(scope.defaultDateTerms);
+						scope.getMemberActivity(scope.defaultDateTerms);
           })
 				}
 				
@@ -66,6 +68,7 @@ app.directive('memberMedicalWalletDirective', [
         }
 
 				scope.getMemberWalletData = function ( data ) {
+					console.log( data );
 					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
           scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
           scope.showLoading();
@@ -99,25 +102,19 @@ app.directive('memberMedicalWalletDirective', [
 					}
 				}
 
-				scope.togglePaymentMethods = function ( type, opt ) {
-					if ( type == 'panel_giro' ) {
-						scope.panelGiroStatus = opt;
+				scope.panelPaymentMethods = function ( opt ) {
+					if (scope.medicalWalletData.panel_payment_method != opt) {
+						scope._saveButtonTrigger_();
+						console.log('save button trigger');
 					}
-					if ( type == 'panel_bank_transfer' ) {
-						scope.panelBankTransfer = opt;
+					scope.medicalWalletData.panel_payment_method = opt;
+				}
+				scope.nonPanelPaymentMethod = function ( opt ) {
+					if (scope.medicalWalletData.non_panel_payment_method != opt) {
+						scope._saveButtonTrigger_();
+						// console.log('save button trigger');
 					}
-					if ( type == 'panel_mednefits_credits' ) {
-						scope.panelMednefitsCredits = opt;
-					}
-					if ( type == 'non_panel_giro' ) {
-						scope.nonPanelGiroStatus = opt;
-					}
-					if ( type == 'non_panel_bank_transfer' ) {
-						scope.nonPanelBankTransfer = opt;
-					}
-					if ( type == 'non_panel_mednefits_credits' ) {
-						scope.nonPanelMednefitsCredits = opt;
-					}
+					scope.medicalWalletData.non_panel_payment_method = opt;
 				}
 
 				scope.toggleMednefitsCredits = function ( type ) {
@@ -145,6 +142,45 @@ app.directive('memberMedicalWalletDirective', [
 					if ( type == 'non-panel-submission' ) {
 						scope.medicalWalletData.non_panel_submission = opt;
 					}
+				}
+
+				scope.getMemberActivity = function ( data ) {
+					console.log(data);
+					data.type = 'medical';
+					
+					hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type )
+            .then(function(response){
+							console.log(response);
+							scope.activity_pagination = response;
+							scope.activity_data = response.data.data;
+							scope.hideLoading();
+            })
+				}
+
+				scope._saveWallet_ = function () {
+
+					let data = {
+						id: scope.medicalWalletData.id,
+						customer_id: scope.medicalWalletData.customer_id,
+						type:'medical',
+						start: scope.medicalWalletData.benefits_start,
+						end: scope.medicalWalletData.benefits_end,
+						active_non_panel_claim:scope.medicalWalletData.non_panel_submission,
+						reimbursement:scope.medicalWalletData.non_panel_reimbursement,
+						payment_method_panel:scope.medicalWalletData.panel_payment_method,
+						payment_method_non_panel:scope.medicalWalletData.non_panel_payment_method,
+					}
+
+					hrSettings.updateMemberWallet( data )
+					.then(function(response){
+						console.log(response);
+						scope.getMemberWalletData( scope.selectedTerm );
+						scope.hideLoading();
+					})
+				}
+
+				scope._saveButtonTrigger_ = function () {
+					scope.isSaveEnable = true;
 				}
 
 				scope.showLoading = function () {
