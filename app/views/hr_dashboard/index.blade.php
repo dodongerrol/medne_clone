@@ -88,7 +88,7 @@
 	<script src="//fast.appcues.com/57952.js"></script>
 
 </head>
-<body>
+<body class="body-reset">
 	<div id="main-section-container">
 		<div ui-view="navigation" ng-controller="checkCtrls"></div>
 		<div class="main-ui-view" ui-view="main"></div>
@@ -290,6 +290,7 @@
 	<!-- Company Profile -->
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/container/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/constants.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/function.js?_={{ $date->format('U') }}"></script>
 
 
