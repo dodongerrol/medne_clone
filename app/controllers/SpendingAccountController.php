@@ -523,7 +523,7 @@ class SpendingAccountController extends \BaseController {
 
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$plan = DB::table('customer_plan')->where('customer_buy_start')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
 		// get wallet use
 		$medical = array(
