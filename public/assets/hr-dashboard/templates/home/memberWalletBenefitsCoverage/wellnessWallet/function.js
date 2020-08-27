@@ -15,6 +15,8 @@ app.directive('memberWellnessWalletDirective', [
 				scope.paymentGiroStatus = false;
 				scope.paymentBankTransferStatus = false;
 				scope.paymentMednefitsCreditsStatus = false;
+				scope.isWellnessWalletShow = false;
+				scope.isSaveEnable = false;
 				// scope.medicalWalletData = {
 				// 	non_panel_reimbursement : false,
 				// }
@@ -28,7 +30,7 @@ app.directive('memberWellnessWalletDirective', [
           .then(function(response){
             scope.dateTerm = response.data.data;
             // console.log(scope.dateTerm);
-
+						// console.log(scope.dateTerm.length);
             // scope.currentTerm = scope.dateTerm.slice(-1).pop();
             // console.log(scope.currentTerm );
 
@@ -51,6 +53,8 @@ app.directive('memberWellnessWalletDirective', [
             });
 						
 						scope.getMemberWalletData(scope.defaultDateTerms);
+						scope.getMemberActivity(scope.defaultDateTerms);
+						scope.getMedicalWalletData(scope.defaultDateTerms);
           })
 				}
 
@@ -77,13 +81,32 @@ app.directive('memberWellnessWalletDirective', [
 					scope.showLoading();
           hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'wellness' )
             .then(function(response){
+							console.log(response);
 							scope.wellnessWalletData = response.data.data;
 							scope.wellnessWalletData.roll_over = scope.wellnessWalletData.roll_over.toString();
 							scope.wellnessWalletData.benefits_start = moment(scope.wellnessWalletData.benefits_start).format('DD/MM/YYYY');
 							scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
 							console.log(scope.wellnessWalletData);
+							console.log(scope.wellnessWalletData.non_panel_payment_method);
 							
 							scope.hideLoading();
+            })
+				}
+				// start and end date for activating wellness
+				scope.getMedicalWalletData = function ( data ) {
+					// console.log(data);
+					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
+          scope.currentTermEndDate = moment(data.end ).format('YYYY-MM-DD');
+					
+					// scope.showLoading();
+          hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical' )
+            .then(function(response){
+							scope.medicalWalletData = response.data.data;
+							scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
+							scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
+							// console.log(scope.medicalWalletData);
+							
+							// scope.hideLoading();
             })
 				}
 
@@ -135,11 +158,111 @@ app.directive('memberWellnessWalletDirective', [
 
 				scope.toggleNonPanelClaim = function ( type,opt ) {
 					if ( type == 'non-panel-reimbursement' ) {
-						scope.medicalWalletData.non_panel_reimbursement = opt;
+						scope.wellnessWalletData.non_panel_reimbursement = opt;
+						console.log(scope.wellnessWalletData.non_panel_reimbursement);
 					}
 					if ( type == 'non-panel-submission' ) {
-						scope.medicalWalletData.non_panel_submission = opt;
+						scope.wellnessWalletData.non_panel_submission = opt;
 					}
+				}
+
+				scope._nonPanelPaymentMethod_ = function ( opt ) {
+					if (scope.wellnessWalletData.non_panel_payment_method != opt) {
+						scope._saveButtonTrigger_();
+					}
+        	scope.wellnessWalletData.non_panel_payment_method = opt;
+				}
+
+				scope.getMemberActivity = function ( data ) {
+					// console.log(data);
+					data.type = 'wellness';
+					
+					hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type )
+            .then(function(response){
+							// console.log(response);
+							scope.activity_pagination = response;
+							scope.activity_data = response.data.data;
+							scope.hideLoading();
+            })
+				}
+
+				scope._saveWallet_ = function () {
+
+					let data = {
+						id: scope.wellnessWalletData.id,
+						customer_id: scope.wellnessWalletData.customer_id,
+						type:'wellness',
+						start: scope.wellnessWalletData.benefits_start,
+						end: scope.wellnessWalletData.benefits_end,
+						active_non_panel_claim:scope.wellnessWalletData.non_panel_submission,
+						reimbursement:scope.wellnessWalletData.non_panel_reimbursement,
+						payment_method_panel:scope.wellnessWalletData.panel_payment_method,
+						payment_method_non_panel:scope.wellnessWalletData.non_panel_payment_method,
+					}
+
+					hrSettings.updateMemberWallet( data )
+					.then(function(response){
+						console.log(response);
+						scope.isSaveEnable = false;
+						scope.hideLoading();
+					})
+				}
+
+				scope.activeWellnessWallet = function ( type ) {
+					if ( type == 'active-wellness-wallet' ) {
+						scope.isWellnessWalletShow = true;
+					}
+					if ( type == 'cancel' ) {
+						scope.isWellnessWalletShow = false;
+					}
+
+					setTimeout(() => {
+						var dt = new Date();
+						// dt.setFullYear(new Date().getFullYear()-18);
+						$('.datepicker').datepicker({
+							format: 'dd/mm/yyyy',
+							endDate: dt
+						});
+	
+						$('.datepicker').datepicker().on('hide', function (evt) {
+							var val = $(this).val();
+							if (val != "") {
+								$(this).datepicker('setDate', val);
+							}
+						})
+					}, 300);
+
+					scope.getMedicalWalletData(scope.defaultDateTerms);
+				}
+
+				scope.activeWellnessMethod = function ( opt ) {
+					if (scope.reim_payment_method != opt) {
+						scope._saveButtonTrigger_();
+						// console.log('save button trigger');
+					}
+					scope.reim_payment_method = opt;
+				}
+
+				scope.confirmWellnessWallet = function () {
+					let data = { 
+						benefits_start: moment(scope.medicalWalletData.benefits_start).format('YYYY-MM-DD'),
+						benefits_end: moment(scope.medicalWalletData.benefits_end).format('YYYY-MM-DD'),
+						non_panel_payment_method: scope.reim_payment_method,
+						non_panel_reimbursement: scope.reimbursementStatus,
+					}
+
+					console.log(data);
+					scope.showLoading();
+					hrSettings.updateWellnessWallet( data )
+					.then(function(response){
+						console.log(response);
+						$('#activate-member-modal').modal('hide');
+						scope.hideLoading();
+					})
+				}
+
+				scope._saveButtonTrigger_ = function () {
+					scope.isSaveEnable = true;
 				}
 
 				scope.showLoading = function () {

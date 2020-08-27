@@ -69,3 +69,7 @@
 .member-wellness-wallet-wrapper .mwbc-card-box-container {
   width: 380px;
 }
+
+.member-wellness-wallet-wrapper .activate-well-btn {
+  margin: 10px 0 0;
+}

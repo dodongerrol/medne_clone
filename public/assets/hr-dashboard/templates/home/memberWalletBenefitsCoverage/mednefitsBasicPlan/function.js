@@ -11,7 +11,14 @@ app.directive('mednefitsBasicPlanDirective', [
 				console.log($location);
 
         scope.showLastTermSelector = false;
-        
+        scope.isConfirmPaymentShow = false;
+        scope.medical_wallet_details = {
+          panel_payment_method: 'mednefits_credits',
+          non_panel_payment_method: 'mednefits_credits',
+        }
+        scope.wellness_wallet_details = {
+          non_panel_payment_method: 'mednefits_credits',
+        }
 
         scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
@@ -91,8 +98,41 @@ app.directive('mednefitsBasicPlanDirective', [
 
         scope.toggleFunds = function ( ) {
           $('.credits-tooltip-container.total-spent').toggle();
-				}
+        }
+        
+        scope.medicalPanel = function ( opt ) {
+          scope.medicalPanelValue = opt;
+          console.log(scope.medicalPanelValue);
+        }
 
+        scope.editMednefitsCredits = function () {
+          scope.isConfirmPaymentShow = false;
+        }
+
+        scope.updatePaymentMethods = function ( type ) {
+          if ( type == 'update' ) {
+            scope.isConfirmPaymentShow = true;
+          }
+          if ( type == 'confirm' ) {
+            let data = {
+              id: 1,
+              customer_id: 334,
+              medical_panel_payment_method: scope.medical_wallet_details.panel_payment_method,
+              medical_non_panel_payment_method: scope.medical_wallet_details.non_panel_payment_method,
+              wellness_non_panel_payment_method: scope.wellness_wallet_details.non_panel_payment_method,
+            }
+            console.log(data);
+            scope.showLoading();
+            hrSettings.updatePaymentMethods( data )
+            .then(function(response){
+              console.log(response);
+              if ( response.data.status == true ) {
+                $('#edit-payment-methods-modal').modal('hide');
+                scope.hideLoading();
+              }							
+            })
+          }
+        }
 
         scope.showLoading = function () {
           $(".circle-loader").fadeIn();

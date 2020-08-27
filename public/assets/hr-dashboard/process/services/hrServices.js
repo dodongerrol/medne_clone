@@ -481,6 +481,26 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end );
   }
 
+  // Medical and Wellness Wallent Activity Table
+  hrFactory.fetchMemberWalletActivitiesData = function ( id,type ) {
+    return $http.get( serverUrl.url + "/hr/get_member_allocation_activity/?customer_id=" + id + "&spending_type=" + type );
+  }
+
+  // Member save wallet
+  hrFactory.updateMemberWallet = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_member_wallet_details", data);
+  }
+
+  // Active wellness wallet
+  hrFactory.updateWellnessWallet = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/activate_wellness_wallet_details", data);
+  }
+
+  // confirm payment methods
+  hrFactory.updatePaymentMethods = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_spending_payment_method", data);
+  }
+
   // Benefits Coverage
   hrFactory.fetchBenefitsCoverageData = function ( start,end,type ) {
     return $http.get( serverUrl.url + "/hr/get_benefits_coverage_details/?start=" + start + "&end=" + end + "&type=" + type );

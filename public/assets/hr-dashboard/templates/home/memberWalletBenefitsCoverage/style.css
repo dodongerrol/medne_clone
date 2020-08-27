@@ -414,3 +414,14 @@
 .credits-tooltip-container.total-member-transaction {
   display: none;
 }
+
+.member-activities-table-container .amount-value.add {
+  color: #3F9D59;
+}
+.member-activities-table-container .amount-value.deduct {
+  color: #EB635D;
+}
+.show-details-on-container button.btnActive {
+  background-color: #0392CF;
+  border-color: transparent;
+}

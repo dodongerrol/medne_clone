@@ -21,7 +21,7 @@
       </div>
     </div>
     <div>
-      <button>Save</button>
+      <button ng-class="{'btnActive': isSaveEnable == true}" ng-disabled="isSaveEnable == false" ng-click="_saveWallet_()">Save</button>
     </div>
   </div>
   <div class="mwbc-box-container">
@@ -96,21 +96,21 @@
       <div>
         <label>Benefits Start Date</label>
         <div class="benefits-input-wrapper start-date">
-          <input class="datepicker" ng-model="medicalWalletData.benefits_start" type="text">
+          <input ng-change="_saveButtonTrigger_()" class="datepicker" ng-model="medicalWalletData.benefits_start" type="text">
           <img src="../../assets/hr-dashboard/img/calendar.png">
         </div>
       </div>
       <div>
         <label>Benefits End Date</label>
         <div class="benefits-input-wrapper end-date">
-          <input class="datepicker" ng-model="medicalWalletData.benefits_end" type="text">
+          <input ng-change="_saveButtonTrigger_()" class="datepicker" ng-model="medicalWalletData.benefits_end" type="text">
           <img src="../../assets/hr-dashboard/img/calendar.png">
         </div>
       </div>
       <div>
         <label>Rollover</label>
         <div class="benefits-input-wrapper rollover">
-          <select ng-model="medicalWalletData.roll_over">
+          <select ng-change="_saveButtonTrigger_()" ng-model="medicalWalletData.roll_over">
             <option value="false">No</option>
             <option value="true">Yes</option>
           </select>
@@ -120,7 +120,7 @@
       <div>
         <label>Deposits</label>
         <div class="benefits-input-wrapper deposits">
-          <input type="text">
+          <input ng-change="_saveButtonTrigger_()" ng-model="medicalWalletData.deposits" type="text">
           <span>%</span>
         </div>
       </div>
@@ -153,26 +153,36 @@
         <h5 class="member-bold-text">Mednefits Panel</h5>
         <div class="dp-flex-ai">
           <div class="flex-1">GIRO</div>
-          <div ng-class="{'on' : panelGiroStatus == true,'off' : panelGiroStatus == false }" class="on-off-container">
-            <button ng-click="togglePaymentMethods( 'panel_giro',true )" ng-class="{'on' : panelGiroStatus == true }" class="">
+          <div ng-class="{'on' : medicalWalletData.panel_payment_method == 'giro','off' : medicalWalletData.panel_payment_method != 'giro' }" class="on-off-container">
+            
+            <button ng-click="panelPaymentMethods( 'giro' )" ng-class="{'on' : medicalWalletData.panel_payment_method == 'giro' }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="togglePaymentMethods( 'panel_giro',false )" ng-class="{'off' : panelGiroStatus == false }" class="">
+            <button ng-if="medicalWalletData.panel_payment_method == 'giro'" ng-click="panelPaymentMethods( false )" ng-class="{'off' : medicalWalletData.panel_payment_method != 'giro' }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
+            <button ng-if="medicalWalletData.panel_payment_method != 'giro'" ng-click="panelPaymentMethods( medicalWalletData.panel_payment_method )" ng-class="{'off' : medicalWalletData.panel_payment_method != 'giro' }" class="">
+              <img src="../../assets/hr-dashboard/img/new-close-icon.png">
+            </button>
+
           </div>
         </div>
         <div class="dp-flex-ai">
           <div class="flex-1">Bank Transfer/PayNow</div>
-          <div ng-class="{'on' : panelBankTransfer == true,'off' : panelBankTransfer == false }" class="on-off-container">
-            <button ng-click="togglePaymentMethods( 'panel_bank_transfer',true )" ng-class="{'on' : panelBankTransfer == true }" class="">
+          <div ng-class="{'on' : medicalWalletData.panel_payment_method == 'bank_transfer','off' : medicalWalletData.panel_payment_method != 'bank_transfer' }" class="on-off-container">
+        
+            <button ng-click="panelPaymentMethods( 'bank_transfer' )" ng-class="{'on' : medicalWalletData.panel_payment_method == 'bank_transfer' }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="togglePaymentMethods( 'panel_bank_transfer',false )" ng-class="{'off' : panelBankTransfer == false }" class="">
+            <button ng-if="medicalWalletData.panel_payment_method == 'bank_transfer'" ng-click="panelPaymentMethods( false )" ng-class="{'off' : medicalWalletData.panel_payment_method != 'bank_transfer' }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
+            <button ng-if="medicalWalletData.panel_payment_method != 'bank_transfer'" ng-click="panelPaymentMethods( medicalWalletData.panel_payment_method )" ng-class="{'off' : medicalWalletData.panel_payment_method != 'bank_transfer' }" class="">
+              <img src="../../assets/hr-dashboard/img/new-close-icon.png">
+            </button>
+
           </div>
         </div>
         <div class="dp-flex-ai">
@@ -190,12 +200,15 @@
               </div> 
             </span>
           </div>
-          <div ng-class="{'on' : panelMednefitsCredits == true,'off' : panelMednefitsCredits == false }" class="on-off-container">
-            <button ng-click="togglePaymentMethods( 'panel_mednefits_credits',true )" ng-class="{'on' : panelMednefitsCredits == true }" class="">
+          <div ng-class="{'on' : medicalWalletData.panel_payment_method == 'mednefits_credits','off' : medicalWalletData.panel_payment_method != 'mednefits_credits' }" class="on-off-container">
+            <button ng-click="panelPaymentMethods( 'mednefits_credits' )" ng-class="{'on' : medicalWalletData.panel_payment_method == 'mednefits_credits' }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="togglePaymentMethods( 'panel_mednefits_credits',false )" ng-class="{'off' : panelMednefitsCredits == false }" class="">
+            <button ng-if="medicalWalletData.panel_payment_method == 'mednefits_credits'" ng-click="panelPaymentMethods( false )" ng-class="{'off' : medicalWalletData.panel_payment_method != 'mednefits_credits' }" class="">
+              <img src="../../assets/hr-dashboard/img/new-close-icon.png">
+            </button>
+            <button ng-if="medicalWalletData.panel_payment_method != 'mednefits_credits'" ng-click="panelPaymentMethods( medicalWalletData.panel_payment_method )" ng-class="{'off' : medicalWalletData.panel_payment_method != 'mednefits_credits' }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
@@ -205,24 +218,30 @@
         <h5 class="member-bold-text">Non-Panel (for reimbursement)</h5>
         <div class="display-flex">
           <div class="flex-1">GIRO</div>
-          <div ng-class="{'on' : nonPanelGiroStatus == true,'off' : nonPanelGiroStatus == false }" class="on-off-container">
-            <button ng-click="togglePaymentMethods( 'non_panel_giro',true )" ng-class="{'on' : nonPanelGiroStatus == true }" class="">
+          <div ng-class="{'on' : medicalWalletData.non_panel_payment_method == 'giro','off' : medicalWalletData.non_panel_payment_method != 'giro' }" class="on-off-container">
+            <button ng-click="nonPanelPaymentMethod( 'giro' )" ng-class="{'on' : medicalWalletData.non_panel_payment_method == 'giro' }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="togglePaymentMethods( 'non_panel_giro',false )" ng-class="{'off' : nonPanelGiroStatus == false }" class="">
+            <button ng-if="medicalWalletData.non_panel_payment_method == 'giro'" ng-click="nonPanelPaymentMethod( false )" ng-class="{'off' : medicalWalletData.non_panel_payment_method != 'giro' }" class="">
+              <img src="../../assets/hr-dashboard/img/new-close-icon.png">
+            </button>
+            <button ng-if="medicalWalletData.non_panel_payment_method != 'giro'" ng-cli ck="nonPanelPaymentMethod( medicalWalletData.non_panel_payment_method )" ng-class="{'off' : medicalWalletData.non_panel_payment_method != 'giro' }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
         </div>
         <div class="display-flex">
           <div class="flex-1">Bank Transfer/PayNow</div>
-          <div ng-class="{'on' : nonPanelBankTransfer == true,'off' : nonPanelBankTransfer == false }" class="on-off-container">
-            <button ng-click="togglePaymentMethods( 'non_panel_bank_transfer',true )" ng-class="{'on' : nonPanelBankTransfer == true }" class="">
+          <div ng-class="{'on' : medicalWalletData.non_panel_payment_method == 'bank_transfer','off' : medicalWalletData.non_panel_payment_method != 'bank_transfer' }" class="on-off-container">
+            <button ng-click="nonPanelPaymentMethod( 'bank_transfer' )" ng-class="{'on' : medicalWalletData.non_panel_payment_method == 'bank_transfer' }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="togglePaymentMethods( 'non_panel_bank_transfer',false )" ng-class="{'off' : nonPanelBankTransfer == false }" class="">
+            <button ng-if="medicalWalletData.non_panel_payment_method == 'bank_transfer'" ng-click="nonPanelPaymentMethod( false )" ng-class="{'off' : medicalWalletData.non_panel_payment_method != 'bank_transfer' }" class="">
+              <img src="../../assets/hr-dashboard/img/new-close-icon.png">
+            </button>
+            <button ng-if="medicalWalletData.non_panel_payment_method != 'bank_transfer'" ng-click="nonPanelPaymentMethod( medicalWalletData.non_panel_payment_method )" ng-class="{'off' : medicalWalletData.non_panel_payment_method != 'bank_transfer' }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
@@ -242,12 +261,15 @@
               </div> 
             </span>
           </div>
-          <div ng-class="{'on' : nonPanelMednefitsCredits == true,'off' : nonPanelMednefitsCredits == false }" class="on-off-container">
-            <button ng-click="togglePaymentMethods( 'non_panel_mednefits_credits',true )" ng-class="{'on' : nonPanelMednefitsCredits == true }" class="">
+          <div ng-class="{'on' : medicalWalletData.non_panel_payment_method == 'mednefits_credits','off' : medicalWalletData.non_panel_payment_method != 'mednefits_credits' }" class="on-off-container">
+            <button ng-click="nonPanelPaymentMethod( 'mednefits_credits' )" ng-class="{'on' : medicalWalletData.non_panel_payment_method == 'mednefits_credits' }" class="">
               <!-- <span class="check-mark"></span> -->
               <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
             </button>
-            <button ng-click="togglePaymentMethods( 'non_panel_mednefits_credits',false )" ng-class="{'off' : nonPanelMednefitsCredits == false }" class="">
+            <button ng-if="medicalWalletData.non_panel_payment_method == 'mednefits_credits'" ng-click="nonPanelPaymentMethod( false )" ng-class="{'off' : medicalWalletData.non_panel_payment_method != 'mednefits_credits' }" class="">
+              <img src="../../assets/hr-dashboard/img/new-close-icon.png">
+            </button>
+            <button ng-if="medicalWalletData.non_panel_payment_method != 'mednefits_credits'" ng-click="nonPanelPaymentMethod( medicalWalletData.non_panel_payment_method )" ng-class="{'off' : medicalWalletData.non_panel_payment_method != 'mednefits_credits' }" class="">
               <img src="../../assets/hr-dashboard/img/new-close-icon.png">
             </button>
           </div>
@@ -294,11 +316,11 @@
             <th>Category</th>
             <th>Amount</th>
           </thead>
-          <tbody>
+          <tbody ng-repeat="list in activity_data">
             <tr>
-              <td>01 Jan 2020</td>
-              <td>Bonus Credits</td>
-              <td class="amount-value">+ SGD 20,000.00</td>
+              <td ng-bind="list.created_at">01 Jan 2020</td>
+              <td ng-bind="list.label || 'N/A'">Bonus Credits</td>
+              <td class="amount-value" ng-class="{'add':list.type == 'add','deduct':list.type != 'add' }">{{list.type == 'add' ? '+':'-' }} <span style="text-transform: uppercase">{{list.currency_type}}</span> {{list.credit}}</td>
             </tr>
           </tbody>
         </table>
