@@ -466,7 +466,7 @@ class SpendingAccountController extends \BaseController {
 			return ['status' => false, 'message' => 'wellness_non_panel_payment_method should only be giro, bank_transfer or mednefits_credits'];
 		}
 
-		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $input['customer_id'])->first();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
 		if(!$customer) {
 			return ['status' => false, 'message' => 'customer does not exist'];
@@ -554,6 +554,8 @@ class SpendingAccountController extends \BaseController {
 			  'total_panel'     => $panel,
 			  'total_non_panel' => $non_panel,
 			  'average' => sizeof($user_allocated) > 0 && $total > 0 ? sizeof($user_allocated) / $total : 0,
+			  'id'			=> $spending_account_settings->spending_account_setting_id,
+			  'customer_id'	=> $customer_id,
 			  'medical'         => $medical,
         	  'wellness'        => $wellness
 			];
@@ -564,6 +566,8 @@ class SpendingAccountController extends \BaseController {
 				'status' => true,
 				'spent' => $credits['credits'],
 				'currency_type' => $customer->currency_type,
+				'id'			=> $spending_account_settings->spending_account_setting_id,
+				'customer_id'	=> $customer_id,
 				'medical'         => $medical,
         	  	'wellness'        => $wellness
 			];
@@ -574,6 +578,8 @@ class SpendingAccountController extends \BaseController {
 				'status' => true,
 				'spent' => $credits['credits'],
 				'currency_type' => $customer->currency_type,
+				'id'			=> $spending_account_settings->spending_account_setting_id,
+				'customer_id'	=> $customer_id,
 				'medical'         => $medical,
         	  	'wellness'        => $wellness
 			];
