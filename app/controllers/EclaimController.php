@@ -129,14 +129,11 @@ class EclaimController extends \BaseController {
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
-
 		
 		// check if their is receipts
 		if(sizeof($input['receipts']) == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
-
-		
 
 		$ids = [];
         // get real userid for dependents
@@ -167,8 +164,6 @@ class EclaimController extends \BaseController {
 		$date = date('Y-m-d', strtotime($input['date']));
 		$claim_amount = $input['claim_amount'];
 		
-		
-
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
@@ -177,6 +172,13 @@ class EclaimController extends \BaseController {
 			if($check_plan['e_claim_access'] == false) {
 				return array('status' => FALSE, 'message' => 'The E-claim function is disabled for your company.');
 			}
+		}
+
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
 
 		// check if it is myr or sgd
@@ -471,6 +473,13 @@ class EclaimController extends \BaseController {
 
 		if($transaction_access)	{
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
+		}
+
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
 
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
