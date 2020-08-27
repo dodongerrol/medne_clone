@@ -13374,6 +13374,12 @@ class BenefitsDashboardController extends \BaseController {
 				$result['spending_feature_status_type'] = false;
 			}
 
+			// check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($id, 'medical');
+			if(!$validity)	{
+				$result['spending_feature_status_type'] = false;
+			}
+
 			return $result;
 		} else {
 			$returnObject->status = FALSE;
