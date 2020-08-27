@@ -565,6 +565,7 @@ class SpendingInvoiceController extends \BaseController {
 					// array_push($format, $data);
 
 					$temp = array(
+						'id' => $customer_id,
 						'invoice_date' => date('j M Y', strtotime($data->statement_date)),
 						'payment_due' => date('j M Y', strtotime($data->statement_due)),
 						'number' => $data->statement_number,
