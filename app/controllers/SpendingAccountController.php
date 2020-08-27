@@ -523,6 +523,7 @@ class SpendingAccountController extends \BaseController {
 
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$plan = DB::table('customer_plan')->where('customer_buy_start')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
 		// get wallet use
 		$medical = array(
@@ -537,6 +538,10 @@ class SpendingAccountController extends \BaseController {
 		);
 	
 		if($input['type'] == "enterprise_plan") {
+			if($plan->account_type == "out_of_pocket") {
+				return ['status' => false, 'account_type' => 'out_of_pocket'];
+			}
+
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 			$user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
 			$total = 0;
@@ -572,6 +577,9 @@ class SpendingAccountController extends \BaseController {
         	  	'wellness'        => $wellness
 			];
 		} else {
+			if($plan->account_type == "out_of_pocket") {
+				return ['status' => false, 'account_type' => 'out_of_pocket'];
+			}
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
 			
 			return [
