@@ -565,6 +565,7 @@ class SpendingInvoiceController extends \BaseController {
 					// array_push($format, $data);
 
 					$temp = array(
+						'id' => $customer_id,
 						'invoice_date' => date('j M Y', strtotime($data->statement_date)),
 						'payment_due' => date('j M Y', strtotime($data->statement_due)),
 						'number' => $data->statement_number,
@@ -674,6 +675,7 @@ class SpendingInvoiceController extends \BaseController {
 				// array_push($format, $result);
 
 				$temp = array(
+					'id' => $customer_id,
 					'invoice_date' => date('j M Y', strtotime($result['invoice_date'])),
 					'payment_due' => date('j M Y', strtotime($result['invoice_due'])),
 					'number' => $result['invoice_number'],
@@ -782,6 +784,7 @@ class SpendingInvoiceController extends \BaseController {
 				// array_push($format, $result);
 
 				$temp = array(
+					'id' => $customer_id,
 					'invoice_date' => date('j M Y', strtotime($result['invoice_date'])),
 					'payment_due' => date('j M Y', strtotime($result['invoice_due'])),
 					'number' => $result['invoice_number'],
@@ -890,6 +893,7 @@ class SpendingInvoiceController extends \BaseController {
 				// array_push($format, $result);
 
 				$temp = array(
+					'id' => $customer_id,
 					'invoice_date' => date('j M Y', strtotime($result['cancellation_date'])),
 					'payment_due' => NULL,
 					'number' => $result['cancellation_number'],
