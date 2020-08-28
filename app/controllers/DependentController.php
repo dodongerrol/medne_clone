@@ -272,8 +272,8 @@ class DependentController extends \BaseController {
 					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
 				}
 				
-				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
-				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
+				$user['medical_credits'] = !isset($user['medical_entitlement']) ? 0 : $user['medical_entitlement'];
+				$user['wellness_credits'] = !isset($user['wellness_entitlement']) ? 0 : $user['wellness_entitlement'];
 				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
 				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
@@ -295,10 +295,10 @@ class DependentController extends \BaseController {
 					'bank_name'				=> $user['bank_name'],
 					'bank_account_number'	=> $user['bank_account_number'],
 					'cap_per_visit'			=> $user['cap_per_visit'],
-					'credits'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
-					'medical_balance_entitlement'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
-					'wellness_credits'		=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
-					'wellness_balance_entitlement'				=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
+					'credits'				=> !isset($user['medical_entitlement']) || $user['medical_entitlement'] == null ? 0 : $user['medical_entitlement'],
+					'medical_balance_entitlement'				=> !isset($user['medical_entitlement']) || $user['medical_entitlement'] == null ? 0 : $user['medical_entitlement'],
+					'wellness_credits'		=> !isset($user['wellness_entitlement']) || $user['wellness_entitlement'] == null ? 0 : $user['wellness_entitlement'],
+					'wellness_balance_entitlement'				=> !isset($user['wellness_entitlement']) || $user['wellness_entitlement'] == null ? 0 : $user['wellness_entitlement'],
 					'postal_code'			=> null,
 					'start_date'			=> $user['plan_start'],
 					'group_number'			=> $group_number,
