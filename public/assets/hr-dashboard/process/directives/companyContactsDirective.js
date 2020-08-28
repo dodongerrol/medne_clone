@@ -312,6 +312,7 @@ app.directive("companyContactsDirective", [
           scope.toggleLoading();
           var curr_total = scope.transactions.current_total != 0 ? scope.transactions.current_total : 0;
           hrSettings.getTransactions( page ).then(function(response) {
+            console.log(response);
             scope.transactions = response.data;
             angular.forEach(scope.transactions.data, function(value, key) {
               if(scope.transactions.data[ key ].amount.includes('S$')) {

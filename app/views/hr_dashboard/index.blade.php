@@ -274,6 +274,8 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/outOfPocket/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/function.js?_={{ $date->format('U') }}"></script>
 
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
+
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>
 	<!-- Services -->

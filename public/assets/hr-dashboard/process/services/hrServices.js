@@ -506,6 +506,17 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/get_benefits_coverage_details/?start=" + start + "&end=" + end + "&type=" + type );
   }
 
+  // Billing 
+  hrFactory.fetchCompanyInvoiceHistory = function ( type ) {
+    return $http.get( serverUrl.url + "/hr/company_invoice_history/?type=" + type  );
+  }
+
+  // Download SOA
+  hrFactory.downloadSoaData = function ( type,download ) {
+    return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download );
+    // return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
+  }
+
   return hrFactory;
 });
 
