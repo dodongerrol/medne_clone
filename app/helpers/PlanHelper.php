@@ -7006,9 +7006,11 @@ class PlanHelper {
 		} else if($data == "trial_plan") {
 			$account_type = "Trial Plan";
 		} else if($data == "lite_plan") {
-			$account_type = "Basic Plan";
+			$account_type = "Mednefits Basic Plan";
 		} else if($data == "enterprise_plan") {
-			$account_type = "Enterprise Plan";
+			$account_type = "Mednefits Enterprise Plan";
+		} else if($data == "out_of_pocket") {
+			$account_type = "Out of Pocket";
 		}
 
 		return $account_type;
