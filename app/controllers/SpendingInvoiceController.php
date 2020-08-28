@@ -60,7 +60,7 @@ class SpendingInvoiceController extends \BaseController {
             return array('status' => FALSE, 'message' => 'Enterprise account does not require spending transaction invoice.');
         }
 
-        $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end);
+        $check_company_transactions = SpendingInvoiceLibrary::checkCompanyTransactions($result->customer_buy_start_id, $start, $end, 'post_paid');
         if(!$check_company_transactions) {
             return array('status' => FALSE, 'message' => 'No Transactions for this Month.');
         }
@@ -144,7 +144,6 @@ class SpendingInvoiceController extends \BaseController {
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
         $statement['sub_total'] = number_format(floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']), 2);
         $statement['statement_in_network_amount'] = number_format($statement['statement_in_network_amount'], 2);
-        // return View::make('invoice.hr-statement-invoice', $statement);
 		$pdf = PDF::loadView('invoice.hr-statement-invoice', $statement);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
@@ -197,7 +196,6 @@ class SpendingInvoiceController extends \BaseController {
 
 	    $statement = SpendingInvoiceLibrary::getInvoiceSpending($input['id'], true);
 		$statement['total_due'] = $statement['statement_amount_due'];
-        // return $statement;
         $company = DB::table('customer_business_information')
         			->where('customer_buy_start_id', $result->customer_buy_start_id)
         			->first();
@@ -207,8 +205,8 @@ class SpendingInvoiceController extends \BaseController {
         if($input['type'] == "csv") {
 			return self::downloadCSV($statement);
 		} else {
-			// return View::make('pdf-download.company-transaction-list-invoice', $statement);
-		    $pdf = PDF::loadView('pdf-download.company-transaction-list-invoice', $statement);
+			// return View::make('pdf-download.globalTemplates.transaction-history-statement', $statement);
+		    $pdf = PDF::loadView('pdf-download.globalTemplates.transaction-history-statement', $statement);
 				$pdf->getDomPDF()->get_option('enable_html5_parser');
 		    $pdf->setPaper('A4', 'landscape');
 

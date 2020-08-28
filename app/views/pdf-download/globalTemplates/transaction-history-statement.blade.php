@@ -2,7 +2,8 @@
 <html><head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Employee Plan Invoice</title>
+    <link rel="shortcut icon" href="/assets/new_landing/images/favicon.ico" type="image/ico">
+    <title>Spending Invoice Transactions</title>
     <style type="text/css">
       @page { 
         margin: 10px 10px 0 10px; 
@@ -47,27 +48,28 @@
           <td style="width: 60%;padding-left: 40px;vertical-align: top;">
             <p style="font-size: 20px;line-height: 29px;margin: 0 0 30px 0;">Transaction History Statement</p>
             <p style="font-size: 12px;line-height: 14px;margin: 0 0 10px 10px;">
-              ABC Corporation Pte Ltd<br>
-              Attention: Darren Lee<br>
-              7 Temasek Boulevard #18-02<br>
-              Suntec Tower One<br>
-              Singapore 038987
+              {{ $company }}<br>
+              Attention: {{ $statement_contact_name }}<br>
+              {{ $company_address }}<br>
             </p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;padding-bottom: 35px;text-align: right;">
             <p style="font-size: 11px;line-height: 13px;margin: 0;">
+            @if($currency_type == "sgd")
               <span>
                 Medicloud Pte Ltd<br>
                 7 Temasek Boulevard #18-02 Suntec Tower One, S(038987)<br>
                 mednefits.com
               </span>
-              <!-- <span>
+            @else
+              <span>
                 Mednefits Sdn Bhd<br>
                 Komune, Level 2,<br>
                 No. 20, Jalan Kerinchi Kiri 3,<br>
                 59200, Kuala Lumpur,<br>
                 Malaysia<br>
-              </span> -->
+              </span>
+            @endif
             </p>
             <div>
               <p style="font-size: 11px;line-height: 14px;margin: 16px 0 12px 0;">Page 1 of 1</p>
@@ -82,7 +84,7 @@
                     Panel Monthly Spending For
                   </td>
                   <td style="border-bottom: 0.5px solid #848484;padding: 5px 8px;">
-                    1 Mar - 31 Mar 2020
+                    {{ $statement_start_date }} - {{ $statement_end_date }}
                   </td>
                 </tr>
                 <tr>
@@ -90,7 +92,7 @@
                     Transaction Breakdown For 
                   </td>
                   <td style="border-bottom: 0.5px solid #848484;padding: 5px 8px;">
-                    Invoice no. MC00001299
+                    Invoice no. {{ $statement_number }}
                   </td>
                 </tr>
                 <tr>
@@ -98,7 +100,7 @@
                     Total Spent
                   </td>
                   <td style="border-bottom: 0.5px solid #848484;padding: 5px 8px;">
-                    SGD 352.60
+                    {{ strtoupper($currency_type) }} {{ $statement_total_amount }}
                   </td>
                 </tr>
                 <tr>
@@ -106,7 +108,7 @@
                     Total Transactions
                   </td>
                   <td style="border-bottom: 0.5px solid #848484;padding: 5px 8px;">
-                    10
+                    {{ $total_transactions }}
                   </td>
                 </tr>
               </table>
@@ -120,7 +122,7 @@
                 GP - MEDICINE/TREATMENT
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
-                SGD 234.69
+              {{ strtoupper($currency_type) }} {{ $total_gp_medicine }}
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
@@ -129,7 +131,7 @@
                 GP - CONSULTATION
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
-                SGD 117.91
+              {{ strtoupper($currency_type) }} {{ $total_gp_consultation }}
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
@@ -138,7 +140,7 @@
                 DENTAL
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
-                SGD 0.00
+              {{ strtoupper($currency_type) }} {{ $total_dental }}
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
@@ -147,13 +149,13 @@
                 TCM
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
-                SGD 0.00
+              {{ strtoupper($currency_type) }} {{ $total_tcm }}
               </p>
             </div>
           </td>
         </tr>
       </table>
-
+      
       <table border="0" cellpadding="0" cellspacing="0" style="margin: 0 0 80px 0; padding: 0 40px;color: #0D0D0D;font-size: 12px;" width="100%">
         <tr>
           <td style="font-size: 12px;border-bottom: 0.5px solid #848484;padding: 0 30px 5px 0;vertical-align: top;">DATE</td>
@@ -165,33 +167,34 @@
           <td style="font-size: 12px;border-bottom: 0.5px solid #848484;padding: 0 30px 5px 0;vertical-align: top;">MEDICINE/TREATMENT</td>
           <td style="font-size: 12px;border-bottom: 0.5px solid #848484;padding: 0 0 5px 0;vertical-align: top;text-align: right;">CONSULTATION</td>
         </tr>
+        @foreach($in_network as $key => $trans)
         <tr>
           <td style="padding: 18px 30px 0 0;vertical-align: top;">
-            27 Feb, 4:04 PM
+          {{ $trans['date_of_transaction'] }}
           </td>
           <td style="padding: 18px 30px 0 0;vertical-align: top;">
-            WEI XIAN HO
+          {{ $trans['member'] }}
           </td>
           <td style="padding: 18px 30px 0 0;vertical-align: top;">
-            MED027990
+          {{ $trans['transaction_id'] }}
           </td>
           <td style="padding: 18px 30px 0 0;vertical-align: top;">
-            GP - Medicine & Treatment
+          {{ $trans['clinic_type_and_service'] }}
           </td>
           <td style="padding: 18px 30px 0 0;vertical-align: top;">
-            Mednefits Demo Clinic
+          {{ $trans['clinic_name'] }}
           </td>
           <td style="padding: 18px 30px 0 0;vertical-align: top;">
-            SGD 30.00
+            {{ $trans['currency_type'] }} {{ $trans['total_amount'] }}
           </td>
           <td style="padding: 18px 30px 0 0;vertical-align: top;">
-            SGD 17.00
+            {{ $trans['currency_type'] }} {{ $trans['treatment'] }}
           </td>
           <td style="padding: 18px 0 0 0;vertical-align: top;text-align: right;">
-            SGD 13.00
+            {{ $trans['currency_type'] }} {{ $trans['consultation'] }}
           </td>
         </tr>
-        
+        @endforeach
       </table>
 
     </div>
