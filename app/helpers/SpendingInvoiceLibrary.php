@@ -303,6 +303,11 @@ class SpendingInvoiceLibrary
 		$in_network_transactions = 0;
 		$consultation_status = false;
 		$lite_plan = false;
+		$total_gp_medicine = 0;
+		$total_gp_consultation = 0;
+		$total_dental = 0;
+		$total_tcm = 0;
+		$total_transactions = 0;
 		$transaction_invoices = SpendingInvoiceTransactions::where('invoice_id', $invoice_id)->get();
 
 		foreach ($transaction_invoices as $key => $transaction) {
@@ -320,6 +325,7 @@ class SpendingInvoiceLibrary
 				$service_credits = false;
 
 				if((int)$trans['deleted'] == 0) {
+					$total_transactions++;
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_transactions += (float)$trans['credit_cost'] * $trans->currency_amount;
 					} else {
@@ -343,11 +349,13 @@ class SpendingInvoiceLibrary
 
 						if($logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_use_credits'] == 0 || $logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_enabled'] == 1) {
 							$total_consultation += floatval($logs_lite_plan->credit);
+							$total_gp_consultation += floatval($logs_lite_plan->credit);
 							$consultation = number_format($logs_lite_plan->credit, 2);
 							$consultation_credits = true;
 							$service_credits = true;
 						} else if($logs_lite_plan && floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 1){
 							$total_consultation += floatval($logs_lite_plan->credit);
+							$total_gp_consultation += floatval($logs_lite_plan->credit);
 							$consultation = $logs_lite_plan->credit;
 							$consultation_credits = true;
 							$service_credits = true;
@@ -355,9 +363,11 @@ class SpendingInvoiceLibrary
 							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 								$total_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
 								$consultation = number_format($trans['consultation_fees'] * $trans->currency_amount, 2);
+								$total_gp_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
 							} else {
 								$total_consultation += floatval($trans['consultation_fees']);
 								$consultation = number_format($trans['consultation_fees'], 2);
+								$total_gp_consultation += floatval($trans['consultation_fees']);
 							}
 						}
 					}
@@ -470,7 +480,41 @@ class SpendingInvoiceLibrary
 						$type = $clinic_type_data['type_name'];
 						$clinic_type_name = $clinic_type_data['type'];
 						$image = $clinic_type_data['image'];
-							// check user if it is spouse or dependent
+
+						if($clinic_type->head == 1 || $clinic_type->head == "1") {
+							if($clinic_type->Name == "GP") { 
+								$total_gp_medicine += $treatment;
+							} else if($clinic_type->Name == "Dental") {
+							$total_dental += $treatment;
+							 $type = "Dental";
+							 $type_name = "dental_care";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+						   } else if($clinic_type->Name == "TCM") {
+							 $total_dental += $total_tcm;
+							 $type = "TCM";
+							 $type_name = "tcm";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+						   }
+						  } else {
+							$find_head = DB::table('clinic_types')
+							->where('ClinicTypeID', $clinic_type->sub_id)
+							->first();
+							if($clinic_type->Name == "GP") { 
+								$total_gp_medicine += $treatment;
+							} else if($find_head->Name == "Dental") {
+							 $total_dental += $treatment;
+							 $type = "Dental";
+							 $type_name = "dental_care";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+						   } else if($find_head->Name == "TCM") {
+							 $total_dental += $total_tcm;
+							 $type = "TCM";
+							 $type_name = "tcm";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+						   }
+						  }
+
+						// check user if it is spouse or dependent
 
 						$employee = $customer->Name;
 						$dependent = null;
@@ -506,6 +550,8 @@ class SpendingInvoiceLibrary
 							$trans->currency_type = "sgd";
 						}
 
+						// check for
+						// if( strpos( strtolower($procedure), 'medicine' ) !== false ) $total_gp_medicine += $treatment;
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
 						$format = array(
 							'clinic_name'       => $clinic->Name,
@@ -572,7 +618,12 @@ class SpendingInvoiceLibrary
 			'consultation_status'	=> $consultation_status,
 			'total_consultation'	=> $total_consultation, 
 			'transactions' => $transaction_details,
-			'lite_plan'		=> $lite_plan
+			'lite_plan'		=> $lite_plan,
+			'total_gp_medicine'		=> $total_gp_medicine,
+			'total_gp_consultation'	=> $total_gp_consultation,
+			'total_dental'			=> $total_dental,
+			'total_tcm'				=> $total_tcm,
+			'total_transactions'	=> $total_transactions
 		);
 	}
 
@@ -790,17 +841,21 @@ class SpendingInvoiceLibrary
 			'statement_id'	=> $data->statement_id,
 			'statement_number' => $data->statement_number,
 			'statement_status'	=> $data->statement_status,
-			'statement_total_amount' => number_format($results['credits'] + $results['total_consultation'], 2),
+			'statement_total_amount' => DecimalHelper::formatDecimal($results['credits'] + $results['total_consultation']),
 			'total_in_network_amount'		=> $results['credits'],
-			'statement_amount_due' => number_format($amount_due, 2),
+			'statement_amount_due' => DecimalHelper::formatDecimal($amount_due),
 			'consultation_amount_due'	=> $consultation_amount_due,
 			'in_network'				=> $results['transactions'],
-
 			'paid_date'				=> $data->paid_date ? date('j M Y', strtotime($data->paid_date)) : NULL,
 			'payment_remarks' => $data->payment_remarks,
-			'payment_amount' => number_format($data->paid_amount, 2),
+			'payment_amount' => DecimalHelper::formatDecimal($data->paid_amount),
 			'lite_plan'	=> $lite_plan,
-			'total_consultation'	=> $results['total_consultation'],
+			'total_consultation'	=> DecimalHelper::formatDecimal($results['total_consultation']),
+			'total_gp_medicine'		=> DecimalHelper::formatDecimal($results['total_gp_medicine']),
+			'total_gp_consultation'	=> DecimalHelper::formatDecimal($results['total_gp_consultation']),
+			'total_dental'			=> DecimalHelper::formatDecimal($results['total_dental']),
+			'total_tcm'				=> DecimalHelper::formatDecimal($results['total_tcm']),
+			'total_transactions'	=> $results['total_transactions'],
 			'currency_type'	=> $data->currency_type
 		);
 	}
