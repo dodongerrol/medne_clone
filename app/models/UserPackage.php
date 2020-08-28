@@ -268,7 +268,7 @@ class UserPackage extends Eloquent
                         }
                         $validity = MemberHelper::getMemberWalletValidity($user_details->UserID, 'wellness');
                         $wallet_entitlement = DB::table('employee_wallet_entitlement')
-                        ->where('user_id', $user_id)
+                        ->where('user_id', $id)
                         ->orderBy('created_at', 'desc')
                         ->first();
 
