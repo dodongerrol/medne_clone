@@ -1,0 +1,66 @@
+ <!-- Department Modal -->
+ <div class="modal fade" id="{{ modals.department }}" tabindex="-1" role="dialog"
+ aria-labelledby="department-modal" aria-hidden="true">
+ <div class="modal-dialog max-w-2xl bg-transparent mt-32" role="document">
+   <div class="modal-content">
+     <div class="modal-body py-0">
+       <div class="py-1 px-16">
+         <form name="departmentModal" class="flex flex-col items-center justify-between space-y-6 pt-6">
+           <h4 class="section-title font-bold">
+             {{ isEditing() ? 'Edit Department' : 'Add Department' }}
+           </h4>
+           <div class="w-full">
+             <div class="grid grid-cols-1 gap-4">
+               <div>
+                 <label class="form-label"> Department Name </label>
+                 <div class="form-input-group">
+                   <input
+                     class="form-input"
+                     required
+                     ng-model="departmentFields.name"
+                     placeholder="E.g., Marketing, Engineering, Sales"
+                     type="text"
+                   >
+                 </div>
+               </div>
+             </div>
+           </div>
+           <div class="flex items-center justify-between w-full pb-8">
+             <div>
+               <button
+                 ng-if="isEditing()"
+                 ng-click="attemptDestroy('departments')"
+                 class="ui-btn ui-btn-danger-outline"
+               >
+                 Remove
+               </button>
+             </div>
+             <div class="flex items-center justify-end space-x-4 w-full">
+               <button ng-click="presentModal(modals.department, false)" type="button" class="ui-btn ui-btn-primary-outline">
+                 Cancel
+               </button>
+               <button
+                 type="button"
+                 ng-if="isEditing()"
+                 ng-disabled="!departmentModal.$dirty && departmentModal.$invalid"
+                 class="ui-btn {{ departmentModal.$dirty && departmentModal.$valid ? 'ui-btn-primary' : 'ui-btn-disabled' }} w-48"
+                 ng-click="saveDepartment()">
+                 Update
+               </button>
+               <button
+                 type="button"
+                 ng-if="!isEditing()"
+                 ng-disabled="departmentModal.$invalid"
+                 class="ui-btn {{ departmentModal.$invalid ? 'ui-btn-disabled' : 'ui-btn-primary' }} w-48"
+                 ng-click="saveDepartment()">
+                 Add Department
+               </button>
+             </div>
+           </div>
+         </form>
+       </div>
+     </div>
+   </div>
+ </div>
+</div>
+<!-- End department modal -->

@@ -7,6 +7,7 @@ app.directive("locationsDepartmentsDirective", [
         restrict: "A",
         scope: true,
         link: function link(scope, element, attributeSet) {
+            scope.views = `${serverUrl.url}/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments`;
             scope.action = null;
             scope.workLocation = null;
             scope.department = null;
