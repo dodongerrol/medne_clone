@@ -129,7 +129,9 @@
   <div class="mwbc-box-container">
     <h5 class="member-bold-text">Benefits Coverage</h5>
     <div class="dp-flex-ai">
-      <div>Mednefits Basic Plan</div>
+      <div ng-if="medicalWalletData.benefits_coverage == 'lite_plan' ">Mednefits Basic Plan</div>
+      <div ng-if="medicalWalletData.benefits_coverage == 'enterprise_plan' ">Mednefits Enterprise Plan</div>
+      <div ng-if="medicalWalletData.benefits_coverage == 'out_pocket' ">Out of pocket</div>
       <div>
         <span class="credits-tooltip-wrapper">
           <img ng-click="toggleMednefitsCredits('mednefits-basic-plan')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 

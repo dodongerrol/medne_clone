@@ -12,6 +12,33 @@ app.directive('mednefitsCreditAccountDirective', [
 
         scope.showLastTermSelector = false;
         scope.defaultDateTerms = {};
+        scope.isCalculationShow = false;
+        scope.isCreditsBonusCreditShow = false;
+        scope.isCreditsInputFormShow = true;
+        scope.isCreditsConfirmShow = false;
+        scope.isTopUpSuccess = false;
+
+        scope.creditsTopUpData  = {
+          total_credits: '0.00',
+          purchased_credits: '0.00',
+          bonus_credits: '0.00',
+          bonus_credits_percentage: 20,
+          invoice_date : new Date(),
+        }
+
+        scope.isPrepaidCreditsActivated = true;
+        scope.isPrepaidCreditsFormShow = false;
+        scope.isCreditsCalculationShow = false;
+
+        scope.activateCreditsData  = {
+          total_credits: '0.00',
+          purchased_credits: '0.00',
+          bonus_credits: '0.00',
+          bonus_credits_percentage: 20,
+          invoice_date: new Date(),
+        }
+
+        scope.isMednefitsCreditsSuccessShow = false;
 
         scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
@@ -53,6 +80,9 @@ app.directive('mednefitsCreditAccountDirective', [
 
             scope.getMednefitsCreditAccount(scope.defaultDateTerms);
             scope.getMednefitsCreditActivities();
+
+            // scope.getMedicalMemberWallet(scope.defaultDateTerms);
+            // scope.getWellnessMemberWallet(scope.defaultDateTerms);
           })
         }
 
@@ -78,10 +108,17 @@ app.directive('mednefitsCreditAccountDirective', [
           scope.showLoading();
           hrSettings.fetchMednefitsCreditsAccountData( scope.currentTermStartDate, scope.currentTermEndDate )
             .then(function(response){
-              scope.mednefitsCreditsData = response.data.data;
-
-              scope.hideLoading();
-              console.log(scope.mednefitsCreditsData);
+              console.log(response);
+              if ( response.data.status  ) {
+                scope.mednefitsCreditsData = response.data.data;
+                scope.isPrepaidCreditsActivated = response.data.status
+                scope.hideLoading();
+                console.log(scope.mednefitsCreditsData);
+              } else {
+                scope.isPrepaidCreditsActivated = response.data.status;
+                scope.hideLoading();
+              }
+             
             })
         }
 
@@ -94,6 +131,86 @@ app.directive('mednefitsCreditAccountDirective', [
             })
         }
 
+        scope.toggleCalculation = function(){
+          scope.isCalculationShow = scope.isCalculationShow ? false : true;
+        }
+
+        scope.toggleCreditsBonusCredit = function(){
+          scope.isCreditsBonusCreditShow = scope.isCreditsBonusCreditShow ? false : true;
+        }
+        scope.calculateCredits =  function(type){
+          scope.creditsTopUpData.total_credits = scope.validateCreditsValue(scope.creditsTopUpData.total_credits);
+          scope.creditsTopUpData.purchased_credits = scope.validateCreditsValue(scope.creditsTopUpData.purchased_credits);
+          scope.creditsTopUpData.bonus_credits = scope.validateCreditsValue(scope.creditsTopUpData.bonus_credits);
+
+          scope.creditsTopUpData.total_credits = scope.creditsTopUpData.total_credits.replace(/\,/g, '');
+          scope.creditsTopUpData.purchased_credits = scope.creditsTopUpData.purchased_credits.replace(/\,/g, '');
+          if(type == 'total_credits'){
+            scope.creditsTopUpData.purchased_credits = scope.creditsTopUpData.total_credits / ((scope.creditsTopUpData.bonus_credits_percentage / 100) + 1); 
+          }
+          if(type == 'purchased_credits'){
+            scope.creditsTopUpData.total_credits = scope.creditsTopUpData.purchased_credits * ((scope.creditsTopUpData.bonus_credits_percentage / 100) + 1);
+          }
+          if(type == 'bonus_credits_percentage'){
+            scope.creditsTopUpData.purchased_credits = scope.creditsTopUpData.total_credits / ((scope.creditsTopUpData.bonus_credits_percentage / 100) + 1);
+            scope.creditsTopUpData.total_credits = scope.creditsTopUpData.purchased_credits * ((scope.creditsTopUpData.bonus_credits_percentage / 100) + 1);
+          }
+          scope.creditsTopUpData.bonus_credits = parseFloat( scope.creditsTopUpData.total_credits - scope.creditsTopUpData.purchased_credits ).toFixed(2);
+          scope.creditsTopUpData.bonus_credits = scope.numberWithCommas( parseFloat( scope.creditsTopUpData.bonus_credits ).toFixed(2) );
+          scope.creditsTopUpData.total_credits = scope.numberWithCommas( parseFloat( scope.creditsTopUpData.total_credits ).toFixed(2) );
+          scope.creditsTopUpData.purchased_credits = scope.numberWithCommas( parseFloat( scope.creditsTopUpData.purchased_credits ).toFixed(2) );
+        }
+        scope.numberWithCommas = function(number) {
+          var parts = number.toString().split(".");
+          parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          return parts.join(".");
+        }
+
+        scope.toggleTopUpCreditsConfirm  = function(opt){
+          // console.log(opt);
+          // if ( opt == false ) {
+          //   scope.isCreditsConfirmShow = true;
+          //   scope.isCreditsInputFormShow = false;
+          //   scope.isTopUpSuccess = false;
+          // }
+          scope.isCreditsInputFormShow = opt ? false : true;
+          scope.isCreditsConfirmShow = opt;
+          scope.isTopUpSuccess = false;
+          console.log( scope.isCreditsInputFormShow );
+        }
+
+        scope.submitTopUpCredits = function ( formData ) {
+          var data = {
+            // customer_id: Number( scope.selected_customer_id ),
+            total_credits: Number( formData.total_credits.replace(/,/g, "") ),
+            purchase_credits: Number( formData.purchased_credits.replace(/,/g, "") ),
+            bonus_percentage: Number( formData.bonus_credits_percentage / 100 ),
+            bonus_credits: Number( formData.bonus_credits.replace(/,/g, "") ),
+            invoice_date: moment( formData.invoice_date ).format('YYYY-MM-DD')
+          }
+          scope.showLoading();
+          console.log(data);
+          hrSettings.updateTopUp( data )
+            .then(function(response){
+              console.log(response);
+              scope.hideLoading();
+              if(response.data.status){
+                scope.isTopUpSuccess = true;
+              }else{
+                swal('Error!', response.data.message, 'error');
+              }
+            })
+        }
+
+        scope.topUpCredits = function () {
+          scope.isCreditsInputFormShow = true;
+          scope.isCreditsConfirmShow = false;
+          scope.isTopUpSuccess = false;
+          scope.creditsTopUpData.total_credits = '0.00';
+          scope.creditsTopUpData.purchased_credits = '0.00';
+          scope.creditsTopUpData.bonus_credits = '0.00';
+        }
+ 
 
         scope.showLoading = function () {
           $(".circle-loader").fadeIn();
@@ -106,6 +223,106 @@ app.directive('mednefitsCreditAccountDirective', [
             loading_trap = false;
           }, 10);
         };
+
+        // get the keys for member wallet 
+        scope.getMedicalMemberWallet = function ( data ) {
+          scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
+          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
+
+          console.log('gkan sa member ug wellness',data);
+          hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical')
+            .then(function(response){
+              console.log('medical',response);
+             
+            })
+        }
+
+        scope.getWellnessMemberWallet = function ( data ) {
+          scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
+          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
+
+          console.log('gkan sa member ug wellness',data);
+          hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'wellness' )
+            .then(function(response){
+              console.log('wellness',response);
+             
+            })
+        }
+
+        scope.toggleCreditsActivation = function(){
+          scope.isPrepaidCreditsFormShow = scope.isPrepaidCreditsFormShow ? false : true;
+          scope.activateCreditsData.invoice_date = moment().format('DD/MM/YYYY');
+          setTimeout(() => {
+						var dt = new Date();
+						// dt.setFullYear(new Date().getFullYear()-18);
+						$('.datepicker').datepicker({
+							format: 'dd/mm/yyyy',
+							endDate: dt
+						});
+	
+						$('.datepicker').datepicker().on('hide', function (evt) {
+							var val = $(this).val();
+							if (val != "") {
+								$(this).datepicker('setDate', val);
+							}
+						})
+					}, 300); 
+        }
+
+        scope.toggleCreditsCalculation = function(){
+          scope.isCreditsCalculationShow = scope.isCreditsCalculationShow ? false : true;
+        }
+
+        scope.calculateActivateCredits =  function(type){
+          scope.activateCreditsData.total_credits = scope.validateCreditsValue(scope.activateCreditsData.total_credits);
+          scope.activateCreditsData.purchased_credits = scope.validateCreditsValue(scope.activateCreditsData.purchased_credits);
+          scope.activateCreditsData.bonus_credits = scope.validateCreditsValue(scope.activateCreditsData.bonus_credits);
+
+          scope.activateCreditsData.total_credits = scope.activateCreditsData.total_credits.replace(/\,/g, '');
+          scope.activateCreditsData.purchased_credits = scope.activateCreditsData.purchased_credits.replace(/\,/g, '');
+          if(type == 'total_credits'){
+            scope.activateCreditsData.purchased_credits = scope.activateCreditsData.total_credits / ((scope.activateCreditsData.bonus_credits_percentage / 100) + 1); 
+          }
+          if(type == 'purchased_credits'){
+            scope.activateCreditsData.total_credits = scope.activateCreditsData.purchased_credits * ((scope.activateCreditsData.bonus_credits_percentage / 100) + 1);
+          }
+          if(type == 'bonus_credits_percentage'){
+            scope.activateCreditsData.purchased_credits = scope.activateCreditsData.total_credits / ((scope.activateCreditsData.bonus_credits_percentage / 100) + 1);
+            scope.activateCreditsData.total_credits = scope.activateCreditsData.purchased_credits * ((scope.activateCreditsData.bonus_credits_percentage / 100) + 1);
+          }
+          scope.activateCreditsData.bonus_credits = parseFloat( scope.activateCreditsData.total_credits - scope.activateCreditsData.purchased_credits ).toFixed(2);
+          scope.activateCreditsData.bonus_credits = scope.numberWithCommas( parseFloat( scope.activateCreditsData.bonus_credits ).toFixed(2) );
+          scope.activateCreditsData.total_credits = scope.numberWithCommas( parseFloat( scope.activateCreditsData.total_credits ).toFixed(2) );
+          scope.activateCreditsData.purchased_credits = scope.numberWithCommas( parseFloat( scope.activateCreditsData.purchased_credits ).toFixed(2) );
+        }
+
+        scope.submitActivateMednefitsCredits = function (formData) {
+          console.log(formData);
+          var data = {
+            // customer_id: Number( scope.selected_customer_id ),
+            total_credits: Number( formData.total_credits.replace(/,/g, "") ),
+            purchase_credits: Number( formData.purchased_credits.replace(/,/g, "") ),
+            bonus_percentage: Number( formData.bonus_credits_percentage / 100 ),
+            bonus_credits: Number( formData.bonus_credits.replace(/,/g, "") ),
+            invoice_date: moment( formData.invoice_date,'DD/MM/YYYY' ).format('YYYY-MM-DD')
+          }
+          console.log(data);
+          // hrSettings.updatePrepaidCredits( data )
+          //   .then(function(response){
+          //     console.log(response);
+              
+          //   })
+        }
+
+        scope.validateCreditsValue = function(value){
+          if(value == ''){
+            return '0.00';
+          }
+          return value.replace(/[a-zA-Z\s]/gi, '');
+          console.log(value);
+        }
+
+
 
        
         scope.onLoad = function () {

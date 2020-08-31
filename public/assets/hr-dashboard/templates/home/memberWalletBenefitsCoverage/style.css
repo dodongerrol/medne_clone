@@ -425,3 +425,7 @@
   background-color: #0392CF;
   border-color: transparent;
 }
+.side-menu-selector .disabled {
+  opacity: .3;
+  pointer-events: none;
+}

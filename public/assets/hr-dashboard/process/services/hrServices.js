@@ -506,6 +506,15 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/get_benefits_coverage_details/?start=" + start + "&end=" + end + "&type=" + type );
   }
 
+  // confirm top up mednefits credits 
+  hrFactory.updateTopUp = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/create_top_up_mednefits_credits", data);
+  }
+
+  hrFactory.updatePrepaidCredits = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/activate_company_mednefits_credits", data);
+  }
+  
   // Billing 
   hrFactory.fetchCompanyInvoiceHistory = function ( type ) {
     return $http.get( serverUrl.url + "/hr/company_invoice_history/?type=" + type  );

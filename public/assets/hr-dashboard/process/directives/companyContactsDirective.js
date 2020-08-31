@@ -908,7 +908,7 @@ app.directive("companyContactsDirective", [
           start_date: new Date(),
           plan_duration: '12',
           invoice_start_date: new Date(),
-          // invoice_date: new Date(),
+          invoice_date: new Date(),
         }
 
         scope._editDetails_ = function ( type, planData ) {

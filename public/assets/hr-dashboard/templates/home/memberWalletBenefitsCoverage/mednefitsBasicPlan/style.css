@@ -60,3 +60,6 @@
 .credits-tooltip-container.total-spent {
   display: none;
 }
+.member-wallet-body-info-container .mednefits-basic-plan-wrapper {
+  height: 100vh;
+}
