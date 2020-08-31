@@ -29,10 +29,10 @@
       </div>
     </div>
     <div class="mwbc-box-container">
-      <h4 class="member-bold-text"> Mednefits Credits Account</h4>
+      <h4 class="member-bold-text"> Prepaid Credits Account</h4>
       <!-- add class "pending" if the account is still pending -->
       <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : mednefitsCreditsData.payment_status == false }">
-        <span ng-if="mednefitsCreditsData.payment_status == false" class="credits-on-hold-text">Credits amounts are on hold due to Pending Mednefits Credits Account Invoice</span>
+        <span ng-if="mednefitsCreditsData.payment_status == false" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
         <div class="mednefits-available-credits display-flex">
           <div class="available-credits flex-1">
             <span class="available-credits-container dp-flex-ai">
@@ -151,10 +151,10 @@
         </div>
       </div>
       <div ng-if="false" class="mednefits-credits-pending">
-        <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
+        <div>This method is currently not in use due to pending Prepaid Credits Account Invoice.</div>
       </div>
       <div ng-if="true">
-        <div>Mednefits Credits is currently used in:</div>
+        <div>Prepaid Credits is currently used in:</div>
         <div>
           <div class="wallet-container medical-wallet-container display-flex">
               <div class="member-bold-text">Medical Wallet:</div>
@@ -242,10 +242,10 @@
 
     <div ng-if="!isPrepaidCreditsFormShow" class="credits-not-activated-text">
       <p class="gray-text">
-        Prepaid Credits Account stores Mednefits Credits. Mednefits Credits can be used to pay for employee benefits charges.
+        Prepaid Credits Account stores Prepaid Credits. Prepaid Credits can be used to pay for employee benefits charges.
       </p>  
       <p>
-        Prepaid Credits Account is currently not activated. Would you like to activate Mednefits Credits Account?
+        Prepaid Credits Account is currently not activated. Would you like to activate Prepaid Credits Account?
       </p>
       <button class="btn-activate-credits" ng-click="toggleCreditsActivation()">
         Activate Prepaid Credits Account
@@ -344,7 +344,7 @@
       <div class="modal-content">
         <form>
           <div class="modal-header">
-            <h5>Top Up Mednefits Credits</h5>
+            <h5>Top Up Prepaid Credits</h5>
             <span ng-if="isCreditsInputFormShow">Input amount of Total Credits or Purchased Credits you wish to top up</span>
           </div>
           <div ng-if="isCreditsInputFormShow" class="modal-body top-up-body-container">
@@ -428,7 +428,7 @@
           </div>
           <div ng-if="isCreditsConfirmShow" class="modal-body top-up-body-container top-up-success">
             <p ng-if="!isTopUpSuccess" >
-              A Mednefits Credits invoice will be billed to your company after this top-up has been successfully completed. Please pay your invoice to utilise the top-up Mednefits Credits.
+              A Prepaid Credits invoice will be billed to your company after this top-up has been successfully completed. Please pay your invoice to utilise the top-up Prepaid Credits.
             </p>
             <p ng-if="!isTopUpSuccess" >
               Please confirm to proceed.
@@ -457,14 +457,14 @@
         </div>
         <div class="modal-body">
           <p ng-if="!isMednefitsCreditsSuccessShow" >
-            An invoice of Purchased Credits will be generated after Mednefits Credits Account is activated. Are you sure you want to activate Mednefits Credits Account?
+            An invoice of Purchased Credits will be generated after Prepaid Credits Account is activated. Are you sure you want to activate Prepaid Credits Account?
           </p>
           <p ng-if="!isMednefitsCreditsSuccessShow" >
             Please confirm to proceed.
           </p>
 
           <img ng-if="isMednefitsCreditsSuccessShow" src="../images/green-check.png" alt="">
-          <p ng-if="isMednefitsCreditsSuccessShow" class="text-center">Mednefits Credits Account has been successfully activated.</p>
+          <p ng-if="isMednefitsCreditsSuccessShow" class="text-center">Prepaid Credits Account has been successfully activated.</p>
         </div>
         <div class="modal-footer">
           <button ng-if="!isMednefitsCreditsSuccessShow" class="btn-edit-cancel btn-close" data-dismiss="modal">Cancel</button>

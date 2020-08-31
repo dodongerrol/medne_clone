@@ -1,40 +1,4 @@
 <div class="member-wallet-benefits-wrapper" member-wallet-benefits-coverage-directive>
-  <div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
-		<!-- <div class="container"> -->
-		<div class="welcome-container">
-			<h4 ui-sref="benefits-dashboard">Overview</h4>
-			<div class="arrow-up" style="visibility: hidden;"></div>
-		</div>
-		<div class="welcome-container">
-			<h4  ng-click="toggleEmployee()">Employee</h4>
-			<div class="arrow-up" style="visibility: hidden;"></div>
-		</div>
-		<div class="welcome-container">
-			<h4 ui-sref="activity">Activity</h4>
-			<div class="arrow-up-3" style="visibility: hidden;"></div>
-		</div>
-		<div class="welcome-container" ng-if="options.accessibility == 1">
-			<h4 ui-sref="e-claim">Claim</h4>
-			<div class="arrow-up-4" style="visibility: hidden;"></div>
-		</div>
-		<div class="welcome-container statement-hide">
-			<h4 ui-sref="statement">Statement</h4>
-			<div class="arrow-up-5" style="visibility: hidden;"></div>
-		</div>
-		<div class="welcome-container">
-			<h4 ui-sref="account-and-payment">Account</h4>
-			<div class="arrow-up-5" style="visibility: hidden;"></div>
-		</div>
-		<div class="welcome-container">
-			<h4 ui-sref="member-wallet-benefits-coverage.mednefits-credits-account">Member Wallet & Benefits Coverage</h4>
-			<div class="arrow-up-5" style="visibility: hidden;"></div>
-		</div>
-		<div class="welcome-container">
-			<h4 ui-sref="spending-billing">Billing</h4>
-			<div class="arrow-up-5" style="visibility: hidden;"></div>
-		</div>
-		<!-- </div> -->
-	</div>
   <div class="member-wallet-body-info-container">
     <div>
       <div class="side-menu-selector member-wallet-container">
@@ -61,9 +25,9 @@
         <div class="border-container"></div>
       </div>
       <div class="side-menu-selector mednefits-credits-account">
-        <div class="member-side-menu-title">Mednefits Credits Account</div>
+        <div class="member-side-menu-title">Prepaid Credits Account</div>
         <div ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.mednefits-credits-account" ng-click="memberWalletSelector('mednefits-credits-account')" ng-class="{'active' : memberWalletBeneftsSelectorValue == 'mednefits-credits-account' }" class="side-selector-text">
-          <a>Mednefits Credits Account</a>
+          <a>Prepaid Credits Account</a>
         </div>
       </div>
     </div>
