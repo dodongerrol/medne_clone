@@ -82,7 +82,7 @@
 </head>
 <body>
 	<div id="main-section-container">
-		<div ui-view="navigation" ng-controller="checkCtrls"></div>
+		<div ui-view="navigation" ng-controller="checkCtrls as navCtr"></div>
 		<div class="main-ui-view" ui-view="main"></div>
 		<div ui-view="modal"></div>
 		<div ui-view="modal_2"></div>

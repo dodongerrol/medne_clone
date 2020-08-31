@@ -4,6 +4,7 @@ var checkCtrl = angular.module('checkCtrl', [])
 checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state, hrSettings ){
 	var vm = this;
 	vm.account_type = null;
+	vm.isEmpDropShow	=	false;
 
 
 	vm.getCompanyContacts = function() {
@@ -79,6 +80,17 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 			introLoader_trap = false;
 		}, 1000);
 	}
+
+	vm.toggleEmployeeNavDrop	=	function(){
+		vm.isEmpDropShow	=	vm.isEmpDropShow ? false : true;
+	}
+
+	$("body").click(function (e) {
+		if ($(e.target).parents(".emp-nav-click-drop").length === 0) {
+			vm.isEmpDropShow = false;
+			$scope.$apply();
+		}
+	});
 
 	vm.accountType();
 	vm.getCompanyContacts();
