@@ -1048,4 +1048,135 @@ class SpendingAccountController extends \BaseController {
 			return ['status' => true, 'message' => 'Prepaid Credits Account has been successfully deactivated.'];
 		}
 	}
+
+	public function activateMednefitCreditsAccount( )
+	{
+		$input = Input::all();
+		$customer_id = PlanHelper::getCusomerIdToken();
+
+		if(empty($input['total_credits']) || $input['total_credits'] == null) {
+			return array('status' => false, 'message' => 'total credits is required.');
+		}
+
+		if(empty($input['purchase_credits']) || $input['purchase_credits'] == null) {
+			return array('status' => false, 'message' => 'purchase credits is required.');
+		}
+
+		if(empty($input['bonus_percentage']) || $input['bonus_percentage'] == null) {
+			return array('status' => false, 'message' => 'bonus_percentage is required.');
+		}
+
+		if(empty($input['bonus_credits']) || $input['bonus_credits'] == null) {
+			return array('status' => false, 'message' => 'bonus_credits is required.');
+		}
+
+		if(empty($input['invoice_date']) || $input['invoice_date'] == null) {
+			return array('status' => false, 'message' => 'invoice_date is required.');
+		}
+		
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'customer does not exist'];
+		}
+
+		// check if there is payment false
+		$account_credits = DB::table('mednefits_credits')
+							->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+							->where('mednefits_credits.customer_id', $customer_id)
+							->first();
+
+		if($account_credits) {
+			return ['status' => false, 'message' => 'Company already have a Mednefits Credit Account created.'];
+		}
+
+		$spending_account_settings = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->select('customer_id', 'customer_plan_id', 'medical_spending_start_date as start', 'medical_spending_end_date as end', 'spending_account_setting_id')
+										->orderBy('created_at', 'desc')
+										->first();
+		$start = $spending_account_settings->start;
+		$end = $spending_account_settings->end;
+
+		// create mednefits credits data
+		$mednefitCreditsAccount = array(
+			'customer_plan_id'		=> $spending_account_settings->customer_plan_id,
+			'customer_id'			=> $customer_id,
+			'credits'				=> $input['purchase_credits'],
+			'bonus_credits'			=> $input['bonus_credits'],
+			'bonus_percentage'		=> $input['bonus_percentage'],
+			'start_term'			=> date('Y-m-d', strtotime($start)),
+			'end_term'				=> date('Y-m-d', strtotime($end)),
+			'currency_type'			=> $customer->currency_type,
+			'top_up'        => 0,
+			'created_at'			=> date('Y-m-d H:i:s'),
+			'updated_at'			=> date('Y-m-d H:i:s')
+		);
+
+		$mednefitsDataResult = DB::table('mednefits_credits')->insertGetId($mednefitCreditsAccount);
+		$mednefits_credits_id = $mednefitsDataResult;
+		// create spending account activity
+		$spendingAccountActivityData = array(
+			'mednefits_credits_id'	=> $mednefits_credits_id,
+			'customer_id'			=> $customer_id,
+			'credit'				=> $input['purchase_credits'],
+			'type'					=> 'added_purchase_credits',
+			'spending_type'			=> 'all',
+			'currency_type'			=> $customer->currency_type,
+			'created_at'			=> date('Y-m-d H:i:s'),
+			'updated_at'			=> date('Y-m-d H:i:s')
+		);
+
+		$spendingAccountActivityResult = DB::table('spending_account_activity')->insertGetId($spendingAccountActivityData);
+		$spendingAccountActivityData['credit'] = $input['bonus_credits'];
+		$spendingAccountActivityData['type'] = 'added_bonus_credits';
+		DB::table('spending_account_activity')->insertGetId($spendingAccountActivityData);
+	
+		// create spending invoice purchase and reuse this one
+		$invoice_number = \InvoiceLibrary::getInvoiceNuber('spending_purchase_invoice', 8);
+		// billing
+		$billing = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
+		$information = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
+		$active_plan = DB::table('customer_active_plan')->where('customer_start_buy_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		
+		$spending_purchase = array(
+			"customer_id"				=> $customer_id,
+			"customer_plan_id"			=> $spending_account_settings->customer_plan_id,
+			"customer_active_plan_id"	=> $active_plan->customer_active_plan_id,
+			"plan_start"				=> date('Y-m-d', strtotime($start)),
+			"plan_end"					=> date('Y-m-d', strtotime($end)),
+			"duration"					=> "12 months",
+			"invoice_number"			=> $invoice_number,
+			"invoice_date"				=> date('Y-m-d', strtotime($input['invoice_date'])),
+			"invoice_due"				=> date('Y-m-d', strtotime('+1 month', strtotime($input['invoice_date']))),
+			"payment_amount"			=> 0,
+			"payment_date"				=> null,
+			"remarks"					=> null,
+			"medical_purchase_credits"	=> $input['purchase_credits'],
+			"medical_credit_bonus"		=> $input['bonus_credits'],
+			"bonus_percentage"			=> $input['bonus_percentage'],
+			"company_name"				=> $information->company_name,
+			"company_address"			=> $information->company_address,
+			"postal"					=> $information->postal_code,
+			"contact_name"				=> $billing->first_name,
+			"contact_number"			=> $billing->phone,
+			"contact_email"				=> $billing->billing_email,
+			'mednefits_credits_link'	=> 1,
+			'mednefits_credits_id'		=> $mednefits_credits_id,
+			'created_at'			=> date('Y-m-d H:i:s'),
+			'updated_at'			=> date('Y-m-d H:i:s')
+		);
+
+		DB::table('spending_purchase_invoice')->insertGetId($spending_purchase);
+		$update = array(
+			'medical_payment_method_panel'      => 'mednefits_credits',
+			'medical_payment_method_non_panel'  => 'mednefits_credits',
+			'wellness_payment_method_panel'     => 'mednefits_credits',
+			'wellness_payment_method_non_panel' => 'mednefits_credits',
+			'activate_mednefits_credit_account'        => 1,
+			'updated_at'			=> date('Y-m-d H:i:s')
+		);
+		DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)->update($update);
+		return ['status' => true, 'message' => 'Company successfully created a Mednefits Credit Account.'];
+	}
 }

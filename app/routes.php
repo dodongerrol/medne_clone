@@ -524,6 +524,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/wallet_activate_deactivate', 'SpendingAccountController@activateDeactivateWallet');
 	// enable disable mednefits credits account
 	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
+	// activate company mednefits credits
+	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
 });
 
 	// downloand plan invoice
