@@ -681,8 +681,9 @@ class PlanHelper {
 		return $current_balance;
 	}
 
-	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history)
+	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history, $owner_id)
 	{
+		$user_wallet = DB::table('e_wallet')->where('UserID', $owner_id)->orderBy('created_at', 'desc')->first();
 		$dependent_plan = DB::table('dependent_plans')
 		->where('dependent_plan_id', $dependent_plan_id)
 		->first();
@@ -732,6 +733,7 @@ class PlanHelper {
 		$package_bundle = DB::table('package_bundle')
 		->join('care_package', 'care_package.care_package_id', '=', 'package_bundle.care_package_id')
 		->where('package_bundle.package_group_id', $package_group->package_group_id)
+		->where('care_package.currency_type', $user_wallet->currency_type)
 		->orderBy('care_package.position', 'desc')
 		->get();
 		return $package_bundle;

@@ -480,7 +480,7 @@ public function test( ) {
 
 
 public function showCalender()
-{
+{ 
   $hostName = $_SERVER['HTTP_HOST'];
   $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
   $data['server'] = $protocol.$hostName;
