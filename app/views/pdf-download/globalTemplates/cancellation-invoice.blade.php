@@ -62,19 +62,22 @@
               <div class="two" style="width: 52%;display: inline-block;vertical-align: top;">
                 <p style="font-size: 14px;line-height: 16px;margin: 0;">
                   <!-- IF SINGAPORE -->
-                  <!-- <span>
+                  @if($currency_type == "SGD")
+                  <span>
                     7 Temasek Boulevard<br>
                     #18-02 Suntec Tower One<br>
                     038987<br>
                     Singapore
-                  </span> -->
-                  <span>
-                    Mednefits Sdn Bhd<br>
-                    Komune, Level 2,<br>
-                    No. 20, Jalan Kerinchi Kiri 3,<br>
-                    59200, Kuala Lumpur,<br>
-                    Malaysia<br>
                   </span>
+                  @else
+                    <span>
+                      Mednefits Sdn Bhd<br>
+                      Komune, Level 2,<br>
+                      No. 20, Jalan Kerinchi Kiri 3,<br>
+                      59200, Kuala Lumpur,<br>
+                      Malaysia<br>
+                    </span>
+                    @endif
                 </p>
               </div>
             </div>
@@ -155,13 +158,14 @@
 
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Bank Transfer:</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Bank: UOB</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Mednefits Sdn. Bhd.</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 2213020031</p>
-            
-            <!-- IF SINGAPORE -->
-            <!-- <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Medicloud Pte Ltd</p> -->
-            <!-- <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 3743069399</p> -->
-
+            @if($currency_type == "SGD")
+              <!-- IF SINGAPORE -->
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Medicloud Pte Ltd</p>
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 3743069399</p>
+            @else
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Mednefits Sdn. Bhd.</p>
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 2213020031</p>
+            @endif
             <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Note: Please quote invoice number when submitting payment</p>
           </td>
         </tr>
