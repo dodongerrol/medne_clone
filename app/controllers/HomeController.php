@@ -493,28 +493,24 @@ public function showCalender()
   }
 
   $clinic = new Admin_Clinic();
-  $clinics = $clinic->getClinicdata($getSessionData->Ref_ID);
-
+  $clinics = $clinic->getClinicInfo($getSessionData->Ref_ID);
+  
         // return $clinics;
   	if ($clinics[0]->Name == "" || $clinics[0]->configure == 0) { //first time login
-
-		// if($clinics[0]->configure == 0) {
-     $clinic_type = new CalendarController();
-     $clinic_type = $clinic_type->getWebClinicTypes($getSessionData->Ref_ID);
-     $clinic_type = json_decode($clinic_type);
-
+    
+      $clinic_type = new CalendarController();
+      $clinic_type = $clinic_type->getWebClinicTypes($getSessionData->Ref_ID);
+      $clinic_type = json_decode($clinic_type);
+      
      $data['doctorlist'] = [];
      $data['doctorprocedurelist'] = [];
 
      $data['clinic_type'] = $clinic_type;
      $data['title'] = 'Calendar';
      $data['clinic_data'] = $clinics[0];
-      // return $data;
-			// return "true";
+      
      return View::make('dashboard.first_time_calender',$data);
-		// }
-
-
+		
    }else{
 
     $doctors = new CalendarController();

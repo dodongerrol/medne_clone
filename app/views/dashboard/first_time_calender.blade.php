@@ -134,30 +134,11 @@
 
 		<div class="row col-md-12" style="padding-top: 15px;">
 			<div class="col-md-2" style="clear: both; padding-right: 25px;">
-				<label class="con-detail-lbl" style="padding-top: 12px;">Speciality</label>
-			</div>
-			<div class="col-md-8" style="padding: 0px; padding-left: 30px;">
-				<div class="right-inner-addon">
-		    		<i style="padding: 13px 35px 0 0;font-size: smaller;color: #666666;" class="glyphicon glyphicon-chevron-down"></i>
-		    		<input type="button" id="{{ $clinic_type[0]->ClinicTypeID }}" class="dropdown-btn dropdown-toggle clinic-speciality" data-toggle="dropdown" value="{{ $clinic_type[0]->Name }}" placeholder="Your Speciality" style="height: 25px; width: 240px; font-size: 12px; cursor: pointer; text-align: left;
-    padding-bottom: 10px;">
-
-					<ul class="dropdown-menu" id="config-clinic-type-list" style="width: 280px; position: absolute;top: 45px;left: 0;height: 80px; overflow-y: auto; overflow-x: hidden;">
-					    <?php foreach ($clinic_type as $val) { ?>
-				        <li><a href="#" id="{{ $val->ClinicTypeID }}">{{ $val->Name }}</a></li>
-				        <?php } ?>
-					</ul>
-				</div>
-			</div>
-		</div>
-
-		<div class="row col-md-12" style="padding-top: 15px;">
-			<div class="col-md-2" style="clear: both; padding-right: 25px;">
 				<label class="con-detail-lbl">Phone No</label>
 			</div>
 			<div class="col-md-8" style="padding: 0px; padding-left: 30px;">
   				<div id="code-dropdown" class="btn-group" style="border: 1px solid #d9d9d9; border-radius: 5px; display: block; width: 280px;">
-    				<button type="button" id="con-mobile-code" class="btn dropdown-toggle" data-toggle="dropdown" style="height: 25px; font-size: 12px; color: #686868; background: #F4F4F4; border-right: 1px solid #d9d9d9; width: 35px; text-align: left;">+65</button>
+    				<button type="button" id="con-mobile-code" class="btn dropdown-toggle" data-toggle="dropdown" style="height: 25px; font-size: 12px; color: #686868; background: #F4F4F4; border-right: 1px solid #d9d9d9; width: 35px; text-align: left;">{{ $clinic_data->PhoneCode }}</button>
     				<input type="text" id="con-mobile" class="dropdown-btn " value="{{ $clinic_data->Phone }}" placeholder="Main Phone" style="height: 28px; width: 197px; font-size: 12px; border: 0px;">
     				<ul class="dropdown-menu" id="config-mobile-code-list" style="width: 280px; position: static; max-height: 80px; overflow-y: auto; overflow-x: hidden;">
 
