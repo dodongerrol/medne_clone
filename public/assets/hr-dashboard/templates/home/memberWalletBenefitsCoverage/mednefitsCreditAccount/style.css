@@ -93,6 +93,7 @@
 #top-up-credits-modal .modal-dialog {
   width: 680px;
   max-height: 100%;
+  margin: 200px auto 0;
 }
 #top-up-credits-modal .modal-header span {
   font-family: 'Helvetica Light';
@@ -188,7 +189,7 @@
   z-index: 1;
   padding: 10px 0;
 }
-.top-up-calculation-wrapper >div:last-child {
+.top-up-calculation-wrapper .bonus-credits {
   padding: 0 0 10px;
 }
 .top-up-calculation-wrapper:before {
@@ -213,4 +214,72 @@
 }
 .bonus-credtits-rate-container .top-up-bonus-credits-container {
   margin: 0 0 10px;
+}
+.mednefits-credits-deactive-btn-footer {
+  text-align: right;
+}
+.mednefits-credits-deactive-btn-footer button {
+  color: #EB635D;
+  border: 1px solid #EB635D;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 2px 50px;
+}
+#top-up-credits-modal button.btn-update[disabled] {
+  background-color: #F2F2F2;
+}
+.member-wallet-benefits-wrapper .mednefits-credits-account-container {
+  height: 100vh;
+}
+
+/* Prepaid not activate */
+.prepaid-not-activated .gray-text {
+  color: #848484;
+}
+.prepaid-not-activated .btn-activate-credits {
+  color: #0392CF;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #0392CF;
+  padding: 2px 30px;
+  font-family: 'Helvetica Medium';
+}
+
+.prepaid-credits-form-container .btn-container {
+  text-align: right;
+  margin: 30px 0 0;
+}
+
+.prepaid-credits-form-container .btn-container button {
+  border-radius: 4px;
+  padding: 4px 0;
+  background-color: #fff;
+}
+.prepaid-credits-form-container button.btn-custom-cancel {
+  border: 1px solid #BFBFBF;
+  width: 90px;
+  margin: 0 10px 0 0;
+}
+.prepaid-credits-form-container button.btn-custom-confirm {
+  border: 1px solid #0392CF;
+  background-color: #0392CF;
+  width: 170px;
+  color: #fff;
+}
+.top-up-input-wrapper {
+  position: relative;
+}
+.top-up-input-wrapper img {
+  height: 14px;
+  width: 13px;
+  position: absolute;
+  top: 7px;
+  right: 10px;
+}
+
+#active-prepaid-credits-modal {
+  margin: 200px auto 0;
+}
+#active-prepaid-credits-modal .modal-body {
+  padding: 0px 40px 15px;
 }

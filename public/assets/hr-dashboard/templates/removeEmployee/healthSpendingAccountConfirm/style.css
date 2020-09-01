@@ -47,6 +47,7 @@
   line-height: 20px;
   color: #0392CF;
   font-family: 'Helvetica Light';
+  background: #ffff;
 }
 .confirm-modal-container .btn-modal-close,
 .confirm-modal-container .btn-modal-close:focus{

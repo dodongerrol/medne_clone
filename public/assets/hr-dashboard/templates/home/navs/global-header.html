@@ -45,10 +45,18 @@
 				<h4 ui-sref-active="active" ui-sref="benefits-dashboard">Overview</h4>
 				<div class="arrow-up"></div>
 			</div>
-			<div class="welcome-container">
-        <h4 ui-sref-active="active" ui-sref="employee-overview">Employee</h4>
+			<div class="welcome-container emp-nav-click-drop">
+        <h4 ng-click="navCtr.toggleEmployeeNavDrop()" ng-class="{'active' : $state.current.name == 'employee-overview' || $state.current.name == 'settings.cap-per-visit' || $state.current.name == 'settings.block-health-partners'}">Employee</h4>
         <!-- <h4  ng-click="toggleEmployee()">Employee</h4> -->
 				<div class="arrow-up"></div>
+				<div ng-if="navCtr.isEmpDropShow" class="nav-drop-wrapper">
+					<div class="nav-drop-item" ui-sref-active="active" ui-sref="employee-overview" ng-click="navCtr.isEmpDropShow = false;">
+						Employee Overview
+					</div>
+					<div class="nav-drop-item" ui-sref-active="active" ui-sref="settings.cap-per-visit" ng-click="navCtr.isEmpDropShow = false;">
+						Employee Settings
+					</div>
+				</div>
 			</div>
 			<div class="welcome-container">
 				<h4 ui-sref-active="active" ui-sref="activity">Activity</h4>
