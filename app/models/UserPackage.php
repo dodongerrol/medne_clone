@@ -170,7 +170,7 @@ class UserPackage extends Eloquent
                         $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
                         $data['plan_type'] = PlanHelper::getDependentPlanType($dependent_plan_history->dependent_plan_id);
                         $data['care_online'] = TRUE;
-                        $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
+                        $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history, $owner_id);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
                         $data['mobile'] = null;
 
