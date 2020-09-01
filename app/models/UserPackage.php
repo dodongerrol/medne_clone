@@ -173,6 +173,8 @@ class UserPackage extends Eloquent
                         $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
                         $data['mobile'] = null;
+                        $data['account_type'] = $active_plan->account_type;
+                        $data['account_status'] = MemberHelper::getMemberWalletStatus($owner_id, 'medical');
 
                         if($data['plan_type'] == "Enterprise Plan") {
                             $data['plan_add_on'] = "N.A.";
@@ -268,7 +270,7 @@ class UserPackage extends Eloquent
                         }
                         $validity = MemberHelper::getMemberWalletValidity($user_details->UserID, 'wellness');
                         $wallet_entitlement = DB::table('employee_wallet_entitlement')
-                        ->where('user_id', $id)
+                        ->where('member_id', $id)
                         ->orderBy('created_at', 'desc')
                         ->first();
 
@@ -288,17 +290,16 @@ class UserPackage extends Eloquent
                         $data['care_online'] = TRUE;
                         $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
                         $data['mobile'] = (string)$user_details->PhoneCode." ".(string)$user_details->PhoneNo;
+                        $data['account_type'] = $active_plan->account_type;
+                        $data['account_status'] = MemberHelper::getMemberWalletStatus($user_details->UserID, 'medical');
                         if($data['plan_type'] == "Mednefits Enterprise Plan") {
                             $data['plan_add_on'] = "N.A.";
                             $data['annual_entitlement'] = 14;
-                        }
-                        if($data['plan_type'] == "Out of Pocket") {
+                        } else if($data['plan_type'] == "Out of Pocket") {
                             $data['plan_add_on'] = "N.A.";
                             $data['annual_entitlement'] = 'Not applicable';
-                        }
-                        if($data['plan_type'] == "Mednefits Basic Plan") {
-                            $data['Annual Medical Entitlement'] = $wallet_entitlement->medical_entitlement;
-                            $data['annual_entitlement'] = 'Not applicable';
+                        } else {
+                            $data['annual_entitlement'] = strtoupper($wallet->currency_type).' '.number_format($wallet_entitlement->medical_entitlement, 2);
                         }
                         // get cap per visit
                         // check if their is a plan tier
@@ -306,7 +307,6 @@ class UserPackage extends Eloquent
                         ->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
                         ->where('plan_tier_users.user_id', $user_id)
                         ->first();
-                        // $cap_per_visit = $wallet->cap_per_visit_medical;
 
                         if($plan_tier) {
                             if($wallet->cap_per_visit_medical > 0) {

@@ -2188,5 +2188,50 @@ class MemberHelper
 
 		return false;
 	}
+
+	public static function getMemberWalletStatus($member_id, $spending_type)
+	{
+		$emp_status = "active";
+		$today = date('Y-m-d');
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if(!$user_plan_history) {
+			return false;
+		}
+
+		$member = DB::table('user')->where('UserID', $member_id)->first();
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = date('Y-m-d', strtotime($user_plan_history->date));
+
+		if($spending_type == "medical") {
+			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		} else {
+			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		}
+
+		$end = PlanHelper::endDate($end);
+
+
+		if($start < $today) {
+			$status = "active";
+		}
+
+		if($start <= $today && $end >= $today) {
+			if((int)$member->member_activated == 0 || (int)$member->member_activated == 1 && (int)$member->Status == 0) {
+				$emp_status = 'pending';
+			}
+		}
+
+		if($today > $end) {
+			$emp_status = 'expired';
+		}
+
+		if((int)$member->Active == 0) {
+			$emp_status = 'deactivated';
+		}
+
+		return $emp_status;
+	}
 }
 ?>

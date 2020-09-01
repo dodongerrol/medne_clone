@@ -802,6 +802,9 @@ class PlanHelper {
 			->get();
 		}
 		
+		if($active_plan->account_type == "out_of_pocket") {
+			return [];
+		}
 		if($active_plan->account_type == "insurance_bundle") {
 			if($active_plan->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active_plan->plan_id)->first();
