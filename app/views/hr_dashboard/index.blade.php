@@ -292,6 +292,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/container/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/constants.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/function.js?_={{ $date->format('U') }}"></script>
 
 
 	<!-- Controllers -->
