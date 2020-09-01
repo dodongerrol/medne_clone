@@ -74,7 +74,7 @@ app.directive('memberWalletBenefitsCoverageDirective', [
 				scope._disabledStatus_ = async function () {
 					// basic plan
 					console.log(scope.planStatusData.account_type);
-					if ( scope.planStatusData.account_type == 'lite_plan' || scope.planStatusData.account_type == 'out_pocket' ) {
+					if ( scope.planStatusData.account_type == 'lite_plan' || scope.planStatusData.account_type == 'out_of_pocket' || scope.planStatusData.account_type == 'out_pocket' ) {
 						scope.isBasicPlan = await false;
 						console.log('basic plan ni')
 					}
@@ -82,7 +82,7 @@ app.directive('memberWalletBenefitsCoverageDirective', [
 						scope.isEnterprisePlan = await false;
 						console.log('enterprise plan ni')
 					}
-					if ( scope.planStatusData.account_type == 'out_pocket' ) {
+					if ( scope.planStatusData.account_type == 'out_of_pocket' || scope.planStatusData.account_type == 'out_pocket' ) {
 						scope.isOutofPlan = await false;
 						console.log('out of pocket ni')
 					}

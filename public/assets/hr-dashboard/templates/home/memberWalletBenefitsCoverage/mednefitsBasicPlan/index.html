@@ -57,14 +57,24 @@
             <div class="available-credits">
               <span class="available-credits-container dp-flex-ai">
                 <h5 class="flex-1 member-bold-text">GIRO</h5>
-                <div>
+                <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
                   <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
-                </div>
+                </div`>
               </span>
-              <div>This method is currently used in:</div>
-              <div class="display-flex wellness-wallet-container">
-                <div class="member-bold-text">Wellness Wallet:</div>
-                <div>Non-Panel</div>
+              <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || medical_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
+                <div>This method is currently used in:</div>
+                <div class="display-flex mednefits-credits-wallet-container">
+                  <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel)" class="member-bold-text">Medical Wallet:</div>
+                  <div class="display-flex m-panel">
+                    <div ng-if="benefitsCoverageData.medical.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                    <div ng-if="benefitsCoverageData.medical.non_panel">Non-Panel</div>
+                  </div>
+                </div>
+                <div ng-if="(benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)" class="display-flex mednefits-credits-wallet-container">
+                  <div class="member-bold-text">Wellness Wallet:</div>
+                  <div ng-if="benefitsCoverageData.wellness.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                  <div ng-if="benefitsCoverageData.wellness.non_panel">Non-Panel</div>
+                </div>
               </div>
             </div>
           </div>
@@ -76,7 +86,22 @@
             <div class="available-credits">
               <span class="available-credits-container dp-flex-ai">
                 <h5 class="flex-1 member-bold-text">Bank Transfer/ PayNow</h5>
+                <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer') || (wellness_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer')">
+                  <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                </div>
               </span>
+              <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || medical_wallet_details.non_panel_payment_method == 'bank_transfer') || (wellness_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer')" class="display-flex mednefits-credits-wallet-container">
+                <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel)" class="member-bold-text">Medical Wallet:</div>
+                <div class="display-flex m-panel">
+                  <div ng-if="benefitsCoverageData.medical.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                  <div ng-if="benefitsCoverageData.medical.non_panel">Non-Panel</div>
+                </div>
+              </div>
+              <div ng-if="(benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)" class="display-flex mednefits-credits-wallet-container">
+                <div class="member-bold-text">Wellness Wallet:</div>
+                <div ng-if="benefitsCoverageData.wellness.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                <div ng-if="benefitsCoverageData.wellness.non_panel">Non-Panel</div>
+              </div>
             </div>
           </div>
         </div>
@@ -87,22 +112,24 @@
             <div class="available-credits">
               <span class="available-credits-container dp-flex-ai">
                 <h5 class="flex-1 member-bold-text">Mednefits Credits</h5>
-                <div>
+                <div ng-if="(medical_wallet_details.panel_payment_method == 'mednefits_credits' || wellness_wallet_details.non_panel_payment_method == 'mednefits_credits') || (wellness_wallet_details.panel_payment_method == 'mednefits_credits' || wellness_wallet_details.non_panel_payment_method == 'mednefits_credits')">
                   <button ng-click="editMednefitsCredits()" class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
                 </div>
               </span>
               <p class="mca-text">Mednefits Credits is held in Mednefits Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
               <div>This method is currently used in:</div>
-              <div class="display-flex mednefits-credits-wallet-container">
-                <div class="member-bold-text">Medical Wallet:</div>
-                <div class="display-flex m-panel">
-                  <div class="mednefits-panel-text">Mednefits Panel</div>
-                  <div>Non-Panel</div>
+              <div>
+                <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel)"  class="display-flex mednefits-credits-wallet-container" class="display-flex mednefits-credits-wallet-container">
+                  <div class="member-bold-text">Medical Wallet:</div>
+                  <div class="display-flex m-panel">
+                    <div ng-if="benefitsCoverageData.medical.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                    <div ng-if="benefitsCoverageData.medical.non_panel">Non-Panel</div>
+                  </div>
                 </div>
-              </div>
-              <div class="display-flex mednefits-credits-wallet-container">
-                <div class="member-bold-text">Wellness Wallet:</div>
-                <div>Non-Panel</div>
+                <div class="display-flex mednefits-credits-wallet-container">
+                  <div ng-if="benefitsCoverageData.wellness.panel" class="member-bold-text">Wellness Wallet:</div>
+                  <div ng-if="benefitsCoverageData.wellness.non_panel">Non-Panel</div>
+                </div>
               </div>
             </div>
           </div>

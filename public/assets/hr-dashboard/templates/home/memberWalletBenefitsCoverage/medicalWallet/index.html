@@ -25,7 +25,7 @@
     </div>
   </div>
   <div class="mwbc-box-container">
-    <h4 class="member-bold-text">Medical Wallet</h4>
+    <h4 class="member-bold-text">Medical Wallet <span class="status" ng-class="{'active' : !medicalWalletData.disable, 'inactive' : medicalWalletData.disable }">({{!medicalWalletData.disable ? 'Active':'Deactivated'}})</span></h4>
     <div class="mwbc-card-box-container">
       <div class="available-credits-container">
         <div class="available-credits">
@@ -366,7 +366,4 @@
       </div>
     </div>
   </div>
-  <span class="mwbc-fotter-btn">
-    <button class="deactivate-btn">Deactivate</button>
-  </span>
 </div>

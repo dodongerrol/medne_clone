@@ -46,6 +46,7 @@ app.directive('outOfPocketDirective', [
             });
 
             scope.getBenefitsCoverageData(scope.defaultDateTerms);
+            scope._getPaymentDetails_(scope.defaultDateTerms);
           })
         }
 
@@ -80,7 +81,27 @@ app.directive('outOfPocketDirective', [
 							
 							scope.hideLoading();
             })
-				}
+        }
+        
+        scope._getPaymentDetails_ = function ( data ) {
+          // console.log(data);
+          hrSettings.fetchMemberWallet( data.start, data.end, 'medical' )
+            .then(function(response){
+              // console.log(response);
+              scope.medical_wallet_details = response.data.data;
+              console.log(scope.medical_wallet_details);
+							scope.hideLoading();
+            })
+
+            hrSettings.fetchMemberWallet( data.start, data.end, 'wellness' )
+            .then(function(response){
+              // console.log(response);
+							scope.wellness_wallet_details = response.data.data;
+              console.log(scope.wellness_wallet_details);
+						
+							scope.hideLoading();
+            })
+        }
 
         scope.toggleTransaction = function () {
           $('.credits-tooltip-container.total-member-transaction').toggle();

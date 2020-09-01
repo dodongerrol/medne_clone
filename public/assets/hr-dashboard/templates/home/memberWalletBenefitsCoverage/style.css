@@ -429,3 +429,9 @@
   opacity: .3;
   pointer-events: none;
 }
+.mwbc-box-container .status.inactive {
+  color: #EB635D;
+}
+.mwbc-box-container .status.active {
+  color: #3F9D59;
+}

@@ -53,7 +53,7 @@
   <div class="mwbc-box-container">
     <div class="dp-flex-ai">
       <h5 class="member-bold-text flex-1">Member Wallet</h5>
-      <div>
+      <div ng-if="false">
         <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
       </div>
     </div>
@@ -61,19 +61,25 @@
       <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
     </div>
     <div ng-if="true">
-      <div>Mednefits Credits is currently used in:</div>
+      <div>
+        <span ng-if="medical_wallet_details.panel_payment_method == 'giro'">Mednefits Credits</span>
+        <span ng-if="medical_wallet_details.panel_payment_method == 'bank_transfer'">Mednefits Credits</span>
+        <span ng-if="medical_wallet_details.panel_payment_method == 'mednefits_credits'">Mednefits Credits</span>
+         is currently used in:
+        </div>
       <div>
         <div class="wallet-container medical-wallet-container display-flex">
-            <div class="member-bold-text">Medical Wallet:</div>
+            <div ng-if="benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel" class="member-bold-text">Medical Wallet:</div>
             <div class="display-flex wallet-panel-container">
-              <div>Mednefits Panel</div>
-              <div>Non Panel</div>
+              <div ng-if="benefitsCoverageData.medical.panel">Mednefits Panel</div>
+              <div ng-if="benefitsCoverageData.medical.non_panel">Non Panel</div>
             </div>
         </div>
         <div class="wallet-container wellness-wallet-container display-flex">
-          <div class="member-bold-text">Wellness Wallet:</div>
+          <div ng-if="benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel" class="member-bold-text">Wellness Wallet:</div>
           <div>
-            <div>Non Panel Panel</div>
+            <div ng-if="benefitsCoverageData.wellness.panel">Mednefits Panel</div>
+            <div ng-if="benefitsCoverageData.wellness.non_panel">Non Panel</div>
           </div>
         </div>
       </div>

@@ -307,11 +307,11 @@ app.directive('mednefitsCreditAccountDirective', [
             invoice_date: moment( formData.invoice_date,'DD/MM/YYYY' ).format('YYYY-MM-DD')
           }
           console.log(data);
-          // hrSettings.updatePrepaidCredits( data )
-          //   .then(function(response){
-          //     console.log(response);
+          hrSettings.updatePrepaidCredits( data )
+            .then(function(response){
+              console.log(response);
               
-          //   })
+            })
         }
 
         scope.validateCreditsValue = function(value){
