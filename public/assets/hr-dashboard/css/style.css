@@ -32,6 +32,9 @@ body {
 .bg-color-home {
   background: #f5f5f5;
 }
+.bg-color-auth{
+  background: #FFF;
+}
 button {
   outline: none !important;
 }

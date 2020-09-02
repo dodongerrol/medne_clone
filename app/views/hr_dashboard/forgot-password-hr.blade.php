@@ -17,7 +17,7 @@
 	<!-- {{ HTML::style('assets/hr-dashboard/css/responsive.css') }} -->
 
 </head>
-<body forgot-section>
+<body forgot-section class="bg-color-auth">
 	<div class="container">
 		<div class="login-need-help-container">
 			<a href="#" class="pull-right need-help-text tooltips">

@@ -92,7 +92,7 @@
 	<div class="header-settings-div">
 		<div class="icon-selection-container">
 			<img ui-sref="account-settings" src="../../assets/hr-dashboard/img/cog-icon.png" class="pointer-cursor">
-			<img src="../../assets/hr-dashboard/img/circle-question.png" class="pointer-cursor">
+			<img src="../../assets/hr-dashboard/img/circle-question.png" class="pointer-cursor help-icon">
 
 			<div class="tooltip-container">
 				<h3 class="tooltip-title">We're here to help.</h3>
@@ -105,8 +105,8 @@
 				<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
 			</div>
 		</div>
-		<div class="user-info-drop-container active">
-			<div class="drop-select-wrapper">
+		<div class="user-info-drop-container" :class="{ 'active': open }" x-data="{ open: false }">
+			<div class="drop-select-wrapper" @click="open = true">
 				<div class="user-img-icon">
 					<div class="circle">
 						<div class="letter">F</div>
@@ -115,6 +115,49 @@
 				<div class="company-name">Mednefits Pte Ltd</div>
 				<div class="icon">
 					<i class="fa fa-angle-down"></i>
+				</div>
+			</div>
+
+			<div x-show="open" @click.away="open = false" class="user-setting-drop-wrapper">
+				<div class="drop-user-details">
+					<div class="user-img-icon">
+						<div class="circle">
+							<div class="letter">F</div>
+						</div>
+					</div>
+					<div class="drop-user-info">
+						<p class="name">Filbert Tan - Mednefits</p>
+						<p class="email">filbert@mednefits.com</p>
+					</div>
+				</div>
+
+				<div class="linked-accounts-wrapper">
+
+					<div ng-repeat="list in [1,2,3,4,5]" class="linked-account">
+						<div class="comp-name">
+							<p class="company">Medicloud</p>
+							<p class="comp-id">Company ID: 141</p>
+						</div>
+						<div class="switch-account">
+							<span>Switch Account</span>
+						</div>
+					</div>
+
+					<div class="more-linked">
+						<span>More linked account <i class="fa fa-angle-right"></i></span>
+					</div>
+				</div>
+
+				<div class="drop-items-wrapper">
+					<div class="drop-item" ui-sref="account-settings">
+						Account Settings
+					</div>
+					<div class="drop-item">
+						Company Profile
+					</div>
+					<div class="drop-item" id="signout-btn">
+						Sign out
+					</div>
 				</div>
 			</div>
 		</div>
@@ -128,6 +171,10 @@
 	}
 
 	$('#logout-btn').click(function( ){
+		window.localStorage.clear();
+		window.location.href = window.location.origin + '/business-portal-login';
+	});
+	$('#signout-btn').click(function( ){
 		window.localStorage.clear();
 		window.location.href = window.location.origin + '/business-portal-login';
 	});

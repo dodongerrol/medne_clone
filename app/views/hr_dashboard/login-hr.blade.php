@@ -42,7 +42,7 @@
 
 </head>
 
-<body ng-cloak login-section>
+<body ng-cloak login-section class="bg-color-auth">
 	<div class="container">
 		<div class="login-need-help-container">
 			<a href="#" class="pull-right need-help-text tooltips">

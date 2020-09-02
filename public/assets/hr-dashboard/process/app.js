@@ -162,24 +162,24 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/benefits-home-dashboard.html'
         },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs.html'
-        },
-        'modal_2': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-new-emp.html'
-        },
-        'modal_3': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-remove-emp.html'
-        },
-        'modal_4': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-replace-emp.html'
-        },
-        'modal_5': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-cancel-plan.html'
-        },
-        'modal_6': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-data-privacy.html'
-        },
+        // 'modal': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs.html'
+        // },
+        // 'modal_2': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-new-emp.html'
+        // },
+        // 'modal_3': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-remove-emp.html'
+        // },
+        // 'modal_4': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-replace-emp.html'
+        // },
+        // 'modal_5': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-cancel-plan.html'
+        // },
+        // 'modal_6': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/faqs-data-privacy.html'
+        // },
       },
     })
     .state('enrollment-options', {
@@ -355,15 +355,15 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/activity.html'
         },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-modal.html'
-        },
-        'modal_2': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/delete-employee-confirmation-modal.html'
-        },
-        'modal_3': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/replace-employee.html'
-        }
+        // 'modal': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-modal.html'
+        // },
+        // 'modal_2': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/delete-employee-confirmation-modal.html'
+        // },
+        // 'modal_3': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/replace-employee.html'
+        // }
       },
     })
 
@@ -376,15 +376,15 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/e-claim.html'
         },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-modal.html'
-        },
-        'modal_2': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/delete-employee-confirmation-modal.html'
-        },
-        'modal_3': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/replace-employee.html'
-        }
+        // 'modal': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-modal.html'
+        // },
+        // 'modal_2': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/delete-employee-confirmation-modal.html'
+        // },
+        // 'modal_3': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/replace-employee.html'
+        // }
       },
     })
 
@@ -397,15 +397,15 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/statement.html'
         },
-        'modal': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-modal.html'
-        },
-        'modal_2': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/delete-employee-confirmation-modal.html'
-        },
-        'modal_3': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/replace-employee.html'
-        }
+        // 'modal': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/edit-employee-modal.html'
+        // },
+        // 'modal_2': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/delete-employee-confirmation-modal.html'
+        // },
+        // 'modal_3': {
+        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/replace-employee.html'
+        // }
       },
     })
 
