@@ -1329,7 +1329,7 @@ Route::group(array('prefix' => 'app'), function()
 		
 		/*****************Clinic : PUT*****************/
 		//Refactor API for gettting providers information for the first time.
-			Route::put('clinic/updateProvidersDetail', '@DashboardController@updateProvidersDetail');
+			Route::put('clinic/updateProvidersDetail', 'DashboardController@updateProvidersDetail');
 		/* End Here. */
 	   
 		

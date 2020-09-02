@@ -581,7 +581,7 @@ public function getFavouriteClinics($userID)
             DB::table('user')
                 ->where('Ref_ID', $clinic_id)
                 ->where('UserType', 3)
-                ->update($data);
+                ->update(array( 'Name' => $data['Name'] ));
             
             // Update Clinic Table.
            return Clinic::where('ClinicID', $clinic_id)
@@ -593,13 +593,18 @@ public function getFavouriteClinics($userID)
             $manageTime = DB::table('manage_times')
                             ->where('PartyID', $clinic_id)
                             ->first();
+            
             // Delete existing time record
             DB::table('clinic_time')
-                ->where('ManageTimeID', $manageTime['ManageTimeID'])
+                ->where('ManageTimeID', $manageTime->ManageTimeID)
                 ->delete();
+
             // Insert new record
-           return  DB::table('clinic_time')
-                ->insert($data); 
+            for ($i = 0; $i < count($data); $i++) {
+                $data[$i] = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => 1));
+                    DB::table('clinic_time')
+                        ->insert($data[$i]);    
+            }
         }
 
         public function updateBreakHours($data, $clinic_id) {
