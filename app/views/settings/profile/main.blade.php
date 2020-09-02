@@ -67,7 +67,7 @@
 
 
 	<div id="profile-detail-wrapper" class="detail-wrapper" style="padding: 0px;">
-		
+		<!-- bugok -->
 	</div>
 	
 </div>

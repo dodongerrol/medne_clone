@@ -878,3 +878,16 @@ div.fc-scroller
 {
     overflow-y: hidden!important;
 }
+
+#setupBreakHours .timepicker {
+    color: #777676;
+    border: 1px solid #d9d9d9;
+    width: 80px;
+    font-size: 15px;
+    height: 30px;
+    background: white;
+}
+
+#setupBreakHours .btn-info {
+    background: #1B9BD7;
+}

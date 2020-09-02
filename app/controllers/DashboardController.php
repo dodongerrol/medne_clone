@@ -208,27 +208,28 @@ class DashboardController extends \BaseController {
 	function updateProvidersDetail() {
 		try {
 			$payload = Input::all();
-
+			$clinic  = new Clinic;
 			// Update Providers info, operating hours and break hours.
 			if (isset($payload['providersDetails']['providersInfo'])
 				&& isset($payload['providersDetails']['providersOperatingHours'])
 				&& isset($payload['providersDetails']['providersBreakHours'])) {
 					// update providers info
-					new updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
+					$clinic->updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
 					// update providers operating hours
-					new updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
+					$clinic->updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
 					// update providers break hours
-					new updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					$clinic->updateBreakHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
 					
 					return array(
 						'message' => 'Providers details successfully updated.',
 						'success' => true
 					);
+					
 			} else if(!isset($payload['providersDetails']['providersInfo'])
 				&& isset($payload['providersDetails']['providersOperatingHours'])
 				&& !isset($payload['providersDetails']['providersBreakHours'])) {
 					// update providers operating hours
-					new updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
+					$clinic->updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
 					
 					return array(
 						'message' => 'Providers Operating Hours Successfully Updated.',
@@ -238,7 +239,7 @@ class DashboardController extends \BaseController {
 				&& !isset($payload['providersDetails']['providersOperatingHours'])
 				&& isset($payload['providersDetails']['providersBreakHours'])) {
 					// update providers break hours
-					new updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					$clinic->updateBreakHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
 					
 					return array(
 						'message' => 'Providers Break Hours Successfully Updated.',
@@ -248,7 +249,7 @@ class DashboardController extends \BaseController {
 				&& !isset($payload['providersDetails']['providersOperatingHours'])
 				&& !isset($payload['providersDetails']['providersBreakHours'])) {
 					// update providers info
-					new updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
+					$clinic->updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
 					
 					return array(
 						'message' => 'Providers Info Successfully Updated.',

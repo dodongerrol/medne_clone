@@ -5,8 +5,6 @@
 <div id="config_alert_box">
     message goes here
 </div>
-
-<input type="hidden" id="clinicID" value="">
 <div id="calender_header">
 		<div class="header-list">
 			<ul class="nav navbar-nav">
@@ -69,7 +67,8 @@
   <ul class="nav nav-tabs setup" style="background: #104159;">
 
     <li id="step-1" class="active disabledTab">
-  	<label class="lbl-setup-complete"><b>Welcome</b></label>
+	  <label class="lbl-setup-complete"><b>Welcome</b></label>
+	  <input type="hidden" id="clinicID" value="{{ $clinic_data->ClinicID }}">
 	<a data-toggle="tab" href="#setupHome">
 		<span id="lbl-step-1" class="step-no">1</span>
 		<span id="lbl-step-1-ok" class="glyphicon glyphicon-ok step-no" style="background: #2AA4D8; position: absolute; display: none;"></span>
@@ -83,7 +82,7 @@
 	</a>
 	</li>
 	<li id="step-3" class="disabledTab">
-  	<label class="lbl-setup-complete"><b>Doctors</b></label>
+  	<label class="lbl-setup-complete"><b>Break Hours</b></label>
 		<a data-toggle="tab" href="#setupDoctor">
 		<span id="lbl-step-3" class="step-no">3</span>
 		<span id="lbl-step-3-ok" class="glyphicon glyphicon-ok step-no" style="background: #2AA4D8; position: absolute; display: none;"></span>
@@ -92,7 +91,7 @@
 	<li id="step-5" class="disabledTab">
   	<label class="lbl-setup-complete"><b>DONE!</b></label>
 		<a data-toggle="tab" href="#setupDone">
-		<span id="lbl-step-5" class="step-no">3</span>
+		<span id="lbl-step-5" class="step-no">4</span>
 		<span id="lbl-step-5-ok" class="glyphicon glyphicon-ok step-no" style="background: #2AA4D8; position: absolute; display: none;"></span>
 	</a>
 	</li>
@@ -179,17 +178,17 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 				<div>
-					<button id="copyTimetoAllBtn" style="font-size: 0.5em;" disabled>Copy time to all</button>
+					<button id="copyTimetoAllBtn" style="font-size: 0.5em;">Copy time to all</button>
 					<button id="undoCopyTimetoAllBtn" style="font-size: 0.5em; display: none">Undo changes</button>
 				</div>
 				
@@ -200,14 +199,14 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Tuesday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Wednesday div -->
@@ -216,14 +215,14 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Wednesday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Thursday div -->
@@ -232,14 +231,14 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Thursday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Friday div -->
@@ -248,14 +247,14 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Friday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Saturday div -->
@@ -264,14 +263,14 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Saturday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Sunday div -->
@@ -280,14 +279,14 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Sunday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Public Holiday div -->
@@ -296,14 +295,14 @@
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
 				</div>
 				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker time-from" value="" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker time-to" value="" style="font-size: 12px;">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>		
 		</div>
@@ -314,45 +313,152 @@
 
     </div>
 
-<!-- Doctor tab contents -->
+<!-- Break Hours tab contents -->
+<div id="setupBreakHours" class="tab-pane fade">
 
-    <div id="setupDoctor" class="tab-pane fade">
+<div>
+	  <h3 style="float: left;">Set Your Break Hours</h3>
+	  <span style="float: right; padding-top: 22px;">
+		  <button id="breakHour-back" class="config-back-btn" style="font-size: medium;"><i class="glyphicon glyphicon-chevron-left" style="font-size: small;"></i></button>
+		  <button id="breakHour-next" class="config-nxt-btn" style="font-size: medium;">Next <i class="glyphicon glyphicon-chevron-right" style="font-size: small;"></i></button>
+	  </span>
+</div><br><br>
+<span style="font-size: 16px; color: #777; font-size: 12px;">Let your customers know when you're open</span>
 
-    <div>
-      	<h3 style="float: left;">Add Doctors</h3>
-      	<span style="float: right; padding-top: 22px;">
-      		<button id="doctor-back" class="config-back-btn" style="font-size: medium;"><i class="glyphicon glyphicon-chevron-left" style="font-size: small;"></i></button>
-      		<button id="doctor-next" class="config-nxt-btn" style="font-size: medium;">Next <i class="glyphicon glyphicon-chevron-right" style="font-size: small;"></i></button>
-      	</span>
-    </div><br><br>
-    <span style="font-size: 12px; color: #777;">Dont worry - you can always edit these later</span>
 
-    <div class="panel panel-default" style="margin-top: 15px;">
-    	<div class="panel-body" style="padding-left: 10px;">
+<div class="panel panel-default" style="margin-top: 15px;">
+	<div class="panel-body">
 
-    	<div id="clinic-doctors-panel">
+	<div style="text-align: center;">
+		<span style="font-size: 12px;; color: #777;">Your time Zone is set to <u style="cursor: pointer;">SINGAPORE (UTC+08:00)</u>.</span>
+	</div>
 
-    	</div>
-
-    	<hr style="border: 1px solid rgb(216, 216, 216) !important; border-color: rgb(216, 216, 216); -webkit-box-shadow: 0 0 5px rgb(216, 216, 216); -moz-box-shadow: 0 0 5px red; box-shadow: 0 0 5px rgb(216, 216, 216);">
-
-		<div class="row col-md-13">
-			<span class="col-md-1" style="padding-bottom: 5px; padding: 0px;">
-    			<img alt="" src="{{ URL::asset('assets/images/ico_Profile.svg') }}" width="40" height="40">
-    		</span>
-			<div class="col-md-4">
-				<input type="text" id="con-doctor-name" class="dropdown-btn " value="" placeholder="Name" style="height: 30px; width: 140px; font-size: 12px;">
+	<div id="clinic-time-panel">
+		<!-- Monday div -->
+		<div class="row col-md-13" id ='monday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
 			</div>
-			<div class="col-md-4" style="padding-left: 0px;">
-				<input type="text" id="con-doctor-email" class="dropdown-btn " value="" placeholder="Email" style="height: 30px; width: 150px; font-size: 12px;">
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
-			<button id="config-doc-add-btn" class="config-doc-add-btn" style="font-size: 15px; width: 45px;">Add</button>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+			<div>
+				<button id="copyTimetoAllBtnBreak" style="font-size: 0.5em;" disabled>Copy time to all</button>
+				<button id="undoCopyTimetoAllBtnBreak" style="font-size: 0.5em; display: none">Undo changes</button>
+			</div>
+			
+		</div>	
+		<!-- Tuesday div -->
+		<div class="row col-md-13" id ='tuesday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Tuesday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Wednesday div -->
+		<div class="row col-md-13" id ='wednesday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Wednesday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Thursday div -->
+		<div class="row col-md-13" id ='thursday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Thursday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Friday div -->
+		<div class="row col-md-13" id ='friday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Friday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Saturday div -->
+		<div class="row col-md-13" id ='saturday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Saturday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Sunday div -->
+		<div class="row col-md-13" id ='sunday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Sunday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+				
+	</div>
+
+
 		</div>
+	</div>
 
-    	</div>
-    </div>
-
-    </div>
+</div>
 
 <!-- DONE tab contents -->
 
