@@ -5967,16 +5967,16 @@ class BenefitsDashboardController extends \BaseController {
 		->first();
 
 		// check if head count or not
-		if((int)$get_active_plan->new_head_count == 0) {
+		// if((int)$get_active_plan->new_head_count == 0) {
 			$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
 			// return $data;
 			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
 			$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		} else {
-			$data = self::getAddedHeadCountInvoice($input['invoice_id']);
-			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
-			$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		}
+		// } else {
+		// 	$data = self::getAddedHeadCountInvoice($input['invoice_id']);
+		// 	// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+		// 	$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
+		// }
 
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
@@ -6006,8 +6006,10 @@ class BenefitsDashboardController extends \BaseController {
 		$data['invoice_number'] = $invoice->invoice_number;
 		$data['invoice_date'] = date('F d, Y', strtotime($invoice->invoice_date));
 		$data['payment_due'] = date('F d, Y', strtotime($invoice->invoice_due));
+		$data['invoice_due'] = $data['payment_due'];
 		$data['employees'] = $invoice->employees;
 		$data['start_date'] = date('F d, Y', strtotime($active_plan->plan_start));
+		$data['plan_start'] = $data['start_date'];
 
 		$calculated_prices_end_date = null;
 		if((int)$active_plan->new_head_count == 0) {
@@ -6128,7 +6130,7 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$data['customer_active_plan_id'] = $active_plan->customer_active_plan_id;
-
+		$data['dependents'] = [];
 		return $data;
 	}
 
@@ -6449,6 +6451,24 @@ class BenefitsDashboardController extends \BaseController {
 					$data['duration'] = $get_active_plan->duration;
 				}
 			} else {
+				// $first_plan = DB::table('customer_active_plan')->where('plan_id', $active_plan->plan_id)->first();
+				$duration = null;
+				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
+				$end_plan_date = $calculated_prices_end_date['plan_end'];
+				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
+
+				if((int)$invoice->override_total_amount_status == 1) {
+					$calculated_prices = $invoice->override_total_amount;
+				} else {
+					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+				}
+				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
+				$duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
+
+				$data['price']          = number_format($calculated_prices, 2);
+				$data['amount']					= number_format($invoice->employees * $calculated_prices, 2);
+				$data['total']					= $invoice->employees * $calculated_prices;
+				$amount_due     = $invoice->employees * $calculated_prices;
 
 				$payment = DB::table('customer_cheque_logs')->where('invoice_id', $id)->first();
 
@@ -6480,15 +6500,6 @@ class BenefitsDashboardController extends \BaseController {
 				} else {
 					$data['amount_due']     = number_format($amount_due, 2);
 				}
-
-				$first_plan = DB::table('customer_active_plan')->where('plan_id', $get_active_plan->plan_id)->first();
-				$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
-				$calculated_prices = self::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $end_plan_date);
-				$data['price']          = number_format($calculated_prices, 2);
-				$amount_due = $data['number_employess'] * $calculated_prices;
-				$data['amount']					= number_format($data['number_employess'] * $calculated_prices, 2);
-				$data['total']					= number_format($data['number_employess'] * $calculated_prices, 2);
-				$data['duration'] = $get_active_plan->duration;
 			}
 
 		}
