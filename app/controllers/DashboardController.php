@@ -218,12 +218,13 @@ class DashboardController extends \BaseController {
 					// update providers operating hours
 					$clinic->updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
 					// update providers break hours
-					$clinic->updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					$clinic->updateBreakHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
 					
 					return array(
 						'message' => 'Providers details successfully updated.',
 						'success' => true
 					);
+					
 			} else if(!isset($payload['providersDetails']['providersInfo'])
 				&& isset($payload['providersDetails']['providersOperatingHours'])
 				&& !isset($payload['providersDetails']['providersBreakHours'])) {
@@ -238,7 +239,7 @@ class DashboardController extends \BaseController {
 				&& !isset($payload['providersDetails']['providersOperatingHours'])
 				&& isset($payload['providersDetails']['providersBreakHours'])) {
 					// update providers break hours
-					$clinic->updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					$clinic->updateBreakHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
 					
 					return array(
 						'message' => 'Providers Break Hours Successfully Updated.',

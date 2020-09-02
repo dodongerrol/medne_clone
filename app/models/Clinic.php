@@ -600,18 +600,31 @@ public function getFavouriteClinics($userID)
                 ->delete();
 
             // Insert new record
-            for ($i = 0; $i < count($data); $i++) {
-                $data[$i] = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => 1));
+            for ($i = 0; $i < count($data); $i++) { 
+                $data[$i] = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => 1, 'Created_on' => time()));
                     DB::table('clinic_time')
                         ->insert($data[$i]);    
             }
+
+            return true;
         }
 
         public function updateBreakHours($data, $clinic_id) {
-            // update manage events
-           return  DB::table('extra_events')
+            // Delete existing time record
+            DB::table('extra_events')
                 ->where('clinic_id', $clinic_id)
-                ->update($data);
+                ->delete();
+
+            // update manage events
+            for ($x = 0; $x < count($data); $x++) {
+                $guid = StringHelper::getGUID();
+                $data[$x] = array_merge($data[$x], array( 'id' => $guid));
+
+                DB::table('extra_events')
+                    ->insert($data[$x]);
+            }
+            
+            return true;
         }
        
 
