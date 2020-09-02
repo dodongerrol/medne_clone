@@ -528,6 +528,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
 });
 
+	// download non-panel reimbursement
+	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
+	// download non-panel invoice
+	Route::get('hr/download_non_panel_invoice', 'EclaimController@downloadNonPanelInvoice');
 	// downloand plan invoice
 	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get company employees and credits left
