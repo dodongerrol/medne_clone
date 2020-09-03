@@ -892,7 +892,7 @@ class Api_V1_TransactionController extends \BaseController
 						$owner = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $findUserID)->first();
 						$user_id = $owner->owner_id;
 						$customer_id = $findUserID;
-						$dependent_user = false;
+						$dependent_user = true;
 					}
 
 					$customerID = PlanHelper::getCustomerId($user_id);
