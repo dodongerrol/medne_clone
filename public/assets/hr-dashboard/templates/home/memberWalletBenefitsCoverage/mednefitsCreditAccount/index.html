@@ -30,6 +30,7 @@
     </div>
     <div class="mwbc-box-container">
       <h4 class="member-bold-text"> Prepaid Credits Account</h4>
+      <p class="prepaid-subtext">Prepaid Credits Account stores prepaid credits. Prepaid credits can be used to pay for employee benefits charges.</p>
       <!-- add class "pending" if the account is still pending -->
       <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : mednefitsCreditsData.payment_status == false }">
         <span ng-if="mednefitsCreditsData.payment_status == false" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
@@ -199,35 +200,35 @@
             <div class="custom-pagination">
               <div class="page-wrapper">
                 <div class="page-scroll-container">
-                  <span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                  <span ng-click="_prevPageList_('activity')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
                     <i class="fa fa-angle-left"></i> 
                     <span>Prev</span>
                   </span>
                   <div class="pages-list">
                       
                     <!-- <span class="page-num active">1</span>	 -->
-                    <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
+                    <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
 
                     <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
                     
                   </div>
-                  <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
+                  <span ng-click="_nextPageList_('activity')" class="prev-next-container">  
                     <span>Next</span>
                     <i class="fa fa-angle-right"></i> 
                   </span>
                 </div>
               </div>
-              <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
+              <div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
               <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
                 <span><span>10</span> per page</span>
                 <span>  
                   <i class="fa fa-caret-down"></i>
                 </span>
-                <div class="opened-per-page-scroll invoice-per-page-container">
-                  <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
-                  <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
-                  <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
-                  <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+                <div ng-if="pagination_dropdown" class="opened-per-page-scroll">
+                  <span ng-click="_setPageLimit_( 'activity',10 )">10 per page</span>
+                  <span ng-click="_setPageLimit_( 'activity',25 )">20 per page</span>
+                  <span ng-click="_setPageLimit_( 'activity',50 )">50 per page</span>
+                  <span ng-click="_setPageLimit_( 'activity',100 )">100 per page</span>
                 </div>
               </div>
             </div>
@@ -423,7 +424,7 @@
                     <img src="../../assets/hr-dashboard/img/calendar.png">
                   </div>
                 </div>
-              </div>=
+              </div>
             </div>
           </div>
           <div ng-if="isCreditsConfirmShow" class="modal-body top-up-body-container top-up-success">
@@ -434,7 +435,7 @@
               Please confirm to proceed.
             </p>
 
-            <img ng-if="isTopUpSuccess" src="../images/green-check.png" alt="">
+            <img ng-if="isTopUpSuccess" src="../assets/images/success-circle.png" alt="">
             <p ng-if="isTopUpSuccess" class="text-center">This top-up has been successfully completed.</p>
           </div>
           <div class="modal-footer">
@@ -462,8 +463,7 @@
           <p ng-if="!isMednefitsCreditsSuccessShow" >
             Please confirm to proceed.
           </p>
-
-          <img ng-if="isMednefitsCreditsSuccessShow" src="../images/green-check.png" alt="">
+          <img ng-if="isMednefitsCreditsSuccessShow" src="../assets/images/success-circle.png" alt="">
           <p ng-if="isMednefitsCreditsSuccessShow" class="text-center">Prepaid Credits Account has been successfully activated.</p>
         </div>
         <div class="modal-footer">

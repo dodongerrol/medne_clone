@@ -21,8 +21,12 @@ app.directive('outOfPocketDirective', [
           return moment(new Date(date)).format("DD/MM/YYYY");
         };
 
-        scope.getDateTerms = function () {
-          hrSettings.fetchDateTerms()
+        scope.formatTableDate = function (date) {
+          return moment(new Date(date)).format("DD MMMM YYYY");
+        };
+
+        scope.getDateTerms = async function () {
+          await hrSettings.fetchDateTerms()
           .then(function(response){
             scope.dateTerm = response.data.data;
             // console.log(scope.dateTerm);
@@ -66,11 +70,11 @@ app.directive('outOfPocketDirective', [
           console.log(scope.selectedTerm)
         }
 
-        scope.getBenefitsCoverageData = function ( data ) {
+        scope.getBenefitsCoverageData = async function ( data ) {
 					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
           scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
           scope.showLoading();
-          hrSettings.fetchBenefitsCoverageData( scope.currentTermStartDate, scope.currentTermEndDate, 'out_of_pocket' )
+          await hrSettings.fetchBenefitsCoverageData( scope.currentTermStartDate, scope.currentTermEndDate, 'out_of_pocket' )
             .then(function(response){
               console.log(response);
 							scope.benefitsCoverageData = response.data;
@@ -83,9 +87,9 @@ app.directive('outOfPocketDirective', [
             })
         }
         
-        scope._getPaymentDetails_ = function ( data ) {
-          // console.log(data);
-          hrSettings.fetchMemberWallet( data.start, data.end, 'medical' )
+        scope._getPaymentDetails_ = async function ( data ) {
+            // console.log(data);
+            await hrSettings.fetchMemberWallet( data.start, data.end, 'medical' )
             .then(function(response){
               // console.log(response);
               scope.medical_wallet_details = response.data.data;
@@ -93,7 +97,7 @@ app.directive('outOfPocketDirective', [
 							scope.hideLoading();
             })
 
-            hrSettings.fetchMemberWallet( data.start, data.end, 'wellness' )
+            await hrSettings.fetchMemberWallet( data.start, data.end, 'wellness' )
             .then(function(response){
               // console.log(response);
 							scope.wellness_wallet_details = response.data.data;
@@ -103,9 +107,65 @@ app.directive('outOfPocketDirective', [
             })
         }
 
+        scope.getActivitiesDataTable = async function ( data ) {
+          // console.log(data);
+          await hrSettings.fetchMednefitsActivitiesData( data.start,data.end,scope.page,scope.per_page )
+          .then(function(response){
+            // console.log(response);
+            scope.spending_activity = response.data.data;
+            console.log(scope.spending_activity);
+          
+            scope.hideLoading();
+          })
+        }
+
         scope.toggleTransaction = function () {
           $('.credits-tooltip-container.total-member-transaction').toggle();
         }
+
+        // pagination activity table
+        scope.pagination_dropdown = false;
+        scope.pagesToDisplay = 5;
+        scope.page_active = 1;
+        scope.per_page = 10;
+        scope.page = 1;
+
+        scope._toggleOpenPerPage_ = function (type) {
+          scope.pagination_dropdown = !scope.pagination_dropdown;
+        }
+
+        scope._selectNumList_ = function (type, num) {
+          console.log(num);
+          scope.page = num;
+          scope.getActivitiesDataTable(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
+        }
+        scope._prevPageList_ = function (type) {
+          scope.page -= 1;
+          scope.getActivitiesDataTable(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
+        }
+
+        scope._nextPageList_ = function (type) {
+          scope.page += 1;
+          scope.getActivitiesDataTable(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
+        }
+
+        scope._setPageLimit_ = function (type, num) {
+          scope.per_page = num;
+          scope.page = 1;
+          scope.getActivitiesDataTable(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
+        }
+
+        scope.range = function (num) {
+          var arr = [];
+          for (var i = 0; i < num; i++) {
+            arr.push(i);
+          }
+          return arr;
+        };
         
 
         scope.showLoading = function () {
@@ -121,9 +181,10 @@ app.directive('outOfPocketDirective', [
         };
 
        
-        scope.onLoad = function () {
+        scope.onLoad = async function () {
           scope.showLoading();
-          scope.getDateTerms();
+          await scope.getDateTerms();
+          await scope.getActivitiesDataTable(scope.defaultDateTerms);
         }
 
         scope.onLoad();
