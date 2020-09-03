@@ -477,8 +477,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   }
 
   // Mednefits Credits Account Activity Table
-  hrFactory.fetchMednefitsActivitiesData = function ( start,end ) {
-    return $http.get( serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end );
+  hrFactory.fetchMednefitsActivitiesData = function ( start,end,page,per_page ) {
+    return $http.get( serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end + "&page=" + page + "&per_page=" + per_page );
   }
 
   // Medical and Wellness Wallent Activity Table
@@ -525,6 +525,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download );
     // return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
   }
+
+  // Activate mednefits basic plan
+  hrFactory.fetchBasicPlan = function ( ) {
+    return $http.post( serverUrl.url + "/hr/activate_mednefits_basic_plan"  );
+  }
+
 
   return hrFactory;
 });

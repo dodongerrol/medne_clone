@@ -19,6 +19,7 @@ app.directive('mednefitsBasicPlanDirective', [
         scope.wellness_wallet_details = {
           non_panel_payment_method: 'mednefits_credits',
         }
+        scope.isConfirmModal = false;
 
         scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
@@ -31,6 +32,7 @@ app.directive('mednefitsBasicPlanDirective', [
         scope.formatTableDate = function (date) {
           return moment(new Date(date)).format("DD MMMM YYYY");
         };
+        
 
         scope.getDateTerms = function () {
           hrSettings.fetchDateTerms()
@@ -166,6 +168,23 @@ app.directive('mednefitsBasicPlanDirective', [
             loading_trap = false;
           }, 10);
         };
+
+        scope.showConfirmationModal = function () {
+          scope.isConfirmModal = false;
+        }
+
+        scope._isConfirmModalBtn_ = async function ( type, src ) {
+          if ( type == 'confirm' && src == 'activate' ) {
+            await hrSettings.fetchBasicPlan( )
+            .then(function(response){
+              console.log(response);	
+              scope.hideLoading();
+              
+              scope.getBenefitsCoverageData(scope.selectedTerm);
+              scope.isConfirmModal = true;
+            })
+          }
+        }
 
        
         scope.onLoad = function () {

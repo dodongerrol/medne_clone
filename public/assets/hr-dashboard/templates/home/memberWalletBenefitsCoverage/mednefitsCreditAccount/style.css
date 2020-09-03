@@ -282,4 +282,16 @@
 }
 #active-prepaid-credits-modal .modal-body {
   padding: 0px 40px 15px;
+  text-align: center;
+}
+#active-prepaid-credits-modal .modal-body img {
+  width: 45px;
+  margin: 0 0 10px;
+}
+
+.mwbc-box-container .prepaid-subtext {
+  font-size: 17px;
+  line-height: 24px;
+  color: #848484;
+  margin: 15px 0;
 }
