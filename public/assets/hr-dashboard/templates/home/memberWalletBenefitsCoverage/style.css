@@ -435,3 +435,11 @@
 .mwbc-box-container .status.active {
   color: #3F9D59;
 }
+.member-wallet-wrapper select {
+  display: block;
+  height: auto;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  -webkit-appearance: none;
+}

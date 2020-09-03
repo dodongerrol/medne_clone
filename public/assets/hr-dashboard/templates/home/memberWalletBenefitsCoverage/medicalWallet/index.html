@@ -216,7 +216,7 @@
           </div>
         </div>
       </div>
-      <div class="mwbc-card-box-container mednefits-panel">
+      <div ng-if="medicalWalletData.non_panel_reimbursement" class="mwbc-card-box-container mednefits-panel">
         <h5 class="member-bold-text">Non-Panel (for reimbursement)</h5>
         <div class="display-flex">
           <div class="flex-1">GIRO</div>
@@ -285,24 +285,24 @@
     <div>Mednefits executes reimbursement to members.</div> -->
     <div class="dp-flex-ai">
       <div class="non-panel-text">Would you allow members to submit <span class="member-bold-text">Non-Panel</span> claims?</div>
-      <div ng-class="{'on' : medicalWalletData.non_panel_reimbursement == true,'off' : medicalWalletData.non_panel_reimbursement == false }" class="on-off-container">
-        <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',true )" ng-model="medicalWalletData.non_panel_reimbursement" ng-class="{'on' : medicalWalletData.non_panel_reimbursement == true }" class="">
-          <!-- <span class="check-mark"></span> -->
-          <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-        </button>
-        <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',false )" ng-model="medicalWalletData.non_panel_reimbursement" ng-class="{'off' : medicalWalletData.non_panel_reimbursement == false }" class="">
-          <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-        </button>
-      </div>
-    </div>
-    <div class="dp-flex-ai">
-      <div class="non-panel-text">Would Mednefits exectute reimbursement to members?</div>
       <div ng-class="{'on' : medicalWalletData.non_panel_submission == true,'off' : medicalWalletData.non_panel_submission == false }" class="on-off-container">
         <button ng-click="toggleNonPanelClaim( 'non-panel-submission',true )" ng-model="medicalWalletData.non_panel_submission" ng-class="{'on' : medicalWalletData.non_panel_submission == true }" class="">
           <!-- <span class="check-mark"></span> -->
           <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
         </button>
         <button ng-click="toggleNonPanelClaim( 'non-panel-submission',false )" ng-model="medicalWalletData.non_panel_submission" ng-class="{'off' : medicalWalletData.non_panel_submission == false }" class="">
+          <img src="../../assets/hr-dashboard/img/new-close-icon.png">
+        </button>
+      </div>
+    </div>
+    <div class="dp-flex-ai">
+      <div class="non-panel-text">Would Mednefits exectute reimbursement to members?</div>
+      <div ng-class="{'on' : medicalWalletData.non_panel_reimbursement == true,'off' : medicalWalletData.non_panel_reimbursement == false }" class="on-off-container">
+        <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',true )" ng-model="medicalWalletData.non_panel_reimbursement" ng-class="{'on' : medicalWalletData.non_panel_reimbursement == true }" class="">
+          <!-- <span class="check-mark"></span> -->
+          <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
+        </button>
+        <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',false )" ng-model="medicalWalletData.non_panel_reimbursement" ng-class="{'off' : medicalWalletData.non_panel_reimbursement == false }" class="">
           <img src="../../assets/hr-dashboard/img/new-close-icon.png">
         </button>
       </div>
