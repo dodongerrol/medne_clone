@@ -618,14 +618,30 @@ public function getFavouriteClinics($userID)
             // update manage events
             for ($x = 0; $x < count($data); $x++) {
                 $guid = StringHelper::getGUID();
-                $data[$x] = array_merge($data[$x], array( 'id' => $guid));
-
+                if (!isset($data[$x]['clinic_id'])) {
+                    $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
+                } else {
+                    $data[$x] = array_merge($data[$x], array( 'id' => $guid));    
+                }
+                
                 DB::table('extra_events')
                     ->insert($data[$x]);
             }
             
             return true;
         }
+
+        public function getProviderOperatingHour($clinic_id) {
+            return DB::table('clinic_time')
+                        ->where('ClinicID', $clinic_id)
+                        ->where('Active', 1)
+                        ->get();
+        }
        
+        public function getProviderBreakHours($clinic_id) {
+            return DB::table('extra_events')
+                        ->where('clinic_id', $clinic_id)
+                        ->get();
+        }
 
 }
