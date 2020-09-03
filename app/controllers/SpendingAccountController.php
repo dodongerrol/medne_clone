@@ -1167,6 +1167,7 @@ class SpendingAccountController extends \BaseController {
 			'updated_at'			=> date('Y-m-d H:i:s')
 		);
 
+
 		DB::table('spending_purchase_invoice')->insertGetId($spending_purchase);
 		$update = array(
 			'medical_payment_method_panel'      => 'mednefits_credits',
@@ -1177,6 +1178,16 @@ class SpendingAccountController extends \BaseController {
 			'updated_at'			=> date('Y-m-d H:i:s')
 		);
 		DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)->update($update);
+
+		if ($spending_account_settings->activate_mednefits_credit_account == 1) {
+			$emailDdata['emailName']= 'Prepaid Credits Account Activation';
+	        $emailDdata['emailPage']= 'email-templates.welcome-corporate';
+	        $emailDdata['emailTo']= 'wanwen@mednefits.com';
+	        $emailDdata['name']= $input['fname'].' '.$input['fname'];
+	        $emailDdata['emailSubject'] = "Prepaid Credits Account Activation";
+	        \EmailHelper::sendEmail($emailDdata);
+		}
+
 		return ['status' => true, 'message' => 'Company successfully created a Mednefits Credit Account.'];
 	}
 }
