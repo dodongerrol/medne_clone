@@ -626,6 +626,13 @@ public function getFavouriteClinics($userID)
             
             return true;
         }
+
+        public function getProviderOperatingHour($clinic_id) {
+            return DB::table('clinic_time')
+                        ->where('ClinicID', $clinic_id)
+                        ->where('Active', 1)
+                        ->get();
+        }
        
 
 }

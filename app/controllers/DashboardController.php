@@ -208,6 +208,12 @@ class DashboardController extends \BaseController {
 	function updateProvidersDetail() {
 		try {
 			$payload = Input::all();
+
+			if (!isset($payload['provider_id'])) {
+				$getSessionData = StringHelper::getMainSession(3);
+				$payload['provider_id'] = $getSessionData->Ref_ID;
+			}
+			
 			$clinic  = new Clinic;
 			// Update Providers info, operating hours and break hours.
 			if (isset($payload['providersDetails']['providersInfo'])
@@ -261,6 +267,28 @@ class DashboardController extends \BaseController {
 					'success' => false
 				);
 			}
+
+		} catch(Exception $error) {
+			return array(
+				'message' => $error,
+				'success' => false
+			);
+		}
+	}
+
+	function getProviderOperatingHours () {
+		try {
+			
+			$clinic  = new Clinic;
+			
+			$getSessionData = StringHelper::getMainSession(3);
+			
+			$operatingHours = $clinic->getProviderOperatingHour($getSessionData->Ref_ID);
+
+			return array(
+				'data' => $operatingHours,
+				'success' => true
+			);
 
 		} catch(Exception $error) {
 			return array(

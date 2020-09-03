@@ -25,6 +25,7 @@ jQuery(document).ready(function($) {
       type: "post"
     })
     .done(function(data) {
+      $('.operatingHours-div').css('display', 'none');
       $("#profile-detail-wrapper").html(data);
     });
 
@@ -36,15 +37,8 @@ jQuery(document).ready(function($) {
   // --------------------------------------------------------------------
 
   $("#clinic-hours").click(function(event) {
-    $.ajax({
-      url: base_url + "setting/profile/ajaxGetBusinessHoursPanel",
-      type: "post"
-    })
-    .done(function(data) {
-      $("#profile-detail-wrapper").html(data);
-      $("#clinic-hours-tab").trigger("click");
-    });
-
+    $('.clinic-detail-container').css('display', 'none');
+    $('.operatingHours-div').css('display', 'inline-block');
     $("#Configure-list div b").css("color", "#777676");
     $("#Integrate-list div b").css("color", "#777676");
     $(this).css("color", "black");
@@ -134,12 +128,14 @@ jQuery(document).ready(function($) {
   // -------------------- load clinic business hours tab page --------------------
 
   $(document).on("click", "#clinic-hours-tab", function(event) {
-    $.ajax({
-      url: base_url + "setting/profile/ajaxGetClinicHoursTab",
-      type: "POST"
-    }).done(function(data) {
-      $("#clinic-hours-main").html(data);
-    });
+    // $.ajax({
+    //   url: base_url + "setting/profile/ajaxGetClinicHoursTab",
+    //   type: "POST"
+    // }).done(function(data) {
+    //   $("#clinic-hours-main").html(data);
+    // });
+    // Refactor code.
+    
   });
 
   // -------------------- load clinic breaks tab page --------------------
@@ -744,6 +740,8 @@ jQuery(document).ready(function($) {
     event.stopImmediatePropagation();
     return false;
   });
+
+  
 
   // ===================================================================================================== //
 }); // end of jQuery

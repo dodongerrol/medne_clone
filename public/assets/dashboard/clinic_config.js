@@ -593,8 +593,8 @@ jQuery(document).ready(function($) {
 		var availableDays = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
 
 		for (var i = 0; i < availableDays.length; i++) {
-			$('#'+availableDays[i]+'-div input.timepicker.time-from.ui-timepicker-input').val('08:00:00');
-			$('#'+availableDays[i]+'-div input.timepicker.time-to.ui-timepicker-input').val('05:30:00');
+			$('#'+availableDays[i]+'-div input.timepicker.time-from.ui-timepicker-input').val('09:00 AM');
+			$('#'+availableDays[i]+'-div input.timepicker.time-to.ui-timepicker-input').val('09:00 PM');
 		}
 
 		/* Change Button text and add class */
@@ -652,8 +652,8 @@ jQuery(document).ready(function($) {
 		}
 
 		/* Change Button text and add class */
-		$('#copyTimetoAllBtnBreak').css('display', 'none');
-		$('#undoCopyTimetoAllBtnBreak').css('display', 'block');
+		// $('#copyTimetoAllBtnBreak').css('display', 'none');
+		// $('#undoCopyTimetoAllBtnBreak').css('display', 'block');
 	});	
 
 	/* Undo changes in every days */
@@ -670,8 +670,8 @@ jQuery(document).ready(function($) {
 		var availableDays = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
 
 		for (var i = 0; i < availableDays.length; i++) {
-			$('#'+availableDays[i]+'-div input.timepicker.breakTime-from.ui-timepicker-input').val('08:00:00');
-			$('#'+availableDays[i]+'-div input.timepicker.breakTime-to.ui-timepicker-input').val('05:30:00');
+			$('#'+availableDays[i]+'-div input.timepicker.breakTime-from.ui-timepicker-input').val('09:00 AM');
+			$('#'+availableDays[i]+'-div input.timepicker.breakTime-to.ui-timepicker-input').val('09:00 PM');
 		}
 
 		/* Change Button text and add class */
