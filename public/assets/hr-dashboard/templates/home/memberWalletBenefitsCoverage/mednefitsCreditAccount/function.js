@@ -53,8 +53,8 @@ app.directive('mednefitsCreditAccountDirective', [
           return moment(new Date(date)).format("DD MMMM YYYY");
         };
 
-        scope.getDateTerms = function () {
-          hrSettings.fetchDateTerms()
+        scope.getDateTerms = async function () {
+          await hrSettings.fetchDateTerms()
           .then(function(response){
             console.log(response);
             scope.dateTerm = response.data.data;
@@ -78,9 +78,6 @@ app.directive('mednefitsCreditAccountDirective', [
               }
             });
 
-            scope.getMednefitsCreditAccount(scope.defaultDateTerms);
-            scope.getMednefitsCreditActivities();
-
             // scope.getMedicalMemberWallet(scope.defaultDateTerms);
             // scope.getWellnessMemberWallet(scope.defaultDateTerms);
           })
@@ -102,11 +99,12 @@ app.directive('mednefitsCreditAccountDirective', [
           console.log(scope.selectedTerm)
         }
 
-        scope.getMednefitsCreditAccount = function (data) {
+        scope.getMednefitsCreditAccount = async function (data,status_data) {
           scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
+          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');  
+          
           scope.showLoading();
-          hrSettings.fetchMednefitsCreditsAccountData( scope.currentTermStartDate, scope.currentTermEndDate )
+          await hrSettings.fetchMednefitsCreditsAccountData( scope.currentTermStartDate, scope.currentTermEndDate )
             .then(function(response){
               console.log(response);
               if ( response.data.status  ) {
@@ -122,13 +120,52 @@ app.directive('mednefitsCreditAccountDirective', [
             })
         }
 
-        scope.getMednefitsCreditActivities = function () {
-          hrSettings.fetchMednefitsActivitiesData( scope.currentTermStartDate, scope.currentTermEndDate )
+        scope.getMednefitsCreditActivities = async function ( data ) {
+          scope.showLoading();
+          await hrSettings.fetchMednefitsActivitiesData( scope.currentTermStartDate, scope.currentTermEndDate, scope.page, scope.per_page )
             .then(function(response){
-              console.log(response);
+              // console.log(response);
+              scope.hideLoading();
               scope.mednefitsActivitiesData = response.data.data.data;
-              // console.log(scope.mednefitsActivitiesData);
+              scope.spending_activity = response.data.data
+              console.log(scope.spending_activity);
             })
+        }
+
+        // pagination activity table
+        scope.pagination_dropdown = false;
+        scope.pagesToDisplay = 5;
+        scope.page_active = 1;
+        scope.per_page = 10;
+        scope.page = 1;
+
+        scope._toggleOpenPerPage_ = function (type) {
+          scope.pagination_dropdown = !scope.pagination_dropdown;
+        }
+
+        scope._selectNumList_ = function (type, num) {
+          console.log(num);
+          scope.page = num;
+          scope.getMednefitsCreditActivities(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
+        }
+        scope._prevPageList_ = function (type) {
+          scope.page -= 1;
+          scope.getMednefitsCreditActivities(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
+        }
+
+        scope._nextPageList_ = function (type) {
+          scope.page += 1;
+          scope.getMednefitsCreditActivities(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
+        }
+
+        scope._setPageLimit_ = function (type, num) {
+          scope.per_page = num;
+          scope.page = 1;
+          scope.getMednefitsCreditActivities(scope.selectedTerm);
+          // scope.getEnrollmentHistory(scope.customer_active_plan_id);
         }
 
         scope.toggleCalculation = function(){
@@ -196,6 +233,7 @@ app.directive('mednefitsCreditAccountDirective', [
               scope.hideLoading();
               if(response.data.status){
                 scope.isTopUpSuccess = true;
+                scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData)
               }else{
                 swal('Error!', response.data.message, 'error');
               }
@@ -209,7 +247,17 @@ app.directive('mednefitsCreditAccountDirective', [
           scope.creditsTopUpData.total_credits = '0.00';
           scope.creditsTopUpData.purchased_credits = '0.00';
           scope.creditsTopUpData.bonus_credits = '0.00';
+          scope.creditsTopUpData.invoice_date = moment(scope.creditsTopUpData.invoice_date).format('DD/MM/YYYY');
         }
+
+        scope.getStatus = async function () {
+					await hrSettings.getPlanStatus( )
+            .then(function(response){
+							scope.planStatusData = response.data;
+							console.log(scope.planStatusData);
+						})
+						
+				}
  
 
         scope.showLoading = function () {
@@ -307,10 +355,21 @@ app.directive('mednefitsCreditAccountDirective', [
             invoice_date: moment( formData.invoice_date,'DD/MM/YYYY' ).format('YYYY-MM-DD')
           }
           console.log(data);
+          scope.showLoading();
           hrSettings.updatePrepaidCredits( data )
             .then(function(response){
               console.log(response);
-              
+              if (response.status) {
+            
+                scope.isMednefitsCreditsSuccessShow = true;
+                scope.isPrepaidCreditsFormShow = false;
+                scope.isPrepaidCreditsActivated = true;
+
+                scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData);
+                
+              } else {
+                swal('Error!', response.message, 'error');
+              }
             })
         }
 
@@ -322,13 +381,21 @@ app.directive('mednefitsCreditAccountDirective', [
           console.log(value);
         }
 
-
+        scope.range = function (num) {
+          var arr = [];
+          for (var i = 0; i < num; i++) {
+            arr.push(i);
+          }
+          return arr;
+        };
 
        
-        scope.onLoad = function () {
+        scope.onLoad = async function () {
           scope.showLoading();
-          scope.getDateTerms();
-          scope.getMednefitsCreditActivities();
+          await scope.getStatus();
+          await scope.getDateTerms();
+          await scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData);
+          await scope.getMednefitsCreditActivities();
         }
 
         scope.onLoad();

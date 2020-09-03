@@ -63,3 +63,13 @@
 .member-wallet-body-info-container .mednefits-basic-plan-wrapper {
   height: 100vh;
 }
+
+.mednefits-basic-plan-wrapper .activate-well-btn {
+  margin: 10px 0 0;
+}
+.mednefits-basic-plan-wrapper .activate-well-btn:focus {
+  background-color: #fff;
+}
+#active-basic-plan-modal .modal-body {
+  padding: 0 40px 10px;
+}
