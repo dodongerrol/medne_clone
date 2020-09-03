@@ -41,6 +41,7 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/custom.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/fonts.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/tailwind.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/style.css?_={{ $date->format('U') }}">
 
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/header-navigation.css?_={{ $date->format('U') }}">
 
