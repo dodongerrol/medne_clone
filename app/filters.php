@@ -304,11 +304,11 @@ Route::filter('auth.headers', function($request, $response) {
 Route::filter('auth.jwt_hr', function($request, $response)
 {
     $headers = [];
-    if(!StringHelper::requestHeader()){
-        $headers[]['error'] = true;
-        // return Redirect::to('company-benefits-dashboard-login');
-        return Response::json('You have an invalid token. Please login again', 403, $headers);
-    } else {
+    // if(!StringHelper::requestHeader()){
+    //     $headers[]['error'] = true;
+    //     // return Redirect::to('company-benefits-dashboard-login');
+    //     return Response::json('You have an invalid token. Please login again', 403, $headers);
+    // } else {
         $headers[]['error'] = true;
         // check if there is a header authorization
         $token = StringHelper::getToken();
@@ -371,7 +371,7 @@ Route::filter('auth.jwt_hr', function($request, $response)
             SystemLogLibrary::createAdminLog($admin_logs);
         }
 
-    }
+    // }
 });
 
 

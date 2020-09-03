@@ -402,21 +402,10 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 
-	        // return $temp_users;
-
 				if(sizeof($temp_users) == 0) {
 					return array('status' => FALSE, 'message' => 'Excel File data is empty.');
 				}
 
-	        // if($total_employees >= sizeof($temp_users)) {
-
-		        // $completed = DB::table('customer_link_customer_buy')
-						// 		->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-						// 		->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
-						// 		->where('customer_link_customer_buy.customer_buy_start_id', $result->customer_buy_start_id)
-						// 		->where('corporate_members.removed_status', 0)
-						// 		->count();
-						// $total = $total_employees - $completed;
 				if($total <= 0) {
 					return array(
 						'status'	=> FALSE,
@@ -2324,6 +2313,7 @@ class BenefitsDashboardController extends \BaseController {
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
 				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
+				'end_date'				=> date('F d, Y', strtotime($plan_user_history->end_date)),
 				'expiry_date'			=> $expiry_date,
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
@@ -13384,6 +13374,12 @@ class BenefitsDashboardController extends \BaseController {
 				$result['spending_feature_status_type'] = false;
 			}
 
+			// check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($id, 'medical');
+			if(!$validity)	{
+				$result['spending_feature_status_type'] = false;
+			}
+
 			return $result;
 		} else {
 			$returnObject->status = FALSE;
@@ -16050,7 +16046,8 @@ class BenefitsDashboardController extends \BaseController {
 
 		if(!$hr->fullname) {
 			// update info
-			$customer = DB::table('customer_business_contact')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
+			$customer = DB::table('customer_business_contact')->where('customer_buy_start_id', $hr->customer_buy_start_id)
+			->first();
 
 			if($customer) {
 				$hr_acount_details = [

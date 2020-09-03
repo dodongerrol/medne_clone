@@ -244,8 +244,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
 	// update employee details
 	Route::post('hr/employee/update', 'BenefitsDashboardController@updateEmployeeDetails');
-	
-
 	// get company details and contacts
 	Route::get('hr/company_contacts', 'BenefitsDashboardController@getCompanyContacts');
 	// get transactions
@@ -302,6 +300,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/save/payment/method/new_active_plan', 'BenefitsDashboardController@newPaymentAddedPurchaseEmployee');
 	// get hr activity
 	Route::get('hr/get_activity', 'EclaimController@getHrActivity');
+	Route::get('hr/get_spending_invoice_history_list', 'InvoiceController@spendingInvoiceHistoryList');
 	
 	// search employee activity
 	Route::post('hr/search_employee_activity', 'EclaimController@searchEmployeeActivity');
@@ -497,8 +496,42 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_users_by_active_plan', 'BenefitsDashboardController@enrolledUsersFromActivePlan');
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
+	// get member allocation activity
+	Route::get('hr/get_member_allocation_activity', 'SpendingAccountController@getMemberAllocationActivity');
+	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
+	// get mednefits credits account
+	Route::get('hr/get_mednefits_credits_account', 'SpendingAccountController@getMednefitsCreditsAccount');
+	// get company wallet details
+	Route::get('hr/get_member_wallet_details', 'SpendingAccountController@getMemberWalletDetails');
+	// get company date terms
+	Route::get('hr/get_company_date_terms', 'SpendingAccountController@getTermsSpendingDates');
+	Route::get('hr/spending_account_activity', 'SpendingAccountController@spendingAccountActivities');
+	// get bebnefits coverage details
+	Route::get('hr/get_benefits_coverage_details', 'SpendingAccountController@getBenefitsCoverageDetails');
+	// get company medical wallet details
+	Route::get('hr/get_company_wallet_details', 'SpendingAccountController@getWalletDetails');
+	// update wallet details
+	Route::post('hr/update_member_wallet_details', 'SpendingAccountController@updateWalletDetails');
+	// activate wellness wallet
+	Route::post('hr/activate_wellness_wallet_details', 'SpendingAccountController@activeWellnessWallet');
+	// update spending payment method
+	Route::post('hr/update_spending_payment_method', 'SpendingAccountController@updateSpendingPaymentMethod');
+	// create top up mednefits credits
+	Route::post('hr/create_top_up_mednefits_credits', 'SpendingAccountController@createMednefitsCreditsTopUp');
+	// activate mednefis basic plan
+	Route::post('hr/activate_mednefits_basic_plan', 'SpendingAccountController@activateBasicPlan');
+	// wallet activation or deactivation
+	Route::post('hr/wallet_activate_deactivate', 'SpendingAccountController@activateDeactivateWallet');
+	// enable disable mednefits credits account
+	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
+	// activate company mednefits credits
+	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
 });
 
+	// download non-panel reimbursement
+	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
+	// download non-panel invoice
+	Route::get('hr/download_non_panel_invoice', 'EclaimController@downloadNonPanelInvoice');
 	// downloand plan invoice
 	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get company employees and credits left

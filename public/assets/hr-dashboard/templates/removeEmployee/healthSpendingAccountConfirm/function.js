@@ -30,7 +30,8 @@ app.directive('healthSpendingAccountConfirmDirective', [
 					if(scope.emp_details.wallet_opt == null){
             swal('Error!', 'Please select an option first.', 'error');
           }else{
-            if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
+            // if(scope.emp_details.account_type == 'lite_plan' && (scope.emp_details.summary.medical.plan_method == 'pre_paid' || scope.emp_details.summary.wellness.plan_method == 'pre_paid') ){
+            if(scope.emp_details.account_type == 'lite_plan' ){
               $("#remove-employee-confirm-modal").modal('show');
             }else if(scope.emp_details.account_type == 'enterprise_plan'){
               $state.go('employee-overview.refund-summary');
@@ -77,7 +78,7 @@ app.directive('healthSpendingAccountConfirmDirective', [
             });
         }
 				scope.removeEmployeeRequests  = function(){
-          if (scope.emp_details.remove_option == 'remove') {
+          if (scope.emp_details.remove_option == 'remove' || !scope.emp_details.remove_option) {
             scope.submitRemoveEmployee();
           }
           if (scope.emp_details.remove_option == 'reserve') {

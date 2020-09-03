@@ -157,7 +157,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/benefits-dashboard',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/benefits-home-dashboard.html'
@@ -287,7 +287,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/employee-overview',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn-emp-overview.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/employee-overview.html'
@@ -350,7 +350,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/activity',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/activity.html'
@@ -371,7 +371,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/e-claim',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/e-claim.html'
@@ -392,7 +392,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/statement',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/statement.html'
@@ -468,7 +468,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/account-and-billing/company-and-contacts',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/company-and-contacts.html'
@@ -491,7 +491,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/account-and-billing/transactions',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/transactions.html'
@@ -505,7 +505,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/account-and-billing/document-center',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/document-center.html'
@@ -516,7 +516,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/account-and-billing/benefits-tier',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/benefits-tier.html'
@@ -527,30 +527,18 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/account-and-billing/account-and-payment',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/account-and-payment.html'
         },
-        // 'modal': {
-        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-modal.html'
-        // },
-        // 'modal_2': {
-        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-payment-information-details-modal.html'
-        // },
-        // 'modal_3': {
-        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/credit-card-details-modal.html'
-        // },
-        // 'modal_4': {
-        //   templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/modals/account-billing-edit-password-modal.html'
-        // }
       },
     })
     .state('plan-coverage', {
       url: '/plan-coverage',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/plan-coverage.html'
@@ -561,7 +549,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/local-network-partners',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/local-network-partners.html'
@@ -594,7 +582,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/settings',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/settings.html'
@@ -771,9 +759,88 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/index.blade.php'
           },
         },
-      });
+      })
 
     // ======================================================== //
+
+    .state('member-wallet-benefits-coverage', {
+      url: '/member-wallet-benefits-coverage',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.medical-wallet', {
+      url: '/medical-wallet',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/medicalWallet/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.wellness-wallet', {
+      url: '/wellness-wallet',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/wellnessWallet/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.mednefits-basic-plan', {
+      url: '/mednefits-basic-plan',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsBasicPlan/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.mednefits-enterprise-plan', {
+      url: '/mednefits-enterprise-plan',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsEnterprisePlan/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.out-of-pocket', {
+      url: '/out-of-pocket',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/outOfPocket/index.html'
+        }
+      }
+    })
+
+    .state('member-wallet-benefits-coverage.mednefits-credits-account', {
+      url: '/mednefits-credits-account',
+      views: {
+        'child-content@member-wallet-benefits-coverage': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/index.html'
+        }
+      }
+    })
+
+    .state('spending-billing', {
+      url: '/spending-billing',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/billing/index.html'
+        }
+      }
+    })
+
 
     
     $urlRouterProvider.otherwise('/benefits-dashboard');

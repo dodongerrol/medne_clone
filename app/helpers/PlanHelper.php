@@ -802,6 +802,9 @@ class PlanHelper {
 			->get();
 		}
 		
+		if($active_plan->account_type == "out_of_pocket") {
+			return [];
+		}
 		if($active_plan->account_type == "insurance_bundle") {
 			if($active_plan->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active_plan->plan_id)->first();
@@ -1221,25 +1224,29 @@ class PlanHelper {
 					$credits_medical_error = true;
 					$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
 				} else if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
-					$total_credits = PlanHelper::getTempCredits($customer_id);
-					if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
-						$credits_medical_error = true;
-						$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
+					if($spending['with_mednefits_credits'] == true) {
+						$creditData = CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+						$total_balance_remaining = $creditData['total_balance'];
+		
+						if($total_balance_remaining == 0) {
+							$credits_medical_error = true;
+							$credits_medical_message = '*Company Total Medical Credits is not sufficient for this Member';
+						}
 					} else {
-						$credits_medical_error = false;
-						$credits_medical_message = '';
-					}
+						$total_credits = PlanHelper::getTempCredits($customer_id);
+						if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
+							$credits_medical_error = true;
+							$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
+						} else {
+							$credits_medical_error = false;
+							$credits_medical_message = '';
+						}
+					}					
 				}
 			} else {
 				if(is_numeric($user['medical_credits'])) {
-					// check
-					// if($user['medical_credits'] > $customer_wallet->balance) {
-					// 	$credits_medical_error = true;
-					// 	$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
-					// } else {
-						$credits_medical_error = false;
-						$credits_medical_message = '';
-					// }
+					$credits_medical_error = false;
+					$credits_medical_message = '';
 				} else {
 					$credits_medical_error = true;
 					$credits_medical_message = '*Credits is not a number.';                
@@ -1256,13 +1263,23 @@ class PlanHelper {
 					$credits_wellness_error = true;
 					$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
 				} else if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
-					$total_credits = PlanHelper::getTempCredits($customer_id);
-					if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
-						$credits_wellness_error = true;
-						$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
+					if($spending['with_mednefits_credits'] == true) {
+						$creditData = \CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+						$total_balance_remaining = $creditData['total_balance'];
+		
+						if($total_balance_remaining == 0) {
+							$credits_wellness_error = true;
+							$credits_wellnes_message = '*Company Total Medical Credits is not sufficient for this Member';
+						}
 					} else {
-						$credits_wellness_error = false;
-						$credits_wellnes_message = '';
+						$total_credits = PlanHelper::getTempCredits($customer_id);
+						if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
+							$credits_wellness_error = true;
+							$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
+						} else {
+							$credits_wellness_error = false;
+							$credits_wellnes_message = '';
+						}
 					}
 				}
 			} else {
@@ -1438,6 +1455,39 @@ class PlanHelper {
 		$user = new User();
 		// $customer_spending = CustomerHelper::getCustomerWalletStatus($customer_id);
 		$customer_spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+
+		$pre_paid_status = false;
+		$total_balance_remaining = 0;
+		$top_up_credits = false;
+		if($customer_spending['with_mednefits_credits'] == true) {
+			$creditData = CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+			$total_balance_remaining = $creditData['total_balance'];
+		}
+
+		$medical_entitlement = $data_enrollee->credits;
+		$wellness_entitlement = $data_enrollee->wellness_credits;
+		
+		if((float)$medical_entitlement > 0 && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
+			// check medical balance
+			if($customer_spending['with_mednefits_credits'] == true) {
+				if((float)$medical_entitlement > $creditData['total_balance']) {
+					$top_up_credits = true;
+				}
+				$total_balance_remaining = $creditData['total_balance'] - $medical_entitlement;
+				$pre_paid_status = true;
+			}
+		}
+		
+		if((float)$wellness_entitlement > 0 && $customer_spending['wellness_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
+			if($customer_spending['with_mednefits_credits'] == true) {
+				if((float)$wellness_entitlement > $total_balance_remaining) {
+					$top_up_credits = true;
+				}
+				$total_balance_remaining = $total_balance_remaining - $wellness_entitlement;
+				$pre_paid_status = true;
+			}
+		}
+
 		// check company credits
 		$customer = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 		// $customer_data = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
@@ -1590,7 +1640,8 @@ class PlanHelper {
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1607,13 +1658,14 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 						\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'medical', $credits);
 					}
-				} else if($customer->balance >= $credits && $customer_spending['account_type'] == "lite_plan" && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
+				} else if($customer->balance >= $credits && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 					if($result_customer_active_plan) {
 						$customer_active_plan_id = $result_customer_active_plan;
@@ -1632,7 +1684,8 @@ class PlanHelper {
 						'logs'              => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1649,10 +1702,54 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
+					}
+				}
+
+				if($pre_paid_status) {
+					$medicalCreditsHistory = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credits'				=> $credits,
+						'member_id'				=> $user_id,
+						'credit_type'			=> 'added_employee_credits',
+						'top_up_status'			=> 0,
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('medical_credits')->insert($medicalCreditsHistory);
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+
+					if($top_up_credits) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}
@@ -1698,7 +1795,8 @@ class PlanHelper {
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1712,7 +1810,8 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
@@ -1728,7 +1827,8 @@ class PlanHelper {
 						'logs'          => 'added_by_hr',
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
-						'currency_type'		=> $customer->currency_type
+						'currency_type'		=> $customer->currency_type,
+						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 					);
 
 					\WellnessWalletHistory::create($wallet_history);
@@ -1743,10 +1843,54 @@ class PlanHelper {
 							'user_id'               => $user_id,
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
-							'currency_type'		=> $customer->currency_type
+							'currency_type'		=> $customer->currency_type,
+							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
 						);
 						
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
+					}
+				}
+
+				if($pre_paid_status) {
+					$medicalCreditsHistory = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credits'				=> $credits,
+						'member_id'				=> $user_id,
+						'credit_type'			=> 'added_employee_credits',
+						'top_up_status'			=> 0,
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('medical_credits')->insert($medicalCreditsHistory);
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+
+					if($top_up_credits) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}
@@ -6865,9 +7009,11 @@ class PlanHelper {
 		} else if($data == "trial_plan") {
 			$account_type = "Trial Plan";
 		} else if($data == "lite_plan") {
-			$account_type = "Basic Plan";
+			$account_type = "Mednefits Basic Plan";
 		} else if($data == "enterprise_plan") {
-			$account_type = "Enterprise Plan";
+			$account_type = "Mednefits Enterprise Plan";
+		} else if($data == "out_of_pocket") {
+			$account_type = "Out of Pocket";
 		}
 
 		return $account_type;
@@ -6944,6 +7090,729 @@ class PlanHelper {
 			}
 			return false;
 		}
+	}
+
+	public static function getCompanyInvoice($id)	
+	{
+		$invoice = CorporateInvoice::where('corporate_invoice_id', $id)->first();
+
+		if(!$invoice) {
+			return array('status' => FALSE, 'message' => 'Active Plan Invoice does not exist');
+		}
+
+		$get_active_plan = DB::table('customer_active_plan')
+		->where('customer_active_plan_id', $invoice->customer_active_plan_id)
+		->first();
+
+		if(!$get_active_plan) {
+			return array('status' => FALSE, 'message' => 'Active Plan does not exist');
+		}
+
+		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
+		$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
+		$payment = DB::table('customer_cheque_logs')
+					->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+					->first();
+		$data['cheque_logs_id'] = $payment->cheque_logs_id;
+		$data['xeroInvoiceId'] = $invoice->xeroInvoiceId;
+		$data['email'] = $contact->work_email;
+		$data['phone']     = $contact->phone;
+		$data['company'] = ucwords($business_info->company_name);
+		$data['postal'] = $business_info->postal_code;
+		$data['currency_type'] = strtoupper($invoice->currency_type);
+		
+		if($contact->billing_status == "true" || $contact->billing_status == true) {
+			$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+			$data['address'] = $business_info->company_address;
+		} else {
+			$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
+			$data['name'] = ucwords($billing_contact->billing_name);
+			$data['address'] = $billing_contact->billing_address;
+		}
+
+		$plan = DB::table('customer_plan')->where('customer_plan_id', $get_active_plan->plan_id)->first();
+		$plan_start = $plan->plan_start;
+
+		$account = DB::table('customer_buy_start')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
+
+		$data['account_type'] = $get_active_plan->account_type;
+		$data['complimentary'] = FALSE;
+		$data['plan_type'] = "Standalone Mednefits Care (Corporate)";
+
+		if($get_active_plan->account_type == "stand_alone_plan") {
+			$data['plan_type'] = "Standalone Mednefits Care (Corporate)";
+			$data['account_type'] = "Pro Plan";
+			$data['complimentary'] = FALSE;
+		} else if($get_active_plan->account_type == "insurance_bundle") {
+			$data['plan_type'] = "Bundled Mednefits Care (Corporate)";
+			$data['account_type'] = "Insurance Bundle";
+			$data['complimentary'] = TRUE;
+		} else if($get_active_plan->account_type == "trial_plan") {
+			$data['plan_type'] = "Trial Plan Mednefits Care (Corporate)";
+			$data['account_type'] = "Trial Plan";
+			$data['complimentary'] = FALSE;
+		} else if($get_active_plan->account_type == "lite_plan") {
+			$data['plan_type'] = "Basic Plan Mednefits Care (Corporate)";
+			$data['account_type'] = "Basic Plan";
+			$data['complimentary'] = FALSE;
+		} else if($get_active_plan->account_type == "enterprise_plan") {
+			$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
+			$data['account_type'] = "Enterprise Plan";
+			$data['complimentary'] = FALSE;
+		}
+
+		// self::checkPaymentHistory($get_active_plan->customer_active_plan_id);
+
+		$data['invoice_number'] = $invoice->invoice_number;
+		$data['invoice_date']		= date('F d, Y', strtotime($invoice->invoice_date));
+		$data['invoice_due']		= date('F d, Y', strtotime($invoice->invoice_due));
+		$data['number_employess'] = $invoice->employees;
+		$data['plan_start']     = date('F d, Y', strtotime($get_active_plan->plan_start));
+		$data['notes'] = null;
+		if($get_active_plan->new_head_count == 0) {
+			$data['head_count'] = false;
+			if((int)$invoice->plan_extention_enable == 1) {
+				$extension = DB::table('plan_extensions')
+				->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+				->first();
+				if($extension) {
+					$data['plan_start']     = date('F d, Y', strtotime($extension->plan_start));
+					if($extension->duration || $extension->duration != "") {
+						$end_plan_date = date('Y-m-d', strtotime('+'.$extension->duration, strtotime($extension->plan_start)));
+						$data['duration'] = $extension->duration;
+					} else {
+						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+						$data['duration'] = '12 months';
+					}
+
+					if($extension->account_type == "stand_alone_plan") {
+						$data['plan_type'] = "Standalone Mednefits Care (Corporate)";
+						$data['account_type'] = "Pro Plan";
+						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "insurance_bundle") {
+						$data['plan_type'] = "Bundled Mednefits Care (Corporate)";
+						$data['account_type'] = "Insurance Bundle";
+						$data['complimentary'] = TRUE;
+					} else if($extension->account_type == "trial_plan") {
+						$data['plan_type'] = "Trial Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Trial Plan";
+						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "lite_plan") {
+						$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Lite Plan";
+						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "enterprise_plan") {
+						$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Enterprise Plan";
+						$data['complimentary'] = FALSE;
+					}
+
+					$invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+					->where('plan_extention_enable', 1)
+					->first();
+
+					$individual_price = 0;
+					if((int)$invoice->override_total_amount_status == 1) {
+						$individual_price = $invoice->override_total_amount;
+					} else {
+						$individual_price = $invoice->individual_price;
+					}
+					$data['price']          = number_format($individual_price, 2);
+					$data['amount']					= number_format($data['number_employess'] * $individual_price, 2);
+					$amount_due = $data['number_employess'] * $individual_price;
+					$data['total']					= $data['number_employess'] * $individual_price;
+
+
+					if((int)$extension->paid == 1) {
+						$data['paid'] = true;
+						$payment = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
+						if($payment) {
+							if(empty($payment->date_received) || $payment->date_received == null) {
+								$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+							} else {
+								$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+							}
+							$data['notes']		  = $payment->remarks;
+
+							$temp_amount_due = $amount_due - $payment->paid_amount;
+							if($temp_amount_due <= 0) {
+								$data['amount_due']     = 0.00;
+							} else {
+								$data['amount_due'] = $temp_amount_due;
+							}
+
+						} else {
+							$data['amount_due']     = $amount_due;
+						}
+					} else {
+						$data['paid'] = false;
+						$data['amount_due']     = $amount_due;
+					}
+				} else {
+					if($get_active_plan->duration || $get_active_plan->duration != "") {
+						$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($plan->plan_start)));
+						$data['duration'] = $get_active_plan->duration;
+					} else {
+						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+						$data['duration'] = '12 months';
+					}
+					$data['price']          = number_format($invoice->individual_price, 2);
+					$data['amount']					= number_format($data['number_employess'] * $invoice->individual_price, 2);
+					$amount_due = $data['number_employess'] * $invoice->individual_price;
+					$data['total']					= $data['number_employess'] * $invoice->individual_price;
+
+					$payment = DB::table('customer_cheque_logs')
+					->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+					->first();
+
+					if($get_active_plan->paid == "true") {
+						$data['paid'] = true;
+						if($payment) {
+							if(empty($payment->date_received) || $payment->date_received == null) {
+								$data['payment_date'] = date('F d, Y', strtotime($get_active_plan->paid_date));
+							} else {
+								$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+							}
+							$data['notes']		  = $payment->remarks;
+						}
+					} else {
+						$data['paid'] = false;
+					}
+
+					if($get_active_plan->paid == "true") {
+						if($payment) {
+							$temp_amount_due = $amount_due - $payment->paid_amount;
+							if($temp_amount_due <= 0) {
+								$data['amount_due']     = 0.00;
+							} else {
+								$data['amount_due'] = $temp_amount_due;
+							}
+						} else {
+							$data['amount_due']     = $amount_due;
+						}
+					} else {
+						$data['amount_due']     = $amount_due;
+					}
+
+					if($get_active_plan->duration || $get_active_plan->duration != "") {
+						$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($plan->plan_start)));
+						$data['duration'] = $get_active_plan->duration;
+					} else {
+						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+						$data['duration'] = '12 months';
+					}
+				}
+			} else {
+				$individual_price = 0;
+				if((int)$invoice->override_total_amount_status == 1) {
+					$individual_price = $invoice->override_total_amount;
+				} else {
+					$individual_price = $invoice->individual_price;
+				}
+				$data['price']          = number_format($individual_price, 2);
+				$data['amount']					= number_format($data['number_employess'] * $individual_price, 2);
+				$amount_due = $data['number_employess'] * $individual_price;
+				$data['total']					= $data['number_employess'] * $individual_price;
+
+				$payment = DB::table('customer_cheque_logs')
+				->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+				->orderBy('created_at', 'desc')
+				->first();
+
+				if($get_active_plan->paid == "true") {
+					$data['paid'] = true;
+					if($payment) {
+						if(empty($payment->date_received) || $payment->date_received == null) {
+							$data['payment_date'] = date('F d, Y', strtotime($get_active_plan->paid_date));
+						} else {
+							$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+						}
+						$data['notes']		  = $payment->remarks;
+					}
+				} else {
+					$data['paid'] = false;
+				}
+
+				if($get_active_plan->paid == "true") {
+					if($payment) {
+						$temp_amount_due = $amount_due - $payment->paid_amount;
+						if($temp_amount_due <= 0) {
+							$data['amount_due']     = 0.00;
+						} else {
+							$data['amount_due'] = $temp_amount_due;
+						}
+					} else {
+						$data['amount_due']     = $amount_due;
+					}
+				} else {
+					$data['amount_due']     = $amount_due;
+				}
+
+				if($get_active_plan->duration || $get_active_plan->duration != "") {
+					$end_plan_date = date('Y-m-d', strtotime('+'.$get_active_plan->duration, strtotime($get_active_plan->plan_start)));
+					$data['duration'] = $get_active_plan->duration;
+				} else {
+					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($get_active_plan->plan_start)));
+					$data['duration'] = '12 months';
+				}
+				$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
+			}
+		} else {
+			$data['head_count'] = true;
+			$first_plan = DB::table('customer_active_plan')->where('plan_id', $get_active_plan->plan_id)->first();
+			$first_plan_invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $first_plan->customer_active_plan_id)->first();
+			$data['same_as_invoice'] = $first_plan_invoice->invoice_number;
+			if((int)$invoice->plan_extention_enable == 1) {
+				$extension = DB::table('plan_extensions')
+				->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+				->first();
+				if($extension) {
+					$data['plan_start']     = date('F d, Y', strtotime($extension->plan_start));
+					if($extension->duration || $extension->duration != "") {
+						$end_plan_date = date('Y-m-d', strtotime('+'.$extension->duration, strtotime($extension->plan_start)));
+						$data['duration'] = $extension->duration;
+					} else {
+						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+						$data['duration'] = '12 months';
+					}
+
+					$data['plan_end'] = $end_plan_date;
+					if($extension->account_type == "stand_alone_plan") {
+						$data['plan_type'] = "Standalone Mednefits Care (Corporate)";
+						$data['account_type'] = "Pro Plan";
+						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "insurance_bundle") {
+						$data['plan_type'] = "Bundled Mednefits Care (Corporate)";
+						$data['account_type'] = "Insurance Bundle";
+						$data['complimentary'] = TRUE;
+					} else if($extension->account_type == "trial_plan") {
+						$data['plan_type'] = "Trial Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Trial Plan";
+						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "lite_plan") {
+						$data['plan_type'] = "Lite Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Lite Plan";
+						$data['complimentary'] = FALSE;
+					} else if($extension->account_type == "enterprise_plan") {
+						$data['plan_type'] = "Enterprise Plan Mednefits Care (Corporate)";
+						$data['account_type'] = "Enterprise Plan";
+						$data['complimentary'] = FALSE;
+					}
+
+					$invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+					->where('plan_extention_enable', 1)
+					->first();
+
+					$individual_price = 0;
+					if((int)$invoice->override_total_amount_status == 1) {
+						$individual_price = $invoice->override_total_amount;
+					} else {
+						$individual_price = $invoice->individual_price;
+					}
+
+					$data['price']          = number_format($individual_price, 2);
+					$data['amount']					= number_format($data['number_employess'] * $individual_price, 2);
+					$amount_due = $data['number_employess'] * $individual_price;
+					$data['total']					= $data['number_employess'] * $individual_price;
+
+					if((int)$extension->paid == 1) {
+						$data['paid'] = true;
+						$payment = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
+						if($payment) {
+							if(empty($payment->date_received) || $payment->date_received == null) {
+								$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+							} else {
+								$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+							}
+							$data['notes']		  = $payment->remarks;
+
+							$temp_amount_due = $amount_due - $payment->paid_amount;
+							if($temp_amount_due <= 0) {
+								$data['amount_due']     = 0.00;
+							} else {
+								$data['amount_due'] = $temp_amount_due;
+							}
+
+						} else {
+							$data['amount_due']     = $amount_due;
+						}
+					} else {
+						$data['paid'] = false;
+						$data['amount_due']     = $amount_due;
+					}
+					
+				} else {
+					$first_plan = DB::table('customer_active_plan')->where('plan_id', $get_active_plan->plan_id)->first();
+					$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
+					$calculated_prices = self::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $end_plan_date);
+					$data['price']          = \DecimalHelper::formatDecimal($calculated_prices);
+					$amount_due = $data['number_employess'] * $data['price'];
+					$data['amount_due'] = $data['number_employess'] * $calculated_prices;
+					$data['amount']					= number_format($data['number_employess'] * $calculated_prices, 2);
+					$data['total']					= $data['number_employess'] * $calculated_prices;
+					$data['duration'] = $get_active_plan->duration;
+				}
+			} else {
+
+				$payment = DB::table('customer_cheque_logs')
+				->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+				->orderBy('created_at', 'desc')
+				->first();
+
+				$first_plan = DB::table('customer_active_plan')->where('plan_id', $get_active_plan->plan_id)->first();
+				$plan = DB::table('customer_plan')->where('customer_plan_id', $get_active_plan->plan_id)->first();
+				$duration = null;
+
+				$calculated_prices_end_date = \CustomerHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
+				$end_plan_date = $calculated_prices_end_date['plan_end'];
+				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
+				$data['plan_end'] = $calculated_prices_end_date;
+				if((int)$invoice->override_total_amount_status == 1) {
+					$calculated_prices = $invoice->override_total_amount;
+				} else {
+					$calculated_prices = \CustomerHelper::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+				}
+				// return $calculated_prices;
+				$duration = \CustomerHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
+				$data['price']          = \DecimalHelper::formatDecimal($calculated_prices);
+				$amount_due = $data['number_employess'] * $calculated_prices;
+				$data['amount']					= number_format($data['number_employess'] * $data['price'], 2);
+				$data['total']					= $data['number_employess'] * $data['price'];
+				$data['duration'] = $duration;
+
+				if($get_active_plan->paid == "true") {
+					$data['paid'] = true;
+					if($payment) {
+						if(empty($payment->date_received) || $payment->date_received == null) {
+							$data['payment_date'] = date('F d, Y', strtotime($get_active_plan->paid_date));
+						} else {
+							$data['payment_date'] = date('F d, Y', strtotime($payment->date_received));
+						}
+						$data['notes']		  = $payment->remarks;
+					}
+				} else {
+					$data['paid'] = false;
+				}
+				
+				if($get_active_plan->paid == "true") {
+					if($payment) {
+						$temp_amount_due = $amount_due - $payment->paid_amount;
+						if($temp_amount_due <= 0) {
+							$data['amount_due']     = 0.00;
+						} else {
+							$data['amount_due'] = $temp_amount_due;
+						}
+					} else {
+						$data['amount_due']     = $amount_due;
+					}
+				} else {
+					$data['amount_due']     = $amount_due;
+				}
+			}
+
+		}
+
+		$data['plan_end'] 			= date('F d, Y', strtotime($end_plan_date));
+		$next_billing = date('M d Y', strtotime('-1 month', strtotime($data['plan_end'])));
+		$data['next_billing'] = date('M d Y', strtotime('-1 day', strtotime($next_billing)));
+
+		$dependents_data = [];
+		// check if active plan has a dependents associated for this
+		$dependents = DB::table('dependent_plans')
+		->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)
+		->where('type', 'active_plan')
+		->where('tagged', 1)
+		->get();
+
+		$dependent_amount = 0;
+		$dependent_amount_due = 0;
+
+		foreach ($dependents as $key => $dependent) {
+			$individual_price = 0;
+			$total_dependents = 0;
+			$invoice_dependent = DB::table('dependent_invoice')
+			->where('dependent_plan_id', $dependent->dependent_plan_id)
+			->first();
+			if($dependent->account_type == "stand_alone_plan") {
+				$account_type = "Pro Plan";
+			} else if($dependent->account_type == "insurance_bundle") {
+				$account_type = "Insurance Bundle";
+			} else if($dependent->account_type == "trial_plan") {
+				$account_type = "Trial Plan";
+			} else if($dependent->account_type == "lite_plan") {
+				$account_type = "Lite Plan";
+			} else if($dependent->account_type == "enterprise_plan") {
+				$account_type = "Enterprise Plan";
+			}
+
+			if($invoice_dependent) {
+				if((int)$dependent->payment_status == 0) {
+					$dependent_amount_due += $invoice_dependent->individual_price * $invoice_dependent->total_dependents;
+				}
+				$dependent_amount += $invoice_dependent->individual_price * $invoice_dependent->total_dependents;
+				$individual_price = $invoice_dependent->individual_price;
+				$total_dependents = $invoice_dependent->total_dependents;
+			} else {
+				$individual_price = $dependent->individual_price;
+				$dependent_amount += $dependent->individual_price * $dependent->total_dependents;
+				$total_dependents = $dependent->total_dependents;
+			}
+			
+
+			if($dependent->duration || $dependent->duration != "") {
+				$end_date_temp = date('Y-m-d', strtotime('+'.$dependent->duration, strtotime($dependent->plan_start)));
+				$end_date = date('F d, Y', strtotime('-1 day', strtotime($end_date_temp)));
+				$duration = $dependent->duration;
+			} else {
+				$end_date = date('F d, Y', strtotime('+1 year', strtotime($dependent->plan_start)));
+				$duration = '12 months';
+			}
+
+			$temp = array(
+				'account_type'		=> $account_type,
+				'total_dependents'	=> $total_dependents,
+				'price'  			=> $individual_price,
+				'amount'			=> number_format($individual_price * $total_dependents, 2),
+				'plan_start'		=> date('F d, Y', strtotime($dependent->plan_start)),
+				'plan_end'			=> $end_date,
+				'duration'			=> $duration,
+				'currency_type' 	=> $invoice_dependent ? $invoice_dependent->currency_type : "sgd"
+			);
+
+			array_push($dependents_data, $temp);
+		}
+
+		$data['dependents'] = $dependents_data;
+		$data['total'] = \DecimalHelper::formatDecimal($data['total'] + $dependent_amount, 2);
+		$data['amount_due'] = \DecimalHelper::formatDecimal($data['amount_due'] + $dependent_amount_due, 2);
+		$data['customer_active_plan_id'] = $get_active_plan->customer_active_plan_id;
+		return $data;
+	}
+
+	public static function getRefundLists($id)
+	{
+		$users = [];
+		$amount_due = 0;
+		$refund_payment = DB::table('payment_refund')->where('payment_refund_id', $id)->first();
+
+		if(!$refund_payment) {
+			return false;
+		}
+
+		if($refund_payment) {
+			$company_active_plan = DB::table('customer_active_plan')
+			->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
+															// ->where('account_type', 'stand_alone_plan')
+			->first();
+			$company_plan = DB::table('customer_plan')->where('customer_plan_id', $company_active_plan->plan_id)->first();
+			$plan_withdraw = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $id)->orderBy('created_at', 'desc')->first();
+			$temp_end_date = date('Y-m-d', strtotime('+1 year', strtotime($company_plan->plan_start)));
+			$end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_end_date)));
+			$total_refund = 0;
+			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->whereIn('refund_status', [0,1])->get();
+
+			foreach ($withdraws as $key => $user) {
+				if((int)$user->has_no_user == 0) {
+					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
+					$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
+					$invoice = DB::table('corporate_invoice')
+						->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
+						->first();
+					$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($plan->plan_start))), new \DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$days = $diff->format('%a') + 1;
+
+					// $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$total_days = \MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
+					$remaining_days = $total_days - $days;
+
+					// return $remaining_days;
+					$cost_plan_and_days = ($invoice->individual_price/$total_days);
+					$temp_total = $cost_plan_and_days * $remaining_days;
+
+					$temp_sub_total = $temp_total * 0.70;
+
+					// check withdraw amount
+					if($user->amount != $temp_sub_total) {
+						// update amount
+						DB::table('customer_plan_withdraw')->where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					}
+
+					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
+					$total_refund += $withdraw_data->amount;
+
+					$temp = array(
+						'user_id'			=> $user->user_id,
+						'name'				=> ucwords($employee->Name),
+						'nric'				=> $employee->NRIC,
+						'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> \DecimalHelper::formatDecimal($temp_total),
+						'after_amount' => \DecimalHelper::formatDecimal($withdraw_data->amount)
+					);
+				} else {
+					$total_refund += $user->amount;
+					$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($user->date_started))), new \DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$days = $diff->format('%a') + 1;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+
+					$remaining_days = $total_days - $days;
+					$temp = array(
+						'user_id'			=> null,
+						'name'				=> null,
+						'nric'				=> null,
+						'period_of_used' => date('d/m/Y', strtotime($user->date_started)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($user->unused)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($user->unused)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> \DecimalHelper::formatDecimal($user->amount),
+						'after_amount' => \DecimalHelper::formatDecimal($user->amount)
+					);
+				}
+
+				if($user->paid == 0) {
+					$amount_due += $temp['after_amount'];
+				}
+
+				array_push($users, $temp);
+			}
+
+
+			$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $company_active_plan->customer_start_buy_id)->first();
+
+			$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $company_active_plan->customer_start_buy_id)->first();
+
+			$data['email'] = $contact->work_email;
+			if($contact->billing_status === "true" || $contact->billing_status === true) {
+				$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+			} else {
+				$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $company_active_plan->customer_start_buy_id)->first();
+				$data['name'] = ucwords($billing_contact->billing_name);
+				$data['address'] = $billing_contact->billing_address;
+			}
+			$data['phone']     = $contact->phone;
+			if($contact->billing_status === "true") {
+				$data['address'] = $business_info->company_address;
+				$data['postal'] = $business_info->postal_code;
+				$data['company'] = ucwords($business_info->company_name);
+			} else {
+				$data['postal'] = $business_info->postal_code;
+				$data['company'] = ucwords($business_info->company_name);
+			}
+
+			return array(
+				'total_refund' => number_format($total_refund, 2),
+				'amount_due'	=> number_format($amount_due, 2),
+				'cancellation_number' => $refund_payment->cancellation_number,
+				'paid' => $refund_payment->payment_amount,
+				'date_refund' => $refund_payment->date_refund,
+				'payment_status' => $refund_payment->status,
+				'billing_info' => $data,
+				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
+				'currency_type' => $refund_payment->currency_type,
+				'users' => $users,
+			);
+
+		}
+	}
+
+	public static function getSpendingDeposit($id) 
+	{
+		$deposit = DB::table("spending_deposit_credits")->where("deposit_id", $id)->first();
+
+		if(!$deposit) {
+			return array('status' => FALSE, 'message' => 'Deposit not found.');
+		}
+
+		$data = [];
+
+		$contact = DB::table('customer_business_contact')
+		->where('customer_buy_start_id', $deposit->customer_id)
+		->first();
+
+		$data['email'] = $contact->work_email;
+		$data['phone']     = $contact->phone;
+		$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $deposit->customer_id)->first();
+		$data['company'] = ucwords($business_info->company_name);
+		$data['postal'] = $business_info->postal_code;
+
+		if($contact->billing_status == "true" || $contact->billing_status == true) {
+			$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+			$data['address'] = $business_info->company_address;
+		} else {
+			$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $deposit->customer_id)->first();
+			$data['name'] = ucwords($billing_contact->billing_name);
+			$data['address'] = $billing_contact->billing_address;
+		}
+
+		$percent = floatval($deposit->percent);
+		$wellness_percent = floatval($deposit->wellness_percent);
+		
+		$data['percent'] = $percent;
+		$data['medical_status'] = false;
+		$data['wellness_status'] = false;
+		$data['medical_deposit_amount'] = 0;
+		$medical_deposit_amount = 0;
+		$data['wellness_deposit_amount'] = 0;
+		$wellness_deposit_amount = 0;
+		$data['total_wellness'] = 0;
+		$data['total_medical'] = 0;
+
+		if($deposit->medical_credits > 0) {
+			$data['total_medical'] = $deposit->medical_credits;
+			$medical_deposit_amount = $deposit->medical_credits * $percent;
+			$data['medical_deposit_amount'] = number_format($medical_deposit_amount, 2);
+			$data['medical_status'] = true;
+		} 
+
+		if($deposit->welness_credits > 0) {
+			$data['total_wellness'] = $deposit->welness_credits;
+			$wellness_deposit_amount = $deposit->welness_credits * $wellness_percent;
+			$data['wellness_deposit_amount'] = number_format($wellness_deposit_amount, 2);
+			$data['wellness_status'] = true;
+		}
+
+		$total_price = $medical_deposit_amount + $wellness_deposit_amount;
+		$amount_due = $total_price - $deposit->amount_paid;
+		$data['price'] = number_format($total_price, 2);
+		$data['amount'] = number_format($total_price, 2);
+		$data['total'] = number_format($total_price, 2);
+		$data['amount_due'] = number_format($amount_due, 2);
+		$data['paid'] = (int)$deposit->payment_status == 1 ? true : false;
+		$data['notes'] = $deposit->payment_remarks;
+		$data['invoice_number'] = $deposit->deposit_number;
+		$data['invoice_date'] = date('F d, Y', strtotime($deposit->invoice_date));
+		$data['invoice_due'] = date('F d, Y', strtotime($deposit->invoice_due));
+		$data['active_plan_id'] = $deposit->customer_active_plan_id;
+		$data['currency_type'] = $deposit->currency_type;
+		$active_plan = DB::table("customer_active_plan")->where("customer_active_plan_id", $deposit->customer_active_plan_id)->first();
+
+		if($active_plan->account_type == "insurance_bundle") {
+			$data['account_type'] = 'Insurance Bundle';
+		} else if($active_plan->account_type == "stand_alone_plan") {
+			$data['account_type'] = 'Stand Alone Plan';
+		} else if($active_plan->account_type == "lite_plan") {
+			$data['account_type'] = 'Lite Plan';
+		} else {
+			$data['account_type'] = 'Trial Plan';
+		}
+
+		if((int)$deposit->payment_status == 1) {
+			$data['payment_date'] = date('F d, Y', strtotime($deposit->payment_date));
+			if($deposit->payment_remarks) {
+				$data['notes'] = $deposit->payment_remarks;
+			}
+		}
+
+
+		return $data;
 	}
 }
 ?>

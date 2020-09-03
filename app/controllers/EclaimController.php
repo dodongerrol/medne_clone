@@ -129,14 +129,12 @@ class EclaimController extends \BaseController {
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
-
 		
 		// check if their is receipts
 		if(sizeof($input['receipts']) == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
 
-		
 		$ids = [];
         // get real userid for dependents
 		$type = StringHelper::checkUserType($input['user_id']);
@@ -168,8 +166,6 @@ class EclaimController extends \BaseController {
 		$date = date('Y-m-d', strtotime($input['date']));
 		$claim_amount = $input['claim_amount'];
 		
-		
-
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
@@ -180,6 +176,20 @@ class EclaimController extends \BaseController {
 			}
 		}
 
+<<<<<<< HEAD
+=======
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
+		}
+
+		// check if it is myr or sgd
+		if($check_user_balance->currency_type == "myr" ) {
+			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+		}
+>>>>>>> rl-spending-v3
 
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
@@ -477,6 +487,13 @@ class EclaimController extends \BaseController {
 
 		if($transaction_access)	{
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
+		}
+
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
 
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
@@ -9854,6 +9871,137 @@ public function downloadEclaimCsv( )
 		}
 
 		return $data;
+	}
+
+	public function downloadNonPanelInvoice( )
+	{
+		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$statement = DB::table('company_credits_statement')->where('statement_id', $input['id'])->where('type', 'non_panel')->first();
+
+		if(!$statement) {
+			return ['status' => false, 'message' => 'Non Panel Invoice does not exist'];
+		}
+
+		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
+
+		if((int)$statement->statement_status == 1) {
+			$total = round($transaction_data['credits'], 2);
+			$amount_due = (float)$total - (float)$statement->paid_amount;
+		} else {
+			$amount_due = (float)$transaction_data['credits'];
+			$total = $amount_due;
+		}
+
+		$data = array(
+			'xeroInvoiceId'	=> $statement->xeroInvoiceId,
+			'company' => ucwords($statement->statement_company_name),
+			'company_address' => ucwords($statement->statement_company_address),
+			'contact_email' => $statement->statement_contact_email,
+			'contact_name' => ucwords($statement->statement_contact_name),
+			'contact_contact_number' => $statement->statement_contact_number,
+			'customer_id' => $statement->statement_customer_id,
+			'statement_date' => date('j M Y', strtotime($statement->statement_date)),
+			'statement_due' => date('j M Y', strtotime($statement->statement_due)),
+			'statement_start_date' => $statement->statement_start_date,
+			'statement_end_date'	=> $statement->statement_end_date,
+			'start_date' => date('j M Y', strtotime($statement->statement_start_date)),
+			'end_date'	=> date('j M Y', strtotime($statement->statement_end_date)),
+			'statement_id'	=> $statement->statement_id,
+			'statement_number' => $statement->statement_number,
+			'statement_status'	=> $statement->statement_status,
+			'statement_total_amount' => number_format($total, 2),
+			'total_in_network_amount'		=> number_format($transaction_data['credits'], 2),
+			'statement_amount_due' => $amount_due < 0 ? "0.00" : number_format($amount_due, 2),
+			'consultation_amount_due'	=> 0,
+			'in_network'				=> null,
+			'paid_date'				=> $statement->paid_date ? date('j M Y', strtotime($statement->paid_date)) : NULL,
+			'payment_remarks' => $statement->payment_remarks,
+			'payment_amount' => number_format($statement->paid_amount, 2),
+			'lite_plan'	=> true,
+			'total_consultation'	=> $transaction_data['total_consultation'],
+			'currency_type'	=> strtoupper($statement->currency_type),
+			'postal'		=> null,
+			'medical'		=> number_format($transaction_data['total_medical'], 2),
+			'wellness'		=> number_format($transaction_data['total_wellness'], 2)
+		);
+
+		$pdf = PDF::loadView('pdf-download.globalTemplates.non-panel-invoice', $data);
+		$pdf->getDomPDF()->get_option('enable_html5_parser');
+		$pdf->setPaper('A4', 'portrait');
+		return $pdf->stream();
+		return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
+	}
+
+	public function downloadNonPanelReimbursement( )
+	{
+		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$statement = DB::table('company_credits_statement')->where('statement_id', $input['id'])->where('type', 'non_panel')->first();
+
+		if(!$statement) {
+			return ['status' => false, 'message' => 'Non Panel Invoice does not exist'];
+		}
+
+		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
+		$container = array();
+
+		foreach($transaction_data['transactions'] as $key => $transaction) {
+			$container[] = array(
+				'Member'				=> $transaction['member'],
+				'Email Address'			=> $transaction['email_address'],
+				'Claim Member Type'		=> $transaction['claim_member_type'],
+				'Employee'				=> $transaction['employee_name'],
+				'Claim Date'			=> $transaction['claim_date'],
+				'Visited Date'			=> $transaction['visit_date'],
+				'Transaction#'			=> $transaction['transaction_id'],
+				'Claim Type'			=> $transaction['service'],
+				'Provider'				=> $transaction['merchant'],
+				'Member Wallet'			=> strtoupper($transaction['spending_type']),
+				'Claim Amount'			=> $transaction['claim_amount'],
+				'Total Amount'			=> $transaction['amount'],
+				'Remarks'				=> $transaction['remarks'],
+				'Bank Name'				=> $transaction['bank_name'],
+				'Bank Account Number'	=> $transaction['bank_account_number']
+			);
+		}
+
+		return \Excel::create('Reimbursement CSV', function($excel) use($container) {
+			$excel->sheet('Non-Panel', function($sheet) use($container) {
+				$sheet->fromArray( $container );
+			});
+		})->export('csv');
+		return $container;
 	}
 }
 ?>

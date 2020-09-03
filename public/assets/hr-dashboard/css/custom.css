@@ -172,7 +172,13 @@
 .display-flex{
     display: flex;
 }
-
+.dp-flex-ai {
+    display: flex;
+    align-items: center;
+}
+.flex-1 {
+    flex: 1;
+}
 /*----------------------------*/
 
 
