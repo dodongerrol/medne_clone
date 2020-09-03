@@ -41,7 +41,8 @@ jQuery(document).ready(function($) {
     $('.operatingHours-div').css('display', 'inline-block');
     $("#Configure-list div b").css("color", "#777676");
     $("#Integrate-list div b").css("color", "#777676");
-    $(this).css("color", "black");
+    $('#clinic-hours').css("color", "black");
+    $('#clinic-hours-tab').click();
   });
 
   // --------------------------------------------------------------------
@@ -125,28 +126,11 @@ jQuery(document).ready(function($) {
     $(this).css("color", "black");
   });
 
-  // -------------------- load clinic business hours tab page --------------------
-
-  $(document).on("click", "#clinic-hours-tab", function(event) {
-    // $.ajax({
-    //   url: base_url + "setting/profile/ajaxGetClinicHoursTab",
-    //   type: "POST"
-    // }).done(function(data) {
-    //   $("#clinic-hours-main").html(data);
-    // });
-    // Refactor code.
-    
-  });
-
   // -------------------- load clinic breaks tab page --------------------
 
   $(document).on("click", "#clinic-breaks-tab", function(event) {
-    $.ajax({
-      url: base_url + "setting/profile/ajaxGetClinicBreaksTab",
-      type: "POST"
-    }).done(function(data) {
-      $("#clinic-breaks-main").html(data);
-    });
+    $('.clinic-detail-container').css('display', 'none');
+    // $('.operatingHours-div').css('display', 'none');
   });
 
   // -------------------- load clinic time off tab page --------------------
@@ -157,6 +141,7 @@ jQuery(document).ready(function($) {
       type: "POST"
     }).done(function(data) {
       $("#clinic-time_off-main").html(data);
+      $('.clinic-breaks-main').css('display', 'none');
     });
   });
 

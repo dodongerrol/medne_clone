@@ -157,4 +157,3 @@
 		<div class="col-md-9" style="padding-top: 3px;" id="saveOperatingBtnDiv">
 			<button id="profile-operatingHours-saveOperatingHours" ><span class="glyphicon glyphicon-pencil"></span> Apply Changes</button>
 		</div>
-</div>

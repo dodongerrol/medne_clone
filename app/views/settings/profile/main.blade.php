@@ -66,10 +66,8 @@
 	</div>
 
 
-	<div id="profile-detail-wrapper" class="detail-wrapper" style="padding: 0px;">
-	</div>
+	<div id="profile-detail-wrapper" class="detail-wrapper" style="padding: 0px;"></div>
 	<div class="operatingHours-div">
 			@include('settings.profile.clinic-hours-main')
 	</div>
-	
 </div>

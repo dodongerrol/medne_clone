@@ -16,7 +16,9 @@
             <div class="tab-pane active" id="clinic-hours-main">
                 @include('settings.profile.clinic-business-hours')
             </div>
-            <div class="tab-pane" id="clinic-breaks-main" style="margin-left: 15px; padding-right: 15px;"></div>
+            <div class="tab-pane" id="clinic-breaks-main">
+              @include('settings.profile.clinic-breaks')
+            </div>
             <div class="tab-pane" id="clinic-time_off-main"></div>
         </div>
     </div>

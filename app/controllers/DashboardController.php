@@ -241,11 +241,11 @@ class DashboardController extends \BaseController {
 						'message' => 'Providers Operating Hours Successfully Updated.',
 						'success' => true
 					);
-			} else if(!isset($payload['providersDetails']['providersInfo'])
-				&& !isset($payload['providersDetails']['providersOperatingHours'])
-				&& isset($payload['providersDetails']['providersBreakHours'])) {
+			} else if(isset($payload['providersDetails']['providersbreakHours'])
+				&& !isset($payload['providersDetails']['providersInfo'])
+				&& !isset($payload['providersDetails']['providersOperatingHours'])) {
 					// update providers break hours
-					$clinic->updateBreakHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					$clinic->updateBreakHours($payload['providersDetails']['providersbreakHours'], $payload['provider_id']);
 					
 					return array(
 						'message' => 'Providers Break Hours Successfully Updated.',
@@ -253,7 +253,7 @@ class DashboardController extends \BaseController {
 					);
 			} else if(isset($payload['providersDetails']['providersInfo'])
 				&& !isset($payload['providersDetails']['providersOperatingHours'])
-				&& !isset($payload['providersDetails']['providersBreakHours'])) {
+				&& !isset($payload['providersDetails']['providersbreakHours'])) {
 					// update providers info
 					$clinic->updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
 					
@@ -287,6 +287,28 @@ class DashboardController extends \BaseController {
 
 			return array(
 				'data' => $operatingHours,
+				'success' => true
+			);
+
+		} catch(Exception $error) {
+			return array(
+				'message' => $error,
+				'success' => false
+			);
+		}
+	}
+
+	function getProviderBreakHours () {
+		try {
+			
+			$clinic  = new Clinic;
+			
+			$getSessionData = StringHelper::getMainSession(3);
+			
+			$breakHours = $clinic->getProviderBreakHours($getSessionData->Ref_ID);
+
+			return array(
+				'data' => $breakHours,
 				'success' => true
 			);
 

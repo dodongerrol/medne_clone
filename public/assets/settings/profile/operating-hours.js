@@ -28,24 +28,33 @@ jQuery(document).ready( function ($) {
             }).done(function (response) {
                 $('#cover-spin').css('display', 'none');
 
-                // Assign Data
-                let availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
-                    availableDaysKeys = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'publicHoliday'];
+                if (response.data.length > 0) {
+                      // Assign Data
+                    let availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
+                        availableDaysKeys = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'publicHoliday'];
 
-                for (let i = 0; i < availableDays.length; i++) {
+                    for (let i = 0; i < availableDays.length; i++) {
 
-                    // Filter Data in there are active status for specific day
-                    selectedChk = response.data.filter( function(item) {
-                        return item[availableDaysKeys[i]];
-                    });
-                    
+                        // Filter Data in there are active status for specific day
+                        selectedChk = response.data.filter( function(item) {
+                            return item[availableDaysKeys[i]];
+                        });
+                        
 
-                    // Populate Data
-                    if (selectedChk.length > 0) {
-                        $('#profile-operatingHours-'+availableDays[i]+'-div input.timepicker.profile-operatingHours-time-from.ui-timepicker-input').val(selectedChk[0]['StartTime']);
-                        $('#profile-operatingHours-'+availableDays[i]+'-div input.timepicker.profile-operatingHours-time-to.ui-timepicker-input').val(selectedChk[0]['EndTime']);
-                        $('#profile-operatingHours-'+availableDays[i]+'-div .profile-operatingHours-chk_activate').bootstrapToggle('on');
+                        // Populate Data
+                        if (selectedChk.length > 0) {
+                            $('#profile-operatingHours-'+availableDays[i]+'-div input.timepicker.profile-operatingHours-time-from.ui-timepicker-input').val(selectedChk[0]['StartTime']);
+                            $('#profile-operatingHours-'+availableDays[i]+'-div input.timepicker.profile-operatingHours-time-to.ui-timepicker-input').val(selectedChk[0]['EndTime']);
+                            $('#profile-operatingHours-'+availableDays[i]+'-div .profile-operatingHours-chk_activate').bootstrapToggle('on');
+                        }
                     }
+                } else {
+                    $('#config_alert_box').css('display', 'block');
+                    $('#config_alert_box').html('No record found.');
+
+                    setTimeout(function() {
+                        $('#config_alert_box').css('display', 'none');
+                    }, 1000);
                 }
         });
     });

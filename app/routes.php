@@ -1268,6 +1268,7 @@ Route::group(array('prefix' => 'app'), function()
 		/*
 			Refactor API for gettting providers information for the first time.
 		*/
+		Route::get('clinic/getProviderBreakHours', 'DashboardController@getProviderBreakHours');
 		Route::get('clinic/getProviderOperatingHours', 'DashboardController@getProviderOperatingHours');
 		Route::get('clinic/getProvidersDetail', 'DashboardController@getProvidersDetail');
 		/* End Here. */
