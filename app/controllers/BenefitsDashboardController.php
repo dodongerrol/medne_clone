@@ -2093,6 +2093,8 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Basic Plan";
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
+			} else if($active_plan->account_type == 'out_of_pocket') {
+				$plan_name = "Out of Pocket";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -2313,7 +2315,7 @@ class BenefitsDashboardController extends \BaseController {
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
 				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
-				'end_date'				=> date('F d, Y', strtotime($plan_user_history->end_date)),
+				'end_date'				=> $active_plan->account_type != 'out_of_pocket' ? date('F d, Y', strtotime($plan_user_history->end_date)) : null,
 				'expiry_date'			=> $expiry_date,
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
