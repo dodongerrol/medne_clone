@@ -3225,6 +3225,10 @@ class EmployeeController extends \BaseController {
       $hostName = $_SERVER['HTTP_HOST'];
       $protocol = $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
       $server = $protocol.$hostName;
+
+      if($server == "https://hrapi.medicloud.sg") {
+        $server = "https://medicloud.sg";
+      }
       // return $server;
       $id = Input::get ('id');
       $input = Input::all();
