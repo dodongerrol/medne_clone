@@ -12,9 +12,18 @@ class ProfileController extends \BaseController {
             if($getSessionData != FALSE){
 
             	$findClinicDetails = Clinic_Library::FindClinicDetails($getSessionData->Ref_ID);
+                
 
 	            $clinicArray = Array_Helper::GetClinicDetailArray($getSessionData,$findClinicDetails);
-            	$data['clinicdetails'] = $clinicArray;
+                /*
+                    Added By Stephen
+                    Description: Image src must be localy located if currently in DEVELOPMENT Stage
+                */
+                if (StringHelper::Deployment() == 2 || empty($clinicArray['image'])) {
+                    $clinicArray['image'] = URL::asset('assets/images/img-portfolio-place.png');
+                }
+
+                $data['clinicdetails'] = $clinicArray;
 
 	            $clinic_type = new CalendarController();
 		        $clinic_type = $clinic_type->getClinicTypesAdmin($getSessionData->Ref_ID);

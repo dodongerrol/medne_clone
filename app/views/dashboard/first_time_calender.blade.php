@@ -5,8 +5,6 @@
 <div id="config_alert_box">
     message goes here
 </div>
-
-<input type="hidden" id="clinicID" value="">
 <div id="calender_header">
 		<div class="header-list">
 			<ul class="nav navbar-nav">
@@ -69,7 +67,8 @@
   <ul class="nav nav-tabs setup" style="background: #104159;">
 
     <li id="step-1" class="active disabledTab">
-  	<label class="lbl-setup-complete"><b>Welcome</b></label>
+	  <label class="lbl-setup-complete"><b>Welcome</b></label>
+	  <input type="hidden" id="clinicID" value="{{ $clinic_data->ClinicID }}">
 	<a data-toggle="tab" href="#setupHome">
 		<span id="lbl-step-1" class="step-no">1</span>
 		<span id="lbl-step-1-ok" class="glyphicon glyphicon-ok step-no" style="background: #2AA4D8; position: absolute; display: none;"></span>
@@ -83,23 +82,16 @@
 	</a>
 	</li>
 	<li id="step-3" class="disabledTab">
-  	<label class="lbl-setup-complete"><b>Doctors</b></label>
+  	<label class="lbl-setup-complete"><b>Break Hours</b></label>
 		<a data-toggle="tab" href="#setupDoctor">
 		<span id="lbl-step-3" class="step-no">3</span>
 		<span id="lbl-step-3-ok" class="glyphicon glyphicon-ok step-no" style="background: #2AA4D8; position: absolute; display: none;"></span>
 	</a>
 	</li>
-	<li id="step-4" class="disabledTab">
-  	<label class="lbl-setup-complete"><b>Service</b></label>
-		<a data-toggle="tab" href="#setupService">
-		<span id="lbl-step-4" class="step-no">4</span>
-		<span id="lbl-step-4-ok" class="glyphicon glyphicon-ok step-no" style="background: #2AA4D8; position: absolute; display: none;"></span>
-	</a>
-	</li>
 	<li id="step-5" class="disabledTab">
   	<label class="lbl-setup-complete"><b>DONE!</b></label>
 		<a data-toggle="tab" href="#setupDone">
-		<span id="lbl-step-5" class="step-no">5</span>
+		<span id="lbl-step-5" class="step-no">4</span>
 		<span id="lbl-step-5-ok" class="glyphicon glyphicon-ok step-no" style="background: #2AA4D8; position: absolute; display: none;"></span>
 	</a>
 	</li>
@@ -123,49 +115,36 @@
     	<div class="panel-body">
     	<span style="font-size: 12px; color: blue;">This will only take a moment.</span>
 
-    	<div class="row col-md-12"><br>
+    	<div class="row col-md-13"><br>
 			<div class="col-md-2" style="clear: both; padding-right: 25px;">
 				<label class="con-detail-lbl">Clinic Name</label>
 			</div>
 			<div class="col-md-8" style="padding: 0px; padding-left: 30px;">
-				<input type="text" id="con-clinic-name" class="dropdown-btn " value="{{ $clinic_data->Name }}" placeholder="Clinic Name" style="height: 25px; width: 260px; font-size: 12px;">
+				<input type="text" id="con-clinic-name" class="dropdown-btn " value="{{ $clinic_data->Name }}" placeholder="Clinic Name" style="height: 25px; width: 260px; font-size: 12px;" required>
 			</div>
 		</div>
 
-		<div class="row col-md-12" style="padding-top: 15px;">
-			<div class="col-md-2" style="clear: both; padding-right: 25px;">
-				<label class="con-detail-lbl" style="padding-top: 12px;">Speciality</label>
-			</div>
-			<div class="col-md-8" style="padding: 0px; padding-left: 30px;">
-				<div class="right-inner-addon">
-		    		<i style="padding: 13px 35px 0 0;font-size: smaller;color: #666666;" class="glyphicon glyphicon-chevron-down"></i>
-		    		<input type="button" id="{{ $clinic_type[0]->ClinicTypeID }}" class="dropdown-btn dropdown-toggle clinic-speciality" data-toggle="dropdown" value="{{ $clinic_type[0]->Name }}" placeholder="Your Speciality" style="height: 25px; width: 240px; font-size: 12px; cursor: pointer; text-align: left;
-    padding-bottom: 10px;">
-
-					<ul class="dropdown-menu" id="config-clinic-type-list" style="width: 280px; position: absolute;top: 45px;left: 0;height: 80px; overflow-y: auto; overflow-x: hidden;">
-					    <?php foreach ($clinic_type as $val) { ?>
-				        <li><a href="#" id="{{ $val->ClinicTypeID }}">{{ $val->Name }}</a></li>
-				        <?php } ?>
-					</ul>
-				</div>
-			</div>
-		</div>
-
-		<div class="row col-md-12" style="padding-top: 15px;">
+		<div class="row col-md-13" style="padding-top: 15px;">
 			<div class="col-md-2" style="clear: both; padding-right: 25px;">
 				<label class="con-detail-lbl">Phone No</label>
 			</div>
 			<div class="col-md-8" style="padding: 0px; padding-left: 30px;">
   				<div id="code-dropdown" class="btn-group" style="border: 1px solid #d9d9d9; border-radius: 5px; display: block; width: 280px;">
-    				<button type="button" id="con-mobile-code" class="btn dropdown-toggle" data-toggle="dropdown" style="height: 25px; font-size: 12px; color: #686868; background: #F4F4F4; border-right: 1px solid #d9d9d9; width: 35px; text-align: left;">+65</button>
-    				<input type="text" id="con-mobile" class="dropdown-btn " value="{{ $clinic_data->Phone }}" placeholder="Main Phone" style="height: 28px; width: 197px; font-size: 12px; border: 0px;">
+    				<button type="button" id="con-mobile-code" class="btn dropdown-toggle" data-toggle="dropdown" style="height: 25px; font-size: 12px; color: #686868; background: #F4F4F4; border-right: 1px solid #d9d9d9; width: 35px; text-align: left;">{{ $clinic_data->PhoneCode }}</button>
+    				<input 
+						type="tel" 
+						id="con-mobile" 
+						class="dropdown-btn " 
+						value="{{ $clinic_data->Phone }}" 
+						placeholder="Main Phone" 
+						style="height: 28px; width: 197px; font-size: 12px; border: 0px;"
+						pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
     				<ul class="dropdown-menu" id="config-mobile-code-list" style="width: 280px; position: static; max-height: 80px; overflow-y: auto; overflow-x: hidden;">
 
 					</ul>
   				</div>
 			</div>
 		</div>
-
     	</div>
     </div>
 
@@ -176,7 +155,7 @@
     <div id="setupHours" class="tab-pane fade">
 
     <div>
-      	<h3 style="float: left;">Set Yours Business Hours</h3>
+      	<h3 style="float: left;">Set Yours Operating Hours</h3>
       	<span style="float: right; padding-top: 22px;">
       		<button id="hour-back" class="config-back-btn" style="font-size: medium;"><i class="glyphicon glyphicon-chevron-left" style="font-size: small;"></i></button>
       		<button id="hour-next" class="config-nxt-btn" style="font-size: medium;">Next <i class="glyphicon glyphicon-chevron-right" style="font-size: small;"></i></button>
@@ -193,8 +172,140 @@
     	</div>
 
     	<div id="clinic-time-panel">
-    		
-    	</div>
+			<!-- Monday div -->
+			<div class="row col-md-13" id ='monday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+				<div>
+					<button id="copyTimetoAllBtn" style="font-size: 0.5em;">Copy time to all</button>
+					<button id="undoCopyTimetoAllBtn" style="font-size: 0.5em; display: none">Undo changes</button>
+				</div>
+				
+			</div>	
+			<!-- Tuesday div -->
+			<div class="row col-md-13" id ='tuesday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Tuesday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>	
+			<!-- Wednesday div -->
+			<div class="row col-md-13" id ='wednesday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Wednesday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>	
+			<!-- Thursday div -->
+			<div class="row col-md-13" id ='thursday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Thursday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>	
+			<!-- Friday div -->
+			<div class="row col-md-13" id ='friday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Friday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>	
+			<!-- Saturday div -->
+			<div class="row col-md-13" id ='saturday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Saturday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>	
+			<!-- Sunday div -->
+			<div class="row col-md-13" id ='sunday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Sunday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>	
+			<!-- Public Holiday div -->
+			<div class="row col-md-13" id ='publicHoliday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>		
+		</div>
 
 
     		</div>
@@ -202,87 +313,152 @@
 
     </div>
 
-<!-- Doctor tab contents -->
+<!-- Break Hours tab contents -->
+<div id="setupBreakHours" class="tab-pane fade">
 
-    <div id="setupDoctor" class="tab-pane fade">
+<div>
+	  <h3 style="float: left;">Set Your Break Hours</h3>
+	  <span style="float: right; padding-top: 22px;">
+		  <button id="breakHour-back" class="config-back-btn" style="font-size: medium;"><i class="glyphicon glyphicon-chevron-left" style="font-size: small;"></i></button>
+		  <button id="breakHour-next" class="config-nxt-btn" style="font-size: medium;">Next <i class="glyphicon glyphicon-chevron-right" style="font-size: small;"></i></button>
+	  </span>
+</div><br><br>
+<span style="font-size: 16px; color: #777; font-size: 12px;">Let your customers know when you're open</span>
 
-    <div>
-      	<h3 style="float: left;">Add Doctors</h3>
-      	<span style="float: right; padding-top: 22px;">
-      		<button id="doctor-back" class="config-back-btn" style="font-size: medium;"><i class="glyphicon glyphicon-chevron-left" style="font-size: small;"></i></button>
-      		<button id="doctor-next" class="config-nxt-btn" style="font-size: medium;">Next <i class="glyphicon glyphicon-chevron-right" style="font-size: small;"></i></button>
-      	</span>
-    </div><br><br>
-    <span style="font-size: 12px; color: #777;">Dont worry - you can always edit these later</span>
 
-    <div class="panel panel-default" style="margin-top: 15px;">
-    	<div class="panel-body" style="padding-left: 10px;">
+<div class="panel panel-default" style="margin-top: 15px;">
+	<div class="panel-body">
 
-    	<div id="clinic-doctors-panel">
+	<div style="text-align: center;">
+		<span style="font-size: 12px;; color: #777;">Your time Zone is set to <u style="cursor: pointer;">SINGAPORE (UTC+08:00)</u>.</span>
+	</div>
 
-    	</div>
-
-    	<hr style="border: 1px solid rgb(216, 216, 216) !important; border-color: rgb(216, 216, 216); -webkit-box-shadow: 0 0 5px rgb(216, 216, 216); -moz-box-shadow: 0 0 5px red; box-shadow: 0 0 5px rgb(216, 216, 216);">
-
-		<div class="row col-md-12">
-			<span class="col-md-1" style="padding-bottom: 5px; padding: 0px;">
-    			<img alt="" src="{{ URL::asset('assets/images/ico_Profile.svg') }}" width="40" height="40">
-    		</span>
-			<div class="col-md-4">
-				<input type="text" id="con-doctor-name" class="dropdown-btn " value="" placeholder="Name" style="height: 30px; width: 140px; font-size: 12px;">
+	<div id="clinic-time-panel">
+		<!-- Monday div -->
+		<div class="row col-md-13" id ='monday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
 			</div>
-			<div class="col-md-4" style="padding-left: 0px;">
-				<input type="text" id="con-doctor-email" class="dropdown-btn " value="" placeholder="Email" style="height: 30px; width: 150px; font-size: 12px;">
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
-			<button id="config-doc-add-btn" class="config-doc-add-btn" style="font-size: 15px; width: 45px;">Add</button>
-		</div>
-
-    	</div>
-    </div>
-
-    </div>
-
-<!-- Services tab contents -->
-
-    <div id="setupService" class="tab-pane fade">
-
-    <div>
-      	<h3 style="float: left;">Add the Services You Offer</h3>
-      	<span style="float: right; padding-top: 22px;">
-      		<button id="service-back" class="config-back-btn" style="font-size: medium;"><i class="glyphicon glyphicon-chevron-left" style="font-size: small;"></i></button>
-      		<button id="service-next" class="config-nxt-btn" style="font-size: medium;">Next <i class="glyphicon glyphicon-chevron-right" style="font-size: small;"></i></button>
-      	</span>
-    </div><br><br>
-    <span style="font-size: 12px; color: #777;">Dont worry - you'll be able to edit these later</span>
-
-    <div class="panel panel-default" style="margin-top: 15px;">
-    	<div class="panel-body">
-    		
-    	<div class="row col-md-12">
-    		<span class="col-md-4" style="padding-bottom: 5px; padding-left: 0px;">
-    			<label class="con-detail-lbl" style="color: #999999;">Service Name</label>
-    		</span>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 			<div class="col-md-2">
-				<label class="con-detail-lbl" style="color: #999999;">Time</label>
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
 			</div>
-			<div class="col-md-1">
-				<label class="con-detail-lbl" style="color: #999999;">Price</label>
+			<div>
+				<button id="copyTimetoAllBtnBreak" style="font-size: 0.5em;" disabled>Copy time to all</button>
+				<button id="undoCopyTimetoAllBtnBreak" style="font-size: 0.5em; display: none">Undo changes</button>
 			</div>
-			<div class="col-md-1">
-				<label class="con-detail-lbl" style="color: #999999;">Doctors</label>
+			
+		</div>	
+		<!-- Tuesday div -->
+		<div class="row col-md-13" id ='tuesday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Tuesday</label>
 			</div>
-			<a id="doc-tiptool" href="#" data-toggle="tooltip" title="Hooray!" style="display: none;"></a>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Wednesday div -->
+		<div class="row col-md-13" id ='wednesday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Wednesday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Thursday div -->
+		<div class="row col-md-13" id ='thursday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Thursday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Friday div -->
+		<div class="row col-md-13" id ='friday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Friday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Saturday div -->
+		<div class="row col-md-13" id ='saturday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Saturday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+		<!-- Sunday div -->
+		<div class="row col-md-13" id ='sunday-div'><br>
+			<div class="col-md-2" style="clear: both">
+				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Sunday</label>
+			</div>
+			<div class="col-md-1" style="padding-top: 3px;">
+				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
+			</div>
+			<div class="col-md-2" style="padding-left: 10px;">
+				<input type="button" class="timepicker breakTime-from" value="09:00:00" style="float: right; font-size: 12px;">
+			</div>
+				<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+			<div class="col-md-2">
+				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
+			</div>
+		</div>	
+				
+	</div>
+
+
 		</div>
+	</div>
 
-		<div id="clinic-service-panel">
-
-    	</div>
-
-		
-    	</div>
-    </div>
-
-    </div>
+</div>
 
 <!-- DONE tab contents -->
 
@@ -454,11 +630,17 @@ function setOpacity() {
 	    opacity: .6 !important;
 	    background: #FFFCFC !important;
 	}
+
 	#config-mobile-code-list li:hover, #config-clinic-type-list li a:hover {
 		cursor: pointer;
 		background: #1997D4;
     	color: white !important;
 	}
+
+	body div#clinic-config-dialog{
+		width: 650px !important;
+	}
+
 }
 
 </style>

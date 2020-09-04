@@ -36,6 +36,19 @@
   border-radius: 0;
 }
 
+ .timepicker {
+  color: #777676;
+  border: 1px solid #d9d9d9;
+  width: 80px;
+  font-size: 15px;
+  height: 30px;
+  background: white;
+}
+
+.btn-info {
+  background: #1B9BD7;
+}
+
 
 .staff-container{
   display: inline-block;

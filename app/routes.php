@@ -1307,7 +1307,9 @@ Route::group(array('prefix' => 'app'), function()
 		/*
 			Refactor API for gettting providers information for the first time.
 		*/
-		Route::get('clinic/getProvidersDetail', '@DashboardController@getProvidersDetail');
+		Route::get('clinic/getProviderBreakHours', 'DashboardController@getProviderBreakHours');
+		Route::get('clinic/getProviderOperatingHours', 'DashboardController@getProviderOperatingHours');
+		Route::get('clinic/getProvidersDetail', 'DashboardController@getProvidersDetail');
 		/* End Here. */
 		
 		Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
@@ -1368,7 +1370,7 @@ Route::group(array('prefix' => 'app'), function()
 		
 		/*****************Clinic : PUT*****************/
 		//Refactor API for gettting providers information for the first time.
-			Route::put('clinic/updateProvidersDetail', '@DashboardController@updateProvidersDetail');
+			Route::put('clinic/updateProvidersDetail', 'DashboardController@updateProvidersDetail');
 		/* End Here. */
 	   
 		
