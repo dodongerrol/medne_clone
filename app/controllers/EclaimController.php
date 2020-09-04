@@ -5471,6 +5471,7 @@ public function getHrActivity( )
 	
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
+		'emp_no'		   => $user->emp_no,
 		'total_balance'			=> $total_allocation - $total_spent,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
@@ -6589,6 +6590,7 @@ public function hrEclaimActivity( )
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(
 				'status'            => $res->status,
+				'emp_no'			=> $member->emp_no,	
 				'status_text'       => $status_text,
 				'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
 				'approved_date'        => $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
