@@ -58,7 +58,7 @@
         <div style="padding: 0 20px">
           <p style="font-weight: 700; margin-bottom: 40px;">Prepaid Credits Account Activation</p>
 
-          <p>Company Noelou has activated Prepaid Credits Account. Payment is currently pending. 
+          <p>Company {{ $company_name }} has activated Prepaid Credits Account. Payment is currently pending. 
           </p>
 
 
