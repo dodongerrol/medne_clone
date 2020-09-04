@@ -4821,7 +4821,7 @@ public function getHrActivity( )
 	$corporate_members = DB::table('corporate_members')
 							->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 							->where('corporate_members.corporate_id', $account->corporate_id)
-							->paginate(10);
+							->paginate(1000);
 
 	$paginate['current_page'] = $corporate_members->getCurrentPage();
 	$paginate['from'] = $corporate_members->getFrom();
@@ -5266,6 +5266,7 @@ public function getHrActivity( )
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 					$format = array(
+						'emp_no'		   	=> $member->emp_no,
 						'clinic_name'       => $clinic->Name,
 						'clinic_image'      => $clinic->image,
 						'amount'            => number_format($total_amount, 2),
@@ -5348,9 +5349,9 @@ public function getHrActivity( )
 				$total_visit_created++;
 				$non_panel++;
 			}
-			
+			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 			if($res->status == 1) {
-				$member = DB::table('user')->where('UserID', $res->user_id)->first();
+				
 
         		// check user if it is spouse or dependent
 				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
@@ -5407,6 +5408,7 @@ public function getHrActivity( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'status'            => $res->status,
+					'emp_no'		   	=> $member->emp_no,
 					'status_text'       => $status_text,
 					'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
 					'approved_date'     => date('d F Y', strtotime($res->approved_date)),
@@ -5471,7 +5473,6 @@ public function getHrActivity( )
 	
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
-		'emp_no'		   => $user->emp_no,
 		'total_balance'			=> $total_allocation - $total_spent,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
@@ -9384,6 +9385,7 @@ public function downloadEclaimCsv( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$container[] = array(
 					'MEMBER'						=> ucwords($member->Name),
+					'EMPLOYEE ID'					=> $member->emp_no,
 					'MOBILE NO'							=> $member->PhoneCode.$member->PhoneNo,
 					'EMAIL ADDRESS'			=> $email,
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
@@ -9724,6 +9726,7 @@ public function downloadEclaimCsv( )
 
 							if((int) $trans->lite_plan_enabled == 1) {
 								$in_network_transactions[] = array(
+									'EMPLOYEE ID'					=> $customer->emp_no,
 									'EMPLOYEE'				=> $employee,
 									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,
@@ -9738,6 +9741,7 @@ public function downloadEclaimCsv( )
 								);
 							} else {
 								$in_network_transactions[] = array(
+									'EMPLOYEE ID'					=> $customer->emp_no,
 									'EMPLOYEE'				=> $employee,
 									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,
