@@ -1178,11 +1178,14 @@ class SpendingAccountController extends \BaseController {
 			'updated_at'			=> date('Y-m-d H:i:s')
 		);
 
+		$spending_account = DB::table('spending_account_settings')
+										->where('customer_id', $customer_id)
+										->first();
 		$company = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
 
-		if ($spending_account_settings->activate_mednefits_credit_account == 1) {
-			$emailDdata['company_name']= $company->company_name;
-	        $emailDdata['emailPage']= 'email-templates.latest-templates.prepaid-activation';
+		if ((int)$spending_account->activate_mednefits_credit_account == 1) {
+			$emailDdata['emailName']= $company->company_name;
+	        $emailDdata['emailPage']= 'email-templates.latest-templates.prepaid-account-template';
 	        $emailDdata['emailTo']= 'wanwen@mednefits.com';
 	        $emailDdata['emailSubject'] = "Prepaid Credits Account Activation";
 	        \EmailHelper::sendEmail($emailDdata);
