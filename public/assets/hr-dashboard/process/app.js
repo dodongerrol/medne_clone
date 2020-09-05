@@ -793,6 +793,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     })
 
+
     .state('member-wallet-benefits-coverage.mednefits-basic-plan', {
       url: '/mednefits-basic-plan',
       views: {
