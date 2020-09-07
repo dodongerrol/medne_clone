@@ -321,7 +321,10 @@ class CustomerHelper
 			'medical_benefits_coverage'			=> $spending->medical_benefits_coverage,
 			'medical_payment_method_panel'		=> $spending->medical_payment_method_panel,
 			'wellness_benefits_coverage'		=> $spending->wellness_benefits_coverage,
-			'wellness_payment_method_panel'		=> $spending->wellness_payment_method_panel
+			'medical_payment_method_panel'		=> $spending->medical_payment_method_panel,
+			'medical_payment_method_non_panel'		=> $spending->medical_payment_method_non_panel,
+			'wellness_payment_method_panel'		=> $spending->wellness_payment_method_panel,
+			'wellness_payment_method_non_panel'		=> $spending->wellness_payment_method_non_panel
 		);
 	}
 

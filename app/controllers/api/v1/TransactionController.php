@@ -56,6 +56,7 @@ class Api_V1_TransactionController extends \BaseController
 					$lite_plan_status = false;
 					$clinic_peak_status = false;
 					$service_id = $input['services'][0];
+					$spending_method = "post_paid";
 					// check user type
 					$type = StringHelper::checkUserType($findUserID);
 					$lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
@@ -79,6 +80,9 @@ class Api_V1_TransactionController extends \BaseController
 						$dependent_user = true;
 					}
 
+					$customer_id = PlanHelper::getCustomerId($user_id);
+					$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+					$spending_method = $spending['medical_payment_method_panel'] == "mednefits_credits" ? 'pre_paid' : 'post_paid';
 					// get clinic info and type
 					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
@@ -403,7 +407,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								} else {
 									$credits_logs = array(
@@ -414,7 +419,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								}
 
@@ -437,7 +443,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									} else {
 										$lite_plan_credits_log = array(
@@ -449,7 +456,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									}
 								}
@@ -465,7 +473,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								} else {
 									$credits_logs = array(
@@ -476,7 +485,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								}
 
@@ -498,7 +508,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									} else {
 										$lite_plan_credits_log = array(
@@ -510,7 +521,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									}
 								}

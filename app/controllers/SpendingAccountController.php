@@ -1193,4 +1193,74 @@ class SpendingAccountController extends \BaseController {
 		DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)->update($update);
 		return ['status' => true, 'message' => 'Company successfully created a Mednefits Credit Account.'];
 	}
+
+	public function downloadPrepaidInvoice( )
+	{
+		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$customer_id = $result->customer_buy_start_id;
+		$spendingPurchase = DB::table('spending_purchase_invoice')
+								->join('mednefits_credits', 'mednefits_credits.id', '=', 'spending_purchase_invoice.mednefits_credits_id')
+								->where('mednefits_credits.id', $input['id'])
+								// ->where('spending_purchase_invoice.customer_id', $customer_id)
+								->first();
+								
+        if(!$spendingPurchase) {
+            return ['status' => false, 'message' => 'Spending Purchase does not exists'];
+        }
+
+        $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
+        $customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
+        
+        $data = array();
+        $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
+        $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
+        $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
+        $data['invoice_number'] = $spendingPurchase->invoice_number;
+        $total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+        $data['total']  = number_format($total, 2);
+        $data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
+        $data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
+        $data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
+        $data['remarks']    = $spendingPurchase->remarks;
+        $data['company_name']   = $spendingPurchase->company_name;
+        $data['company_address']   = $spendingPurchase->company_address;
+        $data['postal']   = $spendingPurchase->postal;
+        $data['contact_name']   = $spendingPurchase->contact_name;
+        $data['contact_number']   = $spendingPurchase->contact_number;
+        $data['contact_email']   = $spendingPurchase->contact_email;
+        $data['plan_start']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+        $data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_end));
+        $data['duration']   = $spendingPurchase->duration;
+        $data['account_type'] = PlanHelper::getAccountType($active_plan->account_type);
+        $data['plan_type'] = 'Basic Plan Mednefits Care (Corporate)';
+        $data['currency_type']   = strtoupper($customer_wallet->currency_type);
+        //spending account
+        $data['spending_account'] = (float)$spendingPurchase->medical_purchase_credits > 0 ? true : false;
+        $data['credits_purchase'] = number_format($spendingPurchase->medical_purchase_credits, 2);
+        $data['credit_bonus'] = number_format($spendingPurchase->medical_credit_bonus, 2);
+        $data['total_credits']  = number_format($spendingPurchase->medical_purchase_credits + $spendingPurchase->medical_credit_bonus, 2);
+        $data['discount_credits']  = number_format($spendingPurchase->medical_credit_bonus, 2);
+		
+		// return View::make('pdf-download.globalTemplates.mednefits-credits-invoice', $data);
+		$pdf = PDF::loadView('pdf-download.globalTemplates.mednefits-credits-invoice', $data);
+		$pdf->getDomPDF()->get_option('enable_html5_parser');
+		$pdf->setPaper('A4', 'portrait');
+		return $pdf->stream($data['invoice_number'].' - '.time().'.pdf');
+	}
 }
